@@ -1,16 +1,13 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: pangratioscosma
- * Date: 28/09/2018
- * Time: 13:16
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App;
 
 class WT1CsvParser
 {
-
     /**
      * @var
      */
@@ -24,17 +21,17 @@ class WT1CsvParser
         $this->patients = [];
     }
 
-    public function parseFile(String $fileName)
-    {
-        $arr = parseCsvToArray($fileName);
-        $this->parseCsvArray($arr);
-    }
-
     public function parseCsvArray($arr)
     {
         foreach ($arr as $row) {
             $this->addToResult($row);
         }
+    }
+
+    public function parseFile(String $fileName)
+    {
+        $arr = parseCsvToArray($fileName);
+        $this->parseCsvArray($arr);
     }
 
     public function toArray()
@@ -56,25 +53,25 @@ class WT1CsvParser
     private function addToResult($row)
     {
         $patientId = $row['patient_id'];
-        if ( ! isset($this->patients[$patientId])) {
+        if (!isset($this->patients[$patientId])) {
             $this->patients[$patientId] = [];
         }
 
         $entry = $this->patients[$patientId];
 
-        if ( ! isset($entry['insurance_plans'])) {
+        if (!isset($entry['insurance_plans'])) {
             $entry['insurance_plans'] = []; //we want this to be translated to { "primary" : {}, "secondary": {} }
         }
 
-        if ( ! isset($entry['problems'])) {
+        if (!isset($entry['problems'])) {
             $entry['problems'] = []; //we want this to be translated to [{}]
         }
 
-        if ( ! isset($entry['medications'])) {
+        if (!isset($entry['medications'])) {
             $entry['medications'] = []; //we want this to be translated to [{}]
         }
 
-        if ( ! isset($entry['allergies'])) {
+        if (!isset($entry['allergies'])) {
             $entry['allergies'] = []; //we want this to be translated to [{}]
         }
 
@@ -126,152 +123,6 @@ class WT1CsvParser
         $this->patients[$patientId] = $entry;
     }
 
-    private function getInsurances($row)
-    {
-        $result    = [];
-        $primary   = $this->getPrimaryInsurance($row);
-        $secondary = $this->getSecondaryInsurance($row);
-
-        if ($primary) {
-            $result['primary'] = $primary;
-        }
-        if ($secondary) {
-            $result['secondary'] = $secondary;
-        }
-        return $result;
-
-    }
-
-    private function getPrimaryInsurance($row)
-    {
-
-        /**
-         * "plan"           => "Test Medicare",
-         * "group_number"   => "",
-         * "policy_number"  => "123455",
-         * "insurance_type" => "Medicare",
-         */
-
-        $plan = $this->getValue($row, 'primaryins');
-        if ( ! $plan) {
-            return null;
-        }
-
-        $result                   = [];
-        $result["plan"]           = $plan;
-        $result["policy_number"]  = $this->getValue($row, 'primaryinspol');
-        $result["group_number"]   = null;
-        $result["insurance_type"] = "Medicare";
-        return $result;
-    }
-
-    private function getSecondaryInsurance($row)
-    {
-        $plan = $this->getValue($row, 'secondaryins');
-        if ( ! $plan) {
-            return null;
-        }
-
-        $result                  = [];
-        $result["plan"]          = $plan;
-        $result["policy_number"] = $this->getValue($row, 'secondaryinspol');
-        return $result;
-    }
-
-    private function getMergedList($row, $currentList, $fieldName, $mapper)
-    {
-        $rowList = $this->getListFromFields($row, $fieldName);
-
-        foreach ($rowList as $fieldValue) {
-
-            $found = false;
-            foreach ($currentList as $entry) {
-                if (strcasecmp($entry['name'], $fieldValue) === 0) {
-                    $found = true;
-                    break;
-                }
-            }
-
-            if ( ! $found) {
-                $currentList[] = $mapper($fieldValue);
-            }
-        }
-        return $currentList;
-    }
-
-    private function getListFromFields($row, $fieldName)
-    {
-        $lookingFor = $fieldName;
-        $result     = [];
-        foreach ($row as $key => $value) {
-
-            $isFieldFound = strcasecmp(substr($key, 0, strlen($lookingFor)), $lookingFor) === 0;
-            if ( ! $isFieldFound) {
-                continue;
-            }
-
-            $fieldValue = str_replace($lookingFor, "", $key);
-            //ignore {FieldName}None
-            if (strcasecmp($fieldValue, 'none') === 0) {
-                continue;
-            }
-
-            //ignore MedsNoMeds
-            if (strcasecmp($key, 'MedsNoMeds') === 0) {
-                continue;
-            }
-
-            if ($this->getBoolValue($row, $key)) {
-                $result[] = $fieldValue;
-            }
-        }
-        return $result;
-    }
-
-    private function getProviderValue($row, $default = null)
-    {
-        $firstName  = $this->getValue($row, 'providerfirstname', '');
-        $middleName = $this->getValue($row, 'providermiddlename', '');
-        $lastName   = $this->getValue($row, 'providerlastname', '');
-        $result     = '';
-        if ( ! empty($firstName)) {
-            $result .= $firstName;
-            if ( ! empty($middleName)) {
-                $result .= ' ';
-            }
-        }
-        if ( ! empty($middleName)) {
-            $result .= $middleName;
-            if ( ! empty($lastName)) {
-                $result .= ' ';
-            }
-        }
-        if ( ! empty($lastName)) {
-            $result .= $lastName;
-        }
-
-        if (empty($result)) {
-            $result = $default;
-        }
-        return $result;
-    }
-
-    private function getValue($row, $key, $default = null)
-    {
-        if ( ! isset($row[$key])) {
-            return $default;
-        }
-
-        if (empty($row[$key])) {
-            return $default;
-        }
-
-        if ($row[$key] === "null" || $row[$key] === "NULL" || $row[$key] === "\\N") {
-            return $default;
-        }
-        return $row[$key];
-    }
-
     /**
      * Returns true if value is Y, false if N.
      * All other fields return false.
@@ -285,10 +136,158 @@ class WT1CsvParser
     private function getBoolValue($row, $key, $default = false)
     {
         $val = $this->getValue($row, $key, $default);
-        if ($val === false) {
+        if (false === $val) {
             return $val;
         }
-        return $val === 'Y';
+
+        return 'Y' === $val;
     }
 
+    private function getInsurances($row)
+    {
+        $result    = [];
+        $primary   = $this->getPrimaryInsurance($row);
+        $secondary = $this->getSecondaryInsurance($row);
+
+        if ($primary) {
+            $result['primary'] = $primary;
+        }
+        if ($secondary) {
+            $result['secondary'] = $secondary;
+        }
+
+        return $result;
+    }
+
+    private function getListFromFields($row, $fieldName)
+    {
+        $lookingFor = $fieldName;
+        $result     = [];
+        foreach ($row as $key => $value) {
+            $isFieldFound = 0 === strcasecmp(substr($key, 0, strlen($lookingFor)), $lookingFor);
+            if (!$isFieldFound) {
+                continue;
+            }
+
+            $fieldValue = str_replace($lookingFor, '', $key);
+            //ignore {FieldName}None
+            if (0 === strcasecmp($fieldValue, 'none')) {
+                continue;
+            }
+
+            //ignore MedsNoMeds
+            if (0 === strcasecmp($key, 'MedsNoMeds')) {
+                continue;
+            }
+
+            if ($this->getBoolValue($row, $key)) {
+                $result[] = $fieldValue;
+            }
+        }
+
+        return $result;
+    }
+
+    private function getMergedList($row, $currentList, $fieldName, $mapper)
+    {
+        $rowList = $this->getListFromFields($row, $fieldName);
+
+        foreach ($rowList as $fieldValue) {
+            $found = false;
+            foreach ($currentList as $entry) {
+                if (0 === strcasecmp($entry['name'], $fieldValue)) {
+                    $found = true;
+                    break;
+                }
+            }
+
+            if (!$found) {
+                $currentList[] = $mapper($fieldValue);
+            }
+        }
+
+        return $currentList;
+    }
+
+    private function getPrimaryInsurance($row)
+    {
+        /**
+         * "plan"           => "Test Medicare",
+         * "group_number"   => "",
+         * "policy_number"  => "123455",
+         * "insurance_type" => "Medicare",.
+         */
+        $plan = $this->getValue($row, 'primaryins');
+        if (!$plan) {
+            return null;
+        }
+
+        $result                   = [];
+        $result['plan']           = $plan;
+        $result['policy_number']  = $this->getValue($row, 'primaryinspol');
+        $result['group_number']   = null;
+        $result['insurance_type'] = 'Medicare';
+
+        return $result;
+    }
+
+    private function getProviderValue($row, $default = null)
+    {
+        $firstName  = $this->getValue($row, 'providerfirstname', '');
+        $middleName = $this->getValue($row, 'providermiddlename', '');
+        $lastName   = $this->getValue($row, 'providerlastname', '');
+        $result     = '';
+        if (!empty($firstName)) {
+            $result .= $firstName;
+            if (!empty($middleName)) {
+                $result .= ' ';
+            }
+        }
+        if (!empty($middleName)) {
+            $result .= $middleName;
+            if (!empty($lastName)) {
+                $result .= ' ';
+            }
+        }
+        if (!empty($lastName)) {
+            $result .= $lastName;
+        }
+
+        if (empty($result)) {
+            $result = $default;
+        }
+
+        return $result;
+    }
+
+    private function getSecondaryInsurance($row)
+    {
+        $plan = $this->getValue($row, 'secondaryins');
+        if (!$plan) {
+            return null;
+        }
+
+        $result                  = [];
+        $result['plan']          = $plan;
+        $result['policy_number'] = $this->getValue($row, 'secondaryinspol');
+
+        return $result;
+    }
+
+    private function getValue($row, $key, $default = null)
+    {
+        if (!isset($row[$key])) {
+            return $default;
+        }
+
+        if (empty($row[$key])) {
+            return $default;
+        }
+
+        if ('null' === $row[$key] || 'NULL' === $row[$key] || '\\N' === $row[$key]) {
+            return $default;
+        }
+
+        return $row[$key];
+    }
 }

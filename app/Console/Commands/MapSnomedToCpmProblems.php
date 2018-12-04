@@ -1,9 +1,21 @@
-<?php namespace App\Console\Commands;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 
 class MapSnomedToCpmProblems extends Command
 {
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Picks problems from SnomedToICD10Map that satisfy the ranges specified in CPMProblems and puts them in SnomedToCPMICDMap, so that our snomed problems parser will never hit an ICD10 code that we don not support.';
 
     /**
      * The console command name.
@@ -13,16 +25,7 @@ class MapSnomedToCpmProblems extends Command
     protected $name = 'map:snomedtocpm';
 
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Picks problems from SnomedToICD10Map that satisfy the ranges specified in CPMProblems and puts them in SnomedToCPMICDMap, so that our snomed problems parser will never hit an ICD10 code that we don not support.';
-
-    /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {

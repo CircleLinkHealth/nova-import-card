@@ -126,7 +126,7 @@
                     <li style="font-size: 18px" id="status"
                         class="inline-block {{$patient->getCcmStatus()}}"><?= (empty($patient->getCcmStatus()))
                             ? 'N/A'
-                            : ucwords($patient->getCcmStatus());  ?></li>
+                            : ucwords($patient->getCcmStatus()); ?></li>
                 @endif
                 <br/>
                 @if(auth()->user()->hasRole(['administrator']))
@@ -137,9 +137,7 @@
 
         </div>
         <?php
-        use App\Services\CCD\CcdProblemService;
-
-        $ccdProblemService = app(CcdProblemService::class);
+        $ccdProblemService = app(App\Services\CCD\CcdProblemService::class);
 
         $ccdProblems = $ccdProblemService->getPatientProblems($patient);
 

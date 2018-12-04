@@ -1,13 +1,15 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Mail;
 
-use App\CarePlan;
 use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
 class CarePlanApprovalReminder extends Mailable
 {
@@ -30,7 +32,7 @@ class CarePlanApprovalReminder extends Mailable
     /**
      * Build the message.
      *
-     * @return CarePlanApprovalReminder|bool
+     * @return bool|CarePlanApprovalReminder
      */
     public function build()
     {

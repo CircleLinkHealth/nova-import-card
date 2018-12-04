@@ -1,4 +1,10 @@
-<?php namespace App\Http\Controllers;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Http\Controllers;
 
 use App\CLH\Repositories\UserRepository;
 use App\CPRulesPCP;
@@ -17,6 +23,341 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class UserController extends Controller
 {
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Response
+     */
+    public function create()
+    {
+        $messages = \Session::get('messages');
+
+        $wpUser = new User();
+
+        $roles = Role::pluck('display_name', 'id')->all();
+
+        // set role
+        $wpRole = '';
+
+        // States (for dropdown)
+        $states_arr = [
+            'AL' => 'Alabama',
+            'AK' => 'Alaska',
+            'AZ' => 'Arizona',
+            'AR' => 'Arkansas',
+            'CA' => 'California',
+            'CO' => 'Colorado',
+            'CT' => 'Connecticut',
+            'DE' => 'Delaware',
+            'DC' => 'District Of Columbia',
+            'FL' => 'Florida',
+            'GA' => 'Georgia',
+            'HI' => 'Hawaii',
+            'ID' => 'Idaho',
+            'IL' => 'Illinois',
+            'IN' => 'Indiana',
+            'IA' => 'Iowa',
+            'KS' => 'Kansas',
+            'KY' => 'Kentucky',
+            'LA' => 'Louisiana',
+            'ME' => 'Maine',
+            'MD' => 'Maryland',
+            'MA' => 'Massachusetts',
+            'MI' => 'Michigan',
+            'MN' => 'Minnesota',
+            'MS' => 'Mississippi',
+            'MO' => 'Missouri',
+            'MT' => 'Montana',
+            'NE' => 'Nebraska',
+            'NV' => 'Nevada',
+            'NH' => 'New Hampshire',
+            'NJ' => 'New Jersey',
+            'NM' => 'New Mexico',
+            'NY' => 'New York',
+            'NC' => 'North Carolina',
+            'ND' => 'North Dakota',
+            'OH' => 'Ohio',
+            'OK' => 'Oklahoma',
+            'OR' => 'Oregon',
+            'PA' => 'Pennsylvania',
+            'RI' => 'Rhode Island',
+            'SC' => 'South Carolina',
+            'SD' => 'South Dakota',
+            'TN' => 'Tennessee',
+            'TX' => 'Texas',
+            'UT' => 'Utah',
+            'VT' => 'Vermont',
+            'VA' => 'Virginia',
+            'WA' => 'Washington',
+            'WV' => 'West Virginia',
+            'WI' => 'Wisconsin',
+            'WY' => 'Wyoming',
+        ];
+
+        // programs for dd
+        $wpBlogs = Practice::orderBy('id', 'desc')->pluck('display_name', 'id')->all();
+
+        $locations = Location::all()->pluck('name', 'id')->all();
+
+        // timezones for dd
+        $timezones_raw = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
+        foreach ($timezones_raw as $timezone) {
+            $timezones_arr[$timezone] = $timezone;
+        }
+
+        // providers
+        $providers_arr = [
+            'provider'          => 'provider',
+            'office_admin'      => 'office_admin',
+            'participant'       => 'participant',
+            'care_center'       => 'care_center',
+            'viewer'            => 'viewer',
+            'clh_participant'   => 'clh_participant',
+            'clh_administrator' => 'clh_administrator',
+        ];
+
+        // display view
+        return view('wpUsers.create', [
+            'wpUser'        => $wpUser,
+            'states_arr'    => $states_arr,
+            'timezones_arr' => $timezones_arr,
+            'wpBlogs'       => $wpBlogs,
+            'providers_arr' => $providers_arr,
+            'messages'      => $messages,
+            'roles'         => $roles,
+            'locations'     => $locations,
+        ]);
+    }
+
+    public function createQuickPatient($programId)
+    {
+        return $this->quickAddForm($programId);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param int $id
+     *
+     * @return Response
+     */
+    public function destroy($id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return response('User not found', 401);
+        }
+
+        //$user->practices()->detach();
+        $user->delete();
+
+        return redirect()->back()->with('messages', ['successfully deleted user']);
+    }
+
+    /**
+     * Perform actions on multiple users.
+     *
+     * @return Response
+     */
+    public function doAction(Request $request)
+    {
+        $params = new ParameterBag($request->input());
+
+        $action = $params->get('action');
+
+        if (!$action) {
+            return redirect()->back()->withErrors(['form_error' => "There was an error: Missing 'action' parameter."]);
+        }
+
+        if ('scramble' == $action || 'withdraw' == $action) {
+            $selectAllFromFilters = !empty($params->get('filterRole')) || !empty($params->get('filterProgram'));
+            if ($selectAllFromFilters) {
+                $users = $this->getUsersBasedOnFilters($params);
+            } else {
+                $users = $params->get('users');
+            }
+
+            if (empty($users)) {
+                return redirect()->back()->withErrors(['form_error' => 'There was an error: Users array is empty.']);
+            }
+
+            if ('scramble' == $action) {
+                $this->scrambleUsers($users);
+
+                return redirect()->back()->with('messages', ['Action [Scramble] was successful']);
+            }
+            if ('withdraw' == $action) {
+                $this->withdrawUsers($users, $params->get('withdrawal-note-body'));
+
+                return redirect()->back()->with('messages', ['Action [Withdraw] was successful']);
+            }
+        } else {
+            return redirect()->back()->withErrors(['form_error' => "Unhandled action: ${action}"]);
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param int $id
+     *
+     * @return Response
+     */
+    public function edit(
+        Request $request,
+        $id
+    ) {
+        $messages = \Session::get('messages');
+
+        $patient = User::find($id);
+        if (!$patient) {
+            return response('User not found', 401);
+        }
+
+        $roles = Role::pluck('name', 'id')->all();
+        $role  = $patient->roles()->first();
+        if (!$role) {
+            $role = Role::first();
+        }
+
+        // build revision info
+        $revisions = [];
+
+        // first for user
+        $revisionHistory = collect([]);
+        foreach ($patient->revisionHistory->sortByDesc('updated_at')->take(10) as $history) {
+            $revisionHistory->push($history);
+        }
+        $revisions['User'] = $revisionHistory;
+
+        // patientInfo
+        if ('participant' == $role->name) {
+            $revisionHistory = collect([]);
+
+            if ($patient->patientInfo) {
+                foreach ($patient->patientInfo->revisionHistory->sortByDesc('updated_at')->take(10) as $history) {
+                    $revisionHistory->push($history);
+                }
+            }
+
+            $revisions['Patient Info'] = $revisionHistory;
+        }
+
+        $params = $request->all();
+        if (!empty($params)) {
+            if (isset($params['action'])) {
+                if ('impersonate' == $params['action']) {
+                    Auth::login($id);
+
+                    return redirect()->route('/', [])->with('messages', ['Logged in as user '.$id]);
+                }
+            }
+        }
+
+        // locations @todo get location id for Practice
+        $practice      = Practice::find($patient->program_id);
+        $locations_arr = [];
+        if ($practice) {
+            $locations_arr = $practice->locations->all();
+        }
+
+        // States (for dropdown)
+        $states_arr = [
+            'AL' => 'Alabama',
+            'AK' => 'Alaska',
+            'AZ' => 'Arizona',
+            'AR' => 'Arkansas',
+            'CA' => 'California',
+            'CO' => 'Colorado',
+            'CT' => 'Connecticut',
+            'DE' => 'Delaware',
+            'DC' => 'District Of Columbia',
+            'FL' => 'Florida',
+            'GA' => 'Georgia',
+            'HI' => 'Hawaii',
+            'ID' => 'Idaho',
+            'IL' => 'Illinois',
+            'IN' => 'Indiana',
+            'IA' => 'Iowa',
+            'KS' => 'Kansas',
+            'KY' => 'Kentucky',
+            'LA' => 'Louisiana',
+            'ME' => 'Maine',
+            'MD' => 'Maryland',
+            'MA' => 'Massachusetts',
+            'MI' => 'Michigan',
+            'MN' => 'Minnesota',
+            'MS' => 'Mississippi',
+            'MO' => 'Missouri',
+            'MT' => 'Montana',
+            'NE' => 'Nebraska',
+            'NV' => 'Nevada',
+            'NH' => 'New Hampshire',
+            'NJ' => 'New Jersey',
+            'NM' => 'New Mexico',
+            'NY' => 'New York',
+            'NC' => 'North Carolina',
+            'ND' => 'North Dakota',
+            'OH' => 'Ohio',
+            'OK' => 'Oklahoma',
+            'OR' => 'Oregon',
+            'PA' => 'Pennsylvania',
+            'RI' => 'Rhode Island',
+            'SC' => 'South Carolina',
+            'SD' => 'South Dakota',
+            'TN' => 'Tennessee',
+            'TX' => 'Texas',
+            'UT' => 'Utah',
+            'VT' => 'Vermont',
+            'VA' => 'Virginia',
+            'WA' => 'Washington',
+            'WV' => 'West Virginia',
+            'WI' => 'Wisconsin',
+            'WY' => 'Wyoming',
+        ];
+
+        // programs for dd
+        $wpBlogs = Practice::orderBy('id', 'desc')->pluck('display_name', 'id')->all();
+
+        // timezones for dd
+        $timezones_raw = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
+        foreach ($timezones_raw as $timezone) {
+            $timezones_arr[$timezone] = $timezone;
+        }
+
+        // providers
+        $providers_arr = [
+            'provider'          => 'provider',
+            'office_admin'      => 'office_admin',
+            'participant'       => 'participant',
+            'care_center'       => 'care_center',
+            'viewer'            => 'viewer',
+            'clh_participant'   => 'clh_participant',
+            'clh_administrator' => 'clh_administrator',
+        ];
+
+        // display view
+        return view('wpUsers.edit', [
+            'patient'       => $patient,
+            'locations_arr' => $locations_arr,
+            'states_arr'    => $states_arr,
+            'timezones_arr' => $timezones_arr,
+            'wpBlogs'       => $wpBlogs,
+            'primaryBlog'   => $patient->program_id,
+            'providers_arr' => $providers_arr,
+            'messages'      => $messages,
+            'role'          => $role,
+            'roles'         => $roles,
+            'revisions'     => $revisions,
+        ]);
+    }
+
+    public function getPatients()
+    {
+        return User::all();
+    }
 
     /**
      * Display a listing of the resource.
@@ -38,56 +379,56 @@ class UserController extends Controller
 
         // filter user
         $users = User::whereIn('id', Auth::user()->viewableUserIds())
-                     ->orderBy('id', 'desc')
-                     ->get()
-                     ->mapWithKeys(function ($user) {
-                         return [
-                             $user->id => "{$user->getFirstName()} {$user->getLastName()} ({$user->id})",
-                         ];
-                     })
-                     ->all();
+            ->orderBy('id', 'desc')
+            ->get()
+            ->mapWithKeys(function ($user) {
+                return [
+                    $user->id => "{$user->getFirstName()} {$user->getLastName()} ({$user->id})",
+                ];
+            })
+            ->all();
 
         $filterUser = 'all';
 
-        if ( ! empty($params['filterUser'])) {
+        if (!empty($params['filterUser'])) {
             $filterUser = $params['filterUser'];
-            if ($params['filterUser'] != 'all') {
+            if ('all' != $params['filterUser']) {
                 $wpUsers->where('id', '=', $filterUser);
             }
         }
 
         // role filter
         $roles = Role::all()
-                     ->pluck('display_name', 'name')
-                     ->all();
+            ->pluck('display_name', 'name')
+            ->all();
 
         $filterRole = 'all';
 
-        if ( ! empty($params['filterRole'])) {
+        if (!empty($params['filterRole'])) {
             $filterRole = $params['filterRole'];
-            if ($params['filterRole'] != 'all') {
+            if ('all' != $params['filterRole']) {
                 $wpUsers->ofType($filterRole);
             }
         }
 
         // program filter
         $programs = Practice::orderBy('id', 'desc')
-                            ->whereIn('id', Auth::user()->viewableProgramIds())
-                            ->get()
-                            ->pluck('display_name', 'id')
-                            ->all();
+            ->whereIn('id', Auth::user()->viewableProgramIds())
+            ->get()
+            ->pluck('display_name', 'id')
+            ->all();
 
         $filterProgram = 'all';
 
-        if ( ! empty($params['filterProgram'])) {
+        if (!empty($params['filterProgram'])) {
             $filterProgram = $params['filterProgram'];
-            if ($params['filterProgram'] != 'all') {
+            if ('all' != $params['filterProgram']) {
                 $wpUsers->where('program_id', '=', $filterProgram);
             }
         }
 
         // only let owners see owners
-        if ( ! Auth::user()->hasRole(['administrator'])) {
+        if (!Auth::user()->hasRole(['administrator'])) {
             $wpUsers = $wpUsers->whereHas('roles', function ($q) {
                 $q->where('name', '!=', 'administrator');
             });
@@ -123,15 +464,9 @@ class UserController extends Controller
         ]));
     }
 
-
-    public function createQuickPatient($programId)
-    {
-        return $this->quickAddForm($programId);
-    }
-
     public function quickAddForm($blogId)
     {
-        if ( ! Auth::user()->isAdmin()) {
+        if (!Auth::user()->isAdmin()) {
             abort(403);
         }
         //if ( $request->header('Client') == 'ui' ) {}
@@ -175,7 +510,7 @@ class UserController extends Controller
             'Weight',
         ];
         foreach ($subItems['Biometrics to Monitor'] as $key => $value) {
-            if ( ! in_array($value->items_text, $biometric_arr)) {
+            if (!in_array($value->items_text, $biometric_arr)) {
                 unset($subItems['Biometrics to Monitor'][$key]);
             }
         }//dd($subItems['Biometrics to Monitor']);
@@ -194,125 +529,39 @@ class UserController extends Controller
         ]);
     }
 
-    public function storeQuickPatient()
+    /**
+     * Scramble user(s).
+     *
+     * @param mixed $userIds
+     *
+     * @return bool
+     */
+    public function scrambleUsers($userIds)
     {
-        if ( ! Auth::user()->isAdmin()) {
-            abort(403);
+        foreach ($userIds as $id) {
+            $user = User::find($id);
+            if (!$user) {
+                return false;
+            }
+
+            $user->scramble();
         }
-        $wpUser = new User;
 
-        // create participant here
-
-        return redirect()->route('admin.users.edit', [$wpUser->id])->with(
-            'messages',
-            ['successfully created new user - ' . $wpUser->id]
-        );
+        return true;
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display the specified resource.
+     *
+     * @param int $id
      *
      * @return Response
      */
-    public function create()
-    {
-        $messages = \Session::get('messages');
-
-        $wpUser = new User;
-
-        $roles = Role::pluck('display_name', 'id')->all();
-
-        // set role
-        $wpRole = '';
-
-        // States (for dropdown)
-        $states_arr = [
-            'AL' => "Alabama",
-            'AK' => "Alaska",
-            'AZ' => "Arizona",
-            'AR' => "Arkansas",
-            'CA' => "California",
-            'CO' => "Colorado",
-            'CT' => "Connecticut",
-            'DE' => "Delaware",
-            'DC' => "District Of Columbia",
-            'FL' => "Florida",
-            'GA' => "Georgia",
-            'HI' => "Hawaii",
-            'ID' => "Idaho",
-            'IL' => "Illinois",
-            'IN' => "Indiana",
-            'IA' => "Iowa",
-            'KS' => "Kansas",
-            'KY' => "Kentucky",
-            'LA' => "Louisiana",
-            'ME' => "Maine",
-            'MD' => "Maryland",
-            'MA' => "Massachusetts",
-            'MI' => "Michigan",
-            'MN' => "Minnesota",
-            'MS' => "Mississippi",
-            'MO' => "Missouri",
-            'MT' => "Montana",
-            'NE' => "Nebraska",
-            'NV' => "Nevada",
-            'NH' => "New Hampshire",
-            'NJ' => "New Jersey",
-            'NM' => "New Mexico",
-            'NY' => "New York",
-            'NC' => "North Carolina",
-            'ND' => "North Dakota",
-            'OH' => "Ohio",
-            'OK' => "Oklahoma",
-            'OR' => "Oregon",
-            'PA' => "Pennsylvania",
-            'RI' => "Rhode Island",
-            'SC' => "South Carolina",
-            'SD' => "South Dakota",
-            'TN' => "Tennessee",
-            'TX' => "Texas",
-            'UT' => "Utah",
-            'VT' => "Vermont",
-            'VA' => "Virginia",
-            'WA' => "Washington",
-            'WV' => "West Virginia",
-            'WI' => "Wisconsin",
-            'WY' => "Wyoming",
-        ];
-
-        // programs for dd
-        $wpBlogs = Practice::orderBy('id', 'desc')->pluck('display_name', 'id')->all();
-
-        $locations = Location::all()->pluck('name', 'id')->all();
-
-        // timezones for dd
-        $timezones_raw = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
-        foreach ($timezones_raw as $timezone) {
-            $timezones_arr[$timezone] = $timezone;
-        }
-
-        // providers
-        $providers_arr = [
-            'provider'          => 'provider',
-            'office_admin'      => 'office_admin',
-            'participant'       => 'participant',
-            'care_center'       => 'care_center',
-            'viewer'            => 'viewer',
-            'clh_participant'   => 'clh_participant',
-            'clh_administrator' => 'clh_administrator',
-        ];
-
-        // display view
-        return view('wpUsers.create', [
-            'wpUser'        => $wpUser,
-            'states_arr'    => $states_arr,
-            'timezones_arr' => $timezones_arr,
-            'wpBlogs'       => $wpBlogs,
-            'providers_arr' => $providers_arr,
-            'messages'      => $messages,
-            'roles'         => $roles,
-            'locations'     => $locations,
-        ]);
+    public function show(
+        Request $request,
+        $id
+    ) {
+        dd('user /edit to view user info');
     }
 
     /**
@@ -326,7 +575,7 @@ class UserController extends Controller
 
         $userRepo = new UserRepository();
 
-        $wpUser = new User;
+        $wpUser = new User();
 
         $this->validate($request, $wpUser->rules);
 
@@ -341,187 +590,31 @@ class UserController extends Controller
             $wpUser->locations()->attach(Location::find($locationId));
         }
 
-
         return redirect()->route('admin.users.edit', [$wpUser->id])->with(
             'messages',
-            ['successfully created new user - ' . $wpUser->id]
+            ['successfully created new user - '.$wpUser->id]
         );
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     *
-     * @return Response
-     */
-    public function show(
-        Request $request,
-        $id
-    ) {
-        dd('user /edit to view user info');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     *
-     * @return Response
-     */
-    public function edit(
-        Request $request,
-        $id
-    ) {
-        $messages = \Session::get('messages');
-
-        $patient = User::find($id);
-        if ( ! $patient) {
-            return response("User not found", 401);
+    public function storeQuickPatient()
+    {
+        if (!Auth::user()->isAdmin()) {
+            abort(403);
         }
+        $wpUser = new User();
 
-        $roles = Role::pluck('name', 'id')->all();
-        $role  = $patient->roles()->first();
-        if ( ! $role) {
-            $role = Role::first();
-        }
+        // create participant here
 
-        // build revision info
-        $revisions = [];
-
-        // first for user
-        $revisionHistory = collect([]);
-        foreach ($patient->revisionHistory->sortByDesc('updated_at')->take(10) as $history) {
-            $revisionHistory->push($history);
-        }
-        $revisions['User'] = $revisionHistory;
-
-        // patientInfo
-        if ($role->name == 'participant') {
-            $revisionHistory = collect([]);
-
-            if ($patient->patientInfo) {
-                foreach ($patient->patientInfo->revisionHistory->sortByDesc('updated_at')->take(10) as $history) {
-                    $revisionHistory->push($history);
-                }
-            }
-
-            $revisions['Patient Info'] = $revisionHistory;
-        }
-
-        $params = $request->all();
-        if ( ! empty($params)) {
-            if (isset($params['action'])) {
-                if ($params['action'] == 'impersonate') {
-                    Auth::login($id);
-
-                    return redirect()->route('/', [])->with('messages', ['Logged in as user ' . $id]);
-                }
-            }
-        }
-
-        // locations @todo get location id for Practice
-        $practice      = Practice::find($patient->program_id);
-        $locations_arr = [];
-        if ($practice) {
-            $locations_arr = $practice->locations->all();
-        }
-
-        // States (for dropdown)
-        $states_arr = [
-            'AL' => "Alabama",
-            'AK' => "Alaska",
-            'AZ' => "Arizona",
-            'AR' => "Arkansas",
-            'CA' => "California",
-            'CO' => "Colorado",
-            'CT' => "Connecticut",
-            'DE' => "Delaware",
-            'DC' => "District Of Columbia",
-            'FL' => "Florida",
-            'GA' => "Georgia",
-            'HI' => "Hawaii",
-            'ID' => "Idaho",
-            'IL' => "Illinois",
-            'IN' => "Indiana",
-            'IA' => "Iowa",
-            'KS' => "Kansas",
-            'KY' => "Kentucky",
-            'LA' => "Louisiana",
-            'ME' => "Maine",
-            'MD' => "Maryland",
-            'MA' => "Massachusetts",
-            'MI' => "Michigan",
-            'MN' => "Minnesota",
-            'MS' => "Mississippi",
-            'MO' => "Missouri",
-            'MT' => "Montana",
-            'NE' => "Nebraska",
-            'NV' => "Nevada",
-            'NH' => "New Hampshire",
-            'NJ' => "New Jersey",
-            'NM' => "New Mexico",
-            'NY' => "New York",
-            'NC' => "North Carolina",
-            'ND' => "North Dakota",
-            'OH' => "Ohio",
-            'OK' => "Oklahoma",
-            'OR' => "Oregon",
-            'PA' => "Pennsylvania",
-            'RI' => "Rhode Island",
-            'SC' => "South Carolina",
-            'SD' => "South Dakota",
-            'TN' => "Tennessee",
-            'TX' => "Texas",
-            'UT' => "Utah",
-            'VT' => "Vermont",
-            'VA' => "Virginia",
-            'WA' => "Washington",
-            'WV' => "West Virginia",
-            'WI' => "Wisconsin",
-            'WY' => "Wyoming",
-        ];
-
-        // programs for dd
-        $wpBlogs = Practice::orderBy('id', 'desc')->pluck('display_name', 'id')->all();
-
-        // timezones for dd
-        $timezones_raw = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
-        foreach ($timezones_raw as $timezone) {
-            $timezones_arr[$timezone] = $timezone;
-        }
-
-        // providers
-        $providers_arr = [
-            'provider'          => 'provider',
-            'office_admin'      => 'office_admin',
-            'participant'       => 'participant',
-            'care_center'       => 'care_center',
-            'viewer'            => 'viewer',
-            'clh_participant'   => 'clh_participant',
-            'clh_administrator' => 'clh_administrator',
-        ];
-
-        // display view
-        return view('wpUsers.edit', [
-            'patient'       => $patient,
-            'locations_arr' => $locations_arr,
-            'states_arr'    => $states_arr,
-            'timezones_arr' => $timezones_arr,
-            'wpBlogs'       => $wpBlogs,
-            'primaryBlog'   => $patient->program_id,
-            'providers_arr' => $providers_arr,
-            'messages'      => $messages,
-            'role'          => $role,
-            'roles'         => $roles,
-            'revisions'     => $revisions,
-        ]);
+        return redirect()->route('admin.users.edit', [$wpUser->id])->with(
+            'messages',
+            ['successfully created new user - '.$wpUser->id]
+        );
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  int $id
+     * @param int $id
      *
      * @return Response
      */
@@ -530,8 +623,8 @@ class UserController extends Controller
         $id
     ) {
         $wpUser = User::find($id);
-        if ( ! $wpUser) {
-            return response("User not found", 401);
+        if (!$wpUser) {
+            return response('User not found', 401);
         }
 
         // input
@@ -548,89 +641,45 @@ class UserController extends Controller
         return redirect()->back()->with('messages', ['successfully updated user']);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     *
-     * @return Response
-     *
-     */
-    public function destroy($id)
+    private function getUsersBasedOnFilters(ParameterBag $params)
     {
-        $user = User::find($id);
-        if ( ! $user) {
-            return response("User not found", 401);
+        $wpUsers = User::where('program_id', '!=', '')->orderBy('id', 'desc');
+
+        // role filter
+        $filterRole = $params->get('filterRole');
+        if (!empty($filterRole)) {
+            if ('all' != $filterRole) {
+                $wpUsers->ofType($filterRole);
+            }
         }
 
-        //$user->practices()->detach();
-        $user->delete();
-
-        return redirect()->back()->with('messages', ['successfully deleted user']);
-    }
-
-
-    /**
-     * Perform actions on multiple users
-     *
-     * @return Response
-     *
-     */
-    public function doAction(Request $request)
-    {
-        $params = new ParameterBag($request->input());
-
-        $action = $params->get('action');
-
-        if ( ! $action) {
-            return redirect()->back()->withErrors(["form_error" => "There was an error: Missing 'action' parameter."]);
+        // program filter
+        $filterProgram = $params->get('filterProgram');
+        if (!empty($filterProgram)) {
+            if ('all' != $filterProgram) {
+                $wpUsers->where('program_id', '=', $filterProgram);
+            }
         }
 
-        if ($action == 'scramble' || $action == 'withdraw') {
-
-            $selectAllFromFilters = ! empty($params->get('filterRole')) || ! empty($params->get('filterProgram'));
-            if ($selectAllFromFilters) {
-                $users = $this->getUsersBasedOnFilters($params);
-            } else {
-                $users = $params->get('users');
+        // only let owners see owners
+        if (!Auth::user()->hasRole(['administrator'])) {
+            $wpUsers = $wpUsers->whereHas('roles', function ($q) {
+                $q->where('name', '!=', 'administrator');
+            });
+            // providers can only see their participants
+            if (Auth::user()->hasRole(['provider'])) {
+                $wpUsers->whereHas('roles', function ($q) {
+                    $q->whereHas('perms', function ($q2) {
+                        $q2->where('name', '=', 'is-participant');
+                    });
+                });
+                $wpUsers->where('program_id', '=', Auth::user()->program_id);
             }
-
-            if (empty($users)) {
-                return redirect()->back()->withErrors(["form_error" => "There was an error: Users array is empty."]);
-            }
-
-            if ($action == 'scramble') {
-                $this->scrambleUsers($users);
-                return redirect()->back()->with('messages', ['Action [Scramble] was successful']);
-            } else if ($action == 'withdraw') {
-                $this->withdrawUsers($users, $params->get('withdrawal-note-body'));
-                return redirect()->back()->with('messages', ['Action [Withdraw] was successful']);
-            }
-        } else {
-            return redirect()->back()->withErrors(["form_error" => "Unhandled action: $action"]);
         }
 
-        return redirect()->back();
-    }
-
-    /**
-     * Scramble user(s)
-     *
-     * @return boolean
-     *
-     */
-    public function scrambleUsers($userIds)
-    {
-        foreach ($userIds as $id) {
-            $user = User::find($id);
-            if ( ! $user) {
-                return false;
-            }
-
-            $user->scramble();
-        }
-
-        return true;
+        return $wpUsers->whereIn('id', Auth::user()->viewableUserIds())
+            ->select('id')
+            ->get();
     }
 
     private function withdrawUsers($userIds, String $noteBody)
@@ -638,19 +687,19 @@ class UserController extends Controller
         //need to make sure that we are creating notes for participants
         //and withdrawn patients that are not already withdrawn
         $participantIds = User::ofType('participant')
-                              ->whereHas('patientInfo', function ($query) {
-                                  $query->where('ccm_status', '!=', 'withdrawn');
-                              })
-                              ->whereIn('id', $userIds)
-                              ->select(['id'])
-                              ->pluck('id')
-                              ->all();
+            ->whereHas('patientInfo', function ($query) {
+                $query->where('ccm_status', '!=', 'withdrawn');
+            })
+            ->whereIn('id', $userIds)
+            ->select(['id'])
+            ->pluck('id')
+            ->all();
 
         Patient::whereIn('user_id', $participantIds)
-               ->update([
-                   'ccm_status'     => 'withdrawn',
-                   'date_withdrawn' => Carbon::now()->toDateTimeString(),
-               ]);
+            ->update([
+                'ccm_status'     => 'withdrawn',
+                'date_withdrawn' => Carbon::now()->toDateTimeString(),
+            ]);
 
         $authorId = auth()->id();
 
@@ -667,53 +716,5 @@ class UserController extends Controller
         }
 
         Note::insert($notes);
-    }
-
-    private function getUsersBasedOnFilters(ParameterBag $params)
-    {
-
-        $wpUsers = User::where('program_id', '!=', '')->orderBy('id', 'desc');
-
-        // role filter
-        $filterRole = $params->get('filterRole');
-        if ( ! empty($filterRole)) {
-            if ($filterRole != 'all') {
-                $wpUsers->ofType($filterRole);
-            }
-        }
-
-        // program filter
-        $filterProgram = $params->get('filterProgram');
-        if ( ! empty($filterProgram)) {
-            if ($filterProgram != 'all') {
-                $wpUsers->where('program_id', '=', $filterProgram);
-            }
-        }
-
-        // only let owners see owners
-        if ( ! Auth::user()->hasRole(['administrator'])) {
-            $wpUsers = $wpUsers->whereHas('roles', function ($q) {
-                $q->where('name', '!=', 'administrator');
-            });
-            // providers can only see their participants
-            if (Auth::user()->hasRole(['provider'])) {
-                $wpUsers->whereHas('roles', function ($q) {
-                    $q->whereHas('perms', function ($q2) {
-                        $q2->where('name', '=', 'is-participant');
-                    });
-                });
-                $wpUsers->where('program_id', '=', Auth::user()->program_id);
-            }
-        }
-
-        return $wpUsers->whereIn('id', Auth::user()->viewableUserIds())
-                       ->select('id')
-                       ->get();
-    }
-
-
-    public function getPatients()
-    {
-        return User::all();
     }
 }

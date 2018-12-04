@@ -1,15 +1,10 @@
 <?php
 
-/**
- * This file is part of Cerberus,
- * a role & permission management solution for Laravel.
- *
- * @license MIT
- * @package Michalisantoniou6\Cerberus
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Cerberus Role Model
@@ -19,7 +14,7 @@ return [
     | the role if it is in a different namespace.
     |
     */
-    'role'                   => 'App\Role',
+    'role' => 'App\Role',
 
     /*
     |--------------------------------------------------------------------------
@@ -29,7 +24,7 @@ return [
     | This is the roles table used by Cerberus to save roles to the database.
     |
     */
-    'roles_table'            => 'lv_roles',
+    'roles_table' => 'lv_roles',
 
     /*
     |--------------------------------------------------------------------------
@@ -40,7 +35,7 @@ return [
     | relation between permissions and roles & roles and users
     |
     */
-    'role_foreign_key'       => 'role_id',
+    'role_foreign_key' => 'role_id',
 
     /*
     |--------------------------------------------------------------------------
@@ -51,7 +46,7 @@ return [
     | relation between permissions and roles, roles and users and users and sites
     |
     */
-    'site_foreign_key'       => 'program_id',
+    'site_foreign_key' => 'program_id',
 
     /*
     |--------------------------------------------------------------------------
@@ -62,7 +57,7 @@ return [
     | Update the User if it is in a different namespace.
     |
     */
-    'user'                   => 'App\User',
+    'user' => 'App\User',
 
     /*
     |--------------------------------------------------------------------------
@@ -73,7 +68,7 @@ return [
     | database.
     |
     */
-    'users_table'            => 'users',
+    'users_table' => 'users',
 
     /*
     |--------------------------------------------------------------------------
@@ -84,7 +79,7 @@ return [
     | database.
     |
     */
-    'role_user_site_table'   => 'practice_role_user',
+    'role_user_site_table' => 'practice_role_user',
 
     /*
     |--------------------------------------------------------------------------
@@ -95,7 +90,7 @@ return [
     | relation between roles and users
     |
     */
-    'user_foreign_key'       => 'user_id',
+    'user_foreign_key' => 'user_id',
 
     /*
     |--------------------------------------------------------------------------
@@ -106,7 +101,7 @@ return [
     | Update the permission if it is in a different namespace.
     |
     */
-    'permission'             => 'App\Permission',
+    'permission' => 'App\Permission',
 
     /*
     |--------------------------------------------------------------------------
@@ -117,7 +112,7 @@ return [
     | database.
     |
     */
-    'permissions_table'      => 'lv_permissions',
+    'permissions_table' => 'lv_permissions',
 
     /*
     |--------------------------------------------------------------------------
@@ -128,7 +123,7 @@ return [
     | between permissions and roles to the database.
     |
     */
-    'permissibles'           => 'permissibles',
+    'permissibles' => 'permissibles',
 
     /*
     |--------------------------------------------------------------------------
@@ -150,7 +145,7 @@ return [
     | Update the permission if it is in a different namespace.
     |
     */
-    'site'                   => 'App\Practice',
+    'site' => 'App\Practice',
 
     /*
     |--------------------------------------------------------------------------
@@ -161,5 +156,5 @@ return [
     | database.
     |
     */
-    'sites_table'            => 'practices',
+    'sites_table' => 'practices',
 ];

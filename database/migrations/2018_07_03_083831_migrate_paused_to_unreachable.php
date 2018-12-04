@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use App\Patient;
 use Carbon\Carbon;
 use Illuminate\Database\Migrations\Migration;
@@ -7,32 +11,27 @@ use Illuminate\Database\Migrations\Migration;
 class MigratePausedToUnreachable extends Migration
 {
     /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+    }
+
+    /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
         Patient::query()
-               ->orderBy('id')
-               ->where('date_paused', '<', Carbon::createFromDate(2018, 5, 1))
-               ->where('ccm_status', Patient::PAUSED)
-               ->chunk(500, function ($patients) {
-                   foreach ($patients as $p) {
-                       $p->ccm_status       = Patient::UNREACHABLE;
-                       $p->date_unreachable = $p->date_paused;
-                       $p->save();
-                   }
-               });
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        //
+            ->orderBy('id')
+            ->where('date_paused', '<', Carbon::createFromDate(2018, 5, 1))
+            ->where('ccm_status', Patient::PAUSED)
+            ->chunk(500, function ($patients) {
+                foreach ($patients as $p) {
+                    $p->ccm_status = Patient::UNREACHABLE;
+                    $p->date_unreachable = $p->date_paused;
+                    $p->save();
+                }
+            });
     }
 }

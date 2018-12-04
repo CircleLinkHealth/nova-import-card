@@ -1,11 +1,20 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Importer\Section\Importers;
 
 use App\Importer\Models\ItemLogs\MedicationLog;
 
 trait ConsolidatesMedicationInfo
 {
+    public function containsSigKeywords($field): bool
+    {
+        return $this->containsExact($field, $this->sigKeywords());
+    }
+
     /**
      * Consolidate Medication info from BB Medication Product and BB Medication Product Translation sections.
      * Sometimes info is in product, or translation or both.
@@ -24,18 +33,16 @@ trait ConsolidatesMedicationInfo
         $consolidatedMedication->cons_name             = null;
         $consolidatedMedication->cons_text             = null;
 
-        if ( ! empty($medicationLog->translation_code)) {
+        if (!empty($medicationLog->translation_code)) {
             $consolidatedMedication->cons_code             = $medicationLog->translation_code;
             $consolidatedMedication->cons_code_system      = $medicationLog->translation_code_system;
             $consolidatedMedication->cons_code_system_name = $medicationLog->translation_code_system_name;
             $consolidatedMedication->cons_name             = $medicationLog->reference_title;
 
             $consolidatedMedication = $this->consolidateName($consolidatedMedication, $medicationLog);
-            $consolidatedMedication = $this->consolidateSig($consolidatedMedication, $medicationLog);
 
-            return $consolidatedMedication;
+            return $this->consolidateSig($consolidatedMedication, $medicationLog);
         }
-
 
         $consolidatedMedication->cons_code             = $medicationLog->product_code;
         $consolidatedMedication->cons_code_system      = $medicationLog->product_code_system;
@@ -43,9 +50,8 @@ trait ConsolidatesMedicationInfo
         $consolidatedMedication->cons_name             = $medicationLog->reference_title;
 
         $consolidatedMedication = $this->consolidateName($consolidatedMedication, $medicationLog);
-        $consolidatedMedication = $this->consolidateSig($consolidatedMedication, $medicationLog);
 
-        return $consolidatedMedication;
+        return $this->consolidateSig($consolidatedMedication, $medicationLog);
     }
 
     private function consolidateName(
@@ -57,7 +63,7 @@ trait ConsolidatesMedicationInfo
             $medicationLog->reference_title,
             $medicationLog->translation_name,
         ])->each(function ($c) use (&$consolidatedMedication) {
-            if ( ! empty($c) && ! $this->containsSigKeywords($c)) {
+            if (!empty($c) && !$this->containsSigKeywords($c)) {
                 $consolidatedMedication->cons_name = $c;
 
                 return false;
@@ -77,7 +83,7 @@ trait ConsolidatesMedicationInfo
             $medicationLog->text,
             $medicationLog->reference_title,
         ])->each(function ($c) use (&$consolidatedMedication) {
-            if ( ! empty($c) && $this->containsSigKeywords($c)) {
+            if (!empty($c) && $this->containsSigKeywords($c)) {
                 $consolidatedMedication->cons_text = $c;
 
                 return false;
@@ -87,15 +93,10 @@ trait ConsolidatesMedicationInfo
         return $consolidatedMedication;
     }
 
-    public function containsSigKeywords($field): bool
-    {
-        return $this->containsExact($field, $this->sigKeywords());
-    }
-
     private function containsExact($haystack, $needles)
     {
         foreach ($needles as $needle) {
-            if (preg_match("~\b{$needle}\b~", $haystack)) {
+            if (preg_match("~\\b{$needle}\\b~", $haystack)) {
                 return true;
             }
         }
@@ -267,6 +268,5 @@ trait ConsolidatesMedicationInfo
             'vag.',
             'w/o',
         ];
-
     }
 }

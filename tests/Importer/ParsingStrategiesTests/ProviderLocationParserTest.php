@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Importer\ParsingStrategiesTests;
 
 use Tests\TestCase;
@@ -8,12 +12,12 @@ use Tests\TestCase;
  * Created by PhpStorm.
  * User: michalis
  * Date: 3/3/16
- * Time: 1:03 PM
+ * Time: 1:03 PM.
  */
 class ProviderLocationParserTest extends TestCase
 {
+    private $nullLocation    = '{"ids":[],"organization":null,"phone":null,"address":{"street":[null],"city":null,"state":null,"zip":null,"country":null}  }';
     private $workingLocation = '{"ids":[{"extension":null,"root":"","assigningAuthorityName":null}],"organization":"","phone":"","address":{"street":["1234 Summer Street, 6th FL "],"city":"Middletown","state":"NY","zip":"10940","country":"USA"}  }';
-    private $nullLocation = '{"ids":[],"organization":null,"phone":null,"address":{"street":[null],"city":null,"state":null,"zip":null,"country":null}  }';
 
     public function getParser()
     {

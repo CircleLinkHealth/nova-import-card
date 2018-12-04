@@ -1,11 +1,13 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Models\PatientData\RockyMountain;
 
-use Illuminate\Database\Eloquent\Model;
-
 /**
- * App\Models\PatientData\RockyMountain\RockyName
+ * App\Models\PatientData\RockyMountain\RockyName.
  *
  * @mixin \Eloquent
  */

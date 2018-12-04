@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Jobs;
 
 use App\Notifications\WeeklyProviderReport;
@@ -10,35 +14,32 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Mail;
-use Maknz\Slack\Facades\Slack;
 
 class EmailWeeklyProviderReport implements ShouldQueue
 {
     use InteractsWithQueue, Queueable, SerializesModels;
+    protected $endRange;
 
     protected $practice;
     protected $startRange;
-    protected $endRange;
     protected $tester;
 
     /**
      * Create a new job instance.
      *
-     * @return void
+     * @param mixed $startRange
+     * @param mixed $endRange
      */
     public function __construct(Practice $practice, $startRange, $endRange, User $tester = null)
     {
-        $this->practice = $practice;
+        $this->practice   = $practice;
         $this->startRange = $startRange;
-        $this->endRange = $endRange;
-        $this->tester = $tester;
+        $this->endRange   = $endRange;
+        $this->tester     = $tester;
     }
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
     public function handle()
     {
@@ -46,18 +47,17 @@ class EmailWeeklyProviderReport implements ShouldQueue
 
         //handle providers
         foreach ($providers_for_practice as $provider) {
-            $providerData =
-                (new SalesByProviderReport(
+            $providerData = (new SalesByProviderReport(
                     $provider,
                     SalesByProviderReport::SECTIONS,
                     $this->startRange->copy(),
                     $this->endRange->copy()
                 ))
-                    ->data(true);
+                ->data(true);
 
-            $providerData['name'] = $provider->display_name;
-            $providerData['start'] = $this->startRange;
-            $providerData['end'] = $this->endRange;
+            $providerData['name']    = $provider->display_name;
+            $providerData['start']   = $this->startRange;
+            $providerData['end']     = $this->endRange;
             $providerData['isEmail'] = true;
 
             if ($this->tester) {

@@ -1,13 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 4/30/18
- * Time: 2:46 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Services\Eligibility\Csv\Validators\PatientList;
-
 
 abstract class BaseValidator implements PatientListValidator
 {
@@ -18,9 +15,11 @@ abstract class BaseValidator implements PatientListValidator
 
     protected $validator;
 
-    public function isValid()
+    public function errors()
     {
-        return $this->validate() === true;
+        return true === $this->validate()
+            ? null
+            : $this->validate();
     }
 
     /**
@@ -31,6 +30,11 @@ abstract class BaseValidator implements PatientListValidator
         return $this->columnNames;
     }
 
+    public function isValid()
+    {
+        return true === $this->validate();
+    }
+
     /**
      * @param array $columnNames
      *
@@ -39,12 +43,5 @@ abstract class BaseValidator implements PatientListValidator
     public function setColumnNames(array $columnNames)
     {
         $this->columnNames = $columnNames;
-    }
-
-    public function errors()
-    {
-        return $this->validate() === true
-            ? null
-            : $this->validate();
     }
 }

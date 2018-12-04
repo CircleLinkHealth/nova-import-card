@@ -1,36 +1,36 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Repositories;
 
-use Prettus\Repository\Eloquent\BaseRepository;
-use Prettus\Repository\Criteria\RequestCriteria;
 use App\Contracts\Repositories\ForeignIdRepository;
 use App\ForeignId;
-use App\Validators\ForeignIdValidator;
+use Prettus\Repository\Criteria\RequestCriteria;
+use Prettus\Repository\Eloquent\BaseRepository;
 
 /**
- * Class ForeignIdRepositoryEloquent
- * @package namespace App\Repositories;
+ * Class ForeignIdRepositoryEloquent.
  */
 class ForeignIdRepositoryEloquent extends BaseRepository implements ForeignIdRepository
 {
     /**
-     * Specify Model class name
+     * Boot up the repository, pushing criteria.
+     */
+    public function boot()
+    {
+        $this->pushCriteria(app(RequestCriteria::class));
+    }
+
+    /**
+     * Specify Model class name.
      *
      * @return string
      */
     public function model()
     {
         return ForeignId::class;
-    }
-
-    
-
-    /**
-     * Boot up the repository, pushing criteria
-     */
-    public function boot()
-    {
-        $this->pushCriteria(app(RequestCriteria::class));
     }
 }

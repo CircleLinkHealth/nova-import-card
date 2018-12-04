@@ -1,19 +1,23 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Models;
 
 use App\User;
-use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\Models\EmailSettings
+ * App\Models\EmailSettings.
  *
- * @property int $id
- * @property int $user_id
- * @property string $frequency
+ * @property int                 $id
+ * @property int                 $user_id
+ * @property string              $frequency
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
- * @property-read \App\User $user
+ * @property \App\User           $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\EmailSettings whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\EmailSettings whereFrequency($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\EmailSettings whereId($value)
@@ -23,17 +27,16 @@ use Illuminate\Database\Eloquent\Model;
  */
 class EmailSettings extends \App\BaseModel
 {
-    public $fillable = [
-        'user_id',
-        'frequency'
-    ];
-
-    const DAILY = 'daily';
+    const DAILY  = 'daily';
+    const MWF    = 'm/w/f';
     const WEEKLY = 'weekly';
-    const MWF = 'm/w/f';
 
     public $attributes = [
         'frequency' => EmailSettings::DAILY,
+    ];
+    public $fillable = [
+        'user_id',
+        'frequency',
     ];
 
     public function user()

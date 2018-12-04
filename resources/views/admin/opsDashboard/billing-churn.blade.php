@@ -126,9 +126,9 @@
                     @foreach($rows as $practice => $patients)
                         
                         <?php
-                            $billedMonths = $patients['Billed'];
+                            $billedMonths       = $patients['Billed'];
                             $profitBilledMonths = $patients['Added to Billing'];
-                            $lossBilledMonths = $patients['Lost from Billing'];
+                            $lossBilledMonths   = $patients['Lost from Billing'];
                         ?>
 
                         <div class="row vdivide">

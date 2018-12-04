@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\Services\Calls\SchedulerService;
@@ -8,18 +12,17 @@ use Illuminate\Console\Command;
 class RemoveScheduledCallsForWithdrawnAndPausedPatients extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'calls:removeWithdrawnAndPaused';
-
-    /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Removes scheduled calls for withdrawn and paused patients.';
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'calls:removeWithdrawnAndPaused';
     private $schedulerService;
 
     /**
@@ -43,6 +46,6 @@ class RemoveScheduledCallsForWithdrawnAndPausedPatients extends Command
     {
         $result = $this->schedulerService->removeScheduledCallsForWithdrawnAndPausedPatients();
 
-        $this->comment("$result calls deleted.");
+        $this->comment("${result} calls deleted.");
     }
 }

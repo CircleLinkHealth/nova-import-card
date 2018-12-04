@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\ProcessedFile;
@@ -8,6 +12,12 @@ use Illuminate\Console\Command;
 class SplitMergedCcdas extends Command
 {
     /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Search for files that contain many CCDAs, save each individual CCDA in the DB, and move the original batch file to another directory.';
+    /**
      * The name and signature of the console command.
      *
      * @var string
@@ -15,16 +25,7 @@ class SplitMergedCcdas extends Command
     protected $signature = 'ccda:split-merged';
 
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Search for files that contain many CCDAs, save each individual CCDA in the DB, and move the original batch file to another directory.';
-
-    /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -38,22 +39,22 @@ class SplitMergedCcdas extends Command
      */
     public function handle()
     {
-        $ccdas = [];
+        $ccdas    = [];
         $xmlFiles = [];
 
         $count = 0;
 
         foreach (\Storage::disk('ccdas')->files() as $fileName) {
-            if (stripos($fileName, '.xml') == false) {
+            if (false == stripos($fileName, '.xml')) {
                 continue;
             }
 
-            $path = config('filesystems.disks.ccdas.root') . '/' . $fileName;
+            $path = config('filesystems.disks.ccdas.root').'/'.$fileName;
 
             $exists = ProcessedFile::wherePath($path)->first();
 
             if ($exists) {
-                \Log::info("Already processed $path");
+                \Log::info("Already processed ${path}");
 
                 continue;
             }
@@ -62,11 +63,11 @@ class SplitMergedCcdas extends Command
 
             dispatch($job);
 
-            $this->info("Queued Job to split: $fileName");
+            $this->info("Queued Job to split: ${fileName}");
 
-            $count++;
+            ++$count;
 
-            if ($count == 4) {
+            if (4 == $count) {
                 break;
             }
         }

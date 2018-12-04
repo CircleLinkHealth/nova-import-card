@@ -12,17 +12,17 @@
                         <form id="location-form" class="form-horizontal" role="form" method="POST" action="{{ action('ActivityController@store') }}">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
-                            <?php $activity_types = array(
-                            'General (Clinical)' => 'General (Clinical)',
-                            'Medication Reconciliation' => 'Medication Reconciliation',
-                            'Appointments' => 'Appointments',
-                            'Test (Scheduling, Communications, etc)' => 'Test (Scheduling, Communications, etc)',
-                            'Call to Other Care Team Member' => 'Call to Other Care Team Member',
-                            'Review Care Plan' => 'Review Care Plan',
-                            'Review Patient Progress' => 'Review Patient Progress',
-                            'Transitional Care Management Activities' => 'Transitional Care Management Activities',
-                            'Other' => 'Other'
-                            ); ?>
+                            <?php $activity_types = [
+                                'General (Clinical)'                      => 'General (Clinical)',
+                                'Medication Reconciliation'               => 'Medication Reconciliation',
+                                'Appointments'                            => 'Appointments',
+                                'Test (Scheduling, Communications, etc)'  => 'Test (Scheduling, Communications, etc)',
+                                'Call to Other Care Team Member'          => 'Call to Other Care Team Member',
+                                'Review Care Plan'                        => 'Review Care Plan',
+                                'Review Patient Progress'                 => 'Review Patient Progress',
+                                'Transitional Care Management Activities' => 'Transitional Care Management Activities',
+                                'Other'                                   => 'Other',
+                            ]; ?>
 
                                 <div class="col-md-6">
                                     <select name="parent_id">

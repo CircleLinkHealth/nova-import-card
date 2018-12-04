@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
@@ -17,7 +21,7 @@ class WeeklyPracticeReport extends Notification
     /**
      * Create a new notification instance.
      *
-     * @return void
+     * @param mixed $subject
      */
     public function __construct(array $data, $subject)
     {
@@ -26,9 +30,48 @@ class WeeklyPracticeReport extends Notification
     }
 
     /**
+     * Get the array representation of the notification.
+     *
+     * @param mixed $notifiable
+     *
+     * @return array
+     */
+    public function toArray($notifiable)
+    {
+        return [
+        ];
+    }
+
+    public function toDatabase($notifiable)
+    {
+        return
+            [
+                'data' => $this->data,
+            ];
+    }
+
+    /**
+     * Get the mail representation of the notification.
+     *
+     * @param mixed $notifiable
+     *
+     * @return MailMessage
+     */
+    public function toMail($notifiable)
+    {
+        $saasAccountName = is_object($notifiable) && method_exists($notifiable, 'saasAccountName')
+            ? $notifiable->saasAccountName()
+            : 'CircleLink Health';
+
+        return (new MailMessage())->view('sales.by-practice.report', ['data' => $this->data])
+            ->from('notifications@careplanmanager.com', $saasAccountName)
+            ->subject($this->subject);
+    }
+
+    /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed $notifiable
+     * @param mixed $notifiable
      *
      * @return array
      */
@@ -44,45 +87,5 @@ class WeeklyPracticeReport extends Notification
         return [
             'mail',
         ];
-    }
-
-    /**
-     * Get the mail representation of the notification.
-     *
-     * @param  mixed $notifiable
-     *
-     * @return MailMessage
-     */
-    public function toMail($notifiable)
-    {
-        $saasAccountName = is_object($notifiable) && method_exists($notifiable, 'saasAccountName')
-            ? $notifiable->saasAccountName()
-            : 'CircleLink Health';
-
-        return (new MailMessage)->view('sales.by-practice.report', ['data' => $this->data])
-                                ->from('notifications@careplanmanager.com', $saasAccountName)
-                                ->subject($this->subject);
-    }
-
-    /**
-     * Get the array representation of the notification.
-     *
-     * @param  mixed $notifiable
-     *
-     * @return array
-     */
-    public function toArray($notifiable)
-    {
-        return [
-            //
-        ];
-    }
-
-    public function toDatabase($notifiable)
-    {
-        return
-            [
-                'data' => $this->data,
-            ];
     }
 }

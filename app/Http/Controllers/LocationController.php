@@ -1,13 +1,72 @@
-<?php namespace App\Http\Controllers;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Http\Controllers;
 
 use App\Location;
 use App\Practice;
 use Auth;
-use Cerberus;
 use Illuminate\Http\Request;
 
 class LocationController extends Controller
 {
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Response
+     */
+    public function create()
+    {
+        if (!Auth::user()->isAdmin()) {
+            abort(403);
+        }
+
+        $practices = Practice::all();
+
+        return view('locations.create', compact('practices'));
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param int $id
+     *
+     * @return Response
+     */
+    public function destroy($id)
+    {
+        if (!Auth::user()->isAdmin()) {
+            abort(403);
+        }
+        Location::destroy($id);
+
+        return 'deleted '.$id;
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param int $id
+     *
+     * @return Response
+     */
+    public function edit($id)
+    {
+        if (!Auth::user()->isAdmin()) {
+            abort(403);
+        }
+
+        $blogs    = Practice::all();
+        $location = Location::find($id);
+
+        return view('locations.edit', [
+            'location' => $location,
+            'blogs'    => $blogs,
+        ]);
+    }
 
     /**
      * Display a listing of the resource.
@@ -28,52 +87,9 @@ class LocationController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-        if (!Auth::user()->isAdmin()) {
-            abort(403);
-        }
-
-        $practices = Practice::all();
-
-        return view('locations.create', compact('practices'));
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return Response
-     */
-    public function store(Request $request)
-    {
-        if (!Auth::user()->isAdmin()) {
-            abort(403);
-        }
-
-        $input = $request->input();
-
-        $newLocation = new Location($input);
-        $saved = $newLocation->save();
-
-        if (!empty($input['emr_direct'])) {
-            $saved->emr_direct_address = $input['emr_direct'];
-        }
-
-        return $saved
-            ?
-            redirect()->route('locations.index')->with('messages', ['Location Created!!'])
-            :
-            response('Error', 500);
-    }
-
-    /**
      * Display the specified resource.
      *
-     * @param  int $id
+     * @param int $id
      *
      * @return Response
      */
@@ -93,31 +109,36 @@ class LocationController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
+     * Store a newly created resource in storage.
      *
      * @return Response
      */
-    public function edit($id)
+    public function store(Request $request)
     {
         if (!Auth::user()->isAdmin()) {
             abort(403);
         }
 
-        $blogs = Practice::all();
-        $location = Location::find($id);
+        $input = $request->input();
 
-        return view('locations.edit', [
-            'location' => $location,
-            'blogs'    => $blogs,
-        ]);
+        $newLocation = new Location($input);
+        $saved       = $newLocation->save();
+
+        if (!empty($input['emr_direct'])) {
+            $saved->emr_direct_address = $input['emr_direct'];
+        }
+
+        return $saved
+            ?
+            redirect()->route('locations.index')->with('messages', ['Location Created!!'])
+            :
+            response('Error', 500);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  int $id
+     * @param int $id
      *
      * @return Response
      */
@@ -147,22 +168,5 @@ class LocationController extends Controller
         }
 
         return redirect()->route('locations.index')->with('messages', ['Location Updated!!']);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     *
-     * @return Response
-     */
-    public function destroy($id)
-    {
-        if (!Auth::user()->isAdmin()) {
-            abort(403);
-        }
-        Location::destroy($id);
-
-        return 'deleted ' . $id;
     }
 }

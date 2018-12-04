@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Exceptions\InvalidArgumentException;
@@ -13,11 +17,11 @@ class LegacyBhiConsentController extends Controller
 {
     public function store(CreateLegacyBhiConsentDecision $request, $practiceId, $patientId)
     {
-        if ((int)$request->input('decision') === 1) {
+        if (1 === (int) $request->input('decision')) {
             $note = $this->createNote($patientId, Patient::BHI_CONSENT_NOTE_TYPE);
-        } elseif ((int)$request->input('decision') === 0) {
+        } elseif (0 === (int) $request->input('decision')) {
             $note = $this->createNote($patientId, Patient::BHI_REJECTION_NOTE_TYPE);
-        } elseif ((int)$request->input('decision') === 2) {
+        } elseif (2 === (int) $request->input('decision')) {
             $this->storeNotNowResponse($patientId);
         }
 
@@ -26,11 +30,11 @@ class LegacyBhiConsentController extends Controller
 
     private function createNote($patientId, $type)
     {
-        if ( ! in_array($type, [Patient::BHI_REJECTION_NOTE_TYPE, Patient::BHI_CONSENT_NOTE_TYPE])) {
-            throw new InvalidArgumentException("`$type` is not a valid type for a legacy BHI consent note type");
+        if (!in_array($type, [Patient::BHI_REJECTION_NOTE_TYPE, Patient::BHI_CONSENT_NOTE_TYPE])) {
+            throw new InvalidArgumentException("`${type}` is not a valid type for a legacy BHI consent note type");
         }
 
-        $body = $type == Patient::BHI_CONSENT_NOTE_TYPE
+        $body = Patient::BHI_CONSENT_NOTE_TYPE == $type
             ? 'The patient consented to receiving BHI services.'
             : 'The patient did not consent to receiving BHI services.';
 

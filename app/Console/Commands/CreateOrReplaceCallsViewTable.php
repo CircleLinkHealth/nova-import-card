@@ -1,11 +1,21 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 
 class CreateOrReplaceCallsViewTable extends Command
 {
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Create or Replace Calls View Table (calls_view)';
     /**
      * The name and signature of the console command.
      *
@@ -14,16 +24,7 @@ class CreateOrReplaceCallsViewTable extends Command
     protected $signature = 'view:CreateOrReplaceCallsViewTable';
 
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Create or Replace Calls View Table (calls_view)';
-
-    /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -37,15 +38,14 @@ class CreateOrReplaceCallsViewTable extends Command
      */
     public function handle()
     {
-
-        $startOfMonthQuery = config('database.connections')[config('database.default')]['driver'] === 'mysql'
+        $startOfMonthQuery = 'mysql' === config('database.connections')[config('database.default')]['driver']
             ? "DATE_ADD(DATE_ADD(LAST_DAY(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')), INTERVAL 1 DAY), INTERVAL - 1 MONTH)"
             : "date('now','start of month')"; //sqlite
 
-        $viewName = "calls_view";
-        \DB::statement("DROP VIEW IF EXISTS $viewName");
+        $viewName = 'calls_view';
+        \DB::statement("DROP VIEW IF EXISTS ${viewName}");
         \DB::statement("
-        CREATE VIEW $viewName
+        CREATE VIEW ${viewName}
         AS
         SELECT
             c.id,
@@ -80,7 +80,7 @@ class CreateOrReplaceCallsViewTable extends Command
             
             left join (select pi.user_id as patient_id, pi.last_contact_time as last_call, pi.no_call_attempts_since_last_success from patient_info pi where pi.deleted_at is null and pi.ccm_status = 'enrolled') as u4 on c.inbound_cpm_id = u4.patient_id
             
-            left join (select pms.patient_id, pms.ccm_time, pms.bhi_time, pms.no_of_successful_calls from patient_monthly_summaries pms where month_year = $startOfMonthQuery) u5 on c.inbound_cpm_id = u5.patient_id
+            left join (select pms.patient_id, pms.ccm_time, pms.bhi_time, pms.no_of_successful_calls from patient_monthly_summaries pms where month_year = ${startOfMonthQuery}) u5 on c.inbound_cpm_id = u5.patient_id
             
 			left join (select pi.user_id, GROUP_CONCAT(pcw.day_of_week) as preferred_call_days from patient_info pi left join patient_contact_window pcw on pi.id = pcw.patient_info_id where pi.deleted_at is null group by pi.user_id) as u6 on c.inbound_cpm_id = u6.user_id
 			

@@ -1,21 +1,24 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 Route::group(['middleware' => 'disable-debugbar'], function () {
     Route::post('send-sample-fax', 'DemoController@sendSampleEfaxNote');
 
     Route::post('/send-sample-direct-mail', 'DemoController@sendSampleEMRNote');
 
-//Patient Landing Pages
+    //Patient Landing Pages
     Route::resource('sign-up', 'PatientSignupController');
     Route::get('talk-to-us', 'PatientSignupController@talkToUs');
 
     Route::get('care/enroll/{enrollUserId}', 'CareController@enroll');
     Route::post('care/enroll/{enrollUserId}', 'CareController@store');
 
-//Algo test routes.
+    //Algo test routes.
 
     Route::group(['prefix' => 'algo'], function () {
-
         Route::get('family', 'AlgoTestController@algoFamily');
 
         Route::get('cleaner', 'AlgoTestController@algoCleaner');
@@ -23,9 +26,7 @@ Route::group(['middleware' => 'disable-debugbar'], function () {
         Route::get('tuner', 'AlgoTestController@algoTuner');
 
         Route::get('rescheduler', 'AlgoTestController@algoRescheduler');
-
     });
-
 
     Route::get('ajax/patients', 'UserController@getPatients');
 
@@ -57,17 +58,15 @@ Route::group(['middleware' => 'disable-debugbar'], function () {
         Route::get('inactivity-logout', [
             'uses' => 'Auth\LoginController@inactivityLogout',
             'as'   => 'user.inactivity-logout',
-
         ]);
     });
 });
 
-
-/****************************/
-/****************************/
+//
+//
 //    AUTH ROUTES
-/****************************/
-/****************************/
+//
+//
 Route::group(['middleware' => 'auth'], function () {
     Route::get('impersonate/leave', [
         'uses' => '\Lab404\Impersonate\Controllers\ImpersonateController@leave',
@@ -102,7 +101,6 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'report-writer.download-template',
         ]);
 
-
         Route::post('validate', [
             'uses' => 'EhrReportWriterController@validateJson',
             'as'   => 'report-writer.validate',
@@ -117,7 +115,6 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'EhrReportWriterController@notifyReportWriter',
             'as'   => 'report-writer.notify',
         ]);
-
     });
 
     Route::group(['prefix' => '2fa'], function () {
@@ -127,9 +124,7 @@ Route::group(['middleware' => 'auth'], function () {
         ]);
     });
 
-    /**
-     * API
-     */
+    // API
     Route::group(['prefix' => 'api'], function () {
         Route::group(['prefix' => '2fa'], function () {
             Route::group(['prefix' => 'token'], function () {
@@ -171,7 +166,6 @@ Route::group(['middleware' => 'auth'], function () {
         });
 
         Route::group(['prefix' => 'admin'], function () {
-
             //the new calls route that uses calls-view table
             Route::get('calls-v2', [
                 'uses' => 'API\Admin\CallsViewController@index',
@@ -195,8 +189,10 @@ Route::group(['middleware' => 'auth'], function () {
                 ])->middleware('permission:call.delete');
             });
 
-            Route::resource('user.outbound-calls',
-                'API\UserOutboundCallController')->middleware('permission:call.create');
+            Route::resource(
+                'user.outbound-calls',
+                'API\UserOutboundCallController'
+            )->middleware('permission:call.create');
         });
 
         Route::get('providers/{providerId}/patients/{patientId}/ccm-time', [
@@ -304,27 +300,28 @@ Route::group(['middleware' => 'auth'], function () {
             Route::group(['prefix' => 'codes'], function () {
                 Route::get('{id}', 'ProblemCodeController@show')->middleware('permission:patientProblem.read');
                 Route::delete('{id}', 'ProblemCodeController@remove')->middleware('permission:patientProblem.delete');
-                Route::resource('',
-                    'ProblemCodeController')->middleware('permission:patientProblem.read,patientProblem.create,patientProblem.delete');
+                Route::resource(
+                    '',
+                    'ProblemCodeController'
+                )->middleware('permission:patientProblem.read,patientProblem.create,patientProblem.delete');
             });
 
             Route::group(['prefix' => 'instructions'], function () {
                 Route::get('search', 'ProblemInstructionController@search');
-                Route::get('{instructionId}',
-                    'ProblemInstructionController@instruction')->middleware('permission:instruction.read');
+                Route::get(
+                    '{instructionId}',
+                    'ProblemInstructionController@instruction'
+                )->middleware('permission:instruction.read');
                 Route::put('{id}', 'ProblemInstructionController@edit')->middleware('permission:instruction.update');
                 Route::resource('', 'ProblemInstructionController');
             });
         });
 
-        /**
-         * ~/api/patients/...
-         */
+        // ~/api/patients/...
         Route::group([
             'prefix'     => 'patients',
             'middleware' => ['patientProgramSecurity'],
         ], function () {
-
             Route::get('without-scheduled-calls', [
                 'uses' => 'API\Admin\CallsController@patientsWithoutScheduledCalls',
                 'as'   => 'patients.without-scheduled-calls',
@@ -345,26 +342,38 @@ Route::group(['middleware' => 'auth'], function () {
                 ], function () {
                     Route::get('', 'PatientController@getBiometrics')->middleware('permission:biometric.read');
                     Route::post('', 'PatientController@addBiometric')->middleware('permission:biometric.create');
-                    Route::delete('{id}',
-                        'PatientController@removeBiometric')->middleware('permission:biometric.delete');
+                    Route::delete(
+                        '{id}',
+                        'PatientController@removeBiometric'
+                    )->middleware('permission:biometric.delete');
                 });
 
                 Route::group([
                     'prefix' => 'problems',
                 ], function () {
                     Route::get('', 'PatientController@getProblems')->middleware('permission:patientProblem.read');
-                    Route::post('',
-                        'PatientController@addCpmProblem')->middleware('permission:patientProblem.create,patientProblem.update');
+                    Route::post(
+                        '',
+                        'PatientController@addCpmProblem'
+                    )->middleware('permission:patientProblem.create,patientProblem.update');
                     Route::get('cpm', 'PatientController@getCpmProblems')->middleware('permission:patientProblem.read');
-                    Route::delete('cpm/{cpmId}',
-                        'PatientController@removeCpmProblem')->middleware('permission:instruction.delete,patientProblem.delete');
+                    Route::delete(
+                        'cpm/{cpmId}',
+                        'PatientController@removeCpmProblem'
+                    )->middleware('permission:instruction.delete,patientProblem.delete');
                     Route::get('ccd', 'PatientController@getCcdProblems')->middleware('permission:patientProblem.read');
-                    Route::post('ccd',
-                        'PatientController@addCcdProblem')->middleware('permission:patientProblem.create');
-                    Route::put('ccd/{ccdId}',
-                        'PatientController@editCcdProblem')->middleware('permission:patientProblem.update');
-                    Route::delete('ccd/{ccdId}',
-                        'PatientController@removeCcdProblem')->middleware('permission:patientProblem.delete');
+                    Route::post(
+                        'ccd',
+                        'PatientController@addCcdProblem'
+                    )->middleware('permission:patientProblem.create');
+                    Route::put(
+                        'ccd/{ccdId}',
+                        'PatientController@editCcdProblem'
+                    )->middleware('permission:patientProblem.update');
+                    Route::delete(
+                        'ccd/{ccdId}',
+                        'PatientController@removeCcdProblem'
+                    )->middleware('permission:patientProblem.delete');
                 });
 
                 Route::group([
@@ -372,8 +381,10 @@ Route::group(['middleware' => 'auth'], function () {
                 ], function () {
                     Route::get('', 'PatientController@getCcdAllergies')->middleware('permission:allergy.read');
                     Route::post('', 'PatientController@addCcdAllergies')->middleware('permission:allergy.create');
-                    Route::delete('{allergyId}',
-                        'PatientController@deleteCcdAllergy')->middleware('permission:allergy.delete');
+                    Route::delete(
+                        '{allergyId}',
+                        'PatientController@deleteCcdAllergy'
+                    )->middleware('permission:allergy.delete');
                 });
 
                 Route::group([
@@ -381,8 +392,10 @@ Route::group(['middleware' => 'auth'], function () {
                 ], function () {
                     Route::get('', 'PatientController@getSymptoms')->middleware('permission:symptom.read');
                     Route::post('', 'PatientController@addSymptom')->middleware('permission:symptom.create');
-                    Route::delete('{symptomId}',
-                        'PatientController@removeSymptom')->middleware('permission:symptom.delete');
+                    Route::delete(
+                        '{symptomId}',
+                        'PatientController@removeSymptom'
+                    )->middleware('permission:symptom.delete');
                 });
 
                 Route::group([
@@ -391,10 +404,14 @@ Route::group(['middleware' => 'auth'], function () {
                     Route::get('', 'PatientController@getMedication')->middleware('permission:medication.read');
                     Route::post('', 'PatientController@addMedication')->middleware('permission:medication.create');
                     Route::put('{id}', 'PatientController@editMedication')->middleware('permission:medication.update');
-                    Route::delete('{medicationId}',
-                        'PatientController@removeMedication')->middleware('permission:medication.delete');
-                    Route::get('groups',
-                        'PatientController@getMedicationGroups')->middleware('permission:medication.read');
+                    Route::delete(
+                        '{medicationId}',
+                        'PatientController@removeMedication'
+                    )->middleware('permission:medication.delete');
+                    Route::get(
+                        'groups',
+                        'PatientController@getMedicationGroups'
+                    )->middleware('permission:medication.read');
                 });
 
                 Route::group([
@@ -402,8 +419,10 @@ Route::group(['middleware' => 'auth'], function () {
                 ], function () {
                     Route::get('', 'PatientController@getAppointments')->middleware('permission:appointment.read');
                     Route::post('', 'PatientController@addAppointment')->middleware('permission:appointment.create');
-                    Route::delete('{id}',
-                        'PatientController@removeAppointment')->middleware('permission:appointment.delete');
+                    Route::delete(
+                        '{id}',
+                        'PatientController@removeAppointment'
+                    )->middleware('permission:appointment.delete');
                 });
 
                 Route::group([
@@ -415,49 +434,81 @@ Route::group(['middleware' => 'auth'], function () {
                 });
             });
 
-            Route::get('{userId}/lifestyles',
-                'PatientController@getLifestyles')->middleware('permission:lifestyle.read');
-            Route::post('{userId}/lifestyles',
-                'PatientController@addLifestyle')->middleware('permission:lifestyle.create');
-            Route::delete('{userId}/lifestyles/{lifestyleId}',
-                'PatientController@removeLifestyle')->middleware('permission:lifestyle.delete');
+            Route::get(
+                '{userId}/lifestyles',
+                'PatientController@getLifestyles'
+            )->middleware('permission:lifestyle.read');
+            Route::post(
+                '{userId}/lifestyles',
+                'PatientController@addLifestyle'
+            )->middleware('permission:lifestyle.create');
+            Route::delete(
+                '{userId}/lifestyles/{lifestyleId}',
+                'PatientController@removeLifestyle'
+            )->middleware('permission:lifestyle.delete');
             Route::get('{userId}/misc', 'PatientController@getMisc')->middleware('permission:misc.read');
-            Route::get('{userId}/misc/{miscTypeId}',
-                'PatientController@getMiscByType')->middleware('permission:misc.read');
+            Route::get(
+                '{userId}/misc/{miscTypeId}',
+                'PatientController@getMiscByType'
+            )->middleware('permission:misc.read');
             Route::post('{userId}/misc', 'PatientController@addMisc')->middleware('permission:misc.create');
-            Route::post('{userId}/misc/{miscId}/instructions',
-                'PatientController@addInstructionToMisc')->middleware('permission:misc.create,misc.delete');
-            Route::delete('{userId}/misc/{miscId}/instructions/{instructionId}',
-                'PatientController@removeInstructionFromMisc')->middleware('permission:misc.delete');
-            Route::delete('{userId}/misc/{miscId}',
-                'PatientController@removeMisc')->middleware('permission:misc.delete');
+            Route::post(
+                '{userId}/misc/{miscId}/instructions',
+                'PatientController@addInstructionToMisc'
+            )->middleware('permission:misc.create,misc.delete');
+            Route::delete(
+                '{userId}/misc/{miscId}/instructions/{instructionId}',
+                'PatientController@removeInstructionFromMisc'
+            )->middleware('permission:misc.delete');
+            Route::delete(
+                '{userId}/misc/{miscId}',
+                'PatientController@removeMisc'
+            )->middleware('permission:misc.delete');
             Route::get('{userId}/notes', 'PatientController@getNotes')->middleware('permission:note.read');
             Route::post('{userId}/notes', 'PatientController@addNote')->middleware('permission:note.create');
             Route::put('{userId}/notes/{id}', 'PatientController@editNote')->middleware('permission:note.update');
-            Route::post('{patientId}/problems/cpm/{cpmId}/instructions',
-                'ProblemInstructionController@addInstructionProblem')->middleware('permission:patientProblem.create');
-            Route::post('{patientId}/problems/ccd/{problemId}/instructions',
-                'ProblemInstructionController@addInstructionToCcdProblem')->middleware('permission:patientProblem.update');
-            Route::delete('{patientId}/problems/cpm/{cpmId}/instructions/{instructionId}',
-                'ProblemInstructionController@removeInstructionProblem')->middleware('permission:instruction.delete');
-            Route::delete('{patientId}/problems/ccd/{problemId}/instructions/{instructionId}',
-                'ProblemInstructionController@removeInstructionFromCcdProblem')->middleware('permission:patientProblem.update');
+            Route::post(
+                '{patientId}/problems/cpm/{cpmId}/instructions',
+                'ProblemInstructionController@addInstructionProblem'
+            )->middleware('permission:patientProblem.create');
+            Route::post(
+                '{patientId}/problems/ccd/{problemId}/instructions',
+                'ProblemInstructionController@addInstructionToCcdProblem'
+            )->middleware('permission:patientProblem.update');
+            Route::delete(
+                '{patientId}/problems/cpm/{cpmId}/instructions/{instructionId}',
+                'ProblemInstructionController@removeInstructionProblem'
+            )->middleware('permission:instruction.delete');
+            Route::delete(
+                '{patientId}/problems/ccd/{problemId}/instructions/{instructionId}',
+                'ProblemInstructionController@removeInstructionFromCcdProblem'
+            )->middleware('permission:patientProblem.update');
 
             Route::resource('', 'PatientController')->middleware('permission:patient.read');
         });
 
         Route::group(['prefix' => 'practices'], function () {
             Route::get('', 'API\PracticeController@getPractices')->middleware('permission:practice.read');
-            Route::get('{practiceId}/providers',
-                'API\PracticeController@getPracticeProviders')->middleware('permission:provider.read');
-            Route::get('{practiceId}/locations',
-                'API\PracticeController@getPracticeLocations')->middleware('permission:location.read');
-            Route::get('{practiceId}/locations/{locationId}/providers',
-                'API\PracticeController@getLocationProviders')->middleware('permission:provider.read');
-            Route::get('all',
-                'API\PracticeController@allPracticesWithLocationsAndStaff')->middleware('permission:practice.read,location.read,provider.read');
-            Route::get('{practiceId}/patients',
-                'API\PracticeController@getPatients')->middleware('permission:patient.read');
+            Route::get(
+                '{practiceId}/providers',
+                'API\PracticeController@getPracticeProviders'
+            )->middleware('permission:provider.read');
+            Route::get(
+                '{practiceId}/locations',
+                'API\PracticeController@getPracticeLocations'
+            )->middleware('permission:location.read');
+            Route::get(
+                '{practiceId}/locations/{locationId}/providers',
+                'API\PracticeController@getLocationProviders'
+            )->middleware('permission:provider.read');
+            Route::get(
+                'all',
+                'API\PracticeController@allPracticesWithLocationsAndStaff'
+            )->middleware('permission:practice.read,location.read,provider.read');
+            Route::get(
+                '{practiceId}/patients',
+                'API\PracticeController@getPatients'
+            )->middleware('permission:patient.read');
             Route::get('{practiceId}/nurses', 'API\PracticeController@getNurses')->middleware('permission:nurse.read');
 
             Route::get('{practiceId}/patients/without-scheduled-calls', [
@@ -479,7 +530,7 @@ Route::group(['middleware' => 'auth'], function () {
             'middleware' => [
                 'permission:ccd-import',
             ],
-            'prefix'     => 'ccd-importer',
+            'prefix' => 'ccd-importer',
         ], function () {
             Route::get('imported-medical-records', [
                 'uses' => 'ImporterController@records',
@@ -497,8 +548,6 @@ Route::group(['middleware' => 'auth'], function () {
 
             Route::get('records/delete', 'MedicalRecordImportController@deleteRecords');
         });
-
-
     });
 
     Route::resource('profiles', 'API\ProfileController')->middleware('permission:user.read,role.read');
@@ -527,15 +576,19 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'user.care-team.edit',
     ])->middleware('permission:carePerson.read');
 
-    Route::resource('practice.locations',
-        'API\PracticeLocationsController')->middleware('permission:location.create,location.read,location.update,location.delete');
+    Route::resource(
+        'practice.locations',
+        'API\PracticeLocationsController'
+    )->middleware('permission:location.create,location.read,location.update,location.delete');
     Route::get('practice/{practice}/locations', [
         'uses' => 'API\PracticeLocationsController@index',
         'as'   => 'practice.locations.index',
     ])->middleware('permission:location.read');
 
-    Route::resource('practice.users',
-        'API\PracticeStaffController')->middleware('permission:practiceStaff.create,practiceStaff.read,practiceStaff.update,practiceStaff.delete');
+    Route::resource(
+        'practice.users',
+        'API\PracticeStaffController'
+    )->middleware('permission:practiceStaff.create,practiceStaff.read,practiceStaff.update,practiceStaff.delete');
 
     Route::get('provider/search', [
         'uses' => 'API\CareTeamController@searchProviders',
@@ -544,25 +597,35 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::delete('pdf/{id}', 'API\PatientCarePlanController@deletePdf')->middleware('permission:careplan-pdf.delete');
 
-    Route::post('care-plans/{careplan_id}/pdfs',
-        'API\PatientCarePlanController@uploadPdfs')->middleware('permission:careplan.update,careplan-pdf.create');
+    Route::post(
+        'care-plans/{careplan_id}/pdfs',
+        'API\PatientCarePlanController@uploadPdfs'
+    )->middleware('permission:careplan.update,careplan-pdf.create');
 
     Route::get('download-pdf-careplan/{filePath}', [
         'uses' => 'API\PatientCarePlanController@downloadPdf',
         'as'   => 'download.pdf.careplan',
     ])->middleware('permission:careplan-pdf.read');
 
-    Route::patch('work-hours/{id}',
-        'CareCenter\WorkScheduleController@updateDailyHours')->middleware('permission:workHours.update');
-// end API
+    Route::patch(
+        'work-hours/{id}',
+        'CareCenter\WorkScheduleController@updateDailyHours'
+    )->middleware('permission:workHours.update');
+    // end API
 
-    Route::resource('settings/email',
-        'EmailSettingsController')->middleware('permission:emailSettings.update,emailSettings.create');
+    Route::resource(
+        'settings/email',
+        'EmailSettingsController'
+    )->middleware('permission:emailSettings.update,emailSettings.create');
 
-    Route::get('/CCDModels/Items/MedicationListItem',
-        'CCDModels\Items\MedicationListItemController@index')->middleware('permission:medication.read');
-    Route::post('/CCDModels/Items/MedicationListItem/store',
-        'CCDModels\Items\MedicationListItemController@store')->middleware('permission:medication.create');
+    Route::get(
+        '/CCDModels/Items/MedicationListItem',
+        'CCDModels\Items\MedicationListItemController@index'
+    )->middleware('permission:medication.read');
+    Route::post(
+        '/CCDModels/Items/MedicationListItem/store',
+        'CCDModels\Items\MedicationListItemController@store'
+    )->middleware('permission:medication.create');
     Route::post(
         '/CCDModels/Items/MedicationListItem/update',
         'CCDModels\Items\MedicationListItemController@update'
@@ -572,28 +635,41 @@ Route::group(['middleware' => 'auth'], function () {
         'CCDModels\Items\MedicationListItemController@destroy'
     )->middleware('permission:medication.delete');
 
-    Route::get('/CCDModels/Items/ProblemsItem',
-        'CCDModels\Items\ProblemsItemController@index')->middleware('permission:patientProblem.read');
-    Route::post('/CCDModels/Items/ProblemsItem/store',
-        'CCDModels\Items\ProblemsItemController@store')->middleware('permission:patientProblem.create');
-    Route::post('/CCDModels/Items/ProblemsItem/update',
-        'CCDModels\Items\ProblemsItemController@update')->middleware('permission:patientProblem.update');
-    Route::post('/CCDModels/Items/ProblemsItem/destroy',
-        'CCDModels\Items\ProblemsItemController@destroy')->middleware('permission:patientProblem.delete');
+    Route::get(
+        '/CCDModels/Items/ProblemsItem',
+        'CCDModels\Items\ProblemsItemController@index'
+    )->middleware('permission:patientProblem.read');
+    Route::post(
+        '/CCDModels/Items/ProblemsItem/store',
+        'CCDModels\Items\ProblemsItemController@store'
+    )->middleware('permission:patientProblem.create');
+    Route::post(
+        '/CCDModels/Items/ProblemsItem/update',
+        'CCDModels\Items\ProblemsItemController@update'
+    )->middleware('permission:patientProblem.update');
+    Route::post(
+        '/CCDModels/Items/ProblemsItem/destroy',
+        'CCDModels\Items\ProblemsItemController@destroy'
+    )->middleware('permission:patientProblem.delete');
 
-    Route::get('/CCDModels/Items/AllergiesItem',
-        'CCDModels\Items\AllergiesItemController@index')->middleware('permission:allergy.read');
-    Route::post('/CCDModels/Items/AllergiesItem/store',
-        'CCDModels\Items\AllergiesItemController@store')->middleware('permission:allergy.create');
-    Route::post('/CCDModels/Items/AllergiesItem/update',
-        'CCDModels\Items\AllergiesItemController@update')->middleware('permission:allergy.update');
-    Route::post('/CCDModels/Items/AllergiesItem/destroy',
-        'CCDModels\Items\AllergiesItemController@destroy')->middleware('permission:allergy.delete');
+    Route::get(
+        '/CCDModels/Items/AllergiesItem',
+        'CCDModels\Items\AllergiesItemController@index'
+    )->middleware('permission:allergy.read');
+    Route::post(
+        '/CCDModels/Items/AllergiesItem/store',
+        'CCDModels\Items\AllergiesItemController@store'
+    )->middleware('permission:allergy.create');
+    Route::post(
+        '/CCDModels/Items/AllergiesItem/update',
+        'CCDModels\Items\AllergiesItemController@update'
+    )->middleware('permission:allergy.update');
+    Route::post(
+        '/CCDModels/Items/AllergiesItem/destroy',
+        'CCDModels\Items\AllergiesItemController@destroy'
+    )->middleware('permission:allergy.delete');
 
-
-    /****************************
-     * CCD STUFF
-     ****************************/
+    // CCD STUFF
     Route::get('ccd/show/user/{userId}', [
         'uses' => 'CCDViewer\CCDViewerController@showByUserId',
         'as'   => 'get.CCDViewerController.showByUserId',
@@ -614,8 +690,10 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'ccd.old.viewer',
     ])->middleware('permission:ccda.read');
 
-    Route::get('ccd/old-viewer',
-        'CCDViewer\CCDViewerController@create')->middleware('permission:ccda.read')->middleware('permission:ccda.read');
+    Route::get(
+        'ccd/old-viewer',
+        'CCDViewer\CCDViewerController@create'
+    )->middleware('permission:ccda.read')->middleware('permission:ccda.read');
 
     Route::post('ccd-old', [
         'uses' => 'CCDViewer\CCDViewerController@oldViewer',
@@ -637,16 +715,13 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'post.store.training.features',
     ])->middleware('permission:ccda.update');
 
-    /**
-     * CCD Importer Routes
-     */
+    // CCD Importer Routes
     Route::group([
         'middleware' => [
             'permission:ccd-import',
         ],
-        'prefix'     => 'ccd-importer',
+        'prefix' => 'ccd-importer',
     ], function () {
-
         Route::get('create', [
             'uses' => 'ImporterController@create',
             'as'   => 'import.ccd',
@@ -672,9 +747,9 @@ Route::group(['middleware' => 'auth'], function () {
     //CCD Parser Demo Route
     Route::get('ccd-parser-demo', 'CCDParserDemoController@index');
 
-    /****************************/
+    //
     // PROVIDER UI (/manage-patients, /reports, ect)
-    /****************************/
+    //
 
     // **** PATIENTS (/manage-patients/
     Route::group([
@@ -858,7 +933,6 @@ Route::group(['middleware' => 'auth'], function () {
             ])->middleware('permission:patient.create,patient.update,careplan.update');
         });
 
-
         // appointments
         Route::group(['prefix' => 'appointments'], function () {
             Route::get('create', [
@@ -911,7 +985,6 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'CCMComplexToggleController@toggle',
             'as'   => 'patient.ccm.toggle',
         ])->middleware('permission:patientSummary.update');
-
 
         Route::get('progress', [
             'uses' => 'ReportsController@index',
@@ -967,17 +1040,16 @@ Route::group(['middleware' => 'auth'], function () {
         });
     });
 
-    /****************************/
+    //
     // ADMIN (/admin)
-    /****************************/
+    //
     Route::group([
         'middleware' => [
             'auth',
             'permission:admin-access',
         ],
-        'prefix'     => 'admin',
+        'prefix' => 'admin',
     ], function () {
-
         Route::group(['prefix' => 'revisions'], function () {
             Route::get('all-activity', [
                 'uses' => 'ShowRevisionsController@allActivity',
@@ -1010,7 +1082,6 @@ Route::group(['middleware' => 'auth'], function () {
         });
 
         Route::group(['prefix' => 'eligibility-batches'], function () {
-
             Route::get('pending-jobs/count', [
                 'uses' => 'EligibilityBatchController@allJobsCount',
                 'as'   => 'all.eligibility.jobs.count',
@@ -1056,7 +1127,6 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses' => 'EligibilityBatchController@postReprocess',
                     'as'   => 'post.eligibility.reprocess',
                 ])->middleware('permission:enrollee.read');
-
 
                 Route::get('/last-import-session-logs', [
                     'uses' => 'EligibilityBatchController@getLastImportLog',
@@ -1104,8 +1174,10 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::resource('saas-accounts', 'Admin\CRUD\SaasAccountController')->middleware('permission:saas.create');
 
-        Route::get('eligible-lists/phoenix-heart',
-            'Admin\WelcomeCallListController@makePhoenixHeartCallList')->middleware('permission:batch.create');
+        Route::get(
+            'eligible-lists/phoenix-heart',
+            'Admin\WelcomeCallListController@makePhoenixHeartCallList'
+        )->middleware('permission:batch.create');
 
         Route::view('api-clients', 'admin.manage-api-clients');
 
@@ -1125,7 +1197,6 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'MedicationGroupsMapController@destroy',
             'as'   => 'medication-groups-maps.destroy',
         ])->middleware('permission:medicationGroup.delete');
-
 
         Route::post('get-athena-ccdas', [
             'uses' => 'CcdApi\Athena\AthenaApiController@getCcdas',
@@ -1147,9 +1218,7 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'get.paused.letters.file',
         ])->middleware('permission:careplan-pdf.create,careplan-pdf.read,patient.read');
 
-        /**
-         * LOGGER
-         */
+        // LOGGER
         Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 
         Route::get('nurses/windows', [
@@ -1207,15 +1276,15 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'invite.store',
         ])->middleware('permission:invite.create');
 
-
-        //
         Route::patch('nurses/window/{id}', [
             'uses' => 'CareCenter\WorkScheduleController@patchAdminEditWindow',
             'as'   => 'patch.admin.edit.nurse.schedules',
         ]);
 
-        Route::get('athena/ccdas/check',
-            'CcdApi\Athena\AthenaApiController@getTodays')->middleware('permission:ccda.create');
+        Route::get(
+            'athena/ccdas/check',
+            'CcdApi\Athena\AthenaApiController@getTodays'
+        )->middleware('permission:ccda.create');
 
         Route::get('athena/ccdas/{practiceId}/{departmentId}', 'CcdApi\Athena\AthenaApiController@fetchCcdas');
 
@@ -1223,7 +1292,6 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'CallController@import',
             'as'   => 'post.CallController.import',
         ])->middleware('permission:call.update,call.create');
-
 
         Route::post('make-welcome-call-list', [
             'uses' => 'Admin\WelcomeCallListController@makeWelcomeCallList',
@@ -1248,7 +1316,6 @@ Route::group(['middleware' => 'auth'], function () {
             Route::group([
                 'prefix' => 'monthly-billing/v2',
             ], function () {
-
                 Route::get('/make', [
                     'uses' => 'Billing\PracticeInvoiceController@make',
                     'as'   => 'monthly.billing.make',
@@ -1326,7 +1393,6 @@ Route::group(['middleware' => 'auth'], function () {
             Route::group([
                 'prefix' => 'sales',
             ], function () {
-
                 //LOCATIONS -hidden on adminUI currently.
 
                 Route::get('location/create', [
@@ -1392,7 +1458,6 @@ Route::group(['middleware' => 'auth'], function () {
             Route::group([
                 'prefix' => 'calls-dashboard',
             ], function () {
-
                 Route::get('/index', [
                     'uses' => 'CallsDashboardController@index',
                     'as'   => 'CallsDashboard.index',
@@ -1412,7 +1477,6 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses' => 'CallsDashboardController@createCall',
                     'as'   => 'CallsDashboard.create-call',
                 ])->middleware('permission:call.create');
-
             });
 
             Route::group([
@@ -1430,7 +1494,6 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses' => 'OpsDashboardController@downloadCsvReport',
                     'as'   => 'OpsDashboard.makeCsv',
                 ])->middleware('permission:opsReport.read');
-
 
                 Route::get('/lost-added', [
                     'uses' => 'OpsDashboardController@getLostAdded',
@@ -1474,7 +1537,6 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'OpsDashboard.patientsByPractice',
                 ]);
             });
-
         });
 
         Route::group([
@@ -1498,12 +1560,10 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'manage-cpm-problems.update',
                 ])->middleware('permission:patientProblem.update');
             });
-
         });
 
         //Practice Billing
         Route::group(['prefix' => 'practice/billing'], function () {
-
             Route::get('create', [
                 'uses' => 'Billing\PracticeInvoiceController@createInvoices',
                 'as'   => 'practice.billing.create',
@@ -1571,7 +1631,6 @@ Route::group(['middleware' => 'auth'], function () {
         });
 
         Route::group([
-
         ], function () {
             Route::post('appConfig/{id}/edit', [
                 'uses' => 'Admin\AppConfigController@update',
@@ -1582,7 +1641,6 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'admin.appConfig.destroy',
             ])->middleware('permission:appConfig.delete');
         });
-
 
         // activities
         Route::group([
@@ -1704,8 +1762,10 @@ Route::group(['middleware' => 'auth'], function () {
                 'permission:role.read',
             ],
         ], function () {
-            Route::resource('roles',
-                'Admin\RoleController')->middleware('permission:user.read,practice.read,location.read');
+            Route::resource(
+                'roles',
+                'Admin\RoleController'
+            )->middleware('permission:user.read,practice.read,location.read');
         });
 
         Route::group([
@@ -1719,8 +1779,10 @@ Route::group(['middleware' => 'auth'], function () {
         // permissions
         Route::group([
         ], function () {
-            Route::resource('permissions',
-                'Admin\PermissionController')->middleware('permission:permission.read,permission.create,permission.update,permission.delete');
+            Route::resource(
+                'permissions',
+                'Admin\PermissionController'
+            )->middleware('permission:permission.read,permission.create,permission.update,permission.delete');
         });
         Route::get('roles-permissions', [
             'uses' => 'Admin\PermissionController@makeRoleExcel',
@@ -1739,8 +1801,6 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'Admin\PermissionController@update',
                 'as'   => 'admin.permissions.update',
             ]);
-
-
         });
 
         //these fall under the admin-access permission
@@ -1778,7 +1838,6 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'NurseController@monthlyReport',
             'as'   => 'admin.reports.nurse.monthly',
         ])->middleware('permission:nurseReport.create');
-
 
         //STATS
 
@@ -1843,10 +1902,14 @@ Route::group(['middleware' => 'auth'], function () {
         // observations
         Route::group([
         ], function () {
-            Route::resource('comments',
-                'Admin\CommentController')->middleware('permission:comment.create,comment.read,comment.update,comment.delete');
-            Route::resource('observations',
-                'Admin\ObservationController')->middleware('permission:observation.create,observation.read,observation.update,observation.delete');
+            Route::resource(
+                'comments',
+                'Admin\CommentController'
+            )->middleware('permission:comment.create,comment.read,comment.update,comment.delete');
+            Route::resource(
+                'observations',
+                'Admin\ObservationController'
+            )->middleware('permission:observation.create,observation.read,observation.update,observation.delete');
         });
 
         Route::group([
@@ -1910,13 +1973,10 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'ObservationController@deleteObservation',
                 'as'   => 'observations-dashboard.delete',
             ])->middleware('permission:observation.delete');
-
         });
-
 
         // programs
         Route::group([
-
         ], function () {
             // locations
             Route::get('locations', [
@@ -1947,23 +2007,16 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'LocationController@destroy',
                 'as'   => 'locations.destroy',
             ])->middleware('permission:location.delete');
-
         });
     });
 
-
-    /*
-     *
-     * CARE-CENTER GROUP
-     *
-     */
+    // CARE-CENTER GROUP
     Route::group([
         'middleware' => ['role:care-center,administrator'],
         'prefix'     => 'care-center',
     ], function () {
-
         Route::resource('work-schedule', 'CareCenter\WorkScheduleController', [
-            'only'  => [
+            'only' => [
                 'index',
                 'store',
             ],
@@ -2014,11 +2067,7 @@ Route::group([], function () {
     ]);
 });
 
-/*
- *
- * Provider Dashboard
- *
- */
+// Provider Dashboard
 Route::group([
     'prefix'     => 'practices/{practiceSlug}',
     'middleware' => [
@@ -2026,7 +2075,6 @@ Route::group([
         'providerDashboardACL:administrator,saas-admin,saas-admin-view-only',
     ],
 ], function () {
-
     Route::post('chargeable-services', [
         'uses' => 'Provider\DashboardController@postStoreChargeableServices',
         'as'   => 'provider.dashboard.store.chargeable-services',
@@ -2078,9 +2126,9 @@ Route::group([
     ])->middleware('permission:practiceSetting.read');
 
     Route::get('', [
-//        'uses' => 'Provider\DashboardController@getIndex',
-'uses' => 'Provider\DashboardController@getCreateNotifications',
-'as'   => 'provider.dashboard.index',
+        //        'uses' => 'Provider\DashboardController@getIndex',
+        'uses' => 'Provider\DashboardController@getCreateNotifications',
+        'as'   => 'provider.dashboard.index',
     ])->middleware('permission:practiceSetting.read');
 
     Route::get('locations', [
@@ -2099,14 +2147,11 @@ Route::group([
     ])->middleware('permission:practiceSetting.update');
 });
 
-/*
- * Enrollment Center UI
- */
+// Enrollment Center UI
 
 Route::group([
     'prefix' => '/enrollment',
 ], function () {
-
     Route::post('/sms/reply', [
         'uses' => 'Enrollment\EnrollmentSMSController@handleIncoming',
         'as'   => 'enrollment.sms.reply',
@@ -2135,14 +2180,11 @@ Route::group([
     });
 });
 
-/*
- * Enrollment Consent
- */
+// Enrollment Consent
 
 Route::group([
     'prefix' => 'join',
 ], function () {
-
     Route::post('/save', [
         'uses' => 'Enrollment\EnrollmentConsentController@store',
         'as'   => 'patient.enroll.store',
@@ -2162,7 +2204,6 @@ Route::group([
 Route::group([
     'prefix' => 'onboarding',
 ], function () {
-
     Route::get('create-invited-user/{code?}', [
         'middleware' => 'verify.invite',
         'uses'       => 'Provider\OnboardingController@getCreateInvitedUser',
@@ -2184,7 +2225,6 @@ Route::group([
         'uses' => 'Provider\OnboardingController@postStorePracticeLeadUser',
         'as'   => 'post.onboarding.store.program.lead.user',
     ])->middleware('permission:provider.create');
-
 
     Route::group([
         'middleware' => 'auth',
@@ -2266,7 +2306,6 @@ Route::group([
     'prefix'     => 'saas/admin',
     'middleware' => ['auth', 'role:saas-admin,administrator,saas-admin-view-only'],
 ], function () {
-
     Route::get('home', [
         'uses' => 'Patient\PatientController@showDashboard',
         'as'   => 'saas-admin.home',
@@ -2340,8 +2379,10 @@ Route::post('process-eligibility/drive/', [
     'as'   => 'process.eligibility.google.drive',
 ])->middleware(['auth', 'role:administrator']);
 
-Route::get('process-eligibility/local-zip-from-drive/{dir}/{practiceName}/{filterLastEncounter}/{filterInsurance}/{filterProblems}',
+Route::get(
+    'process-eligibility/local-zip-from-drive/{dir}/{practiceName}/{filterLastEncounter}/{filterInsurance}/{filterProblems}',
     [
         'uses' => 'ProcessEligibilityController@fromGoogleDriveDownloadedLocally',
         'as'   => 'process.eligibility.local.zip',
-    ])->middleware(['auth', 'role:administrator']);
+    ]
+)->middleware(['auth', 'role:administrator']);

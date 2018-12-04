@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers\Reports;
 
 use App\Http\Controllers\Controller;
@@ -34,16 +38,12 @@ class PatientsForInsuranceCheck extends Controller
                 ];
             });
 
-        Excel::create("{$date->toDateString()} - Patients For Insurance Check", function ($excel) use
-            (
+        Excel::create("{$date->toDateString()} - Patients For Insurance Check", function ($excel) use (
             $users
         ) {
-
-            $excel->sheet('Patients', function ($sheet) use
-                (
+            $excel->sheet('Patients', function ($sheet) use (
                 $users
             ) {
-
                 $sheet->fromArray($users);
             });
         })->export('xls');

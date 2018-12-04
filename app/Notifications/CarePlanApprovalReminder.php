@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Notifications;
 
 use App\Mail\CarePlanApprovalReminder as CarePlanApprovalReminderMailable;
@@ -13,12 +17,8 @@ class CarePlanApprovalReminder extends Notification
 
     /**
      * Create a new notification instance.
-     *
-     * @return void
      */
-
     protected $numberOfCareplans;
-
 
     public function __construct($numberOfCareplans)
     {
@@ -26,24 +26,29 @@ class CarePlanApprovalReminder extends Notification
     }
 
     /**
-     * Get the notification's delivery channels.
+     * Get the array representation of the notification.
      *
-     * @param  mixed $notifiable
+     * @param mixed $notifiable
      *
      * @return array
      */
-    public function via($notifiable)
+    public function toArray($notifiable)
     {
         return [
-            'mail',
-            'database',
+        ];
+    }
+
+    public function toDatabase($notifiable)
+    {
+        return [
+            'numberOfCareplans' => $this->numberOfCareplans,
         ];
     }
 
     /**
      * Get the mail representation of the notification.
      *
-     * @param  User $notifiable
+     * @param User $notifiable
      *
      * @return CarePlanApprovalReminderMailable
      */
@@ -53,23 +58,17 @@ class CarePlanApprovalReminder extends Notification
     }
 
     /**
-     * Get the array representation of the notification.
+     * Get the notification's delivery channels.
      *
-     * @param  mixed $notifiable
+     * @param mixed $notifiable
      *
      * @return array
      */
-    public function toArray($notifiable)
+    public function via($notifiable)
     {
         return [
-
-        ];
-    }
-
-    public function toDatabase($notifiable)
-    {
-        return [
-            'numberOfCareplans' => $this->numberOfCareplans,
+            'mail',
+            'database',
         ];
     }
 }

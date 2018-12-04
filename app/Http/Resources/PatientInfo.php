@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\Resource;
@@ -10,6 +14,7 @@ class PatientInfo extends Resource
      * Transform the resource into an array.
      *
      * @param  \Illuminate\Http\Request
+     * @param mixed $request
      *
      * @return array
      */
@@ -25,7 +30,7 @@ class PatientInfo extends Resource
             'last_contact_time'                   => $this->last_contact_time,
             'last_successful_contact_time'        => $this->last_successful_contact_time,
             'no_call_attempts_since_last_success' => $this->no_call_attempts_since_last_success,
-            'contact_windows'   => PatientContactWindows::collection($this->whenLoaded('contactWindows')),
+            'contact_windows'                     => PatientContactWindows::collection($this->whenLoaded('contactWindows')),
         ];
     }
 }

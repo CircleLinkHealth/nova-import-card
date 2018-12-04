@@ -1,12 +1,15 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Http\Request;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
 class SMSReceived extends Mailable
 {
@@ -15,8 +18,6 @@ class SMSReceived extends Mailable
 
     /**
      * Create a new message instance.
-     *
-     * @return void
      */
     public function __construct(Request $request)
     {
@@ -31,7 +32,7 @@ class SMSReceived extends Mailable
     public function build()
     {
         return $this->view('emails.sms-received', [
-            'request' => $this->request
+            'request' => $this->request,
         ]);
     }
 }

@@ -1,13 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 01/11/2018
- * Time: 12:02 AM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Services;
-
 
 use App\Contracts\HtmlToPdfService;
 use Carbon\Carbon;
@@ -23,54 +20,27 @@ class PdfService
     }
 
     /**
-     * Merge an array of files.
-     * NOTE: Each index in the array has to be a full path to a file
-     *
-     * @param array $filesWithFullPath
-     * @param null $outputFullPath
-     *
-     * @return null|string
-     * @throws \Exception
-     */
-    public function mergeFiles(
-        array $filesWithFullPath,
-        $outputFullPath = null
-    ) {
-        /*
-         * We cannot run shell_exec() on the saas server.
-         * @todo: Figure out how to merge pages without relying on shell_exec
-         */
-        if (auth()->user()->isSaas()) return false;
-
-        if ( ! $outputFullPath) {
-            $outputFullPath = $this->randomFileFullPath();
-        }
-
-        $pdf = new PdfManage();
-
-        foreach ($filesWithFullPath as $file) {
-            $pdf->addPDF($file, 'all');
-        }
-
-        $pdf->merge('file', $outputFullPath, 'P');
-
-        return $outputFullPath;
-    }
-
-    /**
-     * Generate a random file full path
+     * Create a blank page.
      *
      * @return string
      */
-    private function randomFileFullPath()
+    public function blankPage()
     {
-        $name = Carbon::now()->toAtomString() . str_random(20);
+        $blankPagePath = storage_path('pdfs/blank_page.pdf');
 
-        return storage_path("pdfs/$name.pdf") ;
+        if (file_exists($blankPagePath)) {
+            return $blankPagePath;
+        }
+
+        $pdf = $this->htmlToPdfService
+            ->loadHTML('<div></div>')
+            ->save($blankPagePath, true);
+
+        return $blankPagePath;
     }
 
     /**
-     * Count pages of a PDF
+     * Count pages of a PDF.
      *
      * @param $pdfFullPath
      *
@@ -79,25 +49,23 @@ class PdfService
     public function countPages($pdfFullPath)
     {
         $pdftext = file_get_contents($pdfFullPath);
-        $num     = preg_match_all("/\/Page\W/", $pdftext, $dummy);
 
-        return $num;
+        return preg_match_all('/\\/Page\\W/', $pdftext, $dummy);
     }
 
     /**
-     * Create a PDF from a View
+     * Create a PDF from a View.
      *
      * @param $view
      * @param array $args
-     * @param null $outputFullPath
-     *
+     * @param null  $outputFullPath
      * @param array $options
      *
-     * @return null|string
+     * @return string|null
      */
     public function createPdfFromView($view, array $args, array $options = [], $outputFullPath = null)
     {
-        if ( ! $outputFullPath) {
+        if (!$outputFullPath) {
             $outputFullPath = $this->randomFileFullPath();
         }
 
@@ -117,34 +85,64 @@ class PdfService
             ->setOption('margin-bottom', '15')
             ->setOption('margin-right', '0.75');
 
-        if ( ! empty($options)) {
+        if (!empty($options)) {
             foreach ($options as $key => $value) {
                 $pdf = $pdf->setOption($key, $value);
             }
         }
-        
+
         $pdf = $pdf->save($outputFullPath, true);
 
         return $outputFullPath;
     }
 
     /**
-     * Create a blank page
+     * Merge an array of files.
+     * NOTE: Each index in the array has to be a full path to a file.
+     *
+     * @param array $filesWithFullPath
+     * @param null  $outputFullPath
+     *
+     * @throws \Exception
+     *
+     * @return string|null
+     */
+    public function mergeFiles(
+        array $filesWithFullPath,
+        $outputFullPath = null
+    ) {
+        /*
+         * We cannot run shell_exec() on the saas server.
+         * @todo: Figure out how to merge pages without relying on shell_exec
+         */
+        if (auth()->user()->isSaas()) {
+            return false;
+        }
+
+        if (!$outputFullPath) {
+            $outputFullPath = $this->randomFileFullPath();
+        }
+
+        $pdf = new PdfManage();
+
+        foreach ($filesWithFullPath as $file) {
+            $pdf->addPDF($file, 'all');
+        }
+
+        $pdf->merge('file', $outputFullPath, 'P');
+
+        return $outputFullPath;
+    }
+
+    /**
+     * Generate a random file full path.
      *
      * @return string
      */
-    public function blankPage()
+    private function randomFileFullPath()
     {
-        $blankPagePath = storage_path('pdfs/blank_page.pdf');
+        $name = Carbon::now()->toAtomString().str_random(20);
 
-        if (file_exists($blankPagePath)) {
-            return $blankPagePath;
-        }
-
-        $pdf = $this->htmlToPdfService
-            ->loadHTML('<div></div>')
-            ->save($blankPagePath, true);
-
-        return $blankPagePath;
+        return storage_path("pdfs/${name}.pdf");
     }
 }

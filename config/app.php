@@ -1,18 +1,21 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+use App\Providers\AuthyServiceProvider;
 use App\Providers\DirectMailServiceProvider;
 use App\Providers\EmailArrayValidatorServiceProvider;
 use App\Providers\FaxServiceProvider;
 use App\Providers\GoogleDriveServiceProvider;
 use App\Providers\ObserversServiceProvider;
-use App\Providers\AuthyServiceProvider;
 use App\Providers\ViewComposerServiceProvider;
 use App\View\Composers\ProviderUITimerComposer;
 use App\View\Composers\SAAS\Admin\ManageInternalUser;
 
 return [
-
-    /**
+    /*
      * Configure the editor you want to use:
      * sublime
      * idea
@@ -160,14 +163,10 @@ return [
     */
 
     'providers' => [
-        /*
-        * Jenssegers User Agent
-        */
+        // Jenssegers User Agent
         Jenssegers\Agent\AgentServiceProvider::class,
 
-        /*
-         * Laravel Framework Service Providers...
-         */
+        // Laravel Framework Service Providers...
         Illuminate\Auth\AuthServiceProvider::class,
         Illuminate\Broadcasting\BroadcastServiceProvider::class,
         Illuminate\Bus\BusServiceProvider::class,
@@ -191,10 +190,7 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
 
-
-        /*
-         * Application Service Providers...
-         */
+        // Application Service Providers...
         Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
         Barryvdh\Snappy\ServiceProvider::class,
@@ -207,13 +203,10 @@ return [
         FaxServiceProvider::class,
         DirectMailServiceProvider::class,
 
-
         App\Providers\UserMetaParserHelpersServiceProvider::class,
         App\Providers\StringManipulationServiceProvider::class,
 
-        /*
-         * CPM Providers
-         */
+        // CPM Providers
         \Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
         \Collective\Html\HtmlServiceProvider::class,
         \Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
@@ -250,7 +243,6 @@ return [
     */
 
     'aliases' => [
-
         'App'          => Illuminate\Support\Facades\App::class,
         'Agent'        => Jenssegers\Agent\Facades\Agent::class,
         'Artisan'      => Illuminate\Support\Facades\Artisan::class,
@@ -303,5 +295,4 @@ return [
         'Swagger'        => L5Swagger\L5SwaggerServiceProvider::class,
         'UrlShortener'   => Waavi\UrlShortener\Facades\UrlShortener::class,
     ],
-
 ];

@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 13/01/2017
- * Time: 12:02 AM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Importer\Section\Importers;
@@ -14,7 +12,6 @@ use App\Models\CCD\CcdInsurancePolicy;
 
 class Insurance extends BaseImporter
 {
-
     public function import(
         $medicalRecordId,
         $medicalRecordType,

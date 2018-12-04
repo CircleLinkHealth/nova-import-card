@@ -3,9 +3,9 @@
 <?php
 
 $enrollmentSection = \App\Reports\Sales\Provider\Sections\EnrollmentSummary::class;
-$rangeSection = \App\Reports\Sales\Provider\Sections\RangeSummary::class;
-$financialSection = \App\Reports\Sales\Provider\Sections\FinancialSummary::class;
-$practiceSection = \App\Reports\Sales\Provider\Sections\PracticeDemographics::class;
+$rangeSection      = \App\Reports\Sales\Provider\Sections\RangeSummary::class;
+$financialSection  = \App\Reports\Sales\Provider\Sections\FinancialSummary::class;
+$practiceSection   = \App\Reports\Sales\Provider\Sections\PracticeDemographics::class;
 
 ?>
 

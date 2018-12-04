@@ -1,7 +1,10 @@
 <?php
 
-return [
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
+return [
     /*
     |--------------------------------------------------------------------------
     | Additional Compiled Classes
@@ -14,7 +17,6 @@ return [
     */
 
     'files' => [
-        //
     ],
 
     /*
@@ -29,7 +31,5 @@ return [
     */
 
     'providers' => [
-        //
     ],
-
 ];

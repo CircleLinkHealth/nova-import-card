@@ -1,24 +1,27 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Models;
 
-use App\CarePlan;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * App\Models\Pdf
+ * App\Models\Pdf.
  *
- * @property int $id
- * @property string $pdfable_type
- * @property int $pdfable_id
- * @property string $filename
- * @property int|null $uploaded_by
- * @property string $file
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
- * @property string|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $pdfable
+ * @property int                                           $id
+ * @property string                                        $pdfable_type
+ * @property int                                           $pdfable_id
+ * @property string                                        $filename
+ * @property int|null                                      $uploaded_by
+ * @property string                                        $file
+ * @property \Carbon\Carbon|null                           $created_at
+ * @property \Carbon\Carbon|null                           $updated_at
+ * @property string|null                                   $deleted_at
+ * @property \Eloquent|\Illuminate\Database\Eloquent\Model $pdfable
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Pdf onlyTrashed()
  * @method static bool|null restore()

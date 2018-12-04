@@ -1,14 +1,19 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App;
 
 /**
- * App\ProcessedFile
+ * App\ProcessedFile.
  *
- * @property int $id
- * @property string $path
+ * @property int                 $id
+ * @property string              $path
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ProcessedFile whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ProcessedFile whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ProcessedFile wherePath($value)

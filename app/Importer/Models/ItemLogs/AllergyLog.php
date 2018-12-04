@@ -1,31 +1,37 @@
-<?php namespace App\Importer\Models\ItemLogs;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Importer\Models\ItemLogs;
 
 use App\Contracts\Importer\MedicalRecord\Section\ItemLog;
 use App\Importer\Models\ImportedItems\AllergyImport;
 use App\Traits\Relationships\BelongsToCcda;
 use App\Traits\Relationships\BelongsToVendor;
-use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\Importer\Models\ItemLogs\AllergyLog
+ * App\Importer\Models\ItemLogs\AllergyLog.
  *
- * @property int $id
- * @property string|null $medical_record_type
- * @property int|null $medical_record_id
- * @property int|null $vendor_id
- * @property string|null $start
- * @property string|null $end
- * @property string|null $status
- * @property string|null $allergen_name
- * @property int $import
- * @property int $invalid
- * @property int $edited
- * @property string|null $deleted_at
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property-read \App\Models\MedicalRecords\Ccda $ccda
- * @property-read \App\Importer\Models\ImportedItems\AllergyImport $importedItem
- * @property-read \App\Models\CCD\CcdVendor|null $vendor
+ * @property int                                              $id
+ * @property string|null                                      $medical_record_type
+ * @property int|null                                         $medical_record_id
+ * @property int|null                                         $vendor_id
+ * @property string|null                                      $start
+ * @property string|null                                      $end
+ * @property string|null                                      $status
+ * @property string|null                                      $allergen_name
+ * @property int                                              $import
+ * @property int                                              $invalid
+ * @property int                                              $edited
+ * @property string|null                                      $deleted_at
+ * @property \Carbon\Carbon                                   $created_at
+ * @property \Carbon\Carbon                                   $updated_at
+ * @property \App\Models\MedicalRecords\Ccda                  $ccda
+ * @property \App\Importer\Models\ImportedItems\AllergyImport $importedItem
+ * @property \App\Models\CCD\CcdVendor|null                   $vendor
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\AllergyLog whereAllergenName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\AllergyLog whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\AllergyLog whereDeletedAt($value)
@@ -47,8 +53,6 @@ class AllergyLog extends \App\BaseModel implements ItemLog
     use BelongsToCcda,
         BelongsToVendor;
 
-    protected $table = 'ccd_allergy_logs';
-
     protected $fillable = [
         'medical_record_type',
         'medical_record_id',
@@ -61,6 +65,8 @@ class AllergyLog extends \App\BaseModel implements ItemLog
         'invalid',
         'edited',
     ];
+
+    protected $table = 'ccd_allergy_logs';
 
     public function importedItem()
     {

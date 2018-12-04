@@ -1,32 +1,35 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Models\PatientData\LGH;
 
-use Illuminate\Database\Eloquent\Model;
-
 /**
- * App\Models\PatientData\LGH\LGHInsurance
+ * App\Models\PatientData\LGH\LGHInsurance.
  *
- * @property int $id
- * @property int|null $mrn
- * @property int|null $fin
- * @property string|null $primary_insurance
- * @property string|null $primary_policy_nbr
- * @property string|null $primary_policy_type
- * @property string|null $primary_subscriber
- * @property string|null $primary_relation
- * @property string|null $secondary_insurance
- * @property string|null $secondary_policy_nbr
- * @property string|null $secondary_policy_type
- * @property string|null $secondary_subscriber
- * @property string|null $secondary_relation
- * @property string|null $tertiary_insurance
- * @property string|null $tertiary_policy_nbr
- * @property string|null $tertiary_policy_type
- * @property string|null $tertiary_subscriber
- * @property string|null $tertiary_relation
+ * @property int                 $id
+ * @property int|null            $mrn
+ * @property int|null            $fin
+ * @property string|null         $primary_insurance
+ * @property string|null         $primary_policy_nbr
+ * @property string|null         $primary_policy_type
+ * @property string|null         $primary_subscriber
+ * @property string|null         $primary_relation
+ * @property string|null         $secondary_insurance
+ * @property string|null         $secondary_policy_nbr
+ * @property string|null         $secondary_policy_type
+ * @property string|null         $secondary_subscriber
+ * @property string|null         $secondary_relation
+ * @property string|null         $tertiary_insurance
+ * @property string|null         $tertiary_policy_nbr
+ * @property string|null         $tertiary_policy_type
+ * @property string|null         $tertiary_subscriber
+ * @property string|null         $tertiary_relation
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\LGH\LGHInsurance whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\LGH\LGHInsurance whereFin($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\LGH\LGHInsurance whereId($value)
@@ -51,7 +54,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class LGHInsurance extends \App\BaseModel
 {
-    protected $table = 'lgh_insurance';
-
     protected $guarded = [];
+    protected $table   = 'lgh_insurance';
 }

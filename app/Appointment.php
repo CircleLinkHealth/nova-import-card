@@ -1,27 +1,30 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-
 /**
- * App\Appointment
+ * App\Appointment.
  *
- * @property int $id
- * @property int $patient_id
- * @property int $author_id
- * @property int|null $provider_id
- * @property string $date
- * @property string $time
- * @property string $status
- * @property string $comment
- * @property int $was_completed
+ * @property int                 $id
+ * @property int                 $patient_id
+ * @property int                 $author_id
+ * @property int|null            $provider_id
+ * @property string              $date
+ * @property string              $time
+ * @property string              $status
+ * @property string              $comment
+ * @property int                 $was_completed
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
- * @property string $type
- * @property-read \App\User $author
- * @property-read \App\User $patient
- * @property-read \App\User|null $provider
+ * @property string              $type
+ * @property \App\User           $author
+ * @property \App\User           $patient
+ * @property \App\User|null      $provider
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Appointment whereAuthorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Appointment whereComment($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Appointment whereCreatedAt($value)
@@ -38,9 +41,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Appointment extends \App\BaseModel
 {
-
-    protected $table = 'appointments';
-
     protected $fillable = [
         'patient_id',
         'author_id',
@@ -51,24 +51,22 @@ class Appointment extends \App\BaseModel
         'time',
         'comment',
         'created_at',
-        'updated_at'
+        'updated_at',
     ];
-
-    public function patient()
-    {
-
-        return $this->belongsTo(User::class, 'patient_id');
-    }
+    protected $table = 'appointments';
 
     public function author()
     {
-
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+    public function patient()
+    {
+        return $this->belongsTo(User::class, 'patient_id');
     }
 
     public function provider()
     {
-
         return $this->belongsTo(User::class, 'provider_id');
     }
 }

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers\API;
 
 use App\Filters\NurseFilters;
@@ -19,6 +23,7 @@ class NurseController extends ApiController
      *         description="A listing of nurses"
      *     )
      *   )
+     *
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function index(NurseFilters $filters)

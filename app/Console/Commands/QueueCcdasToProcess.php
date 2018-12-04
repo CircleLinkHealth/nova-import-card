@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\Jobs\ProcessCcda;
@@ -10,6 +14,12 @@ use Illuminate\Console\Command;
 class QueueCcdasToProcess extends Command
 {
     /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Queue CCDAs to process. Processing includes converting to json and saving the mrn, ccda date and referring provider name on the ccda.';
+    /**
      * The name and signature of the console command.
      *
      * @var string
@@ -17,16 +27,7 @@ class QueueCcdasToProcess extends Command
     protected $signature = 'ccda:process';
 
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Queue CCDAs to process. Processing includes converting to json and saving the mrn, ccda date and referring provider name on the ccda.';
-
-    /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {

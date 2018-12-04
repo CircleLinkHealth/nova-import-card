@@ -1,22 +1,24 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\unit;
 
-use App\Practice;
-use Tests\TestCase;
 use App\CarePerson;
 use App\User;
 use Faker\Factory;
 use Tests\Helpers\CarePlanHelpers;
-use Tests\Helpers\UserHelpers;
 use Tests\Helpers\SetupTestCustomer;
+use Tests\TestCase;
 
 class CareTeamReceivesAlertsTest extends TestCase
 {
     use CarePlanHelpers,
         SetupTestCustomer;
     /**
-     * @var Faker\Factory $faker
+     * @var Faker\Factory
      */
     protected $faker;
 
@@ -28,61 +30,27 @@ class CareTeamReceivesAlertsTest extends TestCase
     protected $practice;
 
     /**
-     * @var User $provider
+     * @var User
      */
     protected $provider;
 
-    public function test_it_returns_empty_collection_if_no_care_team()
+    protected function setUp()
     {
-        $this->assertEmpty($this->patient->getCareTeamReceivesAlerts());
-    }
+        parent::setUp();
 
-    public function test_it_returns_only_one_user_if_duplicates_exist()
-    {
-        $i = 3;
+        $data           = $this->createTestCustomerData(1);
+        $this->practice = $data['practice'];
 
-        while ($i != 0) {
-            $carePerson = CarePerson::create([
-                'alert'          => true,
-                'type'           => 'member',
-                'user_id'        => $this->patient->id,
-                'member_user_id' => $this->provider->id,
-            ]);
+        $this->faker = Factory::create();
 
-            $i--;
+        $this->provider = $this->createUser($this->practice->id, 'provider');
+
+        auth()->login($this->provider);
+        $this->patient = $this->createUser($this->practice->id, 'participant');
+
+        foreach ($this->provider->locations as $location) {
+            $location->clinicalEmergencyContact()->sync([]);
         }
-
-        $this->assertEquals(1, $this->patient->getCareTeamReceivesAlerts()->count());
-    }
-
-    public function test_it_returns_in_addition_to_provider()
-    {
-        //add first care person
-        $carePerson = CarePerson::create([
-            'alert'          => true,
-            'type'           => 'member',
-            'user_id'        => $this->patient->id,
-            'member_user_id' => $this->provider->id,
-        ]);
-
-        //add second care person
-        $cp2 = $this->createUser($this->practice->id);
-        $carePerson = CarePerson::create([
-            'alert'          => true,
-            'type'           => 'member',
-            'user_id'        => $this->patient->id,
-            'member_user_id' => $cp2->id,
-        ]);
-
-        //add third care person
-        $cp3 = $this->createUser($this->practice->id);
-
-        $cp2->forwardAlertsTo()->attach($cp3->id, [
-            'name' => User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER,
-        ]);
-
-        $this->assertEquals(3, $this->patient->getCareTeamReceivesAlerts()->count());
-        $this->assertContains($cp3->id, $this->patient->getCareTeamReceivesAlerts()->pluck('id'));
     }
 
     public function test_it_does_not_return_instead_of_provider()
@@ -96,7 +64,7 @@ class CareTeamReceivesAlertsTest extends TestCase
         ]);
 
         //add second care person
-        $cp2 = $this->createUser($this->practice->id);
+        $cp2        = $this->createUser($this->practice->id);
         $carePerson = CarePerson::create([
             'alert'          => true,
             'type'           => 'member',
@@ -121,9 +89,44 @@ class CareTeamReceivesAlertsTest extends TestCase
         $this->assertNotContains($cp2->id, $ids);
     }
 
+    public function test_it_returns_empty_collection_if_no_care_team()
+    {
+        $this->assertEmpty($this->patient->getCareTeamReceivesAlerts());
+    }
+
+    public function test_it_returns_in_addition_to_provider()
+    {
+        //add first care person
+        $carePerson = CarePerson::create([
+            'alert'          => true,
+            'type'           => 'member',
+            'user_id'        => $this->patient->id,
+            'member_user_id' => $this->provider->id,
+        ]);
+
+        //add second care person
+        $cp2        = $this->createUser($this->practice->id);
+        $carePerson = CarePerson::create([
+            'alert'          => true,
+            'type'           => 'member',
+            'user_id'        => $this->patient->id,
+            'member_user_id' => $cp2->id,
+        ]);
+
+        //add third care person
+        $cp3 = $this->createUser($this->practice->id);
+
+        $cp2->forwardAlertsTo()->attach($cp3->id, [
+            'name' => User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER,
+        ]);
+
+        $this->assertEquals(3, $this->patient->getCareTeamReceivesAlerts()->count());
+        $this->assertContains($cp3->id, $this->patient->getCareTeamReceivesAlerts()->pluck('id'));
+    }
+
     public function test_it_returns_location_contacts_person_in_addition_to_bp()
     {
-        $cp2 = $this->createUser($this->practice->id);
+        $cp2        = $this->createUser($this->practice->id);
         $carePerson = CarePerson::create([
             'alert'          => true,
             'type'           => 'member',
@@ -140,7 +143,7 @@ class CareTeamReceivesAlertsTest extends TestCase
 
     public function test_it_returns_only_location_contacts_person_instead_of_bp()
     {
-        $cp2 = $this->createUser($this->practice->id);
+        $cp2        = $this->createUser($this->practice->id);
         $carePerson = CarePerson::create([
             'alert'          => true,
             'type'           => 'member',
@@ -155,23 +158,21 @@ class CareTeamReceivesAlertsTest extends TestCase
         $this->assertEquals(1, $this->patient->getCareTeamReceivesAlerts()->count());
     }
 
-    protected function setUp()
+    public function test_it_returns_only_one_user_if_duplicates_exist()
     {
-        parent::setUp();
+        $i = 3;
 
-        $data = $this->createTestCustomerData(1);
-        $this->practice = $data['practice'];
+        while (0 != $i) {
+            $carePerson = CarePerson::create([
+                'alert'          => true,
+                'type'           => 'member',
+                'user_id'        => $this->patient->id,
+                'member_user_id' => $this->provider->id,
+            ]);
 
-
-        $this->faker = Factory::create();
-
-        $this->provider = $this->createUser($this->practice->id, 'provider');
-
-        auth()->login($this->provider);
-        $this->patient = $this->createUser($this->practice->id, 'participant');
-
-        foreach ($this->provider->locations as $location) {
-            $location->clinicalEmergencyContact()->sync([]);
+            --$i;
         }
+
+        $this->assertEquals(1, $this->patient->getCareTeamReceivesAlerts()->count());
     }
 }

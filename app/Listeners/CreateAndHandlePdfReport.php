@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Listeners;
 
 use App\Events\PdfableCreated;
@@ -8,20 +12,15 @@ class CreateAndHandlePdfReport
 {
     /**
      * Create the event listener.
-     *
-     * @return void
      */
     public function __construct()
     {
-        //
     }
 
     /**
      * Handle the event.
      *
-     * @param  PdfableCreated $event
-     *
-     * @return void
+     * @param PdfableCreated $event
      */
     public function handle(PdfableCreated $event)
     {

@@ -1,18 +1,22 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 4/30/18
- * Time: 2:09 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Services\Eligibility\Csv\Validators\PatientList;
 
 interface PatientListValidator
 {
+    public function errors();
+
+    public function getColumnNames(): array;
+
     public function isValid();
 
-    public function errors();
+    public function required();
+
+    public function setColumnNames(array $columnNames);
 
     /**
      * Validates an array of column names from a CSV that is uploaded to be processed for eligibility.
@@ -23,10 +27,4 @@ interface PatientListValidator
      * @return array|bool
      */
     public function validate();
-
-    public function required();
-
-    public function getColumnNames(): array;
-
-    public function setColumnNames(array $columnNames);
 }

@@ -1,13 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 5/25/18
- * Time: 8:57 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Traits;
-
 
 use App\ChargeableService;
 use Cache;
@@ -17,18 +14,21 @@ trait HasChargeableServices
     public function chargeableServices()
     {
         return $this->morphToMany(ChargeableService::class, 'chargeable')
-                    ->withPivot(['amount'])
-                    ->withTimestamps();
+            ->withPivot(['amount'])
+            ->withTimestamps();
     }
 
     public function hasServiceCode($code)
     {
         $class = get_called_class();
 
-        $chargeableServices = Cache::remember("$class:{$this->id}:chargeableServices", 2,
+        $chargeableServices = Cache::remember(
+            "${class}:{$this->id}:chargeableServices",
+            2,
             function () {
                 return $this->chargeableServices->keyBy('code');
-            });
+            }
+        );
 
         return $chargeableServices->has($code);
     }

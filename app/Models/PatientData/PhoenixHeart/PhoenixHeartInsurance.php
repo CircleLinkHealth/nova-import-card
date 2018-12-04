@@ -1,18 +1,21 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Models\PatientData\PhoenixHeart;
 
-use Illuminate\Database\Eloquent\Model;
-
 /**
- * App\Models\PatientData\PhoenixHeart\PhoenixHeartInsurance
+ * App\Models\PatientData\PhoenixHeart\PhoenixHeartInsurance.
  *
- * @property string|null $patient_id
- * @property int|null $order
- * @property string|null $name
- * @property string|null $list_name
- * @property int|null $processed
+ * @property string|null         $patient_id
+ * @property int|null            $order
+ * @property string|null         $name
+ * @property string|null         $list_name
+ * @property int|null            $processed
  * @property \Carbon\Carbon|null $created_at
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\PhoenixHeart\PhoenixHeartInsurance whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\PhoenixHeart\PhoenixHeartInsurance whereListName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\PhoenixHeart\PhoenixHeartInsurance whereName($value)
@@ -23,5 +26,4 @@ use Illuminate\Database\Eloquent\Model;
  */
 class PhoenixHeartInsurance extends \App\BaseModel
 {
-    //
 }

@@ -1,21 +1,25 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Mail;
 
 use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
 class NurseDailyReport extends Mailable
 {
     use Queueable, SerializesModels;
 
     /**
-     * The data passed to the view
+     * The data passed to the view.
      *
      * For an example @see: EmailRNDailyReport, method handle
+     *
      * @var array
      */
     protected $data;
@@ -27,8 +31,6 @@ class NurseDailyReport extends Mailable
 
     /**
      * Create a new message instance.
-     *
-     * @return void
      */
     public function __construct(User $nurse, array $data)
     {

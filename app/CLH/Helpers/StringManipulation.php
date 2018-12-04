@@ -1,11 +1,15 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\CLH\Helpers;
 
 class StringManipulation
 {
     /**
-     * Returns only decimal numbers (numerical values and dots) in a string
+     * Returns only decimal numbers (numerical values and dots) in a string.
      *
      * @param $string
      *
@@ -19,7 +23,21 @@ class StringManipulation
     }
 
     /**
-     * Formats a string of numbers as a phone number delimited by dashes as such: xxx-xxx-xxxx
+     * Returns only numerical values in a string.
+     *
+     * @param $string
+     *
+     * @return string
+     */
+    public function extractNumbers($string)
+    {
+        preg_match_all('/([\d]+)/', $string, $match);
+
+        return implode($match[0]);
+    }
+
+    /**
+     * Formats a string of numbers as a phone number delimited by dashes as such: xxx-xxx-xxxx.
      *
      * @param $string
      *
@@ -37,28 +55,13 @@ class StringManipulation
             $sanitized = substr($sanitized, -10);
         }
 
-        return substr($sanitized, 0, 3) . '-' . substr($sanitized, 3, 3) . '-' . substr($sanitized, 6, 4);
+        return substr($sanitized, 0, 3).'-'.substr($sanitized, 3, 3).'-'.substr($sanitized, 6, 4);
     }
 
     /**
-     * Returns only numerical values in a string
+     * Formats a phone number in E164 format, eg. +12223334444.
      *
      * @param $string
-     *
-     * @return string
-     */
-    public function extractNumbers($string)
-    {
-        preg_match_all('/([\d]+)/', $string, $match);
-
-        return implode($match[0]);
-    }
-
-    /**
-     * Formats a phone number in E164 format, eg. +12223334444
-     *
-     * @param $string
-     *
      * @param string $countryCode
      *
      * @return bool|string

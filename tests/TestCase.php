@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests;
 
 use Artisan;
@@ -20,7 +24,7 @@ abstract class TestCase extends BaseTestCase
             return;
         }
 
-        /**
+        /*
          * Uncomment below to refresh and seed a conventional database
          *
          * NOTE: If you're using paratest to run the test suite, and mysql, leave below commented out.
@@ -31,7 +35,6 @@ abstract class TestCase extends BaseTestCase
         //Since we have commented out $this->refreshTestDatabase()
         //Adding this to rollback transactions at the end of each test
         $this->beginDatabaseTransaction();
-
     }
 
     public function seedDatabase()
@@ -39,7 +42,7 @@ abstract class TestCase extends BaseTestCase
         Artisan::call('db:seed');
 
         Artisan::call('db:seed', [
-            '--class' => 'TestSuiteSeeder'
+            '--class' => 'TestSuiteSeeder',
         ]);
     }
 }

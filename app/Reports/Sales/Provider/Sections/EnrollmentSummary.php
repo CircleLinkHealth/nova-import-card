@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Reports\Sales\Provider\Sections;
 
 use App\Patient;
@@ -21,7 +25,7 @@ class EnrollmentSummary extends SalesReportSection
     ) {
         parent::__construct($provider, $start, $end);
         $this->provider = $provider;
-        $this->service = new StatsHelper(new ProviderReportable($provider));
+        $this->service  = new StatsHelper(new ProviderReportable($provider));
     }
 
     public function render()

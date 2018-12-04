@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Jobs;
 
 use App\EligibilityBatch;
@@ -22,19 +26,19 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
     protected $ccda;
     protected $practice;
     protected $transformer;
-    private $filterLastEncounter;
-    private $filterInsurance;
-    private $filterProblems;
     /**
      * @var EligibilityBatch
      */
     private $batch;
+    private $filterInsurance;
+    private $filterLastEncounter;
+    private $filterProblems;
 
     /**
      * Create a new job instance.
      *
      * @param $ccda
-     * @param Practice $practice
+     * @param Practice         $practice
      * @param EligibilityBatch $batch
      */
     public function __construct(
@@ -49,20 +53,18 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
         $this->ccda                = Ccda::find($ccda);
         $this->transformer         = new CcdToLogTranformer();
         $this->practice            = $practice;
-        $this->filterLastEncounter = (boolean)$batch->options['filterLastEncounter'];
-        $this->filterInsurance     = (boolean)$batch->options['filterInsurance'];
-        $this->filterProblems      = (boolean)$batch->options['filterProblems'];
+        $this->filterLastEncounter = (bool) $batch->options['filterLastEncounter'];
+        $this->filterInsurance     = (bool) $batch->options['filterInsurance'];
+        $this->filterProblems      = (bool) $batch->options['filterProblems'];
         $this->batch               = $batch;
     }
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
     public function handle()
     {
-        if ($this->ccda->status != Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY) {
+        if (Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY != $this->ccda->status) {
             return;
         }
 
@@ -78,10 +80,10 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
             $problem = array_merge($this->transformer->problem($prob));
 
             $code = collect($this->transformer->problemCodes($prob))->sortByDesc(function ($code) {
-                    return empty($code['code'])
+                return empty($code['code'])
                         ? false
                         : $code['code'];
-                })->filter()->values()->first() ?? ['name' => null, 'code' => null, 'code_system_name' => null,];
+            })->filter()->values()->first() ?? ['name' => null, 'code' => null, 'code_system_name' => null];
 
             return Problem::create([
                 'name'             => $problem['name'] ?? $code['name'],
@@ -89,7 +91,7 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
                 'code_system_name' => $code['code_system_name'],
             ]);
         });
-        $insurance    = collect($json->payers)->map(function ($payer) {
+        $insurance = collect($json->payers)->map(function ($payer) {
             if (empty($payer->insurance)) {
                 return false;
             }
@@ -99,7 +101,7 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
 
         $patient = $demographics->put('referring_provider_name', '');
 
-        if ( ! $patient->get('mrn', null) && ! $patient->get('mrn_number', null)) {
+        if (!$patient->get('mrn', null) && !$patient->get('mrn_number', null)) {
             $patient = $patient->put('mrn', $this->ccda->mrn);
         }
 
@@ -138,27 +140,6 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
         return $this->ccda->status;
     }
 
-    private function handleLastEncounter($patient, $ccdaJson)
-    {
-        $lastEncounter = false;
-        $patient->put('last_encounter', '');
-
-        if (isset($ccdaJson->encounters)
-            && array_key_exists(0, $ccdaJson->encounters)
-            && isset($ccdaJson->encounters[0]->date)) {
-            if ($ccdaJson->encounters[0]->date) {
-                $lastEncounter = $ccdaJson->encounters[0]->date;
-                $patient->put('last_encounter', Carbon::parse($lastEncounter));
-            }
-        }
-
-        if ((is_null($this->filterLastEncounter) || $this->filterLastEncounter)) {
-            $this->filterLastEncounter = (boolean)$lastEncounter;
-        }
-
-        return $patient;
-    }
-
     private function handleInsurance($patient, Collection $insurance)
     {
         $patient = $patient->put('primary_insurance', '');
@@ -187,6 +168,27 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
             }
 
             $this->filterInsurance = $count > 0;
+        }
+
+        return $patient;
+    }
+
+    private function handleLastEncounter($patient, $ccdaJson)
+    {
+        $lastEncounter = false;
+        $patient->put('last_encounter', '');
+
+        if (isset($ccdaJson->encounters)
+            && array_key_exists(0, $ccdaJson->encounters)
+            && isset($ccdaJson->encounters[0]->date)) {
+            if ($ccdaJson->encounters[0]->date) {
+                $lastEncounter = $ccdaJson->encounters[0]->date;
+                $patient->put('last_encounter', Carbon::parse($lastEncounter));
+            }
+        }
+
+        if ((is_null($this->filterLastEncounter) || $this->filterLastEncounter)) {
+            $this->filterLastEncounter = (bool) $lastEncounter;
         }
 
         return $patient;

@@ -1,16 +1,15 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Contracts\Repositories;
 
-use App\Activity;
-use App\Repositories\CcmTimeApiLog;
-use App\Repositories\DB;
-use App\Repositories\User;
 use Prettus\Repository\Contracts\RepositoryInterface;
 
 /**
- * Interface ActivityRepository
- * @package namespace App\Contracts\Repositories;
+ * Interface ActivityRepository.
  */
 interface ActivityRepository extends RepositoryInterface
 {
@@ -24,6 +23,7 @@ interface ActivityRepository extends RepositoryInterface
      * @param $startDate
      * @param $endDate
      * @param bool $sendAll
+     *
      * @return mixed
      */
     public function getCcmActivities($patientId, $providerId, $startDate, $endDate, $sendAll = false);

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Notifications\Onboarding;
 
 use App\Practice;
@@ -40,45 +44,44 @@ class ImplementationLeadWelcome extends Notification
     }
 
     /**
-     * Get the notification's delivery channels.
-     *
-     * @param  mixed $notifiable
-     *
-     * @return array
-     */
-    public function via($notifiable)
-    {
-        return ['mail'];
-    }
-
-    /**
-     * Get the mail representation of the notification.
-     *
-     * @param  mixed $notifiable
-     *
-     * @return \Illuminate\Notifications\Messages\MailMessage
-     */
-    public function toMail($notifiable)
-    {
-        return (new MailMessage)
-            ->subject('Welcome to '.$notifiable->saasAccountName().'!')
-            ->greeting("Dear {$notifiable->getFullName()}:")
-            ->line("{$this->practice->formatted_name}’s Personalized Care Management program with CircleLink Health just launched!")
-            ->line("Please reset your password with below button.")
-            ->action('Reset Password', url('auth/password/reset'));
-    }
-
-    /**
      * Get the array representation of the notification.
      *
-     * @param  mixed $notifiable
+     * @param mixed $notifiable
      *
      * @return array
      */
     public function toArray($notifiable)
     {
         return [
-            //
         ];
+    }
+
+    /**
+     * Get the mail representation of the notification.
+     *
+     * @param mixed $notifiable
+     *
+     * @return \Illuminate\Notifications\Messages\MailMessage
+     */
+    public function toMail($notifiable)
+    {
+        return (new MailMessage())
+            ->subject('Welcome to '.$notifiable->saasAccountName().'!')
+            ->greeting("Dear {$notifiable->getFullName()}:")
+            ->line("{$this->practice->formatted_name}’s Personalized Care Management program with CircleLink Health just launched!")
+            ->line('Please reset your password with below button.')
+            ->action('Reset Password', url('auth/password/reset'));
+    }
+
+    /**
+     * Get the notification's delivery channels.
+     *
+     * @param mixed $notifiable
+     *
+     * @return array
+     */
+    public function via($notifiable)
+    {
+        return ['mail'];
     }
 }

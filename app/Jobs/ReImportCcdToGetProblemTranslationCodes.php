@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Jobs;
 
 use App\CLH\Repositories\CCDImporterRepository;
@@ -10,7 +14,6 @@ use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Importer\Section\Importers\Problems;
 use App\Models\CCD\Problem;
 use App\Models\MedicalRecords\Ccda;
-use App\Models\ProblemCode;
 use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -21,20 +24,18 @@ use Illuminate\Queue\SerializesModels;
 class ReImportCcdToGetProblemTranslationCodes implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    private $patient;
-    private $logger;
-    private $repo;
     private $ccda;
+    private $logger;
+    private $patient;
+    private $repo;
 
     /**
      * Create a new job instance.
-     *
-     * @return void
      */
     public function __construct(User $patient)
     {
         $this->patient = $patient;
-        $this->repo = new CCDImporterRepository();
+        $this->repo    = new CCDImporterRepository();
 
         $this->ccda = Ccda::select(['id', 'patient_id', 'xml'])
             ->where('patient_id', '=', $this->patient->id)
@@ -58,13 +59,11 @@ class ReImportCcdToGetProblemTranslationCodes implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
     public function handle()
     {
         $problemsImporter = new Problems();
-        $problemsList = $problemsImporter->import($this->ccda->id, Ccda::class, $this->ccda->importedMedicalRecord());
+        $problemsList     = $problemsImporter->import($this->ccda->id, Ccda::class, $this->ccda->importedMedicalRecord());
 
         $carePlanHelper = new CarePlanHelper($this->patient, $this->ccda->importedMedicalRecord());
         $carePlanHelper->storeProblemsList()

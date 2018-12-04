@@ -1,15 +1,16 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use App\ProblemCodeSystem;
-use function Aws\map;
 use Illuminate\Database\Seeder;
 
 class ProblemCodeSystemsSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
     public function run()
     {

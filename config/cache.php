@@ -1,7 +1,10 @@
 <?php
 
-return [
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
+return [
     /*
     |--------------------------------------------------------------------------
     | Default Cache Store
@@ -29,7 +32,6 @@ return [
     */
 
     'stores' => [
-
         'apc' => [
             'driver' => 'apc',
         ],
@@ -56,10 +58,10 @@ return [
                 env('MEMCACHED_USERNAME'),
                 env('MEMCACHED_PASSWORD'),
             ],
-            'options'       => [
+            'options' => [
                 // Memcached::OPT_CONNECT_TIMEOUT  => 2000,
             ],
-            'servers'       => [
+            'servers' => [
                 [
                     'host'   => env('MEMCACHED_HOST', '127.0.0.1'),
                     'port'   => env('MEMCACHED_PORT', 11211),
@@ -72,7 +74,6 @@ return [
             'driver'     => 'redis',
             'connection' => 'default',
         ],
-
     ],
 
     /*
@@ -90,5 +91,4 @@ return [
 
     //entrust needs this
     'ttl' => 30,
-
 ];

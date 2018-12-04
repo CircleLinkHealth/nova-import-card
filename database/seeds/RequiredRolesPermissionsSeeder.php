@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use App\Permission;
 use App\Role;
 use Illuminate\Database\Seeder;
@@ -7,36 +11,18 @@ use Illuminate\Database\Seeder;
 class RequiredRolesPermissionsSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Grant CLH Super Admin permissions to a Role, after you make sure you know what you are doing :).
      *
-     * Seeds only default permissions for roles
-     *
-     * @return void
+     * @param $roleName
      */
-    public function run()
+    public function grantSuperAdminPermissionsToRole($roleName)
     {
-        $this->call(RequiredPermissionsTableSeeder::class);
+        $adminRole = Role::whereName($roleName)->first();
 
-        foreach ($this->roles() as $role) {
-            $permissionsArr = $role['permissions'];
+        $permissions = Permission::whereNotIn('name', $this->doNotGrantThesePermissionsToSuperAdmins())
+            ->get();
 
-            unset($role['permissions']);
-
-            $role = Role::updateOrCreate(['name' => $role['name']], $role);
-
-            $permissionIds = Permission::whereIn('name', $permissionsArr)
-                                       ->pluck('id')->all();
-
-            $role->perms()->sync($permissionIds);
-
-            $name = $role['name'];
-            $this->command->info("role $name created");
-        }
-
-        $this->grantSuperAdminPermissionsToRole('administrator');
-        $this->grantSuperAdminPermissionsToRole('saas-admin');
-
-        $this->command->info('all roles and permissions created');
+        $adminRole->perms()->sync($permissions->pluck('id')->all());
     }
 
     public function roles()
@@ -597,7 +583,6 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'patientSummary.read',
                     'appointment.read',
                     'careplan-pdf.create',
-
                 ],
             ],
             [
@@ -992,7 +977,6 @@ class RequiredRolesPermissionsSeeder extends Seeder
                 'display_name' => 'EHR Report Writer',
                 'description'  => 'A user that can upload CSVs or Json files for eligibility to be processed by our system',
                 'permissions'  => [
-
                 ],
             ],
             [
@@ -1000,7 +984,6 @@ class RequiredRolesPermissionsSeeder extends Seeder
                 'display_name' => 'SAAS Admin',
                 'description'  => 'An admin for CPM Software-As-A-Service.',
                 'permissions'  => [
-
                 ],
             ],
             [
@@ -1114,18 +1097,34 @@ class RequiredRolesPermissionsSeeder extends Seeder
     }
 
     /**
-     * Grant CLH Super Admin permissions to a Role, after you make sure you know what you are doing :)
+     * Run the database seeds.
      *
-     * @param $roleName
+     * Seeds only default permissions for roles
      */
-    public function grantSuperAdminPermissionsToRole($roleName)
+    public function run()
     {
-        $adminRole = Role::whereName($roleName)->first();
+        $this->call(RequiredPermissionsTableSeeder::class);
 
-        $permissions = Permission::whereNotIn('name', $this->doNotGrantThesePermissionsToSuperAdmins())
-                                 ->get();
+        foreach ($this->roles() as $role) {
+            $permissionsArr = $role['permissions'];
 
-        $adminRole->perms()->sync($permissions->pluck('id')->all());
+            unset($role['permissions']);
+
+            $role = Role::updateOrCreate(['name' => $role['name']], $role);
+
+            $permissionIds = Permission::whereIn('name', $permissionsArr)
+                ->pluck('id')->all();
+
+            $role->perms()->sync($permissionIds);
+
+            $name = $role['name'];
+            $this->command->info("role ${name} created");
+        }
+
+        $this->grantSuperAdminPermissionsToRole('administrator');
+        $this->grantSuperAdminPermissionsToRole('saas-admin');
+
+        $this->command->info('all roles and permissions created');
     }
 
     /**

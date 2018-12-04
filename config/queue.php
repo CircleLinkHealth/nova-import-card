@@ -1,7 +1,10 @@
 <?php
 
-return [
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
+return [
     /*
     |--------------------------------------------------------------------------
     | Default Queue Driver
@@ -29,7 +32,6 @@ return [
     */
 
     'connections' => [
-
         'sync' => [
             'driver' => 'sync',
         ],
@@ -63,7 +65,6 @@ return [
             'queue'       => 'default',
             'retry_after' => 300,
         ],
-
     ],
 
     /*
@@ -81,5 +82,4 @@ return [
         'database' => env('DB_CONNECTION', 'mysql'),
         'table'    => 'failed_jobs',
     ],
-
 ];

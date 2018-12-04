@@ -1,0 +1,13 @@
+#!/bin/sh
+
+SCRIPTS_DIR=./scripts/git/
+GIT_HOOKS_DIR=./.git/hooks/
+
+# copy git hooks to ./.git/hooks/ folder
+for file in $SCRIPTS_DIR/*;do
+    if [ -d "$file" ]; then
+        cp -R $file $GIT_HOOKS_DIR
+    else
+        install -m 755 "$file" $GIT_HOOKS_DIR
+    fi
+done

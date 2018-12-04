@@ -1,24 +1,22 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 return [
-
-    'backup'         => [
-
+    'backup' => [
         /*
          * The name of this application. You can use this name to monitor
          * the backups.
          */
         'name' => config('app.name'),
 
-        'source'             => [
-
-            'files'     => [
-
-                /*
-                 * The list of directories and files that will be included in the backup.
-                 */
-                'include'     => [
-//                    storage_path(),
+        'source' => [
+            'files' => [
+                // The list of directories and files that will be included in the backup.
+                'include' => [
+                    //                    storage_path(),
                 ],
 
                 /*
@@ -26,14 +24,12 @@ return [
                  *
                  * Directories used by the backup process will automatically be excluded.
                  */
-                'exclude'     => [
+                'exclude' => [
                     base_path('vendor'),
                     base_path('node_modules'),
                 ],
 
-                /*
-                 * Determines if symlinks should be followed.
-                 */
+                // Determines if symlinks should be followed.
                 'followLinks' => true,
             ],
 
@@ -61,29 +57,20 @@ return [
             ],
         ],
 
-        /*
-         * The database dump can be gzipped to decrease diskspace usage.
-         */
+        // The database dump can be gzipped to decrease diskspace usage.
         'gzip_database_dump' => true,
 
-        'destination'         => [
-
-            /*
-             * The filename prefix used for the backup zip file.
-             */
+        'destination' => [
+            // The filename prefix used for the backup zip file.
             'filename_prefix' => env('DB_DATABASE', ''),
 
-            /*
-             * The disk names on which the backups will be stored.
-             */
-            'disks'           => [
+            // The disk names on which the backups will be stored.
+            'disks' => [
                 'backup',
             ],
         ],
 
-        /*
-         * The directory where the temporary files will be stored.
-         */
+        // The directory where the temporary files will be stored.
         'temporary_directory' => storage_path('app/backup-temp'),
     ],
 
@@ -94,8 +81,7 @@ return [
      * You can also use your own notification classes, just make sure the class is named after one of
      * the `Spatie\Backup\Events` classes.
      */
-    'notifications'  => [
-
+    'notifications' => [
         'notifications' => [
             \Spatie\Backup\Notifications\Notifications\BackupHasFailed::class         => ['mail'],
             \Spatie\Backup\Notifications\Notifications\UnhealthyBackupWasFound::class => ['mail'],
@@ -109,7 +95,7 @@ return [
          * Here you can specify the notifiable to which the notifications should be sent. The default
          * notifiable will use the variables specified in this config file.
          */
-        'notifiable'    => \Spatie\Backup\Notifications\Notifiable::class,
+        'notifiable' => \Spatie\Backup\Notifications\Notifiable::class,
 
         'mail' => [
             'to' => 'mantoniou@circlelinkhealth.com',
@@ -118,15 +104,12 @@ return [
         'slack' => [
             'webhook_url' => '',
 
-            /*
-             * If this is set to null the default channel of the webhook will be used.
-             */
-            'channel'     => null,
+            // If this is set to null the default channel of the webhook will be used.
+            'channel' => null,
 
             'username' => null,
 
             'icon' => null,
-
         ],
     ],
 
@@ -166,31 +149,20 @@ return [
         'strategy' => \Spatie\Backup\Tasks\Cleanup\Strategies\DefaultStrategy::class,
 
         'defaultStrategy' => [
+            // The number of days for which backups must be kept.
+            'keepAllBackupsForDays' => 7,
 
-            /*
-             * The number of days for which backups must be kept.
-             */
-            'keepAllBackupsForDays'                         => 7,
+            // The number of days for which daily backups must be kept.
+            'keepDailyBackupsForDays' => 16,
 
-            /*
-             * The number of days for which daily backups must be kept.
-             */
-            'keepDailyBackupsForDays'                       => 16,
+            // The number of weeks for which one weekly backup must be kept.
+            'keepWeeklyBackupsForWeeks' => 8,
 
-            /*
-             * The number of weeks for which one weekly backup must be kept.
-             */
-            'keepWeeklyBackupsForWeeks'                     => 8,
+            // The number of months for which one monthly backup must be kept.
+            'keepMonthlyBackupsForMonths' => 12,
 
-            /*
-             * The number of months for which one monthly backup must be kept.
-             */
-            'keepMonthlyBackupsForMonths'                   => 12,
-
-            /*
-             * The number of years for which one yearly backup must be kept.
-             */
-            'keepYearlyBackupsForYears'                     => 5,
+            // The number of years for which one yearly backup must be kept.
+            'keepYearlyBackupsForYears' => 5,
 
             /*
              * After cleaning up the backups remove the oldest backup until

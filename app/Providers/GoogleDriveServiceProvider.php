@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Providers;
 
 use Hypweb\Flysystem\GoogleDrive\GoogleDriveAdapter;
@@ -9,12 +13,10 @@ class GoogleDriveServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the application services.
-     *
-     * @return void
      */
     public function boot()
     {
-        \Storage::extend('google', function($app, $config) {
+        \Storage::extend('google', function ($app, $config) {
             $client = new \Google_Client();
             $client->setClientId($config['clientId']);
             $client->setClientSecret($config['clientSecret']);
@@ -28,11 +30,8 @@ class GoogleDriveServiceProvider extends ServiceProvider
 
     /**
      * Register the application services.
-     *
-     * @return void
      */
     public function register()
     {
-        //
     }
 }

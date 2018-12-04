@@ -1,11 +1,21 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 
 class CreateOrReplacePatientsCcmViewTable extends Command
 {
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Create or Replace Patients CCM View Table (patients_ccm_view)';
     /**
      * The name and signature of the console command.
      *
@@ -14,16 +24,7 @@ class CreateOrReplacePatientsCcmViewTable extends Command
     protected $signature = 'view:CreateOrReplacePatientsCcmViewTable';
 
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Create or Replace Patients CCM View Table (patients_ccm_view)';
-
-    /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -37,10 +38,10 @@ class CreateOrReplacePatientsCcmViewTable extends Command
      */
     public function handle()
     {
-        $viewName = "patients_ccm_view";
-        \DB::statement("DROP VIEW IF EXISTS $viewName");
+        $viewName = 'patients_ccm_view';
+        \DB::statement("DROP VIEW IF EXISTS ${viewName}");
         \DB::statement("
-        CREATE VIEW $viewName
+        CREATE VIEW ${viewName}
         AS
         SELECT DISTINCT u.id
         FROM users u 

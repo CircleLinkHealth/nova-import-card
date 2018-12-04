@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 15/12/2016
- * Time: 2:04 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace Tests\Helpers\FormRequests;
@@ -17,7 +15,6 @@ abstract class FormRequest
      *
      * @var \Faker\Generator
      */
-
     protected $faker;
 
     public function __construct()
@@ -28,40 +25,52 @@ abstract class FormRequest
     /**
      * Returns the attributes needed to delete this resource.
      *
+     * @param mixed $count
+     * @param mixed $params
+     *
      * @return array
      */
     abstract public function delete(
         $count = 1,
         $params = []
-    ) : array;
+    ): array;
 
     /**
      * Returns the attributes needed to create this resource.
+     *
+     * @param mixed $count
+     * @param mixed $params
      *
      * @return array
      */
     abstract public function get(
         $count = 1,
         $params = []
-    ) : array;
+    ): array;
 
     /**
      * Returns the attributes needed to update this resource.
+     *
+     * @param mixed $count
+     * @param mixed $params
      *
      * @return array
      */
     abstract public function patch(
         $count = 1,
         $params = []
-    ) : array;
+    ): array;
 
     /**
      * Returns the attributes needed to store this resource.
+     *
+     * @param mixed $count
+     * @param mixed $params
      *
      * @return array
      */
     abstract public function post(
         $count = 1,
         $params = []
-    ) : array;
+    ): array;
 }

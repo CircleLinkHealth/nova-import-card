@@ -1,15 +1,20 @@
-<?php namespace App;
+<?php
 
-use Illuminate\Database\Eloquent\Model;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App;
 
 /**
- * App\CPRulesItemMeta
+ * App\CPRulesItemMeta.
  *
- * @property int $itemmeta_id
- * @property int|null $items_id
- * @property string|null $meta_key
- * @property string|null $meta_value
- * @property-read \App\CPRulesItem|null $CPRulesItem
+ * @property int                   $itemmeta_id
+ * @property int|null              $items_id
+ * @property string|null           $meta_key
+ * @property string|null           $meta_value
+ * @property \App\CPRulesItem|null $CPRulesItem
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItemMeta whereItemmetaId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItemMeta whereItemsId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItemMeta whereMetaKey($value)
@@ -18,15 +23,14 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CPRulesItemMeta extends \App\BaseModel
 {
-
-
+    public $timestamps = false;
 
     /**
-     * The database table used by the model.
+     * The attributes that are mass assignable.
      *
-     * @var string
+     * @var array
      */
-    protected $table = 'rules_itemmeta';
+    protected $fillable = ['itemmeta_id', 'items_id', 'meta_key', 'meta_value'];
 
     /**
      * The primary key for the model.
@@ -36,13 +40,11 @@ class CPRulesItemMeta extends \App\BaseModel
     protected $primaryKey = 'itemmeta_id';
 
     /**
-     * The attributes that are mass assignable.
+     * The database table used by the model.
      *
-     * @var array
+     * @var string
      */
-    protected $fillable = ['itemmeta_id', 'items_id', 'meta_key', 'meta_value'];
-
-    public $timestamps = false;
+    protected $table = 'rules_itemmeta';
 
     public function CPRulesItem()
     {

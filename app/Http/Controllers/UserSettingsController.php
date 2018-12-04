@@ -1,17 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
-use Illuminate\Http\Request;
+namespace App\Http\Controllers;
 
 class UserSettingsController extends Controller
 {
     public function show()
     {
         $user = auth()->user()
-                      ->load([
-                          'authyUser',
-                      ]);
+            ->load([
+                'authyUser',
+            ]);
 
         $user->global_role = $user->practiceOrGlobalRole();
 

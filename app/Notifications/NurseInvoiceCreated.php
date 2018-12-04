@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Notifications;
 
 use App\Mail\NurseInvoiceMailer;
@@ -26,22 +30,9 @@ class NurseInvoiceCreated extends Notification
     }
 
     /**
-     * Get the mail representation of the notification.
-     *
-     * @param  mixed $notifiable
-     *
-     * @return NurseInvoiceMailer
-     */
-    public function toMail($notifiable)
-    {
-        return (new NurseInvoiceMailer($notifiable->getFullName(), $this->link, $this->month))
-            ->to($notifiable->email, $notifiable->getFullName());
-    }
-
-    /**
      * Get the array representation of the notification.
      *
-     * @param  mixed $notifiable
+     * @param mixed $notifiable
      *
      * @return array
      */
@@ -58,15 +49,28 @@ class NurseInvoiceCreated extends Notification
             'receiver_id'    => get_class($notifiable),
             'receiver_email' => $notifiable->email,
 
-            'subject'   => "$this->month Time and Fees Report",
+            'subject'   => "{$this->month} Time and Fees Report",
             'pathToPdf' => $this->link,
         ];
     }
 
     /**
+     * Get the mail representation of the notification.
+     *
+     * @param mixed $notifiable
+     *
+     * @return NurseInvoiceMailer
+     */
+    public function toMail($notifiable)
+    {
+        return (new NurseInvoiceMailer($notifiable->getFullName(), $this->link, $this->month))
+            ->to($notifiable->email, $notifiable->getFullName());
+    }
+
+    /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed $notifiable
+     * @param mixed $notifiable
      *
      * @return array
      */

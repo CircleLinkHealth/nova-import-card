@@ -1,40 +1,45 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App;
 
 use App\Filters\Filterable;
 use Carbon\Carbon;
 
 /**
- * App\Call
+ * App\Call.
  *
- * @property int $id
- * @property int|null $note_id
- * @property string|null $type
- * @property string|null $sub_type
- * @property string $service
- * @property string $status
- * @property string $inbound_phone_number
- * @property string $outbound_phone_number
- * @property int $inbound_cpm_id
- * @property int|null $outbound_cpm_id
- * @property int|null $call_time
+ * @property int            $id
+ * @property int|null       $note_id
+ * @property string|null    $type
+ * @property string|null    $sub_type
+ * @property string         $service
+ * @property string         $status
+ * @property string         $inbound_phone_number
+ * @property string         $outbound_phone_number
+ * @property int            $inbound_cpm_id
+ * @property int|null       $outbound_cpm_id
+ * @property int|null       $call_time
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @property int $is_cpm_outbound
- * @property string $window_start
- * @property string $window_end
- * @property string $scheduled_date
- * @property string|null $called_date
- * @property string $attempt_note
- * @property string|null $scheduler
- * @property bool $is_from_care_center
+ * @property int            $is_cpm_outbound
+ * @property string         $window_start
+ * @property string         $window_end
+ * @property string         $scheduled_date
+ * @property string|null    $called_date
+ * @property string         $attempt_note
+ * @property string|null    $scheduler
+ * @property bool           $is_from_care_center
  * @property bool is_manual
- * @property-read \App\User|null $schedulerUser
- * @property-read \App\User $inboundUser
- * @property-read \App\Note|null $note
- * @property-read \App\User|null $outboundUser
- * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \App\User|null                                                                 $schedulerUser
+ * @property \App\User                                                                      $inboundUser
+ * @property \App\Note|null                                                                 $note
+ * @property \App\User|null                                                                 $outboundUser
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereAttemptNote($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereCallTime($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereCalledDate($value)
@@ -58,6 +63,16 @@ use Carbon\Carbon;
 class Call extends BaseModel
 {
     use Filterable;
+
+    //patient was reached/not reached but this call is to be ignored
+    //eg. patient was reached but was busy, so ignore call from reached/not reached reports
+    const IGNORED = 'ignored';
+
+    //patient was not reached
+    const NOT_REACHED = 'not reached';
+
+    //patient was reached
+    const REACHED = 'reached';
 
     protected $appends = ['is_from_care_center'];
 
@@ -99,25 +114,24 @@ class Call extends BaseModel
         'is_cpm_outbound',
     ];
 
-    //patient was reached
-    const REACHED = 'reached';
-
-    //patient was not reached
-    const NOT_REACHED = 'not reached';
-
-    //patient was reached/not reached but this call is to be ignored
-    //eg. patient was reached but was busy, so ignore call from reached/not reached reports
-    const IGNORED = 'ignored';
-
     public function getIsFromCareCenterAttribute()
     {
-
-        if ( ! is_a($this->schedulerUser, User::class)) {
+        if (!is_a($this->schedulerUser, User::class)) {
             //null in cases of scheduler = 'algorithm'
             return false;
         }
 
         return $this->schedulerUser->hasRole('care-center');
+    }
+
+    public function inboundUser()
+    {
+        return $this->belongsTo(User::class, 'inbound_cpm_id', 'id');
+    }
+
+    public function note()
+    {
+        return $this->belongsTo(Note::class, 'note_id', 'id');
     }
 
     public static function numberOfCallsForPatientForMonth(User $user, $date)
@@ -131,7 +145,7 @@ class Call extends BaseModel
         // get record for month
         $day_start = $d->startOfMonth()->toDateString();
         $record    = PatientMonthlySummary::where('month_year', $day_start)->where('patient_id', $user->id)->first();
-        if ( ! $record) {
+        if (!$record) {
             return 0;
         }
 
@@ -148,40 +162,24 @@ class Call extends BaseModel
 
         $calls = Call::where(function ($q) {
             $q->whereNull('type')
-              ->orWhere('type', '=', 'call')
-              ->orWhere('sub_type', '=', 'Call Back');
+                ->orWhere('type', '=', 'call')
+                ->orWhere('sub_type', '=', 'Call Back');
         })
-                     ->where(function ($q) use ($user, $d) {
-                         $q->where('outbound_cpm_id', $user->id)
-                           ->orWhere('inbound_cpm_id', $user->id);
-                     })
-                     ->where('called_date', '>=', $d->startOfMonth()->toDateTimeString())
-                     ->where('called_date', '<=', $d->endOfMonth()->toDateTimeString())
-                     ->where('status', 'reached');
+            ->where(function ($q) use ($user, $d) {
+                $q->where('outbound_cpm_id', $user->id)
+                    ->orWhere('inbound_cpm_id', $user->id);
+            })
+            ->where('called_date', '>=', $d->startOfMonth()->toDateTimeString())
+            ->where('called_date', '<=', $d->endOfMonth()->toDateTimeString())
+            ->where('status', 'reached');
 
         return $calls->count();
-    }
-
-    public function schedulerUser()
-    {
-        return $this->belongsTo(User::class, 'scheduler', 'id');
-    }
-
-    public function note()
-    {
-        return $this->belongsTo(Note::class, 'note_id', 'id');
     }
 
     public function outboundUser()
     {
         return $this->belongsTo(User::class, 'outbound_cpm_id');
     }
-
-    public function inboundUser()
-    {
-        return $this->belongsTo(User::class, 'inbound_cpm_id', 'id');
-    }
-
 
     public function patientId()
     {
@@ -190,12 +188,16 @@ class Call extends BaseModel
             : $this->inbound_cpm_id;
     }
 
+    public function schedulerUser()
+    {
+        return $this->belongsTo(User::class, 'scheduler', 'id');
+    }
+
     /**
-     * Scope for calls for the given month
+     * Scope for calls for the given month.
      *
      * @param $builder
      * @param Carbon $monthYear
-     *
      */
     public function scopeOfMonth($builder, Carbon $monthYear)
     {
@@ -206,15 +208,14 @@ class Call extends BaseModel
     }
 
     /**
-     * Scope for status
+     * Scope for status.
      *
      * @param $builder
      * @param $status
-     *
      */
     public function scopeOfStatus($builder, $status)
     {
-        if ( ! is_array($status)) {
+        if (!is_array($status)) {
             $status = [$status];
         }
 
@@ -222,7 +223,7 @@ class Call extends BaseModel
     }
 
     /**
-     * Scope for Scheduled calls for the given month
+     * Scope for Scheduled calls for the given month.
      *
      * @param $builder
      */
@@ -230,10 +231,10 @@ class Call extends BaseModel
     {
         $builder->where(function ($q) {
             $q->where('calls.status', '=', 'scheduled')
-              ->whereHas('inboundUser');
+                ->whereHas('inboundUser');
         })->with([
             'inboundUser.billingProvider.user',
-            'inboundUser.notes'            => function ($q) {
+            'inboundUser.notes' => function ($q) {
                 $q->latest();
             },
             'inboundUser.patientInfo.contactWindows',

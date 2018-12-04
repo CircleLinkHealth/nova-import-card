@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 21/12/2016
- * Time: 5:58 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Services\PdfReports\Handlers;
@@ -15,7 +13,6 @@ use App\PatientReports;
 
 class AprimaApiPdfHandler implements PdfReportHandler
 {
-
     /**
      * Dispatch a PDFReport to an API, or EMR Direct Mailbox.
      *
@@ -52,7 +49,7 @@ class AprimaApiPdfHandler implements PdfReportHandler
                 ->first();
 
             if (empty($foreign_id)) {
-                \Log::error("Provider $providerId has no Aprima Foreign id.");
+                \Log::error("Provider ${providerId} has no Aprima Foreign id.");
 
                 continue;
             }

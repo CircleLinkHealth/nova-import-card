@@ -32,7 +32,7 @@
                     <?php
                         $status = $patient['careplan_status'];
                         if ($status && str_contains($status, '{')) {
-                            $status = ((object)json_decode($status))->status;
+                            $status = ((object) json_decode($status))->status;
                         }
                         echo $status;
                     ?>
@@ -44,11 +44,11 @@
                 <td> {{$patient['last_read']}} </td>
                 <td> 
                     <?php
-                        $seconds = (int)($patient['ccm_seconds'] ?? '0');
-                        $hours = str_pad((string)floor($seconds / 3600), 2, '0', STR_PAD_LEFT);
-                        $minutes = str_pad((string)(floor($seconds / 60) % 60), 2, '0', STR_PAD_LEFT);
+                        $seconds = (int) ($patient['ccm_seconds'] ?? '0');
+                        $hours   = str_pad((string) floor($seconds / 3600), 2, '0', STR_PAD_LEFT);
+                        $minutes = str_pad((string) (floor($seconds / 60) % 60), 2, '0', STR_PAD_LEFT);
                         $seconds = $seconds % 60;
-                        echo $hours . ':' . $minutes . ':' . $seconds;
+                        echo $hours.':'.$minutes.':'.$seconds;
                     ?>
                 </td>
             </tr>

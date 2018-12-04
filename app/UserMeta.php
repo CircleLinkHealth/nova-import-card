@@ -1,14 +1,21 @@
-<?php namespace App;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App;
 
 /**
- * App\UserMeta
+ * App\UserMeta.
  *
- * @property int $umeta_id
- * @property int $user_id
- * @property string|null $meta_key
- * @property string|null $meta_value
- * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- * @property-read \App\User $wpUser
+ * @property int                                                                            $umeta_id
+ * @property int                                                                            $user_id
+ * @property string|null                                                                    $meta_key
+ * @property string|null                                                                    $meta_value
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \App\User                                                                      $wpUser
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\UserMeta whereMetaKey($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\UserMeta whereMetaValue($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\UserMeta whereUmetaId($value)
@@ -17,8 +24,19 @@
  */
 class UserMeta extends BaseModel
 {
-
     public $timestamps = false;
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['umeta_id', 'user_id', 'meta_key', 'meta_value'];
+    /**
+     * The primary key for the model.
+     *
+     * @var string
+     */
+    protected $primaryKey = 'umeta_id';
 
     /**
      * The database table used by the model.
@@ -26,18 +44,6 @@ class UserMeta extends BaseModel
      * @var string
      */
     protected $table = 'usermeta';
-    /**
-     * The primary key for the model.
-     *
-     * @var string
-     */
-    protected $primaryKey = 'umeta_id';
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = ['umeta_id', 'user_id', 'meta_key', 'meta_value'];
 
     public function wpUser()
     {

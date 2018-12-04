@@ -1,4 +1,10 @@
-<?php namespace App\CLH\Repositories;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\CLH\Repositories;
 
 use App\CareItem;
 use App\CarePlan;
@@ -8,21 +14,51 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class CarePlanRepository
 {
+    public function attachCareItemToCarePlan(
+        CareSection $careSection,
+        CarePlan $carePlan,
+        CarePlanItem $careItemCarePlan
+    ) {
+        $rowData = [
+            'section_id'              => $careSection->id,
+            'meta_key'                => $careItemCarePlan->meta_key,
+            'meta_value'              => $careItemCarePlan->meta_value,
+            'status'                  => $careItemCarePlan->status,
+            'alert_key'               => $careItemCarePlan->alert_key,
+            'ui_placeholder'          => $careItemCarePlan->ui_placeholder,
+            'ui_default'              => $careItemCarePlan->ui_default,
+            'ui_title'                => $careItemCarePlan->ui_title,
+            'ui_fld_type'             => $careItemCarePlan->ui_fld_type,
+            'ui_show_detail'          => $careItemCarePlan->ui_show_detail,
+            'ui_row_start'            => $careItemCarePlan->ui_row_start,
+            'ui_row_end'              => $careItemCarePlan->ui_row_end,
+            'ui_sort'                 => $careItemCarePlan->ui_sort,
+            'ui_col_start'            => $careItemCarePlan->ui_col_start,
+            'ui_col_end'              => $careItemCarePlan->ui_col_end,
+            'ui_track_as_observation' => $careItemCarePlan->ui_track_as_observation,
+            'msg_app_en'              => $careItemCarePlan->msg_app_en,
+            'msg_app_es'              => $careItemCarePlan->msg_app_es,
+        ];
+        $carePlan->careItems()->attach([$careItemCarePlan['item_id'] => $rowData]);
+    }
 
-    public function updateCarePlan(CarePlan $carePlan, ParameterBag $params)
-    {
-        $carePlan->name = $params->get('name');
+    public function createCarePlan(
+        CarePlan $carePlan,
+        ParameterBag $params
+    ) {
+        $carePlan->name         = $params->get('name');
         $carePlan->display_name = $params->get('display_name');
-        $carePlan->type = $params->get('type');
-        $carePlan->user_id = $params->get('user_id');
+        $carePlan->type         = $params->get('type');
+        $carePlan->user_id      = $params->get('user_id');
         $carePlan->save();
+
         return $carePlan;
     }
 
     public function duplicateCarePlan(CarePlan $carePlan, ParameterBag $params)
     {
         // create new careplan
-        $carePlanDupe = $this->createCarePlan(new CarePlan, $params);
+        $carePlanDupe = $this->createCarePlan(new CarePlan(), $params);
         $carePlanDupe->save();
 
         // build careplan
@@ -52,7 +88,7 @@ class CarePlanRepository
                     continue 1;
                 }
                 // skip if care_item.parent_id = 0
-                if ($carePlanItem->careItem->parent_id == 0) {
+                if (0 == $carePlanItem->careItem->parent_id) {
                     continue 1;
                 }
                 // get parent care item
@@ -78,45 +114,14 @@ class CarePlanRepository
         return $carePlanDupe;
     }
 
-    public function createCarePlan(
-        CarePlan $carePlan,
-        ParameterBag $params
-    ) {
-    
-        $carePlan->name = $params->get('name');
+    public function updateCarePlan(CarePlan $carePlan, ParameterBag $params)
+    {
+        $carePlan->name         = $params->get('name');
         $carePlan->display_name = $params->get('display_name');
-        $carePlan->type = $params->get('type');
-        $carePlan->user_id = $params->get('user_id');
+        $carePlan->type         = $params->get('type');
+        $carePlan->user_id      = $params->get('user_id');
         $carePlan->save();
 
         return $carePlan;
-    }
-
-    public function attachCareItemToCarePlan(
-        CareSection $careSection,
-        CarePlan $carePlan,
-        CarePlanItem $careItemCarePlan
-    ) {
-        $rowData = [
-            'section_id'              => $careSection->id,
-            "meta_key"                => $careItemCarePlan->meta_key,
-            "meta_value"              => $careItemCarePlan->meta_value,
-            "status"                  => $careItemCarePlan->status,
-            "alert_key"               => $careItemCarePlan->alert_key,
-            "ui_placeholder"          => $careItemCarePlan->ui_placeholder,
-            "ui_default"              => $careItemCarePlan->ui_default,
-            "ui_title"                => $careItemCarePlan->ui_title,
-            "ui_fld_type"             => $careItemCarePlan->ui_fld_type,
-            "ui_show_detail"          => $careItemCarePlan->ui_show_detail,
-            "ui_row_start"            => $careItemCarePlan->ui_row_start,
-            "ui_row_end"              => $careItemCarePlan->ui_row_end,
-            "ui_sort"                 => $careItemCarePlan->ui_sort,
-            "ui_col_start"            => $careItemCarePlan->ui_col_start,
-            "ui_col_end"              => $careItemCarePlan->ui_col_end,
-            "ui_track_as_observation" => $careItemCarePlan->ui_track_as_observation,
-            "msg_app_en"              => $careItemCarePlan->msg_app_en,
-            "msg_app_es"              => $careItemCarePlan->msg_app_es,
-        ];
-        $carePlan->careItems()->attach([$careItemCarePlan['item_id'] => $rowData]);
     }
 }

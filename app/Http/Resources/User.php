@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\Resource;
@@ -10,6 +14,7 @@ class User extends Resource
      * Transform the resource into an array.
      *
      * @param  \Illuminate\Http\Request
+     * @param mixed $request
      *
      * @return array
      */
@@ -33,25 +38,25 @@ class User extends Resource
             'created_at'          => $this->created_at
                 ? $this->created_at->format('c')
                 : null,
-            'updated_at'          => $this->updated_at
+            'updated_at' => $this->updated_at
                 ? $this->updated_at->format('c')
                 : null,
-            'deleted_at'          => $this->deleted_at
+            'deleted_at' => $this->deleted_at
                 ? $this->deleted_at->format('c')
                 : null,
-            'timezone'            => $this->created_at
+            'timezone' => $this->created_at
                 ? $this->created_at->format('T')
                 : null,
-            'billing_provider'    => BillingProvider::make($this->whenLoaded('billingProvider')),
-            'notes'               => Note::collection($this->whenLoaded('notes')),
-            'nurse_info'          => NurseInfo::make($this->whenLoaded('nurseInfo')),
-            'patient_info'        => PatientInfo::make($this->whenLoaded('patientInfo')),
-            'patient_summaries'   => PatientMonthlySummary::collection($this->whenLoaded('patientSummaries')),
-            'provider_info'       => ProviderInfo::make($this->whenLoaded('providerInfo')),
-            'primary_practice'    => Practice::make($this->whenLoaded('primaryPractice')),
-            'status'              => optional($this->carePlan)->status,
-            'is_bhi'              => $this->isBhi(),
-            'is_ccm'              => $this->isCcm(),
+            'billing_provider'  => BillingProvider::make($this->whenLoaded('billingProvider')),
+            'notes'             => Note::collection($this->whenLoaded('notes')),
+            'nurse_info'        => NurseInfo::make($this->whenLoaded('nurseInfo')),
+            'patient_info'      => PatientInfo::make($this->whenLoaded('patientInfo')),
+            'patient_summaries' => PatientMonthlySummary::collection($this->whenLoaded('patientSummaries')),
+            'provider_info'     => ProviderInfo::make($this->whenLoaded('providerInfo')),
+            'primary_practice'  => Practice::make($this->whenLoaded('primaryPractice')),
+            'status'            => optional($this->carePlan)->status,
+            'is_bhi'            => $this->isBhi(),
+            'is_ccm'            => $this->isCcm(),
         ];
 
         if ($this->relationLoaded('patientSummaries')) {

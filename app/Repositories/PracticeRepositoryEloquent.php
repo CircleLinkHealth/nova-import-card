@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Repositories;
 
 use App\Contracts\Repositories\PracticeRepository;
@@ -9,13 +13,20 @@ use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
 
 /**
- * Class PracticeRepositoryEloquent
- * @package namespace App\Repositories;
+ * Class PracticeRepositoryEloquent.
  */
 class PracticeRepositoryEloquent extends BaseRepository implements PracticeRepository
 {
     /**
-     * Specify Model class name
+     * Boot up the repository, pushing criteria.
+     */
+    public function boot()
+    {
+        $this->pushCriteria(app(RequestCriteria::class));
+    }
+
+    /**
+     * Specify Model class name.
      *
      * @return string
      */
@@ -27,13 +38,5 @@ class PracticeRepositoryEloquent extends BaseRepository implements PracticeRepos
     public function validator()
     {
         return PracticeValidator::class;
-    }
-
-    /**
-     * Boot up the repository, pushing criteria
-     */
-    public function boot()
-    {
-        $this->pushCriteria(app(RequestCriteria::class));
     }
 }

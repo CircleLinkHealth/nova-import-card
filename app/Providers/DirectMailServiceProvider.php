@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Providers;
 
 use App\Contracts\DirectMail;
@@ -10,22 +14,17 @@ class DirectMailServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the application services.
-     *
-     * @return void
      */
     public function boot()
     {
-        //
     }
 
     /**
      * Register the application services.
-     *
-     * @return void
      */
     public function register()
     {
-        $this->app->bind(DirectMail::class, function() {
+        $this->app->bind(DirectMail::class, function () {
             return new PhiMail();
         });
     }

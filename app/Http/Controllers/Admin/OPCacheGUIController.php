@@ -1,14 +1,17 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
 class OPCacheGUIController extends Controller
 {
     /**
-     * Show the status of OPCache
+     * Show the status of OPCache.
      *
      * @return View the view from amnuts/opcache-gui
      */

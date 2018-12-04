@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Unit;
 
 use App\ChargeableService;
@@ -18,42 +22,47 @@ class PageTimerControllerTest extends TestCase
         WithoutMiddleware;
 
     private $patient;
-    private $provider;
 
     /**
      * @var Practice
      */
     private $practice;
+    private $provider;
 
-    public function test_ccm_time_is_stored()
+    protected function setUp()
     {
-        $response = $this->json('POST', route('api.pagetracking'), [
-            'patientId'  => $this->patient->id,
-            'providerId' => $this->provider->id,
-            'programId'  => '',
-            'ipAddr'     => '',
-            'submitUrl'  => 'url',
-            'activities' => [
-                [
-                    'start_time'    => Carbon::now()->toDateTimeString(),
-                    'duration'      => 10,
-                    'url'           => '',
-                    'url_short'     => '',
-                    'name'          => 'Test activity',
-                    'title'         => 'some.route',
-                    'is_behavioral' => false,
-                ],
-            ],
-        ]);
+        parent::setUp();
+        $this->practice = factory(Practice::class)->create();
+        $this->provider = $this->createUser($this->practice->id, 'care-center');
+        $this->patient  = $this->createUser($this->practice->id, 'participant');
 
-        $response->assertStatus(201);
+        //fulfill conditions for patient to be BHI
+        Patient::whereUserId($this->patient->id)
+            ->update([
+                'ccm_status'   => Patient::ENROLLED,
+                'consent_date' => Carbon::now(),
+            ]);
 
-        $this->assertDatabaseHas('lv_activities', [
-            'patient_id'  => $this->patient->id,
-            'provider_id' => $this->provider->id,
-            'duration'    => 10,
-            'type'        => 'Test activity',
-        ]);
+        $defaultServices = ChargeableService::defaultServices();
+        $this->practice->chargeableServices()->sync($defaultServices->pluck('id')->all());
+
+        $cpmProblem = CpmProblem::whereIsBehavioral(true)->firstOrFail();
+
+        $this->patient
+            ->ccdProblems()
+            ->create([
+                'name'             => $cpmProblem->name,
+                'is_monitored'     => true,
+                'billable'         => true,
+                'cpm_problem_id'   => $cpmProblem->id,
+                'code'             => '12345',
+                'code_system_name' => 'ICD-10',
+                'code_system_oid'  => '2.16.840.1.113883.6.3',
+            ]);
+
+        //add provider role
+        $role = Role::where('name', 'provider')->first();
+        $this->provider->roles()->attach($role->id);
     }
 
     public function test_bhi_time_is_stored()
@@ -85,6 +94,37 @@ class PageTimerControllerTest extends TestCase
             'duration'      => 10,
             'type'          => 'Test activity',
             'is_behavioral' => true,
+        ]);
+    }
+
+    public function test_ccm_time_is_stored()
+    {
+        $response = $this->json('POST', route('api.pagetracking'), [
+            'patientId'  => $this->patient->id,
+            'providerId' => $this->provider->id,
+            'programId'  => '',
+            'ipAddr'     => '',
+            'submitUrl'  => 'url',
+            'activities' => [
+                [
+                    'start_time'    => Carbon::now()->toDateTimeString(),
+                    'duration'      => 10,
+                    'url'           => '',
+                    'url_short'     => '',
+                    'name'          => 'Test activity',
+                    'title'         => 'some.route',
+                    'is_behavioral' => false,
+                ],
+            ],
+        ]);
+
+        $response->assertStatus(201);
+
+        $this->assertDatabaseHas('lv_activities', [
+            'patient_id'  => $this->patient->id,
+            'provider_id' => $this->provider->id,
+            'duration'    => 10,
+            'type'        => 'Test activity',
         ]);
     }
 
@@ -137,43 +177,5 @@ class PageTimerControllerTest extends TestCase
         ]);
 
         $response->assertStatus(201);
-
-
-    }
-
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->practice = factory(Practice::class)->create();
-        $this->provider = $this->createUser($this->practice->id, 'care-center');
-        $this->patient  = $this->createUser($this->practice->id, 'participant');
-
-        //fulfill conditions for patient to be BHI
-        Patient::whereUserId($this->patient->id)
-               ->update([
-                   'ccm_status'   => Patient::ENROLLED,
-                   'consent_date' => Carbon::now(),
-               ]);
-
-        $defaultServices = ChargeableService::defaultServices();
-        $this->practice->chargeableServices()->sync($defaultServices->pluck('id')->all());
-
-        $cpmProblem = CpmProblem::whereIsBehavioral(true)->firstOrFail();
-
-        $this->patient
-            ->ccdProblems()
-            ->create([
-                'name'             => $cpmProblem->name,
-                'is_monitored'     => true,
-                'billable'         => true,
-                'cpm_problem_id'   => $cpmProblem->id,
-                'code'             => '12345',
-                'code_system_name' => 'ICD-10',
-                'code_system_oid'  => '2.16.840.1.113883.6.3',
-            ]);
-
-        //add provider role
-        $role = Role::where('name', 'provider')->first();
-        $this->provider->roles()->attach($role->id);
     }
 }
