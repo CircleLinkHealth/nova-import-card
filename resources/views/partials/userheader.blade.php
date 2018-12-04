@@ -137,9 +137,7 @@
 
         </div>
         <?php
-        use App\Services\CCD\CcdProblemService;
-
-        $ccdProblemService = app(CcdProblemService::class);
+        $ccdProblemService = app(App\Services\CCD\CcdProblemService::class);
 
         $ccdProblems = $ccdProblemService->getPatientProblems($patient);
 
