@@ -69,17 +69,53 @@
                                 filter = '<' + filter.toString().toLowerCase();
                                 return value.indexOf(filter) === 0;
                             }
+                            function durationTitle(obj){
+                                let title = 'CCM';
+                                if (obj.is_behavioral === 1){
+                                    title = 'BHI';
+                                }
+                                return title;
+                            }
                             webix.locale.pager = {
                                 first: "<<",// the first button
                                 last: ">>",// the last button
                                 next: ">",// the next button
                                 prev: "<"// the previous button
                             };
-                            webix.ui.datafilter.mySummColumn = webix.extend({
+                            webix.ui.datafilter.mySummColumnCCM = webix.extend({
                                 refresh: function (master, node, value) {
                                     var seconds = 0;
                                     master.data.each(function (obj) {
-                                        seconds = seconds + parseInt(obj.duration);
+                                        let test = durationTitle(obj);
+                                        if (test === 'CCM'){
+                                            seconds = seconds + parseInt(obj.duration);
+                                        }
+                                    });
+                                    var date = new Date(seconds * 1000);
+                                    var hh = Math.floor(seconds / 3600);
+                                    var mm = Math.floor(seconds / 60) % 60;
+                                    var ss = date.getSeconds();
+                                    function pad (num, count) {
+                                        count = count || 0;
+                                        const $num = num + '';
+                                        return '0'.repeat(Math.max(count - $num.length, 0)) + $num;
+                                    }
+                                    ss = pad(ss, 2)
+                                    mm = pad(mm, 2)
+                                    hh = pad(hh, 2)
+                                    var time = hh + ':' + mm + ":" + ss;
+                                    result = "<span title='" + mm + ":" + ss + "' style='float:right;'><b>" + time + "</b></span>";
+                                    node.firstChild.innerHTML = result;
+                                }
+                            }, webix.ui.datafilter.summColumn);
+                            webix.ui.datafilter.mySummColumnBHI = webix.extend({
+                                refresh: function (master, node, value) {
+                                    var seconds = 0;
+                                    master.data.each(function (obj) {
+                                        let test = durationTitle(obj);
+                                        if (test === 'BHI'){
+                                            seconds = seconds + parseInt(obj.duration);
+                                        }
                                     });
                                     var date = new Date(seconds * 1000);
                                     var hh = Math.floor(seconds / 3600);
@@ -148,12 +184,14 @@
                                     },
                                     {
                                         id: "duration",
-                                        header: ["Total", "(HH:MM:SS)"],
+                                        header: ["Total CCM", "(HH:MM:SS)"],
                                         width: 100,
                                         sort: 'string',
                                         css: {"color": "black", "text-align": "right"},
-                                        footer: {content: "mySummColumn"},
+                                        footer: {content: "mySummColumnCCM"},
                                         template: function (obj) {
+                                            var test = durationTitle(obj);
+                                            if (test === 'CCM'){
                                             var seconds = obj.duration;
                                             var date = new Date(seconds * 1000);
                                             var hh = Math.floor(seconds / 3600);
@@ -167,8 +205,47 @@
                                             ss = pad(ss, 2)
                                             mm = pad(mm, 2)
                                             hh = pad(hh, 2)
+
                                             var time = hh + ':' + mm + ":" + ss;
-                                            return "<span title=':" + mm + ":" + ss + "' style='float:right;'>" + time + "</span>";
+
+                                                return "<span title=':" + mm + ":" + ss + "' style='float:right;'>" + time +"</span>";
+                                            }else{
+                                                return "<span title=':" + mm + ":" + ss + "' style='float:right;'>" + "--" +"</span>";
+                                            }
+
+                                        }
+                                    },
+                                    {
+                                        id: "duration",
+                                        header: ["Total BHI", "(HH:MM:SS)"],
+                                        width: 100,
+                                        sort: 'string',
+                                        css: {"color": "black", "text-align": "right"},
+                                        footer: {content: "mySummColumnBHI"},
+                                        template: function (obj) {
+                                            var test = durationTitle(obj);
+                                            if (test === 'BHI'){
+                                            var seconds = obj.duration;
+                                            var date = new Date(seconds * 1000);
+                                            var hh = Math.floor(seconds / 3600);
+                                            var mm = Math.floor(seconds / 60) % 60;
+                                            var ss = date.getSeconds();
+                                            function pad (num, count) {
+                                                count = count || 0;
+                                                const $num = num + '';
+                                                return '0'.repeat(Math.max(count - $num.length, 0)) + $num;
+                                            }
+                                            ss = pad(ss, 2)
+                                            mm = pad(mm, 2)
+                                            hh = pad(hh, 2)
+
+                                            var time = hh + ':' + mm + ":" + ss;
+
+                                                return "<span title=':" + mm + ":" + ss + "' style='float:right;'>" + time +"</span>";
+                                            }else{
+                                                return "<span title=':" + mm + ":" + ss + "' style='float:right;'>" + "--" +"</span>";
+                                            }
+
                                         }
                                     }
                                 ],
