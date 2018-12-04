@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\unit;
 
 use App\Call;
@@ -21,68 +25,66 @@ class NurseScheduledCallsTest extends TestCase
         parent::setUp();
 
         $this->practice = factory(Practice::class)->create();
-        $this->nurse = $this->createUser($this->practice->id, 'care-center');
-        $this->patient = $this->createUser($this->practice->id, 'participant');
+        $this->nurse    = $this->createUser($this->practice->id, 'care-center');
+        $this->patient  = $this->createUser($this->practice->id, 'participant');
     }
 
     /**
      * Test it gets calls (scheduled, reached, not reached) for today.
-     *
-     * @return void
      */
-    public function testDailyReport()
+    public function test_daily_report()
     {
         $call1 = Call::create([
-            'status' => 'scheduled',
-            'inbound_cpm_id' => $this->patient->id,
+            'status'          => 'scheduled',
+            'inbound_cpm_id'  => $this->patient->id,
             'outbound_cpm_id' => $this->nurse->id,
-            'called_date' => null,
-            'scheduled_date' => Carbon::today()->toDateString(),
+            'called_date'     => null,
+            'scheduled_date'  => Carbon::today()->toDateString(),
         ]);
 
         $call2 = Call::create([
-            'status' => 'not reached',
-            'inbound_cpm_id' => $this->patient->id,
+            'status'          => 'not reached',
+            'inbound_cpm_id'  => $this->patient->id,
             'outbound_cpm_id' => $this->nurse->id,
-            'called_date' => Carbon::yesterday()->toDateTimeString(),
-            'scheduled_date' => Carbon::today()->toDateString(),
+            'called_date'     => Carbon::yesterday()->toDateTimeString(),
+            'scheduled_date'  => Carbon::today()->toDateString(),
         ]);
 
         $call3 = Call::create([
-            'status' => 'scheduled',
-            'inbound_cpm_id' => $this->patient->id,
+            'status'          => 'scheduled',
+            'inbound_cpm_id'  => $this->patient->id,
             'outbound_cpm_id' => $this->nurse->id,
-            'called_date' => null,
-            'scheduled_date' => Carbon::today()->toDateString(),
+            'called_date'     => null,
+            'scheduled_date'  => Carbon::today()->toDateString(),
         ]);
 
         $call4 = Call::create([
-            'status' => 'reached',
-            'inbound_cpm_id' => $this->patient->id,
+            'status'          => 'reached',
+            'inbound_cpm_id'  => $this->patient->id,
             'outbound_cpm_id' => $this->nurse->id,
-            'called_date' => Carbon::yesterday()->toDateTimeString(),
-            'scheduled_date' => Carbon::today()->toDateString(),
+            'called_date'     => Carbon::yesterday()->toDateTimeString(),
+            'scheduled_date'  => Carbon::today()->toDateString(),
         ]);
 
         $call5 = Call::create([
-            'status' => 'reached',
-            'inbound_cpm_id' => $this->patient->id,
+            'status'          => 'reached',
+            'inbound_cpm_id'  => $this->patient->id,
             'outbound_cpm_id' => $this->nurse->id,
-            'called_date' => Carbon::now()->toDateTimeString(),
-            'scheduled_date' => Carbon::today()->toDateString(),
+            'called_date'     => Carbon::now()->toDateTimeString(),
+            'scheduled_date'  => Carbon::today()->toDateString(),
         ]);
 
         $call6 = Call::create([
-            'status' => 'dropped',
-            'inbound_cpm_id' => $this->patient->id,
+            'status'          => 'dropped',
+            'inbound_cpm_id'  => $this->patient->id,
             'outbound_cpm_id' => $this->nurse->id,
-            'called_date' => null,
-            'scheduled_date' => Carbon::today()->toDateString(),
+            'called_date'     => null,
+            'scheduled_date'  => Carbon::today()->toDateString(),
         ]);
 
-        $scheduledCallCount = $this->nurse->countScheduledCallsForToday();
+        $scheduledCallCount  = $this->nurse->countScheduledCallsForToday();
         $successfulCallCount = $this->nurse->countSuccessfulCallsMadeToday();
-        $completedCallCount = $this->nurse->countCompletedCallsForToday();
+        $completedCallCount  = $this->nurse->countCompletedCallsForToday();
 
         $this->assertEquals(4, $scheduledCallCount);
         $this->assertEquals(1, $successfulCallCount);
@@ -91,10 +93,8 @@ class NurseScheduledCallsTest extends TestCase
 
     /**
      * Test it returns 0 when there are no scheduled calls for today.
-     *
-     * @return void
      */
-    public function testNoScheduledCallsForToday()
+    public function test_no_scheduled_calls_for_today()
     {
         $calls = $this->nurse->countScheduledCallsForToday();
 

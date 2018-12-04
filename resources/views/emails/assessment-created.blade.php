@@ -1,7 +1,7 @@
 <div>
     <?php
 
-    $patient          = $assessment->patient()->first();
+    $patient      = $assessment->patient()->first();
         $approver = $assessment->approver()->first();
     ?>
     <p>

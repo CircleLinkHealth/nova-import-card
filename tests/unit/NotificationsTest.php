@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Unit;
 
 use App\Notifications\CarePlanApprovalReminder;
@@ -22,19 +26,54 @@ class NotificationsTest extends TestCase
     use CarePlanHelpers,
         SetupTestCustomer;
 
-    protected $patient;
-
-    protected $nurse;
+    protected $channels;
 
     protected $location;
 
-    protected $practice;
+    protected $nurse;
+
+    protected $patient;
 
     protected $patients;
 
-    protected $channels;
+    protected $practice;
 
     protected $provider;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->channels = $channels = [
+            DirectMailChannel::class,
+            FaxChannel::class,
+            DatabaseChannel::class,
+        ];
+
+        $data = $this->createTestCustomerData(1);
+
+        $this->practice = $data['practice'];
+        $this->location = $data['location'];
+        $this->patients = $data['patients'];
+        $this->provider = $data['provider'];
+
+        $this->nurse   = $this->createUser($this->practice->id, 'care-center');
+        $this->patient = $this->patients->first();
+
+        $carePerson = $this->patient->careTeamMembers()->create([
+            'member_user_id' => $this->nurse->id,
+            'type'           => 'member',
+            'alert'          => 1,
+        ]);
+
+        $this->patient->notes()->create([
+            'author_id'    => $this->nurse->id,
+            'body'         => 'test',
+            'logger_id'    => $this->nurse->id,
+            'performed_at' => Carbon::now(),
+            'type'         => 'Patient Consented',
+        ]);
+    }
 
     public function test_it_sends_careplan_approval_reminder()
     {
@@ -58,12 +97,12 @@ class NotificationsTest extends TestCase
             CarePlanApprovalReminder::class,
             function ($notification, $channels) use ($reminder) {
                 $mailData = $notification->toMail($this->provider)->build();
-                $this->assertEquals("5 CircleLink Care Plan(s) for your Approval!", $mailData->subject);
-                $this->assertEquals("CircleLink Health", $mailData->from[0]['name']);
-                $this->assertEquals("notifications@careplanmanager.com", $mailData->from[0]['address']);
+                $this->assertEquals('5 CircleLink Care Plan(s) for your Approval!', $mailData->subject);
+                $this->assertEquals('CircleLink Health', $mailData->from[0]['name']);
+                $this->assertEquals('notifications@careplanmanager.com', $mailData->from[0]['address']);
                 $this->assertEquals("{$this->provider->getFullName()}", $mailData->to[0]['name']);
                 $this->assertEquals("{$this->provider->email}", $mailData->to[0]['address']);
-                $this->assertEquals("emails.careplansPendingApproval", $mailData->view);
+                $this->assertEquals('emails.careplansPendingApproval', $mailData->view);
 
                 return $notification->id === $reminder->id;
             }
@@ -93,27 +132,25 @@ class NotificationsTest extends TestCase
             function ($notification, $channels) use ($carePlanApproved) {
                 $mailData = $notification->toMail($this->location);
 
-                $this->assertEquals("A CarePlan has just been approved", $mailData->subject);
-                $this->assertEquals("CircleLink Health", $mailData->from[1]);
-                $this->assertEquals("no-reply@circlelinkhealth.com", $mailData->from[0]);
-                $this->assertEquals("raph@circlelinkhealth.com", $mailData->bcc[0][0]);
-                $this->assertEquals("vendor.notifications.email", $mailData->view);
+                $this->assertEquals('A CarePlan has just been approved', $mailData->subject);
+                $this->assertEquals('CircleLink Health', $mailData->from[1]);
+                $this->assertEquals('no-reply@circlelinkhealth.com', $mailData->from[0]);
+                $this->assertEquals('raph@circlelinkhealth.com', $mailData->bcc[0][0]);
+                $this->assertEquals('vendor.notifications.email', $mailData->view);
                 $this->assertEquals("Please click below button to see a Care Plan regarding one of your patients, which was approved on {$this->patient->carePlan->provider_date->toFormattedDateString()} by ", $mailData->viewData['greeting']);
-                $this->assertEquals("View CarePlan", $mailData->viewData['actionText']);
+                $this->assertEquals('View CarePlan', $mailData->viewData['actionText']);
 
                 return $notification->id === $carePlanApproved->id;
             }
         );
     }
+
     /**
      * A basic test example.
-     *
-     * @return void
      */
     public function tests_other_notifications()
     {
         Notification::fake();
-
 
         $this->location->notify(new NoteForwarded($this->patient->notes()->first(), $this->channels));
 
@@ -123,7 +160,6 @@ class NotificationsTest extends TestCase
             [$this->provider],
             ResetPassword::class
         );
-
 
         $this->provider->notify(new WeeklyPracticeReport([], 'test'));
         Notification::assertSentTo(
@@ -136,41 +172,5 @@ class NotificationsTest extends TestCase
             [$this->provider],
             WeeklyProviderReport::class
         );
-    }
-
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->channels = $channels = [
-            DirectMailChannel::class,
-            FaxChannel::class,
-            DatabaseChannel::class,
-        ];
-
-        $data = $this->createTestCustomerData(1);
-
-        $this->practice = $data['practice'];
-        $this->location = $data['location'];
-        $this->patients = $data['patients'];
-        $this->provider = $data['provider'];
-
-        $this->nurse = $this->createUser($this->practice->id, 'care-center');
-        $this->patient = $this->patients->first();
-
-        $carePerson = $this->patient->careTeamMembers()->create([
-            'member_user_id' => $this->nurse->id,
-            'type'           => 'member',
-            'alert'          => 1,
-
-        ]);
-
-        $this->patient->notes()->create([
-            'author_id'    => $this->nurse->id,
-            'body'         => 'test',
-            'logger_id'    => $this->nurse->id,
-            'performed_at' => Carbon::now(),
-            'type'         => 'Patient Consented',
-        ]);
     }
 }

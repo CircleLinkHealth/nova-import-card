@@ -1,30 +1,36 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Unit;
 
+use App\Notifications\SAAS\SendInternalUserSignupInvitation;
+use App\Practice;
 use App\Role;
 use App\SaasAccount;
 use App\User;
-use App\Notifications\SAAS\SendInternalUserSignupInvitation;
-use App\Practice;
-use Faker\Factory;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Notification;
 use Tests\Helpers\UserHelpers;
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class AddNewSaasAccountTest
 {
     use UserHelpers, WithFaker;
-    private $adminUser;
     private $adminPractice;
+    private $adminUser;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->adminPractice = factory(Practice::class)->create([]);
+        $this->adminUser     = $this->createUser($this->adminPractice->id, 'administrator');
+    }
 
     /**
      * A basic test example.
-     *
-     * @return void
      */
     //  commenting out because it doesn't run with sqlite. Michalis says no point fixing as we don't use saas.
 //    public function test_flow()
@@ -52,7 +58,7 @@ class AddNewSaasAccountTest
 
         $response->assertStatus(200);
 
-        $user = User::whereEmail($adminEmails[0])->first();
+        $user        = User::whereEmail($adminEmails[0])->first();
         $saasAccount = SaasAccount::whereName($name)->first();
 
         $this->assertNotNull($saasAccount);
@@ -65,18 +71,10 @@ class AddNewSaasAccountTest
             SendInternalUserSignupInvitation::class
         );
 
-        $result = new \stdClass();
-        $result->user = $user;
+        $result              = new \stdClass();
+        $result->user        = $user;
         $result->saasAccount = $saasAccount;
 
         return $result;
-    }
-
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->adminPractice = factory(Practice::class)->create([]);
-        $this->adminUser     = $this->createUser($this->adminPractice->id, 'administrator');
     }
 }

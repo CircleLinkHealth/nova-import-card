@@ -1,40 +1,36 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Unit;
 
-use App\User;
 use App\Practice;
+use App\User;
 use Carbon\Carbon;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class PracticeInvoiceTest extends TestCase
 {
+    private $date;
     private $patient;
     private $practice;
-    private $date;
-
-
-    /**
-     * A basic test example.
-     *
-     * @return void
-     */
-    public function test_a_practice_has_a_chargeable_service()
-    {
-        $this->assertTrue(true);
-    }
-
-
-
 
     public function setUp()
     {
         parent::setUp();
 
         $this->patient  = factory(User::class)->create();
-        $this->practice  = factory(Practice::class)->create();
-        $this->date  = new Carbon('2017-08-01');
+        $this->practice = factory(Practice::class)->create();
+        $this->date     = new Carbon('2017-08-01');
+    }
+
+    /**
+     * A basic test example.
+     */
+    public function test_a_practice_has_a_chargeable_service()
+    {
+        $this->assertTrue(true);
     }
 }

@@ -1,14 +1,13 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Unit;
 
-use App\Importer\Section\Importers\Medications;
-use App\Models\MedicalRecords\ImportedMedicalRecord;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ConsolidatedMedicationTest extends TestCase
 {
@@ -16,10 +15,8 @@ class ConsolidatedMedicationTest extends TestCase
 
     /**
      * A basic test example.
-     *
-     * @return void
      */
-    public function testExample()
+    public function test_example()
     {
         //cannot test because no ImportedMedicalRecords exists in sqlite
 

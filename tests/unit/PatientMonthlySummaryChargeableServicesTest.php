@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Unit;
 
 use App\Http\Resources\ApprovableBillablePatient;
@@ -20,17 +24,24 @@ class PatientMonthlySummaryChargeableServicesTest extends TestCase
     use UserHelpers,
         WithoutMiddleware,
         WithFaker;
+    private $monthYear;
+    private $patient;
 
     private $practice;
-    private $patient;
     private $service;
     private $summary;
-    private $monthYear;
 
+    protected function setUp()
+    {
+        parent::setUp();
 
-    /**
-     *
-     */
+        $this->practice  = factory(Practice::class)->create();
+        $this->patient   = $this->createUser($this->practice->id, 'participant');
+        $this->service   = app(ApproveBillablePatientsService::class);
+        $this->summary   = $this->createMonthlySummary($this->patient, Carbon::now(), 1400);
+        $this->monthYear = Carbon::now()->startOfMonth()->toDateString();
+    }
+
     public function test_it_updates_practice_default_service()
     {
         $practice = $this->practice;
@@ -46,16 +57,11 @@ class PatientMonthlySummaryChargeableServicesTest extends TestCase
         $response->assertStatus(200);
     }
 
-    /**
-     *
-     *
-     */
     public function test_it_updates_summary_chargeable_services()
     {
         $practice = $this->practice;
         $patient  = $this->patient;
         $services = [1, 2];
-
 
         $response = $this
             ->json('POST', route('monthly.billing.summary.services'), [
@@ -70,31 +76,12 @@ class PatientMonthlySummaryChargeableServicesTest extends TestCase
     }
 
     /**
-     * Create a patient monthly summary
-     *
-     * @param User $patient
-     * @param Carbon $monthYear
-     * @param $ccmTime
-     *
-     * @return PatientMonthlySummary
-     */
-    private function createMonthlySummary(User $patient, Carbon $monthYear, $ccmTime)
-    {
-        return $patient->patientSummaries()->updateOrCreate(
-            [
-            'month_year' => $monthYear->startOfMonth(),
-        ],
-            ['ccm_time' => $ccmTime,]
-        );
-    }
-
-    /**
-     * Assert patient monthly summary
+     * Assert patient monthly summary.
      *
      * @param PatientMonthlySummary $summary
-     * @param Problem $problem1
-     * @param Problem $problem2
-     * @param Collection $list
+     * @param Problem               $problem1
+     * @param Problem               $problem2
+     * @param Collection            $list
      */
     private function assertMonthlySummary(
         PatientMonthlySummary $summary,
@@ -106,7 +93,7 @@ class PatientMonthlySummaryChargeableServicesTest extends TestCase
         $problem1 = $problem1->fresh();
         $problem2 = $problem2->fresh();
 
-        $this->assertTrue($list->count() == 1);
+        $this->assertTrue(1 == $list->count());
 
         $row = (new ApprovableBillablePatient($list->first()))->resolve();
 
@@ -118,20 +105,28 @@ class PatientMonthlySummaryChargeableServicesTest extends TestCase
         $this->assertEquals($row['problem2'], $problem2->name);
         $this->assertEquals($row['problem2_code'], $problem2->icd10Code());
 
-        $this->assertTrue((boolean)$problem1->billable);
-        $this->assertTrue((boolean)$problem2->billable);
+        $this->assertTrue((bool) $problem1->billable);
+        $this->assertTrue((bool) $problem2->billable);
 
-        $this->assertTrue($this->patient->ccdProblems()->whereBillable(true)->count() == 2);
+        $this->assertTrue(2 == $this->patient->ccdProblems()->whereBillable(true)->count());
     }
 
-    protected function setUp()
+    /**
+     * Create a patient monthly summary.
+     *
+     * @param User   $patient
+     * @param Carbon $monthYear
+     * @param $ccmTime
+     *
+     * @return PatientMonthlySummary
+     */
+    private function createMonthlySummary(User $patient, Carbon $monthYear, $ccmTime)
     {
-        parent::setUp();
-
-        $this->practice  = factory(Practice::class)->create();
-        $this->patient   = $this->createUser($this->practice->id, 'participant');
-        $this->service   = app(ApproveBillablePatientsService::class);
-        $this->summary   = $this->createMonthlySummary($this->patient, Carbon::now(), 1400);
-        $this->monthYear = Carbon::now()->startOfMonth()->toDateString();
+        return $patient->patientSummaries()->updateOrCreate(
+            [
+                'month_year' => $monthYear->startOfMonth(),
+            ],
+            ['ccm_time' => $ccmTime]
+        );
     }
 }

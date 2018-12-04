@@ -13,7 +13,6 @@ use App\User;
 use Carbon\Carbon;
 use Faker\Factory;
 use Laravel\Dusk\Browser;
-use Maknz\Slack\Facades\Slack;
 
 trait CarePlanHelpers
 {

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Unit;
 
 use App\Services\AthenaAPI\Calls;
@@ -17,10 +21,42 @@ class AthenaApiCallsTest extends TestCase
      * @var Calls
      */
     private $api;
-    private $athenaPatientId;
-    private $fakePatient;
     private $athenaDepartmentId;
+    private $athenaPatientId;
     private $athenaPracticeId;
+    private $fakePatient;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->api = new Calls();
+
+        $this->athenaPracticeId   = 195900;
+        $this->athenaDepartmentId = 1;
+        $this->fakePatient        = $this->fakePatient();
+        $this->athenaPatientId    = $this->createAthenaApiPatient($this->fakePatient);
+    }
+
+    public function test_it_creates_and_gets_patient_appointments()
+    {
+        //creates slot and appointment
+        $appointment = $this->createNewAthenaAppointment();
+
+        //retrieves all patient appointments
+        $patientAppointments = $this->api->getPatientAppointments($this->athenaPracticeId, $this->athenaPatientId);
+
+        $this->assertTrue(is_array($patientAppointments));
+
+        //test appointment notes
+        $note = $this->addAppointmentNote($appointment[0]['appointmentid']);
+
+        $this->assertTrue(is_array($note));
+
+        $appointmentNotes = $this->api->getAppointmentNotes($this->athenaPracticeId, $appointment[0]['appointmentid']);
+
+        $this->assertTrue(is_array($appointmentNotes));
+    }
 
     public function test_it_gets_problems()
     {
@@ -56,133 +92,13 @@ class AthenaApiCallsTest extends TestCase
         $this->assertEquals(0, $response['totalcount']);
     }
 
-    public function test_it_creates_and_gets_patient_appointments()
+    private function addAppointmentNote($appointmentId)
     {
-        //creates slot and appointment
-        $appointment = $this->createNewAthenaAppointment();
+        $noteText = 'TEST';
 
-        //retrieves all patient appointments
-        $patientAppointments = $this->api->getPatientAppointments($this->athenaPracticeId, $this->athenaPatientId);
+        $response = $this->api->postAppointmentNotes($this->athenaPracticeId, $appointmentId, $noteText);
 
-        $this->assertTrue(is_array($patientAppointments));
-
-
-        //test appointment notes
-        $note = $this->addAppointmentNote($appointment[0]['appointmentid']);
-
-        $this->assertTrue(is_array($note));
-
-        $appointmentNotes = $this->api->getAppointmentNotes($this->athenaPracticeId, $appointment[0]['appointmentid']);
-
-        $this->assertTrue(is_array($appointmentNotes));
-    }
-
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->api = new Calls();
-
-        $this->athenaPracticeId   = 195900;
-        $this->athenaDepartmentId = 1;
-        $this->fakePatient        = $this->fakePatient();
-        $this->athenaPatientId    = $this->createAthenaApiPatient($this->fakePatient);
-    }
-
-    private function fakeProblem($snomedCode, $athenaPatientId, $athenaPracticeId)
-    {
-        $problem = new Problem();
-        $problem->setDepartmentId(1);
-        $problem->setPracticeId($athenaPracticeId);
-        $problem->setPatientId($athenaPatientId);
-        $problem->setSnomedCode($snomedCode);
-        $problem->setStatus('CHRONIC');
-
-        return $problem;
-    }
-
-    private function fakePatient()
-    {
-        $patient = new Patient();
-        $patient->setPracticeId(195900);
-        $patient->setDepartmentId(1);
-        $patient->setFirstName($this->faker()->firstName());
-        $patient->setLastName($this->faker()->lastName);
-        $patient->setDob(Carbon::now()->subYear(50));
-        $patient->setAddress1($this->faker()->streetAddress);
-        $patient->setAddress2('Apt 123');
-        $patient->setCity($this->faker()->city);
-        $patient->setState($this->faker()->randomElement(['NY', 'NJ', 'AR', 'CA']));
-        $patient->setZip('07601');
-        $patient->setGender($this->faker()->randomElement(['F', 'M']));
-        $patient->setHomePhone('2014445555');
-        $patient->setMobilePhone('2012223333');
-
-        return $patient;
-    }
-
-    private function createAthenaApiPatient()
-    {
-        $patients = $this->api->createNewPatient($this->fakePatient);
-
-        $this->assertTrue(is_array($patients));
-
-        if (array_key_exists(0, $patients)) {
-            $this->assertTrue(true);
-
-            return $patients[0]['patientid'];
-        }
-
-        $this->assertTrue(false);
-    }
-
-
-    private function createAppointmentSlot()
-    {
-        $providerId      = '86';
-        $reasonId        = '962';
-        $appointmentDate = Carbon::now()->addMonth()->toDateString();
-        $appointmentTime = '11:00';
-
-
-        $response = $this->api->createNewAppointmentSlot(
-            $this->athenaPracticeId,
-            $this->athenaDepartmentId,
-            $providerId,
-            $reasonId,
-            $appointmentDate,
-            $appointmentTime
-        );
-
-        $appointmentId = '';
-
-        foreach ($response as $id => $appointments) {
-            foreach ($appointments as $appointment => $time) {
-                $appointmentId = $appointment;
-            }
-        }
-
-        return $appointmentId;
-    }
-
-    private function createNewAthenaAppointment()
-    {
-        $providerId = '86';
-        $reasonId   = '962';
-
-        $appointmentId = $this->createAppointmentSlot();
-
-
-        $response = $this->api->createNewAppointment(
-            $this->athenaPracticeId,
-            $this->athenaDepartmentId,
-            $this->athenaPatientId,
-            $providerId,
-            $appointmentId,
-            $reasonId
-        );
-
-        if (array_key_exists(0, $response)) {
+        if (array_key_exists('success', $response)) {
             $this->assertTrue(true);
 
             return $response;
@@ -206,18 +122,102 @@ class AthenaApiCallsTest extends TestCase
         return $problem['problemid'];
     }
 
-    private function addAppointmentNote($appointmentId)
+    private function createAppointmentSlot()
     {
-        $noteText = 'TEST';
+        $providerId      = '86';
+        $reasonId        = '962';
+        $appointmentDate = Carbon::now()->addMonth()->toDateString();
+        $appointmentTime = '11:00';
 
-        $response = $this->api->postAppointmentNotes($this->athenaPracticeId, $appointmentId, $noteText);
+        $response = $this->api->createNewAppointmentSlot(
+            $this->athenaPracticeId,
+            $this->athenaDepartmentId,
+            $providerId,
+            $reasonId,
+            $appointmentDate,
+            $appointmentTime
+        );
 
-        if (array_key_exists('success', $response)) {
+        $appointmentId = '';
+
+        foreach ($response as $id => $appointments) {
+            foreach ($appointments as $appointment => $time) {
+                $appointmentId = $appointment;
+            }
+        }
+
+        return $appointmentId;
+    }
+
+    private function createAthenaApiPatient()
+    {
+        $patients = $this->api->createNewPatient($this->fakePatient);
+
+        $this->assertTrue(is_array($patients));
+
+        if (array_key_exists(0, $patients)) {
+            $this->assertTrue(true);
+
+            return $patients[0]['patientid'];
+        }
+
+        $this->assertTrue(false);
+    }
+
+    private function createNewAthenaAppointment()
+    {
+        $providerId = '86';
+        $reasonId   = '962';
+
+        $appointmentId = $this->createAppointmentSlot();
+
+        $response = $this->api->createNewAppointment(
+            $this->athenaPracticeId,
+            $this->athenaDepartmentId,
+            $this->athenaPatientId,
+            $providerId,
+            $appointmentId,
+            $reasonId
+        );
+
+        if (array_key_exists(0, $response)) {
             $this->assertTrue(true);
 
             return $response;
         }
 
         $this->assertTrue(false);
+    }
+
+    private function fakePatient()
+    {
+        $patient = new Patient();
+        $patient->setPracticeId(195900);
+        $patient->setDepartmentId(1);
+        $patient->setFirstName($this->faker()->firstName());
+        $patient->setLastName($this->faker()->lastName);
+        $patient->setDob(Carbon::now()->subYear(50));
+        $patient->setAddress1($this->faker()->streetAddress);
+        $patient->setAddress2('Apt 123');
+        $patient->setCity($this->faker()->city);
+        $patient->setState($this->faker()->randomElement(['NY', 'NJ', 'AR', 'CA']));
+        $patient->setZip('07601');
+        $patient->setGender($this->faker()->randomElement(['F', 'M']));
+        $patient->setHomePhone('2014445555');
+        $patient->setMobilePhone('2012223333');
+
+        return $patient;
+    }
+
+    private function fakeProblem($snomedCode, $athenaPatientId, $athenaPracticeId)
+    {
+        $problem = new Problem();
+        $problem->setDepartmentId(1);
+        $problem->setPracticeId($athenaPracticeId);
+        $problem->setPatientId($athenaPatientId);
+        $problem->setSnomedCode($snomedCode);
+        $problem->setStatus('CHRONIC');
+
+        return $problem;
     }
 }

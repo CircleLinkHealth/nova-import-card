@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\unit;
 
 use App\CarePerson;
@@ -22,17 +26,6 @@ class CarePlanProviderApprovalTest extends TestCase
         UserHelpers;
 
     /**
-     * @var
-     */
-    protected $patient;
-    protected $practice;
-
-    /**
-     * @var User $provider
-     */
-    protected $provider;
-
-    /**
      * @var CarePlan
      */
     protected $carePlan;
@@ -42,9 +35,73 @@ class CarePlanProviderApprovalTest extends TestCase
      */
     protected $location;
 
+    /**
+     * @var
+     */
+    protected $patient;
+    protected $practice;
+
+    /**
+     * @var User
+     */
+    protected $provider;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        //Setup Practice and Location
+        $this->practice = factory(Practice::class)->create();
+        $this->location = factory(Location::class)->create([
+            'practice_id' => $this->practice->id,
+        ]);
+
+        //Setup Practice Settings
+        $settings                    = $this->practice->cpmSettings();
+        $settings->efax_pdf_careplan = true;
+        $settings->dm_pdf_careplan   = true;
+        $settings->save();
+
+        //Setup Provider
+        $this->provider = $this->createUser($this->practice->id);
+        auth()->login($this->provider);
+
+        //Setup Patient and CarePlan
+        $this->patient = $this->createUser($this->practice->id, 'participant');
+        $this->patient->setPreferredContactLocation($this->location->id);
+        $this->patient->patientInfo->save();
+
+        $this->carePlan = $this->patient->carePlan;
+    }
+
+    public function test_care_center_can_qa_approve()
+    {
+        $careCenter = $this->createUser($this->practice->id, 'care-center');
+        auth()->login($careCenter);
+
+        $response = $this->get(route('patient.careplan.print', [
+            'patientId' => $this->patient->id,
+        ]))
+            ->assertSee('Approve');
+    }
+
+    public function test_care_center_cannot_approve()
+    {
+        $careCenter = $this->createUser($this->practice->id, 'care-center');
+        auth()->login($careCenter);
+
+        $this->patient->carePlan->status = CarePlan::QA_APPROVED;
+        $this->patient->carePlan->save();
+
+        $response = $this->get(route('patient.careplan.print', [
+            'patientId' => $this->patient->id,
+        ]))
+            ->assertDontSee('Approve');
+    }
+
     public function test_careplan_validation()
     {
-        $validator   = $this->carePlan->validator();
+        $validator = $this->carePlan->validator();
 
         $this->assertTrue($validator->fails());
         $this->assertEquals(
@@ -57,9 +114,9 @@ class CarePlanProviderApprovalTest extends TestCase
 
         $cpmProblems = CpmProblem::get();
         $ccdProblems = $this->patient->ccdProblems()->createMany([
-            ['name' => 'test' . str_random(5)],
-            ['name' => 'test' . str_random(5)],
-            ['name' => 'test' . str_random(5)],
+            ['name' => 'test'.str_random(5)],
+            ['name' => 'test'.str_random(5)],
+            ['name' => 'test'.str_random(5)],
         ]);
 
         foreach ($ccdProblems as $problem) {
@@ -81,90 +138,13 @@ class CarePlanProviderApprovalTest extends TestCase
 
         $this->patient->save();
 
-
         $validator = $this->carePlan->validator();
 
         $this->assertTrue($validator->passes());
     }
 
-    public function test_provider_cannot_qa_approve()
-    {
-        $response = $this->get(route('patient.careplan.print', [
-            'patientId' => $this->patient->id,
-        ]))
-                         ->assertDontSee('Approve');
-    }
-
-    public function test_provider_can_approve()
-    {
-        $this->patient->carePlan->status = CarePlan::QA_APPROVED;
-        $this->patient->carePlan->save();
-
-        $response = $this->get(route('patient.careplan.print', [
-            'patientId' => $this->patient->id,
-        ]))
-                         ->assertSee('Approve');
-    }
-
-    public function test_medical_assistant_can_approve()
-    {
-        $medicalAssistant = $this->createUser($this->practice->id, 'med_assistant');
-        auth()->login($medicalAssistant);
-
-        $this->patient->carePlan->status = CarePlan::QA_APPROVED;
-        $this->patient->carePlan->save();
-
-        $response = $this->get(route('patient.careplan.print', [
-            'patientId' => $this->patient->id,
-        ]))
-                         ->assertSee('Approve');
-    }
-
-    public function test_r_n_can_approve()
-    {
-        $rn = $this->createUser($this->practice->id, 'registered-nurse');
-
-        $careplanApprove = Permission::where('name', 'care-plan-approve')->first();
-        $rn->attachPermission($careplanApprove->id);
-
-        auth()->login($rn);
-
-        $this->patient->carePlan->status = CarePlan::QA_APPROVED;
-        $this->patient->carePlan->save();
-
-        $response = $this->get(route('patient.careplan.print', [
-            'patientId' => $this->patient->id,
-        ]))
-                         ->assertSee('Approve');
-    }
-
-    public function test_care_center_cannot_approve()
-    {
-        $careCenter = $this->createUser($this->practice->id, 'care-center');
-        auth()->login($careCenter);
-
-        $this->patient->carePlan->status = CarePlan::QA_APPROVED;
-        $this->patient->carePlan->save();
-
-        $response = $this->get(route('patient.careplan.print', [
-            'patientId' => $this->patient->id,
-        ]))
-                         ->assertDontSee('Approve');
-    }
-
-    public function test_care_center_can_qa_approve()
-    {
-        $careCenter = $this->createUser($this->practice->id, 'care-center');
-        auth()->login($careCenter);
-
-        $response = $this->get(route('patient.careplan.print', [
-            'patientId' => $this->patient->id,
-        ]))
-                         ->assertSee('Approve');
-    }
-
     /**
-     * Test that a CarePlan is forwarded to a location
+     * Test that a CarePlan is forwarded to a location.
      */
     public function test_it_forwards_careplan_to_location()
     {
@@ -200,31 +180,54 @@ class CarePlanProviderApprovalTest extends TestCase
         $this->assertTrue(Carbon::now()->isSameDay($this->carePlan->provider_date));
     }
 
-    protected function setUp()
+    public function test_medical_assistant_can_approve()
     {
-        parent::setUp();
+        $medicalAssistant = $this->createUser($this->practice->id, 'med_assistant');
+        auth()->login($medicalAssistant);
 
-        //Setup Practice and Location
-        $this->practice = factory(Practice::class)->create();
-        $this->location = factory(Location::class)->create([
-            'practice_id' => $this->practice->id,
-        ]);
+        $this->patient->carePlan->status = CarePlan::QA_APPROVED;
+        $this->patient->carePlan->save();
 
-        //Setup Practice Settings
-        $settings                    = $this->practice->cpmSettings();
-        $settings->efax_pdf_careplan = true;
-        $settings->dm_pdf_careplan   = true;
-        $settings->save();
+        $response = $this->get(route('patient.careplan.print', [
+            'patientId' => $this->patient->id,
+        ]))
+            ->assertSee('Approve');
+    }
 
-        //Setup Provider
-        $this->provider = $this->createUser($this->practice->id);
-        auth()->login($this->provider);
+    public function test_provider_can_approve()
+    {
+        $this->patient->carePlan->status = CarePlan::QA_APPROVED;
+        $this->patient->carePlan->save();
 
-        //Setup Patient and CarePlan
-        $this->patient                                          = $this->createUser($this->practice->id, 'participant');
-        $this->patient->setPreferredContactLocation($this->location->id);
-        $this->patient->patientInfo->save();
+        $response = $this->get(route('patient.careplan.print', [
+            'patientId' => $this->patient->id,
+        ]))
+            ->assertSee('Approve');
+    }
 
-        $this->carePlan = $this->patient->carePlan;
+    public function test_provider_cannot_qa_approve()
+    {
+        $response = $this->get(route('patient.careplan.print', [
+            'patientId' => $this->patient->id,
+        ]))
+            ->assertDontSee('Approve');
+    }
+
+    public function test_r_n_can_approve()
+    {
+        $rn = $this->createUser($this->practice->id, 'registered-nurse');
+
+        $careplanApprove = Permission::where('name', 'care-plan-approve')->first();
+        $rn->attachPermission($careplanApprove->id);
+
+        auth()->login($rn);
+
+        $this->patient->carePlan->status = CarePlan::QA_APPROVED;
+        $this->patient->carePlan->save();
+
+        $response = $this->get(route('patient.careplan.print', [
+            'patientId' => $this->patient->id,
+        ]))
+            ->assertSee('Approve');
     }
 }

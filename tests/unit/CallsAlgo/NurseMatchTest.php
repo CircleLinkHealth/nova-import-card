@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Unit\CallsAlgo;
 
 use App\Algorithms\Calls\CallAlgoHelper;
@@ -9,19 +13,32 @@ use Tests\TestCase;
 
 class NurseMatchTest extends TestCase
 {
-    private $nurse;
-    private $nurse2;
-    private $practice;
-
-    private $patient;
-
-    private $prediction = [];
-    private $matchArray = [];
-
     use UserHelpers,
         CallAlgoHelper;
+    private $matchArray = [];
+    private $nurse;
+    private $nurse2;
 
-    public function testNursesMatchTest()
+    private $patient;
+    private $practice;
+
+    private $prediction = [];
+
+    public function createPatientWindows()
+    {
+        for ($i = 1; $i < 6; ++$i) {
+            $windows[] = $this->createWindowForPatient(
+                $this->patient,
+                Carbon::parse('10:00:00'),
+                Carbon::parse('17:00:00'),
+                $i
+            );
+        }
+
+        return $windows;
+    }
+
+    public function test_nurses_match_test()
     {
         //init mock algo predictions
         $this->prediction['date']         = '2016-12-19';
@@ -29,9 +46,7 @@ class NurseMatchTest extends TestCase
         $this->prediction['window_end']   = '17:00:00';
 
         $this->practice = \App\Practice::create([
-
-            'name' => 'program' . Carbon::now()->secondsSinceMidnight(),
-
+            'name' => 'program'.Carbon::now()->secondsSinceMidnight(),
         ]);
 
         //create main nurse
@@ -44,11 +59,9 @@ class NurseMatchTest extends TestCase
         $this->nurse2               = $nurse2->nurseInfo;
         $this->prediction['Nurse2'] = $nurse2->getFullName();
 
-
         $patient                     = $this->createUser($this->practice->id, 'participant');
         $this->patient               = $patient->patientInfo;
         $this->prediction['Patient'] = $patient->getFullName();
-
 
         //mock the last success to test for previously contacted nurses
         $call = $this->createLastCallForPatient($this->patient, $this->nurse);
@@ -70,20 +83,5 @@ class NurseMatchTest extends TestCase
         $this->findNurse();
 
         $this->assertTrue($this->prediction['nurse'] == $this->nurse->user_id);
-    }
-
-    public function createPatientWindows()
-    {
-        for ($i = 1; $i < 6; $i++) {
-            $windows[] = $this->createWindowForPatient(
-                $this->patient,
-                Carbon::parse('10:00:00'),
-                Carbon::parse('17:00:00'),
-                $i
-            );
-        }
-
-
-        return $windows;
     }
 }

@@ -126,11 +126,11 @@
     }
   },
   "scripts": {
-    "php-lint": [
+    "lint-php": [
       "php -d memory_limit=2048M ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --show-progress=dots --diff -vvv"
     ],
-    "views-lint": [
-      "php -d memory_limit=2048M ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --show-progress=dots --diff -vvv --config=.php_cs_views.php --using-cache=no"
+    "lint-views": [
+      "php -d memory_limit=2048M ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --show-progress=dots --diff -vvv --config=.php_cs_views.php"
     ],
     "post-root-package-install": [
       "php -r \"file_exists('.env') || copy('.env.example', '.env');\""
