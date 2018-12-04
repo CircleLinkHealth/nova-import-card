@@ -114,7 +114,7 @@ class Handler extends ExceptionHandler
             //Check to see if LERN is installed otherwise you will not get an exception.
             if (app()->bound('lern')) {
                 LERN::pushHandler(
-                    new \Monolog\Handler\SlackWebhookHandler(
+                new \Monolog\Handler\SlackWebhookHandler(
                         config('lern.notify.slack.webhook'),
                         config('lern.notify.slack.channel'),
                         config('lern.notify.slack.username'),
@@ -123,10 +123,12 @@ class Handler extends ExceptionHandler
                         false
                     )
                 );
+
                 if ($this->shouldRecordOnly($e)) {
                     app()->make('lern')->record($e);
                 } else {
-                    app()->make('lern')->handle($e); //Record and Notify the Exception
+                    //Record and Notify the Exception
+                    app()->make('lern')->handle($e);
                 }
 
                 /*
