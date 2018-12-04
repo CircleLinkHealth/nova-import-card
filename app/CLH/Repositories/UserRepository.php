@@ -42,12 +42,12 @@ class UserRepository
         $email_view = 'emails.newpatientnotify';
         $program    = Practice::find($user->primaryProgramId());
 
-        if (!$program) {
+        if ( ! $program) {
             return;
         }
 
         $program_name  = $program->display_name;
-        $email_subject = '['.$program_name.'] New User Registration!';
+        $email_subject = '[' . $program_name . '] New User Registration!';
         $data          = [
             'patient_name'  => $user->getFullName(),
             'patient_id'    => $user->id,
@@ -180,7 +180,7 @@ class UserRepository
         }
 
         if ($params->get('program_id')) {
-            if (!in_array($params->get('program_id'), $userPrograms)) {
+            if ( ! in_array($params->get('program_id'), $userPrograms)) {
                 $userPrograms[] = $params->get('program_id');
             }
         }
@@ -196,26 +196,32 @@ class UserRepository
     {
         $googleDrive = new GoogleDrive();
         $cloudDisk   = Storage::drive('google');
-        $ehrPath     = '1NMMNIZKKicOVDNEUjXf6ayAjRbBbFAgh';
 
-        $ehr = $googleDrive->getContents($ehrPath);
 
-        //this will cause a time-out, and folder exists for the time being
-//        $ehr = getGoogleDirectoryByName('ehr-data-from-report-writers');
-//
-//        if ( ! $ehr) {
-//            $cloudDisk->makeDirectory("ehr-data-from-report-writers");
-//            $path = $this->saveEhrReportWriterFolder($user);
-//
-//            return $path;
-//        }
+        if (app()->environment(['staging', 'local'])) {
+
+            $ehr = getGoogleDirectoryByName('ehr-data-from-report-writers');
+
+            if ( ! $ehr) {
+                $cloudDisk->makeDirectory("ehr-data-from-report-writers");
+
+                return $this->saveEhrReportWriterFolder($user);
+            }
+
+        } else {
+
+            $ehrPath = '1NMMNIZKKicOVDNEUjXf6ayAjRbBbFAgh';
+
+            $ehr = $googleDrive->getContents($ehrPath);
+        }
+
 
         $writerFolder = $ehr->where('type', '=', 'dir')
-            ->where('filename', '=', "report-writer-{$user->id}")
-            ->first();
+                            ->where('filename', '=', "report-writer-{$user->id}")
+                            ->first();
 
-        if (!$writerFolder) {
-            $cloudDisk->makeDirectory($ehrPath."/report-writer-{$user->id}");
+        if ( ! $writerFolder) {
+            $cloudDisk->makeDirectory($ehrPath . "/report-writer-{$user->id}");
 
             return $this->saveEhrReportWriterFolder($user);
         }
@@ -264,7 +270,7 @@ class UserRepository
         CareAmbassador::updateOrCreate(
             ['user_id' => $user->id],
             [
-                'hourly_rate' => $params->get('hourly_rate')
+                'hourly_rate'    => $params->get('hourly_rate')
                     ?: null,
                 'speaks_spanish' => 'on' == $params->get('speaks_spanish')
                     ? 1
@@ -309,7 +315,7 @@ class UserRepository
      * to also populate password history.
      * https://www.5balloons.info/setting-up-change-password-with-laravel-authentication/.
      *
-     * @param User         $user
+     * @param User $user
      * @param ParameterBag $params
      */
     public function saveOrUpdatePasswordsHistory(
@@ -346,7 +352,7 @@ class UserRepository
             for ($i = 0; $i < count($contactDays); ++$i) {
                 $contactDaysDelmited .= (count($contactDays) == $i + 1)
                     ? $contactDays[$i]
-                    : $contactDays[$i].', ';
+                    : $contactDays[$i] . ', ';
             }
             $params->add(['preferred_cc_contact_days' => $contactDaysDelmited]);
         }
@@ -392,7 +398,7 @@ class UserRepository
         // phone numbers
         if ($params->has('study_phone_number')) { // add study as home
             $phoneNumber = $user->phoneNumbers()->where('type', 'home')->first();
-            if (!$phoneNumber) {
+            if ( ! $phoneNumber) {
                 $phoneNumber = new PhoneNumber();
             }
             $phoneNumber->is_primary = 1;
@@ -403,7 +409,7 @@ class UserRepository
         }
         if ($params->has('home_phone_number')) {
             $phoneNumber = $user->phoneNumbers()->where('type', 'home')->first();
-            if (!$phoneNumber) {
+            if ( ! $phoneNumber) {
                 $phoneNumber = new PhoneNumber();
             }
             $phoneNumber->is_primary = 1;
@@ -414,7 +420,7 @@ class UserRepository
         }
         if ($params->has('work_phone_number')) {
             $phoneNumber = $user->phoneNumbers()->where('type', 'work')->first();
-            if (!$phoneNumber) {
+            if ( ! $phoneNumber) {
                 $phoneNumber = new PhoneNumber();
             }
             $phoneNumber->user_id = $user->id;
@@ -425,7 +431,7 @@ class UserRepository
 
         if ($params->has('mobile_phone_number')) {
             $phoneNumber = $user->phoneNumbers()->where('type', 'mobile')->first();
-            if (!$phoneNumber) {
+            if ( ! $phoneNumber) {
                 $phoneNumber = new PhoneNumber();
             }
             $phoneNumber->user_id = $user->id;
@@ -456,15 +462,15 @@ class UserRepository
         $practices = $this->saveAndGetPractice($user, $params);
 
         foreach ($practices as $practiceId) {
-            if (!empty($params->get('role'))) {
+            if ( ! empty($params->get('role'))) {
                 $user->detachRolesForSite([], $practiceId);
                 $user->attachRoleForSite($params->get('role'), $practiceId);
             }
 
-            if (!empty($params->get('roles'))) {
+            if ( ! empty($params->get('roles'))) {
                 $user->detachRolesForSite([], $practiceId);
                 // support if one role is passed in as a string
-                if (!is_array($params->get('roles'))) {
+                if ( ! is_array($params->get('roles'))) {
                     $user->attachRoleForSite($params->get('roles'), $practiceId);
                 } else {
                     $user->attachRolesForSite($params->get('roles'), $practiceId);
@@ -473,12 +479,12 @@ class UserRepository
         }
 
         DB::table('practice_role_user')
-            ->where('user_id', $user->id)
-            ->whereNotIn('program_id', $practices)
-            ->delete();
+          ->where('user_id', $user->id)
+          ->whereNotIn('program_id', $practices)
+          ->delete();
 
         // add patient info
-        if ($user->hasRole('participant') && !$user->patientInfo) {
+        if ($user->hasRole('participant') && ! $user->patientInfo) {
             $patientInfo          = new Patient();
             $patientInfo->user_id = $user->id;
             $patientInfo->save();
@@ -486,7 +492,7 @@ class UserRepository
         }
 
         // add provider info
-        if ($user->hasRole('provider') && !$user->providerInfo) {
+        if ($user->hasRole('provider') && ! $user->providerInfo) {
             $providerInfo          = new ProviderInfo();
             $providerInfo->user_id = $user->id;
             $providerInfo->save();
@@ -494,7 +500,7 @@ class UserRepository
         }
 
         // add nurse info
-        if ($user->hasRole('care-center') && !$user->nurseInfo) {
+        if ($user->hasRole('care-center') && ! $user->nurseInfo) {
             $nurseInfo          = new Nurse();
             $nurseInfo->status  = 'active';
             $nurseInfo->user_id = $user->id;
@@ -502,7 +508,7 @@ class UserRepository
             $user->load('nurseInfo');
         }
 
-        if ($user->hasRole('ehr-report-writer') && !$user->ehrReportWriterInfo) {
+        if ($user->hasRole('ehr-report-writer') && ! $user->ehrReportWriterInfo) {
             $ehrReportWriterInfo          = new EhrReportWriterInfo();
             $ehrReportWriterInfo->user_id = $user->id;
             $ehrReportWriterInfo->save();
@@ -560,10 +566,10 @@ class UserRepository
 
     private function forceEnable2fa(AuthyUser $authyUser)
     {
-        if ($authyUser->authy_id && !$authyUser->is_authy_enabled) {
+        if ($authyUser->authy_id && ! $authyUser->is_authy_enabled) {
             $authyUser->is_authy_enabled = true;
 
-            if (!$authyUser->authy_method) {
+            if ( ! $authyUser->authy_method) {
                 $authyUser->authy_method = 'app';
             }
 

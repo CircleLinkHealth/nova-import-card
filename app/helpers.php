@@ -1048,17 +1048,20 @@ if (!function_exists('read_file_using_generator')) {
 if (!function_exists('getEhrReportWritersFolderUrl')) {
     function getEhrReportWritersFolderUrl()
     {
-        return 'https://drive.google.com/drive/folders/1NMMNIZKKicOVDNEUjXf6ayAjRbBbFAgh';
+        if (app()->environment(['production', 'worker'])){
+            return 'https://drive.google.com/drive/folders/1NMMNIZKKicOVDNEUjXf6ayAjRbBbFAgh';
+        }
+
         //Causes timeouts on prod
-//        return Cache::rememberForever('url_for_ehr_data_from_report_writers', function () {
-//            $dir = getGoogleDirectoryByName('ehr-data-from-report-writers');
-//
-//            if ( ! $dir) {
-//                return null;
-//            }
-//
-//            return Storage::drive('google')->url($dir['path']);
-//        });
+        return Cache::rememberForever('url_for_ehr_data_from_report_writers', function () {
+            $dir = getGoogleDirectoryByName('ehr-data-from-report-writers');
+
+            if ( ! $dir) {
+                return null;
+            }
+
+            return Storage::drive('google')->url($dir['path']);
+        });
     }
 }
 
