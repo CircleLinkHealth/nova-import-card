@@ -169,18 +169,6 @@ class UserRepository
         return User::where('id', $id)->exists();
     }
 
-    public function findByRole(
-        $role,
-        $select = '*'
-    ) {
-        return User::select(DB::raw($select))
-            ->whereHas('roles', function ($q) use (
-                       $role
-                   ) {
-                $q->where('name', '=', $role);
-            })->get();
-    }
-
     public function saveAndGetPractice(
         User $user,
         ParameterBag $params
@@ -206,20 +194,28 @@ class UserRepository
 
     public function saveEhrReportWriterFolder($user)
     {
-        $cloudDisk = Storage::drive('google');
+        $googleDrive = new GoogleDrive();
+        $cloudDisk   = Storage::drive('google');
+        $ehrPath     = '1NMMNIZKKicOVDNEUjXf6ayAjRbBbFAgh';
 
-        $ehr = getGoogleDirectoryByName('ehr-data-from-report-writers');
+        $ehr = $googleDrive->getContents($ehrPath);
 
-        if (!$ehr) {
-            $cloudDisk->makeDirectory('ehr-data-from-report-writers');
+        //this will cause a time-out, and folder exists for the time being
+//        $ehr = getGoogleDirectoryByName('ehr-data-from-report-writers');
+//
+//        if ( ! $ehr) {
+//            $cloudDisk->makeDirectory("ehr-data-from-report-writers");
+//            $path = $this->saveEhrReportWriterFolder($user);
+//
+//            return $path;
+//        }
 
-            return $this->saveEhrReportWriterFolder($user);
-        }
-
-        $writerFolder = getGoogleDirectoryByName("report-writer-{$user->id}");
+        $writerFolder = $ehr->where('type', '=', 'dir')
+            ->where('filename', '=', "report-writer-{$user->id}")
+            ->first();
 
         if (!$writerFolder) {
-            $cloudDisk->makeDirectory($ehr['path']."/report-writer-{$user->id}");
+            $cloudDisk->makeDirectory($ehrPath."/report-writer-{$user->id}");
 
             return $this->saveEhrReportWriterFolder($user);
         }
@@ -238,19 +234,47 @@ class UserRepository
 
         $service->permissions->create($writerFolder['basename'], $permission);
 
-        if (!app()->environment(['production', 'worker', 'local'])) {
-            $adminEmails = User::ofType('administrator')
-                ->pluck('email')
-                ->each(function ($email) use ($service, $writerFolder) {
-                    $permission = new \Google_Service_Drive_Permission();
-                    $permission->setRole('writer');
-                    $permission->setType('user');
-                    $permission->setEmailAddress($email);
-                    $service->permissions->create($writerFolder['basename'], $permission);
-                });
+        if (app()->environment('staging')) {
+            //only staging, so we can have the ability to test, but not get access to PHI
+            $devEmails = collect([
+                'constantinos@circlelinkhealth.com',
+                'mAntoniou@circlelinkhealth.com',
+                'antonis@circlelinkhealth.com',
+                'pangratios@circlelinkhealth.com',
+            ]);
+
+            foreach ($devEmails as $email) {
+                $permission = new \Google_Service_Drive_Permission();
+                $permission->setRole('writer');
+                $permission->setType('user');
+                $permission->setEmailAddress($email);
+                $service->permissions->create($writerFolder['basename'], $permission);
+            }
         }
 
         return $writerFolder['path'];
+        if ($params->get('suffix')) {
+            $user->suffix = $params->get('suffix');
+        }
+        if ($params->get('address')) {
+            $user->address = $params->get('address');
+        }
+        if ($params->get('address2')) {
+            $user->address2 = $params->get('address2');
+        }
+        if ($params->get('city')) {
+            $user->city = $params->get('city');
+        }
+        if ($params->get('state')) {
+            $user->state = $params->get('state');
+        }
+        if ($params->get('zip')) {
+            $user->zip = $params->get('zip');
+        }
+        if ($params->get('timezone')) {
+            $user->timezone = $params->get('timezone');
+        }
+        $user->save();
     }
 
     public function saveOrUpdateCareAmbassadorInfo(
@@ -371,6 +395,14 @@ class UserRepository
             }
         }
         $user->patientInfo->save();
+    }
+
+    public function saveOrUpdatePatientMonthlySummary($user)
+    {
+        return PatientMonthlySummary::updateOrCreate([
+            'patient_id' => $user->id,
+            'month_year' => Carbon::now()->startOfMonth()->toDateString(),
+        ]);
     }
 
     public function saveOrUpdatePatientMonthlySummary($user)
@@ -518,115 +550,6 @@ class UserRepository
         }
 
         return $user;
-    }
-
-    public function findByRole(
-        $role,
-        $select = '*'
-    ) {
-        return User::select(DB::raw($select))
-                   ->whereHas('roles', function ($q) use (
-                       $role
-                   ) {
-                       $q->where('name', '=', $role);
-                   })->get();
-    }
-
-    public function saveOrUpdatePatientMonthlySummary($user)
-    {
-        return PatientMonthlySummary::updateOrCreate([
-            'patient_id' => $user->id,
-            'month_year' => Carbon::now()->startOfMonth()->toDateString(),
-        ]);
-    }
-
-    public function saveEhrReportWriterFolder($user)
-    {
-        $googleDrive = new GoogleDrive();
-        $cloudDisk = Storage::drive('google');
-        $ehrPath = '1NMMNIZKKicOVDNEUjXf6ayAjRbBbFAgh';
-
-
-        $ehr = $googleDrive->getContents($ehrPath);
-
-        //this will cause a time-out, and folder exists for the time being
-//        $ehr = getGoogleDirectoryByName('ehr-data-from-report-writers');
-//
-//        if ( ! $ehr) {
-//            $cloudDisk->makeDirectory("ehr-data-from-report-writers");
-//            $path = $this->saveEhrReportWriterFolder($user);
-//
-//            return $path;
-//        }
-
-        $writerFolder = $ehr->where('type', '=', 'dir')
-                            ->where('filename', '=', "report-writer-{$user->id}")
-                            ->first();
-
-
-        if ( ! $writerFolder) {
-            $cloudDisk->makeDirectory($ehrPath . "/report-writer-{$user->id}");
-            $path = $this->saveEhrReportWriterFolder($user);
-
-            return $path;
-        } else {
-            $service    = $cloudDisk->getAdapter()->getService();
-            $permission = new \Google_Service_Drive_Permission();
-            $permission->setRole('writer');
-            $permission->setType('user');
-            $permission->setEmailAddress($user->email);
-
-            $service->permissions->create($writerFolder['basename'], $permission);
-
-            $permission = new \Google_Service_Drive_Permission();
-            $permission->setRole('writer');
-            $permission->setType('user');
-            $permission->setEmailAddress("joe@circlelinkhealth.com");
-
-            $service->permissions->create($writerFolder['basename'], $permission);
-
-            if (app()->environment('staging')){
-                //only staging, so we can have the ability to test, but not get access to PHI
-                $devEmails = collect([
-                    'constantinos@circlelinkhealth.com',
-                    'mAntoniou@circlelinkhealth.com',
-                    'antonis@circlelinkhealth.com',
-                    'pangratios@circlelinkhealth.com'
-                ]);
-
-                foreach ($devEmails as $email){
-                    $permission = new \Google_Service_Drive_Permission();
-                    $permission->setRole('writer');
-                    $permission->setType('user');
-                    $permission->setEmailAddress($email);
-                    $service->permissions->create($writerFolder['basename'], $permission);
-                }
-            }
-
-            return $writerFolder['path'];
-        }
-        if ($params->get('suffix')) {
-            $user->suffix = $params->get('suffix');
-        }
-        if ($params->get('address')) {
-            $user->address = $params->get('address');
-        }
-        if ($params->get('address2')) {
-            $user->address2 = $params->get('address2');
-        }
-        if ($params->get('city')) {
-            $user->city = $params->get('city');
-        }
-        if ($params->get('state')) {
-            $user->state = $params->get('state');
-        }
-        if ($params->get('zip')) {
-            $user->zip = $params->get('zip');
-        }
-        if ($params->get('timezone')) {
-            $user->timezone = $params->get('timezone');
-        }
-        $user->save();
     }
 
     private function forceEnable2fa(AuthyUser $authyUser)
