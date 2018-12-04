@@ -36,13 +36,4 @@ fi
 # Enable lada-cache after migrations
 # php artisan lada-cache:enable
 
-php artisan view:clear
-php artisan route:cache
-php artisan config:cache
-
-php artisan opcache:clear
-php artisan opcache:optimize
-
-# Restart Queue Workers
-php artisan horizon:terminate
-php artisan queue:restart
+php artisan deploy:post

@@ -15,19 +15,25 @@ class AddNewDefaultCarePlanTemplate extends Seeder
      */
     public function run()
     {
+        //this means the seeder has already run
+        //we don't wanna run twice
+        if (CarePlanTemplate::whereDisplayName('Old CLH Default (Deprecated)')->exists()) {
+            return;
+        }
+
         $newCpt = CarePlanTemplate::create([
             'display_name' => str_random(),
             'type'         => str_random(),
         ]);
 
         $default = CarePlanTemplate::whereType('CLH Default')
-            ->update([
-                'display_name' => 'Old CLH Default (Deprecated)',
-                'type'         => 'Old CLH Default (Deprecated)',
-            ]);
+                                   ->update([
+                                       'display_name' => 'Old CLH Default (Deprecated)',
+                                       'type'         => 'Old CLH Default (Deprecated)',
+                                   ]);
 
         $newCpt->display_name = 'CLH Default';
-        $newCpt->type = 'CLH Default';
+        $newCpt->type         = 'CLH Default';
         $newCpt->save();
 
         $this->setupCpmProblems();
@@ -49,19 +55,20 @@ class AddNewDefaultCarePlanTemplate extends Seeder
                 $newCpt->save();
             }
         }
-        
+
 
         setAppConfig('default_care_plan_template_id', $newCpt->id);
     }
 
-    public function setupCpmProblems() {
+    public function setupCpmProblems()
+    {
         $defaultCarePlan = getDefaultCarePlanTemplate();
 
         CpmProblem::get()->map(function ($cpmProblem) use ($defaultCarePlan) {
             if ( ! in_array($cpmProblem->id, $defaultCarePlan->cpmProblems->pluck('id')->all())) {
                 $defaultCarePlan->cpmProblems()->attach($cpmProblem, [
                     'has_instruction' => true,
-                    'page'            => 1
+                    'page'            => 1,
                 ]);
             }
 
@@ -70,7 +77,7 @@ class AddNewDefaultCarePlanTemplate extends Seeder
             ], [
                 'cpm_problem_id' => $cpmProblem->id,
                 'icd_10_name'    => $cpmProblem->name,
-                'snomed_code' => 0
+                'snomed_code'    => 0,
             ]);
 
             $this->command->info("$cpmProblem->name has been added");

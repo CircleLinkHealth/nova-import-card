@@ -61,6 +61,7 @@ class ImportedMedicalRecord extends \App\BaseModel implements ImportedMedicalRec
         SoftDeletes;
 
     protected $fillable = [
+        'patient_id',
         'medical_record_type',
         'medical_record_id',
         'billing_provider_id',

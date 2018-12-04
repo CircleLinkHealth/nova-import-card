@@ -1,5 +1,6 @@
 <?php namespace App\CLH\Repositories;
 
+use App\AuthyUser;
 use App\CareAmbassador;
 use App\CarePlan;
 use App\EhrReportWriterInfo;
@@ -14,6 +15,7 @@ use App\UserPasswordsHistory;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Storage;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class UserRepository
@@ -67,6 +69,10 @@ class UserRepository
         // ehr report writer info
         if ($user->hasRole('ehr-report-writer')) {
             $this->saveOrUpdateEhrReportWriterInfo($user, $params);
+        }
+
+        if ($user->isAdmin() && $user->authyUser) {
+            $this->forceEnable2fa($user->authyUser);
         }
 
         //Add Email Notification
@@ -355,10 +361,16 @@ class UserRepository
         User $user,
         ParameterBag $params
     ) {
+
+        $folderPath = $this->saveEhrReportWriterFolder($user);
+
         EhrReportWriterInfo::updateOrCreate(
             ['user_id' => $user->id],
-            ['google_drive_folder' => $params->get('google_drive_folder')]
+            [
+                'google_drive_folder_path' => $folderPath,
+            ]
         );
+
     }
 
     /**
@@ -462,7 +474,7 @@ class UserRepository
             $this->saveOrUpdateNurseInfo($user, $params);
         }
 
-        if ($user->hasRole('ehr-report-writer')){
+        if ($user->hasRole('ehr-report-writer')) {
             $this->saveOrUpdateEhrReportWriterInfo($user, $params);
         }
 
@@ -487,5 +499,72 @@ class UserRepository
             'patient_id' => $user->id,
             'month_year' => Carbon::now()->startOfMonth()->toDateString(),
         ]);
+    }
+
+    public function saveEhrReportWriterFolder($user)
+    {
+        $cloudDisk = Storage::drive('google');
+
+        $ehr = getGoogleDirectoryByName('ehr-data-from-report-writers');
+
+        if ( ! $ehr) {
+            $cloudDisk->makeDirectory("ehr-data-from-report-writers");
+            $path = $this->saveEhrReportWriterFolder($user);
+
+            return $path;
+        }
+
+        $writerFolder = getGoogleDirectoryByName("report-writer-{$user->id}");
+
+        if ( ! $writerFolder) {
+            $cloudDisk->makeDirectory($ehr['path'] . "/report-writer-{$user->id}");
+            $path = $this->saveEhrReportWriterFolder($user);
+
+            return $path;
+        } else {
+            $service    = $cloudDisk->getAdapter()->getService();
+            $permission = new \Google_Service_Drive_Permission();
+            $permission->setRole('writer');
+            $permission->setType('user');
+            $permission->setEmailAddress($user->email);
+
+            $service->permissions->create($writerFolder['basename'], $permission);
+
+            $permission = new \Google_Service_Drive_Permission();
+            $permission->setRole('writer');
+            $permission->setType('user');
+            $permission->setEmailAddress("joe@circlelinkhealth.com");
+
+            $service->permissions->create($writerFolder['basename'], $permission);
+
+            if (! app()->environment(['production', 'worker', 'local'])){
+                $adminEmails = User::ofType('administrator')
+                                   ->pluck('email')
+                                   ->each(function($email) use ($service, $writerFolder){
+                                       $permission = new \Google_Service_Drive_Permission();
+                                       $permission->setRole('writer');
+                                       $permission->setType('user');
+                                       $permission->setEmailAddress($email);
+                                       $service->permissions->create($writerFolder['basename'], $permission);
+                                   });
+            }
+
+            return $writerFolder['path'];
+        }
+
+
+    }
+
+    private function forceEnable2fa(AuthyUser $authyUser)
+    {
+        if ($authyUser->authy_id && ! $authyUser->is_authy_enabled) {
+            $authyUser->is_authy_enabled = true;
+
+            if ( ! $authyUser->authy_method) {
+                $authyUser->authy_method = 'app';
+            }
+
+            $authyUser->save();
+        }
     }
 }

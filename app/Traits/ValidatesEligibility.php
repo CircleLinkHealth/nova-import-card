@@ -9,8 +9,10 @@
 namespace App\Traits;
 
 
+use App\EligibilityJob;
 use App\Rules\EligibilityPhones;
 use App\Rules\EligibilityProblems;
+use Illuminate\Support\Collection;
 use Validator;
 
 trait ValidatesEligibility
@@ -20,7 +22,7 @@ trait ValidatesEligibility
         if (array_key_exists('patient_id', $row)) {
             $row['mrn'] = $row['patient_id'];
         }
-        if (array_key_exists('date_of_birth', $row)){
+        if (array_key_exists('date_of_birth', $row)) {
             $row['dob'] = $row['date_of_birth'];
         }
         $row = $this->transformProblems($row);
@@ -66,13 +68,8 @@ trait ValidatesEligibility
         return $row;
     }
 
-    //to perform validation for the whole csv?
-    public function validateCsv()
+    public function validateJsonStructure($row)
     {
-
-    }
-
-    public function validateJsonStructure($row){
 
         $toValidate = [];
         $rules      = [];
@@ -126,6 +123,26 @@ trait ValidatesEligibility
             "medications",
             "allergies",
         ];
+    }
+
+    public function saveErrorsOnEligibilityJob(EligibilityJob $job, Collection $errors)
+    {
+        //check keys and update job
+
+        if ($errors->isNotEmpty() && ! ($errors->count() == 1 && $errors->first() == 'structure')) {
+            $job->invalid_data = true;
+        }
+        //check for invalid data
+        $job->invalid_structure  = $errors->contains('structure');
+        $job->invalid_mrn        = $errors->contains('mrn');
+        $job->invalid_first_name = $errors->contains('first_name');
+        $job->invalid_last_name  = $errors->contains('last_name');
+        $job->invalid_dob        = $errors->contains('dob');
+        $job->invalid_problems   = $errors->contains('problems');
+        $job->invalid_phones     = $errors->contains('phones');
+
+        $job->save();
+
     }
 
 

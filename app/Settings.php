@@ -69,6 +69,8 @@ class Settings extends \App\BaseModel
 
         'bill_to',
         'api_auto_pull',
+
+        'twilio_enabled'
     ];
 
     /**

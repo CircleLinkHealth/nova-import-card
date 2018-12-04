@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $day
  * @property int $no_enrolled
  * @property int $no_rejected
+ * @property int $no_soft_rejected
  * @property int $no_utc
  * @property int $total_calls
  * @property int $total_time_in_system
@@ -39,6 +40,7 @@ class CareAmbassadorLog extends \App\BaseModel
         'day',
         'no_enrolled',
         'no_rejected',
+        'no_soft_rejected',
         'no_utc',
         'total_calls',
         'total_time_in_system'

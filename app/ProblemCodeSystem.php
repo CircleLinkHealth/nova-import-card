@@ -2,8 +2,6 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-
 /**
  * App\ProblemCodeSystem
  *
@@ -19,7 +17,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ProblemCodeSystem whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class ProblemCodeSystem extends \App\BaseModel
+class ProblemCodeSystem extends BaseModel
 {
     public $fillable = ['name'];
 }

@@ -1,6 +1,7 @@
 <nav class="navbar secondary-navbar hidden-xs">
     <div class="patient__actions text-center">
         <ul class="navbar-nav nav">
+
             <li class="inline-block">
                 <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.note.index', array('patient' => $patient->id)) }}">
                     Notes and Activities
@@ -14,7 +15,7 @@
 
             <li class="inline-block">
                 <a href="{{ route('patient.demographics.show', array('patientId' => $patient->id)) }}"
-                    role="button">Patient Profile</a>
+                   role="button">Patient Profile</a>
             </li>
 
 
@@ -27,11 +28,11 @@
                             Activity Report</a>
                     </li>
                     @if(auth()->user()->isNotSaas())
-                    <li>
-                        <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.reports.progress', array('patient' => $patient->id)) }}">Progress
-                            Report</a>
-                    </li>
-                        @endif
+                        <li>
+                            <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.reports.progress', array('patient' => $patient->id)) }}">Progress
+                                Report</a>
+                        </li>
+                    @endif
                 </ul>
             </li>
 

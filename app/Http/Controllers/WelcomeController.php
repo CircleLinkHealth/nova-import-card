@@ -44,7 +44,7 @@ class WelcomeController extends Controller
             throw new \Exception("Log in for User with id {$user->id} failed. User has no assigned Roles.");
         }
 
-        if ($user->hasRole('administrator')) {
+        if ($user->isAdmin()) {
             return redirect()->route('admin.dashboard', []);
         }
 
@@ -57,7 +57,11 @@ class WelcomeController extends Controller
         }
 
         if ($user->hasRole('ehr-report-writer')){
-            return redirect()->route('report-writer.dashboard');
+            if (! app()->environment('production')){
+                return redirect()->route('report-writer.dashboard');
+            }
+            return redirect()->route('login')->with(['messages' => ["message" => "Ehr Report Writers can only login in the Worker. Please visit: https://circlelink-worker.medstack.net"]]);
+
         }
 
         return redirect()->route('patients.dashboard', []);

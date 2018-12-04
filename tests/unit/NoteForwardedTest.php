@@ -5,7 +5,6 @@ namespace Tests\Unit;
 use App\Notifications\NoteForwarded;
 use App\Practice;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Notification;
 use Tests\Helpers\UserHelpers;
@@ -13,8 +12,7 @@ use Tests\TestCase;
 
 class NoteForwardedTest extends TestCase
 {
-    use DatabaseTransactions,
-        WithoutMiddleware,
+    use WithoutMiddleware,
         UserHelpers;
 
     protected $practice;

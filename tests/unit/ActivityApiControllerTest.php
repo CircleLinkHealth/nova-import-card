@@ -11,8 +11,7 @@ use Tests\TestCase;
 
 class ActivityApiControllerTest extends TestCase
 {
-    use DatabaseTransactions,
-        WithoutMiddleware,
+    use WithoutMiddleware,
         UserHelpers;
 
     private $provider;

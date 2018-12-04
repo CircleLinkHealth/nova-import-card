@@ -142,7 +142,7 @@ class InternalUserController extends Controller
             'registered-nurse',
         ];
 
-        if (auth()->user()->hasRole('administrator')) {
+        if (auth()->user()->isAdmin()) {
             $rolesArray[] = 'administrator';
         }
 

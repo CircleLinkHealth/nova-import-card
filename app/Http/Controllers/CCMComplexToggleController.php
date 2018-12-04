@@ -47,9 +47,11 @@ class CCMComplexToggleController extends Controller
 
             if ($patient->getCcmTime() > 3600) {
                 //Get nurse that did the last activity.
-
-                (new AlternativeCareTimePayableCalculator($patient->patientInfo->lastNurseThatPerformedActivity()))
-                    ->adjustPayOnCCMComplexSwitch60Mins();
+                $nurse = $patient->patientInfo->lastNurseThatPerformedActivity();
+                if($nurse){
+                    (new AlternativeCareTimePayableCalculator($nurse))
+                        ->adjustPayOnCCMComplexSwitch60Mins();
+                }
             }
         } else {
             $patientRecord->is_ccm_complex = 0;

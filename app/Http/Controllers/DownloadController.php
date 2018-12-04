@@ -91,6 +91,6 @@ class DownloadController extends Controller
 
         $practiceId = $media->model_id;
 
-        return auth()->user()->practice((int)$practiceId) || auth()->user()->hasRole('administrator');
+        return auth()->user()->practice((int)$practiceId) || auth()->user()->isAdmin();
     }
 }
