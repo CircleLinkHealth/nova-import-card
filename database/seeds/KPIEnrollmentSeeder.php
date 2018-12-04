@@ -68,6 +68,9 @@ class KPIEnrollmentSeeder extends Seeder
 
             $practiceId = $this->determinePracticeId($row['customer']);
 
+            if (!$practiceId) {
+                return;
+            }
 
             $log = $ambassador->logs()->create([
                 'day'                  => $day->toDateString(),
