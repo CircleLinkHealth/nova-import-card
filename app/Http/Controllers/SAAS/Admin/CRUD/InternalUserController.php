@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers\SAAS\Admin\CRUD;
 
 use App\Http\Controllers\Controller;
@@ -25,6 +29,22 @@ class InternalUserController extends Controller
         $this->userManagementService = $userManagementService;
     }
 
+    public function action(Request $request)
+    {
+        $params = new ParameterBag($request->input());
+
+        if ($params->get('action') && 'delete' == $params->get('action')) {
+            foreach ($params->get('users') as $userId) {
+                User::whereId($userId)
+                    ->delete();
+            }
+
+            return redirect()->back()->with('messages', ['successfully scrambled users']);
+        }
+
+        return redirect()->back();
+    }
+
     /**
      * Show the page to create a new internal user.
      *
@@ -36,36 +56,13 @@ class InternalUserController extends Controller
 
         $data['submitUrl']    = route('saas-admin.users.store');
         $data['submitMethod'] = 'post';
-        $data['titleVerb'] = 'Add';
+        $data['titleVerb']    = 'Add';
 
         return view('saas.admin.user.manage', $data);
     }
 
     /**
-     * Store an internal user
-     *
-     * @param StoreInternalUser $request
-     *
-     * @return \Illuminate\Http\RedirectResponse
-     * @throws \Exception
-     */
-    public function store(StoreInternalUser $request)
-    {
-        $internalUser = new InternalUser($request['user'], $request['practices'], $request['role']);
-        $user         = $this->userManagementService->storeInternalUser($internalUser);
-
-        $practices = Practice::whereIn('id', $internalUser->getPractices())
-                             ->get();
-
-        $user->notify(new SendInternalUserSignupInvitation(auth()->user(), $practices, auth()->user()->saasAccount));
-
-        return redirect()->route('saas-admin.users.edit', [
-            'userId' => $user->id,
-        ])->with('messages', 'User created successfully!');
-    }
-
-    /**
-     * Show the page to edit an internal user
+     * Show the page to edit an internal user.
      *
      * @param $userId
      *
@@ -79,25 +76,9 @@ class InternalUserController extends Controller
 
         $data['submitUrl']    = route('saas-admin.users.update', ['userId' => $userId]);
         $data['submitMethod'] = 'patch';
-        $data['titleVerb'] = 'Edit';
+        $data['titleVerb']    = 'Edit';
 
         return view('saas.admin.user.manage', $data);
-    }
-
-    public function update(StoreInternalUser $request, $userId)
-    {
-        $userAttr = $request['user'];
-
-        if (!$request->has('user.auto_attach_programs')) {
-            $userAttr['auto_attach_programs'] = false;
-        }
-
-        $internalUser = new InternalUser($userAttr, $request['practices'], $request['role']);
-        $user         = $this->userManagementService->storeInternalUser($internalUser);
-
-        return redirect()->route('saas-admin.users.edit', [
-            'userId' => $user->id,
-        ])->with('messages', 'User created successfully!');
     }
 
     public function index(Request $request)
@@ -113,20 +94,20 @@ class InternalUserController extends Controller
 
         // filter user
         $users = User::whereIn('id', Auth::user()->viewableUserIds())
-                     ->orderBy('display_name')
-                     ->get()
-                     ->mapWithKeys(function ($user) {
-                         return [
-                             $user->id => "{$user->getFirstName()} {$user->getLastName()} ({$user->id})",
-                         ];
-                     })
-                     ->all();
+            ->orderBy('display_name')
+            ->get()
+            ->mapWithKeys(function ($user) {
+                return [
+                    $user->id => "{$user->getFirstName()} {$user->getLastName()} ({$user->id})",
+                ];
+            })
+            ->all();
 
         $filterUser = 'all';
 
-        if ( ! empty($params['filterUser'])) {
+        if (!empty($params['filterUser'])) {
             $filterUser = $params['filterUser'];
-            if ($params['filterUser'] != 'all') {
+            if ('all' != $params['filterUser']) {
                 $wpUsers->where('id', '=', $filterUser);
             }
         }
@@ -148,37 +129,37 @@ class InternalUserController extends Controller
 
         // role filter
         $roles = Role::whereIn('name', $rolesArray)
-                     ->orderBy('display_name')
-                     ->pluck('display_name', 'name')
-                     ->all();
+            ->orderBy('display_name')
+            ->pluck('display_name', 'name')
+            ->all();
 
         $filterRole = 'all';
 
-        if ( ! empty($params['filterRole'])) {
+        if (!empty($params['filterRole'])) {
             $filterRole = $params['filterRole'];
-            if ($params['filterRole'] != 'all') {
+            if ('all' != $params['filterRole']) {
                 $wpUsers->ofType($filterRole);
             }
         }
 
         // program filter
         $programs = Practice::whereIn('id', Auth::user()->viewableProgramIds())
-                            ->orderBy('display_name')
-                            ->get()
-                            ->pluck('display_name', 'id')
-                            ->all();
+            ->orderBy('display_name')
+            ->get()
+            ->pluck('display_name', 'id')
+            ->all();
 
         $filterProgram = 'all';
 
-        if ( ! empty($params['filterProgram'])) {
+        if (!empty($params['filterProgram'])) {
             $filterProgram = $params['filterProgram'];
-            if ($params['filterProgram'] != 'all') {
+            if ('all' != $params['filterProgram']) {
                 $wpUsers->where('program_id', '=', $filterProgram);
             }
         }
 
         // only let owners see owners
-        if ( ! Auth::user()->hasRole(['administrator'])) {
+        if (!Auth::user()->hasRole(['administrator'])) {
             $wpUsers = $wpUsers->whereHas('roles', function ($q) {
                 $q->where('name', '!=', 'administrator');
             });
@@ -208,19 +189,43 @@ class InternalUserController extends Controller
         ]));
     }
 
-    public function action(Request $request)
+    /**
+     * Store an internal user.
+     *
+     * @param StoreInternalUser $request
+     *
+     * @throws \Exception
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function store(StoreInternalUser $request)
     {
-        $params = new ParameterBag($request->input());
+        $internalUser = new InternalUser($request['user'], $request['practices'], $request['role']);
+        $user         = $this->userManagementService->storeInternalUser($internalUser);
 
-        if ($params->get('action') && $params->get('action') == 'delete') {
-            foreach ($params->get('users') as $userId) {
-                User::whereId($userId)
-                    ->delete();
-            }
+        $practices = Practice::whereIn('id', $internalUser->getPractices())
+            ->get();
 
-            return redirect()->back()->with('messages', ['successfully scrambled users']);
+        $user->notify(new SendInternalUserSignupInvitation(auth()->user(), $practices, auth()->user()->saasAccount));
+
+        return redirect()->route('saas-admin.users.edit', [
+            'userId' => $user->id,
+        ])->with('messages', 'User created successfully!');
+    }
+
+    public function update(StoreInternalUser $request, $userId)
+    {
+        $userAttr = $request['user'];
+
+        if (!$request->has('user.auto_attach_programs')) {
+            $userAttr['auto_attach_programs'] = false;
         }
 
-        return redirect()->back();
+        $internalUser = new InternalUser($userAttr, $request['practices'], $request['role']);
+        $user         = $this->userManagementService->storeInternalUser($internalUser);
+
+        return redirect()->route('saas-admin.users.edit', [
+            'userId' => $user->id,
+        ])->with('messages', 'User created successfully!');
     }
 }

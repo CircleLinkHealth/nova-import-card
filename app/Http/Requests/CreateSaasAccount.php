@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -30,7 +34,7 @@ class CreateSaasAccount extends FormRequest
                 'filled',
                 Rule::unique('saas_accounts', 'name')->ignore($this->input('name')),
             ],
-            'admin_emails' => 'required|email_array'
+            'admin_emails' => 'required|email_array',
         ];
     }
 }

@@ -1,29 +1,33 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Importer\Models\ItemLogs;
 
 use App\Models\CCD\CcdInsurancePolicy;
 use App\Traits\Relationships\BelongsToCcda;
 use App\Traits\Relationships\BelongsToVendor;
-use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\Importer\Models\ItemLogs\InsuranceLog
+ * App\Importer\Models\ItemLogs\InsuranceLog.
  *
- * @property int $id
- * @property string|null $medical_record_type
- * @property int|null $medical_record_id
- * @property string $name
- * @property string|null $type
- * @property string|null $policy_id
- * @property string|null $relation
- * @property string|null $subscriber
- * @property int $import
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
- * @property-read \App\Models\MedicalRecords\Ccda $ccda
- * @property-read \App\Models\CCD\CcdInsurancePolicy $importedItem
- * @property-read \App\Models\CCD\CcdVendor $vendor
+ * @property int                                $id
+ * @property string|null                        $medical_record_type
+ * @property int|null                           $medical_record_id
+ * @property string                             $name
+ * @property string|null                        $type
+ * @property string|null                        $policy_id
+ * @property string|null                        $relation
+ * @property string|null                        $subscriber
+ * @property int                                $import
+ * @property \Carbon\Carbon|null                $created_at
+ * @property \Carbon\Carbon|null                $updated_at
+ * @property \App\Models\MedicalRecords\Ccda    $ccda
+ * @property \App\Models\CCD\CcdInsurancePolicy $importedItem
+ * @property \App\Models\CCD\CcdVendor          $vendor
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog whereImport($value)
@@ -50,7 +54,7 @@ class InsuranceLog extends \App\BaseModel
         'policy_id',
         'relation',
         'subscriber',
-        'import'
+        'import',
     ];
 
     public function importedItem()

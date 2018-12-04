@@ -1,4 +1,10 @@
-<?php namespace App\CLH\CCD\Importer\StorageStrategies\Biometrics;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\CLH\CCD\Importer\StorageStrategies\Biometrics;
 
 use App\CLH\CCD\Importer\StorageStrategies\BaseStorageStrategy;
 use App\CLH\Contracts\CCD\StorageStrategy;
@@ -8,11 +14,10 @@ use App\Models\CPM\CpmBiometric;
  * Created by PhpStorm.
  * User: michalis
  * Date: 5/25/16
- * Time: 11:55 PM
+ * Time: 11:55 PM.
  */
 class BloodPressure extends BaseStorageStrategy implements StorageStrategy
 {
-
     public function import($bloodPressure)
     {
         $this->user->cpmBloodPressure()->create([
@@ -27,7 +32,7 @@ class BloodPressure extends BaseStorageStrategy implements StorageStrategy
             //check if this is a mysql exception for unique key constraint
             if ($e instanceof \Illuminate\Database\QueryException) {
                 $errorCode = $e->errorInfo[1];
-                if ($errorCode == 1062) {
+                if (1062 == $errorCode) {
                     //do nothing
                     //we don't actually want to terminate the program if we detect duplicates
                     //we just don't wanna add the row again
@@ -43,7 +48,7 @@ class BloodPressure extends BaseStorageStrategy implements StorageStrategy
         ];
 
         $namesSystolic = [
-            'systolic blood pressure'
+            'systolic blood pressure',
         ];
 
         $codesDiastolic = [
@@ -51,7 +56,7 @@ class BloodPressure extends BaseStorageStrategy implements StorageStrategy
         ];
 
         $namesDiastolic = [
-            'diastolic blood pressure'
+            'diastolic blood pressure',
         ];
 
         $vitals = $jsonDecodedCcda->vitals;
@@ -69,7 +74,7 @@ class BloodPressure extends BaseStorageStrategy implements StorageStrategy
                 if (in_array($result->code, $codesDiastolic) || in_array(strtolower($result->name), $namesDiastolic)) {
                     $diastolic = $result->value;
                 }
-                
+
                 if (!empty($systolic) && !empty($diastolic)) {
                     return "{$systolic}/{$diastolic}";
                 }

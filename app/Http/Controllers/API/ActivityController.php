@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
@@ -34,7 +38,8 @@ class ActivityController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function ccmTime($patientId) {
+    public function ccmTime($patientId)
+    {
         return response()->json($this->activityService->totalCcmTime($patientId));
     }
 }

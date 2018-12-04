@@ -1,20 +1,16 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 3/7/18
- * Time: 6:40 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Services\Cache;
-
 
 use App\Repositories\Cache\UserNotificationList;
 use App\User;
 
 class NotificationService
 {
-
     public function notifyAdmins($title, $description, $link, $linkTitle)
     {
         User::ofType('administrator')

@@ -1,4 +1,10 @@
-<?php namespace App\Traits\Relationships;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Traits\Relationships;
 
 use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Importer\Models\ItemLogs\AllergyLog;
@@ -13,7 +19,6 @@ use App\Importer\Models\ItemLogs\ProviderLog;
  * We are putting them all together in this trait so that they can be easily re-used in case.
  *
  * Class MedicalRecordItemLoggerRelationships
- * @package App\CLH\CCD\ItemLogger
  */
 trait MedicalRecordItemLoggerRelationships
 {
@@ -25,6 +30,16 @@ trait MedicalRecordItemLoggerRelationships
     public function demographics()
     {
         return $this->morphMany(DemographicsLog::class, 'providerLoggable', 'medical_record_type', 'medical_record_id');
+    }
+
+    public function demographicsImports()
+    {
+        return $this->morphMany(
+            DemographicsImport::class,
+            'providerLoggable',
+            'medical_record_type',
+            'medical_record_id'
+        );
     }
 
     public function document()
@@ -45,15 +60,5 @@ trait MedicalRecordItemLoggerRelationships
     public function providers()
     {
         return $this->morphMany(ProviderLog::class, 'providerLoggable', 'medical_record_type', 'medical_record_id');
-    }
-
-    public function demographicsImports()
-    {
-        return $this->morphMany(
-            DemographicsImport::class,
-            'providerLoggable',
-            'medical_record_type',
-            'medical_record_id'
-        );
     }
 }

@@ -1,10 +1,12 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Filters;
 
-use App\User;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
 
 class UserFilters extends QueryFilters
 {

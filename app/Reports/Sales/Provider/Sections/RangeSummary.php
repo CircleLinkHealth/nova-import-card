@@ -1,4 +1,10 @@
-<?php namespace App\Reports\Sales\Provider\Sections;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Reports\Sales\Provider\Sections;
 
 use App\Reports\Sales\ProviderReportable;
 use App\Reports\Sales\SalesReportSection;

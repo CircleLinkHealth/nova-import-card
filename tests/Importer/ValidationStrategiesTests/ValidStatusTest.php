@@ -1,15 +1,15 @@
 <?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Importer\ValidationStrategiesTests;
 
 use Tests\TestCase;
 
 class ValidStatusTest extends TestCase
 {
-    public function test_null_status_returns_inactive()
-    {
-        $this->assertFalse($this->getValidationStrategy()->isValid($this->mockProblem(null)));
-    }
-
     public function getValidationStrategy()
     {
         return new \App\Importer\Section\Validators\ValidStatus();
@@ -17,7 +17,7 @@ class ValidStatusTest extends TestCase
 
     public function mockProblem($status)
     {
-        $problem = new stdClass();
+        $problem         = new stdClass();
         $problem->status = $status;
 
         return $problem;
@@ -41,5 +41,10 @@ class ValidStatusTest extends TestCase
     public function test_not_object_returns_inactive()
     {
         $this->assertFalse($this->getValidationStrategy()->isValid('not an object'));
+    }
+
+    public function test_null_status_returns_inactive()
+    {
+        $this->assertFalse($this->getValidationStrategy()->isValid($this->mockProblem(null)));
     }
 }

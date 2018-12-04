@@ -1,7 +1,10 @@
 <?php
 
-return [
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
+return [
     /*
     |--------------------------------------------------------------------------
     | View Storage Paths
@@ -29,5 +32,4 @@ return [
     */
 
     'compiled' => realpath(storage_path('framework/views')),
-
 ];

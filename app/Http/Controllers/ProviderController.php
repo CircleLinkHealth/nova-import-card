@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers;
 
 use App\CarePlan;
@@ -17,41 +21,26 @@ class ProviderController extends Controller
         $this->providerInfoService = $providerInfoService;
     }
 
-    public function index()
-    {
-        return $this->providerInfoService->providers();
-    }
-
-    public function list()
-    {
-        return $this->providerInfoService->repo()->list();
-    }
-
-    public function show($id)
-    {
-        return $this->providerInfoService->repo()->provider($id);
-    }
-
     public function approveCarePlan(Request $request, $patientId, $viewNext = false)
     {
         if (auth()->user()->canQAApproveCarePlans()) {
             $carePlan = CarePlan::where('user_id', $patientId)
-                                ->firstOrFail();
+                ->firstOrFail();
 
-            if ($carePlan->status == CarePlan::DRAFT && $carePlan->validator()->fails()) {
+            if (CarePlan::DRAFT == $carePlan->status && $carePlan->validator()->fails()) {
                 return redirect()->back()->with(['errors' => $carePlan->validator()->errors()]);
             }
         }
 
         event(new CarePlanWasApproved(User::find($patientId)));
-        $viewNext = (boolean)$viewNext;
+        $viewNext = (bool) $viewNext;
 
         if ($viewNext) {
             $nextPatient = auth()->user()->patientsPendingApproval()->get()->filter(function ($user) {
-                return $user->getCarePlanStatus() == CarePlan::QA_APPROVED;
+                return CarePlan::QA_APPROVED == $user->getCarePlanStatus();
             })->first();
 
-            if ( ! $nextPatient) {
+            if (!$nextPatient) {
                 return redirect()->to('/');
             }
 
@@ -64,12 +53,22 @@ class ProviderController extends Controller
         ]));
     }
 
+    public function index()
+    {
+        return $this->providerInfoService->providers();
+    }
+
+    public function list()
+    {
+        return $this->providerInfoService->repo()->list();
+    }
+
     public function removePatient($patientId, $viewNext = false)
     {
         $user = User::find($patientId);
 
-        if ( ! $user) {
-            return response("User not found", 401);
+        if (!$user) {
+            return response('User not found', 401);
         }
 
         try {
@@ -80,10 +79,10 @@ class ProviderController extends Controller
 
         if ($viewNext) {
             $nextPatient = auth()->user()->patientsPendingApproval()->get()->filter(function ($user) {
-                return $user->getCarePlanStatus() == CarePlan::QA_APPROVED;
+                return CarePlan::QA_APPROVED == $user->getCarePlanStatus();
             })->first();
 
-            if ( ! $nextPatient) {
+            if (!$nextPatient) {
                 return redirect()->to('/');
             }
 
@@ -93,27 +92,31 @@ class ProviderController extends Controller
                 'patientId'    => $patientId,
                 'clearSession' => $viewNext,
             ]));
-
         }
 
         return redirect()->to('/');
     }
-
+    
     public function updateApproveOwnCarePlan(Request $request)
     {
-
+        
         $user = auth()->user();
         if ( ! $user->providerInfo) {
             return redirect()->back()->withErrors(['errors' => 'Please log in as a Provider.']);
         }
-
+        
         $own = $user->providerInfo->approve_own_care_plans;
-
+        
         $user->providerInfo->approve_own_care_plans = $own
             ? 0
             : 1;
         $user->providerInfo->save();
-
+        
         return redirect()->route('patients.dashboard');
+    }
+
+    public function show($id)
+    {
+        return $this->providerInfoService->repo()->provider($id);
     }
 }

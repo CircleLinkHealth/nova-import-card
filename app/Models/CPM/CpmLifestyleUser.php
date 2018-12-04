@@ -1,23 +1,26 @@
-<?php namespace App\Models\CPM;
+<?php
 
-use App\Contracts\Serviceable;
-use App\Models\CPM\CpmLifestyle;
-use App\Models\CPM\CpmInstruction;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Models\CPM;
+
 use App\User;
-use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\Models\CPM\CpmLifestyleUser
+ * App\Models\CPM\CpmLifestyleUser.
  *
- * @property int $id
- * @property int|null $cpm_instruction_id
- * @property int $patient_id
- * @property int $cpm_lifestyle_id
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property-read App\Models\CPM\CpmInstruction $cpmInstruction
- * @property-read App\Models\CPM\CpmLifestyle $cpmLifestyle
- * @property-read \App\User $user
+ * @property int                           $id
+ * @property int|null                      $cpm_instruction_id
+ * @property int                           $patient_id
+ * @property int                           $cpm_lifestyle_id
+ * @property \Carbon\Carbon                $created_at
+ * @property \Carbon\Carbon                $updated_at
+ * @property App\Models\CPM\CpmInstruction $cpmInstruction
+ * @property App\Models\CPM\CpmLifestyle   $cpmLifestyle
+ * @property \App\User                     $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle whereName($value)
@@ -26,7 +29,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CpmLifestyleUser extends \App\BaseModel
 {
-    
     use Instructable;
 
     protected $guarded = [];
@@ -42,7 +44,7 @@ class CpmLifestyleUser extends \App\BaseModel
     {
         return $this->belongsTo(CpmLifestyle::class, 'cpm_lifestyle_id');
     }
-    
+
     public function user()
     {
         return $this->belongsTo(User::class, 'patient_id');

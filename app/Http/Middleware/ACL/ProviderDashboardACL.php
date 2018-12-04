@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Middleware\ACL;
 
 use App\Practice;
@@ -11,8 +15,9 @@ class ProviderDashboardACL
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Closure $next
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure                 $next
+     * @param mixed                    $role
      *
      * @return mixed
      */
@@ -22,14 +27,12 @@ class ProviderDashboardACL
         $role
     ) {
         $practiceSlug = Route::current()->parameter('practiceSlug');
-        $practice = Practice::whereName($practiceSlug)->first();
-
+        $practice     = Practice::whereName($practiceSlug)->first();
 
         //CLH Admins can see everything
         if (auth()->user()->hasRole(['administrator', 'saas-admin', 'saas-admin-view-only'])) {
             return $next($request);
         }
-
 
         $practice = auth()->user()->practice($practiceSlug);
 

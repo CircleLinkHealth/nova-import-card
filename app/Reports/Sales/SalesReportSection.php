@@ -1,4 +1,10 @@
-<?php namespace App\Reports\Sales;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Reports\Sales;
 
 use App\Contracts\Reports\Section;
 use Carbon\Carbon;
@@ -7,25 +13,24 @@ use Carbon\Carbon;
  * Created by PhpStorm.
  * User: RohanM
  * Date: 12/19/16
- * Time: 5:25 PM
+ * Time: 5:25 PM.
  */
 abstract class SalesReportSection implements Section
 {
-
-    protected $start;
+    protected $data;
     protected $end;
     protected $for;
-    protected $data;
+    protected $start;
 
     public function __construct(
         $for,
         Carbon $start,
         Carbon $end
     ) {
-        $this->for = $for;
+        $this->for   = $for;
         $this->start = $start;
-        $this->end = $end;
+        $this->end   = $end;
     }
 
-    abstract function render();
+    abstract public function render();
 }

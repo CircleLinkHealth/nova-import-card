@@ -1,8 +1,13 @@
-<?php namespace App\CLH\Contracts\Messaging;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\CLH\Contracts\Messaging;
 
 interface SecureMessage
 {
-
     /**
      * This method will send a message to the user through an api.
      *
@@ -10,6 +15,7 @@ interface SecureMessage
      * @param $from
      * @param $message
      * @param array $args
+     *
      * @return mixed
      */
     public function send($to, $from, $message, $args = []);

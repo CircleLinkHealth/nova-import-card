@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\Algorithms\Calls\ReschedulerHandler;
@@ -8,18 +12,17 @@ use Illuminate\Console\Command;
 class RescheduleMissedCalls extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'calls:reschedule';
-
-    /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Reschedule all past scheduled calls that were missed.';
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'calls:reschedule';
     private $service;
 
     /**
@@ -43,7 +46,7 @@ class RescheduleMissedCalls extends Command
     {
         $handled = $this->service->handle();
 
-        if ( ! empty($handled)) {
+        if (!empty($handled)) {
             $message = "The CPMbot just rescheduled some calls.\n";
 
             foreach ($handled as $call) {

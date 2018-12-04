@@ -1,36 +1,42 @@
-<?php namespace App\Models\CPM;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Models\CPM;
 
 use App\CareItem;
 use App\CarePlanTemplate;
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\Contracts\Serviceable;
 use App\Importer\Models\ImportedItems\ProblemImport;
-use App\Keyword;
 use App\Services\CPM\CpmProblemService;
 use App\User;
 
 /**
- * App\Models\CPM\CpmProblem
+ * App\Models\CPM\CpmProblem.
  *
- * @property int $id
- * @property string $default_icd_10_code
- * @property string $name
- * @property string $icd10from
- * @property string $icd10to
- * @property float $icd9from
- * @property float $icd9to
- * @property string $contains
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property-read \App\CareItem $carePlanItemIdDeprecated
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\CarePlanTemplate[] $carePlanTemplates
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmBiometric[] $cpmBiometricsToBeActivated
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmInstruction[] $cpmInstructions
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmLifestyle[] $cpmLifestylesToBeActivated
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmMedicationGroup[] $cpmMedicationGroupsToBeActivated
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmSymptom[] $cpmSymptomsToBeActivated
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\User[] $patient
- * @property-read App\Models\CPM\CpmInstructable $instructable
+ * @property int                                                                           $id
+ * @property string                                                                        $default_icd_10_code
+ * @property string                                                                        $name
+ * @property string                                                                        $icd10from
+ * @property string                                                                        $icd10to
+ * @property float                                                                         $icd9from
+ * @property float                                                                         $icd9to
+ * @property string                                                                        $contains
+ * @property \Carbon\Carbon                                                                $created_at
+ * @property \Carbon\Carbon                                                                $updated_at
+ * @property \App\CareItem                                                                 $carePlanItemIdDeprecated
+ * @property \App\CarePlanTemplate[]|\Illuminate\Database\Eloquent\Collection              $carePlanTemplates
+ * @property \App\Models\CPM\CpmBiometric[]|\Illuminate\Database\Eloquent\Collection       $cpmBiometricsToBeActivated
+ * @property \App\Models\CPM\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection     $cpmInstructions
+ * @property \App\Models\CPM\CpmLifestyle[]|\Illuminate\Database\Eloquent\Collection       $cpmLifestylesToBeActivated
+ * @property \App\Models\CPM\CpmMedicationGroup[]|\Illuminate\Database\Eloquent\Collection $cpmMedicationGroupsToBeActivated
+ * @property \App\Models\CPM\CpmSymptom[]|\Illuminate\Database\Eloquent\Collection         $cpmSymptomsToBeActivated
+ * @property \App\User[]|\Illuminate\Database\Eloquent\Collection                          $patient
+ * @property App\Models\CPM\CpmInstructable                                                $instructable
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereContains($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereDefaultIcd10Code($value)
@@ -45,24 +51,23 @@ use App\User;
  */
 class CpmProblem extends \App\BaseModel implements Serviceable
 {
-    
     use Instructable;
+
+    protected $guarded = [];
 
     protected $table = 'cpm_problems';
 
-    protected $guarded = [];
-    
+    public function carePlanItemIdDeprecated()
+    {
+        return $this->belongsTo(CareItem::class);
+    }
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function carePlanTemplates()
     {
         return $this->belongsToMany(CarePlanTemplate::class, 'care_plan_templates_cpm_problems');
-    }
-
-    public function carePlanItemIdDeprecated()
-    {
-        return $this->belongsTo(CareItem::class);
     }
 
     /**
@@ -116,7 +121,27 @@ class CpmProblem extends \App\BaseModel implements Serviceable
             ->withPivot('care_plan_template_id')
             ->withTimestamps();
     }
-    
+
+    public function instructable()
+    {
+        return $this->hasOne(CpmInstructable::class, 'instructable_id');
+    }
+
+    public function instruction()
+    {
+        return $this->cpmInstructions()->first();
+    }
+
+    public function instructions()
+    {
+        return $this->user()->whereNotNull('cpm_instruction_id')->with(['instruction'])->groupBy('cpm_instruction_id');
+    }
+
+    public function isDuplicateOf($name)
+    {
+        return $this->where('contains', 'LIKE', "%${name}%");
+    }
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
@@ -125,34 +150,13 @@ class CpmProblem extends \App\BaseModel implements Serviceable
         return $this->belongsToMany(User::class, 'cpm_problems_users', 'patient_id');
     }
 
-    public function user() {
-        return $this->hasMany(CpmProblemUser::class, 'cpm_problem_id');
-    }
-
-    public function instruction() {
-        return $this->cpmInstructions()->first();
-    }
-
-    public function instructions() {
-        return $this->user()->whereNotNull('cpm_instruction_id')->with(['instruction'])->groupBy('cpm_instruction_id');
-    }
-
-    public function instructable() {
-        return $this->hasOne(CpmInstructable::class, 'instructable_id');
-    }
-
-    public function isDuplicateOf($name) {
-        return $this->where('contains', 'LIKE', "%$name%");
-    }
-
-    public function snomedMaps()
+    public function problemImports()
     {
-        return $this->hasMany(SnomedToCpmIcdMap::class);
+        return $this->hasMany(ProblemImport::class);
     }
-
 
     /**
-     * Get this Model's Service Class
+     * Get this Model's Service Class.
      *
      * @return Serviceable
      */
@@ -161,7 +165,13 @@ class CpmProblem extends \App\BaseModel implements Serviceable
         return new CpmProblemService();
     }
 
-    public function problemImports() {
-        return $this->hasMany(ProblemImport::class);
+    public function snomedMaps()
+    {
+        return $this->hasMany(SnomedToCpmIcdMap::class);
+    }
+
+    public function user()
+    {
+        return $this->hasMany(CpmProblemUser::class, 'cpm_problem_id');
     }
 }

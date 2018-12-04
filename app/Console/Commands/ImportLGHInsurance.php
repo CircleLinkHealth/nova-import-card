@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\ProcessedFile;
@@ -8,6 +12,12 @@ use Illuminate\Console\Command;
 class ImportLGHInsurance extends Command
 {
     /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Import LGH Insurance files from /cryptdata/var/sftp/sftp1/files/';
+    /**
      * The name and signature of the console command.
      *
      * @var string
@@ -15,16 +25,7 @@ class ImportLGHInsurance extends Command
     protected $signature = 'lgh:importInsurance';
 
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Import LGH Insurance files from /cryptdata/var/sftp/sftp1/files/';
-
-    /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -38,22 +39,22 @@ class ImportLGHInsurance extends Command
      */
     public function handle()
     {
-        $ccdas = [];
+        $ccdas    = [];
         $xmlFiles = [];
 
         $count = 0;
 
         foreach (\Storage::disk('ccdas')->files() as $fileName) {
-            if (stripos($fileName, 'circlelink_supplement_') === false) {
+            if (false === stripos($fileName, 'circlelink_supplement_')) {
                 continue;
             }
 
-            $path = config('filesystems.disks.ccdas.root') . '/' . $fileName;
+            $path = config('filesystems.disks.ccdas.root').'/'.$fileName;
 
             $exists = ProcessedFile::wherePath($path)->first();
 
             if ($exists) {
-                \Log::info("Already processed $path");
+                \Log::info("Already processed ${path}");
 
                 continue;
             }
@@ -62,11 +63,11 @@ class ImportLGHInsurance extends Command
 
             dispatch($job);
 
-            $this->info("Queued Job to import: $fileName");
+            $this->info("Queued Job to import: ${fileName}");
 
-            $count++;
+            ++$count;
 
-            if ($count == 4) {
+            if (4 == $count) {
                 break;
             }
         }

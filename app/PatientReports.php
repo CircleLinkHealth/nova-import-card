@@ -1,20 +1,27 @@
-<?php namespace App;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * App\PatientReports
+ * App\PatientReports.
  *
- * @property int $id
- * @property int $patient_id
- * @property string $patient_mrn
- * @property string $provider_id
- * @property string $file_type
- * @property int $location_id
- * @property string $file_base64
- * @property string|null $deleted_at
+ * @property int            $id
+ * @property int            $patient_id
+ * @property string         $patient_mrn
+ * @property string         $provider_id
+ * @property string         $file_type
+ * @property int            $location_id
+ * @property string         $file_base64
+ * @property string|null    $deleted_at
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\PatientReports onlyTrashed()
  * @method static bool|null restore()

@@ -1,13 +1,15 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Seeder;
 
 class AddsCLHPPPMToPractices extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
     public function run()
     {
@@ -27,7 +29,7 @@ class AddsCLHPPPMToPractices extends Seeder
         ];
 
         foreach ($data as $key => $value) {
-            $p = \App\Practice::whereName($key)->first();
+            $p           = \App\Practice::whereName($key)->first();
             $p->clh_pppm = $value;
             $p->save();
         }

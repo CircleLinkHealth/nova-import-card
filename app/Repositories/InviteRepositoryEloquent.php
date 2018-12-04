@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Repositories;
 
 use App\Contracts\Repositories\InviteRepository;
@@ -8,27 +12,25 @@ use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
 
 /**
- * Class InviteRepositoryEloquent
- * @package namespace App\Repositories;
+ * Class InviteRepositoryEloquent.
  */
 class InviteRepositoryEloquent extends BaseRepository implements InviteRepository
 {
     /**
-     * Specify Model class name
+     * Boot up the repository, pushing criteria.
+     */
+    public function boot()
+    {
+        $this->pushCriteria(app(RequestCriteria::class));
+    }
+
+    /**
+     * Specify Model class name.
      *
      * @return string
      */
     public function model()
     {
         return Invite::class;
-    }
-
-
-    /**
-     * Boot up the repository, pushing criteria
-     */
-    public function boot()
-    {
-        $this->pushCriteria(app(RequestCriteria::class));
     }
 }

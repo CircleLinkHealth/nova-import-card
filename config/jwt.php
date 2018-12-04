@@ -1,16 +1,10 @@
 <?php
 
 /*
- * This file is part of jwt-auth.
- *
- * (c) Sean Tymon <tymon148@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | JWT Authentication Secret
@@ -122,7 +116,6 @@ return [
     */
 
     'providers' => [
-
         /*
         |--------------------------------------------------------------------------
         | User Provider
@@ -167,7 +160,5 @@ return [
         */
 
         'storage' => 'Tymon\JWTAuth\Providers\Storage\IlluminateCacheAdapter',
-
     ],
-
 ];

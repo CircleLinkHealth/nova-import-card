@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
@@ -10,23 +14,21 @@ use Illuminate\Http\Request;
 
 class CCMComplexToggleController extends Controller
 {
-
     public function toggle(
         Request $request,
         $patientId
     ) {
-
         $input = $request->all();
 
         $date = Carbon::now()->startOfMonth()->toDateString();
 
         $patient = User::where('id', $patientId)
-                       ->with([
-                           'patientSummaries' => function ($q) use ($date) {
-                               $q->where('month_year', $date);
-                           },
-                       ])
-                       ->first();
+            ->with([
+                'patientSummaries' => function ($q) use ($date) {
+                    $q->where('month_year', $date);
+                },
+            ])
+            ->first();
 
         $patientRecord = $patient
             ->patientSummaries
@@ -48,7 +50,7 @@ class CCMComplexToggleController extends Controller
             if ($patient->getCcmTime() > 3600) {
                 //Get nurse that did the last activity.
                 $nurse = $patient->patientInfo->lastNurseThatPerformedActivity();
-                if($nurse){
+                if ($nurse) {
                     (new AlternativeCareTimePayableCalculator($nurse))
                         ->adjustPayOnCCMComplexSwitch60Mins();
                 }

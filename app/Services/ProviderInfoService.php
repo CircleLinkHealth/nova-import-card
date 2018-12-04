@@ -1,4 +1,10 @@
-<?php namespace App\Services;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Services;
 
 use App\Repositories\ProviderInfoRepository;
 use App\Repositories\UserRepositoryEloquent;
@@ -8,21 +14,16 @@ class ProviderInfoService
     private $providerInfoRepo;
     private $userRepo;
 
-    public function __construct(ProviderInfoRepository $providerInfoRepo, UserRepositoryEloquent $userRepo) {
+    public function __construct(ProviderInfoRepository $providerInfoRepo, UserRepositoryEloquent $userRepo)
+    {
         $this->providerInfoRepo = $providerInfoRepo;
-        $this->userRepo = $userRepo;
+        $this->userRepo         = $userRepo;
     }
 
-    public function repo() {
-        return $this->providerInfoRepo;
-    }
-
-    public function providers() {
-        return $this->repo()->providers();
-    }
-
-    public function getPatientProviders($userId) {
+    public function getPatientProviders($userId)
+    {
         $user = $this->userRepo->user($userId);
+
         return $user->practices()->get()->map(function ($p) {
             return $p->providers();
         })->reduce(function ($arr, $item) {
@@ -32,5 +33,15 @@ class ProviderInfoService
         })->values()->map(function ($u) {
             return $u->safe();
         });
+    }
+
+    public function providers()
+    {
+        return $this->repo()->providers();
+    }
+
+    public function repo()
+    {
+        return $this->providerInfoRepo;
     }
 }

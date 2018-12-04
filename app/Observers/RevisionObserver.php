@@ -1,13 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 8/7/18
- * Time: 1:51 AM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Observers;
-
 
 use Venturecraft\Revisionable\Revision;
 

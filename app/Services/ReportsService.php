@@ -1,4 +1,10 @@
-<?php namespace App\Services;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Services;
 
 use App\CarePlan;
 use App\Models\CCD\Problem;
@@ -11,297 +17,66 @@ use Illuminate\Support\Facades\DB;
 
 class ReportsService
 {
-
-    //FOR MOBILE API
-    public static function biometricsMessageIdMapping($biometric)
-    {
-        switch ($biometric) {
-            case 'Blood Sugar':
-            case 'Blood_Sugar':
-                return 'CF_RPT_30';
-                break;
-            case 'Cigarettes':
-                return 'CF_RPT_50';
-                break;
-            case 'Weight':
-                return 'CF_RPT_40';
-                break;
-            case 'Blood Pressure':
-            case 'Blood_Pressure':
-                return 'CF_RPT_20';
-                break;
-            default:
-                return '';
-        }
-    }
-
-    public function getBiometricsToMonitor(User $user)
-    {
-        return $user->cpmBiometrics()->get()->pluck('name')->all();
-    }
-
-    public function getSymptomsToMonitor(CarePlan $carePlan)
-    {
-        $temp = [];
-        if ($carePlan) {
-            foreach ($carePlan->careSections as $section) {
-                if ($section->name == 'symptoms-to-monitor') {
-                    foreach ($section->carePlanItems as $item) {
-                        if ($item->meta_value == 'Active') {
-                            $temp[] = $item->careItem->display_name;
-                        }
-                    }
-                }
-            }
-        }
-
-        return $temp;
-    }
-
-    public function getLifestyleToMonitor(CarePlan $carePlan)
-    {
-        $temp = [];
-        if ($carePlan) {
-            foreach ($carePlan->careSections as $section) {
-                if ($section->name == 'lifestyle-to-monitor') {
-                    foreach ($section->carePlanItems as $item) {
-                        if ($item->meta_value == 'Active') {
-                            $temp[] = $item->careItem->display_name;
-                        }
-                    }
-                }
-            }
-        }
-
-        return $temp;
-    }
-
-    public function medicationsList(User $user)
-    {
-        $medications = $user->cpmMedicationGroups()->get()->pluck('name')->all();
-
-        return $medications;
-    }
-
-    public function getMedicationStatus(
-        User $user,
-        $fromApp = true
-    ) {
-        $medications_categories = $user->cpmMedicationGroups()->get()->pluck('name')->all();
-
-        //get all medication observations for the user
-        $medication_obs = DB::table('rules_questions')
-                            ->select(
-                                'lv_observations.id',
-                                'rules_items.items_text',
-                                'lv_observations.obs_date',
-                                'lv_observations.obs_value',
-                                'lv_observations.obs_key',
-                                'lv_observations.obs_message_id'
-                            )
-                            ->join('lv_observations', 'rules_questions.msg_id', '=', 'lv_observations.obs_message_id')
-                            ->join('rules_items', 'rules_questions.qid', '=', 'rules_items.qid')
-                            ->where('user_id', $user->id)
-                            ->where('lv_observations.obs_key', 'Adherence')
-                            ->where('lv_observations.obs_unit', '!=', 'invalid')
-                            ->where('lv_observations.obs_unit', '!=', 'scheduled')
-                            ->where('obs_unit', '!=', 'outbound')
-                            ->distinct('lv_observations.id')
-                            ->orderBy('lv_observations.id')
-                            ->get();
-
-        //group observation readings by medicine
-        $temp_meds = [];
-        foreach ($medications_categories as $cat) {
-            $temp_meds[$cat]['total'] = 0;
-            $temp_meds[$cat]['yes']   = 0;
-        }
-
-        //Add scaffolding to sections
-        if ($fromApp) {
-            $meds_array['Better']['description']     = '';
-            $meds_array['Needs Work']['description'] = '';
-            $meds_array['Worse']['description']      = '';
-        } else {
-            $meds_array['Better']['description']     = [];
-            $meds_array['Needs Work']['description'] = [];
-            $meds_array['Worse']['description']      = [];
-        }
-
-        foreach ($medication_obs as $obs) {
-            $yes   = 0;
-            $count = 0;
-            if (in_array($obs->items_text, $medications_categories)) {
-                $temp_meds[$obs->items_text]['total']++;
-                if ($obs->obs_value == 'Y') {
-                    $temp_meds[$obs->items_text]['yes']++;
-                }
-            }
-        }
-
-        //Remove meds with no observations
-        foreach ($temp_meds as $key => $value) {
-            if ($value['total'] == 0) {
-                unset($temp_meds[$key]);
-            }
-        }
-
-        foreach ($temp_meds as $key => $value) {
-            $yes   = $value['yes'];
-            $total = $value['total'];
-
-            if ($yes != 0 && $total != 0) {
-                $adhereance_percent = doubleval($yes / $total);
-            } else {
-                if ($yes == 0 && $total == 1) {
-                    $adhereance_percent = 0;
-                } else {
-                    if ($yes == 0 && $total == 0) {
-                        $adhereance_percent = 1;
-                    } else {
-                        if ($yes == 0) {
-                            $adhereance_percent = 0;
-                        }
-                    }
-                }
-            }
-//            if ($fromApp) {
-//                //add to categories based on percentage of responses
-//                switch ($adhereance_percent) {
-//                    case ($adhereance_percent > 0.8):
-//                        $meds_array['Better']['description'] .= ($meds_array['Better']['description'] == '' ? $category : ', ' . $category);
-//                        break;
-//                    case ($temp_meds[$category]['percent'] >= 0.5):
-//                        $meds_array['Needs Work']['description'] .= ($meds_array['Needs Work']['description'] == '' ? $category : ', ' . $category);
-//                        break;
-//                    case ($temp_meds[$category]['percent'] == 0.0):
-//                        $meds_array['Worse']['description'] .= ($meds_array['Worse']['description'] == '' ? $category : ', ' . $category);
-//                        break;
-//                    default:
-//                        $meds_array['Worse']['description'] .= ($meds_array['Worse']['description'] == '' ? $category : ', ' . $category);
-//                        break;
-//                }
-//                dd($category.': ' . $temp_meds[$category]['percent'] . ' <br /> ');
-//            } else {
-            // for provider UI
-            switch (true) {
-                case ($adhereance_percent > 0.8):
-                    $meds_array['Better']['description'][] = $key;
-                    break;
-                case ($adhereance_percent >= 0.5):
-                    $meds_array['Needs Work']['description'][] = $key;
-                    break;
-                case ($adhereance_percent < 0.5):
-                    $meds_array['Worse']['description'][] = $key;
-                    break;
-                default:
-                    $meds_array['Worse']['description'][] = $key;
-                    break;
-            }
-        }
-        //Show all the medication categories and stats
-        //dd(json_encode($medications)); // show the medications by adherence category
-
-        $medications[0] = [
-            'name'    => $meds_array['Better']['description'],
-            'Section' => 'Better',
-        ];
-        $medications[1] = [
-            'name'    => $meds_array['Needs Work']['description'],
-            'Section' => 'Needs Work',
-        ];
-        $medications[2] = [
-            'name'    => $meds_array['Worse']['description'],
-            'Section' => 'Worse',
-        ];
-
-        return $medications;
-    }
-
-    public function getTargetValueForBiometric(
-        $biometric,
-        User $user,
-        $showUnits = true
-    ) {
-        $bio              = CpmBiometric::whereName(str_replace('_', ' ', $biometric))->first();
-        $biometric_values = app(config('cpmmodelsmap.biometrics')[$bio->type])->getUserValues($user);
-
-        if ($showUnits) {
-            return $biometric_values['target'] . ReportsService::biometricsUnitMapping($biometric);
-        } else {
-            return $biometric_values['target'];
-        }
-    }
-
-    public static function biometricsUnitMapping($biometric)
-    {
-        switch ($biometric) {
-            case 'Blood Sugar':
-            case 'Blood_Sugar':
-                return ' mg/dL';
-                break;
-            case 'Cigarettes':
-                return '';
-                break;
-            case 'Weight':
-                return ' lbs';
-                break;
-            case 'Blood Pressure':
-            case 'Blood_Pressure':
-                return ' mm Hg';
-                break;
-            default:
-                return '';
-        }
-    }
-
-    public function getBiometricsData(
-        $biometric,
-        $user
-    ) {
-        $data = DB::table('lv_observations')
-                  ->select(DB::raw('user_id, replace(obs_key,\'_\',\' \') \'Observation\',
-					week(obs_date) week, year(obs_date) year, floor(datediff(now(), obs_date)/7) realweek,
-					date_format(max(obs_date), \'%c/%e\') as day, date_format(min(obs_date), \'%c/%e\') as day_low,
-					min(obs_date) as min_obs_id, max(obs_date) as obs_id,
-					round(avg(obs_value)) \'Avg\''))
-                  ->where('obs_key', '=', $biometric)
-                  ->where('user_id', $user->id)
-                  ->where(DB::raw('datediff(now(), obs_date)/7'), '<=', 11)
-                  ->where('obs_unit', '!=', 'invalid')
-                  ->where('obs_unit', '!=', 'scheduled')
-                  ->groupBy('user_id')
-                  ->groupBy('obs_key')
-                  ->groupBy('realweek')
-                  ->orderBy('obs_date')
-                  ->get();
-
-        return ($data)
-            ? $data
-            : '';
-    }
-
-    public function biometricsIndicators(
+    public function analyzeBloodPressure(
         $weeklyReading1,
-        $weeklyReading2,
-        $biometric,
-        $target
-    ) {//debug($biometric);
+        $weeklyReading2
+    ) {
+        $change = $weeklyReading1 - $weeklyReading2;
 
-        if ($biometric == 'Blood Sugar') {
-//            debug($this->analyzeBloodSugar($weeklyReading1, $weeklyReading2));
-            return $this->analyzeBloodSugar($weeklyReading1, $weeklyReading2);
-        } else {
-            if ($biometric == 'Blood Pressure') {
-//            debug($this->analyzeBloodSugar($weeklyReading1, $weeklyReading2));
-                return $this->analyzeBloodPressure($weeklyReading1, $weeklyReading2);
+        if ($weeklyReading1 > 130) {
+            if ($change > 0) { //The weekly average has increased
+                $color       = 'red';
+                $progression = 'up';
+                $copy        = 'Worse';
             } else {
-                if ($biometric == 'Weight') {
-//            debug($this->analyzeBloodSugar($weeklyReading1, $weeklyReading2));
-                    return $this->analyzeWeight($weeklyReading1, $weeklyReading2);
+                if ($change < 0) {
+                    $color       = 'green';
+                    $progression = 'down';
+                    $copy        = 'Better';
+                } else {
+                    $color       = 'yellow';
+                    $copy        = 'Unchanged';
+                    $progression = '';
+                }
+            }
+        } else {
+            if ($weeklyReading1 <= 130 && $weeklyReading1 > 100) {
+                $color = 'green';
+                $copy  = 'Good';
+                if ($change > 0) { //The weekly average has increased
+                    $progression = 'up';
+                } else {
+                    if ($change < 0) {
+                        $progression = 'down';
+                    } else {
+                        $progression = '';
+                    }
+                }
+            } else {
+                if ($weeklyReading1 <= 100) {
+                    $color = 'yellow';
+                    $copy  = 'Low';
+                    if ($change > 0) { //The weekly average has increased
+                        $progression = 'up';
+                    } else {
+                        if ($change < 0) {
+                            $progression = 'down';
+                        } else {
+                            $progression = '';
+                        }
+                    }
                 }
             }
         }
+
+        $changes_array                = [];
+        $changes_array['change']      = $change;
+        $changes_array['unit']        = $this->biometricsUnitMapping('Blood Pressure');
+        $changes_array['color']       = $color;
+        $changes_array['progression'] = $progression;
+        $changes_array['status']      = $copy;
+
+        return $changes_array;
     }
 
     public function analyzeBloodSugar(
@@ -328,8 +103,8 @@ class ReportsService
             }
         } else {
             if ($weeklyReading1 <= 130 && $weeklyReading1 > 70) {
-                $color = "green";
-                $copy  = "Good";
+                $color = 'green';
+                $copy  = 'Good';
                 if ($change > 0) { //The weekly average has increased
                     $progression = 'up';
                 } else {
@@ -341,8 +116,8 @@ class ReportsService
                 }
             } else {
                 if ($weeklyReading1 <= 70 && $weeklyReading1 > 60) {
-                    $color = "yellow";
-                    $copy  = "Low";
+                    $color = 'yellow';
+                    $copy  = 'Low';
                     if ($change > 0) { //The weekly average has increased
                         $progression = 'up';
                     } else {
@@ -354,8 +129,8 @@ class ReportsService
                     }
                 } else {
                     if ($weeklyReading1 <= 60) {
-                        $color = "red";
-                        $copy  = "Too Low";
+                        $color = 'red';
+                        $copy  = 'Too Low';
                         if ($change > 0) { //The weekly average has increased
                             $progression = 'up';
                         } else {
@@ -372,69 +147,7 @@ class ReportsService
 
         $changes_array                = [];
         $changes_array['change']      = $change;
-        $changes_array['unit']        = $this->biometricsUnitMapping("Blood Sugar");
-        $changes_array['color']       = $color;
-        $changes_array['progression'] = $progression;
-        $changes_array['status']      = $copy;
-
-        return $changes_array;
-    }
-
-    public function analyzeBloodPressure(
-        $weeklyReading1,
-        $weeklyReading2
-    ) {
-        $change = $weeklyReading1 - $weeklyReading2;
-
-        if ($weeklyReading1 > 130) {
-            if ($change > 0) { //The weekly average has increased
-                $color       = 'red';
-                $progression = 'up';
-                $copy        = 'Worse';
-            } else {
-                if ($change < 0) {
-                    $color       = 'green';
-                    $progression = 'down';
-                    $copy        = 'Better';
-                } else {
-                    $color       = 'yellow';
-                    $copy        = 'Unchanged';
-                    $progression = '';
-                }
-            }
-        } else {
-            if ($weeklyReading1 <= 130 && $weeklyReading1 > 100) {
-                $color = "green";
-                $copy  = "Good";
-                if ($change > 0) { //The weekly average has increased
-                    $progression = 'up';
-                } else {
-                    if ($change < 0) {
-                        $progression = 'down';
-                    } else {
-                        $progression = '';
-                    }
-                }
-            } else {
-                if ($weeklyReading1 <= 100) {
-                    $color = "yellow";
-                    $copy  = "Low";
-                    if ($change > 0) { //The weekly average has increased
-                        $progression = 'up';
-                    } else {
-                        if ($change < 0) {
-                            $progression = 'down';
-                        } else {
-                            $progression = '';
-                        }
-                    }
-                }
-            }
-        }
-
-        $changes_array                = [];
-        $changes_array['change']      = $change;
-        $changes_array['unit']        = $this->biometricsUnitMapping("Blood Pressure");
+        $changes_array['unit']        = $this->biometricsUnitMapping('Blood Sugar');
         $changes_array['color']       = $color;
         $changes_array['progression'] = $progression;
         $changes_array['status']      = $copy;
@@ -464,7 +177,7 @@ class ReportsService
         }
         $changes_array                = [];
         $changes_array['change']      = $change;
-        $changes_array['unit']        = $this->biometricsUnitMapping("Weight");
+        $changes_array['unit']        = $this->biometricsUnitMapping('Weight');
         $changes_array['color']       = $color;
         $changes_array['progression'] = $progression;
         $changes_array['status']      = $copy;
@@ -472,12 +185,77 @@ class ReportsService
         return $changes_array;
     }
 
+    public function biometricsIndicators(
+        $weeklyReading1,
+        $weeklyReading2,
+        $biometric,
+        $target
+    ) {//debug($biometric);
+        if ('Blood Sugar' == $biometric) {
+//            debug($this->analyzeBloodSugar($weeklyReading1, $weeklyReading2));
+            return $this->analyzeBloodSugar($weeklyReading1, $weeklyReading2);
+        }
+        if ('Blood Pressure' == $biometric) {
+//            debug($this->analyzeBloodSugar($weeklyReading1, $weeklyReading2));
+            return $this->analyzeBloodPressure($weeklyReading1, $weeklyReading2);
+        }
+        if ('Weight' == $biometric) {
+//            debug($this->analyzeBloodSugar($weeklyReading1, $weeklyReading2));
+            return $this->analyzeWeight($weeklyReading1, $weeklyReading2);
+        }
+    }
+
+    //FOR MOBILE API
+    public static function biometricsMessageIdMapping($biometric)
+    {
+        switch ($biometric) {
+            case 'Blood Sugar':
+            case 'Blood_Sugar':
+                return 'CF_RPT_30';
+                break;
+            case 'Cigarettes':
+                return 'CF_RPT_50';
+                break;
+            case 'Weight':
+                return 'CF_RPT_40';
+                break;
+            case 'Blood Pressure':
+            case 'Blood_Pressure':
+                return 'CF_RPT_20';
+                break;
+            default:
+                return '';
+        }
+    }
+
+    public static function biometricsUnitMapping($biometric)
+    {
+        switch ($biometric) {
+            case 'Blood Sugar':
+            case 'Blood_Sugar':
+                return ' mg/dL';
+                break;
+            case 'Cigarettes':
+                return '';
+                break;
+            case 'Weight':
+                return ' lbs';
+                break;
+            case 'Blood Pressure':
+            case 'Blood_Pressure':
+                return ' mm Hg';
+                break;
+            default:
+                return '';
+        }
+    }
+
     public function carePlanGenerator($patients)
     {
         $careplanReport = [];
 
         foreach ($patients as $user) {
-            if ( ! is_object($user)) {
+            if (!is_object($user)) {
                 $user = User::find($user);
             }
             $careplanReport[$user->id]['symptoms']    = $user->cpmSymptoms()->get()->pluck('name')->all();
@@ -490,7 +268,7 @@ class ReportsService
 
         $other_problems = $this->getInstructionsforOtherProblems($user);
 
-        if ( ! empty($other_problems)) {
+        if (!empty($other_problems)) {
             $careplanReport[$user->id]['problems']['Other Problems'] = $other_problems;
         }
 
@@ -498,7 +276,7 @@ class ReportsService
         $careplanReport[$user->id]['bio_data'] = [];
 
         //Ignore Smoking - Untracked Biometric
-        if (($key = array_search(CpmBiometric::SMOKING, $careplanReport[$user->id]['biometrics'])) !== false) {
+        if (false !== ($key = array_search(CpmBiometric::SMOKING, $careplanReport[$user->id]['biometrics']))) {
             unset($careplanReport[$user->id]['biometrics'][$key]);
         }
 
@@ -508,12 +286,12 @@ class ReportsService
 
             if ($biometric_values) {
                 //Check to see whether the user has a starting value
-                if ($biometric_values['starting'] == '') {
+                if ('' == $biometric_values['starting']) {
                     $biometric_values['starting'] = 'N/A';
                 }
 
                 //Check to see whether the user has a target value
-                if ($biometric_values['target'] == '') {
+                if ('' == $biometric_values['target']) {
                     $biometric_values['target'] = 'TBD';
                 }
 
@@ -524,19 +302,19 @@ class ReportsService
             }
 
             //Special verb use for each biometric
-            if ($metric == 'Blood Pressure') {
-                if ($biometric_values['starting'] == 'N/A') {
+            if ('Blood Pressure' == $metric) {
+                if ('N/A' == $biometric_values['starting']) {
                     $biometric_values['verb'] = 'Regulate';
                 } else {
                     $biometric_values['verb'] = 'Maintain';
                 }
             } else {
-                if ($metric == 'Weight') {
+                if ('Weight' == $metric) {
                     $biometric_values['verb'] = 'Maintain';
                 } else {
                     $biometric_values['verb'] = 'Raise';
 
-                    if ($biometric_values['starting'] != "N/A") {
+                    if ('N/A' != $biometric_values['starting']) {
                         $starting = explode('/', $biometric_values['starting']);
                         $starting = $starting[0];
                         $target   = explode('/', $biometric_values['target']);
@@ -545,15 +323,14 @@ class ReportsService
                         if ($starting > $target) {
                             $biometric_values['verb'] = 'Lower';
                         }
-                    };
+                    }
                 }
             }
 
-            $careplanReport[$user->id]['bio_data'][$metric]['target']   = $biometric_values['target'] . ReportsService::biometricsUnitMapping($metric);
-            $careplanReport[$user->id]['bio_data'][$metric]['starting'] = $biometric_values['starting'] . ReportsService::biometricsUnitMapping($metric);
+            $careplanReport[$user->id]['bio_data'][$metric]['target']   = $biometric_values['target'].ReportsService::biometricsUnitMapping($metric);
+            $careplanReport[$user->id]['bio_data'][$metric]['starting'] = $biometric_values['starting'].ReportsService::biometricsUnitMapping($metric);
             $careplanReport[$user->id]['bio_data'][$metric]['verb']     = $biometric_values['verb'];
         }
-
 
         //Medications List
         if ($user->cpmMiscs->where('name', CpmMisc::MEDICATION_LIST)->first()) {
@@ -608,18 +385,48 @@ class ReportsService
         return $careplanReport;
     }
 
+    public function getBiometricsData(
+        $biometric,
+        $user
+    ) {
+        $data = DB::table('lv_observations')
+            ->select(DB::raw('user_id, replace(obs_key,\'_\',\' \') \'Observation\',
+					week(obs_date) week, year(obs_date) year, floor(datediff(now(), obs_date)/7) realweek,
+					date_format(max(obs_date), \'%c/%e\') as day, date_format(min(obs_date), \'%c/%e\') as day_low,
+					min(obs_date) as min_obs_id, max(obs_date) as obs_id,
+					round(avg(obs_value)) \'Avg\''))
+            ->where('obs_key', '=', $biometric)
+            ->where('user_id', $user->id)
+            ->where(DB::raw('datediff(now(), obs_date)/7'), '<=', 11)
+            ->where('obs_unit', '!=', 'invalid')
+            ->where('obs_unit', '!=', 'scheduled')
+            ->groupBy('user_id')
+            ->groupBy('obs_key')
+            ->groupBy('realweek')
+            ->orderBy('obs_date')
+            ->get();
+
+        return ($data)
+            ? $data
+            : '';
+    }
+
+    public function getBiometricsToMonitor(User $user)
+    {
+        return $user->cpmBiometrics()->get()->pluck('name')->all();
+    }
+
     public function getInstructionsForOtherProblems(User $user)
     {
-
-        if ( ! $user) {
+        if (!$user) {
             //nullify
-            return "User not found...";
+            return 'User not found...';
         }
 
         // Other Conditions / Problem List
         $ccdProblems = 'No instructions at this time';
         $problem     = $user->cpmMiscs->where('name', CpmMisc::OTHER_CONDITIONS)->all();
-        if ( ! empty($problem)) {
+        if (!empty($problem)) {
             $problems = Problem::where('patient_id', '=', $user->id)->orderBy('name')->get();
             if ($problems->count() > 0) {
                 $ccdProblems = '';
@@ -632,13 +439,12 @@ class ReportsService
                         $ccdProblems .= '<br>';
                     }
                     $ccdProblems .= $problem->name;
-                    $i++;
+                    ++$i;
                 }
             }
         }
 
         return $ccdProblems;
-
         /*
         $problem = $user->cpmMiscs->where('name',CpmMisc::OTHER_CONDITIONS)->all();
 
@@ -656,5 +462,196 @@ class ReportsService
 
         return $instructions->name;
         */
+    }
+
+    public function getLifestyleToMonitor(CarePlan $carePlan)
+    {
+        $temp = [];
+        if ($carePlan) {
+            foreach ($carePlan->careSections as $section) {
+                if ('lifestyle-to-monitor' == $section->name) {
+                    foreach ($section->carePlanItems as $item) {
+                        if ('Active' == $item->meta_value) {
+                            $temp[] = $item->careItem->display_name;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $temp;
+    }
+
+    public function getMedicationStatus(
+        User $user,
+        $fromApp = true
+    ) {
+        $medications_categories = $user->cpmMedicationGroups()->get()->pluck('name')->all();
+
+        //get all medication observations for the user
+        $medication_obs = DB::table('rules_questions')
+            ->select(
+                                'lv_observations.id',
+                                'rules_items.items_text',
+                                'lv_observations.obs_date',
+                                'lv_observations.obs_value',
+                                'lv_observations.obs_key',
+                                'lv_observations.obs_message_id'
+                            )
+            ->join('lv_observations', 'rules_questions.msg_id', '=', 'lv_observations.obs_message_id')
+            ->join('rules_items', 'rules_questions.qid', '=', 'rules_items.qid')
+            ->where('user_id', $user->id)
+            ->where('lv_observations.obs_key', 'Adherence')
+            ->where('lv_observations.obs_unit', '!=', 'invalid')
+            ->where('lv_observations.obs_unit', '!=', 'scheduled')
+            ->where('obs_unit', '!=', 'outbound')
+            ->distinct('lv_observations.id')
+            ->orderBy('lv_observations.id')
+            ->get();
+
+        //group observation readings by medicine
+        $temp_meds = [];
+        foreach ($medications_categories as $cat) {
+            $temp_meds[$cat]['total'] = 0;
+            $temp_meds[$cat]['yes']   = 0;
+        }
+
+        //Add scaffolding to sections
+        if ($fromApp) {
+            $meds_array['Better']['description']     = '';
+            $meds_array['Needs Work']['description'] = '';
+            $meds_array['Worse']['description']      = '';
+        } else {
+            $meds_array['Better']['description']     = [];
+            $meds_array['Needs Work']['description'] = [];
+            $meds_array['Worse']['description']      = [];
+        }
+
+        foreach ($medication_obs as $obs) {
+            $yes   = 0;
+            $count = 0;
+            if (in_array($obs->items_text, $medications_categories)) {
+                ++$temp_meds[$obs->items_text]['total'];
+                if ('Y' == $obs->obs_value) {
+                    ++$temp_meds[$obs->items_text]['yes'];
+                }
+            }
+        }
+
+        //Remove meds with no observations
+        foreach ($temp_meds as $key => $value) {
+            if (0 == $value['total']) {
+                unset($temp_meds[$key]);
+            }
+        }
+
+        foreach ($temp_meds as $key => $value) {
+            $yes   = $value['yes'];
+            $total = $value['total'];
+
+            if (0 != $yes && 0 != $total) {
+                $adhereance_percent = doubleval($yes / $total);
+            } else {
+                if (0 == $yes && 1 == $total) {
+                    $adhereance_percent = 0;
+                } else {
+                    if (0 == $yes && 0 == $total) {
+                        $adhereance_percent = 1;
+                    } else {
+                        if (0 == $yes) {
+                            $adhereance_percent = 0;
+                        }
+                    }
+                }
+            }
+//            if ($fromApp) {
+//                //add to categories based on percentage of responses
+//                switch ($adhereance_percent) {
+//                    case ($adhereance_percent > 0.8):
+//                        $meds_array['Better']['description'] .= ($meds_array['Better']['description'] == '' ? $category : ', ' . $category);
+//                        break;
+//                    case ($temp_meds[$category]['percent'] >= 0.5):
+//                        $meds_array['Needs Work']['description'] .= ($meds_array['Needs Work']['description'] == '' ? $category : ', ' . $category);
+//                        break;
+//                    case ($temp_meds[$category]['percent'] == 0.0):
+//                        $meds_array['Worse']['description'] .= ($meds_array['Worse']['description'] == '' ? $category : ', ' . $category);
+//                        break;
+//                    default:
+//                        $meds_array['Worse']['description'] .= ($meds_array['Worse']['description'] == '' ? $category : ', ' . $category);
+//                        break;
+//                }
+//                dd($category.': ' . $temp_meds[$category]['percent'] . ' <br /> ');
+//            } else {
+            // for provider UI
+            switch (true) {
+                case $adhereance_percent > 0.8:
+                    $meds_array['Better']['description'][] = $key;
+                    break;
+                case $adhereance_percent >= 0.5:
+                    $meds_array['Needs Work']['description'][] = $key;
+                    break;
+                case $adhereance_percent < 0.5:
+                    $meds_array['Worse']['description'][] = $key;
+                    break;
+                default:
+                    $meds_array['Worse']['description'][] = $key;
+                    break;
+            }
+        }
+        //Show all the medication categories and stats
+        //dd(json_encode($medications)); // show the medications by adherence category
+
+        $medications[0] = [
+            'name'    => $meds_array['Better']['description'],
+            'Section' => 'Better',
+        ];
+        $medications[1] = [
+            'name'    => $meds_array['Needs Work']['description'],
+            'Section' => 'Needs Work',
+        ];
+        $medications[2] = [
+            'name'    => $meds_array['Worse']['description'],
+            'Section' => 'Worse',
+        ];
+
+        return $medications;
+    }
+
+    public function getSymptomsToMonitor(CarePlan $carePlan)
+    {
+        $temp = [];
+        if ($carePlan) {
+            foreach ($carePlan->careSections as $section) {
+                if ('symptoms-to-monitor' == $section->name) {
+                    foreach ($section->carePlanItems as $item) {
+                        if ('Active' == $item->meta_value) {
+                            $temp[] = $item->careItem->display_name;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $temp;
+    }
+
+    public function getTargetValueForBiometric(
+        $biometric,
+        User $user,
+        $showUnits = true
+    ) {
+        $bio              = CpmBiometric::whereName(str_replace('_', ' ', $biometric))->first();
+        $biometric_values = app(config('cpmmodelsmap.biometrics')[$bio->type])->getUserValues($user);
+
+        if ($showUnits) {
+            return $biometric_values['target'].ReportsService::biometricsUnitMapping($biometric);
+        }
+
+        return $biometric_values['target'];
+    }
+
+    public function medicationsList(User $user)
+    {
+        return $user->cpmMedicationGroups()->get()->pluck('name')->all();
     }
 }

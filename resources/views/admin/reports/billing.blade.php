@@ -75,11 +75,12 @@
             <div class="col-md-12">
                 <div class="row">
                     <div class="col-md-12">
-                        <?php 
-                            function getPractice($practice) {
+                        <?php
+                            function getPractice($practice)
+                            {
                                 return [
-                                    'id' => $practice->id,
-                                    'display_name' => $practice->display_name
+                                    'id'           => $practice->id,
+                                    'display_name' => $practice->display_name,
                                 ];
                             }
                         ?>

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Unit;
 
 use App\Notifications\NoteForwarded;
@@ -14,14 +18,39 @@ class NoteForwardedTest extends TestCase
 {
     use WithoutMiddleware,
         UserHelpers;
+    protected $admin;
+    protected $nurse;
+    protected $patient;
 
     protected $practice;
-    protected $patient;
-    protected $nurse;
-    protected $admin;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->practice = factory(Practice::class)->create();
+        $this->patient  = $this->createUser($this->practice->id, 'participant');
+        $this->admin    = $this->createUser($this->practice->id, 'administrator');
+
+        $this->nurse = $this->createUser($this->practice->id, 'care-center');
+
+        $carePerson = $this->patient->careTeamMembers()->create([
+            'member_user_id' => $this->nurse->id,
+            'type'           => 'member',
+            'alert'          => 1,
+        ]);
+
+        $this->patient->notes()->create([
+            'author_id'    => $this->nurse->id,
+            'body'         => 'test',
+            'logger_id'    => $this->nurse->id,
+            'performed_at' => Carbon::now(),
+            'type'         => 'Patient Consented',
+        ]);
+    }
 
     /**
-     * Test that notes created for a patient are forwarded to care_team_members for that patient
+     * Test that notes created for a patient are forwarded to care_team_members for that patient.
      */
     public function test_it_sends_notifications()
     {
@@ -54,31 +83,5 @@ class NoteForwardedTest extends TestCase
                 NoteForwarded::class
             );
         });
-    }
-
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->practice = factory(Practice::class)->create();
-        $this->patient  = $this->createUser($this->practice->id, 'participant');
-        $this->admin    = $this->createUser($this->practice->id, 'administrator');
-
-        $this->nurse = $this->createUser($this->practice->id, 'care-center');
-
-        $carePerson = $this->patient->careTeamMembers()->create([
-            'member_user_id' => $this->nurse->id,
-            'type'           => 'member',
-            'alert'          => 1,
-
-        ]);
-
-        $this->patient->notes()->create([
-            'author_id'    => $this->nurse->id,
-            'body'         => 'test',
-            'logger_id'    => $this->nurse->id,
-            'performed_at' => Carbon::now(),
-            'type'         => 'Patient Consented',
-        ]);
     }
 }

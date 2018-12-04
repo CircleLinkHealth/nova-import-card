@@ -1,16 +1,22 @@
-<?php namespace App\Http\Middleware;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Http\Middleware;
 
 use Closure;
 use Session;
 
 class AprimaCcdApiAuthAdapter
 {
-
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure                 $next
+     *
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -19,7 +25,7 @@ class AprimaCcdApiAuthAdapter
             return response()->json(['error' => 'Access token not found on the request.'], 400);
         }
 
-        /**
+        /*
          * This will add an Authorization header to Aprima's request. We do this because we already gave
          * them documentation for the separate API we had, and we don't wanna have them change their stuff.
          */

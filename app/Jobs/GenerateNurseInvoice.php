@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Jobs;
 
 use App\Billing\NurseMonthlyBillGenerator;
@@ -17,48 +21,47 @@ use Illuminate\Support\Collection;
 class GenerateNurseInvoice implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    private $startDate;
-    private $nurses;
-    private $endDate;
-    private $variablePay;
     private $addNotes;
     private $addTime;
+    private $endDate;
+    private $nurses;
     private $requestors;
+    private $startDate;
+    private $variablePay;
 
     /**
      * Create a new job instance.
      *
-     * @param array $nurseUserIds
-     * @param Carbon $startDate
-     * @param Carbon $endDate
+     * @param array          $nurseUserIds
+     * @param Carbon         $startDate
+     * @param Carbon         $endDate
      * @param Collection|int $requestors
-     * @param bool $variablePay
-     * @param int $addTime
-     * @param string $addNotes
+     * @param bool           $variablePay
+     * @param int            $addTime
+     * @param string         $addNotes
      */
-    public function __construct(array $nurseUserIds,
+    public function __construct(
+        array $nurseUserIds,
                                 Carbon $startDate,
                                 Carbon $endDate,
                                 $requestors,
                                 bool $variablePay = false,
                                 int $addTime = 0,
-                                string $addNotes = '')
-    {
-        $this->nurses = Nurse::whereIn('user_id', $nurseUserIds)->with('user')->get();
-        $this->startDate = $startDate;
-        $this->endDate = $endDate;
+                                string $addNotes = ''
+    ) {
+        $this->nurses      = Nurse::whereIn('user_id', $nurseUserIds)->with('user')->get();
+        $this->startDate   = $startDate;
+        $this->endDate     = $endDate;
         $this->variablePay = $variablePay;
-        $this->addTime = $addTime;
-        $this->addNotes = $addNotes;
-        $this->requestors = is_a($requestors, Collection::class)
+        $this->addTime     = $addTime;
+        $this->addNotes    = $addNotes;
+        $this->requestors  = is_a($requestors, Collection::class)
             ? $requestors
             : collect($requestors);
     }
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
     public function handle()
     {
@@ -99,12 +102,14 @@ class GenerateNurseInvoice implements ShouldQueue
                 return;
             }
 
-            $userNotification->push('Nurse Invoices',
-                "Invoice(s) were generated for {$this->nurses->count()} nurse(s): {$this->nurses->map(function($n) {return $n->user->getFullName();})->implode(', ')}",
+            $userNotification->push(
+                'Nurse Invoices',
+                "Invoice(s) were generated for {$this->nurses->count()} nurse(s): {$this->nurses->map(function ($n) {
+                    return $n->user->getFullName();
+                })->implode(', ')}",
                 linkToCachedView($viewHashKey),
                 'Go to page'
             );
         });
-
     }
 }

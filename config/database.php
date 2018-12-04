@@ -1,7 +1,10 @@
 <?php
 
-return [
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
+return [
     /*
     |--------------------------------------------------------------------------
     | Default Database Connection Name
@@ -32,7 +35,6 @@ return [
     */
 
     'connections' => [
-
         'sqlite' => [
             'driver'   => 'sqlite',
             'database' => ':memory:',
@@ -69,7 +71,6 @@ return [
             'engine'      => null,
         ],
 
-
         'pgsql' => [
             'driver'   => 'pgsql',
             'host'     => env('DB_HOST', '127.0.0.1'),
@@ -93,7 +94,6 @@ return [
             'charset'  => 'utf8',
             'prefix'   => '',
         ],
-
     ],
 
     /*
@@ -121,7 +121,6 @@ return [
     */
 
     'redis' => [
-
         'client' => 'predis',
 
         'default' => [
@@ -130,6 +129,5 @@ return [
             'port'     => env('REDIS_PORT', 6379),
             'database' => 0,
         ],
-
     ],
 ];

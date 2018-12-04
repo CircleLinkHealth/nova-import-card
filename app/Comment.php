@@ -1,31 +1,36 @@
-<?php namespace App;
+<?php
 
-use Illuminate\Database\Eloquent\Model;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App;
 
 /**
- * App\Comment
+ * App\Comment.
  *
- * @property int $id
- * @property int $comment_post_ID
- * @property string $comment_author
- * @property string $comment_author_email
- * @property string $comment_author_url
- * @property string $comment_author_IP
- * @property \Carbon\Carbon $comment_date
- * @property \Carbon\Carbon $comment_date_gmt
- * @property string $comment_content
- * @property int $comment_karma
- * @property string $comment_approved
- * @property string $comment_agent
- * @property string $comment_type
- * @property int $comment_parent
- * @property int $user_id
- * @property int $program_id
- * @property int $legacy_comment_id
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property-read \App\Observation $observation
- * @property-read \App\User $user
+ * @property int              $id
+ * @property int              $comment_post_ID
+ * @property string           $comment_author
+ * @property string           $comment_author_email
+ * @property string           $comment_author_url
+ * @property string           $comment_author_IP
+ * @property \Carbon\Carbon   $comment_date
+ * @property \Carbon\Carbon   $comment_date_gmt
+ * @property string           $comment_content
+ * @property int              $comment_karma
+ * @property string           $comment_approved
+ * @property string           $comment_agent
+ * @property string           $comment_type
+ * @property int              $comment_parent
+ * @property int              $user_id
+ * @property int              $program_id
+ * @property int              $legacy_comment_id
+ * @property \Carbon\Carbon   $created_at
+ * @property \Carbon\Carbon   $updated_at
+ * @property \App\Observation $observation
+ * @property \App\User        $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentAgent($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentApproved($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentAuthor($value)
@@ -49,15 +54,14 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Comment extends \App\BaseModel
 {
-
-
+    protected $dates = ['comment_date', 'comment_date_gmt'];
 
     /**
-     * The database table used by the model.
-     * 
-     * @var string
+     * The attributes that are mass assignable.
+     *
+     * @var array
      */
-    protected $table = 'lv_comments';
+    protected $fillable = ['id', 'comment_content', 'user_id', 'comment_date', 'comment_date_gmt', 'comment_type', 'legacy_comment_id'];
 
     /**
      * The primary key for the model.
@@ -66,19 +70,12 @@ class Comment extends \App\BaseModel
      */
     protected $primaryKey = 'id';
 
-    protected $dates = ['comment_date', 'comment_date_gmt'];
-
     /**
-     * The attributes that are mass assignable.
+     * The database table used by the model.
      *
-     * @var array
+     * @var string
      */
-    protected $fillable = ['id','comment_content', 'user_id', 'comment_date', 'comment_date_gmt', 'comment_type', 'legacy_comment_id'];
-
-    public function user()
-    {
-        return $this->belongsTo('App\User', 'id');
-    }
+    protected $table = 'lv_comments';
 
     public function observation()
     {
@@ -136,5 +133,10 @@ class Comment extends \App\BaseModel
 
         parent::save();
         // http://www.amitavroy.com/justread/content/articles/events-laravel-5-and-customize-model-save
+    }
+
+    public function user()
+    {
+        return $this->belongsTo('App\User', 'id');
     }
 }

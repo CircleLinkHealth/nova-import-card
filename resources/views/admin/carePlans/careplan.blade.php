@@ -5,7 +5,7 @@
                 <h1> {{ $careSection->display_name }} <a href="{{ route('admin.items.show', array('id' => $carePlan->id)) }}" class="btn btn-orange btn-xs">Edit</a></h1>
             </a>
             @if(!empty($careSection->carePlanItems))
-                <?php $i=0; ?>
+                <?php $i = 0; ?>
                 <div class="collapse" id="collapseSection{{ $careSection->name }}">
                     @foreach($careSection->carePlanItems as $planItem)
                         @if ($planItem->careItem->display_name != '')
@@ -50,7 +50,7 @@
                                     @if( ($i % 2 != 0) || ($careSection->carePlanItems->count() == ($i+1)) ) END ROW</div> @endif
                             </div>
                             @endif
-                            <?php $i++; ?>
+                            <?php ++$i; ?>
                             @endforeach
                 </div>
             @endif

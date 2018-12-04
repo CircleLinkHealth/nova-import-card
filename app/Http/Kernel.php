@@ -1,4 +1,10 @@
-<?php namespace App\Http;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Http;
 
 use App\Http\Middleware\ACL\ProviderDashboardACL;
 use App\Http\Middleware\AprimaCcdApiAuthAdapter;
@@ -31,6 +37,16 @@ use Michalisantoniou6\Cerberus\Middleware\CerberusRole;
 
 class Kernel extends HttpKernel
 {
+    /**
+     * The application's global HTTP middleware stack.
+     *
+     * @var array
+     */
+    protected $middleware = [
+        CheckForMaintenanceMode::class,
+        TrustProxies::class,
+        FrameGuard::class,
+    ];
 
     /**
      * The application's route middleware groups.
@@ -38,7 +54,7 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middlewareGroups = [
-        'web'      => [
+        'web' => [
             EncryptCookies::class,
             AddQueuedCookiesToResponse::class,
             StartSession::class,
@@ -52,21 +68,10 @@ class Kernel extends HttpKernel
         'sessions' => [
             StartSession::class,
         ],
-        'api'      => [
+        'api' => [
             'throttle:60,1',
             'bindings',
         ],
-    ];
-
-    /**
-     * The application's global HTTP middleware stack.
-     *
-     * @var array
-     */
-    protected $middleware = [
-        CheckForMaintenanceMode::class,
-        TrustProxies::class,
-        FrameGuard::class,
     ];
 
     /**
@@ -76,12 +81,12 @@ class Kernel extends HttpKernel
      */
     protected $routeMiddleware = [
         //Laravel Middleware
-        'auth'                       => Authenticate::class,
-        'auth.basic'                 => AuthenticateWithBasicAuth::class,
-        'bindings'                   => SubstituteBindings::class,
-        'can'                        => Authorize::class,
-        'guest'                      => RedirectIfAuthenticated::class,
-        'throttle'                   => ThrottleRequests::class,
+        'auth'       => Authenticate::class,
+        'auth.basic' => AuthenticateWithBasicAuth::class,
+        'bindings'   => SubstituteBindings::class,
+        'can'        => Authorize::class,
+        'guest'      => RedirectIfAuthenticated::class,
+        'throttle'   => ThrottleRequests::class,
 
         //CLH Middleware
         'ability'                    => CerberusAbility::class,

@@ -1,4 +1,10 @@
-<?php namespace App\Http\Controllers\Admin\Reports;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Http\Controllers\Admin\Reports;
 
 use App\Http\Controllers\Controller;
 use App\PageTimer;
@@ -13,7 +19,6 @@ use Illuminate\Http\Request;
 
 class ProviderUsageReportController extends Controller
 {
-
     /**
      * Display a listing of the resource.
      *
@@ -23,21 +28,20 @@ class ProviderUsageReportController extends Controller
     {
         // get array of dates
         $startDate = new DateTime('first day of this month');
-        $endDate = new DateTime(date('Y-m-d'));
+        $endDate   = new DateTime(date('Y-m-d'));
 
         // if form submitted dates, override here
         $showAllTimes = false;
-        if ($request->all('showAllTimes') == 'checked') {
+        if ('checked' == $request->all('showAllTimes')) {
             $showAllTimes = 'checked';
         }
         if ($request->all('start_date')) {
-            $startDate = new DateTime($request->input('start_date') . ' 00:00:01');
+            $startDate = new DateTime($request->input('start_date').' 00:00:01');
         }
         if ($request->all('end_date')) {
-            $endDate = new DateTime($request->input('end_date') . ' 23:59:59');
+            $endDate = new DateTime($request->input('end_date').' 23:59:59');
         }
 
-        //
         $programStats = [];
 
         // get all program
@@ -58,14 +62,13 @@ class ProviderUsageReportController extends Controller
 
         // get stats for each program
         foreach ($programs as $programId => $programName) {
-            $programStats[$programName] = [];
+            $programStats[$programName]          = [];
             $programStats[$programName]['dates'] = []; // array of dates
 
-            /***** OFFICE USERS *******/
+            // OFFICE USERS
             // get users
             $officeUserIds = User::
-            whereHas('practices', function ($q) use
-                (
+            whereHas('practices', function ($q) use (
                 $programId
             ) {
                 $q->whereIn('program_id', [$programId]);
@@ -73,7 +76,7 @@ class ProviderUsageReportController extends Controller
                 ->whereHas('roles', function ($q) {
                     $q->whereIn('name', [
                         'provider',
-                        'med_assistant'
+                        'med_assistant',
                     ]);
                 })
                 ->pluck('id')->toArray();
@@ -82,48 +85,44 @@ class ProviderUsageReportController extends Controller
 
             // get all pagetimes for users, per day:
             $pagetimes = PageTimer::
-            whereHas('logger', function ($q) use
-                (
+            whereHas('logger', function ($q) use (
                 $officeUserIds
             ) {
                 $q->whereIn('id', $officeUserIds);
             })
                 ->whereBetween('start_time', [
                     $startDate,
-                    $endDate
+                    $endDate,
                 ])
                 //->limit(10)
                 ->get(); // ->sum('duration')
             foreach ($period as $dt) {
                 $programStats[$programName]['dates'][$dt->format('Y-m-d')] = [];
-                $pagetimesForDate = 0;
+                $pagetimesForDate                                          = 0;
                 if ($pagetimes->count() > 0) {
-                    $pagetimesForDate = $pagetimes->filter(function ($item) use
-                        (
+                    $pagetimesForDate = $pagetimes->filter(function ($item) use (
                         $dt
                     ) {
-                        return (data_get($item, 'start_time') > $dt->format('Y-m-d') . ' 00:00:01') && (data_get(
+                        return (data_get($item, 'start_time') > $dt->format('Y-m-d').' 00:00:01') && (data_get(
                             $item,
                             'start_time'
-                        ) < $dt->format('Y-m-d') . ' 23:59:59');
+                        ) < $dt->format('Y-m-d').' 23:59:59');
                     })->count();
                 }
                 $programStats[$programName]['dates'][$dt->format('Y-m-d')]['pageviews'] = $pagetimesForDate;
             }
 
-
-            /***** CARE CENTER USERS *******/
+            // CARE CENTER USERS
             // get users
             $nurseUserIds = User::
-            whereHas('practices', function ($q) use
-                (
+            whereHas('practices', function ($q) use (
                 $programId
             ) {
                 $q->whereIn('program_id', [$programId]);
             })
                 ->whereHas('roles', function ($q) {
                     $q->whereIn('name', [
-                        'care-center'
+                        'care-center',
                     ]);
                 })
                 ->pluck('id')->toArray();
@@ -132,15 +131,14 @@ class ProviderUsageReportController extends Controller
 
             // get participants
             $participantUserIds = User::
-            whereHas('practices', function ($q) use
-                (
+            whereHas('practices', function ($q) use (
                 $programId
             ) {
                 $q->whereIn('program_id', [$programId]);
             })
                 ->whereHas('roles', function ($q) {
                     $q->whereIn('name', [
-                        'participant'
+                        'participant',
                     ]);
                 })
                 ->pluck('id')->toArray();
@@ -149,40 +147,36 @@ class ProviderUsageReportController extends Controller
 
             // get all pagetimes for users, per day:
             $pagetimes = PageTimer::
-            whereHas('logger', function ($q) use
-                (
+            whereHas('logger', function ($q) use (
                 $nurseUserIds
             ) {
                 $q->whereIn('id', $nurseUserIds);
             })
-                ->whereHas('patient', function ($q) use
-                    (
+                ->whereHas('patient', function ($q) use (
                     $participantUserIds
                 ) {
                     $q->whereIn('id', $participantUserIds);
                 })
                 ->whereBetween('start_time', [
                     $startDate,
-                    $endDate
+                    $endDate,
                 ])
                 //->limit(10)
                 ->get(); // ->sum('duration')
             foreach ($period as $dt) {
                 $pagetimesForDate = 0;
                 if ($pagetimes->count() > 0) {
-                    $pagetimesForDate = $pagetimes->filter(function ($item) use
-                        (
+                    $pagetimesForDate = $pagetimes->filter(function ($item) use (
                         $dt
                     ) {
-                        return (data_get($item, 'start_time') > $dt->format('Y-m-d') . ' 00:00:01') && (data_get(
+                        return (data_get($item, 'start_time') > $dt->format('Y-m-d').' 00:00:01') && (data_get(
                             $item,
                             'start_time'
-                        ) < $dt->format('Y-m-d') . ' 23:59:59');
+                        ) < $dt->format('Y-m-d').' 23:59:59');
                     })->count();
                 }
                 $programStats[$programName]['dates'][$dt->format('Y-m-d')]['nurse_pageviews'] = $pagetimesForDate;
             }
-
 
             //$programStats[$programName]['number_of_pageviews'] = $pagetimes->count();
         }
@@ -191,33 +185,30 @@ class ProviderUsageReportController extends Controller
 
         $date = Carbon::now()->startOfMonth();
 
-        Excel::create('CLH-Provider_Usage-Report-' . $date, function ($excel) use
-            (
+        Excel::create('CLH-Provider_Usage-Report-'.$date, function ($excel) use (
             $date,
             $worksheets
         ) {
-
             // Set the title
-            $excel->setTitle('CLH Call Report - ' . $date);
+            $excel->setTitle('CLH Call Report - '.$date);
 
             // Chain the setters
             $excel->setCreator('CLH System')
                 ->setCompany('CircleLink Health');
 
             // Call them separately
-            $excel->setDescription('CLH Call Report - ' . $date);
+            $excel->setDescription('CLH Call Report - '.$date);
 
             // headers
             $headers = [
                 'Date',
                 'Office Pageviews',
-                'Nurse Pageviews'
+                'Nurse Pageviews',
             ];
 
             // sheet for each program
             foreach ($worksheets as $worksheetName => $worksheetData) {
-                $excel->sheet(substr($worksheetName, 0, 20), function ($sheet) use
-                    (
+                $excel->sheet(substr($worksheetName, 0, 20), function ($sheet) use (
                     $worksheetData,
                     $headers
                 ) {
@@ -226,7 +217,7 @@ class ProviderUsageReportController extends Controller
                         $sheet->appendRow([
                             $date,
                             $dateData['pageviews'],
-                            $dateData['nurse_pageviews']
+                            $dateData['nurse_pageviews'],
                         ]);
                     }
                 });

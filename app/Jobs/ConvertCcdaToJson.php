@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Jobs;
 
 use App\Models\MedicalRecords\Ccda;
@@ -15,8 +19,6 @@ class ConvertCcdaToJson implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @return void
      */
     public function __construct(Ccda $ccda)
     {
@@ -25,7 +27,7 @@ class ConvertCcdaToJson implements ShouldQueue
 
     /**
      * Execute the job.
-     * @return void
+     *
      * @throws \Exception
      */
     public function handle()

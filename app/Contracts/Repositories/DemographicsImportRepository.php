@@ -1,18 +1,15 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Contracts\Repositories;
 
-use App\Entities\DemographicsImport;
-use App\Repositories\Activity;
-use App\Repositories\Ccda;
-use App\Repositories\DB;
-use App\Repositories\ForeignId;
-use App\Repositories\User;
 use Prettus\Repository\Contracts\RepositoryInterface;
 
 /**
- * Interface DemographicsImportRepository
- * @package namespace App\Contracts\Repositories;
+ * Interface DemographicsImportRepository.
  */
 interface DemographicsImportRepository extends RepositoryInterface
 {

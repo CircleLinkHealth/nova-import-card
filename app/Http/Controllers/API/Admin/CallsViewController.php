@@ -1,17 +1,19 @@
 <?php
 
-namespace App\Http\Controllers\API\Admin;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
+namespace App\Http\Controllers\API\Admin;
 
 use App\CallView;
 use App\Filters\CallViewFilters;
-use App\Http\Resources\CallView as CallViewResource;
 use App\Http\Controllers\API\ApiController;
+use App\Http\Resources\CallView as CallViewResource;
 use Illuminate\Http\Request;
 
 class CallsViewController extends ApiController
 {
-
     public function __construct()
     {
     }
@@ -28,7 +30,8 @@ class CallsViewController extends ApiController
      *         description="A listing of calls"
      *     )
      *   )
-     * @param Request $request
+     *
+     * @param Request         $request
      * @param CallViewFilters $filters
      *
      * @return \Illuminate\Http\Response
@@ -37,8 +40,8 @@ class CallsViewController extends ApiController
     {
         $rows  = $request->input('rows');
         $calls = CallView::filter($filters)
-                         ->paginate($rows ?? 15);
+            ->paginate($rows ?? 15);
+
         return CallViewResource::collection($calls);
     }
-
 }

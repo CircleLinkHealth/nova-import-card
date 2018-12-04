@@ -1,29 +1,33 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Entities;
 
 use App\Role;
 use App\User;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 
 /**
- * App\Entities\Invite
+ * App\Entities\Invite.
  *
- * @property int $id
- * @property int $inviter_id
- * @property int|null $role_id
- * @property string $email
- * @property string|null $subject
- * @property string|null $message
- * @property string|null $code
+ * @property int                 $id
+ * @property int                 $inviter_id
+ * @property int|null            $role_id
+ * @property string              $email
+ * @property string|null         $subject
+ * @property string|null         $message
+ * @property string|null         $code
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property \Carbon\Carbon|null $deleted_at
- * @property-read \App\User $inviter
- * @property-read \App\Role|null $role
+ * @property \App\User           $inviter
+ * @property \App\Role|null      $role
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\Entities\Invite onlyTrashed()
  * @method static bool|null restore()
@@ -60,7 +64,6 @@ class Invite extends \App\BaseModel implements Transformable
         'message',
         'code',
     ];
-
 
     public function inviter()
     {

@@ -1,10 +1,22 @@
-<?php namespace App\Console\Commands;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Inspiring;
 
 class Inspire extends Command
 {
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Display an inspiring quote';
 
     /**
      * The console command name.
@@ -12,13 +24,6 @@ class Inspire extends Command
      * @var string
      */
     protected $name = 'inspire';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Display an inspiring quote';
 
     /**
      * Execute the console command.

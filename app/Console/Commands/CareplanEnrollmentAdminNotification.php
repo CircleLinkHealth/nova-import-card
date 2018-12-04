@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\CarePlan;
@@ -11,6 +15,12 @@ use Illuminate\Console\Command;
 class CareplanEnrollmentAdminNotification extends Command
 {
     /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Send notification to CLH admins about careplan enrollments done on the previous day';
+    /**
      * The name and signature of the console command.
      *
      * @var string
@@ -18,16 +28,7 @@ class CareplanEnrollmentAdminNotification extends Command
     protected $signature = 'enrollment:notification';
 
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Send notification to CLH admins about careplan enrollments done on the previous day';
-
-    /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -44,15 +45,15 @@ class CareplanEnrollmentAdminNotification extends Command
         $admins = User::ofType('administrator')->get();
 
         CarePlan::where('provider_date', '>=', Carbon::yesterday())
-                ->has('patient.carePlanAssessment')
-                ->with('patient.carePlanAssessment')
-                ->get()
-                ->map(function ($c) use ($admins) {
-                    if ($c->patient->carePlanAssessment) {
-                        $admins->map(function ($user) use ($c) {
-                            $user->notify(new SendAssessmentNotification($c->patient->carePlanAssessment));
-                        });
-                    }
-                });
+            ->has('patient.carePlanAssessment')
+            ->with('patient.carePlanAssessment')
+            ->get()
+            ->map(function ($c) use ($admins) {
+                if ($c->patient->carePlanAssessment) {
+                    $admins->map(function ($user) use ($c) {
+                        $user->notify(new SendAssessmentNotification($c->patient->carePlanAssessment));
+                    });
+                }
+            });
     }
 }

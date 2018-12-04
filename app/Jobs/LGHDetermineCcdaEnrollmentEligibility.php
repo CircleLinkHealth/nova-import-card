@@ -1,8 +1,11 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Jobs;
 
-use App\CLH\Repositories\CCDImporterRepository;
 use App\Importer\Loggers\Ccda\CcdToLogTranformer;
 use App\Models\MedicalRecords\Ccda;
 use App\Models\PatientData\LGH\LGHInsurance;
@@ -26,25 +29,23 @@ class LGHDetermineCcdaEnrollmentEligibility implements ShouldQueue
      */
     public function __construct(Ccda $ccda)
     {
-        $this->ccda = Ccda::find($ccda->id);
+        $this->ccda        = Ccda::find($ccda->id);
         $this->transformer = new CcdToLogTranformer();
     }
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
     public function handle()
     {
-        if ($this->ccda->status != Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY) {
+        if (Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY != $this->ccda->status) {
             return;
         }
 
         $json = $this->ccda->bluebuttonJson();
 
         $demographics = collect($this->transformer->demographics($json->demographics));
-        $problems = collect($json->problems)->map(function ($prob) {
+        $problems     = collect($json->problems)->map(function ($prob) {
             $problem = array_merge($this->transformer->problem($prob));
 
             $codes = collect($this->transformer->problemCodes($prob))->sortByDesc(function ($code) {
@@ -54,9 +55,11 @@ class LGHDetermineCcdaEnrollmentEligibility implements ShouldQueue
             foreach ($codes as $code) {
                 if ($code['code']) {
                     return $code['code'];
-                } elseif ($problem['name']) {
+                }
+                if ($problem['name']) {
                     return $problem['name'];
-                } elseif ($code['name']) {
+                }
+                if ($code['name']) {
                     return $code['name'];
                 }
             }
@@ -68,7 +71,7 @@ class LGHDetermineCcdaEnrollmentEligibility implements ShouldQueue
 
         if (array_key_exists(0, $json->document->documentation_of)) {
             $provider = $this->transformer->provider($json->document->documentation_of[0]);
-            $patient = $patient->put('referring_provider_name', "{$provider['first_name']} {$provider['last_name']}");
+            $patient  = $patient->put('referring_provider_name', "{$provider['first_name']} {$provider['last_name']}");
         }
 
         $patient = $patient->put('problems', $problems);
@@ -83,7 +86,6 @@ class LGHDetermineCcdaEnrollmentEligibility implements ShouldQueue
 
             $filterInsurance = true;
         }
-
 
         $lgh = Practice::whereName('lafayette-general-health')
             ->first();

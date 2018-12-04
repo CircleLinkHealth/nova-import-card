@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers\Demo;
 
 use App\Contracts\Efax;
@@ -17,11 +21,6 @@ class SendSampleNoteController extends Controller
     public function __construct(Efax $fax)
     {
         $this->fax = $fax;
-    }
-
-    public function showMakeNoteForm()
-    {
-        return view('admin.demo.note.create');
     }
 
     public function makePdf(Request $request)
@@ -47,8 +46,8 @@ class SendSampleNoteController extends Controller
         $pdf = $sampleNote->toPdf($request->input('scale', null));
 
         $practices = Practice::active()
-                             ->orderBy('display_name')
-                             ->get();
+            ->orderBy('display_name')
+            ->get();
 
         return view('admin.demo.note.review', [
             'filePath'  => $pdf,
@@ -65,8 +64,8 @@ class SendSampleNoteController extends Controller
     {
         $path = $request->input('filePath');
 
-        if ( ! file_exists($path)) {
-            throw new \Exception("Could find file at: `$path`", 404);
+        if (!file_exists($path)) {
+            throw new \Exception("Could find file at: `${path}`", 404);
         }
 
 //        $practice = Practice::findOrFail($request->input('practice_id'));
@@ -79,12 +78,17 @@ class SendSampleNoteController extends Controller
 
         $fax = formatPhoneNumberE164($request->input('fax'));
 
-        if ( ! $fax) {
-            throw new \Exception("Invalid fax number.", 400);
+        if (!$fax) {
+            throw new \Exception('Invalid fax number.', 400);
         }
 
         $result = $this->fax->send($fax, $path);
 
         dd($result);
+    }
+
+    public function showMakeNoteForm()
+    {
+        return view('admin.demo.note.create');
     }
 }
