@@ -139,13 +139,13 @@
     "post-update-cmd": [
       "Illuminate\\Foundation\\ComposerScripts::postUpdate"
     ],
-    "prepare-test-db": [
+    "test-db-mysql": [
       "php artisan config:clear && php artisan db:test && php artisan migrate:fresh && php artisan migrate && php artisan db:seed && php artisan db:seed --class=TestSuiteSeeder"
     ],
-    "test": [
+    "test-mysql": [
       "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner WrapperRunner -p8"
     ],
-    "test-sqlite": [
+    "test": [
       "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner SqliteRunner -p8"
     ],
     "integration-sqlite": [
