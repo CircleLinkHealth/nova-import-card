@@ -72,12 +72,12 @@ class ProviderInfo extends \App\BaseModel
      * @var string
      */
     protected $table = 'provider_info';
-    
+
     public function getAddressAttribute()
     {
         return $this->user->address;
     }
-    
+
     public function getCityAttribute()
     {
         return $this->user->city;
@@ -87,17 +87,17 @@ class ProviderInfo extends \App\BaseModel
     {
         return $this->user->getFirstName();
     }
-    
+
     public function getLastNameAttribute()
     {
         return $this->user->getLastName();
     }
-    
+
     public function getStateAttribute()
     {
         return $this->user->state;
     }
-    
+
     public function getZipAttribute()
     {
         return $this->user->zip;
@@ -150,7 +150,7 @@ class ProviderInfo extends \App\BaseModel
 
         return true;
     }
-    
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
