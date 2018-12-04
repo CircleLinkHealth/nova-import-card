@@ -1,0 +1,4 @@
+#!/bin/sh
+
+echo 'Fixing PHP Code Style'
+php -d memory_limit=2048M ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix
