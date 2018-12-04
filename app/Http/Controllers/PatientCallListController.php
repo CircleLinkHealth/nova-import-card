@@ -19,8 +19,14 @@ class PatientCallListController extends Controller
         $dateFilter = 'All';
         $date       = Carbon::now();
         if ($request->has('date') && strtolower($request->input('date')) != 'all') {
-            $date = $dateFilter = Carbon::parse($request->input('date'));
+            try {
+                $date = $dateFilter = Carbon::parse($request->input('date'));
+            } catch (\Exception $e) {
+                return redirect()->back()->withErrors("Invalid date format. Please use yyyy-mm-dd instead.");
+            }
+
             $calls->where('scheduled_date', '=', $date->toDateString());
+
         }
 
         $calls->with([
