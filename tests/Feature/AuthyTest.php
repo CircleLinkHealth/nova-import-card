@@ -1,15 +1,17 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Feature;
 
-use App\Services\AuthyService;
 use App\User;
-use Authy\AuthyApi;
 use Tests\TestCase;
 
 class AuthyTest extends TestCase
 {
-    public function test_it_registers_a_user()
+    public function test_it_creates_one_touch_request()
     {
         $user = factory(User::class)->create();
         auth()->login($user);
@@ -22,6 +24,10 @@ class AuthyTest extends TestCase
         ]);
 
         $response->assertStatus(201);
+
+        $response = $this->json('POST', route('user.2fa.one-touch-request.create'));
+
+        $response->assertStatus(200);
     }
 
     public function test_it_receives_errors()
@@ -45,7 +51,7 @@ class AuthyTest extends TestCase
         ]);
     }
 
-    public function test_it_creates_one_touch_request()
+    public function test_it_registers_a_user()
     {
         $user = factory(User::class)->create();
         auth()->login($user);
@@ -58,9 +64,5 @@ class AuthyTest extends TestCase
         ]);
 
         $response->assertStatus(201);
-
-        $response = $this->json('POST', route('user.2fa.one-touch-request.create'));
-
-        $response->assertStatus(200);
     }
 }

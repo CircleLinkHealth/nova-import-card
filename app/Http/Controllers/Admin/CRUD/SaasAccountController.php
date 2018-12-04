@@ -1,7 +1,12 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers\Admin\CRUD;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateSaasAccount;
 use App\Notifications\SAAS\SendInternalUserSignupInvitation;
 use App\Practice;
@@ -10,7 +15,6 @@ use App\SaasAccount;
 use App\Services\SAAS\Admin\UserManagementService;
 use App\ValueObjects\SAAS\Admin\InternalUser;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 class SaasAccountController extends Controller
 {
@@ -22,16 +26,6 @@ class SaasAccountController extends Controller
     public function __construct(UserManagementService $userManagementService)
     {
         $this->userManagementService = $userManagementService;
-    }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
     }
 
     /**
@@ -48,18 +42,60 @@ class SaasAccountController extends Controller
     }
 
     /**
+     * Remove the specified resource from storage.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param \Illuminate\Http\Request $request
      *
      * @return \Illuminate\Http\Response
      */
     public function store(CreateSaasAccount $request)
     {
-        $saasAccount   = SaasAccount::create([
+        $saasAccount = SaasAccount::create([
             'name' => $request['name'],
         ]);
-        $practice      = Practice::updateOrCreate([
+        $practice = Practice::updateOrCreate([
             'name'            => $saasAccount->name,
             'display_name'    => $saasAccount->name,
             'saas_account_id' => $saasAccount->id,
@@ -86,51 +122,14 @@ class SaasAccountController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  int $id
+     * @param \Illuminate\Http\Request $request
+     * @param int                      $id
      *
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 }

@@ -1,17 +1,24 @@
-<?php namespace App;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App;
 
 use Michalisantoniou6\Cerberus\CerberusPermission;
 
 /**
- * App\Permission
+ * App\Permission.
  *
- * @property int $id
- * @property string $name
- * @property string|null $display_name
- * @property string|null $description
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Role[] $roles
+ * @property int                                                  $id
+ * @property string                                               $name
+ * @property string|null                                          $display_name
+ * @property string|null                                          $description
+ * @property \Carbon\Carbon                                       $created_at
+ * @property \Carbon\Carbon                                       $updated_at
+ * @property \App\Role[]|\Illuminate\Database\Eloquent\Collection $roles
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Permission whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Permission whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Permission whereDisplayName($value)

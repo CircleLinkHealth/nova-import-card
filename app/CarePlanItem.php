@@ -1,30 +1,31 @@
-<?php namespace App;
+<?php
 
-use Illuminate\Database\Eloquent\Model;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App;
 
 /**
- * App\CarePlanItem
+ * App\CarePlanItem.
  *
- * @property-read \App\CareItem $careItem
- * @property-read \App\CarePlan $carePlan
- * @property-read \App\CareSection $careSection
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\CarePlanItem[] $children
- * @property-read \App\CarePlanItem $parents
+ * @property \App\CareItem                                                $careItem
+ * @property \App\CarePlan                                                $carePlan
+ * @property \App\CareSection                                             $careSection
+ * @property \App\CarePlanItem[]|\Illuminate\Database\Eloquent\Collection $children
+ * @property \App\CarePlanItem                                            $parents
  * @mixin \Eloquent
  */
 class CarePlanItem extends \App\BaseModel
 {
-
     public $timestamps = false;
 
-
-
     /**
-     * The database table used by the model.
+     * The attributes that are mass assignable.
      *
-     * @var string
+     * @var array
      */
-    protected $table = 'care_item_care_plan';
+    protected $fillable = ['parent_id', 'name', 'display_name', 'description'];
 
     /**
      * The primary key for the model.
@@ -34,20 +35,20 @@ class CarePlanItem extends \App\BaseModel
     protected $primaryKey = 'id';
 
     /**
-     * The attributes that are mass assignable.
+     * The database table used by the model.
      *
-     * @var array
+     * @var string
      */
-    protected $fillable = ['parent_id', 'name', 'display_name', 'description'];
-
-    public function carePlan()
-    {
-        return $this->belongsTo('App\CarePlan', 'plan_id', 'id');
-    }
+    protected $table = 'care_item_care_plan';
 
     public function careItem()
     {
         return $this->belongsTo('App\CareItem', 'item_id', 'id');
+    }
+
+    public function carePlan()
+    {
+        return $this->belongsTo('App\CarePlan', 'plan_id', 'id');
     }
 
     public function careSection()
@@ -55,13 +56,13 @@ class CarePlanItem extends \App\BaseModel
         return $this->belongsTo('App\CareSection', 'section_id', 'id');
     }
 
-    public function parents()
-    {
-        return $this->belongsTo('App\CarePlanItem', 'parent_id');
-    }
-
     public function children()
     {
         return $this->hasMany('App\CarePlanItem', 'parent_id');
+    }
+
+    public function parents()
+    {
+        return $this->belongsTo('App\CarePlanItem', 'parent_id');
     }
 }

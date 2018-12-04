@@ -1,4 +1,10 @@
-<?php namespace App\Importer\Loggers\Csv;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Importer\Loggers\Csv;
 
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
 use App\Importer\Models\ItemLogs\AllergyLog;
@@ -35,7 +41,6 @@ class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
             return collect($rappaInsAllergy);
         });
 
-
         $patientList = $merged->map(function ($patient) {
             $data = RappaData::where('patient_id', '=', $patient->get('patient_id'))->get();
 
@@ -68,40 +73,9 @@ class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
         $this->updateTMR();
     }
 
-    public function updateTMR()
-    {
-        $this->medicalRecord->update([
-            'mrn'        => $this->rappaPatient->get('patient_id'),
-            'first_name' => $this->rappaPatient->get('first_name'),
-            'last_name'  => $this->rappaPatient->get('last_name'),
-
-            'medications_string' => implode(',', $this->rappaPatient->get('medications')->all()),
-            'problems_string'    => implode(',', $this->rappaPatient->get('problems')->all()),
-
-            'dob'                => $this->rappaPatient->get('dob') ?? null,
-
-            //            'gender' => $this->rappaPatient->get(''),
-
-            'provider_name' => $this->rappaPatient->get('provider'),
-
-            'primary_phone' => $this->rappaPatient->get('primary_phone'),
-            'home_phone'    => $this->rappaPatient->get('home_phone'),
-            'work_phone'    => $this->rappaPatient->get('work_phone'),
-            'email'         => $this->rappaPatient->get('email'),
-
-            'address'  => $this->rappaPatient->get('address_1'),
-            'address2' => $this->rappaPatient->get('address_2'),
-            'city'     => $this->rappaPatient->get('city'),
-            'state'    => $this->rappaPatient->get('state'),
-            'zip'      => $this->rappaPatient->get('zip'),
-
-            'primary_insurance'   => $this->rappaPatient->get('primary_insurance'),
-            'secondary_insurance' => $this->rappaPatient->get('secondary_insurance'),
-        ]);
-    }
-
     /**
      * Log Allergies Section.
+     *
      * @return MedicalRecordLogger
      */
     public function logAllergiesSection(): MedicalRecordLogger
@@ -125,6 +99,7 @@ class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
 
     /**
      * Log Insurance Section.
+     *
      * @return MedicalRecordLogger
      */
     public function logInsuranceSection(): MedicalRecordLogger
@@ -137,7 +112,7 @@ class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
             'import' => true,
         ], $this->foreignKeys));
 
-        if ($insurances->secondary_insurance == 'No Secondary Plan') {
+        if ('No Secondary Plan' == $insurances->secondary_insurance) {
             return $this;
         }
 
@@ -151,6 +126,7 @@ class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
 
     /**
      * Log Medications Section.
+     *
      * @return MedicalRecordLogger
      */
     public function logMedicationsSection(): MedicalRecordLogger
@@ -170,6 +146,7 @@ class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
 
     /**
      * Log Problems Section.
+     *
      * @return MedicalRecordLogger
      */
     public function logProblemsSection(): MedicalRecordLogger
@@ -187,6 +164,7 @@ class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
 
     /**
      * Log Providers Section.
+     *
      * @return MedicalRecordLogger
      */
     public function logProvidersSection(): MedicalRecordLogger
@@ -233,5 +211,37 @@ class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
         ], $this->foreignKeys));
 
         return $this;
+    }
+
+    public function updateTMR()
+    {
+        $this->medicalRecord->update([
+            'mrn'        => $this->rappaPatient->get('patient_id'),
+            'first_name' => $this->rappaPatient->get('first_name'),
+            'last_name'  => $this->rappaPatient->get('last_name'),
+
+            'medications_string' => implode(',', $this->rappaPatient->get('medications')->all()),
+            'problems_string'    => implode(',', $this->rappaPatient->get('problems')->all()),
+
+            'dob' => $this->rappaPatient->get('dob') ?? null,
+
+            //            'gender' => $this->rappaPatient->get(''),
+
+            'provider_name' => $this->rappaPatient->get('provider'),
+
+            'primary_phone' => $this->rappaPatient->get('primary_phone'),
+            'home_phone'    => $this->rappaPatient->get('home_phone'),
+            'work_phone'    => $this->rappaPatient->get('work_phone'),
+            'email'         => $this->rappaPatient->get('email'),
+
+            'address'  => $this->rappaPatient->get('address_1'),
+            'address2' => $this->rappaPatient->get('address_2'),
+            'city'     => $this->rappaPatient->get('city'),
+            'state'    => $this->rappaPatient->get('state'),
+            'zip'      => $this->rappaPatient->get('zip'),
+
+            'primary_insurance'   => $this->rappaPatient->get('primary_insurance'),
+            'secondary_insurance' => $this->rappaPatient->get('secondary_insurance'),
+        ]);
     }
 }

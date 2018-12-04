@@ -1,18 +1,11 @@
 <?php
 
 /*
-|--------------------------------------------------------------------------
-| Create The Application
-|--------------------------------------------------------------------------
-|
-| The first thing we will do is create a new Laravel application instance
-| which serves as the "glue" for all the components of Laravel, and is
-| the IoC container for the system binding all of the various parts.
-|
-*/
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
 $app = new Illuminate\Foundation\Application(
-    realpath(__DIR__ . '/../')
+    realpath(__DIR__.'/../')
 );
 
 /*
@@ -41,13 +34,12 @@ $app->singleton(
     'App\Exceptions\Handler'
 );
 
-
 ///**
 // * Configure Monolog.
 // */
 $app->configureMonologUsing(function (Monolog\Logger $monolog) {
-    $filename = storage_path('logs/laravel-' . php_sapi_name() . '.log');
-    $handler  = new Monolog\Handler\RotatingFileHandler($filename, config('app.log_max_files'));
+    $filename = storage_path('logs/laravel-'.php_sapi_name().'.log');
+    $handler = new Monolog\Handler\RotatingFileHandler($filename, config('app.log_max_files'));
     $monolog->pushHandler($handler);
 });
 
@@ -61,6 +53,5 @@ $app->configureMonologUsing(function (Monolog\Logger $monolog) {
 | from the actual running of the application and sending responses.
 |
 */
-
 
 return $app;

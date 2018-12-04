@@ -125,10 +125,10 @@
 
                                         template: function (obj) {
                                             if (obj.logged_from == "manual_input" || obj.logged_from == "activity")
-                                                return "<a href='<?php echo route('patient.activity.view', array(
-                                                        'patientId' => $patient->id,
-                                                        'atcId'     => ''
-                                                    )); ?>/" + obj.id + "'>" + obj.type + "</a>";
+                                                return "<a href='<?php echo route('patient.activity.view', [
+                                                    'patientId' => $patient->id,
+                                                    'atcId'     => '',
+                                                ]); ?>/" + obj.id + "'>" + obj.type + "</a>";
                                             else
                                                 return obj.type;
                                         },
@@ -194,7 +194,7 @@
                         @if(auth()->user()->hasRole(['administrator', 'med_assistant', 'provider']))
                             <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
                                    onclick="webix.toPDF($$(obs_alerts_dtable), {
-                                           header:'CarePlanManager.com - Patient Activity Report <?= date('M d,Y') ?>',
+                                           header:'CarePlanManager.com - Patient Activity Report <?= date('M d,Y'); ?>',
                                            orientation:'landscape',
                                            autowidth:true,
                                            columns:{

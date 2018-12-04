@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\Jobs\ReImportCcdToGetProblemTranslationCodes;
@@ -9,6 +13,12 @@ use Illuminate\Console\Command;
 class ReImportCcdsToGetTranslations extends Command
 {
     /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Command description';
+    /**
      * The name and signature of the console command.
      *
      * @var string
@@ -16,16 +26,7 @@ class ReImportCcdsToGetTranslations extends Command
     protected $signature = 'fix:ngdc';
 
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Command description';
-
-    /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 return [
     'title' => 'Laravel Health Check Panel',
 
@@ -16,7 +20,7 @@ return [
         // false = disabled
         // default = 1 minute
         // in debug mode defautls to "disabled"
-        'minutes' => config('app.debug') === true ? false : 1,
+        'minutes' => true === config('app.debug') ? false : 1,
 
         'key' => 'health-resources',
     ],
@@ -61,9 +65,9 @@ return [
         'enabled' => false,
 
         'notify_on' => [
-            'panel' => false,
-            'check' => true,
-            'string' => true,
+            'panel'    => false,
+            'check'    => true,
+            'string'   => true,
             'resource' => false,
         ],
 
@@ -98,12 +102,12 @@ return [
 
     'alert' => [
         'success' => [
-            'type' => 'success',
+            'type'    => 'success',
             'message' => 'Everything is fine with this resource',
         ],
 
         'error' => [
-            'type' => 'error',
+            'type'    => 'error',
             'message' => 'We are having trouble with this resource',
         ],
     ],
@@ -134,7 +138,7 @@ return [
 
     'string' => [
         'glue' => '-',
-        'ok' => 'OK',
+        'ok'   => 'OK',
         'fail' => 'FAIL',
     ],
 
@@ -147,60 +151,60 @@ return [
 
         'list' => [
             [
-                'uri' => "{$route_prefix}/panel",
-                'name' => "pragmarx.health.panel",
-                'action' => "{$namespace}@panel",
+                'uri'        => "{$route_prefix}/panel",
+                'name'       => 'pragmarx.health.panel',
+                'action'     => "{$namespace}@panel",
                 'middleware' => [
-                    /*'auth.basic'*/
+                    // 'auth.basic'
                 ],
             ],
 
             [
-                'uri' => "{$route_prefix}/check",
-                'name' => "pragmarx.health.check",
-                'action' => "{$namespace}@check",
+                'uri'        => "{$route_prefix}/check",
+                'name'       => 'pragmarx.health.check',
+                'action'     => "{$namespace}@check",
                 'middleware' => [],
             ],
 
             [
-                'uri' => "{$route_prefix}/string",
-                'name' => "pragmarx.health.string",
-                'action' => "{$namespace}@string",
+                'uri'        => "{$route_prefix}/string",
+                'name'       => 'pragmarx.health.string',
+                'action'     => "{$namespace}@string",
                 'middleware' => [],
             ],
 
             [
-                'uri' => "{$route_prefix}/resources",
-                'name' => "pragmarx.health.resources.all",
-                'action' => "{$namespace}@allResources",
+                'uri'        => "{$route_prefix}/resources",
+                'name'       => 'pragmarx.health.resources.all',
+                'action'     => "{$namespace}@allResources",
                 'middleware' => [],
             ],
 
             [
-                'uri' => "{$route_prefix}/resources/{slug}",
-                'name' => "pragmarx.health.resources.get",
-                'action' => "{$namespace}@getResource",
+                'uri'        => "{$route_prefix}/resources/{slug}",
+                'name'       => 'pragmarx.health.resources.get',
+                'action'     => "{$namespace}@getResource",
                 'middleware' => [],
             ],
 
             [
-                'uri' => "{$route_prefix}/assets/css/app.css",
-                'name' => "pragmarx.health.assets.css",
-                'action' => "{$namespace}@assetAppCss",
+                'uri'        => "{$route_prefix}/assets/css/app.css",
+                'name'       => 'pragmarx.health.assets.css',
+                'action'     => "{$namespace}@assetAppCss",
                 'middleware' => [],
             ],
 
             [
-                'uri' => "{$route_prefix}/assets/js/app.js",
-                'name' => "pragmarx.health.assets.js",
-                'action' => "{$namespace}@assetAppJs",
+                'uri'        => "{$route_prefix}/assets/js/app.js",
+                'name'       => 'pragmarx.health.assets.js',
+                'action'     => "{$namespace}@assetAppJs",
                 'middleware' => [],
             ],
 
             [
-                'uri' => "{$route_prefix}/config",
-                'name' => "pragmarx.health.config",
-                'action' => "{$namespace}@config",
+                'uri'        => "{$route_prefix}/config",
+                'name'       => 'pragmarx.health.config',
+                'action'     => "{$namespace}@config",
                 'middleware' => [],
             ],
         ],

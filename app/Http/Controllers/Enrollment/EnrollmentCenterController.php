@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers\Enrollment;
 
 use App\CareAmbassadorLog;
@@ -10,87 +14,16 @@ use Illuminate\Http\Request;
 
 class EnrollmentCenterController extends Controller
 {
-
-    public function dashboard()
-    {
-
-        $careAmbassador = auth()->user()->careAmbassador;
-
-        if (!$careAmbassador) {
-            return view('errors.403', [
-                'message' => 'You need to be a Care Ambassador to acccess this page.',
-                'hideLinks' => true
-            ]);
-        }
-
-        //if logged in ambassador is spanish, pick up a spanish patient
-        if ($careAmbassador->speaks_spanish) {
-            $enrollee = Enrollee
-                ::toCall()
-                ->where('lang', 'ES')
-                ->orderBy('attempt_count')
-                ->with('practice.enrollmentTips')
-                ->first();
-
-            //if no spanish, get a EN user.
-            if ($enrollee == null) {
-                $enrollee = Enrollee
-                    ::toCall()
-                    ->orderBy('attempt_count')
-                    ->with('practice.enrollmentTips')
-                    ->first();
-            }
-        } else { // auth ambassador doesn't speak ES, get a regular user.
-
-            $enrollee = Enrollee
-                ::toCall()
-                ->orderBy('attempt_count')
-                ->with('practice.enrollmentTips')
-                ->first();
-        }
-
-        $engagedEnrollee = Enrollee::where([
-            'status'             => 'engaged',
-            'care_ambassador_id' => $careAmbassador->id,
-        ])
-            ->orderBy('attempt_count')
-            ->with('practice.enrollmentTips')
-            ->first();
-
-        if ($engagedEnrollee) {
-            $enrollee = $engagedEnrollee;
-        }
-
-        if ($enrollee == null) {
-            //no calls available
-            return view('enrollment-ui.no-available-calls');
-        }
-
-        //mark as engaged to prevent double dipping
-        $enrollee->status = 'engaged';
-        $enrollee->care_ambassador_id = $careAmbassador->id;
-        $enrollee->save();
-
-        return view(
-            'enrollment-ui.dashboard',
-            [
-                'enrollee' => $enrollee,
-                'report'   => CareAmbassadorLog::createOrGetLogs($careAmbassador->id),
-            ]
-        );
-    }
-
     public function consented(Request $request)
     {
-
         $careAmbassador = auth()->user()->careAmbassador;
 
         $enrollee = Enrollee::find($request->input('enrollee_id'));
 
         //update report for care ambassador:
-        $report = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
-        $report->no_enrolled = $report->no_enrolled + 1;
-        $report->total_calls = $report->total_calls + 1;
+        $report                       = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
+        $report->no_enrolled          = $report->no_enrolled + 1;
+        $report->total_calls          = $report->total_calls + 1;
         $report->total_time_in_system = $request->input('total_time_in_system');
         $report->save();
 
@@ -113,14 +46,14 @@ class EnrollmentCenterController extends Controller
                 $enrollee->setPrimaryPhoneNumberAttribute($request->input('home_phone'));
         }
 
-        $enrollee->address = $request->input('address');
-        $enrollee->address_2 = $request->input('address_2');
-        $enrollee->state = $request->input('state');
-        $enrollee->city = $request->input('city');
-        $enrollee->zip = $request->input('zip');
-        $enrollee->email = $request->input('email');
-        $enrollee->dob = $request->input('dob');
-        $enrollee->last_call_outcome = $request->input('consented');
+        $enrollee->address            = $request->input('address');
+        $enrollee->address_2          = $request->input('address_2');
+        $enrollee->state              = $request->input('state');
+        $enrollee->city               = $request->input('city');
+        $enrollee->zip                = $request->input('zip');
+        $enrollee->email              = $request->input('email');
+        $enrollee->dob                = $request->input('dob');
+        $enrollee->last_call_outcome  = $request->input('consented');
         $enrollee->care_ambassador_id = $careAmbassador->id;
 
         $enrollee->total_time_spent = $enrollee->total_time_spent + $request->input('time_elapsed');
@@ -139,8 +72,8 @@ class EnrollmentCenterController extends Controller
             $enrollee->preferred_window = implode(', ', $request->input('times'));
         }
 
-        $enrollee->status = 'consented';
-        $enrollee->consented_at = Carbon::now()->toDateTimeString();
+        $enrollee->status          = 'consented';
+        $enrollee->consented_at    = Carbon::now()->toDateTimeString();
         $enrollee->last_attempt_at = Carbon::now()->toDateTimeString();
 
         $enrollee->save();
@@ -148,40 +81,71 @@ class EnrollmentCenterController extends Controller
         return redirect()->action('Enrollment\EnrollmentCenterController@dashboard');
     }
 
-    public function unableToContact(Request $request)
+    public function dashboard()
     {
-
-        $enrollee = Enrollee::find($request->input('enrollee_id'));
         $careAmbassador = auth()->user()->careAmbassador;
 
-        //update report for care ambassador:
-        $report = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
-        $report->no_utc = $report->no_utc + 1;
-        $report->total_calls = $report->total_calls + 1;
-        $report->total_time_in_system = $request->input('total_time_in_system');
-        $report->save();
-
-        $enrollee->last_call_outcome = $request->input('reason');
-
-        if ($request->input('reason_other')) {
-            $enrollee->last_call_outcome_reason = $request->input('reason_other');
+        if (!$careAmbassador) {
+            return view('errors.403', [
+                'message'   => 'You need to be a Care Ambassador to acccess this page.',
+                'hideLinks' => true,
+            ]);
         }
 
+        //if logged in ambassador is spanish, pick up a spanish patient
+        if ($careAmbassador->speaks_spanish) {
+            $enrollee = Enrollee
+                ::toCall()
+                    ->where('lang', 'ES')
+                    ->orderBy('attempt_count')
+                    ->with('practice.enrollmentTips')
+                    ->first();
+
+            //if no spanish, get a EN user.
+            if (null == $enrollee) {
+                $enrollee = Enrollee
+                    ::toCall()
+                        ->orderBy('attempt_count')
+                        ->with('practice.enrollmentTips')
+                        ->first();
+            }
+        } else { // auth ambassador doesn't speak ES, get a regular user.
+            $enrollee = Enrollee
+                ::toCall()
+                    ->orderBy('attempt_count')
+                    ->with('practice.enrollmentTips')
+                    ->first();
+        }
+
+        $engagedEnrollee = Enrollee::where([
+            'status'             => 'engaged',
+            'care_ambassador_id' => $careAmbassador->id,
+        ])
+            ->orderBy('attempt_count')
+            ->with('practice.enrollmentTips')
+            ->first();
+
+        if ($engagedEnrollee) {
+            $enrollee = $engagedEnrollee;
+        }
+
+        if (null == $enrollee) {
+            //no calls available
+            return view('enrollment-ui.no-available-calls');
+        }
+
+        //mark as engaged to prevent double dipping
+        $enrollee->status             = 'engaged';
         $enrollee->care_ambassador_id = $careAmbassador->id;
-
-        if ($request->input('reason') == "requested callback") {
-            $enrollee->status = 'call_queue';
-        } else {
-            $enrollee->status = 'utc';
-        }
-
-        $enrollee->attempt_count = $enrollee->attempt_count + 1;
-        $enrollee->last_attempt_at = Carbon::now()->toDateTimeString();
-        $enrollee->total_time_spent = $enrollee->total_time_spent + $request->input('time_elapsed');
-
         $enrollee->save();
 
-        return redirect()->action('Enrollment\EnrollmentCenterController@dashboard');
+        return view(
+            'enrollment-ui.dashboard',
+            [
+                'enrollee' => $enrollee,
+                'report'   => CareAmbassadorLog::createOrGetLogs($careAmbassador->id),
+            ]
+        );
     }
 
     /**
@@ -191,8 +155,7 @@ class EnrollmentCenterController extends Controller
      */
     public function rejected(Request $request)
     {
-
-        $enrollee = Enrollee::find($request->input('enrollee_id'));
+        $enrollee       = Enrollee::find($request->input('enrollee_id'));
         $careAmbassador = auth()->user()->careAmbassador;
 
         //soft_rejected or rejected
@@ -201,17 +164,15 @@ class EnrollmentCenterController extends Controller
         //update report for care ambassador:
         $report = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
 
-        if ($status === 'rejected') {
+        if ('rejected' === $status) {
             $report->no_rejected = $report->no_rejected + 1;
-        }
-        else {
+        } else {
             $report->no_soft_rejected = $report->no_soft_rejected + 1;
         }
 
-        $report->total_calls = $report->total_calls + 1;
+        $report->total_calls          = $report->total_calls + 1;
         $report->total_time_in_system = $request->input('total_time_in_system');
         $report->save();
-
 
         $enrollee->last_call_outcome = $request->input('reason');
 
@@ -226,8 +187,8 @@ class EnrollmentCenterController extends Controller
             $enrollee->soft_rejected_callback = $request->input('soft_decline_callback');
         }
 
-        $enrollee->attempt_count = $enrollee->attempt_count + 1;
-        $enrollee->last_attempt_at = Carbon::now()->toDateTimeString();
+        $enrollee->attempt_count    = $enrollee->attempt_count + 1;
+        $enrollee->last_attempt_at  = Carbon::now()->toDateTimeString();
         $enrollee->total_time_spent = $enrollee->total_time_spent + $request->input('time_elapsed');
 
         $enrollee->save();
@@ -237,7 +198,41 @@ class EnrollmentCenterController extends Controller
 
     public function training()
     {
-
         return view('enrollment-ui.training');
+    }
+
+    public function unableToContact(Request $request)
+    {
+        $enrollee       = Enrollee::find($request->input('enrollee_id'));
+        $careAmbassador = auth()->user()->careAmbassador;
+
+        //update report for care ambassador:
+        $report                       = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
+        $report->no_utc               = $report->no_utc + 1;
+        $report->total_calls          = $report->total_calls + 1;
+        $report->total_time_in_system = $request->input('total_time_in_system');
+        $report->save();
+
+        $enrollee->last_call_outcome = $request->input('reason');
+
+        if ($request->input('reason_other')) {
+            $enrollee->last_call_outcome_reason = $request->input('reason_other');
+        }
+
+        $enrollee->care_ambassador_id = $careAmbassador->id;
+
+        if ('requested callback' == $request->input('reason')) {
+            $enrollee->status = 'call_queue';
+        } else {
+            $enrollee->status = 'utc';
+        }
+
+        $enrollee->attempt_count    = $enrollee->attempt_count + 1;
+        $enrollee->last_attempt_at  = Carbon::now()->toDateTimeString();
+        $enrollee->total_time_spent = $enrollee->total_time_spent + $request->input('time_elapsed');
+
+        $enrollee->save();
+
+        return redirect()->action('Enrollment\EnrollmentCenterController@dashboard');
     }
 }

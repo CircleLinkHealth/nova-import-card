@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Notifications;
 
 use App\Mail\SalesPracticeReport as SalesPracticeReportMailable;
@@ -10,16 +14,14 @@ class SalesPracticeReport extends Notification
 {
     use Queueable;
 
-
     protected $data;
 
     protected $recipientEmail;
 
-
     /**
      * Create a new notification instance.
      *
-     * @return void
+     * @param mixed $recipientEmail
      */
     public function __construct(array $data, $recipientEmail)
     {
@@ -28,43 +30,15 @@ class SalesPracticeReport extends Notification
     }
 
     /**
-     * Get the notification's delivery channels.
-     *
-     * @param  mixed $notifiable
-     *
-     * @return array
-     */
-    public function via($notifiable)
-    {
-        return [
-            'mail',
-            'database',
-        ];
-    }
-
-    /**
-     * Get the mail representation of the notification.
-     *
-     * @param  mixed $notifiable
-     *
-     * @return SalesPracticeReportMailable
-     */
-    public function toMail($notifiable)
-    {
-        return new SalesPracticeReportMailable($notifiable, $this->data, $this->recipientEmail);
-    }
-
-    /**
      * Get the array representation of the notification.
      *
-     * @param  mixed $notifiable
+     * @param mixed $notifiable
      *
      * @return array
      */
     public function toArray($notifiable)
     {
         return [
-            //
         ];
     }
 
@@ -74,5 +48,32 @@ class SalesPracticeReport extends Notification
             [
                 'data' => $this->data,
             ];
+    }
+
+    /**
+     * Get the mail representation of the notification.
+     *
+     * @param mixed $notifiable
+     *
+     * @return SalesPracticeReportMailable
+     */
+    public function toMail($notifiable)
+    {
+        return new SalesPracticeReportMailable($notifiable, $this->data, $this->recipientEmail);
+    }
+
+    /**
+     * Get the notification's delivery channels.
+     *
+     * @param mixed $notifiable
+     *
+     * @return array
+     */
+    public function via($notifiable)
+    {
+        return [
+            'mail',
+            'database',
+        ];
     }
 }

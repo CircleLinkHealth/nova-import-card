@@ -1,40 +1,38 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Mail;
 
 use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
 class PracticeInvoice extends Mailable
 {
     use Queueable, SerializesModels;
 
     /**
-     * @var User
-     */
-    protected $recipient;
-
-
-    /**
-     * The link passed to the view
+     * The attachment to the Mailable.
      *
      * For an example @see: PracticeInvoiceController, method send
-     *
-     */
-    protected $patientReportURL;
-
-
-    /**
-     * The attachment to the Mailable
-     *
-     * For an example @see: PracticeInvoiceController, method send
-     *
      */
     protected $invoiceURL;
 
+    /**
+     * The link passed to the view.
+     *
+     * For an example @see: PracticeInvoiceController, method send
+     */
+    protected $patientReportURL;
+
+    /**
+     * @var User
+     */
+    protected $recipient;
 
     /**
      * Create a new message instance.
@@ -47,7 +45,7 @@ class PracticeInvoice extends Mailable
     public function __construct($patientReportURL, $invoiceURL)
     {
         $this->patientReportURL = $patientReportURL;
-        $this->invoiceURL = $invoiceURL;
+        $this->invoiceURL       = $invoiceURL;
     }
 
     /**
@@ -60,7 +58,7 @@ class PracticeInvoice extends Mailable
         return $this->view('billing.practice.mail')
             ->with([
                 'patientReportURL' => $this->patientReportURL,
-                'invoiceURL' => $this->invoiceURL,
+                'invoiceURL'       => $this->invoiceURL,
             ])
             ->from('billing@circlelinkhealth.com', 'CircleLink Health')
             ->subject('Your Invoice and Billing Report from CircleLink');

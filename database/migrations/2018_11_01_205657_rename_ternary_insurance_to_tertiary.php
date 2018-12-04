@@ -1,15 +1,26 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class RenameTernaryInsuranceToTertiary extends Migration
 {
     /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        Schema::table('eligibility_jobs', function (Blueprint $table) {
+        });
+    }
+
+    /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -18,17 +29,5 @@ class RenameTernaryInsuranceToTertiary extends Migration
                 $table->renameColumn('ternary_insurance', 'tertiary_insurance');
             });
         }
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::table('eligibility_jobs', function (Blueprint $table) {
-            //
-        });
     }
 }

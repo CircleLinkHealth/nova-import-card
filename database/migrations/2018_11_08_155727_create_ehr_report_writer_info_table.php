@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -7,9 +11,15 @@ use Illuminate\Support\Facades\Schema;
 class CreateEhrReportWriterInfoTable extends Migration
 {
     /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        Schema::dropIfExists('ehr_report_writer_info');
+    }
+
+    /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -20,19 +30,9 @@ class CreateEhrReportWriterInfoTable extends Migration
             $table->timestamps();
 
             $table->foreign('user_id')
-                  ->references('id')->on('users')
-                  ->onUpdate('cascade')
-                  ->onDelete('cascade');
+                ->references('id')->on('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
         });
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::dropIfExists('ehr_report_writer_info');
     }
 }

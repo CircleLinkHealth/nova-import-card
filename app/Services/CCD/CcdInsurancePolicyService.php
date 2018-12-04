@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Services\CCD;
 
 use App\User;
@@ -8,11 +12,10 @@ use App\User;
  * Created by PhpStorm.
  * User: michalis
  * Date: 6/10/16
- * Time: 3:35 PM
+ * Time: 3:35 PM.
  */
 class CcdInsurancePolicyService
 {
-
     public function checkPendingInsuranceApproval(User $patient)
     {
         $hasPolicies = $patient->ccdInsurancePolicies()->get();

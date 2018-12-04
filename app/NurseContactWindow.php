@@ -1,25 +1,29 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * App\NurseContactWindow
+ * App\NurseContactWindow.
  *
- * @property int $id
- * @property int $nurse_info_id
- * @property \Carbon\Carbon $date
- * @property int $day_of_week
- * @property string $window_time_start
- * @property string $window_time_end
+ * @property int                 $id
+ * @property int                 $nurse_info_id
+ * @property \Carbon\Carbon      $date
+ * @property int                 $day_of_week
+ * @property string              $window_time_start
+ * @property string              $window_time_end
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property \Carbon\Carbon|null $deleted_at
- * @property-read mixed $day_name
- * @property-read \App\Nurse $nurse
+ * @property mixed               $day_name
+ * @property \App\Nurse          $nurse
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\NurseContactWindow onlyTrashed()
  * @method static bool|null restore()
@@ -51,11 +55,59 @@ class NurseContactWindow extends \App\BaseModel
         'date',
     ];
 
-    protected $table = 'nurse_contact_window';
+    protected $guarded = [];
 
     protected $primaryKey = 'id';
 
-    protected $guarded = [];
+    protected $table = 'nurse_contact_window';
+
+    public function getDayNameAttribute()
+    {
+        return clhDayOfWeekToDayName($this->day_of_week);
+    }
+
+    public function getScheduleForAllNurses()
+    {
+        return $this->with('nurse.user')
+            ->where('date', '>=', Carbon::today()->format('Y-m-d'))
+            ->get();
+    }
+
+    // END RELATIONSHIPS
+
+    public function nurse()
+    {
+        return $this->belongsTo(Nurse::class, 'nurse_info_id', 'id');
+    }
+
+    /**
+     * Returns the range of the windows as an object consisting of 2 Carbon Objects.
+     *
+     * @return \stdClass
+     */
+    public function range()
+    {
+        $object = new \stdClass();
+
+        $object->start = Carbon::parse($this->window_time_start);
+        $object->end   = Carbon::parse($this->window_time_end);
+
+        return $object;
+    }
+
+    /**
+     * Scope query to only include upcoming (future) windows.
+     *
+     * @param $query
+     *
+     * @return mixed
+     */
+    public function scopeUpcoming($query)
+    {
+        return $query->where('date', '>=', Carbon::today()->format('Y-m-d'))
+            ->orderBy('date', 'asc')
+            ->orderBy('window_time_start', 'asc');
+    }
 
     // START RELATIONSHIPS
 
@@ -85,54 +137,5 @@ class NurseContactWindow extends \App\BaseModel
             'window_time_start' => $startTime,
             'window_time_end'   => $endTime,
         ]);
-    }
-
-    // END RELATIONSHIPS
-
-    public function nurse()
-    {
-        return $this->belongsTo(Nurse::class, 'nurse_info_id', 'id');
-    }
-
-    public function getDayNameAttribute()
-    {
-        return clhDayOfWeekToDayName($this->day_of_week);
-    }
-
-    public function getScheduleForAllNurses()
-    {
-        return $this->with('nurse.user')
-            ->where('date', '>=', Carbon::today()->format('Y-m-d'))
-            ->get();
-    }
-
-    /**
-     * Scope query to only include upcoming (future) windows.
-     *
-     * @param $query
-     *
-     * @return mixed
-     */
-    public function scopeUpcoming($query)
-    {
-        return $query->where('date', '>=', Carbon::today()->format('Y-m-d'))
-            ->orderBy('date', 'asc')
-            ->orderBy('window_time_start', 'asc');
-    }
-
-
-    /**
-     * Returns the range of the windows as an object consisting of 2 Carbon Objects
-     *
-     * @return \stdClass
-     */
-    public function range()
-    {
-        $object = new \stdClass();
-
-        $object->start = Carbon::parse($this->window_time_start);
-        $object->end = Carbon::parse($this->window_time_end);
-
-        return $object;
     }
 }

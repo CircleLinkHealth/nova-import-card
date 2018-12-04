@@ -1,12 +1,15 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers\API;
 
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 
 class ImporterController extends ApiController
 {
-
     /**
      * @SWG\GET(
      *     path="/ccd-importer/medical-records",
@@ -18,6 +21,7 @@ class ImporterController extends ApiController
      *         description="A listing of medical records"
      *     )
      *   )
+     *
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function index()
@@ -36,7 +40,7 @@ class ImporterController extends ApiController
                     ['last_name', '!=', null],
                     ['ml_ignore', '=', false],
                 ])->get()->unique(function ($m) {
-                    return $m->first_name . $m->last_name;
+                    return $m->first_name.$m->last_name;
                 });
 
                 if ($providers->count() > 1) {

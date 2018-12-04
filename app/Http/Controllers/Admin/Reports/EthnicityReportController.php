@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers\Admin\Reports;
 
 use App\Http\Controllers\Controller;
@@ -20,13 +24,13 @@ class EthnicityReportController extends Controller
             $program = Practice::find($ccdVendor->program_id);
 
             return [
-                'program' => $program->display_name,
+                'program'   => $program->display_name,
                 'ethnicity' => $demoLog->ethnicity,
-                'race' => $demoLog->race,
+                'race'      => $demoLog->race,
             ];
         });
 
-        Excel::create("Ethnicity Report", function ($excel) use ($filtered) {
+        Excel::create('Ethnicity Report', function ($excel) use ($filtered) {
             $excel->sheet('Master', function ($sheet) use ($filtered) {
                 $sheet->fromArray(
                     $filtered->all()

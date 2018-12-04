@@ -1,66 +1,73 @@
-<?php namespace App;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App;
 
 use App\Filters\Filterable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * App\Patient
+ * App\Patient.
  *
- * @property int $id
- * @property int|null $imported_medical_record_id
- * @property int $user_id
- * @property int|null $ccda_id
- * @property int|null $care_plan_id
- * @property string|null $active_date
- * @property string|null $agent_name
- * @property string|null $agent_telephone
- * @property string|null $agent_email
- * @property string|null $agent_relationship
- * @property string|null $birth_date
- * @property string|null $ccm_status
- * @property string|null $consent_date
- * @property string|null $gender
- * @property \Carbon\Carbon|null $date_paused
- * @property \Carbon\Carbon|null $date_withdrawn
- * @property string|null $mrn_number
- * @property string|null $preferred_cc_contact_days
- * @property string|null $preferred_contact_language
- * @property string|null $preferred_contact_location
- * @property string|null $preferred_contact_method
- * @property string|null $preferred_contact_time
- * @property string|null $preferred_contact_timezone
- * @property string|null $registration_date
- * @property string|null $daily_reminder_optin
- * @property string|null $daily_reminder_time
- * @property string|null $daily_reminder_areas
- * @property string|null $hospital_reminder_optin
- * @property string|null $hospital_reminder_time
- * @property string|null $hospital_reminder_areas
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property string|null $deleted_at
- * @property string $general_comment
- * @property int $preferred_calls_per_month
- * @property string $last_successful_contact_time
- * @property int|null $no_call_attempts_since_last_success
- * @property string $last_contact_time
- * @property string $daily_contact_window_start
- * @property string $daily_contact_window_end
- * @property int|null $next_call_id
- * @property int|null $family_id
- * @property string|null $date_welcomed
- * @property-read \App\Family|null $family
- * @property mixed $address
- * @property mixed $city
- * @property mixed $first_name
- * @property mixed $last_name
- * @property mixed $state
- * @property mixed $zip
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\PatientContactWindow[] $contactWindows
- * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- * @property-read \App\User $user
+ * @property int                                                                            $id
+ * @property int|null                                                                       $imported_medical_record_id
+ * @property int                                                                            $user_id
+ * @property int|null                                                                       $ccda_id
+ * @property int|null                                                                       $care_plan_id
+ * @property string|null                                                                    $active_date
+ * @property string|null                                                                    $agent_name
+ * @property string|null                                                                    $agent_telephone
+ * @property string|null                                                                    $agent_email
+ * @property string|null                                                                    $agent_relationship
+ * @property string|null                                                                    $birth_date
+ * @property string|null                                                                    $ccm_status
+ * @property string|null                                                                    $consent_date
+ * @property string|null                                                                    $gender
+ * @property \Carbon\Carbon|null                                                            $date_paused
+ * @property \Carbon\Carbon|null                                                            $date_withdrawn
+ * @property string|null                                                                    $mrn_number
+ * @property string|null                                                                    $preferred_cc_contact_days
+ * @property string|null                                                                    $preferred_contact_language
+ * @property string|null                                                                    $preferred_contact_location
+ * @property string|null                                                                    $preferred_contact_method
+ * @property string|null                                                                    $preferred_contact_time
+ * @property string|null                                                                    $preferred_contact_timezone
+ * @property string|null                                                                    $registration_date
+ * @property string|null                                                                    $daily_reminder_optin
+ * @property string|null                                                                    $daily_reminder_time
+ * @property string|null                                                                    $daily_reminder_areas
+ * @property string|null                                                                    $hospital_reminder_optin
+ * @property string|null                                                                    $hospital_reminder_time
+ * @property string|null                                                                    $hospital_reminder_areas
+ * @property \Carbon\Carbon                                                                 $created_at
+ * @property \Carbon\Carbon                                                                 $updated_at
+ * @property string|null                                                                    $deleted_at
+ * @property string                                                                         $general_comment
+ * @property int                                                                            $preferred_calls_per_month
+ * @property string                                                                         $last_successful_contact_time
+ * @property int|null                                                                       $no_call_attempts_since_last_success
+ * @property string                                                                         $last_contact_time
+ * @property string                                                                         $daily_contact_window_start
+ * @property string                                                                         $daily_contact_window_end
+ * @property int|null                                                                       $next_call_id
+ * @property int|null                                                                       $family_id
+ * @property string|null                                                                    $date_welcomed
+ * @property \App\Family|null                                                               $family
+ * @property mixed                                                                          $address
+ * @property mixed                                                                          $city
+ * @property mixed                                                                          $first_name
+ * @property mixed                                                                          $last_name
+ * @property mixed                                                                          $state
+ * @property mixed                                                                          $zip
+ * @property \App\PatientContactWindow[]|\Illuminate\Database\Eloquent\Collection           $contactWindows
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \App\User                                                                      $user
  * @property mixed location
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient enrolled()
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient hasFamily()
@@ -117,13 +124,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Patient extends BaseModel
 {
     use Filterable, SoftDeletes;
-
-    const UNREACHABLE = 'unreachable';
-    const PAUSED = 'paused';
-    const ENROLLED = 'enrolled';
-    const WITHDRAWN = 'withdrawn';
-    const TO_ENROLL = 'to_enroll';
-    const PATIENT_REJECTED = 'patient_rejected';
+    const BHI_CONSENT_NOTE_TYPE   = 'Consented to BHI';
+    const BHI_REJECTION_NOTE_TYPE = 'Did Not Consent to BHI';
 
     /**
      * Starting on this date, when a patients consents for CCM, they also consent for BHI.
@@ -133,23 +135,13 @@ class Patient extends BaseModel
      * services. As of 07/23/2018, there exist ~200 BHI eligible patients who have consented before 07/23/2018.
      */
     const DATE_CONSENT_INCLUDES_BHI = '2018-07-23 00:00:00';
-    const BHI_CONSENT_NOTE_TYPE = 'Consented to BHI';
-    const BHI_REJECTION_NOTE_TYPE = 'Did Not Consent to BHI';
+    const ENROLLED                  = 'enrolled';
+    const PATIENT_REJECTED          = 'patient_rejected';
+    const PAUSED                    = 'paused';
+    const TO_ENROLL                 = 'to_enroll';
 
-    protected $dates = [
-        'consent_date',
-        'date_withdrawn',
-        'date_paused',
-        'date_unreachable',
-        'paused_letter_printed_at',
-    ];
-
-    /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    protected $table = 'patient_info';
+    const UNREACHABLE = 'unreachable';
+    const WITHDRAWN   = 'withdrawn';
 
     public $phi = [
         'agent_name',
@@ -159,6 +151,14 @@ class Patient extends BaseModel
         'gender',
         'mrn_number',
         'general_comment',
+    ];
+
+    protected $dates = [
+        'consent_date',
+        'date_withdrawn',
+        'date_paused',
+        'date_unreachable',
+        'paused_letter_printed_at',
     ];
 
     protected $fillable = [
@@ -208,11 +208,248 @@ class Patient extends BaseModel
         'date_welcomed',
     ];
 
+    /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
+    protected $table = 'patient_info';
+
+    /**
+     * Import Patient's Call Window from the sheet, or save default.
+     *
+     * @param array $days | eg. [1,2,3] Monday is 1
+     * @param $fromTime | eg. '09:00:00'
+     * @param $toTime | eg. '17:00:00'
+     *
+     * @return array of PatientContactWindows
+     */
+    public function attachNewOrDefaultCallWindows(
+        array $days = [],
+        $fromTime = null,
+        $toTime = null
+    ) {
+        $daysNumber = [
+            1,
+            2,
+            3,
+            4,
+            5,
+        ];
+
+        if (!empty($days)) {
+            $daysNumber = $days;
+        }
+
+        $timeFrom = '09:00:00';
+        $timeTo   = '17:00:00';
+
+        if (!empty($fromTime)) {
+            $timeFrom = Carbon::parse($fromTime)->format('H:i:s');
+        }
+        if (!empty($toTime)) {
+            $timeTo = Carbon::parse($toTime)->format('H:i:s');
+        }
+
+        return PatientContactWindow::sync(
+            $this,
+            $daysNumber,
+            $timeFrom,
+            $timeTo
+        );
+    }
+
+    public function contactWindows()
+    {
+        return $this->hasMany(PatientContactWindow::class, 'patient_info_id');
+    }
+
+    public function dob()
+    {
+        return Carbon::parse($this->birth_date)->format('m/d/Y');
+    }
+
+    public function family()
+    {
+        return $this->belongsTo(Family::class, 'family_id');
+    }
+
+    public function getAddressAttribute()
+    {
+        return $this->user->address;
+    }
+
+    public function getCcmTime()
+    {
+        return $this->user->getCcmTime();
+    }
+
+    public function getCityAttribute()
+    {
+        return $this->user->city;
+    }
+
+    public function getContactWindowsString()
+    {
+        $windows = [];
+
+        foreach ($this->contactWindows as $window) {
+            $start = Carbon::parse($window->window_time_start)->format('h:i a');
+            $end   = Carbon::parse($window->window_time_end)->format('h:i a');
+            switch ($window->day_of_week) {
+                case 1:
+                    $windows[] = "Monday: {$start} - {$end}<br/>";
+                    break;
+                case 2:
+                    $windows[] = "Tuesday: {$start} - {$end}<br/>";
+                    break;
+                case 3:
+                    $windows[] = "Wednesday: {$start} - {$end}<br/>";
+                    break;
+                case 4:
+                    $windows[] = "Thursday: {$start} - {$end}<br/>";
+                    break;
+                case 5:
+                    $windows[] = "Friday: {$start} - {$end}<br/>";
+                    break;
+                case 6:
+                    $windows[] = "Saturday: {$start} - {$end}<br/>";
+                    break;
+                case 7:
+                    $windows[] = "Sunday: {$start} - {$end}<br/>";
+                    break;
+            }
+        }
+
+        return empty($windows)
+            ? 'Patient call date/time preferences not found.'
+            : implode($windows);
+    }
+
+    /**
+     * Get family members of a patient.
+     * TODO: remove patient argument, since its a function of the Patient class. Or, make it a static function.
+     *
+     * @param Patient $patient
+     *
+     * @return array|static
+     */
+    public function getFamilyMembers(Patient $patient)
+    {
+        $family = $patient->family;
+
+        if (is_object($family)) {
+            $members = $family->patients()->get();
+
+            //remove the patient from the family itself
+            return $members->reject(function ($item) {
+                return $item->id == $this->id;
+            });
+        }
+
+        return [];
+    }
+
+    public function getFirstNameAttribute()
+    {
+        return $this->user->getFirstName();
+    }
+
+    public function getFullName()
+    {
+        return $this->user->getFullName();
+    }
+
+    public function getLastCallStatusAttribute()
+    {
+        if (is_null($this->no_call_attempts_since_last_success)) {
+            return 'n/a';
+        }
+
+        if ($this->no_call_attempts_since_last_success > 0) {
+            return $this->no_call_attempts_since_last_success.'x Attempts';
+        }
+
+        return 'Success';
+    }
+
+    public function getLastNameAttribute()
+    {
+        return $this->user->getLastName();
+    }
+
+    public function getPreferences()
+    {
+        $patientTimezone = $this->user->timezone;
+        if (!isset($patientTimezone)) {
+            $patientTimezone = 'America/New_York';
+        }
+        $tzAbbr = Carbon::now()->setTimezone($patientTimezone)->format('T');
+
+        return [
+            'calls_per_month' => $this->preferred_calls_per_month,
+            //found in contact_window
+            //'contact_days' => $this->preferred_cc_contact_days,
+            //'contact_time' => $this->preferred_contact_time,
+
+            //'contact_timezone' => $this->preferred_contact_timezone,
+            'contact_timezone' => $tzAbbr,
+
+            'contact_language' => $this->preferred_contact_language,
+            'contact_method'   => $this->preferred_contact_method,
+            'contact_window'   => $this->contactWindows,
+            'contact_location' => $this->location,
+        ];
+    }
+
+    public function getStateAttribute()
+    {
+        return $this->user->state;
+    }
+
+    public function getZipAttribute()
+    {
+        return $this->user->zip;
+    }
+
+    public function hasFamilyId()
+    {
+        return null != $this->family_id;
+    }
+
+    public function lastNurseThatPerformedActivity()
+    {
+        $id = Activity::where('patient_id', $this->user_id)
+            ->whereHas('provider', function ($q) {
+                $q->ofType('care-center');
+            })
+            ->orderBy('created_at', 'desc')
+            ->first()['provider_id'];
+
+        return Nurse::where('user_id', $id)->first();
+    }
+
+    public function lastReachedNurse()
+    {
+        return Call::where('inbound_cpm_id', $this->user_id)
+            ->whereNotNull('called_date')
+            ->orderBy('called_date', 'desc')
+            ->first()['outbound_cpm_id'];
+    }
+
+    /**
+     * Get the patient's Location.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function location()
+    {
+        return $this->belongsTo(Location::class, 'preferred_contact_location');
+    }
+
     public static function numberToTextDaySwitcher($string)
     {
-
         $mapper = function ($i) {
-
             switch ($i) {
                 case 1:
                     return ' Mon';
@@ -247,346 +484,16 @@ class Patient extends BaseModel
         return implode(',', $formatted);
     }
 
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id', 'id');
-    }
-
-    public function contactWindows()
-    {
-        return $this->hasMany(PatientContactWindow::class, 'patient_info_id');
-    }
-
-    public function getContactWindowsString()
-    {
-
-        $windows = [];
-
-        foreach ($this->contactWindows as $window) {
-            $start = Carbon::parse($window->window_time_start)->format('h:i a');
-            $end   = Carbon::parse($window->window_time_end)->format('h:i a');
-            switch ($window->day_of_week) {
-                case (1):
-                    $windows[] = "Monday: {$start} - {$end}<br/>";
-                    break;
-                case (2):
-                    $windows[] = "Tuesday: {$start} - {$end}<br/>";
-                    break;
-                case (3):
-                    $windows[] = "Wednesday: {$start} - {$end}<br/>";
-                    break;
-                case (4):
-                    $windows[] = "Thursday: {$start} - {$end}<br/>";
-                    break;
-                case (5):
-                    $windows[] = "Friday: {$start} - {$end}<br/>";
-                    break;
-                case (6):
-                    $windows[] = "Saturday: {$start} - {$end}<br/>";
-                    break;
-                case (7):
-                    $windows[] = "Sunday: {$start} - {$end}<br/>";
-                    break;
-            }
-        }
-
-        return empty($windows)
-            ? "Patient call date/time preferences not found."
-            : implode($windows);
-    }
-
-    public function family()
-    {
-
-        return $this->belongsTo(Family::class, 'family_id');
-    }
-
-    public function getFirstNameAttribute()
-    {
-        return $this->user->getFirstName();
-    }
-
-    public function setFirstNameAttribute($value)
-    {
-        $this->user->setFirstName($value);
-        $this->user->save();
-
-        return true;
-    }
-
-    public function getLastNameAttribute()
-    {
-        return $this->user->getLastName();
-    }
-
-    public function setLastNameAttribute($value)
-    {
-        $this->user->setLastName($value);
-        $this->user->save();
-
-        return true;
-    }
-
-    public function getFullName()
-    {
-        return $this->user->getFullName();
-    }
-
-    public function getAddressAttribute()
-    {
-        return $this->user->address;
-    }
-
-    public function setAddressAttribute($value)
-    {
-        $this->user->address = $value;
-        $this->user->save();
-
-        return true;
-    }
-
-    public function getCityAttribute()
-    {
-        return $this->user->city;
-    }
-
-    public function setCityAttribute($value)
-    {
-        $this->user->city = $value;
-        $this->user->save();
-
-        return true;
-    }
-
-    public function getStateAttribute()
-    {
-        return $this->user->state;
-    }
-
-    public function setStateAttribute($value)
-    {
-        $this->user->state = $value;
-        $this->user->save();
-
-        return true;
-    }
-
-    public function getZipAttribute()
-    {
-        return $this->user->zip;
-    }
-
-    public function setZipAttribute($value)
-    {
-        $this->user->zip = $value;
-        $this->user->save();
-
-        return true;
-    }
-
-    public function setCcmStatusAttribute($value)
-    {
-        $statusBefore                   = $this->ccm_status;
-        $this->attributes['ccm_status'] = $value;
-
-        if ($statusBefore !== $value) {
-            if ($value == Patient::ENROLLED) {
-                $this->attributes['registration_date'] = Carbon::now()->toDateTimeString();
-            };
-            if ($value == Patient::PAUSED) {
-                $this->attributes['date_paused'] = Carbon::now()->toDateTimeString();
-            };
-            if ($value == Patient::WITHDRAWN) {
-                $this->attributes['date_withdrawn'] = Carbon::now()->toDateTimeString();
-            };
-            if ($value == Patient::UNREACHABLE) {
-                $this->attributes['date_unreachable'] = Carbon::now()->toDateTimeString();
-            };
-        }
-        $this->save();
-    }
-
-    /**
-     * Get family members of a patient.
-     * TODO: remove patient argument, since its a function of the Patient class. Or, make it a static function.
-     *
-     * @param Patient $patient
-     *
-     * @return array|static
-     */
-    public function getFamilyMembers(Patient $patient)
-    {
-
-        $family = $patient->family;
-
-        if (is_object($family)) {
-            $members = $family->patients()->get();
-
-            //remove the patient from the family itself
-            return $members->reject(function ($item) {
-                return $item->id == $this->id;
-            });
-        }
-
-        return [];
-    }
-
-    public function getLastCallStatusAttribute()
-    {
-        if (is_null($this->no_call_attempts_since_last_success)) {
-            return 'n/a';
-        }
-
-        if ($this->no_call_attempts_since_last_success > 0) {
-            return $this->no_call_attempts_since_last_success . 'x Attempts';
-        }
-
-        return 'Success';
-    }
-
-    public function getCcmTime()
-    {
-        return $this->user->getCcmTime();
-    }
-
-    public function scopeEnrolled($query)
-    {
-
-        return $query->where('ccm_status', 'enrolled');
-    }
-
-    public function scopeByStatus($query, $fromDate, $toDate)
-    {
-
-        return $query->where(function ($query) use ($fromDate, $toDate) {
-            $query->where(function ($subQuery) use ($fromDate, $toDate) {
-                $subQuery->ccmStatus(Patient::PAUSED)
-                         ->where([
-                             ['date_paused', '>=', $fromDate],
-                             ['date_paused', '<=', $toDate],
-                         ]);
-            })
-                  ->orWhere(function ($subQuery) use ($fromDate, $toDate) {
-                      $subQuery->ccmStatus(Patient::WITHDRAWN)
-                               ->where([
-                                   ['date_withdrawn', '>=', $fromDate],
-                                   ['date_withdrawn', '<=', $toDate],
-                               ]);
-                  })
-                  ->orWhere(function ($subQuery) use ($fromDate, $toDate) {
-                      $subQuery->ccmStatus(Patient::ENROLLED)
-                               ->where([
-                                   ['registration_date', '>=', $fromDate],
-                                   ['registration_date', '<=', $toDate],
-                               ]);
-                  });
-        });
-    }
-
-
-    /**
-     * Import Patient's Call Window from the sheet, or save default.
-     *
-     * @param array $days | eg. [1,2,3] Monday is 1
-     * @param $fromTime | eg. '09:00:00'
-     * @param $toTime | eg. '17:00:00'
-     *
-     * @return array of PatientContactWindows
-     */
-    public function attachNewOrDefaultCallWindows(
-        array $days = [],
-        $fromTime = null,
-        $toTime = null
-    ) {
-        $daysNumber = [
-            1,
-            2,
-            3,
-            4,
-            5,
-        ];
-
-        if ( ! empty($days)) {
-            $daysNumber = $days;
-        }
-
-        $timeFrom = '09:00:00';
-        $timeTo   = '17:00:00';
-
-        if ( ! empty($fromTime)) {
-            $timeFrom = Carbon::parse($fromTime)->format('H:i:s');
-        }
-        if ( ! empty($toTime)) {
-            $timeTo = Carbon::parse($toTime)->format('H:i:s');
-        }
-
-        return PatientContactWindow::sync(
-            $this,
-            $daysNumber,
-            $timeFrom,
-            $timeTo
-        );
-    }
-
-    public function hasFamilyId()
-    {
-        return $this->family_id != null;
-    }
-
-    public function scopeHasFamily($query)
-    {
-
-        return $query->whereNotNull('family_id');
-    }
-
-    public function lastReachedNurse()
-    {
-
-        return Call::where('inbound_cpm_id', $this->user_id)
-                   ->whereNotNull('called_date')
-                   ->orderBy('called_date', 'desc')
-                   ->first()['outbound_cpm_id'];
-    }
-
-    public function lastNurseThatPerformedActivity()
-    {
-
-        $id = Activity::where('patient_id', $this->user_id)
-                      ->whereHas('provider', function ($q) {
-                          $q->ofType('care-center');
-                      })
-                      ->orderBy('created_at', 'desc')
-                      ->first()['provider_id'];
-
-        return Nurse::where('user_id', $id)->first();
-    }
-
-    /**
-     * Scope by ccm_status
-     *
-     * @param $builder
-     * @param $status
-     * @param string $operator
-     */
-    public function scopeCcmStatus($builder, $status, $operator = '=')
-    {
-        $builder->where('ccm_status', $operator, $status);
-    }
-
     /**
      * Returns nurseInfos that have:
      *  - a call window in the future
-     *  - location intersection with the patient's preferred contact location
-     *
+     *  - location intersection with the patient's preferred contact location.
      */
-
     public function nursesThatCanCareforPatient()
     {
-
         //Get user's programs
 
         $nurses = Nurse::whereHas('user', function ($q) {
-
             $q->where('user_status', 1);
         })->get();
 
@@ -612,48 +519,14 @@ class Patient extends BaseModel
         return $result;
     }
 
-    /**
-     * Get the patient's Location
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function location()
-    {
-        return $this->belongsTo(Location::class, 'preferred_contact_location');
-    }
-
-    public function getPreferences()
-    {
-        $patientTimezone = $this->user->timezone;
-        if ( ! isset($patientTimezone)) {
-            $patientTimezone = 'America/New_York';
-        }
-        $tzAbbr = Carbon::now()->setTimezone($patientTimezone)->format('T');
-
-        return [
-            'calls_per_month'  => $this->preferred_calls_per_month,
-            //found in contact_window
-            //'contact_days' => $this->preferred_cc_contact_days,
-            //'contact_time' => $this->preferred_contact_time,
-
-            //'contact_timezone' => $this->preferred_contact_timezone,
-            'contact_timezone' => $tzAbbr,
-
-            'contact_language' => $this->preferred_contact_language,
-            'contact_method'   => $this->preferred_contact_method,
-            'contact_window'   => $this->contactWindows,
-            'contact_location' => $this->location,
-        ];
-    }
-
     public function safe()
     {
         return [
-            'id'               => $this->id,
-            'user_id'          => $this->user_id,
-            'ccm_status'       => $this->ccm_status,
-            'birth_date'       => $this->birth_date,
-            'age'              => $this->birth_date
+            'id'         => $this->id,
+            'user_id'    => $this->user_id,
+            'ccm_status' => $this->ccm_status,
+            'birth_date' => $this->birth_date,
+            'age'        => $this->birth_date
                 ? (Carbon::now()->year - Carbon::parse($this->birth_date)->year)
                 : 0,
             'gender'           => $this->gender,
@@ -665,8 +538,127 @@ class Patient extends BaseModel
         ];
     }
 
-    public function dob()
+    public function scopeByStatus($query, $fromDate, $toDate)
     {
-        return Carbon::parse($this->birth_date)->format('m/d/Y');
+        return $query->where(function ($query) use ($fromDate, $toDate) {
+            $query->where(function ($subQuery) use ($fromDate, $toDate) {
+                $subQuery->ccmStatus(Patient::PAUSED)
+                    ->where([
+                        ['date_paused', '>=', $fromDate],
+                        ['date_paused', '<=', $toDate],
+                    ]);
+            })
+                ->orWhere(function ($subQuery) use ($fromDate, $toDate) {
+                    $subQuery->ccmStatus(Patient::WITHDRAWN)
+                        ->where([
+                            ['date_withdrawn', '>=', $fromDate],
+                            ['date_withdrawn', '<=', $toDate],
+                        ]);
+                })
+                ->orWhere(function ($subQuery) use ($fromDate, $toDate) {
+                    $subQuery->ccmStatus(Patient::ENROLLED)
+                        ->where([
+                            ['registration_date', '>=', $fromDate],
+                            ['registration_date', '<=', $toDate],
+                        ]);
+                });
+        });
+    }
+
+    /**
+     * Scope by ccm_status.
+     *
+     * @param $builder
+     * @param $status
+     * @param string $operator
+     */
+    public function scopeCcmStatus($builder, $status, $operator = '=')
+    {
+        $builder->where('ccm_status', $operator, $status);
+    }
+
+    public function scopeEnrolled($query)
+    {
+        return $query->where('ccm_status', 'enrolled');
+    }
+
+    public function scopeHasFamily($query)
+    {
+        return $query->whereNotNull('family_id');
+    }
+
+    public function setAddressAttribute($value)
+    {
+        $this->user->address = $value;
+        $this->user->save();
+
+        return true;
+    }
+
+    public function setCcmStatusAttribute($value)
+    {
+        $statusBefore                   = $this->ccm_status;
+        $this->attributes['ccm_status'] = $value;
+
+        if ($statusBefore !== $value) {
+            if (Patient::ENROLLED == $value) {
+                $this->attributes['registration_date'] = Carbon::now()->toDateTimeString();
+            }
+            if (Patient::PAUSED == $value) {
+                $this->attributes['date_paused'] = Carbon::now()->toDateTimeString();
+            }
+            if (Patient::WITHDRAWN == $value) {
+                $this->attributes['date_withdrawn'] = Carbon::now()->toDateTimeString();
+            }
+            if (Patient::UNREACHABLE == $value) {
+                $this->attributes['date_unreachable'] = Carbon::now()->toDateTimeString();
+            }
+        }
+        $this->save();
+    }
+
+    public function setCityAttribute($value)
+    {
+        $this->user->city = $value;
+        $this->user->save();
+
+        return true;
+    }
+
+    public function setFirstNameAttribute($value)
+    {
+        $this->user->setFirstName($value);
+        $this->user->save();
+
+        return true;
+    }
+
+    public function setLastNameAttribute($value)
+    {
+        $this->user->setLastName($value);
+        $this->user->save();
+
+        return true;
+    }
+
+    public function setStateAttribute($value)
+    {
+        $this->user->state = $value;
+        $this->user->save();
+
+        return true;
+    }
+
+    public function setZipAttribute($value)
+    {
+        $this->user->zip = $value;
+        $this->user->save();
+
+        return true;
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 }

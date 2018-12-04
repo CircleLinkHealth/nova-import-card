@@ -1,4 +1,10 @@
-<?php namespace App\Importer\Models\ItemLogs;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Importer\Models\ItemLogs;
 
 use App\Contracts\Importer\MedicalRecord\Section\ItemLog;
 use App\Contracts\Models\CCD\Problem;
@@ -6,39 +12,39 @@ use App\Importer\Models\ImportedItems\ProblemImport;
 use App\Traits\HasProblemCodes;
 use App\Traits\Relationships\BelongsToCcda;
 use App\Traits\Relationships\BelongsToVendor;
-use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\Importer\Models\ItemLogs\ProblemLog
+ * App\Importer\Models\ItemLogs\ProblemLog.
  *
- * @property int $id
- * @property string|null $medical_record_type
- * @property int|null $medical_record_id
- * @property int|null $vendor_id
- * @property string|null $reference
- * @property string|null $reference_title
- * @property string|null $start
- * @property string|null $end
- * @property string|null $status
- * @property string|null $name
- * @property string|null $code
- * @property string|null $code_system
- * @property string|null $code_system_name
- * @property string|null $translation_name
- * @property string|null $translation_code
- * @property string|null $translation_code_system
- * @property string|null $translation_code_system_name
- * @property int $import
- * @property int $invalid
- * @property int $edited
- * @property int|null $cpm_problem_id
- * @property string|null $deleted_at
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property-read \App\Models\MedicalRecords\Ccda $ccda
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Importer\Models\ItemLogs\ProblemCodeLog[] $codes
- * @property-read \App\Importer\Models\ImportedItems\ProblemImport $importedItem
- * @property-read \App\Models\CCD\CcdVendor|null $vendor
+ * @property int                                                                                     $id
+ * @property string|null                                                                             $medical_record_type
+ * @property int|null                                                                                $medical_record_id
+ * @property int|null                                                                                $vendor_id
+ * @property string|null                                                                             $reference
+ * @property string|null                                                                             $reference_title
+ * @property string|null                                                                             $start
+ * @property string|null                                                                             $end
+ * @property string|null                                                                             $status
+ * @property string|null                                                                             $name
+ * @property string|null                                                                             $code
+ * @property string|null                                                                             $code_system
+ * @property string|null                                                                             $code_system_name
+ * @property string|null                                                                             $translation_name
+ * @property string|null                                                                             $translation_code
+ * @property string|null                                                                             $translation_code_system
+ * @property string|null                                                                             $translation_code_system_name
+ * @property int                                                                                     $import
+ * @property int                                                                                     $invalid
+ * @property int                                                                                     $edited
+ * @property int|null                                                                                $cpm_problem_id
+ * @property string|null                                                                             $deleted_at
+ * @property \Carbon\Carbon                                                                          $created_at
+ * @property \Carbon\Carbon                                                                          $updated_at
+ * @property \App\Models\MedicalRecords\Ccda                                                         $ccda
+ * @property \App\Importer\Models\ItemLogs\ProblemCodeLog[]|\Illuminate\Database\Eloquent\Collection $codes
+ * @property \App\Importer\Models\ImportedItems\ProblemImport                                        $importedItem
+ * @property \App\Models\CCD\CcdVendor|null                                                          $vendor
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemLog whereCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemLog whereCodeSystem($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemLog whereCodeSystemName($value)
@@ -67,12 +73,9 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ProblemLog extends \App\BaseModel implements ItemLog, Problem
 {
-
     use BelongsToCcda,
         BelongsToVendor,
         HasProblemCodes;
-
-    protected $table = 'ccd_problem_logs';
 
     protected $fillable = [
         'medical_record_type',
@@ -97,13 +100,15 @@ class ProblemLog extends \App\BaseModel implements ItemLog, Problem
         'cpm_problem_id',
     ];
 
-    public function importedItem()
-    {
-        return $this->hasOne(ProblemImport::class);
-    }
+    protected $table = 'ccd_problem_logs';
 
     public function codes()
     {
         return $this->hasMany(ProblemCodeLog::class, 'ccd_problem_log_id');
+    }
+
+    public function importedItem()
+    {
+        return $this->hasOne(ProblemImport::class);
     }
 }

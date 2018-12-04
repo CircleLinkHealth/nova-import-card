@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Jobs;
 
 use App\Models\MedicalRecords\Ccda;
@@ -13,20 +17,18 @@ use Illuminate\Queue\SerializesModels;
 class ImportMedicalRecordsById implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    /**
+     * @var array
+     */
+    private $medicalRecordIds;
     /**
      * @var Practice
      */
     private $practice;
 
     /**
-     * @var array
-     */
-    private $medicalRecordIds;
-
-    /**
      * Create a new job instance.
-     *
-     * @return void
      */
     public function __construct(array $medicalRecordIds, Practice $practice)
     {
@@ -36,17 +38,15 @@ class ImportMedicalRecordsById implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
     public function handle()
     {
         $imported = Ccda::withTrashed()
-                        ->whereIn('id', $this->medicalRecordIds)
-                        ->wherePracticeId($this->practice->id)
-                        ->get()
-                        ->map(function ($ccda) {
-                            ImportCcda::dispatch($ccda)->onQueue('low');
-                        });
+            ->whereIn('id', $this->medicalRecordIds)
+            ->wherePracticeId($this->practice->id)
+            ->get()
+            ->map(function ($ccda) {
+                ImportCcda::dispatch($ccda)->onQueue('low');
+            });
     }
 }

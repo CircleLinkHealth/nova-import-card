@@ -1,16 +1,23 @@
-<?php namespace App;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App;
 
 /**
- * App\CarePerson
+ * App\CarePerson.
  *
- * @property int $id
- * @property int $alert
- * @property int $user_id
- * @property int $member_user_id
- * @property string $type
+ * @property int            $id
+ * @property int            $alert
+ * @property int            $user_id
+ * @property int            $member_user_id
+ * @property string         $type
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @property-read \App\User $user
+ * @property \App\User      $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePerson whereAlert($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePerson whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePerson whereId($value)
@@ -22,31 +29,15 @@
  */
 class CarePerson extends BaseModel
 {
-    const BILLING_PROVIDER = 'billing_provider';
+    const BILLING_PROVIDER                = 'billing_provider';
+    const EXTERNAL                        = 'external';
     const IN_ADDITION_TO_BILLING_PROVIDER = 'in_addition_to_billing_provider';
-    const INSTEAD_OF_BILLING_PROVIDER = 'instead_of_billing_provider';
-
+    const INSTEAD_OF_BILLING_PROVIDER     = 'instead_of_billing_provider';
+    const LEAD_CONTACT                    = 'lead_contact';
+    const MEMBER                          = 'member';
 
     const REGULAR_DOCTOR = 'regular_doctor';
-    const LEAD_CONTACT = 'lead_contact';
-    const MEMBER = 'member';
-    const SEND_ALERT_TO = 'send_alert_to';
-    const EXTERNAL = 'external';
-
-
-    /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    protected $table = 'patient_care_team_members';
-
-    /**
-     * The primary key for the model.
-     *
-     * @var string
-     */
-    protected $primaryKey = 'id';
+    const SEND_ALERT_TO  = 'send_alert_to';
 
     /**
      * The attributes that are mass assignable.
@@ -59,6 +50,20 @@ class CarePerson extends BaseModel
         'type',
         'alert',
     ];
+
+    /**
+     * The primary key for the model.
+     *
+     * @var string
+     */
+    protected $primaryKey = 'id';
+
+    /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
+    protected $table = 'patient_care_team_members';
 
     public function user()
     {

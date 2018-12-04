@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\CLH\Repositories;
 
 use App\Importer\Models\ImportedItems\DemographicsImport;
@@ -13,7 +17,7 @@ class CCDImporterRepository
 {
     /**
      * Creates a user with random credentials
-     * Used to attach XML CCDs to a Patient
+     * Used to attach XML CCDs to a Patient.
      *
      * @return \App\User
      */
@@ -30,7 +34,7 @@ class CCDImporterRepository
         $newUserId = str_random(20);
 
         $email = empty($email = $demographics->email)
-            ? $newUserId . '@careplanmanager.com'
+            ? $newUserId.'@careplanmanager.com'
             : $email;
 
         $username = empty($email)
@@ -38,7 +42,7 @@ class CCDImporterRepository
             : $email;
 
         //user_nicename, display_name
-        $user_nicename = empty($fullName = $demographics->first_name . ' ' . $demographics->last_name)
+        $user_nicename = empty($fullName = $demographics->first_name.' '.$demographics->last_name)
             ? ''
             : ucwords(strtolower($fullName));
 
@@ -73,15 +77,15 @@ class CCDImporterRepository
             'body'    => $xml,
         ]);
 
-        $responseBody = (string)$response->getBody();
+        $responseBody = (string) $response->getBody();
 
-        if ( ! in_array($response->getStatusCode(), [200, 201])) {
+        if (!in_array($response->getStatusCode(), [200, 201])) {
             $data = json_encode([
                 $response->getStatusCode(),
                 $response->getReasonPhrase(),
             ]);
 
-            throw new \Exception("Could not process ccd. Data: $data");
+            throw new \Exception("Could not process ccd. Data: ${data}");
         }
 
         return $responseBody;

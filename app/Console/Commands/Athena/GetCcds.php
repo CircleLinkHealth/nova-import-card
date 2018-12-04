@@ -1,15 +1,24 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands\Athena;
 
 use App\ForeignId;
 use App\Models\CCD\CcdVendor;
 use App\Services\AthenaAPI\CreateAndPostPdfCareplan;
 use Illuminate\Console\Command;
-use Maknz\Slack\Facades\Slack;
 
 class GetCcds extends Command
 {
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Get CCDs from Athena, if there are any CCDA Requests.';
     /**
      * The name and signature of the console command.
      *
@@ -17,19 +26,10 @@ class GetCcds extends Command
      */
     protected $signature = 'athena:getCcds';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Get CCDs from Athena, if there are any CCDA Requests.';
-
     private $service;
 
     /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct(CreateAndPostPdfCareplan $athenaApi)
     {

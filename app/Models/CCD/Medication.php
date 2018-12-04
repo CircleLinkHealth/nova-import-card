@@ -1,31 +1,37 @@
-<?php namespace App\Models\CCD;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Models\CCD;
 
 use App\Importer\Models\ItemLogs\MedicationLog;
 use App\Models\CPM\CpmMedicationGroup;
 use App\User;
-use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\Models\CCD\Medication
+ * App\Models\CCD\Medication.
  *
- * @property int $id
- * @property int|null $medication_import_id
- * @property int|null $ccda_id
- * @property int $patient_id
- * @property int|null $vendor_id
- * @property int|null $ccd_medication_log_id
- * @property int|null $medication_group_id
- * @property string|null $name
- * @property string|null $sig
- * @property string|null $code
- * @property string|null $code_system
- * @property string|null $code_system_name
- * @property string|null $deleted_at
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property-read \App\Importer\Models\ItemLogs\MedicationLog $ccdLog
- * @property-read \App\Models\CPM\CpmMedicationGroup $cpmMedicationGroup
- * @property-read \App\User $patient
+ * @property int                                         $id
+ * @property int|null                                    $medication_import_id
+ * @property int|null                                    $ccda_id
+ * @property int                                         $patient_id
+ * @property int|null                                    $vendor_id
+ * @property int|null                                    $ccd_medication_log_id
+ * @property int|null                                    $medication_group_id
+ * @property string|null                                 $name
+ * @property string|null                                 $sig
+ * @property string|null                                 $code
+ * @property string|null                                 $code_system
+ * @property string|null                                 $code_system_name
+ * @property string|null                                 $deleted_at
+ * @property \Carbon\Carbon                              $created_at
+ * @property \Carbon\Carbon                              $updated_at
+ * @property \App\Importer\Models\ItemLogs\MedicationLog $ccdLog
+ * @property \App\Models\CPM\CpmMedicationGroup          $cpmMedicationGroup
+ * @property \App\User                                   $patient
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Medication whereCcdMedicationLogId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Medication whereCcdaId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Medication whereCode($value)
@@ -45,7 +51,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Medication extends \App\BaseModel
 {
-
     protected $fillable = [
         'ccda_id',
         'vendor_id',

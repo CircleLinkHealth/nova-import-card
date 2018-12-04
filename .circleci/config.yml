@@ -63,7 +63,7 @@ jobs:
     #    - run: ./vendor/bin/phpunit --testsuite=Unit
     #- run: ./vendor/bin/codecept build
     #        - run: ./vendor/bin/codecept run --xml result.xml
-    - run: composer test-sqlite
+    - run: composer test
 #    - store_test_results:
 #        path: tests/_output
 #    - store_artifacts:

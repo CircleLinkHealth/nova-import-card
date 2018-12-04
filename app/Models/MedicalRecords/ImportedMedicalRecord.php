@@ -1,4 +1,10 @@
-<?php namespace App\Models\MedicalRecords;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Models\MedicalRecords;
 
 use App\CarePlan;
 use App\CLH\Repositories\CCDImporterRepository;
@@ -17,26 +23,27 @@ use App\User;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * App\Models\MedicalRecords\ImportedMedicalRecord
+ * App\Models\MedicalRecords\ImportedMedicalRecord.
  *
- * @property int $id
- * @property int|null $patient_id
- * @property string $medical_record_type
- * @property int $medical_record_id
- * @property int|null $billing_provider_id
- * @property int|null $location_id
- * @property int|null $practice_id
- * @property int|null $duplicate_id
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
- * @property string|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Importer\Models\ImportedItems\AllergyImport[] $allergies
- * @property-read \App\User|null $billingProvider
- * @property-read \App\Importer\Models\ImportedItems\DemographicsImport $demographics
- * @property-read \App\Location|null $location
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Importer\Models\ImportedItems\MedicationImport[] $medications
- * @property-read \App\Practice|null $practice
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Importer\Models\ImportedItems\ProblemImport[] $problems
+ * @property int                                                                                            $id
+ * @property int|null                                                                                       $patient_id
+ * @property string                                                                                         $medical_record_type
+ * @property int                                                                                            $medical_record_id
+ * @property int|null                                                                                       $billing_provider_id
+ * @property int|null                                                                                       $location_id
+ * @property int|null                                                                                       $practice_id
+ * @property int|null                                                                                       $duplicate_id
+ * @property \Carbon\Carbon|null                                                                            $created_at
+ * @property \Carbon\Carbon|null                                                                            $updated_at
+ * @property string|null                                                                                    $deleted_at
+ * @property \App\Importer\Models\ImportedItems\AllergyImport[]|\Illuminate\Database\Eloquent\Collection    $allergies
+ * @property \App\User|null                                                                                 $billingProvider
+ * @property \App\Importer\Models\ImportedItems\DemographicsImport                                          $demographics
+ * @property \App\Location|null                                                                             $location
+ * @property \App\Importer\Models\ImportedItems\MedicationImport[]|\Illuminate\Database\Eloquent\Collection $medications
+ * @property \App\Practice|null                                                                             $practice
+ * @property \App\Importer\Models\ImportedItems\ProblemImport[]|\Illuminate\Database\Eloquent\Collection    $problems
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\MedicalRecords\ImportedMedicalRecord onlyTrashed()
  * @method static bool|null restore()
@@ -67,95 +74,12 @@ class ImportedMedicalRecord extends \App\BaseModel implements ImportedMedicalRec
         'billing_provider_id',
         'location_id',
         'practice_id',
-        'duplicate_id'
+        'duplicate_id',
     ];
 
     public function allergies()
     {
         return $this->hasMany(AllergyImport::class);
-    }
-
-    /**
-     * Get the Demographics that were imported for QA
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     */
-    public function demographics()
-    {
-        return $this->hasOne(DemographicsImport::class);
-    }
-
-    /**
-     * Get the Medications that were imported for QA
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function medications()
-    {
-        return $this->hasMany(MedicationImport::class);
-    }
-
-    /**
-     * Get the Problems that were imported for QA
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function problems()
-    {
-        return $this->hasMany(ProblemImport::class);
-    }
-
-    /**
-     * @return MedicalRecord|null
-     */
-    public function medicalRecord()
-    {
-        return (app($this->medical_record_type))->withTrashed()->find($this->medical_record_id);
-    }
-
-    public function getPractice() : Practice
-    {
-        return Practice::find($this->practice_id);
-    }
-
-    /**
-     * @return array
-     */
-    public function providers() : array
-    {
-        // TODO: Implement providers() method.
-    }
-
-    public function getBillingProvider() : User
-    {
-        return User::find($this->billing_provider_id);
-    }
-
-    public function createCarePlan() : CarePlan
-    {
-        $user = (new CCDImporterRepository())->createRandomUser($this->demographics, $this);
-
-        $this->patient_id = $user->id;
-        $this->save();
-
-        $helper = new CarePlanHelper($user, $this);
-
-        return $helper->storeImportedValues();
-    }
-
-    public function reimport() : ImportedMedicalRecordInterface
-    {
-        // TODO: Implement reimport() method.
-    }
-
-    public function practice()
-    {
-        return $this->belongsTo(Practice::class);
-    }
-
-    public function location()
-    {
-        return $this->belongsTo(Location::class);
     }
 
     public function billingProvider()
@@ -168,17 +92,18 @@ class ImportedMedicalRecord extends \App\BaseModel implements ImportedMedicalRec
      *
      * @return int|mixed|null
      */
-    public function checkDuplicity() {
+    public function checkDuplicity()
+    {
         $demos = $this->demographics()->first();
 
         if ($demos) {
             $practiceId = $this->practice_id;
 
             $query = User::whereFirstName($demos->first_name)
-                        ->whereLastName($demos->last_name)
-                        ->whereHas('patientInfo', function ($q) use ($demos) {
-                            $q->whereBirthDate($demos->dob);
-                        });
+                ->whereLastName($demos->last_name)
+                ->whereHas('patientInfo', function ($q) use ($demos) {
+                    $q->whereBirthDate($demos->dob);
+                });
             if ($practiceId) {
                 $query = $query->where('program_id', $practiceId);
             }
@@ -203,5 +128,88 @@ class ImportedMedicalRecord extends \App\BaseModel implements ImportedMedicalRec
 
             return null;
         }
+    }
+
+    public function createCarePlan(): CarePlan
+    {
+        $user = (new CCDImporterRepository())->createRandomUser($this->demographics, $this);
+
+        $this->patient_id = $user->id;
+        $this->save();
+
+        $helper = new CarePlanHelper($user, $this);
+
+        return $helper->storeImportedValues();
+    }
+
+    /**
+     * Get the Demographics that were imported for QA.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function demographics()
+    {
+        return $this->hasOne(DemographicsImport::class);
+    }
+
+    public function getBillingProvider(): User
+    {
+        return User::find($this->billing_provider_id);
+    }
+
+    public function getPractice(): Practice
+    {
+        return Practice::find($this->practice_id);
+    }
+
+    public function location()
+    {
+        return $this->belongsTo(Location::class);
+    }
+
+    /**
+     * @return MedicalRecord|null
+     */
+    public function medicalRecord()
+    {
+        return (app($this->medical_record_type))->withTrashed()->find($this->medical_record_id);
+    }
+
+    /**
+     * Get the Medications that were imported for QA.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function medications()
+    {
+        return $this->hasMany(MedicationImport::class);
+    }
+
+    public function practice()
+    {
+        return $this->belongsTo(Practice::class);
+    }
+
+    /**
+     * Get the Problems that were imported for QA.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function problems()
+    {
+        return $this->hasMany(ProblemImport::class);
+    }
+
+    /**
+     * @return array
+     */
+    public function providers(): array
+    {
+        // TODO: Implement providers() method.
+    }
+
+    public function reimport(): ImportedMedicalRecordInterface
+    {
+        // TODO: Implement reimport() method.
     }
 }

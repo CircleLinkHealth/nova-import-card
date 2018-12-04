@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Notifications;
 
 use App\EligibilityBatch;
@@ -26,44 +30,43 @@ class EligibilityBatchProcessed extends Notification
     }
 
     /**
-     * Get the notification's delivery channels.
-     *
-     * @param  mixed $notifiable
-     *
-     * @return array
-     */
-    public function via($notifiable)
-    {
-        return ['mail', 'database'];
-    }
-
-    /**
-     * Get the mail representation of the notification.
-     *
-     * @param  mixed $notifiable
-     *
-     * @return \Illuminate\Notifications\Messages\MailMessage
-     */
-    public function toMail($notifiable)
-    {
-        return (new MailMessage)
-            ->subject("Eligibility Batch {$this->batch->id} has finished processing")
-            ->line('Click link below to Download Eligible Patients CSV and schedule calls')
-            ->action('View Batch', route('eligibility.batch.show' . [$this->batch->id]))
-            ->line('Thank you for using our CarePlan Manager!');
-    }
-
-    /**
      * Get the array representation of the notification.
      *
-     * @param  mixed $notifiable
+     * @param mixed $notifiable
      *
      * @return array
      */
     public function toArray($notifiable)
     {
         return [
-            //
         ];
+    }
+
+    /**
+     * Get the mail representation of the notification.
+     *
+     * @param mixed $notifiable
+     *
+     * @return \Illuminate\Notifications\Messages\MailMessage
+     */
+    public function toMail($notifiable)
+    {
+        return (new MailMessage())
+            ->subject("Eligibility Batch {$this->batch->id} has finished processing")
+            ->line('Click link below to Download Eligible Patients CSV and schedule calls')
+            ->action('View Batch', route('eligibility.batch.show'.[$this->batch->id]))
+            ->line('Thank you for using our CarePlan Manager!');
+    }
+
+    /**
+     * Get the notification's delivery channels.
+     *
+     * @param mixed $notifiable
+     *
+     * @return array
+     */
+    public function via($notifiable)
+    {
+        return ['mail', 'database'];
     }
 }

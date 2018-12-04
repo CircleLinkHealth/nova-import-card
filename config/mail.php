@@ -1,7 +1,10 @@
 <?php
 
-return [
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
+return [
     /*
     |--------------------------------------------------------------------------
     | Mail Driver
@@ -82,8 +85,8 @@ return [
     | connection. You may also set the "password" value below this one.
     |
     */
-    'username'   => env('MAIL_USERNAME'),
-    'password'   => env('MAIL_PASSWORD'),
+    'username' => env('MAIL_USERNAME'),
+    'password' => env('MAIL_PASSWORD'),
 
     /*
     |--------------------------------------------------------------------------
@@ -95,7 +98,7 @@ return [
     | been provided here, which will work well on most of your systems.
     |
     */
-    'sendmail'   => '/usr/sbin/sendmail -bs',
+    'sendmail' => '/usr/sbin/sendmail -bs',
 
     /*
     |--------------------------------------------------------------------------
@@ -107,12 +110,10 @@ return [
     | of the emails. Or, you may simply stick with the Laravel defaults!
     |
     */
-    'markdown'   => [
+    'markdown' => [
         'theme' => 'default',
         'paths' => [
             resource_path('views/vendor/mail'),
         ],
     ],
-
-
 ];

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers\Billing;
 
 use App\AppConfig;
@@ -20,19 +24,18 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
 
-
 class PracticeInvoiceController extends Controller
 {
     private $patientSummaryDBRepository;
-    private $service;
     private $practiceReportsService;
+    private $service;
 
     /**
      * PracticeInvoiceController constructor.
      *
-     * @param ApproveBillablePatientsService $service
+     * @param ApproveBillablePatientsService   $service
      * @param PatientSummaryEloquentRepository $patientSummaryDBRepository
-     * @param PracticeReportsService $practiceReportsService
+     * @param PracticeReportsService           $practiceReportsService
      */
     public function __construct(
         ApproveBillablePatientsService $service,
@@ -42,34 +45,47 @@ class PracticeInvoiceController extends Controller
         $this->service                    = $service;
         $this->patientSummaryDBRepository = $patientSummaryDBRepository;
         $this->practiceReportsService     = $practiceReportsService;
-
     }
 
-    /**
-     * Show the page to choose a practice and generate approvable billing reports
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    public function make()
+    /** open patient-monthly-summaries in a practice */
+    public function closeMonthlySummaryStatus(Request $request)
     {
-        $practices = Practice::orderBy('display_name')
-                             ->select(['name', 'id', 'display_name'])
-                             ->with('chargeableServices')
-                             ->authUserCanAccess()
-                             ->active()
-                             ->get();
+        $practice_id = $request->input('practice_id');
+        $date        = $request->input('date');
+        $user        = auth()->user();
 
-        $cpmProblems = CpmProblem::where('name', '!=', 'Diabetes')
-                                 ->get()
-                                 ->map(function ($p) {
-                                     return [
-                                         'id'            => $p->id,
-                                         'name'          => $p->name,
-                                         'code'          => $p->default_icd_10_code,
-                                         'is_behavioral' => $p->is_behavioral,
-                                     ];
-                                 });
+        if ($date) {
+            $date = Carbon::createFromFormat('M, Y', $date);
+        }
 
+        $summaries = $this->getCurrentMonthSummariesQuery($practice_id, $date)
+            ->get();
+
+        foreach ($summaries as $summary) {
+            $summary->actor_id = $user->id;
+            $summary->needs_qa = false;
+            if ($summary->patient) {
+                if ($summary->patient->patientInfo) {
+                    $summary->closed_ccm_status = $summary->patient->patientInfo->ccm_status;
+                }
+            }
+            $summary->save();
+        }
+
+        return response()->json($summaries);
+    }
+
+    public function counts(Request $request)
+    {
+        $date = Carbon::createFromFormat('M, Y', $request->input('date'));
+
+        $counts = $this->service->counts($request['practice_id'], $date->firstOfMonth());
+
+        return response()->json($counts);
+    }
+
+    public function createInvoices()
+    {
         $currentMonth = Carbon::now()->startOfMonth();
 
         $dates = [];
@@ -78,28 +94,26 @@ class PracticeInvoiceController extends Controller
 
         $numberOfMonths = $currentMonth->diffInMonths($oldestSummary->created_at) ?? 12;
 
-        for ($i = 0; $i <= $numberOfMonths; $i++) {
+        for ($i = 0; $i <= $numberOfMonths; ++$i) {
             $date = $currentMonth->copy()->subMonth($i)->startOfMonth();
 
-            $dates[] = [
-                'label' => $date->format('F, Y'),
-                'value' => $date->toDateString(),
-            ];
+            $dates[$date->toDateString()] = $date->format('F, Y');
         }
 
-        $chargeableServices = ChargeableService::all();
+        $readyToBill = Practice::active()
+            ->authUserCanAccess()
+            ->get();
+        $needsQA    = [];
+        $invoice_no = AppConfig::where('config_key', 'billing_invoice_count')->first()['config_value'];
 
-        return view('admin.reports.billing', compact([
-            'cpmProblems',
-            'practices',
-            'chargeableServices',
-            'dates',
-        ]));
-    }
-
-    public function getChargeableServices()
-    {
-        return $this->ok(ChargeableService::all());
+        return view('billing.practice.create', compact(
+            [
+                'needsQA',
+                'readyToBill',
+                'invoice_no',
+                'dates',
+            ]
+        ));
     }
 
     /**
@@ -122,120 +136,124 @@ class PracticeInvoiceController extends Controller
 
         $month = $this->service->getBillablePatientsForMonth($practice_id, $date);
 
+        return response($month['summaries'])->header('is-closed', (int) $month['is_closed']);
+    }
 
-        return response($month['summaries'])->header('is-closed', (int)$month['is_closed']);
+    /**
+     * @deprecated This will be phased out. It's here only to support older links
+     *
+     * @param $practice
+     * @param $name
+     *
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse|void
+     */
+    public function downloadInvoice(
+        $practice,
+        $name
+    ) {
+        if (!auth()->user()->practice((int) $practice) && !auth()->user()->isAdmin()) {
+            return abort(403, 'Unauthorized action.');
+        }
+
+        return response()->download(storage_path('/download/'.$name), $name, [
+            'Content-Length: '.filesize(storage_path('/download/'.$name)),
+        ]);
+    }
+
+    public function getChargeableServices()
+    {
+        return $this->ok(ChargeableService::all());
+    }
+
+    public function getCounts(
+        $date,
+        $practice
+    ) {
+        $date = Carbon::parse($date);
+
+        return $this->service->counts($practice, $date->firstOfMonth());
+    }
+
+    /**
+     * Show the page to choose a practice and generate approvable billing reports.
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function make()
+    {
+        $practices = Practice::orderBy('display_name')
+            ->select(['name', 'id', 'display_name'])
+            ->with('chargeableServices')
+            ->authUserCanAccess()
+            ->active()
+            ->get();
+
+        $cpmProblems = CpmProblem::where('name', '!=', 'Diabetes')
+            ->get()
+            ->map(function ($p) {
+                return [
+                    'id'            => $p->id,
+                    'name'          => $p->name,
+                    'code'          => $p->default_icd_10_code,
+                    'is_behavioral' => $p->is_behavioral,
+                ];
+            });
+
+        $currentMonth = Carbon::now()->startOfMonth();
+
+        $dates = [];
+
+        $oldestSummary = PatientMonthlySummary::orderBy('created_at', 'asc')->first();
+
+        $numberOfMonths = $currentMonth->diffInMonths($oldestSummary->created_at) ?? 12;
+
+        for ($i = 0; $i <= $numberOfMonths; ++$i) {
+            $date = $currentMonth->copy()->subMonth($i)->startOfMonth();
+
+            $dates[] = [
+                'label' => $date->format('F, Y'),
+                'value' => $date->toDateString(),
+            ];
+        }
+
+        $chargeableServices = ChargeableService::all();
+
+        return view('admin.reports.billing', compact([
+            'cpmProblems',
+            'practices',
+            'chargeableServices',
+            'dates',
+        ]));
     }
 
     /**
      * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded
+     * @throws \Spatie\MediaLibrary\Exceptions\InvalidConversion
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
-    public function updatePracticeChargeableServices(Request $request)
+    public function makeInvoices(Request $request)
     {
-        $practice_id     = $request->input('practice_id');
-        $date            = $request->input('date');
-        $default_code_id = $request->input('default_code_id');
-        $is_detach       = $request->has('detach');
+        $invoices = [];
 
-        if ($date) {
-            $date = Carbon::createFromFormat('M, Y', $date);
-        } else {
-            return $this->badRequest('Invalid [date] parameter. Must have a value like "Jan, 2017"');
+        $date = Carbon::parse($request->input('date'));
+
+        if ('pdf' == $request['format']) {
+            $invoices = $this->practiceReportsService->getPdfInvoiceAndPatientReport($request['practices'], $date);
+
+            return view('billing.practice.list', compact(['invoices']));
         }
+        if ('csv' == $request['format'] or 'xls') {
+            $report = $this->practiceReportsService->getQuickbooksReport(
+                $request['practices'],
+                $request['format'],
+                $date
+            );
 
-        if ( ! $default_code_id || ! $practice_id) {
-            return $this->badRequest('Invalid [practice_id] and [default_code_id] parameters. Must have a values');
+            return $this->downloadMedia($report);
         }
-
-        $summaries = $this->service
-            ->billablePatientSummaries($practice_id, $date)
-            ->get()
-            ->map(function ($summary) use ($default_code_id, $is_detach) {
-                $result = $this->patientSummaryDBRepository
-                    ->attachBillableProblems($summary->patient, $summary);
-
-                if ($result) {
-                    $summary = $result;
-                }
-
-                if ( ! $is_detach) {
-                    $summary = $this->service
-                        ->attachDefaultChargeableService($summary, $default_code_id, false);
-                } else {
-                    $summary = $this->service
-                        ->detachDefaultChargeableService($summary, $default_code_id);
-                }
-
-
-                return ApprovableBillablePatient::make($summary);
-            });
-
-        return response()->json($summaries);
-    }
-
-    public function updateSummaryChargeableServices(Request $request)
-    {
-        if ( ! $request->ajax()) {
-            return response()->json('Method not allowed', 403);
-        }
-
-        $reportId = $request->input('report_id');
-
-        if ( ! $reportId) {
-            return $this->badRequest('report_id is a required field');
-        }
-
-        //need array of IDs
-        $chargeableIDs = $request->input('patient_chargeable_services');
-
-        if ( ! is_array($chargeableIDs)) {
-            return $this->badRequest('patient_chargeable_services must be an array');
-        }
-
-        $summary = PatientMonthlySummary::find($reportId);
-
-        $summary->actor_id = auth()->id();
-        $summary->save();
-
-        if ( ! $summary) {
-            return $this->badRequest("Report with id $reportId not found.");
-        }
-
-        $summary->chargeableServices()->sync($chargeableIDs);
-
-        return $this->ok($summary);
-
-    }
-
-
-    public function updateStatus(Request $request)
-    {
-        if ( ! $request->ajax()) {
-            return response()->json('Method not allowed', 403);
-        }
-
-        $summary = PatientMonthlySummary::find($request['report_id']);
-
-        $summary->approved = $request['approved'];
-        $summary->rejected = $request['rejected'];
-
-        //if approved was unchecked, rejected stays as is. If it was approved, rejected becomes 0
-        $summary->actor_id = auth()->user()->id;
-        $summary->save();
-
-        //used for view report counts
-        $counts = $this->getCounts($summary->month_year, $summary->patient->primaryPractice->id);
-
-        return response()->json([
-            'report_id' => $summary->id,
-            'counts'    => $counts,
-            'status'    => [
-                'approved' => $summary->approved,
-                'rejected' => $summary->rejected,
-            ],
-            'actor_id'  => $summary->actor_id,
-        ]);
     }
 
     /** open patient-monthly-summaries in a practice */
@@ -261,103 +279,49 @@ class PracticeInvoiceController extends Controller
         return response()->json($summaries);
     }
 
-    /** open patient-monthly-summaries in a practice */
-    public function closeMonthlySummaryStatus(Request $request)
+    public function send(Request $request)
     {
-        $practice_id = $request->input('practice_id');
-        $date        = $request->input('date');
-        $user        = auth()->user();
+        $invoices = (array) json_decode($request->input('links'));
 
-        if ($date) {
-            $date = Carbon::createFromFormat('M, Y', $date);
-        }
+        $logger = '';
 
-        $summaries = $this->getCurrentMonthSummariesQuery($practice_id, $date)
-                          ->get();
+        foreach ($invoices as $key => $value) {
+            $practice = Practice::whereDisplayName($key)->first();
 
-        foreach ($summaries as $summary) {
-            $summary->actor_id = $user->id;
-            $summary->needs_qa = false;
-            if ($summary->patient) {
-                if ($summary->patient->patientInfo) {
-                    $summary->closed_ccm_status = $summary->patient->patientInfo->ccm_status;
-                }
+            $data = (array) $value;
+
+            $patientReportUrl = $data['patient_report_url'];
+            $invoiceURL       = $data['invoice_url'];
+
+            if ('' != $practice->invoice_recipients) {
+                $recipients = $practice->getInvoiceRecipientsArray();
+
+                $recipients = array_merge($recipients, $practice->getInvoiceRecipients()->pluck('email')->all());
+            } else {
+                $recipients = $practice->getInvoiceRecipients()->pluck('email')->all();
             }
-            $summary->save();
+
+            if (count($recipients) > 0) {
+                foreach ($recipients as $recipient) {
+                    $user = User::whereEmail($recipient)->first();
+
+                    $notification = new PracticeInvoice($patientReportUrl, $invoiceURL);
+
+                    if ($user) {
+                        $user->notify($notification);
+                    } else {
+                        Notification::route('mail', $recipient)
+                            ->notify($notification);
+                    }
+
+                    $logger .= "Sent report for {$practice->name} to ${recipient} <br />";
+                }
+            } else {
+                $logger .= "No recipients setup for {$practice->name}...";
+            }
         }
 
-
-        return response()->json($summaries);
-    }
-
-    public function getCounts(
-        $date,
-        $practice
-    ) {
-        $date = Carbon::parse($date);
-
-        return $this->service->counts($practice, $date->firstOfMonth());
-    }
-
-    public function createInvoices()
-    {
-        $currentMonth = Carbon::now()->startOfMonth();
-
-        $dates = [];
-
-        $oldestSummary = PatientMonthlySummary::orderBy('created_at', 'asc')->first();
-
-        $numberOfMonths = $currentMonth->diffInMonths($oldestSummary->created_at) ?? 12;
-
-        for ($i = 0; $i <= $numberOfMonths; $i++) {
-            $date = $currentMonth->copy()->subMonth($i)->startOfMonth();
-
-            $dates[$date->toDateString()] = $date->format('F, Y');
-        }
-
-        $readyToBill = Practice::active()
-                               ->authUserCanAccess()
-                               ->get();
-        $needsQA     = [];
-        $invoice_no  = AppConfig::where('config_key', 'billing_invoice_count')->first()['config_value'];
-
-        return view('billing.practice.create', compact(
-            [
-                'needsQA',
-                'readyToBill',
-                'invoice_no',
-                'dates',
-            ]
-        ));
-    }
-
-    /**
-     * @param Request $request
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|\Symfony\Component\HttpFoundation\BinaryFileResponse
-     * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded
-     * @throws \Spatie\MediaLibrary\Exceptions\InvalidConversion
-     */
-    public function makeInvoices(Request $request)
-    {
-
-        $invoices = [];
-
-        $date = Carbon::parse($request->input('date'));
-
-        if ($request['format'] == 'pdf') {
-
-            $invoices = $this->practiceReportsService->getPdfInvoiceAndPatientReport($request['practices'], $date);
-
-            return view('billing.practice.list', compact(['invoices']));
-
-        } elseif ($request['format'] == 'csv' or 'xls') {
-
-            $report = $this->practiceReportsService->getQuickbooksReport($request['practices'], $request['format'],
-                $date);
-
-            return $this->downloadMedia($report);
-        }
+        return $logger;
     }
 
     public function storeProblem(Request $request)
@@ -388,27 +352,27 @@ class PracticeInvoiceController extends Controller
 
                 if ($existingProblemId) {
                     Problem::where('id', $existingProblemId)
-                           ->update([
-                               'billable' => false,
-                           ]);
+                        ->update([
+                            'billable' => false,
+                        ]);
                 }
 
                 Problem::where('id', $problemId)
-                       ->update([
-                           'billable'     => true,
-                           'name'         => $request['name'],
-                           'is_monitored' => true,
-                       ]);
+                    ->update([
+                        'billable'     => true,
+                        'name'         => $request['name'],
+                        'is_monitored' => true,
+                    ]);
 
                 $updated = ProblemCode::where('problem_id', $problemId)
-                                      ->where('code_system_name', 'like', '%10%')
-                                      ->update([
-                                          'code'             => $request['code'],
-                                          'code_system_name' => 'ICD-10',
-                                          'code_system_oid'  => '2.16.840.1.113883.6.3',
-                                      ]);
+                    ->where('code_system_name', 'like', '%10%')
+                    ->update([
+                        'code'             => $request['code'],
+                        'code_system_name' => 'ICD-10',
+                        'code_system_oid'  => '2.16.840.1.113883.6.3',
+                    ]);
 
-                if ( ! $updated && $request['code']) {
+                if (!$updated && $request['code']) {
                     ProblemCode::create([
                         'problem_id'       => $problemId,
                         'code'             => $request['code'],
@@ -418,19 +382,21 @@ class PracticeInvoiceController extends Controller
                 }
             }
 
-            if ($key == 'problem_1' || $key == 'problem_2') {
+            if ('problem_1' == $key || 'problem_2' == $key) {
                 $summary->$key = $problemId;
-            } else if ($key == 'bhi_problem' && $summary->hasServiceCode('CPT 99484')) {
+            } elseif ('bhi_problem' == $key && $summary->hasServiceCode('CPT 99484')) {
                 if ($request['cpm_problem_id']) {
-                    $cpmProblem = CpmProblem::where('id', $request['cpm_problem_id'])->where('is_behavioral',
-                        1)->exists();
+                    $cpmProblem = CpmProblem::where('id', $request['cpm_problem_id'])->where(
+                        'is_behavioral',
+                        1
+                    )->exists();
 
-                    if ( ! $cpmProblem) {
+                    if (!$cpmProblem) {
                         throw new \Exception('Please select a BHI problem.');
                     }
                 }
 
-                if ($summary->billableProblems()->where((new Problem())->getTable() . '.id', $problemId)->exists()) {
+                if ($summary->billableProblems()->where((new Problem())->getTable().'.id', $problemId)->exists()) {
                     $summary->billableProblems()->updateExistingPivot($problemId, [
                         'name'        => $request['name'],
                         'icd_10_code' => $request['code'],
@@ -442,17 +408,16 @@ class PracticeInvoiceController extends Controller
                 throw new \Exception('Cannot add BHI problem because practice does not have service CPT 99484 activated.');
             }
 
-            if ( ! $this->patientSummaryDBRepository->lacksProblems($summary)) {
+            if (!$this->patientSummaryDBRepository->lacksProblems($summary)) {
                 $summary->approved = true;
             }
 
             $problemNumber = extractNumbers($key);
 
-            if ((int)$problemNumber > 0 && (int)$problemNumber < 3) {
-                $summary->{"billable_problem$problemNumber"}        = $request['name'];
+            if ((int) $problemNumber > 0 && (int) $problemNumber < 3) {
+                $summary->{"billable_problem${problemNumber}"}      = $request['name'];
                 $summary->{"billable_problem{$problemNumber}_code"} = $request['code'];
             }
-
 
             $summary->save();
 
@@ -473,94 +438,127 @@ class PracticeInvoiceController extends Controller
         }
     }
 
-    public function counts(Request $request)
-    {
-        $date = Carbon::createFromFormat('M, Y', $request->input('date'));
-
-        $counts = $this->service->counts($request['practice_id'], $date->firstOfMonth());
-
-        return response()->json($counts);
-    }
-
-    public function send(Request $request)
-    {
-
-        $invoices = (array)json_decode($request->input('links'));
-
-        $logger = '';
-
-        foreach ($invoices as $key => $value) {
-            $practice = Practice::whereDisplayName($key)->first();
-
-            $data = (array)$value;
-
-            $patientReportUrl = $data['patient_report_url'];
-            $invoiceURL       = $data['invoice_url'];
-
-            if ($practice->invoice_recipients != '') {
-                $recipients = $practice->getInvoiceRecipientsArray();
-
-                $recipients = array_merge($recipients, $practice->getInvoiceRecipients()->pluck('email')->all());
-            } else {
-                $recipients = $practice->getInvoiceRecipients()->pluck('email')->all();
-            }
-
-            if (count($recipients) > 0) {
-                foreach ($recipients as $recipient) {
-                    $user = User::whereEmail($recipient)->first();
-
-                    $notification = new PracticeInvoice($patientReportUrl, $invoiceURL);
-
-                    if ($user) {
-                        $user->notify($notification);
-                    } else {
-                        Notification::route('mail', $recipient)
-                                    ->notify($notification);
-                    }
-
-                    $logger .= "Sent report for $practice->name to $recipient <br />";
-                }
-            } else {
-                $logger .= "No recipients setup for $practice->name...";
-            }
-        }
-
-        return $logger;
-    }
-
     /**
-     * @deprecated This will be phased out. It's here only to support older links
+     * @param Request $request
      *
-     * @param $practice
-     * @param $name
-     *
-     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse|void
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function downloadInvoice(
-        $practice,
-        $name
-    ) {
-        if ( ! auth()->user()->practice((int)$practice) && ! auth()->user()->isAdmin()) {
-            return abort(403, 'Unauthorized action.');
+    public function updatePracticeChargeableServices(Request $request)
+    {
+        $practice_id     = $request->input('practice_id');
+        $date            = $request->input('date');
+        $default_code_id = $request->input('default_code_id');
+        $is_detach       = $request->has('detach');
+
+        if ($date) {
+            $date = Carbon::createFromFormat('M, Y', $date);
+        } else {
+            return $this->badRequest('Invalid [date] parameter. Must have a value like "Jan, 2017"');
         }
 
-        return response()->download(storage_path('/download/' . $name), $name, [
-            'Content-Length: ' . filesize(storage_path('/download/' . $name)),
+        if (!$default_code_id || !$practice_id) {
+            return $this->badRequest('Invalid [practice_id] and [default_code_id] parameters. Must have a values');
+        }
+
+        $summaries = $this->service
+            ->billablePatientSummaries($practice_id, $date)
+            ->get()
+            ->map(function ($summary) use ($default_code_id, $is_detach) {
+                $result = $this->patientSummaryDBRepository
+                    ->attachBillableProblems($summary->patient, $summary);
+
+                if ($result) {
+                    $summary = $result;
+                }
+
+                if (!$is_detach) {
+                    $summary = $this->service
+                        ->attachDefaultChargeableService($summary, $default_code_id, false);
+                } else {
+                    $summary = $this->service
+                        ->detachDefaultChargeableService($summary, $default_code_id);
+                }
+
+                return ApprovableBillablePatient::make($summary);
+            });
+
+        return response()->json($summaries);
+    }
+
+    public function updateStatus(Request $request)
+    {
+        if (!$request->ajax()) {
+            return response()->json('Method not allowed', 403);
+        }
+
+        $summary = PatientMonthlySummary::find($request['report_id']);
+
+        $summary->approved = $request['approved'];
+        $summary->rejected = $request['rejected'];
+
+        //if approved was unchecked, rejected stays as is. If it was approved, rejected becomes 0
+        $summary->actor_id = auth()->user()->id;
+        $summary->save();
+
+        //used for view report counts
+        $counts = $this->getCounts($summary->month_year, $summary->patient->primaryPractice->id);
+
+        return response()->json([
+            'report_id' => $summary->id,
+            'counts'    => $counts,
+            'status'    => [
+                'approved' => $summary->approved,
+                'rejected' => $summary->rejected,
+            ],
+            'actor_id' => $summary->actor_id,
         ]);
+    }
+
+    public function updateSummaryChargeableServices(Request $request)
+    {
+        if (!$request->ajax()) {
+            return response()->json('Method not allowed', 403);
+        }
+
+        $reportId = $request->input('report_id');
+
+        if (!$reportId) {
+            return $this->badRequest('report_id is a required field');
+        }
+
+        //need array of IDs
+        $chargeableIDs = $request->input('patient_chargeable_services');
+
+        if (!is_array($chargeableIDs)) {
+            return $this->badRequest('patient_chargeable_services must be an array');
+        }
+
+        $summary = PatientMonthlySummary::find($reportId);
+
+        $summary->actor_id = auth()->id();
+        $summary->save();
+
+        if (!$summary) {
+            return $this->badRequest("Report with id ${reportId} not found.");
+        }
+
+        $summary->chargeableServices()->sync($chargeableIDs);
+
+        return $this->ok($summary);
     }
 
     /**
      * @param $practice_id
      * @param Carbon $date
      *
-     * @return PatientMonthlySummary|\Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary
      */
     private function getCurrentMonthSummariesQuery($practice_id, Carbon $date)
     {
         return PatientMonthlySummary::with('patient.patientInfo')
-                                    ->whereHas('patient', function ($q) use ($practice_id) {
-                                        $q->ofPractice($practice_id);
-                                    })
-                                    ->where('month_year', $date->startOfMonth());
+            ->whereHas('patient', function ($q) use ($practice_id) {
+                $q->ofPractice($practice_id);
+            })
+            ->where('month_year', $date->startOfMonth());
     }
 }

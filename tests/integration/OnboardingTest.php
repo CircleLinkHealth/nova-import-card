@@ -1,21 +1,23 @@
 <?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\integration;
 
-use Tests\TestCase;
-use App\Entities\Invite;
 use App\User;
-use Faker\Factory;
-use Tests\Helpers\FormRequests\Onboarding\LocationFormRequest;
+use Tests\TestCase;
 
 class OnboardingTest extends TestCase
 {
     /**
-     * @var Faker\Factory $faker
+     * @var Faker\Factory
      */
     protected $faker;
 
     /**
-     * @var User $provider
+     * @var User
      */
     protected $provider;
 

@@ -1,13 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 01/22/2018
- * Time: 5:50 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Services\Eligibility\Processables;
-
 
 use App\Jobs\CheckCcdaEnrollmentEligibility;
 use App\Jobs\ProcessCcda;
@@ -29,10 +26,10 @@ class Zip extends BaseProcessable
     {
         foreach (\Storage::disk('cloud')->files($this->relativeDirectory) as $filePath) {
             $ccda = Ccda::create([
-                'source'      => 'uploaded',
-                'xml'         => \Storage::disk('cloud')->get($filePath),
-                'status'      => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
-                'imported'    => false,
+                'source'   => 'uploaded',
+                'xml'      => \Storage::disk('cloud')->get($filePath),
+                'status'   => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
+                'imported' => false,
             ]);
 
             //for some reason it doesn't save practice_id when using Ccda::create([])
@@ -42,10 +39,15 @@ class Zip extends BaseProcessable
             $deleted = \Storage::disk('cloud')->delete($filePath);
 
             ProcessCcda::withChain([
-                new CheckCcdaEnrollmentEligibility($ccda->id, $this->practice, $this->filterLastEncounter,
-                    $this->filterInsurance, $this->filterProblems),
+                new CheckCcdaEnrollmentEligibility(
+                    $ccda->id,
+                    $this->practice,
+                    $this->filterLastEncounter,
+                    $this->filterInsurance,
+                    $this->filterProblems
+                ),
             ])->dispatch($ccda->id)
-                       ->onQueue('low');
+                ->onQueue('low');
         }
     }
 
@@ -58,7 +60,7 @@ class Zip extends BaseProcessable
         if (is_a($this->getFilePath(), UploadedFile::class) || is_a($this->getFilePath(), File::class)) {
             $date     = Carbon::now();
             $relDir   = "{$date->toDateString()}/unzip/{$this->practice->name}/{$date->toTimeString()}";
-            $fileName = 'unzip-' . $this->practice->name . '-' . Carbon::now()->toTimeString() . '.zip';
+            $fileName = 'unzip-'.$this->practice->name.'-'.Carbon::now()->toTimeString().'.zip';
 
             \Storage::disk('local')->putFileAs($relDir, new File($this->getFilePath()), $fileName);
 
@@ -73,24 +75,25 @@ class Zip extends BaseProcessable
     }
 
     /**
-     * @return mixed
      * @throws \Exception
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     *
+     * @return mixed
      */
     public function unzip()
     {
-        $disk = \Storage::disk('local');
+        $disk      = \Storage::disk('local');
         $cloudDisk = \Storage::disk('cloud');
-        $prefix = $disk->getAdapter()->getPathPrefix();
+        $prefix    = $disk->getAdapter()->getPathPrefix();
 
-        $path = $this->getFilePath();
+        $path            = $this->getFilePath();
         $fullZipFilePath = "$prefix$path";
 
-        if ( ! file_exists($fullZipFilePath)) {
+        if (!file_exists($fullZipFilePath)) {
             throw new \Exception('File does not exist.');
         }
 
-        if ( ! ZipFacade::check($fullZipFilePath)) {
+        if (!ZipFacade::check($fullZipFilePath)) {
             throw new \Exception('Invalid zip file.');
         }
 
@@ -106,13 +109,12 @@ class Zip extends BaseProcessable
         }
 
         foreach ($xmlFiles as $filePath) {
-
             if (!file_exists($filePath)) {
                 throw new \Exception('File not found');
             }
 
             $saved = $cloudDisk
-                             ->put($this->relativeDirectory.'/'.Carbon::now()->toAtomString().'.xml', fopen($filePath, 'r+'));
+                ->put($this->relativeDirectory.'/'.Carbon::now()->toAtomString().'.xml', fopen($filePath, 'r+'));
 
             $deleted = $disk->delete(str_replace($prefix, '', $filePath));
         }

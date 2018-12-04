@@ -1,14 +1,57 @@
-<?php namespace App\Http\Controllers\Admin;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Http\Controllers\Admin;
 
 use App\CPRulesPCP;
 use App\CPRulesUCP;
 use App\Http\Controllers\Controller;
 use App\User;
-use Auth;
 use Illuminate\Http\Request;
 
 class CPRUCPController extends Controller
 {
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Response
+     */
+    public function create()
+    {
+        // display view
+        return view('admin.ucp.create', []);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param int $id
+     *
+     * @return Response
+     */
+    public function destroy($id)
+    {
+        CPRulesUCP::destroy($id);
+
+        return redirect()->back()->with('messages', ['successfully removed ucp']);
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param int $id
+     *
+     * @return Response
+     */
+    public function edit($id)
+    {
+        $ucp = CPRulesUCP::find($id);
+
+        return view('admin.ucp.edit', ['ucp' => $ucp, 'messages' => \Session::get('messages')]);
+    }
 
     /**
      * Display a listing of the resource.
@@ -34,7 +77,7 @@ class CPRUCPController extends Controller
 
         if (!empty($params['filterUser'])) {
             $filterUser = $params['filterUser'];
-            if ($params['filterUser'] != 'all') {
+            if ('all' != $params['filterUser']) {
                 $ucps->where('user_id', '=', $filterUser);
             }
         }
@@ -47,7 +90,7 @@ class CPRUCPController extends Controller
         $filterPCP = 'all';
         if (!empty($params['filterPCP'])) {
             $filterPCP = $params['filterPCP'];
-            if ($params['filterPCP'] != 'all') {
+            if ('all' != $params['filterPCP']) {
                 $ucps->whereHas('item', function ($q) use ($filterPCP) {
                     $q->whereHas('pcp', function ($qp) use ($filterPCP) {
                         $qp->where('section_text', '=', $filterPCP);
@@ -60,18 +103,22 @@ class CPRUCPController extends Controller
 
         //dd($pcps);
 
-        return view('admin.ucp.index', [ 'ucps' => $ucps, 'users' => $users, 'filterUser' => $filterUser, 'pcps' => $pcps, 'filterPCP' => $filterPCP ]);
+        return view('admin.ucp.index', ['ucps' => $ucps, 'users' => $users, 'filterUser' => $filterUser, 'pcps' => $pcps, 'filterPCP' => $filterPCP]);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display the specified resource.
+     *
+     * @param int $id
      *
      * @return Response
      */
-    public function create()
+    public function show($id)
     {
         // display view
-        return view('admin.ucp.create', []);
+        $ucp = CPRulesUCP::find($id);
+
+        return view('admin.ucp.show', ['ucp' => $ucp, 'errors' => [], 'messages' => []]);
     }
 
     /**
@@ -81,72 +128,37 @@ class CPRUCPController extends Controller
      */
     public function store(Request $request)
     {
-        $params = $request->input();
-        $ucp = new CPRulesUCP;
-        $ucp->items_id = $params['items_id'];
-        $ucp->user_id = $params['user_id'];
-        $ucp->meta_key = $params['meta_key'];
+        $params          = $request->input();
+        $ucp             = new CPRulesUCP();
+        $ucp->items_id   = $params['items_id'];
+        $ucp->user_id    = $params['user_id'];
+        $ucp->meta_key   = $params['meta_key'];
         $ucp->meta_value = $params['meta_value'];
         $ucp->save();
 
-        return redirect()->route('admin.ucp.edit', [$ucp->qid])->with('messages',
-            ['successfully added new ucp - ' . $params['msg_id']]);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function show($id)
-    {
-        // display view
-        $ucp = CPRulesUCP::find($id);
-        return view('admin.ucp.show', [ 'ucp' => $ucp, 'errors' => [], 'messages' => [] ]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function edit($id)
-    {
-        $ucp = CPRulesUCP::find($id);
-        return view('admin.ucp.edit', [ 'ucp' => $ucp, 'messages' => \Session::get('messages') ]);
+        return redirect()->route('admin.ucp.edit', [$ucp->qid])->with(
+            'messages',
+            ['successfully added new ucp - '.$params['msg_id']]
+        );
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  int  $id
+     * @param int $id
+     *
      * @return Response
      */
     public function update(Request $request, $id)
     {
-        $params = $request->input();
-        $ucp = CPRulesUCP::find($id);
-        $ucp->items_id = $params['items_id'];
-        $ucp->user_id = $params['user_id'];
-        $ucp->meta_key = $params['meta_key'];
+        $params          = $request->input();
+        $ucp             = CPRulesUCP::find($id);
+        $ucp->items_id   = $params['items_id'];
+        $ucp->user_id    = $params['user_id'];
+        $ucp->meta_key   = $params['meta_key'];
         $ucp->meta_value = $params['meta_value'];
         $ucp->save();
 
         return redirect()->back()->with('messages', ['successfully updated ucp']);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function destroy($id)
-    {
-        CPRulesUCP::destroy($id);
-
-        return redirect()->back()->with('messages', ['successfully removed ucp']);
     }
 }

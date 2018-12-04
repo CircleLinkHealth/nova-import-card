@@ -2,7 +2,7 @@
 
 <?php
 
-    $active_nurses  = activeNurseNames();
+    $active_nurses = activeNurseNames();
 
 ?>
 

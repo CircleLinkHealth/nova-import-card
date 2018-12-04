@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\User;
@@ -8,6 +12,12 @@ use Illuminate\Console\Command;
 class GetNumberOfBhiChargeablePatients extends Command
 {
     /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Returns the number of bhi chargeable patients';
+    /**
      * The name and signature of the console command.
      *
      * @var string
@@ -15,16 +25,7 @@ class GetNumberOfBhiChargeablePatients extends Command
     protected $signature = 'debug:GetNumberOfBhiChargeablePatients';
 
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Returns the number of bhi chargeable patients';
-
-    /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {

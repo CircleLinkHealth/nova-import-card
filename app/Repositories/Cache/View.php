@@ -1,13 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 11/03/2017
- * Time: 6:20 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Repositories\Cache;
-
 
 use Carbon\Carbon;
 
@@ -17,7 +14,7 @@ class View
 
     public function __construct($viewHashKey = null)
     {
-        $this->viewHashKey = $viewHashKey ?? 'view' . str_random('20');
+        $this->viewHashKey = $viewHashKey ?? 'view'.str_random('20');
     }
 
     /**

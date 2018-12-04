@@ -1,19 +1,16 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 5/11/18
- * Time: 2:08 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Importer\Loggers\Allergy;
 
 class NumberedAllergyFields
 {
-
     public function handle(&$patient): array
     {
-        if ( ! is_array($patient)) {
+        if (!is_array($patient)) {
             return [];
         }
 
@@ -21,20 +18,22 @@ class NumberedAllergyFields
         $i         = 1;
 
         do {
-            if ( ! array_key_exists("allergy_$i", $patient)) {
+            if (!array_key_exists("allergy_${i}", $patient)) {
                 break;
             }
 
-            if ( ! empty($patient["allergy_$i"]) && ! str_contains(strtolower($patient["allergy_$i"]),
-                    ['#n/a', 'no known'])) {
+            if (!empty($patient["allergy_${i}"]) && !str_contains(
+                strtolower($patient["allergy_${i}"]),
+                    ['#n/a', 'no known']
+            )) {
                 $allergies[] = [
-                    'Name'        => $patient["allergy_$i"],
+                    'Name' => $patient["allergy_${i}"],
                 ];
             }
 
-            unset($patient["allergy_$i"]);
+            unset($patient["allergy_${i}"]);
 
-            $i++;
+            ++$i;
         } while (true);
 
         return $allergies;
@@ -42,7 +41,7 @@ class NumberedAllergyFields
 
     public function shouldHandle($patient)
     {
-        if ( ! is_array($patient)) {
+        if (!is_array($patient)) {
             return false;
         }
 

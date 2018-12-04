@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Requests\SAAS;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -25,8 +29,8 @@ class StorePractice extends FormRequest
     {
         return [
             'display_name' => 'required|filled|unique:practices,display_name',
-            'service_id' => 'required|filled',
-            'amount' => 'required|filled|numeric',
+            'service_id'   => 'required|filled',
+            'amount'       => 'required|filled|numeric',
         ];
     }
 }

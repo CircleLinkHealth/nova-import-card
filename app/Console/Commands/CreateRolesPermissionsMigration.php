@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use Carbon\Carbon;
@@ -10,18 +14,17 @@ use Illuminate\Support\Str;
 class CreateRolesPermissionsMigration extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'make:rpm';
-
-    /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Create a migration to run RolesPermissions seeder.';
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'make:rpm';
     /**
      * @var Filesystem
      */
@@ -29,8 +32,6 @@ class CreateRolesPermissionsMigration extends Command
 
     /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct(Filesystem $filesystem)
     {
@@ -41,14 +42,15 @@ class CreateRolesPermissionsMigration extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     *
+     * @return mixed
      */
     public function handle()
     {
         $stub = $this->getStub();
 
-        $name = 'UpdateRolesAndPermissions' . Carbon::now()->timestamp;
+        $name = 'UpdateRolesAndPermissions'.Carbon::now()->timestamp;
         $path = $this->getMigrationPath();
 
         $this->filesystem->put(
@@ -56,18 +58,7 @@ class CreateRolesPermissionsMigration extends Command
             $this->populateStub($name, $stub)
         );
 
-        $this->comment("Created $path");
-    }
-
-    /**
-     * Get the file containing the template to create a migration for Roles and Permissions
-     *
-     * @return string
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
-     */
-    private function getStub()
-    {
-        return $this->filesystem->get($this->stubPath());
+        $this->comment("Created ${path}");
     }
 
     /**
@@ -77,30 +68,19 @@ class CreateRolesPermissionsMigration extends Command
      */
     public function stubPath()
     {
-        return __DIR__ . '/stubs/RolesPermissionsMigration/create.stub';
+        return __DIR__.'/stubs/RolesPermissionsMigration/create.stub';
     }
 
     /**
-     * Get the path to the migration directory.
+     * Get the class name of a migration name.
+     *
+     * @param string $name
      *
      * @return string
      */
-    protected function getMigrationPath()
+    protected function getClassName($name)
     {
-        return app()->databasePath() . DIRECTORY_SEPARATOR . 'migrations';
-    }
-
-    /**
-     * Get the full path to the migration.
-     *
-     * @param  string $name
-     * @param  string $path
-     *
-     * @return string
-     */
-    protected function getPath($name, $path)
-    {
-        return $path . '/' . $this->getDatePrefix() . '_' . $name . '.php';
+        return Str::studly($name);
     }
 
     /**
@@ -114,29 +94,50 @@ class CreateRolesPermissionsMigration extends Command
     }
 
     /**
+     * Get the path to the migration directory.
+     *
+     * @return string
+     */
+    protected function getMigrationPath()
+    {
+        return app()->databasePath().DIRECTORY_SEPARATOR.'migrations';
+    }
+
+    /**
+     * Get the full path to the migration.
+     *
+     * @param string $name
+     * @param string $path
+     *
+     * @return string
+     */
+    protected function getPath($name, $path)
+    {
+        return $path.'/'.$this->getDatePrefix().'_'.$name.'.php';
+    }
+
+    /**
      * Populate the place-holders in the migration stub.
      *
-     * @param  string $name
-     * @param  string $stub
+     * @param string $name
+     * @param string $stub
      *
      * @return string
      */
     protected function populateStub($name, $stub)
     {
-        $stub = str_replace('DummyClass', $this->getClassName($name), $stub);
-
-        return $stub;
+        return str_replace('DummyClass', $this->getClassName($name), $stub);
     }
 
     /**
-     * Get the class name of a migration name.
+     * Get the file containing the template to create a migration for Roles and Permissions.
      *
-     * @param  string $name
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      *
      * @return string
      */
-    protected function getClassName($name)
+    private function getStub()
     {
-        return Str::studly($name);
+        return $this->filesystem->get($this->stubPath());
     }
 }

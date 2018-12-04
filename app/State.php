@@ -1,16 +1,19 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-
 /**
- * App\State
+ * App\State.
  *
- * @property int $id
- * @property string $name
- * @property string $code
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Nurse[] $nurses
+ * @property int                                                   $id
+ * @property string                                                $name
+ * @property string                                                $code
+ * @property \App\Nurse[]|\Illuminate\Database\Eloquent\Collection $nurses
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\State whereCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\State whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\State whereName($value)
@@ -22,7 +25,6 @@ class State extends \App\BaseModel
 
     public function nurses()
     {
-        
         return $this->belongsToMany(Nurse::class);
     }
 }

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\CarePlan;
@@ -9,18 +13,17 @@ use Illuminate\Console\Command;
 class EmailsProvidersToApproveCareplans extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'emailapprovalreminder:providers {--pretend}';
-
-    /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Send a reminder email to all Providers telling them how many Careplans are awaiting approval.';
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'emailapprovalreminder:providers {--pretend}';
 
     /**
      * Execute the console command.
@@ -32,8 +35,8 @@ class EmailsProvidersToApproveCareplans extends Command
         $pretend = $this->option('pretend');
 
         $providers = User::ofType('provider')
-                         ->with('forwardAlertsTo')
-                         ->get();
+            ->with('forwardAlertsTo')
+            ->get();
 
         $bar = $this->output->createProgressBar(count($providers));
 
@@ -41,13 +44,13 @@ class EmailsProvidersToApproveCareplans extends Command
             $bar,
             $pretend
         ) {
-            if ( ! $this->shouldSend($providerUser)) {
+            if (!$this->shouldSend($providerUser)) {
                 return false;
             }
 
             $recipients = $this->recipients($providerUser)
-                               ->unique('id')
-                               ->values();
+                ->unique('id')
+                ->values();
 
             if ($recipients->isEmpty()) {
                 return false;
@@ -83,42 +86,7 @@ class EmailsProvidersToApproveCareplans extends Command
 
         $count = count($emailsSent);
 
-        $this->info("$count emails.");
-    }
-
-    public function shouldSend(User $providerUser)
-    {
-        //Middletown
-        if ($providerUser->program_id == 23) {
-            return false;
-        }
-
-        //Miller
-        if ($providerUser->program_id == 10) {
-            return false;
-        }
-        //Icli
-        if ($providerUser->program_id == 19) {
-            return false;
-        }
-        //Purser
-        if ($providerUser->program_id == 22) {
-            return false;
-        }
-
-        if ( ! $providerUser->primaryPractice) {
-            return false;
-        }
-
-        if ( ! $providerUser->primaryPractice->cpmSettings()->email_careplan_approval_reminders) {
-            return false;
-        }
-
-        if ($providerUser->primaryPractice->cpmSettings()->auto_approve_careplans) {
-            return false;
-        }
-
-        return true;
+        $this->info("${count} emails.");
     }
 
     public function recipients(User $providerUser)
@@ -129,12 +97,12 @@ class EmailsProvidersToApproveCareplans extends Command
             $recipients->push($providerUser);
         } else {
             foreach ($providerUser->forwardAlertsTo as $forwardee) {
-                if ($forwardee->pivot->name == User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER) {
+                if (User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER == $forwardee->pivot->name) {
                     $recipients->push($providerUser);
                     $recipients->push($forwardee);
                 }
 
-                if ($forwardee->pivot->name == User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER) {
+                if (User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER == $forwardee->pivot->name) {
                     $recipients->push($forwardee);
                 }
             }
@@ -145,10 +113,45 @@ class EmailsProvidersToApproveCareplans extends Command
 
     public function sendEmail(User $recipient, $numberOfCareplans, bool $pretend)
     {
-        if ( ! $pretend) {
+        if (!$pretend) {
             if ($recipient->email) {
                 $recipient->sendCarePlanApprovalReminderEmail($numberOfCareplans);
             }
         }
+    }
+
+    public function shouldSend(User $providerUser)
+    {
+        //Middletown
+        if (23 == $providerUser->program_id) {
+            return false;
+        }
+
+        //Miller
+        if (10 == $providerUser->program_id) {
+            return false;
+        }
+        //Icli
+        if (19 == $providerUser->program_id) {
+            return false;
+        }
+        //Purser
+        if (22 == $providerUser->program_id) {
+            return false;
+        }
+
+        if (!$providerUser->primaryPractice) {
+            return false;
+        }
+
+        if (!$providerUser->primaryPractice->cpmSettings()->email_careplan_approval_reminders) {
+            return false;
+        }
+
+        if ($providerUser->primaryPractice->cpmSettings()->auto_approve_careplans) {
+            return false;
+        }
+
+        return true;
     }
 }

@@ -1,11 +1,13 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Models\PatientData\PhoenixHeart;
 
-use Illuminate\Database\Eloquent\Model;
-
 /**
- * App\Models\PatientData\PhoenixHeart\PhoenixHeartName
+ * App\Models\PatientData\PhoenixHeart\PhoenixHeartName.
  *
  * @property string|null $patient_id
  * @property string|null $provider_last_name
@@ -17,7 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $gender
  * @property string|null $email
  * @property string|null $phone_1_type
- * @property int|null $phone_1
+ * @property int|null    $phone_1
  * @property string|null $phone_2_type
  * @property string|null $phone_2
  * @property string|null $phone_3_type
@@ -27,9 +29,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $city
  * @property string|null $state
  * @property string|null $zip
- * @property int $processed
- * @property int|null $eligible
+ * @property int         $processed
+ * @property int|null    $eligible
  * @property string|null $created_at
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\PhoenixHeart\PhoenixHeartName whereAddress1($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\PhoenixHeart\PhoenixHeartName whereAddress2($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\PhoenixHeart\PhoenixHeartName whereCity($value)
@@ -57,7 +60,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class PhoenixHeartName extends \App\BaseModel
 {
-    protected $guarded = [];
-
     public $timestamps = false;
+    protected $guarded = [];
 }

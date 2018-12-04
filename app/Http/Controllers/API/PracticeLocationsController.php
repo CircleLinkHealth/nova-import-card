@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers\API;
 
 use App\CarePerson;
@@ -13,7 +17,61 @@ use App\User;
 class PracticeLocationsController extends Controller
 {
     /**
+     * Remove the specified resource from storage.
+     *
+     * @param int   $id
+     * @param mixed $practiceId
+     * @param mixed $locationId
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($practiceId, $locationId)
+    {
+        $loc = Location::find($locationId);
+
+        if ($loc) {
+            $loc->delete();
+        }
+
+        return response()->json($loc);
+    }
+
+    public function handleClinicalContact(array $clinicalContact, Practice $primaryPractice, Location $location)
+    {
+        //clean up other contacts
+        $location->clinicalEmergencyContact()->sync([]);
+
+        if (CarePerson::BILLING_PROVIDER == $clinicalContact['type']) {
+            return;
+        }
+
+        $clinicalContactUser = User::whereEmail($clinicalContact['email'])->first();
+
+        if (!$clinicalContactUser) {
+            $clinicalContactUser = User::create([
+                'program_id' => $primaryPractice->id,
+                'email'      => $clinicalContact['email'],
+                'first_name' => $clinicalContact['first_name'],
+                'last_name'  => $clinicalContact['last_name'],
+                'password'   => 'password_not_set',
+            ]);
+        }
+
+        $clinicalContactUser->attachPractice($primaryPractice);
+        $clinicalContactUser->attachLocation($location);
+
+        //clean up other contacts before adding the new one
+        $location->clinicalEmergencyContact()->sync([]);
+
+        $location->clinicalEmergencyContact()->attach($clinicalContactUser->id, [
+            'name' => $clinicalContact['type'],
+        ]);
+    }
+
+    /**
      * Display a listing of the resource.
+     *
+     * @param mixed $primaryPracticeId
      *
      * @return \Illuminate\Http\Response
      */
@@ -36,8 +94,8 @@ class PracticeLocationsController extends Controller
         $contactUser = $loc->clinicalEmergencyContact->first() ?? null;
 
         return [
-            'id'                        => $loc->id,
-            'clinical_contact'          => [
+            'id'               => $loc->id,
+            'clinical_contact' => [
                 'email'      => optional($contactUser)->email ?? null,
                 'first_name' => optional($contactUser)->getFirstName() ?? null,
                 'last_name'  => optional($contactUser)->getLastName() ?? null,
@@ -63,12 +121,13 @@ class PracticeLocationsController extends Controller
         ];
     }
 
-
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  int $id
+     * @param \Illuminate\Http\Request $request
+     * @param int                      $id
+     * @param mixed                    $primaryPracticeId
+     * @param mixed                    $locationId
      *
      * @return \Illuminate\Http\Response
      */
@@ -79,7 +138,7 @@ class PracticeLocationsController extends Controller
         $formData = $request->input();
 
         $sameClinicalContact = $request->input('sameClinicalIssuesContact');
-        $sameEHRLogin = $request->input('sameEHRLogin');
+        $sameEHRLogin        = $request->input('sameEHRLogin');
 
         $location = Location::updateOrCreate([
             'id' => $formData['id'],
@@ -98,7 +157,7 @@ class PracticeLocationsController extends Controller
             'ehr_password'   => $formData['ehr_password'] ?? null,
         ]);
 
-        if (Location::where('practice_id', $primaryPractice->id)->count() == 1) {
+        if (1 == Location::where('practice_id', $primaryPractice->id)->count()) {
             $location->is_primary = 1;
             $location->save();
         }
@@ -133,61 +192,10 @@ class PracticeLocationsController extends Controller
 
         $primaryPractice->save();
 
-
         if ($primaryPractice->lead) {
             $primaryPractice->lead->attachLocation($location);
         }
 
         return response()->json($this->present($location, $primaryPractice));
-    }
-
-    public function handleClinicalContact(array $clinicalContact, Practice $primaryPractice, Location $location)
-    {
-        //clean up other contacts
-        $location->clinicalEmergencyContact()->sync([]);
-
-        if ($clinicalContact['type'] == CarePerson::BILLING_PROVIDER) {
-            return;
-        }
-
-        $clinicalContactUser = User::whereEmail($clinicalContact['email'])->first();
-
-        if (!$clinicalContactUser) {
-            $clinicalContactUser = User::create([
-                'program_id' => $primaryPractice->id,
-                'email'      => $clinicalContact['email'],
-                'first_name' => $clinicalContact['first_name'],
-                'last_name'  => $clinicalContact['last_name'],
-                'password'   => 'password_not_set',
-            ]);
-        }
-
-        $clinicalContactUser->attachPractice($primaryPractice);
-        $clinicalContactUser->attachLocation($location);
-
-        //clean up other contacts before adding the new one
-        $location->clinicalEmergencyContact()->sync([]);
-
-        $location->clinicalEmergencyContact()->attach($clinicalContactUser->id, [
-            'name' => $clinicalContact['type'],
-        ]);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($practiceId, $locationId)
-    {
-        $loc = Location::find($locationId);
-
-        if ($loc) {
-            $loc->delete();
-        }
-
-        return response()->json($loc);
     }
 }

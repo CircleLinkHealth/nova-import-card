@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Models\MedicalRecords\Ccda;
@@ -10,19 +14,23 @@ class CcdaController extends Controller
 {
     private $ccdaService;
 
-    public function __construct(CcdaService $ccdaService) {
+    public function __construct(CcdaService $ccdaService)
+    {
         $this->ccdaService = $ccdaService;
     }
 
-    public function index() {
+    public function index()
+    {
         return $this->ccdaService->ccda();
     }
 
-    public function show($id) {
+    public function show($id)
+    {
         return $this->ccdaService->ccda($id);
     }
 
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         $ccda              = new Ccda();
         $ccda->json        = $request->input('json');
         $xml               = $request->input('xml');
@@ -31,6 +39,7 @@ class CcdaController extends Controller
         if ($ccda->user_id && ($xml || $ccda->json)) {
             return $this->ccdaService->create($ccda, $xml);
         }
-        else return $this->badRequest('"user_id" and one of "xml" and "json" are compulsory fields');
+
+        return $this->badRequest('"user_id" and one of "xml" and "json" are compulsory fields');
     }
 }

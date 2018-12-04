@@ -1,13 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 01/10/2018
- * Time: 8:56 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Services;
-
 
 use App\Repositories\PatientReadRepository;
 use App\Repositories\PatientWriteRepository;
@@ -29,7 +26,7 @@ class PrintPausedPatientLettersService
     }
 
     /**
-     * Get paused patients whose letter has not been printed yet
+     * Get paused patients whose letter has not been printed yet.
      *
      * @return \Illuminate\Support\Collection|static
      */
@@ -58,9 +55,9 @@ class PrintPausedPatientLettersService
      * Make paused letters for the user id's provided.
      *
      * @param array $userIdsToPrint
-     * @param bool $viewOnly | If true, it doesn't update paused letter printed date.
+     * @param bool  $viewOnly       | If true, it doesn't update paused letter printed date
      *
-     * @return null|string
+     * @return string|null
      */
     public function makePausedLettersPdf(array $userIdsToPrint, bool $viewOnly = false)
     {
@@ -76,14 +73,12 @@ class PrintPausedPatientLettersService
                     'lang'    => $lang,
                 ]);
 
-                $pathToFlyer = public_path("assets/pdf/flyers/paused/$lang.pdf");
+                $pathToFlyer = public_path("assets/pdf/flyers/paused/${lang}.pdf");
 
-                $fullPathToPdf = $this->pdfService->mergeFiles([$fullPathToLetter, $pathToFlyer]);
-
-                return $fullPathToPdf;
+                return $this->pdfService->mergeFiles([$fullPathToLetter, $pathToFlyer]);
             });
 
-        if ( ! $viewOnly) {
+        if (!$viewOnly) {
             $this->patientWriteRepository->updatePausedLetterPrintedDate($userIdsToPrint);
         }
 

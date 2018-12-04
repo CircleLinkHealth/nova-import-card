@@ -1,15 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 12/28/2017
- * Time: 7:13 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Exceptions;
 
-
 class InvalidArgumentException extends \InvalidArgumentException
 {
-
 }

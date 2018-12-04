@@ -1,48 +1,54 @@
-<?php namespace App\Importer\Models\ItemLogs;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Importer\Models\ItemLogs;
 
 use App\Contracts\Importer\MedicalRecord\Section\ItemLog;
 use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Traits\Relationships\BelongsToCcda;
 use App\Traits\Relationships\BelongsToVendor;
-use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\Importer\Models\ItemLogs\DemographicsLog
+ * App\Importer\Models\ItemLogs\DemographicsLog.
  *
- * @property int $id
- * @property string|null $medical_record_type
- * @property int|null $medical_record_id
- * @property int|null $vendor_id
- * @property string|null $first_name
- * @property string|null $last_name
- * @property string|null $dob
- * @property string|null $gender
- * @property string|null $mrn_number
- * @property string|null $street
- * @property string|null $street2
- * @property string|null $city
- * @property string|null $state
- * @property string|null $zip
- * @property string|null $primary_phone
- * @property string|null $cell_phone
- * @property string|null $home_phone
- * @property string|null $work_phone
- * @property string|null $email
- * @property string|null $language
- * @property string $consent_date
- * @property string|null $race
- * @property string|null $ethnicity
- * @property int $import
- * @property int $invalid
- * @property int $edited
- * @property string|null $deleted_at
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property string|null $preferred_call_times
- * @property string|null $preferred_call_days
- * @property-read \App\Models\MedicalRecords\Ccda $ccda
- * @property-read \App\Importer\Models\ImportedItems\DemographicsImport $importedItem
- * @property-read \App\Models\CCD\CcdVendor|null $vendor
+ * @property int                                                   $id
+ * @property string|null                                           $medical_record_type
+ * @property int|null                                              $medical_record_id
+ * @property int|null                                              $vendor_id
+ * @property string|null                                           $first_name
+ * @property string|null                                           $last_name
+ * @property string|null                                           $dob
+ * @property string|null                                           $gender
+ * @property string|null                                           $mrn_number
+ * @property string|null                                           $street
+ * @property string|null                                           $street2
+ * @property string|null                                           $city
+ * @property string|null                                           $state
+ * @property string|null                                           $zip
+ * @property string|null                                           $primary_phone
+ * @property string|null                                           $cell_phone
+ * @property string|null                                           $home_phone
+ * @property string|null                                           $work_phone
+ * @property string|null                                           $email
+ * @property string|null                                           $language
+ * @property string                                                $consent_date
+ * @property string|null                                           $race
+ * @property string|null                                           $ethnicity
+ * @property int                                                   $import
+ * @property int                                                   $invalid
+ * @property int                                                   $edited
+ * @property string|null                                           $deleted_at
+ * @property \Carbon\Carbon                                        $created_at
+ * @property \Carbon\Carbon                                        $updated_at
+ * @property string|null                                           $preferred_call_times
+ * @property string|null                                           $preferred_call_days
+ * @property \App\Models\MedicalRecords\Ccda                       $ccda
+ * @property \App\Importer\Models\ImportedItems\DemographicsImport $importedItem
+ * @property \App\Models\CCD\CcdVendor|null                        $vendor
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\DemographicsLog whereCellPhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\DemographicsLog whereCity($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\DemographicsLog whereConsentDate($value)
@@ -78,11 +84,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class DemographicsLog extends \App\BaseModel implements ItemLog
 {
-
     use BelongsToCcda,
         BelongsToVendor;
-
-    protected $table = 'ccd_demographics_logs';
 
     protected $fillable = [
         'medical_record_type',
@@ -109,6 +112,8 @@ class DemographicsLog extends \App\BaseModel implements ItemLog
         'preferred_call_times',
         'preferred_call_days',
     ];
+
+    protected $table = 'ccd_demographics_logs';
 
     public function importedItem()
     {

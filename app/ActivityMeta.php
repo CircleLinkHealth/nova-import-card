@@ -1,21 +1,27 @@
-<?php namespace App;
+<?php
 
-use Illuminate\Database\Eloquent\Model;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App;
+
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * App\ActivityMeta
+ * App\ActivityMeta.
  *
- * @property int $id
- * @property int $activity_id
- * @property int $comment_id
- * @property string $message_id
- * @property string|null $meta_key
- * @property string $meta_value
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property int                 $id
+ * @property int                 $activity_id
+ * @property int                 $comment_id
+ * @property string              $message_id
+ * @property string|null         $meta_key
+ * @property string              $meta_value
+ * @property \Carbon\Carbon      $created_at
+ * @property \Carbon\Carbon      $updated_at
  * @property \Carbon\Carbon|null $deleted_at
- * @property-read \App\Activity $activity
+ * @property \App\Activity       $activity
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\ActivityMeta onlyTrashed()
  * @method static bool|null restore()
@@ -34,15 +40,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class ActivityMeta extends \App\BaseModel
 {
-
     use SoftDeletes;
 
-    /**
-     * The database table used by the model.
-     * 
-     * @var string
-     */
-    protected $table = 'lv_activitymeta';
+    protected $dates = ['deleted_at'];
 
     /**
      * The attributes that are mass assignable.
@@ -51,7 +51,12 @@ class ActivityMeta extends \App\BaseModel
      */
     protected $fillable = ['activity_id', 'meta_key', 'meta_value'];
 
-    protected $dates = ['deleted_at'];
+    /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
+    protected $table = 'lv_activitymeta';
 
     public function activity()
     {

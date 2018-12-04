@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Jobs;
 
 use App\EligibilityBatch;
@@ -20,13 +24,13 @@ class ImportConsentedEnrollees implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     /**
-     * @var array
-     */
-    private $enrolleeIds;
-    /**
      * @var EligibilityBatch
      */
     private $batch;
+    /**
+     * @var array
+     */
+    private $enrolleeIds;
 
     /**
      * Create a new job instance.
@@ -43,85 +47,85 @@ class ImportConsentedEnrollees implements ShouldQueue
      * Execute the job.
      *
      * @param ProcessEligibilityService $importService
-     *
-     * @return void
      */
     public function handle(ImportService $importService)
     {
         $imported = Enrollee::whereIn('id', $this->enrolleeIds)
-                            ->with(['targetPatient', 'practice'])
-                            ->get()
-                            ->map(function ($enrollee) use ($importService) {
-                                $url = route('import.ccd.remix',
-                                    'Click here to Create and a CarePlan and review.');
+            ->with(['targetPatient', 'practice'])
+            ->get()
+            ->map(function ($enrollee) use ($importService) {
+                $url = route(
+                                    'import.ccd.remix',
+                                    'Click here to Create and a CarePlan and review.'
+                                );
 
-                                //verify it wasn't already imported
-                                if ($enrollee->user_id) {
-                                    return [
-                                        'patient' => $enrollee->nameAndDob(),
-                                        'message' => 'This patient has already been imported',
-                                        'type'    => 'error',
-                                    ];
-                                }
+                //verify it wasn't already imported
+                if ($enrollee->user_id) {
+                    return [
+                        'patient' => $enrollee->nameAndDob(),
+                        'message' => 'This patient has already been imported',
+                        'type'    => 'error',
+                    ];
+                }
 
-                                //verify it wasn't already imported
-                                $imr = $enrollee->getImportedMedicalRecord();
-                                if ($imr) {
-                                    if ($imr->patient_id) {
-                                        $enrollee->user_id = $imr->patient_id;
-                                        $enrollee->save();
+                //verify it wasn't already imported
+                $imr = $enrollee->getImportedMedicalRecord();
+                if ($imr) {
+                    if ($imr->patient_id) {
+                        $enrollee->user_id = $imr->patient_id;
+                        $enrollee->save();
 
-                                        return [
-                                            'patient' => $enrollee->nameAndDob(),
-                                            'message' => 'This patient has already been imported',
-                                            'type'    => 'error',
-                                        ];
-                                    }
+                        return [
+                            'patient' => $enrollee->nameAndDob(),
+                            'message' => 'This patient has already been imported',
+                            'type'    => 'error',
+                        ];
+                    }
 
-                                    return [
-                                        'patient' => $enrollee->nameAndDob(),
-                                        'message' => "The CCD was imported. $url",
-                                        'type'    => 'success',
-                                    ];
-                                }
+                    return [
+                        'patient' => $enrollee->nameAndDob(),
+                        'message' => "The CCD was imported. ${url}",
+                        'type'    => 'success',
+                    ];
+                }
 
-                                //import PHX
-                                if ($enrollee->practice_id == 139) {
-                                    ImportPHXEnrollee::dispatch($enrollee);
+                //import PHX
+                if (139 == $enrollee->practice_id) {
+                    ImportPHXEnrollee::dispatch($enrollee);
 
-                                    return $enrollee;
-                                }
+                    return $enrollee;
+                }
 
-                                //import from AthenaAPI
-                                if ($enrollee->targetPatient) {
-                                    return $this->importTargetPatient($enrollee);
-                                }
+                //import from AthenaAPI
+                if ($enrollee->targetPatient) {
+                    return $this->importTargetPatient($enrollee);
+                }
 
-                                //import from eligibility jobs
-                                $job = $this->eligibilityJob($enrollee);
-                                if ($job) {
-                                    return $this->importFromEligibilityJob($enrollee, $job);
-                                }
+                //import from eligibility jobs
+                $job = $this->eligibilityJob($enrollee);
+                if ($job) {
+                    return $this->importFromEligibilityJob($enrollee, $job);
+                }
 
-                                //import ccda
-                                if ($importService->isCcda($enrollee->medical_record_type)) {
-                                    $response = $importService->importExistingCcda($enrollee->medical_record_id);
+                //import ccda
+                if ($importService->isCcda($enrollee->medical_record_type)) {
+                    $response = $importService->importExistingCcda($enrollee->medical_record_id);
 
-                                    if ($response->imr) {
-                                        return [
-                                            'patient' => $enrollee->nameAndDob(),
-                                            'message' => "The CCD was imported. $url",
-                                            'type'    => 'success',
-                                        ];
-                                    }
-                                }
+                    if ($response->imr) {
+                        return [
+                            'patient' => $enrollee->nameAndDob(),
+                            'message' => "The CCD was imported. ${url}",
+                            'type'    => 'success',
+                        ];
+                    }
+                }
 
-                                return [
-                                    'patient' => $enrollee->nameAndDob(),
-                                    'message' => $response->message ?? 'Sorry. Some random error occured. Please post to #qualityassurance to notify everyone to stop using the importer, and also tag Michalis to fix this asap.',
-                                    'type'    => 'error',
-                                ];
-                            });
+                return [
+                    'patient' => $enrollee->nameAndDob(),
+                    'message' => $response->message ?? 'Sorry. Some random error occured. Please post to #qualityassurance to notify everyone to stop using the importer, and also tag Michalis to fix this asap.',
+                    'type'    => 'error',
+                ];
+            });
 
         if ($this->batch && $imported->isNotEmpty()) {
             \Log::info($imported->toJson());
@@ -132,18 +136,71 @@ class ImportConsentedEnrollees implements ShouldQueue
         return $imported;
     }
 
+    private function eligibilityJob(Enrollee $enrollee)
+    {
+        if ($enrollee->eligibilityJob) {
+            return $enrollee->eligibilityJob;
+        }
+        $hash = $enrollee->practice->name.$enrollee->first_name.$enrollee->last_name.$enrollee->mrn.$enrollee->city.$enrollee->state.$enrollee->zip;
+
+        return EligibilityJob::whereHash($hash)->first();
+    }
+
+    private function importFromEligibilityJob(Enrollee $enrollee, EligibilityJob $job)
+    {
+        $service = app(ImportService::class);
+
+        // Just another hack
+        // To import CLH JSON format
+        // @todo: Need to consolidate functionality from [Enrollees, EligibilityJobs, CCDAs, TabularMedicalRecords, _logs, _imports, phx tables]
+        if (EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE == $job->batch->type) {
+            $mr = new MedicalRecord($job, $enrollee->practice);
+
+            $provider = $job->data['preferred_provider'];
+
+            $exists = Ccda::where('referring_provider_name', $provider)
+                ->where('practice_id', $enrollee->practice->id)
+                ->whereNotNull('billing_provider_id')
+                ->whereNotNull('location_id')
+                ->first();
+
+            $mr = Ccda::create([
+                'practice_id'             => $enrollee->practice->id,
+                'location_id'             => optional($exists)->location_id ?? $enrollee->practice->primary_location_id,
+                'billing_provider_id'     => optional($exists)->billing_provider_id ?? null,
+                'mrn'                     => $job->data['patient_id'],
+                'json'                    => $mr->toJson(),
+                'referring_provider_name' => $provider,
+            ]);
+
+            $imr = $mr->import();
+
+            $enrollee->medical_record_id   = $mr->id;
+            $enrollee->medical_record_type = Ccda::class;
+            $enrollee->save();
+
+            return $imr;
+        }
+
+        return $service->createTabularMedicalRecordAndImport($job->data, $enrollee->practice);
+    }
+
     private function importTargetPatient(Enrollee $enrollee)
     {
-        $url = route('import.ccd.remix',
-            'Click here to Create and a CarePlan and review.');
+        $url = route(
+            'import.ccd.remix',
+            'Click here to Create and a CarePlan and review.'
+        );
 
         $athenaApi = app(Calls::class);
 
-        $ccdaExternal = $athenaApi->getCcd($enrollee->targetPatient->ehr_patient_id,
+        $ccdaExternal = $athenaApi->getCcd(
+            $enrollee->targetPatient->ehr_patient_id,
             $enrollee->targetPatient->ehr_practice_id,
-            $enrollee->targetPatient->ehr_department_id);
+            $enrollee->targetPatient->ehr_department_id
+        );
 
-        if ( ! isset($ccdaExternal[0])) {
+        if (!isset($ccdaExternal[0])) {
             return [
                 'patient' => $enrollee->nameAndDob(),
                 'message' => 'Could not retrieve CCD from Athena',
@@ -164,59 +221,8 @@ class ImportConsentedEnrollees implements ShouldQueue
 
         return [
             'patient' => $enrollee->nameAndDob(),
-            'message' => "The CCD was imported. $url",
+            'message' => "The CCD was imported. ${url}",
             'type'    => 'success',
         ];
-    }
-
-    private function eligibilityJob(Enrollee $enrollee)
-    {
-        if ($enrollee->eligibilityJob) {
-            return $enrollee->eligibilityJob;
-        }
-        $hash = $enrollee->practice->name . $enrollee->first_name . $enrollee->last_name . $enrollee->mrn . $enrollee->city . $enrollee->state . $enrollee->zip;
-
-        return EligibilityJob::whereHash($hash)->first();
-    }
-
-    private function importFromEligibilityJob(Enrollee $enrollee, EligibilityJob $job)
-    {
-        $service = app(ImportService::class);
-
-        // Just another hack
-        // To import CLH JSON format
-        // @todo: Need to consolidate functionality from [Enrollees, EligibilityJobs, CCDAs, TabularMedicalRecords, _logs, _imports, phx tables]
-        if ($job->batch->type == EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE) {
-            $mr = new MedicalRecord($job, $enrollee->practice);
-
-            $provider = $job->data['preferred_provider'];
-
-            $exists = Ccda::where('referring_provider_name', $provider)
-                          ->where('practice_id', $enrollee->practice->id)
-                          ->whereNotNull('billing_provider_id')
-                          ->whereNotNull('location_id')
-                          ->first();
-
-            $mr = Ccda::create([
-                'practice_id'             => $enrollee->practice->id,
-                'location_id'             => optional($exists)->location_id ?? $enrollee->practice->primary_location_id,
-                'billing_provider_id'     => optional($exists)->billing_provider_id ?? null,
-                'mrn'                     => $job->data['patient_id'],
-                'json'                    => $mr->toJson(),
-                'referring_provider_name' => $provider,
-            ]);
-
-            $imr = $mr->import();
-
-            $enrollee->medical_record_id   = $mr->id;
-            $enrollee->medical_record_type = Ccda::class;
-            $enrollee->save();
-
-            return $imr;
-        }
-
-        $imr = $service->createTabularMedicalRecordAndImport($job->data, $enrollee->practice);
-
-        return $imr;
     }
 }

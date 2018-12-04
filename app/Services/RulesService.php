@@ -1,17 +1,13 @@
-<?php namespace App\Services;
+<?php
 
-use App\Rules;
-use App\Http\Requests;
-use App\User;
-use App\Observation;
-use App\UserMeta;
-use App\Comment;
-use DB;
-use Validator;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Services;
 
 class RulesService
 {
-
     public function getActions($params, $type = 'ATT')
     {
         if (empty($params)) {
@@ -27,43 +23,43 @@ class RulesService
         // add params to query string
         if (!empty($params)) {
             foreach ($params as $key => $value) {
-                $quotedValue = "";
-                if ($value == '') {
+                $quotedValue = '';
+                if ('' == $value) {
                     $quotedValue = "'%0000000000000%'"; // hack to force blank params to break finding a rule
                 } else {
                     // if contains a bracket, assuming its an array
-                    if (strpos($value, '[') !== false) {
+                    if (false !== strpos($value, '[')) {
                         // remove brackets now that we know
-                        $value = str_replace(['[', ']'], "", $value);
+                        $value = str_replace(['[', ']'], '', $value);
                         // if comma, assume comma delimited
-                        if (strpos($value, ',') !== false) {
+                        if (false !== strpos($value, ',')) {
                             $valueArgs = explode(',', $value);
                             if (!empty($valueArgs)) {
                                 foreach ($valueArgs as $valueArg) {
                                     $valueArg = trim($valueArg);
-                                    $valueArg = str_replace(["'", '"'], "", $valueArg);
-                                    $quotedValue .= "'" . $valueArg . "', ";
+                                    $valueArg = str_replace(["'", '"'], '', $valueArg);
+                                    $quotedValue .= "'".$valueArg."', ";
                                 }
                                 // remove trailing comma
                                 $quotedValue = trim($quotedValue);
-                                $quotedValue = rtrim($quotedValue, ",");
+                                $quotedValue = rtrim($quotedValue, ',');
                             }
                         } else {
-                            $quotedValue = "'" . $value . "'";
+                            $quotedValue = "'".$value."'";
                         }
                     } else {
-                        $quotedValue = "'%" . $value . "%'";
+                        $quotedValue = "'%".$value."%'";
                     }
                 }
-                $sql .= "AND r.id in (
+                $sql .= 'AND r.id in (
         select rule_id from lv_rules_intr_conditions where
-                value LIKE (".$quotedValue.")
+                value LIKE ('.$quotedValue.")
                 and condition_id = (select id from lv_rules_conditions where
                 condition_name = '".$key."'))";
             }
         }
 
-        $sql = str_replace(["\n","\r"], "", $sql);
+        $sql = str_replace(["\n", "\r"], '', $sql);
 
         // query sql for rules
         $rules = \DB::select(\DB::raw($sql));
@@ -85,9 +81,9 @@ class RulesService
                     AND r.id = ".$rule_id));
             if (!empty($actions)) {
                 return $actions;
-            } else {
-                return false;
             }
+
+            return false;
         }
     }
 }

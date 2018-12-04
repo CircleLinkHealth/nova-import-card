@@ -1,10 +1,15 @@
-<?php namespace App\Http\Controllers;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
 class AuthorizationController extends Controller
 {
-
     /**
      * Display a listing of the resource.
      *
@@ -28,9 +33,10 @@ class AuthorizationController extends Controller
         \JWTAuth::setIdentifier('id');
 
         // attempt authorization
-        if (! $token = \JWTAuth::attempt($credentials)) {
+        if (!$token = \JWTAuth::attempt($credentials)) {
             return response()->json(['error' => 'invalid_credentials'], 400);
         }
+
         return response()->json(compact('token'));
     }
 
@@ -49,7 +55,8 @@ class AuthorizationController extends Controller
         // set the identifier for wp_users
         \JWTAuth::setIdentifier('id');
         $token = \JWTAuth::getToken();
-        $user = \JWTAuth::parseToken()->authenticate();
+        $user  = \JWTAuth::parseToken()->authenticate();
+
         return response()->json($user);
     }
 }

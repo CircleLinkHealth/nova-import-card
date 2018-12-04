@@ -1,8 +1,13 @@
-<?php namespace App\Http\Controllers\CcdApi\Aprima;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Http\Controllers\CcdApi\Aprima;
 
 use App\CarePerson;
 use App\CarePlan;
-use App\CLH\CCD\Importer\QAImportManager;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Contracts\Repositories\ActivityRepository;
 use App\Contracts\Repositories\AprimaCcdApiRepository;
@@ -18,16 +23,15 @@ use App\PatientReports;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Maknz\Slack\Facades\Slack;
 
 class CcdApiController extends Controller
 {
     use ValidatesQAImportOutput;
+    protected $activities;
 
     protected $api;
-    protected $activities;
-    protected $ccmTime;
     protected $ccda;
+    protected $ccmTime;
     private $importer;
     private $users;
 
@@ -40,11 +44,24 @@ class CcdApiController extends Controller
         UserRepository $users
     ) {
         $this->activities = $activityRepository;
-        $this->ccda = $ccdaRepository;
-        $this->ccmTime = $ccmTime;
-        $this->api = $aprimaCcdApiRepository;
-        $this->importer = $repo;
-        $this->users = $users;
+        $this->ccda       = $ccdaRepository;
+        $this->ccmTime    = $ccmTime;
+        $this->api        = $aprimaCcdApiRepository;
+        $this->importer   = $repo;
+        $this->users      = $users;
+    }
+
+    public function getApiUserLocation($user)
+    {
+        $apiUserLocation = $user->locations;
+
+        try {
+            $locationId = $apiUserLocation[0]->pivot->location_id;
+        } catch (\Exception $e) {
+            return response()->json('Could not resolve a Location from your User.', 400);
+        }
+
+        return $locationId;
     }
 
     public function getCcmTime(Request $request)
@@ -86,7 +103,6 @@ class CcdApiController extends Controller
             }
 
             $careEvents = $activities->map(function ($careEvent) {
-
                 $this->ccmTime->logSentActivity(['activity_id' => $careEvent->id], ['activity_id' => $careEvent->id]);
 
                 return [
@@ -96,7 +112,7 @@ class CcdApiController extends Controller
                     'lengthUnit'       => $careEvent->lengthUnit,
                     'commentString'    => $careEvent->commentString,
                     //                    'comment' => $careEvent->comment,
-                    'alertProvider'    => false,
+                    'alertProvider' => false,
                 ];
             });
 
@@ -110,19 +126,6 @@ class CcdApiController extends Controller
         return isset($results)
             ? response()->json($results, 200)
             : response()->json([], 200);
-    }
-
-    public function getApiUserLocation($user)
-    {
-        $apiUserLocation = $user->locations;
-
-        try {
-            $locationId = $apiUserLocation[0]->pivot->location_id;
-        } catch (\Exception $e) {
-            return response()->json('Could not resolve a Location from your User.', 400);
-        }
-
-        return $locationId;
     }
 
     public function notes(Request $request)
@@ -205,6 +208,29 @@ class CcdApiController extends Controller
             ->delete();
 
         return response()->json($json, 200, ['fileCount' => count($json)]);
+    }
+
+    /**
+     * This is to help notify us of the status of CCDs we receive.
+     *
+     * @param User                            $user
+     * @param \App\Models\MedicalRecords\Ccda $ccda
+     * @param $status
+     * @param null       $line
+     * @param null       $errorMessage
+     * @param mixed|null $providerInfo
+     */
+    public function notifyAdmins(
+        User $user,
+        Ccda $ccda,
+        $providerInfo = null,
+        $status,
+        $line = null,
+        $errorMessage = null
+    ) {
+        $link = route('import.ccd.remix');
+
+        sendSlackMessage('#ccd-file-status', "Aprima sent a CCD. It went {$status}. \n Please visit {$link} to import.");
     }
 
     public function reports(Request $request)
@@ -310,7 +336,7 @@ class CcdApiController extends Controller
         }
 
         try {
-            $providerInput = \GuzzleHttp\json_decode($request->input('provider'), true);
+            $providerInput   = \GuzzleHttp\json_decode($request->input('provider'), true);
             $providerJsonStr = $request->input('provider');
         } catch (\Exception $e) {
             return response()->json(['error' => 'Invalid json in provider field.'], 400);
@@ -319,7 +345,7 @@ class CcdApiController extends Controller
         if (!empty($providerInput['firstName']) && !empty($providerInput['lastName'])) {
             //Check if the provider exists
             $provider = $this->users->findWhere([
-                'display_name' => $providerInput['firstName'] . ' ' . $providerInput['lastName'],
+                'display_name' => $providerInput['firstName'].' '.$providerInput['lastName'],
             ]);
         }
 
@@ -373,7 +399,7 @@ class CcdApiController extends Controller
                     $ccdObj,
                     $providerJsonStr,
                     'bad',
-                    __METHOD__ . ' ' . __LINE__,
+                    __METHOD__.' '.__LINE__,
                     $e->getMessage()
                 );
             }
@@ -386,28 +412,5 @@ class CcdApiController extends Controller
         }
 
         return response()->json(['message' => 'CCD uploaded successfully.'], 201);
-    }
-
-    /**
-     * This is to help notify us of the status of CCDs we receive.
-     *
-     *
-     * @param User $user
-     * @param \App\Models\MedicalRecords\Ccda $ccda
-     * @param $status
-     * @param null $line
-     * @param null $errorMessage
-     */
-    public function notifyAdmins(
-        User $user,
-        Ccda $ccda,
-        $providerInfo = null,
-        $status,
-        $line = null,
-        $errorMessage = null
-    ) {
-        $link = route('import.ccd.remix');
-
-        sendSlackMessage('#ccd-file-status', "Aprima sent a CCD. It went {$status}. \n Please visit {$link} to import.");
     }
 }

@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: RohanM
- * Date: 12/19/16
- * Time: 5:16 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Reports\Sales;
@@ -13,12 +11,11 @@ use Carbon\Carbon;
 
 abstract class SalesReport
 {
-
-    protected $start;
+    protected $data;
     protected $end;
     protected $for;
     protected $requestedSections;
-    protected $data;
+    protected $start;
 
     public function __construct(
         $for,
@@ -26,24 +23,19 @@ abstract class SalesReport
         Carbon $start,
         Carbon $end
     ) {
-        $this->for = $for;
-        $this->start = $start;
-        $this->end = $end;
+        $this->for               = $for;
+        $this->start             = $start;
+        $this->end               = $end;
         $this->requestedSections = $sections;
-    }
-
-    public function renderView($name)
-    {
-        $this->data();
-
-        return view($name, ['data' => $this->data]);
     }
 
     public function data()
     {
         foreach ($this->requestedSections as $key => $section) {
             $this->data[$section] = (new $section(
-                $this->for, $this->start, $this->end
+                $this->for,
+                $this->start,
+                $this->end
             ))->render();
         }
 
@@ -56,8 +48,15 @@ abstract class SalesReport
     ) {
         $this->data();
         $pdf = PDF::loadView($view, ['data' => $this->data]);
-        $pdf->save(storage_path("download/$name.pdf"), true);
+        $pdf->save(storage_path("download/${name}.pdf"), true);
 
-        return $name . '.pdf';
+        return $name.'.pdf';
+    }
+
+    public function renderView($name)
+    {
+        $this->data();
+
+        return view($name, ['data' => $this->data]);
     }
 }

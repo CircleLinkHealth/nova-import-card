@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 $supervisor = [
     'supervisor-1' => [
         'connection' => 'redis',
@@ -12,7 +16,6 @@ $supervisor = [
 ];
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Horizon Redis Connection

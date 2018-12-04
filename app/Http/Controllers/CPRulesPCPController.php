@@ -1,14 +1,47 @@
-<?php namespace App\Http\Controllers;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Http\Controllers;
 
 use App\CPRulesPCP;
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 
 class CPRulesPCPController extends Controller
 {
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Response
+     */
+    public function create()
+    {
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param int $id
+     *
+     * @return Response
+     */
+    public function destroy($id)
+    {
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param int $id
+     *
+     * @return Response
+     */
+    public function edit($id)
+    {
+    }
 
     /**
      * Display a listing of the resource.
@@ -17,7 +50,7 @@ class CPRulesPCPController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->header('Client') == 'ui') {
+        if ('ui' == $request->header('Client')) {
             $provId = Crypt::decrypt($request->header('provId'));
 
             $CPrulesPCP = (new CPRulesPCP())->getCPRulesPCPForProv($provId);
@@ -27,13 +60,14 @@ class CPRulesPCPController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display the specified resource.
+     *
+     * @param int $id
      *
      * @return Response
      */
-    public function create()
+    public function show($id)
     {
-        //
     }
 
     /**
@@ -43,50 +77,16 @@ class CPRulesPCPController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function edit($id)
-    {
-        //
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  int  $id
+     * @param int $id
+     *
      * @return Response
      */
     public function update($id)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 }
