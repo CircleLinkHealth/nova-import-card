@@ -123,7 +123,9 @@ class Handler extends ExceptionHandler
                         false
                     )
                 );
-                if ($this->shouldRecordOnly($e)) {app()->make('lern')->record($e);} else {
+                if ($this->shouldRecordOnly($e)) {
+                    app()->make('lern')->record($e);
+                } else {
                     app()->make('lern')->handle($e); //Record and Notify the Exception
                 }
 
