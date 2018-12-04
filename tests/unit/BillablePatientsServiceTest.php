@@ -12,7 +12,6 @@ use App\Repositories\PatientSummaryEloquentRepository;
 use App\Services\ApproveBillablePatientsService;
 use App\User;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Collection;
@@ -21,8 +20,7 @@ use Tests\TestCase;
 
 class BillablePatientsServiceTest extends TestCase
 {
-    use DatabaseTransactions,
-        UserHelpers,
+    use UserHelpers,
         WithoutMiddleware,
         WithFaker;
 
@@ -312,7 +310,7 @@ class BillablePatientsServiceTest extends TestCase
         $problem4 = $this->createProblem(false, 2);
         $problem5 = $this->createProblem(null, 9);
 
-        $summary = $this->repo->attachChargeableServices($this->patient, $this->summary);
+        $summary = $this->repo->attachChargeableServices($this->summary);
         $summary->save();
 
         //Run
@@ -353,7 +351,7 @@ class BillablePatientsServiceTest extends TestCase
         $problem2 = $this->createProblem(true, 2);
 
         //act
-        $summary = $this->repo->attachChargeableServices($this->patient, $this->summary);
+        $summary = $this->repo->attachChargeableServices($this->summary);
         $summary->save();
 
         //assert

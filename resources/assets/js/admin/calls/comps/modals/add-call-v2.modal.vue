@@ -3,7 +3,7 @@
         <template slot="title">
             <div class="row">
                 <div class="col-sm-6">
-                    Add New Action(s)
+                    Add New Call(s)
                 </div>
                 <div class="col-sm-6 text-right">
                     <button class="btn btn-warning btn-xs" @click="showUnscheduledPatients">
@@ -156,7 +156,7 @@
                 <br/>
                 <div class="row">
                     <div class="btn btn-primary btn-xs" @click="addNewAction">
-                        Add New Action
+                        Add New Call
                     </div>
                 </div>
 
@@ -533,6 +533,7 @@
                         patients.push(action.patients.find(patient => patient.id === call.patientId));
                         patientIds.push(call.patientId);
                         return {
+                            type: 'call',
                             inbound_cpm_id: call.patientId,
                             outbound_cpm_id: call.nurseId,
                             scheduled_date: call.date,

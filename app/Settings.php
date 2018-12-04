@@ -2,8 +2,6 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-
 /**
  * App\Settings
  *
@@ -12,7 +10,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $settingsable_type
  * @property string $careplan_mode
  * @property int $auto_approve_careplans
- * @property int $rn_can_approve_careplans
  * @property int $dm_pdf_careplan
  * @property int $dm_pdf_notes
  * @property int $dm_audit_reports
@@ -53,7 +50,6 @@ class Settings extends \App\BaseModel
     protected $fillable = [
         'careplan_mode',
         'auto_approve_careplans',
-        'rn_can_approve_careplans',
 
         //Direct Mail Notifications
         'dm_pdf_careplan',
@@ -73,6 +69,8 @@ class Settings extends \App\BaseModel
 
         'bill_to',
         'api_auto_pull',
+
+        'twilio_enabled'
     ];
 
     /**

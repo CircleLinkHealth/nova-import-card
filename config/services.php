@@ -24,10 +24,14 @@ return [
     ],
 
     'twilio' => [
-        'sid'                => env('TWILIO_SID'),
-        'token'              => env('TWILIO_TOKEN'),
-        'from'               => env('TWILIO_FROM'),
-        'enrollment-app-sid' => env('TWILIO_ENROLLMENT_TWIML_APP_SID'),
+        'sid'           => env('TWILIO_SID'),
+        'token'         => env('TWILIO_TOKEN'),
+        'from'          => env('TWILIO_FROM'),
+        'twiml-app-sid' => env('TWIML_APP_SID'),
+    ],
+
+    'authy' => [
+        'api_key' => env('AUTHY_API_KEY'),
     ],
 
     'ws' => [

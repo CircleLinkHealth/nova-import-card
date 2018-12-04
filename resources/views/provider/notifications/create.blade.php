@@ -20,51 +20,39 @@
         <div class="row">
             {!! Form::open(['url' => route('provider.dashboard.store.notifications', ['practiceSlug' => $practiceSlug]), 'method' => 'post', 'class' => 'col s12', 'id'=>'practice-settings-form']) !!}
 
-            <button type="submit"
-                    form="practice-settings-form"
-                    class="btn blue waves-effect waves-light col s4"
-                    onclick="Materialize.toast('{{$practice->display_name}} preferences was successfully updated.', 4000)">
-                Update Preferences
-            </button>
+            <div class="row">
+                <button type="submit"
+                        form="practice-settings-form"
+                        class="btn blue waves-effect waves-light col s4"
+                        onclick="Materialize.toast('{{$practice->display_name}} preferences was successfully updated.', 4000)">
+                    Update Preferences
+                </button>
+            </div>
 
             <div class="row">
-                <div class="input-field col s12"><h6>Settings</h6></div>
-
-                <div class="input-field col s6">
+                <div class="input-field col s12">
                     <input name="settings[auto_approve_careplans]" type="checkbox" id="auto_approve_careplans"
                            value="1" @if($practiceSettings->auto_approve_careplans){{'checked'}}@endif>
                     <label for="auto_approve_careplans">Auto Approve Care Plans</label>
                 </div>
 
-                <div class="input-field col s6">
-                    <input name="settings[rn_can_approve_careplans]" type="checkbox" id="rn_can_approve_careplans"
-                           value="1" @if($practiceSettings->rn_can_approve_careplans){{'checked'}}@endif>
-                    <label for="rn_can_approve_careplans">RNs Can Approve Care Plans</label>
-                </div>
-
                 @if($practice->external_id !== null)
-                <div class="input-field col s12">
-                    <input name="settings[api_auto_pull]" type="checkbox" id="api_auto_pull"
-                           value="1" @if($practiceSettings->api_auto_pull == 1){{'checked'}}@endif>
-                    <label for="api_auto_pull">Auto Pull Eligible Patients from Athena</label>
-                </div>
+                    <div class="input-field col s12">
+                        <input name="settings[api_auto_pull]" type="checkbox" id="api_auto_pull"
+                               value="1" @if($practiceSettings->api_auto_pull == 1){{'checked'}}@endif>
+                        <label for="api_auto_pull">Auto Pull Eligible Patients from Athena</label>
+                    </div>
                 @endif
+            </div>
 
-                <div class="input-field col s4" style="margin-top: 3rem;">
-                    {{ Form::select('settings[careplan_mode]', ['web'=>'Web','pdf'=>'PDF'], $practiceSettings->careplan_mode) }}
-                    <label>Starting CarePlan Mode</label>
-                </div>
+            <div class="row">
+                <div class="input-field col s12"><h6>Twilio</h6></div>
 
-                <div class="input-field col s4" style="margin-top: 3rem;">
-                    {{ Form::select('settings[bill_to]', ['practice'=>'Practice','provider'=>'Provider'], $practiceSettings->bill_to) }}
-                    <label>Bill to:</label>
-                </div>
-
-                <div class="input-field col s4" style="margin-top: 3rem;">
-                    <input type="number" name="settings[note_font_size]" id="note_font_size"
-                           value="{{$practiceSettings->note_font_size ?? config('snappy.pdf.options.zoom')}}" step="0.1"
-                           min="0.1" max="2.0">
-                    <label for="note_font_size">PDF Note Font Size</label>
+                <div class="input-field col s6">
+                    <input name="settings[twilio_enabled]" type="checkbox"
+                           id="twilio_enabled"
+                           value="1" @if($practiceSettings->twilio_enabled){{'checked'}}@endif>
+                    <label for="twilio_enabled">Use Twilio for Calls</label>
                 </div>
             </div>
 
@@ -156,15 +144,36 @@
                     <small>The emails above will receive weekly summary reports.</small>
                 </div>
             </div>
+
+            <div class="row">
+                <div class="input-field col s4" style="margin-top: 3rem;">
+                    {{ Form::select('settings[careplan_mode]', ['web'=>'Web','pdf'=>'PDF'], $practiceSettings->careplan_mode) }}
+                    <label>Starting CarePlan Mode</label>
+                </div>
+
+                <div class="input-field col s4" style="margin-top: 3rem;">
+                    {{ Form::select('settings[bill_to]', ['practice'=>'Practice','provider'=>'Provider'], $practiceSettings->bill_to) }}
+                    <label>Bill to:</label>
+                </div>
+
+                <div class="input-field col s4" style="margin-top: 3rem;">
+                    <input type="number" name="settings[note_font_size]" id="note_font_size"
+                           value="{{$practiceSettings->note_font_size ?? config('snappy.pdf.options.zoom')}}" step="0.1"
+                           min="0.1" max="2.0">
+                    <label for="note_font_size">PDF Note Font Size</label>
+                </div>
+            </div>
         </div>
 
 
-        <button type="submit"
-                form="practice-settings-form"
-                class="btn blue waves-effect waves-light col s4"
-                onclick="Materialize.toast('{{$practice->display_name}} preferences was successfully updated.', 4000)">
-            Update Preferences
-        </button>
+        <div class="row">
+            <button type="submit"
+                    form="practice-settings-form"
+                    class="btn blue waves-effect waves-light col s4"
+                    onclick="Materialize.toast('{{$practice->display_name}} preferences was successfully updated.', 4000)">
+                Update Preferences
+            </button>
+        </div>
 
         {!! Form::close() !!}
 

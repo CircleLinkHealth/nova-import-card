@@ -101,7 +101,7 @@ class EmailRNDailyReport extends Command
                 : null;
 
             $data = [
-                'name'                       => $nurse->fullName,
+                'name'                       => $nurse->getFullName(),
                 'performance'                => $performance,
                 'totalEarningsThisMonth'     => $totalEarningsThisMonth,
                 'totalTimeInSystemToday'     => $totalTimeInSystemToday,
@@ -118,7 +118,7 @@ class EmailRNDailyReport extends Command
             $nurse->notify(new NurseDailyReport($data));
 
             $emailsSent[] = [
-                'nurse' => $nurse->fullName,
+                'nurse' => $nurse->getFullName(),
                 'email' => $nurse->email,
             ];
 

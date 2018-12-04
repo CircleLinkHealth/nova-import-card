@@ -19,7 +19,6 @@ class CreateCpmSettingsTable extends Migration {
 			$table->string('settingsable_type');
 			$table->enum('careplan_mode', array('web','pdf'))->default('web');
 			$table->boolean('auto_approve_careplans')->default(0);
-			$table->boolean('rn_can_approve_careplans')->default(0);
 			$table->boolean('dm_pdf_careplan')->default(1);
 			$table->boolean('dm_pdf_notes')->default(1);
 			$table->boolean('dm_audit_reports');

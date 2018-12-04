@@ -4,16 +4,15 @@
 @section('activity', 'Care Plan View/Print')
 
 <?php
-    if (isset($patient)) {
-        $seconds = optional($patient->patientInfo)->cur_month_activity_time ?? 0;
-        $H = floor($seconds / 3600);
-        $i = ($seconds / 60) % 60;
-        $s = $seconds % 60;
-        $monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
-    }
-    else {
-        $monthlyTime = "";
-    }
+if (isset($patient)) {
+    $seconds     = $patient->getCcmTime();
+    $H           = floor($seconds / 3600);
+    $i           = ($seconds / 60) % 60;
+    $s           = $seconds % 60;
+    $monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
+} else {
+    $monthlyTime = "";
+}
 ?>
 
 <style>
@@ -23,7 +22,7 @@
         color: white;
     }
 
-    a.revert-btn:hover,a.revert-btn:focus {
+    a.revert-btn:hover, a.revert-btn:focus {
         color: white;
         background-color: #b61d18;
     }
@@ -46,29 +45,33 @@
                         @if (isset($disableTimeTracking) && $disableTimeTracking)
                             <div class="color-grey">
                                 <a href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patient' => $patient->id]) }}">
-                                    <server-time-display url="{{config('services.ws.server-url')}}" patient-id="{{$patient->id}}" provider-id="{{Auth::user()->id}}" value="{{$monthlyTime}}"></server-time-display>
+                                    <server-time-display url="{{config('services.ws.server-url')}}"
+                                                         patient-id="{{$patient->id}}"
+                                                         provider-id="{{Auth::user()->id}}"
+                                                         value="{{$monthlyTime}}"></server-time-display>
                                 </a>
                             </div>
                         @else
                             <?php
-                                $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
-                                $ccmCountableUser = auth()->user()->isCCMCountable();
-                             ?>
-                            <time-tracker ref="TimeTrackerApp" class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
-                                    :info="timeTrackerInfo" 
-                                    :no-live-count="{{($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? 1 : 0}}"
-                                    :override-timeout="{{config('services.time-tracker.override-timeout')}}"></time-tracker>
+                            $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
+                            $ccmCountableUser = auth()->user()->isCCMCountable();
+                            ?>
+                            <time-tracker ref="TimeTrackerApp"
+                                          class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
+                                          :info="timeTrackerInfo"
+                                          :no-live-count="{{($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? 1 : 0}}"
+                                          :override-timeout="{{config('services.time-tracker.override-timeout')}}"></time-tracker>
                         @endif
                     </span>
                 </span>
             </div>
         </div>
-        
+
         <pdf-careplans mode="pdf">
             <template slot="buttons">
                 @if(auth()->user()->hasRole(['administrator', 'provider', 'office_admin', 'med_assistant', 'registered-nurse']) && $patient->carePlan && $patient->carePlan->mode == App\CarePlan::PDF)
                     <a href="{{route('switch.to.web.careplan', ['carePlanId' => $patient->carePlan ? $patient->carePlan->id : 0])}}"
-                            class="btn revert-btn inline-block">REVERT TO EDITABLE CAREPLAN FROM CCD/PATIENT DATA</a>
+                       class="btn revert-btn inline-block">REVERT TO EDITABLE CAREPLAN FROM CCD/PATIENT DATA</a>
                 @endif
             </template>
         </pdf-careplans>

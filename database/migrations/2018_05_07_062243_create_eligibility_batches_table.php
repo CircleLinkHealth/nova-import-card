@@ -18,9 +18,9 @@ class CreateEligibilityBatchesTable extends Migration {
 			$table->integer('initiator_id')->unsigned()->nullable()->index('eligibility_batches_initiator_id_foreign');
 			$table->integer('practice_id')->unsigned()->nullable()->index('eligibility_batches_practice_id_foreign');
 			$table->string('type');
-			$table->integer('status');
-			$table->text('options');
-			$table->text('stats');
+            $table->integer('status')->nullable();
+            $table->text('options')->nullable();
+            $table->text('stats')->nullable();
 			$table->timestamps();
 			$table->softDeletes();
 		});

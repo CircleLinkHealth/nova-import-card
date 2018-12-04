@@ -10,7 +10,7 @@
                                     <div class="col-xs-12 address"><strong>On Behalf of</strong></div>
                                     <div class="col-xs-7 address">
                                         <div>
-                                            {{optional($patient->billingProviderUser())->fullName ?? ''}}
+                                            {{optional($patient->billingProviderUser())->getFullName() ?? ''}}
                                         </div>
                                         <div>
                                             {{$patient->primaryPractice->display_name}}
@@ -37,7 +37,7 @@
                                 <div class="row">
                                     <div class="col-xs-8">
                                         <div class="row">
-                                            <div class="col-xs-12 address">{{strtoupper($patient->fullName)}}</div>
+                                            <div class="col-xs-12 address">{{strtoupper($patient->getFullName())}}</div>
                                             <div class="col-xs-12 address">{{strtoupper($patient->address)}}</div>
                                             <div class="col-xs-12 address"> {{strtoupper($patient->city)}}
                                                 , {{strtoupper($patient->state)}} {{strtoupper($patient->zip)}}</div>
@@ -57,17 +57,17 @@
                 <div class="row gutter">
                     <div class="col-xs-10 welcome-copy">
                         <div class="row gutter">
-                            Dear {{$patient->fullName}},
+                            Dear {{$patient->getFullName()}},
                         </div>
                         <div class="row gutter">
                         </div>
                         <div class="row gutter row">
-                            Welcome to Dr. {{optional($patient->billingProviderUser())->fullName}}'s Personalized Care
+                            Welcome to Dr. {{optional($patient->billingProviderUser())->getFullName()}}'s Personalized Care
                             Management program!
                         </div>
                         <br>
                         <div class="row gutter">
-                            As Dr. {{optional($patient->billingProviderUser())->last_name}} may have mentioned regarding
+                            As Dr. {{optional($patient->billingProviderUser())->getLastName()}} may have mentioned regarding
                             this
                             invite-only
                             program, personalized
@@ -84,7 +84,7 @@
                                 </li>
                                 <li style="list-style-type: disc;margin: 15px 0;">
                                     Connection with your provider through updates shared with
-                                    Dr. {{optional($patient->billingProviderUser())->last_name}}.
+                                    Dr. {{optional($patient->billingProviderUser())->getLastName()}}.
                                 </li>
                                 <li style="list-style-type: disc;margin: 15px 0;">
                                     Access to your care team from the comfort of your home, to help avoid frequent
@@ -93,7 +93,7 @@
                             </ul>
                         </div>
                         <div class="row gutter">
-                            Since we have been unable to reach you at {{$patient->primary_phone}}, and this program
+                            Since we have been unable to reach you at {{$patient->getPrimaryPhone()}}, and this program
                             requires our
                             care
                             coaches to call periodically, can you please call us

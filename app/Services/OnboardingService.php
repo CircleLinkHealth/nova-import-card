@@ -14,6 +14,7 @@ use App\Contracts\Repositories\LocationRepository;
 use App\Contracts\Repositories\PracticeRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\Facades\StringManipulation;
+use App\Location;
 use App\PhoneNumber;
 use App\Practice;
 use App\ProviderInfo;
@@ -80,7 +81,7 @@ class OnboardingService
             'specialist',
         ];
 
-//        if (auth()->user()->hasRole('administrator')) {
+//        if (auth()->user()->isAdmin()) {
 //            $relevantRoles[] = 'administrator';
 //        }
 
@@ -94,9 +95,9 @@ class OnboardingService
                              ->sortBy('first_name')
                              ->values();
 
-        if ( ! auth()->user()->hasRole('administrator')) {
+        if ( ! auth()->user()->isAdmin()) {
             $practiceUsers->reject(function ($user) {
-                return $user->hasRole('administrator');
+                return $user->isAdmin();
             })
                           ->values();
         }
@@ -315,6 +316,11 @@ class OnboardingService
                     'messages' => $e->getMessageBag()->getMessages(),
                     'input'    => $newLocation,
                 ];
+            }
+
+            if (Location::where('practice_id', $primaryPractice->id)->count() == 1) {
+                $location->is_primary = 1;
+                $location->save();
             }
 
             $location->emr_direct_address           = $newLocation['emr_direct_address'];

@@ -24,7 +24,7 @@ class PracticeDemographics extends SalesReportSection
     public function render()
     {
 
-        $lead = $this->practice->lead->fullName ?? 'N/A';
+        $lead = optional($this->practice->lead)->getFullName() ?? 'N/A';
         $providers = $this->practice->getCountOfUserTypeAtPractice('provider');
         $mas = $this->practice->getCountOfUserTypeAtPractice('med_assistant');
         $oa = $this->practice->getCountOfUserTypeAtPractice('office_admin');

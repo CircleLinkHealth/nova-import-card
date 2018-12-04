@@ -12,8 +12,11 @@ use App\Http\Requests\UpdatePracticeSettingsAndNotifications;
 use App\Http\Resources\SAAS\PracticeChargeableServices;
 use App\Location;
 use App\Practice;
+use App\PracticeEnrollmentTips;
+use App\SafeRequest;
 use App\Services\OnboardingService;
 use App\Settings;
+use App\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -102,16 +105,16 @@ class DashboardController extends Controller
 
                                                       if ($existing) {
                                                           $service->amount = $existing->pivot->amount;
-                                                          $service->is_on = true;
+                                                          $service->is_on  = true;
                                                       }
 
                                                       return $service;
                                                   });
 
         return view('provider.chargableServices.create', array_merge([
-            'practice'          => $this->primaryPractice,
-            'practiceSlug'      => $this->practiceSlug,
-            'practiceSettings'  => $this->primaryPractice->cpmSettings(),
+            'practice'           => $this->primaryPractice,
+            'practiceSlug'       => $this->practiceSlug,
+            'practiceSettings'   => $this->primaryPractice->cpmSettings(),
             'chargeableServices' => PracticeChargeableServices::collection($allChargeableServices),
         ], $this->returnWithAll));
     }
@@ -127,6 +130,16 @@ class DashboardController extends Controller
         $practiceSlug = $this->practiceSlug;
 
         return view('provider.user.create-staff', compact('invite', 'practiceSlug', 'practice'));
+    }
+
+    public function getCreateEnrollment()
+    {
+        return view('provider.enrollment.create', array_merge([
+            'practice'         => $this->primaryPractice,
+            'practiceSlug'     => $this->practiceSlug,
+            'practiceSettings' => $this->primaryPractice->cpmSettings(),
+            'tips'             => optional($this->primaryPractice->enrollmentTips)->content,
+        ], $this->returnWithAll));
     }
 
     public function getIndex()
@@ -208,7 +221,7 @@ class DashboardController extends Controller
             }
         }
 
-        if (!isset($settingsInput['api_auto_pull'])) {
+        if ( ! isset($settingsInput['api_auto_pull'])) {
             $settingsInput['api_auto_pull'] = 0;
         }
 
@@ -238,7 +251,7 @@ class DashboardController extends Controller
         foreach ($services as $id => $service) {
             if (array_key_exists('is_on', $service)) {
                 $sync[$id] = [
-                    'amount' => $service['amount']
+                    'amount' => $service['amount'],
                 ];
             }
         }
@@ -269,13 +282,73 @@ class DashboardController extends Controller
             $update['user_id'] = $request->input('lead_id');
         }
 
+        if (auth()->user()->isAdmin()) {
+            $update['bill_to_name'] = $request->input('bill_to_name');
+            $update['clh_pppm']     = $request->input('clh_pppm');
+            $update['term_days']    = $request->input('term_days');
+            $update['active']       = $request->input('is_active');
+
+            if ( ! ! $this->primaryPractice->active && ! ! ! $update['active']) {
+                $enrolledPatientsExist = User::ofPractice($this->primaryPractice->id)
+                                             ->ofType('participant')
+                                             ->whereHas('patientInfo', function ($q) {
+                                                 $q->enrolled();
+                                             })
+                                             ->exists();
+
+                if ($enrolledPatientsExist) {
+                    return redirect()
+                        ->back()
+                        ->withErrors([
+                            'is_active' => "The practice cannot be deactivated because it has enrolled patients.",
+                        ]);
+                }
+            }
+        }
+
         $this->primaryPractice->update($update);
 
-        Location::whereId($request['primary_location'])
-            ->update([
-                'is_primary' => true
-            ]);
+        if ($request->has('primary_location')) {
+            Location::whereId($request['primary_location'])
+                    ->update([
+                        'is_primary' => true,
+                    ]);
+        }
 
-        return redirect()->back();
+        return redirect()
+            ->back()
+            ->with('message', "The practice has been updated successfully.");
+    }
+
+    public function postStoreEnrollment(SafeRequest $request)
+    {
+        //Summernote is vulnerable to XSS, so we remove entirely the special chars
+        //Laravel already sanitizes suspicious characters and can result to something like this:
+        //<p>all good</p>&lt;script&rt;alert('hi')&lt;script&gt;
+        //Also, Laravel does not handle this: <a href="javascript:alert('hi')">Click me. I am safe!</a>
+        $detail = $request->input('tips');
+        $detail = $this->removeEncodedSpecialChars($detail);
+        $detail = $this->removeSuspiciousJsCode($detail);
+        PracticeEnrollmentTips::updateOrCreate([ 'practice_id' => $this->primaryPractice->id ],[ 'content' => $detail ]);
+
+        return redirect()
+            ->back()
+            ->with('message', "Enrollment tips were saved successfully.");
+    }
+
+    private function removeEncodedSpecialChars($str) {
+        /**
+        & (ampersand) becomes &amp;
+        " (double quote) becomes &quot;
+        ' (single quote) becomes &#039;
+        < (less than) becomes &lt;
+        > (greater than) becomes &gt;
+         */
+        $pattern = ['/&amp;/', '/&quot;/', '/&#039;/', '/&lt;/', '/&gt;/'];
+        return preg_replace($pattern, '', $str);
+    }
+
+    private function removeSuspiciousJsCode($str) {
+        return preg_replace('/javascript:/', '', $str);
     }
 }

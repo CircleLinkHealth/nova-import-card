@@ -3,7 +3,6 @@
 namespace Tests\AprimaApi;
 
 use App\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Tests\TestCase;
 
@@ -15,8 +14,7 @@ use Tests\TestCase;
  */
 class UploadCcdTest extends TestCase
 {
-    use DatabaseTransactions,
-        WithoutMiddleware;
+    use WithoutMiddleware;
 
     public function test_no_credentials_error()
     {

@@ -182,12 +182,10 @@
                                     <div class="new-note-item">
                                         <div class="form-group">
                                             <div class="col-sm-12">
-                                                <label>
+                                                <label id="phone-label">
                                                     <div>
                                                         <input type="checkbox"
-                                                               name="meta[0][meta_key]"
-                                                               id="phone"
-                                                               value="phone"/>
+                                                               id="phone"/>
                                                         <label for="phone">
                                                             <span> </span>Patient Phone Session
                                                         </label>
@@ -195,7 +193,40 @@
                                                 </label>
                                             </div>
                                             <div class="col-sm-12">
-                                                <div class="panel-group" id="accordion">
+                                                <label id="task-label" style="display: none;">
+                                                    <div>
+                                                        <input type="checkbox"
+                                                               id="task"/>
+                                                        <label for="task">
+                                                            <span> </span>Associate with Task
+                                                        </label>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                            @if(!empty($tasks))
+                                                <div class="col-sm-12" id="tasks-container" style="display: none;">
+                                                    <div class="multi-input-wrapper"
+                                                         style="padding-bottom: 3px">
+                                                        @foreach($tasks as $task)
+                                                            <div class="radio">
+                                                                <input type="radio"
+                                                                       class="tasks-radio"
+                                                                       name="task_id"
+                                                                       value="{{$task->id}}"
+                                                                       id="{{$task->id}}"/>
+                                                                <label for="{{$task->id}}">
+                                                                    <span> </span>{{$task->sub_type}}
+                                                                    ; {{!empty($task->attempt_note) ? $task->attempt_note . ',' : ''}}
+                                                                    due {{$task->window_end}}
+                                                                    on {{$task->scheduled_date}}
+                                                                </label>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                            @endif
+                                            <div class="col-sm-12">
+                                                <div class="panel-group" id="accordion" style="margin-bottom: 2px">
                                                     <div id="collapseOne" class="panel-collapse collapse in"
                                                          style="display: none;">
                                                         <div class="multi-input-wrapper">
@@ -212,93 +243,90 @@
                                                                         for="Outbound"><span> </span>Outbound</label>
                                                             </div>
                                                         </div>
-
-
-                                                        @if(auth()->user()->isCCMCountable())
-                                                            <div class="multi-input-wrapper"
-                                                                 style="padding-bottom: 3px">
-                                                                <div class="radio">
-                                                                    <input type="radio"
-                                                                           name="call_status"
-                                                                           value="not reached"
-                                                                           id="not-reached"/>
-                                                                    <label for="not-reached">
-                                                                        <span> </span>Patient Not Reached
-                                                                    </label>
-                                                                </div>
-                                                                <div class="radio">
-                                                                    <input type="radio"
-                                                                           name="call_status"
-                                                                           value="reached"
-                                                                           id="reached"/>
-                                                                    <label for="reached">
-                                                                        <span> </span>Successful Clinical Call
-                                                                    </label>
-                                                                </div>
-                                                                <!-- CPM-165 Ability for RN to mark unsuccessful call but NOT count towards an attempt -->
-                                                                <div class="radio">
-                                                                    <input type="radio"
-                                                                           name="call_status"
-                                                                           value="ignored"
-                                                                           id="ignored"/>
-                                                                    <label for="ignored">
-                                                                        <span> </span>Patient Busy - Rescheduled Call
-                                                                    </label>
-                                                                </div>
-                                                            </div>
-                                                        @else
-
-                                                            <div class="multi-input-wrapper"
-                                                                 style="padding-bottom: 3px">
-                                                                <div>
-                                                                    <div class="radio">
-                                                                        <input type="checkbox"
-                                                                               name="welcome_call"
-                                                                               value="welcome_call"
-                                                                               id="welcome_call"/>
-                                                                        <label for="welcome_call">
-                                                                            <span> </span>Successful
-                                                                            Welcome Call
-                                                                        </label>
-                                                                    </div>
-                                                                </div>
-                                                                <div>
-                                                                    <div class="radio">
-                                                                        <input type="checkbox"
-                                                                               name="other_call"
-                                                                               value="other_call"
-                                                                               id="other_call"/>
-                                                                        <label for="other_call">
-                                                                            <span> </span>Successful
-                                                                            Other
-                                                                            Patient Call
-                                                                        </label>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-
-                                                        @endif
-                                                        <div class="multi-input-wrapper" style="padding-top: 3px">
-                                                            <div><input type="checkbox"
-                                                                        name="medication_recon"
-                                                                        value="true"
-                                                                        id="medication_recon"/>
-                                                                <label for="medication_recon">
-                                                                    <span> </span>Medication Reconciliation
-                                                                </label>
-                                                            </div>
-                                                            <input type="hidden" name="tcm" value="hospital">
-                                                            <div><input type="checkbox"
-                                                                        name="tcm"
-                                                                        value="true"
-                                                                        id="tcm"/>
-                                                                <label for="tcm">
-                                                                    <span> </span>Patient in Hospital/ER (now or
-                                                                    recently)
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                @if(auth()->user()->isCCMCountable())
+                                                    <div class="call-status-radios multi-input-wrapper"
+                                                         style="padding-bottom: 3px; display: none">
+                                                        <div class="radio">
+                                                            <input type="radio"
+                                                                   name="call_status"
+                                                                   value="not reached"
+                                                                   id="not-reached"/>
+                                                            <label for="not-reached">
+                                                                <span> </span>Patient Not Reached
+                                                            </label>
+                                                        </div>
+                                                        <div class="radio">
+                                                            <input type="radio"
+                                                                   name="call_status"
+                                                                   value="reached"
+                                                                   id="reached"/>
+                                                            <label for="reached">
+                                                                <span> </span>Successful Clinical Call
+                                                            </label>
+                                                        </div>
+                                                        <!-- CPM-165 Ability for RN to mark unsuccessful call but NOT count towards an attempt -->
+                                                        <div class="radio">
+                                                            <input type="radio"
+                                                                   name="call_status"
+                                                                   value="ignored"
+                                                                   id="ignored"/>
+                                                            <label for="ignored">
+                                                                <span> </span>Patient Busy - Rescheduled Call
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                @else
+                                                    <div class="call-status-radios multi-input-wrapper"
+                                                         style="padding-bottom: 3px; display: none">
+                                                        <div>
+                                                            <div class="radio">
+                                                                <input type="checkbox"
+                                                                       name="welcome_call"
+                                                                       value="welcome_call"
+                                                                       id="welcome_call"/>
+                                                                <label for="welcome_call">
+                                                                    <span> </span>Successful
+                                                                    Welcome Call
                                                                 </label>
                                                             </div>
                                                         </div>
-
+                                                        <div>
+                                                            <div class="radio">
+                                                                <input type="checkbox"
+                                                                       name="other_call"
+                                                                       value="other_call"
+                                                                       id="other_call"/>
+                                                                <label for="other_call">
+                                                                    <span> </span>Successful
+                                                                    Other
+                                                                    Patient Call
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                                <div class="other-radios multi-input-wrapper" style="padding-top: 3px; display: none">
+                                                    <div><input type="checkbox"
+                                                                name="medication_recon"
+                                                                value="true"
+                                                                id="medication_recon"/>
+                                                        <label for="medication_recon">
+                                                            <span> </span>Medication Reconciliation
+                                                        </label>
+                                                    </div>
+                                                    <input type="hidden" name="tcm" value="hospital">
+                                                    <div><input type="checkbox"
+                                                                name="tcm"
+                                                                value="true"
+                                                                id="tcm"/>
+                                                        <label for="tcm">
+                                                            <span> </span>Patient in Hospital/ER (now or
+                                                            recently)
+                                                        </label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -338,6 +366,7 @@
                                         <input type="hidden" name="logger_id" value="{{Auth::user()->id}}">
                                         <input type="hidden" name="author_id" value="{{Auth::user()->id}}">
                                         <input type="hidden" name="programId" id="programId" value="{{$program_id}}">
+                                        <input type="hidden" name="task_status" id="task_status" value="">
                                     </div>
 
                                     <!-- Submit -->
@@ -375,8 +404,6 @@
                         "Successful Clinical Call"?
                         <i class="far fa-smile"></i>
                     </p>
-
-
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" data-dismiss="modal">Yes</button>
@@ -386,6 +413,25 @@
         </div>
     </div>
 
+    <div class="modal fade" id="confirm-task-completed" tabindex="-1" role="dialog"
+         aria-labelledby="confirm-task-completed-label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="confirm-note-create-label">Task Completed?</h3>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Is this task completed?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button id="confirm-task-completed-submit" type="button" class="btn btn-success">Yes</button>
+                    <button id="confirm-task-not-completed-submit" type="button" class="btn btn-grey">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div>
         <br/>
@@ -395,10 +441,49 @@
         <script>
 
             const userIsCCMCountable = @json(auth()->user()->isCCMCountable());
+            const taskTypeToTopicMap = @json($task_types_to_topics);
+            const noteTypesMap = @json($note_types);
+            const patientNurseTasks = @json($tasks);
+            const medications = @json($medications);
 
+            const MEDICATIONS_SEPARATOR = '------------------------------';
+
+            //flag to check whether form was submitted already
+            //CPM-91 and CPM-437 double submitting notes
+            let submitted = false;
             let form;
 
+            const waitForEl = function (selector, callback) {
+                if (!$(selector).length) {
+                    setTimeout(function () {
+                        window.requestAnimationFrame(function () {
+                            waitForEl(selector, callback)
+                        });
+                    }, 100);
+                } else {
+                    callback();
+                }
+            };
+
             $(document).ready(function () {
+
+                if (medications && medications.length) {
+                    waitForEl('#note', () => {
+                        const noteBody = $('#note');
+                        if (noteBody.val().length === 0) {
+                            const medDescriptions = [];
+                            for (let i = 0; i < medications.length; i++) {
+                                const med = medications[i];
+                                const desc = `-${med.name}\n\t${med.sig}`;
+                                medDescriptions.push(desc);
+                            }
+
+                            noteBody.val(`\n\n${MEDICATIONS_SEPARATOR}\n${medDescriptions.join('\n')}`);
+                            const event = new Event('change');
+                            document.getElementById('note').dispatchEvent(event);
+                        }
+                    });
+                }
 
                 //CPM-182: Show a confirmation box if user spend time creating the note
                 //but did not register a phone session
@@ -407,12 +492,20 @@
                 function phoneSessionChange(e) {
                     if (e) {
                         if (e.currentTarget.checked) {
+                            $('#task-label').hide();
                             $('#collapseOne').show();
+                            $('.call-status-radios').show();
+                            $('.other-radios').show();
                             $("#Inbound").prop("checked", false);
                             $("#Outbound").prop("checked", true);
                         }
                         else {
+                            if (patientNurseTasks.length) {
+                                $('#task-label').show();
+                            }
                             $('#collapseOne').hide();
+                            $('.call-status-radios').hide();
+                            $('.other-radios').hide();
                             $("#Inbound").prop("checked", false);
                             $("#Outbound").prop("checked", false);
                         }
@@ -423,6 +516,8 @@
                     }
                     else {
                         $('#collapseOne').toggle();
+                        $('.call-status-radios').toggle();
+                        $('.other-radios').toggle();
                     }
                     //bug fix - this set value to phone="Outbound" in the form without
                     //the user knowing
@@ -438,6 +533,96 @@
                     }
                 });
 
+                function associateWithTaskChange(e) {
+                    if (!e) {
+                        return;
+                    }
+                    if (e.currentTarget.checked) {
+
+                        $('#phone-label').hide();
+                        const selectList = $('#activityKey');
+                        selectList.empty();
+                        const defaultOption = new Option('Select Topic', "");
+                        defaultOption.innerHTML = "Select Topic";
+                        selectList.append(defaultOption);
+                        for (let i in taskTypeToTopicMap) {
+                            if (!taskTypeToTopicMap.hasOwnProperty(i)) {
+                                continue;
+                            }
+                            const o = new Option(taskTypeToTopicMap[i], taskTypeToTopicMap[i]);
+                            o.innerHTML = taskTypeToTopicMap[i];
+                            selectList.append(o);
+                        }
+
+                        //hide radios. will be decided what to show when a task is clicked
+                        $('.call-status-radios').hide();
+                        $('.other-radios').hide();
+
+                        //if there is a task selected, select it as note topic
+                        if ($('.tasks-radio').prop('checked')) {
+                            $('.tasks-radio').change();
+                        }
+
+                        selectList.prop("disabled", true);
+                        $('#tasks-container').show();
+
+                        //if only one task, just select it
+                        if (patientNurseTasks.length === 1) {
+                            $('.tasks-radio').prop('checked', true);
+                            $('.tasks-radio').change();
+                        }
+                    }
+                    else {
+
+                        $('.tasks-radio').prop('checked', false);
+                        $('#phone-label').show();
+                        const selectList = $('#activityKey');
+                        selectList.empty();
+                        const defaultOption = new Option('Select Topic', "");
+                        defaultOption.innerHTML = "Select Topic";
+                        selectList.append(defaultOption);
+                        for (let i in noteTypesMap) {
+                            if (!noteTypesMap.hasOwnProperty(i)) {
+                                continue;
+                            }
+                            const o = new Option(noteTypesMap[i], i);
+                            o.innerHTML = noteTypesMap[i];
+                            selectList.append(o);
+                        }
+
+                        selectList.prop("disabled", false);
+                        $('#tasks-container').hide();
+                    }
+                }
+
+                if (!patientNurseTasks.length) {
+                    $('#task-label').hide();
+                }
+                else {
+                    $('#task-label').show();
+                    $('#task').change(associateWithTaskChange);
+                }
+
+                function onTaskSelected(e) {
+                    //get id of task
+                    const task = patientNurseTasks.find(x => x.id === +e.currentTarget.value);
+                    if (!task) {
+                        return;
+                    }
+
+                    if (task.sub_type === 'Call Back') {
+                        $('.call-status-radios').show();
+                    }
+                    else {
+                        $('.call-status-radios').hide();
+                    }
+
+                    const selectList = $('#activityKey');
+                    selectList.val(taskTypeToTopicMap[task.sub_type]);
+                }
+
+                $('.tasks-radio').change(onTaskSelected);
+
                 function tcmChange(e) {
                     if (e) {
                         if (e.currentTarget.checked) {
@@ -445,7 +630,7 @@
                             $('#notify-careteam').prop("disabled", true);
 
                             @empty($notifies_text)
-                            $('#who-is-notified').text("{{optional($patient->billingProviderUser())->fullName}}");
+                            $('#who-is-notified').text("{{optional($patient->billingProviderUser())->getFullName()}}");
                             @endempty
                         }
                         else {
@@ -472,20 +657,37 @@
                     e.preventDefault();
                     form = this;
 
-                    let callHasStatus;
+                    const isAssociatedWithTask = $('#task').is(':checked');
+                    const callHasTask = $('.tasks-radio').is(':checked');
+
+                    const isPhoneSession = $('#phone').is(':checked');
+                    let callIsSuccess = false;
+                    let callHasStatus = false;
                     if (userIsCCMCountable) {
                         //radio buttons
-                        callHasStatus = form['call_status'] && form['call_status'].value && form['call_status'].value.length;
+                        callHasStatus = typeof form['call_status'] !== "undefined" && typeof form['call_status'].value !== "undefined" && form['call_status'].value.length > 0;
+                        callIsSuccess = typeof form['call_status'] !== "undefined" && typeof form['call_status'].value !== "undefined" && form['call_status'].value === "reached";
                     }
                     else {
                         //checkbox
-                        callHasStatus = form['welcome_call'].checked || form['other_call'].checked;
+                        callIsSuccess = form['welcome_call'].checked || form['other_call'].checked;
                     }
 
-                    const isPhoneSession = $('#phone').is(':checked');
+                    if (!callHasStatus) {
+                        const isCallBackTask = $('#activityKey').val() === "Call Back";
+                        if ((userIsCCMCountable && isPhoneSession) || (isAssociatedWithTask && isCallBackTask)) {
+                            alert('Please select whether patient was reached or not.');
+                            return;
+                        }
+                    }
 
-                    if (userIsCCMCountable && isPhoneSession && !callHasStatus) {
-                        alert('Please select whether patient was reached or not.');
+                    if (isAssociatedWithTask && !callHasTask) {
+                        alert('Please select a task to associate to.');
+                        return;
+                    }
+
+                    if (isAssociatedWithTask) {
+                        showTaskCompletedModal();
                         return;
                     }
 
@@ -493,13 +695,18 @@
                     const CHARACTERS_THRESHOLD = 100;
                     let showModal = false;
                     const noteBody = form['body'].value;
-                    //CPM-182 - show modal if time spend on this form is more than 90 seconds
-                    if ((Date.now() - startDate) >= SECONDS_THRESHOLD && noteBody.length > CHARACTERS_THRESHOLD) {
+                    const noteBodyWithoutMeds = noteBody.substring(0, noteBody.indexOf(MEDICATIONS_SEPARATOR)).trim();
 
-                        if (!isPhoneSession || (isPhoneSession && !callHasStatus)) {
+                    //CPM-182:
+                    // if time more than 90 seconds
+                    // and (is not phone session, or phone session but not success)
+
+                    if ((Date.now() - startDate) >= SECONDS_THRESHOLD || noteBodyWithoutMeds.length > CHARACTERS_THRESHOLD) {
+
+                        if (!isPhoneSession || !callIsSuccess) {
                             showModal = true;
                         }
-                        
+
                     }
 
                     if (showModal) {
@@ -514,15 +721,41 @@
                     confirmSubmitForm();
                 });
 
+                $(document).on("click", "#confirm-task-completed-submit", function (event) {
+                    $('#task_status').val("done");
+                    confirmSubmitForm();
+                });
+
+                $(document).on("click", "#confirm-task-not-completed-submit", function (event) {
+                    $('#task_status').val("not_done");
+                    confirmSubmitForm();
+                });
+
                 function confirmSubmitForm() {
+
+                    //CPM-91 and CPM-437 double submitting notes
+                    if (submitted) {
+                        return;
+                    }
+
+                    submitted = true;
+
                     //what is this?
                     $.get('/api/test').always(function (response) {
                         if (response.status == 200 || response.message == 'clh') {
                             var key = 'notes:{{$patient->id}}:add'
                             window.sessionStorage.removeItem(key)
                         }
+                        //when we associate a note with task, we disable the note topic
+                        //we have to enable it back before posting to server,
+                        //otherwise its value will not reach the server
+                        $('#activityKey').prop("disabled", false);
                         form.submit();
                     });
+                }
+
+                function showTaskCompletedModal() {
+                    $('#confirm-task-completed').modal('show');
                 }
             });
 

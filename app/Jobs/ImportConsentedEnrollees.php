@@ -9,6 +9,7 @@ use App\Models\MedicalRecords\Ccda;
 use App\Services\AthenaAPI\Calls;
 use App\Services\CCD\ProcessEligibilityService;
 use App\Services\MedicalRecords\ImportService;
+use App\ValueObjects\BlueButtonMedicalRecord\MedicalRecord;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -127,6 +128,8 @@ class ImportConsentedEnrollees implements ShouldQueue
 
             \Cache::put("batch:{$this->batch->id}:last_consented_enrollee_import", $imported->toJson(), 14400);
         }
+
+        return $imported;
     }
 
     private function importTargetPatient(Enrollee $enrollee)
@@ -168,6 +171,9 @@ class ImportConsentedEnrollees implements ShouldQueue
 
     private function eligibilityJob(Enrollee $enrollee)
     {
+        if ($enrollee->eligibilityJob) {
+            return $enrollee->eligibilityJob;
+        }
         $hash = $enrollee->practice->name . $enrollee->first_name . $enrollee->last_name . $enrollee->mrn . $enrollee->city . $enrollee->state . $enrollee->zip;
 
         return EligibilityJob::whereHash($hash)->first();
@@ -176,6 +182,38 @@ class ImportConsentedEnrollees implements ShouldQueue
     private function importFromEligibilityJob(Enrollee $enrollee, EligibilityJob $job)
     {
         $service = app(ImportService::class);
+
+        // Just another hack
+        // To import CLH JSON format
+        // @todo: Need to consolidate functionality from [Enrollees, EligibilityJobs, CCDAs, TabularMedicalRecords, _logs, _imports, phx tables]
+        if ($job->batch->type == EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE) {
+            $mr = new MedicalRecord($job, $enrollee->practice);
+
+            $provider = $job->data['preferred_provider'];
+
+            $exists = Ccda::where('referring_provider_name', $provider)
+                          ->where('practice_id', $enrollee->practice->id)
+                          ->whereNotNull('billing_provider_id')
+                          ->whereNotNull('location_id')
+                          ->first();
+
+            $mr = Ccda::create([
+                'practice_id'             => $enrollee->practice->id,
+                'location_id'             => optional($exists)->location_id ?? $enrollee->practice->primary_location_id,
+                'billing_provider_id'     => optional($exists)->billing_provider_id ?? null,
+                'mrn'                     => $job->data['patient_id'],
+                'json'                    => $mr->toJson(),
+                'referring_provider_name' => $provider,
+            ]);
+
+            $imr = $mr->import();
+
+            $enrollee->medical_record_id   = $mr->id;
+            $enrollee->medical_record_type = Ccda::class;
+            $enrollee->save();
+
+            return $imr;
+        }
 
         $imr = $service->createTabularMedicalRecordAndImport($job->data, $enrollee->practice);
 

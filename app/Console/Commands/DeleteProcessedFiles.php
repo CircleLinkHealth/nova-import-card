@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\ProcessedFiles;
+use App\ProcessedFile;
 use Illuminate\Console\Command;
 
 class DeleteProcessedFiles extends Command
@@ -40,7 +40,7 @@ class DeleteProcessedFiles extends Command
     {
         $ccdaPath = config('services.ccda.dropbox-path');
 
-        foreach (ProcessedFiles::get() as $file) {
+        foreach (ProcessedFile::get() as $file) {
             $path = str_replace($ccdaPath, '', $file->path);
 
             if (\Storage::disk('ccdas')->exists($path)) {

@@ -7,7 +7,7 @@ jobs:
   build:
     docker:
     # Specify the version you desire here
-    - image: circleci/php:7.1-jessie-node-browsers
+    - image: circleci/php:7.2-fpm-node-browsers-legacy
 
     # Specify service dependencies here if necessary
     # CircleCI maintains a library of pre-built images
@@ -22,7 +22,7 @@ jobs:
     - checkout
 
     - run: sudo apt update && sudo apt install zlib1g-dev libsqlite3-dev libpng-dev
-    - run: sudo docker-php-ext-install zip gd
+    - run: sudo docker-php-ext-install zip pcntl
 
     # Download and cache dependencies
 
@@ -63,7 +63,7 @@ jobs:
     #    - run: ./vendor/bin/phpunit --testsuite=Unit
     #- run: ./vendor/bin/codecept build
     #        - run: ./vendor/bin/codecept run --xml result.xml
-    - run: composer test
+    - run: composer test-sqlite
 #    - store_test_results:
 #        path: tests/_output
 #    - store_artifacts:

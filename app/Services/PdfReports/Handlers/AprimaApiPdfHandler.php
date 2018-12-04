@@ -28,7 +28,7 @@ class AprimaApiPdfHandler implements PdfReportHandler
         //assuming relation patient exists and it returns a user object
         $patient = $report->patient;
 
-        $careTeam = $patient->care_team_receives_alerts;
+        $careTeam = $patient->getCareTeamReceivesAlerts();
 
         //ProviderId of the Users this was sent to
         $sendTo = [];
@@ -40,7 +40,7 @@ class AprimaApiPdfHandler implements PdfReportHandler
                 continue;
             }
 
-            $locationId = $patient->getpreferredContactLocationAttribute();
+            $locationId = $patient->getpreferredContactLocation();
 
             if (empty($locationId)) {
                 return false;
@@ -69,7 +69,7 @@ class AprimaApiPdfHandler implements PdfReportHandler
 
             $patientReport = PatientReports::create([
                 'patient_id'  => $patient->id,
-                'patient_mrn' => $patient->getMRNAttribute(),
+                'patient_mrn' => $patient->getMRN(),
                 'provider_id' => $foreign_id->foreign_id,
                 'file_type'   => get_class($report),
                 'file_base64' => $base_64_report,

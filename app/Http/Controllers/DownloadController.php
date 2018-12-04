@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Request;
 use App\Practice;
-use Spatie\MediaLibrary\Media;
+use Spatie\MediaLibrary\Models\Media;
 
 class DownloadController extends Controller
 {
@@ -22,6 +22,10 @@ class DownloadController extends Controller
         //try looking in the download folder
         if ( ! file_exists($path)) {
             $path = storage_path("download/$filePath");
+        }
+
+        if ( ! file_exists($path)) {
+            $path = storage_path("eligibility-templates/$filePath");
         }
 
         if ( ! file_exists($path)) {
@@ -87,6 +91,6 @@ class DownloadController extends Controller
 
         $practiceId = $media->model_id;
 
-        return auth()->user()->practice((int)$practiceId) || auth()->user()->hasRole('administrator');
+        return auth()->user()->practice((int)$practiceId) || auth()->user()->isAdmin();
     }
 }

@@ -34,8 +34,8 @@ class ManageInternalUser extends ServiceProvider
                     : '';
                 $usernameField      = $editedUser->username;
                 $emailField         = $editedUser->email;
-                $firstNameField     = $editedUser->first_name;
-                $lastNameField      = $editedUser->last_name;
+                $firstNameField     = $editedUser->getFirstName();
+                $lastNameField      = $editedUser->getLastName();
                 $practicesField     = $data->get('editedUser')->getPractices();
                 $roleField          = $data->get('editedUser')->getRole();
                 $internalUserId     = $editedUser->id;

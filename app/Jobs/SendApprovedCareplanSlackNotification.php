@@ -31,9 +31,13 @@ class SendApprovedCareplanSlackNotification implements ShouldQueue
      */
     public function handle()
     {
-        $date      = Carbon::now();
+        $date = Carbon::now();
+
         $careplans = CarePlan::with('providerApproverUser')
-                             ->where('provider_date', '>=', $date->copy()->startOfDay())
+                             ->where([
+                                 ['provider_date', '>=', $date->copy()->startOfDay()],
+                                 ['provider_date', '<=', $date->copy()->endOfDay()],
+                             ])
                              ->get();
 
         if ($careplans->isEmpty()) {
@@ -41,16 +45,13 @@ class SendApprovedCareplanSlackNotification implements ShouldQueue
                 sendSlackMessage('#careplanprintstatus', "0 Care Plan(s) have been approved today.");
             }
         } else {
-            $providers = [];
-            foreach ($careplans as $careplan) {
-                if ($careplan->providerApproverUser) {
-                    $providers[] = $careplan->providerApproverUser->display_name;
-                }
-            }
-            $doctors = implode(',', $providers);
+            $providers = $careplans->groupBy('providerApproverUser.display_name')
+                                   ->map(function ($careplansCol, $providerName) {
+                                       return "$providerName: {$careplansCol->count()} careplans";
+                                   });
 
-            $message = "{$careplans->count()} Care Plan(s) have been approved today by the following doctor(s): {$doctors}. \n
-                    {$careplans->where('first_printed', null)->count()} Approved Care Plan(s) have not yet been printed.\n";
+            $message = "{$careplans->count()} Care Plan(s) have been approved today by the following doctor(s): {$providers->implode(', ')}. 
+                    \n {$careplans->where('first_printed', null)->count()} Approved Care Plan(s) have not yet been printed.";
 
             if (app()->environment('staging')) {
                 $message = "(This is a test from staging) $message";

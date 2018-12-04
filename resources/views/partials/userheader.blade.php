@@ -4,7 +4,7 @@
             <div class="col-sm-8" style="line-height: 22px;">
                 <span style="font-size: 30px;"> <a
                             href="{{ route('patient.summary', array('patient' => $patient->id)) }}">
-                    {{$patient->fullName}}
+                    {{$patient->getFullName()}}
                     </a> </span>
                 @if($ccm_complex)
                     <span id="complex_tag"
@@ -29,23 +29,23 @@
 
                 <ul class="inline-block" style="margin-left: -40px; font-size: 16px">
                     <b>
-                        <li class="inline-block">{{$patient->birthDate ?? 'N/A'}} <span style="color: #4390b5">•</span>
+                        <li class="inline-block">{{$patient->getBirthDate() ?? 'N/A'}} <span style="color: #4390b5">•</span>
                         </li>
-                        <li class="inline-block">{{$patient->gender ?? 'N/A'}} <span style="color: #4390b5">•</span>
+                        <li class="inline-block">{{$patient->getGender() ?? 'N/A'}} <span style="color: #4390b5">•</span>
                         </li>
-                        <li class="inline-block">{{$patient->age ?? 'N/A'}} yrs <span style="color: #4390b5">•</span>
+                        <li class="inline-block">{{$patient->getAge() ?? 'N/A'}} yrs <span style="color: #4390b5">•</span>
                         </li>
-                        <li class="inline-block">{{formatPhoneNumber($patient->phone) ?? 'N/A'}} </li>
+                        <li class="inline-block">{{formatPhoneNumber($patient->getPhone()) ?? 'N/A'}} </li>
                     </b>
                     <li><span> <b>Billing Dr.</b>: {{$provider}}  </span></li>
                     @if($regularDoctor)
-                        <li><span> <b>Regular Dr.</b>: {{$regularDoctor->full_name}}  </span></li>
+                        <li><span> <b>Regular Dr.</b>: {{$regularDoctor->getFullName()}}  </span></li>
                     @endif
                     <li><span> <b>Practice</b>: {{$patient->primaryProgramName()}} </span></li>
-                    @if($patient->agentName)
+                    @if($patient->getAgentName())
                         <li class="inline-block"><b>Alternate Contact</b>: <span
-                                    title="{{$patient->agentEmail}}">({{$patient->agentRelationship}}
-                                ) {{$patient->agentName}} {{$patient->agentPhone}}</span></li>
+                                    title="{{$patient->getAgentEmail()}}">({{$patient->getAgentRelationship()}}
+                                ) {{$patient->getAgentName()}} {{$patient->getAgentPhone()}}</span></li>
                         <li class="inline-block"></li>
                     @endif
                     <li>
@@ -111,22 +111,22 @@
                         <select id="status" name="status" class="selectpickerX dropdownValid form-control" data-size="2"
                                 style="width: 135px">
                             <option style="color: #47beab"
-                                    value="enrolled" {{$patient->ccm_status == 'enrolled' ? 'selected' : ''}}> Enrolled
+                                    value="enrolled" {{$patient->getCcmStatus() == 'enrolled' ? 'selected' : ''}}> Enrolled
                             </option>
                             <option class="withdrawn"
-                                    value="withdrawn" {{$patient->ccm_status == 'withdrawn' ? 'selected' : ''}}>
+                                    value="withdrawn" {{$patient->getCcmStatus() == 'withdrawn' ? 'selected' : ''}}>
                                 Withdrawn
                             </option>
                             <option class="paused"
-                                    value="paused" {{$patient->ccm_status == 'paused' ? 'selected' : ''}}> Paused
+                                    value="paused" {{$patient->getCcmStatus() == 'paused' ? 'selected' : ''}}> Paused
                             </option>
                         </select>
                     </li>
                 @else
                     <li style="font-size: 18px" id="status"
-                        class="inline-block {{$patient->ccm_status}}"><?= (empty($patient->ccm_status))
+                        class="inline-block {{$patient->getCcmStatus()}}"><?= (empty($patient->getCcmStatus()))
                             ? 'N/A'
-                            : ucwords($patient->ccm_status);  ?></li>
+                            : ucwords($patient->getCcmStatus());  ?></li>
                 @endif
                 <br/>
                 @if(auth()->user()->hasRole(['administrator']))
@@ -139,24 +139,21 @@
         <?php
         use App\Services\CCD\CcdProblemService;
 
-        //            $cpmProblemService = app(CpmProblemUserService::class);
         $ccdProblemService = app(CcdProblemService::class);
 
-        //            $cpmProblems = $cpmProblemService->getPatientProblems($patient->id);
         $ccdProblems = $ccdProblemService->getPatientProblems($patient);
 
-        $ccdMonitoredProblems = $ccdProblems->filter(function ($problem) {
-            return $problem['is_monitored'];
-        })->groupBy('name')->values()->map(function ($problems) {
-            return $problems->first();
-        });
+        $ccdMonitoredProblems = $ccdProblems
+            ->where('is_monitored', 1)
+            ->unique('name')
+            ->values();
         ?>
         @if(!empty($ccdMonitoredProblems))
             <div style="clear:both"></div>
             <ul id="user-header-problems-checkboxes" class="person-conditions-list inline-block text-medium"
                 style="margin-top: -10px">
                 @foreach($ccdMonitoredProblems as $problem)
-                    @if($problem['name'] != App\Models\CPM\CpmMisc::OTHER_CONDITIONS && $problem['name'] != 'Diabetes')
+                    @if($problem['name'] != 'Diabetes')
                         <li class="inline-block"><input type="checkbox" id="item27" name="condition27" value="Active"
                                                         checked="checked" disabled="disabled">
                             <label for="condition27"><span> </span>{{$problem['name']}}</label>

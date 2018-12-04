@@ -52,7 +52,7 @@ class NurseController extends Controller
             $endDate   = Carbon::parse($request->input('end_date'));
 
             GenerateNurseInvoice::dispatch($nurseIds, $startDate, $endDate, auth()->user()->id, $variablePay, $addTime,
-                $addNotes)->onQueue('reports');
+                $addNotes)->onQueue('high');
         }
 
         return "Waldo is working on compiling the reports you requested. <br> Give it a minute, and then head to " . link_to('/jobs/completed') . " and refresh frantically to see a link to the report you requested.";
@@ -82,7 +82,7 @@ class NurseController extends Controller
 
     public function dailyReport()
     {
-        return Datatables::collection(NurseDailyReport::data())->make(true);
+        return datatables()->collection(NurseDailyReport::data())->make(true);
     }
 
     public function makeHourlyStatistics()
@@ -128,7 +128,7 @@ class NurseController extends Controller
 
                 $formattedDate = $dayCounter->format('m/d Y');
 
-                $name = $nurse->first_name[0] . '. ' . $nurse->last_name;
+                $name = $nurse->first_name[0] . '. ' . $nurse->getLastName();
 
                 if ($countScheduled > 0) {
                     $data[$formattedDate][$name]['Scheduled'] = $countScheduled;

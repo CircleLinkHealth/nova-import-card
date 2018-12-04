@@ -6,10 +6,10 @@ return [
     'record' => [
         'table'       => 'exceptions',
         'collect'     => [
-            'method'      => true,
             //When true it will collect GET, POST, DELETE, PUT, etc...
-            'data'        => true,
+            'method'      => true,
             //When true it will collect Input data
+            'data'        => true,
             'status_code' => true,
             'user_id'     => true,
             'url'         => true,
@@ -37,8 +37,8 @@ return [
         /**
          * The log level to use when notifying
          */
-        'log_level'                  => 'emergency',
         //Options are: debug, info, notice, warning, error, critical, alert, emergency.
+        'log_level'                  => 'emergency',
 
         /**
          * When using the default message body this will also include the stack trace

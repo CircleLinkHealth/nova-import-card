@@ -9,6 +9,8 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\QueryException;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Collection;
 
 if ( ! function_exists('parseIds')) {
@@ -171,23 +173,28 @@ if ( ! function_exists('extractNumbers')) {
 }
 
 if ( ! function_exists('detectDelimiter')) {
-    function detectDelimiter($fileHandle, $length)
+    /**
+     * @param bool|resource $csvFileHandle The handle of a file opened with fopen
+     * @param int $length
+     *
+     * @return false|int|string
+     */
+    function detectDelimiter($csvFileHandle, $length = 4096)
     {
-        $delimiters = ["\t", ";", "|", ","];
-        $data_1     = $data_2 = $delimiter = null;
+        $delimiters = [
+            ','  => 0,
+            "\t" => 0,
+            ';'  => 0,
+            "|"  => 0,
+        ];
 
-        foreach ($delimiters as $d) {
-            $data_1 = fgetcsv($fileHandle, $length, $d);
-            if (sizeof($data_1) > sizeof($data_2)) {
-                $delimiter = sizeof($data_1) > sizeof($data_2)
-                    ? $d
-                    : $delimiter;
-                $data_2    = $data_1;
-            }
-            rewind($fileHandle);
+        foreach ($delimiters as $delimiter => &$count) {
+            $firstLine = fgetcsv($csvFileHandle, $length, $delimiter);
+            $count     = count($firstLine);
+            rewind($csvFileHandle);
         }
 
-        return $delimiter;
+        return array_search(max($delimiters), $delimiters);
     }
 }
 
@@ -197,6 +204,9 @@ if ( ! function_exists('parseCsvToArray')) {
      *
      * @param $file
      *
+     * @param int $length
+     * @param null $delimiter
+     *
      * @return array
      */
     function parseCsvToArray($file, $length = 0, $delimiter = null)
@@ -204,7 +214,7 @@ if ( ! function_exists('parseCsvToArray')) {
         $csvArray  = $fields = [];
         $i         = 0;
         $handle    = @fopen($file, "r");
-        $delimiter = $delimiter ?? detectDelimiter($handle, $length = 0);
+        $delimiter = $delimiter ?? detectDelimiter($handle);
 
         if ($handle) {
             while (($row = fgetcsv($handle, $length, $delimiter)) !== false) {
@@ -611,13 +621,13 @@ if ( ! function_exists('defaultCarePlanTemplate')) {
     /**
      * Returns CircleLink's default CarePlanTemplate
      *
-     * @return CarePlanTemplate
+     * @return CarePlanTemplate|null
      */
-    function getDefaultCarePlanTemplate(): CarePlanTemplate
+    function getDefaultCarePlanTemplate(): ?CarePlanTemplate
     {
         $id = getAppConfig('default_care_plan_template_id');
 
-        return CarePlanTemplate::find($id);
+        return CarePlanTemplate::findOrFail($id);
     }
 }
 
@@ -875,6 +885,23 @@ if ( ! function_exists('validProblemName')) {
     }
 }
 
+if ( ! function_exists('validAllergyName')) {
+    /**
+     * Is the allergy name valid
+     *
+     * @param $name
+     *
+     * @return boolean
+     */
+    function validAllergyName($name)
+    {
+        return ! str_contains(strtolower($name), [
+            'no known',
+            'none',
+        ]);
+    }
+}
+
 if ( ! function_exists('showDiabetesBanner')) {
     function showDiabetesBanner($patient, $noShow = null)
     {
@@ -986,6 +1013,139 @@ if ( ! function_exists('is_json')) {
 
         \json_decode($string);
         if (\json_last_error()) {
+            return false;
+        }
+
+        return true;
+    }
+}
+
+if ( ! function_exists('read_file_using_generator')) {
+    /**
+     * Read a file using a generator.
+     * https://wiki.php.net/rfc/generators
+     *
+     * @param $path
+     *
+     * @return bool|Generator
+     */
+    function read_file_using_generator($path)
+    {
+        if ( ! file_exists($path)) {
+            return false;
+        }
+
+        $handle = fopen($path, "r");
+
+        while ( ! feof($handle)) {
+            yield fgets($handle);
+        }
+
+        fclose($handle);
+    }
+}
+if ( ! function_exists('getEhrReportWritersFolderUrl')) {
+
+    function getEhrReportWritersFolderUrl()
+    {
+        return 'https://drive.google.com/drive/folders/1NMMNIZKKicOVDNEUjXf6ayAjRbBbFAgh';
+
+        //Causes timeouts on prod
+//        return Cache::rememberForever('url_for_ehr_data_from_report_writers', function () {
+//            $dir = getGoogleDirectoryByName('ehr-data-from-report-writers');
+//
+//            if ( ! $dir) {
+//                return null;
+//            }
+//
+//            return Storage::drive('google')->url($dir['path']);
+//        });
+    }
+}
+
+if ( ! function_exists('getGoogleDirectoryByName')) {
+
+    function getGoogleDirectoryByName($name)
+    {
+
+        $clh = collect(Storage::drive('google')->listContents('/', true));
+
+        $directory = $clh->where('type', '=', 'dir')
+                         ->where('filename', '=', $name)
+                         ->first();
+        if ( ! $directory) {
+            return null;
+        }
+
+        return $directory;
+    }
+}
+
+
+if ( ! function_exists('format_bytes')) {
+    function format_bytes($bytes, $precision = 2)
+    {
+        $units = ["b", "kb", "mb", "gb", "tb"];
+
+        $bytes = max($bytes, 0);
+        $pow   = floor(($bytes
+                ? log($bytes)
+                : 0) / log(1024));
+        $pow   = min($pow, count($units) - 1);
+
+        $bytes /= (1 << (10 * $pow));
+
+        return round($bytes, $precision) . " " . $units[$pow];
+    }
+}
+
+if ( ! function_exists('array_keys_exist')) {
+    /**
+     * Returns TRUE if the given keys are all set in the array. Each key can be any value possible for an array index.
+     *
+     * @see array_key_exists()
+     *
+     * @param string[] $keys Keys to check.
+     * @param array $array An array with keys to check.
+     * @param mixed $missing Reference to a variable that that contains the missing keys.
+     *
+     * @return bool true if all given keys exist in the given array, false if not
+     */
+    function array_keys_exist(array $keys, array $array, &$missing = null)
+    {
+        $missing = array_diff($keys, array_keys($array));
+
+        return array_reduce($keys, function ($carry, $key) use ($array) {
+            return $carry && array_key_exists($key, $array);
+        }, true);
+    }
+}
+
+if ( ! function_exists('is_falsey')) {
+    function is_falsey($value)
+    {
+        return is_null($value) || empty($value) || strcasecmp($value, 'null') === 0;
+    }
+}
+
+if ( ! function_exists('isAllowedToSee2FA')) {
+    function isAllowedToSee2FA(User $user = null)
+    {
+        return ! ! config('auth.two_fa_enabled') && optional($user ?? auth()->user())->isAdmin();
+    }
+}
+
+if ( ! function_exists('tryDropForeignKey')) {
+    function tryDropForeignKey(Blueprint $table, $key)
+    {
+        try {
+            $table->dropForeign($key);
+        } catch (QueryException $e) {
+            $errorCode = $e->errorInfo[1];
+            if ($errorCode == 1091) {
+                Log::debug("Key `$key` does not exist. Nothing to delete." . __FILE__);
+            }
+
             return false;
         }
 

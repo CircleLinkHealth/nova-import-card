@@ -69,7 +69,7 @@
             <form action="{{route('OpsDashboard.index')}}" method="GET">
                 <div class="form-group">
                     <div class="col-md-12">
-                        <article>Active Patients as of 11pm ET on:</article>
+                        <article>Active Patients as of @if($dateGenerated){{$dateGenerated->toTimeString()}}@else 11pm ET @endif on:</article>
                     </div>
                     <div class="col-md-8">
                         <input id="date" type="date" name="date" value="{{$date->toDateString()}}" max="{{$maxDate->toDateString()}}" required class="form-control">
@@ -89,13 +89,9 @@
                 </div>
                 <div class="col-md-12">
                     <div class="ops-csv">
-                        <a href="{{route('OpsDashboard.dailyCsv')}}" class="btn btn-info">Generate CSV Report (for today)</a>
+                        <a href="{{route('OpsDashboard.dailyCsv')}}" class="btn btn-info">Generate CSV: From 11pm to Now</a>
                     </div>
                 </div>
-
-                    {{--<div class="col-md-8">--}}
-                        {{--<input id="date" type="date" name="date" value="{{$date->toDateString()}}" max="{{$maxDate->toDateString()}}" required class="form-control">--}}
-                    {{--</div>--}}
             </div>
         </div>
         <div class="col-md-12">

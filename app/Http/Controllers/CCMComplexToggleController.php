@@ -33,38 +33,29 @@ class CCMComplexToggleController extends Controller
             ->first();
 
         if (empty($patientRecord)) {
+            //should not need to do that, because there is a command on start of every month
+            //that sets a monthly summary to 0 for each patient
             $patientRecord = PatientMonthlySummary::updateCCMInfoForPatient(
                 $patient->id,
-                $patient->patientInfo->cur_month_activity_time
+                0
             );
+        }
 
-            if (isset($input['complex'])) {
-                $patientRecord->is_ccm_complex = 1;
-                $patientRecord->save();
+        if (isset($input['complex'])) {
+            $patientRecord->is_ccm_complex = 1;
+            $patientRecord->save();
 
-                if ($patient->patientInfo->cur_month_activity_time > 3600) {
-                    //Get nurse that did the last activity.
-
-                    (new AlternativeCareTimePayableCalculator($patient->patientInfo->lastNurseThatPerformedActivity()))
+            if ($patient->getCcmTime() > 3600) {
+                //Get nurse that did the last activity.
+                $nurse = $patient->patientInfo->lastNurseThatPerformedActivity();
+                if($nurse){
+                    (new AlternativeCareTimePayableCalculator($nurse))
                         ->adjustPayOnCCMComplexSwitch60Mins();
                 }
-            } else {
-                $patientRecord->is_ccm_complex = 0;
-                $patientRecord->save();
             }
-        } else { // if exists
-
-            if (isset($input['complex'])) {
-                $patientRecord->is_ccm_complex = 1;
-                $patientRecord->save();
-
-                if ($patient->patientInfo->cur_month_activity_time > 3600) {
-                    (new AlternativeCareTimePayableCalculator($patient->patientInfo->lastNurseThatPerformedActivity()))->adjustPayOnCCMComplexSwitch60Mins();
-                }
-            } else {
-                $patientRecord->is_ccm_complex = 0;
-                $patientRecord->save();
-            }
+        } else {
+            $patientRecord->is_ccm_complex = 0;
+            $patientRecord->save();
         }
 
         return response()->json(['patientSummary' => $patientRecord]);

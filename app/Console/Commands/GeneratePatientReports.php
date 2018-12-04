@@ -50,18 +50,18 @@ class GeneratePatientReports extends Command
             }
 
             //Check Status
-            $status = $patient->carePlanStatus;
+            $status = $patient->getCarePlanStatus();
             if ($status != 'provider_approved') {
                 $this->error(" User Not Provider Approved: " . $patient_id . " ");
                 continue;
             }
             //Check if the provider approver is set
-            $provider_id = $patient->carePlanProviderApprover;
+            $provider_id = $patient->getCarePlanProviderApprover();
             if (!$provider_id) {
                 $this->error(" Approving Provider Not Found: " . $patient_id . " ");
                 continue;
             }
-            $locationId = $patient->getpreferredContactLocationAttribute();
+            $locationId = $patient->getpreferredContactLocation();
 
             if (!$locationId) {
                 $this->error(" Location Not Found For: " . $patient_id . " ");

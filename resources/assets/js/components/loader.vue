@@ -10,7 +10,7 @@
 
 <style>
     .loader {
-            border: 5px solid #f3f3f3;
+            border: 5px solid #31C6F9;
             -webkit-animation: spin 1s linear infinite;
             animation: spin 1s linear infinite;
             border-top: 5px solid #555;

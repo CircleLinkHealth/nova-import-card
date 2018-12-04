@@ -27,7 +27,7 @@ class EnrolleesController extends Controller
             $input = [$input];
         }
 
-        ImportConsentedEnrollees::dispatch($input, $batch)->onQueue('medical-records');
+        ImportConsentedEnrollees::dispatch($input, $batch)->onQueue('low');
 
         $url = link_to_route('import.ccd.remix', 'Imported CCDAs.');
 
@@ -43,14 +43,15 @@ class EnrolleesController extends Controller
             return trim($id);
         })->filter()->unique()->values()->all();
 
-        ImportConsentedEnrollees::dispatch($ids)->onQueue('medical-records');
+        ImportConsentedEnrollees::dispatch($ids)->onQueue('low');
 
         $url = link_to_route('import.ccd.remix', 'Imported CCDAs.');
 
-        return redirect()->back()->with([
-            'message' => "A job has been scheduled. Imported CCDs should start showing up in $url in 4-5 minutes. Something went wrong otherwise, and you should reach Michalis with a link to the Batch you were trying to import.",
+        return [
+            'message' => "A job has been scheduled. Imported CCDs should start showing up in $url in 5-10 minutes. Importing " . implode(',',
+                    $ids),
             'type'    => 'success',
-        ]);
+        ];
     }
 
     public function importMedicalRecords(Request $request)
@@ -61,7 +62,7 @@ class EnrolleesController extends Controller
 
         $practice = Practice::findOrFail($request->input('practice_id'));
 
-        ImportMedicalRecordsById::dispatch($ids, $practice)->onQueue('medical-records');
+        ImportMedicalRecordsById::dispatch($ids, $practice)->onQueue('low');
 
         $url = link_to_route('import.ccd.remix', 'Imported CCDAs.');
 

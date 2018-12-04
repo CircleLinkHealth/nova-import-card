@@ -8,15 +8,13 @@ use App\Patient;
 use App\Practice;
 use App\Role;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
 
 class PageTimerControllerTest extends TestCase
 {
-    use DatabaseTransactions,
-        UserHelpers,
+    use UserHelpers,
         WithoutMiddleware;
 
     private $patient;

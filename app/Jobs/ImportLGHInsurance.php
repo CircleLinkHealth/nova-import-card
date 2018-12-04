@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\PatientData\LGH\LGHInsurance;
-use App\ProcessedFiles;
+use App\ProcessedFile;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -43,7 +43,7 @@ class ImportLGHInsurance implements ShouldQueue
 
         $path = config('filesystems.disks.ccdas.root') . '/' . $this->fileName;
 
-        $exists = ProcessedFiles::wherePath($path)->first();
+        $exists = ProcessedFile::wherePath($path)->first();
 
         if ($exists) {
             \Log::info("Already processed $path");
@@ -65,7 +65,7 @@ class ImportLGHInsurance implements ShouldQueue
             ], $row);
         }
 
-        ProcessedFiles::create([
+        ProcessedFile::create([
             'path' => $path,
         ]);
     }

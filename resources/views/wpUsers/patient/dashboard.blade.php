@@ -36,7 +36,7 @@
                     </li>
 
                     <li class="menu-item">
-                        <a dusk="add-patient-btn" href="{{ route('patients.demographics.show', array()) }}">
+                        <a dusk="add-patient-btn" href="{{ route('patient.demographics.create') }}">
                             <div class="icon-container column-centered">
                                 <i class="icon--add-patient--big icon--menu"></i>
                             </div>
@@ -53,7 +53,7 @@
                                     <i class="icon--phone-call--big icon--menu"></i>
                                 </div>
                                 <div>
-                                    <p class="text-medium-big text--menu text-serif">Scheduled Calls<BR><BR><br></p>
+                                    <p class="text-medium-big text--menu text-serif">Scheduled Activities<BR><BR></p>
                                 </div>
                             </a>
                         </li>

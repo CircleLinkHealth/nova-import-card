@@ -5,9 +5,10 @@
     <title>@yield('title')</title>
 
     <meta id="token" name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="base-url" content="{{ url('/') }}">
 
     <!-- Compiled and minified CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -16,14 +17,9 @@
     <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 
     <!-- Compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
-    <style>
-
-    </style>
-
 </head>
 
 <!-- Dropdown Structure -->
@@ -32,17 +28,34 @@
             Logout
         </a></li>
 </ul>
-<nav>
+<nav style="position: fixed">
     <div class="nav-wrapper" style="background: #4fb2e2;">
         <a href="#!" style="padding-left: 10px" class="brand-logo">CircleLink Health Enrollment Center</a>
         <ul class="right hide-on-med-and-down">
             @if(auth()->user()->hasRole('care-ambassador-view-only'))
-            <li><a href="{{route('patients.dashboard')}}">Patient Dashboard</a></li>
+                <li><a href="{{route('patients.dashboard')}}">Patient Dashboard</a></li>
             @endif
-            <li><a href="https://drive.google.com/file/d/0Byt9en_0bcOpRGM3LVBQamh4WkE/view" target="_blank">Training Materials</a></li>
+
+            @if($enrollee && ($enrollee->practice->enrollmentTips() ?? collect())->count() > 0)
+                <li>
+                    <!-- #tips is a modal in dashboard.blade -->
+                    <a href="#tips" id="tips-link" class="modal-trigger">
+                        Tips
+                    </a>
+                </li>
+            @endif
+
+            <li>
+                <a href="https://drive.google.com/file/d/0Byt9en_0bcOpRGM3LVBQamh4WkE/view" target="_blank">
+                    Training Materials
+                </a>
+            </li>
             <!-- Dropdown Trigger -->
-            <li><a class="dropdown-button" href="#!" data-activates="dropdown1">{{ auth()->user()->fullName }}<i
-                            class="material-icons right">settings</i></a></li>
+            <li>
+                <a class="dropdown-trigger" href="#" data-target="dropdown1">
+                    {{ auth()->user()->getFullName() }}
+                    <i class="material-icons right">settings</i></a>
+            </li>
         </ul>
     </div>
 </nav>

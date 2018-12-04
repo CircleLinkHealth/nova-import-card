@@ -7,13 +7,10 @@ use App\Note;
 use App\Notifications\NoteForwarded;
 use App\Services\NoteService;
 use App\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
 class NoteServiceTest extends TestCase
 {
-    use DatabaseTransactions;
-
     protected $provider;
     protected $note;
     protected $service;

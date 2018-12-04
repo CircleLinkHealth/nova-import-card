@@ -92,14 +92,18 @@ class SchedulerService
     //Get scheduled call
     public function getScheduledCallForPatient($patient)
     {
-
-        $call = Call::where(function ($q) use (
-            $patient
-        ) {
-            $q->where('outbound_cpm_id', $patient->id)
-              ->orWhere('inbound_cpm_id', $patient->id);
+        $call = Call::where(function ($q) {
+            $q->whereNull('type')
+              ->orWhere('type', '=', 'call');
         })
+                    ->where(function ($q) use (
+                        $patient
+                    ) {
+                        $q->where('outbound_cpm_id', $patient->id)
+                          ->orWhere('inbound_cpm_id', $patient->id);
+                    })
                     ->where('status', '=', 'scheduled')
+                    ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'))
                     ->first();
 
         return $call;
@@ -107,7 +111,11 @@ class SchedulerService
 
     public static function getNextScheduledCall($patientId, $excludeToday = false)
     {
-        return Call::where('inbound_cpm_id', $patientId)
+        return Call::where(function ($q) {
+            $q->whereNull('type')
+              ->orWhere('type', '=', 'call');
+        })
+                   ->where('inbound_cpm_id', $patientId)
                    ->where('status', '=', 'scheduled')
                    ->when($excludeToday, function ($query) {
                        $query->where('scheduled_date', '>', Carbon::today()->format('Y-m-d'));
@@ -130,13 +138,21 @@ class SchedulerService
      */
     public function getTodaysCall($patientId)
     {
-        $query = Call::where('inbound_cpm_id', $patientId)
+        $query = Call::where(function ($q) {
+            $q->whereNull('type')
+              ->orWhere('type', '=', 'call');
+        })
+                     ->where('inbound_cpm_id', $patientId)
                      ->where('status', 'scheduled')
                      ->where('scheduled_date', '=', Carbon::today()->format('Y-m-d'))
                      ->orderBy('updated_at', 'desc');
 
         if ($query->count() == 0) {
-            $query = Call::where('inbound_cpm_id', $patientId)
+            $query = Call::where(function ($q) {
+                $q->whereNull('type')
+                  ->orWhere('type', '=', 'call');
+            })
+                         ->where('inbound_cpm_id', $patientId)
                          ->whereNotIn('status', ['reached', 'not reached'])
                          ->where('scheduled_date', '=', Carbon::today()->format('Y-m-d'))
                          ->orderBy('updated_at', 'desc');
@@ -203,7 +219,11 @@ class SchedulerService
         //since algo already updates it before getting here.
         //check for day != today
 
-        $call = Call::where('inbound_cpm_id', $patient->id)
+        $call = Call::where(function ($q) {
+            $q->whereNull('type')
+              ->orWhere('type', '=', 'call');
+        })
+                    ->where('inbound_cpm_id', $patient->id)
                     ->whereIn('status', ['reached', 'not reached'])
                     ->where('called_date', '!=', '')
                     ->where('called_date', '<', Carbon::today()->startOfDay()->toDateTimeString())
@@ -244,6 +264,7 @@ class SchedulerService
 
         $call = Call::create([
 
+            'type'    => 'call',
             'service' => 'phone',
             'status'  => 'scheduled',
 
@@ -340,11 +361,12 @@ class SchedulerService
 
             Call::updateOrCreate([
 
+                'type'    => 'call',
                 'service' => 'phone',
                 'status'  => 'scheduled',
 
-                'inbound_phone_number'  => $patient->phone
-                    ? $patient->phone
+                'inbound_phone_number'  => $patient->getPhone()
+                    ? $patient->getPhone()
                     : '',
                 'outbound_phone_number' => '',
 
@@ -418,7 +440,7 @@ class SchedulerService
 
                 if (is_a($call, Call::class)) {
                     //If the patient has a call and is not manual,
-                    if (!$call->is_manual) {
+                    if ( ! $call->is_manual) {
                         $window_start = $call->window_start;
                         $window_end   = $call->window_end;
 
@@ -440,6 +462,7 @@ class SchedulerService
                     //fill in some call info:
                     $call = Call::create([
 
+                        'type'    => 'call',
                         'service' => 'phone',
                         'status'  => 'scheduled',
 
@@ -485,8 +508,8 @@ class SchedulerService
                     $callPatient = $familyUsers[$key];
 
                     $value->scheduled_date       = $minDate->toDateTimeString();
-                    $value->inbound_phone_number = $callPatient->phone
-                        ? $callPatient->phone
+                    $value->inbound_phone_number = $callPatient->getPhone()
+                        ? $callPatient->getPhone()
                         : '';
                     $value->outbound_cpm_id      = $designatedNurse;
                     $value->window_start         = $window_start;

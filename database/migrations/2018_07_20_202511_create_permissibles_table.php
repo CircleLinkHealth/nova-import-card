@@ -13,9 +13,6 @@ class CreatePermissiblesTable extends Migration
      */
     public function up()
     {
-
-        Schema::dropIfExists('lv_permission_role');
-
         Schema::create('permissibles', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('permission_id');

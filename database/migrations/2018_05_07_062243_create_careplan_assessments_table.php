@@ -15,7 +15,7 @@ class CreateCareplanAssessmentsTable extends Migration {
 		Schema::create('careplan_assessments', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->integer('careplan_id')->unsigned()->index('careplan_assessments_careplan_id_foreign');
+			$table->integer('careplan_id')->unsigned();
 			$table->integer('provider_approver_id')->unsigned()->index('careplan_assessments_provider_approver_id_foreign');
 			$table->text('alcohol_misuse_counseling');
 			$table->text('diabetes_screening_interval');

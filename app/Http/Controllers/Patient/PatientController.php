@@ -18,7 +18,7 @@ class PatientController extends Controller
 
     public function __construct(ReportFormatter $formatter, PdfService $pdfService)
     {
-        $this->formatter = $formatter;
+        $this->formatter  = $formatter;
         $this->pdfService = $pdfService;
     }
 
@@ -40,15 +40,17 @@ class PatientController extends Controller
             $nurse->workhourables()->firstOrCreate([]);
         }
 
-        if (auth()->user()->hasPermission('care-plan-approve')) {
+        if (auth()->user()->canApproveCarePlans()) {
             $showPatientsPendingApprovalBox = true;
-            $patients                       = auth()->user()->patientsPendingApproval()->get()->filter(function ($user) {
-                                                    return $user->careplanStatus == CarePlan::QA_APPROVED;
-                                              });
+            $patients                       = auth()->user()->patientsPendingApproval()->get()->filter(function ($user
+            ) {
+                return $user->getCarePlanStatus() == CarePlan::QA_APPROVED;
+            });
             $patientsPendingApproval        = $this->formatter->patientListing($patients);
-            $pendingApprovals = $patients->count();
+            $pendingApprovals               = $patients->count();
         }
         $noLiveCountTimeTracking = true;
+
         return view('wpUsers.patient.dashboard',
             array_merge(
                 compact([
@@ -78,8 +80,10 @@ class PatientController extends Controller
 
         $wpUser = User::with([
             'primaryPractice',
-            'cpmProblems.cpmInstructions',
-            'cpmMiscs',
+            'ccdProblems'  => function ($q) {
+                $q->with('cpmProblem.cpmInstructions')
+                  ->whereNotNull('cpm_problem_id');
+            },
             'observations' => function ($q) {
                 $q->where('obs_unit', '!=', "invalid")
                   ->where('obs_unit', '!=', "scheduled")
@@ -103,7 +107,7 @@ class PatientController extends Controller
         // program
         $program = $wpUser->primaryPractice;
 
-        $problems = $carePlanViewService->getProblemsToMonitor($wpUser);
+        $problems = $wpUser->getProblemsToMonitor();
 
         $params        = $request->all();
         $detailSection = '';
@@ -262,13 +266,29 @@ class PatientController extends Controller
         ]);
     }
 
+    public function showCallPatientPage(Request $request, $patientId)
+    {
+        $user = User::with('phoneNumbers')
+                    ->where('id', $patientId)
+                    ->firstOrFail();
+
+        $phoneNumbers = $user->phoneNumbers
+            ->map(function ($p) {
+                return $p->number;
+            });
+
+        return view('wpUsers.patient.calls.index')
+            ->with('patient', $user)
+            ->with('phoneNumbers', $phoneNumbers);
+    }
 
     /**
      * Display the specified resource.
      *
      * @return Response
      */
-    public function showPatientListing() {
+    public function showPatientListing()
+    {
         return view('wpUsers.patient.listing');
     }
 
@@ -284,17 +304,19 @@ class PatientController extends Controller
         return view('wpUsers.patient.listingToDeprecate', $data);
     }
 
-    public function showPatientListingPdf() {
+    public function showPatientListingPdf()
+    {
         $storageDirectory = 'storage/pdfs/patients/';
         $datetimePrefix   = date('Y-m-dH:i:s');
-        $fileName = $storageDirectory . $datetimePrefix . '-patient-list.pdf';
-        $file = $this->pdfService->createPdfFromView('wpUsers.patient.listing-pdf', [
+        $fileName         = $storageDirectory . $datetimePrefix . '-patient-list.pdf';
+        $file             = $this->pdfService->createPdfFromView('wpUsers.patient.listing-pdf', [
             'patients' => $this->formatter->patients(),
         ], [
             'orientation'  => 'Landscape',
             'margin-left'  => '3',
             'margin-right' => '3',
         ]);
+
         return response()->file($file);
     }
 
@@ -349,15 +371,15 @@ class PatientController extends Controller
         $i        = 0;
         foreach ($results as $d) {
             $patients[$i]['name'] = ($d->display_name);
-            $dob                  = new Carbon(($d->birth_date));
+            $dob                  = new Carbon(($d->getBirthDate()));
             $patients[$i]['dob']  = $dob->format('m-d-Y');
-            $patients[$i]['mrn']  = $d->mrn_number;
+            $patients[$i]['mrn']  = $d->getMRN();
             $patients[$i]['link'] = route('patient.summary', ['patient' => $d->id]);
 
             $programObj = Practice::find($d->program_id);
 
             $patients[$i]['program'] = $programObj->display_name ?? '';
-            $patients[$i]['hint']    = $patients[$i]['name'] . " DOB:" . $patients[$i]['dob'] . " [" . $patients[$i]['program'] . "] MRN: {$patients[$i]['mrn']} ID: {$d->id} PRIMARY PHONE: {$d->primary_phone}";
+            $patients[$i]['hint']    = $patients[$i]['name'] . " DOB:" . $patients[$i]['dob'] . " [" . $patients[$i]['program'] . "] MRN: {$patients[$i]['mrn']} ID: {$d->id} PRIMARY PHONE: {$d->getPrimaryPhone()}";
             $i++;
         }
 
@@ -495,7 +517,7 @@ class PatientController extends Controller
 
         //leave it here?
         // security
-        if ( ! Auth::user()->hasPermissionForSite('observation.create', $patient->primary_practice_id)) {
+        if ( ! Auth::user()->hasPermissionForSite('observation.create', $patient->getPrimaryPracticeId())) {
             abort(403);
         }
 

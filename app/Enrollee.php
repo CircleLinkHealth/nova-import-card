@@ -44,6 +44,7 @@ use Carbon\Carbon;
  * @property string|null $invite_opened_at
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
+ * @property \Carbon\Carbon|null $soft_rejected_callback
  * @property string $primary_insurance
  * @property string $secondary_insurance
  * @property string $tertiary_insurance
@@ -200,6 +201,8 @@ class Enrollee extends \App\BaseModel
         'problems',
         'cpm_problem_1',
         'cpm_problem_2',
+
+        'soft_rejected_callback',
     ];
 
     protected $dates = [
@@ -209,6 +212,7 @@ class Enrollee extends \App\BaseModel
         'invite_sent_at',
         'last_attempt_at',
         'last_encounter',
+        'soft_rejected_callback',
     ];
 
     public function user()
@@ -219,13 +223,11 @@ class Enrollee extends \App\BaseModel
 
     public function provider()
     {
-
         return $this->belongsTo(User::class, 'provider_id');
     }
 
     public function careAmbassador()
     {
-
         return $this->belongsTo(CareAmbassador::class, 'care_ambassador_id');
     }
 
@@ -247,8 +249,7 @@ class Enrollee extends \App\BaseModel
 
     public function getProviderFullNameAttribute()
     {
-
-        return $this->provider->fullName ?? null;
+        return optional($this->provider)->getFullName();
     }
 
     public function getPracticeNameAttribute()
@@ -263,7 +264,7 @@ class Enrollee extends \App\BaseModel
             config('services.twilio.from'));
 
         $link          = url("join/$this->invite_code");
-        $provider_name = User::find($this->provider_id)->fullName;
+        $provider_name = User::find($this->provider_id)->getFullName();
 
         $twilio->message(
             $this->primary_phone,
@@ -278,7 +279,9 @@ class Enrollee extends \App\BaseModel
      */
     public function setDobAttribute($dob)
     {
-        $this->attributes['dob'] = Carbon::parse($dob);
+        $this->attributes['dob'] = is_a($dob, Carbon::class)
+            ? $dob
+            : Carbon::parse($dob);
     }
 
     /**
@@ -341,7 +344,7 @@ class Enrollee extends \App\BaseModel
 
         $link = url("join/$this->invite_code");
 
-        $provider_name = User::find($this->provider_id)->fullName;
+        $provider_name = User::find($this->provider_id)->getFullName();
 
         $twilio->message(
             $this->primary_phone,
@@ -361,7 +364,11 @@ class Enrollee extends \App\BaseModel
     {
         //@todo add check for where phones are not all null
 
-        return $query->where('status', self::TO_CALL);
+        return $query->where('status', self::TO_CALL)
+                     ->orWhere(function ($q) {
+                         $q->where('status', '=', 'soft_rejected')
+                           ->where('soft_rejected_callback', '<=', Carbon::now()->toDateString());
+                     });
     }
 
     /**
@@ -452,5 +459,10 @@ class Enrollee extends \App\BaseModel
     public function targetPatient()
     {
         return $this->hasOne(TargetPatient::class);
+    }
+
+    public function eligibilityJob()
+    {
+        return $this->belongsTo(EligibilityJob::class);
     }
 }

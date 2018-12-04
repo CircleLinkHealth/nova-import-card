@@ -9,6 +9,7 @@ use App\Events\PdfableCreated;
 use App\Observers\PatientObserver;
 use App\User;
 use Carbon\Carbon;
+use Log;
 
 class UpdateCarePlanStatus
 {
@@ -39,31 +40,35 @@ class UpdateCarePlanStatus
         $user = $event->patient;
 
         //Stop the propagation to other Listeners if the CarePlan is already approved.
-        if ($user->carePlanStatus == CarePlan::PROVIDER_APPROVED) {
-            return false;
+        if ($user->getCarePlanStatus() == CarePlan::PROVIDER_APPROVED) {
+            Log::debug('UpdateCarePlanStatus: Called but care plan is already approved. Exiting.');
+
+            return;
         }
         $practiceSettings = $event->practiceSettings;
         //This CarePlan has already been `QA approved` by CLH, and is now being approved by a member of the practice
-        if ($user->carePlanStatus == CarePlan::QA_APPROVED && auth()->user()->canApproveCarePlans()) {
+        if ($user->getCarePlanStatus() == CarePlan::QA_APPROVED && auth()->user()->canApproveCarePlans()) {
+
+            Log::debug("UpdateCarePlanStatus: Ready to set status to PROVIDER_APPROVED");
 
             $date     = Carbon::now();
             $approver = auth()->user();
 
-            $user->carePlanStatus               = CarePlan::PROVIDER_APPROVED;
-            $user->carePlanProviderApprover     = $approver->id;
-            $user->carePlanProviderApproverDate = $date->format('Y-m-d H:i:s');
+            $user->setCarePlanStatus(CarePlan::PROVIDER_APPROVED);
+            $user->setCarePlanProviderApprover($approver->id);
+            $user->setCarePlanProviderApproverDate($date->format('Y-m-d H:i:s'));
             $user->carePlan->forward();
             event(new PdfableCreated($user->carePlan));
 
-            if (app()->environment(['worker', 'production','staging'])) {
+            if (app()->environment(['worker', 'production', 'staging'])) {
                 sendSlackMessage('#careplanprintstatus',
-                    "Dr.{$approver->full_name} approved {$user->id}'s care plan.\n");
+                    "Dr.{$approver->getFullName()} approved {$user->id}'s care plan.\n");
             }
 
 
         } //This CarePlan is being `QA approved` by CLH
-        elseif ($user->carePlanStatus == CarePlan::DRAFT
-                && auth()->user()->hasPermissionForSite('care-plan-qa-approve', $user->primary_practice_id)) {
+        elseif ($user->getCarePlanStatus() == CarePlan::DRAFT
+                && auth()->user()->hasPermissionForSite('care-plan-qa-approve', $user->getPrimaryPracticeId())) {
             $user->carePlan->status         = CarePlan::QA_APPROVED;
             $user->carePlan->qa_approver_id = auth()->id();
             $user->carePlan->save();
@@ -78,7 +83,7 @@ class UpdateCarePlanStatus
 
             $this->addPatientConsentedNote($user);
 
-            $user->carePlanQaDate = date('Y-m-d H:i:s'); // careplan_qa_date
+            $user->setCarePlanQADate(date('Y-m-d H:i:s')); // careplan_qa_date
         }
 
         $user->save();

@@ -43,9 +43,9 @@ class PracticeStaffController extends Controller
                              ->sortBy('first_name')
                              ->values();
 
-        if ( ! auth()->user()->hasRole('administrator')) {
+        if ( ! auth()->user()->isAdmin()) {
             $practiceUsers->reject(function ($user) {
-                return $user->hasRole('administrator');
+                return $user->isAdmin();
             })
                           ->values();
         }
@@ -98,23 +98,23 @@ class PracticeStaffController extends Controller
             'id'                                  => $user->id,
             'practice_id'                         => $primaryPractice->id,
             'email'                               => $user->email,
-            'last_name'                           => $user->last_name,
-            'first_name'                          => $user->first_name,
+            'last_name'                           => $user->getLastName(),
+            'first_name'                          => $user->getFirstName(),
             'full_name'                           => $user->display_name,
             'phone_number'                        => $phone->number ?? '',
-            'phone_extension'                     => $phone->extension ?? '',
-            'phone_type'                          => array_search(
+            'phone_extension'        => $phone->extension ?? '',
+            'phone_type'             => array_search(
                                                          $phone->type ?? '',
                                                          PhoneNumber::getTypes()
                                                      ) ?? '',
-            'grantAdminRights'                    => $permissions->pivot->has_admin_rights ?? false,
-            'sendBillingReports'                  => $permissions->pivot->send_billing_reports ?? false,
-            'canApproveAllCareplans'              => $user->hasPermission('care-plan-approve'),
-            'role_name'                           => $roles[$roleId]->name,
-            'role_display_name'                   => $roles[$roleId]->display_name,
-            'locations'                           => $user->locations->pluck('id'),
-            'emr_direct_address'                  => $user->emr_direct_address,
-            'forward_alerts_to'                   => [
+            'grantAdminRights'       => $permissions->pivot->has_admin_rights ?? false,
+            'sendBillingReports'     => $permissions->pivot->send_billing_reports ?? false,
+            'canApproveAllCareplans' => $user->canApproveCarePlans(),
+            'role_name'              => $roles[$roleId]->name,
+            'role_display_name'      => $roles[$roleId]->display_name,
+            'locations'              => $user->locations->pluck('id'),
+            'emr_direct_address'     => $user->emr_direct_address,
+            'forward_alerts_to'      => [
                 'who'      => $forwardAlertsToContactUsers->keys()->first() ?? 'billing_provider',
                 'user_ids' => $forwardAlertsToContactUsers->values()->first() ?? [],
             ],

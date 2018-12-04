@@ -99,52 +99,51 @@
                     </div>
                 </div>
 
-                <div v-if="formData.role_name == 'provider' && practiceSettings.email_careplan_approval_reminders == 1">
-                    <div class="row">
-                        <h6 class="col s12">
-                            Whom should we notify for clinical issues regarding provider’s patients?
-                        </h6>
+                <div class="row">
+                    <h6 class="col s12">
+                        Whom should we notify for clinical issues regarding provider’s patients?
+                    </h6>
 
-                        <div class="input-field col s6">
-                            <material-select v-model="formData.forward_alerts_to.who" class="input-field"
-                                             name="forward_alerts_to.who">
-                                <option v-for="option in contactOptions" :value="option.value"
-                                        v-text="option.name"></option>
-                            </material-select>
-                        </div>
-
-                        <div v-show="formData.forward_alerts_to.who !== 'billing_provider'" class="input-field col s6">
-                            <material-select v-model="formData.forward_alerts_to.user_ids" class="input-field"
-                                             name="forward_alerts_to.user_ids" :multiple="true">
-                                <option v-for="user in staff" :value="user.id" v-if="user.id !== formData.id"
-                                        v-text="user.full_name"></option>
-                            </material-select>
-                        </div>
+                    <div class="input-field col s6">
+                        <material-select v-model="formData.forward_alerts_to.who" class="input-field"
+                                         name="forward_alerts_to.who">
+                            <option v-for="option in contactOptions" :value="option.value"
+                                    v-text="option.name"></option>
+                        </material-select>
                     </div>
 
-                    <div class="row">
-                        <h6 class="col s12">
-                            Whom should we notify for approval of care plans regarding provider’s patients?
-                        </h6>
+                    <div v-show="formData.forward_alerts_to.who !== 'billing_provider'" class="input-field col s6">
+                        <material-select v-model="formData.forward_alerts_to.user_ids" class="input-field"
+                                         name="forward_alerts_to.user_ids" :multiple="true">
+                            <option v-for="user in staff" :value="user.id" v-if="user.id !== formData.id"
+                                    v-text="user.full_name"></option>
+                        </material-select>
+                    </div>
+                </div>
 
-                        <div class="input-field col s6">
-                            <material-select v-model="formData.forward_careplan_approval_emails_to.who"
-                                             class="input-field"
-                                             name="forward_careplan_approval_emails_to.who">
-                                <option v-for="option in carePlanApprovalEmailOptions" :value="option.value"
-                                        v-text="option.name"></option>
-                            </material-select>
-                        </div>
+                <div v-if="formData.role_name == 'provider' && practiceSettings.email_careplan_approval_reminders == 1"
+                     class="row">
+                    <h6 class="col s12">
+                        Whom should we notify for approval of care plans regarding provider’s patients?
+                    </h6>
 
-                        <div v-show="formData.forward_careplan_approval_emails_to.who !== 'billing_provider'"
-                             class="input-field col s6">
-                            <material-select v-model="formData.forward_careplan_approval_emails_to.user_ids"
-                                             class="input-field"
-                                             name="forward_careplan_approval_emails_to.user_ids" :multiple="true">
-                                <option v-for="user in staff" :value="user.id" v-if="user.id !== formData.id"
-                                        v-text="user.full_name"></option>
-                            </material-select>
-                        </div>
+                    <div class="input-field col s6">
+                        <material-select v-model="formData.forward_careplan_approval_emails_to.who"
+                                         class="input-field"
+                                         name="forward_careplan_approval_emails_to.who">
+                            <option v-for="option in carePlanApprovalEmailOptions" :value="option.value"
+                                    v-text="option.name"></option>
+                        </material-select>
+                    </div>
+
+                    <div v-show="formData.forward_careplan_approval_emails_to.who !== 'billing_provider'"
+                         class="input-field col s6">
+                        <material-select v-model="formData.forward_careplan_approval_emails_to.user_ids"
+                                         class="input-field"
+                                         name="forward_careplan_approval_emails_to.user_ids" :multiple="true">
+                            <option v-for="user in staff" :value="user.id" v-if="user.id !== formData.id"
+                                    v-text="user.full_name"></option>
+                        </material-select>
                     </div>
                 </div>
 
@@ -182,9 +181,9 @@
 
 <script>
     import modal from '../../shared/materialize/modal.vue';
-    import {mapGetters, mapActions} from 'vuex'
-    import {clearOpenModal, addNotification, updatePracticeStaff, clearErrors} from '../../../store/actions'
-    import {errors, practiceStaff, practiceLocations} from '../../../store/getters'
+    import {mapActions, mapGetters} from 'vuex'
+    import {addNotification, clearErrors, clearOpenModal, updatePracticeStaff} from '../../../store/actions'
+    import {practiceLocations, practiceStaff} from '../../../store/getters'
     import MaterialSelect from '../../src/material-select.vue'
 
     export default {
@@ -329,11 +328,11 @@
                         value: 'billing_provider',
                     },
                     {
-                        name: 'Someone else in addition to provider',
+                        name: 'Notify others in addition to provider',
                         value: 'forward_alerts_in_addition_to_provider',
                     },
                     {
-                        name: 'Someone else instead of provider',
+                        name: 'Notify others instead of provider',
                         value: 'forward_alerts_instead_of_provider',
                     },
                 ],
@@ -343,11 +342,11 @@
                         value: 'billing_provider',
                     },
                     {
-                        name: 'Someone else in addition to provider',
+                        name: 'Notify others in addition to provider',
                         value: 'forward_careplan_approval_emails_in_addition_to_provider',
                     },
                     {
-                        name: 'Someone else instead of provider',
+                        name: 'Notify others instead of provider',
                         value: 'forward_careplan_approval_emails_instead_of_provider',
                     },
                 ]

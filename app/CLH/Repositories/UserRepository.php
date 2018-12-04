@@ -1,7 +1,9 @@
 <?php namespace App\CLH\Repositories;
 
+use App\AuthyUser;
 use App\CareAmbassador;
 use App\CarePlan;
+use App\EhrReportWriterInfo;
 use App\Nurse;
 use App\Patient;
 use App\PatientMonthlySummary;
@@ -13,18 +15,14 @@ use App\UserPasswordsHistory;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Storage;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
+class UserRepository
 {
-    public function model()
-    {
-        return app(User::class);
-    }
-
     public function exists($id)
     {
-        return ! ! $this->model()->find($id);
+        return User::where('id', $id)->exists();
     }
 
     public function createNewUser(
@@ -68,6 +66,15 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             $this->saveOrUpdateCareAmbassadorInfo($user, $params);
         }
 
+        // ehr report writer info
+        if ($user->hasRole('ehr-report-writer')) {
+            $this->saveOrUpdateEhrReportWriterInfo($user, $params);
+        }
+
+        if ($user->isAdmin() && $user->authyUser) {
+            $this->forceEnable2fa($user->authyUser);
+        }
+
         //Add Email Notification
         $sendTo = ['patientsupport@circlelinkhealth.com'];
         if (app()->environment('production')) {
@@ -97,10 +104,10 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 
         $user->auto_attach_programs = $params->get('auto_attach_programs');
         if ($params->get('first_name')) {
-            $user->first_name = $params->get('first_name');
+            $user->setFirstName($params->get('first_name'));
         }
         if ($params->get('last_name')) {
-            $user->last_name = $params->get('last_name');
+            $user->setLastName($params->get('last_name'));
         }
         if ($params->get('suffix')) {
             $user->suffix = $params->get('suffix');
@@ -173,9 +180,17 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         // add nurse info
         if ($user->hasRole('care-center') && ! $user->nurseInfo) {
             $nurseInfo          = new Nurse;
+            $nurseInfo->status  = 'active';
             $nurseInfo->user_id = $user->id;
             $nurseInfo->save();
             $user->load('nurseInfo');
+        }
+
+        if ($user->hasRole('ehr-report-writer') && ! $user->ehrReportWriterInfo) {
+            $ehrReportWriterInfo          = new EhrReportWriterInfo;
+            $ehrReportWriterInfo->user_id = $user->id;
+            $ehrReportWriterInfo->save();
+            $user->load('ehrReportWriterInfo');
         }
     }
 
@@ -331,21 +346,31 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         ParameterBag $params
     ) {
 
-        if ($user->careAmbassador != null) {
-            $user->careAmbassador->hourly_rate    = $params->get('hourly_rate');
-            $user->careAmbassador->speaks_spanish = $params->get('speaks_spanish') == 'on'
-                ? 1
-                : 0;
-            $user->careAmbassador->save();
-        } else {
-            $ambassador = CareAmbassador::create([
-                'user_id' => $user->id,
+        CareAmbassador::updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'hourly_rate'    => $params->get('hourly_rate')
+                    ?: null,
+                'speaks_spanish' => $params->get('speaks_spanish') == 'on'
+                    ? 1
+                    : 0,
             ]);
+    }
 
-            $ambassador->save();
+    public function saveOrUpdateEhrReportWriterInfo(
+        User $user,
+        ParameterBag $params
+    ) {
 
-            $user->careAmbassador()->save($ambassador);
-        }
+        $folderPath = $this->saveEhrReportWriterFolder($user);
+
+        EhrReportWriterInfo::updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'google_drive_folder_path' => $folderPath,
+            ]
+        );
+
     }
 
     /**
@@ -363,17 +388,16 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         User $user,
         ParameterBag $params
     ) {
-        $history = $user->passwordsHistory;
+        $history          = $user->passwordsHistory;
         $previousPassword = $params->get('old-password');
         if ($history) {
             if ($previousPassword) {
                 $history->older_password = $history->old_password;
-                $history->old_password = bcrypt($previousPassword);
+                $history->old_password   = bcrypt($previousPassword);
                 $history->save();
             }
-        }
-        else {
-            $history = new UserPasswordsHistory();
+        } else {
+            $history          = new UserPasswordsHistory();
             $history->user_id = $user->id;
             $history->save();
         }
@@ -402,7 +426,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         $program_name  = $program->display_name;
         $email_subject = '[' . $program_name . '] New User Registration!';
         $data          = [
-            'patient_name'  => $user->getFullNameAttribute(),
+            'patient_name'  => $user->getFullName(),
             'patient_id'    => $user->id,
             'patient_email' => $user->getEmailForPasswordReset(),
             'program'       => $program_name,
@@ -450,6 +474,10 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             $this->saveOrUpdateNurseInfo($user, $params);
         }
 
+        if ($user->hasRole('ehr-report-writer')) {
+            $this->saveOrUpdateEhrReportWriterInfo($user, $params);
+        }
+
         return $user;
     }
 
@@ -471,5 +499,72 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             'patient_id' => $user->id,
             'month_year' => Carbon::now()->startOfMonth()->toDateString(),
         ]);
+    }
+
+    public function saveEhrReportWriterFolder($user)
+    {
+        $cloudDisk = Storage::drive('google');
+
+        $ehr = getGoogleDirectoryByName('ehr-data-from-report-writers');
+
+        if ( ! $ehr) {
+            $cloudDisk->makeDirectory("ehr-data-from-report-writers");
+            $path = $this->saveEhrReportWriterFolder($user);
+
+            return $path;
+        }
+
+        $writerFolder = getGoogleDirectoryByName("report-writer-{$user->id}");
+
+        if ( ! $writerFolder) {
+            $cloudDisk->makeDirectory($ehr['path'] . "/report-writer-{$user->id}");
+            $path = $this->saveEhrReportWriterFolder($user);
+
+            return $path;
+        } else {
+            $service    = $cloudDisk->getAdapter()->getService();
+            $permission = new \Google_Service_Drive_Permission();
+            $permission->setRole('writer');
+            $permission->setType('user');
+            $permission->setEmailAddress($user->email);
+
+            $service->permissions->create($writerFolder['basename'], $permission);
+
+            $permission = new \Google_Service_Drive_Permission();
+            $permission->setRole('writer');
+            $permission->setType('user');
+            $permission->setEmailAddress("joe@circlelinkhealth.com");
+
+            $service->permissions->create($writerFolder['basename'], $permission);
+
+            if (! app()->environment(['production', 'worker', 'local'])){
+                $adminEmails = User::ofType('administrator')
+                                   ->pluck('email')
+                                   ->each(function($email) use ($service, $writerFolder){
+                                       $permission = new \Google_Service_Drive_Permission();
+                                       $permission->setRole('writer');
+                                       $permission->setType('user');
+                                       $permission->setEmailAddress($email);
+                                       $service->permissions->create($writerFolder['basename'], $permission);
+                                   });
+            }
+
+            return $writerFolder['path'];
+        }
+
+
+    }
+
+    private function forceEnable2fa(AuthyUser $authyUser)
+    {
+        if ($authyUser->authy_id && ! $authyUser->is_authy_enabled) {
+            $authyUser->is_authy_enabled = true;
+
+            if ( ! $authyUser->authy_method) {
+                $authyUser->authy_method = 'app';
+            }
+
+            $authyUser->save();
+        }
     }
 }

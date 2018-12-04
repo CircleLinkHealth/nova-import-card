@@ -238,9 +238,9 @@
 
 <script>
     import modal from '../../shared/materialize/modal.vue';
-    import {mapGetters, mapActions} from 'vuex'
-    import {clearOpenModal, addNotification, updatePracticeLocation, clearErrors} from '../../../store/actions'
-    import {errors, practiceLocations} from '../../../store/getters'
+    import {mapActions, mapGetters} from 'vuex'
+    import {addNotification, clearErrors, clearOpenModal, updatePracticeLocation} from '../../../store/actions'
+    import {practiceLocations} from '../../../store/getters'
     import MaterialSelect from '../../src/material-select.vue'
 
     export default {
@@ -353,10 +353,10 @@
                     name: 'Patient\'s Billing / Main provider',
                     value: 'billing_provider'
                 }, {
-                    name: 'Someone else instead of the billing provider',
+                    name: 'Notify others instead of the billing provider',
                     value: 'instead_of_billing_provider'
                 }, {
-                    name: 'Someone else in addition to the billing provider',
+                    name: 'Notify others in addition to the billing provider',
                     value: 'in_addition_to_billing_provider'
                 }],
                 timezoneOptions: [{

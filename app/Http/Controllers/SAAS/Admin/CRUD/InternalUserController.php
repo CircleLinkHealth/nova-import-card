@@ -117,7 +117,7 @@ class InternalUserController extends Controller
                      ->get()
                      ->mapWithKeys(function ($user) {
                          return [
-                             $user->id => "{$user->first_name} {$user->last_name} ({$user->id})",
+                             $user->id => "{$user->getFirstName()} {$user->getLastName()} ({$user->id})",
                          ];
                      })
                      ->all();
@@ -142,7 +142,7 @@ class InternalUserController extends Controller
             'registered-nurse',
         ];
 
-        if (auth()->user()->hasRole('administrator')) {
+        if (auth()->user()->isAdmin()) {
             $rolesArray[] = 'administrator';
         }
 

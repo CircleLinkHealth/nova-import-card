@@ -55,8 +55,7 @@
         </style>
     @endpush
     <div class="container-fluid">
-
-        <form action="{{route('all.activity')}}" method="GET">
+        <form action="{{$submitUrl ?? route('revisions.all.activity')}}" method="GET">
             <div class="row">
                 <div class="col-md-3 col-md-offset-2">
                     <div class="form-group">
@@ -95,14 +94,19 @@
 
         <br/>
 
-        @if($revisions->isNotEmpty())
-            <div class="row">
-                <div class="panel panel-default">
-                    <div class="panel-body">
+        <div class="row">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    {{isset($user) ? "PHI History for {$user->getFullName()}" : 'History'}}
+                </div>
+                <div class="panel-body">
+                    @if($revisions->isNotEmpty())
+
                         <table class="table table-striped table-bordered table-curved table-condensed table-hover">
                             <thead>
                             <tr>
                                 <th id="change-id">Change Id</th>
+                                <th id="change-id">Changed By</th>
                                 <th id="type">Type</th>
                                 <th id="key">Key</th>
                                 <th id="is-phi">Is PHI</th>
@@ -116,6 +120,7 @@
                             @foreach($revisions as $history)
                                 <tr>
                                     <th>{{$history->id}}</th>
+                                    <th>{{$history->user_id ? link_to_route('admin.users.edit', $history->user_id, [$history->user_id]) : 'System'}}</th>
                                     <td title="{{$history->revisionable_type}}">{{str_replace('App\\', '',$history->revisionable_type)}}</td>
                                     <td title="{{$history->key}}">{{$history->key}}</td>
                                     <td>{{$history->is_phi ? 'Yes' : 'No'}}</td>
@@ -127,20 +132,23 @@
                             @endforeach
                             </tbody>
                         </table>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 center-align">
+                        {{$revisions->appends([
+                            'date-from' => $startDate->toDateString(),
+                            'date-to' => $endDate->toDateString()
+                        ])->render()}}
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-12 center-align">
-                            {{$revisions->appends([
-                                'date-from' => $startDate->toDateString(),
-                                'date-to' => $endDate->toDateString()
-                            ])->render()}}
-                        </div>
-                    </div>
-
+                    @else
+                        <h5>No data found.</h5>
+                    @endif
                 </div>
             </div>
-        @endif
+        </div>
+
     </div>
 
 @stop

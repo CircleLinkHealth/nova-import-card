@@ -94,7 +94,7 @@ class CarePlanProviderApproved extends Notification
         $approver = optional($this->carePlan->providerApproverUser);
 
         if ($approver) {
-            $message .= ' by ' . $approver->full_name;
+            $message .= ' by ' . $approver->getFullName();
         }
 
         return $message;

@@ -93,9 +93,14 @@ class CcdProblemService
         });
 
         return $user->ccdProblems
-            ->reject(function ($problem) use ($diabetes) {
-                return $problem->cpm_problem_id == $diabetes->id;
-        })->map([$this, 'setupProblem']);
+            ->where('cpm_problem_id', '!=', $diabetes->id)
+            ->map([$this, 'setupProblem']);
+    }
+
+    public function getPatientProblemsValues($userId)
+    {
+        return $this->getPatientProblems($userId)
+                    ->values();
     }
 
     public function addPatientCcdProblem($ccdProblem)

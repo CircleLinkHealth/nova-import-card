@@ -1,15 +1,18 @@
 <?php namespace App;
 
 use App\Contracts\PdfReport;
+use App\Contracts\ReportFormatter;
 use App\Models\Pdf;
 use App\Notifications\CarePlanProviderApproved;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\Channels\FaxChannel;
-use App\Services\ReportsService;
+use App\Rules\HasAtLeast2CcmOr1BhiProblems;
+use App\Services\CareplanService;
+use App\Services\PdfService;
 use App\Traits\PdfReportTrait;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Support\Facades\App;
+use Log;
+use Validator;
 
 /**
  * App\CarePlan
@@ -51,13 +54,12 @@ class CarePlan extends BaseModel implements PdfReport
 {
     use PdfReportTrait;
 
-    // statuses
+    // status options
     const DRAFT = 'draft';
     const QA_APPROVED = 'qa_approved';
     const PROVIDER_APPROVED = 'provider_approved';
 
-
-    // modes
+    // mode options
     const WEB = 'web';
     const PDF = 'pdf';
 
@@ -141,11 +143,6 @@ class CarePlan extends BaseModel implements PdfReport
         return $this->belongsTo(User::class, 'provider_approver_id', 'id');
     }
 
-    public function assessment()
-    {
-        return $this->hasOne(CareplanAssessment::class, 'careplan_id');
-    }
-
     /**
      * Create a PDF of this resource and return the path to it.
      *
@@ -165,33 +162,27 @@ class CarePlan extends BaseModel implements PdfReport
             return public_path('assets/pdf/sample-note.pdf');
         }
 
-        $user = $this->patient;
+        $pdfService      = app(PdfService::class);
+        $reportFormatter = app(ReportFormatter::class);
+        $careplanService = app(CareplanService::class);
 
-        $careplan = (new ReportsService())->carePlanGenerator([$user]);
+        $careplan = $reportFormatter->formatDataForViewPrintCareplanReport([$this->patient]);
+        $careplan = $careplan[$this->patient->id];
 
-        $pdf = App::make('snappy.pdf.wrapper');
+        if (empty($careplan)) {
+            throw new \Exception("Could not get CarePlan info for CarePlan with ID: $this->id");
+        }
 
-        $pdf->loadView('wpUsers.patient.careplan.print', [
-            'patient'             => $user,
-            'problems'            => $careplan[$user->id]['problems'],
-            'problemNames'        => $user->cpmProblems()->get()->sortBy('name')->pluck('name')->all(),
-            'biometrics'          => $careplan[$user->id]['bio_data'],
-            'symptoms'            => $careplan[$user->id]['symptoms'],
-            'lifestyle'           => $careplan[$user->id]['lifestyle'],
-            'medications_monitor' => $careplan[$user->id]['medications'],
-            'taking_medications'  => $careplan[$user->id]['taking_meds'],
-            'allergies'           => $careplan[$user->id]['allergies'],
-            'social'              => $careplan[$user->id]['social'],
-            'appointments'        => $careplan[$user->id]['appointments'],
-            'other'               => $careplan[$user->id]['other'],
-            'isPdf'               => true,
-            'recentSubmission'    => false,
+        return $pdfService->createPdfFromView('wpUsers.patient.multiview', [
+            'careplans'    => [$this->patient->id => $careplan],
+            'isPdf'        => true,
+            'letter'       => false,
+            'problemNames' => $careplan['problem'],
+            'careTeam'     => $this->patient->careTeamMembers,
+            'data'         => $careplanService->careplan($this->patient->id),
+        ], [
+            'disable-javascript' => true,
         ]);
-
-        $file_name = base_path('storage/pdfs/careplans/' . Carbon::now()->toDateString() . '-' . $user->fullName . '.pdf');
-        $pdf->save($file_name, true);
-
-        return $file_name;
     }
 
     public function isProviderApproved()
@@ -217,7 +208,7 @@ class CarePlan extends BaseModel implements PdfReport
         $approver = $this->providerApproverUser;
 
         return $approver
-            ? $approver->fullName
+            ? $approver->getFullName()
             : '';
     }
 
@@ -249,6 +240,8 @@ class CarePlan extends BaseModel implements PdfReport
      */
     public function forward()
     {
+        Log::debug("CarePlan: Ready to forward");
+
         $this->load([
             'patient.primaryPractice.settings',
             'patient.patientInfo.location',
@@ -260,21 +253,35 @@ class CarePlan extends BaseModel implements PdfReport
 
         if ($cpmSettings->efax_pdf_careplan) {
             $channels[] = FaxChannel::class;
+            Log::debug("CarePlan: Will forward to fax");
         }
 
         if ($cpmSettings->dm_pdf_careplan) {
             $channels[] = DirectMailChannel::class;
+            Log::debug("CarePlan: Will forward to direct mail");
         }
 
         if (empty($channels)) {
+            $patientId = $this->patient->id;
+            $practice  = $this->patient->primaryPractice->name;
+            Log::debug("CarePlan: Will not be forwarded because primary practice[$practice] for patient[$patientId] does not have any enabled channels.");
+
             return;
         }
 
-        optional($this->patient->patientInfo->location)->notify(new CarePlanProviderApproved($this, $channels));
+        $location = $this->patient->patientInfo->location;
+        if ($location == null) {
+            $patientId = $this->patient->id;
+            Log::debug("CarePlan: Will not be forwarded because patient[$patientId] does not have a preferred contact location.");
+
+            return;
+        }
+
+        $location->notify(new CarePlanProviderApproved($this, $channels));
     }
 
     /**
-     * Returns the notifications that included this note as an attachment
+     * Returns the notifications that included this resource as an attachment
      *
      * @return MorphMany
      */
@@ -282,5 +289,45 @@ class CarePlan extends BaseModel implements PdfReport
     {
         return $this->morphMany(DatabaseNotification::class, 'attachment')
                     ->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * Validate that the recently created CarePlan has all the data CLH needs to provide services to a patient.
+     *
+     * @return \Illuminate\Validation\Validator
+     */
+    public function validator()
+    {
+        $patient = $this->patient->load([
+            'patientInfo',
+            'phoneNumbers',
+            'billingProvider.user',
+            'ccdProblems' => function ($q) {
+                return $q->has('cpmProblem')
+                         ->with('cpmProblem');
+            },
+            //before enabling insurance validation, we have to store all insurance info in CPM
+            //            'ccdInsurancePolicies',
+        ]);
+
+        $data = [
+            'conditions'      => $patient->ccdProblems,
+            //before enabling insurance validation, we have to store all insurance info in CPM
+            //            'insurances' => $patient->ccdInsurancePolicies,
+            'phoneNumber'     => optional($patient->phoneNumbers->first())->number,
+            'dob'             => $patient->getBirthDate(),
+            'mrn'             => $patient->getMRN(),
+            'name'            => $patient->getFullName(),
+            'billingProvider' => optional($patient->billingProviderUser())->id,
+        ];
+
+        return Validator::make($data, [
+            'conditions'      => [new HasAtLeast2CcmOr1BhiProblems()],
+            'phoneNumber'     => 'required|phone:AUTO,US',
+            'dob'             => 'required|date',
+            'mrn'             => 'required',
+            'name'            => 'required',
+            'billingProvider' => 'required|numeric',
+        ]);
     }
 }

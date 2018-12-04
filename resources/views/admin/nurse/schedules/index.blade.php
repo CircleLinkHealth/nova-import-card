@@ -9,7 +9,7 @@
             @foreach($data as $user)
                 <div id="nurse-{{$user->nurseInfo->id}}" class="row" style="padding-bottom: 10%;">
                     <h3>
-                        <b>{{ $user->fullName }}</b>
+                        <b>{{ $user->getFullName() }}</b>
                         <span class="pull-right red-text">Timezone: {{ $user->timezone ? $user->timezone : 'Not set' }}</span>
                     </h3>
 
@@ -25,7 +25,7 @@
 
                     <div class="row">
                         <div class="row">
-                            <h3>{{$user->fullName}}'s Schedule</h3>
+                            <h3>{{$user->getFullName()}}'s Schedule</h3>
                         </div>
                         <div class="col-md-12">
                             @include('partials.care-center.work-schedule-slot.index', [
@@ -39,7 +39,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="row">
-                                <h3>{{$user->fullName}}'s Days Off</h3>
+                                <h3>{{$user->getFullName()}}'s Days Off</h3>
                             </div>
                             @include('partials.care-center.holiday-schedule.index', [
                                 'holidays' => $user->nurseInfo->upcoming_holiday_dates

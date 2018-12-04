@@ -42,6 +42,10 @@
 
                         @push('scripts')
                             <script>
+
+                                const activityStr = @json($activity_json) + "";
+                                const activityJson = JSON.parse(activityStr);
+
                                 function startCompare(value, filter) {
                                     value = value.toString().toLowerCase();
                                     filter = '<' + filter.toString().toLowerCase();
@@ -74,7 +78,7 @@
                                                 placeholder: "Filter"
                                             }],
                                             template: function (obj) {
-                                                if (obj.logged_from == "note")
+                                                if (obj.logged_from == "note" || obj.logged_from == "note_task")
                                                     return "<a href='<?php echo route('patient.note.view', [
                                                         'patientId' => $patient->id,
                                                         'noteId'    => ''
@@ -101,13 +105,14 @@
                                             id: "logged_from",
                                             header: ["Type", {content: "textFilter", placeholder: "Filter"}],
                                             template: function (obj) {
-                                                if (obj.logged_from == "note")
+                                                if (obj.logged_from == "note") {
                                                     return "Note";
-                                                else if (obj.logged_from == "manual_input") {
+                                                } else if (obj.logged_from == "note_task") {
+                                                    return "Note re: Task";
+                                                } else if (obj.logged_from == "manual_input") {
                                                     return "Offline Activity";
                                                 } else if (obj.logged_from == "appointment") {
                                                     return "Appointment";
-
                                                 }
                                                 return obj.type_name;
                                             },
@@ -125,7 +130,7 @@
                                             id: "comment",
                                             header: ["Preview"],
                                             template: function (obj) {
-                                                if (obj.logged_from == "note")
+                                                if (obj.logged_from == "note" || obj.logged_from == "note_task")
                                                     return "<a href='<?php echo route('patient.note.view', [
                                                         'patientId' => $patient->id,
                                                         'noteId'    => ''
@@ -187,7 +192,7 @@
                                         size: 10, // the number of records per a page
                                         group: 5   // the number of pages in the pager
                                     },
-                                    {!!$activity_json!!}
+                                    data: activityJson
                                 })
                                 ;
                                 webix.event(window, "resize", function () {
@@ -239,10 +244,10 @@
                                 <input type="button" value="Export as PDF" class="btn btn-primary"
                                        style='margin:15px;'
                                        onclick="webix.toPDF($$(obs_alerts_dtable), {
-                                               header: 'CarePlan Manager notes for {{ $patient->fullName . ", Dr. " . $patient->billingProviderName . " as of " . Carbon\Carbon::now()->toDateString() }}',
+                                               header: 'CarePlan Manager notes for {{ $patient->getFullName() . ", Dr. " . $patient->getBillingProviderName() . " as of " . Carbon\Carbon::now()->toDateString() }}',
                                                orientation:'landscape',
                                                autowidth:true,
-                                               filename: '{{$patient->fullName }} {{Carbon\Carbon::now()->toDateString()}}',
+                                               filename: '{{$patient->getFullName() }} {{Carbon\Carbon::now()->toDateString()}}',
                                                columns:{
                                                'performed_at':       { header:'Date/Time', width: 200, template: webix.template('#performed_at#') },
                                                'logger_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#logger_name#')},
@@ -253,10 +258,10 @@
                                 <input type="button" value="Export as Excel" class="btn btn-primary"
                                        style='margin:15px;'
                                        onclick="webix.toExcel($$(obs_alerts_dtable), {
-                                               header:'CarePlan Manager notes for {{ $patient->fullName . ", Dr. " . $patient->billingProviderName . " as of " . Carbon\Carbon::now()->toDateString() }}',
+                                               header:'CarePlan Manager notes for {{ $patient->getFullName() . ", Dr. " . $patient->getBillingProviderName() . " as of " . Carbon\Carbon::now()->toDateString() }}',
                                                orientation:'landscape',
                                                autowidth:true,
-                                               filename: '{{$patient->fullName }} {{Carbon\Carbon::now()->toDateString()}}',
+                                               filename: '{{$patient->getFullName() }} {{Carbon\Carbon::now()->toDateString()}}',
 
                                                columns:{
                                                'performed_at':       { header:'Date/Time', width: 110, template: webix.template('#performed_at#') },

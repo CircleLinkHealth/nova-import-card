@@ -24,7 +24,10 @@ class CallController extends Controller
     public function index(Request $request)
     {
 
-        $calls = Call::where('status', 'scheduled')->get();
+        $calls = Call::where(function ($q) {
+            $q->whereNull('type')
+              ->orWhere('type', '=', 'call');
+        })->where('status', 'scheduled')->get();
 
         return $calls;
     }
@@ -33,7 +36,7 @@ class CallController extends Controller
     {
         $input = $request->all();
         $call  = $this->createCall($input);
-        if (!isset($call['errors'])) {
+        if ( ! isset($call['errors'])) {
             return response()
                 ->json($call, 201);
         } else {
@@ -63,6 +66,8 @@ class CallController extends Controller
     private function createCall($input)
     {
         $validation = \Validator::make($input, [
+            'type'            => 'required',
+            'sub_type'        => '',
             'inbound_cpm_id'  => 'required',
             'outbound_cpm_id' => '',
             'scheduled_date'  => 'required|date',
@@ -80,6 +85,13 @@ class CallController extends Controller
             ];
         }
 
+        if ($input['type'] === 'task' && empty($input['sub_type'])) {
+            return [
+                'errors' => ['invalid form'],
+                'code'   => 407,
+            ];
+        }
+
         // validate patient doesnt already have a scheduled call
         $patient = User::find($input['inbound_cpm_id']);
         if ( ! $patient) {
@@ -89,8 +101,12 @@ class CallController extends Controller
             ];
         }
 
-        if ($patient->inboundCalls) {
+        if ($input['type'] === 'call' && $patient->inboundCalls) {
             $scheduledCall = $patient->inboundCalls()
+                                     ->where(function ($q) {
+                                         $q->whereNull('type')
+                                           ->orWhere('type', '=', 'call');
+                                     })
                                      ->where('status', '=', 'scheduled')
                                      ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'))
                                      ->first();
@@ -114,7 +130,10 @@ class CallController extends Controller
         }
 
         $call = $this->storeNewCall($patient, $input);
-        $this->storeNewCallForFamilyMembers($patient, $input);
+
+        if ($input['type'] === 'call') {
+            $this->storeNewCallForFamilyMembers($patient, $input);
+        }
 
         return CallResource::make($call);
     }
@@ -130,9 +149,17 @@ class CallController extends Controller
         if ( ! empty($familyMembers)) {
             foreach ($familyMembers as $familyMember) {
                 $familyMemberCall = $this->scheduler->getScheduledCallForPatient($familyMember->user);
-                //be extra safe here. if we have a call just skip this patient
                 if ($familyMemberCall) {
-                    continue;
+
+                    //be extra safe here. if we have a manual call just skip this patient
+                    if ($familyMemberCall->is_manual) {
+                        continue;
+                    }
+
+                    //cancel this call
+                    $familyMemberCall->status = 'rescheduled/family';
+                    $familyMemberCall->save();
+
                 }
                 $this->storeNewCall($familyMember->user, $input);
             }
@@ -149,13 +176,10 @@ class CallController extends Controller
     {
         $isFamilyOverride = ! empty($input['family_override']);
 
-        $call                 = new Call;
-        $call->inbound_cpm_id = $user->id;
-        if (empty($input['outbound_cpm_id'])) {
-            $call->outbound_cpm_id = null;
-        } else {
-            $call->outbound_cpm_id = $input['outbound_cpm_id'];
-        }
+        $call                  = new Call;
+        $call->type            = $input['type'];
+        $call->sub_type        = isset($input['sub_type']) ? $input['sub_type'] : null;
+        $call->inbound_cpm_id  = $user->id;
         $call->scheduled_date  = $input['scheduled_date'];
         $call->window_start    = $input['window_start'];
         $call->window_end      = $input['window_end'];
@@ -166,6 +190,13 @@ class CallController extends Controller
         $call->status          = 'scheduled';
         $call->scheduler       = auth()->user()->id;
         $call->is_manual       = boolval($input['is_manual']) || $isFamilyOverride;
+
+        if (empty($input['outbound_cpm_id'])) {
+            $call->outbound_cpm_id = null;
+        } else {
+            $call->outbound_cpm_id = $input['outbound_cpm_id'];
+        }
+
         $call->save();
         return $call;
     }
@@ -224,7 +255,10 @@ class CallController extends Controller
 
     public function showCallsForPatient($patientId)
     {
-        $calls = Call::where('inbound_cpm_id', $patientId)->paginate();
+        $calls = Call::where(function ($q) {
+            $q->whereNull('type')
+              ->orWhere('type', '=', 'call');
+        })->where('inbound_cpm_id', $patientId)->paginate();
 
         return view('admin.calls.index', ['calls' => $calls, 'patient' => User::find($patientId)]);
     }

@@ -2,7 +2,6 @@
 
 namespace Tests\Unit;
 
-use App\CareplanAssessment;
 use App\Notifications\CarePlanApprovalReminder;
 use App\Notifications\CarePlanProviderApproved;
 use App\Notifications\Channels\DatabaseChannel;
@@ -13,20 +12,14 @@ use App\Notifications\ResetPassword;
 use App\Notifications\WeeklyPracticeReport;
 use App\Notifications\WeeklyProviderReport;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Notification;
-use test\Mockery\TestWithVariadicArguments;
 use Tests\Helpers\CarePlanHelpers;
 use Tests\Helpers\SetupTestCustomer;
 use Tests\TestCase;
-use Faker\Factory;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class NotificationsTest extends TestCase
 {
     use CarePlanHelpers,
-        DatabaseTransactions,
         SetupTestCustomer;
 
     protected $patient;
@@ -65,7 +58,7 @@ class NotificationsTest extends TestCase
                 $this->assertEquals("5 CircleLink Care Plan(s) for your Approval!", $mailData->subject);
                 $this->assertEquals("CircleLink Health", $mailData->from[0]['name']);
                 $this->assertEquals("notifications@careplanmanager.com", $mailData->from[0]['address']);
-                $this->assertEquals("{$this->provider->fullName}", $mailData->to[0]['name']);
+                $this->assertEquals("{$this->provider->getFullName()}", $mailData->to[0]['name']);
                 $this->assertEquals("{$this->provider->email}", $mailData->to[0]['address']);
                 $this->assertEquals("emails.careplansPendingApproval", $mailData->view);
 

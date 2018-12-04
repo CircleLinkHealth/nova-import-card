@@ -152,7 +152,7 @@ trait CallAlgoHelper
                     $match['window_start'] = $startWindow->format('H:i');
                     $match['window_end'] = $endWindow->format('H:i');
 
-                    $match['window_match'] = 'We found an intersecting nurse window with: ' . $nurse->user->fullName;
+                    $match['window_match'] = 'We found an intersecting nurse window with: ' . $nurse->user->getFullName();
                     $match['nurse'] = $nurse->user_id;
 
                     return $match;
@@ -163,7 +163,7 @@ trait CallAlgoHelper
                 $match['window_start'] = $this->prediction['window_start'];
                 $match['window_end'] = $this->prediction['window_end'];
 
-                $match['window_match'] = 'No windows found, assigning to same nurse: ' . $nurse->user->fullName;
+                $match['window_match'] = 'No windows found, assigning to same nurse: ' . $nurse->user->getFullName();
                 $match['nurse'] = $nurse->user_id;
 
                 return $match;

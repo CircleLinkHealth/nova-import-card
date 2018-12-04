@@ -322,9 +322,11 @@ class NoteService
                                               ->first();
 
         if (empty($patientRecord)) {
+            //should not need to do that, because there is a command on start of every month
+            //that sets a monthly summary to 0 for each patient
             $patientRecord = PatientMonthlySummary::updateCCMInfoForPatient(
                 $patient->user_id,
-                $patient->cur_month_activity_time
+                0
             );
         } else {
             $patientRecord->is_ccm_complex = 0;
@@ -335,7 +337,7 @@ class NoteService
             $patientRecord->is_ccm_complex = 1;
             $patientRecord->save();
 
-            if ($patient->cur_month_activity_time > 3600 && auth()->user()->nurseInfo) {
+            if ($patient->user->getCcmTime() > 3600 && auth()->user()->nurseInfo) {
                 (new AlternativeCareTimePayableCalculator(auth()->user()->nurseInfo))->adjustPayOnCCMComplexSwitch60Mins();
             }
         }
@@ -354,15 +356,15 @@ class NoteService
     ) {
 
         if ($phone_direction == 'inbound') {
-            $outbound_num  = $patient->primaryPhone;
+            $outbound_num  = $patient->getPrimaryPhone();
             $outbound_id   = $patient->id;
-            $inbound_num   = $author->primaryPhone;
+            $inbound_num   = $author->getPrimaryPhone();
             $inbound_id    = $author->id;
             $isCpmOutbound = false;
         } else {
-            $outbound_num  = $author->primaryPhone;
+            $outbound_num  = $author->getPrimaryPhone();
             $outbound_id   = $author->id;
-            $inbound_num   = $patient->primaryPhone;
+            $inbound_num   = $patient->getPrimaryPhone();
             $inbound_id    = $patient->id;
             $isCpmOutbound = true;
         }
@@ -405,7 +407,7 @@ class NoteService
 
         foreach ($careteam_ids as $id) {
             if (User::find($id)) {
-                $careteam_info[$id] = User::find($id)->fullName;
+                $careteam_info[$id] = User::find($id)->getFullName();
             }
         }
 
@@ -453,7 +455,7 @@ class NoteService
                     ->whereNotNull('read_at')
                     ->get()
                     ->mapWithKeys(function ($notification) {
-                        return [$notification->notifiable->fullName => $notification->read_at->format('m/d/y h:iA T')];
+                        return [$notification->notifiable->getFullName() => $notification->read_at->format('m/d/y h:iA T')];
                     });
     }
 
@@ -468,7 +470,7 @@ class NoteService
                             return ['N/A' => $notification->created_at->format('m/d/y h:iA T')];
                         }
 
-                        return [$notification->notifiable->fullName => $notification->created_at->format('m/d/y h:iA T')];
+                        return [$notification->notifiable->getFullName() => $notification->created_at->format('m/d/y h:iA T')];
                     });
     }
 

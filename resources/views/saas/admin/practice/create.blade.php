@@ -4,11 +4,11 @@
 
 @section('content')
     @push('styles')
-    <style>
-        .form-group {
-            margin: 20px;
-        }
-    </style>
+        <style>
+            .form-group {
+                margin: 20px;
+            }
+        </style>
     @endpush
     <div class="container-fluid">
         <div class="row">
@@ -45,7 +45,8 @@
                                 <div class="col-xs-7">
                                     <select class="form-control" name="service_id">
                                         @foreach(App\ChargeableService::all() as $service)
-                                            <option value="{{$service->id}}" @if($service->code == 'CPT 99490'){{'selected'}}@endif>{{$service->code}} - {{$service->description}}</option>
+                                            <option value="{{$service->id}}" @if($service->code == 'CPT 99490'){{'selected'}}@endif>{{$service->code}}
+                                                - {{$service->description}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -55,15 +56,16 @@
                                     {!! Form::label('amount', 'Price ($)') !!}
                                 </div>
                                 <div class="col-xs-2">
-                                    <input class="form-control" name="amount" type="number" step="0.01" required style="width: 100%"/>
+                                    <input class="form-control" name="amount" type="number" step="0.01" required
+                                           style="width: 100%"/>
                                 </div>
                             </div>
 
                             <div class="row" style="margin-top:20px;">
                                 <div class="col-xs-2">{!! Form::label('term_days', 'Invoice Terms (days)') !!}</div>
                                 <div class="col-xs-2">
-                                    <input class="form-control" name="term_days" style="width: 100%"
-                                                             value="30"/>
+                                    <input class="form-control" name="term_days" style="width: 100%" type="number"
+                                           value="30"/>
                                 </div>
                                 <div class="col-xs-1">{!! Form::label('active', 'Active') !!}</div>
                                 <div class="col-xs-1">

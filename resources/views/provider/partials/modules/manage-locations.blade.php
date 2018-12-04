@@ -280,7 +280,7 @@
                         <div>
                             @include('provider.partials.mdl.form.radio', [
                                 'id' => 'instead-of-billing-provider-@{{index}}',
-                                'label' => 'Someone else instead of the billing provider.',
+                                'label' => 'Notify others instead of the billing provider.',
                                 'name' => 'locations[@{{index}}][clinical_contact][type]',
                                 'value' => 'instead_of_billing_provider',
                                 'attributes' => [
@@ -306,7 +306,7 @@
                         <div>
                             @include('provider.partials.mdl.form.radio', [
                                 'id' => 'in-addition-to-billing-provider-@{{index}}',
-                                'label' => 'Someone else in addition to the billing provider.',
+                                'label' => 'Notify others in addition to the billing provider.',
                                 'name' => 'locations[@{{index}}][clinical_contact][type]',
                                 'value' => 'in_addition_to_billing_provider',
                                 'attributes' => [

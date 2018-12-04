@@ -1,12 +1,10 @@
 <?php
 
 use App\Practice;
-use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
 class PracticeTableSeeder extends Seeder
 {
-
     public function run()
     {
         \DB::table('practices')->delete();

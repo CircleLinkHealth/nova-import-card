@@ -13,8 +13,7 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         'enrollment/sms/reply',
-        '/twilio/token',
-        '/twilio/call/make',
+        '/twilio/call/place',
         '/admin/reports/monthly-billing/v2/updateApproved',
         '/admin/reports/monthly-billing/v2/updateRejected',
         '/admin/reports/monthly-billing/v2/data',

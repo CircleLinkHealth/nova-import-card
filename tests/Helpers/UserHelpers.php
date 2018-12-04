@@ -37,7 +37,7 @@ trait UserHelpers
     ): User {
 
         $roles = [
-            Role::whereName($roleName)->first()->id,
+            Role::whereName($roleName)->firstOrFail()->id,
         ];
 
         //creates the User

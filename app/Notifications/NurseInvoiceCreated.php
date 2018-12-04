@@ -34,8 +34,8 @@ class NurseInvoiceCreated extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new NurseInvoiceMailer($notifiable->fullName, $this->link, $this->month))
-            ->to($notifiable->email, $notifiable->fullName);
+        return (new NurseInvoiceMailer($notifiable->getFullName(), $this->link, $this->month))
+            ->to($notifiable->email, $notifiable->getFullName());
     }
 
     /**

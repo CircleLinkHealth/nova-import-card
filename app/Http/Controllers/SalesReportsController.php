@@ -52,7 +52,7 @@ class SalesReportsController extends Controller
         ))
             ->data();
 
-        $data['name'] = $provider->fullName;
+        $data['name'] = $provider->getFullName();
         $data['start'] = Carbon::parse($input['start_date']);
         $data['end'] = Carbon::parse($input['end_date']);
         $data['isEmail'] = false;
@@ -61,7 +61,7 @@ class SalesReportsController extends Controller
         if ($input['submit'] == 'download') {
             $pdf = PDF::loadView('sales.by-practice.report', ['data' => $data]);
 
-            $name = $provider->last_name . '-' . Carbon::now()->toDateString();
+            $name = $provider->getLastName() . '-' . Carbon::now()->toDateString();
 
             $path = storage_path("download/$name.pdf");
 

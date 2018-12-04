@@ -13,60 +13,81 @@ class CpmMedicationRepository
         return app(Medication::class);
     }
 
-    public function count() {
+    public function count()
+    {
         return $this->model()->count();
     }
 
-    public function search($terms) {
+    public function search($terms)
+    {
         $query = $this->model();
         if (is_array($terms)) {
             $i = 0;
             foreach ($terms as $term) {
-                if ($i == 0) $query = $query->where('name', 'LIKE', '%'.$term.'%');
-                else $query = $query->orWhere('name', 'LIKE', '%'.$term.'%');
+                if ($i == 0) {
+                    $query = $query->where('name', 'LIKE', '%' . $term . '%');
+                } else {
+                    $query = $query->orWhere('name', 'LIKE', '%' . $term . '%');
+                }
                 $i++;
             }
+        } else {
+            $query = $query->orWhere('name', 'LIKE', '%' . $terms . '%');
         }
-        else $query = $query->orWhere('name', 'LIKE', '%'.$terms.'%');
         return $query->groupBy('name')->get();
     }
-    
-    public function patientMedication($userId) {
+
+    public function patientMedication($userId)
+    {
         return $this->model()->where([
-            'patient_id' => $userId
+            'patient_id' => $userId,
         ])->paginate();
     }
 
-    public function exists($id) {
-        return !!$this->model()->find($id);
+    public function patientMedicationsList($userId)
+    {
+        return $this
+            ->model()
+            ->where([
+                'patient_id' => $userId,
+            ])
+            ->select(['name', 'sig'])
+            ->get();
     }
 
-    public function addMedicationToPatient(Medication $medication) {
+    public function exists($id)
+    {
+        return ! ! $this->model()->find($id);
+    }
+
+    public function addMedicationToPatient(Medication $medication)
+    {
         $medication->save();
         return $medication;
     }
-    
-    public function removeMedicationFromPatient($medicationId, $userId) {
+
+    public function removeMedicationFromPatient($medicationId, $userId)
+    {
         $this->model()->where([
             'patient_id' => $userId,
-            'id' => $medicationId
+            'id'         => $medicationId,
         ])->delete();
-        
+
         return [
-            'message' => 'success'
+            'message' => 'success',
         ];
     }
 
-    public function editPatientMedication(Medication $medication) {
-        if (!$medication->id) {
+    public function editPatientMedication(Medication $medication)
+    {
+        if ( ! $medication->id) {
             throw new Exception('"id" is important');
-        }
-        else {
-            $medications = $this->model()->where([ 'id' => $medication->id ]);
+        } else {
+            $medications = $this->model()->where(['id' => $medication->id]);
             $medications->update([
-                'name' => $medication->name,
-                'sig' => $medication->sig,
-                'medication_group_id' => $medication->medication_group_id
+                'name'                => $medication->name,
+                'sig'                 => $medication->sig,
+                'medication_group_id' => $medication->medication_group_id,
             ]);
             return $medications->first();
         }

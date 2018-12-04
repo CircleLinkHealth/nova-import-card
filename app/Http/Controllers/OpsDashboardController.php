@@ -2,17 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Patient;
+use App\Jobs\GenerateOpsDashboardCSVReport;
 use App\Practice;
 use App\Repositories\OpsDashboardPatientEloquentRepository;
 use App\SaasAccount;
 use App\Services\OpsDashboardService;
-use App\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Maatwebsite\Excel\Facades\Excel;
 
 class OpsDashboardController extends Controller
 {
@@ -39,7 +37,10 @@ class OpsDashboardController extends Controller
      * Gets Patient Counts for table: CarePlan Manager Patient Totals,
      * for today, for specific day.
      *
+     * @param Request $request
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws \Exception
      */
     public function index(Request $request)
     {
@@ -54,27 +55,32 @@ class OpsDashboardController extends Controller
         }
         //there are no compatible reports in the cloud before this day
         $noReportDates = Carbon::parse('5 August 2018');
+        //for older reports that dont have dateGenerated
+        $dateGenerated = null;
 
         $json = optional(SaasAccount::whereSlug('circlelink-health')
-                           ->first()
-                           ->getMedia("ops-daily-report-{$date->toDateString()}.json")
-                           ->sortByDesc('id')
-                           ->first())
-                           ->getFile();
+                                    ->first()
+                                    ->getMedia("ops-daily-report-{$date->toDateString()}.json")
+                                    ->sortByDesc('id')
+                                    ->first())
+            ->getFile();
 
         //first check if we have a valid file
         if ( ! $json || $date <= $noReportDates) {
             $hoursBehind = 'N/A';
-            $rows  = null;
-        }else{
+            $rows        = null;
+        } else {
             //then check if it's in json format
-            if (!is_json($json)){
+            if ( ! is_json($json)) {
                 throw new \Exception("File retrieved is not in json format.", 500);
             }
 
             $data        = json_decode($json, true);
             $hoursBehind = $data['hoursBehind'];
             $rows        = $data['rows'];
+            if(array_key_exists('dateGenerated', $data)){
+            $dateGenerated = Carbon::parse($data['dateGenerated']);
+        }
         }
 
         return view('admin.opsDashboard.daily', compact([
@@ -82,144 +88,43 @@ class OpsDashboardController extends Controller
             'maxDate',
             'hoursBehind',
             'rows',
+            'dateGenerated'
         ]));
     }
 
-    public function dailyCsv(){
+    public function dailyCsv()
+    {
 
-        $date = Carbon::now();
+        GenerateOpsDashboardCSVReport::dispatch(auth()->user())->onQueue('high');
 
-        $practices = Practice::activeBillable()
-                             ->with([
-                                 'patients' => function ($p) use ($date) {
-                                     $p->with([
-                                         'activities'      => function ($a) use ($date) {
-                                             $a->where('performed_at', '>=',
-                                                 $date->copy()->startOfMonth()->startOfDay());
-                                         },
-                                         'revisionHistory' => function ($r) use ($date) {
-                                             $r->where('key', 'ccm_status')
-                                               ->where('created_at', '>=', $date->copy()->startOfDay());
-                                         },
-                                         'patientInfo',
-                                     ]);
-                                 },
-                             ])
-                             ->whereHas('patients.patientInfo')
-                             ->get()
-                             ->sortBy('display_name');
-
-        $enrolledPatients = $practices->map(function ($practice) {
-            return $practice->patients->filter(function ($user) {
-                if (!$user) {
-                    return false;
-                }
-                if(!$user->patientInfo) {
-                    return false;
-                }
-                return $user->patientInfo->ccm_status == Patient::ENROLLED;
-            });
-        })->flatten()->unique('id');
-
-        $hoursBehind = $this->service->calculateHoursBehind($date, $enrolledPatients);
-
-        foreach ($practices as $practice) {
-
-            $row = $this->service->dailyReportRow($practice->patients->unique('id'),
-                $enrolledPatients->where('program_id', $practice->id), $date);
-            if ($row != null) {
-                $rows[$practice->display_name] = $row;
-            }
-        }
-        $rows['CircleLink Total'] = $this->calculateDailyTotalRow($rows);
-        $rows                     = collect($rows);
-
-        Excel::create('CLH-Ops-Daily-Report-' . $date->toDateTimeString(), function ($excel) use (
-            $rows,
-            $hoursBehind,
-            $date
-        ) {
-            // Set the title
-            $excel->setTitle('CLH Ops Daily Report');
-
-            // Chain the setters
-            $excel->setCreator('CLH System')
-                  ->setCompany('CircleLink Health');
-
-            // Call them separately
-            $excel->setDescription('CLH Ops Daily Report');
-
-            // Our first sheet
-            $excel->sheet('Sheet 1', function ($sheet) use (
-                $rows,
-                $hoursBehind,
-                $date
-            ) {
-                $sheet->cell('A1', function($cell) use ($date) {
-                    // manipulate the cell
-                    $cell->setValue("Ops Report from: {$date->copy()->startOfDay()->toDateTimeString()} to: {$date->toDateTimeString()}");
-
-                });
-                $sheet->cell('A2', function($cell) use ($hoursBehind) {
-                    // manipulate the cell
-                    $cell->setValue("HoursBehind: {$hoursBehind}");
-
-                });
-
-
-                $sheet->appendRow([
-                    'Active Accounts',
-                    '0 mins',
-                    '0-5',
-                    '5-10',
-                    '10-15',
-                    '15-20',
-                    '20+',
-                    'Total',
-                    'Prior Day Totals',
-                    'Added',
-                    'Unreachable',
-                    'Paused',
-                    'Withdrawn',
-                    'Delta',
-                    'G0506 To Enroll'
-                ]);
-                foreach ($rows as $key => $value) {
-                    $sheet->appendRow([
-                        $key,
-                        $value['0 mins'],
-                        $value['0-5'],
-                        $value['5-10'],
-                        $value['10-15'],
-                        $value['15-20'],
-                        $value['20+'],
-                        $value['Total'],
-                        $value['Prior Day totals'],
-                        $value['Added'],
-                        $value['Unreachable'],
-                        $value['Paused'],
-                        $value['Withdrawn'],
-                        $value['Delta'],
-                        $value['G0506 To Enroll']
-                    ]);}
-
-
-            });
-        })->export('xls');
+        return "Waldo is working on compiling the reports you requested. <br> Give it a minute, and then head to " . link_to('/jobs/completed') . " and refresh frantically to see a link to the report you requested.";
 
     }
 
+    public function downloadCsvReport($fileName, $collection)
+    {
 
+        $csv = auth()->user()
+            ->saasAccount
+            ->getMedia($collection)
+            ->where('file_name', $fileName)
+            ->first();
+
+        return $this->downloadMedia($csv);
+
+    }
 
     public function getLostAdded(Request $request)
     {
+        return "This page is under construction.";
+
         $today   = Carbon::today();
         $maxDate = $today->copy()->subDay(1);
 
-        if ($request['fromDate'] && $request['toDate'] ){
+        if ($request['fromDate'] && $request['toDate']) {
             $fromDate = $request['fromDate'];
             $toDate   = $request['toDate'];
-        }else{
+        } else {
             $toDate   = $today->copy()->subDay(1)->setTimeFromTimeString('23:00');
             $fromDate = $toDate->copy()->subDay(1);
         }
@@ -247,7 +152,7 @@ class OpsDashboardController extends Controller
         $rows = [];
         foreach ($practices as $practice) {
             $patients = $practice->patients->where('program_id', $practice->id);
-            $row                      = $this->service->lostAddedRow($patients, $fromDate);
+            $row      = $this->service->lostAddedRow($patients, $fromDate);
             if ($row != null) {
                 $rows[$practice->display_name] = $row;
             }
@@ -267,7 +172,7 @@ class OpsDashboardController extends Controller
 
     public function getPatientListIndex()
     {
-
+        return "This page is under construction";
         $today   = Carbon::today();
         $maxDate = $today->copy()->subDay(1);
 
@@ -397,192 +302,6 @@ class OpsDashboardController extends Controller
 
     }
 
-    /**
-     * Old dashboard
-     *
-     * Gets Patient Counts for table: CarePlan Manager Patient Totals
-     *
-     * @param Request $request
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    public function getTotalPatientData(Request $request)
-    {
-        $practice           = false;
-        $patientsByPractice = null;
-
-        $date     = Carbon::createFromFormat('Y-m-d', $request['date']);
-        $dateType = $request['type'];
-
-        $practices = Practice::active()->get();
-
-        $totals = $this->service->getCpmPatientTotals($date, $dateType);
-
-        return view('admin.opsDashboard.index', compact([
-            'practices',
-            'totals',
-            'patientsByPractice',
-            'practice',
-            'date',
-            'dateType',
-
-        ]));
-
-    }
-
-    /**
-     * Old dashboard
-     *
-     * Gets Patient Counts for table: Patient stats by Practice.
-     *
-     * @param Request $request
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    public function getPatientsByPractice(Request $request)
-    {
-
-        $totals = null;
-
-        $date     = new Carbon($request['date']);
-        $dateType = $request['type'];
-        $practice = Practice::find($request['practice_id']);
-
-
-        $practices          = Practice::active()->get();
-        $patientsByPractice = $this->service->getCpmPatientTotals($date, $dateType, $practice->id);
-
-
-        return view('admin.opsDashboard.index', compact([
-            'practices',
-            'totals',
-            'patientsByPractice',
-            'practice',
-            'date',
-            'dateType',
-        ]));
-
-    }
-
-
-    /**
-     * Old dashboard
-     *
-     * Gets Patient list for Total Patients Table, and Patients by Practice Table.
-     *
-     *
-     * @param Request $request
-     *
-     * @param $type (type of the column (day, week, month, total)
-     * @param $date
-     * @param $dateType (type of date for the query (specific day, week, or month)
-     * @param null $practiceId
-     *
-     * @return mixed
-     */
-    public function getList(Request $request, $type, $date, $dateType, $practiceId = null)
-    {
-
-        $to     = null;
-        $date   = new Carbon($date);
-        $toDate = null;
-
-
-        if ($type == 'day') {
-            if ($dateType == 'day') {
-                $dayFromDate = $date->copy()->startOfDay()->toDateTimeString();
-                $dayToDate   = $date->copy()->endOfDay()->toDateTimeString();
-                $patients    = $this->service->getTotalPatients($dayFromDate, $dayToDate);
-            }
-            if ($dateType == 'week') {
-                $dayFromDate = $date->copy()->endOfWeek()->startOfDay()->toDateTimeString();
-                $dayToDate   = $date->copy()->endOfWeek()->endOfDay()->toDateTimeString();
-                $patients    = $this->service->getTotalPatients($dayFromDate, $dayToDate);
-            }
-            if ($dateType == 'month') {
-                $dayFromDate = $date->copy()->endOfMonth()->startOfDay()->toDateTimeString();
-                $dayToDate   = $date->copy()->endOfMonth()->endOfDay()->toDateTimeString();
-                $patients    = $this->service->getTotalPatients($dayFromDate, $dayToDate);
-            }
-        }
-        if ($type == 'week') {
-            if ($dateType == 'day' || 'week') {
-                $fromDate = $date->copy()->startOfWeek()->startOfDay()->toDateTimeString();
-                $toDate   = $date->copy()->endOfWeek()->endOfDay()->toDateTimeString();
-                $patients = $this->service->getTotalPatients($fromDate, $toDate);
-            }
-            if ($dateType == 'month') {
-                $fromDate = $date->copy()->endOfMonth()->startOfWeek()->startOfDay()->toDateTimeString();
-                $toDate   = $date->copy()->endOfMonth()->endOfDay()->toDateTimeString();
-                $patients = $this->service->getTotalPatients($fromDate, $toDate);
-            }
-        }
-        if ($type == 'month') {
-            $fromDate = $date->copy()->startOfMonth()->startOfDay()->toDateTimeString();
-            $toDate   = $date->copy()->endOfMonth()->endOfDay()->toDateTimeString();
-            $patients = $this->service->getTotalPatients($fromDate, $toDate);
-        }
-        if ($type == 'total') {
-            $patients = $this->service->getTotalPatients();
-        }
-
-        $practice = null;
-        if ($practiceId) {
-            $practice = Practice::find($practiceId);
-            $patients = $this->service->filterPatientsByPractice($patients, $practiceId);
-            $patients = new Collection($patients);
-        }
-
-
-        $patients = $this->paginatePatients($patients);
-        $patients = $patients->withPath("admin/reports/ops-dashboard/patient-list/$type/$date/$dateType/$practiceId");
-
-
-        return view('admin.opsDashboard.list', compact([
-            'patients',
-            'type',
-            'date',
-            'practice',
-            'to',
-        ]));
-
-    }
-
-
-    /**
-     *
-     * Old dashboard
-     * Gets Paused Patients List for two specific dates.
-     *
-     *
-     * @param Request $request
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    public function getPausedPatientList(Request $request)
-    {
-
-        $practice = null;
-        $date     = new Carbon($request['fromDate']);
-        $to       = new Carbon($request['toDate']);
-
-        $fromDate = $date->startOfDay()->toDateTimeString();
-        $toDate   = $to->endOfDay()->toDateTimeString();
-
-        $patients = $this->service->getPausedPatients($fromDate, $toDate);
-
-
-        $patients = $this->paginatePatients($patients);
-        $patients = $patients->withPath("admin/reports/ops-dashboard/paused-patient-list");
-
-        return view('admin.opsDashboard.list', compact([
-            'patients',
-            'practice',
-            'date',
-            'to',
-        ]));
-    }
-
     private function paginatePatients($patients)
     {
 
@@ -624,19 +343,19 @@ class OpsDashboardController extends Controller
 
     public function calculateLostAddedRow($rows)
     {
-        $total = [];
+        $total    = [];
         $totalRow = [];
         foreach ($rows as $key => $value) {
-            $total['Added'][]          = $value['Added'];
+            $total['Added'][]     = $value['Added'];
             $total['Paused'][]    = $value['Paused'];
             $total['Withdrawn'][] = $value['Withdrawn'];
-            $total['Delta'][]             = $value['Delta'];
+            $total['Delta'][]     = $value['Delta'];
         }
 
-        $totalRow['Added']          = array_sum($total['Added']);
+        $totalRow['Added']     = array_sum($total['Added']);
         $totalRow['Paused']    = array_sum($total['Paused']);
         $totalRow['Withdrawn'] = array_sum($total['Withdrawn']);
-        $totalRow['Delta']             = array_sum($total['Delta']);
+        $totalRow['Delta']     = array_sum($total['Delta']);
 
         return collect($totalRow);
 
@@ -646,13 +365,13 @@ class OpsDashboardController extends Controller
     {
         $totalCounts = [];
 
-        foreach ($rows as $row){
-            foreach ($row as $key => $value){
+        foreach ($rows as $row) {
+            foreach ($row as $key => $value) {
                 $totalCounts[$key][] = $value;
             }
 
         }
-        foreach($totalCounts as $key => $value){
+        foreach ($totalCounts as $key => $value) {
 
             $totalCounts[$key] = array_sum($value);
         }

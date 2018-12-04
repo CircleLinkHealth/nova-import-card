@@ -24,9 +24,9 @@ class PatientsForInsuranceCheck extends Controller
             ->where('created_at', '>=', $date)
             ->get()->map(function ($user) {
                 return [
-                    'name'             => $user->fullName,
-                    'dob'              => $user->birth_date,
-                    'billing_provider' => optional($user->billingProviderUser())->fullName,
+                    'name'             => $user->getFullName(),
+                    'dob'              => $user->getBirthDate(),
+                    'billing_provider' => optional($user->billingProviderUser())->getFullName(),
                     'practice'         => $user->primaryPractice->display_name,
                     'insurance_1'      => $user->ccdInsurancePolicies[0]->name ?? '',
                     'insurance_2'      => $user->ccdInsurancePolicies[1]->name ?? '',

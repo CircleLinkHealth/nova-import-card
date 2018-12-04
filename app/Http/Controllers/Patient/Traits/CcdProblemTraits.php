@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Patient\Traits;
 
+use App\SafeRequest;
 use Illuminate\Http\Request;
 
 trait CcdProblemTraits
@@ -19,25 +20,25 @@ trait CcdProblemTraits
         else return $this->badRequest('"userId" and "ccdId" are important');
     }
     
-    public function addCcdProblem($userId, Request $request)
+    public function addCcdProblem($userId, SafeRequest $request)
     {
         $ccdProblem = [ 
-                        'name' => $request->input('name'),
-                        'cpm_problem_id' => $request->input('cpm_problem_id'),
+                        'name' => $request->inputSafe('name'),
+                        'cpm_problem_id' => $request->inputSafe('cpm_problem_id'),
                         'userId' => $userId,
-                        'is_monitored' => $request->input('is_monitored'),
-                        'icd10' => $request->input('icd10')
+                        'is_monitored' => $request->inputSafe('is_monitored'),
+                        'icd10' => $request->inputSafe('icd10')
                     ];
         return response()->json($this->ccdProblemService->addPatientCcdProblem($ccdProblem));
     }
     
-    public function editCcdProblem($userId, $ccdId, Request $request)
+    public function editCcdProblem($userId, $ccdId, SafeRequest $request)
     {
-        $name = $request->input('name');
-        $cpm_problem_id = $request->input('cpm_problem_id');
-        $is_monitored = $request->input('is_monitored');
-        $icd10 = $request->input('icd10');
-        $instruction = $request->input('instruction');
+        $name = $request->inputSafe('name');
+        $cpm_problem_id = $request->inputSafe('cpm_problem_id');
+        $is_monitored = $request->inputSafe('is_monitored');
+        $icd10 = $request->inputSafe('icd10');
+        $instruction = $request->inputSafe('instruction');
         if ($name) {
             return response()->json($this->ccdProblemService->editPatientCcdProblem($userId, $ccdId, $name, $cpm_problem_id, $is_monitored, $icd10, $instruction));
         }

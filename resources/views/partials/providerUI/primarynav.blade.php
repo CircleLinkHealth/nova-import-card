@@ -1,6 +1,7 @@
 <?php
 if (isset($patient)) {
-    $seconds     = optional($patient->patientInfo)->cur_month_activity_time ?? 0;
+    //$patient can be a User or Patient model.
+    $seconds     = $patient->getCcmTime();
     $H           = floor($seconds / 3600);
     $i           = ($seconds / 60) % 60;
     $s           = $seconds % 60;
@@ -35,18 +36,20 @@ if (isset($patient)) {
 
         </div>
 
-        <div class="col-lg-5 col-sm-10 col-xs-10" id="search-bar-container">
+        <div class="col-lg-4 col-sm-10 col-xs-10" id="search-bar-container">
             @include('partials.search')
         </div>
 
-        <div class="hidden-xs col-lg-6 col-sm-12">
+        <div class="hidden-xs col-lg-7 col-sm-12">
             <ul class="nav navbar-nav navbar-right">
-                @if (auth()->user()->hasRole('care-center') && isset($patient) && optional($patient)->id && (!isset($noLiveCountTimeTracking)))
+                @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && auth()->user()->hasRole('care-center') && isset($patient) && optional($patient)->id && (!isset($noLiveCountTimeTracking)))
                     <li>
-                        <time-tracker-call-mode ref="timeTrackerCallMode" :patient-id="{{ isset($patient) ? (optional($patient)->id ?? '0') : '0' }}"></time-tracker-call-mode>
+                        <time-tracker-call-mode ref="timeTrackerCallMode"
+                                                :twilio-enabled="{{ $patient->primaryPractice->cpmSettings()->twilio_enabled }}"
+                                                :patient-id="{{ $patient->id }}"></time-tracker-call-mode>
                     </li>
                 @endif
-                @if(auth()->user()->hasRole('saas-admin') || auth()->user()->hasRole('administrator') || auth()->user()->hasRole('saas-admin-view-only'))
+                @if(auth()->user()->hasRole('saas-admin') || auth()->user()->isAdmin() || auth()->user()->hasRole('saas-admin-view-only'))
                     <li class="dropdown-toggle">
                         <div class="dropdown-toggle" data-toggle="dropdown" role="button"
                              aria-expanded="false"
@@ -67,10 +70,12 @@ if (isset($patient)) {
                             Practices <span class="caret" style="color: #fff"></span>
                         </div>
                         <ul class="dropdown-menu" role="menu" style="background: white !important;">
-                            <li><a href="{{ route('saas-admin.practices.create', []) }}">Add New</a></li>
-                            <li><a href="{{ route('saas-admin.practices.index', []) }}">Manage Active</a></li>
-                            <li><a href="{{ route('saas-admin.practices.billing.create', []) }}">Billable Patient Report</a></li>
-                            <li><a href="{{ route('saas-admin.monthly.billing.make', []) }}">Approve Billable Patients</a></li>
+                            <li><a href="{{ route('saas-admin.practices.create')}}">Add New</a></li>
+                            <li><a href="{{ route('saas-admin.practices.index')}}">Manage</a></li>
+                            <li><a href="{{ route('saas-admin.practices.billing.create', []) }}">Billable Patient
+                                    Report</a></li>
+                            <li><a href="{{ route('saas-admin.monthly.billing.make', []) }}">Approve Billable
+                                    Patients</a></li>
                         </ul>
                     </li>
                 @endif
@@ -118,7 +123,7 @@ if (isset($patient)) {
                          aria-expanded="false"
                          style="background: none !important;padding: 15px;line-height: 20px;cursor: pointer;">
                         <i class="glyphicon glyphicon glyphicon-cog"></i>
-                        {{auth()->user()->full_name}}
+                        {{auth()->user()->getFullName()}}
                         <span class="caret" style="color: #fff"></span>
                     </div>
                     <ul class="dropdown-menu" role="menu" style="background: white !important;">
@@ -145,7 +150,15 @@ if (isset($patient)) {
                             </li>
                         @endif
 
-                        <li><a href="{{ url('/auth/logout') }}">
+                        @if(isAllowedToSee2FA())
+                            <li>
+                                <a href="{{ route('user.settings.manage') }}">
+                                    Account Settings
+                                </a>
+                            </li>
+                        @endif
+
+                        <li><a href="{{ route('user.logout') }}">
                                 Logout
                             </a>
                         </li>

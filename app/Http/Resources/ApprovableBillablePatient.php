@@ -21,7 +21,7 @@ class ApprovableBillablePatient extends Resource
             ->where('type', '=', 'billing_provider')
             ->first();
 
-        $name = $this->patient->fullName;
+        $name = $this->patient->getFullName();
         $url  = route('patient.note.index', [
             'patient' => $this->patient->id,
         ]);
@@ -56,15 +56,15 @@ class ApprovableBillablePatient extends Resource
 
         return array_merge([
             'id'                     => $this->patient->id,
-            'mrn'                    => $this->patient->patientInfo->mrn_number,
+            'mrn'                    => $this->patient->getMRN(),
             'name'                   => $name,
             'url'                    => $url,
             'provider'               => $bP
-                ? optional($bP->user)->fullName
+                ? optional($bP->user)->getFullName()
                 : '',
             'practice'               => $this->patient->primaryPractice->display_name,
             'practice_id'            => $this->patient->primaryPractice->id,
-            'dob'                    => $this->patient->patientInfo->birth_date,
+            'dob'                    => $this->patient->getBirthDate(),
             'ccm'                    => round($this->ccm_time / 60, 2),
             'total_time'             => $this->total_time,
             'bhi_time'               => $this->bhi_time,

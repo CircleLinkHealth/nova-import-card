@@ -20,7 +20,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $birth_date
  * @property string|null $ccm_status
  * @property string|null $consent_date
- * @property string|null $cur_month_activity_time
  * @property string|null $gender
  * @property \Carbon\Carbon|null $date_paused
  * @property \Carbon\Carbon|null $date_withdrawn
@@ -54,7 +53,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \App\Family|null $family
  * @property mixed $address
  * @property mixed $city
- * @property-read mixed $current_month_c_c_m_time
  * @property mixed $first_name
  * @property mixed $last_name
  * @property mixed $state
@@ -177,7 +175,6 @@ class Patient extends BaseModel
         'ccm_status',
         'paused_letter_printed_at',
         'consent_date',
-        'cur_month_activity_time',
         'gender',
         'date_paused',
         'date_withdrawn',
@@ -260,6 +257,44 @@ class Patient extends BaseModel
         return $this->hasMany(PatientContactWindow::class, 'patient_info_id');
     }
 
+    public function getContactWindowsString()
+    {
+
+        $windows = [];
+
+        foreach ($this->contactWindows as $window) {
+            $start = Carbon::parse($window->window_time_start)->format('h:i a');
+            $end   = Carbon::parse($window->window_time_end)->format('h:i a');
+            switch ($window->day_of_week) {
+                case (1):
+                    $windows[] = "Monday: {$start} - {$end}<br/>";
+                    break;
+                case (2):
+                    $windows[] = "Tuesday: {$start} - {$end}<br/>";
+                    break;
+                case (3):
+                    $windows[] = "Wednesday: {$start} - {$end}<br/>";
+                    break;
+                case (4):
+                    $windows[] = "Thursday: {$start} - {$end}<br/>";
+                    break;
+                case (5):
+                    $windows[] = "Friday: {$start} - {$end}<br/>";
+                    break;
+                case (6):
+                    $windows[] = "Saturday: {$start} - {$end}<br/>";
+                    break;
+                case (7):
+                    $windows[] = "Sunday: {$start} - {$end}<br/>";
+                    break;
+            }
+        }
+
+        return empty($windows)
+            ? "Patient call date/time preferences not found."
+            : implode($windows);
+    }
+
     public function family()
     {
 
@@ -268,12 +303,12 @@ class Patient extends BaseModel
 
     public function getFirstNameAttribute()
     {
-        return $this->user->first_name;
+        return $this->user->getFirstName();
     }
 
     public function setFirstNameAttribute($value)
     {
-        $this->user->first_name = $value;
+        $this->user->setFirstName($value);
         $this->user->save();
 
         return true;
@@ -281,15 +316,20 @@ class Patient extends BaseModel
 
     public function getLastNameAttribute()
     {
-        return $this->user->last_name;
+        return $this->user->getLastName();
     }
 
     public function setLastNameAttribute($value)
     {
-        $this->user->last_name = $value;
+        $this->user->setLastName($value);
         $this->user->save();
 
         return true;
+    }
+
+    public function getFullName()
+    {
+        return $this->user->getFullName();
     }
 
     public function getAddressAttribute()
@@ -391,17 +431,6 @@ class Patient extends BaseModel
         return [];
     }
 
-    public function getCurrentMonthCCMTimeAttribute()
-    {
-        $seconds     = $this->cur_month_activity_time;
-        $H           = floor($seconds / 3600);
-        $i           = ($seconds / 60) % 60;
-        $s           = $seconds % 60;
-        $monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
-
-        return $monthlyTime;
-    }
-
     public function getLastCallStatusAttribute()
     {
         if (is_null($this->no_call_attempts_since_last_success)) {
@@ -413,6 +442,11 @@ class Patient extends BaseModel
         }
 
         return 'Success';
+    }
+
+    public function getCcmTime()
+    {
+        return $this->user->getCcmTime();
     }
 
     public function scopeEnrolled($query)
@@ -494,7 +528,8 @@ class Patient extends BaseModel
         );
     }
 
-    public function hasFamilyId() {
+    public function hasFamilyId()
+    {
         return $this->family_id != null;
     }
 
@@ -614,20 +649,24 @@ class Patient extends BaseModel
     public function safe()
     {
         return [
-            'id'                      => $this->id,
-            'user_id'                 => $this->user_id,
-            'ccm_status'              => $this->ccm_status,
-            'birth_date'              => $this->birth_date,
-            'age'                     => $this->birth_date
+            'id'               => $this->id,
+            'user_id'          => $this->user_id,
+            'ccm_status'       => $this->ccm_status,
+            'birth_date'       => $this->birth_date,
+            'age'              => $this->birth_date
                 ? (Carbon::now()->year - Carbon::parse($this->birth_date)->year)
                 : 0,
-            'gender'                  => $this->gender,
-            'date_paused'             => optional($this->date_paused)->format('c'),
-            'date_withdrawn'          => optional($this->date_withdrawn)->format('c'),
-            'date_unreachable'        => optional($this->date_unreachable)->format('c'),
-            'created_at'              => optional($this->created_at)->format('c'),
-            'updated_at'              => optional($this->updated_at)->format('c'),
-            'cur_month_activity_time' => $this->cur_month_activity_time,
+            'gender'           => $this->gender,
+            'date_paused'      => optional($this->date_paused)->format('c'),
+            'date_withdrawn'   => optional($this->date_withdrawn)->format('c'),
+            'date_unreachable' => optional($this->date_unreachable)->format('c'),
+            'created_at'       => optional($this->created_at)->format('c'),
+            'updated_at'       => optional($this->updated_at)->format('c'),
         ];
+    }
+
+    public function dob()
+    {
+        return Carbon::parse($this->birth_date)->format('m/d/Y');
     }
 }

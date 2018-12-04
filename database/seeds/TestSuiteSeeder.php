@@ -1,11 +1,9 @@
 <?php
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
 
 class TestSuiteSeeder extends Seeder
 {
-
     /**
      * Run the database seeds.
      *
@@ -15,6 +13,6 @@ class TestSuiteSeeder extends Seeder
     {
         $this->call(PracticeTableSeeder::class);
         $this->call(UserTableSeeder::class);
-        $this->call(PatientMonthlySummariesSeeder::class);
+        $this->call(PatientSeeder::class);
     }
 }

@@ -99,11 +99,12 @@
                             <li role="presentation" class="dropdown">
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                    aria-expanded="false">
-                                    Calls <span class="caret"></span>
+                                    Activities <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu" role="menu">
 
                                     <li><a href="{{ route('admin.patientCallManagement.index') }}">Manage</a></li>
+                                    <li><a href="{{ route('admin.patientCallManagement.v2.index') }}">Manage V2</a></li>
                                     <li><a href="{{ route('admin.families.index') }}">Families</a></li>
                                     <li><a href="{{ route('algo.mock.create') }}">
                                             Algo v{{\App\Algorithms\Calls\SuccessfulHandler::VERSION}} Simulator</a>
@@ -123,10 +124,6 @@
                                 </a>
                                 <ul class="dropdown-menu" role="menu">
                                     <li><a href="{{ route('get.admin.nurse.schedules') }}">Schedules</a>
-                                    {{--                                    <li><a href="{{ route('stats.nurse.info') }}">Nurse Statistics</a>--}}
-                                    <li><a href="{{ route('admin.reports.nurseTime.index') }}">Nurse
-                                            Time</a>
-                                    </li>
                                     <li><a href="{{ route('admin.reports.nurse.daily') }}">Daily
                                             Report</a></li>
                                     <li><a href="{{ route('admin.reports.nurse.monthly') }}">Monthly
@@ -174,21 +171,6 @@
                             </li>
                         @endif
 
-                        @if(Cerberus::hasPermission('practice.read'))
-                            <li role="presentation" class="dropdown">
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
-                                   aria-expanded="false">
-                                    Programs <span class="caret"></span>
-                                </a>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="{{ route('admin.programs.index') }}">Programs</a></li>
-                                    @if(Cerberus::hasPermission('location.read'))
-                                        <li><a href="{{ route('locations.index') }}">Locations</a></li>
-                                    @endif
-                                </ul>
-                            </li>
-                        @endif
-
                         <li role="presentation" class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                aria-expanded="false">
@@ -204,10 +186,6 @@
 
                                 <li><a href="{{ route('monthly.billing.make') }}">Approve Billable Patients</a></li>
 
-                                <li><a href="{{ route('PatientConditionsReportController.getReport') }}">Patient
-                                        Conditions (export)</a>
-                                </li>
-
                                 <li><a href="{{ route('excel.report.t2') }}">Unreachable Patients (export)</a>
                                 </li>
 
@@ -222,9 +200,11 @@
                                     <a href="{{route('OpsDashboard.billingChurn')}}">Billing Churn</a>
                                 </li>
                                 <li>
-                                    <a href="{{route('all.activity')}}">All Activity</a>
+                                    <a href="{{route('revisions.all.activity')}}">All Activity</a>
                                 </li>
-
+                                <li>
+                                    <a href="{{route('revisions.phi.activity')}}">PHI Activity</a>
+                                </li>
                             </ul>
                         </li>
 
@@ -250,9 +230,8 @@
                                 Practices <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{ route('admin.programs.create') }}">Add New</a></li>
-                                <li><a href="{{ route('admin.programs.index', []) }}">View Active</a></li>
-
+                                <li><a href="{{ route('saas-admin.practices.create')}}">Add New</a></li>
+                                <li><a href="{{ route('saas-admin.practices.index')}}">Manage</a></li>
                                 <li><a href="{{ route('invite.create', []) }}">Send Onboarding Invite</a>
                                 <li>
                                     <a href="{{ route('get.onboarding.create.program.lead.user', []) }}">Onboarding</a>
@@ -294,6 +273,7 @@
                             </a>
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{{ route('eligibility.batches.index') }}">Eligibility</a></li>
+                                <li><a href="{{ getEhrReportWritersFolderUrl() }}" target="_blank">EHR Report Writers Google Folder</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -319,7 +299,7 @@
                             </li>
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                                   aria-expanded="false">{{ Auth::user()->full_name }} [ID:{{ Auth::user()->id }}]<span
+                                   aria-expanded="false">{{ Auth::user()->getFullName() }} [ID:{{ Auth::user()->id }}]<span
                                             class="caret"></span></a>
                                 <ul class="dropdown-menu" role="menu">
                                     <li><a href="{{ route('admin.users.edit', array('id' => Auth::user()->id)) }}"

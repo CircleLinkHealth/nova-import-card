@@ -6,6 +6,7 @@ use App\ChargeableService;
 use App\Models\CPM\CpmProblem;
 use App\Patient;
 use App\Practice;
+use App\User;
 use Carbon\Carbon;
 use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
@@ -58,7 +59,7 @@ class BHIReconsentTest extends TestCase
 
             $patient->notes()
                     ->create([
-                        'author_id'    => 948,
+                        'author_id'    => factory(User::class)->create()->id,
                         'body'         => "Patient consented to receive BHI care on {$now->toDateTimeString()}",
                         'type'         => Patient::BHI_CONSENT_NOTE_TYPE,
                         'performed_at' => $now->toDateTimeString(),

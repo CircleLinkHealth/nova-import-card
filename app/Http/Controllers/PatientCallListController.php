@@ -17,16 +17,21 @@ class PatientCallListController extends Controller
         $calls = Call::where('outbound_cpm_id', '=', \Auth::user()->id);
 
         $dateFilter = 'All';
-        $date = Carbon::now();
+        $date       = Carbon::now();
         if ($request->has('date') && strtolower($request->input('date')) != 'all') {
             $date = $dateFilter = Carbon::parse($request->input('date'));
             $calls->where('scheduled_date', '=', $date->toDateString());
         }
 
         $calls->with([
-            'inboundUser.patientSummaries' => function ($q) use ($date) {
-                $q->where('month_year', $date->startOfMonth()->toDateString())
-                  ->orderBy('id', 'desc');
+            'inboundUser' => function ($u) use ($date) {
+                $u->with([
+                    'patientSummaries' => function ($q) use ($date) {
+                        $q->where('month_year', $date->startOfMonth()->toDateString())
+                          ->orderBy('id', 'desc');
+                    },
+                    'patientInfo.contactWindows',
+                ]);
             },
         ]);
 

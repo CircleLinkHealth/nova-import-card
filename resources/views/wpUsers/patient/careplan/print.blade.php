@@ -35,7 +35,6 @@ if (isset($patient) && ! empty($patient)) {
                     @if(!isset($isPdf))
                         <div class="row">
                             <div class="col-xs-12 text-right hidden-print">
-
                                 <div class="text-center">
                                     <span style="font-size: 27px;{{$ccm_above ? 'color: #47beab;' : ''}}">
                                         <span data-monthly-time="{{$monthlyTime}}" style="color: inherit"
@@ -46,6 +45,23 @@ if (isset($patient) && ! empty($patient)) {
                                         </span>
                                     </span>
                                 </div>
+                                @if(! empty(optional($errors)->messages()))
+                                    <div>
+                                        <div class="alert alert-danger text-left" style="line-height: 2">
+                                            <h4>CarePlan cannot be approved because:</h4>
+                                            <ul class="list-group">
+                                                @foreach ($errors->all() as $error)
+                                                    <li>
+                                                        <span class="glyphicon glyphicon-exclamation-sign"></span> {!! $error !!}
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                        <div class="row" style="margin-bottom: 5%;">
+                                            @include('errors.incompatibleBrowser')
+                                        </div>
+                                    </div>
+                                @endif
 
                                 @if($showInsuranceReviewFlag)
                                     <div class="alert alert-danger text-left" role="alert">
@@ -102,33 +118,50 @@ if (isset($patient) && ! empty($patient)) {
                                                 @endif
                                             </template>
 
-                                            <span class="btn btn-group text-right">
-                                                @if ( ($patient->carePlanStatus == 'qa_approved' && auth()->user()->canApproveCarePlans()) || ($patient->carePlanStatus == 'draft' && auth()->user()->hasPermission('care-plan-qa-approve')) )
+                                            @if ( ($patient->getCarePlanStatus() == 'qa_approved' && auth()->user()->canApproveCarePlans()) || ($patient->getCarePlanStatus() == 'draft' && auth()->user()->canQAApproveCarePlans()) )
+                                                <a style="margin-right:10px;"
+                                                   class="btn btn-info btn-sm inline-block"
+                                                   aria-label="..."
+                                                   role="button"
+                                                   href="{{ route('patient.careplan.approve', ['patientId' => $patient->id]) }}">Approve</a>
+
+                                                @if(auth()->user()->hasRole('provider'))
                                                     <a style="margin-right:10px;"
-                                                       class="btn btn-info btn-sm inline-block"
+                                                       class="btn btn-success btn-sm inline-block"
                                                        aria-label="..."
                                                        role="button"
-                                                       href="{{ route('patient.careplan.approve', ['patientId' => $patient->id]) }}">Approve</a>
+                                                       href="{{ route('patient.careplan.approve', ['patientId' => $patient->id, 'viewNext' => true]) }}">Approve
+                                                        and View Next</a>
 
-                                                    @if(auth()->user()->hasRole('provider'))
-                                                        <a style="margin-right:10px;"
-                                                           class="btn btn-success btn-sm inline-block"
-                                                           aria-label="..."
-                                                           role="button"
-                                                           href="{{ route('patient.careplan.approve', ['patientId' => $patient->id, 'viewNext' => true]) }}">Approve and View Next</a>
-                                                    @endif
+                                                    <form action="{{route('patient.careplan.not.eligible', ['patientId' => $patient->id, 'viewNext' => true])}}"
+                                                          method="POST" id="not-eligible-form" style="display: inline">
+                                                        {{ csrf_field() }}
+                                                        <button type="button" style="margin-right:10px;"
+                                                                onclick="notEligibleClick()"
+                                                                class="btn btn-danger btn-sm text-right">Not Eligible
+                                                        </button>
+
+                                                        <script>
+                                                            function notEligibleClick() {
+                                                                if (confirm('CAUTION: Clicking "confirm" will delete this patient’s entire record from Care Plan Manager. This action cannot be undone. Do you want to delete this patients entire record?')) {
+                                                                    document.getElementById('not-eligible-form').submit();
+                                                                }
+                                                            }
+                                                        </script>
+                                                    </form>
                                                 @endif
+                                            @endif
 
-                                                <a class="btn btn-info btn-sm inline-block" aria-label="..."
-                                                   role="button"
-                                                   href="{{ route('patients.careplan.multi') }}?users={{ $patient->id }}">Print This Page</a>
+                                            <a class="btn btn-info btn-sm inline-block" aria-label="..."
+                                               role="button"
+                                               href="{{ route('patients.careplan.multi') }}?users={{ $patient->id }}">Print
+                                                This Page</a>
 
-                                                <form class="lang" action="#" method="POST" id="form">
+                                            <form class="lang" action="#" method="POST" id="form">
                                                 {{ csrf_field() }}
-                                                    <input type="hidden" name="lang" value="es"/>
-                                                    <!-- <button type="submit" class="btn btn-info btn-sm text-right" aria-label="..." value="">Translate to Spanish</button>
-                                    -->       </form>
-                                            </span>
+                                                <input type="hidden" name="lang" value="es"/>
+                                                <!-- <button type="submit" class="btn btn-info btn-sm text-right" aria-label="..." value="">Translate to Spanish</button>
+                                -->       </form>
                                         </pdf-careplans>
                                     @endif
                                 </div>
@@ -148,24 +181,26 @@ if (isset($patient) && ! empty($patient)) {
                     <br>
 
                     <div class="row gutter">
-                        <div class="col-xs-4 print-row text-bold">{{$patient->fullName}}</div>
-                        <div class="col-xs-4 print-row">{{$patient->phone}}</div>
+                        <div class="col-xs-5 print-row text-bold">{{$patient->getFullName()}}
+                            (DOB: {{$patient->patientInfo->dob()}})
+                        </div>
+                        <div class="col-xs-3 print-row">{{$patient->getPhone()}}</div>
                         <div class="col-xs-4 print-row text-right">{{$today}}</div>
                     </div>
 
                     <div class="row gutter">
                         @if($billingDoctor)
-                            <div class="col-xs-4 print-row text-bold">
-                                {{$billingDoctor->fullName}} {!! ($billingDoctor->getSpecialtyAttribute() == '')? '' :  "<br> {$billingDoctor->getSpecialtyAttribute()}"!!}
+                            <div class="col-xs-5 print-row text-bold">
+                                {{$billingDoctor->getFullName()}} {!! ($billingDoctor->getSpecialty() == '')? '' :  "<br> {$billingDoctor->getSpecialty()}"!!}
                             </div>
-                            <div class="col-xs-4 print-row">
-                                {{$billingDoctor->phone}}
+                            <div class="col-xs-3 print-row">
+                                {{$billingDoctor->getPhone()}}
                             </div>
                         @else
-                            <div class="col-xs-4 print-row text-bold">
+                            <div class="col-xs-5 print-row text-bold">
                                 <em>No Billing Dr. Selected</em>
                             </div>
-                            <div class="col-xs-4 print-row">
+                            <div class="col-xs-3 print-row">
                             </div>
                         @endif
                         <div class="col-xs-4 print-row text-bold text-right">{{$patient->getPreferredLocationName()}}</div>
@@ -174,11 +209,11 @@ if (isset($patient) && ! empty($patient)) {
 
                     @if($regularDoctor)
                         <div class="row gutter">
-                            <div class="col-xs-4 print-row text-bold">
-                                {{$regularDoctor->fullName}} {!! ($regularDoctor->getSpecialtyAttribute() == '')? '' :  "<br> {$regularDoctor->getSpecialtyAttribute()}"!!}
+                            <div class="col-xs-5 print-row text-bold">
+                                {{$regularDoctor->getFullName()}} {!! ($regularDoctor->getSpecialty() == '')? '' :  "<br> {$regularDoctor->getSpecialty()}"!!}
                             </div>
-                            <div class="col-xs-4 print-row">
-                                {{$regularDoctor->phone}}
+                            <div class="col-xs-3 print-row">
+                                {{$regularDoctor->getPhone()}}
                             </div>
                         </div>
                     @endif
@@ -287,7 +322,7 @@ if (isset($patient) && ! empty($patient)) {
                         </div>
 
                         <div class="col-xs-12">
-                            <p>Your care team will check in with you at {{$patient->phone}} periodically.</p>
+                            <p>Your care team will check in with you at {{$patient->getPhone()}} periodically.</p>
                         </div>
                     </div>
                 </div>
@@ -404,11 +439,6 @@ if (isset($patient) && ! empty($patient)) {
                     var careplan = (<?php
                         echo json_encode($careplan)
                         ?>) || {};
-
-                    if (careplan.ccdProblems && !(careplan.ccdProblems instanceof Array)) {
-                        careplan.ccdProblems = Object.values(careplan.ccdProblems);
-                    }
-
                 </script>
             @endpush
         @endif

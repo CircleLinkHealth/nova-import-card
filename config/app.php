@@ -5,6 +5,7 @@ use App\Providers\EmailArrayValidatorServiceProvider;
 use App\Providers\FaxServiceProvider;
 use App\Providers\GoogleDriveServiceProvider;
 use App\Providers\ObserversServiceProvider;
+use App\Providers\AuthyServiceProvider;
 use App\Providers\ViewComposerServiceProvider;
 use App\View\Composers\ProviderUITimerComposer;
 use App\View\Composers\SAAS\Admin\ManageInternalUser;
@@ -143,7 +144,7 @@ return [
 
     'log' => env('APP_LOG', 'daily'),
 
-    'log_max_files' => 10,
+    'log_max_files' => 5,
 
     'log_level' => env('APP_LOG_LEVEL', 'debug'),
 
@@ -201,7 +202,7 @@ return [
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
-        App\Providers\EventServiceProvider::class,
+        App\Providers\CpmEventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         FaxServiceProvider::class,
         DirectMailServiceProvider::class,
@@ -218,7 +219,7 @@ return [
         \Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
         \Maatwebsite\Excel\ExcelServiceProvider::class,
         Prettus\Repository\Providers\RepositoryServiceProvider::class,
-        Yajra\Datatables\DatatablesServiceProvider::class,
+        Yajra\DataTables\DataTablesServiceProvider::class,
         Spatie\GoogleCalendar\GoogleCalendarServiceProvider::class,
         ObserversServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
@@ -233,6 +234,8 @@ return [
         GoogleDriveServiceProvider::class,
         ManageInternalUser::class,
         LynX39\LaraPdfMerger\PdfMergerServiceProvider::class,
+        AuthyServiceProvider::class,
+        PragmaRX\Health\ServiceProvider::class,
     ],
 
     /*
@@ -248,7 +251,7 @@ return [
 
     'aliases' => [
 
-        'App'            => Illuminate\Support\Facades\App::class,
+        'App'          => Illuminate\Support\Facades\App::class,
         'Agent'        => Jenssegers\Agent\Facades\Agent::class,
         'Artisan'      => Illuminate\Support\Facades\Artisan::class,
         'Auth'         => Illuminate\Support\Facades\Auth::class,
@@ -284,6 +287,7 @@ return [
         'Input'     => Illuminate\Support\Facades\Input::class,
         'Inspiring' => Illuminate\Foundation\Inspiring::class,
 
+        'DataTables'     => Yajra\DataTables\Facades\DataTables::class,
         'Debugbar'       => Barryvdh\Debugbar\Facade::class,
         'Excel'          => \Maatwebsite\Excel\Facades\Excel::class,
         'Form'           => \Collective\Html\FormFacade::class,

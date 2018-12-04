@@ -68,9 +68,9 @@ class PatientDailyAuditReport
                         ->where('patient_id', $this->patient->user_id)
                         ->sum('duration');
 
-        $this->data['name']     = $this->patient->user->fullName;
+        $this->data['name']     = $this->patient->user->getFullName();
         $this->data['month']    = $this->forMonth->format('F, Y');
-        $this->data['provider'] = $this->patient->user->billingProviderName;
+        $this->data['provider'] = $this->patient->user->getBillingProviderName();
         $this->data['totalCCM'] = $this->formatMonthlyTime($time);
 
         $activities = DB::table('lv_activities')
@@ -105,7 +105,7 @@ class PatientDailyAuditReport
 
             foreach ($notes as $note) {
                 $time                                                        = Carbon::parse($note->created_at)->format("g:i:s A");
-                $performer                                                   = User::withTrashed()->find($note->author_id)->fullName ?? '';
+                $performer                                                   = User::withTrashed()->find($note->author_id)->getFullName() ?? '';
                 $this->data['daily'][$date]['notes'][$note->id]['performer'] = $performer;
                 $this->data['daily'][$date]['notes'][$note->id]['time']      = $time;
                 $this->data['daily'][$date]['notes'][$note->id]['body']      = $note->body;

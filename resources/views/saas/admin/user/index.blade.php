@@ -111,7 +111,7 @@
                                             </div>
                                         </td>
                                         <td><a href="{{ route('saas-admin.users.edit', ['userId' => $wpUser->id]) }}" target="_blank"
-                                               class=""> {{ $wpUser->fullNameWithID }}</a></td>
+                                               class=""> {{ $wpUser->getFullNameWithId() }}</a></td>
                                         <td>
                                             @if ($wpUser->roles->isNotEmpty())
                                                 {{ $wpUser->roles->first()->display_name }}
@@ -120,7 +120,7 @@
                                         <td>{{ $wpUser->email }}</td>
                                         <td>
                                             @if ($wpUser->primaryPractice)
-                                                <a href="{{ route('admin.programs.show', array('id' => $wpUser->primaryPractice->id)) }}"
+                                                <a href="{{ route('provider.dashboard.manage.notifications', [$wpUser->primaryPractice->name]) }}"
                                                    class=""> {{ $wpUser->primaryPractice->display_name }}</a>
                                             @endif
                                         </td>

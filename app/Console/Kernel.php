@@ -19,10 +19,11 @@ use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
 use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
-use App\Console\Commands\SyncFamilialCalls;
 use App\Console\Commands\TuneScheduledCalls;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Spatie\Backup\Commands\BackupCommand;
+use Spatie\Backup\Commands\CleanupCommand;
 
 class Kernel extends ConsoleKernel
 {
@@ -35,19 +36,21 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        $schedule->command('horizon:snapshot')->everyFiveMinutes();
+
         $schedule->command(DetermineTargetPatientEligibility::class)
                  ->everyTenMinutes();
 
         $schedule->command(QueueEligibilityBatchForProcessing::class)
                  ->everyMinute()
-                 ->withoutOverlapping(15);
+                 ->withoutOverlapping();
 
         $schedule->command(AutoPullEnrolleesFromAthena::class)
                  ->monthlyOn(1);
 
-        $schedule->command(RescheduleMissedCalls::class)->dailyAt('00:05');
+        $schedule->command(RescheduleMissedCalls::class)->dailyAt('00:01');
 
-        $schedule->command(TuneScheduledCalls::class)->dailyAt('00:20');
+        $schedule->command(TuneScheduledCalls::class)->dailyAt('00:05');
 
 //        $schedule->call(function () {
 //            (new EnrollmentSMSSender())->exec();
@@ -64,7 +67,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('emailapprovalreminder:providers')
                  ->weekdays()
-                 ->dailyAt('08:00');
+                 ->at('08:00');
 
         //commenting out due to isues with google calendar
 //        $schedule->command('nurseSchedule:export')
@@ -77,14 +80,13 @@ class Kernel extends ConsoleKernel
                  ->everyThirtyMinutes();
 
         $schedule->command(EmailRNDailyReport::class)
-                 ->weekdays()
-                 ->at('21:00');
+                 ->dailyAt('21:00');
 
         $schedule->command(QueueSendApprovedCareplanSlackNotification::class)
                  ->dailyAt('23:40');
 
         $schedule->command(QueueGenerateOpsDailyReport::class)
-                 ->dailyAt('23:00');
+                 ->dailyAt('23:30');
 
         //Run at 12:01am every 1st of month
         $schedule->command(ResetPatients::class)
@@ -98,11 +100,11 @@ class Kernel extends ConsoleKernel
 //            ->dailyAt('05:00');
 
         $schedule->command(QueueGenerateNurseInvoices::class)
-                 ->dailyAt('23:50')
+                 ->dailyAt('23:40')
                  ->withoutOverlapping();
 
         $schedule->command(QueueGenerateNurseDailyReport::class)
-                 ->dailyAt('23:55')
+                 ->dailyAt('23:45')
                  ->withoutOverlapping();
 
         $schedule->command(CareplanEnrollmentAdminNotification::class)
@@ -137,6 +139,12 @@ class Kernel extends ConsoleKernel
         $schedule->command(DeleteProcessedFiles::class)
                  ->everyThirtyMinutes()
                  ->withoutOverlapping();
+
+//        Disable backup till we fix the issue of it not running
+//        if (app()->environment('worker')) {
+//            $schedule->command(CleanupCommand::class)->daily()->at('01:00');
+//            $schedule->command(BackupCommand::class)->daily()->at('02:00');
+//        }
     }
 
     /**
@@ -146,10 +154,6 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        if ( ! \Schema::hasTable('practices')) {
-            return;
-        }
-
         $this->load(__DIR__ . '/Commands');
         require base_path('routes/console.php');
     }

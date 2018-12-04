@@ -110,7 +110,7 @@ class SendInternalUserSignupInvitation extends Notification
      */
     public function toArray($notifiable)
     {
-        $inviterName     = $this->sender->fullName;
+        $inviterName     = $this->sender->getFullName();
         $practiceName    = $this->practice
             ->sortBy('display_name')
             ->map(function ($practice) {

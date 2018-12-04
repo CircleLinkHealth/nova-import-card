@@ -20,7 +20,7 @@ class CreateEligibilityJobsTable extends Migration {
 			$table->integer('status')->nullable()->index();
 			$table->text('data');
 			$table->string('outcome', 20)->nullable()->index();
-			$table->text('messages');
+            $table->text('messages')->nullable();
 			$table->timestamps();
 			$table->softDeletes();
 		});

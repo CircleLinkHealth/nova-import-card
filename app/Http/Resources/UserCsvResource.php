@@ -16,9 +16,9 @@ class UserCsvResource extends Resource
      */
     public function toArray($request)
     {
-        $practice = optional($this->primaryPractice()->first());
-        $patient  = optional($this->patientInfo()->first());
-        $careplan = optional($this->carePlan()->first());
+        $practice = $this->primaryPractice;
+        $patient  = $this->patientInfo;
+        $careplan = $this->carePlan;
         $ccmStatusDate = '';
         if ($patient->ccm_status == 'paused'){
             $ccmStatusDate = $patient->date_paused;
@@ -31,18 +31,18 @@ class UserCsvResource extends Resource
         }
 
         return ('"' . $this->display_name ?? $this->name()) . '",' .
-               '"' . $this->billing_provider_name . '",' .
+               '"' . $this->getBillingProviderName() . '",' .
                '"' . $practice->display_name . '",' .
                '"' . $patient->ccm_status . '",' .
-               '"' . $ccmStatusDate . '",' .
                '"' . $careplan->status . '",' .
                '"' . $patient->birth_date . '",' .
-               '"' . $this->phone . '",' .
+               '"' . $this->getPhone() . '",' .
                '"' . ($patient->birth_date
                 ? Carbon::parse($patient->birth_date)->age
                 : 0) . '",' .
                '"' . $this->created_at . '",' .
-               '"' . $this->getTimeInDecimals($patient->cur_month_activity_time) . '"';
+               '"' . $this->getTimeInDecimals($this->getCcmTime()) . '",' .
+               '"' . $ccmStatusDate . '"' ;
     }
 
     /**

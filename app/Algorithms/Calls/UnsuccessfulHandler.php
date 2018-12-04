@@ -59,7 +59,7 @@ class UnsuccessfulHandler implements CallHandler
     ) {
         $this->week         = $initTime->weekOfMonth;
         $this->patient      = $calledPatient;
-        $this->ccmTime      = $calledPatient->cur_month_activity_time;
+        $this->ccmTime      = $calledPatient->user->getCcmTime();
         $this->nextCallDate = $initTime;
         $this->logic        = '';
         $this->attemptNote  = '';
@@ -265,7 +265,7 @@ class UnsuccessfulHandler implements CallHandler
         $this->prediction['complex'] = $this->isComplex;
 
         return
-            'You just called ' . $this->patient->user->fullName
+            'You just called ' . $this->patient->user->getFullName()
             . ' ' . $status . ' in <b>week '
             . $this->week . '. </b> <br/> <br/> <b>'
             . 'Please confirm or amend the above next predicted call time. </b>';

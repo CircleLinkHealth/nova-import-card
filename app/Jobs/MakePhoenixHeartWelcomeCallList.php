@@ -9,7 +9,6 @@ use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartProblem;
 use App\Practice;
 use App\Repositories\Cache\UserNotificationList;
-use App\Services\Cache\NotificationService;
 use App\Services\Eligibility\Entities\Problem;
 use App\Services\WelcomeCallListGenerator;
 use Illuminate\Bus\Queueable;
@@ -40,22 +39,12 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
      * @return void
      * @throws \Exception
      */
-    public function handle(NotificationService $notificationService)
+    public function handle()
     {
         $names = PhoenixHeartName::where('processed', '=', false)
                                  ->take(30)
                                  ->get()
                                  ->keyBy('patient_id');
-
-        if ($names->isEmpty()) {
-            $this->batch->status = EligibilityBatch::STATUSES['complete'];
-            $this->batch->save();
-
-            return true;
-        } else {
-            $this->batch->status = EligibilityBatch::STATUSES['processing'];
-            $this->batch->save();
-        }
 
         $phxPractice = Practice::whereName('phoenix-heart')->firstOrFail();
 
@@ -97,14 +86,22 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
                 }
 
                 $patient['problems']->push(Problem::create([
-                    'name' => $problem->name,
-                    'code' => $problemCode,
+                    'name'  => $problem->description,
+                    'code'  => $problemCode,
+                    'start' => $problem->start_date,
+                    'end'   => $problem->end_date,
                 ]));
             }
 
             //format insurances
             $insurances = PhoenixHeartInsurance::where('patient_id', '=', $patient->get('patient_id'))
                                                ->get()
+                                               ->transform(function ($i) {
+                                                   $i->name = trim($i->name);
+
+                                                   return $i;
+                                               })
+                                               ->unique('name')
                                                ->sortBy('order')
                                                ->pluck('name')
                                                ->map(function ($ins) {
@@ -121,7 +118,7 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
 
             return $patient;
         })->map(function ($p) use ($phxPractice) {
-            $job = $this->firstOrCreateEligibilityJob($p, $phxPractice);
+            $job = $this->createEligibilityJob($p, $phxPractice);
 
             $list = (new WelcomeCallListGenerator(collect([0 => $p]), false, true, true, true,
                 $phxPractice, null, null, $this->batch, $job));
@@ -151,19 +148,15 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
      *
      * @return EligibilityJob|\Illuminate\Database\Eloquent\Model
      */
-    private function firstOrCreateEligibilityJob($p, $phxPractice)
+    private function createEligibilityJob($p, $phxPractice)
     {
         $hash = $phxPractice->name . $p['first_name'] . $p['last_name'] . $p['mrn'] . $p['city'] . $p['state'] . $p['zip'];
 
-        $job = EligibilityJob::whereHash($hash)->first();
-
-        if ( ! $job) {
-            $job = EligibilityJob::create([
-                'batch_id' => $this->batch->id,
-                'hash'     => $hash,
-                'data'     => $p,
-            ]);
-        }
+        $job = EligibilityJob::create([
+            'batch_id' => $this->batch->id,
+            'hash'     => $hash,
+            'data'     => $p,
+        ]);
 
         return $job;
     }

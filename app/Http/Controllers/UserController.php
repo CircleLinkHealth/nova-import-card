@@ -3,10 +3,13 @@
 use App\CLH\Repositories\UserRepository;
 use App\CPRulesPCP;
 use App\Location;
+use App\Note;
+use App\Patient;
 use App\Practice;
 use App\Role;
 use App\User;
 use Auth;
+use Carbon\Carbon;
 use DateTimeZone;
 use Illuminate\Http\Request;
 use Response;
@@ -25,7 +28,7 @@ class UserController extends Controller
         $messages = \Session::get('messages');
 
         $missingProgramId = [];
-        $users = User::all();
+        $users            = User::all();
 
         // display view
         $wpUsers = User::where('program_id', '!=', '')->orderBy('id', 'desc');
@@ -35,18 +38,18 @@ class UserController extends Controller
 
         // filter user
         $users = User::whereIn('id', Auth::user()->viewableUserIds())
-            ->orderBy('id', 'desc')
-            ->get()
-            ->mapWithKeys(function ($user) {
-                return [
-                    $user->id => "{$user->first_name} {$user->last_name} ({$user->id})"
-                ];
-            })
-            ->all();
+                     ->orderBy('id', 'desc')
+                     ->get()
+                     ->mapWithKeys(function ($user) {
+                         return [
+                             $user->id => "{$user->getFirstName()} {$user->getLastName()} ({$user->id})",
+                         ];
+                     })
+                     ->all();
 
         $filterUser = 'all';
 
-        if (!empty($params['filterUser'])) {
+        if ( ! empty($params['filterUser'])) {
             $filterUser = $params['filterUser'];
             if ($params['filterUser'] != 'all') {
                 $wpUsers->where('id', '=', $filterUser);
@@ -55,12 +58,12 @@ class UserController extends Controller
 
         // role filter
         $roles = Role::all()
-            ->pluck('display_name', 'name')
-            ->all();
+                     ->pluck('display_name', 'name')
+                     ->all();
 
         $filterRole = 'all';
 
-        if (!empty($params['filterRole'])) {
+        if ( ! empty($params['filterRole'])) {
             $filterRole = $params['filterRole'];
             if ($params['filterRole'] != 'all') {
                 $wpUsers->ofType($filterRole);
@@ -69,14 +72,14 @@ class UserController extends Controller
 
         // program filter
         $programs = Practice::orderBy('id', 'desc')
-            ->whereIn('id', Auth::user()->viewableProgramIds())
-            ->get()
-            ->pluck('display_name', 'id')
-            ->all();
+                            ->whereIn('id', Auth::user()->viewableProgramIds())
+                            ->get()
+                            ->pluck('display_name', 'id')
+                            ->all();
 
         $filterProgram = 'all';
 
-        if (!empty($params['filterProgram'])) {
+        if ( ! empty($params['filterProgram'])) {
             $filterProgram = $params['filterProgram'];
             if ($params['filterProgram'] != 'all') {
                 $wpUsers->where('program_id', '=', $filterProgram);
@@ -84,7 +87,7 @@ class UserController extends Controller
         }
 
         // only let owners see owners
-        if (!Auth::user()->hasRole(['administrator'])) {
+        if ( ! Auth::user()->hasRole(['administrator'])) {
             $wpUsers = $wpUsers->whereHas('roles', function ($q) {
                 $q->where('name', '!=', 'administrator');
             });
@@ -103,7 +106,7 @@ class UserController extends Controller
 
         // patient restriction
         $wpUsers->whereIn('id', Auth::user()->viewableUserIds());
-        $wpUsers = $wpUsers->paginate(20);
+        $wpUsers      = $wpUsers->paginate(20);
         $invalidUsers = [];
 
         return view('wpUsers.index', compact([
@@ -128,7 +131,7 @@ class UserController extends Controller
 
     public function quickAddForm($blogId)
     {
-        if (!Auth::user()->hasRole('administrator')) {
+        if ( ! Auth::user()->isAdmin()) {
             abort(403);
         }
         //if ( $request->header('Client') == 'ui' ) {}
@@ -158,9 +161,9 @@ class UserController extends Controller
 
         //List of providers
         $provider_raw = Practice::getProviders($blogId);
-        $providers = [];
+        $providers    = [];
         foreach ($provider_raw as $provider) {
-            $providers[$provider->id] = $provider->getFullNameAttribute();
+            $providers[$provider->id] = $provider->getFullName();
         }
 
         // @todo Check what's the name for Smoking
@@ -172,7 +175,7 @@ class UserController extends Controller
             'Weight',
         ];
         foreach ($subItems['Biometrics to Monitor'] as $key => $value) {
-            if (!in_array($value->items_text, $biometric_arr)) {
+            if ( ! in_array($value->items_text, $biometric_arr)) {
                 unset($subItems['Biometrics to Monitor'][$key]);
             }
         }//dd($subItems['Biometrics to Monitor']);
@@ -193,7 +196,7 @@ class UserController extends Controller
 
     public function storeQuickPatient()
     {
-        if (!Auth::user()->hasRole('administrator')) {
+        if ( ! Auth::user()->isAdmin()) {
             abort(403);
         }
         $wpUser = new User;
@@ -328,9 +331,9 @@ class UserController extends Controller
         $this->validate($request, $wpUser->rules);
 
         $wpUser = $userRepo->createNewUser($wpUser, $params);
-                
+
         if ($request->has('provider_id')) {
-            $wpUser->billing_provider_id = $request->input('provider_id');
+            $wpUser->setBillingProviderId($request->input('provider_id'));
         }
 
         //if location was selected save it
@@ -373,13 +376,13 @@ class UserController extends Controller
         $messages = \Session::get('messages');
 
         $patient = User::find($id);
-        if (!$patient) {
+        if ( ! $patient) {
             return response("User not found", 401);
         }
 
         $roles = Role::pluck('name', 'id')->all();
-        $role = $patient->roles()->first();
-        if (!$role) {
+        $role  = $patient->roles()->first();
+        if ( ! $role) {
             $role = Role::first();
         }
 
@@ -407,7 +410,7 @@ class UserController extends Controller
         }
 
         $params = $request->all();
-        if (!empty($params)) {
+        if ( ! empty($params)) {
             if (isset($params['action'])) {
                 if ($params['action'] == 'impersonate') {
                     Auth::login($id);
@@ -418,7 +421,7 @@ class UserController extends Controller
         }
 
         // locations @todo get location id for Practice
-        $practice = Practice::find($patient->program_id);
+        $practice      = Practice::find($patient->program_id);
         $locations_arr = [];
         if ($practice) {
             $locations_arr = $practice->locations->all();
@@ -527,7 +530,7 @@ class UserController extends Controller
         $id
     ) {
         $wpUser = User::find($id);
-        if (!$wpUser) {
+        if ( ! $wpUser) {
             return response("User not found", 401);
         }
 
@@ -537,9 +540,9 @@ class UserController extends Controller
         $userRepo = new UserRepository();
 
         $userRepo->editUser($wpUser, $params);
-                
+
         if ($request->has('provider_id')) {
-            $wpUser->billing_provider_id = $request->input('provider_id');
+            $wpUser->setBillingProviderid($request->input('provider_id'));
         }
 
         return redirect()->back()->with('messages', ['successfully updated user']);
@@ -556,7 +559,7 @@ class UserController extends Controller
     public function destroy($id)
     {
         $user = User::find($id);
-        if (!$user) {
+        if ( ! $user) {
             return response("User not found", 401);
         }
 
@@ -568,7 +571,7 @@ class UserController extends Controller
 
 
     /**
-     * Scramble user(s)
+     * Perform actions on multiple users
      *
      * @return Response
      *
@@ -577,12 +580,34 @@ class UserController extends Controller
     {
         $params = new ParameterBag($request->input());
 
-        if ($params->get('action') && $params->get('action') == 'scramble') {
-            if ($params->get('users') && !empty($params->get('users'))) {
-                $this->scrambleUsers($params->get('users'));
+        $action = $params->get('action');
 
-                return redirect()->back()->with('messages', ['successfully scrambled users']);
+        if ( ! $action) {
+            return redirect()->back()->withErrors(["form_error" => "There was an error: Missing 'action' parameter."]);
+        }
+
+        if ($action == 'scramble' || $action == 'withdraw') {
+
+            $selectAllFromFilters = ! empty($params->get('filterRole')) || ! empty($params->get('filterProgram'));
+            if ($selectAllFromFilters) {
+                $users = $this->getUsersBasedOnFilters($params);
+            } else {
+                $users = $params->get('users');
             }
+
+            if (empty($users)) {
+                return redirect()->back()->withErrors(["form_error" => "There was an error: Users array is empty."]);
+            }
+
+            if ($action == 'scramble') {
+                $this->scrambleUsers($users);
+                return redirect()->back()->with('messages', ['Action [Scramble] was successful']);
+            } else if ($action == 'withdraw') {
+                $this->withdrawUsers($users, $params->get('withdrawal-note-body'));
+                return redirect()->back()->with('messages', ['Action [Withdraw] was successful']);
+            }
+        } else {
+            return redirect()->back()->withErrors(["form_error" => "Unhandled action: $action"]);
         }
 
         return redirect()->back();
@@ -591,14 +616,14 @@ class UserController extends Controller
     /**
      * Scramble user(s)
      *
-     * @return Response
+     * @return boolean
      *
      */
     public function scrambleUsers($userIds)
     {
         foreach ($userIds as $id) {
             $user = User::find($id);
-            if (!$user) {
+            if ( ! $user) {
                 return false;
             }
 
@@ -606,6 +631,84 @@ class UserController extends Controller
         }
 
         return true;
+    }
+
+    private function withdrawUsers($userIds, String $noteBody)
+    {
+        //need to make sure that we are creating notes for participants
+        //and withdrawn patients that are not already withdrawn
+        $participantIds = User::ofType('participant')
+                              ->whereHas('patientInfo', function ($query) {
+                                  $query->where('ccm_status', '!=', 'withdrawn');
+                              })
+                              ->whereIn('id', $userIds)
+                              ->select(['id'])
+                              ->pluck('id')
+                              ->all();
+
+        Patient::whereIn('user_id', $participantIds)
+               ->update([
+                   'ccm_status'     => 'withdrawn',
+                   'date_withdrawn' => Carbon::now()->toDateTimeString(),
+               ]);
+
+        $authorId = auth()->id();
+
+        $notes = [];
+        foreach ($participantIds as $userId) {
+            $notes[] = [
+                'patient_id'   => $userId,
+                'author_id'    => $authorId,
+                'logger_id'    => $authorId,
+                'body'         => $noteBody,
+                'type'         => 'Other',
+                'performed_at' => Carbon::now(),
+            ];
+        }
+
+        Note::insert($notes);
+    }
+
+    private function getUsersBasedOnFilters(ParameterBag $params)
+    {
+
+        $wpUsers = User::where('program_id', '!=', '')->orderBy('id', 'desc');
+
+        // role filter
+        $filterRole = $params->get('filterRole');
+        if ( ! empty($filterRole)) {
+            if ($filterRole != 'all') {
+                $wpUsers->ofType($filterRole);
+            }
+        }
+
+        // program filter
+        $filterProgram = $params->get('filterProgram');
+        if ( ! empty($filterProgram)) {
+            if ($filterProgram != 'all') {
+                $wpUsers->where('program_id', '=', $filterProgram);
+            }
+        }
+
+        // only let owners see owners
+        if ( ! Auth::user()->hasRole(['administrator'])) {
+            $wpUsers = $wpUsers->whereHas('roles', function ($q) {
+                $q->where('name', '!=', 'administrator');
+            });
+            // providers can only see their participants
+            if (Auth::user()->hasRole(['provider'])) {
+                $wpUsers->whereHas('roles', function ($q) {
+                    $q->whereHas('perms', function ($q2) {
+                        $q2->where('name', '=', 'is-participant');
+                    });
+                });
+                $wpUsers->where('program_id', '=', Auth::user()->program_id);
+            }
+        }
+
+        return $wpUsers->whereIn('id', Auth::user()->viewableUserIds())
+                       ->select('id')
+                       ->get();
     }
 
 

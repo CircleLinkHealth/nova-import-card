@@ -1,5 +1,6 @@
 <?php namespace App;
 
+use App\BaseModel;
 use App\CLH\Helpers\StringManipulation;
 use App\Models\Ehr;
 use App\Traits\HasChargeableServices;
@@ -8,8 +9,8 @@ use App\Traits\SaasAccountable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
+use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
-use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
 
 /**
  * App\Practice
@@ -76,7 +77,7 @@ use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
  * @method static \Illuminate\Database\Query\Builder|\App\Practice withoutTrashed()
  * @mixin \Eloquent
  */
-class Practice extends \App\BaseModel implements HasMedia
+class Practice extends BaseModel implements HasMedia
 {
     use HasMediaTrait,
         HasChargeableServices,
@@ -176,6 +177,13 @@ class Practice extends \App\BaseModel implements HasMedia
     public function careplan()
     {
         return $this->hasMany('App\CarePlanTemplate', 'patient_id');
+    }
+
+    /**
+     * @return \App\PracticeEnrollmentTips|\Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function enrollmentTips() {
+        return $this->hasOne('App\PracticeEnrollmentTips', 'practice_id');
     }
 
     public function careAmbassadorLogs()
@@ -295,7 +303,7 @@ class Practice extends \App\BaseModel implements HasMedia
             return $q->whereActive(1);
         }
         return $q->whereActive(1)
-                     ->whereNotIn('name', ['demo', 'testdrive']);
+                     ->whereNotIn('name', ['demo', 'testdrive', 'mdally-demo']);
 
 
     }

@@ -96,12 +96,12 @@ class StatsHelper
             $end = $start->copy()->endOfMonth()->endOfDay();
 
             $index = $start->toDateString();
-            $data['withdrawn'][$index] = 0;
-            $data['paused'][$index] = 0;
+//            $data['withdrawn'][$index] = 0;
+//            $data['paused'][$index] = 0;
             $data['added'][$index] = 0;
 
             foreach ($patients as $patient) {
-                if ($patient->created_at->gte($start) && $patient->created_at->lte($end)) {
+                if (optional($patient->created_at)->gte($start) && optional($patient->created_at)->lte($end)) {
                     $data['added'][$index]++;
                 }
 
@@ -109,13 +109,13 @@ class StatsHelper
                     continue;
                 }
 
-                if (!empty($patient->patientInfo->date_withdrawn) && $patient->patientInfo->date_withdrawn->gte($start) && $patient->patientInfo->date_withdrawn->lte($end)) {
-                    $data['withdrawn'][$index]++;
-                }
-
-                if (!empty($patient->patientInfo->date_paused) && $patient->patientInfo->date_paused->gte($start) && $patient->patientInfo->date_paused->lte($end)) {
-                    $data['paused'][$index]++;
-                }
+//                if (!empty($patient->patientInfo->date_withdrawn) && $patient->patientInfo->date_withdrawn->gte($start) && $patient->patientInfo->date_withdrawn->lte($end)) {
+//                    $data['withdrawn'][$index]++;
+//                }
+//
+//                if (!empty($patient->patientInfo->date_paused) && $patient->patientInfo->date_paused->gte($start) && $patient->patientInfo->date_paused->lte($end)) {
+//                    $data['paused'][$index]++;
+//                }
             }
         }
 

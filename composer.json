@@ -26,6 +26,10 @@
     },
     {
       "type": "git",
+      "url": "git@github.com:ishansiddiqui/lara-pdf-merger.git"
+    },
+    {
+      "type": "git",
       "url": "git@github.com:CircleLinkHealth/laravel-cerberus.git"
     },
     {
@@ -37,43 +41,46 @@
     }
   ],
   "require": {
-    "php": ">=7.1.0",
+    "php": ">=7.2.0",
+    "ext-dom": "*",
+    "ext-json": "*",
+    "ext-libxml": "*",
     "amnuts/opcache-gui": "dev-master",
     "appstract/laravel-opcache": "^2.0",
     "arcturial/clickatell": "*",
+    "authy/php": "^3.0",
     "barryvdh/laravel-debugbar": "*",
     "barryvdh/laravel-snappy": "0.4.1",
+    "blackfire/php-sdk": "^1.17",
     "fideloper/proxy": "~3.3",
-    "gemorroj/archive7z": "^3.0",
     "genealabs/laravel-caffeine": "^0.5.0",
     "guzzlehttp/guzzle": "~5.3|~6.0",
-    "h4cc/wkhtmltoimage-amd64": "*",
-    "h4cc/wkhtmltopdf-amd64": "*",
     "jenssegers/agent": "^2.5",
     "jeremykenedy/slack-laravel": "^2.2",
     "lab404/laravel-impersonate": "^1.2",
     "laracasts/utilities": "~2.0",
     "laravel/framework": "5.5.*",
+    "laravel/horizon": "^1.4",
     "laravel/passport": "^4.0",
     "laravel/tinker": "^1.0",
     "laravelcollective/html": "5.5.*",
     "league/flysystem-aws-s3-v3": "~1.0",
     "league/fractal": "0.12.*",
-    "lynx39/lara-pdf-merger": "^1.0",
+    "lynx39/lara-pdf-merger": "dev-php7.2-adjustments",
     "maatwebsite/excel": "^2.1",
     "michalisantoniou6/laravel-cerberus": "dev-master",
     "nao-pon/flysystem-google-drive": "~1.1",
     "phaxio/phaxio": "^1.0",
-    "php-pm/httpkernel-adapter": "1.*",
-    "php-pm/php-pm": "1.*",
-    "pokitdok/pokitdok-php": "^1.1",
+    "pragmarx/health": "^0.9.16",
     "predis/predis": "^1.1",
     "prettus/l5-repository": "dev-master",
     "prettus/laravel-validation": "*",
     "propaganistas/laravel-phone": "^3.0",
     "rap2hpoutre/laravel-log-viewer": "^0.4.0",
+    "seld/jsonlint": "^1.7",
+    "spatie/laravel-backup": "^5.10",
     "spatie/laravel-google-calendar": "^2.0",
-    "spatie/laravel-medialibrary": "^6.9",
+    "spatie/laravel-medialibrary": "^7.0.0",
     "spiritix/lada-cache": "^2.1",
     "squizlabs/php_codesniffer": "*",
     "twilio/sdk": "5.7",
@@ -81,7 +88,7 @@
     "tymon/jwt-auth": "0.5.*",
     "venturecraft/revisionable": "dev-master",
     "waavi/url-shortener": "dev-master",
-    "yajra/laravel-datatables-oracle": "~6.0"
+    "yajra/laravel-datatables-oracle": "~8.0"
   },
   "require-dev": {
     "Xethron/Laravel-4-Generators": "*",
@@ -131,13 +138,19 @@
     "post-update-cmd": [
       "Illuminate\\Foundation\\ComposerScripts::postUpdate"
     ],
-    "test": [
-      "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner SqliteRunner -p4"
+    "prepare-test-db": [
+      "php artisan config:clear && php artisan db:test && php artisan migrate:fresh && php artisan migrate && php artisan db:seed && php artisan db:seed --class=TestSuiteSeeder"
     ],
-    "integration": [
+    "test": [
+      "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner WrapperRunner -p8"
+    ],
+    "test-sqlite": [
+      "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner SqliteRunner -p8"
+    ],
+    "integration-sqlite": [
       "./vendor/bin/paratest ./tests/integration --stop-on-failure --colors --runner SqliteRunner"
     ],
-    "feature": [
+    "feature-sqlite": [
       "./vendor/bin/paratest ./tests/feature --stop-on-failure --colors --runner SqliteRunner"
     ],
     "clear": [

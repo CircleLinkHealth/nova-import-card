@@ -57,7 +57,7 @@ class CompletionReminder extends Notification
 
         return (new MailMessage)
             ->subject("Let’s Finish Your".$notifiable->saasAccountName()." Profile!")
-            ->greeting("Hi $notifiable->fullName:")
+            ->greeting("Hi {$notifiable->getFullName()}:")
             ->line("We’re excited to start providing best-in-class chronic care management at $program_name but we need you to finish your profile!")
             ->line("Thanks and welcome aboard!")
             ->action('Complete Profile', $this->link);

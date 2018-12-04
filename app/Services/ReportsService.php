@@ -8,7 +8,6 @@ use App\Services\CPM\CpmMiscService;
 use App\Services\CPM\CpmProblemService;
 use App\User;
 use Illuminate\Support\Facades\DB;
-use Mockery\CountValidator\Exception;
 
 class ReportsService
 {
@@ -39,15 +38,6 @@ class ReportsService
     public function getBiometricsToMonitor(User $user)
     {
         return $user->cpmBiometrics()->get()->pluck('name')->all();
-    }
-
-    public function getProblemsToMonitor(User $user)
-    {
-        if ( ! $user) {
-            throw new Exception('User not found..');
-        }
-
-        return $user->cpmProblems()->get()->pluck('name')->all();
     }
 
     public function getSymptomsToMonitor(CarePlan $carePlan)

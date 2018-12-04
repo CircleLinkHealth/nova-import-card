@@ -6,6 +6,8 @@ use App\Contracts\Efax;
 use App\Http\Controllers\Controller;
 use App\Note;
 use App\Practice;
+use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class SendSampleNoteController extends Controller
@@ -24,8 +26,23 @@ class SendSampleNoteController extends Controller
 
     public function makePdf(Request $request)
     {
-        $sampleNote       = factory(Note::class)->make();
-        $sampleNote->body = $request->input('note_body');
+        $demo = Practice::whereName('demo')->firstOrFail();
+
+        //pick a random demo patient
+        $patient = User::ofType('participant')->ofPractice($demo->id)->firstOrFail();
+
+        //pick a random demo provider
+        $provider = User::ofType('provider')->ofPractice($demo->id)->firstOrFail();
+
+        $sampleNote                       = new Note();
+        $sampleNote->patient_id           = $patient->id;
+        $sampleNote->author_id            = $provider->id;
+        $sampleNote->logger_id            = $provider->id;
+        $sampleNote->body                 = $request->input('note_body');
+        $sampleNote->isTCM                = false;
+        $sampleNote->type                 = 'Test Note';
+        $sampleNote->did_medication_recon = false;
+        $sampleNote->performed_at         = Carbon::now();
 
         $pdf = $sampleNote->toPdf($request->input('scale', null));
 

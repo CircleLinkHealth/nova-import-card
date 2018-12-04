@@ -8,6 +8,7 @@ use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Session\TokenMismatchException;
 use Illuminate\Validation\ValidationException;
 use LERN;
+use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class Handler extends ExceptionHandler
@@ -28,6 +29,14 @@ class Handler extends ExceptionHandler
     ];
 
     /**
+     * A list of the exception types that should be recorded, but no notification should be sent.
+     * @var array
+     */
+    protected $recordButNotNotify = [
+        SuspiciousOperationException::class,
+    ];
+
+    /**
      * A list of the inputs that are never flashed for validation exceptions.
      *
      * @var array
@@ -45,11 +54,10 @@ class Handler extends ExceptionHandler
      * @param  \Exception $e
      *
      * @return void
+     * @throws Exception
      */
     public function report(Exception $e)
     {
-        parent::report($e);
-
         if ($e instanceof \Illuminate\Database\QueryException) {
             $errorCode = $e->errorInfo[1];
             if ($errorCode == 1062) {
@@ -60,10 +68,11 @@ class Handler extends ExceptionHandler
             }
         }
 
-        if ($this->shouldReport($e) && ! in_array(app()->environment(), [
+        if ($this->shouldReport($e) && ! in_array(config('app.env'), [
                 'local',
                 'development',
                 'dev',
+                'testing',
             ])
         ) {
             //Check to see if LERN is installed otherwise you will not get an exception.
@@ -80,7 +89,12 @@ class Handler extends ExceptionHandler
                     )
                 );
 
-                app()->make("lern")->handle($e); //Record and Notify the Exception
+                if ($this->shouldRecordOnly($e)) {
+                    app()->make("lern")->record($e);
+                } else {
+                    app()->make("lern")->handle($e); //Record and Notify the Exception
+                }
+
 
                 /*
                 OR...
@@ -89,6 +103,8 @@ class Handler extends ExceptionHandler
                 */
             }
         }
+
+        return parent::report($e);
     }
 
     /**
@@ -105,27 +121,17 @@ class Handler extends ExceptionHandler
     ) {
         if ($e instanceof ModelNotFoundException) {
             return response($e->getMessage(), 400);
-        }
-
-        if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException) {
+        } elseif ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException) {
             return response()->json(['token_expired'], $e->getStatusCode());
         } elseif ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
             return response()->json(['token_invalid'], $e->getStatusCode());
         } elseif ($e instanceof \Tymon\JWTAuth\Exceptions\TokenBlacklistedException) {
             return response()->json(['token_blacklisted'], '403');
-        }
-
-        if ($this->isHttpException($e)) {
+        } elseif ($this->isHttpException($e)) {
             return $this->renderHttpException($e);
-        } elseif ($e instanceof \ErrorException) {
-            if ( ! config('app.debug')) {
-                abort(500);
-            }
-
-            return parent::render($request, $e);
-        } else {
-            return parent::render($request, $e);
         }
+
+        return parent::render($request, $e);
     }
 
     /**
@@ -145,5 +151,10 @@ class Handler extends ExceptionHandler
         }
 
         return redirect()->guest('login');
+    }
+
+    private function shouldRecordOnly($e)
+    {
+        return in_array(get_class($e), $this->recordButNotNotify);
     }
 }

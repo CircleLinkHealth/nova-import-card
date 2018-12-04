@@ -312,11 +312,6 @@
                             if (patient.patient_info.date_paused) patient.patient_info.date_paused = patient.patient_info.date_paused.split('T')[0]
                             if (patient.patient_info.date_withdrawn) patient.patient_info.date_withdrawn = patient.patient_info.date_withdrawn.split('T')[0]
                             if (patient.patient_info.date_unreachable) patient.patient_info.date_unreachable = patient.patient_info.date_unreachable.split('T')[0]
-
-                            const pad = (num, count = 2) => '0'.repeat(count - num.toString().length) + num
-                            const seconds = patient.patient_info.cur_month_activity_time || 0
-                            patient.patient_info.ccm = seconds
-                            patient.patient_info.cur_month_activity_time = pad(Math.floor(seconds / 3600), 2) + ':' + pad(Math.floor(seconds / 60) % 60, 2) + ':' + pad(seconds % 60, 2);
                         }
                         return patient
                     }).map(patient => {
@@ -337,8 +332,11 @@
                         patient.sort_registeredOn = new Date(patient.created_at)
                         patient.sort_ccmStatusDate = new Date(patient.ccmStatusDate)
                         patient.lastReading = (patient.last_read || '').split(' ')[0] || 'No Readings'
-                        patient.ccm = (patient.patient_info || {}).cur_month_activity_time || 0
-                        patient.sort_ccm = (patient.patient_info || {}).ccm
+
+                        const pad = (num, count = 2) => '0'.repeat(count - num.toString().length) + num
+                        const seconds = patient.ccm_time || 0
+                        patient.ccm = pad(Math.floor(seconds / 3600), 2) + ':' + pad(Math.floor(seconds / 60) % 60, 2) + ':' + pad(seconds % 60, 2);
+                        patient.sort_ccm = seconds;
                         return patient
                     }).map(patient => {
                         const loadColumnList = (list = [], item = null) => {
@@ -410,7 +408,7 @@
                 return download().then(res => {
                     const link = document.createElement('a')
                     link.href = 'data:attachment/text,' + 
-                    encodeURI('name,provider,program,ccm status, ccm status date,careplan status,dob,phone,age,registered on,ccm\n'
+                    encodeURI('name,provider,program,ccm status, careplan status,dob,phone,age,registered on,ccm, ccm status date\n'
                                 + patients.join('\n'))
                     link.download = `patient-list-${Date.now()}.csv`
                     link.click()

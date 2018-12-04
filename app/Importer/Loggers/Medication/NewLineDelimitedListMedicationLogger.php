@@ -45,7 +45,7 @@ class NewLineDelimitedListMedicationLogger implements Logger
 
     public function shouldHandle($medicalRecord): bool
     {
-        return str_contains($medicalRecord->medications_string,
-                "\n") && ! starts_with($medicalRecord->medications_string, ['[', '{']);
+        return str_contains(optional($medicalRecord)->medications_string,
+                "\n") && ! starts_with(optional($medicalRecord)->medications_string, ['[', '{']);
     }
 }

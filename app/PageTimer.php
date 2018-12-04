@@ -1,6 +1,7 @@
 <?php namespace App;
 
 use App\Scopes\Universal\DateScopesTrait;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -34,6 +35,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \App\User $logger
  * @property-read \App\User $patient
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer createdThisMonth($field = 'created_at')
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer createdOn(Carbon $date, $field = 'created_at')
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer createdToday($field = 'created_at')
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer createdYesterday($field = 'created_at')
  * @method static bool|null forceDelete()

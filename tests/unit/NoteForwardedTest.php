@@ -5,7 +5,6 @@ namespace Tests\Unit;
 use App\Notifications\NoteForwarded;
 use App\Practice;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Notification;
 use Tests\Helpers\UserHelpers;
@@ -13,8 +12,7 @@ use Tests\TestCase;
 
 class NoteForwardedTest extends TestCase
 {
-    use DatabaseTransactions,
-        WithoutMiddleware,
+    use WithoutMiddleware,
         UserHelpers;
 
     protected $practice;
@@ -46,7 +44,7 @@ class NoteForwardedTest extends TestCase
         $note->forward(true, true);
 
         $recipients = collect();
-        $recipients = $note->patient->care_team_receives_alerts;
+        $recipients = $note->patient->getCareTeamReceivesAlerts();
         //care center
         $recipients->push($this->nurse);
 

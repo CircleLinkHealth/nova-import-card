@@ -47,7 +47,7 @@ class NurseCallStatistics
 
         foreach ($this->nurses as $nurse) {
             $differentiations = 10;
-            $name = $nurse->user->fullName;
+            $name = $nurse->user->getFullName();
 
             for ($i = 0; $i < $differentiations; $i++) {
                 $rangeStart = Carbon::parse($this->startTime)->addHours($i);
