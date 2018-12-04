@@ -41,6 +41,7 @@ $config = PhpCsFixer\Config::create()
         'no_null_property_initialization' => true,
         'no_short_echo_tag' => true,
         'no_superfluous_elseif' => true,
+        'no_unused_imports' => false,
         'no_useless_else' => true,
         'no_useless_return' => true,
         'ordered_class_elements' => [
@@ -62,8 +63,7 @@ $config = PhpCsFixer\Config::create()
         'single_line_comment_style' => true,
         'yoda_style' => true,
     ])
-    ->setFinder($finders)
-;
+    ->setFinder($finders);
 
 // special handling of fabbot.io service if it's using too old PHP CS Fixer version
 if (false !== getenv('FABBOT_IO')) {
