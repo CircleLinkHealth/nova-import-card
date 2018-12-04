@@ -621,13 +621,13 @@ if ( ! function_exists('defaultCarePlanTemplate')) {
     /**
      * Returns CircleLink's default CarePlanTemplate
      *
-     * @return CarePlanTemplate
+     * @return CarePlanTemplate|null
      */
-    function getDefaultCarePlanTemplate(): CarePlanTemplate
+    function getDefaultCarePlanTemplate(): ?CarePlanTemplate
     {
         $id = getAppConfig('default_care_plan_template_id');
 
-        return CarePlanTemplate::find($id);
+        return CarePlanTemplate::findOrFail($id);
     }
 }
 
