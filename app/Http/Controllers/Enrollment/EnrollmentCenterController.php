@@ -119,7 +119,7 @@ class EnrollmentCenterController extends Controller
 
         $engagedEnrollee = Enrollee::where([
             'status'             => 'engaged',
-            'care_ambassador_id' => $careAmbassador->id,
+            'care_ambassador_id' => $careAmbassador->user_id,
         ])
             ->orderBy('attempt_count')
             ->with('practice.enrollmentTips')
