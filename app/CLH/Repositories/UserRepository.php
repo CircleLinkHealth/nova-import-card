@@ -211,10 +211,10 @@ class UserRepository
 //        }
 
         $writerFolder = $ehr->where('type', '=', 'dir')
-                            ->where('filename', '=', "report-writer-{$user->id}")
-                            ->first();
+            ->where('filename', '=', "report-writer-{$user->id}")
+            ->first();
 
-        if ( ! $writerFolder) {
+        if (!$writerFolder) {
             $cloudDisk->makeDirectory($ehrPath."/report-writer-{$user->id}");
 
             return $this->saveEhrReportWriterFolder($user);
@@ -384,6 +384,7 @@ class UserRepository
             'month_year' => Carbon::now()->startOfMonth()->toDateString(),
         ]);
     }
+
     public function saveOrUpdatePhoneNumbers(
         User $user,
         ParameterBag $params
