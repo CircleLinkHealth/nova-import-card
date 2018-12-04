@@ -5,15 +5,17 @@ This file is part of CarePlan Manager by CircleLink Health.
 EOF;
 
 $finder = PhpCsFixer\Finder::create()
-    ->exclude(['vendor','supervisor','storage','node_modules','bower_components','bin','.circleci','public'])
+    ->exclude(['vendor','supervisor','storage','scripts','resources','public','node_modules','docs','coverage','bower_components','bin','.circleci','.vscode','.ppm'])
     ->in(__DIR__);
 
 $config = PhpCsFixer\Config::create()
-    ->setRiskyAllowed(false)
+    ->setRiskyAllowed(true)
     ->setRules([
         '@Symfony' => true,
+        'psr0' => true,
         '@PSR1' => true,
         '@PSR2' => true,
+        'psr4' => true,
         'align_multiline_comment' => true,
         'array_indentation' => true,
         'array_syntax' => ['syntax' => 'short'],
@@ -31,6 +33,8 @@ $config = PhpCsFixer\Config::create()
         'multiline_comment_opening_closing' => true,
         'no_alternative_syntax' => true,
         'no_binary_string' => true,
+        'no_empty_comment' => true,
+        'no_empty_phpdoc' => true,
         'no_extra_blank_lines' => ['tokens' => ['break', 'continue', 'extra', 'return', 'throw', 'use', 'parenthesis_brace_block', 'square_brace_block', 'curly_brace_block']],
         'no_null_property_initialization' => true,
         'no_short_echo_tag' => true,
@@ -42,6 +46,7 @@ $config = PhpCsFixer\Config::create()
             'sortAlgorithm' => 'alpha',
         ],
         'ordered_imports' => true,
+        'phpdoc_add_missing_param_annotation' => true,
         'php_unit_internal_class' => true,
         'php_unit_method_casing' => ['case' => 'snake_case'],
         'php_unit_ordered_covers' => true,
