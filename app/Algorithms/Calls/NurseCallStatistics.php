@@ -11,8 +11,7 @@ namespace App\Algorithms\Calls;
 use App\Call;
 use Carbon\Carbon;
 
-class NurseCallStatistics
-{
+class NurseCallStatistics{
 
     /**
      *  This algorithm helps determine the average velocity of placed by a nurse
@@ -26,7 +25,12 @@ class NurseCallStatistics
     protected $minCallsForAverageConsideration = 0;
     protected $minMinutesForAverageConsideration = 0;
 
-    public function __construct($nurses, Carbon $startRange, Carbon $endRange)
+    public function __construct($nurses, Carbon $startRange,
+
+
+
+
+        Carbon $endRange)
     {
         $this->nurses = $nurses;
         $this->startTime = $startRange; //->subMinutes($this->minutesPadding);
