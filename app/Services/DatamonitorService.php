@@ -200,12 +200,12 @@ class DatamonitorService
         $items
     ) {
         $log_string = '';
-        if (!empty($items)) {
+        if ( ! empty($items)) {
             foreach ($items as $item) {
                 // get all active users and loop through them
                 $active_users = $this->CI->users_model->get_users_for_active_item($item['items_id'], $this->int_id);
                 //echo "<pre>";var_dump($active_users);echo "</pre>";die();
-                if (!empty($active_users)) {
+                if ( ! empty($active_users)) {
                     foreach ($active_users as $active_user) {
                         $user_id           = $active_user['user_id'];
                         $item_obs_ids      = '';
@@ -220,7 +220,7 @@ class DatamonitorService
                             $this->int_id
                         );
                         //echo "<pre>";var_dump($item_observations);echo "</pre>";
-                        if (!empty($item_observations)) {
+                        if ( ! empty($item_observations)) {
                             $i               = 1; // standard loop counter, 1 = most recent obs found
                             $f               = 0; // the number of found observations (3 should always be found)
                             $dates_processed = [];
@@ -249,7 +249,7 @@ class DatamonitorService
                                             $observation = $item_obs; // this will store the first obs
                                         }
                                     } else {
-                                        if (!empty($item_obs['dm_log_missed_'.strtolower($item['alert_key'])])) {
+                                        if ( ! empty($item_obs['dm_log_missed_'.strtolower($item['alert_key'])])) {
                                             $item_obs['obs_value'] = 'ALREADY ALERTED';
                                         }
                                         $item_obs_ids .= '('.$item_obs['obs_id']."[{$item_obs['obs_date']}][{$item_obs['obs_value']}])";
@@ -258,12 +258,12 @@ class DatamonitorService
                                 }
                             }
                         }
-                        if (!empty($send_alert) && (3 == $f) && $observation) {
+                        if ( ! empty($send_alert) && (3 == $f) && $observation) {
                             // fire alert on first day obs
                             $label                   = 'danger';
                             $extra_vars['alert_key'] = $item['alert_key'];
                             $message_id              = $item['alert_msg_id']; // missed meds are CF_AL_13 through CF-AL-21
-                            if (!$item['alert_msg_id']) {
+                            if ( ! $item['alert_msg_id']) {
                                 $message_id = '';
                             }
                             $send_email = false;
@@ -460,7 +460,7 @@ class DatamonitorService
         if (2 == sizeof($pieces)) {
             $obs_value = $pieces[0];
         }
-        if (!isset($userUcpData['alert_keys']['bloodPressure'])) {
+        if ( ! isset($userUcpData['alert_keys']['bloodPressure'])) {
             $log_string .= 'Missing UCP data for bp and/or bp low';
             $label = 'success';
         } else {
@@ -479,7 +479,7 @@ class DatamonitorService
 
             $log_string .= PHP_EOL."OBSERVATION[{$observation['id']}] Patient[{$observation['user_id']}] BP High: {$max_systolic_bp_healthy_range}(systolic),  BP Low: {$min_systolic_bp_healthy_range}(systolic) - obs_value={$obs_value}(systolic)".PHP_EOL;
             // compare observation value (systolic/diastolic) to patient max/min blood pressure limit
-            if (!empty($obs_value) && !empty($min_systolic_bp_healthy_range) && !empty($max_systolic_bp_healthy_range)) {
+            if ( ! empty($obs_value) && ! empty($min_systolic_bp_healthy_range) && ! empty($max_systolic_bp_healthy_range)) {
                 if ($obs_value >= $highAlert || $obs_value <= $lowAlert) { //81
                     $message_id = 'CF_AL_02';
                     $send_alert = "[{$obs_value} (systolic) is <= {$min_systolic_bp_healthy_range} (systolic)]";
@@ -544,7 +544,7 @@ class DatamonitorService
         //dd($userUcpData);
         //blood-sugar-bs-high-alert
         //blood-sugar-bs-low-alert
-        if (!isset($userUcpData['alert_keys']['bloodSugar'])) {
+        if ( ! isset($userUcpData['alert_keys']['bloodSugar'])) {
             $log_string .= 'Missing UCP data for bs and/or bs low';
             $label = 'success';
         } else {
@@ -563,7 +563,7 @@ class DatamonitorService
             $extra_vars['bsvalue'] = $obs_value;
             $log_string            = PHP_EOL."OBSERVATION[{$observation['id']}] Patient[{$observation['user_id']}] BS High: {$max_blood_sugar_healthy_range}, BS Low: {$lowAlert}".PHP_EOL;
 
-            if (!empty($obs_value)) {
+            if ( ! empty($obs_value)) {
                 if (($obs_value <= $lowAlert) || ($obs_value >= $highAlert)) { //61
                     $message_id = 'CF_AL_04';
                     $send_alert = "{$obs_value} (systolic) is <= {$lowAlert} (systolic)";
@@ -956,7 +956,7 @@ class DatamonitorService
                 ->where('obs_unit', '!=', 'scheduled')
                 ->orderBy('obs_date', 'desc')
                 ->first();
-            if (!empty($prev_obs)) {
+            if ( ! empty($prev_obs)) {
                 // calculate dates
                 $dateLast  = new DateTime($prev_obs->obs_date);
                 $dateNow   = new DateTime($observation['obs_date']);
@@ -1029,7 +1029,7 @@ class DatamonitorService
             $log_string .= PHP_EOL.'user does not have chf checked for monitoring, checking weight'.PHP_EOL;
             // WEIGHT TARGET ALERT
             $max_cigs = 4;
-            if (!isset($userUcpData['alert_keys']['Weight'])) {
+            if ( ! isset($userUcpData['alert_keys']['Weight'])) {
                 $log_string .= PHP_EOL.'user does not have a target weight set, cannot check'.PHP_EOL;
                 $label = 'success';
             } else {
@@ -1084,7 +1084,7 @@ class DatamonitorService
         $email_message,
         $extra_vars
     ) {
-        if (!empty($extra_vars)) {
+        if ( ! empty($extra_vars)) {
             foreach ($extra_vars as $substitute => $value) {
                 if (false !== strpos($email_message, '#'.$substitute.'#')) {
                     $email_message = str_replace('#'.$substitute.'#', $value, $email_message);
@@ -1114,12 +1114,12 @@ class DatamonitorService
         // first get any new [alert_key or obs_id] observations that haven't been processed
         //$observations = $this->CI->observation_model->get_dm_observations($observation->obs_key, $obs_id, $this->int_id);
         $observation = Observation::find($obs_id);
-        if (!$observation) {
+        if ( ! $observation) {
             return false;
         }
 
         // skip others (hack, bad planning)
-        if ('Other' == $observation->obs_key && (!in_array($observation['obs_value'], [
+        if ('Other' == $observation->obs_key && ( ! in_array($observation['obs_value'], [
             'y',
             'Y',
             'n',
@@ -1445,13 +1445,13 @@ class DatamonitorService
         $alert_sort_weight = 0;
         $alert_level       = 'success';
         $msg_info          = $this->get_alert_msg_info($message_id);
-        if (!empty($msg_info)) {
+        if ( ! empty($msg_info)) {
             $alert_sort_weight = $msg_info['alert_sort_weight'];
             $alert_level       = $msg_info['alert_level'];
         }
 
         $status = 'PA';
-        if (!$send_email) {
+        if ( ! $send_email) {
             $status = 'NR';
             // override send email, set to NR if source = in-office visit
             if ($source) {

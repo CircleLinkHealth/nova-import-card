@@ -11,7 +11,7 @@ class MsgUI
     public function addAppSimCodeToCP($cpFeed)
     {
         $msgUI = new MsgUI();
-        if (!empty($cpFeed['CP_Feed'])) {
+        if ( ! empty($cpFeed['CP_Feed'])) {
             foreach ($cpFeed['CP_Feed'] as $key => $value) {
                 $cpFeedSections = ['Symptoms', 'Biometric', 'DMS', 'Reminders'];
                 foreach ($cpFeedSections as $section) {
@@ -90,9 +90,9 @@ class MsgUI
                     break;
                 case 'List':
                     $formOutput .= "\n".'<select name="obs_value" id="obs_value" data-role="slider">';
-                    if (!empty($arrBio['ReturnValidAnswers'])) {
+                    if ( ! empty($arrBio['ReturnValidAnswers'])) {
                         $answers = explode(',', $arrBio['ReturnValidAnswers']);
-                        if (!empty($answers)) {
+                        if ( ! empty($answers)) {
                             foreach ($answers as $answer) {
                                 $formOutput .= '<option value="'.$answer.'">'.$answer.'</option>';
                             }

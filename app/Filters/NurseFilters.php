@@ -115,7 +115,7 @@ class NurseFilters extends QueryFilters
      */
     public function states($states = null, $operator = 'and')
     {
-        if (!$states) {
+        if ( ! $states) {
             return $this->builder->with('states');
         }
 
@@ -123,7 +123,7 @@ class NurseFilters extends QueryFilters
             $states = explode(',', $states);
         }
 
-        if (!is_array($states)) {
+        if ( ! is_array($states)) {
             $states = [$states];
         }
 

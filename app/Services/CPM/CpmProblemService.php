@@ -53,14 +53,14 @@ class CpmProblemService implements CpmModel
 
         //Get all the User's Problems
         $problems = $user->cpmProblems()->get()->sortBy('name')->values()->all();
-        if (!$problems) {
+        if ( ! $problems) {
             return [];
         }
 
         //For each problem, extract the instructions and
         //store in a key value pair
         foreach ($problems as $problem) {
-            if (!$problem) {
+            if ( ! $problem) {
                 continue;
             }
 

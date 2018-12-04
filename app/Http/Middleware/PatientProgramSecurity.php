@@ -42,7 +42,7 @@ class PatientProgramSecurity
     ) {
         $loggedInUser = auth()->user();
 
-        if (!$loggedInUser) {
+        if ( ! $loggedInUser) {
             return redirect()->guest('login');
         }
 
@@ -60,13 +60,13 @@ class PatientProgramSecurity
                 ->has('patientInfo')
                 ->first();
 
-            if (!$patient) {
+            if ( ! $patient) {
                 return response('Could not locate patient.', 401);
             }
-            if ($patient->id == $loggedInUser->id && !$loggedInUser->hasPermission('users-view-self')) {
+            if ($patient->id == $loggedInUser->id && ! $loggedInUser->hasPermission('users-view-self')) {
                 abort(403);
             }
-            if ($patient->id != $loggedInUser->id && !$loggedInUser->hasPermission('users-view-all')) {
+            if ($patient->id != $loggedInUser->id && ! $loggedInUser->hasPermission('users-view-all')) {
                 abort(403);
             }
             if (

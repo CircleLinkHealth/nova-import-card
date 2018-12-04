@@ -47,7 +47,7 @@ class PracticeLocationsController extends Controller
 
         $clinicalContactUser = User::whereEmail($clinicalContact['email'])->first();
 
-        if (!$clinicalContactUser) {
+        if ( ! $clinicalContactUser) {
             $clinicalContactUser = User::create([
                 'program_id' => $primaryPractice->id,
                 'email'      => $clinicalContact['email'],

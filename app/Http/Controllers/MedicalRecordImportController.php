@@ -95,7 +95,7 @@ class MedicalRecordImportController extends Controller
         $import = $request->input('medicalRecordsToImport');
         $delete = $request->input('medicalRecordsToDelete');
 
-        if (!empty($import)) {
+        if ( ! empty($import)) {
             foreach ($import as $id) {
                 $imr = ImportedMedicalRecord::find($id);
 
@@ -112,7 +112,7 @@ class MedicalRecordImportController extends Controller
             }
         }
 
-        if (!empty($delete)) {
+        if ( ! empty($delete)) {
             $deleted = [];
 
             foreach ($delete as $id) {
@@ -141,7 +141,7 @@ class MedicalRecordImportController extends Controller
         $import = $request->input('medicalRecordsToImport');
         $delete = $request->input('medicalRecordsToDelete');
 
-        if (!empty($import)) {
+        if ( ! empty($import)) {
             foreach ($import as $id) {
                 $imr = ImportedMedicalRecord::find($id);
 
@@ -158,7 +158,7 @@ class MedicalRecordImportController extends Controller
             }
         }
 
-        if (!empty($delete)) {
+        if ( ! empty($delete)) {
             $deleted = [];
 
             foreach ($delete as $id) {

@@ -85,7 +85,7 @@ class CpmMiscService implements CpmModel
 
     public function syncWithUser(User $user, array $ids, $page, array $instructions)
     {
-        if (!is_int($page)) {
+        if ( ! is_int($page)) {
             throw new \Exception('The page number needs to be an integer.');
         }
 
@@ -126,7 +126,7 @@ class CpmMiscService implements CpmModel
 
             //if it's in $ids keep it, or detach it
             if (in_array($cptMiscId, $ids)) {
-                if (!in_array($cptMiscId, $userMiscs)) {
+                if ( ! in_array($cptMiscId, $userMiscs)) {
                     //if the field is not already related attach it
                     $user->cpmMiscs()->attach($cptMiscId);
                 }

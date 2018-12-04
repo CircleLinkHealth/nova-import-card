@@ -23,7 +23,7 @@ class CareTeamController extends Controller
         $patientId,
         $memberId
     ) {
-        if (!$request->ajax()) {
+        if ( ! $request->ajax()) {
             return abort('403', 'Care Team Members cannot be deleted using this method');
         }
 
@@ -136,14 +136,14 @@ class CareTeamController extends Controller
                               ) {
                 $type = $member->type;
 
-                if ($member->user->practice($patient->primaryPractice->id) && !in_array(
+                if ($member->user->practice($patient->primaryPractice->id) && ! in_array(
                                       $member->type,
                                           [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
                                   )) {
                     $formattedType = $member->user->practiceOrGlobalRole()->display_name.' (Internal)';
                 }
 
-                if (!isset($formattedType)) {
+                if ( ! isset($formattedType)) {
                     $formattedType = snakeToSentenceCase($type);
                 }
 
@@ -245,7 +245,7 @@ class CareTeamController extends Controller
         Request $request,
         $id
     ) {
-        if (!$request->ajax()) {
+        if ( ! $request->ajax()) {
             return abort('403', 'Care Team Members cannot be deleted using this method');
         }
 
@@ -306,11 +306,11 @@ class CareTeamController extends Controller
 
         $alert = $input['alert'];
 
-        if (!$providerUser->email) {
+        if ( ! $providerUser->email) {
             $alert = false;
         }
 
-        if ($providerUser->practice($patient->primaryPractice->id) && !in_array(
+        if ($providerUser->practice($patient->primaryPractice->id) && ! in_array(
             $type,
                 [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
         )) {
@@ -363,7 +363,7 @@ class CareTeamController extends Controller
             $primaryPractice = $input['user']['primary_practice'];
 
             if ($primaryPractice['display_name']) {
-                if (!empty($primaryPractice['id'])) {
+                if ( ! empty($primaryPractice['id'])) {
                     $practice = Practice::updateOrCreate([
                         'id' => $primaryPractice['id'],
                     ], [
@@ -407,7 +407,7 @@ class CareTeamController extends Controller
     {
         $acceptedTypes = [CarePerson::REGULAR_DOCTOR, CarePerson::BILLING_PROVIDER];
 
-        if (!in_array($type, $acceptedTypes)) {
+        if ( ! in_array($type, $acceptedTypes)) {
             throw new InvalidArgumentException("`${type}` is not an accepted type of CarePerson.");
         }
 

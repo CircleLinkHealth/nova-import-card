@@ -42,7 +42,7 @@ class ActivityService
      */
     public function ccmTimeBetween($providerId, array $patientIds, Carbon $monthYear = null)
     {
-        if (!$monthYear) {
+        if ( ! $monthYear) {
             $monthYear = Carbon::now();
         }
 
@@ -60,13 +60,13 @@ class ActivityService
         $userIds,
         Carbon $monthYear = null
     ) {
-        if (!$monthYear) {
+        if ( ! $monthYear) {
             $monthYear = Carbon::now();
         }
 
         $monthYear = $monthYear->startOfMonth();
 
-        if (!is_array($userIds)) {
+        if ( ! is_array($userIds)) {
             $userIds = [$userIds];
         }
 
@@ -81,7 +81,7 @@ class ActivityService
 
         //add 0 for the ones not found in this monthYear
         foreach ($userIds as $userId) {
-            if (!isset($acts[$userId])) {
+            if ( ! isset($acts[$userId])) {
                 $acts[$userId] = 0;
             }
         }
@@ -112,7 +112,7 @@ class ActivityService
 
         //add 0 for the ones not found in this monthYear
         foreach ($userIds as $userId) {
-            if (!isset($bhi_acts[$userId])) {
+            if ( ! isset($bhi_acts[$userId])) {
                 $bhi_acts[$userId] = 0;
             }
         }
@@ -148,7 +148,7 @@ class ActivityService
      */
     public function totalCcmTime($patientId, Carbon $monthYear = null)
     {
-        if (!$monthYear) {
+        if ( ! $monthYear) {
             $monthYear = Carbon::now();
         }
 

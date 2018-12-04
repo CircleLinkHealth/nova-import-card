@@ -22,7 +22,7 @@ class CcdProblemRepository
      */
     public function addPatientCcdProblem($ccdProblem)
     {
-        if (!$this->patientCcdExists($ccdProblem['userId'], $ccdProblem['name'])) {
+        if ( ! $this->patientCcdExists($ccdProblem['userId'], $ccdProblem['name'])) {
             $problem                 = new Problem();
             $problem->patient_id     = $ccdProblem['userId'];
             $problem->name           = $ccdProblem['name'];

@@ -79,7 +79,7 @@ class CCDImporterRepository
 
         $responseBody = (string) $response->getBody();
 
-        if (!in_array($response->getStatusCode(), [200, 201])) {
+        if ( ! in_array($response->getStatusCode(), [200, 201])) {
             $data = json_encode([
                 $response->getStatusCode(),
                 $response->getReasonPhrase(),

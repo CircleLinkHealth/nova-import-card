@@ -105,7 +105,7 @@ class InternalUserController extends Controller
 
         $filterUser = 'all';
 
-        if (!empty($params['filterUser'])) {
+        if ( ! empty($params['filterUser'])) {
             $filterUser = $params['filterUser'];
             if ('all' != $params['filterUser']) {
                 $wpUsers->where('id', '=', $filterUser);
@@ -135,7 +135,7 @@ class InternalUserController extends Controller
 
         $filterRole = 'all';
 
-        if (!empty($params['filterRole'])) {
+        if ( ! empty($params['filterRole'])) {
             $filterRole = $params['filterRole'];
             if ('all' != $params['filterRole']) {
                 $wpUsers->ofType($filterRole);
@@ -151,7 +151,7 @@ class InternalUserController extends Controller
 
         $filterProgram = 'all';
 
-        if (!empty($params['filterProgram'])) {
+        if ( ! empty($params['filterProgram'])) {
             $filterProgram = $params['filterProgram'];
             if ('all' != $params['filterProgram']) {
                 $wpUsers->where('program_id', '=', $filterProgram);
@@ -159,7 +159,7 @@ class InternalUserController extends Controller
         }
 
         // only let owners see owners
-        if (!Auth::user()->hasRole(['administrator'])) {
+        if ( ! Auth::user()->hasRole(['administrator'])) {
             $wpUsers = $wpUsers->whereHas('roles', function ($q) {
                 $q->where('name', '!=', 'administrator');
             });
@@ -217,7 +217,7 @@ class InternalUserController extends Controller
     {
         $userAttr = $request['user'];
 
-        if (!$request->has('user.auto_attach_programs')) {
+        if ( ! $request->has('user.auto_attach_programs')) {
             $userAttr['auto_attach_programs'] = false;
         }
 

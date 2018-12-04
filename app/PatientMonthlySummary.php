@@ -170,7 +170,7 @@ class PatientMonthlySummary extends BaseModel
             $report = PatientMonthlySummary::where('month_year', $month->firstOfMonth()->toDateString())
                 ->where('patient_id', $p->id)->first();
 
-            if (!$report) {
+            if ( ! $report) {
                 continue;
             }
 

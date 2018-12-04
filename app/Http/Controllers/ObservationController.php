@@ -84,7 +84,7 @@ class ObservationController extends Controller
     {
         $user = User::find($request['userId']);
 
-        if (!$user) {
+        if ( ! $user) {
             return redirect()->route('observations-dashboard.index')->with('msg', 'User not found.');
         }
 
@@ -124,7 +124,7 @@ class ObservationController extends Controller
             // get and validate current user
             \JWTAuth::setIdentifier('id');
             $wpUser = \JWTAuth::parseToken()->authenticate();
-            if (!$wpUser) {
+            if ( ! $wpUser) {
                 return response()->json(['error' => 'invalid_credentials'], 401);
             }
             $params                  = $request->input();
@@ -139,9 +139,9 @@ class ObservationController extends Controller
             }
         }
 
-        if ((!$request->header('Client')) || 'ui' == $request->header('Client')) {
+        if (( ! $request->header('Client')) || 'ui' == $request->header('Client')) {
             $wpUser = User::find($input['userId']);
-            if (!$wpUser) {
+            if ( ! $wpUser) {
                 return response()->json(['error' => 'invalid_credentials'], 401);
             }
             $validator = Validator::make($input, [
@@ -215,7 +215,7 @@ class ObservationController extends Controller
             }
         }
 
-        if (!$answerResponse) {
+        if ( ! $answerResponse) {
             return redirect()->back()->withErrors(['You entered an invalid value, please review and resubmit.'])->withInput();
         }
 

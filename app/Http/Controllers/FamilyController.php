@@ -48,7 +48,7 @@ class FamilyController extends Controller
             $patient       = Patient::where('user_id', trim($patient_id))->first();
             $contact_rohan = 'Please contact Rohan for Manual Edits.';
 
-            if (!is_object($patient)) {
+            if ( ! is_object($patient)) {
                 return "Sorry, {$patient_id} is not a patient in the system. ".$contact_rohan;
             }
 

@@ -18,7 +18,7 @@ trait ValidatesEligibility
     {
         //check keys and update job
 
-        if ($errors->isNotEmpty() && !(1 == $errors->count() && 'structure' == $errors->first())) {
+        if ($errors->isNotEmpty() && ! (1 == $errors->count() && 'structure' == $errors->first())) {
             $job->invalid_data = true;
         }
         //check for invalid data

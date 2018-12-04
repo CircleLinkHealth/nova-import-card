@@ -27,7 +27,7 @@ class IdentificationManager extends BaseIdentificationStrategy
          */
         foreach ($identifierMap as $field => $identifiers) {
             foreach ($identifiers as $identifier) {
-                if (!empty($this->matchedIdentifiers[$field])) {
+                if ( ! empty($this->matchedIdentifiers[$field])) {
                     continue 2;
                 }
                 $this->matchedIdentifiers[$field] = ( new $identifier['class']($this->ccd) )->identify();
@@ -37,7 +37,7 @@ class IdentificationManager extends BaseIdentificationStrategy
         //this will get rid of empty entries
         $filteredIdentifiers = array_filter($this->matchedIdentifiers);
 
-        if (!$filteredIdentifiers) {
+        if ( ! $filteredIdentifiers) {
             // all identifier values are false
             return false;
         }

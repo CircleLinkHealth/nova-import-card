@@ -58,7 +58,7 @@ class PatientObserver
 
     public function sendPatientConsentedNote(Patient $patient)
     {
-        if (!optional($patient->user->careplan)->isProviderApproved() || !auth()->check()) {
+        if ( ! optional($patient->user->careplan)->isProviderApproved() || ! auth()->check()) {
             return;
         }
 

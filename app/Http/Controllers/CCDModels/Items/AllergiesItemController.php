@@ -18,9 +18,9 @@ class AllergiesItemController extends Controller
     public function destroy(Request $request)
     {
         $allergy = $request->input('allergy');
-        if (!empty($allergy)) {
+        if ( ! empty($allergy)) {
             $ccdAllergy = Allergy::find($allergy['id']);
-            if (!$ccdAllergy) {
+            if ( ! $ccdAllergy) {
                 return response('Allergy '.$allergy['id'].' not found', 401);
             }
             $ccdAllergy->delete();
@@ -51,7 +51,7 @@ class AllergiesItemController extends Controller
         $result = 'error';
         // pass back some data, along with the original data, just to prove it was received
         $allergy = $request->input('allergy');
-        if (!empty($allergy)) {
+        if ( ! empty($allergy)) {
             $ccdAllergy                = new Allergy();
             $ccdAllergy->patient_id    = $allergy['patient_id'];
             $ccdAllergy->allergen_name = $allergy['name'];
@@ -68,9 +68,9 @@ class AllergiesItemController extends Controller
     {
         // pass back some data, along with the original data, just to prove it was received
         $allergy = $request->input('allergy');
-        if (!empty($allergy)) {
+        if ( ! empty($allergy)) {
             $ccdAllergy = Allergy::find($allergy['id']);
-            if (!$ccdAllergy) {
+            if ( ! $ccdAllergy) {
                 return response('Allergy not found', 401);
             }
             $ccdAllergy->allergen_name = $allergy['name'];

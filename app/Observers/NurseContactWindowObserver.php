@@ -21,7 +21,7 @@ class NurseContactWindowObserver
     {
         $auth = auth()->user();
 
-        if (!$auth) {
+        if ( ! $auth) {
             return;
         }
 

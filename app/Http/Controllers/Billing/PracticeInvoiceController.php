@@ -151,7 +151,7 @@ class PracticeInvoiceController extends Controller
         $practice,
         $name
     ) {
-        if (!auth()->user()->practice((int) $practice) && !auth()->user()->isAdmin()) {
+        if ( ! auth()->user()->practice((int) $practice) && ! auth()->user()->isAdmin()) {
             return abort(403, 'Unauthorized action.');
         }
 
@@ -372,7 +372,7 @@ class PracticeInvoiceController extends Controller
                         'code_system_oid'  => '2.16.840.1.113883.6.3',
                     ]);
 
-                if (!$updated && $request['code']) {
+                if ( ! $updated && $request['code']) {
                     ProblemCode::create([
                         'problem_id'       => $problemId,
                         'code'             => $request['code'],
@@ -391,7 +391,7 @@ class PracticeInvoiceController extends Controller
                         1
                     )->exists();
 
-                    if (!$cpmProblem) {
+                    if ( ! $cpmProblem) {
                         throw new \Exception('Please select a BHI problem.');
                     }
                 }
@@ -408,7 +408,7 @@ class PracticeInvoiceController extends Controller
                 throw new \Exception('Cannot add BHI problem because practice does not have service CPT 99484 activated.');
             }
 
-            if (!$this->patientSummaryDBRepository->lacksProblems($summary)) {
+            if ( ! $this->patientSummaryDBRepository->lacksProblems($summary)) {
                 $summary->approved = true;
             }
 
@@ -456,7 +456,7 @@ class PracticeInvoiceController extends Controller
             return $this->badRequest('Invalid [date] parameter. Must have a value like "Jan, 2017"');
         }
 
-        if (!$default_code_id || !$practice_id) {
+        if ( ! $default_code_id || ! $practice_id) {
             return $this->badRequest('Invalid [practice_id] and [default_code_id] parameters. Must have a values');
         }
 
@@ -471,7 +471,7 @@ class PracticeInvoiceController extends Controller
                     $summary = $result;
                 }
 
-                if (!$is_detach) {
+                if ( ! $is_detach) {
                     $summary = $this->service
                         ->attachDefaultChargeableService($summary, $default_code_id, false);
                 } else {
@@ -487,7 +487,7 @@ class PracticeInvoiceController extends Controller
 
     public function updateStatus(Request $request)
     {
-        if (!$request->ajax()) {
+        if ( ! $request->ajax()) {
             return response()->json('Method not allowed', 403);
         }
 
@@ -516,20 +516,20 @@ class PracticeInvoiceController extends Controller
 
     public function updateSummaryChargeableServices(Request $request)
     {
-        if (!$request->ajax()) {
+        if ( ! $request->ajax()) {
             return response()->json('Method not allowed', 403);
         }
 
         $reportId = $request->input('report_id');
 
-        if (!$reportId) {
+        if ( ! $reportId) {
             return $this->badRequest('report_id is a required field');
         }
 
         //need array of IDs
         $chargeableIDs = $request->input('patient_chargeable_services');
 
-        if (!is_array($chargeableIDs)) {
+        if ( ! is_array($chargeableIDs)) {
             return $this->badRequest('patient_chargeable_services must be an array');
         }
 
@@ -538,7 +538,7 @@ class PracticeInvoiceController extends Controller
         $summary->actor_id = auth()->id();
         $summary->save();
 
-        if (!$summary) {
+        if ( ! $summary) {
             return $this->badRequest("Report with id ${reportId} not found.");
         }
 

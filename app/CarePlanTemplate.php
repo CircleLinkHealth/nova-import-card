@@ -134,12 +134,12 @@ class CarePlanTemplate extends \App\BaseModel
         if (empty($relationship)) {
             return false;
         }
-        if (!is_array($relationship)) {
+        if ( ! is_array($relationship)) {
             $relationship = (array) $relationship;
         }
 
         foreach ($relationship as $rel) {
-            if (!method_exists($this, $rel)) {
+            if ( ! method_exists($this, $rel)) {
                 throw new \Exception("Relationship `${rel}` does not exist.");
             }
 

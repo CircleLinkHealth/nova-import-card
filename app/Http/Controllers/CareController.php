@@ -51,14 +51,14 @@ class CareController extends Controller
 
     public function validate_user_id($enrollUserId, $callbackFn)
     {
-        if (!$enrollUserId) {
+        if ( ! $enrollUserId) {
             return redirect('/');
         }
         $patient = User::find($enrollUserId);
-        if (!$patient) {
+        if ( ! $patient) {
             return redirect()->route('patient.careplan.print', ['patientId' => $enrollUserId]);
         }
-        if (!$patient->isCCMEligible()) {
+        if ( ! $patient->isCCMEligible()) {
             return redirect()->route('patient.careplan.print', ['patientId' => $enrollUserId]);
         }
 

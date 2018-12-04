@@ -31,7 +31,7 @@ class CpmProblemUserService
             'cpm_problem_id'     => $cpmProblemId,
             'cpm_instruction_id' => $instructionId,
         ])->first();
-        if (!$cpmProblemUser) {
+        if ( ! $cpmProblemUser) {
             return $this->repo()->create($patientId, $cpmProblemId, $instructionId);
         }
         throw new Exception('a similar instruction->problem relationship already exists');

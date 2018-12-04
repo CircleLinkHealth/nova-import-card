@@ -16,7 +16,7 @@ class CpmProblemUserRepository
 
         $cpmProblemUsers = CpmProblemUser::where(['cpm_problem_id' => $cpmProblemId, 'patient_id' => $patientId])->orderBy('id', 'desc');
         $cpmProblemUser  = $cpmProblemUsers->first();
-        if ($cpmProblemUser && !$cpmProblemUser->cpm_instruction_id) {
+        if ($cpmProblemUser && ! $cpmProblemUser->cpm_instruction_id) {
             $cpmProblemUsers->update([
                 'cpm_instruction_id' => $instructionId,
             ]);

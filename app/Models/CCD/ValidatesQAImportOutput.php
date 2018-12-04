@@ -138,7 +138,7 @@ trait ValidatesQAImportOutput
             if ($duplicatePatient) {
                 //If the patient is withdrawn or paused, then do not delete the duplicate because we'd wanna re-import
                 if ('enrolled' != $duplicatePatient->patientInfo->ccm_status
-                    && !$duplicateCcdJustUploaded
+                    && ! $duplicateCcdJustUploaded
                 ) {
                     $deleteTheCCD = false;
                 }
@@ -179,7 +179,7 @@ trait ValidatesQAImportOutput
             || empty($qaSummary->has_city)
             || empty($qaSummary->has_state)
             || empty($qaSummary->has_zip)
-            || !$qaSummary->has_phone
+            || ! $qaSummary->has_phone
         ) {
             $isFlagged = true;
         }

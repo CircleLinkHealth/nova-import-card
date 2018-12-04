@@ -31,7 +31,7 @@ class CallFilters extends QueryFilters
      */
     public function attemptsSinceLastSuccess($noCallAttemptsSinceLastSuccess)
     {
-        if (!is_numeric($noCallAttemptsSinceLastSuccess)) {
+        if ( ! is_numeric($noCallAttemptsSinceLastSuccess)) {
             throw new \Exception('noCallAttemptsSinceLastSuccess must be a numeric value.');
         }
 
@@ -89,7 +89,7 @@ class CallFilters extends QueryFilters
 
     public function minScheduledDate($date)
     {
-        if (!array_key_exists('unassigned', $this->filters())) {
+        if ( ! array_key_exists('unassigned', $this->filters())) {
             return $this->builder
                 ->where('scheduled_date', '>=', $date);
         }

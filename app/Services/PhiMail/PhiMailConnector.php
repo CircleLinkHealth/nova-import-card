@@ -133,7 +133,7 @@ class CheckResult
      */
     public function isStatus()
     {
-        return !$this->mail;
+        return ! $this->mail;
     }
 
     /**
@@ -281,13 +281,13 @@ class PhiMailConnector
      */
     public function __construct($s, $p)
     {
-        if (!isset(self::$context)) {
+        if ( ! isset(self::$context)) {
             self::$context = stream_context_create();
         }
         $host        = 'ssl://'.$s.':'.$p;
         $socketTries = 0;
         $socket      = 0;
-        while ($socketTries < 3 && !$socket) {
+        while ($socketTries < 3 && ! $socket) {
             ++$socketTries;
             $socket = stream_socket_client(
                 $host,
@@ -298,7 +298,7 @@ class PhiMailConnector
                 self::$context
             );
         }
-        if (!$socket) {
+        if ( ! $socket) {
             $err = 'Connection failed';
             if ($err1) {
                 $err .= ": error ${err1} (${err2})";
@@ -680,14 +680,14 @@ class PhiMailConnector
      */
     public static function setClientCertificate($filename, $passphrase = '')
     {
-        if (!isset(self::$context)) {
+        if ( ! isset(self::$context)) {
             self::$context = stream_context_create();
         }
-        if (!isset($filename)) {
+        if ( ! isset($filename)) {
             return;
         }
-        if (!stream_context_set_option(self::$context, 'ssl', 'passphrase', $passphrase) ||
-            !stream_context_set_option(self::$context, 'ssl', 'local_cert', $filename)) {
+        if ( ! stream_context_set_option(self::$context, 'ssl', 'passphrase', $passphrase) ||
+            ! stream_context_set_option(self::$context, 'ssl', 'local_cert', $filename)) {
             throw new \Exception('Set Client Certificate failed.');
         }
     }
@@ -720,17 +720,17 @@ class PhiMailConnector
      */
     public static function setServerCertificate($filename)
     {
-        if (!isset(self::$context)) {
+        if ( ! isset(self::$context)) {
             self::$context = stream_context_create();
         }
-        if (!isset($filename) || '' === $filename) {
+        if ( ! isset($filename) || '' === $filename) {
             throw new \Exception('Server Certificate filename is invalid.');
         }
-        if (!is_readable($filename)) {
+        if ( ! is_readable($filename)) {
             throw new \Exception('Server Certificate file is not readable.');
         }
-        if (!stream_context_set_option(self::$context, 'ssl', 'verify_peer', true) ||
-            !stream_context_set_option(self::$context, 'ssl', 'cafile', $filename)) {
+        if ( ! stream_context_set_option(self::$context, 'ssl', 'verify_peer', true) ||
+            ! stream_context_set_option(self::$context, 'ssl', 'cafile', $filename)) {
             throw new \Exception('Set Server Certificate failed.');
         }
     }
@@ -831,7 +831,7 @@ class PhiMailConnector
      */
     private function addData($dataBytes, $dataType, $filename = null, $encoding = null)
     {
-        if (null != $encoding && !mb_detect_encoding($dataBytes, $encoding, true)) {
+        if (null != $encoding && ! mb_detect_encoding($dataBytes, $encoding, true)) {
             $this->sendCommand('INFO ERR invalid character encoding.');
             $response = 'FAIL invalid character encoding.';
         } else {
@@ -888,7 +888,7 @@ class PhiMailConnector
      */
     private function sendCommand($command)
     {
-        if (!mb_detect_encoding($command, 'UTF-8', true)) {
+        if ( ! mb_detect_encoding($command, 'UTF-8', true)) {
             $this->sendCommand('INFO ERR invalid character encoding.');
 
             return 'FAIL invalid character encoding.';

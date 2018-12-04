@@ -59,7 +59,7 @@ class UserCsvResource extends Resource
      */
     private function getTimeInDecimals(String $ccmTime = null)
     {
-        if (!$ccmTime) {
+        if ( ! $ccmTime) {
             return '0.00';
         }
 

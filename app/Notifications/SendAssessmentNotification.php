@@ -66,7 +66,7 @@ class SendAssessmentNotification extends Notification
 
     public function toFax($notifiable)
     {
-        if (!$notifiable || !$notifiable->fax) {
+        if ( ! $notifiable || ! $notifiable->fax) {
             return false;
         }
 
@@ -93,7 +93,7 @@ class SendAssessmentNotification extends Notification
 
     public function toPdf($notifiable = null)
     {
-        if (!file_exists($this->pathToPdf)) {
+        if ( ! file_exists($this->pathToPdf)) {
             $this->pathToPdf = $this->attachment->toPdf($notifiable);
         }
 

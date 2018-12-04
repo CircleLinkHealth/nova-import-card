@@ -21,7 +21,7 @@ class AprimaCcdApiAuthAdapter
      */
     public function handle($request, Closure $next)
     {
-        if (!$request->filled('access_token')) {
+        if ( ! $request->filled('access_token')) {
             return response()->json(['error' => 'Access token not found on the request.'], 400);
         }
 
@@ -33,7 +33,7 @@ class AprimaCcdApiAuthAdapter
 
         $user = \JWTAuth::parseToken()->authenticate();
 
-        if (!$user) {
+        if ( ! $user) {
             return response()->json(['error' => 'Invalid Token'], 400);
         }
 

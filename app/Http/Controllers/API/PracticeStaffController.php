@@ -75,7 +75,7 @@ class PracticeStaffController extends Controller
             ->sortBy('first_name')
             ->values();
 
-        if (!auth()->user()->isAdmin()) {
+        if ( ! auth()->user()->isAdmin()) {
             $practiceUsers->reject(function ($user) {
                 return $user->isAdmin();
             })

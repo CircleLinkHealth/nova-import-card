@@ -138,7 +138,7 @@ class NurseFinder
         //supplies $this->matchArray
         $date_matches = $this->checkForIntersectingDays($nurse); //first days
 
-        if (!is_null($date_matches)) {
+        if ( ! is_null($date_matches)) {
             foreach ($date_matches as $key => $value) {
                 if (isset($value['patient'], $value['nurse'])) {
                     if ($this->checkForIntersectingTimes($value['patient'], $value['nurse'])) {
@@ -206,7 +206,7 @@ class NurseFinder
             return $match;
         }
 
-        if (!$this->previousCall) {
+        if ( ! $this->previousCall) {
             if ($isCurrentUserNurse) {
                 $match['nurse']        = auth()->id();
                 $match['window_match'] = 'No previous call found, assigning to you.';
@@ -229,7 +229,7 @@ class NurseFinder
             $isPreviousCallNurseActive = true;
         }
 
-        if (!$isPreviousCallNurseActive) {
+        if ( ! $isPreviousCallNurseActive) {
             if ($isCurrentUserNurse) {
                 $match['nurse']        = auth()->id();
                 $match['window_match'] = 'No previous call with active nurse found, assigning to you.';
@@ -348,7 +348,7 @@ class NurseFinder
         $offset_date = Carbon::parse($this->offsetDate)->subDay()->toDateString();
 
         //If there are no contact windows, we just return the same day. @todo confirm logic
-        if (!$patient_windows) {
+        if ( ! $patient_windows) {
             $carbon_date_start = Carbon::parse($offset_date);
             $carbon_date_end   = Carbon::parse($offset_date);
 

@@ -21,7 +21,7 @@ class PhiMail implements DirectMail
 
     public function __destruct()
     {
-        if (!$this->connector) {
+        if ( ! $this->connector) {
             return;
         }
 
@@ -40,11 +40,11 @@ class PhiMail implements DirectMail
 
     public function receive()
     {
-        if (!$this->initPhiMailConnection()) {
+        if ( ! $this->initPhiMailConnection()) {
             return false;
         }
 
-        if (!$this->connector) {
+        if ( ! $this->connector) {
             return false;
         }
 
@@ -57,7 +57,7 @@ class PhiMail implements DirectMail
                     break;
                 }
 
-                if (!$message->isMail()) {
+                if ( ! $message->isMail()) {
                     // Process a status update for a previously sent message.
 //                        echo ("Status message for id = " . $message->messageId . "\n");
 //                        echo ("  StatusCode = " . $message->statusCode . "\n");
@@ -158,7 +158,7 @@ class PhiMail implements DirectMail
         $ccdaAttachmentPath = null,
         User $patient = null
     ) {
-        if (!$this->initPhiMailConnection()) {
+        if ( ! $this->initPhiMailConnection()) {
             return false;
         }
 

@@ -78,7 +78,7 @@ class CPRulesQuestions extends \App\BaseModel
         $html    = '';
         $msgUI   = new MsgUI();
         $msgIcon = $msgUI->getMsgIcon($this->icon);
-        if (!empty($msgIcon)) {
+        if ( ! empty($msgIcon)) {
             $html = "<i style='color:".$msgIcon['color']."' class='fa fa-2x fa-".$msgIcon['icon']."'></i>";
         }
 

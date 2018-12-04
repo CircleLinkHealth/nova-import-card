@@ -97,8 +97,8 @@ order by ui_sort
                 $sub_meta[$row->section_text][$row->items_parent][$row->items_text]['pcp_id']      = $row->pcp_id;
             }
 
-            if (!isset($items[$row->section_text][$row->sub_parent])) {
-                if (!isset($items[$row->section_text][$row->items_text])) {
+            if ( ! isset($items[$row->section_text][$row->sub_parent])) {
+                if ( ! isset($items[$row->section_text][$row->items_text])) {
                     if ('status' == $row->meta_key) {
                         $items[$row->section_text][$row->items_text] = [
                             'status'  => $row->item_status,
@@ -311,7 +311,7 @@ order by ui_sort
                                 break;
                             case 'RADIO':
                                 $radio_options = [];
-                                if (!empty($value['radio_options'])) {
+                                if ( ! empty($value['radio_options'])) {
                                     $radio_options = json_decode($value['radio_options'], 1);
                                 }
                                 $modal_content .= $key.' ';
@@ -347,11 +347,11 @@ order by ui_sort
                                 break;
                         }
                         // meta key to end column
-                        if (!empty($value['ui_col_end']) && 1 == $value['ui_col_end']) {
+                        if ( ! empty($value['ui_col_end']) && 1 == $value['ui_col_end']) {
                             $modal_content .= '</div>';
                         }
                         // meta key to end row
-                        if (!empty($value['ui_col_end']) && 1 == $value['ui_row_end']) {
+                        if ( ! empty($value['ui_col_end']) && 1 == $value['ui_row_end']) {
                             $modal_content .= '</div>';
                         }
                         // item inc ++
@@ -419,7 +419,7 @@ order by ui_sort
     public function renderCareplanSections($pcpSections = [], $programId, User $user = null)
     {
         // if not set, get all pcp sections
-        if (!$pcpSections) {
+        if ( ! $pcpSections) {
             $pcpSections = [];
             $pcps        = CPRulesPCP::where('prov_id', '=', $programId)->where('status', '=', 'Active')->get();
             if (count($pcps) > 0) {
@@ -430,7 +430,7 @@ order by ui_sort
         }
         // render each section
         $pcpSectionHtml = '';
-        if (!empty($pcpSections)) {
+        if ( ! empty($pcpSections)) {
             foreach ($pcpSections as $pcpSection) {
                 $pcpSectionHtml .= $this->renderCareplanSection($pcpSection, $programId, $user);
             }

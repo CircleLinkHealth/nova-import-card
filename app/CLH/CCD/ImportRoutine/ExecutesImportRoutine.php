@@ -15,7 +15,7 @@ trait ExecutesImportRoutine
         $storage   = null;
         $items     = null;
 
-        if (!isset($parsingStrategy) || !isset($storageStrategy)) {
+        if ( ! isset($parsingStrategy) || ! isset($storageStrategy)) {
             abort('400', 'Parsing Strategy and Storage Strategy are required');
         }
 

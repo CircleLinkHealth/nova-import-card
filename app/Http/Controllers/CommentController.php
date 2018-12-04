@@ -74,7 +74,7 @@ class CommentController extends Controller
 
         \JWTAuth::setIdentifier('id');
         $user = \JWTAuth::parseToken()->authenticate();
-        if (!$user) {
+        if ( ! $user) {
             return response()->json(['error' => 'invalid_credentials'], 401);
         }
         $input                            = $request->input();

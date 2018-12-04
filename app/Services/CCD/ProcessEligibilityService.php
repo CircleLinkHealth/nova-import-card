@@ -207,7 +207,7 @@ class ProcessEligibilityService
             ->where('filename', '=', 'processed')
             ->first();
 
-        if (!$processedDir) {
+        if ( ! $processedDir) {
             $cloudDisk->makeDirectory("${dir}/processed");
 
             $processedDir = collect($cloudDisk->listContents($dir, $recursive))
@@ -377,7 +377,7 @@ class ProcessEligibilityService
             ->where('filename', '=', 'processed')
             ->first();
 
-        if (!$processedDir) {
+        if ( ! $processedDir) {
             $cloudDisk->makeDirectory("${dir}/processed");
 
             $processedDir = collect($cloudDisk->listContents($dir, $recursive))
@@ -532,7 +532,7 @@ class ProcessEligibilityService
         for ($i = 1; $i <= 1000; ++$i) {
             $patient = $collection->shift();
 
-            if (!is_array($patient)) {
+            if ( ! is_array($patient)) {
                 continue;
             }
 
@@ -597,7 +597,7 @@ class ProcessEligibilityService
 
         $savedLocally = $localDisk->put($fileName, $stream);
 
-        if (!$savedLocally) {
+        if ( ! $savedLocally) {
             throw new \Exception("Failed saving ${pathToFile}");
         }
 
@@ -611,7 +611,7 @@ class ProcessEligibilityService
 
             $i = 1;
             foreach ($iterator as $iteration) {
-                if (!$iteration) {
+                if ( ! $iteration) {
                     continue;
                 }
                 if (1 == $i) {
@@ -632,7 +632,7 @@ class ProcessEligibilityService
             for ($i = 1; $i <= 1000; ++$i) {
                 $patient = $data->shift();
 
-                if (!is_array($patient)) {
+                if ( ! is_array($patient)) {
                     continue;
                 }
 

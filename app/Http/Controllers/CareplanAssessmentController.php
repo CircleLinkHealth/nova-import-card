@@ -35,7 +35,7 @@ class CareplanAssessmentController extends Controller
         $data = $request->all();
         $assessment->process((object) $data);
         $assessment->provider_approver_id = auth()->user()->id;
-        if (!$assessment->careplan_id) {
+        if ( ! $assessment->careplan_id) {
             return $this->badRequest('missing parameter "careplan_id"');
         }
         //return response()->json($assessment);

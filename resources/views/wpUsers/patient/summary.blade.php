@@ -43,7 +43,7 @@
                         ['section' => 'obs_lifestyle', 'id' => 'obs_lifestyle_dtable', 'title' => 'Lifestyle', 'col_name_question' => 'Question', 'col_name_severity' => 'Response'],
                     ];
                     foreach ($sections as $section) {
-                        if (!empty($detailSection)) {
+                        if ( ! empty($detailSection)) {
                             if ($detailSection != $section['section']) {
                                 continue 1;
                             }
@@ -153,7 +153,7 @@
                             ready: function () {
                                 this.adjustRowHeight("description");
                             },
-                            <?php if (!empty($detailSection)) {
+                            <?php if ( ! empty($detailSection)) {
                             ?>
                             pager: {
                                 container: "paging_container",// the container where the pager controls will be placed into

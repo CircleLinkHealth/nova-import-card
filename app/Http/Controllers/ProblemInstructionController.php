@@ -51,10 +51,10 @@ class ProblemInstructionController extends Controller
             if ($patient && $problem && $instruction) {
                 return response()->json($this->cpmProblemUserService->addInstructionToProblem($patientId, $cpmProblemId, $instructionId));
             }
-            if (!$patient) {
+            if ( ! $patient) {
                 return $this->notFound('patient not found');
             }
-            if (!$problem) {
+            if ( ! $problem) {
                 return $this->notFound('cpm problem not found');
             }
 
@@ -80,10 +80,10 @@ class ProblemInstructionController extends Controller
 
                 return response()->json($this->ccdProblemService->problem($problemId));
             }
-            if (!$patient) {
+            if ( ! $patient) {
                 return $this->notFound('patient not found');
             }
-            if (!$problem) {
+            if ( ! $problem) {
                 return $this->notFound('cpm problem not found');
             }
 
@@ -149,10 +149,10 @@ class ProblemInstructionController extends Controller
 
                 return response()->json($this->ccdProblemService->problem($problemId));
             }
-            if (!$patient) {
+            if ( ! $patient) {
                 return $this->notFound('patient not found');
             }
-            if (!$problem) {
+            if ( ! $problem) {
                 return $this->notFound('cpm problem not found');
             }
 
@@ -180,10 +180,10 @@ class ProblemInstructionController extends Controller
                     'message' => 'success',
                 ]);
             }
-            if (!$patient) {
+            if ( ! $patient) {
                 return $this->notFound('patient not found');
             }
-            if (!$problem) {
+            if ( ! $problem) {
                 return $this->notFound('cpm problem not found');
             }
 

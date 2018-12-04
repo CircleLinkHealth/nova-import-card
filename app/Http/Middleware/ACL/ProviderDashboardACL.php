@@ -36,7 +36,7 @@ class ProviderDashboardACL
 
         $practice = auth()->user()->practice($practiceSlug);
 
-        if (!$practice) {
+        if ( ! $practice) {
             abort(404, 'This Practice does not exist.');
         }
 

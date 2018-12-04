@@ -60,7 +60,7 @@ class ActivityRepositoryEloquent extends BaseRepository implements ActivityRepos
             ->whereBetween("${activitiesTable}.performed_at", [
                 $startDate, $endDate,
             ]);
-        if (!$sendAll) {
+        if ( ! $sendAll) {
             $activities->whereNotIn("${activitiesTable}.id", CcmTimeApiLog::pluck('activity_id')->all());
         }
 

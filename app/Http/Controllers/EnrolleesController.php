@@ -19,7 +19,7 @@ class EnrolleesController extends Controller
     {
         $input = $request->input('enrollee_id');
 
-        if (!is_array($input)) {
+        if ( ! is_array($input)) {
             $input = [$input];
         }
 

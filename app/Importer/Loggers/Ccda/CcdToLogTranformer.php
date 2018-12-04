@@ -165,7 +165,7 @@ class CcdToLogTranformer
     {
         $codes = [];
 
-        if (!$ccdProblem->code_system_name) {
+        if ( ! $ccdProblem->code_system_name) {
             $ccdProblem->code_system_name = getProblemCodeSystemName([$ccdProblem->code_system]);
         }
 
@@ -179,10 +179,10 @@ class CcdToLogTranformer
         }
 
         foreach ($ccdProblem->translations as $translation) {
-            if (!$translation->code_system_name) {
+            if ( ! $translation->code_system_name) {
                 $translation->code_system_name = getProblemCodeSystemName([$translation->code_system]);
 
-                if (!$translation->code_system_name) {
+                if ( ! $translation->code_system_name) {
                     continue;
                 }
             }

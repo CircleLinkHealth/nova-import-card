@@ -10,7 +10,7 @@ class NumberedProblemFields
 {
     public function handle(&$patient): array
     {
-        if (!is_array($patient)) {
+        if ( ! is_array($patient)) {
             return [];
         }
 
@@ -18,11 +18,11 @@ class NumberedProblemFields
         $i        = 1;
 
         do {
-            if (!array_key_exists("problem_${i}", $patient)) {
+            if ( ! array_key_exists("problem_${i}", $patient)) {
                 break;
             }
 
-            if (!empty($patient["problem_${i}"]) && '#N/A' != $patient["problem_${i}"]) {
+            if ( ! empty($patient["problem_${i}"]) && '#N/A' != $patient["problem_${i}"]) {
                 $problems[] = [
                     'Name'        => $patient["problem_${i}"],
                     'CodeType'    => '',
@@ -43,7 +43,7 @@ class NumberedProblemFields
 
     public function shouldHandle($patient)
     {
-        if (!is_array($patient)) {
+        if ( ! is_array($patient)) {
             return false;
         }
 

@@ -79,7 +79,7 @@ class InviteController extends Controller
 
         $exists = Invite::whereEmail($input['email'])->first();
 
-        if (!empty($exists)) {
+        if ( ! empty($exists)) {
             $message = $input['email'].' has already been invited.';
 
             return view('admin.invites.create', ['message' => $message]);

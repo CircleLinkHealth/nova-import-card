@@ -32,8 +32,8 @@ class Service
 
         foreach ($overlappingActivities as $overlap) {
             if ($this->isCcmActivity($newActivity)
-                || (!$this->isCcmActivity($newActivity)
-                    && !$this->isCcmActivity($overlap))
+                || ( ! $this->isCcmActivity($newActivity)
+                    && ! $this->isCcmActivity($overlap))
             ) {
                 $greedy    = $newActivity;
                 $secondary = $overlap;
@@ -149,7 +149,7 @@ class Service
 
     public function isCcmActivity(PageTimer $activity): bool
     {
-        return !(0 == $activity->patient_id
+        return ! (0 == $activity->patient_id
             || 'patient.activity.create' == $activity->title
             || 'patient.activity.providerUIIndex' == $activity->title);
     }

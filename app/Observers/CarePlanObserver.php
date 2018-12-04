@@ -45,7 +45,7 @@ class CarePlanObserver
             $carePlan->provider_approver_id = null;
         }
 
-        if (!array_key_exists('care_plan_template_id', $carePlan->getAttributes())) {
+        if ( ! array_key_exists('care_plan_template_id', $carePlan->getAttributes())) {
             $carePlan->care_plan_template_id = getDefaultCarePlanTemplate()->id;
         }
 

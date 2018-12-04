@@ -338,12 +338,12 @@ class OpsDashboardController extends Controller
             ->getFile();
 
         //first check if we have a valid file
-        if (!$json || $date <= $noReportDates) {
+        if ( ! $json || $date <= $noReportDates) {
             $hoursBehind = 'N/A';
             $rows        = null;
         } else {
             //then check if it's in json format
-            if (!is_json($json)) {
+            if ( ! is_json($json)) {
                 throw new \Exception('File retrieved is not in json format.', 500);
             }
 

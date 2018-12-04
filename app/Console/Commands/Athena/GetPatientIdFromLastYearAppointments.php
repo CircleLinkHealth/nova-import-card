@@ -53,7 +53,7 @@ class GetPatientIdFromLastYearAppointments extends Command
     {
         $athenaPracticeId = $this->argument('athenaPracticeId');
 
-        if (!$athenaPracticeId) {
+        if ( ! $athenaPracticeId) {
             return;
         }
 

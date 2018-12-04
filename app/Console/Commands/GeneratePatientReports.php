@@ -47,7 +47,7 @@ class GeneratePatientReports extends Command
         foreach ($patient_ids as $patient_id) {
             //Check if user exists
             $patient = User::find($patient_id);
-            if (!$patient) {
+            if ( ! $patient) {
                 $this->error(' User Not Found: '.$patient_id.' ');
                 continue;
             }
@@ -60,20 +60,20 @@ class GeneratePatientReports extends Command
             }
             //Check if the provider approver is set
             $provider_id = $patient->getCarePlanProviderApprover();
-            if (!$provider_id) {
+            if ( ! $provider_id) {
                 $this->error(' Approving Provider Not Found: '.$patient_id.' ');
                 continue;
             }
             $locationId = $patient->getpreferredContactLocation();
 
-            if (!$locationId) {
+            if ( ! $locationId) {
                 $this->error(' Location Not Found For: '.$patient_id.' ');
                 continue;
             }
 
             $locationObj = Location::find($locationId);
 
-            if (!$locationObj) {
+            if ( ! $locationObj) {
                 $this->error(' Location Object Not Found For: '.$patient_id.' ');
                 continue;
             }
@@ -83,7 +83,7 @@ class GeneratePatientReports extends Command
                 continue;
             }
 
-            if (!empty($locationObj) && Location::UPG_PARENT_LOCATION_ID == $locationObj->parent_id) {
+            if ( ! empty($locationObj) && Location::UPG_PARENT_LOCATION_ID == $locationObj->parent_id) {
                 (new ReportsService())->createAprimaPatientCarePlanPdfReport($patient, $provider_id);
                 $this->info('Report Created for User: '.$patient_id.' ');
             }

@@ -32,7 +32,7 @@ class PatientWriteRepository
             $userId = $user;
         }
 
-        if (!isset($userId)) {
+        if ( ! isset($userId)) {
             throw new InvalidArgumentException();
         }
 
@@ -52,7 +52,7 @@ class PatientWriteRepository
 
     public function storeCcdProblem(User $patient, array $args)
     {
-        if (!$args['code']) {
+        if ( ! $args['code']) {
             return;
         }
 
@@ -113,7 +113,7 @@ class PatientWriteRepository
         $patient->save();
 
         // Determine whether to add to record or not
-        if (!$record) {
+        if ( ! $record) {
             $record                         = new PatientMonthlySummary();
             $record->patient_id             = $patient->user_id;
             $record->ccm_time               = 0;
@@ -138,7 +138,7 @@ class PatientWriteRepository
      */
     public function updatePausedLetterPrintedDate(array $userIdsToPrint, Carbon $dateTime = null)
     {
-        if (!$dateTime) {
+        if ( ! $dateTime) {
             $dateTime = Carbon::now();
         }
 

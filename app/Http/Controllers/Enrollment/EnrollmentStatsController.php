@@ -253,7 +253,7 @@ class EnrollmentStatsController extends Controller
             $data[$practice->id]['total_cost'] = 0;
 
             foreach ($enrollers as $enrollerId => $time) {
-                if (!$enrollerId) {
+                if ( ! $enrollerId) {
                     continue;
                 }
 

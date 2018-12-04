@@ -92,7 +92,7 @@ class EligibilityJob extends BaseModel
 
     public function getStatus($statusId = null)
     {
-        if (!$statusId) {
+        if ( ! $statusId) {
             if (is_null($this->status)) {
                 return null;
             }

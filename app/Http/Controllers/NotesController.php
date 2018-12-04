@@ -50,7 +50,7 @@ class NotesController extends Controller
         if ($patientId) {
             // patient view
             $patient = User::find($patientId);
-            if (!$patient) {
+            if ( ! $patient) {
                 return response('User not found', 401);
             }
 
@@ -249,7 +249,7 @@ class NotesController extends Controller
 
             $title = $provider->display_name;
 
-            if (!empty($notes)) {
+            if ( ! empty($notes)) {
                 $notes = $this->formatter->formatDataForNotesListingReport($notes, $request);
             }
 
@@ -275,7 +275,7 @@ class NotesController extends Controller
 
                 $title = 'All Forwarded Notes';
 
-                if (!empty($notes)) {
+                if ( ! empty($notes)) {
                     $notes = $this->formatter->formatDataForNotesListingReport($notes, $request);
                 }
 
@@ -397,7 +397,7 @@ class NotesController extends Controller
         $input = $request->allSafe();
 
         //in case Performed By field is removed from the form (per CPM-165)
-        if (!isset($input['author_id'])) {
+        if ( ! isset($input['author_id'])) {
             $input['author_id'] = auth()->id();
         }
         $input['performed_at'] = Carbon::parse($input['performed_at'])->toDateTimeString();
@@ -460,7 +460,7 @@ class NotesController extends Controller
             if ($call) {
                 if ('done' === $task_status) {
                     if ('Call Back' === $call->sub_type) {
-                        if (!isset($input['call_status'])) {
+                        if ( ! isset($input['call_status'])) {
                             //exit with error
                             return redirect()
                                 ->back()
@@ -496,7 +496,7 @@ class NotesController extends Controller
             if (Auth::user()->hasRole('care-center')) {
                 $is_withdrawn = 'withdrawn' == $info->ccm_status;
 
-                if (!$is_phone_session && $is_withdrawn) {
+                if ( ! $is_phone_session && $is_withdrawn) {
                     return redirect()->route('patient.note.index', ['patient' => $patientId])->with(
                         'messages',
                         ['Successfully Created Note']
@@ -504,7 +504,7 @@ class NotesController extends Controller
                 }
 
                 if ($is_phone_session) {
-                    if (!isset($input['call_status'])) {
+                    if ( ! isset($input['call_status'])) {
                         //exit with error
                         return redirect()
                             ->back()
@@ -521,7 +521,7 @@ class NotesController extends Controller
                         $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s'); // @todo add H:i:s
                     }
 
-                    if (!$is_saas && !$is_withdrawn) {
+                    if ( ! $is_saas && ! $is_withdrawn) {
                         $prediction = $schedulerService->updateTodaysCallAndPredictNext(
                             $patient,
                             $note->id,
@@ -545,7 +545,7 @@ class NotesController extends Controller
                     $ccm_complex = $patient->isCCMComplex() ?? false;
 
                     $ccm_above = false;
-                    if ($seconds > 1199 && !$ccm_complex) {
+                    if ($seconds > 1199 && ! $ccm_complex) {
                         $ccm_above = true;
                     } elseif ($seconds > 3599 && $ccm_complex) {
                         $ccm_above = true;

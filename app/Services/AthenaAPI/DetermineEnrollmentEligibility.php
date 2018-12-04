@@ -55,7 +55,7 @@ class DetermineEnrollmentEligibility
                 $offsetBy
             );
 
-            if (!isset($response['appointments'])) {
+            if ( ! isset($response['appointments'])) {
                 return;
             }
 
@@ -67,7 +67,7 @@ class DetermineEnrollmentEligibility
                 $ehrPatientId = $bookedAppointment['patientid'];
                 $departmentId = $bookedAppointment['departmentid'];
 
-                if (!$ehrPatientId) {
+                if ( ! $ehrPatientId) {
                     continue;
                 }
 
@@ -82,7 +82,7 @@ class DetermineEnrollmentEligibility
                     $target->batch_id = $batchId;
                 }
 
-                if (!$target->status) {
+                if ( ! $target->status) {
                     $target->status = 'to_process';
                     $target->save();
                 }

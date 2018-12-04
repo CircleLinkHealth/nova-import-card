@@ -49,7 +49,7 @@ class EmailRNDailyReport extends Command
         $emailsSent = [];
 
         foreach ($nurses as $nurse) {
-            if (!$nurse->nurseInfo) {
+            if ( ! $nurse->nurseInfo) {
                 continue;
             }
             $activityTime = Activity::createdBy($nurse)

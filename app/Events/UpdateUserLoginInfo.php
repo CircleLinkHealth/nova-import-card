@@ -30,7 +30,7 @@ class UpdateUserLoginInfo
 
         $authyUser = optional($event->user->authyUser);
 
-        if ($event->user->isAdmin() && (bool) config('auth.two_fa_enabled') && $authyUser->authy_id && !$authyUser->is_authy_enabled) {
+        if ($event->user->isAdmin() && (bool) config('auth.two_fa_enabled') && $authyUser->authy_id && ! $authyUser->is_authy_enabled) {
             $authyUser->is_authy_enabled = true;
             $authyUser->save();
         }

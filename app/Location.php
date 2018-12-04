@@ -132,7 +132,7 @@ class Location extends \App\BaseModel
     {
         if ($parent_location_id) {
             $parent_location = Location::where('id', '=', $parent_location_id)->first();
-            if (!$parent_location) {
+            if ( ! $parent_location) {
                 return false;
             }
 
@@ -156,7 +156,7 @@ class Location extends \App\BaseModel
 
     public function isNotSaas()
     {
-        return !$this->isSaas();
+        return ! $this->isSaas();
     }
 
     public function isSaas()

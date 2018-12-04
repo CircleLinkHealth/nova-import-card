@@ -29,7 +29,7 @@ class PracticeDemographics extends SalesReportSection
 
     public function render()
     {
-        if (!$this->provider->primaryPractice) {
+        if ( ! $this->provider->primaryPractice) {
             \Log::critical("Provider {$this->provider->id} does not have a primary practice set.");
 
             return 'This provider does not have a primary practice set.';

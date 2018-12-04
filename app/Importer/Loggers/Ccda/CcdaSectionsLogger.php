@@ -125,7 +125,7 @@ class CcdaSectionsLogger implements MedicalRecordLogger
      */
     public function logInsuranceSection(): MedicalRecordLogger
     {
-        if (!empty($this->ccd->payers)) {
+        if ( ! empty($this->ccd->payers)) {
             foreach ($this->ccd->payers as $payer) {
                 if (empty($payer->insurance)) {
                     continue;
@@ -180,7 +180,7 @@ class CcdaSectionsLogger implements MedicalRecordLogger
             foreach ($codes as $code) {
                 $code['ccd_problem_log_id'] = $problemLog->id;
 
-                if (!$code['code']) {
+                if ( ! $code['code']) {
                     continue;
                 }
                 ProblemCodeLog::create($code);

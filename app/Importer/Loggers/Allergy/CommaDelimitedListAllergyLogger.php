@@ -29,6 +29,6 @@ class CommaDelimitedListAllergyLogger implements Logger
 
     public function shouldHandle($allergiesString): bool
     {
-        return !starts_with($allergiesString, ['[', '{']);
+        return ! starts_with($allergiesString, ['[', '{']);
     }
 }

@@ -38,7 +38,7 @@ class WelcomeController extends Controller
     {
         $user = auth()->user();
 
-        if (!$user) {
+        if ( ! $user) {
             return redirect()->route('login', []);
         }
 
@@ -61,7 +61,7 @@ class WelcomeController extends Controller
         }
 
         if ($user->hasRole('ehr-report-writer')) {
-            if (!app()->environment('production')) {
+            if ( ! app()->environment('production')) {
                 return redirect()->route('report-writer.dashboard');
             }
 

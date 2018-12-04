@@ -20,11 +20,11 @@ trait PdfReportTrait
         $practice = $this->patient
             ->primaryPractice;
 
-        if (!$practice->ehr) {
+        if ( ! $practice->ehr) {
             return false;
         }
 
-        if (!$practice->ehr->pdf_report_handler) {
+        if ( ! $practice->ehr->pdf_report_handler) {
             return false;
         }
 
@@ -39,7 +39,7 @@ trait PdfReportTrait
     public function pdfHandleCreated()
     {
         // Check if we have a designated report handler for this EHR, for example an API.
-        if (!$this->hasPdfHandler()) {
+        if ( ! $this->hasPdfHandler()) {
             return false;
         }
 

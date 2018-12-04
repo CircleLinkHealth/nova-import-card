@@ -24,7 +24,7 @@ class CreateAndHandlePdfReport
      */
     public function handle(PdfableCreated $event)
     {
-        if (!$event->notifyPractice) {
+        if ( ! $event->notifyPractice) {
             return false;
         }
 

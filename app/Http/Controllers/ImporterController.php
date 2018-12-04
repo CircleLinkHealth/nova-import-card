@@ -50,7 +50,7 @@ class ImporterController extends Controller
 
                 $mr = $summary->medicalRecord();
 
-                if (!$mr) {
+                if ( ! $mr) {
                     return false;
                 }
 
@@ -62,7 +62,7 @@ class ImporterController extends Controller
                     return $m->first_name.$m->last_name;
                 });
 
-                if ($providers->count() > 1 || !$mr->location_id || !$mr->location_id || !$mr->billing_provider_id) {
+                if ($providers->count() > 1 || ! $mr->location_id || ! $mr->location_id || ! $mr->billing_provider_id) {
                     $summary['flag'] = true;
                 }
 
@@ -77,13 +77,13 @@ class ImporterController extends Controller
     {
         $importedMedicalRecord = ImportedMedicalRecord::find($imrId);
 
-        if (!$importedMedicalRecord) {
+        if ( ! $importedMedicalRecord) {
             return 'Could not find an Imported Medical Record with this ID';
         }
 
         $ccda = $importedMedicalRecord->medicalRecord();
 
-        if (!$ccda) {
+        if ( ! $ccda) {
             return 'Could not find the CCDA for this Imported Medical Record.';
         }
         //gather the features for review
@@ -108,7 +108,7 @@ class ImporterController extends Controller
 
     public function handleCcdFilesUpload(Request $request)
     {
-        if (!$request->hasFile('file')) {
+        if ( ! $request->hasFile('file')) {
             return response()->json('No file found', 400);
         }
 
@@ -235,7 +235,7 @@ class ImporterController extends Controller
     //Train the Importing Algo
     public function train(Request $request)
     {
-        if (!$request->hasFile('medical_records')) {
+        if ( ! $request->hasFile('medical_records')) {
             return 'Please upload a CCDA';
         }
 
@@ -298,7 +298,7 @@ class ImporterController extends Controller
     {
         $records = $this::handleCcdFilesUpload($request);
 
-        if (!$request->has('json')) {
+        if ( ! $request->has('json')) {
             return redirect()->route('import.ccd.remix');
         }
 

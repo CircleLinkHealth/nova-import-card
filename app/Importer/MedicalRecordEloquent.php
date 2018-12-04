@@ -254,7 +254,7 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
             return $this;
         }
 
-        if (!empty($this->location_id)) {
+        if ( ! empty($this->location_id)) {
             $this->setLocationIdPrediction($this->location_id);
 
             return $this;
@@ -271,8 +271,8 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
         }
 
         if ($historicPrediction) {
-            if (isset($practice) && !$practice->locations->pluck('id')->contains($historicPrediction)) {
-                !$practice->primary_location_id
+            if (isset($practice) && ! $practice->locations->pluck('id')->contains($historicPrediction)) {
+                ! $practice->primary_location_id
                     ?: $this->setLocationIdPrediction($practice->primary_location_id);
 
                 return $this;

@@ -200,7 +200,7 @@ class ImportConsentedEnrollees implements ShouldQueue
             $enrollee->targetPatient->ehr_department_id
         );
 
-        if (!isset($ccdaExternal[0])) {
+        if ( ! isset($ccdaExternal[0])) {
             return [
                 'patient' => $enrollee->nameAndDob(),
                 'message' => 'Could not retrieve CCD from Athena',

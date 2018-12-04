@@ -40,7 +40,7 @@ class UserNotificationList implements UserNotificationListInterface
             $now = Carbon::now();
             $expires = Carbon::parse($cache['expires_at']);
 
-            if ($now->greaterThan($expires) || (isset($cache['key']) && !\Cache::has($cache['key']))) {
+            if ($now->greaterThan($expires) || (isset($cache['key']) && ! \Cache::has($cache['key']))) {
                 $this->delete($json);
 
                 return false;

@@ -95,7 +95,7 @@ class UpdateCarePlanStatus
      */
     private function addPatientConsentedNote(User $user)
     {
-        if (!$user->notes->isEmpty()) {
+        if ( ! $user->notes->isEmpty()) {
             return;
         }
 

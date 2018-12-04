@@ -92,10 +92,10 @@ class OpsDashboardService
     {
         $enrolledPatients = $practices->map(function ($practice) {
             return $practice->patients->filter(function ($user) {
-                if (!$user) {
+                if ( ! $user) {
                     return false;
                 }
-                if (!$user->patientInfo) {
+                if ( ! $user->patientInfo) {
                     return false;
                 }
 
@@ -179,7 +179,7 @@ class OpsDashboardService
         return Carbon::parse($fromDate)->diffInDaysFiltered(function (Carbon $date) use ($holidays) {
             $matchingHolidays = $holidays->where('holiday_date', $date->toDateString());
 
-            return !$date->isWeekend() && !$matchingHolidays->count() >= 1;
+            return ! $date->isWeekend() && ! $matchingHolidays->count() >= 1;
         }, new Carbon($toDate));
     }
 
@@ -207,7 +207,7 @@ class OpsDashboardService
         $count['20+']    = 0;
 
         foreach ($patients as $patient) {
-            if (!$patient->patientInfo) {
+            if ( ! $patient->patientInfo) {
                 continue;
             }
             if (Patient::ENROLLED == $patient->patientInfo->ccm_status) {

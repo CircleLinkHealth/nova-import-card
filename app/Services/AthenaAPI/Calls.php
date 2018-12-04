@@ -34,13 +34,13 @@ class Calls
     {
         $practiceId = $problem->getPracticeId();
 
-        if (!$practiceId) {
+        if ( ! $practiceId) {
             throw new \Exception('practiceid is required.', 422);
         }
 
         $patientId = $problem->getPatientId();
 
-        if (!$patientId) {
+        if ( ! $patientId) {
             throw new \Exception('practiceid is required.', 422);
         }
 
@@ -132,7 +132,7 @@ class Calls
     {
         $practiceId = $patient->getPracticeId();
 
-        if (!$practiceId) {
+        if ( ! $practiceId) {
             throw new \Exception('practiceid is required.', 422);
         }
 
@@ -601,7 +601,7 @@ class Calls
 
             \Log::error(\GuzzleHttp\json_encode($response));
 
-            if (!empty($response)) {
+            if ( ! empty($response)) {
                 abort(400, json_encode($response));
             }
         }

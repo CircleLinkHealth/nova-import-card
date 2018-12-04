@@ -32,7 +32,7 @@ class ProblemCodeService
             $problem = $this->ccdProblemRepo->problem($problemCode->problem_id);
             $system  = $problemCode->system()->first();
             if ($system) {
-                if (!$this->repo()->exists($problemCode->problem_id, $problemCode->problem_code_system_id)) {
+                if ( ! $this->repo()->exists($problemCode->problem_id, $problemCode->problem_code_system_id)) {
                     $problemCode->code_system_name = $system->name;
                     $problemCode->resolve();
                     $problemCode->save();

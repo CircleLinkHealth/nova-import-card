@@ -46,7 +46,7 @@ class RescheduleMissedCalls extends Command
     {
         $handled = $this->service->handle();
 
-        if (!empty($handled)) {
+        if ( ! empty($handled)) {
             $message = "The CPMbot just rescheduled some calls.\n";
 
             foreach ($handled as $call) {

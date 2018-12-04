@@ -21,7 +21,7 @@ class RulesService
             where r.type_id = 'ATT' AND r.approve = 'Y' AND r.archive = 'N'";
 
         // add params to query string
-        if (!empty($params)) {
+        if ( ! empty($params)) {
             foreach ($params as $key => $value) {
                 $quotedValue = '';
                 if ('' == $value) {
@@ -34,7 +34,7 @@ class RulesService
                         // if comma, assume comma delimited
                         if (false !== strpos($value, ',')) {
                             $valueArgs = explode(',', $value);
-                            if (!empty($valueArgs)) {
+                            if ( ! empty($valueArgs)) {
                                 foreach ($valueArgs as $valueArg) {
                                     $valueArg = trim($valueArg);
                                     $valueArg = str_replace(["'", '"'], '', $valueArg);
@@ -79,7 +79,7 @@ class RulesService
 
                 where r.type_id = '".$type."' AND r.approve = 'Y' AND r.archive = 'N'
                     AND r.id = ".$rule_id));
-            if (!empty($actions)) {
+            if ( ! empty($actions)) {
                 return $actions;
             }
 

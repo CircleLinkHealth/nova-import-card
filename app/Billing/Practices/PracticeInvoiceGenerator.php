@@ -151,7 +151,7 @@ class PracticeInvoiceGenerator
                 foreach ($patients as $u) {
                     $summary = $u->patientSummaries->first();
 
-                    if (!$this->patientSummaryEloquentRepository->hasBillableProblemsNameAndCode($summary)) {
+                    if ( ! $this->patientSummaryEloquentRepository->hasBillableProblemsNameAndCode($summary)) {
                         $summary = $this->patientSummaryEloquentRepository->fillBillableProblemsNameAndCode($summary);
                         $summary->save();
                     }

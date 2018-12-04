@@ -35,17 +35,17 @@ class ActivityController extends Controller
         Request $request,
         $patientId
     ) {
-        if (auth()->user()->hasRole('care-center') && !in_array(app()->environment(), ['local', 'staging'])) {
+        if (auth()->user()->hasRole('care-center') && ! in_array(app()->environment(), ['local', 'staging'])) {
             return abort(403);
         }
 
-        if (!$patientId) {
+        if ( ! $patientId) {
             return abort(404);
         }
 
         $patient = User::find($patientId);
 
-        if (!$patient) {
+        if ( ! $patient) {
             return response('User not found', 401);
         }
 
@@ -211,7 +211,7 @@ class ActivityController extends Controller
         if ((false !== @unserialize($careteam_ids))) {
             $careteam_ids = unserialize($careteam_ids);
         }
-        if (!empty($careteam_ids) && is_array($careteam_ids)) {
+        if ( ! empty($careteam_ids) && is_array($careteam_ids)) {
             foreach ($careteam_ids as $id) {
                 $careteam_info[$id] = User::find($id)->getFullName();
             }

@@ -21,7 +21,7 @@ class RoleController extends Controller
      */
     public function create()
     {
-        if (!Auth::user()->isAdmin()) {
+        if ( ! Auth::user()->isAdmin()) {
             abort(403);
         }
         // display view
@@ -43,7 +43,7 @@ class RoleController extends Controller
      */
     public function destroy($id)
     {
-        if (!Auth::user()->isAdmin()) {
+        if ( ! Auth::user()->isAdmin()) {
             abort(403);
         }
     }
@@ -57,7 +57,7 @@ class RoleController extends Controller
      */
     public function edit($id)
     {
-        if (!Auth::user()->isAdmin()) {
+        if ( ! Auth::user()->isAdmin()) {
             abort(403);
         }
         $role        = Role::find($id);
@@ -77,7 +77,7 @@ class RoleController extends Controller
      */
     public function index()
     {
-        if (!Auth::user()->isAdmin()) {
+        if ( ! Auth::user()->isAdmin()) {
             abort(403);
         }
         // display view
@@ -95,7 +95,7 @@ class RoleController extends Controller
      */
     public function show($id)
     {
-        if (!Auth::user()->isAdmin()) {
+        if ( ! Auth::user()->isAdmin()) {
             abort(403);
         }
         // display view
@@ -115,7 +115,7 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Auth::user()->isAdmin()) {
+        if ( ! Auth::user()->isAdmin()) {
             abort(403);
         }
         $params             = $request->input();
@@ -146,7 +146,7 @@ class RoleController extends Controller
         Request $request,
         $id
     ) {
-        if (!Auth::user()->isAdmin()) {
+        if ( ! Auth::user()->isAdmin()) {
             abort(403);
         }
         $params             = $request->input();

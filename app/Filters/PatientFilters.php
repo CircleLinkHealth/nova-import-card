@@ -152,7 +152,7 @@ class PatientFilters extends QueryFilters
 
     public function sort_age($type = null)
     {
-        return $this->sort_dob((!$type || 'asc' == $type)
+        return $this->sort_dob(( ! $type || 'asc' == $type)
             ? 'desc'
             : 'asc');
     }

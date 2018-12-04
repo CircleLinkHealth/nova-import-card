@@ -183,7 +183,7 @@ class CarePlanHelper
         $preferredCallDays  = parseCallDays($this->dem->preferred_call_days);
         $preferredCallTimes = parseCallTimes($this->dem->preferred_call_times);
 
-        if (!$preferredCallDays && !$preferredCallTimes) {
+        if ( ! $preferredCallDays && ! $preferredCallTimes) {
             PatientContactWindow::sync($this->patientInfo, [
                 1,
                 2,
@@ -346,7 +346,7 @@ class CarePlanHelper
         $workPhone   = null;
 
         //`$this->demographicsImport->primary_phone` may be a phone number or phone type
-        $primaryPhone = !empty($pPhone)
+        $primaryPhone = ! empty($pPhone)
             ? $this->str->formatPhoneNumberE164($pPhone)
             : $this->dem->primary_phone;
 
@@ -354,14 +354,14 @@ class CarePlanHelper
             ? $this->dem->home_phone
             : $primaryPhone;
 
-        if (!empty($homeNumber)) {
+        if ( ! empty($homeNumber)) {
             if ($this->validatePhoneNumber($homeNumber)) {
                 $number = $this->str->formatPhoneNumberE164($homeNumber);
 
                 $makePrimary = 0 == strcasecmp(
                     $primaryPhone,
                         PhoneNumber::HOME
-                ) || $primaryPhone == $number || !$primaryPhone;
+                ) || $primaryPhone == $number || ! $primaryPhone;
 
                 $homePhone = PhoneNumber::create([
                     'user_id'    => $this->user->id,
@@ -382,14 +382,14 @@ class CarePlanHelper
         }
 
         $mobileNumber = $this->dem->cell_phone;
-        if (!empty($mobileNumber)) {
+        if ( ! empty($mobileNumber)) {
             if ($this->validatePhoneNumber($mobileNumber)) {
                 $number = $this->str->formatPhoneNumberE164($mobileNumber);
 
                 $makePrimary = 0 == strcasecmp($primaryPhone, PhoneNumber::MOBILE) || 0 == strcasecmp(
                     $primaryPhone,
                         'cell'
-                ) || $primaryPhone == $number || !$primaryPhone;
+                ) || $primaryPhone == $number || ! $primaryPhone;
 
                 $mobilePhone = PhoneNumber::create([
                     'user_id'    => $this->user->id,
@@ -401,11 +401,11 @@ class CarePlanHelper
         }
 
         $workNumber = $this->dem->work_phone;
-        if (!empty($workNumber)) {
+        if ( ! empty($workNumber)) {
             if ($this->validatePhoneNumber($mobileNumber)) {
                 $number = $this->str->formatPhoneNumberE164($workNumber);
 
-                $makePrimary = PhoneNumber::WORK == $primaryPhone || $primaryPhone == $number || !$primaryPhone;
+                $makePrimary = PhoneNumber::WORK == $primaryPhone || $primaryPhone == $number || ! $primaryPhone;
 
                 $workPhone = PhoneNumber::create([
                     'user_id'    => $this->user->id,
@@ -416,7 +416,7 @@ class CarePlanHelper
             }
         }
 
-        if (!$primaryPhone) {
+        if ( ! $primaryPhone) {
             $primaryPhone = empty($mobileNumber)
                 ? empty($homeNumber)
                     ? empty($workNumber)
@@ -430,7 +430,7 @@ class CarePlanHelper
                 $primaryPhone->save();
             }
 
-            if (!$primaryPhone && $this->dem->primary_phone) {
+            if ( ! $primaryPhone && $this->dem->primary_phone) {
                 PhoneNumber::create([
                     'user_id'    => $this->user->id,
                     'number'     => $this->str->formatPhoneNumberE164($this->dem->primary_phone),
@@ -449,7 +449,7 @@ class CarePlanHelper
                         PhoneNumber::WORK => $workPhone,
                     ] as $type => $phone
                 ) {
-                    if (!$phone) {
+                    if ( ! $phone) {
                         PhoneNumber::create([
                             'user_id'    => $this->user->id,
                             'number'     => $number,
@@ -576,7 +576,7 @@ class CarePlanHelper
 
         $ccda = $this->imr->medicalRecord();
 
-        if (!$ccda) {
+        if ( ! $ccda) {
             return $this;
         }
 
@@ -589,14 +589,14 @@ class CarePlanHelper
         //Weight
         $weightParseAndStore = new Weight($this->user->program_id, $this->user);
         $weight              = $weightParseAndStore->parse($decodedCcda);
-        if (!empty($weight)) {
+        if ( ! empty($weight)) {
             $weightParseAndStore->import($weight);
         }
 
         //Blood Pressure
         $bloodPressureParseAndStore = new BloodPressure($this->user->program_id, $this->user);
         $bloodPressure              = $bloodPressureParseAndStore->parse($decodedCcda);
-        if (!empty($bloodPressure)) {
+        if ( ! empty($bloodPressure)) {
             $bloodPressureParseAndStore->import($bloodPressure);
         }
 

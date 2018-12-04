@@ -33,7 +33,7 @@ class AuthorizationController extends Controller
         \JWTAuth::setIdentifier('id');
 
         // attempt authorization
-        if (!$token = \JWTAuth::attempt($credentials)) {
+        if ( ! $token = \JWTAuth::attempt($credentials)) {
             return response()->json(['error' => 'invalid_credentials'], 400);
         }
 

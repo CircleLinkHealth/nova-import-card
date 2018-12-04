@@ -42,7 +42,7 @@ class CreateTestSuiteDatabase extends Command
     {
         $database = config('database.connections.test_suite.database');
 
-        if (!$database) {
+        if ( ! $database) {
             $this->info('Skipping creation of database as env(TEST_SUITE_DB_DATABASE) is empty');
 
             return;

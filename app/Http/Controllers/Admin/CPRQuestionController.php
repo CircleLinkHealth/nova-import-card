@@ -49,7 +49,7 @@ class CPRQuestionController extends Controller
     {
         $question = CPRulesQuestions::find($id);
         $programs = Practice::get();
-        if (!empty($question->rulesItems)) {
+        if ( ! empty($question->rulesItems)) {
             foreach ($question->rulesItems as $item) {
                 if (isset($item->pcp->program->first()->domain)) {
                     $programItems[] = $item->pcp->program->first()->domain;

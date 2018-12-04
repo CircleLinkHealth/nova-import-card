@@ -39,7 +39,7 @@ class PracticeObserver
      */
     public function creating(Practice $practice)
     {
-        if (!$practice->saas_account_id && !auth()->guest()) {
+        if ( ! $practice->saas_account_id && ! auth()->guest()) {
             $practice->saas_account_id = auth()->user()->saas_account_id;
         }
     }

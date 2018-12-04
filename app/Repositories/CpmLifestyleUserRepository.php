@@ -12,7 +12,7 @@ class CpmLifestyleUserRepository
 {
     public function addLifestyleToPatient($lifestyleId, $userId)
     {
-        if (!$this->patientHasLifestyle($userId, $lifestyleId)) {
+        if ( ! $this->patientHasLifestyle($userId, $lifestyleId)) {
             $lifestyleUser                   = new CpmLifestyleUser();
             $lifestyleUser->patient_id       = $userId;
             $lifestyleUser->cpm_lifestyle_id = $lifestyleId;

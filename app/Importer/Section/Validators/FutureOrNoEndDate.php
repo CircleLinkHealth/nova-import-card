@@ -14,17 +14,17 @@ class FutureOrNoEndDate implements SectionValidator
 {
     public function isValid(ItemLog $item): bool
     {
-        if (!$this->shouldValidate($item)) {
+        if ( ! $this->shouldValidate($item)) {
             return false;
         }
 
         $endDate = Carbon::createFromTimestamp(strtotime($item->end));
 
-        return !$endDate->isPast();
+        return ! $endDate->isPast();
     }
 
     public function shouldValidate(ItemLog $item): bool
     {
-        return !empty($item->end);
+        return ! empty($item->end);
     }
 }

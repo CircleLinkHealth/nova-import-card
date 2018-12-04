@@ -67,19 +67,19 @@ class WelcomeCallListController extends Controller
             $patient->put('problems', collect());
 
             foreach ($data as $d) {
-                if ($d['medication'] && !$patient['medications']->contains($d['medication'])) {
+                if ($d['medication'] && ! $patient['medications']->contains($d['medication'])) {
                     $patient['medications']->push($d['medication']);
                 }
 
-                if ($d['condition'] && !$patient['problems']->contains($d['condition'])) {
+                if ($d['condition'] && ! $patient['problems']->contains($d['condition'])) {
                     $patient['problems']->push($d['condition']);
                 }
 
-                if (!$patient->contains($d['last_name'])) {
+                if ( ! $patient->contains($d['last_name'])) {
                     $patient->put('last_name', $d['last_name']);
                 }
 
-                if (!$patient->contains($d['first_name'])) {
+                if ( ! $patient->contains($d['first_name'])) {
                     $patient->put('first_name', $d['first_name']);
                 }
             }
@@ -109,7 +109,7 @@ class WelcomeCallListController extends Controller
 
             foreach ($data as $d) {
                 for ($i = 1; $i < 11; ++$i) {
-                    if ($d["DIAG${i}"] && !$patient['problems']->contains($d["DIAG${i}"])) {
+                    if ($d["DIAG${i}"] && ! $patient['problems']->contains($d["DIAG${i}"])) {
                         $patient['problems']->push($d["DIAG${i}"]);
                     }
                 }
@@ -133,11 +133,11 @@ class WelcomeCallListController extends Controller
      */
     public function makeWelcomeCallList(Request $request)
     {
-        if (!$request->hasFile('patient_list')) {
+        if ( ! $request->hasFile('patient_list')) {
             dd('Please upload a CSV file.');
         }
 
-        if (!$request['practice_id']) {
+        if ( ! $request['practice_id']) {
             dd('`practice_id` is a required field.');
         }
 
@@ -151,7 +151,7 @@ class WelcomeCallListController extends Controller
         $csvPatientList = new CsvPatientList(collect($patients));
         $isValid        = $csvPatientList->guessValidator();
 
-        if (!$isValid) {
+        if ( ! $isValid) {
             return [
                 'errors' => 'This csv does not match any of the supported templates. you can see supported templates here https://drive.google.com/drive/folders/1zpiBkegqjTioZGzdoPqZQAqWvXkaKEgB',
             ];

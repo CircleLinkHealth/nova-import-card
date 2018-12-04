@@ -144,7 +144,7 @@ class OnboardingService
             ->sortBy('first_name')
             ->values();
 
-        if (!auth()->user()->isAdmin()) {
+        if ( ! auth()->user()->isAdmin()) {
             $practiceUsers->reject(function ($user) {
                 return $user->isAdmin();
             })
@@ -261,7 +261,7 @@ class OnboardingService
         $sameEHRLogin        = $request->input('sameEHRLogin');
 
         foreach ($request->input('locations') as $index => $newLocation) {
-            if (!$newLocation['name']) {
+            if ( ! $newLocation['name']) {
                 continue;
             }
 
@@ -352,7 +352,7 @@ class OnboardingService
                 $clinicalContactUser = User::whereEmail($newLocation['clinical_contact']['email'])
                     ->first();
 
-                if (!$newLocation['clinical_contact']['email']) {
+                if ( ! $newLocation['clinical_contact']['email']) {
                     $clinicalContactUser = null;
 
                     $errors[] = [
@@ -364,7 +364,7 @@ class OnboardingService
                     ];
                 }
 
-                if (!$clinicalContactUser) {
+                if ( ! $clinicalContactUser) {
                     try {
                         $clinicalContactUser = $this->users->create([
                             'program_id' => $primaryPractice->id,
@@ -424,7 +424,7 @@ class OnboardingService
         foreach ($request->input('users') as $index => $newUser) {
             //create the user
             try {
-                if (!$newUser['first_name'] && !$newUser['last_name']) {
+                if ( ! $newUser['first_name'] && ! $newUser['last_name']) {
                     continue;
                 }
 

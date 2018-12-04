@@ -47,7 +47,7 @@ class WorkScheduleController extends Controller
         $window = $this->nurseContactWindows
             ->find($windowId);
 
-        if (!$window) {
+        if ( ! $window) {
             $errors['window'] = 'This window does not exist.';
 
             return redirect()->route('care.center.work.schedule.index')
@@ -55,7 +55,7 @@ class WorkScheduleController extends Controller
                 ->withInput();
         }
 
-        if (!auth()->user()->isAdmin()) {
+        if ( ! auth()->user()->isAdmin()) {
             if ($window->nurse_info_id != auth()->user()->nurseInfo->id) {
                 $errors['window'] = 'This window does not belong to you.';
 
@@ -75,7 +75,7 @@ class WorkScheduleController extends Controller
         $holiday = $this->holiday
             ->find($holidayId);
 
-        if (!$holiday) {
+        if ( ! $holiday) {
             $errors['holiday'] = 'This holiday does not exist.';
 
             return redirect()->route('care.center.work.schedule.index')
@@ -154,7 +154,7 @@ class WorkScheduleController extends Controller
             ? $request->input('nurse_info_id')
             : auth()->user()->nurseInfo->id;
 
-        if (!$nurseInfoId) {
+        if ( ! $nurseInfoId) {
             $nurseInfoId = auth()->user()->nurseInfo->id;
         }
 

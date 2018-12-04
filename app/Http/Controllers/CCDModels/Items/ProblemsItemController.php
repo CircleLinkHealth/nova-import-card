@@ -18,9 +18,9 @@ class ProblemsItemController extends Controller
     public function destroy(Request $request)
     {
         $problem = $request->input('problem');
-        if (!empty($problem)) {
+        if ( ! empty($problem)) {
             $ccdProblem = Problem::find($problem['id']);
-            if (!$ccdProblem) {
+            if ( ! $ccdProblem) {
                 return response('Problem '.$problem['id'].' not found', 401);
             }
             $ccdProblem->delete();
@@ -50,7 +50,7 @@ class ProblemsItemController extends Controller
     {
         // pass back some data, along with the original data, just to prove it was received
         $problem = $request->input('problem');
-        if (!empty($problem)) {
+        if ( ! empty($problem)) {
             $ccdProblem             = new Problem();
             $ccdProblem->patient_id = $problem['patient_id'];
             $ccdProblem->name       = $problem['name'];
@@ -66,9 +66,9 @@ class ProblemsItemController extends Controller
     {
         // pass back some data, along with the original data, just to prove it was received
         $problem = $request->input('problem');
-        if (!empty($problem)) {
+        if ( ! empty($problem)) {
             $ccdProblem = Problem::find($problem['id']);
-            if (!$ccdProblem) {
+            if ( ! $ccdProblem) {
                 return response('Problem not found', 401);
             }
             $ccdProblem->name = $problem['name'];

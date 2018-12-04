@@ -55,7 +55,7 @@ class ImportLGHInsurance implements ShouldQueue
 
         $csv = parseCsvToArray($path);
 
-        if (!$csv) {
+        if ( ! $csv) {
             return;
         }
 

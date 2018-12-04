@@ -38,7 +38,7 @@ class AuthyMiddleware
      */
     public function handle($request, Closure $next)
     {
-        if (!(bool) config('auth.two_fa_enabled')) {
+        if ( ! (bool) config('auth.two_fa_enabled')) {
             \Session::put('authy_status', 'approved');
 
             if (\Route::is('user.2fa.show.token.form')) {
@@ -55,11 +55,11 @@ class AuthyMiddleware
         $user      = optional(auth()->user());
         $authyUser = optional($user->authyUser);
 
-        if ($user->isAdmin() && !$authyUser->is_authy_enabled && !\Route::is('user.settings.manage')) {
+        if ($user->isAdmin() && ! $authyUser->is_authy_enabled && ! \Route::is('user.settings.manage')) {
             return redirect()->route('user.settings.manage');
         }
 
-        if (!isAllowedToSee2FA() || !$authyUser->is_authy_enabled) {
+        if ( ! isAllowedToSee2FA() || ! $authyUser->is_authy_enabled) {
             if (\Route::is('user.2fa.show.token.form')) {
                 return redirect()->back();
             }

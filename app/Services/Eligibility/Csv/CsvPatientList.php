@@ -92,7 +92,7 @@ class CsvPatientList
 
     private function validate()
     {
-        if (!$this->validator) {
+        if ( ! $this->validator) {
             return null;
         }
 

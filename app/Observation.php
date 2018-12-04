@@ -205,7 +205,7 @@ class Observation extends BaseModel
             return false;
         }
         $wpUser = User::find($this->user_id);
-        if (!$wpUser->program_id) {
+        if ( ! $wpUser->program_id) {
             return false;
         }
         $comment = Comment::find($this->comment_id);
@@ -248,7 +248,7 @@ class Observation extends BaseModel
         parent::save();
 
         // run datamonitor if new obs
-        if (!$updating) {
+        if ( ! $updating) {
             $dmService = app(DatamonitorService::class);
             $dmService->process_obs_alerts($this->id);
         }

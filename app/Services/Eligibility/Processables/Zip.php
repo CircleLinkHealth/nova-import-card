@@ -89,11 +89,11 @@ class Zip extends BaseProcessable
         $path            = $this->getFilePath();
         $fullZipFilePath = "$prefix$path";
 
-        if (!file_exists($fullZipFilePath)) {
+        if ( ! file_exists($fullZipFilePath)) {
             throw new \Exception('File does not exist.');
         }
 
-        if (!ZipFacade::check($fullZipFilePath)) {
+        if ( ! ZipFacade::check($fullZipFilePath)) {
             throw new \Exception('Invalid zip file.');
         }
 
@@ -109,7 +109,7 @@ class Zip extends BaseProcessable
         }
 
         foreach ($xmlFiles as $filePath) {
-            if (!file_exists($filePath)) {
+            if ( ! file_exists($filePath)) {
                 throw new \Exception('File not found');
             }
 
