@@ -152,13 +152,13 @@
       "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner WrapperRunner -p8"
     ],
     "test": [
-      "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner SqliteRunner -p8"
+      "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner SqliteRunner -p4"
     ],
-    "integration-sqlite": [
-      "./vendor/bin/paratest ./tests/integration --stop-on-failure --colors --runner SqliteRunner"
+    "integration": [
+      "./vendor/bin/paratest ./tests/integration --stop-on-failure --colors --runner SqliteRunner -p4"
     ],
-    "feature-sqlite": [
-      "./vendor/bin/paratest ./tests/feature --stop-on-failure --colors --runner SqliteRunner"
+    "feature": [
+      "./vendor/bin/paratest ./tests/feature --stop-on-failure --colors --runner SqliteRunner -p4"
     ],
     "clear": [
       "php artisan clear-compiled",
