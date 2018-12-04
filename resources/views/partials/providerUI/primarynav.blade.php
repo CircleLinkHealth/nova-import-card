@@ -49,7 +49,7 @@ if (isset($patient)) {
                                                 :patient-id="{{ $patient->id }}"></time-tracker-call-mode>
                     </li>
                 @endif
-                @if(auth()->user()->hasRole('saas-admin') || auth()->user()->hasRole('administrator') || auth()->user()->hasRole('saas-admin-view-only'))
+                @if(auth()->user()->hasRole('saas-admin') || auth()->user()->isAdmin() || auth()->user()->hasRole('saas-admin-view-only'))
                     <li class="dropdown-toggle">
                         <div class="dropdown-toggle" data-toggle="dropdown" role="button"
                              aria-expanded="false"
@@ -150,7 +150,15 @@ if (isset($patient)) {
                             </li>
                         @endif
 
-                        <li><a href="{{ url('/auth/logout') }}">
+                        @if(isAllowedToSee2FA())
+                            <li>
+                                <a href="{{ route('user.settings.manage') }}">
+                                    Account Settings
+                                </a>
+                            </li>
+                        @endif
+
+                        <li><a href="{{ route('user.logout') }}">
                                 Logout
                             </a>
                         </li>

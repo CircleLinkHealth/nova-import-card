@@ -131,7 +131,7 @@ class UserController extends Controller
 
     public function quickAddForm($blogId)
     {
-        if ( ! Auth::user()->hasRole('administrator')) {
+        if ( ! Auth::user()->isAdmin()) {
             abort(403);
         }
         //if ( $request->header('Client') == 'ui' ) {}
@@ -196,7 +196,7 @@ class UserController extends Controller
 
     public function storeQuickPatient()
     {
-        if ( ! Auth::user()->hasRole('administrator')) {
+        if ( ! Auth::user()->isAdmin()) {
             abort(403);
         }
         $wpUser = new User;

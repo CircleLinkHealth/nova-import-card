@@ -2,10 +2,8 @@
 
 BASEDIR=$(pwd)
 
-cat "$BASEDIR"/bin/wkhtmtopdf/wkhtmltopdf > "$BASEDIR"/vendor/h4cc/wkhtmltopdf-amd64/bin/wkhtmltopdf
-cat "$BASEDIR"/bin/wkhtmtopdf/wkhtmltopdf-amd64 > "$BASEDIR"/vendor/h4cc/wkhtmltopdf-amd64/bin/wkhtmltopdf-amd64
-
-chmod 755 "$BASEDIR"/vendor/h4cc/wkhtmltopdf-amd64/bin/wkhtmltopdf
-chmod 755 "$BASEDIR"/vendor/h4cc/wkhtmltopdf-amd64/bin/wkhtmltopdf-amd64
+echo 'Make files executable'
+chmod 755 "$BASEDIR"/bin/wkhtmltopdf/wkhtmltopdf
+chmod 755 "$BASEDIR"/bin/wkhtmltopdf/wkhtmltopdf-amd64
 
 echo 'Done!'

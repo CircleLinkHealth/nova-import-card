@@ -55,11 +55,11 @@ class AddForeignKeysToPatientInfoTable extends Migration
     public function down()
     {
         Schema::table('patient_info', function (Blueprint $table) {
-            $table->dropForeign('patient_info_care_plan_id_foreign');
-            $table->dropForeign('patient_info_family_id_foreign');
-            $table->dropForeign('patient_info_imported_medical_record_id_foreign');
-            $table->dropForeign('patient_info_next_call_id_foreign');
-            $table->dropForeign('patient_info_user_id_foreign');
+            tryDropForeignKey($table, 'patient_info_care_plan_id_foreign');
+            tryDropForeignKey($table, 'patient_info_family_id_foreign');
+            tryDropForeignKey($table, 'patient_info_imported_medical_record_id_foreign');
+            tryDropForeignKey($table, 'patient_info_next_call_id_foreign');
+            tryDropForeignKey($table, 'patient_info_user_id_foreign');
         });
     }
 

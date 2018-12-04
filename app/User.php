@@ -48,6 +48,7 @@ use Laravel\Passport\HasApiTokens;
 use Michalisantoniou6\Cerberus\Traits\CerberusSiteUserTrait;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
+use Storage;
 
 /**
  * App\User
@@ -558,6 +559,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasOne(Nurse::class, 'user_id', 'id');
     }
 
+    public function ehrReportWriterInfo(){
+        return $this->hasOne(EhrReportWriterInfo::class, 'user_id', 'id');
+    }
+
     public function carePlan()
     {
         return $this->hasOne(CarePlan::class, 'user_id', 'id');
@@ -733,7 +738,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         $this->display_name             = $this->getFullName();
     }
 
-    public function getFirstName(){
+    public function getFirstName()
+    {
         return ucfirst(strtolower($this->first_name));
     }
 
@@ -1902,19 +1908,19 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
         //dd($randomUserInfo);
         // set random data
-        $user                    = $this;
+        $user = $this;
         $user->setFirstName($faker->firstName);
         $user->setLastName('Z-' . $faker->lastName);
-        $user->username          = $faker->userName;
-        $user->password          = $faker->password;
-        $user->email             = $faker->freeEmail;
+        $user->username = $faker->userName;
+        $user->password = $faker->password;
+        $user->email    = $faker->freeEmail;
         $user->setMRN(rand());
         $user->setGender('M');
-        $user->address           = $faker->address;
-        $user->address2          = $faker->secondaryAddress;
-        $user->city              = $faker->city;
-        $user->state             = $faker->stateAbbr;
-        $user->zip               = $faker->postcode;
+        $user->address  = $faker->address;
+        $user->address2 = $faker->secondaryAddress;
+        $user->city     = $faker->city;
+        $user->state    = $faker->stateAbbr;
+        $user->zip      = $faker->postcode;
         $user->setPhone('111-234-5678');
         $user->setWorkPhoneNumber('222-234-5678');
         $user->setMobilePhoneNumber('333-234-5678');
@@ -2065,7 +2071,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         $query,
         $user
     ) {
-        $viewableLocations = $user->hasRole('administrator')
+        $viewableLocations = $user->isAdmin()
             ? Location::all()->pluck('id')->all()
             : $user->locations->pluck('id')->all();
 
@@ -2195,10 +2201,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                         //$query -> Practice Model
                         return $query->whereHas('patients', function ($innerQuery) {
                             //$innerQuery -> User Model
-                           return $innerQuery->whereHas('patientInfo', function ($innerInnerQuery) {
-                               //$innerInnerQuery -> Patient model
-                               return $innerInnerQuery->where('ccm_status', '=', 'enrolled');
-                           });
+                            return $innerQuery->whereHas('patientInfo', function ($innerInnerQuery) {
+                                //$innerInnerQuery -> Patient model
+                                return $innerInnerQuery->where('ccm_status', '=', 'enrolled');
+                            });
                         });
                     })
                     ->withTimestamps();
@@ -3191,5 +3197,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function carePlanAssessment()
     {
         return $this->hasOne(CareplanAssessment::class, 'careplan_id');
+    }
+
+    public function authyUser() {
+        return $this->hasOne(AuthyUser::class);
     }
 }

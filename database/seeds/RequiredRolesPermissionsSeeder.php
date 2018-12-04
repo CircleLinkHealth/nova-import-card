@@ -988,6 +988,14 @@ class RequiredRolesPermissionsSeeder extends Seeder
                 ],
             ],
             [
+                'name'         => 'ehr-report-writer',
+                'display_name' => 'EHR Report Writer',
+                'description'  => 'A user that can upload CSVs or Json files for eligibility to be processed by our system',
+                'permissions'  => [
+
+                ],
+            ],
+            [
                 'name'         => 'saas-admin',
                 'display_name' => 'SAAS Admin',
                 'description'  => 'An admin for CPM Software-As-A-Service.',

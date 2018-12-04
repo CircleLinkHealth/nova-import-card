@@ -48,6 +48,10 @@ class PatientProgramSecurity
             return redirect()->route('enrollment-center.dashboard', []);
         }
 
+        if ($loggedInUser->hasRole('ehr-report-writer')) {
+            return redirect()->route('report-writer.dashboard', []);
+        }
+
         if ($request->route()->patientId) {
             $patient = User::whereId($request->route()->patientId)
                            ->with('practices')

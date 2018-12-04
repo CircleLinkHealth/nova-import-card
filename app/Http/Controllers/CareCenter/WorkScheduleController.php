@@ -106,7 +106,7 @@ class WorkScheduleController extends Controller
 
     public function store(Request $request)
     {
-        $isAdmin = auth()->user()->hasRole('administrator');
+        $isAdmin = auth()->user()->isAdmin();
 
         $nurseInfoId = $isAdmin
             ? $request->input('nurse_info_id')
@@ -244,7 +244,7 @@ class WorkScheduleController extends Controller
                 ->withInput();
         }
 
-        if (!auth()->user()->hasRole('administrator')) {
+        if (!auth()->user()->isAdmin()) {
             if ($window->nurse_info_id != auth()->user()->nurseInfo->id) {
                 $errors['window'] = 'This window does not belong to you.';
 
