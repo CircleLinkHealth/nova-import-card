@@ -30,12 +30,12 @@ use App\Patient;
 
             $patientFamilyId = null;
 
-            $patientIsCcm = false;
+            $patientIsCcm        = false;
             $patientIsBehavioral = false;
 
             if (is_a($patient, Patient::class)) {
-                $user = optional($patient->user()->first());
-                $patientId = $user->id;
+                $user            = optional($patient->user()->first());
+                $patientId       = $user->id;
                 $patientFamilyId = $patient->family_id;
 
                 $patientIsCcm        = $user->isCcm();
@@ -46,7 +46,7 @@ use App\Patient;
                 $patientIsBehavioral = $patient->isBhi();
             }
         } else {
-            $patientIsCcm = false;
+            $patientIsCcm        = false;
             $patientIsBehavioral = false;
         }
         $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;

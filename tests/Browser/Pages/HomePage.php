@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Browser\Pages;
 
 use Laravel\Dusk\Browser;
@@ -7,24 +11,12 @@ use Laravel\Dusk\Browser;
 class HomePage extends Page
 {
     /**
-     * Get the URL for the page.
-     *
-     * @return string
-     */
-    public function url()
-    {
-        return '/';
-    }
-
-    /**
      * Assert that the browser is on the page.
      *
-     * @param  Browser  $browser
-     * @return void
+     * @param Browser $browser
      */
     public function assert(Browser $browser)
     {
-        //
     }
 
     /**
@@ -37,5 +29,15 @@ class HomePage extends Page
         return [
             '@element' => '#selector',
         ];
+    }
+
+    /**
+     * Get the URL for the page.
+     *
+     * @return string
+     */
+    public function url()
+    {
+        return '/';
     }
 }

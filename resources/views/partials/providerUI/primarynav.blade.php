@@ -5,9 +5,9 @@ if (isset($patient)) {
     $H           = floor($seconds / 3600);
     $i           = ($seconds / 60) % 60;
     $s           = $seconds % 60;
-    $monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
+    $monthlyTime = sprintf('%02d:%02d:%02d', $H, $i, $s);
 } else {
-    $monthlyTime = "";
+    $monthlyTime = '';
 }
 ?>
 @push('styles')

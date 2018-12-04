@@ -24,14 +24,14 @@
                             @foreach($data as $date => $nurses)
                                 <?php
 
-                                if ($count == 0) {
+                                if (0 == $count) {
                                     $boxSpaces = Carbon\Carbon::parse($date)->dayOfWeek;
 
-                                    for ($i = 0; $i < $boxSpaces; $i++) {
+                                    for ($i = 0; $i < $boxSpaces; ++$i) {
                                         $d = Carbon\Carbon::parse($date)->subDays($boxSpaces - $i)->format('m/d/y D');
 
                                         echo '<div class="container"style="display:inline-block; width: 130px; vertical-align: text-top;">
-                                                  <h4 style="color: dimgray; font-size: 17px;">' . $d . '</h4>
+                                                  <h4 style="color: dimgray; font-size: 17px;">'.$d.'</h4>
                                              </div>';
                                     }
                                 }
@@ -54,7 +54,7 @@
                                         @endforeach
                                     </div>
                                 </div>
-                                <?php $count++; ?>
+                                <?php ++$count; ?>
                             @endforeach
                         </div>
                     </div>

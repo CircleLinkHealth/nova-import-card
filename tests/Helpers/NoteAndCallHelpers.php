@@ -1,4 +1,10 @@
-<?php namespace Tests\Helpers;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace Tests\Helpers;
 
 use Carbon\Carbon;
 

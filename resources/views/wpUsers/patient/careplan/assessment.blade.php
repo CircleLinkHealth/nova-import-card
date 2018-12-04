@@ -1,7 +1,6 @@
 @extends('partials.providerUI')
 
 <?php
-    use \Carbon\Carbon;
 
 $today = \Carbon\Carbon::now()->toFormattedDateString();
 ?>
@@ -92,7 +91,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
     @push('styles')
         <script type="application/json" id="questions-script">
             <?php
-                include app_path() . '/../public/data/ccm-eligibility-questions.json';
+                include app_path().'/../public/data/ccm-eligibility-questions.json';
             ?>
         </script>
         <script type="application/json" id="assessment-script">

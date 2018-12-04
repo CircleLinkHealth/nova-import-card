@@ -4,7 +4,6 @@
 @section('activity', 'Patient Call Scheduler')
 
 <?php
-    use \Carbon\Carbon;
 
 ?>
 

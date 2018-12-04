@@ -1,10 +1,14 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\AprimaApi;
 
-use Tests\TestCase;
 use App\PatientReports;
 use Tests\Helpers\AuthenticatesApiUsers;
+use Tests\TestCase;
 
 class NotesTest extends TestCase
 {
@@ -17,7 +21,7 @@ class NotesTest extends TestCase
         $this->authenticate();
     }
 
-    public function testReturnsNotes()
+    public function test_returns_notes()
     {
         $allNotes = PatientReports::whereFileType('note')
             ->where('location_id', 40)

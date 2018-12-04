@@ -1,7 +1,10 @@
 <?php
 
-return [
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
+return [
     /*
     |--------------------------------------------------------------------------
     | Pagination Language Lines
@@ -15,5 +18,4 @@ return [
 
     'previous' => '&laquo; Previous',
     'next'     => 'Next &raquo;',
-
 ];

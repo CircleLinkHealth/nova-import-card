@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Feature;
 
 use App\EligibilityBatch;
@@ -8,8 +12,6 @@ use App\Practice;
 use App\Services\CCD\ProcessEligibilityService;
 use App\Services\WelcomeCallListGenerator;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class EligibilityProcessingTest extends TestCase
 {
@@ -51,7 +53,6 @@ class EligibilityProcessingTest extends TestCase
             $job
         ));
 
-
-        $this->assertTrue($list->getEligibilityJob()->status == 3);
+        $this->assertTrue(3 == $list->getEligibilityJob()->status);
     }
 }

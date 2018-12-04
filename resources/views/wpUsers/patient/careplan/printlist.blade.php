@@ -23,7 +23,7 @@
                 <div class="main-form-container col-lg-10 col-lg-offset-1">
                     <div class="row">
                         <div class="col-sm-2">
-                            <h4 class="time-report__month"><?= date("F Y") ?></h4>
+                            <h4 class="time-report__month"><?= date('F Y'); ?></h4>
                         </div>
                         <div class="col-sm-10">
                         </div>

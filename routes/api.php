@@ -1,16 +1,8 @@
 <?php
 
 /*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
-
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
 /*
 |--------------------------------------------------------------------------
@@ -33,7 +25,7 @@ Route::group([
         //Should make this plural
         Route::post('ccd', [
             'uses' => 'CcdApi\Aprima\CcdApiController@uploadCcd',
-            'as' => 'api.aprima.uploadCcd'
+            'as'   => 'api.aprima.uploadCcd',
         ]);
         Route::get('reports', 'CcdApi\Aprima\CcdApiController@reports');
 

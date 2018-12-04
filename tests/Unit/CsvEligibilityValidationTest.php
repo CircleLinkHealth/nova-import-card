@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Unit;
 
 use App\EligibilityBatch;
@@ -14,16 +18,18 @@ class CsvEligibilityValidationTest extends TestCase
 {
     use UserHelpers;
 
-    private $service;
-
     private $practice;
 
-    /**
-     *
-     *
-     * @return void
-     */
-    public function testNumberedFieldsPasses()
+    private $service;
+
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->service  = new ProcessEligibilityService();
+        $this->practice = factory(Practice::class)->create();
+    }
+
+    public function test_numbered_fields_passes()
     {
         $csv = base_path('tests/Feature/EligibleCsvFormat/Numbered_Fields_1.csv');
 
@@ -37,7 +43,6 @@ class CsvEligibilityValidationTest extends TestCase
         $this->assertTrue($isValid);
 
         $batch = $this->service->createSingleCSVBatch($patients, $this->practice->id, false, false, true);
-
 
         $this->assertDatabaseHas('eligibility_batches', [
             'id' => $batch->id,
@@ -66,12 +71,12 @@ class CsvEligibilityValidationTest extends TestCase
         });
 
         foreach ($jobs as $job) {
-            $this->assertEquals("3", $job->status);
+            $this->assertEquals('3', $job->status);
             $this->assertNotNull($job->outcome);
         }
     }
 
-    public function testSingleFieldsPasses()
+    public function test_single_fields_passes()
     {
         $csv = base_path('tests/Feature/EligibleCsvFormat/Single_Fields_1.csv');
 
@@ -116,15 +121,8 @@ class CsvEligibilityValidationTest extends TestCase
         });
 
         foreach ($jobs as $job) {
-            $this->assertEquals("3", $job->status);
+            $this->assertEquals('3', $job->status);
             $this->assertNotNull($job->outcome);
         }
-    }
-
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->service  = new ProcessEligibilityService();
-        $this->practice = factory(Practice::class)->create();
     }
 }

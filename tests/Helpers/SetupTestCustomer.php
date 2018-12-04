@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: kakoushias
- * Date: 09/04/2018
- * Time: 8:07 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace Tests\Helpers;
@@ -22,6 +20,19 @@ trait SetupTestCustomer
 {
     use UserHelpers;
 
+    /**
+     * @param Practice $practice
+     *
+     * @return \App\User
+     */
+    public function createAdmin(Practice $practice)
+    {
+        $roles = [
+            Role::whereName('administrator')->first()->id,
+        ];
+
+        return $this->setupUser($practice->id, $roles);
+    }
 
     /**
      * @param Practice $practice
@@ -32,66 +43,26 @@ trait SetupTestCustomer
     {
         $faker = Factory::create();
 
-        $location = Location::create([
-            'practice_id'    => $practice->id,
-            'is_primary'     => 1,
-            'name'           => $practice->name,
-            'phone'          => $faker->phoneNumber,
+        return Location::create([
+            'practice_id' => $practice->id,
+            'is_primary'  => 1,
+            'name'        => $practice->name,
+            'phone'       => $faker->phoneNumber,
             //                'fax',
             'address_line_1' => $faker->address,
             'address_line_2' => $faker->address,
             'city'           => $faker->city,
             //            'state' => $faker->state??,
-            'timezone'       => $faker->timezone,
-            'postal_code'    => $faker->postcode,
+            'timezone'    => $faker->timezone,
+            'postal_code' => $faker->postcode,
             //                'ehr_login',
             //                'ehr_password',
         ]);
-
-        return $location;
     }
-
-    /**
-     * @return $this|\Illuminate\Database\Eloquent\Model
-     */
-    public function createPractice()
-    {
-        $faker = Factory::create();
-        $name  = $faker->company;
-
-        $practice = Practice::create([
-            'name'                     => $name,
-            'display_name'             => $name,
-            'active'                   => true,
-            'federal_tax_id'           => $faker->randomNumber(5),
-            //        'user_id',
-            //        'same_clinical_contact',
-            'clh_pppm'                 => 0,
-            //        'same_ehr_login',
-            //        'sms_marketing_number',
-            'weekly_report_recipients' => 'mantoniou@circlelinkhealth.com',
-            'invoice_recipients'       => 'mantoniou@circlelinkhealth.com',
-            'bill_to_name'             => $name,
-            //        'auto_approve_careplans',
-            //        'send_alerts',
-            'outgoing_phone_number'    => $faker->phoneNumber,
-            'term_days'                => 30,
-        ]);
-
-        $saas = SaasAccount::firstOrCreate([
-            'name' => 'CircleLink Health',
-            'slug' => 'circlelink-health',
-        ]);
-
-        $practice->saasAccount()->associate($saas);
-        $practice->save();
-
-        return $practice;
-    }
-
 
     /**
      * @param Practice $practice
+     * @param mixed    $providerId
      *
      * @return \App\User
      */
@@ -107,7 +78,6 @@ trait SetupTestCustomer
         //status
         $status = collect([Patient::ENROLLED, Patient::PAUSED, Patient::WITHDRAWN]);
         $patient->patientInfo->setCcmStatusAttribute($status->random());
-
 
         //attach problems, summaries, chargeable services
         $problems   = CpmProblem::get();
@@ -126,13 +96,12 @@ trait SetupTestCustomer
             ->random(5)
             ->each(function ($p) use ($patient) {
                 $patient->ccdProblems()
-                        ->create([
-                            'is_monitored'   => true,
-                            'name'           => $p->name,
-                            'cpm_problem_id' => $p->id,
-                        ]);
+                    ->create([
+                        'is_monitored'   => true,
+                        'name'           => $p->name,
+                        'cpm_problem_id' => $p->id,
+                    ]);
             });
-
 
         //careplan
         $patient->carePlan()->create([
@@ -172,7 +141,6 @@ trait SetupTestCustomer
 
         $patient->setBillingProviderId($providerId);
 
-
         $patient->load(
             'patientInfo',
             'activities',
@@ -187,6 +155,44 @@ trait SetupTestCustomer
     }
 
     /**
+     * @return $this|\Illuminate\Database\Eloquent\Model
+     */
+    public function createPractice()
+    {
+        $faker = Factory::create();
+        $name  = $faker->company;
+
+        $practice = Practice::create([
+            'name'           => $name,
+            'display_name'   => $name,
+            'active'         => true,
+            'federal_tax_id' => $faker->randomNumber(5),
+            //        'user_id',
+            //        'same_clinical_contact',
+            'clh_pppm' => 0,
+            //        'same_ehr_login',
+            //        'sms_marketing_number',
+            'weekly_report_recipients' => 'mantoniou@circlelinkhealth.com',
+            'invoice_recipients'       => 'mantoniou@circlelinkhealth.com',
+            'bill_to_name'             => $name,
+            //        'auto_approve_careplans',
+            //        'send_alerts',
+            'outgoing_phone_number' => $faker->phoneNumber,
+            'term_days'             => 30,
+        ]);
+
+        $saas = SaasAccount::firstOrCreate([
+            'name' => 'CircleLink Health',
+            'slug' => 'circlelink-health',
+        ]);
+
+        $practice->saasAccount()->associate($saas);
+        $practice->save();
+
+        return $practice;
+    }
+
+    /**
      * @param Practice $practice
      *
      * @return \App\User
@@ -197,28 +203,8 @@ trait SetupTestCustomer
             Role::whereName('provider')->first()->id,
         ];
 
-        $provider = $this->setupUser($practice->id, $roles);
-
-        return $provider;
+        return $this->setupUser($practice->id, $roles);
     }
-
-
-    /**
-     * @param Practice $practice
-     *
-     * @return \App\User
-     */
-    public function createAdmin(Practice $practice)
-    {
-        $roles = [
-            Role::whereName('administrator')->first()->id,
-        ];
-
-        $admin = $this->setupUser($practice->id, $roles);
-
-        return $admin;
-    }
-
 
     /**
      * @param int $patientCount
@@ -233,8 +219,7 @@ trait SetupTestCustomer
         $admin    = $this->createAdmin($practice);
         $patients = [];
 
-
-        for ($x = $patientCount; $x > 0; $x--) {
+        for ($x = $patientCount; $x > 0; --$x) {
             $patients[] = $this->createPatient($practice, $provider->id);
         }
 

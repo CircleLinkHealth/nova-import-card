@@ -21,7 +21,7 @@
     /**
      * Sometimes, $patient is an instance of User::class,
      * other times, it is an instance of Patient::class
-     * We have to make sure that $user is always an instance of User::class by deriving it from $patient
+     * We have to make sure that $user is always an instance of User::class by deriving it from $patient.
      */
     use App\Patient;
 

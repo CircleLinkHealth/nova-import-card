@@ -30,8 +30,9 @@ function getRelativeUrl($url)
 {
     $step1 = parse_url($url);
     if (isset($step1['query'])) {
-        return $step1['path'] . '?' . $step1['query'];
+        return $step1['path'].'?'.$step1['query'];
     }
+
     return $step1['path'];
 }
 

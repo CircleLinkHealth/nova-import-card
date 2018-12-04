@@ -35,13 +35,13 @@
                 @include('partials.userheader')
                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
                     <?php
-                    $filter = '';
-                    $sections = array(
-                            array('section' => 'obs_biometrics', 'id' => 'obs_biometrics_dtable', 'title' => 'Biometrics', 'col_name_question' => 'Reading Type', 'col_name_severity' => 'Reading'),
-                            array('section' => 'obs_medications', 'id' => 'obs_medications_dtable', 'title' => 'Medications', 'col_name_question' => 'Medication', 'col_name_severity' => 'Adherence'),
-                            array('section' => 'obs_symptoms', 'id' => 'obs_symptoms_dtable', 'title' => 'Symptoms', 'col_name_question' => 'Symptom', 'col_name_severity' => 'Severity'),
-                            array('section' => 'obs_lifestyle', 'id' => 'obs_lifestyle_dtable', 'title' => 'Lifestyle', 'col_name_question' => 'Question', 'col_name_severity' => 'Response'),
-                    );
+                    $filter   = '';
+                    $sections = [
+                        ['section' => 'obs_biometrics', 'id' => 'obs_biometrics_dtable', 'title' => 'Biometrics', 'col_name_question' => 'Reading Type', 'col_name_severity' => 'Reading'],
+                        ['section' => 'obs_medications', 'id' => 'obs_medications_dtable', 'title' => 'Medications', 'col_name_question' => 'Medication', 'col_name_severity' => 'Adherence'],
+                        ['section' => 'obs_symptoms', 'id' => 'obs_symptoms_dtable', 'title' => 'Symptoms', 'col_name_question' => 'Symptom', 'col_name_severity' => 'Severity'],
+                        ['section' => 'obs_lifestyle', 'id' => 'obs_lifestyle_dtable', 'title' => 'Lifestyle', 'col_name_question' => 'Question', 'col_name_severity' => 'Response'],
+                    ];
                     foreach ($sections as $section) {
                         if (!empty($detailSection)) {
                             if ($detailSection != $section['section']) {
@@ -57,20 +57,20 @@
                             </style>
                             @endpush
                             <i class="fa fa-print" onclick="webix.toPDF($$({{ $section['id'] }}), {
-                                header:'CarePlanManager.com - Patient <?php echo $section['title']; ?> Report <?= date('M d,Y') ?>',
+                                header:'CarePlanManager.com - Patient <?php echo $section['title']; ?> Report <?= date('M d,Y'); ?>',
                                 orientation:'landscape',
                                 autowidth:true,
                                         columns:{
-                                'description':       { header:'<?= $filter ?>', width: 200, template: webix.template('#description#') },
-                                'obs_value':             { header:'<?= $section['col_name_severity'] ?>',    width:150, sort:'string', template: webix.template('#obs_value#')},
+                                'description':       { header:'<?= $filter; ?>', width: 200, template: webix.template('#description#') },
+                                'obs_value':             { header:'<?= $section['col_name_severity']; ?>',    width:150, sort:'string', template: webix.template('#obs_value#')},
                                 'comment_date':    { header:'Date',    width:200, sort:'string', template: webix.template('#comment_date#') }
                                         }
                                     }
                                     );"></i> &nbsp;
                             <i class="fa fa-file-excel-o" onclick="webix.toExcel($$({{ $section['id'] }}), {
                                         columns:{
-                                'description':       { header:'<?= $filter ?>', width: 200, template: webix.template('#description#') },
-                                'obs_value':             { header:'<?= $section['col_name_severity'] ?>',    width:150, sort:'string', template: webix.template('#obs_value#')},
+                                'description':       { header:'<?= $filter; ?>', width: 200, template: webix.template('#description#') },
+                                'obs_value':             { header:'<?= $section['col_name_severity']; ?>',    width:150, sort:'string', template: webix.template('#obs_value#')},
                                 'comment_date':    { header:'Date',    width:200, sort:'string', template: webix.template('#comment_date#') }
                                         }
                                     }
@@ -126,7 +126,7 @@
                             columns: [
                                 {
                                     id: "description",
-                                    header: ["<?= $section['col_name_question'] ?>" <?= $filter ?>],
+                                    header: ["<?= $section['col_name_question']; ?>" <?= $filter; ?>],
                                     css: {"text-align": "left"},
                                     sort: 'string',
                                     width: 300,
@@ -134,7 +134,7 @@
                                 },
                                 {
                                     id: "obs_value",
-                                    header: ["<?= $section['col_name_severity'] ?>" <?= $filter ?>],
+                                    header: ["<?= $section['col_name_severity']; ?>" <?= $filter; ?>],
                                     css: {"text-align": "left"},
                                     sort: 'string',
                                     width: 300,
@@ -143,7 +143,7 @@
                                 },
                                 {
                                     id: "comment_date",
-                                    header: ["Date" <?= $filter ?>],
+                                    header: ["Date" <?= $filter; ?>],
                                     css: {"text-align": "left"},
                                     sort: 'string',
                                     fillspace: true,

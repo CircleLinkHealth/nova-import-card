@@ -79,8 +79,8 @@
                             function getPractice($practice)
                             {
                                 return [
-                                    'id' => $practice->id,
-                                    'display_name' => $practice->display_name
+                                    'id'           => $practice->id,
+                                    'display_name' => $practice->display_name,
                                 ];
                             }
                         ?>

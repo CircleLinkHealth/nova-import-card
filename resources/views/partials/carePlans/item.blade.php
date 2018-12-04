@@ -54,10 +54,10 @@
         <?php
         $detailChildItem = null;
         foreach ($planItem->children as $planItemChild) {
-            if ($planItemChild->ui_fld_type == 'TEXTAREA') {
-                $detailChildItem = $planItemChild;
+            if ('TEXTAREA' == $planItemChild->ui_fld_type) {
+                $detailChildItem      = $planItemChild;
                 $detailChildItemLabel = 'Instructions';
-                if ($careSection->name == 'Additional Information') {
+                if ('Additional Information' == $careSection->name) {
                     $detailChildItemLabel = 'Details';
                 }
                 // change to details for certain section

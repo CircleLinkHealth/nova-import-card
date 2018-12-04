@@ -136,7 +136,7 @@
                                                     $curTime = \Carbon\Carbon::now();
                                                     $curDate = $curTime->toDateString();
                                                     $curTime = $curTime->toTimeString();
-                                                    $rowBg = '';
+                                                    $rowBg   = '';
                                                     if ($call->scheduled_date == $curDate && $call->window_end < $curTime) {
                                                         $rowBg = 'background-color: rgba(255, 0, 0, 0.4);';
                                                     }
@@ -186,7 +186,7 @@
                                                                 <?php
                                                                 $dateTime = new DateTime();
                                                                 $dateTime->setTimeZone(new DateTimeZone($call->inboundUser->timezone));
-                                                                echo '<span style="font-weight:bold;color:green;">' . $dateTime->format('T') . '</a>';
+                                                                echo '<span style="font-weight:bold;color:green;">'.$dateTime->format('T').'</a>';
                                                                 ?>
                                                             @endif
                                                         </td>

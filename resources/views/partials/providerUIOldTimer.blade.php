@@ -22,30 +22,29 @@
 <input type="hidden" name="activityName" id="activityName" value="@yield('activity')">
 
 <?php
-use App\User;
 use Carbon\Carbon;
 
 if (!isset($activity)) {
     $activity = 'Undefined';
 }
-$title = Route::currentRouteName();
-$ipAddr = Request::ip();
-$requestUri = Request::getRequestUri();
-$pieces = explode("?", $requestUri);
-$urlShort = $pieces[0];
+$title              = Route::currentRouteName();
+$ipAddr             = Request::ip();
+$requestUri         = Request::getRequestUri();
+$pieces             = explode('?', $requestUri);
+$urlShort           = $pieces[0];
 $enableTimeTracking = !isset($disableTimeTracking);
 // disable if login
-if (strpos($requestUri, 'login') !== false) {
+if (false !== strpos($requestUri, 'login')) {
 //    $enableTimeTracking = false;
 }
 // set patient vars
-$patientId = '';
+$patientId        = '';
 $patientProgramId = '';
 if (isset($patient) && !empty($patient) && is_a($patient, App\User::class)) {
-    $patientId = $patient->id;
+    $patientId        = $patient->id;
     $patientProgramId = $patient->program_id;
 } elseif (isset($patient) && !empty($patient) && is_a($patient, App\Patient::class)) {
-    $patientId = $patient->user_id;
+    $patientId        = $patient->user_id;
     $patientProgramId = $patient->user->program_id;
 }
 ?>
@@ -121,7 +120,7 @@ if (isset($patient) && !empty($patient) && is_a($patient, App\User::class)) {
                     $(document).idleTimer("pause");
                     var data = {
                         "patientId": '<?php echo $patientId; ?>',
-                        "providerId": '<?php echo Auth::user()->id ?>',
+                        "providerId": '<?php echo Auth::user()->id; ?>',
                         "totalTime": Math.ceil(totalTime / 1000),
                         "programId": '<?php echo $patientProgramId; ?>',
                         "startTime": '<?php echo Carbon::now()->subSeconds(8)->toDateTimeString(); ?>',

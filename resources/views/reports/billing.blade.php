@@ -115,7 +115,7 @@
                                         sort: 'string',
                                         template: "<a href='<?php echo route(
     'patient.activity.providerUIIndex',
-                                                array('patient' => '#patient_id#')
+                                                ['patient' => '#patient_id#']
 ); ?>'>#patient_name#</a>"
                                     },
                                     {
@@ -321,7 +321,7 @@
                         @if(auth()->user()->hasRole(['administrator', 'med_assistant', 'provider']))
                             <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
                                    onclick="webix.toPDF($$(obs_alerts_dtable), {
-                                           header:'CarePlanManager.com - Billing Report <?= date('M d,Y') ?>',
+                                           header:'CarePlanManager.com - Billing Report <?= date('M d,Y'); ?>',
                                            orientation:'landscape',
                                            autowidth:true,
                                            columns:{

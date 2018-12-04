@@ -1,10 +1,7 @@
 <div>
     <?php
-        use \App\User;
-use \App\Location;
-use \Carbon\Carbon;
 
-$patient = $assessment->patient()->first();
+    $patient          = $assessment->patient()->first();
         $approver = $assessment->approver()->first();
     ?>
     <p>
