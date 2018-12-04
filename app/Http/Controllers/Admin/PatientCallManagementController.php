@@ -1,10 +1,12 @@
-<?php namespace App\Http\Controllers\Admin;
+<?php
 
-use App\Call;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Http\Controllers\Admin;
+
 use App\Http\Controllers\Controller;
-use App\User;
-use Auth;
-use DateTime;
 use Illuminate\Http\Request;
 
 class PatientCallManagementController extends Controller
@@ -16,24 +18,13 @@ class PatientCallManagementController extends Controller
      */
     public function create()
     {
-        //
     }
 
     /**
-     * Store a newly created resource in storage.
+     * New Calls page with lazy-loading.
      *
      * @return Response
      */
-    public function store(Request $request)
-    {
-        //
-    }
-    
-    /**
-        * New Calls page with lazy-loading.
-        *
-        * @return Response
-        */
     public function remix(Request $request)
     {
         return view('admin.patientCallManagement.remix');
@@ -47,5 +38,14 @@ class PatientCallManagementController extends Controller
     public function remixV2(Request $request)
     {
         return view('admin.patientCallManagement.remixV2');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @return Response
+     */
+    public function store(Request $request)
+    {
     }
 }

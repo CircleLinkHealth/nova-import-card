@@ -1,10 +1,12 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Notifications;
 
-
 use App\Mail\PracticeInvoice as PracticeInvoiceMailable;
-use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
@@ -13,24 +15,19 @@ class PracticeInvoice extends Notification implements ShouldQueue
 {
     use Queueable;
 
-
     /**
-     * The link passed to the view
+     * The attachment to the Mailable.
      *
      * For an example @see: PracticeInvoiceController, method send
-     *
-     */
-    protected $invoiceLink;
-
-
-    /**
-     * The attachment to the Mailable
-     *
-     * For an example @see: PracticeInvoiceController, method send
-     *
      */
     protected $filePath;
 
+    /**
+     * The link passed to the view.
+     *
+     * For an example @see: PracticeInvoiceController, method send
+     */
+    protected $invoiceLink;
 
     /**
      * Create a new notification instance.
@@ -43,34 +40,33 @@ class PracticeInvoice extends Notification implements ShouldQueue
         $this->invoiceLink = $invoiceLink;
 
         $this->filePath = $filePath;
-
     }
 
     /**
-     * Get the notification's delivery channels.
+     * Get the array representation of the notification.
      *
-     * @param  mixed $notifiable
+     * @param mixed $notifiable
      *
      * @return array
      */
-    public function via($notifiable)
+    public function toArray($notifiable)
     {
-        if (isset($notifiable->id)) {
-            return [
-                'mail',
-                'database',
-            ];
-        }
-
         return [
-            'mail',
         ];
+    }
+
+    public function toDatabase($notifiable)
+    {
+        return
+            [
+                'invoiceLink' => $this->invoiceLink,
+            ];
     }
 
     /**
      * Get the mail representation of the notification.
      *
-     * @param  mixed $notifiable
+     * @param mixed $notifiable
      *
      * @return PracticeInvoiceMailable
      */
@@ -89,24 +85,23 @@ class PracticeInvoice extends Notification implements ShouldQueue
     }
 
     /**
-     * Get the array representation of the notification.
+     * Get the notification's delivery channels.
      *
-     * @param  mixed $notifiable
+     * @param mixed $notifiable
      *
      * @return array
      */
-    public function toArray($notifiable)
+    public function via($notifiable)
     {
-        return [
-            //
-        ];
-    }
-
-    public function toDatabase($notifiable)
-    {
-        return
-            [
-                'invoiceLink' => $this->invoiceLink,
+        if (isset($notifiable->id)) {
+            return [
+                'mail',
+                'database',
             ];
+        }
+
+        return [
+            'mail',
+        ];
     }
 }

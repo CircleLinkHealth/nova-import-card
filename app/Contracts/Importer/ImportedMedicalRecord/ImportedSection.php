@@ -1,18 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 07/01/2017
- * Time: 12:07 AM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Contracts\Importer\ImportedMedicalRecord;
 
 /**
- * ImportedSections are CcdaSections that have been imported and stored in
+ * ImportedSections are CcdaSections that have been imported and stored in.
  *
  * Interface ImportedSection
- * @package App\Contracts\CCDA
  */
 interface ImportedSection
 {
@@ -21,7 +18,7 @@ interface ImportedSection
      *
      * @return bool
      */
-    public function createCarePlanSection() : bool;
+    public function createCarePlanSection(): bool;
 
     /**
      * Get a collection of the ImportedItems.
@@ -29,5 +26,5 @@ interface ImportedSection
      *
      * @return ImportedItem[]
      */
-    public function getImported() : array;
+    public function getImported(): array;
 }

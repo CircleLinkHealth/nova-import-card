@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\EligibilityJob;
@@ -11,6 +15,12 @@ use Illuminate\Console\Command;
 class TransformEligibilityJobs extends Command
 {
     /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Transform eligibility jobs';
+    /**
      * The name and signature of the console command.
      *
      * @var string
@@ -18,16 +28,7 @@ class TransformEligibilityJobs extends Command
     protected $signature = 'ej:trans';
 
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Transform eligibility jobs';
-
-    /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -42,12 +43,12 @@ class TransformEligibilityJobs extends Command
     public function handle()
     {
         EligibilityJob::orderBy('id')
-                      ->chunk(500, function ($jobs) {
-                          foreach ($jobs as $j) {
-                              $j->data = $this->transformCsvRow($j->data);
-                              $j->save();
-                          }
-                      });
+            ->chunk(500, function ($jobs) {
+                foreach ($jobs as $j) {
+                    $j->data = $this->transformCsvRow($j->data);
+                    $j->save();
+                }
+            });
     }
 
     private function transformCsvRow($patient)

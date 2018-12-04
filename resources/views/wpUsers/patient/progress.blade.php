@@ -4,7 +4,7 @@
 @section('activity', 'Progress Report Review/Print')
 
 <?php
-$today = \Carbon\Carbon::now()->toFormattedDateString();
+$today    = \Carbon\Carbon::now()->toFormattedDateString();
 $provider = App\User::find($patient->getBillingProviderId());
 
 function trim_bp($bp)
@@ -17,9 +17,9 @@ if (isset($patient)) {
     $H           = floor($seconds / 3600);
     $i           = ($seconds / 60) % 60;
     $s           = $seconds % 60;
-    $monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
+    $monthlyTime = sprintf('%02d:%02d:%02d', $H, $i, $s);
 } else {
-    $monthlyTime = "";
+    $monthlyTime = '';
 }
 ?>
 @section('content')
@@ -51,7 +51,7 @@ if (isset($patient)) {
                                         @else
                                             <?php
                                             $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
-                                            $ccmCountableUser = auth()->user()->isCCMCountable();
+                                            $ccmCountableUser        = auth()->user()->isCCMCountable();
                                             ?>
                                             <time-tracker ref="TimeTrackerApp"
                                                           class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
@@ -133,19 +133,19 @@ if (isset($patient)) {
                 @if($value['data'] != '')
                     <?php
 
-                    $read = explode('/', $value['reading']);
-                    $goal = explode('/', $key);
+                    $read        = explode('/', $value['reading']);
+                    $goal        = explode('/', $key);
                     $yaxis_start = '';
-                    $yaxis_end = '';
-                    $yaxis_step = 'step:10,';
-                    if ($key == 'Blood_Sugar') {
+                    $yaxis_end   = '';
+                    $yaxis_step  = 'step:10,';
+                    if ('Blood_Sugar' == $key) {
                         $yaxis_start = 'start:40,';
                         $yaxis_step  = 'step:20,';
-                    } else if ($key == 'Blood_Pressure') {
+                    } elseif ('Blood_Pressure' == $key) {
                         $yaxis_start = 'start:80,';
-                    } else if ($key == 'Weight') {
+                    } elseif ('Weight' == $key) {
                         $yaxis_start = 'start:80,';
-                        $yaxis_step  = 'step: ' . round(($value['max'] - 80) / 4, -1) . ',';
+                        $yaxis_step  = 'step: '.round(($value['max'] - 80) / 4, -1).',';
                     }
                     ?>
 
@@ -159,16 +159,17 @@ if (isset($patient)) {
                                 <div class="row">
                                     <div class="col-xs-3 text-center" style="Zoom:75%">
                                         <div class="patient-summary__info {{strtolower($value['status'])}}">
-                            <span><i class="icon--<?php if ($key == 'Weight') {
-                                    if (strtolower($value['status']) == 'increased') {
-                                        echo trim("grey-up");
-                                    } elseif (strtolower($value['status']) == 'decreased')
-                                        echo trim("grey-down");
-                                    else
-                                        echo trim("unchanged");
-                                } else {
-                                    echo trim(strtolower($value['status']));
-                                } ?>"> </i></span>{{abs($value['change'])}}
+                            <span><i class="icon--<?php if ('Weight' == $key) {
+                        if ('increased' == strtolower($value['status'])) {
+                            echo trim('grey-up');
+                        } elseif ('decreased' == strtolower($value['status'])) {
+                            echo trim('grey-down');
+                        } else {
+                            echo trim('unchanged');
+                        }
+                    } else {
+                        echo trim(strtolower($value['status']));
+                    } ?>"> </i></span>{{abs($value['change'])}}
                                             <span class="patient-summary__metrics">{{trim($value['unit'])}}</span>
                                         </div>
                                         <div class="patient-summary__info__legend">

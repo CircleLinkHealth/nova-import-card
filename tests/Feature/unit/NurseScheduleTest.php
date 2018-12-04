@@ -1,10 +1,14 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Feature\unit;
 
-use Tests\TestCase;
 use Carbon\Carbon;
 use Tests\Helpers\UserHelpers;
+use Tests\TestCase;
 
 class NurseScheduleTest extends TestCase
 {
@@ -60,9 +64,9 @@ class NurseScheduleTest extends TestCase
         $schedule = $this->nurse->nurseInfo->weeklySchedule();
 
         //assert 3 days
-        $this->assertTrue($schedule->count() == 3);
+        $this->assertTrue(3 == $schedule->count());
 
         //assert 4 windows
-        $this->assertTrue($schedule->flatten()->count() == 4);
+        $this->assertTrue(4 == $schedule->flatten()->count());
     }
 }

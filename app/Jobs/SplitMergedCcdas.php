@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Jobs;
 
 use App\Models\MedicalRecords\Ccda;
@@ -14,16 +18,14 @@ class SplitMergedCcdas implements ShouldQueue
     use InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     *
-     *
-     * @var string $fileName
+     * @var string
      */
     protected $fileName;
 
     /**
      * Create a new job instance.
      *
-     * @return void
+     * @param mixed $fileName
      */
     public function __construct($fileName)
     {
@@ -32,41 +34,39 @@ class SplitMergedCcdas implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
     public function handle()
     {
-        if (stripos($this->fileName, '.xml') == false) {
+        if (false == stripos($this->fileName, '.xml')) {
             return;
         }
 
-        $path = config('filesystems.disks.ccdas.root') . '/' . $this->fileName;
+        $path = config('filesystems.disks.ccdas.root').'/'.$this->fileName;
 
         $exists = ProcessedFile::wherePath($path)->first();
 
         if ($exists) {
-            \Log::info("Already processed $path");
+            \Log::info("Already processed ${path}");
 
             return;
         }
 
-        \Log::info("Started Splitting $this->fileName");
+        \Log::info("Started Splitting {$this->fileName}");
 
         $exploded = explode('</ClinicalDocument>', \Storage::disk('ccdas')->get($this->fileName));
 
         $count = 0;
 
         foreach ($exploded as $ccdaString) {
-            if (stripos($ccdaString, '<ClinicalDocument') !== false) {
+            if (false !== stripos($ccdaString, '<ClinicalDocument')) {
                 $ccda = Ccda::create([
                     'source'   => Ccda::SFTP_DROPBOX,
                     'imported' => false,
-                    'xml'      => trim($ccdaString . '</ClinicalDocument>'),
+                    'xml'      => trim($ccdaString.'</ClinicalDocument>'),
                     'status'   => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
                 ]);
 
-                $count++;
+                ++$count;
             }
         }
 
@@ -74,6 +74,6 @@ class SplitMergedCcdas implements ShouldQueue
             'path' => $path,
         ]);
 
-        \Log::info("Finished Splitting $this->fileName! $count CCDAs found.");
+        \Log::info("Finished Splitting {$this->fileName}! ${count} CCDAs found.");
     }
 }

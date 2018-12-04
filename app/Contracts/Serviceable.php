@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 5/5/16
- * Time: 2:54 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Contracts;
@@ -11,7 +9,7 @@ namespace App\Contracts;
 interface Serviceable
 {
     /**
-     * Get this Model's Service Class
+     * Get this Model's Service Class.
      *
      * @return Serviceable
      */

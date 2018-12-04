@@ -1,43 +1,13 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 4/30/18
- * Time: 1:31 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Services\Eligibility\Csv\Validators\PatientList;
 
 class SingleFieldsValidator extends BaseValidator
 {
-    /**
-     * Validates an array of column names from a CSV that is uploaded to be processed for eligibility.
-     * Returns false if there's no errors, and an array of errors if errors are found.
-     *
-     * @param array $columnNames
-     *
-     * @return array|bool
-     */
-    public function validate()
-    {
-        $toValidate = [];
-        $rules      = [];
-
-        foreach ($this->getColumnNames() as $cn) {
-            $toValidate[$cn] = $cn;
-        }
-
-        foreach ($this->required() as $name) {
-            $rules[$name] = 'required|filled|same:' . $name;
-        }
-
-        $this->validator = \Validator::make($toValidate, $rules);
-
-        return $this->validator->passes()
-            ? true
-            : $this->validator->errors()->all();
-    }
-
     public function required()
     {
         return [
@@ -66,5 +36,33 @@ class SingleFieldsValidator extends BaseValidator
             'allergies_string',
             'medications_string',
         ];
+    }
+
+    /**
+     * Validates an array of column names from a CSV that is uploaded to be processed for eligibility.
+     * Returns false if there's no errors, and an array of errors if errors are found.
+     *
+     * @param array $columnNames
+     *
+     * @return array|bool
+     */
+    public function validate()
+    {
+        $toValidate = [];
+        $rules      = [];
+
+        foreach ($this->getColumnNames() as $cn) {
+            $toValidate[$cn] = $cn;
+        }
+
+        foreach ($this->required() as $name) {
+            $rules[$name] = 'required|filled|same:'.$name;
+        }
+
+        $this->validator = \Validator::make($toValidate, $rules);
+
+        return $this->validator->passes()
+            ? true
+            : $this->validator->errors()->all();
     }
 }

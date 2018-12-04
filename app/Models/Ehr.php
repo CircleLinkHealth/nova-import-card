@@ -1,20 +1,24 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Models;
 
 use App\Practice;
 use App\TargetPatient;
-use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\Models\Ehr
+ * App\Models\Ehr.
  *
- * @property int $id
- * @property string $name
- * @property string $pdf_report_handler
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Practice[] $practices
+ * @property int                                                      $id
+ * @property string                                                   $name
+ * @property string                                                   $pdf_report_handler
+ * @property \Carbon\Carbon|null                                      $created_at
+ * @property \Carbon\Carbon|null                                      $updated_at
+ * @property \App\Practice[]|\Illuminate\Database\Eloquent\Collection $practices
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Ehr whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Ehr whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Ehr whereName($value)
@@ -34,8 +38,8 @@ class Ehr extends \App\BaseModel
         return $this->hasMany(Practice::class);
     }
 
-    public function targetPatient(){
-
+    public function targetPatient()
+    {
         return $this->hasMany(TargetPatient::class);
     }
 }

@@ -1,13 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 3/14/18
- * Time: 7:47 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App;
-
 
 use Storage;
 use Symfony\Component\HttpFoundation\File\MimeType\ExtensionGuesser;
@@ -15,24 +12,25 @@ use Symfony\Component\HttpFoundation\File\MimeType\ExtensionGuesser;
 class Media extends \Spatie\MediaLibrary\Models\Media
 {
     /**
-     * Get the file
-     *
-     * @return string
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
-     */
-    public function getFile()
-    {
-        return Storage::disk($this->disk)->get($this->getPath());
-    }
-
-    /**
-     * Get the file
+     * Get the file.
      *
      * @return string
      */
     public function downloadFile()
     {
         return Storage::disk($this->disk)->download("{$this->id}/{$this->file_name}");
+    }
+
+    /**
+     * Get the file.
+     *
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     *
+     * @return string
+     */
+    public function getFile()
+    {
+        return Storage::disk($this->disk)->get($this->getPath());
     }
 
     /**

@@ -1,6 +1,11 @@
-<?php namespace App\Services;
+<?php
 
-use App\Patient;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Services;
+
 use App\PatientMonthlySummary;
 use App\Repositories\CallRepository;
 use App\Repositories\Eloquent\ActivityRepository;
@@ -20,33 +25,50 @@ class ActivityService
         ActivityRepository $repo,
         CallRepository $callRepo,
         PatientSummaryEloquentRepository $patientSummaryEloquentRepository
-    )
-    {
+    ) {
         $this->repo                             = $repo;
         $this->callRepo                         = $callRepo;
         $this->patientSummaryEloquentRepository = $patientSummaryEloquentRepository;
     }
 
     /**
-     * Process activity time for month
+     * Get the CCM Time provided by a specific provider to a specific patient for a given month.
      *
-     * @param array|int $userIds
+     * @param $providerId
+     * @param array       $patientIds
+     * @param Carbon|null $monthYear
+     *
+     * @return mixed
+     */
+    public function ccmTimeBetween($providerId, array $patientIds, Carbon $monthYear = null)
+    {
+        if (!$monthYear) {
+            $monthYear = Carbon::now();
+        }
+
+        return $this->repo->ccmTimeBetween($providerId, $patientIds, $monthYear)
+            ->pluck('total_time', 'patient_id');
+    }
+
+    /**
+     * Process activity time for month.
+     *
+     * @param array|int   $userIds
      * @param Carbon|null $monthYear
      */
     public function processMonthlyActivityTime(
         $userIds,
         Carbon $monthYear = null
     ) {
-        if ( ! $monthYear) {
+        if (!$monthYear) {
             $monthYear = Carbon::now();
         }
 
         $monthYear = $monthYear->startOfMonth();
 
-        if ( ! is_array($userIds)) {
+        if (!is_array($userIds)) {
             $userIds = [$userIds];
         }
-
 
         $total_time_per_user = [];
         foreach ($userIds as $userId) {
@@ -54,18 +76,17 @@ class ActivityService
         }
 
         $acts = $this->repo->totalCCMTime($userIds, $monthYear)
-                           ->get()
-                           ->pluck('total_time', 'patient_id');
+            ->get()
+            ->pluck('total_time', 'patient_id');
 
         //add 0 for the ones not found in this monthYear
         foreach ($userIds as $userId) {
-            if ( ! isset($acts[$userId])) {
+            if (!isset($acts[$userId])) {
                 $acts[$userId] = 0;
             }
         }
 
         foreach ($acts as $id => $ccmTime) {
-
             if ($ccmTime > 0) {
                 $summary = PatientMonthlySummary::updateOrCreate([
                     'patient_id' => $id,
@@ -74,31 +95,29 @@ class ActivityService
                     'ccm_time' => $ccmTime,
                 ]);
 
-                if ($summary->no_of_calls == 0 || $summary->no_of_successful_calls == 0) {
+                if (0 == $summary->no_of_calls || 0 == $summary->no_of_successful_calls) {
                     $summary = $this->patientSummaryEloquentRepository->syncCallCounts($summary);
                 }
 
                 $total_time_per_user[$id] += $ccmTime;
 
-                $summary->total_time = (int)$total_time_per_user[$id];
+                $summary->total_time = (int) $total_time_per_user[$id];
                 $summary->save();
             }
-
         }
 
         $bhi_acts = $this->repo->totalBHITime($userIds, $monthYear)
-                               ->get()
-                               ->pluck('total_time', 'patient_id');
+            ->get()
+            ->pluck('total_time', 'patient_id');
 
         //add 0 for the ones not found in this monthYear
         foreach ($userIds as $userId) {
-            if ( ! isset($bhi_acts[$userId])) {
+            if (!isset($bhi_acts[$userId])) {
                 $bhi_acts[$userId] = 0;
             }
         }
 
         foreach ($bhi_acts as $id => $bhiTime) {
-
             if ($bhiTime > 0) {
                 $summary = PatientMonthlySummary::updateOrCreate([
                     'patient_id' => $id,
@@ -107,37 +126,16 @@ class ActivityService
                     'bhi_time' => $bhiTime,
                 ]);
 
-                if ($summary->no_of_calls == 0 || $summary->no_of_successful_calls == 0) {
+                if (0 == $summary->no_of_calls || 0 == $summary->no_of_successful_calls) {
                     $summary = $this->patientSummaryEloquentRepository->syncCallCounts($summary);
                 }
 
                 $total_time_per_user[$id] += $bhiTime;
 
-                $summary->total_time = (int)$total_time_per_user[$id];
+                $summary->total_time = (int) $total_time_per_user[$id];
                 $summary->save();
             }
         }
-
-
-    }
-
-    /**
-     * Get the CCM Time provided by a specific provider to a specific patient for a given month.
-     *
-     * @param $providerId
-     * @param array $patientIds
-     * @param Carbon|null $monthYear
-     *
-     * @return mixed
-     */
-    public function ccmTimeBetween($providerId, array $patientIds, Carbon $monthYear = null)
-    {
-        if ( ! $monthYear) {
-            $monthYear = Carbon::now();
-        }
-
-        return $this->repo->ccmTimeBetween($providerId, $patientIds, $monthYear)
-                          ->pluck('total_time', 'patient_id');
     }
 
     /**
@@ -150,7 +148,7 @@ class ActivityService
      */
     public function totalCcmTime($patientId, Carbon $monthYear = null)
     {
-        if ( ! $monthYear) {
+        if (!$monthYear) {
             $monthYear = Carbon::now();
         }
 

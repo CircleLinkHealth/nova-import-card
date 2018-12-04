@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: rohan
- * Date: 5/9/16
- * Time: 3:42 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Contracts\Models\CPM;

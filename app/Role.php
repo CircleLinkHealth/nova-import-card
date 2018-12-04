@@ -1,18 +1,25 @@
-<?php namespace App;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App;
 
 use Michalisantoniou6\Cerberus\CerberusRole;
 
 /**
- * App\Role
+ * App\Role.
  *
- * @property int $id
- * @property string $name
- * @property string|null $display_name
- * @property string|null $description
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Permission[] $perms
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\User[] $users
+ * @property int                                                        $id
+ * @property string                                                     $name
+ * @property string|null                                                $display_name
+ * @property string|null                                                $description
+ * @property \Carbon\Carbon                                             $created_at
+ * @property \Carbon\Carbon                                             $updated_at
+ * @property \App\Permission[]|\Illuminate\Database\Eloquent\Collection $perms
+ * @property \App\User[]|\Illuminate\Database\Eloquent\Collection       $users
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereDisplayName($value)
@@ -26,7 +33,7 @@ class Role extends CerberusRole
     const CCM_TIME_ROLES = [
         'care-center',
         'med_assistant',
-        'provider'
+        'provider',
     ];
 
     /**

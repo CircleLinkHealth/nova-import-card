@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -34,13 +38,59 @@ class ResetPasswordController extends Controller
     protected $redirectTo = '/home';
 
     /**
+     * @var \App\User
+     */
+    private $userToReset;
+
+    /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct(Request $request)
     {
         $this->middleware('guest');
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
+     */
+    public function reset(Request $request)
+    {
+        $input        = $request->only(['email', 'password']);
+        $email        = $input['email'];
+        $new_password = $input['password'];
+
+        $current_password = null;
+
+        if ($email && $new_password) {
+            $this->userToReset = $this->getUserToReset($email);
+            if (!$this->userToReset) {
+                return redirect()->back()
+                    ->withErrors([
+                        'email' => 'No user found with the supplied email address.',
+                    ]);
+            }
+
+            $current_password = $this->userToReset->password;
+
+            if (!$this->validateNewPasswordUsingPasswordsHistory($current_password, $new_password)) {
+                return redirect()->back()
+                    ->withInput($request->only('email'))
+                    ->withErrors([
+                        'email' => 'You have used this password again in the past. Please choose a different one.',
+                    ]);
+            }
+        }
+
+        $resetResponse = $this->traitReset($request);
+
+        //won't even reach here if traitReset fails (throws exception)
+        if (!($resetResponse->isClientError() || $resetResponse->isServerError()) && $current_password) {
+            $this->saveOldPasswordInHistory($current_password);
+        }
+
+        return $resetResponse;
     }
 
     protected function rules()
@@ -53,59 +103,9 @@ class ResetPasswordController extends Controller
                 'filled',
                 'min:8',
                 'confirmed',
-                new PasswordCharacters,
+                new PasswordCharacters(),
             ],
         ];
-    }
-
-    /**
-     * @var \App\User
-     */
-    private $userToReset;
-
-    /**
-     * @param Request $request
-     *
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Http\JsonResponse
-     */
-    public function reset(Request $request)
-    {
-
-        $input        = $request->only(['email', 'password']);
-        $email        = $input['email'];
-        $new_password = $input['password'];
-
-        $current_password = null;
-
-        if ($email && $new_password) {
-
-            $this->userToReset = $this->getUserToReset($email);
-            if ( ! $this->userToReset) {
-                return redirect()->back()
-                                 ->withErrors([
-                                     'email' => 'No user found with the supplied email address.',
-                                 ]);
-            }
-
-            $current_password = $this->userToReset->password;
-
-            if ( ! $this->validateNewPasswordUsingPasswordsHistory($current_password, $new_password)) {
-                return redirect()->back()
-                                 ->withInput($request->only('email'))
-                                 ->withErrors([
-                                     'email' => 'You have used this password again in the past. Please choose a different one.',
-                                 ]);
-            }
-        }
-
-        $resetResponse = $this->traitReset($request);
-
-        //won't even reach here if traitReset fails (throws exception)
-        if ( ! ($resetResponse->isClientError() || $resetResponse->isServerError()) && $current_password) {
-            $this->saveOldPasswordInHistory($current_password);
-        }
-
-        return $resetResponse;
     }
 
     /**
@@ -118,12 +118,25 @@ class ResetPasswordController extends Controller
     private function getUserToReset(string $email)
     {
         return User::where('email', '=', $email)
-                   ->with('passwordsHistory')
-                   ->first();
+            ->with('passwordsHistory')
+            ->first();
+    }
+
+    private function saveOldPasswordInHistory($old_password)
+    {
+        $history = $this->userToReset->passwordsHistory;
+
+        if (!$history) {
+            $history          = new UserPasswordsHistory();
+            $history->user_id = $this->userToReset->id;
+        }
+
+        $history->older_password = $history->old_password;
+        $history->old_password   = $old_password;
+        $history->save();
     }
 
     /**
-     *
      * Check new password against current password and previous two previous passwords.
      * If one of them is the same as the new password,
      * reject it.
@@ -135,9 +148,9 @@ class ResetPasswordController extends Controller
      */
     private function validateNewPasswordUsingPasswordsHistory($current_password, $new_password)
     {
-        $isDiff = ! \Hash::check($new_password, $current_password);
+        $isDiff = !\Hash::check($new_password, $current_password);
 
-        if ( ! $isDiff) {
+        if (!$isDiff) {
             //new password is same as current password
             return $isDiff;
         }
@@ -145,26 +158,13 @@ class ResetPasswordController extends Controller
         $history = $this->userToReset->passwordsHistory;
         if ($history) {
             if ($history->old_password) {
-                $isDiff = ! \Hash::check($new_password, $history->old_password);
+                $isDiff = !\Hash::check($new_password, $history->old_password);
             }
             if ($isDiff && $history->older_password) {
-                $isDiff = ! \Hash::check($new_password, $history->older_password);
+                $isDiff = !\Hash::check($new_password, $history->older_password);
             }
         }
+
         return $isDiff;
-    }
-
-    private function saveOldPasswordInHistory($old_password)
-    {
-        $history = $this->userToReset->passwordsHistory;
-
-        if ( ! $history) {
-            $history          = new UserPasswordsHistory();
-            $history->user_id = $this->userToReset->id;
-        }
-
-        $history->older_password = $history->old_password;
-        $history->old_password   = $old_password;
-        $history->save();
     }
 }

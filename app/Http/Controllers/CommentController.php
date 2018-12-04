@@ -1,4 +1,10 @@
-<?php namespace App\Http\Controllers;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Http\Controllers;
 
 use App\Comment;
 use Carbon\Carbon;
@@ -6,6 +12,36 @@ use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Response
+     */
+    public function create()
+    {
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param int $id
+     *
+     * @return Response
+     */
+    public function destroy($id)
+    {
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param int $id
+     *
+     * @return Response
+     */
+    public function edit($id)
+    {
+    }
 
     /**
      * Display a listing of the resource.
@@ -14,17 +50,17 @@ class CommentController extends Controller
      */
     public function index()
     {
-        //
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display the specified resource.
+     *
+     * @param int $id
      *
      * @return Response
      */
-    public function create()
+    public function show($id)
     {
-        //
     }
 
     /**
@@ -32,99 +68,61 @@ class CommentController extends Controller
      *
      * @return Response
      */
-
-
     public function store(Request $request)
     {
-            $statusCode = 200;
+        $statusCode = 200;
 
-            \JWTAuth::setIdentifier('id');
-            $user = \JWTAuth::parseToken()->authenticate();
+        \JWTAuth::setIdentifier('id');
+        $user = \JWTAuth::parseToken()->authenticate();
         if (!$user) {
             return response()->json(['error' => 'invalid_credentials'], 401);
-        } else {
-            $input = $request->input();
-            $newComment = new Comment();
-            $newComment->user_id = $user->id;
-            $newComment->comment_author = $input['comment_author'];
-            $newComment->comment_author_email = 'admin@circlelinkhealth.com';
-            $newComment->comment_author_url = 'https://www.circlelinkhealth.com/';
-            $newComment->comment_author_IP = '127.0.0.1';
-
-            //**Needs to be looked at - Possibly take Time Zone from the app
-            $newComment->comment_date = Carbon::now();
-            $newComment->comment_date_gmt = Carbon::now()->setTimezone('GMT');
-            //**
-
-            $newComment->comment_content = $input['comment_content'];
-            $newComment->comment_karma = '0';
-            $newComment->comment_approved = 1;
-            $newComment->comment_agent = 'N/A';
-            $newComment->comment_parent = $input['comment_parent'];
-            $newComment->comment_type = $input['comment_type'];
-
-            //Get Blog id for current user
-
-            $blogTable = 'wp_' . $user->getBlogId($user->id) . '_comments';
-            //$comm = new Comment();
-            $newComment->setTable($blogTable);
-            $saved = $newComment->save();
-
-
-
-
-            if ($saved) {
-                $response = [
-                    'message' => 'Comment Stored!'
-                ];
-                return response()->json($response, $statusCode);
-            } else {
-                return response('Error', 500);
-            }
         }
-    }
+        $input                            = $request->input();
+        $newComment                       = new Comment();
+        $newComment->user_id              = $user->id;
+        $newComment->comment_author       = $input['comment_author'];
+        $newComment->comment_author_email = 'admin@circlelinkhealth.com';
+        $newComment->comment_author_url   = 'https://www.circlelinkhealth.com/';
+        $newComment->comment_author_IP    = '127.0.0.1';
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function show($id)
-    {
-        //
-    }
+        //**Needs to be looked at - Possibly take Time Zone from the app
+        $newComment->comment_date     = Carbon::now();
+        $newComment->comment_date_gmt = Carbon::now()->setTimezone('GMT');
+        //**
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function edit($id)
-    {
-        //
+        $newComment->comment_content  = $input['comment_content'];
+        $newComment->comment_karma    = '0';
+        $newComment->comment_approved = 1;
+        $newComment->comment_agent    = 'N/A';
+        $newComment->comment_parent   = $input['comment_parent'];
+        $newComment->comment_type     = $input['comment_type'];
+
+        //Get Blog id for current user
+
+        $blogTable = 'wp_'.$user->getBlogId($user->id).'_comments';
+        //$comm = new Comment();
+        $newComment->setTable($blogTable);
+        $saved = $newComment->save();
+
+        if ($saved) {
+            $response = [
+                'message' => 'Comment Stored!',
+            ];
+
+            return response()->json($response, $statusCode);
+        }
+
+        return response('Error', 500);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  int  $id
+     * @param int $id
+     *
      * @return Response
      */
     public function update($id)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 }

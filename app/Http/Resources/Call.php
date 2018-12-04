@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Resources;
 
 use App\User as UserModel;
@@ -11,13 +15,14 @@ class Call extends Resource
      * Transform the resource into an array.
      *
      * @param  \Illuminate\Http\Request
+     * @param mixed $request
      *
      * @return array
      */
     public function toArray($request)
     {
         $schedulerName = $this->scheduler;
-        if ((int)($this->scheduler)) {
+        if ((int) ($this->scheduler)) {
             $user = UserModel::find($this->scheduler);
             if ($user) {
                 $schedulerName = $user->display_name;
@@ -40,18 +45,18 @@ class Call extends Resource
             'created_at'            => $this->created_at
                 ? $this->created_at->format('c')
                 : null,
-            'updated_at'            => $this->updated_at
+            'updated_at' => $this->updated_at
                 ? $this->updated_at->format('c')
                 : null,
-            'is_cpm_outbound'       => $this->is_cpm_outbound,
-            'window_start'          => $this->window_start,
-            'window_end'            => $this->window_end,
-            'scheduled_date'        => $this->scheduled_date,
-            'called_date'           => $this->called_date,
-            'attempt_note'          => $this->attempt_note,
-            'scheduler'             => $schedulerName,
-            'is_manual'             => $this->is_manual,
-            'sort_day'              => $this->sort_day ?? null,
+            'is_cpm_outbound' => $this->is_cpm_outbound,
+            'window_start'    => $this->window_start,
+            'window_end'      => $this->window_end,
+            'scheduled_date'  => $this->scheduled_date,
+            'called_date'     => $this->called_date,
+            'attempt_note'    => $this->attempt_note,
+            'scheduler'       => $schedulerName,
+            'is_manual'       => $this->is_manual,
+            'sort_day'        => $this->sort_day ?? null,
 
             'inbound_user'  => User::make($this->whenLoaded('inboundUser')),
             'outbound_user' => User::make($this->whenLoaded('outboundUser')),

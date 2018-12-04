@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Models\CCD;
 
 use App\Importer\Models\ItemLogs\DemographicsLog;
@@ -16,16 +20,14 @@ trait ValidatesQAImportOutput
     ) {
         $demographics = DemographicsLog::whereCcdaId($ccda->id)->first();
 
-        $name = function () use
-            (
+        $name = function () use (
             $demographics
         ) {
-            return empty($name = $demographics->first_name . ' ' . $demographics->last_name)
+            return empty($name = $demographics->first_name.' '.$demographics->last_name)
                 ?: $name;
         };
 
-        $provider = function () use
-            (
+        $provider = function () use (
             $output
         ) {
             if (isset($output['provider'][0])) {
@@ -33,8 +35,7 @@ trait ValidatesQAImportOutput
             }
         };
 
-        $location = function () use
-            (
+        $location = function () use (
             $output
         ) {
             if (isset($output['location'][0])) {
@@ -42,15 +43,13 @@ trait ValidatesQAImportOutput
             }
         };
 
-        $duplicateCheck = function () use
-            (
+        $duplicateCheck = function () use (
             $demographics
         ) {
             $date = (new Carbon($demographics->dob))->format('Y-m-d');
 
             $dup = User::with([
-                'patientInfo' => function ($q) use
-                    (
+                'patientInfo' => function ($q) use (
                     $demographics,
                     $date
                 ) {
@@ -61,30 +60,26 @@ trait ValidatesQAImportOutput
                 ->whereLastName($demographics->last_name)
                 ->first();
 
-
             return empty($dup)
                 ? null
                 : $dup;
         };
 
-        $phoneCheck = function () use
-            (
+        $phoneCheck = function () use (
             $demographics
         ) {
-            return ($demographics->cell_phone
+            return $demographics->cell_phone
                 || $demographics->home_phone
-                || $demographics->work_phone);
+                || $demographics->work_phone;
         };
 
-        $counter = function ($index) use
-            (
+        $counter = function ($index) use (
             $output
         ) {
             return count($output[$index]);
         };
 
-        $hasStreetAddress = function () use
-            (
+        $hasStreetAddress = function () use (
             $demographics
         ) {
             return empty($demographics->street)
@@ -92,8 +87,7 @@ trait ValidatesQAImportOutput
                 : true;
         };
 
-        $hasCity = function () use
-            (
+        $hasCity = function () use (
             $demographics
         ) {
             return empty($demographics->city)
@@ -101,8 +95,7 @@ trait ValidatesQAImportOutput
                 : true;
         };
 
-        $hasState = function () use
-            (
+        $hasState = function () use (
             $demographics
         ) {
             return empty($demographics->state)
@@ -110,8 +103,7 @@ trait ValidatesQAImportOutput
                 : true;
         };
 
-        $hasZip = function () use
-            (
+        $hasZip = function () use (
             $demographics
         ) {
             return empty($demographics->zip)
@@ -120,12 +112,11 @@ trait ValidatesQAImportOutput
         };
 
         $medications = $counter(3);
-        $problems = $counter(1);
-        $allergies = $counter(0);
-        $fullName = $name();
+        $problems    = $counter(1);
+        $allergies   = $counter(0);
+        $fullName    = $name();
 
-        $duplicateCcdCheck = function () use
-            (
+        $duplicateCcdCheck = function () use (
             $medications,
             $problems,
             $allergies,
@@ -138,7 +129,7 @@ trait ValidatesQAImportOutput
                 ->exists();
         };
 
-        $duplicatePatient = $duplicateCheck();
+        $duplicatePatient         = $duplicateCheck();
         $duplicateCcdJustUploaded = $duplicateCcdCheck();
 
         if ($duplicateCcdJustUploaded || $duplicatePatient) {
@@ -146,7 +137,7 @@ trait ValidatesQAImportOutput
 
             if ($duplicatePatient) {
                 //If the patient is withdrawn or paused, then do not delete the duplicate because we'd wanna re-import
-                if ($duplicatePatient->patientInfo->ccm_status != 'enrolled'
+                if ('enrolled' != $duplicatePatient->patientInfo->ccm_status
                     && !$duplicateCcdJustUploaded
                 ) {
                     $deleteTheCCD = false;
@@ -158,31 +149,29 @@ trait ValidatesQAImportOutput
                 $ccda->source = 'duplicate';
                 $ccda->save();
 
-                
-
                 return false;
             }
         }
 
-        $qaSummary = new ImportedMedicalRecord();
+        $qaSummary          = new ImportedMedicalRecord();
         $qaSummary->ccda_id = $ccda->id;
-        $qaSummary->name = $fullName;
+        $qaSummary->name    = $fullName;
 //        $qaSummary->medications = $medications;
 //        $qaSummary->problems = $problems;
 //        $qaSummary->allergies = $allergies;
         $qaSummary->provider = $provider();
 //        $qaSummary->location = $location();
-        $qaSummary->duplicate_id = $duplicatePatient->id ?? null;
+        $qaSummary->duplicate_id       = $duplicatePatient->id ?? null;
         $qaSummary->has_street_address = $hasStreetAddress();
-        $qaSummary->has_zip = $hasZip();
-        $qaSummary->has_city = $hasCity();
-        $qaSummary->has_state = $hasState();
-        $qaSummary->has_phone = $phoneCheck();
+        $qaSummary->has_zip            = $hasZip();
+        $qaSummary->has_city           = $hasCity();
+        $qaSummary->has_state          = $hasState();
+        $qaSummary->has_phone          = $phoneCheck();
 
         $isFlagged = false;
 
-        if ($qaSummary->medications == 0
-            || $qaSummary->problems == 0
+        if (0 == $qaSummary->medications
+            || 0 == $qaSummary->problems
             || empty($qaSummary->location)
             || empty($qaSummary->provider)
             || empty($qaSummary->name)
@@ -197,7 +186,7 @@ trait ValidatesQAImportOutput
 
         $qaSummary->flag = $isFlagged;
         $qaSummary->save();
-        $qaSummary['ccda']['source'] = $ccda->source;
+        $qaSummary['ccda']['source']     = $ccda->source;
         $qaSummary['ccda']['created_at'] = $ccda->created_at;
 
         return $qaSummary;

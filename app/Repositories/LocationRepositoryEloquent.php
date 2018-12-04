@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Repositories;
 
 use App\Contracts\Repositories\LocationRepository;
@@ -9,13 +13,20 @@ use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
 
 /**
- * Class LocationRepositoryEloquent
- * @package namespace App\Repositories;
+ * Class LocationRepositoryEloquent.
  */
 class LocationRepositoryEloquent extends BaseRepository implements LocationRepository
 {
     /**
-     * Specify Model class name
+     * Boot up the repository, pushing criteria.
+     */
+    public function boot()
+    {
+        $this->pushCriteria(app(RequestCriteria::class));
+    }
+
+    /**
+     * Specify Model class name.
      *
      * @return string
      */
@@ -27,13 +38,5 @@ class LocationRepositoryEloquent extends BaseRepository implements LocationRepos
     public function presenter()
     {
         return new LocationPresenter();
-    }
-
-    /**
-     * Boot up the repository, pushing criteria
-     */
-    public function boot()
-    {
-        $this->pushCriteria(app(RequestCriteria::class));
     }
 }

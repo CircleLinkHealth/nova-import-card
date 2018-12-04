@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Observers;
 
 use App\SaasAccount;
@@ -10,8 +14,6 @@ class SaasAccountObserver
      * Listen to the SaasAccount creating event.
      *
      * @param SaasAccount $saasAccount
-     *
-     * @return void
      */
     public function creating(SaasAccount $saasAccount)
     {

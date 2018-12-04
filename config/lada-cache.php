@@ -1,7 +1,10 @@
 <?php
 
-return [
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
+return [
     /*
     |--------------------------------------------------------------------------
     | Disabling cache
@@ -50,7 +53,6 @@ return [
     */
     'consider-rows' => true,
 
-
     /*
     |--------------------------------------------------------------------------
     | Include tables
@@ -84,8 +86,7 @@ return [
     |
     */
     'exclude-tables' => [
-//        (new PageTimer())->getTable(),
-//        (new Activity())->getTable(),
+        //        (new PageTimer())->getTable(),
+        //        (new Activity())->getTable(),
     ],
-
 ];

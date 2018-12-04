@@ -1,27 +1,33 @@
-<?php namespace App\Importer\Models\ImportedItems;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Importer\Models\ImportedItems;
 
 use App\Importer\Models\ItemLogs\ProblemLog;
-use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\Importer\Models\ImportedItems\ProblemImport
+ * App\Importer\Models\ImportedItems\ProblemImport.
  *
- * @property int $id
- * @property string|null $medical_record_type
- * @property int|null $medical_record_id
- * @property int $imported_medical_record_id
- * @property int $ccd_problem_log_id
- * @property string|null $name
- * @property string|null $code
- * @property string|null $code_system
- * @property string|null $code_system_name
- * @property int $activate
- * @property int|null $cpm_problem_id
- * @property int|null $substitute_id
- * @property string|null $deleted_at
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property-read \App\Importer\Models\ItemLogs\ProblemLog $ccdLog
+ * @property int                                      $id
+ * @property string|null                              $medical_record_type
+ * @property int|null                                 $medical_record_id
+ * @property int                                      $imported_medical_record_id
+ * @property int                                      $ccd_problem_log_id
+ * @property string|null                              $name
+ * @property string|null                              $code
+ * @property string|null                              $code_system
+ * @property string|null                              $code_system_name
+ * @property int                                      $activate
+ * @property int|null                                 $cpm_problem_id
+ * @property int|null                                 $substitute_id
+ * @property string|null                              $deleted_at
+ * @property \Carbon\Carbon                           $created_at
+ * @property \Carbon\Carbon                           $updated_at
+ * @property \App\Importer\Models\ItemLogs\ProblemLog $ccdLog
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\ProblemImport whereActivate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\ProblemImport whereCcdProblemLogId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\ProblemImport whereCode($value)
@@ -41,7 +47,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ProblemImport extends \App\BaseModel
 {
-
     protected $guarded = [];
 
     public function ccdLog()

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\CLH\CCD\Importer\StorageStrategies\Problems;
 
 use App\CLH\CCD\Importer\StorageStrategies\BaseStorageStrategy;
@@ -16,14 +20,14 @@ class ProblemsList extends BaseStorageStrategy implements StorageStrategy
         }
 
         $instruction = CpmInstruction::create([
-            'name' => $problemsList
+            'name' => $problemsList,
         ]);
 
         $misc = CpmMisc::whereName(CpmMisc::OTHER_CONDITIONS)
             ->first();
 
         $this->user->cpmMiscs()->attach($misc->id, [
-            'cpm_instruction_id' => $instruction->id
+            'cpm_instruction_id' => $instruction->id,
         ]);
     }
 }

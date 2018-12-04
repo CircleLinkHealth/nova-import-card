@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Reports\Sales\Practice\Sections;
 
 use App\Practice;
@@ -26,14 +30,14 @@ class FinancialSummary extends SalesReportSection
     public function render()
     {
         setlocale(LC_MONETARY, 'en_US.UTF-8');
-        $total = $this->service->totalBilled();
+        $total                       = $this->service->totalBilled();
         $this->data['billed_so_far'] = $total;
 
         $this->data['revenue_so_far'] = money_format('%.0n', round($total * 40, -2));
-        $this->data['profit_so_far'] = money_format('%.0n', $total * 40 - $total * $this->clhpppm);
+        $this->data['profit_so_far']  = money_format('%.0n', $total * 40 - $total * $this->clhpppm);
 
-        for ($i = 0; $i < 3; $i++) {
-            if ($i == 0) {
+        for ($i = 0; $i < 3; ++$i) {
+            if (0 == $i) {
                 $start = Carbon::parse($this->end)->firstOfMonth();
                 $month = Carbon::parse($this->end)->format('F Y');
             } else {
@@ -43,12 +47,11 @@ class FinancialSummary extends SalesReportSection
                 $month = Carbon::parse($iMonthsAgo)->format('F Y');
             }
 
-            $billable = $this->service->billableCountForMonth($start);
+            $billable        = $this->service->billableCountForMonth($start);
             $billableDollars = $billable * 40;
             $billableRounded = $billableDollars;
 
-
-            if ($billableDollars == 0) {
+            if (0 == $billableDollars) {
                 $profit = 0;
             } else {
                 $profit = ($billableRounded * (1 - ($this->clhpppm / 40)));
@@ -59,7 +62,7 @@ class FinancialSummary extends SalesReportSection
                 = $billable;
 
             $this->data['historical']['CCM Profit (Approx.)'][$month]
-                = ($this->clhpppm != 0)
+                = (0 != $this->clhpppm)
                 ? money_format('%.0n', round($profit, 0))
                 : 'N/A';
         }

@@ -1,28 +1,28 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Unit;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class KPIEnrollmentSeederTest extends TestCase
 {
     use DatabaseTransactions;
+
     /**
      * A basic test example.
-     *
-     * @return void
      */
-    public function testExample()
+    public function test_example()
     {
         Artisan::call('db:seed', [
-            '--class' => 'KPIEnrollmentSeeder'
+            '--class' => 'KPIEnrollmentSeeder',
         ]);
 
         $this->assertTrue(true);
-
     }
 }

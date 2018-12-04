@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Requests;
 
 use App\AuthyUser;
@@ -26,18 +30,18 @@ class StoreAuthyPhoneNumber extends FormRequest
     public function rules()
     {
         return [
-            'country_code'   => [
+            'country_code' => [
                 'required',
                 Rule::in([1, 357, 33]),
             ],
-            'phone_number'   => [
+            'phone_number' => [
                 'required',
                 Rule::phone()->country(['US', 'CY', 'FR']),
                 Rule::unique((new AuthyUser())->getTable(), 'phone_number'),
             ],
-            'method'         => [
+            'method' => [
                 'required',
-                Rule::in(['app', 'sms', 'phone',]),
+                Rule::in(['app', 'sms', 'phone']),
             ],
             'is_2fa_enabled' => 'boolean',
         ];

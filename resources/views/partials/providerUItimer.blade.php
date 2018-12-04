@@ -1,5 +1,6 @@
 <?php
 use App\Patient;
+
 ?>
 <input type="hidden" name="activityName" id="activityName" value="@yield('activity')">
 
@@ -29,25 +30,23 @@ use App\Patient;
 
             $patientFamilyId = null;
 
-            $patientIsCcm = false;
+            $patientIsCcm        = false;
             $patientIsBehavioral = false;
 
             if (is_a($patient, Patient::class)) {
-                $user = optional($patient->user()->first());
-                $patientId = $user->id;
+                $user            = optional($patient->user()->first());
+                $patientId       = $user->id;
                 $patientFamilyId = $patient->family_id;
 
                 $patientIsCcm        = $user->isCcm();
                 $patientIsBehavioral = $user->isBhi();
-            }
-            else {
+            } else {
                 $patientFamilyId     = optional($patient->patientInfo()->first())->family_id;
                 $patientIsCcm        = $patient->isCcm();
                 $patientIsBehavioral = $patient->isBhi();
             }
-        }
-        else {
-            $patientIsCcm = false;
+        } else {
+            $patientIsCcm        = false;
             $patientIsBehavioral = false;
         }
         $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;

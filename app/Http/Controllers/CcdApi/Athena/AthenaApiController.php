@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers\CcdApi\Athena;
 
 use App\Http\Controllers\Controller;
@@ -9,11 +13,11 @@ use Illuminate\Http\Request;
 
 class AthenaApiController extends Controller
 {
-    private $service;
     /**
      * @var CcdService
      */
     private $athenaCcdService;
+    private $service;
 
     public function __construct(CreateAndPostPdfCareplan $athenaApi, CcdService $athenaCcdService)
     {
@@ -21,20 +25,12 @@ class AthenaApiController extends Controller
         $this->athenaCcdService = $athenaCcdService;
     }
 
-    public function getTodays()
-    {
-        \Artisan::call('athena:getCcds');
-
-        return 'athena:getCcds command ran.';
-    }
-
-
     public function fetchCcdas(
         Request $request,
         $practiceId,
         $departmentId
     ) {
-        if ($ids = $request->input('ids') == null) {
+        if ($ids = null == $request->input('ids')) {
             return 'Please include IDs';
         }
 
@@ -47,6 +43,13 @@ class AthenaApiController extends Controller
 
         $imported = $this->athenaCcdService->importCcds($ids, $request->input('practice_id'));
 
-        return count($imported) . " CCDs were imported. To finish the importing process go to:  " . link_to_route('import.ccd.remix');
+        return count($imported).' CCDs were imported. To finish the importing process go to:  '.link_to_route('import.ccd.remix');
+    }
+
+    public function getTodays()
+    {
+        \Artisan::call('athena:getCcds');
+
+        return 'athena:getCcds command ran.';
     }
 }

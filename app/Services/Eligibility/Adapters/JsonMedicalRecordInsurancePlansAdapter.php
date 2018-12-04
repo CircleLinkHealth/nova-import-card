@@ -1,20 +1,17 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 10/12/18
- * Time: 1:23 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Services\Eligibility\Adapters;
-
 
 class JsonMedicalRecordInsurancePlansAdapter
 {
     /**
      * Adapt Insurance Plans from `CLH Medical Record Template`
      * https://gist.github.com/michalisantoniou6/853740eff3ed58814a89d12c922840c3 to primary, secondary and tertiary
-     * insurance
+     * insurance.
      *
      * @param array $record
      *
@@ -30,11 +27,11 @@ class JsonMedicalRecordInsurancePlansAdapter
                     $concatString = "{$plan['plan']} - {$plan['group_number']} - {$plan['policy_number']} - {$plan['insurance_type']}";
                 }
 
-                if ($key == 'primary') {
+                if ('primary' == $key) {
                     $record['primary_insurance'] = $concatString;
-                } elseif ($key == 'secondary') {
+                } elseif ('secondary' == $key) {
                     $record['secondary_insurance'] = $concatString;
-                } elseif ($key == 'tertiary') {
+                } elseif ('tertiary' == $key) {
                     $record['tertiary_insurance'] = $concatString;
                 }
             });

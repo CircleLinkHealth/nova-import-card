@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Importer\Loggers\Ccda;
 
 use App\Facades\UserMetaParserHelpers;
@@ -9,8 +13,7 @@ use App\Importer\Models\ItemLogs\DemographicsLog;
 /**
  * Takes data from the the json CCD and transforms it so that it can be saved as one of the transformer Models.
  * There is a method in this class for each model, it is listed using @see above every function
- * Class CcdToLogTranformer
- * @package App\CLH\CCD\ItemLogger
+ * Class CcdToLogTranformer.
  */
 class CcdToLogTranformer
 {
@@ -43,17 +46,17 @@ class CcdToLogTranformer
         $phones = UserMetaParserHelpers::getAllPhoneNumbers($demographics->phones);
 
         return [
-            'first_name'    => array_key_exists(0, $demographics->name->given)
+            'first_name' => array_key_exists(0, $demographics->name->given)
                 ? $demographics->name->given[0]
                 : null,
-            'last_name'     => $demographics->name->family,
-            'dob'           => $demographics->dob,
-            'gender'        => $demographics->gender,
-            'mrn_number'    => $demographics->mrn_number,
-            'street'        => array_key_exists(0, $demographics->address->street)
+            'last_name'  => $demographics->name->family,
+            'dob'        => $demographics->dob,
+            'gender'     => $demographics->gender,
+            'mrn_number' => $demographics->mrn_number,
+            'street'     => array_key_exists(0, $demographics->address->street)
                 ? $demographics->address->street[0]
                 : null,
-            'street2'       => array_key_exists(1, $demographics->address->street)
+            'street2' => array_key_exists(1, $demographics->address->street)
                 ? $demographics->address->street[1]
                 : null,
             'city'          => $demographics->address->city,
@@ -81,7 +84,7 @@ class CcdToLogTranformer
         return [
             'custodian' => empty($document->custodian->name)
                 ?: trim($document->custodian->name),
-            'type'      => empty($document->type)
+            'type' => empty($document->type)
                 ?: $document->type,
         ];
     }
@@ -103,7 +106,6 @@ class CcdToLogTranformer
             'subscriber' => $payer->subscriber,
         ];
     }
-
 
     /**
      * @see @see App\Importer\Models\ItemLogs\MedicationLog
@@ -163,7 +165,7 @@ class CcdToLogTranformer
     {
         $codes = [];
 
-        if ( ! $ccdProblem->code_system_name) {
+        if (!$ccdProblem->code_system_name) {
             $ccdProblem->code_system_name = getProblemCodeSystemName([$ccdProblem->code_system]);
         }
 
@@ -177,10 +179,10 @@ class CcdToLogTranformer
         }
 
         foreach ($ccdProblem->translations as $translation) {
-            if ( ! $translation->code_system_name) {
+            if (!$translation->code_system_name) {
                 $translation->code_system_name = getProblemCodeSystemName([$translation->code_system]);
 
-                if ( ! $translation->code_system_name) {
+                if (!$translation->code_system_name) {
                     continue;
                 }
             }
@@ -208,30 +210,30 @@ class CcdToLogTranformer
         $phones = UserMetaParserHelpers::getAllPhoneNumbers($provider->phones);
 
         return [
-            'provider_id'  => isset($provider->provider_id)
+            'provider_id' => isset($provider->provider_id)
                 ? $provider->provider_id
                 : null,
-            'npi'          => isset($provider->npi)
+            'npi' => isset($provider->npi)
                 ? $provider->npi
                 : null,
-            'first_name'   => isset($provider->name->given) && array_key_exists(0, $provider->name->given)
+            'first_name' => isset($provider->name->given) && array_key_exists(0, $provider->name->given)
                 ? $provider->name->given[0]
                 : null,
-            'last_name'    => isset($provider->name->family)
+            'last_name' => isset($provider->name->family)
                 ? $provider->name->family
                 : null,
             'organization' => isset($provider->organization)
                 ? $provider->organization
                 : null,
-            'street'       => array_key_exists(0, $provider->address->street)
+            'street' => array_key_exists(0, $provider->address->street)
                 ? $provider->address->street[0]
                 : null,
-            'city'         => $provider->address->city,
-            'state'        => $provider->address->state,
-            'zip'          => $provider->address->zip,
-            'cell_phone'   => $phones['mobile'][0],
-            'home_phone'   => $phones['home'][0],
-            'work_phone'   => $phones['work'][0],
+            'city'       => $provider->address->city,
+            'state'      => $provider->address->state,
+            'zip'        => $provider->address->zip,
+            'cell_phone' => $phones['mobile'][0],
+            'home_phone' => $phones['home'][0],
+            'work_phone' => $phones['work'][0],
         ];
     }
 }

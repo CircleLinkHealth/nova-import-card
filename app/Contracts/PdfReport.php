@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 19/12/2016
- * Time: 1:31 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Contracts;
@@ -22,5 +20,5 @@ interface PdfReport extends Pdfable
      *
      * @return PdfReportHandler
      */
-    public function pdfReportHandler() : PdfReportHandler;
+    public function pdfReportHandler(): PdfReportHandler;
 }

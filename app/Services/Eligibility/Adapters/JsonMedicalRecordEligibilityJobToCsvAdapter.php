@@ -1,13 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 10/12/18
- * Time: 1:41 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Services\Eligibility\Adapters;
-
 
 use App\EligibilityJob;
 
@@ -35,7 +32,7 @@ class JsonMedicalRecordEligibilityJobToCsvAdapter
             'outcome'            => $this->job->outcome,
             'reason'             => $this->job->reason,
 
-            'messages'           => json_encode($this->job->messages),
+            'messages' => json_encode($this->job->messages),
 
             'patient_id'    => $this->job->data['patient_id'],
             'first_name'    => $this->job->data['first_name'],
@@ -64,8 +61,6 @@ class JsonMedicalRecordEligibilityJobToCsvAdapter
             //                    'problems'           => $this->job->data['problems'],
             //                    'medications'        => $this->job->data['medications'],
             //                    'allergies'          => $this->job->data['allergies'],
-
-
         ];
     }
 }

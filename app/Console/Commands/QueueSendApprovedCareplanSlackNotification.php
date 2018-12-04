@@ -1,13 +1,22 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\Jobs\SendApprovedCareplanSlackNotification;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
 
 class QueueSendApprovedCareplanSlackNotification extends Command
 {
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Sends copy of daily summary and displays the number of Approved Care Plans not yet printed';
     /**
      * The name and signature of the console command.
      *
@@ -16,16 +25,7 @@ class QueueSendApprovedCareplanSlackNotification extends Command
     protected $signature = 'careplans:notifySlack';
 
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Sends copy of daily summary and displays the number of Approved Care Plans not yet printed';
-
-    /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {

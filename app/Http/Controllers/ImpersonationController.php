@@ -1,11 +1,16 @@
-<?php namespace App\Http\Controllers;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Http\Request;
 
 class ImpersonationController extends Controller
 {
-
     public function postImpersonate(Request $request)
     {
         $email = $request->input('email');
@@ -13,7 +18,7 @@ class ImpersonationController extends Controller
         try {
             $user = User::whereEmail($email)->firstOrFail();
         } catch (\Exception $e) {
-            echo "No User was found with email address $email <br><br> Please go back and try again.";
+            echo "No User was found with email address ${email} <br><br> Please go back and try again.";
             exit;
         }
 

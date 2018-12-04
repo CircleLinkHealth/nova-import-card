@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Unit;
 
 use App\CarePlan;
@@ -14,10 +18,10 @@ use Tests\TestCase;
 class CarePlanApprovalReminderTest extends TestCase
 {
     use CarePlanHelpers, UserHelpers;
-
-    private $provider;
     private $patient;
     private $practice;
+
+    private $provider;
 
     protected function setUp()
     {
@@ -34,10 +38,29 @@ class CarePlanApprovalReminderTest extends TestCase
         $this->assertEquals($this->provider->id, $this->patient->getBillingProviderId());
     }
 
+    public function checkToDatabase($notification, $recipient, $numberOfCareplans)
+    {
+        $databaseData = $notification->toDatabase($recipient);
+
+        $expected = ['numberOfCareplans' => $numberOfCareplans];
+
+        $this->assertEquals($expected, $databaseData);
+        $this->assertArrayHasKey('numberOfCareplans', $databaseData);
+    }
+
+    public function checkToMail($notification, $recipient, $numberOfCareplans)
+    {
+        $mailData = $notification->toMail($recipient)->build();
+
+        $expectedTo = [['address' => $recipient->email, 'name' => $recipient->getFullName()]];
+
+        $this->assertEquals("$numberOfCareplans CircleLink Care Plan(s) for your Approval!", $mailData->subject);
+        $this->assertEquals($expectedTo, $mailData->to);
+        $this->assertEquals('emails.careplansPendingApproval', $mailData->view);
+    }
+
     /**
      * A basic test example.
-     *
-     * @return void
      */
     public function test_notification_was_sent()
     {
@@ -56,34 +79,11 @@ class CarePlanApprovalReminderTest extends TestCase
             $this->provider,
             CarePlanApprovalReminder::class,
             function ($notification) use ($numberOfCareplans) {
-
                 $this->checkToMail($notification, $this->provider, $numberOfCareplans);
                 $this->checkToDatabase($notification, $this->provider, $numberOfCareplans);
 
                 return true;
             }
         );
-    }
-
-    public function checkToMail($notification, $recipient, $numberOfCareplans)
-    {
-        $mailData = $notification->toMail($recipient)->build();
-
-        $expectedTo = [['address' => $recipient->email, 'name' => $recipient->getFullName()]];
-
-        $this->assertEquals("$numberOfCareplans CircleLink Care Plan(s) for your Approval!", $mailData->subject);
-        $this->assertEquals($expectedTo, $mailData->to);
-        $this->assertEquals('emails.careplansPendingApproval', $mailData->view);
-    }
-
-    public function checkToDatabase($notification, $recipient, $numberOfCareplans)
-    {
-
-        $databaseData = $notification->toDatabase($recipient);
-
-        $expected = ['numberOfCareplans' => $numberOfCareplans];
-
-        $this->assertEquals($expected, $databaseData);
-        $this->assertArrayHasKey('numberOfCareplans', $databaseData);
     }
 }

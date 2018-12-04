@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 07/01/2017
- * Time: 12:53 AM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Contracts\Importer\ImportedMedicalRecord;
@@ -17,43 +15,43 @@ use App\User;
 interface ImportedMedicalRecord
 {
     /**
-     * Get the Allergies that were imported for QA
+     * Get the Allergies that were imported for QA.
      */
     public function allergies();
 
+    public function createCarePlan(): CarePlan;
+
     /**
-     * Get the Demographics that were imported for QA
+     * Get the Demographics that were imported for QA.
      *
      * @return DemographicsImport[]
      */
     public function demographics();
 
-    /**
-     * Get the Medications that were imported for QA
-     *
-     * @return \App\Importer\Models\ImportedItems\MedicationImport[]
-     */
-    public function medications();
+    public function getBillingProvider(): User;
 
-    /**
-     * Get the Problems that were imported for QA
-     *
-     * @return \App\Importer\Models\ImportedItems\ProblemImport[]
-     */
-    public function problems();
+    public function getPractice(): Practice;
 
     /**
      * @return MedicalRecord|null
      */
     public function medicalRecord();
 
-    public function getPractice() : Practice;
+    /**
+     * Get the Medications that were imported for QA.
+     *
+     * @return \App\Importer\Models\ImportedItems\MedicationImport[]
+     */
+    public function medications();
 
-    public function providers() : array;
+    /**
+     * Get the Problems that were imported for QA.
+     *
+     * @return \App\Importer\Models\ImportedItems\ProblemImport[]
+     */
+    public function problems();
 
-    public function getBillingProvider() : User;
+    public function providers(): array;
 
-    public function createCarePlan() : CarePlan;
-
-    public function reimport() : self;
+    public function reimport(): self;
 }

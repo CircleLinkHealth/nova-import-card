@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Importer\Section\Validators;
 
 use App\Contracts\Importer\MedicalRecord\Section\ItemLog;
@@ -8,7 +12,7 @@ use Carbon\Carbon;
 
 class FutureOrNoEndDate implements SectionValidator
 {
-    public function isValid(ItemLog $item) : bool
+    public function isValid(ItemLog $item): bool
     {
         if (!$this->shouldValidate($item)) {
             return false;
@@ -19,7 +23,7 @@ class FutureOrNoEndDate implements SectionValidator
         return !$endDate->isPast();
     }
 
-    public function shouldValidate(ItemLog $item) : bool
+    public function shouldValidate(ItemLog $item): bool
     {
         return !empty($item->end);
     }

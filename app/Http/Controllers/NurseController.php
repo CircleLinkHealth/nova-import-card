@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Activity;
@@ -11,26 +15,16 @@ use Carbon\Carbon;
 use Excel;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Yajra\Datatables\Facades\Datatables;
 
 class NurseController extends Controller
 {
-    public function makeInvoice()
+    public function dailyReport()
     {
-
-        $nurses = activeNurseNames();
-
-        return view(
-            'billing.nurse.create',
-            [
-                'nurses' => $nurses->sort(),
-            ]
-        );
+        return datatables()->collection(NurseDailyReport::data())->make(true);
     }
 
     public function generateInvoice(Request $request)
     {
-
         $input = $request->input();
 
         $nurseIds = $request->input('nurses');
@@ -45,49 +39,33 @@ class NurseController extends Controller
 
         $variablePay = isset($input['alternative_pay']);
 
-        if ($request->input('submit') == 'download') {
+        if ('download' == $request->input('submit')) {
             $links = [];
 
             $startDate = Carbon::parse($request->input('start_date'));
             $endDate   = Carbon::parse($request->input('end_date'));
 
-            GenerateNurseInvoice::dispatch($nurseIds, $startDate, $endDate, auth()->user()->id, $variablePay, $addTime,
-                $addNotes)->onQueue('high');
+            GenerateNurseInvoice::dispatch(
+                $nurseIds,
+                $startDate,
+                $endDate,
+                auth()->user()->id,
+                $variablePay,
+                $addTime,
+                $addNotes
+            )->onQueue('high');
         }
 
-        return "Waldo is working on compiling the reports you requested. <br> Give it a minute, and then head to " . link_to('/jobs/completed') . " and refresh frantically to see a link to the report you requested.";
-    }
-
-    public function sendInvoice(Request $request)
-    {
-        $invoices = (array)json_decode($request->input('links'));
-        $month    = $request->input('month');
-
-        foreach ($invoices as $key => $value) {
-            $value = (array)$value;
-
-            $user = User::find($key);
-
-            $user->notify(new NurseInvoiceCreated($value['link'], $month));
-        }
-
-        return redirect()->route('admin.reports.nurse.invoice')->with(['success' => 'yes']);
+        return 'Waldo is working on compiling the reports you requested. <br> Give it a minute, and then head to '.link_to('/jobs/completed').' and refresh frantically to see a link to the report you requested.';
     }
 
     public function makeDailyReport()
     {
-
         return view('admin.reports.nursedaily');
-    }
-
-    public function dailyReport()
-    {
-        return datatables()->collection(NurseDailyReport::data())->make(true);
     }
 
     public function makeHourlyStatistics()
     {
-
 //        $data = (new NurseCallStatistics(Nurse::all(),
 //                                Carbon::parse('2016-09-29 09:00:00'),
 //                                Carbon::parse('2016-09-29 10:00:00')))
@@ -96,9 +74,20 @@ class NurseController extends Controller
         return view('statistics.nurses.info');
     }
 
+    public function makeInvoice()
+    {
+        $nurses = activeNurseNames();
+
+        return view(
+            'billing.nurse.create',
+            [
+                'nurses' => $nurses->sort(),
+            ]
+        );
+    }
+
     public function monthlyOverview(Request $request)
     {
-
         $input = $request->input();
 
         if (isset($input['next'])) {
@@ -115,10 +104,9 @@ class NurseController extends Controller
         $nurses = User::ofType('care-center')->where('access_disabled', 0)->get();
         $data   = [];
 
-
         while ($dayCounter->lte($last)) {
             foreach ($nurses as $nurse) {
-                if ( ! $nurse->nurseInfo) {
+                if (!$nurse->nurseInfo) {
                     continue;
                 }
 
@@ -128,7 +116,7 @@ class NurseController extends Controller
 
                 $formattedDate = $dayCounter->format('m/d Y');
 
-                $name = $nurse->first_name[0] . '. ' . $nurse->getLastName();
+                $name = $nurse->first_name[0].'. '.$nurse->getLastName();
 
                 if ($countScheduled > 0) {
                     $data[$formattedDate][$name]['Scheduled'] = $countScheduled;
@@ -163,18 +151,18 @@ class NurseController extends Controller
 
         if ($request->has('json')) {
             return response()->json($rows);
-        } elseif ($request->has('excel')) {
-            return Excel::create('CLH-Nurse-Monthly-Report-' . $date, function ($excel) use ($date, $rows) {
-
+        }
+        if ($request->has('excel')) {
+            return Excel::create('CLH-Nurse-Monthly-Report-'.$date, function ($excel) use ($date, $rows) {
                 // Set the title
-                $excel->setTitle('CLH Nurse Monthly Report - ' . $date);
+                $excel->setTitle('CLH Nurse Monthly Report - '.$date);
 
                 // Chain the setters
                 $excel->setCreator('CLH System')
-                      ->setCompany('CircleLink Health');
+                    ->setCompany('CircleLink Health');
 
                 // Call them separately
-                $excel->setDescription('CLH Call Report - ' . $date);
+                $excel->setDescription('CLH Call Report - '.$date);
 
                 // Our first sheet
                 $excel->sheet('Sheet 1', function ($sheet) use ($rows) {
@@ -199,44 +187,57 @@ class NurseController extends Controller
         $currentPageSearchResults = $rows->slice(($currentPage - 1) * $perPage, $perPage)->all();
         $rows                     = new LengthAwarePaginator($currentPageSearchResults, count($rows), $perPage);
 
-        $rows = $rows->withPath("admin/reports/nurse/monthly");
+        $rows = $rows->withPath('admin/reports/nurse/monthly');
 
         return view('admin.nurse.monthly-report', compact(['date', 'rows']));
     }
 
+    public function sendInvoice(Request $request)
+    {
+        $invoices = (array) json_decode($request->input('links'));
+        $month    = $request->input('month');
+
+        foreach ($invoices as $key => $value) {
+            $value = (array) $value;
+
+            $user = User::find($key);
+
+            $user->notify(new NurseInvoiceCreated($value['link'], $month));
+        }
+
+        return redirect()->route('admin.reports.nurse.invoice')->with(['success' => 'yes']);
+    }
+
     private function getMonthlyReportRows($date)
     {
-
         $fromDate = $date->copy()->startOfMonth()->startOfDay();
         $toDate   = $date->copy()->endOfMonth()->endOfDay();
 
         $rows = [];
 
         $nurses = User::orderBy('id')
-                      ->ofType('care-center')
-                      ->whereHas('activitiesAsProvider', function ($a) use ($fromDate, $toDate) {
-                          $a->where('performed_at', '>=', $fromDate)
-                            ->where('performed_at', '<=', $toDate);
-                      })
-                      ->chunk(50, function ($nurses) use (&$rows, $fromDate, $toDate) {
-                          foreach ($nurses as $nurse) {
+            ->ofType('care-center')
+            ->whereHas('activitiesAsProvider', function ($a) use ($fromDate, $toDate) {
+                $a->where('performed_at', '>=', $fromDate)
+                    ->where('performed_at', '<=', $toDate);
+            })
+            ->chunk(50, function ($nurses) use (&$rows, $fromDate, $toDate) {
+                foreach ($nurses as $nurse) {
+                    $seconds = Activity::where('provider_id', $nurse->id)
+                        ->where(function ($q) use ($fromDate, $toDate) {
+                            $q->where('performed_at', '>=', $fromDate)
+                                ->where('performed_at', '<=', $toDate);
+                        })
+                        ->sum('duration');
 
-                              $seconds = Activity::where('provider_id', $nurse->id)
-                                                 ->where(function ($q) use ($fromDate, $toDate) {
-                                                     $q->where('performed_at', '>=', $fromDate)
-                                                       ->where('performed_at', '<=', $toDate);
-                                                 })
-                                                 ->sum('duration');
+                    if (0 == $seconds) {
+                        continue;
+                    }
 
-                              if ($seconds == 0) {
-                                  continue;
-                              }
-
-                              $rows[$nurse->display_name] = gmdate('H:i:s', $seconds);
-                          }
-                      });
+                    $rows[$nurse->display_name] = gmdate('H:i:s', $seconds);
+                }
+            });
 
         return collect($rows);
     }
-
 }

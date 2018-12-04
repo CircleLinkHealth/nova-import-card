@@ -1,14 +1,19 @@
-<?php namespace App;
+<?php
 
-use Illuminate\Database\Eloquent\Model;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App;
 
 /**
- * App\CPRulesAnswers
+ * App\CPRulesAnswers.
  *
- * @property int $aid
- * @property string $value
+ * @property int         $aid
+ * @property string      $value
  * @property string|null $alt_answers
- * @property int|null $a_sort
+ * @property int|null    $a_sort
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers whereASort($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers whereAid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers whereAltAnswers($value)
@@ -17,15 +22,14 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CPRulesAnswers extends \App\BaseModel
 {
-
-
+    public $timestamps = false;
 
     /**
-     * The database table used by the model.
+     * The attributes that are mass assignable.
      *
-     * @var string
+     * @var array
      */
-    protected $table = 'rules_answers';
+    protected $fillable = ['value', 'alt_answers', 'a_sort'];
 
     /**
      * The primary key for the model.
@@ -35,11 +39,9 @@ class CPRulesAnswers extends \App\BaseModel
     protected $primaryKey = 'aid';
 
     /**
-     * The attributes that are mass assignable.
+     * The database table used by the model.
      *
-     * @var array
+     * @var string
      */
-    protected $fillable = ['value', 'alt_answers', 'a_sort'];
-
-    public $timestamps = false;
+    protected $table = 'rules_answers';
 }

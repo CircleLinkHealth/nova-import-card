@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 14/11/2016
- * Time: 4:58 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace Tests\Helpers;
@@ -15,7 +13,7 @@ trait CcdImporterHelpers
 {
     /**
      * QA Import a CCDA. This means import all Problems, Meds and so on, without actually creating a User for the
-     * patient. Note: An example of $pathToCcda is storage_path('/ccdas/Samples/aprima-sample.xml')
+     * patient. Note: An example of $pathToCcda is storage_path('/ccdas/Samples/aprima-sample.xml').
      *
      * @param $pathToCcda
      * @param CcdVendor $ccdVendor

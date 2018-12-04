@@ -1,19 +1,23 @@
 <?php
 
-echo "ERROR: {$exception->getMessage()}" . PHP_EOL . PHP_EOL;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+echo "ERROR: {$exception->getMessage()}".PHP_EOL.PHP_EOL;
 
 //Get the route
 if ($url) {
-    echo "URL: {$method}@{$url}" . PHP_EOL . PHP_EOL;
+    echo "URL: {$method}@{$url}".PHP_EOL.PHP_EOL;
 }
 
 //Get the User
 if ($user) {
-    echo "User: #{$user->id}" . PHP_EOL . PHP_EOL;
+    echo "User: #{$user->id}".PHP_EOL.PHP_EOL;
 }
 
 //Exception
-echo get_class($exception) . ":{$exception->getFile()}:{$exception->getLine()}" . PHP_EOL . PHP_EOL;
+echo get_class($exception).":{$exception->getFile()}:{$exception->getLine()}".PHP_EOL.PHP_EOL;
 
 //Input. Commented out for HIPAA compliance. Input may contain PHI
 //if (!empty($input)) {
@@ -21,4 +25,4 @@ echo get_class($exception) . ":{$exception->getFile()}:{$exception->getLine()}" 
 //}
 
 //Trace
-echo PHP_EOL . "Trace: {$exception->getTraceAsString()}";
+echo PHP_EOL."Trace: {$exception->getTraceAsString()}";

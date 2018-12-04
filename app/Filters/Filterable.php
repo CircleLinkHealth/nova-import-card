@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -9,8 +13,8 @@ trait Filterable
     /**
      * Filter a result set.
      *
-     * @param  Builder $query
-     * @param  QueryFilters $filters
+     * @param Builder      $query
+     * @param QueryFilters $filters
      *
      * @return Builder
      */

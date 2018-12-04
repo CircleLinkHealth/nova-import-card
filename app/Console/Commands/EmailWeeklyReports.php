@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\Jobs\EmailWeeklyPracticeReport;
@@ -12,6 +16,12 @@ use Illuminate\Console\Command;
 class EmailWeeklyReports extends Command
 {
     /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Emails weekly practice reports to distributors and providers. If a tester user id is passed to the command, all emails will be sent to that user (ie. useful for testing)';
+    /**
      * The name and signature of the console command.
      *
      * @var string
@@ -19,16 +29,7 @@ class EmailWeeklyReports extends Command
     protected $signature = 'email:weeklyReports {--practice} {--provider} {testerUserId?} {practiceId?} {endDate? : End date in YYYY-MM-DD. The report will be produced from a week before endDate, up to endDate}';
 
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Emails weekly practice reports to distributors and providers. If a tester user id is passed to the command, all emails will be sent to that user (ie. useful for testing)';
-
-    /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -59,7 +60,6 @@ class EmailWeeklyReports extends Command
             : Carbon::now()->endOfDay();
 
         $startRange = $endRange->copy()->subWeek()->startOfDay();
-
 
         if (isset($onlyForPractice)) {
             dispatch(new EmailWeeklyPracticeReport($onlyForPractice, $startRange, $endRange, $tester));

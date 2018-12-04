@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\NurseContactWindow;
@@ -10,6 +14,13 @@ use Spatie\GoogleCalendar\Event;
 class ExportNurseSchedulesToGoogleCalendar extends Command
 {
     /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Exports Nurses Schedules to a Google Calendar';
+    protected $nurseContactWindows;
+    /**
      * The name and signature of the console command.
      *
      * @var string
@@ -17,17 +28,7 @@ class ExportNurseSchedulesToGoogleCalendar extends Command
     protected $signature = 'nurseSchedule:export';
 
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Exports Nurses Schedules to a Google Calendar';
-    protected $nurseContactWindows;
-
-    /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct(NurseContactWindow $nurseContactWindow)
     {
@@ -53,7 +54,7 @@ class ExportNurseSchedulesToGoogleCalendar extends Command
             $nurseTz = $window->nurse->user->timezone;
 
             $startDate = "{$window->date->format('Y-m-d')} {$window->window_time_start}";
-            $endDate = "{$window->date->format('Y-m-d')} {$window->window_time_end}";
+            $endDate   = "{$window->date->format('Y-m-d')} {$window->window_time_end}";
 
             $startDateTime = Carbon::createFromFormat(
                 'Y-m-d H:i:s',

@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 11/17/2017
- * Time: 3:17 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Notifications\Channels;
@@ -16,8 +14,8 @@ class DatabaseChannel
     /**
      * Send the given notification.
      *
-     * @param  mixed $notifiable
-     * @param  \Illuminate\Notifications\Notification $notification
+     * @param mixed                                  $notifiable
+     * @param \Illuminate\Notifications\Notification $notification
      *
      * @return \Illuminate\Database\Eloquent\Model
      */
@@ -41,12 +39,12 @@ class DatabaseChannel
     /**
      * Get the data for the notification.
      *
-     * @param  mixed $notifiable
-     * @param  \Illuminate\Notifications\Notification $notification
-     *
-     * @return array
+     * @param mixed                                  $notifiable
+     * @param \Illuminate\Notifications\Notification $notification
      *
      * @throws \RuntimeException
+     *
+     * @return array
      */
     protected function getData($notifiable, Notification $notification)
     {

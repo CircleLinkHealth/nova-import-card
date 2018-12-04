@@ -1,6 +1,9 @@
 <?php
 
-//PDF Binary
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 $debianPdfLib = '/usr/local/bin/wkhtmltopdf';
 $localPdfLib  = base_path('bin/wkhtmltopdf/wkhtmltopdf-amd64');
 
@@ -25,7 +28,7 @@ if (file_exists($debianImgLib)) {
 }
 
 return [
-    'pdf'   => [
+    'pdf' => [
         'enabled' => true,
         'binary'  => $pdfBinary,
         'timeout' => false,
@@ -43,7 +46,7 @@ return [
             'page-width'    => '5mm',
             'zoom'          => 0.8,
         ],
-        'env'     => [],
+        'env' => [],
     ],
     'image' => [
         'enabled' => true,

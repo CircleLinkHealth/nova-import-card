@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Algorithms\Calls\SuccessfulHandler;
@@ -10,21 +14,12 @@ use Illuminate\Http\Request;
 
 class AlgoController extends Controller
 {
-
-    public function createMock(Request $request)
-    {
-
-
-        return view('admin.algo.mocker');
-    }
-
     public function computeMock(Request $request)
     {
-
         if ($request->ajax()) {
-            $ccm = $request->input('seconds');
-            $date = Carbon::parse($request->input('date'));
-            $status = (bool) $request->input('status');
+            $ccm         = $request->input('seconds');
+            $date        = Carbon::parse($request->input('date'));
+            $status      = (bool) $request->input('status');
             $contact_day = $request->input('days');
 
             $guineaPig = Patient::find(1272);
@@ -37,10 +32,10 @@ class AlgoController extends Controller
                 //add a 3 weeks to it.
 
                 $day = (new SuccessfulHandler($guineaPig, $date))
-                                    ->getPatientOffset($ccm, $date->weekOfMonth);
+                    ->getPatientOffset($ccm, $date->weekOfMonth);
             } else {
                 $day = (new UnsuccessfulHandler($guineaPig, $date))
-                                    ->getPatientOffset($ccm, $date->weekOfMonth);
+                    ->getPatientOffset($ccm, $date->weekOfMonth);
             }
 
             $days = [];
@@ -53,5 +48,10 @@ class AlgoController extends Controller
 
             return $upcoming->format('l, jS M');
         }
+    }
+
+    public function createMock(Request $request)
+    {
+        return view('admin.algo.mocker');
     }
 }

@@ -1,27 +1,17 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddSoftRejectedCallbackInEnrolleesTable extends Migration
 {
     /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        Schema::table('enrollees', function (Blueprint $table) {
-            $table->date('soft_rejected_callback')->nullable();
-        });
-    }
-
-    /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
@@ -30,5 +20,15 @@ class AddSoftRejectedCallbackInEnrolleesTable extends Migration
                 $table->dropColumn('soft_rejected_callback');
             });
         }
+    }
+
+    /**
+     * Run the migrations.
+     */
+    public function up()
+    {
+        Schema::table('enrollees', function (Blueprint $table) {
+            $table->date('soft_rejected_callback')->nullable();
+        });
     }
 }

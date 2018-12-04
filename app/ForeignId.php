@@ -1,27 +1,32 @@
-<?php namespace App;
+<?php
 
-use Illuminate\Database\Eloquent\Model;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App;
+
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 
 /**
  * These are IDs from third party systems.
- * 
+ *
  * Example use:
  * XYZ CCD Vendor uses our API to submit CCDs and receive back reports and wants their system's id returned in the
  * response.
- * 
+ *
  * Class ForeignId
  *
- * @package App
- * @property int $id
- * @property int $user_id
- * @property int|null $location_id
- * @property string $foreign_id
- * @property string $system
+ * @property int            $id
+ * @property int            $user_id
+ * @property int|null       $location_id
+ * @property string         $foreign_id
+ * @property string         $system
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @property-read \App\User $user
+ * @property \App\User      $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ForeignId whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ForeignId whereForeignId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ForeignId whereId($value)
@@ -33,14 +38,13 @@ use Prettus\Repository\Traits\TransformableTrait;
  */
 class ForeignId extends \App\BaseModel implements Transformable
 {
-
     use TransformableTrait;
-
-    protected $guarded = [];
 
     //Define systems here
     const APRIMA = 'aprima';
     const ATHENA = 'athena';
+
+    protected $guarded = [];
 
     public function user()
     {

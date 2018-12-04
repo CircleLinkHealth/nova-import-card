@@ -1,17 +1,22 @@
-<?php namespace App;
+<?php
 
-use Illuminate\Database\Eloquent\Model;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App;
 
 /**
- * App\CPRulesUCP
+ * App\CPRulesUCP.
  *
- * @property int $ucp_id
- * @property int|null $items_id
- * @property int|null $user_id
- * @property string|null $meta_key
- * @property string|null $meta_value
- * @property-read \App\CPRulesItem|null $item
- * @property-read \App\User $user
+ * @property int                   $ucp_id
+ * @property int|null              $items_id
+ * @property int|null              $user_id
+ * @property string|null           $meta_key
+ * @property string|null           $meta_value
+ * @property \App\CPRulesItem|null $item
+ * @property \App\User             $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP whereItemsId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP whereMetaKey($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP whereMetaValue($value)
@@ -21,17 +26,14 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CPRulesUCP extends \App\BaseModel
 {
-
     public $timestamps = false;
 
-
-
     /**
-     * The database table used by the model.
+     * The attributes that are mass assignable.
      *
-     * @var string
+     * @var array
      */
-    protected $table = 'rules_ucp';
+    protected $fillable = ['ucp_id', 'items_id', 'user_id', 'meta_key', 'meta_value'];
 
     /**
      * The primary key for the model.
@@ -41,28 +43,15 @@ class CPRulesUCP extends \App\BaseModel
     protected $primaryKey = 'ucp_id';
 
     /**
-     * The attributes that are mass assignable.
+     * The database table used by the model.
      *
-     * @var array
+     * @var string
      */
-    protected $fillable = ['ucp_id', 'items_id', 'user_id', 'meta_key', 'meta_value'];
-
-
-    public function item()
-    {
-        return $this->belongsTo('App\CPRulesItem', 'items_id');
-    }
-
-    public function user()
-    {
-        return $this->hasOne('App\User', 'user_id');
-    }
+    protected $table = 'rules_ucp';
 
     public function getCPRulesUCP($userId)
     {
-        $rulesUCP = CPRulesUCP::where('user_id', '=', $userId)->get();
-
-        return $rulesUCP;
+        return CPRulesUCP::where('user_id', '=', $userId)->get();
     }
 
     public function getCPRulesUCPDetails($userId)
@@ -74,5 +63,15 @@ class CPRulesUCP extends \App\BaseModel
         }
 
         return $rulesUCP;
+    }
+
+    public function item()
+    {
+        return $this->belongsTo('App\CPRulesItem', 'items_id');
+    }
+
+    public function user()
+    {
+        return $this->hasOne('App\User', 'user_id');
     }
 }

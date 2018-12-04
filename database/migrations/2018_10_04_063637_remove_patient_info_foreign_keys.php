@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\QueryException;
 use Illuminate\Database\Schema\Blueprint;
@@ -8,9 +12,16 @@ use Illuminate\Support\Facades\Schema;
 class RemovePatientInfoForeignKeys extends Migration
 {
     /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        Schema::table('patient_info', function (Blueprint $table) {
+        });
+    }
+
+    /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -29,22 +40,10 @@ class RemovePatientInfoForeignKeys extends Migration
                 });
             } catch (QueryException $e) {
                 $errorCode = $e->errorInfo[1];
-                if ($errorCode == 1091) {
-                    Log::debug("Key `$key` does not exist. Nothing to delete." . __FILE__);
+                if (1091 == $errorCode) {
+                    Log::debug("Key `${key}` does not exist. Nothing to delete.".__FILE__);
                 }
             }
         }
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::table('patient_info', function (Blueprint $table) {
-            //
-        });
     }
 }

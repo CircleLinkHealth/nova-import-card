@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 5/3/16
- * Time: 2:19 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Services\CPM;
@@ -18,32 +16,38 @@ class CpmLifestyleService implements CpmModel
     private $lifestyleRepo;
     private $lifestyleUserRepo;
 
-    public function __construct(CpmLifestyleRepository $lifestyleRepo, CpmLifestyleUserRepository $lifestyleUserRepo) {
-        $this->lifestyleRepo = $lifestyleRepo;
+    public function __construct(CpmLifestyleRepository $lifestyleRepo, CpmLifestyleUserRepository $lifestyleUserRepo)
+    {
+        $this->lifestyleRepo     = $lifestyleRepo;
         $this->lifestyleUserRepo = $lifestyleUserRepo;
     }
 
-    public function repo() {
-        return $this->lifestyleRepo;
-    }
-
-    public function lifestylePatients($lifestyleId) {
-        return $this->lifestyleUserRepo->lifestylePatients($lifestyleId);
-    }
-
-    public function patientLifestyles($userId) {
-        return $this->lifestyleUserRepo->patientLifestyles($userId);
-    }
-
-    public function addLifestyleToPatient($lifestyleId, $userId) {
+    public function addLifestyleToPatient($lifestyleId, $userId)
+    {
         if ($this->repo()->exists($lifestyleId)) {
             return $this->lifestyleUserRepo->addLifestyleToPatient($lifestyleId, $userId);
         }
-        else throw new Exception('lifestyle with id "' . $lifestyleId . '" does not exist');
+        throw new Exception('lifestyle with id "'.$lifestyleId.'" does not exist');
     }
 
-    public function removeLifestyleFromPatient($lifestyleId, $userId) {
+    public function lifestylePatients($lifestyleId)
+    {
+        return $this->lifestyleUserRepo->lifestylePatients($lifestyleId);
+    }
+
+    public function patientLifestyles($userId)
+    {
+        return $this->lifestyleUserRepo->patientLifestyles($userId);
+    }
+
+    public function removeLifestyleFromPatient($lifestyleId, $userId)
+    {
         return $this->lifestyleUserRepo->removeLifestyleFromPatient($lifestyleId, $userId);
+    }
+
+    public function repo()
+    {
+        return $this->lifestyleRepo;
     }
 
     public function syncWithUser(User $user, array $ids = [], $page = null, array $instructions)

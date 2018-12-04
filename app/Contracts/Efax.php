@@ -1,19 +1,17 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 06/02/2017
- * Time: 8:40 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Contracts;
 
 interface Efax
 {
+    public function getStatus($faxId);
+
     public function send(
         $faxNumber,
         $pathOrMessage
     );
-
-    public function getStatus($faxId);
 }

@@ -4,7 +4,7 @@
 
 <?php
 
-if (isset($patient) && ! empty($patient)) {
+if (isset($patient) && !empty($patient)) {
     $today = \Carbon\Carbon::now()->toFormattedDateString();
 
     $alreadyShown = [];
@@ -347,7 +347,7 @@ if (isset($patient) && ! empty($patient)) {
                 <allergies ref="allergiesComponent" patient-id="{{$patient->id}}">
                     <div class="col-xs-12">
                         @if($allergies)
-                            <p><?= nl2br($allergies) ?></p>
+                            <p><?= nl2br($allergies); ?></p>
                         @else
                             <p>No allergies at this time</p>
                         @endif
@@ -358,7 +358,7 @@ if (isset($patient) && ! empty($patient)) {
                 <!-- SOCIALSERVICES -->
                 <social-services ref="socialServicesComponent" patient-id="{{$patient->id}}">
                     @if($social)
-                        <p><?= nl2br($social) ?></p>
+                        <p><?= nl2br($social); ?></p>
                     @else
                         <p>No instructions at this time</p>
                     @endif
@@ -422,7 +422,7 @@ if (isset($patient) && ! empty($patient)) {
                 <!-- OTHER NOTES -->
                 <others ref="othersComponent" patient-id="{{$patient->id}}">
                     @if($other)
-                        <p><?= nl2br($other) ?></p>
+                        <p><?= nl2br($other); ?></p>
                     @else
                         <p>No instructions at this time</p>
                     @endif
@@ -437,7 +437,7 @@ if (isset($patient) && ! empty($patient)) {
             @push('styles')
                 <script>
                     var careplan = (<?php
-                        echo json_encode($careplan)
+                        echo json_encode($careplan);
                         ?>) || {};
                 </script>
             @endpush

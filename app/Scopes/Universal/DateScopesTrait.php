@@ -1,9 +1,15 @@
-<?php namespace App\Scopes\Universal;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Scopes\Universal;
 
 use Carbon\Carbon;
 
 /**
- * Class DateScopesTrait
+ * Class DateScopesTrait.
  *
  * Applies to Models.
  * Put all date specific scopes that we can use with multiple Models here.
@@ -23,12 +29,30 @@ trait DateScopesTrait
         Carbon $date,
         $field = 'created_at'
     ) {
-        $builder->where(function ($q) use
-        (
+        $builder->where(function ($q) use (
             $field, $date
         ) {
             $q->where($field, '>=', $date->copy()->startOfDay())
-              ->where($field, '<=', $date->copy()->endOfDay());
+                ->where($field, '<=', $date->copy()->endOfDay());
+        });
+    }
+
+    /**
+     * Scope a query to only include activities created this month. Defaults to created_at field, but a different field
+     * may be specified.
+     *
+     * @param $builder
+     * @param string $field
+     */
+    public function scopeCreatedThisMonth(
+        $builder,
+        $field = 'created_at'
+    ) {
+        $builder->where(function ($q) use (
+            $field
+        ) {
+            $q->where($field, '>=', Carbon::now()->startOfMonth())
+                ->where($field, '<=', Carbon::now()->endOfMonth());
         });
     }
 
@@ -43,8 +67,7 @@ trait DateScopesTrait
         $builder,
         $field = 'created_at'
     ) {
-        $builder->where(function ($q) use
-            (
+        $builder->where(function ($q) use (
             $field
         ) {
             $q->where($field, '>=', Carbon::now()->startOfDay())
@@ -63,32 +86,11 @@ trait DateScopesTrait
         $builder,
         $field = 'created_at'
     ) {
-        $builder->where(function ($q) use
-            (
+        $builder->where(function ($q) use (
             $field
         ) {
             $q->where($field, '>=', Carbon::yesterday()->startOfDay())
                 ->where($field, '<=', Carbon::yesterday()->endOfDay());
-        });
-    }
-
-    /**
-     * Scope a query to only include activities created this month. Defaults to created_at field, but a different field
-     * may be specified.
-     *
-     * @param $builder
-     * @param string $field
-     */
-    public function scopeCreatedThisMonth(
-        $builder,
-        $field = 'created_at'
-    ) {
-        $builder->where(function ($q) use
-            (
-            $field
-        ) {
-            $q->where($field, '>=', Carbon::now()->startOfMonth())
-                ->where($field, '<=', Carbon::now()->endOfMonth());
         });
     }
 }

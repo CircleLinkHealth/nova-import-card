@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 12/01/2017
- * Time: 12:11 AM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Importer\Section\Importers;
@@ -18,11 +16,11 @@ class Medications extends BaseImporter
 {
     use ConsolidatesMedicationInfo;
 
-    protected $medicalRecordId;
-    protected $medicalRecordType;
+    protected $imported = [];
     protected $importedMedicalRecord;
 
-    protected $imported = [];
+    protected $medicalRecordId;
+    protected $medicalRecordType;
 
     public function __construct(
         $medicalRecordId,
@@ -34,18 +32,38 @@ class Medications extends BaseImporter
         $this->importedMedicalRecord = $importedMedicalRecord;
     }
 
+    /**
+     * Get the medication group to activate.
+     *
+     * @param $name
+     *
+     * @return int|null
+     */
+    public function getMedicationGroup($name)
+    {
+        $maps = MedicationGroupsMap::all();
+
+        foreach ($maps as $map) {
+            if (str_contains(strtolower($name), strtolower($map->keyword))) {
+                return $map->medication_group_id;
+            }
+        }
+
+        return null;
+    }
+
     public function import(
         $medicalRecordId,
         $medicalRecordType,
         ImportedMedicalRecord $importedMedicalRecord
     ) {
         $itemLogs = MedicationLog::where('medical_record_type', '=', $medicalRecordType)
-                                 ->where('medical_record_id', '=', $medicalRecordId)
-                                 ->get();
+            ->where('medical_record_id', '=', $medicalRecordId)
+            ->get();
 
         $this->processLogs($itemLogs);
 
-        if (count($this->imported) == 0) {
+        if (0 == count($this->imported)) {
             $this->processLogs($itemLogs, true);
         }
 
@@ -53,33 +71,7 @@ class Medications extends BaseImporter
     }
 
     /**
-     * Loop through the logs and decide what to import
-     *
-     * @param $itemLogs
-     * @param bool $importAll
-     */
-    public function processLogs(
-        $itemLogs,
-        $importAll = false
-    ) {
-        foreach ($itemLogs as $itemLog) {
-            if ( ! $this->validate($itemLog) && ! $importAll) {
-                continue;
-            }
-
-            $itemLog->import = true;
-            $itemLog->save();
-
-            $consMed = $this->consolidateMedicationInfo($itemLog);
-
-            if ( ! $this->containsSigKeywords($consMed->cons_name)) {
-                $this->importMedication($itemLog, $consMed);
-            }
-        }
-    }
-
-    /**
-     * Import a single Medication from an Item Log
+     * Import a single Medication from an Item Log.
      *
      * @param MedicationLog $itemLog
      * @param $consolidatedMed
@@ -103,29 +95,35 @@ class Medications extends BaseImporter
                 $consolidatedMed->cons_name,
                 $consolidatedMed->cons_text
             )),
-            'code'                  => $consolidatedMed->cons_code,
-            'code_system'           => $consolidatedMed->cons_code_system,
-            'code_system_name'      => $consolidatedMed->cons_code_system_name,
+            'code'             => $consolidatedMed->cons_code,
+            'code_system'      => $consolidatedMed->cons_code_system,
+            'code_system_name' => $consolidatedMed->cons_code_system_name,
         ]);
     }
 
     /**
-     * Get the medication group to activate.
+     * Loop through the logs and decide what to import.
      *
-     * @param $name
-     *
-     * @return integer|null
+     * @param $itemLogs
+     * @param bool $importAll
      */
-    public function getMedicationGroup($name)
-    {
-        $maps = MedicationGroupsMap::all();
+    public function processLogs(
+        $itemLogs,
+        $importAll = false
+    ) {
+        foreach ($itemLogs as $itemLog) {
+            if (!$this->validate($itemLog) && !$importAll) {
+                continue;
+            }
 
-        foreach ($maps as $map) {
-            if (str_contains(strtolower($name), strtolower($map->keyword))) {
-                return $map->medication_group_id;
+            $itemLog->import = true;
+            $itemLog->save();
+
+            $consMed = $this->consolidateMedicationInfo($itemLog);
+
+            if (!$this->containsSigKeywords($consMed->cons_name)) {
+                $this->importMedication($itemLog, $consMed);
             }
         }
-
-        return null;
     }
 }

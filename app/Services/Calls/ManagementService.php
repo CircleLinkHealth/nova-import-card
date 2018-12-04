@@ -1,13 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 12/11/2017
- * Time: 3:00 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Services\Calls;
-
 
 use App\Repositories\CallRepository;
 use Carbon\Carbon;
@@ -21,8 +18,9 @@ class ManagementService
         $this->repository = $repository;
     }
 
-    public function getScheduledCalls(Carbon $month = null) {
-        return $this->repository->scheduledCalls($month);
+    public function getPatientsWithoutAnyInboundCalls($practiceId)
+    {
+        return $this->repository->patientsWithoutAnyInboundCalls($practiceId);
     }
 
     public function getPatientsWithoutScheduledCalls($practiceId, Carbon $afterDate = null)
@@ -30,8 +28,8 @@ class ManagementService
         return $this->repository->patientsWithoutScheduledCalls($practiceId, $afterDate);
     }
 
-    public function getPatientsWithoutAnyInboundCalls($practiceId)
+    public function getScheduledCalls(Carbon $month = null)
     {
-        return $this->repository->patientsWithoutAnyInboundCalls($practiceId);
+        return $this->repository->scheduledCalls($month);
     }
 }

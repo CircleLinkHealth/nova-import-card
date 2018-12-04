@@ -1,23 +1,28 @@
-<?php namespace App;
+<?php
 
-use Illuminate\Database\Eloquent\Model;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App;
 
 /**
- * App\CPRulesItem
+ * App\CPRulesItem.
  *
- * @property int $items_id
- * @property int|null $pcp_id
- * @property int|null $items_parent
- * @property int|null $qid
- * @property string $care_item_id
- * @property string $name
- * @property string $display_name
- * @property string $description
- * @property string|null $items_text
- * @property string|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\CPRulesItemMeta[] $meta
- * @property-read \App\CPRulesPCP|null $pcp
- * @property-read \App\CPRulesQuestions|null $question
+ * @property int                                                             $items_id
+ * @property int|null                                                        $pcp_id
+ * @property int|null                                                        $items_parent
+ * @property int|null                                                        $qid
+ * @property string                                                          $care_item_id
+ * @property string                                                          $name
+ * @property string                                                          $display_name
+ * @property string                                                          $description
+ * @property string|null                                                     $items_text
+ * @property string|null                                                     $deleted_at
+ * @property \App\CPRulesItemMeta[]|\Illuminate\Database\Eloquent\Collection $meta
+ * @property \App\CPRulesPCP|null                                            $pcp
+ * @property \App\CPRulesQuestions|null                                      $question
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem whereCareItemId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem whereDescription($value)
@@ -32,15 +37,14 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CPRulesItem extends \App\BaseModel
 {
-
-
+    public $timestamps = false;
 
     /**
-     * The database table used by the model.
+     * The attributes that are mass assignable.
      *
-     * @var string
+     * @var array
      */
-    protected $table = 'rules_items';
+    protected $fillable = ['items_id', 'pcp_id', 'items_parent', 'qid', 'items_text'];
 
     /**
      * The primary key for the model.
@@ -50,14 +54,26 @@ class CPRulesItem extends \App\BaseModel
     protected $primaryKey = 'items_id';
 
     /**
-     * The attributes that are mass assignable.
+     * The database table used by the model.
      *
-     * @var array
+     * @var string
      */
-    protected $fillable = ['items_id', 'pcp_id', 'items_parent', 'qid', 'items_text'];
+    protected $table = 'rules_items';
 
-    public $timestamps = false;
+    public static function boot()
+    {
+        parent::boot();
 
+        // Automatically delete and item's meta when the item is deleted
+        CPRulesItem::deleting(function ($CPRulesItem) {
+            $CPRulesItem->meta()->delete();
+        });
+    }
+
+    public function getRulesItem($itemId)
+    {
+        return CPRulesUCP::where('items_id', '=', $itemId)->get();
+    }
 
     public function meta()
     {
@@ -72,24 +88,5 @@ class CPRulesItem extends \App\BaseModel
     public function question()
     {
         return $this->belongsTo('App\CPRulesQuestions', 'qid', 'qid');
-    }
-
-    public function getRulesItem($itemId)
-    {
-        $rulesUCP = CPRulesUCP::where('items_id', '=', $itemId)->get();
-
-        return $rulesUCP;
-    }
-
-    public static function boot()
-    {
-        parent::boot();
-
-        /**
-         * Automatically delete and item's meta when the item is deleted
-         */
-        CPRulesItem::deleting(function ($CPRulesItem) {
-            $CPRulesItem->meta()->delete();
-        });
     }
 }

@@ -1,4 +1,10 @@
-<?php namespace App\Console\Commands;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Console\Commands;
 
 use App\Location;
 use App\Services\ReportsService;
@@ -8,6 +14,12 @@ use Symfony\Component\Console\Input\InputArgument;
 
 class GeneratePatientReports extends Command
 {
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Given a comma separated list of user ids, this command creates Patient Reports for Aprima';
 
     /**
      * The console command name.
@@ -17,16 +29,7 @@ class GeneratePatientReports extends Command
     protected $name = 'make:reports';
 
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Given a comma separated list of user ids, this command creates Patient Reports for Aprima';
-
-    /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -45,47 +48,47 @@ class GeneratePatientReports extends Command
             //Check if user exists
             $patient = User::find($patient_id);
             if (!$patient) {
-                $this->error(" User Not Found: " . $patient_id . " ");
+                $this->error(' User Not Found: '.$patient_id.' ');
                 continue;
             }
 
             //Check Status
             $status = $patient->getCarePlanStatus();
-            if ($status != 'provider_approved') {
-                $this->error(" User Not Provider Approved: " . $patient_id . " ");
+            if ('provider_approved' != $status) {
+                $this->error(' User Not Provider Approved: '.$patient_id.' ');
                 continue;
             }
             //Check if the provider approver is set
             $provider_id = $patient->getCarePlanProviderApprover();
             if (!$provider_id) {
-                $this->error(" Approving Provider Not Found: " . $patient_id . " ");
+                $this->error(' Approving Provider Not Found: '.$patient_id.' ');
                 continue;
             }
             $locationId = $patient->getpreferredContactLocation();
 
             if (!$locationId) {
-                $this->error(" Location Not Found For: " . $patient_id . " ");
+                $this->error(' Location Not Found For: '.$patient_id.' ');
                 continue;
             }
 
             $locationObj = Location::find($locationId);
 
             if (!$locationObj) {
-                $this->error(" Location Object Not Found For: " . $patient_id . " ");
+                $this->error(' Location Object Not Found For: '.$patient_id.' ');
                 continue;
             }
 
-            if ($locationObj->parent_id != Location::UPG_PARENT_LOCATION_ID) {
-                $this->error(" Location Does Not Belong to Aprima for User: " . $patient_id . " ");
+            if (Location::UPG_PARENT_LOCATION_ID != $locationObj->parent_id) {
+                $this->error(' Location Does Not Belong to Aprima for User: '.$patient_id.' ');
                 continue;
             }
 
-            if (!empty($locationObj) && $locationObj->parent_id == Location::UPG_PARENT_LOCATION_ID) {
+            if (!empty($locationObj) && Location::UPG_PARENT_LOCATION_ID == $locationObj->parent_id) {
                 (new ReportsService())->createAprimaPatientCarePlanPdfReport($patient, $provider_id);
-                $this->info("Report Created for User: " . $patient_id . " ");
+                $this->info('Report Created for User: '.$patient_id.' ');
             }
 
-            $this->info("Report Creation Complete");
+            $this->info('Report Creation Complete');
         }
     }
 

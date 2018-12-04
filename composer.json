@@ -82,6 +82,7 @@
     "spatie/laravel-google-calendar": "^2.0",
     "spatie/laravel-medialibrary": "^7.0.0",
     "spiritix/lada-cache": "^2.1",
+    "squizlabs/php_codesniffer": "*",
     "twilio/sdk": "5.7",
     "tylercd100/lern": "^3.8",
     "tymon/jwt-auth": "0.5.*",
@@ -90,6 +91,7 @@
     "yajra/laravel-datatables-oracle": "~8.0"
   },
   "require-dev": {
+    "friendsofphp/php-cs-fixer": "^2.13",
     "Xethron/Laravel-4-Generators": "*",
     "barryvdh/laravel-ide-helper": "^2.4",
     "darkaonline/l5-swagger": "^5.5",
@@ -124,6 +126,12 @@
     }
   },
   "scripts": {
+    "lint-php": [
+      "php -d memory_limit=2048M ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --show-progress=dots --diff -vvv"
+    ],
+    "lint-views": [
+      "php -d memory_limit=2048M ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --show-progress=dots --diff -vvv --config=.php_cs_views.php"
+    ],
     "post-root-package-install": [
       "php -r \"file_exists('.env') || copy('.env.example', '.env');\""
     ],

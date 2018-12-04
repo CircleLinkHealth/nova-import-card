@@ -1,27 +1,31 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Jobs;
 
 use App\EligibilityBatch;
 use App\Services\CCD\ProcessEligibilityService;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class ProcessEligibilityFromGoogleDrive implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    private $dir;
-    private $practiceName;
-    private $filterLastEncounter;
-    private $filterInsurance;
-    private $filterProblems;
     /**
      * @var EligibilityBatch
      */
     private $batch;
+    private $dir;
+    private $filterInsurance;
+    private $filterLastEncounter;
+    private $filterProblems;
+    private $practiceName;
 
     /**
      * Create a new job instance.
@@ -32,9 +36,9 @@ class ProcessEligibilityFromGoogleDrive implements ShouldQueue
     {
         $this->dir                 = $batch->options['dir'];
         $this->practiceName        = $batch->options['practiceName'];
-        $this->filterLastEncounter = (boolean)$batch->options['filterLastEncounter'];
-        $this->filterInsurance     = (boolean)$batch->options['filterInsurance'];
-        $this->filterProblems      = (boolean)$batch->options['filterProblems'];
+        $this->filterLastEncounter = (bool) $batch->options['filterLastEncounter'];
+        $this->filterInsurance     = (bool) $batch->options['filterInsurance'];
+        $this->filterProblems      = (bool) $batch->options['filterProblems'];
         $this->batch               = $batch;
     }
 
@@ -42,8 +46,6 @@ class ProcessEligibilityFromGoogleDrive implements ShouldQueue
      * Execute the job.
      *
      * @param ProcessEligibilityService $processEligibilityService
-     *
-     * @return void
      */
     public function handle(ProcessEligibilityService $processEligibilityService)
     {

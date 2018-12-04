@@ -1,30 +1,31 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Notifications;
 
 use App\Mail\NurseDailyReport as NurseDailyReportMailable;
 use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 
 class NurseDailyReport extends Notification
 {
     use Queueable;
 
     /**
-     * The data passed to the view
+     * The data passed to the view.
      *
      * For an example @see: EmailRNDailyReport, method handle
+     *
      * @var array
      */
     protected $data;
 
     /**
      * Create a new notification instance.
-     *
-     * @return void
      */
     public function __construct(array $data)
     {
@@ -32,23 +33,31 @@ class NurseDailyReport extends Notification
     }
 
     /**
-     * Get the notification's delivery channels.
+     * Get the array representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
+     *
      * @return array
      */
-    public function via($notifiable)
+    public function toArray($notifiable)
     {
         return [
-            'mail',
-            'database',
+        ];
+    }
+
+    public function toDatabase($notifiable)
+    {
+        return
+            [
+                'data' => $this->data,
             ];
     }
 
     /**
      * Get the mail representation of the notification.
      *
-     * @param  User $notifiable
+     * @param User $notifiable
+     *
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail(User $notifiable)
@@ -57,23 +66,17 @@ class NurseDailyReport extends Notification
     }
 
     /**
-     * Get the array representation of the notification.
+     * Get the notification's delivery channels.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
+     *
      * @return array
      */
-    public function toArray($notifiable)
+    public function via($notifiable)
     {
         return [
-            //
+            'mail',
+            'database',
         ];
-    }
-
-    public function toDatabase($notifiable)
-    {
-        return
-            [
-            'data' => $this->data,
-            ];
     }
 }

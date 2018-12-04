@@ -1,13 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 5/9/18
- * Time: 11:36 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Services\AthenaAPI;
-
 
 use App\Models\MedicalRecords\Ccda;
 use App\Practice;
@@ -36,7 +33,7 @@ class CcdService
             $id           = trim($id);
             $ccdaExternal = $this->athenaApi->getCcd($id, $practiceId, $departmentId);
 
-            if ( ! isset($ccdaExternal[0])) {
+            if (!isset($ccdaExternal[0])) {
                 continue;
             }
 

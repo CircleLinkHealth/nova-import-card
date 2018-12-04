@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 01/22/2018
- * Time: 7:25 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Contracts;
@@ -11,17 +9,17 @@ namespace App\Contracts;
 interface EligibilityProcessable
 {
     /**
-     * Queue a file to process for eligibility.
+     * Return the file from S3 or Local storage.
      */
-    public function queue();
+    public function getFilePath();
 
     /**
-     * Process a csv from the `cloud` s3 disk
+     * Process a csv from the `cloud` s3 disk.
      */
     public function processEligibility();
 
     /**
-     * Return the file from S3 or Local storage.
+     * Queue a file to process for eligibility.
      */
-    public function getFilePath();
+    public function queue();
 }

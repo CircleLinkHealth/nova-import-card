@@ -1,21 +1,24 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-
 /**
- * App\SnomedToICD9Map
+ * App\SnomedToICD9Map.
  *
- * @property int $id
- * @property int $ccm_eligible
- * @property string $code
- * @property string $name
- * @property float $avg_usage
- * @property int $is_nec
- * @property int $snomed_code
- * @property string $snomed_name
+ * @property int      $id
+ * @property int      $ccm_eligible
+ * @property string   $code
+ * @property string   $name
+ * @property float    $avg_usage
+ * @property int      $is_nec
+ * @property int      $snomed_code
+ * @property string   $snomed_name
  * @property int|null $cpm_problem_id
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\SnomedToICD9Map whereAvgUsage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\SnomedToICD9Map whereCcmEligible($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\SnomedToICD9Map whereCode($value)
@@ -30,5 +33,5 @@ use Illuminate\Database\Eloquent\Model;
 class SnomedToICD9Map extends \App\BaseModel
 {
     public $timestamps = false;
-    protected $table = 'snomed_to_icd9_map';
+    protected $table   = 'snomed_to_icd9_map';
 }
