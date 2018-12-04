@@ -29,7 +29,6 @@ $practiceSection   = \App\Reports\Sales\Practice\Sections\PracticeDemographics::
 
 
 @section('content')
-
     <div class="page-header">
         @if($data['isEmail'])
             <div style="text-align: center">
