@@ -16,7 +16,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Collection;
 
-if (!function_exists('parseIds')) {
+if ( ! function_exists('parseIds')) {
     /**
      * Get all of the IDs from the given mixed value.
      *
@@ -50,11 +50,11 @@ if (!function_exists('parseIds')) {
             return explode(',', $value);
         }
 
-        return array_filter((array) $value);
+        return array_filter((array)$value);
     }
 }
 
-if (!function_exists('str_substr_after')) {
+if ( ! function_exists('str_substr_after')) {
     /**
      * Get the substring after the given character.
      *
@@ -73,7 +73,7 @@ if (!function_exists('str_substr_after')) {
     }
 }
 
-if (!function_exists('activeNurseNames')) {
+if ( ! function_exists('activeNurseNames')) {
     /**
      * Returns an array of nurse names keyed by id.
      *
@@ -82,12 +82,12 @@ if (!function_exists('activeNurseNames')) {
     function activeNurseNames()
     {
         return User::ofType('care-center')
-            ->where('user_status', 1)
-            ->pluck('display_name', 'id');
+                   ->where('user_status', 1)
+                   ->pluck('display_name', 'id');
     }
 }
 
-if (!function_exists('sendSlackMessage')) {
+if ( ! function_exists('sendSlackMessage')) {
     /**
      * Sends a message to Slack.
      *
@@ -96,7 +96,7 @@ if (!function_exists('sendSlackMessage')) {
      */
     function sendSlackMessage($to, $message)
     {
-        if (!in_array(app()->environment(), ['production', 'worker'])) {
+        if ( ! in_array(app()->environment(), ['production', 'worker'])) {
             return;
         }
 
@@ -104,7 +104,7 @@ if (!function_exists('sendSlackMessage')) {
     }
 }
 
-if (!function_exists('formatPhoneNumber')) {
+if ( ! function_exists('formatPhoneNumber')) {
     /**
      * Formats a string of numbers as a phone number delimited by dashes as such: xxx-xxx-xxxx.
      *
@@ -125,14 +125,14 @@ if (!function_exists('formatPhoneNumber')) {
         }
 
         if (10 === strlen($sanitized)) {
-            return substr($sanitized, 0, 3).'-'.substr($sanitized, 3, 3).'-'.substr($sanitized, 6, 4);
+            return substr($sanitized, 0, 3) . '-' . substr($sanitized, 3, 3) . '-' . substr($sanitized, 6, 4);
         }
 
         return null;
     }
 }
 
-if (!function_exists('formatPhoneNumberE164')) {
+if ( ! function_exists('formatPhoneNumberE164')) {
     /**
      * Formats a string of numbers as a phone number delimited by dashes as such: xxx-xxx-xxxx.
      *
@@ -155,11 +155,11 @@ if (!function_exists('formatPhoneNumberE164')) {
             $sanitized = substr($sanitized, -10);
         }
 
-        return '+'.$countryCode.$sanitized;
+        return '+' . $countryCode . $sanitized;
     }
 }
 
-if (!function_exists('extractNumbers')) {
+if ( ! function_exists('extractNumbers')) {
     /**
      * Returns only numerical values in a string.
      *
@@ -175,10 +175,10 @@ if (!function_exists('extractNumbers')) {
     }
 }
 
-if (!function_exists('detectDelimiter')) {
+if ( ! function_exists('detectDelimiter')) {
     /**
      * @param bool|resource $csvFileHandle The handle of a file opened with fopen
-     * @param int           $length
+     * @param int $length
      *
      * @return false|int|string
      */
@@ -201,19 +201,19 @@ if (!function_exists('detectDelimiter')) {
     }
 }
 
-if (!function_exists('parseCsvToArray')) {
+if ( ! function_exists('parseCsvToArray')) {
     /**
      * Parses a CSV file into an array.
      *
      * @param $file
-     * @param int  $length
+     * @param int $length
      * @param null $delimiter
      *
      * @return array
      */
     function parseCsvToArray($file, $length = 0, $delimiter = null)
     {
-        $csvArray  = $fields  = [];
+        $csvArray  = $fields = [];
         $i         = 0;
         $handle    = @fopen($file, 'r');
         $delimiter = $delimiter ?? detectDelimiter($handle);
@@ -235,7 +235,7 @@ if (!function_exists('parseCsvToArray')) {
                 }
                 ++$i;
             }
-            if (!feof($handle)) {
+            if ( ! feof($handle)) {
                 echo "Error: unexpected fgets() fail\n";
             }
             fclose($handle);
@@ -245,27 +245,27 @@ if (!function_exists('parseCsvToArray')) {
     }
 }
 
-if (!function_exists('secondsToHHMM')) {
+if ( ! function_exists('secondsToHHMM')) {
     function secondsToHHMM($seconds)
     {
         $getHours = sprintf('%02d', floor($seconds / 3600));
         $getMins  = sprintf('%02d', floor(($seconds - ($getHours * 3600)) / 60));
 
-        return $getHours.':'.$getMins;
+        return $getHours . ':' . $getMins;
     }
 }
 
-if (!function_exists('secondsToMMSS')) {
+if ( ! function_exists('secondsToMMSS')) {
     function secondsToMMSS($seconds)
     {
         $minutes = sprintf('%02d', floor($seconds / 60));
-        $seconds = sprintf(':%02d', (int) $seconds % 60);
+        $seconds = sprintf(':%02d', (int)$seconds % 60);
 
-        return $minutes.$seconds;
+        return $minutes . $seconds;
     }
 }
 
-if (!function_exists('parseDaysStringToNumbers')) {
+if ( ! function_exists('parseDaysStringToNumbers')) {
     /**
      * Parses a String of days into numbers.
      *
@@ -294,7 +294,7 @@ if (!function_exists('parseDaysStringToNumbers')) {
     }
 }
 
-if (!function_exists('validateBloodPressureString')) {
+if ( ! function_exists('validateBloodPressureString')) {
     /**
      * Validates blood pressure string that looks like this: xxx/xxx.
      *
@@ -314,7 +314,7 @@ if (!function_exists('validateBloodPressureString')) {
         $readings = new Collection(explode($delimiter, $bloodPressureString));
 
         foreach ($readings as $reading) {
-            if (!is_numeric($reading) || $reading > 999 || $reading < 10) {
+            if ( ! is_numeric($reading) || $reading > 999 || $reading < 10) {
                 return false;
             }
         }
@@ -323,7 +323,7 @@ if (!function_exists('validateBloodPressureString')) {
     }
 }
 
-if (!function_exists('carbonGetNext')) {
+if ( ! function_exists('carbonGetNext')) {
     /**
      * Get carbon instance of the next $day.
      *
@@ -333,7 +333,7 @@ if (!function_exists('carbonGetNext')) {
      */
     function carbonGetNext($day = 'monday')
     {
-        if (!is_numeric($day)) {
+        if ( ! is_numeric($day)) {
             $dayOfWeek = clhToCarbonDayOfWeek(dayNameToClhDayOfWeek($day));
             $dayName   = $day;
         }
@@ -343,7 +343,7 @@ if (!function_exists('carbonGetNext')) {
             $dayName   = clhDayOfWeekToDayName($day);
         }
 
-        if (!isset($dayOfWeek)) {
+        if ( ! isset($dayOfWeek)) {
             return false;
         }
 
@@ -357,7 +357,7 @@ if (!function_exists('carbonGetNext')) {
     }
 }
 
-if (!function_exists('clhToCarbonDayOfWeek')) {
+if ( ! function_exists('clhToCarbonDayOfWeek')) {
     /**
      * Convert CLH DayOfWeek to Carbon DayOfWeek.
      * Carbon does 0-6 for Sun-Sat.
@@ -375,7 +375,7 @@ if (!function_exists('clhToCarbonDayOfWeek')) {
     }
 }
 
-if (!function_exists('carbonToClhDayOfWeek')) {
+if ( ! function_exists('carbonToClhDayOfWeek')) {
     /**
      * Convert Carbon DayOfWeek to CLH DayOfWeek.
      * Carbon does 0-6 for Sun-Sat.
@@ -393,7 +393,7 @@ if (!function_exists('carbonToClhDayOfWeek')) {
     }
 }
 
-if (!function_exists('clhDayOfWeekToDayName')) {
+if ( ! function_exists('clhDayOfWeekToDayName')) {
     /**
      * Convert CLH DayOfWeek to a day such as Monday, Tuesday.
      *
@@ -418,7 +418,7 @@ if (!function_exists('clhDayOfWeekToDayName')) {
     }
 }
 
-if (!function_exists('dayNameToClhDayOfWeek')) {
+if ( ! function_exists('dayNameToClhDayOfWeek')) {
     /**
      * Convert a day such as Monday, Tuesday to CLH DayOfWeek (1,2,3,4,5,6,7).
      *
@@ -442,7 +442,7 @@ if (!function_exists('dayNameToClhDayOfWeek')) {
     }
 }
 
-if (!function_exists('weekDays')) {
+if ( ! function_exists('weekDays')) {
     /**
      * Returns the days of the week.
      *
@@ -462,7 +462,7 @@ if (!function_exists('weekDays')) {
     }
 }
 
-if (!function_exists('timestampsToWindow')) {
+if ( ! function_exists('timestampsToWindow')) {
     /**
      * Convert timestamps to a Contact Window.
      *
@@ -488,7 +488,7 @@ if (!function_exists('timestampsToWindow')) {
     }
 }
 
-if (!function_exists('generateRandomString')) {
+if ( ! function_exists('generateRandomString')) {
     /**
      * uses mt_rand to give a random string.
      *
@@ -508,16 +508,16 @@ if (!function_exists('generateRandomString')) {
     }
 }
 
-if (!function_exists('windowToTimestamps')) {
+if ( ! function_exists('windowToTimestamps')) {
     /**
      * Convert timestamps to a Contact Window.
      *
      * @param $startTimestamp
      * @param $endTimestamp
      * @param string $timezone
-     * @param mixed  $date
-     * @param mixed  $start
-     * @param mixed  $end
+     * @param mixed $date
+     * @param mixed $start
+     * @param mixed $end
      *
      * @return array
      */
@@ -547,7 +547,7 @@ if (!function_exists('windowToTimestamps')) {
     }
 }
 
-if (!function_exists('dateAndTimeToCarbon')) {
+if ( ! function_exists('dateAndTimeToCarbon')) {
     /**
      * Convert a Date and Time Object to one Carbon Object.
      *
@@ -570,7 +570,7 @@ if (!function_exists('dateAndTimeToCarbon')) {
     }
 }
 
-if (!function_exists('secondsToHMS')) {
+if ( ! function_exists('secondsToHMS')) {
     /**
      * Converts a string of time in seconds to H:m:s.
      *
@@ -591,7 +591,7 @@ if (!function_exists('secondsToHMS')) {
     }
 }
 
-if (!function_exists('timezones')) {
+if ( ! function_exists('timezones')) {
     /**
      * Get the timezones we support.
      *
@@ -615,7 +615,7 @@ if (!function_exists('timezones')) {
     }
 }
 
-if (!function_exists('defaultCarePlanTemplate')) {
+if ( ! function_exists('defaultCarePlanTemplate')) {
     /**
      * Returns CircleLink's default CarePlanTemplate.
      *
@@ -629,7 +629,7 @@ if (!function_exists('defaultCarePlanTemplate')) {
     }
 }
 
-if (!function_exists('getAppConfig')) {
+if ( ! function_exists('getAppConfig')) {
     /**
      * Returns the AppConfig value for the given key.
      *
@@ -647,12 +647,12 @@ if (!function_exists('getAppConfig')) {
     }
 }
 
-if (!function_exists('setAppConfig')) {
+if ( ! function_exists('setAppConfig')) {
     /**
      * Save an AppConfig key, value and then return it.
      *
      * @param string $key
-     * @param mixed  $value
+     * @param mixed $value
      *
      * @return CarePlanTemplate
      */
@@ -670,7 +670,7 @@ if (!function_exists('setAppConfig')) {
     }
 }
 
-if (!function_exists('snakeToSentenceCase')) {
+if ( ! function_exists('snakeToSentenceCase')) {
     /**
      * Convert Snake to Sentence Case.
      *
@@ -684,7 +684,7 @@ if (!function_exists('snakeToSentenceCase')) {
     }
 }
 
-if (!function_exists('linkToDownloadFile')) {
+if ( ! function_exists('linkToDownloadFile')) {
     /**
      * Generate a file to download a file.
      *
@@ -697,7 +697,7 @@ if (!function_exists('linkToDownloadFile')) {
      */
     function linkToDownloadFile($path, $absolute = false)
     {
-        if (!$path) {
+        if ( ! $path) {
             throw new \Exception('File path cannot be empty');
         }
 
@@ -707,7 +707,7 @@ if (!function_exists('linkToDownloadFile')) {
     }
 }
 
-if (!function_exists('linkToCachedView')) {
+if ( ! function_exists('linkToCachedView')) {
     /**
      * Generate a link to a cached view.
      *
@@ -720,7 +720,7 @@ if (!function_exists('linkToCachedView')) {
      */
     function linkToCachedView($viewHashKey, $absolute = false)
     {
-        if (!$viewHashKey) {
+        if ( ! $viewHashKey) {
             throw new \Exception('File path cannot be empty');
         }
 
@@ -728,10 +728,10 @@ if (!function_exists('linkToCachedView')) {
     }
 }
 
-if (!function_exists('parseCallDays')) {
+if ( ! function_exists('parseCallDays')) {
     function parseCallDays($preferredCallDays)
     {
-        if (!$preferredCallDays || str_contains(strtolower($preferredCallDays), ['any'])) {
+        if ( ! $preferredCallDays || str_contains(strtolower($preferredCallDays), ['any'])) {
             return [1, 2, 3, 4, 5];
         }
 
@@ -758,10 +758,10 @@ if (!function_exists('parseCallDays')) {
     }
 }
 
-if (!function_exists('parseCallTimes')) {
+if ( ! function_exists('parseCallTimes')) {
     function parseCallTimes($preferredCallTimes)
     {
-        if (!$preferredCallTimes) {
+        if ( ! $preferredCallTimes) {
             return [
                 'start' => '09:00:00',
                 'end'   => '17:00:00',
@@ -793,7 +793,7 @@ if (!function_exists('parseCallTimes')) {
     }
 }
 
-if (!function_exists('getProblemCodeSystemName')) {
+if ( ! function_exists('getProblemCodeSystemName')) {
     /**
      * Get a problem code system name from an array of clues.
      *
@@ -824,7 +824,7 @@ if (!function_exists('getProblemCodeSystemName')) {
     }
 }
 
-if (!function_exists('getProblemCodeSystemCPMId')) {
+if ( ! function_exists('getProblemCodeSystemCPMId')) {
     /**
      * Get the id of an App\ProblemCodeSystem from an array of clues.
      *
@@ -846,7 +846,7 @@ if (!function_exists('getProblemCodeSystemCPMId')) {
     }
 }
 
-if (!function_exists('validProblemName')) {
+if ( ! function_exists('validProblemName')) {
     /**
      * Is the problem name valid.
      *
@@ -856,36 +856,36 @@ if (!function_exists('validProblemName')) {
      */
     function validProblemName($name)
     {
-        return !str_contains(strtolower($name), [
-            'screening',
-            'history',
-            'scan',
-            'immunization',
-            'immunisation',
-            'injection',
-            'vaccine',
-            'vaccination',
-            'vaccin',
-            'screen',
-            'follow up',
-            'followup',
-            'labs',
-            'f/u',
-            'mo fu',
-            'fu on',
-            'fu from',
-            'm fu',
-            'counsel',
-            'adverse effect drug',
-            'counseling',
-            'new pt',
-        ]) && !in_array(strtolower($name), [
-            'fu',
-        ]);
+        return ! str_contains(strtolower($name), [
+                'screening',
+                'history',
+                'scan',
+                'immunization',
+                'immunisation',
+                'injection',
+                'vaccine',
+                'vaccination',
+                'vaccin',
+                'screen',
+                'follow up',
+                'followup',
+                'labs',
+                'f/u',
+                'mo fu',
+                'fu on',
+                'fu from',
+                'm fu',
+                'counsel',
+                'adverse effect drug',
+                'counseling',
+                'new pt',
+            ]) && ! in_array(strtolower($name), [
+                'fu',
+            ]);
     }
 }
 
-if (!function_exists('validAllergyName')) {
+if ( ! function_exists('validAllergyName')) {
     /**
      * Is the allergy name valid.
      *
@@ -895,14 +895,14 @@ if (!function_exists('validAllergyName')) {
      */
     function validAllergyName($name)
     {
-        return !str_contains(strtolower($name), [
+        return ! str_contains(strtolower($name), [
             'no known',
             'none',
         ]);
     }
 }
 
-if (!function_exists('showDiabetesBanner')) {
+if ( ! function_exists('showDiabetesBanner')) {
     function showDiabetesBanner($patient, $noShow = null)
     {
 //        if (!$noShow && $patient
@@ -919,7 +919,7 @@ if (!function_exists('showDiabetesBanner')) {
     }
 }
 
-if (!function_exists('shortenUrl')) {
+if ( ! function_exists('shortenUrl')) {
     /**
      * Create a short URL.
      *
@@ -935,7 +935,7 @@ if (!function_exists('shortenUrl')) {
     }
 }
 
-if (!function_exists('validateYYYYMMDDDateString')) {
+if ( ! function_exists('validateYYYYMMDDDateString')) {
     /**
      * Validate that the given date string has format YYYY-MM-DD.
      *
@@ -948,9 +948,9 @@ if (!function_exists('validateYYYYMMDDDateString')) {
      */
     function validateYYYYMMDDDateString($date, $throwException = true)
     {
-        $isValid = (bool) preg_match('/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/', $date);
+        $isValid = (bool)preg_match('/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/', $date);
 
-        if (!$isValid && $throwException) {
+        if ( ! $isValid && $throwException) {
             throw new \Exception('Invalid Date');
         }
 
@@ -958,7 +958,7 @@ if (!function_exists('validateYYYYMMDDDateString')) {
     }
 }
 
-if (!function_exists('cast')) {
+if ( ! function_exists('cast')) {
     /**
      * Cast an object into a different class.
      *
@@ -970,19 +970,19 @@ if (!function_exists('cast')) {
      * incompatable classes.
      *
      * @param object $object the object to cast
-     * @param string $class  the class to cast the object into
+     * @param string $class the class to cast the object into
      *
      * @return object
      */
     function cast($object, $class)
     {
-        if (!is_object($object)) {
+        if ( ! is_object($object)) {
             throw new InvalidArgumentException('$object must be an object.');
         }
-        if (!is_string($class)) {
+        if ( ! is_string($class)) {
             throw new InvalidArgumentException('$class must be a string.');
         }
-        if (!class_exists($class)) {
+        if ( ! class_exists($class)) {
             throw new InvalidArgumentException(sprintf('Unknown class: %s.', $class));
         }
         $ret = app($class);
@@ -994,7 +994,7 @@ if (!function_exists('cast')) {
     }
 }
 
-if (!function_exists('is_json')) {
+if ( ! function_exists('is_json')) {
     /**
      * Determine whether the given string is json.
      *
@@ -1008,7 +1008,7 @@ if (!function_exists('is_json')) {
      */
     function is_json($string)
     {
-        if ('' === $string || !is_string($string)) {
+        if ('' === $string || ! is_string($string)) {
             return null;
         }
 
@@ -1021,7 +1021,7 @@ if (!function_exists('is_json')) {
     }
 }
 
-if (!function_exists('read_file_using_generator')) {
+if ( ! function_exists('read_file_using_generator')) {
     /**
      * Read a file using a generator.
      * https://wiki.php.net/rfc/generators.
@@ -1032,48 +1032,47 @@ if (!function_exists('read_file_using_generator')) {
      */
     function read_file_using_generator($path)
     {
-        if (!file_exists($path)) {
+        if ( ! file_exists($path)) {
             return false;
         }
 
         $handle = fopen($path, 'r');
 
-        while (!feof($handle)) {
+        while ( ! feof($handle)) {
             yield fgets($handle);
         }
 
         fclose($handle);
     }
 }
-if (!function_exists('getEhrReportWritersFolderUrl')) {
+if ( ! function_exists('getEhrReportWritersFolderUrl')) {
     function getEhrReportWritersFolderUrl()
     {
-        if (app()->environment(['production', 'worker'])){
+        if (app()->environment(['production', 'worker'])) {
             return 'https://drive.google.com/drive/folders/1NMMNIZKKicOVDNEUjXf6ayAjRbBbFAgh';
         }
 
-        //Causes timeouts on prod
-        return Cache::rememberForever('url_for_ehr_data_from_report_writers', function () {
-            $dir = getGoogleDirectoryByName('ehr-data-from-report-writers');
 
-            if ( ! $dir) {
-                return null;
-            }
+        $dir = getGoogleDirectoryByName('ehr-data-from-report-writers');
 
-            return Storage::drive('google')->url($dir['path']);
-        });
+        if ( ! $dir) {
+            return null;
+        }
+
+        return "https://drive.google.com/drive/folders/{$dir['path']}";
+
     }
 }
 
-if (!function_exists('getGoogleDirectoryByName')) {
+if ( ! function_exists('getGoogleDirectoryByName')) {
     function getGoogleDirectoryByName($name)
     {
         $clh = collect(Storage::drive('google')->listContents('/', true));
 
         $directory = $clh->where('type', '=', 'dir')
-            ->where('filename', '=', $name)
-            ->first();
-        if (!$directory) {
+                         ->where('filename', '=', $name)
+                         ->first();
+        if ( ! $directory) {
             return null;
         }
 
@@ -1081,7 +1080,7 @@ if (!function_exists('getGoogleDirectoryByName')) {
     }
 }
 
-if (!function_exists('format_bytes')) {
+if ( ! function_exists('format_bytes')) {
     function format_bytes($bytes, $precision = 2)
     {
         $units = ['b', 'kb', 'mb', 'gb', 'tb'];
@@ -1090,23 +1089,23 @@ if (!function_exists('format_bytes')) {
         $pow   = floor(($bytes
                 ? log($bytes)
                 : 0) / log(1024));
-        $pow = min($pow, count($units) - 1);
+        $pow   = min($pow, count($units) - 1);
 
         $bytes /= (1 << (10 * $pow));
 
-        return round($bytes, $precision).' '.$units[$pow];
+        return round($bytes, $precision) . ' ' . $units[$pow];
     }
 }
 
-if (!function_exists('array_keys_exist')) {
+if ( ! function_exists('array_keys_exist')) {
     /**
      * Returns TRUE if the given keys are all set in the array. Each key can be any value possible for an array index.
      *
      * @see array_key_exists()
      *
-     * @param string[] $keys    keys to check
-     * @param array    $array   an array with keys to check
-     * @param mixed    $missing reference to a variable that that contains the missing keys
+     * @param string[] $keys keys to check
+     * @param array $array an array with keys to check
+     * @param mixed $missing reference to a variable that that contains the missing keys
      *
      * @return bool true if all given keys exist in the given array, false if not
      */
@@ -1120,21 +1119,21 @@ if (!function_exists('array_keys_exist')) {
     }
 }
 
-if (!function_exists('is_falsey')) {
+if ( ! function_exists('is_falsey')) {
     function is_falsey($value)
     {
         return is_null($value) || empty($value) || 0 === strcasecmp($value, 'null');
     }
 }
 
-if (!function_exists('isAllowedToSee2FA')) {
+if ( ! function_exists('isAllowedToSee2FA')) {
     function isAllowedToSee2FA(User $user = null)
     {
-        return (bool) config('auth.two_fa_enabled') && optional($user ?? auth()->user())->isAdmin();
+        return (bool)config('auth.two_fa_enabled') && optional($user ?? auth()->user())->isAdmin();
     }
 }
 
-if (!function_exists('tryDropForeignKey')) {
+if ( ! function_exists('tryDropForeignKey')) {
     function tryDropForeignKey(Blueprint $table, $key)
     {
         try {
@@ -1142,7 +1141,7 @@ if (!function_exists('tryDropForeignKey')) {
         } catch (QueryException $e) {
             $errorCode = $e->errorInfo[1];
             if (1091 == $errorCode) {
-                Log::debug("Key `${key}` does not exist. Nothing to delete.".__FILE__);
+                Log::debug("Key `${key}` does not exist. Nothing to delete." . __FILE__);
             }
 
             return false;
