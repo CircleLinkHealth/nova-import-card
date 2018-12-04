@@ -1,4 +1,16 @@
 #!/bin/sh
 
-echo 'Fixing PHP Code Style'
-php -d memory_limit=2048M ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix
+CHANGED_FILES=$(git diff --name-only --diff-filter=ACMRTUXB)
+EXTRA_ARGS="--path-mode=override"
+
+while read -r line; do
+    if [[ $line == *"resources/views/"* ]]; then
+        echo "running: php ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix ${line} --config=.php_cs_views.php"
+        php ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix ${line} --config=.php_cs_views.php ${EXTRA_ARGS}
+    fi
+
+    if [[ $line == *".php"* ]]; then
+        echo "running: php ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix ${line} --config=.php_cs.dist"
+        php ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix ${line} --config=.php_cs.dist ${EXTRA_ARGS}
+    fi
+done <<< "$CHANGED_FILES"
