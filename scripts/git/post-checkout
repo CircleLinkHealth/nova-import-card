@@ -1,6 +1,7 @@
 #!/bin/bash
 
-composer dumpautoload
+# Enable at will
+# composer dumpautoload
 COMPOSER_DUMP_AUTOLOAD_EC=$?
 
 if [ $COMPOSER_DUMP_AUTOLOAD_EC -eq "0" ]
