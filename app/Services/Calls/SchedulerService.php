@@ -113,7 +113,7 @@ class SchedulerService
                         $patient
                     ) {
                 $q->where('outbound_cpm_id', $patient->id)
-                            ->orWhere('inbound_cpm_id', $patient->id);
+                    ->orWhere('inbound_cpm_id', $patient->id);
             })
             ->where('status', '=', 'scheduled')
             ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'))

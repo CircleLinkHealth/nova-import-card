@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use App\Role;
 use App\User;
 use Carbon\Carbon;
@@ -7,78 +11,6 @@ use Illuminate\Database\Seeder;
 
 class KPIEnrollmentSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
-    {
-        $data = collect($this->csvData());
-
-        foreach ($data as $row) {
-            $fullname = explode(' ', $row['caller']);
-
-            $firstName = $fullname[0];
-            if (count($fullname) > 1) {
-                $lastName = $fullname[1];
-            } else {
-                $lastName = '';
-            }
-
-            $user = User::where('first_name', $firstName)
-                        ->where('last_name', $lastName)
-                        ->first();
-
-            if (! $user) {
-                $user = User::create([
-                    'email'           => "$firstName$lastName@clh.com",
-                    'password'        => 'password',
-                    'display_name'    => "$firstName $lastName",
-                    'first_name'      => $firstName,
-                    'last_name'       => $lastName,
-                    'username'        => "$firstName$lastName",
-                    'status'          => 'Inactive',
-                    'access_disabled' => 1,
-                    'user_status'     => 1,
-                ]);
-
-                $role = Role::where('name', 'care-ambassador')->first();
-                $role = $user->attachGlobalRole($role->id);
-
-                $ambassador = $user->careAmbassador()->create([
-                    'hourly_rate'    => $row['rate'],
-                    'speaks_spanish' => 0,
-                ]);
-            } else {
-                $ambassador = $user->careAmbassador;
-            }
-
-            //first record only
-            if ($row['by_day'] == 'prior to 2/16') {
-                $day = Carbon::parse('2/15/2017');
-            } else {
-                $day = Carbon::parse($row['by_day']);
-            }
-
-            $practiceId = $this->determinePracticeId($row['customer']);
-
-            if (!$practiceId) {
-                return;
-            }
-
-            $log = $ambassador->logs()->create([
-                'day'                  => $day->toDateString(),
-                'no_enrolled'          => $row['enrolled'],
-                'no_rejected'          => $row['declined'],
-                'no_utc'               => 0,
-                'total_calls'          => $row['calls'],
-                'total_time_in_system' => $row['hours'],
-                'practice_id'          => $practiceId,
-            ]);
-        }
-    }
-
     public function csvData(): array
     {
         return parseCsvToArray(storage_path('enroller_kpi.csv'));
@@ -124,5 +56,75 @@ class KPIEnrollmentSeeder extends Seeder
         ];
 
         return $arr[$customer];
+    }
+
+    /**
+     * Run the database seeds.
+     */
+    public function run()
+    {
+        $data = collect($this->csvData());
+
+        foreach ($data as $row) {
+            $fullname = explode(' ', $row['caller']);
+
+            $firstName = $fullname[0];
+            if (count($fullname) > 1) {
+                $lastName = $fullname[1];
+            } else {
+                $lastName = '';
+            }
+
+            $user = User::where('first_name', $firstName)
+                ->where('last_name', $lastName)
+                ->first();
+
+            if (!$user) {
+                $user = User::create([
+                    'email'           => "$firstName$lastName@clh.com",
+                    'password'        => 'password',
+                    'display_name'    => "$firstName $lastName",
+                    'first_name'      => $firstName,
+                    'last_name'       => $lastName,
+                    'username'        => "$firstName$lastName",
+                    'status'          => 'Inactive',
+                    'access_disabled' => 1,
+                    'user_status'     => 1,
+                ]);
+
+                $role = Role::where('name', 'care-ambassador')->first();
+                $role = $user->attachGlobalRole($role->id);
+
+                $ambassador = $user->careAmbassador()->create([
+                    'hourly_rate'    => $row['rate'],
+                    'speaks_spanish' => 0,
+                ]);
+            } else {
+                $ambassador = $user->careAmbassador;
+            }
+
+            //first record only
+            if ('prior to 2/16' == $row['by_day']) {
+                $day = Carbon::parse('2/15/2017');
+            } else {
+                $day = Carbon::parse($row['by_day']);
+            }
+
+            $practiceId = $this->determinePracticeId($row['customer']);
+
+            if (!$practiceId) {
+                return;
+            }
+
+            $log = $ambassador->logs()->create([
+                'day'                  => $day->toDateString(),
+                'no_enrolled'          => $row['enrolled'],
+                'no_rejected'          => $row['declined'],
+                'no_utc'               => 0,
+                'total_calls'          => $row['calls'],
+                'total_time_in_system' => $row['hours'],
+                'practice_id'          => $practiceId,
+            ]);
+        }
     }
 }

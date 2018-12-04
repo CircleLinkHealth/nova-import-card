@@ -53,7 +53,7 @@ class EmailWeeklyProviderReport implements ShouldQueue
                     $this->startRange->copy(),
                     $this->endRange->copy()
                 ))
-                    ->data(true);
+                ->data(true);
 
             $providerData['name']    = $provider->display_name;
             $providerData['start']   = $this->startRange;

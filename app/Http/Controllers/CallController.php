@@ -34,7 +34,7 @@ class CallController extends Controller
         }
 
         return response()
-                ->json($call, $call['code']);
+            ->json($call, $call['code']);
     }
 
     public function createMulti(Request $request)
@@ -333,7 +333,7 @@ class CallController extends Controller
             $scheduledCall = $patient->inboundCalls()
                 ->where(function ($q) {
                     $q->whereNull('type')
-                                             ->orWhere('type', '=', 'call');
+                        ->orWhere('type', '=', 'call');
                 })
                 ->where('status', '=', 'scheduled')
                 ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'))

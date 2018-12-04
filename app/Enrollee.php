@@ -361,7 +361,7 @@ class Enrollee extends \App\BaseModel
         return $query->where('status', self::TO_CALL)
             ->orWhere(function ($q) {
                 $q->where('status', '=', 'soft_rejected')
-                             ->where('soft_rejected_callback', '<=', Carbon::now()->toDateString());
+                    ->where('soft_rejected_callback', '<=', Carbon::now()->toDateString());
             });
     }
 

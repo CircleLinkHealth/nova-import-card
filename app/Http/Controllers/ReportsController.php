@@ -955,7 +955,7 @@ class ReportsController extends Controller
             ])
             ->whereHas('patientSummaries', function ($q) use ($time) {
                 $q->where('month_year', $time->copy()->startOfMonth()->toDateString())
-                                ->where('total_time', '<', 1200);
+                    ->where('total_time', '<', 1200);
             })
             ->get();
 

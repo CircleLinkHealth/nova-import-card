@@ -550,17 +550,17 @@ class Patient extends BaseModel
             })
                 ->orWhere(function ($subQuery) use ($fromDate, $toDate) {
                     $subQuery->ccmStatus(Patient::WITHDRAWN)
-                          ->where([
-                              ['date_withdrawn', '>=', $fromDate],
-                              ['date_withdrawn', '<=', $toDate],
-                          ]);
+                        ->where([
+                            ['date_withdrawn', '>=', $fromDate],
+                            ['date_withdrawn', '<=', $toDate],
+                        ]);
                 })
                 ->orWhere(function ($subQuery) use ($fromDate, $toDate) {
                     $subQuery->ccmStatus(Patient::ENROLLED)
-                          ->where([
-                              ['registration_date', '>=', $fromDate],
-                              ['registration_date', '<=', $toDate],
-                          ]);
+                        ->where([
+                            ['registration_date', '>=', $fromDate],
+                            ['registration_date', '<=', $toDate],
+                        ]);
                 });
         });
     }

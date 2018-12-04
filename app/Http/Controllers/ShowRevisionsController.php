@@ -116,12 +116,12 @@ class ShowRevisionsController extends Controller
             ->where(function ($q) use ($userId, $patientInfoId) {
                 $q->where(function ($q) use ($patientInfoId) {
                     $q->where('revisionable_type', Patient::class)
-                                         ->where('revisionable_id', $patientInfoId)
-                                         ->whereIn('key', (new Patient())->phi);
+                        ->where('revisionable_id', $patientInfoId)
+                        ->whereIn('key', (new Patient())->phi);
                 })->orWhere(function ($q) use ($userId) {
                     $q->where('revisionable_type', User::class)
-                                         ->where('revisionable_id', $userId)
-                                         ->whereIn('key', (new User())->phi);
+                        ->where('revisionable_id', $userId)
+                        ->whereIn('key', (new User())->phi);
                 });
             })
             ->orderBy('updated_at', 'desc')

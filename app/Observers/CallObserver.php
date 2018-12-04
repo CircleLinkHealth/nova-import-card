@@ -46,7 +46,7 @@ class CallObserver
             })
                 ->where(function ($q) use ($patient) {
                     $q->where('outbound_cpm_id', $patient->id)
-                                       ->orWhere('inbound_cpm_id', $patient->id);
+                        ->orWhere('inbound_cpm_id', $patient->id);
                 })
                 ->where('called_date', '>=', $start)
                 ->where('called_date', '<=', $end)

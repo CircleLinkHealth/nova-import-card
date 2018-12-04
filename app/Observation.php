@@ -47,7 +47,8 @@ class Observation extends BaseModel
                 }
 
                 return 'success';
-            } elseif ('Blood_Sugar' == $this->obs_key) {
+            }
+            if ('Blood_Sugar' == $this->obs_key) {
                 if ($value < 60 || $value >= 350) {
                     return 'danger';
                 }
@@ -56,7 +57,8 @@ class Observation extends BaseModel
                 }
 
                 return 'success';
-            } elseif ('Cigarettes' == $this->obs_key) {
+            }
+            if ('Cigarettes' == $this->obs_key) {
                 if ($value < 4) {
                     return 'success';
                 }
@@ -152,7 +154,7 @@ class Observation extends BaseModel
                                    $message_id
                                ) {
                 $q->where('meta_key', 'starting_observation')
-                                       ->where('message_id', $message_id);
+                    ->where('message_id', $message_id);
             })->first();
 
         if ($starting) {

@@ -647,7 +647,7 @@ class NotesController extends Controller
         return Practice::whereId($patient->program_id)
             ->where(function ($q) {
                 $q->where('name', '=', 'phoenix-heart')
-                               ->orWhere('name', '=', 'demo');
+                    ->orWhere('name', '=', 'demo');
             })
             ->exists();
     }

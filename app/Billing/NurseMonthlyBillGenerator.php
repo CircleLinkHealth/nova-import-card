@@ -275,7 +275,7 @@ class NurseMonthlyBillGenerator
             ->select(['id', 'duration', 'created_at'])
             ->where(function ($q) {
                 $q->where('created_at', '>=', $this->startDate)
-                                       ->where('created_at', '<=', $this->endDate);
+                    ->where('created_at', '<=', $this->endDate);
             })
             ->get();
 
@@ -283,7 +283,7 @@ class NurseMonthlyBillGenerator
             ->select(['id', 'duration', 'created_at'])
             ->where(function ($q) {
                 $q->where('created_at', '>=', $this->startDate)
-                                             ->where('created_at', '<=', $this->endDate);
+                    ->where('created_at', '<=', $this->endDate);
             })
             ->where('logged_from', 'manual_input')
             ->get();

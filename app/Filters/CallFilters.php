@@ -411,7 +411,7 @@ class CallFilters extends QueryFilters
                 $q->where('outbound_cpm_id', '=', null)
                     ->where(function ($q) {
                         $q->whereNull('scheduled_date')
-                          ->orWhere('scheduled_date', '>=', Carbon::now()->startOfDay()->toDateString());
+                            ->orWhere('scheduled_date', '>=', Carbon::now()->startOfDay()->toDateString());
                     });
             });
     }

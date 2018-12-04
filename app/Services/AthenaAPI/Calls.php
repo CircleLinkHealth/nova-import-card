@@ -587,7 +587,6 @@ class Calls
     /**
      * Checks if the response contains errors. If it does, it logs the response and throws an Exception.
      *
-     *
      * @param $response
      *
      * @throws \Exception

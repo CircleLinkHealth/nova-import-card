@@ -58,7 +58,7 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
                 ->select(['id', 'duration', 'created_at'])
                 ->where(function ($q) {
                     $q->where('created_at', '>=', $this->date->copy()->startOfDay())
-                                           ->where('created_at', '<=', $this->date->copy()->endOfDay());
+                        ->where('created_at', '<=', $this->date->copy()->endOfDay());
                 })
                 ->get()
                 ->sum('duration');
@@ -67,7 +67,7 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
                 ->select(['id', 'duration', 'created_at'])
                 ->where(function ($q) {
                     $q->where('created_at', '>=', $this->date->copy()->startOfDay())
-                                                 ->where('created_at', '<=', $this->date->copy()->endOfDay());
+                        ->where('created_at', '<=', $this->date->copy()->endOfDay());
                 })
                 ->where('logged_from', 'manual_input')
                 ->get()

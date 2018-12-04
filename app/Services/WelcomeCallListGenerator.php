@@ -307,9 +307,9 @@ class WelcomeCallListGenerator
             $enrolledPatientExists = User::withTrashed()
                 ->where(function ($u) use ($args) {
                     $u->whereProgramId($args['practice_id'])
-                                                 ->whereHas('patientInfo', function ($q) use ($args) {
-                                                     $q->withTrashed()->whereMrnNumber($args['mrn']);
-                                                 });
+                        ->whereHas('patientInfo', function ($q) use ($args) {
+                            $q->withTrashed()->whereMrnNumber($args['mrn']);
+                        });
                 })->orWhere(function ($u) use ($args) {
                     $u->where([
                         [
@@ -684,13 +684,13 @@ class WelcomeCallListGenerator
             return CpmProblem::all()
                 ->transform(function ($problem) {
                     $problem->searchKeywords = collect(explode(',', $problem->contains), [$problem->name])
-                                     ->transform(function ($keyword) {
-                                         return trim(strtolower($keyword));
-                                     })
-                                     ->filter()
-                                     ->unique()
-                                     ->values()
-                                     ->toArray();
+                        ->transform(function ($keyword) {
+                            return trim(strtolower($keyword));
+                        })
+                        ->filter()
+                        ->unique()
+                        ->values()
+                        ->toArray();
 
                     return $problem;
                 });

@@ -128,8 +128,8 @@ class ActivityController extends Controller
             ->where('patient_id', $patientId)
             ->where(function ($q) {
                 $q->where('logged_from', 'activity')
-                          ->Orwhere('logged_from', 'manual_input')
-                          ->Orwhere('logged_from', 'pagetimer');
+                    ->Orwhere('logged_from', 'manual_input')
+                    ->Orwhere('logged_from', 'pagetimer');
             })
             ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
             ->orderBy('created_at', 'desc')

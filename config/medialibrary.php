@@ -1,35 +1,34 @@
 <?php
 
-return [
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
+return [
     /*
      * The disk on which to store added files and derived images by default. Choose
      * one or more of the disks you've configured in config/filesystems.php.
      */
-    'disk_name'                   => 'media',
+    'disk_name' => 'media',
 
     /*
      * The maximum file size of an item in bytes.
      * Adding a larger file will result in an exception.
      */
-    'max_file_size'               => 1024 * 1024 * 35,
+    'max_file_size' => 1024 * 1024 * 35,
 
     /*
      * This queue will be used to generate derived and responsive images.
      * Leave empty to use the default queue.
      */
-    'queue_name'                  => '',
+    'queue_name' => '',
 
-    /*
-     * The fully qualified class name of the media model.
-     */
-    'media_model'                 => App\Media::class,
+    // The fully qualified class name of the media model.
+    'media_model' => App\Media::class,
 
     's3' => [
-        /*
-         * The domain that should be prepended when generating urls.
-         */
-        'domain' => 'https://' . env('S3_CPM_STORAGE_BUCKET_NAME') . '.s3.amazonaws.com',
+        // The domain that should be prepended when generating urls.
+        'domain' => 'https://'.env('S3_CPM_STORAGE_BUCKET_NAME').'.s3.amazonaws.com',
     ],
 
     'remote' => [
@@ -46,8 +45,7 @@ return [
         ],
     ],
 
-    'responsive_images'        => [
-
+    'responsive_images' => [
         /*
         * This class is responsible for calculating the target widths of the responsive
         * images. By default we optimize for filesize and create variations that each are 20%
@@ -55,13 +53,13 @@ return [
         *
         * https://docs.spatie.be/laravel-medialibrary/v7/advanced-usage/generating-responsive-images
         */
-        'width_calculator'           => Spatie\MediaLibrary\ResponsiveImages\WidthCalculator\FileSizeOptimizedWidthCalculator::class,
+        'width_calculator' => Spatie\MediaLibrary\ResponsiveImages\WidthCalculator\FileSizeOptimizedWidthCalculator::class,
 
         /*
          * By default rendering media to a responsive image will add some javascript and a tiny placeholder.
          * This ensures that the browser can already determine the correct layout.
          */
-        'use_tiny_placeholders'      => true,
+        'use_tiny_placeholders' => true,
 
         /*
          * This class will generate the tiny placeholder used for progressive image loading. By default
@@ -74,44 +72,40 @@ return [
      * When urls to files get generated, this class will be called. Leave empty
      * if your files are stored locally above the site root or on s3.
      */
-    'url_generator'            => App\MediaLibrary\CPMURLGenerator::class,
+    'url_generator' => App\MediaLibrary\CPMURLGenerator::class,
 
-    /*
-     * The class that contains the strategy for determining a media file's path.
-     */
-    'path_generator'           => null,
+    // The class that contains the strategy for determining a media file's path.
+    'path_generator' => null,
 
     /*
      * Medialibrary will try to optimize all converted images by removing
      * metadata and applying a little bit of compression. These are
      * the optimizers that will be used by default.
      */
-    'image_optimizers'         => [
+    'image_optimizers' => [
         Spatie\ImageOptimizer\Optimizers\Jpegoptim::class => [
             '--strip-all', // this strips out all text information such as comments and EXIF data
             '--all-progressive', // this will make sure the resulting image is a progressive one
         ],
-        Spatie\ImageOptimizer\Optimizers\Pngquant::class  => [
+        Spatie\ImageOptimizer\Optimizers\Pngquant::class => [
             '--force', // required parameter for this package
         ],
-        Spatie\ImageOptimizer\Optimizers\Optipng::class   => [
+        Spatie\ImageOptimizer\Optimizers\Optipng::class => [
             '-i0', // this will result in a non-interlaced, progressive scanned image
             '-o2', // this set the optimization level to two (multiple IDAT compression trials)
             '-quiet', // required parameter for this package
         ],
-        Spatie\ImageOptimizer\Optimizers\Svgo::class      => [
+        Spatie\ImageOptimizer\Optimizers\Svgo::class => [
             '--disable=cleanupIDs', // disabling because it is known to cause troubles
         ],
-        Spatie\ImageOptimizer\Optimizers\Gifsicle::class  => [
+        Spatie\ImageOptimizer\Optimizers\Gifsicle::class => [
             '-b', // required parameter for this package
             '-O3', // this produces the slowest but best results
         ],
     ],
 
-    /*
-     * These generators will be used to create an image of media files.
-     */
-    'image_generators'         => [
+    // These generators will be used to create an image of media files.
+    'image_generators' => [
         Spatie\MediaLibrary\ImageGenerators\FileTypes\Image::class,
         Spatie\MediaLibrary\ImageGenerators\FileTypes\Webp::class,
         Spatie\MediaLibrary\ImageGenerators\FileTypes\Pdf::class,
@@ -123,15 +117,15 @@ return [
      * The engine that should perform the image conversions.
      * Should be either `gd` or `imagick`.
      */
-    'image_driver'             => 'gd',
+    'image_driver' => 'gd',
 
     /*
      * FFMPEG & FFProbe binaries paths, only used if you try to generate video
      * thumbnails and have installed the php-ffmpeg/php-ffmpeg composer
      * dependency.
      */
-    'ffmpeg_path'              => env('FFMPEG_PATH', '/usr/bin/ffmpeg'),
-    'ffprobe_path'             => env('FFPROBE_PATH', '/usr/bin/ffprobe'),
+    'ffmpeg_path'  => env('FFMPEG_PATH', '/usr/bin/ffmpeg'),
+    'ffprobe_path' => env('FFPROBE_PATH', '/usr/bin/ffprobe'),
 
     /*
      * The path where to store temporary files while performing image conversions.
@@ -143,7 +137,7 @@ return [
      * Here you can override the class names of the jobs used by this package. Make sure
      * your custom jobs extend the ones provided by the package.
      */
-    'jobs'                     => [
+    'jobs' => [
         'perform_conversions'        => Spatie\MediaLibrary\Jobs\PerformConversions::class,
         'generate_responsive_images' => Spatie\MediaLibrary\Jobs\GenerateResponsiveImages::class,
     ],

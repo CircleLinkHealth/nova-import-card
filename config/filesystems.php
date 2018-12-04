@@ -1,7 +1,10 @@
 <?php
 
-return [
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
+return [
     /*
     |--------------------------------------------------------------------------
     | Default Filesystem Disk
@@ -40,7 +43,6 @@ return [
     */
 
     'disks' => [
-
         'google' => [
             'driver'       => 'google',
             'clientId'     => env('GOOGLE_DRIVE_CLIENT_ID'),
@@ -50,7 +52,7 @@ return [
         ],
 
         //The directory where Practices deposit CCDAs on the Worker environment
-        'ccdas'  => [
+        'ccdas' => [
             'driver' => 'local',
             'root'   => env('CCDA_DROPBOX_PATH') ?? null,
         ],
@@ -76,7 +78,7 @@ return [
         'public' => [
             'driver'     => 'local',
             'root'       => storage_path('app/public'),
-            'url'        => env('OPCACHE_URL') . '/storage',
+            'url'        => env('OPCACHE_URL').'/storage',
             'visibility' => 'public',
         ],
 
@@ -115,5 +117,4 @@ return [
             'root'   => 'backup',
         ],
     ],
-
 ];

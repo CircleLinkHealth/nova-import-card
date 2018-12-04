@@ -212,14 +212,14 @@ class EnrollmentStatsController extends Controller
             $data[$practice->id]['name'] = $practice->display_name;
 
             $data[$practice->id]['unique_patients_called'] = Enrollee::where('practice_id', $practice->id)
-                    ->where('last_attempt_at', '>=', $start)
-                    ->where('last_attempt_at', '<=', $end)
-                    ->where(function ($q) {
-                        $q->where('status', 'utc')
-                                ->orWhere('status', 'consented')
-                                ->orWhere('status', 'rejected');
-                    })
-                    ->count();
+                ->where('last_attempt_at', '>=', $start)
+                ->where('last_attempt_at', '<=', $end)
+                ->where(function ($q) {
+                    $q->where('status', 'utc')
+                        ->orWhere('status', 'consented')
+                        ->orWhere('status', 'rejected');
+                })
+                ->count();
 
             $data[$practice->id]['consented'] = Enrollee
                 ::where('practice_id', $practice->id)

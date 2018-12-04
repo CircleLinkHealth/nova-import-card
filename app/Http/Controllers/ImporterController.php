@@ -59,8 +59,8 @@ class ImporterController extends Controller
                     ['last_name', '!=', null],
                     ['ml_ignore', '=', false],
                 ])->get()->unique(function ($m) {
-                        return $m->first_name.$m->last_name;
-                    });
+                    return $m->first_name.$m->last_name;
+                });
 
                 if ($providers->count() > 1 || !$mr->location_id || !$mr->location_id || !$mr->billing_provider_id) {
                     $summary['flag'] = true;

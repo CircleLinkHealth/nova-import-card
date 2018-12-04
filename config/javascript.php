@@ -1,7 +1,10 @@
 <?php
 
-return [
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
+return [
     /*
     |--------------------------------------------------------------------------
     | View to Bind JavaScript Vars To
@@ -25,6 +28,5 @@ return [
     | That way, you can access vars, like "SomeNamespace.someVariable."
     |
     */
-    'js_namespace' => 'cpm'
-
+    'js_namespace' => 'cpm',
 ];

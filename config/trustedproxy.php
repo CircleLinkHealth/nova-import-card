@@ -1,7 +1,10 @@
 <?php
 
-return [
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
+return [
     /*
      * Set trusted proxy IP addresses.
      *
@@ -34,13 +37,13 @@ return [
      * Or, to trust all proxies that connect
      * directly to your server, uncomment this:
      */
-    # 'proxies' => '*',
+    // 'proxies' => '*',
 
     /*
      * Or, to trust ALL proxies, including those that
      * are in a chain of forwarding, uncomment this:
     */
-    # 'proxies' => '**',
+    // 'proxies' => '**',
 
     /*
      * Default Header Names

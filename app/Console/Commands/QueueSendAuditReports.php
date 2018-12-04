@@ -50,14 +50,14 @@ class QueueSendAuditReports extends Command
             ->with('primaryPractice.settings')
             ->whereHas('primaryPractice', function ($query) {
                 $query->where('active', '=', true)
-                                ->whereHas('settings', function ($query) {
-                                    $query->where('dm_audit_reports', '=', true)
-                                          ->orWhere('efax_audit_reports', '=', true);
-                                });
+                    ->whereHas('settings', function ($query) {
+                        $query->where('dm_audit_reports', '=', true)
+                            ->orWhere('efax_audit_reports', '=', true);
+                    });
             })
             ->whereHas('patientSummaries', function ($query) use ($date) {
                 $query->where('total_time', '>', 0)
-                                ->where('month_year', $date->toDateString());
+                    ->where('month_year', $date->toDateString());
             })
             ->get();
 

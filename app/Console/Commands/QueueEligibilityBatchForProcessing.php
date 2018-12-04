@@ -272,7 +272,7 @@ class QueueEligibilityBatchForProcessing extends Command
                         $batch
                     ))->onQueue('low'),
                 ])->dispatch($ccda->id)
-                                   ->onQueue('low');
+                    ->onQueue('low');
 
                 return $ccda;
             });

@@ -49,7 +49,7 @@ class ResetCcmTime extends Command
             ->chunk(200, function ($patients) {
                 foreach ($patients as $patient) {
                     $summary = PatientMonthlySummary::where('patient_id', '=', $patient->user_id)
-                           ->orderBy('id', 'desc')->first();
+                        ->orderBy('id', 'desc')->first();
 
                     //if we have already summary for this month, then we skip this
                     if ($summary && Carbon::today()->isSameMonth($summary->month_year)) {

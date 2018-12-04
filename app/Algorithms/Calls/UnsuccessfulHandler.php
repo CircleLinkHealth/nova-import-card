@@ -129,7 +129,8 @@ class UnsuccessfulHandler implements CallHandler
                 $this->logic = 'Next Day';
 
                 return $this->nextCallDate->addDay();
-            } elseif (3 == $week) { //second last week of month
+            }
+            if (3 == $week) { //second last week of month
                 if ($successfulCallsThisMonth > 0) { //If there was a successful call this month...
                     $this->logic = 'Add one week';
 
@@ -165,7 +166,8 @@ class UnsuccessfulHandler implements CallHandler
                 $this->logic = 'Next window';
 
                 return $this->nextCallDate;
-            } elseif (4 == $week) {
+            }
+            if (4 == $week) {
                 if ($successfulCallsThisMonth > 0) {
                     $this->logic       = 'This Case Is Tricky, need to call this person on a Saturday or closest contact window';
                     $this->attemptNote = 'Call This Weekend';
@@ -175,7 +177,8 @@ class UnsuccessfulHandler implements CallHandler
                 $this->logic = 'Next window';
 
                 return $this->nextCallDate;
-            } elseif (5 == $week) { //last-ish week of month
+            }
+            if (5 == $week) { //last-ish week of month
                 $this->logic = 'Less than 17, tomorrow. ';
 
                 return $this->nextCallDate->addDay(1);
@@ -202,7 +205,8 @@ class UnsuccessfulHandler implements CallHandler
                 $this->logic = 'Next Week';
 
                 return $this->nextCallDate->addWeek(1);
-            } elseif (3 == $week) {
+            }
+            if (3 == $week) {
                 if ($successfulCallsThisMonth > 0) { //If there was a successful call this month...
                     $this->logic       = 'This Case Is Tricky, need to call this person on a Saturday';
                     $this->attemptNote = 'Call This Weekend';
@@ -212,7 +216,8 @@ class UnsuccessfulHandler implements CallHandler
                 $this->logic = 'Next window';
 
                 return $this->nextCallDate->addDay(1);
-            } elseif (4 == $week || 5 == $week) {
+            }
+            if (4 == $week || 5 == $week) {
                 $this->logic = 'Next window';
 
                 return $this->nextCallDate->addDay(1);

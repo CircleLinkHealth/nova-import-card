@@ -219,16 +219,16 @@ class NurseController extends Controller
             ->ofType('care-center')
             ->whereHas('activitiesAsProvider', function ($a) use ($fromDate, $toDate) {
                 $a->where('performed_at', '>=', $fromDate)
-                              ->where('performed_at', '<=', $toDate);
+                    ->where('performed_at', '<=', $toDate);
             })
             ->chunk(50, function ($nurses) use (&$rows, $fromDate, $toDate) {
                 foreach ($nurses as $nurse) {
                     $seconds = Activity::where('provider_id', $nurse->id)
-                                  ->where(function ($q) use ($fromDate, $toDate) {
-                                      $q->where('performed_at', '>=', $fromDate)
-                                                         ->where('performed_at', '<=', $toDate);
-                                  })
-                                  ->sum('duration');
+                        ->where(function ($q) use ($fromDate, $toDate) {
+                            $q->where('performed_at', '>=', $fromDate)
+                                ->where('performed_at', '<=', $toDate);
+                        })
+                        ->sum('duration');
 
                     if (0 == $seconds) {
                         continue;

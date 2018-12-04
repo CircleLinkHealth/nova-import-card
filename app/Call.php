@@ -167,7 +167,7 @@ class Call extends BaseModel
         })
             ->where(function ($q) use ($user, $d) {
                 $q->where('outbound_cpm_id', $user->id)
-                             ->orWhere('inbound_cpm_id', $user->id);
+                    ->orWhere('inbound_cpm_id', $user->id);
             })
             ->where('called_date', '>=', $d->startOfMonth()->toDateTimeString())
             ->where('called_date', '<=', $d->endOfMonth()->toDateTimeString())

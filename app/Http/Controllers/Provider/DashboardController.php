@@ -64,8 +64,8 @@ class DashboardController extends Controller
         $allChargeableServices = ChargeableService::all()
             ->map(function ($service) use ($practiceChargeableRel) {
                 $existing = $practiceChargeableRel
-                                                          ->where('id', '=', $service->id)
-                                                          ->first();
+                    ->where('id', '=', $service->id)
+                    ->first();
 
                 $service->is_on = false;
 
@@ -345,7 +345,7 @@ class DashboardController extends Controller
          * " (double quote) becomes &quot;
          * ' (single quote) becomes &#039;
          * < (less than) becomes &lt;
-         * > (greater than) becomes &gt;
+         * > (greater than) becomes &gt;.
          */
         $pattern = ['/&amp;/', '/&quot;/', '/&#039;/', '/&lt;/', '/&gt;/'];
 

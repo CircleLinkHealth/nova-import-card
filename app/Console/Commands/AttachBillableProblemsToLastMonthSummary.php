@@ -52,10 +52,10 @@ class AttachBillableProblemsToLastMonthSummary extends Command
             ->get()
             ->map(function ($practice) use ($month) {
                 $this->billablePatientsRepo->billablePatients($practice->id, $month)
-                        ->get()
-                        ->map(function ($u) {
-                            AttachBillableProblemsToSummary::dispatch($u->patientSummaries->first());
-                        });
+                    ->get()
+                    ->map(function ($u) {
+                        AttachBillableProblemsToSummary::dispatch($u->patientSummaries->first());
+                    });
             });
     }
 }

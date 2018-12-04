@@ -166,7 +166,8 @@ class SuccessfulHandler implements CallHandler
                 $this->logic = 'Call patient in the last week of the month';
 
                 return $this->nextCallDate->endOfMonth()->subWeek(1);
-            } elseif (3 == $week || 4 == $week) { //second last week of month
+            }
+            if (3 == $week || 4 == $week) { //second last week of month
                 if ($once_monthly) {
                     $this->logic = 'Add three weeks,1x preference override';
 
@@ -175,7 +176,8 @@ class SuccessfulHandler implements CallHandler
                 $this->logic = 'First week of next month, [but at least 7 days in future]';
 
                 return $this->nextCallDate->addMonth(1)->startOfMonth()->addDays(3);
-            } elseif (5 == $week) { //last-ish week of month
+            }
+            if (5 == $week) { //last-ish week of month
                 $this->logic = 'Call patient after two weeks';
 
                 return $this->nextCallDate->addWeek(2);
@@ -201,7 +203,8 @@ class SuccessfulHandler implements CallHandler
                 $this->logic = 'Less than 17, add week. ';
 
                 return $this->nextCallDate->addWeek(1);
-            } elseif (5 == $week) { //last few days of month
+            }
+            if (5 == $week) { //last few days of month
                 if ($ccmTime > 1020) {
                     $this->logic       = 'Greater than 17 mins, same day, add attempt note';
                     $this->attemptNote = 'Please review careplan';

@@ -176,7 +176,7 @@ class CarePlan extends BaseModel implements PdfReport
                                             $user
                                         ) {
                         $q->where('member_user_id', '=', $user->id)
-                                                ->where('type', '=', CarePerson::BILLING_PROVIDER);
+                            ->where('type', '=', CarePerson::BILLING_PROVIDER);
                     })
                     ->count();
             }

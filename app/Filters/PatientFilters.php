@@ -62,7 +62,7 @@ class PatientFilters extends QueryFilters
             })
                 ->orWhere(function ($subQuery) use ($date) {
                     $subQuery->where('ccm_status', Patient::UNREACHABLE)
-                          ->where('date_unreachable', 'LIKE', "%${date}%");
+                        ->where('date_unreachable', 'LIKE', "%${date}%");
                 })
                 ->orWhere(
                       function ($subQuery) use ($date) {

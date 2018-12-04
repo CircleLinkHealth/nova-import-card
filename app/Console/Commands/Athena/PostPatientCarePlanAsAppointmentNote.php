@@ -63,8 +63,8 @@ class PostPatientCarePlanAsAppointmentNote extends Command
                 $link = route('patient.careplan.print', ['patientId' => $c->user_id]);
 
                 $practiceId = $c->patient
-                                    ->primaryPractice
-                                    ->external_id;
+                    ->primaryPractice
+                    ->external_id;
 
                 $appointments = $this->api->getPatientAppointments(
                                     $practiceId,

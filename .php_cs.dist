@@ -4,12 +4,18 @@ $header = <<<'EOF'
 This file is part of CarePlan Manager by CircleLink Health.
 EOF;
 
-$finder = PhpCsFixer\Finder::create()
-    ->exclude(['vendor','supervisor','storage','scripts','resources','public','node_modules','docs','coverage','bower_components','bin','.circleci','.vscode','.ppm'])
-    ->in(__DIR__);
+$finders = PhpCsFixer\Finder::create()
+    ->in([
+        __DIR__."/app",
+        __DIR__."/bootstrap",
+        __DIR__."/config",
+        __DIR__."/database",
+        __DIR__."/routes",
+        __DIR__."/tests"
+    ]);
 
 $config = PhpCsFixer\Config::create()
-    ->setRiskyAllowed(true)
+    ->setRiskyAllowed(false)
     ->setRules([
         '@Symfony' => true,
         '@PSR1' => true,
@@ -21,8 +27,6 @@ $config = PhpCsFixer\Config::create()
         'combine_consecutive_issets' => true,
         'combine_consecutive_unsets' => true,
         'compact_nullable_typehint' => true,
-        'escape_implicit_backslashes' => true,
-        'explicit_string_variable' => true,
         'fully_qualified_strict_types' => true,
         'header_comment' => ['header' => $header],
         'list_syntax' => ['syntax' => 'short'],
@@ -61,7 +65,7 @@ $config = PhpCsFixer\Config::create()
         'single_line_comment_style' => true,
         'yoda_style' => true,
     ])
-    ->setFinder($finder)
+    ->setFinder($finders)
 ;
 
 // special handling of fabbot.io service if it's using too old PHP CS Fixer version

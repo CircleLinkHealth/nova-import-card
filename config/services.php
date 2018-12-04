@@ -1,7 +1,10 @@
 <?php
 
-return [
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
+return [
     /*
     |--------------------------------------------------------------------------
     | Third Party Services
@@ -55,7 +58,7 @@ return [
     ],
 
     'no-call-mode' => [
-        'env' => ! in_array(env('APP_ENV'), ['local', 'staging']),
+        'env' => !in_array(env('APP_ENV'), ['local', 'staging']),
     ],
 
     'emr-direct' => [

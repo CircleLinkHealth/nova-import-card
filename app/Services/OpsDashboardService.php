@@ -392,8 +392,8 @@ class OpsDashboardService
         ])
             ->whereHas('patientInfo', function ($patient) use ($fromDate, $toDate) {
                 $patient->ccmStatus(Patient::PAUSED)
-                                ->where('date_paused', '>=', $fromDate)
-                                ->where('date_paused', '<=', $toDate);
+                    ->where('date_paused', '>=', $fromDate)
+                    ->where('date_paused', '<=', $toDate);
             })
             ->get();
 

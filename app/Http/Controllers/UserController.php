@@ -532,7 +532,6 @@ class UserController extends Controller
     /**
      * Scramble user(s).
      *
-     *
      * @param mixed $userIds
      *
      * @return bool

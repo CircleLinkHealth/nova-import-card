@@ -93,9 +93,9 @@ class PracticeController extends Controller
                               ? $info->states
                               : new Collection()
                           )
-                              ->map(function ($state) {
-                                  return $state->code;
-                              });
+                    ->map(function ($state) {
+                        return $state->code;
+                    });
 
                 if ($nurse->state && !$states->contains($nurse->state)) {
                     $states->push($nurse->state);

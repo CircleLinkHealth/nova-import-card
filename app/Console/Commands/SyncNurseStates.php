@@ -54,25 +54,25 @@ class SyncNurseStates extends Command
                 }
 
                 $practices = $user
-                     ->practices;
+                    ->practices;
 
                 if (!$practices) {
                     return false;
                 }
 
                 $stateIDs = $practices
-                     ->map(function ($p) use ($states) {
-                         return $p->locations
-                             ->map(function ($l) use ($states) {
-                                 return $states[$l->state];
-                             });
-                     })
-                     ->flatten()
-                     ->unique()
-                     ->all();
+                    ->map(function ($p) use ($states) {
+                        return $p->locations
+                            ->map(function ($l) use ($states) {
+                                return $states[$l->state];
+                            });
+                    })
+                    ->flatten()
+                    ->unique()
+                    ->all();
 
                 $n->states()
-                     ->syncWithoutDetaching($stateIDs);
+                    ->syncWithoutDetaching($stateIDs);
             });
     }
 }
