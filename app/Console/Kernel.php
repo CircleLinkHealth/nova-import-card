@@ -140,10 +140,11 @@ class Kernel extends ConsoleKernel
                  ->everyThirtyMinutes()
                  ->withoutOverlapping();
 
-        if (app()->environment('worker')) {
-            $schedule->command(CleanupCommand::class)->daily()->at('01:00');
-            $schedule->command(BackupCommand::class)->daily()->at('02:00');
-        }
+//        Disable backup till we fix the issue of it not running
+//        if (app()->environment('worker')) {
+//            $schedule->command(CleanupCommand::class)->daily()->at('01:00');
+//            $schedule->command(BackupCommand::class)->daily()->at('02:00');
+//        }
     }
 
     /**

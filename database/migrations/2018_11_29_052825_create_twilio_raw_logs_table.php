@@ -19,6 +19,7 @@ class CreateTwilioRawLogsTable extends Migration
             $table->string('application_sid')->nullable();
             $table->string('account_sid')->nullable();
             $table->string('call_status')->nullable();
+            $table->string('type')->nullable();
             $table->json('log')->nullable();
             $table->timestamps();
         });

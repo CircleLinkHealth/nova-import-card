@@ -4,7 +4,6 @@ namespace Tests\Unit\CallsAlgo;
 
 use App\Algorithms\Calls\CallAlgoHelper;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
 
@@ -19,8 +18,7 @@ class NurseMatchTest extends TestCase
     private $prediction = [];
     private $matchArray = [];
 
-    use DatabaseTransactions,
-        UserHelpers,
+    use UserHelpers,
         CallAlgoHelper;
 
     public function testNursesMatchTest()

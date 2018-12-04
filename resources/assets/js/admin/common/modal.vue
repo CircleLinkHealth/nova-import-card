@@ -59,7 +59,11 @@
             okText: String,
             onCancel: Function,
             noWrapperClose: Boolean,
-            isVisible: Boolean
+            isVisible: Boolean,
+            closeOnEsc: {
+                type: Boolean,
+                default: true
+            }
         },
         data() {
             return {
@@ -98,9 +102,18 @@
                 this.body = opts.body || ''
                 this.footer = opts.footer || ''
                 this.visible = true
+            },
+            listenOnEscKey(e) {
+                if (e.key === 'Escape') {
+                    this.cancel();
+                }
             }
         },
         mounted() {
+
+            if (this.closeOnEsc) {
+                $(document).bind('keyup.modal', this.listenOnEscKey);
+            }
 
             Event.$on(`modal${this.name ? '-' + this.name : ''}:show`, (opts) => {
                 this.show(opts);
@@ -110,7 +123,13 @@
                 this.close();
             });
 
+        },
+        destroyed() {
+            if (this.closeOnEsc) {
+                $(document).unbind('keyup.modal');
+            }
         }
+
     }
 </script>
 

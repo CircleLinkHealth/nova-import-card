@@ -16,5 +16,5 @@ class TwilioRawLog extends BaseModel
 {
     protected $table = 'twilio_raw_logs';
 
-    protected $fillable = ['call_sid', 'application_sid', 'account_sid', 'call_status', 'log'];
+    protected $fillable = ['call_sid', 'call_status', 'application_sid', 'account_sid', 'log', 'type'];
 }

@@ -13,6 +13,9 @@ class AthenaApiCallsTest extends TestCase
 {
     use WithFaker;
 
+    /**
+     * @var Calls
+     */
     private $api;
     private $athenaPatientId;
     private $fakePatient;

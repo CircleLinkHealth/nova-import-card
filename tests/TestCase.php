@@ -2,13 +2,44 @@
 
 namespace Tests;
 
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Artisan;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
-    use CreatesApplication,
-        DatabaseMigrations,
-        DatabaseTransactions;
+    use CreatesApplication, RefreshDatabase;
+
+    public function refreshDatabase()
+    {
+        if ($this->usingInMemoryDatabase()) {
+            $this->refreshInMemoryDatabase();
+
+            $this->seedDatabase();
+
+            return;
+        }
+
+        /**
+         * Uncomment below to refresh and seed a conventional database
+         *
+         * NOTE: If you're using paratest to run the test suite, and mysql, leave below commented out.
+         */
+//        $this->refreshTestDatabase();
+//        $this->seedDatabase();
+
+        //Since we have commented out $this->refreshTestDatabase()
+        //Adding this to rollback transactions at the end of each test
+        $this->beginDatabaseTransaction();
+
+    }
+
+    public function seedDatabase()
+    {
+        Artisan::call('db:seed');
+
+        Artisan::call('db:seed', [
+            '--class' => 'TestSuiteSeeder'
+        ]);
+    }
 }

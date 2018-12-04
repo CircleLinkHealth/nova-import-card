@@ -102,7 +102,13 @@ class QueueEligibilityBatchForProcessing extends Command
      */
     private function queueSingleCsvJobs(EligibilityBatch $batch): EligibilityBatch
     {
-        $result = $this->processEligibilityService->processCsvForEligibility($batch);
+        $result = null;
+
+        if (array_key_exists('patientList', $batch->options)) {
+            $result = $this->processEligibilityService->processCsvForEligibility($batch);
+        } elseif (array_keys_exist(['folder', 'fileName'], $batch->options)) {
+            $result = $this->processEligibilityService->processGoogleDriveCsvForEligibility($batch);
+        }
 
         if ($result) {
             $batch->status = EligibilityBatch::STATUSES['processing'];
@@ -263,10 +269,19 @@ class QueueEligibilityBatchForProcessing extends Command
     {
         $driveFolder   = $batch->options['folder'];
         $driveFileName = $batch->options['fileName'];
+        $driveFilePath = $batch->options['filePath'] ?? null;
 
         $driveHandler = new GoogleDrive();
-        $stream       = $driveHandler
-            ->getFileStream($driveFileName, $driveFolder);
+        try {
+            $stream = $driveHandler
+                ->getFileStream($driveFileName, $driveFolder);
+        } catch (\Exception $e) {
+            \Log::debug("EXCEPTION `{$e->getMessage()}`");
+            $batch->status = 2;
+            $batch->save();
+            return null;
+        }
+
 
         $localDisk = Storage::disk('local');
 
@@ -302,6 +317,11 @@ class QueueEligibilityBatchForProcessing extends Command
             $options['finishedReadingFile'] = true;
             $batch->options                 = $options;
             $batch->save();
+
+            $initiator = $batch->initiatorUser()->firstOrFail();
+            if ($initiator->hasRole('ehr-report-writer') && $initiator->ehrReportWriterInfo) {
+                Storage::drive('google')->move($driveFilePath, "{$driveFolder}/processed_{$driveFileName}");
+            }
 
             return $batch;
         } catch (\Exception $e) {

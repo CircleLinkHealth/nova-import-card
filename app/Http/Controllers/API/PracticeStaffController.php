@@ -43,9 +43,9 @@ class PracticeStaffController extends Controller
                              ->sortBy('first_name')
                              ->values();
 
-        if ( ! auth()->user()->hasRole('administrator')) {
+        if ( ! auth()->user()->isAdmin()) {
             $practiceUsers->reject(function ($user) {
-                return $user->hasRole('administrator');
+                return $user->isAdmin();
             })
                           ->values();
         }

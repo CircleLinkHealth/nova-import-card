@@ -27,6 +27,8 @@ class TwilioCall extends BaseModel
     protected $table = 'twilio_calls';
 
     protected $fillable = [
+        'application_sid',
+        'account_sid',
         'call_sid',
         'call_status',
         'from',
@@ -39,5 +41,8 @@ class TwilioCall extends BaseModel
         'recording_duration',
         'recording_url',
         'sequence_number',
+        'dial_call_sid',
+        'dial_call_duration',
+        'dial_call_status'
     ];
 }

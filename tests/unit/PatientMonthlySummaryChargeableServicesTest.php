@@ -2,26 +2,23 @@
 
 namespace Tests\Unit;
 
-use App\Practice;
-use App\Services\ApproveBillablePatientsService;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Tests\Helpers\UserHelpers;
-use Tests\TestCase;
-use Carbon\Carbon;
 use App\Http\Resources\ApprovableBillablePatient;
 use App\Models\CCD\Problem;
 use App\PatientMonthlySummary;
+use App\Practice;
+use App\Services\ApproveBillablePatientsService;
 use App\User;
+use Carbon\Carbon;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Collection;
-
+use Tests\Helpers\UserHelpers;
+use Tests\TestCase;
 
 
 class PatientMonthlySummaryChargeableServicesTest extends TestCase
 {
-    use DatabaseTransactions,
-        UserHelpers,
+    use UserHelpers,
         WithoutMiddleware,
         WithFaker;
 
@@ -38,14 +35,14 @@ class PatientMonthlySummaryChargeableServicesTest extends TestCase
     public function test_it_updates_practice_default_service()
     {
         $practice = $this->practice;
-        $date = Carbon::parse($this->monthYear)->format('M, Y');
+        $date     = Carbon::parse($this->monthYear)->format('M, Y');
 
         $response = $this->json('POST', route('monthly.billing.practice.services'), [
             'month_year'      => $this->monthYear,
             'practice_id'     => $practice->id,
             'default_code_id' => 1,
-            'date'          => $date,
-        ],['X-Requested-With' => 'XMLHttpRequest']);
+            'date'            => $date,
+        ], ['X-Requested-With' => 'XMLHttpRequest']);
 
         $response->assertStatus(200);
 
@@ -68,11 +65,10 @@ class PatientMonthlySummaryChargeableServicesTest extends TestCase
                 'practice_id'                 => $practice->id,
                 'patient_id'                  => $patient->id,
                 'patient_chargeable_services' => $services,
-                'report_id'     => $this->summary->id,
+                'report_id'                   => $this->summary->id,
             ], ['X-Requested-With' => 'XMLHttpRequest']);
 
         $response->assertStatus(200);
-
 
 
     }
@@ -91,7 +87,7 @@ class PatientMonthlySummaryChargeableServicesTest extends TestCase
         return $patient->patientSummaries()->updateOrCreate([
             'month_year' => $monthYear->startOfMonth(),
         ],
-            ['ccm_time'   => $ccmTime,]);
+            ['ccm_time' => $ccmTime,]);
     }
 
     /**
@@ -129,14 +125,15 @@ class PatientMonthlySummaryChargeableServicesTest extends TestCase
 
         $this->assertTrue($this->patient->ccdProblems()->whereBillable(true)->count() == 2);
     }
+
     protected function setUp()
     {
         parent::setUp();
 
-        $this->practice = factory(Practice::class)->create();
-        $this->patient  = $this->createUser($this->practice->id, 'participant');
-        $this->service  = app(ApproveBillablePatientsService::class);
-        $this->summary  = $this->createMonthlySummary($this->patient, Carbon::now(), 1400);
+        $this->practice  = factory(Practice::class)->create();
+        $this->patient   = $this->createUser($this->practice->id, 'participant');
+        $this->service   = app(ApproveBillablePatientsService::class);
+        $this->summary   = $this->createMonthlySummary($this->patient, Carbon::now(), 1400);
         $this->monthYear = Carbon::now()->startOfMonth()->toDateString();
     }
 }

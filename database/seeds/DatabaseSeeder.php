@@ -5,7 +5,6 @@ use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-
     /**
      * Run the database seeds.
      *
@@ -15,39 +14,12 @@ class DatabaseSeeder extends Seeder
     {
         Model::unguard();
 
-        /*
-		$this->call('database\seeds\UserTableSeeder');
-		$this->command->info('User table seeded!');
-
-		$this->call('database\seeds\ActivityTableSeeder');
-		$this->command->info('Activity table seeded!');
-
-		$this->call('database\seeds\LocationTableSeeder');
-		$this->command->info('Location table seeded!');
-
-		$this->call('database\seeds\UserProgramSeeder');
-		$this->command->info('User table program ids seeded!');
-		*/
-
-        // ObservationsCommentsSeeder, kg 2015/9/24
-        // S20150929SymItems, kg 2015/9/28
-//	    $this->call('SnomedToIcd10MapTableSeeder');
-//		$this->command->info('SnomedToIcd10MapTableSeeder success!');
-
-//      $this->call('CcdImportRoutinesStrategiesTableSeeder');
-//      $this->call('CcdImportRoutinesTableSeeder');
-//      $this->call('CcdVendorsTableSeeder');
-//      $this->call('CpmProblemsTableSeeder');
-
-        $limit = ini_get('memory_limit'); // retrieve the set limit
-        ini_set('memory_limit', '512M');
-
         $this->call(AppConfigTableSeeder::class);
         $this->call(CpmProblemsTableSeeder::class);
         $this->call(AddNewDefaultCarePlanTemplate::class);
         $this->call(RequiredRolesPermissionsSeeder::class);
         $this->call(ChargeableServiceSeeder::class);
-
-        ini_set('memory_limit', $limit);
+        $this->call(ProblemCodeSystemsSeeder::class);
+        $this->call(SnomedToIcd9TestMapTableSeeder::class);
     }
 }
