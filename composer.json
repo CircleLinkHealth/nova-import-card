@@ -141,7 +141,7 @@
       "php artisan config:clear && php artisan db:test && php artisan migrate:fresh && php artisan migrate && php artisan db:seed && php artisan db:seed --class=TestSuiteSeeder"
     ],
     "test": [
-      "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner WrapperRunner -p4"
+      "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner WrapperRunner -p8"
     ],
     "test-sqlite": [
       "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner SqliteRunner -p8"

@@ -50,7 +50,8 @@
         <env name="SESSION_DRIVER" value="array"/>
         <env name="QUEUE_DRIVER" value="sync"/>
 
-        <env name="DB_CONNECTION" value="sqlite" />
+        <env name="DB_CONNECTION" value="test_suite"/>
+        <!--<env name="DB_CONNECTION" value="sqlite" />-->
         <env name="MAIL_DRIVER" value="log"/>
 
         <env name="LADA_CACHE_ACTIVE" value="false"/>
