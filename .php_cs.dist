@@ -17,6 +17,7 @@ $config = PhpCsFixer\Config::create()
         'align_multiline_comment' => true,
         'array_indentation' => true,
         'array_syntax' => ['syntax' => 'short'],
+        'binary_operator_spaces' => ['operators' => ['=' => "align_single_space_minimal", '==' => "align_single_space_minimal", '===' => "align_single_space_minimal", '+=' => "align_single_space_minimal", '=>' => 'align_single_space_minimal', '|' => 'no_space']],
         'combine_consecutive_issets' => true,
         'combine_consecutive_unsets' => true,
         'compact_nullable_typehint' => true,
