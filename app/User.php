@@ -1996,45 +1996,44 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function patientsPendingApproval()
     {
-
-        $approveOwnCarePlans = $this->providerInfo ? $this->providerInfo->approve_own_care_plans : 0;
-
+        $approveOwnCarePlans = $this->providerInfo ? $this->providerInfo->approve_own_care_plans : false;
 
         return User::intersectPracticesWith($this)
-                   ->ofType('participant')
-                   ->whereHas('patientInfo')
-                   ->whereHas('carePlan', function ($q) {
-                       $q->whereIn('status', [CarePlan::QA_APPROVED]);
-                   })
-                   ->whereHas('careTeamMembers', function ($q)use ($approveOwnCarePlans) {
-                       $q->where([
-                           ['type', '=', CarePerson::BILLING_PROVIDER],
-                           ['member_user_id', '=', $this->id],
-                       ])
-                         ->when( ! $approveOwnCarePlans, function($q) use ($approveOwnCarePlans){
-                         $q->orWhere(function ($q) {
-                             $q->whereHas('user', function ($q) {
-                                 $q->whereHas('forwardAlertsTo', function ($q) {
-                                     $q->where('contactable_id', $this->id)
-                                       ->orWhereIn('name', [
-                                           'forward_careplan_approval_emails_instead_of_provider',
-                                           'forward_careplan_approval_emails_in_addition_to_provider',
-                                       ]);
-                                 });
-                             });
-                         });});
-                   })
-                   ->with('primaryPractice')
-                   ->with([
-                       'observations' => function ($query) {
-                           $query->where('obs_key', '!=', 'Outbound');
-                           $query->orderBy('obs_date', 'DESC');
-                           $query->first();
-                       },
-                       'phoneNumbers' => function ($q) {
-                           $q->where('type', '=', PhoneNumber::HOME);
-                       },
-                   ]);
+            ->ofType('participant')
+            ->whereHas('patientInfo')
+            ->whereHas('carePlan', function ($q) {
+                $q->whereIn('status', [CarePlan::QA_APPROVED]);
+            })
+            ->whereHas('careTeamMembers', function ($q) use ($approveOwnCarePlans) {
+                $q->where([
+                    ['type', '=', CarePerson::BILLING_PROVIDER],
+                    ['member_user_id', '=', $this->id],
+                ])
+                    ->when(!$approveOwnCarePlans, function ($q) use ($approveOwnCarePlans) {
+                        $q->orWhere(function ($q) {
+                            $q->whereHas('user', function ($q) {
+                                $q->whereHas('forwardAlertsTo', function ($q) {
+                                    $q->where('contactable_id', $this->id)
+                                        ->orWhereIn('name', [
+                                            'forward_careplan_approval_emails_instead_of_provider',
+                                            'forward_careplan_approval_emails_in_addition_to_provider',
+                                        ]);
+                                });
+                            });
+                        });
+                    });
+            })
+            ->with('primaryPractice')
+            ->with([
+                'observations' => function ($query) {
+                    $query->where('obs_key', '!=', 'Outbound');
+                    $query->orderBy('obs_date', 'DESC');
+                    $query->first();
+                },
+                'phoneNumbers' => function ($q) {
+                    $q->where('type', '=', PhoneNumber::HOME);
+                },
+            ]);
     }
 
     public function patientSummaries()

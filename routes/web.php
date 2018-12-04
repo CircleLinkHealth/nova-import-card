@@ -889,7 +889,6 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'patient.careplan.print',
         ])->middleware('permission:careplan.read');
 
-
         Route::get('view-careplan/assessment', [
             'uses' => 'ReportsController@makeAssessment',
             'as'   => 'patient.careplan.assessment',
@@ -914,7 +913,6 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'ProviderController@removePatient',
             'as'   => 'patient.careplan.not.eligible',
         ])->middleware('permission:care-plan-approve');
-
 
         Route::get('view-careplan/pdf', [
             'uses' => 'ReportsController@viewPdfCarePlan',
