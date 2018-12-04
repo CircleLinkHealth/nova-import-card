@@ -65,7 +65,7 @@ class SendSampleNoteController extends Controller
     {
         $path = $request->input('filePath');
 
-        if ( ! file_exists($path)) {
+        if (! file_exists($path)) {
             throw new \Exception("Could find file at: `$path`", 404);
         }
 
@@ -79,7 +79,7 @@ class SendSampleNoteController extends Controller
 
         $fax = formatPhoneNumberE164($request->input('fax'));
 
-        if ( ! $fax) {
+        if (! $fax) {
             throw new \Exception("Invalid fax number.", 400);
         }
 

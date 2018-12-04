@@ -8,7 +8,6 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
-
 class MiscController extends Controller
 {
     private $miscService;
@@ -18,7 +17,7 @@ class MiscController extends Controller
      *
      */
     public function __construct(CpmMiscService $miscService)
-    {   
+    {
         $this->miscService = $miscService;
     }
 
@@ -40,7 +39,8 @@ class MiscController extends Controller
         return response()->json($this->miscService->miscPatients($id));
     }
 
-    public function test() {
+    public function test()
+    {
         return response()->json([
             'message' => 'clh'
         ]);

@@ -8,7 +8,6 @@
 
 namespace App\Services\Eligibility\Processables;
 
-
 use App\Jobs\CheckCcdaEnrollmentEligibility;
 use App\Jobs\ProcessCcda;
 use App\Models\MedicalRecords\Ccda;
@@ -42,8 +41,13 @@ class Zip extends BaseProcessable
             $deleted = \Storage::disk('cloud')->delete($filePath);
 
             ProcessCcda::withChain([
-                new CheckCcdaEnrollmentEligibility($ccda->id, $this->practice, $this->filterLastEncounter,
-                    $this->filterInsurance, $this->filterProblems),
+                new CheckCcdaEnrollmentEligibility(
+                    $ccda->id,
+                    $this->practice,
+                    $this->filterLastEncounter,
+                    $this->filterInsurance,
+                    $this->filterProblems
+                ),
             ])->dispatch($ccda->id)
                        ->onQueue('low');
         }
@@ -86,11 +90,11 @@ class Zip extends BaseProcessable
         $path = $this->getFilePath();
         $fullZipFilePath = "$prefix$path";
 
-        if ( ! file_exists($fullZipFilePath)) {
+        if (! file_exists($fullZipFilePath)) {
             throw new \Exception('File does not exist.');
         }
 
-        if ( ! ZipFacade::check($fullZipFilePath)) {
+        if (! ZipFacade::check($fullZipFilePath)) {
             throw new \Exception('Invalid zip file.');
         }
 
@@ -106,7 +110,6 @@ class Zip extends BaseProcessable
         }
 
         foreach ($xmlFiles as $filePath) {
-
             if (!file_exists($filePath)) {
                 throw new \Exception('File not found');
             }

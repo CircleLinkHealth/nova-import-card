@@ -3,7 +3,6 @@
 
 namespace App\CLH\Faker\Patient;
 
-
 use App\Models\CCD\Problem as CcdProblem;
 use App\Models\CPM\CpmProblem;
 use App\Models\ProblemCode;
@@ -38,21 +37,16 @@ class Problem
             }
 
             return $ccdProblem;
-
         } else {
             if ($name) {
                 $cpmProblem = $this->getCpmProblems()->firstWhere('name', $name);
                 $ccdProblem    = $this->getCcdProblems()->firstWhere('cpm_problem_id', $cpmProblem->id);
-
             } else {
                 $ccdProblem = $this->getCcdProblems()->random();
             }
 
             return $ccdProblem;
-
         }
-
-
     }
 
 
@@ -69,29 +63,23 @@ class Problem
         $patientId = $patientIds->random();
         $problemSet = [];
 
-        if ($withCodes){
-
+        if ($withCodes) {
             $ccdProblems = $this->getCcdProblems()->where('patient_id', $patientId);
-            foreach ($ccdProblems as $ccdProblem){
+            foreach ($ccdProblems as $ccdProblem) {
                 $problemCodes = $this->getProblemCodes()->where('problem_id', $ccdProblem->id);
-                if ($problemCodes){
+                if ($problemCodes) {
                     $ccdProblem->codes = $problemCodes;
                     $problemSet[] = $ccdProblem;
-                }else{
+                } else {
                     $problemSet[] = $ccdProblem;
                 }
-
             }
 
             return $problemSet;
-
-        }else{
-
+        } else {
             $problemSet = $this->getCcdProblems()->where('patient_id', $patientId);
             return $problemSet;
-
         }
-
     }
 
     /**
@@ -110,8 +98,6 @@ class Problem
         $patient->ccdProblems()->saveMany($problemSet);
 
         return $patient;
-
-
     }
 
     public function getCcdProblems(): Collection
@@ -125,7 +111,6 @@ class Problem
 
     public function getCpmProblems(): Collection
     {
-
         $cpmProblems = CpmProblem::take(2000)->get();
 
         return $cpmProblems;
@@ -133,7 +118,6 @@ class Problem
 
     public function getProblemCodes(): Collection
     {
-
         $problemCodes = ProblemCode::take(2000)->get();
 
         return $problemCodes;

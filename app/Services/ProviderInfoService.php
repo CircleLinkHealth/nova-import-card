@@ -8,20 +8,24 @@ class ProviderInfoService
     private $providerInfoRepo;
     private $userRepo;
 
-    public function __construct(ProviderInfoRepository $providerInfoRepo, UserRepositoryEloquent $userRepo) {
+    public function __construct(ProviderInfoRepository $providerInfoRepo, UserRepositoryEloquent $userRepo)
+    {
         $this->providerInfoRepo = $providerInfoRepo;
         $this->userRepo = $userRepo;
     }
 
-    public function repo() {
+    public function repo()
+    {
         return $this->providerInfoRepo;
     }
 
-    public function providers() {
+    public function providers()
+    {
         return $this->repo()->providers();
     }
 
-    public function getPatientProviders($userId) {
+    public function getPatientProviders($userId)
+    {
         $user = $this->userRepo->user($userId);
         return $user->practices()->get()->map(function ($p) {
             return $p->providers();

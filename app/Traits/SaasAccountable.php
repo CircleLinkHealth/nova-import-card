@@ -8,27 +8,32 @@
 
 namespace App\Traits;
 
-
 use App\SaasAccount;
 
 trait SaasAccountable
 {
-    public function saasAccount() {
+    public function saasAccount()
+    {
         return $this->belongsTo(SaasAccount::class);
     }
 
-    public function isSaas() {
+    public function isSaas()
+    {
         return $this->saas_account_id > 1;
     }
 
-    public function isNotSaas() {
+    public function isNotSaas()
+    {
         return !$this->isSaas();
     }
 
-    public function saasAccountName() {
+    public function saasAccountName()
+    {
         $saasAccount = $this->saasAccount;
 
-        if ($saasAccount) return $saasAccount->name;
+        if ($saasAccount) {
+            return $saasAccount->name;
+        }
 
         return 'CircleLink Health';
     }

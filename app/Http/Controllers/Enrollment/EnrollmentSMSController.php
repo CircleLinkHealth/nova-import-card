@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Log;
 
 class EnrollmentSMSController extends Controller
 {
-
     public function handleIncoming(Request $request)
     {
         Mail::to('mantoniou@circlelinkhealth.com')

@@ -7,7 +7,8 @@ use App\Http\Controllers\Controller;
 
 class UserCacheController extends Controller
 {
-    public function getCachedViewByKey($key) {
+    public function getCachedViewByKey($key)
+    {
         $cached = \Cache::get($key);
 
         if (empty($cached)) {

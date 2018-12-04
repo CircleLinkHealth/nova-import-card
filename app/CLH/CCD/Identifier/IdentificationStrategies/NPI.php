@@ -6,7 +6,6 @@ use App\Models\CCD\CcdVendor;
 
 class NPI extends BaseIdentificationStrategy
 {
-
     public function identify()
     {
         if (empty($this->ccd->document->documentation_of)) {

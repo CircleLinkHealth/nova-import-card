@@ -8,7 +8,6 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
-
 class SymptomController extends Controller
 {
     private $symptomService;
@@ -18,7 +17,7 @@ class SymptomController extends Controller
      *
      */
     public function __construct(CpmSymptomService $symptomService)
-    {   
+    {
         $this->symptomService = $symptomService;
     }
 

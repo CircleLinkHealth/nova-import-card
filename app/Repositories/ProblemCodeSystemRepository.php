@@ -12,7 +12,8 @@ class ProblemCodeSystemRepository
         return app(ProblemCodeSystem::class);
     }
 
-    public function count() {
+    public function count()
+    {
         return $this->model->select('name', DB::raw('count(*) as total'))->groupBy('name')->pluck('total')->count();
     }
 }

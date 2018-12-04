@@ -22,7 +22,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CcdImportRoutine extends \App\BaseModel
 {
-
     protected $guarded = [];
 
     public function strategies()

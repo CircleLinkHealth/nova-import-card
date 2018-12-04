@@ -40,7 +40,7 @@ class CcdProblemService
         return $this->problemRepo;
     }
 
-    function setupProblem($p)
+    public function setupProblem($p)
     {
         if ($p) {
             $problem = [
@@ -107,7 +107,6 @@ class CcdProblemService
     {
         if ($ccdProblem) {
             if ($ccdProblem['userId'] && $ccdProblem['name'] && strlen($ccdProblem['name']) > 0) {
-
                 $problem = $this->setupProblem($this->repo()->addPatientCcdProblem($ccdProblem));
 
                 if ($problem && $ccdProblem['icd10']) {
@@ -121,7 +120,6 @@ class CcdProblemService
                 } else {
                     return $problem;
                 }
-
             }
             throw new \Exception('$ccdProblem needs "userId" and "name" parameters');
         }
@@ -137,8 +135,13 @@ class CcdProblemService
         $icd10 = null,
         $instruction = null
     ) {
-        $problem = $this->setupProblem($this->repo()->editPatientCcdProblem($userId, $ccdId, $name, $problemCode,
-            $is_monitored));
+        $problem = $this->setupProblem($this->repo()->editPatientCcdProblem(
+            $userId,
+            $ccdId,
+            $name,
+            $problemCode,
+            $is_monitored
+        ));
 
         if ($instruction) {
             $instructionData = null;

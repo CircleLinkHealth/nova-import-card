@@ -8,7 +8,6 @@
 
 namespace App\Services;
 
-
 use Storage;
 
 class GoogleDrive
@@ -32,7 +31,7 @@ class GoogleDrive
             ->where('extension', '=', pathinfo($fileName, PATHINFO_EXTENSION))
             ->first();
 
-        if ( ! $file) {
+        if (! $file) {
             return false;
         }
 

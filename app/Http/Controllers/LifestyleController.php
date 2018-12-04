@@ -8,7 +8,6 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
-
 class LifestyleController extends Controller
 {
     private $lifestyleService;
@@ -18,7 +17,7 @@ class LifestyleController extends Controller
      *
      */
     public function __construct(CpmLifestyleService $lifestyleService)
-    {   
+    {
         $this->lifestyleService = $lifestyleService;
     }
 

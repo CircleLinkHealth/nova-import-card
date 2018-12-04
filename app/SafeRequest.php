@@ -55,5 +55,4 @@ class SafeRequest extends Request
         }
         return $result;
     }
-
 }

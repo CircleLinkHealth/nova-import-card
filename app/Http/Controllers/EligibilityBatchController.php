@@ -44,8 +44,10 @@ class EligibilityBatchController extends Controller
                                    ->take(100)
                                    ->get();
 
-        return view('eligibilityBatch.index',
-            compact(['batches']));
+        return view(
+            'eligibilityBatch.index',
+            compact(['batches'])
+        );
     }
 
     /**
@@ -57,8 +59,10 @@ class EligibilityBatchController extends Controller
      */
     public function getReprocess(EligibilityBatch $batch)
     {
-        if (in_array($batch->type,
-            [EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE, EligibilityBatch::TYPE_GOOGLE_DRIVE_CCDS])) {
+        if (in_array(
+            $batch->type,
+            [EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE, EligibilityBatch::TYPE_GOOGLE_DRIVE_CCDS]
+        )) {
             return view('eligibilityBatch.methods.google-drive')
                 ->with('batch', $batch)
                 ->with('action', 'edit');
@@ -120,8 +124,10 @@ class EligibilityBatchController extends Controller
                             ->whereBatchId($batch->id)
                             ->get();
 
-            $unprocessed = $statuses->where('status', Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY)->where('deleted_at',
-                null)->count();
+            $unprocessed = $statuses->where('status', Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY)->where(
+                'deleted_at',
+                null
+            )->count();
             $ineligible  = $statuses->where('status', Ccda::INELIGIBLE)->where('deleted_at', null)->count();
             $duplicates  = $statuses->where('deleted_at', '!=', null)->count();
             $eligible    = Enrollee::whereBatchId($batch->id)->whereNull('user_id')->count();
@@ -143,7 +149,6 @@ class EligibilityBatchController extends Controller
             'initiatorUser',
             'validationStats',
         ]));
-
     }
 
     public function getCounts(EligibilityBatch $batch)

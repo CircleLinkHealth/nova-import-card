@@ -44,7 +44,7 @@ class EmailWeeklyPracticeReport implements ShouldQueue
      */
     public function handle()
     {
-        if ( ! $this->practice->weekly_report_recipients) {
+        if (! $this->practice->weekly_report_recipients) {
             return;
         }
 

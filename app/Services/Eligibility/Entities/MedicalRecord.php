@@ -8,7 +8,6 @@
 
 namespace App\Services\Eligibility\Entities;
 
-
 class MedicalRecord
 {
     /**
@@ -388,5 +387,4 @@ class MedicalRecord
     {
         $this->patient_id = $patient_id;
     }
-
 }

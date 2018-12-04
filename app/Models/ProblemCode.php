@@ -60,18 +60,18 @@ class ProblemCode extends \App\BaseModel
         return $this->belongsTo(Problem::class, 'problem_id');
     }
 
-    public function system() {
+    public function system()
+    {
         return $this->belongsTo(ProblemCodeSystem::class, 'problem_code_system_id');
     }
 
-    public function resolve() {
+    public function resolve()
+    {
         if ($this->isSnomed()) {
             $this->code_system_oid = $this->SNOMED_CODE;
-        }
-        else if ($this->isIcd9()) {
+        } elseif ($this->isIcd9()) {
             $this->code_system_oid = $this->ICD9_CODE;
-        }
-        else if ($this->isIcd10()) {
+        } elseif ($this->isIcd10()) {
             $this->code_system_oid = $this->ICD10_CODE;
         }
         return $this;

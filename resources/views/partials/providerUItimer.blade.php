@@ -1,5 +1,6 @@
 <?php
 use App\Patient;
+
 ?>
 <input type="hidden" name="activityName" id="activityName" value="@yield('activity')">
 
@@ -39,14 +40,12 @@ use App\Patient;
 
                 $patientIsCcm        = $user->isCcm();
                 $patientIsBehavioral = $user->isBhi();
-            }
-            else {
+            } else {
                 $patientFamilyId     = optional($patient->patientInfo()->first())->family_id;
                 $patientIsCcm        = $patient->isCcm();
                 $patientIsBehavioral = $patient->isBhi();
             }
-        }
-        else {
+        } else {
             $patientIsCcm = false;
             $patientIsBehavioral = false;
         }

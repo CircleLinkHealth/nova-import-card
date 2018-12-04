@@ -20,8 +20,7 @@ class ActivityService
         ActivityRepository $repo,
         CallRepository $callRepo,
         PatientSummaryEloquentRepository $patientSummaryEloquentRepository
-    )
-    {
+    ) {
         $this->repo                             = $repo;
         $this->callRepo                         = $callRepo;
         $this->patientSummaryEloquentRepository = $patientSummaryEloquentRepository;
@@ -37,13 +36,13 @@ class ActivityService
         $userIds,
         Carbon $monthYear = null
     ) {
-        if ( ! $monthYear) {
+        if (! $monthYear) {
             $monthYear = Carbon::now();
         }
 
         $monthYear = $monthYear->startOfMonth();
 
-        if ( ! is_array($userIds)) {
+        if (! is_array($userIds)) {
             $userIds = [$userIds];
         }
 
@@ -59,13 +58,12 @@ class ActivityService
 
         //add 0 for the ones not found in this monthYear
         foreach ($userIds as $userId) {
-            if ( ! isset($acts[$userId])) {
+            if (! isset($acts[$userId])) {
                 $acts[$userId] = 0;
             }
         }
 
         foreach ($acts as $id => $ccmTime) {
-
             if ($ccmTime > 0) {
                 $summary = PatientMonthlySummary::updateOrCreate([
                     'patient_id' => $id,
@@ -83,7 +81,6 @@ class ActivityService
                 $summary->total_time = (int)$total_time_per_user[$id];
                 $summary->save();
             }
-
         }
 
         $bhi_acts = $this->repo->totalBHITime($userIds, $monthYear)
@@ -92,13 +89,12 @@ class ActivityService
 
         //add 0 for the ones not found in this monthYear
         foreach ($userIds as $userId) {
-            if ( ! isset($bhi_acts[$userId])) {
+            if (! isset($bhi_acts[$userId])) {
                 $bhi_acts[$userId] = 0;
             }
         }
 
         foreach ($bhi_acts as $id => $bhiTime) {
-
             if ($bhiTime > 0) {
                 $summary = PatientMonthlySummary::updateOrCreate([
                     'patient_id' => $id,
@@ -117,8 +113,6 @@ class ActivityService
                 $summary->save();
             }
         }
-
-
     }
 
     /**
@@ -132,7 +126,7 @@ class ActivityService
      */
     public function ccmTimeBetween($providerId, array $patientIds, Carbon $monthYear = null)
     {
-        if ( ! $monthYear) {
+        if (! $monthYear) {
             $monthYear = Carbon::now();
         }
 
@@ -150,7 +144,7 @@ class ActivityService
      */
     public function totalCcmTime($patientId, Carbon $monthYear = null)
     {
-        if ( ! $monthYear) {
+        if (! $monthYear) {
             $monthYear = Carbon::now();
         }
 

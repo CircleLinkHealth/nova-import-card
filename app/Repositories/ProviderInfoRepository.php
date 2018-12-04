@@ -13,33 +13,37 @@ class ProviderInfoRepository
         return app(ProviderInfo::class);
     }
 
-    public function count() {
+    public function count()
+    {
         return $this->model()->count();
     }
 
-    public function exists($id) {
+    public function exists($id)
+    {
         return !!$this->model()->find($id);
     }
 
-    public function list() {
+    public function list()
+    {
         $providers = $this->model()
                             ->join('users', 'provider_info.user_id', '=', 'users.id')
                             ->whereHas('user', function ($q) {
                                 $q->intersectPracticesWith(auth()->user());
                             })
                             ->orderBy('provider_info.id', 'desc')->with([ 'user' ])->get()->map(function ($p) {
-            return [
+                                return [
                 'id' => $p->id,
                 'user_id' => $p->user_id,
                 'specialty' => $p->specialty,
                 'name' => trim(optional($p->user)->display_name ?? ''),
                 'address' => optional($p->user)->address
             ];
-        });
+                            });
         return $providers;
     }
 
-    public function setupProviderUser($providerUser) {
+    public function setupProviderUser($providerUser)
+    {
         return [
             'id' => $providerUser->id,
             'program_id' => $providerUser->program_id,
@@ -52,7 +56,8 @@ class ProviderInfoRepository
         ];
     }
 
-    public function providers() {
+    public function providers()
+    {
         $providers = $this->model()->orderBy('id', 'desc')->paginate();
         $providers->getCollection()->transform(function ($p) {
             $providerUser = $p->user()->first();
@@ -62,14 +67,16 @@ class ProviderInfoRepository
         return $providers;
     }
 
-    public function provider($id) {
+    public function provider($id)
+    {
         $provider = $this->model()->where([ 'user_id' => $id ])->firstOrFail();
         $providerUser = $provider->user()->first();
         $provider['user'] = $this->setupProviderUser($providerUser);
         return $provider;
     }
 
-    public function remove($id) {
+    public function remove($id)
+    {
         $this->model()->where([ 'id' => $id ])->delete();
         return [
             'message' => 'successful'

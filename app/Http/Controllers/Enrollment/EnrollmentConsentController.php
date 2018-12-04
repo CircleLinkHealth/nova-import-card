@@ -102,13 +102,11 @@ class EnrollmentConsentController extends Controller
 
     public function makeEnrollmentReport()
     {
-
         return view('admin.reports.enrollment.enrollment-list');
     }
 
     public function create($invite_code)
     {
-
         $enrollee                   = Enrollee::whereInviteCode($invite_code)->first();
         $enrollee->invite_opened_at = Carbon::now()->toDateTimeString();
         $enrollee->save();
@@ -122,7 +120,6 @@ class EnrollmentConsentController extends Controller
 
     public function store(Request $request)
     {
-
         $input = $request->input();
 
         $enrollee = Enrollee::find($input['enrollee_id']);
@@ -136,7 +133,6 @@ class EnrollmentConsentController extends Controller
 
     public function update(Request $request)
     {
-
         $input = $request->input();
 
         $enrollee = Enrollee::find($input['enrollee_id']);

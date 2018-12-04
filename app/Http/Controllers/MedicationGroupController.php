@@ -9,7 +9,6 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
-
 class MedicationGroupController extends Controller
 {
     private $medicationGroupService;
@@ -19,7 +18,7 @@ class MedicationGroupController extends Controller
      *
      */
     public function __construct(CpmMedicationGroupService $medicationGroupService)
-    {   
+    {
         $this->medicationGroupService = $medicationGroupService;
     }
 
@@ -31,9 +30,13 @@ class MedicationGroupController extends Controller
         return response()->json($this->medicationGroupService->repo()->groups());
     }
 
-    public function show($id) {
+    public function show($id)
+    {
         $group = $this->medicationGroupService->repo()->group($id);
-        if ($group) return response()->json($this->medicationGroupService->repo()->group($id));
-        else return $this->notFound('group with id "' . $id . '" not found');
+        if ($group) {
+            return response()->json($this->medicationGroupService->repo()->group($id));
+        } else {
+            return $this->notFound('group with id "' . $id . '" not found');
+        }
     }
 }

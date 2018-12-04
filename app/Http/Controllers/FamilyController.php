@@ -8,10 +8,8 @@ use Illuminate\Http\Request;
 
 class FamilyController extends Controller
 {
-
     public function index()
     {
-
         $families = Family::all();
 
         return view('admin.families.index', compact(['families']));
@@ -19,7 +17,6 @@ class FamilyController extends Controller
 
     public function create()
     {
-
         $wpUsers = Patient::enrolled()->pluck('user_id');
 
         return view('admin.families.create', compact(['users, filterUser ']));
@@ -32,7 +29,6 @@ class FamilyController extends Controller
 
     public function store(Request $request)
     {
-
         $family_member_ids =  explode(',', $request->input('family_member_ids'));
 
         $fam = new Family();

@@ -78,10 +78,10 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
             $problem = array_merge($this->transformer->problem($prob));
 
             $code = collect($this->transformer->problemCodes($prob))->sortByDesc(function ($code) {
-                    return empty($code['code'])
+                return empty($code['code'])
                         ? false
                         : $code['code'];
-                })->filter()->values()->first() ?? ['name' => null, 'code' => null, 'code_system_name' => null,];
+            })->filter()->values()->first() ?? ['name' => null, 'code' => null, 'code_system_name' => null,];
 
             return Problem::create([
                 'name'             => $problem['name'] ?? $code['name'],
@@ -99,7 +99,7 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
 
         $patient = $demographics->put('referring_provider_name', '');
 
-        if ( ! $patient->get('mrn', null) && ! $patient->get('mrn_number', null)) {
+        if (! $patient->get('mrn', null) && ! $patient->get('mrn_number', null)) {
             $patient = $patient->put('mrn', $this->ccda->mrn);
         }
 

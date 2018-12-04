@@ -16,13 +16,14 @@ trait CcdProblemTraits
     {
         if ($userId && $ccdId) {
             return response()->json($this->ccdProblemService->repo()->removePatientCcdProblem($userId, $ccdId));
+        } else {
+            return $this->badRequest('"userId" and "ccdId" are important');
         }
-        else return $this->badRequest('"userId" and "ccdId" are important');
     }
     
     public function addCcdProblem($userId, SafeRequest $request)
     {
-        $ccdProblem = [ 
+        $ccdProblem = [
                         'name' => $request->inputSafe('name'),
                         'cpm_problem_id' => $request->inputSafe('cpm_problem_id'),
                         'userId' => $userId,
@@ -41,7 +42,8 @@ trait CcdProblemTraits
         $instruction = $request->inputSafe('instruction');
         if ($name) {
             return response()->json($this->ccdProblemService->editPatientCcdProblem($userId, $ccdId, $name, $cpm_problem_id, $is_monitored, $icd10, $instruction));
+        } else {
+            return $this->badRequest('"userId" and "name" are important');
         }
-        else return $this->badRequest('"userId" and "name" are important');
     }
 }

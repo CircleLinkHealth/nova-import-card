@@ -158,7 +158,7 @@ trait CarePlanHelpers
             ?: $query->wherePivot('page', $page);
         $carePlanEntities = $query->get();
 
-        if ( ! empty($numberOfRowsToCreate)) {
+        if (! empty($numberOfRowsToCreate)) {
             if ($numberOfRowsToCreate > $carePlanEntities->count()) {
                 $numberOfRowsToCreate = rand(2, $carePlanEntities->count() - 1);
             }

@@ -10,17 +10,13 @@ use Illuminate\Http\Request;
 
 class AlgoController extends Controller
 {
-
     public function createMock(Request $request)
     {
-
-
         return view('admin.algo.mocker');
     }
 
     public function computeMock(Request $request)
     {
-
         if ($request->ajax()) {
             $ccm = $request->input('seconds');
             $date = Carbon::parse($request->input('date'));

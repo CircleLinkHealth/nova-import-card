@@ -19,16 +19,19 @@ class CpmProblemService implements CpmModel
     private $problemRepo;
     private $userRepo;
 
-    public function __construct(CpmProblemRepository $problemRepo, UserRepositoryEloquent $userRepo) {
+    public function __construct(CpmProblemRepository $problemRepo, UserRepositoryEloquent $userRepo)
+    {
         $this->problemRepo = $problemRepo;
         $this->userRepo = $userRepo;
     }
 
-    public function repo() {
+    public function repo()
+    {
         return $this->problemRepo;
     }
 
-    public function all() {
+    public function all()
+    {
         $problems = $this->repo()->noDiabetesFilter()->get([
             'id',
             'name',
@@ -40,7 +43,8 @@ class CpmProblemService implements CpmModel
         return $problems;
     }
 
-    public function problems() {
+    public function problems()
+    {
         $problems = $this->repo()->noDiabetesFilter()->paginate(30);
         $problems->getCollection()->transform(function ($value) {
             return $this->setupProblem($value);
@@ -48,7 +52,8 @@ class CpmProblemService implements CpmModel
         return $problems;
     }
 
-    public function setupProblem($p) {
+    public function setupProblem($p)
+    {
         return [
             'id'            => $p->id,
             'name'          => $p->name,
@@ -60,10 +65,14 @@ class CpmProblemService implements CpmModel
         ];
     }
 
-    public function problem($id) {
+    public function problem($id)
+    {
         $problem = $this->repo()->model()->find($id);
-        if ($problem) return $this->setupProblem($problem);
-        else return null;
+        if ($problem) {
+            return $this->setupProblem($problem);
+        } else {
+            return null;
+        }
     }
 
     public function syncWithUser(User $user, array $ids = [], $page = null, array $instructions)

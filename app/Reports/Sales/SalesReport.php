@@ -13,7 +13,6 @@ use Carbon\Carbon;
 
 abstract class SalesReport
 {
-
     protected $start;
     protected $end;
     protected $for;
@@ -43,7 +42,9 @@ abstract class SalesReport
     {
         foreach ($this->requestedSections as $key => $section) {
             $this->data[$section] = (new $section(
-                $this->for, $this->start, $this->end
+                $this->for,
+                $this->start,
+                $this->end
             ))->render();
         }
 

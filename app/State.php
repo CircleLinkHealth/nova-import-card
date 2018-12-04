@@ -22,7 +22,6 @@ class State extends \App\BaseModel
 
     public function nurses()
     {
-        
         return $this->belongsToMany(Nurse::class);
     }
 }

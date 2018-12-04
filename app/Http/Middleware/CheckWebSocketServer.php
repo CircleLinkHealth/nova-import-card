@@ -26,12 +26,10 @@ class CheckWebSocketServer
                 $body = $res->getBody();
                 if ($status == 200) {
                     cache()->put('ws:server:working', true, 5);
-                }
-                else {
+                } else {
                     cache()->forget('ws:server:working');
                 }
-            }
-            catch (\Exception $ex) {
+            } catch (\Exception $ex) {
                 cache()->forget('ws:server:working');
             }
         }

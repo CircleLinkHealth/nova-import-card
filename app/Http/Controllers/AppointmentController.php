@@ -8,14 +8,12 @@ use Illuminate\Http\Request;
 
 class AppointmentController extends Controller
 {
-
     public function index()
     {
     }
     
     public function create(Request $request, $patientId)
     {
-
         $patient = User::find($patientId);
 
         $providers = [];
@@ -46,7 +44,6 @@ class AppointmentController extends Controller
 
     public function store(Request $request)
     {
-
         $input = $request->input();
 
         $was_completed = isset($input['is_completed']) ?? false;
@@ -74,7 +71,6 @@ class AppointmentController extends Controller
 
     public function view(Request $request, $patientId, $appointmentId)
     {
-
         $patient = User::find($patientId);
         $appointment = Appointment::find($appointmentId);
 

@@ -210,9 +210,7 @@ class Patient extends BaseModel
 
     public static function numberToTextDaySwitcher($string)
     {
-
         $mapper = function ($i) {
-
             switch ($i) {
                 case 1:
                     return ' Mon';
@@ -259,7 +257,6 @@ class Patient extends BaseModel
 
     public function getContactWindowsString()
     {
-
         $windows = [];
 
         foreach ($this->contactWindows as $window) {
@@ -297,7 +294,6 @@ class Patient extends BaseModel
 
     public function family()
     {
-
         return $this->belongsTo(Family::class, 'family_id');
     }
 
@@ -416,7 +412,6 @@ class Patient extends BaseModel
      */
     public function getFamilyMembers(Patient $patient)
     {
-
         $family = $patient->family;
 
         if (is_object($family)) {
@@ -451,13 +446,11 @@ class Patient extends BaseModel
 
     public function scopeEnrolled($query)
     {
-
         return $query->where('ccm_status', 'enrolled');
     }
 
     public function scopeByStatus($query, $fromDate, $toDate)
     {
-
         return $query->where(function ($query) use ($fromDate, $toDate) {
             $query->where(function ($subQuery) use ($fromDate, $toDate) {
                 $subQuery->ccmStatus(Patient::PAUSED)
@@ -506,17 +499,17 @@ class Patient extends BaseModel
             5,
         ];
 
-        if ( ! empty($days)) {
+        if (! empty($days)) {
             $daysNumber = $days;
         }
 
         $timeFrom = '09:00:00';
         $timeTo   = '17:00:00';
 
-        if ( ! empty($fromTime)) {
+        if (! empty($fromTime)) {
             $timeFrom = Carbon::parse($fromTime)->format('H:i:s');
         }
-        if ( ! empty($toTime)) {
+        if (! empty($toTime)) {
             $timeTo = Carbon::parse($toTime)->format('H:i:s');
         }
 
@@ -535,13 +528,11 @@ class Patient extends BaseModel
 
     public function scopeHasFamily($query)
     {
-
         return $query->whereNotNull('family_id');
     }
 
     public function lastReachedNurse()
     {
-
         return Call::where('inbound_cpm_id', $this->user_id)
                    ->whereNotNull('called_date')
                    ->orderBy('called_date', 'desc')
@@ -550,7 +541,6 @@ class Patient extends BaseModel
 
     public function lastNurseThatPerformedActivity()
     {
-
         $id = Activity::where('patient_id', $this->user_id)
                       ->whereHas('provider', function ($q) {
                           $q->ofType('care-center');
@@ -586,7 +576,6 @@ class Patient extends BaseModel
         //Get user's programs
 
         $nurses = Nurse::whereHas('user', function ($q) {
-
             $q->where('user_status', 1);
         })->get();
 
@@ -625,7 +614,7 @@ class Patient extends BaseModel
     public function getPreferences()
     {
         $patientTimezone = $this->user->timezone;
-        if ( ! isset($patientTimezone)) {
+        if (! isset($patientTimezone)) {
             $patientTimezone = 'America/New_York';
         }
         $tzAbbr = Carbon::now()->setTimezone($patientTimezone)->format('T');

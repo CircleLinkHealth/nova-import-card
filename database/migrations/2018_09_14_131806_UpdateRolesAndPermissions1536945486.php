@@ -11,7 +11,7 @@ class UpdateRolesAndPermissions1536945486 extends Migration
      */
     public function up()
     {
-        if ( ! app()->environment(['testing'])) {
+        if (! app()->environment(['testing'])) {
             Artisan::call('db:seed', [
                 '--class' => 'RequiredRolesPermissionsSeeder',
             ]);
@@ -28,5 +28,3 @@ class UpdateRolesAndPermissions1536945486 extends Migration
         //
     }
 }
-
-

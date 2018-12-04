@@ -16,16 +16,14 @@ trait ValidatesQAImportOutput
     ) {
         $demographics = DemographicsLog::whereCcdaId($ccda->id)->first();
 
-        $name = function () use
-            (
+        $name = function () use (
             $demographics
         ) {
             return empty($name = $demographics->first_name . ' ' . $demographics->last_name)
                 ?: $name;
         };
 
-        $provider = function () use
-            (
+        $provider = function () use (
             $output
         ) {
             if (isset($output['provider'][0])) {
@@ -33,8 +31,7 @@ trait ValidatesQAImportOutput
             }
         };
 
-        $location = function () use
-            (
+        $location = function () use (
             $output
         ) {
             if (isset($output['location'][0])) {
@@ -42,15 +39,13 @@ trait ValidatesQAImportOutput
             }
         };
 
-        $duplicateCheck = function () use
-            (
+        $duplicateCheck = function () use (
             $demographics
         ) {
             $date = (new Carbon($demographics->dob))->format('Y-m-d');
 
             $dup = User::with([
-                'patientInfo' => function ($q) use
-                    (
+                'patientInfo' => function ($q) use (
                     $demographics,
                     $date
                 ) {
@@ -67,8 +62,7 @@ trait ValidatesQAImportOutput
                 : $dup;
         };
 
-        $phoneCheck = function () use
-            (
+        $phoneCheck = function () use (
             $demographics
         ) {
             return ($demographics->cell_phone
@@ -76,15 +70,13 @@ trait ValidatesQAImportOutput
                 || $demographics->work_phone);
         };
 
-        $counter = function ($index) use
-            (
+        $counter = function ($index) use (
             $output
         ) {
             return count($output[$index]);
         };
 
-        $hasStreetAddress = function () use
-            (
+        $hasStreetAddress = function () use (
             $demographics
         ) {
             return empty($demographics->street)
@@ -92,8 +84,7 @@ trait ValidatesQAImportOutput
                 : true;
         };
 
-        $hasCity = function () use
-            (
+        $hasCity = function () use (
             $demographics
         ) {
             return empty($demographics->city)
@@ -101,8 +92,7 @@ trait ValidatesQAImportOutput
                 : true;
         };
 
-        $hasState = function () use
-            (
+        $hasState = function () use (
             $demographics
         ) {
             return empty($demographics->state)
@@ -110,8 +100,7 @@ trait ValidatesQAImportOutput
                 : true;
         };
 
-        $hasZip = function () use
-            (
+        $hasZip = function () use (
             $demographics
         ) {
             return empty($demographics->zip)
@@ -124,8 +113,7 @@ trait ValidatesQAImportOutput
         $allergies = $counter(0);
         $fullName = $name();
 
-        $duplicateCcdCheck = function () use
-            (
+        $duplicateCcdCheck = function () use (
             $medications,
             $problems,
             $allergies,

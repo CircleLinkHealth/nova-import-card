@@ -29,7 +29,9 @@ class SendAssessmentNotification extends Notification
         $this->attachment = $assessment;
         $this->patient = $assessment->patient()->first();
         $this->approver = $assessment->approver()->first();
-        if ($this->approver) $this->practice = $this->approver->practices()->first();
+        if ($this->approver) {
+            $this->practice = $this->approver->practices()->first();
+        }
     }
 
     /**
@@ -83,15 +85,17 @@ class SendAssessmentNotification extends Notification
         ];
     }
 
-    public function toFax($notifiable) {
-        if ( ! $notifiable || ! $notifiable->fax) {
+    public function toFax($notifiable)
+    {
+        if (! $notifiable || ! $notifiable->fax) {
             return false;
         }
         return $this->toPdf($notifiable);
     }
 
-    public function toPdf($notifiable = null) {
-        if ( ! file_exists($this->pathToPdf)) {
+    public function toPdf($notifiable = null)
+    {
+        if (! file_exists($this->pathToPdf)) {
             $this->pathToPdf = $this->attachment->toPdf($notifiable);
         }
         return $this->pathToPdf;

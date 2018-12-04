@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
-
     protected $user;
 
     public function __construct(UserRepository $userRepository)

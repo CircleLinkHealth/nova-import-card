@@ -24,7 +24,6 @@ use App\Traits\ValidatesEligibility;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 
-
 class ProcessEligibilityService
 {
     use ValidatesEligibility;
@@ -46,7 +45,7 @@ class ProcessEligibilityService
                                  ->where('filename', '=', 'processed')
                                  ->first();
 
-        if ( ! $processedDir) {
+        if (! $processedDir) {
             $cloudDisk->makeDirectory("$dir/processed");
 
             $processedDir = collect($cloudDisk->listContents($dir, $recursive))
@@ -188,8 +187,10 @@ class ProcessEligibilityService
             ])->dispatch($ccda->id)
                        ->onQueue('low');
 
-            $cloudDisk->move($file['path'],
-                "{$processedDir['path']}/ccdaId=$ccda->id::processed={$file['filename']}");
+            $cloudDisk->move(
+                $file['path'],
+                "{$processedDir['path']}/ccdaId=$ccda->id::processed={$file['filename']}"
+            );
 
             return $file;
         })
@@ -219,7 +220,7 @@ class ProcessEligibilityService
                                  ->where('filename', '=', 'processed')
                                  ->first();
 
-        if ( ! $processedDir) {
+        if (! $processedDir) {
             $cloudDisk->makeDirectory("$dir/processed");
 
             $processedDir = collect($cloudDisk->listContents($dir, $recursive))
@@ -253,8 +254,10 @@ class ProcessEligibilityService
                         $now       = Carbon::now()->toAtomString();
                         $randomStr = str_random();
 
-                        $put  = $cloudDisk->put("{$processedDir['path']}/$randomStr-$now",
-                            fopen($localDisk->path($path), 'r+'));
+                        $put  = $cloudDisk->put(
+                            "{$processedDir['path']}/$randomStr-$now",
+                            fopen($localDisk->path($path), 'r+')
+                        );
                         $ccda = Ccda::create([
                             'source'      => Ccda::GOOGLE_DRIVE . "_$dir",
                             'xml'         => stream_get_contents(fopen($localDisk->path($path), 'r+')),
@@ -268,14 +271,21 @@ class ProcessEligibilityService
                         $ccda->save();
 
                         ProcessCcda::withChain([
-                            (new CheckCcdaEnrollmentEligibility($ccda->id, $practice, (bool)$filterLastEncounter,
-                                (bool)$filterInsurance, (bool)$filterProblems))->onQueue('low'),
+                            (new CheckCcdaEnrollmentEligibility(
+                                $ccda->id,
+                                $practice,
+                                (bool)$filterLastEncounter,
+                                (bool)$filterInsurance,
+                                (bool)$filterProblems
+                            ))->onQueue('low'),
                         ])->dispatch($ccda->id)
                                    ->onQueue('low');
                     } else {
                         $pathWithUnderscores = str_replace('/', '_', $path);
-                        $put                 = $cloudDisk->put("{$processedDir['path']}/$pathWithUnderscores",
-                            fopen($localDisk->path($path), 'r+'));
+                        $put                 = $cloudDisk->put(
+                            "{$processedDir['path']}/$pathWithUnderscores",
+                            fopen($localDisk->path($path), 'r+')
+                        );
                     }
 
                     $localDisk->delete($path);
@@ -356,12 +366,15 @@ class ProcessEligibilityService
      */
     public function createPhoenixHeartBatch()
     {
-        return $this->createBatch(EligibilityBatch::TYPE_PHX_DB_TABLES,
-            Practice::whereName('phoenix-heart')->firstOrFail()->id, [
+        return $this->createBatch(
+            EligibilityBatch::TYPE_PHX_DB_TABLES,
+            Practice::whereName('phoenix-heart')->firstOrFail()->id,
+            [
                 'filterLastEncounter' => false,
                 'filterInsurance'     => true,
                 'filterProblems'      => true,
-            ]);
+            ]
+        );
     }
 
     /**
@@ -387,7 +400,7 @@ class ProcessEligibilityService
         for ($i = 1; $i <= 1000; $i++) {
             $patient = $collection->shift();
 
-            if ( ! is_array($patient)) {
+            if (! is_array($patient)) {
                 continue;
             }
 
@@ -529,7 +542,6 @@ class ProcessEligibilityService
      */
     public function processGoogleDriveCsvForEligibility(EligibilityBatch $batch)
     {
-
         $driveFolder   = $batch->options['folder'];
         $driveFileName = $batch->options['fileName'];
         $driveFilePath = $batch->options['filePath'] ?? null;
@@ -553,7 +565,7 @@ class ProcessEligibilityService
 
         $savedLocally = $localDisk->put($fileName, $stream);
 
-        if ( ! $savedLocally) {
+        if (! $savedLocally) {
             throw new \Exception("Failed saving $pathToFile");
         }
 
@@ -568,7 +580,7 @@ class ProcessEligibilityService
 
             $i = 1;
             foreach ($iterator as $iteration) {
-                if ( ! $iteration) {
+                if (! $iteration) {
                     continue;
                 }
                 if ($i == 1) {
@@ -589,7 +601,7 @@ class ProcessEligibilityService
             for ($i = 1; $i <= 1000; $i++) {
                 $patient = $data->shift();
 
-                if ( ! is_array($patient)) {
+                if (! is_array($patient)) {
                     continue;
                 }
 
@@ -638,7 +650,6 @@ class ProcessEligibilityService
 
 
             return $patientList;
-
         } catch (\Exception $e) {
             \Log::debug("EXCEPTION `{$e->getMessage()}`");
 
@@ -717,8 +728,10 @@ class ProcessEligibilityService
     public function notifySlack($batch)
     {
         if (app()->environment('worker')) {
-            sendSlackMessage(' #parse_enroll_import',
-                "Hey I just processed this list, it's crazy. Here's some patients, call them maybe? {$batch->linkToView()}");
+            sendSlackMessage(
+                ' #parse_enroll_import',
+                "Hey I just processed this list, it's crazy. Here's some patients, call them maybe? {$batch->linkToView()}"
+            );
         }
     }
 }

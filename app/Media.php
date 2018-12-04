@@ -8,7 +8,6 @@
 
 namespace App;
 
-
 use Storage;
 use Symfony\Component\HttpFoundation\File\MimeType\ExtensionGuesser;
 

@@ -9,9 +9,7 @@ use DateTimeZone;
 
 class MsgUI
 {
-
-
-    function getForm($arrBio = [], $date, $offset = null)
+    public function getForm($arrBio = [], $date, $offset = null)
     {
         date_default_timezone_set('America/New_York');
         $formOutput ="";
@@ -78,6 +76,7 @@ class MsgUI
                     break;
                 case 'Date':
                     $formOutput .= "<input $type class='form-control col-sm-1' id='obs_value' name='obs_value' value='" . $arrBio['PatientAnswer'] . "' REQUIRED>";
+                    // no break
                 default:
                     $formOutput .= "";
             }
@@ -98,12 +97,12 @@ class MsgUI
         return $formOutput;
     }
 
-    function getMsgIcon($msgIcon)
+    public function getMsgIcon($msgIcon)
     {
         $color = 'Blue';
         switch ($msgIcon) {
-            case 'bp';
-            case 'bs';
+            case 'bp':
+            case 'bs':
                 $icon = 'clock-o';
                 break;
             case 'wt':

@@ -8,14 +8,13 @@
 
 namespace App\Observers;
 
-
 use App\PatientMonthlySummary;
 
 class PatientMonthlySummaryObserver
 {
     public function creating(PatientMonthlySummary $record)
     {
-        if ( ! $record->problem_1 || ! $record->problem_2) {
+        if (! $record->problem_1 || ! $record->problem_2) {
             $existingRecord = PatientMonthlySummary::wherePatientId($record->patient_id)
                                                    ->where('id', '!=', $record->id)
                                                    ->whereApproved(true)

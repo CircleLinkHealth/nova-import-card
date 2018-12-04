@@ -30,5 +30,3 @@ class UpdateRolesAndPermissions1535811176 extends Migration
         //
     }
 }
-
-

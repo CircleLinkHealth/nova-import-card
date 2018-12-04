@@ -203,7 +203,7 @@ class EnrollmentStatsController extends Controller
             $data[$practice->id]['total_cost'] = 0;
 
             foreach ($enrollers as $enrollerId => $time) {
-                if ( ! $enrollerId) {
+                if (! $enrollerId) {
                     continue;
                 }
 
@@ -222,8 +222,10 @@ class EnrollmentStatsController extends Controller
             }
 
             if ($data[$practice->id]['total_cost'] > 0 && $data[$practice->id]['consented'] > 0) {
-                $data[$practice->id]['acq_cost'] = '$' . number_format($data[$practice->id]['total_cost'] / $data[$practice->id]['consented'],
-                        2);
+                $data[$practice->id]['acq_cost'] = '$' . number_format(
+                    $data[$practice->id]['total_cost'] / $data[$practice->id]['consented'],
+                        2
+                );
             } else {
                 $data[$practice->id]['acq_cost'] = 'N/A';
             }
@@ -292,7 +294,6 @@ class EnrollmentStatsController extends Controller
      */
     public function makePracticeStats()
     {
-
         return view('admin.reports.enrollment.practice-kpis');
     }
 }

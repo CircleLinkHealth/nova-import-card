@@ -51,7 +51,7 @@ class CreateAndPostPdfCareplan
 
     public function logPatientIdsFromAppointments($response, $practiceId)
     {
-        if ( ! isset($response['appointments'])) {
+        if (! isset($response['appointments'])) {
             return;
         }
 
@@ -68,7 +68,7 @@ class CreateAndPostPdfCareplan
             }
         }
 
-        if ( ! isset($ccmEnabledFieldId)) {
+        if (! isset($ccmEnabledFieldId)) {
             return;
         }
 
@@ -113,13 +113,13 @@ class CreateAndPostPdfCareplan
                 $ccdaRequest->department_id
             );
 
-            if ( ! isset($xmlCcda[0]['ccda'])) {
+            if (! isset($xmlCcda[0]['ccda'])) {
                 return false;
             }
 
             $vendor = CcdVendor::wherePracticeId($ccdaRequest->practice_id)->first();
 
-            if ( ! $vendor) {
+            if (! $vendor) {
                 return false;
             }
 

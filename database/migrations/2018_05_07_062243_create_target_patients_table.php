@@ -3,40 +3,39 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateTargetPatientsTable extends Migration {
+class CreateTargetPatientsTable extends Migration
+{
 
-	/**
-	 * Run the migrations.
-	 *
-	 * @return void
-	 */
-	public function up()
-	{
-		Schema::create('target_patients', function(Blueprint $table)
-		{
-			$table->increments('id');
-			$table->integer('batch_id')->unsigned()->nullable()->index('target_patients_batch_id_foreign');
-			$table->integer('ehr_id')->unsigned()->index('target_patients_ehr_id_foreign');
-			$table->integer('user_id')->unsigned()->nullable()->index('target_patients_user_id_foreign');
-			$table->integer('enrollee_id')->unsigned()->nullable()->index('target_patients_enrollee_id_foreign');
-			$table->integer('ehr_patient_id')->unsigned();
-			$table->integer('practice_id')->unsigned();
-			$table->integer('department_id')->unsigned();
-			$table->enum('status', array('to_process','eligible','ineligible','consented','enrolled','error'))->nullable();
-			$table->timestamps();
-			$table->string('description');
-		});
-	}
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('target_patients', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('batch_id')->unsigned()->nullable()->index('target_patients_batch_id_foreign');
+            $table->integer('ehr_id')->unsigned()->index('target_patients_ehr_id_foreign');
+            $table->integer('user_id')->unsigned()->nullable()->index('target_patients_user_id_foreign');
+            $table->integer('enrollee_id')->unsigned()->nullable()->index('target_patients_enrollee_id_foreign');
+            $table->integer('ehr_patient_id')->unsigned();
+            $table->integer('practice_id')->unsigned();
+            $table->integer('department_id')->unsigned();
+            $table->enum('status', array('to_process','eligible','ineligible','consented','enrolled','error'))->nullable();
+            $table->timestamps();
+            $table->string('description');
+        });
+    }
 
 
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down()
-	{
-		Schema::drop('target_patients');
-	}
-
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::drop('target_patients');
+    }
 }

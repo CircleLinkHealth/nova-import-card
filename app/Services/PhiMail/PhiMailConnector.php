@@ -47,7 +47,7 @@ class SendResult
      */
     public $errorText = null;
 
-    function __construct($r, $s, $m)
+    public function __construct($r, $s, $m)
     {
         $this->recipient = $r;
         $this->succeeded = $s;
@@ -203,7 +203,7 @@ class ShowResult
      */
     public $attachmentInfo;
 
-    function __construct($p, $h, $f, $m, $l, $d, $ai)
+    public function __construct($p, $h, $f, $m, $l, $d, $ai)
     {
         $this->partNum = $p;
         $this->headers = $h;
@@ -225,7 +225,7 @@ class AttachmentInfo
     /** @var string $description */
     public $description;
 
-    function __construct($filename, $mimeType, $description)
+    public function __construct($filename, $mimeType, $description)
     {
         $this->filename = $filename;
         $this->mimeType = $mimeType;
@@ -235,7 +235,6 @@ class AttachmentInfo
 
 class PhiMailConnector
 {
-
     const PHIMAIL_VERSION = '1.0';
     const PHIMAIL_BUILD = '104';
     const PHIMAIL_API_VERSION = '1.3.1';
@@ -250,7 +249,7 @@ class PhiMailConnector
      * @param int    $p the phiMail service port number
      * @throws \Exception if connection cannot be opened.
      */
-    function __construct($s, $p)
+    public function __construct($s, $p)
     {
         if (!isset(self::$context)) {
             self::$context = stream_context_create();
@@ -689,7 +688,7 @@ class PhiMailConnector
                 $rExplode[2],
                 isset($rExplode[3]) ? $rExplode[3] : null
             );
-        } else if (substr($response, 0, 4) == 'MAIL') {
+        } elseif (substr($response, 0, 4) == 'MAIL') {
             $rExplode = explode(' ', trim($response), 5);
             $numAttach = (int) $rExplode[3];
             return CheckResult::newMail(

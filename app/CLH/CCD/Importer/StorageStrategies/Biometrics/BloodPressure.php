@@ -12,7 +12,6 @@ use App\Models\CPM\CpmBiometric;
  */
 class BloodPressure extends BaseStorageStrategy implements StorageStrategy
 {
-
     public function import($bloodPressure)
     {
         $this->user->cpmBloodPressure()->create([

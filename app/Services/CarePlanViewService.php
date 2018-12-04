@@ -195,7 +195,7 @@ class CarePlanViewService
         return compact('sections');
     }
 
-    function convert_state_to_abbreviation($state_name)
+    public function convert_state_to_abbreviation($state_name)
     {
         switch ($state_name) {
             case "Alabama":

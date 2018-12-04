@@ -46,7 +46,6 @@ class AutoPullEnrolleesFromAthena extends Command
             "filterInsurance"     => true,
             "filterLastEncounter" => true,
         ];
-
     }
 
     /**
@@ -57,7 +56,8 @@ class AutoPullEnrolleesFromAthena extends Command
     public function handle()
     {
         $to   = Carbon::now()->format('y-m-d');
-        $from = Carbon::now()->subMonth()->format('y-m-d');;
+        $from = Carbon::now()->subMonth()->format('y-m-d');
+        ;
         $offset = true;
 
         if ($this->argument('offset')) {
@@ -90,15 +90,16 @@ class AutoPullEnrolleesFromAthena extends Command
 
         if ($practices->count() == 0) {
             if (app()->environment('worker')) {
-                sendSlackMessage(' #parse_enroll_import',
-                    "No Practices with checked 'api-auto-pull' setting were found for the weekly Athena Data Pull.");
+                sendSlackMessage(
+                    ' #parse_enroll_import',
+                    "No Practices with checked 'api-auto-pull' setting were found for the weekly Athena Data Pull."
+                );
             } else {
                 return null;
             }
         }
 
         foreach ($practices as $practice) {
-
             $batch = $this->service->createBatch(EligibilityBatch::ATHENA_API, $practice->id, $this->options);
 
             Artisan::call('athena:getPatientIdFromLastYearAppointments', [

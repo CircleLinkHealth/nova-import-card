@@ -8,7 +8,6 @@
 
 namespace App\Services;
 
-
 use App\Contracts\AuthyApiable;
 use App\User;
 use Authy\AuthyUser as AuthyApiUser;

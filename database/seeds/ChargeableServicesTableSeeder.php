@@ -12,8 +12,6 @@ class ChargeableServicesTableSeeder extends Seeder
      */
     public function run()
     {
-
-
         \DB::table('chargeable_services')->delete();
 
         \DB::table('chargeable_services')->insert([
@@ -72,7 +70,5 @@ class ChargeableServicesTableSeeder extends Seeder
                     'updated_at'  => '2018-02-24 17:13:02',
                 ],
         ]);
-
-
     }
 }

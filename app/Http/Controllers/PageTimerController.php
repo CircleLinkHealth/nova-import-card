@@ -104,7 +104,7 @@ class PageTimerController extends Controller
         //user
         $user = User::find($pageTimer->provider_id);
 
-        if (( ! (bool)$user->isCCMCountable()) || ($pageTimer->patient_id == 0)) {
+        if ((! (bool)$user->isCCMCountable()) || ($pageTimer->patient_id == 0)) {
             return false;
         }
 
@@ -118,7 +118,7 @@ class PageTimerController extends Controller
 
         $is_ommited = in_array($pageTimer->title, $omitted_routes);
 
-        if ( ! $is_ommited) {
+        if (! $is_ommited) {
             $activityParams                  = [];
             $activityParams['type']          = $params['activity'];
             $activityParams['provider_id']   = $pageTimer->provider_id;
@@ -156,14 +156,14 @@ class PageTimerController extends Controller
         $activity = Activity::with('patient.patientInfo')
                             ->find($activityId);
 
-        if ( ! $activity) {
+        if (! $activity) {
             return;
         }
 
         $nurse = Nurse::whereUserId($activity->provider_id)
                       ->first();
 
-        if ( ! $nurse) {
+        if (! $nurse) {
             return;
         }
 

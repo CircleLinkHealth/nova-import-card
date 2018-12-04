@@ -36,10 +36,10 @@ class ActivityApiControllerTest extends TestCase
             ->assertJson([
                 $this->patient->id => $sum
             ]);
-
     }
 
-    public function test_total_ccm_time_for_patient_for_current_month() {
+    public function test_total_ccm_time_for_patient_for_current_month()
+    {
         $sum = $this->activities->sum('duration');
 
 
@@ -57,7 +57,8 @@ class ActivityApiControllerTest extends TestCase
             ]);
     }
 
-    public function test_total_ccm_time_returns_404_if_no_patient_id_is_given() {
+    public function test_total_ccm_time_returns_404_if_no_patient_id_is_given()
+    {
         $response = $this->json(
             'GET',
             route('get.total.ccm.time', [

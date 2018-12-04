@@ -2,7 +2,6 @@
 
 namespace App\Notifications;
 
-
 use App\Mail\PracticeInvoice as PracticeInvoiceMailable;
 use App\User;
 use Illuminate\Bus\Queueable;
@@ -43,7 +42,6 @@ class PracticeInvoice extends Notification implements ShouldQueue
         $this->invoiceLink = $invoiceLink;
 
         $this->filePath = $filePath;
-
     }
 
     /**

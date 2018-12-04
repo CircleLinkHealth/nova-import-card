@@ -24,7 +24,6 @@ class CreateNewPatientRequest extends FormRequest
      */
     public function rules()
     {
-
         if ($this->input('patientId')) {
             return [];
         }
@@ -47,7 +46,5 @@ class CreateNewPatientRequest extends FormRequest
                 },
             ],
         ];
-
     }
-
 }

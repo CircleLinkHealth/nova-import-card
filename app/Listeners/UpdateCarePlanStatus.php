@@ -48,7 +48,6 @@ class UpdateCarePlanStatus
         $practiceSettings = $event->practiceSettings;
         //This CarePlan has already been `QA approved` by CLH, and is now being approved by a member of the practice
         if ($user->getCarePlanStatus() == CarePlan::QA_APPROVED && auth()->user()->canApproveCarePlans()) {
-
             Log::debug("UpdateCarePlanStatus: Ready to set status to PROVIDER_APPROVED");
 
             $date     = Carbon::now();
@@ -61,11 +60,11 @@ class UpdateCarePlanStatus
             event(new PdfableCreated($user->carePlan));
 
             if (app()->environment(['worker', 'production', 'staging'])) {
-                sendSlackMessage('#careplanprintstatus',
-                    "Dr.{$approver->getFullName()} approved {$user->id}'s care plan.\n");
+                sendSlackMessage(
+                    '#careplanprintstatus',
+                    "Dr.{$approver->getFullName()} approved {$user->id}'s care plan.\n"
+                );
             }
-
-
         } //This CarePlan is being `QA approved` by CLH
         elseif ($user->getCarePlanStatus() == CarePlan::DRAFT
                 && auth()->user()->hasPermissionForSite('care-plan-qa-approve', $user->getPrimaryPracticeId())) {
@@ -96,7 +95,7 @@ class UpdateCarePlanStatus
      */
     private function addPatientConsentedNote(User $user)
     {
-        if ( ! $user->notes->isEmpty()) {
+        if (! $user->notes->isEmpty()) {
             return;
         }
 

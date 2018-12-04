@@ -22,7 +22,7 @@ class ProviderUITimerComposer extends ServiceProvider
             $ccm_time = 0;
             $bhi_time = 0;
 
-            if ( ! isset($activity)) {
+            if (! isset($activity)) {
                 $activity = 'Undefined';
             }
 
@@ -88,7 +88,6 @@ class ProviderUITimerComposer extends ServiceProvider
             $patient = $view->patient;
 
             if ($patient) {
-
                 $seconds = $patient->getCcmTime();
 
                 $H           = floor($seconds / 3600);

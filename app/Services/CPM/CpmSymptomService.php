@@ -16,15 +16,18 @@ class CpmSymptomService implements CpmModel
 {
     private $symptomRepo;
 
-    public function __construct(CpmSymptomRepository $symptomRepo) {
+    public function __construct(CpmSymptomRepository $symptomRepo)
+    {
         $this->symptomRepo = $symptomRepo;
     }
 
-    public function repo() {
+    public function repo()
+    {
         return $this->symptomRepo;
     }
 
-    public function symptoms() {
+    public function symptoms()
+    {
         return $this->repo()->symptoms();
     }
 

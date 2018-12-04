@@ -22,15 +22,18 @@ class NoteFilters extends QueryFilters
         return [];
     }
     
-    public function type($term) {
+    public function type($term)
+    {
         return $this->builder->where('type', $term);
     }
 
-    public function sort_createdAt($type = null) {
+    public function sort_createdAt($type = null)
+    {
         return $this->builder->orderBy('created_at', $type);
     }
     
-    public function sort_id($type = null) {
+    public function sort_id($type = null)
+    {
         return $this->builder->orderBy('id', $type);
     }
 }

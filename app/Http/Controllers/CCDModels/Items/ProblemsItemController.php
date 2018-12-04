@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
  */
 class ProblemsItemController extends Controller
 {
-
     public function index(Request $request)
     {
         $data   = [];

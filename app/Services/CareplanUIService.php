@@ -83,7 +83,7 @@ class CareplanUIService extends Facade
                 if ($n == 0) {
                     $content .= '<div class="form-block form-block--left col-md-6">
 								<div class="row">';
-                } else if ($n == $num_items_per_column) {
+                } elseif ($n == $num_items_per_column) {
                     $content .= '<div class="form-block form-block--right col-md-6">
 								<div class="row">';
                 }
@@ -112,7 +112,7 @@ class CareplanUIService extends Facade
                     $item_status = $arrSubKeyVal['status'];
                     //echo "<br>lastrow<pre>";var_export($arrSubKeyVal);echo "</pre><br>";
                     $item_ui_sort = $arrSubKeyVal['ui_sort'];
-                } else if (isset($sub_meta[$item][0][$subKey]['items_id'])) {
+                } elseif (isset($sub_meta[$item][0][$subKey]['items_id'])) {
                     // singleton, has no children
                     $item_id = $sub_meta[$item][0][$subKey]['items_id'];
                     $item_parent_id = $sub_meta[$item][0][$subKey]['items_id'];
@@ -297,7 +297,7 @@ class CareplanUIService extends Facade
                 }
                 if ($n==($num_items_per_column-1)) {
                     $content .= '</div></div>';
-                } else if ($n == ($num_items_total-1)) {
+                } elseif ($n == ($num_items_total-1)) {
                     $content .= '</div></div>';
                 }
                 $content .= "</div></div></div></div>";
@@ -341,7 +341,6 @@ class CareplanUIService extends Facade
         $pcpSectionText,
         $user
     ) {
-
         $id = $programId;
         $section_text = $pcpSectionText;
         $user_id = '0';

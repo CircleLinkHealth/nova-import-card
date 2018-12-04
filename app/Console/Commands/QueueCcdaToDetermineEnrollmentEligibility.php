@@ -67,7 +67,7 @@ class QueueCcdaToDetermineEnrollmentEligibility extends Command
                         if ($ccda->practice_id) {
                             $practice = $practices[$ccda->practice_id] ?? null;
 
-                            if ( ! $practice) {
+                            if (! $practice) {
                                 return false;
                             }
 

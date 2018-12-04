@@ -83,8 +83,10 @@ class ManageCpmProblemsController extends Controller
             $problem->default_icd_10_code == $request['default_icd_10_code'] &&
             $problem->is_behavioral == $request['is_behavioral'] &&
             $problem->weight == $request['weight']) {
-            return redirect()->route('manage-cpm-problems.edit', ['problem_id' => $problem->id])->with('msg',
-                'No changes have been made.');
+            return redirect()->route('manage-cpm-problems.edit', ['problem_id' => $problem->id])->with(
+                'msg',
+                'No changes have been made.'
+            );
         }
         $data = [
             'contains'            => $request['contains'],
@@ -94,8 +96,10 @@ class ManageCpmProblemsController extends Controller
         ];
         $problem->update($data);
 
-        return redirect()->route('manage-cpm-problems.edit', ['problem_id' => $problem->id])->with('msg',
-            'Changes Successfully Applied.');
+        return redirect()->route('manage-cpm-problems.edit', ['problem_id' => $problem->id])->with(
+            'msg',
+            'Changes Successfully Applied.'
+        );
     }
 
     /**

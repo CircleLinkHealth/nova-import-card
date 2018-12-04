@@ -8,7 +8,6 @@
 
 namespace App\Observers;
 
-
 use App\EligibilityBatch;
 use App\Notifications\EligibilityBatchProcessed;
 use App\Practice;

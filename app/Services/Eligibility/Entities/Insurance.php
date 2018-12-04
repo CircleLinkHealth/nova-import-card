@@ -8,8 +8,6 @@
 
 namespace App\Services\Eligibility\Entities;
 
-
 class Insurance
 {
-
 }

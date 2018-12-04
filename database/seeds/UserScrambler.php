@@ -5,7 +5,6 @@ use Illuminate\Database\Seeder;
 
 class UserScrambler extends Seeder
 {
-
     public function run()
     {
         $allUsers = User::all();

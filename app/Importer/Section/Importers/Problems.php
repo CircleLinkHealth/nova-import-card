@@ -46,7 +46,7 @@ class Problems extends BaseImporter
                                         $medicalRecordId,
                                         $importedMedicalRecord
                                     ) {
-                                        if ( ! $this->validate($itemLog)) {
+                                        if (! $this->validate($itemLog)) {
                                             return ['do_not_import' => $itemLog->id];
                                         }
 
@@ -55,20 +55,26 @@ class Problems extends BaseImporter
                                          */
                                         $problemCodes = $this->consolidateProblemInfo($itemLog);
 
-                                        if ( ! validProblemName($problemCodes->cons_name)) {
+                                        if (! validProblemName($problemCodes->cons_name)) {
                                             return ['do_not_import' => $itemLog->id];
                                         }
 
                                         $cpmProblemId = $this->getCpmProblemId($itemLog, $problemCodes->cons_name);
 
                                         if ($cpmProblemId == 1 && str_contains($problemCodes->cons_name, ['2'])) {
-                                            $cpmProblemId = $this->cpmProblems->firstWhere('name',
-                                                'Diabetes Type 2')->id;
-                                        } else if ($cpmProblemId == 1 && str_contains($problemCodes->cons_name,
-                                                ['1'])) {
-                                            $cpmProblemId = $this->cpmProblems->firstWhere('name',
-                                                'Diabetes Type 1')->id;
-                                        } else if ($cpmProblemId == 1) {
+                                            $cpmProblemId = $this->cpmProblems->firstWhere(
+                                                'name',
+                                                'Diabetes Type 2'
+                                            )->id;
+                                        } elseif ($cpmProblemId == 1 && str_contains(
+                                            $problemCodes->cons_name,
+                                                ['1']
+                                        )) {
+                                            $cpmProblemId = $this->cpmProblems->firstWhere(
+                                                'name',
+                                                'Diabetes Type 1'
+                                            )->id;
+                                        } elseif ($cpmProblemId == 1) {
                                             return ['do_not_import' => $itemLog->id];
                                         }
 
@@ -120,7 +126,7 @@ class Problems extends BaseImporter
 
     private function getCpmProblemId(ProblemLog $itemLog, $problemName)
     {
-        if ( ! validProblemName($problemName)) {
+        if (! validProblemName($problemName)) {
             return null;
         }
 
@@ -149,14 +155,16 @@ class Problems extends BaseImporter
             $keywords = array_merge(explode(',', $cpmProblem->contains), [$cpmProblem->name]);
 
             foreach ($keywords as $keyword) {
-                if ( ! $keyword || empty($keyword)) {
+                if (! $keyword || empty($keyword)) {
                     continue;
                 }
 
                 $keyword = trim($keyword);
 
-                if (str_contains(strtolower($problemName), strtolower($keyword)) || str_contains(strtolower($keyword),
-                        strtolower($problemName))) {
+                if (str_contains(strtolower($problemName), strtolower($keyword)) || str_contains(
+                    strtolower($keyword),
+                        strtolower($problemName)
+                )) {
                     return $cpmProblem->id;
                 }
             }

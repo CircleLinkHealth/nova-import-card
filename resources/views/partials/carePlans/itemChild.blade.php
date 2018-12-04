@@ -42,7 +42,9 @@
             $day = 'S';
         }
         $status = '';
-        if (strpos($planItem->meta_value, strval($i)) > -1) $status = ' checked="checked"';
+        if (strpos($planItem->meta_value, strval($i)) > -1) {
+            $status = ' checked="checked"';
+        }
         // $modal_content .= '<input type="checkbox" name="test" id="" value="1">';
         $name = $planItem->careItem->name;
         $modal_content .= '<div class="radio-inline"><input type="checkbox" id="' . $name . $i . '" name="' . $name . '[]" value="' . $i . '" ' . $status . '><label for="' . $name . $i . '"><span> </span>&nbsp;' . $day . '</label></div>';  // HIDE CONTACT DAYS

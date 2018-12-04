@@ -141,9 +141,9 @@ if (isset($patient)) {
                     if ($key == 'Blood_Sugar') {
                         $yaxis_start = 'start:40,';
                         $yaxis_step  = 'step:20,';
-                    } else if ($key == 'Blood_Pressure') {
+                    } elseif ($key == 'Blood_Pressure') {
                         $yaxis_start = 'start:80,';
-                    } else if ($key == 'Weight') {
+                    } elseif ($key == 'Weight') {
                         $yaxis_start = 'start:80,';
                         $yaxis_step  = 'step: ' . round(($value['max'] - 80) / 4, -1) . ',';
                     }
@@ -160,15 +160,16 @@ if (isset($patient)) {
                                     <div class="col-xs-3 text-center" style="Zoom:75%">
                                         <div class="patient-summary__info {{strtolower($value['status'])}}">
                             <span><i class="icon--<?php if ($key == 'Weight') {
-                                    if (strtolower($value['status']) == 'increased') {
-                                        echo trim("grey-up");
-                                    } elseif (strtolower($value['status']) == 'decreased')
-                                        echo trim("grey-down");
-                                    else
-                                        echo trim("unchanged");
-                                } else {
-                                    echo trim(strtolower($value['status']));
-                                } ?>"> </i></span>{{abs($value['change'])}}
+                        if (strtolower($value['status']) == 'increased') {
+                            echo trim("grey-up");
+                        } elseif (strtolower($value['status']) == 'decreased') {
+                            echo trim("grey-down");
+                        } else {
+                            echo trim("unchanged");
+                        }
+                    } else {
+                        echo trim(strtolower($value['status']));
+                    } ?>"> </i></span>{{abs($value['change'])}}
                                             <span class="patient-summary__metrics">{{trim($value['unit'])}}</span>
                                         </div>
                                         <div class="patient-summary__info__legend">

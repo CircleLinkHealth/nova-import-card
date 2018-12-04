@@ -45,7 +45,6 @@ use App\User;
  */
 class CpmProblem extends \App\BaseModel implements Serviceable
 {
-    
     use Instructable;
 
     protected $table = 'cpm_problems';
@@ -125,23 +124,28 @@ class CpmProblem extends \App\BaseModel implements Serviceable
         return $this->belongsToMany(User::class, 'cpm_problems_users', 'patient_id');
     }
 
-    public function user() {
+    public function user()
+    {
         return $this->hasMany(CpmProblemUser::class, 'cpm_problem_id');
     }
 
-    public function instruction() {
+    public function instruction()
+    {
         return $this->cpmInstructions()->first();
     }
 
-    public function instructions() {
+    public function instructions()
+    {
         return $this->user()->whereNotNull('cpm_instruction_id')->with(['instruction'])->groupBy('cpm_instruction_id');
     }
 
-    public function instructable() {
+    public function instructable()
+    {
         return $this->hasOne(CpmInstructable::class, 'instructable_id');
     }
 
-    public function isDuplicateOf($name) {
+    public function isDuplicateOf($name)
+    {
         return $this->where('contains', 'LIKE', "%$name%");
     }
 
@@ -161,7 +165,8 @@ class CpmProblem extends \App\BaseModel implements Serviceable
         return new CpmProblemService();
     }
 
-    public function problemImports() {
+    public function problemImports()
+    {
         return $this->hasMany(ProblemImport::class);
     }
 }

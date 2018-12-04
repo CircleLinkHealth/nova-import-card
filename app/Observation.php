@@ -79,20 +79,20 @@ class Observation extends BaseModel
             if ($this->obs_key == 'Blood_Pressure') {
                 if ($value < 80 || $value >= 180) {
                     return 'danger';
-                } else if (($value >= 80 && $value < 100) || ($value >= 130 && $value < 180)) {
+                } elseif (($value >= 80 && $value < 100) || ($value >= 130 && $value < 180)) {
                     return 'warning';
                 } else {
                     return 'success';
                 }
-            } else if ($this->obs_key == 'Blood_Sugar') {
+            } elseif ($this->obs_key == 'Blood_Sugar') {
                 if ($value < 60 || $value >= 350) {
                     return 'danger';
-                } else if (($value >= 60 && $value < 80) || ($value >= 140 && $value < 350)) {
+                } elseif (($value >= 60 && $value < 80) || ($value >= 140 && $value < 350)) {
                     return 'warning';
                 } else {
                     return 'success';
                 }
-            } else if ($this->obs_key == 'Cigarettes') {
+            } elseif ($this->obs_key == 'Cigarettes') {
                 if ($value < 4) {
                     return 'success';
                 } else {
@@ -206,7 +206,7 @@ class Observation extends BaseModel
             return false;
         }
         $wpUser = User::find($this->user_id);
-        if ( ! $wpUser->program_id) {
+        if (! $wpUser->program_id) {
             return false;
         }
         $comment = Comment::find($this->comment_id);
@@ -249,7 +249,7 @@ class Observation extends BaseModel
         parent::save();
 
         // run datamonitor if new obs
-        if ( ! $updating) {
+        if (! $updating) {
             $dmService = app(DatamonitorService::class);
             $dmService->process_obs_alerts($this->id);
         }

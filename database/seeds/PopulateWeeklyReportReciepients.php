@@ -12,7 +12,6 @@ class PopulateWeeklyReportReciepients extends Seeder
      */
     public function run()
     {
-
         $practicesToSendTo = [
             'carolina-medical-associates' =>
                 'joereddy@icloud.com, jillmclain@yahoo.com'

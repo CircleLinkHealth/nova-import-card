@@ -18,28 +18,36 @@ class CpmInstructionService
     private $instructionsRepo;
     private $userRepo;
     
-    public function __construct(CpmInstructionRepository $instructionsRepo, UserRepositoryEloquent $userRepo) {
+    public function __construct(CpmInstructionRepository $instructionsRepo, UserRepositoryEloquent $userRepo)
+    {
         $this->instructionsRepo = $instructionsRepo;
         $this->userRepo = $userRepo;
     }
 
-    public function repo() {
+    public function repo()
+    {
         return $this->instructionsRepo;
     }
 
-    public function instructions() {
+    public function instructions()
+    {
         $instructions = $this->repo()->model()->paginate(15);
         $instructions->getCollection()->transform([$this, 'setupInstruction']);
         return $instructions;
     }
 
-    public function instruction($id) {
+    public function instruction($id)
+    {
         $instruction = $this->repo()->model()->find($id);
-        if ($instruction) return $this->setupInstruction($instruction);
-        else return null;
+        if ($instruction) {
+            return $this->setupInstruction($instruction);
+        } else {
+            return null;
+        }
     }
 
-    public function create($name) {
+    public function create($name)
+    {
         if ($name) {
             $instruction = new CpmInstruction();
             $instruction->name = $name;
@@ -49,7 +57,8 @@ class CpmInstructionService
         }
     }
     
-    public function edit($id, $text) {
+    public function edit($id, $text)
+    {
         if ($id && $text) {
             $query = CpmInstruction::where('id', $id);
             $query->update(['name' => $text ]);
@@ -57,7 +66,8 @@ class CpmInstructionService
         }
     }
 
-    function setupInstruction($value) {
+    public function setupInstruction($value)
+    {
         $value->problems = $value->cpmProblems()->get(['cpm_problems.id'])->map(function ($p) {
             return $p->id;
         });

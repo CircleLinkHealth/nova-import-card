@@ -20,13 +20,13 @@ class UserCsvResource extends Resource
         $patient  = $this->patientInfo;
         $careplan = $this->carePlan;
         $ccmStatusDate = '';
-        if ($patient->ccm_status == 'paused'){
+        if ($patient->ccm_status == 'paused') {
             $ccmStatusDate = $patient->date_paused;
         }
-        if ($patient->ccm_status == 'withdrawn'){
+        if ($patient->ccm_status == 'withdrawn') {
             $ccmStatusDate = $patient->date_withdrawn;
         }
-        if ($patient->ccm_status == 'unreachable'){
+        if ($patient->ccm_status == 'unreachable') {
             $ccmStatusDate = $patient->date_unreachable;
         }
 
@@ -52,7 +52,8 @@ class UserCsvResource extends Resource
      *
      * @return string CCM minutes in decimal
      */
-    private function getTimeInDecimals(String $ccmTime = null) {
+    private function getTimeInDecimals(String $ccmTime = null)
+    {
         if (!$ccmTime) {
             return '0.00';
         }

@@ -58,7 +58,6 @@ class LocationFormRequest extends FormRequest
         $count = 1,
         $params = []
     ) : array {
-    
         return [
             'locations' =>
                 [

@@ -8,7 +8,6 @@
 
 namespace App\Repositories;
 
-
 use App\Models\CPM\CpmProblemUser;
 
 class CpmProblemUserRepository
@@ -18,11 +17,13 @@ class CpmProblemUserRepository
         return CpmProblemUser;
     }
 
-    public function where($conditions) {
+    public function where($conditions)
+    {
         return CpmProblemUser::where($conditions);
     }
 
-    public function create($patientId, $cpmProblemId, $instructionId) {
+    public function create($patientId, $cpmProblemId, $instructionId)
+    {
         $this->remove($patientId, $cpmProblemId);
         
         $cpmProblemUsers = CpmProblemUser::where([ 'cpm_problem_id' => $cpmProblemId, 'patient_id' => $patientId ])->orderBy('id', 'desc');
@@ -32,8 +33,7 @@ class CpmProblemUserRepository
                 'cpm_instruction_id' => $instructionId
             ]);
             $cpmProblemUser = $cpmProblemUsers->first();
-        }
-        else {
+        } else {
             $cpmProblemUser = new CpmProblemUser();
             $cpmProblemUser->patient_id = $patientId;
             $cpmProblemUser->cpm_problem_id = $cpmProblemId;
@@ -43,7 +43,8 @@ class CpmProblemUserRepository
         return $cpmProblemUser;
     }
 
-    public function remove($patientId, $cpmProblemId) {
+    public function remove($patientId, $cpmProblemId)
+    {
         $cpmProblemUsers = CpmProblemUser::where([ 'cpm_problem_id' => $cpmProblemId, 'patient_id' => $patientId ])->get();
         $cpmProblemUsers->map(function ($u) {
             $u->instruction()->delete();

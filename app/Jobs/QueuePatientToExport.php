@@ -99,7 +99,7 @@ class QueuePatientToExport implements ShouldQueue
 
         $pdfPath = $note->toPdf();
 
-        if ( ! $pdfPath) {
+        if (! $pdfPath) {
             throw new \Exception("`$pdfPath` not created");
         }
 
@@ -107,7 +107,7 @@ class QueuePatientToExport implements ShouldQueue
         $put = $drive->getFilesystemHandle()
                      ->putStream("{$googleDriveDir['path']}/$noteFileName", fopen($pdfPath, 'r+'));
 
-        if ( ! $put) {
+        if (! $put) {
             throw new \Exception("Failed uploading PDF Note to `{$googleDriveDir['path']}`. ");
         }
 
@@ -145,7 +145,7 @@ class QueuePatientToExport implements ShouldQueue
 
         \Log::debug("PDF CarePlan path for `{$this->fullCloudPath()}` is `$pdfPath`.");
 
-        if ( ! $pdfPath) {
+        if (! $pdfPath) {
             \Log::debug("PDF CarePlan not created to upload to `{$this->fullCloudPath()}`.");
 
             throw new \Exception("`$pdfPath` not created");
@@ -155,7 +155,7 @@ class QueuePatientToExport implements ShouldQueue
         $put = $drive->getFilesystemHandle()
                      ->putStream($this->pdfCarePlanPath($googleDriveDir), fopen($pdfPath, 'r+'));
 
-        if ( ! $put) {
+        if (! $put) {
             \Log::debug("PDF CarePlan not uploaded to `{$this->fullCloudPath()}` from `$pdfPath`.");
 
             throw new \Exception("Failed uploading PDF CarePlan to `{$this->pdfCarePlanPath($googleDriveDir)}`. ");
@@ -166,7 +166,7 @@ class QueuePatientToExport implements ShouldQueue
         $deleted = $this->getLocalFilesystemHandle()
                         ->delete($pathStartingAtStorage);
 
-        if ( ! $deleted) {
+        if (! $deleted) {
             \Log::debug("PDF CarePlan not deleted from `$pathStartingAtStorage`.");
 
             throw new \Exception("Failed uploading PDF CarePlan to `{$this->pdfCarePlanPath($googleDriveDir)}`. ");
@@ -196,7 +196,7 @@ class QueuePatientToExport implements ShouldQueue
     {
         $directory = $drive->getDirectory($this->folderId, $this->folderName());
 
-        if ( ! $directory) {
+        if (! $directory) {
             $drive->getFilesystemHandle()->makeDirectory($this->fullCloudPath());
             $directory = $drive->getDirectory($this->folderId, $this->folderName());
         }
@@ -216,7 +216,7 @@ class QueuePatientToExport implements ShouldQueue
     {
         $directory = $this->fileExists('Notes', 'dir');
 
-        if ( ! $directory) {
+        if (! $directory) {
             $drive->getFilesystemHandle()->makeDirectory("{$googleDriveDir['path']}/Notes");
             $directory = $drive->getDirectory($googleDriveDir['path'], 'Notes');
         }
@@ -238,7 +238,7 @@ class QueuePatientToExport implements ShouldQueue
 
     public function fileExists($fileNameWithExtension, $type = 'file')
     {
-        if ( ! is_a($this->driveContents, Collection::class)) {
+        if (! is_a($this->driveContents, Collection::class)) {
             return false;
         }
 

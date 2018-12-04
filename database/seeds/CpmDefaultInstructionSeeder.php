@@ -5,7 +5,7 @@ use App\Models\CPM\CpmProblem;
 use Illuminate\Database\Seeder;
 
 class CpmDefaultInstructionSeeder extends Seeder
-{   
+{
     /**
      * Create default instructions for cpm problems
      *
@@ -54,7 +54,8 @@ class CpmDefaultInstructionSeeder extends Seeder
         }
     }
 
-    public function instructions () {
+    public function instructions()
+    {
         return [
             'Hypertension' => "- Learn to take and monitor your own blood pressure. It may save your life.\n\n- Take your blood pressure medication exactly as directed. Do not skip doses. Missing doses can cause your blood pressure to get out of control.\n\n- Avoid medications that contain heart stimulants, including over-the-counter drugs like decongestants (cold, flu, allergy) and pain relievers (ibuprofen, motrin, advil, naproxen, aleve). Check for warnings about high blood pressure on the label.\n\n- Cut back on salt.\n\n- Follow the DASH (Dietary Approaches to Stop Hypertension) eating plan. Try eating more raw nuts, vegetables, legumes (beans, peas, etc.), lean proteins (skinless chicken, fish, beef) and complex carbohydrates (brown rice, wholegrain bread), instead of processed foods.\n\n- Begin an exercise program. Ask your provider how to get started. The American Heart Association recommends aerobic exercise 3 to 4 times a week for an average of 40 minutes at a time, along with resistance exercise 2 days a week, with your provider’s approval. 
             ",
@@ -83,7 +84,8 @@ class CpmDefaultInstructionSeeder extends Seeder
         ];
     }
 
-    public function behavioralInstructions() {
+    public function behavioralInstructions()
+    {
         return [
             'Depression' => [
                 'problems' => [

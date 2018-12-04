@@ -163,7 +163,7 @@ class CallFilters extends QueryFilters
 
     public function minScheduledDate($date)
     {
-        if ( ! array_key_exists('unassigned', $this->filters())) {
+        if (! array_key_exists('unassigned', $this->filters())) {
             return $this->builder
                 ->where('scheduled_date', '>=', $date);
         }
@@ -212,7 +212,7 @@ class CallFilters extends QueryFilters
      */
     public function attemptsSinceLastSuccess($noCallAttemptsSinceLastSuccess)
     {
-        if ( ! is_numeric($noCallAttemptsSinceLastSuccess)) {
+        if (! is_numeric($noCallAttemptsSinceLastSuccess)) {
             throw new \Exception("noCallAttemptsSinceLastSuccess must be a numeric value.");
         }
 
@@ -252,12 +252,18 @@ class CallFilters extends QueryFilters
             : 'desc';
 
         return $this->builder
-            ->select('calls.*',
-                \DB::raw('group_concat(DISTINCT ' . (new PatientContactWindow)->getTable() . ".day_of_week ORDER BY day_of_week $aggregate SEPARATOR ',') as sort_day"))
+            ->select(
+                'calls.*',
+                \DB::raw('group_concat(DISTINCT ' . (new PatientContactWindow)->getTable() . ".day_of_week ORDER BY day_of_week $aggregate SEPARATOR ',') as sort_day")
+            )
             ->with('inboundUser.patientInfo.contactWindows')
             ->join((new Patient)->getTable(), 'calls.inbound_cpm_id', '=', (new Patient)->getTable() . '.user_id')
-            ->join((new PatientContactWindow)->getTable(), (new PatientContactWindow)->getTable() . '.patient_info_id',
-                '=', (new Patient)->getTable() . '.id')
+            ->join(
+                (new PatientContactWindow)->getTable(),
+                (new PatientContactWindow)->getTable() . '.patient_info_id',
+                '=',
+                (new Patient)->getTable() . '.id'
+            )
             ->orderBy('sort_day', $term)
             ->groupBy('calls.inbound_cpm_id');
     }
@@ -267,10 +273,16 @@ class CallFilters extends QueryFilters
         return $this->builder
             ->select('calls.*')
             ->with('inboundUser.patientSummaries')
-            ->join((new PatientMonthlySummary)->getTable(), 'calls.inbound_cpm_id', '=',
-                (new PatientMonthlySummary)->getTable() . '.patient_id')
-            ->where((new PatientMonthlySummary)->getTable() . '.month_year',
-                Carbon::now()->startOfMonth()->toDateString())
+            ->join(
+                (new PatientMonthlySummary)->getTable(),
+                'calls.inbound_cpm_id',
+                '=',
+                (new PatientMonthlySummary)->getTable() . '.patient_id'
+            )
+            ->where(
+                (new PatientMonthlySummary)->getTable() . '.month_year',
+                Carbon::now()->startOfMonth()->toDateString()
+            )
             ->orderBy((new PatientMonthlySummary)->getTable() . '.no_of_successful_calls', $term)
             ->groupBy('calls.inbound_cpm_id');
     }
@@ -371,11 +383,18 @@ class CallFilters extends QueryFilters
 
         return $this->builder->selectRaw('calls.*, ' . " $aggregate(" . (new PatientContactWindow)->getTable() . '.day_of_week) as sort_day')
                              ->with('inboundUser.patientInfo.contactWindows')
-                             ->join((new Patient)->getTable(), 'calls.inbound_cpm_id', '=',
-                                 (new Patient)->getTable() . '.user_id')
-                             ->join((new PatientContactWindow)->getTable(),
-                                 (new PatientContactWindow)->getTable() . '.patient_info_id', '=',
-                                 (new Patient)->getTable() . '.id')
+                             ->join(
+                                 (new Patient)->getTable(),
+                                 'calls.inbound_cpm_id',
+                                 '=',
+                                 (new Patient)->getTable() . '.user_id'
+                             )
+                             ->join(
+                                 (new PatientContactWindow)->getTable(),
+                                 (new PatientContactWindow)->getTable() . '.patient_info_id',
+                                 '=',
+                                 (new Patient)->getTable() . '.id'
+                             )
                              ->orderBy('sort_day', $term)
                              ->groupBy('calls.inbound_cpm_id');
     }

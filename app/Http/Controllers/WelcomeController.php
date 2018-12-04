@@ -34,7 +34,7 @@ class WelcomeController extends Controller
     {
         $user = auth()->user();
 
-        if ( ! $user) {
+        if (! $user) {
             return redirect()->route('login', []);
         }
 
@@ -56,12 +56,11 @@ class WelcomeController extends Controller
             return redirect()->route('enrollment-center.dashboard');
         }
 
-        if ($user->hasRole('ehr-report-writer')){
-            if (! app()->environment('production')){
+        if ($user->hasRole('ehr-report-writer')) {
+            if (! app()->environment('production')) {
                 return redirect()->route('report-writer.dashboard');
             }
             return redirect()->route('login')->with(['messages' => ["message" => "Ehr Report Writers can only login in the Worker. Please visit: https://circlelink-worker.medstack.net"]]);
-
         }
 
         return redirect()->route('patients.dashboard', []);

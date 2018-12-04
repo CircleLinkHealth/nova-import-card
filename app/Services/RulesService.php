@@ -11,7 +11,6 @@ use Validator;
 
 class RulesService
 {
-
     public function getActions($params, $type = 'ATT')
     {
         if (empty($params)) {

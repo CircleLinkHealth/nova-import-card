@@ -177,7 +177,8 @@ class TabularMedicalRecord extends MedicalRecordEloquent
         // TODO: Implement getPatient() method.
     }
 
-    public function setPatientNameAttribute(string $value): string {
+    public function setPatientNameAttribute(string $value): string
+    {
         if ($value) {
             $names = explode(', ', $value);
             $this->first_name = $names[0];

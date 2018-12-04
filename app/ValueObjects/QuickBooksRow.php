@@ -49,7 +49,6 @@ class QuickBooksRow
         $this->lineDesc              = $array['LineDesc'];
         $this->lineUnitPrice         = $array['LineUnitPrice'];
         $this->msg                   = $array['Msg'];
-
     }
 
     public function toArray()
@@ -69,7 +68,6 @@ class QuickBooksRow
             'LineUnitPrice'         => $this->lineUnitPrice,
             'Msg'                   => $this->msg,
         ];
-
     }
 
 
@@ -280,6 +278,4 @@ class QuickBooksRow
     {
         $this->msg = $msg;
     }
-
-
 }

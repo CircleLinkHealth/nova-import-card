@@ -59,7 +59,7 @@ class QueueEligibilityBatchForProcessing extends Command
     {
         $batch = $this->getBatch();
 
-        if ( ! $batch) {
+        if (! $batch) {
             return null;
         }
 
@@ -169,9 +169,11 @@ class QueueEligibilityBatchForProcessing extends Command
                            ->get()
                            ->map(function ($ccda) use ($batch, $practice) {
                                ProcessCcda::withChain([
-                                   (new CheckCcdaEnrollmentEligibility($ccda->id,
+                                   (new CheckCcdaEnrollmentEligibility(
+                                       $ccda->id,
                                        $practice,
-                                       $batch))->onQueue('low'),
+                                       $batch
+                                   ))->onQueue('low'),
                                ])->dispatch($ccda->id)
                                           ->onQueue('low');
 
@@ -204,7 +206,7 @@ class QueueEligibilityBatchForProcessing extends Command
 
         if ($jobsToBeProcessedExist) {
             $batch->status = EligibilityBatch::STATUSES['processing'];
-        } elseif ( ! PhoenixHeartName::where('processed', '=', false)->exists()) {
+        } elseif (! PhoenixHeartName::where('processed', '=', false)->exists()) {
             $batch->status = EligibilityBatch::STATUSES['complete'];
         }
 
@@ -224,7 +226,7 @@ class QueueEligibilityBatchForProcessing extends Command
      */
     private function queueClhMedicalRecordTemplateJobs(EligibilityBatch $batch): EligibilityBatch
     {
-        if ( ! ! ! $batch->options['finishedReadingFile']) {
+        if (! ! ! $batch->options['finishedReadingFile']) {
             ini_set('memory_limit', '800M');
 
             $created = $this->createEligibilityJobsFromJsonFile($batch);
@@ -290,7 +292,7 @@ class QueueEligibilityBatchForProcessing extends Command
 
         $savedLocally = $localDisk->put($fileName, $stream);
 
-        if ( ! $savedLocally) {
+        if (! $savedLocally) {
             throw new \Exception("Failed saving $pathToFile");
         }
 
@@ -345,7 +347,7 @@ class QueueEligibilityBatchForProcessing extends Command
     {
         $handle = @fopen($pathToFile, "r");
         if ($handle) {
-            while ( ! feof($handle)) {
+            while (! feof($handle)) {
                 if (($buffer = fgets($handle)) !== false) {
                     $mr = new JsonMedicalRecordAdapter($buffer);
                     $mr->createEligibilityJob($batch);
@@ -366,7 +368,7 @@ class QueueEligibilityBatchForProcessing extends Command
         $iterator = read_file_using_generator($pathToFile);
 
         foreach ($iterator as $iteration) {
-            if ( ! $iteration) {
+            if (! $iteration) {
                 continue;
             }
 
@@ -391,7 +393,7 @@ class QueueEligibilityBatchForProcessing extends Command
     private function queueAthenaJobs(EligibilityBatch $batch): EligibilityBatch
     {
         //If the Athena batch has not patients, mark it as complete
-        if ( ! TargetPatient::whereBatchId($batch->id)->exists()) {
+        if (! TargetPatient::whereBatchId($batch->id)->exists()) {
             $batch->status = 3;
             $batch->save();
         }

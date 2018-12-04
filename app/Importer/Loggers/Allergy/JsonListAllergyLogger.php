@@ -8,12 +8,10 @@
 
 namespace App\Importer\Loggers\Allergy;
 
-
 use App\Contracts\Importer\MedicalRecord\Section\Logger;
 
 class JsonListAllergyLogger implements Logger
 {
-
     public function handle($allergiesString): array
     {
 //        Format

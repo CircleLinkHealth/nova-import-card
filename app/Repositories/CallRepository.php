@@ -8,7 +8,6 @@
 
 namespace App\Repositories;
 
-
 use App\Call;
 use App\User;
 use Carbon\Carbon;
@@ -40,7 +39,7 @@ class CallRepository
      */
     public function numberOfCalls($patientUserId, Carbon $monthYear = null)
     {
-        if ( ! $monthYear) {
+        if (! $monthYear) {
             $monthYear = Carbon::now();
         }
 
@@ -63,7 +62,7 @@ class CallRepository
      */
     public function numberOfSuccessfulCalls($patientUserId, Carbon $monthYear = null)
     {
-        if ( ! $monthYear) {
+        if (! $monthYear) {
             $monthYear = Carbon::now();
         }
 

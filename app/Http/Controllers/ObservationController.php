@@ -13,7 +13,6 @@ use Validator;
 
 class ObservationController extends Controller
 {
-
     public function index(Request $request)
     {
         if ($request->header('Client') == 'ui') {
@@ -43,7 +42,7 @@ class ObservationController extends Controller
             // get and validate current user
             \JWTAuth::setIdentifier('id');
             $wpUser = \JWTAuth::parseToken()->authenticate();
-            if ( ! $wpUser) {
+            if (! $wpUser) {
                 return response()->json(['error' => 'invalid_credentials'], 401);
             }
             $params                  = $request->input();
@@ -58,9 +57,9 @@ class ObservationController extends Controller
             }
         }
 
-        if (( ! $request->header('Client')) || $request->header('Client') == 'ui') {
+        if ((! $request->header('Client')) || $request->header('Client') == 'ui') {
             $wpUser = User::find($input['userId']);
-            if ( ! $wpUser) {
+            if (! $wpUser) {
                 return response()->json(['error' => 'invalid_credentials'], 401);
             }
             $validator = Validator::make($input, [
@@ -134,7 +133,7 @@ class ObservationController extends Controller
             }
         }
 
-        if ( ! $answerResponse) {
+        if (! $answerResponse) {
             return redirect()->back()->withErrors(['You entered an invalid value, please review and resubmit.'])->withInput();
         }
 
@@ -218,18 +217,14 @@ class ObservationController extends Controller
 
     public function dashboardIndex()
     {
-
-
         return view('admin.observations.dashboard.index');
-
     }
 
     public function getObservationsList(Request $request)
     {
-
         $user = User::find($request['userId']);
 
-        if ( ! $user) {
+        if (! $user) {
             return redirect()->route('observations-dashboard.index')->with('msg', 'User not found.');
         }
 
@@ -248,7 +243,6 @@ class ObservationController extends Controller
 
     public function editObservation(Request $request)
     {
-
         $obsId = $request['obsId'];
 
         $observation = Observation::with(['user', 'comment'])
@@ -260,7 +254,6 @@ class ObservationController extends Controller
 
     public function updateObservation(Request $request)
     {
-
         $observation = Observation::find($request['obsId']);
 
         $key       = $request['obs_key'];
@@ -274,8 +267,10 @@ class ObservationController extends Controller
             $observation->obs_value == $value &&
             $observation->obs_method == $method &&
             $observation->obs_message_id == $messageId) {
-            return redirect()->route('observations-dashboard.edit', ['obsId' => $observation->id])->with('msg',
-                'No changes have been made.');
+            return redirect()->route('observations-dashboard.edit', ['obsId' => $observation->id])->with(
+                'msg',
+                'No changes have been made.'
+            );
         }
 
         $observation->obs_key        = $key;
@@ -285,14 +280,14 @@ class ObservationController extends Controller
         $observation->save();
 
 
-        return redirect()->route('observations-dashboard.edit', ['obsId' => $observation->id])->with('msg',
-            'Changes Successfully Applied.');
+        return redirect()->route('observations-dashboard.edit', ['obsId' => $observation->id])->with(
+            'msg',
+            'Changes Successfully Applied.'
+        );
     }
 
     public function deleteObservation(Request $request)
     {
-
-
         $observation = Observation::find($request['obsId']);
 
         $userId = $observation->user_id;
@@ -300,7 +295,9 @@ class ObservationController extends Controller
         $observation->delete();
 
 
-        return redirect()->route('observations-dashboard.list', ['userId' => $userId])->with('msg',
-            'Observation Successfully Deleted.');
+        return redirect()->route('observations-dashboard.list', ['userId' => $userId])->with(
+            'msg',
+            'Observation Successfully Deleted.'
+        );
     }
 }

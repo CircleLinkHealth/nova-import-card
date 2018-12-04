@@ -477,7 +477,7 @@ class ReportsService
         $careplanReport = [];
 
         foreach ($patients as $user) {
-            if ( ! is_object($user)) {
+            if (! is_object($user)) {
                 $user = User::find($user);
             }
             $careplanReport[$user->id]['symptoms']    = $user->cpmSymptoms()->get()->pluck('name')->all();
@@ -490,7 +490,7 @@ class ReportsService
 
         $other_problems = $this->getInstructionsforOtherProblems($user);
 
-        if ( ! empty($other_problems)) {
+        if (! empty($other_problems)) {
             $careplanReport[$user->id]['problems']['Other Problems'] = $other_problems;
         }
 
@@ -610,8 +610,7 @@ class ReportsService
 
     public function getInstructionsForOtherProblems(User $user)
     {
-
-        if ( ! $user) {
+        if (! $user) {
             //nullify
             return "User not found...";
         }
@@ -619,7 +618,7 @@ class ReportsService
         // Other Conditions / Problem List
         $ccdProblems = 'No instructions at this time';
         $problem     = $user->cpmMiscs->where('name', CpmMisc::OTHER_CONDITIONS)->all();
-        if ( ! empty($problem)) {
+        if (! empty($problem)) {
             $problems = Problem::where('patient_id', '=', $user->id)->orderBy('name')->get();
             if ($problems->count() > 0) {
                 $ccdProblems = '';

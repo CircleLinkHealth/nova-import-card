@@ -119,7 +119,7 @@ class CarePlanProviderApproved extends Notification
      */
     public function toFax($notifiable)
     {
-        if ( ! $notifiable || ! $notifiable->fax) {
+        if (! $notifiable || ! $notifiable->fax) {
             return false;
         }
 
@@ -133,7 +133,7 @@ class CarePlanProviderApproved extends Notification
      */
     public function toPdf()
     {
-        if ( ! file_exists($this->pathToPdf)) {
+        if (! file_exists($this->pathToPdf)) {
             $this->pathToPdf = $this->carePlan->toPdf();
         }
 
@@ -149,7 +149,7 @@ class CarePlanProviderApproved extends Notification
      */
     public function toDirectMail($notifiable)
     {
-        if ( ! $notifiable || ! $notifiable->emr_direct_address) {
+        if (! $notifiable || ! $notifiable->emr_direct_address) {
             return false;
         }
 

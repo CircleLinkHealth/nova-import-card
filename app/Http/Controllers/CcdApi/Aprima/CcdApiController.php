@@ -86,7 +86,6 @@ class CcdApiController extends Controller
             }
 
             $careEvents = $activities->map(function ($careEvent) {
-
                 $this->ccmTime->logSentActivity(['activity_id' => $careEvent->id], ['activity_id' => $careEvent->id]);
 
                 return [

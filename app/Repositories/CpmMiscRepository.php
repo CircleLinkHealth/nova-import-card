@@ -13,27 +13,33 @@ class CpmMiscRepository
         return app(CpmMisc::class);
     }
 
-    public function count() {
+    public function count()
+    {
         return $this->model()->count();
     }
     
-    function setupMisc($misc) {
+    public function setupMisc($misc)
+    {
         $misc['patients'] = $misc->users()->count();
         return $misc;
     }
     
-    public function misc($id = null) {
+    public function misc($id = null)
+    {
         if ($id) {
             $misc = $this->model()->with('carePlanTemplates')->find($id);
-            if ($misc) return $this->setupMisc($misc);
-            else return null;
-        }
-        else {
+            if ($misc) {
+                return $this->setupMisc($misc);
+            } else {
+                return null;
+            }
+        } else {
             return $this->model()->get()->map([$this, 'setupMisc']);
         }
     }
 
-    public function exists($id) {
+    public function exists($id)
+    {
         return !!$this->model()->find($id);
     }
 }

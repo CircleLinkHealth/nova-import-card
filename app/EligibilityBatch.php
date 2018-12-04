@@ -75,7 +75,7 @@ class EligibilityBatch extends BaseModel
 
     public function getStatus($statusId = null)
     {
-        if ( ! $statusId) {
+        if (! $statusId) {
             if (is_null($this->status)) {
                 return null;
             }
@@ -148,7 +148,7 @@ class EligibilityBatch extends BaseModel
      */
     public function linkToView()
     {
-        if ( ! $this->id) {
+        if (! $this->id) {
             return null;
         }
 
@@ -177,7 +177,6 @@ class EligibilityBatch extends BaseModel
 
     public function getValidationStats()
     {
-
         $structure = EligibilityJob::where('batch_id', $this->id)
                                    ->where('invalid_structure', 1)
                                    ->count();
@@ -221,6 +220,5 @@ class EligibilityBatch extends BaseModel
             'problems'          => $problems,
             'phones'            => $phones,
         ];
-
     }
 }

@@ -53,7 +53,6 @@ class SchedulerService
         $noteId,
         $callStatus
     ) {
-
         $isComplex = $patient->isCCMComplex();
 
         $scheduled_call = $this->getTodaysCall($patient->id);
@@ -78,11 +77,19 @@ class SchedulerService
         $previousCall = $this->getPreviousCall($patient, $scheduled_call['id']);
 
         if ($callStatus == Call::REACHED) {
-            $prediction = (new SuccessfulHandler($patient->patientInfo, Carbon::now(), $isComplex,
-                $previousCall))->handle();
+            $prediction = (new SuccessfulHandler(
+                $patient->patientInfo,
+                Carbon::now(),
+                $isComplex,
+                $previousCall
+            ))->handle();
         } else {
-            $prediction = (new UnsuccessfulHandler($patient->patientInfo, Carbon::now(), $isComplex,
-                $previousCall))->handle();
+            $prediction = (new UnsuccessfulHandler(
+                $patient->patientInfo,
+                Carbon::now(),
+                $isComplex,
+                $previousCall
+            ))->handle();
         }
 
         $prediction['successful'] = $callStatus == Call::REACHED;
@@ -174,7 +181,6 @@ class SchedulerService
         $call,
         $status
     ) {
-
         $patient = $note->patient;
 
         if ($call) {
@@ -252,7 +258,6 @@ class SchedulerService
         $attempt_note = '',
         $is_manual = false
     ) {
-
         $patient = User::find($patientId);
 
         $window_start = Carbon::parse($window_start)->format('H:i');
@@ -334,7 +339,7 @@ class SchedulerService
                            })
                            ->first();
 
-            if ( ! $patient) {
+            if (! $patient) {
                 $failed[] = "{$row['Patient First Name']} {$row['Patient Last Name']}";
                 continue;
             }
@@ -352,7 +357,7 @@ class SchedulerService
                 $generalComment = $row['General Comment'];
             }
 
-            if ( ! empty($generalComment)) {
+            if (! empty($generalComment)) {
                 $info->general_comment = $generalComment;
                 $info->save();
             }
@@ -407,7 +412,6 @@ class SchedulerService
      */
     public function syncFamilialCalls()
     {
-
         $nurseIds = User::select('id')
                         ->whereHas('roles', function ($q) {
                             $q->where('name', '=', 'care-center');
@@ -440,7 +444,7 @@ class SchedulerService
 
                 if (is_a($call, Call::class)) {
                     //If the patient has a call and is not manual,
-                    if ( ! $call->is_manual) {
+                    if (! $call->is_manual) {
                         $window_start = $call->window_start;
                         $window_end   = $call->window_end;
 
@@ -532,8 +536,7 @@ class SchedulerService
         $reprocess_bucket = [];
 
         foreach ($patients as $patient) {
-
-            if ( ! $patient->user) {
+            if (! $patient->user) {
                 continue;
             }
 
@@ -581,11 +584,19 @@ class SchedulerService
                         $last_attempted_time = $last_attempted_call->called_date;
 
                         if ($status) {
-                            $data = (new SuccessfulHandler($patient, Carbon::parse($last_attempted_time),
-                                $patient->user->isCCMComplex(), $last_attempted_call));
+                            $data = (new SuccessfulHandler(
+                                $patient,
+                                Carbon::parse($last_attempted_time),
+                                $patient->user->isCCMComplex(),
+                                $last_attempted_call
+                            ));
                         } else {
-                            $data = (new UnsuccessfulHandler($patient, Carbon::parse($last_attempted_time),
-                                $patient->user->isCCMComplex(), $last_attempted_call));
+                            $data = (new UnsuccessfulHandler(
+                                $patient,
+                                Carbon::parse($last_attempted_time),
+                                $patient->user->isCCMComplex(),
+                                $last_attempted_call
+                            ));
                         }
 
                         $scheduled_call->scheduler      = 'refresher algorithm';

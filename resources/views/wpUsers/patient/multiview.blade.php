@@ -8,7 +8,7 @@
 
 use Illuminate\Support\Collection;
 
-if ( ! function_exists('checkIfExists')) {
+if (! function_exists('checkIfExists')) {
     //check if exists
     function checkIfExists(
         $arr,
@@ -322,7 +322,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 <div class="patient-info__subareas">
                     <?php
                     $ccdProblems = $ccdProblems->map(function ($problem) use ($allCpmProblems) {
-                        if ( ! $problem['instruction']) {
+                        if (! $problem['instruction']) {
                             $cpmProblem = $allCpmProblems->first(function ($cpm) use ($problem) {
                                 return ($cpm['name'] == $problem['name']) || ($cpm['id'] == $problem['cpm_id']);
                             });
@@ -412,12 +412,12 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             }
                             if ($start > 130) {
                                 $goal['verb'] = 'Decrease';
-                            } else if ($goal['info']['starting'] == 'N/A' || $goal['info']['target'] == 'TBD' || ! $goal['info']['starting'] || ($start >= 80 && $start <= 130)) {
+                            } elseif ($goal['info']['starting'] == 'N/A' || $goal['info']['target'] == 'TBD' || ! $goal['info']['starting'] || ($start >= 80 && $start <= 130)) {
                                 $goal['verb'] = 'Regulate';
                             } else {
                                 $goal['verb'] = 'Increase';
                             }
-                        } else if ($goal['name'] == 'Blood Pressure') {
+                        } elseif ($goal['name'] == 'Blood Pressure') {
                             $goal['info']['target'] = $goal['info']['target'] ?? '130/80';
                             if ($goal['info']['target'] == '0') {
                                 $goal['info']['target'] = '130/80';
@@ -425,11 +425,11 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
 
                             if ($goal['info']['starting'] == 'N/A' || $goal['info']['target'] == 'TBD' || ! $goal['info']['starting'] || ($start < 130)) {
                                 $goal['verb'] = 'Regulate';
-                            } else if ($start >= 130) {
+                            } elseif ($start >= 130) {
                                 $goal['verb'] = 'Decrease';
                             }
                         } else {
-                            if ( ! $goal['info']['starting'] || $goal['info']['starting'] == 'N/A' || ! $goal['info']['target'] || ($goal['name'] == 'Weight' && $goal['info']['target'] == '0')) {
+                            if (! $goal['info']['starting'] || $goal['info']['starting'] == 'N/A' || ! $goal['info']['target'] || ($goal['name'] == 'Weight' && $goal['info']['target'] == '0')) {
                                 if (($goal['name'] == 'Weight' && $goal['info']['target'] == '0')) {
                                     $goal['info']['target'] = 'N/A';
                                 }

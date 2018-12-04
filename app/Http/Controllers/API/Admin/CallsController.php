@@ -20,7 +20,6 @@ use DateTimeZone;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
 
-
 class CallsController extends ApiController
 {
     private $service;
@@ -112,7 +111,7 @@ class CallsController extends ApiController
                          })
                          ->addColumn('general_comment_html', function ($call) {
                              $generalComment = 'Add Text';
-                             if ( ! empty($call->general_comment)) {
+                             if (! empty($call->general_comment)) {
                                  $generalComment = $call->general_comment;
                              }
 
@@ -120,7 +119,7 @@ class CallsController extends ApiController
                          })
                          ->addColumn('attempt_note_html', function ($call) {
                              $attemptNote = 'Add Text';
-                             if ( ! empty($call->attempt_note)) {
+                             if (! empty($call->attempt_note)) {
                                  $attemptNote = $call->attempt_note;
                              }
 
@@ -179,7 +178,7 @@ class CallsController extends ApiController
                              }
                          })
                          ->editColumn('scheduler', function ($call) {
-                             if ( ! empty($call->scheduler_user_name)) {
+                             if (! empty($call->scheduler_user_name)) {
                                  return $call->scheduler_user_name;
                              } else {
                                  return $call->scheduler;
@@ -255,15 +254,13 @@ class CallsController extends ApiController
                              }
                          })
                          ->addColumn('patient_timezone', function ($call) {
-
                              $dateTime = new DateTime();
                              $dateTime->setTimeZone(new DateTimeZone($call->patient_timezone));
 
                              return '<span style="font-weight:bold;color:green;">' . $dateTime->format('T') . '</a>';
                          })
                          ->addColumn('notes_link', function ($call) {
-
-                             if ( ! $call) {
+                             if (! $call) {
                                  return '';
                              }
 
@@ -418,7 +415,7 @@ class CallsController extends ApiController
             $ids = explode(',', $ids);
         }
 
-        if ( ! is_array($ids)) {
+        if (! is_array($ids)) {
             $ids = [$ids];
         }
 

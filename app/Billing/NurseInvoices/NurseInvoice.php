@@ -22,7 +22,6 @@ abstract class NurseInvoice
 
     public function __construct(Nurse $nurse, Carbon $start, Carbon $end)
     {
-
         $this->nurse = $nurse;
         $this->start = $start;
         $this->end = $end;

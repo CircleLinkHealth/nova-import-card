@@ -8,7 +8,6 @@
 
 namespace App\Services;
 
-
 use App\Repositories\PatientReadRepository;
 use App\Repositories\PatientWriteRepository;
 
@@ -83,7 +82,7 @@ class PrintPausedPatientLettersService
                 return $fullPathToPdf;
             });
 
-        if ( ! $viewOnly) {
+        if (! $viewOnly) {
             $this->patientWriteRepository->updatePausedLetterPrintedDate($userIdsToPrint);
         }
 

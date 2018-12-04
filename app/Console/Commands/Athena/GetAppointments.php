@@ -55,8 +55,10 @@ class GetAppointments extends Command
 
         foreach ($practices as $practice) {
             if (app()->environment('worker')) {
-                sendSlackMessage('#background-tasks',
-                    "Getting appointments from Athena for practice: {$practice->display_name}. \n");
+                sendSlackMessage(
+                    '#background-tasks',
+                    "Getting appointments from Athena for practice: {$practice->display_name}. \n"
+                );
             }
 
             $this->service->getAppointments($practice->external_id, $startDate, $endDate);

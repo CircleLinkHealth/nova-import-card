@@ -9,7 +9,6 @@ use Knp\Snappy\Pdf;
 
 class CCDParserDemoController extends Controller
 {
-
     public function index()
     {
         $patientId = 308;

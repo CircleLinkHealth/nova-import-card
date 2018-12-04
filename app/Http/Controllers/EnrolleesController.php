@@ -23,7 +23,7 @@ class EnrolleesController extends Controller
     {
         $input = $request->input('enrollee_id');
 
-        if ( ! is_array($input)) {
+        if (! is_array($input)) {
             $input = [$input];
         }
 
@@ -48,8 +48,10 @@ class EnrolleesController extends Controller
         $url = link_to_route('import.ccd.remix', 'Imported CCDAs.');
 
         return [
-            'message' => "A job has been scheduled. Imported CCDs should start showing up in $url in 5-10 minutes. Importing " . implode(',',
-                    $ids),
+            'message' => "A job has been scheduled. Imported CCDs should start showing up in $url in 5-10 minutes. Importing " . implode(
+                ',',
+                    $ids
+            ),
             'type'    => 'success',
         ];
     }

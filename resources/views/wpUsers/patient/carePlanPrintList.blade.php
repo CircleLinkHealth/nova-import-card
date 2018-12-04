@@ -17,7 +17,8 @@
 
 
 
-                    <?php if(strlen($patientJson) > 20) { ?>
+                    <?php if (strlen($patientJson) > 20) {
+    ?>
                     <div id="obs_alerts_container" class=""></div><br/>
                     <div id="paging_container"></div><br/>
                     
@@ -28,9 +29,12 @@
                         <input type="button" value="Export as Excel" class="btn btn-primary" style='margin:15px;'
                                onclick="webix.toExcel(obs_alerts_dtable);">
                     
-                    <?php } else { ?>
+                    <?php
+} else {
+        ?>
                     <div style="text-align:center;margin:50px;">There are no patients to display</div>
-                    <?php } ?>
+                    <?php
+    } ?>
 
 
 

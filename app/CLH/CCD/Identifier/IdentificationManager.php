@@ -26,7 +26,7 @@ class IdentificationManager extends BaseIdentificationStrategy
                 if (!empty($this->matchedIdentifiers[ $field ])) {
                     continue 2;
                 }
-                $this->matchedIdentifiers[ $field ] = ( new $identifier[ 'class' ]( $this->ccd ) )->identify();
+                $this->matchedIdentifiers[ $field ] = ( new $identifier[ 'class' ]($this->ccd) )->identify();
             }
         }
 

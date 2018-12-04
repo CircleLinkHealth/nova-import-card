@@ -252,7 +252,6 @@ class PhiMail implements DirectMail
 
                     sendSlackMessage('#background-tasks', $message);
                 }
-
             }
         } catch (\Exception $e) {
             $this->handleException($e);

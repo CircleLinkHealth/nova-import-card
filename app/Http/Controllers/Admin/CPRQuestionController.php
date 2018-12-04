@@ -49,8 +49,10 @@ class CPRQuestionController extends Controller
         $question->category = $params['category'];
         $question->save();
 
-        return redirect()->route('admin.questions.edit', [$question->qid])->with('messages',
-            ['successfully added new question - ' . $params['msg_id']]);
+        return redirect()->route('admin.questions.edit', [$question->qid])->with(
+            'messages',
+            ['successfully added new question - ' . $params['msg_id']]
+        );
     }
 
     /**
@@ -74,7 +76,6 @@ class CPRQuestionController extends Controller
      */
     public function edit($id)
     {
-
         $question = CPRulesQuestions::find($id);
         $programs = Practice::get();
         if (!empty($question->rulesItems)) {

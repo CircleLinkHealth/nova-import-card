@@ -18,34 +18,44 @@ class CpmMedicationService
     private $userRepo;
     private $medicationRepo;
 
-    public function __construct(CpmMedicationRepository $medicationRepo, UserRepository $userRepo) {
+    public function __construct(CpmMedicationRepository $medicationRepo, UserRepository $userRepo)
+    {
         $this->medicationRepo = $medicationRepo;
         $this->userRepo = $userRepo;
     }
 
-    public function repo() {
+    public function repo()
+    {
         return $this->medicationRepo;
     }
 
-    public function medications() {
+    public function medications()
+    {
         return $this->repo()->model()->paginate();
     }
 
-    public function search($terms) {
+    public function search($terms)
+    {
         return $this->repo()->search($terms);
     }
 
-    public function editPatientMedication(Medication $medication) {
+    public function editPatientMedication(Medication $medication)
+    {
         if (!$medication) {
             throw new Exception('invalid parameters');
-        }
-        else {
-            if (!$medication->id) throw new Exception('parameter "id" is important');
-            else if (!$medication->patient_id) throw new Exception('parameter "patient_id" is important');
-            else {
-                if (!$this->userRepo->exists($medication->patient_id)) throw new Exception('no user exists with id "' . $medication->patient_id . '"');
-                else if (!$this->repo()->exists($medication->id)) throw new Exception('no medication exists with id "' . $medication->id . '"');
-                else if ($this->repo()->model()->find($medication->id)->patient_id != $medication->patient_id) throw new Exception('user with id "' . $medication->patient_id . '" does own medication with id "' . $medication->id . '"');
+        } else {
+            if (!$medication->id) {
+                throw new Exception('parameter "id" is important');
+            } elseif (!$medication->patient_id) {
+                throw new Exception('parameter "patient_id" is important');
+            } else {
+                if (!$this->userRepo->exists($medication->patient_id)) {
+                    throw new Exception('no user exists with id "' . $medication->patient_id . '"');
+                } elseif (!$this->repo()->exists($medication->id)) {
+                    throw new Exception('no medication exists with id "' . $medication->id . '"');
+                } elseif ($this->repo()->model()->find($medication->id)->patient_id != $medication->patient_id) {
+                    throw new Exception('user with id "' . $medication->patient_id . '" does own medication with id "' . $medication->id . '"');
+                }
                 return $this->repo()->editPatientMedication($medication);
             }
         }

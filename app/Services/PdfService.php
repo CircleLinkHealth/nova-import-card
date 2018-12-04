@@ -8,7 +8,6 @@
 
 namespace App\Services;
 
-
 use App\Contracts\HtmlToPdfService;
 use Carbon\Carbon;
 use LynX39\LaraPdfMerger\PdfManage;
@@ -40,9 +39,11 @@ class PdfService
          * We cannot run shell_exec() on the saas server.
          * @todo: Figure out how to merge pages without relying on shell_exec
          */
-        if (auth()->user()->isSaas()) return false;
+        if (auth()->user()->isSaas()) {
+            return false;
+        }
 
-        if ( ! $outputFullPath) {
+        if (! $outputFullPath) {
             $outputFullPath = $this->randomFileFullPath();
         }
 
@@ -97,7 +98,7 @@ class PdfService
      */
     public function createPdfFromView($view, array $args, array $options = [], $outputFullPath = null)
     {
-        if ( ! $outputFullPath) {
+        if (! $outputFullPath) {
             $outputFullPath = $this->randomFileFullPath();
         }
 
@@ -117,7 +118,7 @@ class PdfService
             ->setOption('margin-bottom', '15')
             ->setOption('margin-right', '0.75');
 
-        if ( ! empty($options)) {
+        if (! empty($options)) {
             foreach ($options as $key => $value) {
                 $pdf = $pdf->setOption($key, $value);
             }

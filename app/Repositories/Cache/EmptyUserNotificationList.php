@@ -8,7 +8,6 @@
 
 namespace App\Repositories\Cache;
 
-
 use App\Contracts\UserNotificationListInterface;
 
 /**

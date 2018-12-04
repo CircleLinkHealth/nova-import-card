@@ -45,7 +45,7 @@ class ApprovableBillablePatient extends Resource
         }
 
         $status = $this->closed_ccm_status;
-        if ($status == null){
+        if ($status == null) {
             $status = $this->patient->patientInfo->ccm_status;
         }
 

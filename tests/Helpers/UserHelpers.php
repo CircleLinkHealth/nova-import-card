@@ -35,7 +35,6 @@ trait UserHelpers
         $practiceId = 8,
         $roleName = 'provider'
     ): User {
-
         $roles = [
             Role::whereName($roleName)->firstOrFail()->id,
         ];
@@ -81,7 +80,8 @@ trait UserHelpers
         return $user;
     }
 
-    public function setupUser($practiceId, $roles){
+    public function setupUser($practiceId, $roles)
+    {
         $faker = Factory::create();
 
         $firstName = $faker->firstName;
@@ -139,7 +139,6 @@ trait UserHelpers
         Patient $patient,
         Nurse $scheduler
     ) {
-
         $call = Call::create([
 
             'service'     => 'phone',
@@ -176,7 +175,6 @@ trait UserHelpers
         Carbon $st,
         Carbon $end
     ) {
-
         $window = timestampsToWindow($st, $end);
 
         $res = NurseContactWindow::create([
@@ -202,7 +200,6 @@ trait UserHelpers
         Carbon $end,
         $dayOfWeek
     ) {
-
         $window = timestampsToWindow($st, $end);
 
         return PatientContactWindow::create([
@@ -219,7 +216,6 @@ trait UserHelpers
 
     public function makePatientMonthlyRecord(Patient $patient)
     {
-
         return (app(PatientWriteRepository::class))->updateCallLogs($patient, true);
     }
 }

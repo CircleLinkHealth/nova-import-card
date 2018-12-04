@@ -15,7 +15,8 @@ class UserRepositoryEloquent
         return app(User::class);
     }
 
-    public function user($id) {
+    public function user($id)
+    {
         return $this->model()->findOrFail($id);
     }
 }

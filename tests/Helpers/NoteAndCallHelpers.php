@@ -4,10 +4,8 @@ use Carbon\Carbon;
 
 trait NoteAndCallHelpers
 {
-
     public function createNote()
     {
-
         $this->actingAs($this->provider)
             ->visit("/manage-patients/{$this->patient->id}/notes/create")
             //Select Note Topic

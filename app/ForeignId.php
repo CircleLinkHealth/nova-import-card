@@ -6,11 +6,11 @@ use Prettus\Repository\Traits\TransformableTrait;
 
 /**
  * These are IDs from third party systems.
- * 
+ *
  * Example use:
  * XYZ CCD Vendor uses our API to submit CCDs and receive back reports and wants their system's id returned in the
  * response.
- * 
+ *
  * Class ForeignId
  *
  * @package App
@@ -33,7 +33,6 @@ use Prettus\Repository\Traits\TransformableTrait;
  */
 class ForeignId extends \App\BaseModel implements Transformable
 {
-
     use TransformableTrait;
 
     protected $guarded = [];

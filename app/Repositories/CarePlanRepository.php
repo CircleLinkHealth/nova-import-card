@@ -19,7 +19,6 @@ class CareplanRepository
 
     public function approve($userId, $providerApproverId)
     {
-
         $carePlans = $this->model()->where(['user_id' => $userId]);
 
         if ($carePlans->first()) {
@@ -36,7 +35,6 @@ class CareplanRepository
 
     public function reject($userId, $providerApproverId = null)
     {
-
         $carePlans = $this->model()->where(['user_id' => $userId]);
 
         if ($carePlans->first()) {

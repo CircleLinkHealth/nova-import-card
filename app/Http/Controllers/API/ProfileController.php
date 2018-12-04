@@ -14,10 +14,10 @@ class ProfileController extends ApiController
      *     summary="Get User Info",
      *     description="Get Basic User Information",
      *     @SWG\Response(
-     *         response="default", 
+     *         response="default",
      *         description="Basic User Information"
      *     )
-     *   )   
+     *   )
      * @return \Illuminate\Http\Response
      */
     public function index()

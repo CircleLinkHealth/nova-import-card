@@ -40,7 +40,6 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
-
         $params = $request->input();
         $comment = new Comment;
         $comment->msg_id = $params['msg_id'];
@@ -51,8 +50,10 @@ class CommentController extends Controller
         $comment->category = $params['category'];
         $comment->save();
 
-        return redirect()->route('admin.comments.edit', [$comment->qid])->with('messages',
-            ['successfully added new comment - ' . $params['msg_id']]);
+        return redirect()->route('admin.comments.edit', [$comment->qid])->with(
+            'messages',
+            ['successfully added new comment - ' . $params['msg_id']]
+        );
     }
 
     /**

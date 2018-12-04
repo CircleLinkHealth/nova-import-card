@@ -21,7 +21,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CPRulesUCP extends \App\BaseModel
 {
-
     public $timestamps = false;
 
 

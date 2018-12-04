@@ -28,7 +28,6 @@ class NurseCallStatistics
 
     public function __construct($nurses, Carbon $startRange, Carbon $endRange)
     {
-        
         $this->nurses = $nurses;
         $this->startTime = $startRange; //->subMinutes($this->minutesPadding);
         $this->endTime = $endRange;//->addMinutes($this->minutesPadding);
@@ -40,7 +39,6 @@ class NurseCallStatistics
 
     public function nurseCallsPerHourAggregated()
     {
-
         $results = [];
 
 //        $this->nurses = [Nurse::find(5)];

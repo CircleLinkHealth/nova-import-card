@@ -2,7 +2,6 @@
 
 namespace App;
 
-
 class DatabaseNotification extends \Illuminate\Notifications\DatabaseNotification
 {
     protected $dates = [

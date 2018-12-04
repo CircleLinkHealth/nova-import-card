@@ -137,8 +137,6 @@ class PageTimerControllerTest extends TestCase
         ]);
 
         $response->assertStatus(201);
-
-
     }
 
     protected function setUp()

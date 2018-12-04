@@ -7,7 +7,6 @@ use Prettus\Validator\LaravelValidator;
 
 class InviteValidator extends LaravelValidator
 {
-
     protected $rules = [
         ValidatorInterface::RULE_CREATE => [
             'inviter_id' => 'required',

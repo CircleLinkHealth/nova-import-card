@@ -90,7 +90,8 @@ class ImportWT1Csv extends Command
                 true,
                 false,
                 true,
-                true);
+                true
+            );
 
             foreach ($patients as $p) {
                 $this->createEligibilityJob($p, $practice, $batch->id);
@@ -112,7 +113,7 @@ class ImportWT1Csv extends Command
 
         $job = EligibilityJob::whereHash($hash)->first();
 
-        if ( ! $job) {
+        if (! $job) {
             $job = EligibilityJob::create([
                 'batch_id' => $batchId,
                 'hash'     => $hash,

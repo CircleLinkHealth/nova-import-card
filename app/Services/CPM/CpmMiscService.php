@@ -18,41 +18,53 @@ class CpmMiscService implements CpmModel
     private $cpmMiscRepo;
     private $cpmMiscUserRepo;
 
-    public function __construct(CpmMiscRepository $cpmMiscRepo, CpmMiscUserRepository $cpmMiscUserRepo) {
+    public function __construct(CpmMiscRepository $cpmMiscRepo, CpmMiscUserRepository $cpmMiscUserRepo)
+    {
         $this->cpmMiscRepo = $cpmMiscRepo;
         $this->cpmMiscUserRepo = $cpmMiscUserRepo;
     }
 
-    public function repo() {
+    public function repo()
+    {
         return $this->cpmMiscRepo;
     }
 
-    public function miscPatients($miscId) {
+    public function miscPatients($miscId)
+    {
         return $this->cpmMiscUserRepo->miscPatients($miscId);
     }
     
-    public function patientMisc($userId) {
+    public function patientMisc($userId)
+    {
         return $this->cpmMiscUserRepo->patientMisc($userId);
     }
     
-    public function patientMiscByType($userId, $miscTypeId) {
+    public function patientMiscByType($userId, $miscTypeId)
+    {
         return $this->cpmMiscUserRepo->patientMisc($userId, $miscTypeId)->first();
     }
 
-    public function editPatientMisc($userId, $miscId, $instructionId) {
+    public function editPatientMisc($userId, $miscId, $instructionId)
+    {
         return $this->cpmMiscUserRepo->editPatientMisc($userId, $miscId, $instructionId);
     }
 
-    public function addMiscToPatient($miscId, $userId) {
-        if ($this->repo()->exists($miscId)) return $this->cpmMiscUserRepo->addMiscToPatient($miscId, $userId);
-        else throw new Exception('misc with id "' . $miscId . '" does not exist');
+    public function addMiscToPatient($miscId, $userId)
+    {
+        if ($this->repo()->exists($miscId)) {
+            return $this->cpmMiscUserRepo->addMiscToPatient($miscId, $userId);
+        } else {
+            throw new Exception('misc with id "' . $miscId . '" does not exist');
+        }
     }
     
-    public function removeMiscFromPatient($miscId, $userId) {
+    public function removeMiscFromPatient($miscId, $userId)
+    {
         return $this->cpmMiscUserRepo->removeMiscFromPatient($miscId, $userId);
     }
     
-    public function removeInstructionFromPatientMisc($userId, $miscId, $instructionId) {
+    public function removeInstructionFromPatientMisc($userId, $miscId, $instructionId)
+    {
         return $this->cpmMiscUserRepo->removeInstructionFromPatientMisc($userId, $miscId, $instructionId);
     }
 
@@ -121,7 +133,6 @@ class CpmMiscService implements CpmModel
 
     public function getMiscWithInstructionsForUser(User $user, $miscName)
     {
-
         $misc = $user->cpmMiscs->where('name', $miscName)->first();
         //For the CPM Misc Item, extract the instruction and
         //store in a key value pair

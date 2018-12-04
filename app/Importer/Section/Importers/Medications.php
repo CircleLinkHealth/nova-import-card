@@ -63,7 +63,7 @@ class Medications extends BaseImporter
         $importAll = false
     ) {
         foreach ($itemLogs as $itemLog) {
-            if ( ! $this->validate($itemLog) && ! $importAll) {
+            if (! $this->validate($itemLog) && ! $importAll) {
                 continue;
             }
 
@@ -72,7 +72,7 @@ class Medications extends BaseImporter
 
             $consMed = $this->consolidateMedicationInfo($itemLog);
 
-            if ( ! $this->containsSigKeywords($consMed->cons_name)) {
+            if (! $this->containsSigKeywords($consMed->cons_name)) {
                 $this->importMedication($itemLog, $consMed);
             }
         }

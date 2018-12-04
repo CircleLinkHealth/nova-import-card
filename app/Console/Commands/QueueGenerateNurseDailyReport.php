@@ -47,13 +47,11 @@ class QueueGenerateNurseDailyReport extends Command
         if ($forDate) {
             try {
                 $forDate = Carbon::parse($forDate);
-            }
-            catch (\Exception $e) {
+            } catch (\Exception $e) {
                 $this->error($e->getMessage());
                 die(1);
             }
-        }
-        else {
+        } else {
             //CPM-404
             //this job is executed at end of day to generate a daily report
             //sometimes the job gets delayed and runs after midnight,

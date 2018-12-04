@@ -9,7 +9,6 @@ use Laracasts\Utilities\JavaScript\JavaScriptFacade as JavaScript;
 
 class ImportedMedicalRecordController extends Controller
 {
-
     public function edit(
         Request $request,
         $importedMedicalRecordId

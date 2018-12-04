@@ -6,14 +6,16 @@ use Illuminate\Http\Request;
 
 trait MedicationTraits
 {
-    public function getMedication($userId) {
+    public function getMedication($userId)
+    {
         if ($userId) {
             return $this->medicationService->repo()->patientMedication($userId);
         }
         return $this->badRequest('"userid" is important');
     }
 
-    function retrieveMedication(Request $request) {
+    public function retrieveMedication(Request $request)
+    {
         $medication = new \App\Models\CCD\Medication();
         $medication->medication_import_id = $request->input('medication_import_id');
         $medication->ccda_id = $request->input('ccda_id');
@@ -28,7 +30,8 @@ trait MedicationTraits
         return $medication;
     }
 
-    public function editMedication($userId, $id, Request $request) {
+    public function editMedication($userId, $id, Request $request)
+    {
         if ($userId) {
             $medication = $this->retrieveMedication($request);
             $medication->id = $id;
@@ -38,7 +41,8 @@ trait MedicationTraits
         return $this->badRequest('"userId" is important');
     }
 
-    public function addMedication($userId, Request $request) {
+    public function addMedication($userId, Request $request)
+    {
         if ($userId) {
             $medication = $this->retrieveMedication($request);
             $medication->patient_id = $userId;
@@ -47,14 +51,16 @@ trait MedicationTraits
         return $this->badRequest('"userId" is important');
     }
     
-    public function removeMedication($userId, $medicationId) {
+    public function removeMedication($userId, $medicationId)
+    {
         if ($userId) {
             return $this->medicationService->repo()->removeMedicationFromPatient($medicationId, $userId);
         }
         return $this->badRequest('"userId" is important');
     }
 
-    public function getMedicationGroups($userId) {
+    public function getMedicationGroups($userId)
+    {
         if ($userId) {
             return $this->medicationGroupService->repo()->patientGroups($userId);
         }

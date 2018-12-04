@@ -62,7 +62,6 @@ class Connection
      */
     public function __construct($version, $key, $secret, $practiceid = null)
     {
-
         if (!$version || !$key || !$secret) {
             return 'Required parameters missing.';
         }
@@ -212,7 +211,7 @@ class Connection
         return join('/', array_map(function ($p) {
             return trim($p, '/');
         }, array_filter(func_get_args(), function ($value) {
-                return ! (is_null($value) || $value == '');
+            return ! (is_null($value) || $value == '');
         })));
     }
 

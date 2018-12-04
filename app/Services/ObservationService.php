@@ -9,8 +9,8 @@ use DateTimeZone;
 
 class ObservationService
 {
-
-    public function storeObservationFromApp($userId,
+    public function storeObservationFromApp(
+        $userId,
                                             $parentId,
                                             $obsValue,
                                             $obsDate,
@@ -18,8 +18,8 @@ class ObservationService
                                             $obsKey,
                                             $timezone,
                                             $source = 'manual_input',
-                                            $isStartingObs = 'N')
-    {
+                                            $isStartingObs = 'N'
+    ) {
 
         // get user
         $wpUser = User::find($userId);
@@ -112,15 +112,15 @@ class ObservationService
         $diff = $my_offset - $server_offset;
 
         /*
-		echo var_dump(($diff / 3600))."<br>";
-		echo $obsDate ."<br>";
-		echo "--------------<br>";
-		echo 'my_date = '.$my_date->format('Y-m-d H:i:s') ."<br>";
-		echo 'my_date (u) = '.$my_date->format('U') ."<br>";
-		echo 'my_date date w/ (u) = '.date('Y-m-d H:i:s', ($my_date->format('U'))) ."<br>";
-		echo 'my_date u + diff = '.($my_date->format('U') + $diff) ."<br>";
-		echo 'my_date date w/ (u+diff) = '.date('Y-m-d H:i:s', ($my_date->format('U') + $diff)) ."<br>";
-		*/
+        echo var_dump(($diff / 3600))."<br>";
+        echo $obsDate ."<br>";
+        echo "--------------<br>";
+        echo 'my_date = '.$my_date->format('Y-m-d H:i:s') ."<br>";
+        echo 'my_date (u) = '.$my_date->format('U') ."<br>";
+        echo 'my_date date w/ (u) = '.date('Y-m-d H:i:s', ($my_date->format('U'))) ."<br>";
+        echo 'my_date u + diff = '.($my_date->format('U') + $diff) ."<br>";
+        echo 'my_date date w/ (u+diff) = '.date('Y-m-d H:i:s', ($my_date->format('U') + $diff)) ."<br>";
+        */
 
         $tzGmtDateLocal = date('Y-m-d H:i:s', ($my_date->format('U') + $diff));
         $tzGmtDate = date('Y-m-d H:i:s', ($my_date->format('U')));

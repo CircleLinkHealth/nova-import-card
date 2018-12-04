@@ -20,34 +20,41 @@ class PatientService
     private $allergyRepo;
     private $patientReadRepo;
 
-    public function __construct(PatientWriteRepository $patientRepo, PatientReadRepository $patientReadRepo, CcdAllergyService $allergyService, UserRepositoryEloquent $userRepo) {
+    public function __construct(PatientWriteRepository $patientRepo, PatientReadRepository $patientReadRepo, CcdAllergyService $allergyService, UserRepositoryEloquent $userRepo)
+    {
         $this->patientRepo = $patientRepo;
         $this->userRepo = $userRepo;
         $this->allergyService = $allergyService;
         $this->patientReadRepo = $patientReadRepo;
     }
 
-    public function repo() {
+    public function repo()
+    {
         return $this->patientRepo;
     }
     
-    public function readRepo() {
+    public function readRepo()
+    {
         return $this->patientReadRepo;
     }
 
-    public function getPatientByUserId($userId) {
+    public function getPatientByUserId($userId)
+    {
         return optional($this->userRepo->model()->with(['patientInfo'])->find($userId))->patientInfo;
     }
 
-    public function getCcdAllergies($userId) {
+    public function getCcdAllergies($userId)
+    {
         return $this->allergyService->patientAllergies($userId);
     }
 
-    public function setStatus($userId, $status) {
+    public function setStatus($userId, $status)
+    {
         $this->repo()->setStatus($userId, Patient::ENROLLED);
     }
 
-    public function patients(PatientFilters $filters) {
+    public function patients(PatientFilters $filters)
+    {
         $users = $this->readRepo()->patients($filters);
 
         if ($filters->isAutocomplete()) {
@@ -65,9 +72,10 @@ class PatientService
         return UserSafeResource::collection($users);
     }
 
-    public function excelReport($users) {
+    public function excelReport($users)
+    {
         $date = date('Y-m-d H:i:s');
-        return Excel::create('CLH-Patients-' . $date, function ($excel) use ( $date, $users ) {
+        return Excel::create('CLH-Patients-' . $date, function ($excel) use ($date, $users) {
             $excel->setTitle('CLH Patients List');
             $excel->setCreator('CLH System')->setCompany('CircleLink Health');
             $excel->setDescription('CLH Patients List');

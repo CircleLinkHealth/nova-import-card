@@ -140,7 +140,7 @@ class CallReportController extends Controller
                     if ($call->inboundUser && $call->inboundUser->patientInfo) {
                         if (is_null($call->inboundUser->patientInfo->no_call_attempts_since_last_success)) {
                             $noAttmpts = 'n/a';
-                        } else if ($call->inboundUser->patientInfo->no_call_attempts_since_last_success > 0) {
+                        } elseif ($call->inboundUser->patientInfo->no_call_attempts_since_last_success > 0) {
                             $noAttmpts = $call->inboundUser->patientInfo->no_call_attempts_since_last_success . 'x Attempts';
                         } else {
                             $noAttmpts = 'Success';

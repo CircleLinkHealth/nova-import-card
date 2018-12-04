@@ -29,7 +29,6 @@ use App\Services\PatientService;
 use App\Services\ProviderInfoService;
 use Illuminate\Http\Request;
 
-
 class PatientController extends Controller
 {
     use ProviderInfoTraits,

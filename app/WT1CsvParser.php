@@ -56,25 +56,25 @@ class WT1CsvParser
     private function addToResult($row)
     {
         $patientId = $row['patient_id'];
-        if ( ! isset($this->patients[$patientId])) {
+        if (! isset($this->patients[$patientId])) {
             $this->patients[$patientId] = [];
         }
 
         $entry = $this->patients[$patientId];
 
-        if ( ! isset($entry['insurance_plans'])) {
+        if (! isset($entry['insurance_plans'])) {
             $entry['insurance_plans'] = []; //we want this to be translated to { "primary" : {}, "secondary": {} }
         }
 
-        if ( ! isset($entry['problems'])) {
+        if (! isset($entry['problems'])) {
             $entry['problems'] = []; //we want this to be translated to [{}]
         }
 
-        if ( ! isset($entry['medications'])) {
+        if (! isset($entry['medications'])) {
             $entry['medications'] = []; //we want this to be translated to [{}]
         }
 
-        if ( ! isset($entry['allergies'])) {
+        if (! isset($entry['allergies'])) {
             $entry['allergies'] = []; //we want this to be translated to [{}]
         }
 
@@ -139,7 +139,6 @@ class WT1CsvParser
             $result['secondary'] = $secondary;
         }
         return $result;
-
     }
 
     private function getPrimaryInsurance($row)
@@ -153,7 +152,7 @@ class WT1CsvParser
          */
 
         $plan = $this->getValue($row, 'primaryins');
-        if ( ! $plan) {
+        if (! $plan) {
             return null;
         }
 
@@ -168,7 +167,7 @@ class WT1CsvParser
     private function getSecondaryInsurance($row)
     {
         $plan = $this->getValue($row, 'secondaryins');
-        if ( ! $plan) {
+        if (! $plan) {
             return null;
         }
 
@@ -183,7 +182,6 @@ class WT1CsvParser
         $rowList = $this->getListFromFields($row, $fieldName);
 
         foreach ($rowList as $fieldValue) {
-
             $found = false;
             foreach ($currentList as $entry) {
                 if (strcasecmp($entry['name'], $fieldValue) === 0) {
@@ -192,7 +190,7 @@ class WT1CsvParser
                 }
             }
 
-            if ( ! $found) {
+            if (! $found) {
                 $currentList[] = $mapper($fieldValue);
             }
         }
@@ -204,9 +202,8 @@ class WT1CsvParser
         $lookingFor = $fieldName;
         $result     = [];
         foreach ($row as $key => $value) {
-
             $isFieldFound = strcasecmp(substr($key, 0, strlen($lookingFor)), $lookingFor) === 0;
-            if ( ! $isFieldFound) {
+            if (! $isFieldFound) {
                 continue;
             }
 
@@ -234,19 +231,19 @@ class WT1CsvParser
         $middleName = $this->getValue($row, 'providermiddlename', '');
         $lastName   = $this->getValue($row, 'providerlastname', '');
         $result     = '';
-        if ( ! empty($firstName)) {
+        if (! empty($firstName)) {
             $result .= $firstName;
-            if ( ! empty($middleName)) {
+            if (! empty($middleName)) {
                 $result .= ' ';
             }
         }
-        if ( ! empty($middleName)) {
+        if (! empty($middleName)) {
             $result .= $middleName;
-            if ( ! empty($lastName)) {
+            if (! empty($lastName)) {
                 $result .= ' ';
             }
         }
-        if ( ! empty($lastName)) {
+        if (! empty($lastName)) {
             $result .= $lastName;
         }
 
@@ -258,7 +255,7 @@ class WT1CsvParser
 
     private function getValue($row, $key, $default = null)
     {
-        if ( ! isset($row[$key])) {
+        if (! isset($row[$key])) {
             return $default;
         }
 
@@ -290,5 +287,4 @@ class WT1CsvParser
         }
         return $val === 'Y';
     }
-
 }

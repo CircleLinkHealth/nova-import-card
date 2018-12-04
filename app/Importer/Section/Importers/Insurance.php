@@ -14,7 +14,6 @@ use App\Models\CCD\CcdInsurancePolicy;
 
 class Insurance extends BaseImporter
 {
-
     public function import(
         $medicalRecordId,
         $medicalRecordType,

@@ -49,7 +49,7 @@ class UserController extends Controller
 
         $filterUser = 'all';
 
-        if ( ! empty($params['filterUser'])) {
+        if (! empty($params['filterUser'])) {
             $filterUser = $params['filterUser'];
             if ($params['filterUser'] != 'all') {
                 $wpUsers->where('id', '=', $filterUser);
@@ -63,7 +63,7 @@ class UserController extends Controller
 
         $filterRole = 'all';
 
-        if ( ! empty($params['filterRole'])) {
+        if (! empty($params['filterRole'])) {
             $filterRole = $params['filterRole'];
             if ($params['filterRole'] != 'all') {
                 $wpUsers->ofType($filterRole);
@@ -79,7 +79,7 @@ class UserController extends Controller
 
         $filterProgram = 'all';
 
-        if ( ! empty($params['filterProgram'])) {
+        if (! empty($params['filterProgram'])) {
             $filterProgram = $params['filterProgram'];
             if ($params['filterProgram'] != 'all') {
                 $wpUsers->where('program_id', '=', $filterProgram);
@@ -87,7 +87,7 @@ class UserController extends Controller
         }
 
         // only let owners see owners
-        if ( ! Auth::user()->hasRole(['administrator'])) {
+        if (! Auth::user()->hasRole(['administrator'])) {
             $wpUsers = $wpUsers->whereHas('roles', function ($q) {
                 $q->where('name', '!=', 'administrator');
             });
@@ -131,7 +131,7 @@ class UserController extends Controller
 
     public function quickAddForm($blogId)
     {
-        if ( ! Auth::user()->isAdmin()) {
+        if (! Auth::user()->isAdmin()) {
             abort(403);
         }
         //if ( $request->header('Client') == 'ui' ) {}
@@ -175,7 +175,7 @@ class UserController extends Controller
             'Weight',
         ];
         foreach ($subItems['Biometrics to Monitor'] as $key => $value) {
-            if ( ! in_array($value->items_text, $biometric_arr)) {
+            if (! in_array($value->items_text, $biometric_arr)) {
                 unset($subItems['Biometrics to Monitor'][$key]);
             }
         }//dd($subItems['Biometrics to Monitor']);
@@ -196,7 +196,7 @@ class UserController extends Controller
 
     public function storeQuickPatient()
     {
-        if ( ! Auth::user()->isAdmin()) {
+        if (! Auth::user()->isAdmin()) {
             abort(403);
         }
         $wpUser = new User;
@@ -376,13 +376,13 @@ class UserController extends Controller
         $messages = \Session::get('messages');
 
         $patient = User::find($id);
-        if ( ! $patient) {
+        if (! $patient) {
             return response("User not found", 401);
         }
 
         $roles = Role::pluck('name', 'id')->all();
         $role  = $patient->roles()->first();
-        if ( ! $role) {
+        if (! $role) {
             $role = Role::first();
         }
 
@@ -410,7 +410,7 @@ class UserController extends Controller
         }
 
         $params = $request->all();
-        if ( ! empty($params)) {
+        if (! empty($params)) {
             if (isset($params['action'])) {
                 if ($params['action'] == 'impersonate') {
                     Auth::login($id);
@@ -530,7 +530,7 @@ class UserController extends Controller
         $id
     ) {
         $wpUser = User::find($id);
-        if ( ! $wpUser) {
+        if (! $wpUser) {
             return response("User not found", 401);
         }
 
@@ -559,7 +559,7 @@ class UserController extends Controller
     public function destroy($id)
     {
         $user = User::find($id);
-        if ( ! $user) {
+        if (! $user) {
             return response("User not found", 401);
         }
 
@@ -582,12 +582,11 @@ class UserController extends Controller
 
         $action = $params->get('action');
 
-        if ( ! $action) {
+        if (! $action) {
             return redirect()->back()->withErrors(["form_error" => "There was an error: Missing 'action' parameter."]);
         }
 
         if ($action == 'scramble' || $action == 'withdraw') {
-
             $selectAllFromFilters = ! empty($params->get('filterRole')) || ! empty($params->get('filterProgram'));
             if ($selectAllFromFilters) {
                 $users = $this->getUsersBasedOnFilters($params);
@@ -602,7 +601,7 @@ class UserController extends Controller
             if ($action == 'scramble') {
                 $this->scrambleUsers($users);
                 return redirect()->back()->with('messages', ['Action [Scramble] was successful']);
-            } else if ($action == 'withdraw') {
+            } elseif ($action == 'withdraw') {
                 $this->withdrawUsers($users, $params->get('withdrawal-note-body'));
                 return redirect()->back()->with('messages', ['Action [Withdraw] was successful']);
             }
@@ -623,7 +622,7 @@ class UserController extends Controller
     {
         foreach ($userIds as $id) {
             $user = User::find($id);
-            if ( ! $user) {
+            if (! $user) {
                 return false;
             }
 
@@ -671,12 +670,11 @@ class UserController extends Controller
 
     private function getUsersBasedOnFilters(ParameterBag $params)
     {
-
         $wpUsers = User::where('program_id', '!=', '')->orderBy('id', 'desc');
 
         // role filter
         $filterRole = $params->get('filterRole');
-        if ( ! empty($filterRole)) {
+        if (! empty($filterRole)) {
             if ($filterRole != 'all') {
                 $wpUsers->ofType($filterRole);
             }
@@ -684,14 +682,14 @@ class UserController extends Controller
 
         // program filter
         $filterProgram = $params->get('filterProgram');
-        if ( ! empty($filterProgram)) {
+        if (! empty($filterProgram)) {
             if ($filterProgram != 'all') {
                 $wpUsers->where('program_id', '=', $filterProgram);
             }
         }
 
         // only let owners see owners
-        if ( ! Auth::user()->hasRole(['administrator'])) {
+        if (! Auth::user()->hasRole(['administrator'])) {
             $wpUsers = $wpUsers->whereHas('roles', function ($q) {
                 $q->where('name', '!=', 'administrator');
             });

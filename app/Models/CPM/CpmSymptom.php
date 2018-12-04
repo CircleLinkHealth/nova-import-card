@@ -31,7 +31,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CpmSymptom extends \App\BaseModel implements Serviceable
 {
-    
     use Instructable;
 
     protected $guarded = [];

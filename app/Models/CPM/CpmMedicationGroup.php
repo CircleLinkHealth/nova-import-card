@@ -30,7 +30,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CpmMedicationGroup extends \App\BaseModel implements Serviceable
 {
-    
     use Instructable;
 
     protected $guarded = [];

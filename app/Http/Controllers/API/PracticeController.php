@@ -175,7 +175,8 @@ class PracticeController extends Controller
                       ])
                       ->map(function ($nurse) {
                           $info   = $nurse->nurseInfo;
-                          $states = ($info
+                          $states = (
+                              $info
                               ? $info->states
                               : new Collection()
                           )

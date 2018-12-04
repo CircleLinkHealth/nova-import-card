@@ -45,7 +45,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class MedicationImport extends \App\BaseModel
 {
-
     protected $guarded = [];
 
     public function ccdLog()

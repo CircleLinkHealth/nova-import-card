@@ -20,23 +20,28 @@ class CcdProblemRepository
         return app(Problem::class);
     }
 
-    public function count() {
+    public function count()
+    {
         return $this->model()->select('name', DB::raw('count(*) as total'))->groupBy('name')->pluck('total')->count();
     }
 
-    public function patientIds($name) {
+    public function patientIds($name)
+    {
         return $this->model()->where(['name' => $name ])->distinct(['patient_id'])->get(['patient_id']);
     }
 
-    public function problems() {
+    public function problems()
+    {
         return $this->model()->groupBy('name')->orderBy('id')->paginate(30);
     }
 
-    public function problem($id) {
+    public function problem($id)
+    {
         return $this->model()->findOrFail($id);
     }
 
-    public function patientCcdExists($userId, $name) {
+    public function patientCcdExists($userId, $name)
+    {
         return !!$this->model()->where([ 'patient_id' => $userId, 'name' => $name ])->first();
     }
 
@@ -49,7 +54,8 @@ class CcdProblemRepository
     *    icd10
     * ]} $ccdProblem
     */
-    public function addPatientCcdProblem($ccdProblem) {
+    public function addPatientCcdProblem($ccdProblem)
+    {
         if (!$this->patientCcdExists($ccdProblem['userId'], $ccdProblem['name'])) {
             $problem = new Problem();
             $problem->patient_id = $ccdProblem['userId'];
@@ -62,7 +68,8 @@ class CcdProblemRepository
         return $this->model()->where([ 'patient_id' => $ccdProblem['userId'], 'name' => $ccdProblem['name'] ])->first();
     }
     
-    public function editPatientCcdProblem($userId, $ccdId, $name, $problemCode = null, $is_monitored = null) {
+    public function editPatientCcdProblem($userId, $ccdId, $name, $problemCode = null, $is_monitored = null)
+    {
         if ($this->patientCcdExists($userId, $name)) {
             $this->model()->where([ 'id' => $ccdId, 'patient_id' => $userId])->update([
                 'name' => $name,
@@ -73,7 +80,8 @@ class CcdProblemRepository
         return $this->model()->where([ 'id' => $ccdId, 'patient_id' => $userId ])->first();
     }
 
-    public function removePatientCcdProblem($userId, $ccdId) {
+    public function removePatientCcdProblem($userId, $ccdId)
+    {
         $this->model()->where([ 'patient_id' => $userId, 'id' => $ccdId ])->delete();
         return [
             'message' => 'successful'

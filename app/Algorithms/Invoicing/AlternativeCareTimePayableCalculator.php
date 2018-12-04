@@ -14,14 +14,12 @@ use Carbon\Carbon;
  */
 class AlternativeCareTimePayableCalculator
 {
-
     protected $nurse;
     protected $nurseReport;
     protected $month;
 
     public function __construct(Nurse $nurse)
     {
-
         $this->nurse = $nurse;
 
         $this->month = Carbon::parse(Carbon::now()->firstOfMonth()->format('Y-m-d'));
@@ -30,12 +28,11 @@ class AlternativeCareTimePayableCalculator
         $this->nurseReport = $report;
     }
 
-    public function createOrIncrementNurseSummary( // note, not storing call data for now.
+    public function createOrIncrementNurseSummary(// note, not storing call data for now.
         $toAddToAccruedTowardsCCM,
         $toAddToAccruedAfterCCM,
         $activityId
     ) {
-
         if ($this->nurseReport) {
             $this->nurseReport->accrued_after_ccm = $toAddToAccruedAfterCCM + $this->nurseReport->accrued_after_ccm;
             $this->nurseReport->accrued_towards_ccm = $toAddToAccruedTowardsCCM + $this->nurseReport->accrued_towards_ccm;
@@ -80,7 +77,6 @@ class AlternativeCareTimePayableCalculator
 
     public function adjustNursePayForActivity(Activity $activity)
     {
-
         $toAddToAccuredTowardsCCM = 0;
         $toAddToAccuredAfterCCM   = 0;
         $user                     = $activity->patient;

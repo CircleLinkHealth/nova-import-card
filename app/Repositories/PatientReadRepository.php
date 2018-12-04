@@ -8,7 +8,6 @@
 
 namespace App\Repositories;
 
-
 use App\Patient;
 use App\User;
 use App\PatientSearchModel;
@@ -46,7 +45,7 @@ class PatientReadRepository
                       ->whereHas('patientInfo')
                       ->intersectPracticesWith(auth()->user())
                       ->filter($filters);
-        if ( ! $filters->isExcel()) { //check that an excel file is not requested]
+        if (! $filters->isExcel()) { //check that an excel file is not requested]
             if (isset($filters->filters()['rows']) && $filters->filters()['rows'] == 'all') {
                 $users = $users->paginate($users->count());
             } else {

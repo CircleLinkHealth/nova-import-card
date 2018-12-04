@@ -61,28 +61,32 @@ class CpmBiometricUser extends \App\BaseModel
     /**
     * @return \Illuminate\Database\Eloquent\Relations\HasOne
     */
-    public function bloodPressure() {
+    public function bloodPressure()
+    {
         return $this->hasOne(CpmBloodPressure::class, 'patient_id', 'patient_id');
     }
 
     /**
     * @return \Illuminate\Database\Eloquent\Relations\HasOne
     */
-    public function bloodSugar() {
+    public function bloodSugar()
+    {
         return $this->hasOne(CpmBloodSugar::class, 'patient_id', 'patient_id');
     }
     
     /**
     * @return \Illuminate\Database\Eloquent\Relations\HasOne
     */
-    public function smoking() {
+    public function smoking()
+    {
         return $this->hasOne(CpmSmoking::class, 'patient_id', 'patient_id');
     }
     
     /**
     * @return \Illuminate\Database\Eloquent\Relations\HasOne
     */
-    public function weight() {
+    public function weight()
+    {
         return $this->hasOne(CpmWeight::class, 'patient_id', 'patient_id');
     }
 }

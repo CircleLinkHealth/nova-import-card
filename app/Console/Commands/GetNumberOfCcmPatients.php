@@ -39,11 +39,11 @@ class GetNumberOfCcmPatients extends Command
     public function handle()
     {
         $count = User::whereHas('ccdProblems', function ($q) {
-                         $q->where('is_monitored', 1)
+            $q->where('is_monitored', 1)
                            ->whereHas('cpmProblem', function ($cpm) {
                                return $cpm->where('is_behavioral', 0);
                            });
-                     })->count();
+        })->count();
 
         $this->info("$count");
     }

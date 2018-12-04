@@ -16,7 +16,6 @@ class NurseInvoiceMailer extends Mailable
 
     public function __construct($recipientName, $link, $month)
     {
-
         $this->link          = $link;
         $this->recipientName = $recipientName;
         $this->month         = $month;

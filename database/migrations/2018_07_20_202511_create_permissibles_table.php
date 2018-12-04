@@ -21,7 +21,7 @@ class CreatePermissiblesTable extends Migration
             $table->boolean('is_active')->default(1);
             $table->timestamps();
 
-            $table->unique(['permission_id', 'permissible_id', 'permissible_type'], 'p_id_pble_id_pt_id' );
+            $table->unique(['permission_id', 'permissible_id', 'permissible_type'], 'p_id_pble_id_pt_id');
         });
     }
 
@@ -33,6 +33,5 @@ class CreatePermissiblesTable extends Migration
     public function down()
     {
         Schema::dropIfExists('permissibles');
-
     }
 }

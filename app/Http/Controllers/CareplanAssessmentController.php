@@ -12,7 +12,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-
 class CareplanAssessmentController extends Controller
 {
     private $assessmentService;
@@ -26,18 +25,19 @@ class CareplanAssessmentController extends Controller
         $this->noteService = $noteService;
     }
 
-    public function index() {
+    public function index()
+    {
         return response()->json(null);
     }
     
-    public function store(Request $request, CareplanAssessment $assessment) {
+    public function store(Request $request, CareplanAssessment $assessment)
+    {
         $data = $request->all();
         $assessment->process((object)$data);
         $assessment->provider_approver_id = auth()->user()->id;
         if (!$assessment->careplan_id) {
             return $this->badRequest('missing parameter "careplan_id"');
-        }
-        else {
+        } else {
             //return response()->json($assessment);
             $this->assessmentService->save($assessment);
             $this->noteService->createAssessmentNote($assessment);

@@ -43,7 +43,7 @@ class PracticeStaffController extends Controller
                              ->sortBy('first_name')
                              ->values();
 
-        if ( ! auth()->user()->isAdmin()) {
+        if (! auth()->user()->isAdmin()) {
             $practiceUsers->reject(function ($user) {
                 return $user->isAdmin();
             })
@@ -83,10 +83,16 @@ class PracticeStaffController extends Controller
 
 
         $forwardCarePlanApprovalEmailsToContactUsers = $user->forwardAlertsTo()
-                                                            ->having('name', '=',
-                                                                User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER)
-                                                            ->orHaving('name', '=',
-                                                                User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER)
+                                                            ->having(
+                                                                'name',
+                                                                '=',
+                                                                User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER
+                                                            )
+                                                            ->orHaving(
+                                                                'name',
+                                                                '=',
+                                                                User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER
+                                                            )
                                                             ->get()
                                                             ->mapToGroups(function ($user) {
                                                                 return [$user->pivot->name => $user->id];

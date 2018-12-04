@@ -8,7 +8,6 @@
 
 namespace App\Services\Eligibility;
 
-
 use App\Practice;
 use App\Services\Eligibility\Processables\Csv;
 use App\Services\Eligibility\Processables\Zip;
@@ -38,8 +37,14 @@ class EligibilityProcessorService
         $fileExtension = $uploadedFile->clientExtension();
 
         if (in_array($fileExtension, ['zip'])) {
-            $processor = new Zip($uploadedFile, $practice, $filterLastEncounter, $filterInsurance, $filterProblems,
-                $createEnrollees);
+            $processor = new Zip(
+                $uploadedFile,
+                $practice,
+                $filterLastEncounter,
+                $filterInsurance,
+                $filterProblems,
+                $createEnrollees
+            );
         }
 
         $processor->queue();

@@ -30,7 +30,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CpmMisc extends \App\BaseModel implements Serviceable
 {
-    
     use Instructable;
 
     const ALLERGIES = 'Allergies';

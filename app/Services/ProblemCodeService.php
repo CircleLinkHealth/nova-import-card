@@ -10,27 +10,33 @@ class ProblemCodeService
     private $problemCodeRepo;
     private $ccdProblemRepo;
 
-    public function __construct(ProblemCodeRepository $problemCodeRepo, 
+    public function __construct(
+        ProblemCodeRepository $problemCodeRepo,
                                 ProblemCodeSystemRepository $problemCodeSystemRepo,
-                                CcdProblemRepository $ccdProblemRepo) {
+                                CcdProblemRepository $ccdProblemRepo
+    ) {
         $this->problemCodeRepo = $problemCodeRepo;
         $this->problemCodeSystemRepo = $problemCodeSystemRepo;
         $this->ccdProblemRepo = $ccdProblemRepo;
     }
 
-    public function repo() {
+    public function repo()
+    {
         return $this->problemCodeRepo;
     }
 
-    public function systems() {
+    public function systems()
+    {
         return $this->problemCodeSystemRepo->model()->get();
     }
     
-    public function system($id) {
+    public function system($id)
+    {
         return $this->problemCodeSystemRepo->model()->findOrFail($id);
     }
     
-    public function add(ProblemCode $problemCode) {
+    public function add(ProblemCode $problemCode)
+    {
         if ($problemCode) {
             $problem = $this->ccdProblemRepo->problem($problemCode->problem_id);
             $system = $problemCode->system()->first();
@@ -40,15 +46,15 @@ class ProblemCodeService
                     $problemCode->resolve();
                     $problemCode->save();
                     return $problemCode;
-                }
-                else {
+                } else {
                     return $this->repo()->model()->where([
                         'problem_code_system_id' => $problemCode->problem_code_system_id,
                         'problem_id' => $problemCode->problem_id
                     ])->first();
                 }
+            } else {
+                throw new Exception('Invalid problem_code_system_id value');
             }
-            else throw new Exception('Invalid problem_code_system_id value');
         }
         throw new Exception('$problemCode must exist');
     }

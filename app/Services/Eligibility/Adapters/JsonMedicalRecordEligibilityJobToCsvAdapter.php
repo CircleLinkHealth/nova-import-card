@@ -8,7 +8,6 @@
 
 namespace App\Services\Eligibility\Adapters;
 
-
 use App\EligibilityJob;
 
 class JsonMedicalRecordEligibilityJobToCsvAdapter

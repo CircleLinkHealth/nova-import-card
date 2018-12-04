@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Log;
 
 class MedicationsList extends BaseStorageStrategy implements StorageStrategy
 {
-
     public function import($medsList)
     {
         if (empty($medsList)) {

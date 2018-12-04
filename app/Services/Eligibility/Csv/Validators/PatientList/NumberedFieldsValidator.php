@@ -8,7 +8,6 @@
 
 namespace App\Services\Eligibility\Csv\Validators\PatientList;
 
-
 class NumberedFieldsValidator extends BaseValidator
 {
     /**
@@ -21,7 +20,6 @@ class NumberedFieldsValidator extends BaseValidator
      */
     public function validate()
     {
-
         $toValidate = [];
         $rules      = [];
 

@@ -66,7 +66,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
 
         $allergiesString = $this->medicalRecord->allergies_string;
 
-        if ( ! $allergiesString) {
+        if (! $allergiesString) {
             return $this;
         }
 
@@ -179,7 +179,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
 
         $medicationsString = $this->medicalRecord->medications_string;
 
-        if ( ! $medicationsString) {
+        if (! $medicationsString) {
             return $this;
         }
 
@@ -211,7 +211,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
 
         $problemsString = $this->medicalRecord->problems_string;
 
-        if ( ! $problemsString) {
+        if (! $problemsString) {
             return $this;
         }
 

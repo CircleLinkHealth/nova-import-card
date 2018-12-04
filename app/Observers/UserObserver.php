@@ -16,7 +16,7 @@ class UserObserver
      */
     public function saving(User $user)
     {
-        if ( ! $user->saas_account_id) {
+        if (! $user->saas_account_id) {
             $practice = $user->practices->first();
 
             if ($practice) {

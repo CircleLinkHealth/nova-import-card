@@ -12,26 +12,31 @@ class CpmLifestyleRepository
         return app(CpmLifestyle::class);
     }
 
-    public function count() {
+    public function count()
+    {
         return $this->model()->count();
     }
 
-    function setupLifestyle($lifestyle) {
+    public function setupLifestyle($lifestyle)
+    {
         $lifestyle['patients'] = $lifestyle->users()->count();
         return $lifestyle;
     }
     
-    public function lifestyles() {
+    public function lifestyles()
+    {
         $lifestyles = $this->model()->paginate();
         $lifestyles->getCollection()->transform([$this, 'setupLifestyle']);
         return $lifestyles;
     }
     
-    public function lifestyle($id) {
+    public function lifestyle($id)
+    {
         return $this->setupLifestyle($this->model()->with(['carePlanTemplates'])->find($id));
     }
 
-    public function exists($id) {
+    public function exists($id)
+    {
         return !!$this->model()->find($id);
     }
 }

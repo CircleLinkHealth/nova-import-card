@@ -17,7 +17,6 @@ class NurseController extends Controller
 {
     public function makeInvoice()
     {
-
         $nurses = activeNurseNames();
 
         return view(
@@ -30,7 +29,6 @@ class NurseController extends Controller
 
     public function generateInvoice(Request $request)
     {
-
         $input = $request->input();
 
         $nurseIds = $request->input('nurses');
@@ -51,8 +49,15 @@ class NurseController extends Controller
             $startDate = Carbon::parse($request->input('start_date'));
             $endDate   = Carbon::parse($request->input('end_date'));
 
-            GenerateNurseInvoice::dispatch($nurseIds, $startDate, $endDate, auth()->user()->id, $variablePay, $addTime,
-                $addNotes)->onQueue('high');
+            GenerateNurseInvoice::dispatch(
+                $nurseIds,
+                $startDate,
+                $endDate,
+                auth()->user()->id,
+                $variablePay,
+                $addTime,
+                $addNotes
+            )->onQueue('high');
         }
 
         return "Waldo is working on compiling the reports you requested. <br> Give it a minute, and then head to " . link_to('/jobs/completed') . " and refresh frantically to see a link to the report you requested.";
@@ -76,7 +81,6 @@ class NurseController extends Controller
 
     public function makeDailyReport()
     {
-
         return view('admin.reports.nursedaily');
     }
 
@@ -98,7 +102,6 @@ class NurseController extends Controller
 
     public function monthlyOverview(Request $request)
     {
-
         $input = $request->input();
 
         if (isset($input['next'])) {
@@ -118,7 +121,7 @@ class NurseController extends Controller
 
         while ($dayCounter->lte($last)) {
             foreach ($nurses as $nurse) {
-                if ( ! $nurse->nurseInfo) {
+                if (! $nurse->nurseInfo) {
                     continue;
                 }
 
@@ -206,7 +209,6 @@ class NurseController extends Controller
 
     private function getMonthlyReportRows($date)
     {
-
         $fromDate = $date->copy()->startOfMonth()->startOfDay();
         $toDate   = $date->copy()->endOfMonth()->endOfDay();
 
@@ -220,7 +222,6 @@ class NurseController extends Controller
                       })
                       ->chunk(50, function ($nurses) use (&$rows, $fromDate, $toDate) {
                           foreach ($nurses as $nurse) {
-
                               $seconds = Activity::where('provider_id', $nurse->id)
                                                  ->where(function ($q) use ($fromDate, $toDate) {
                                                      $q->where('performed_at', '>=', $fromDate)
@@ -238,5 +239,4 @@ class NurseController extends Controller
 
         return collect($rows);
     }
-
 }

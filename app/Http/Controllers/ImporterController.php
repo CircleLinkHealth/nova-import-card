@@ -21,8 +21,9 @@ class ImporterController extends Controller
         $this->repo = $repo;
     }
 
-    function handleCcdFilesUpload(Request $request) {
-        if ( ! $request->hasFile('file')) {
+    public function handleCcdFilesUpload(Request $request)
+    {
+        if (! $request->hasFile('file')) {
             return response()->json('No file found', 400);
         }
 
@@ -62,7 +63,7 @@ class ImporterController extends Controller
     
     /**
      * Route: /api/ccd-importer/import-medical-records
-     * 
+     *
      * Receives XML and XLSX files, saves them in DB, and returns them JSON Encoded
      *
      * @param Request $request
@@ -70,12 +71,15 @@ class ImporterController extends Controller
      * @return string
      * @throws \Exception
      */
-    public function uploadRecords(Request $request) 
-    {    
+    public function uploadRecords(Request $request)
+    {
         $records = $this::handleCcdFilesUpload($request);
 
-        if (!$request->has('json')) return redirect()->route('import.ccd.remix');
-        else return response()->json($records);
+        if (!$request->has('json')) {
+            return redirect()->route('import.ccd.remix');
+        } else {
+            return response()->json($records);
+        }
     }
 
     /**
@@ -98,7 +102,8 @@ class ImporterController extends Controller
         return view('CCDUploader.uploader-remix');
     }
 
-    function getImportedRecords() {
+    public function getImportedRecords()
+    {
         return ImportedMedicalRecord::whereNull('patient_id')
                 ->with('demographics')
                 ->with('practice')
@@ -133,7 +138,8 @@ class ImporterController extends Controller
                   ->values();
     }
 
-    public function records() {
+    public function records()
+    {
         return $this::getImportedRecords();
     }
 
@@ -158,13 +164,13 @@ class ImporterController extends Controller
     {
         $importedMedicalRecord = ImportedMedicalRecord::find($imrId);
 
-        if ( ! $importedMedicalRecord) {
+        if (! $importedMedicalRecord) {
             return "Could not find an Imported Medical Record with this ID";
         }
 
         $ccda = $importedMedicalRecord->medicalRecord();
 
-        if ( ! $ccda) {
+        if (! $ccda) {
             return "Could not find the CCDA for this Imported Medical Record.";
         }
         //gather the features for review
@@ -190,14 +196,16 @@ class ImporterController extends Controller
     //Train the Importing Algo
     public function train(Request $request)
     {
-        if ( ! $request->hasFile('medical_records')) {
+        if (! $request->hasFile('medical_records')) {
             return 'Please upload a CCDA';
         }
 
         foreach ($request->allFiles()['medical_records'] as $file) {
             if ($file->getClientOriginalExtension() == 'csv') {
-                ImportCsvPatientList::dispatch(parseCsvToArray($file),
-                    $file->getClientOriginalName())->onQueue('low');
+                ImportCsvPatientList::dispatch(
+                    parseCsvToArray($file),
+                    $file->getClientOriginalName()
+                )->onQueue('low');
 
                 $link = link_to_route(
                     'import.ccd.remix',

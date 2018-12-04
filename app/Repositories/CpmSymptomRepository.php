@@ -14,45 +14,51 @@ class CpmSymptomRepository
         return app(CpmSymptom::class);
     }
 
-    public function count() {
+    public function count()
+    {
         return $this->model()->count();
     }
 
-    public function symptoms() {
+    public function symptoms()
+    {
         return $this->model()->paginate();
     }
 
-    function patientHasSymptom($userId, $symptomId) {
-        return !!CpmSymptomUser::where([ 
+    public function patientHasSymptom($userId, $symptomId)
+    {
+        return !!CpmSymptomUser::where([
             'patient_id' => $userId,
             'cpm_symptom_id' => $symptomId
          ])->first();
     }
 
-    public function addSymptomToPatient($symptomId, $userId) {
+    public function addSymptomToPatient($symptomId, $userId)
+    {
         if (!$this->patientHasSymptom($userId, $symptomId)) {
             $symptomUser = new CpmSymptomUser();
             $symptomUser->cpm_symptom_id = $symptomId;
             $symptomUser->patient_id = $userId;
             $symptomUser->save();
             return $symptomUser;
-         }
+        }
     }
     
-    public function removeSymptomFromPatient($symptomId, $userId) {
+    public function removeSymptomFromPatient($symptomId, $userId)
+    {
         if ($this->patientHasSymptom($userId, $symptomId)) {
-            CpmSymptomUser::where([ 
+            CpmSymptomUser::where([
                 'patient_id' => $userId,
                 'cpm_symptom_id' => $symptomId
              ])->delete();
-             return [
+            return [
                  'message' => 'successful'
              ];
         }
         return null;
     }
 
-    public function patientSymptoms($userId) {
+    public function patientSymptoms($userId)
+    {
         return CpmSymptomUser::where([ 'patient_id' => $userId ])->with('cpmSymptom')->get()->map(function ($u) {
             return $u->cpmSymptom;
         });

@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\DB;
  */
 class PatientDailyAuditReport
 {
-
     protected $patient;
     protected $day;
 
@@ -24,14 +23,12 @@ class PatientDailyAuditReport
 
     public function __construct(Patient $patient, Carbon $forMonth)
     {
-
         $this->patient  = $patient;
         $this->forMonth = $forMonth;
     }
 
     public function renderPDF()
     {
-
         $name = $this->patient->user->last_name . '-' . Carbon::now()->timestamp;
 
         $this->renderData();

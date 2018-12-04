@@ -31,7 +31,6 @@ class AddIndexesToRevisionsTable extends Migration
                 $key = 'ops_dashboard_query';
 
                 $table->dropIndex($key);
-
             } catch (QueryException $e) {
                 $errorCode = $e->errorInfo[1];
                 if ($errorCode == 1091) {

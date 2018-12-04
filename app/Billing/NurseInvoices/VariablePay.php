@@ -8,7 +8,6 @@ use Carbon\Carbon;
 
 class VariablePay extends NurseInvoice
 {
-
     const OVER_PER_MINUTE = 10 / 60;
     const UNDER_PER_MINUTE = 30 / 60;
     private $ccm_over_duration;
@@ -55,7 +54,6 @@ class VariablePay extends NurseInvoice
 
     public function activityDurationForPeriod()
     {
-
         return [
 
             'total'     => $this->ccm_under_payable + $this->ccm_over_payable,
@@ -67,7 +65,6 @@ class VariablePay extends NurseInvoice
 
     public function getItemizedActivities()
     {
-
         $dayCounter = $this->start->toDateString();
 
         $this->data['total']['towards'] = $this->ccm_under_duration;
@@ -75,8 +72,7 @@ class VariablePay extends NurseInvoice
 
         while ($this->end->toDateString() >= $dayCounter) {
             $raw_after = NurseCareRateLog::where('nurse_id', $this->nurse->id)
-                ->where(function ($q) use
-                    (
+                ->where(function ($q) use (
                     $dayCounter
                 ) {
                     $q->where('created_at', '>=', Carbon::parse($dayCounter)->startOfDay())
@@ -87,8 +83,7 @@ class VariablePay extends NurseInvoice
 
 
             $raw_towards = NurseCareRateLog::where('nurse_id', $this->nurse->id)
-                ->where(function ($q) use
-                    (
+                ->where(function ($q) use (
                     $dayCounter
                 ) {
                     $q->where('created_at', '>=', Carbon::parse($dayCounter)->startOfDay())

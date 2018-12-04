@@ -78,7 +78,7 @@ class PageTimer extends \App\BaseModel
 
     /**
      * The database table used by the model.
-     * 
+     *
      * @var string
      */
     protected $table = 'lv_page_timer';

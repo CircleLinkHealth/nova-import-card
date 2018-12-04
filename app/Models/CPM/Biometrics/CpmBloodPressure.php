@@ -78,7 +78,8 @@ class CpmBloodPressure extends \App\BaseModel implements Biometric
         return $this->belongsTo(User::class, 'patient_id');
     }
     
-    public function biometric() {
+    public function biometric()
+    {
         return CpmBiometric::where('name', 'LIKE', '%pressure%');
     }
 

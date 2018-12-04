@@ -10,12 +10,10 @@ use Illuminate\Http\Request;
 
 class CCMComplexToggleController extends Controller
 {
-
     public function toggle(
         Request $request,
         $patientId
     ) {
-
         $input = $request->all();
 
         $date = Carbon::now()->startOfMonth()->toDateString();
@@ -48,7 +46,7 @@ class CCMComplexToggleController extends Controller
             if ($patient->getCcmTime() > 3600) {
                 //Get nurse that did the last activity.
                 $nurse = $patient->patientInfo->lastNurseThatPerformedActivity();
-                if($nurse){
+                if ($nurse) {
                     (new AlternativeCareTimePayableCalculator($nurse))
                         ->adjustPayOnCCMComplexSwitch60Mins();
                 }

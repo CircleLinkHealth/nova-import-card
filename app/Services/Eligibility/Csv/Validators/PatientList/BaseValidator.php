@@ -8,7 +8,6 @@
 
 namespace App\Services\Eligibility\Csv\Validators\PatientList;
 
-
 abstract class BaseValidator implements PatientListValidator
 {
     /**

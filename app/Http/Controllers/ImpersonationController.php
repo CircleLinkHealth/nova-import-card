@@ -5,7 +5,6 @@ use Illuminate\Http\Request;
 
 class ImpersonationController extends Controller
 {
-
     public function postImpersonate(Request $request)
     {
         $email = $request->input('email');

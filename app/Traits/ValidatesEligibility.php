@@ -8,7 +8,6 @@
 
 namespace App\Traits;
 
-
 use App\EligibilityJob;
 use App\Rules\EligibilityPhones;
 use App\Rules\EligibilityProblems;
@@ -31,9 +30,8 @@ trait ValidatesEligibility
         return $this->validatePatient($row);
     }
 
-    private function transformProblems(Array $row)
+    private function transformProblems(array $row)
     {
-
         if (array_key_exists('problems_string', $row) && is_json($row['problems_string'])) {
             $problems               = json_decode($row['problems_string'])->Problems;
             $row['problems_string'] = [];
@@ -48,7 +46,7 @@ trait ValidatesEligibility
         return $row;
     }
 
-    private function transformPhones(Array $row)
+    private function transformPhones(array $row)
     {
         $row['phones'] = [
             'primary_phone' => array_key_exists('primary_phone', $row)
@@ -70,7 +68,6 @@ trait ValidatesEligibility
 
     public function validateJsonStructure($row)
     {
-
         $toValidate = [];
         $rules      = [];
 
@@ -83,10 +80,9 @@ trait ValidatesEligibility
         }
 
         return Validator::make($toValidate, $rules);
-
     }
 
-    public function validatePatient(Array $array)
+    public function validatePatient(array $array)
     {
         return Validator::make($array, [
             'mrn'        => 'required',
@@ -142,8 +138,5 @@ trait ValidatesEligibility
         $job->invalid_phones     = $errors->contains('phones');
 
         $job->save();
-
     }
-
-
 }

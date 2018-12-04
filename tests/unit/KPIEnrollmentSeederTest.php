@@ -23,6 +23,5 @@ class KPIEnrollmentSeederTest extends TestCase
         ]);
 
         $this->assertTrue(true);
-
     }
 }

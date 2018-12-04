@@ -18,7 +18,6 @@ use App\SaasAccount;
 use Carbon\Carbon;
 use Faker\Factory;
 
-
 trait SetupTestCustomer
 {
     use UserHelpers;
@@ -31,7 +30,6 @@ trait SetupTestCustomer
      */
     public function createLocation(Practice $practice)
     {
-
         $faker = Factory::create();
 
         $location = Location::create([
@@ -58,7 +56,6 @@ trait SetupTestCustomer
      */
     public function createPractice()
     {
-
         $faker = Factory::create();
         $name  = $faker->company;
 
@@ -183,10 +180,10 @@ trait SetupTestCustomer
             'cpmProblems',
             'chargeableServices',
             'carePlan',
-            'billingProvider');
+            'billingProvider'
+        );
 
         return $patient;
-
     }
 
     /**
@@ -230,7 +227,6 @@ trait SetupTestCustomer
      */
     public function createTestCustomerData($patientCount = 100)
     {
-
         $practice = $this->createPractice();
         $location = $this->createLocation($practice);
         $provider = $this->createProvider($practice);
@@ -251,8 +247,5 @@ trait SetupTestCustomer
         $data['admin']    = $admin;
 
         return $data;
-
     }
-
-
 }

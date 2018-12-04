@@ -55,7 +55,6 @@ class ReschedulerHandler
 
     public function collectCallsToBeRescheduled()
     {
-
         $calls = Call
             ::where(function ($q) {
                 $q->whereNull('type')
@@ -95,7 +94,6 @@ class ReschedulerHandler
 
     public function handleCalls()
     {
-
         foreach ($this->callsToReschedule as $call) {
             //Handle Previous Call
             try {
@@ -128,7 +126,6 @@ class ReschedulerHandler
 
                     $this->storeNewCallForPatient($patient, $call, $window_start, $window_end, $day);
                     $this->storeNewCallForFamilyMembers($patient, $call, $window_start, $window_end, $day);
-
                 }
             } catch (\Exception $exception) {
                 \Log::critical($exception);
@@ -140,12 +137,12 @@ class ReschedulerHandler
 
     private function storeNewCallForFamilyMembers(Patient $patient, $oldCall, $window_start, $window_end, $day)
     {
-        if ( ! $patient->hasFamilyId()) {
+        if (! $patient->hasFamilyId()) {
             return;
         }
 
         $familyMembers = $patient->getFamilyMembers($patient);
-        if ( ! empty($familyMembers)) {
+        if (! empty($familyMembers)) {
             foreach ($familyMembers as $familyMember) {
                 $familyMemberCall = $this->schedulerService->getScheduledCallForPatient($familyMember->user);
                 //if manually scheduled by nurse or admin, do not do anything

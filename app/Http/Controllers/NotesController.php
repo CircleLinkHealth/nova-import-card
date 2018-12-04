@@ -20,7 +20,6 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class NotesController extends Controller
 {
-
     private $service;
     private $formatter;
     private $patientRepo;
@@ -97,7 +96,6 @@ class NotesController extends Controller
 
     public function listing(Request $request)
     {
-
         $input = $request->all();
 
         $session_user = auth()->user();
@@ -141,7 +139,7 @@ class NotesController extends Controller
 
             $title = $provider->display_name;
 
-            if ( ! empty($notes)) {
+            if (! empty($notes)) {
                 $notes = $this->formatter->formatDataForNotesListingReport($notes, $request);
             }
 
@@ -167,7 +165,7 @@ class NotesController extends Controller
 
                 $title = 'All Forwarded Notes';
 
-                if ( ! empty($notes)) {
+                if (! empty($notes)) {
                     $notes = $this->formatter->formatDataForNotesListingReport($notes, $request);
                 }
 
@@ -211,7 +209,7 @@ class NotesController extends Controller
         if ($patientId) {
             // patient view
             $patient = User::find($patientId);
-            if ( ! $patient) {
+            if (! $patient) {
                 return response("User not found", 401);
             }
 
@@ -339,11 +337,10 @@ class NotesController extends Controller
         SchedulerService $schedulerService,
         $patientId
     ) {
-
         $input = $request->allSafe();
 
         //in case Performed By field is removed from the form (per CPM-165)
-        if ( ! isset($input['author_id'])) {
+        if (! isset($input['author_id'])) {
             $input['author_id'] = auth()->id();
         }
         $input['performed_at'] = Carbon::parse($input['performed_at'])->toDateTimeString();
@@ -406,8 +403,7 @@ class NotesController extends Controller
             if ($call) {
                 if ($task_status === "done") {
                     if ($call->sub_type === "Call Back") {
-
-                        if ( ! isset($input['call_status'])) {
+                        if (! isset($input['call_status'])) {
                             //exit with error
                             return redirect()
                                 ->back()
@@ -425,7 +421,6 @@ class NotesController extends Controller
                         if (auth()->user()->hasRole('provider')) {
                             $this->patientRepo->updateCallLogs($patient->patientInfo, true);
                         }
-
                     } else {
                         $call->status = "done";
                     }
@@ -442,10 +437,9 @@ class NotesController extends Controller
             }
         } else {
             if (Auth::user()->hasRole('care-center')) {
-
                 $is_withdrawn = $info->ccm_status == 'withdrawn';
 
-                if ( ! $is_phone_session && $is_withdrawn) {
+                if (! $is_phone_session && $is_withdrawn) {
                     return redirect()->route('patient.note.index', ['patient' => $patientId])->with(
                         'messages',
                         ['Successfully Created Note']
@@ -453,8 +447,7 @@ class NotesController extends Controller
                 }
 
                 if ($is_phone_session) {
-
-                    if ( ! isset($input['call_status'])) {
+                    if (! isset($input['call_status'])) {
                         //exit with error
                         return redirect()
                             ->back()
@@ -471,9 +464,12 @@ class NotesController extends Controller
                         $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s'); // @todo add H:i:s
                     }
 
-                    if ( ! $is_saas && ! $is_withdrawn) {
-                        $prediction = $schedulerService->updateTodaysCallAndPredictNext($patient, $note->id,
-                            $call_status);
+                    if (! $is_saas && ! $is_withdrawn) {
+                        $prediction = $schedulerService->updateTodaysCallAndPredictNext(
+                            $patient,
+                            $note->id,
+                            $call_status
+                        );
                     }
 
                     // add last contact time regardless of if success
@@ -507,11 +503,16 @@ class NotesController extends Controller
 
             //If successful phone call and provider, also mark as the last successful day contacted. [ticket: 592]
             if ($is_phone_session) {
-
                 if (isset($input['call_status']) && $input['call_status'] == 'reached') {
                     if (auth()->user()->hasRole('provider')) {
-                        $this->service->storeCallForNote($note, 'reached', $patient, Auth::user(), Auth::user()->id,
-                            null);
+                        $this->service->storeCallForNote(
+                            $note,
+                            'reached',
+                            $patient,
+                            Auth::user(),
+                            Auth::user()->id,
+                            null
+                        );
 
                         $this->patientRepo->updateCallLogs($patient->patientInfo, true);
 
@@ -569,7 +570,6 @@ class NotesController extends Controller
         $patientId,
         $noteId
     ) {
-
         $patient = User::find($patientId);
         $note    = Note::where('id', $noteId)
                        ->with(['call', 'notifications'])
@@ -643,7 +643,9 @@ class NotesController extends Controller
             'author_user_id' => auth()->user()->id,
         ]);
 
-        return redirect()->to(route('patient.note.view',
-                ['patientId' => $patientId, 'noteId' => $noteId]) . '#create-addendum');
+        return redirect()->to(route(
+            'patient.note.view',
+                ['patientId' => $patientId, 'noteId' => $noteId]
+        ) . '#create-addendum');
     }
 }

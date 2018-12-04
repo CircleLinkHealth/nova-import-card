@@ -37,7 +37,8 @@ class UserOutboundCallController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function store(AssignCallsToUser $request, $user) {
+    public function store(AssignCallsToUser $request, $user)
+    {
         $callIds = $request->input('callIds');
 
         $nurseUser = User::findOrFail($user);

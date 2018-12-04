@@ -17,14 +17,14 @@ class CpmMedicationGroupRepository
         return $this->model()->count();
     }
 
-    function setupGroupMedicationCount($group)
+    public function setupGroupMedicationCount($group)
     {
         $group['medications'] = $group->medications()->count();
 
         return $group;
     }
 
-    function setupGroupMedication($group)
+    public function setupGroupMedication($group)
     {
         $group['medications'] = $group->medications()->paginate();
 

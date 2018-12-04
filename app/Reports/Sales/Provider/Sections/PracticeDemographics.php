@@ -10,7 +10,6 @@ use Carbon\Carbon;
 
 class PracticeDemographics extends SalesReportSection
 {
-
     private $provider;
     private $service;
 

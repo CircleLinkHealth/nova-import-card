@@ -8,7 +8,6 @@
 
 namespace App\Services\Eligibility\Processables;
 
-
 use App\Contracts\EligibilityProcessable;
 use App\Jobs\ProcessEligibilityProcessable;
 use App\Practice;

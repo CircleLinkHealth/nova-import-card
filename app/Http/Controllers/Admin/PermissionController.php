@@ -62,8 +62,10 @@ class PermissionController extends Controller
             $permission->roles()->sync($params['roles']);
         }
         $permission->save();
-        redirect()->route('admin.permissions.edit', [$permission->id])->with('messages',
-            ['successfully added new permission - ' . $params['name']]);
+        redirect()->route('admin.permissions.edit', [$permission->id])->with(
+            'messages',
+            ['successfully added new permission - ' . $params['name']]
+        );
     }
 
     /**
@@ -143,14 +145,14 @@ class PermissionController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\StreamedResponse
      */
-    public function makeRoleExcel(){
-
+    public function makeRoleExcel()
+    {
         $today = Carbon::now();
         $perms = Permission::with('roles')->get();
         $roles = Role::get();
 
         $columns = [];
-        foreach ($roles as $role){
+        foreach ($roles as $role) {
             $columns[] = $role->display_name;
         }
         $roles = collect($columns);
@@ -160,9 +162,9 @@ class PermissionController extends Controller
         foreach ($perms as $perm) {
             $row = [];
             $row['Permission'] = $perm->display_name;
-            foreach ($roles as $role){
+            foreach ($roles as $role) {
                 $input = ' ';
-                if ($perm->roles->where('display_name', $role)->count() > 0){
+                if ($perm->roles->where('display_name', $role)->count() > 0) {
                     $input = 'X';
                 }
                 $row[$role] = $input;
@@ -195,15 +197,15 @@ class PermissionController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\StreamedResponse
      */
-    public function makeRouteExcel(){
+    public function makeRouteExcel()
+    {
         $today = Carbon::now();
         $collection = Route::getRoutes();
         $allRoutes = collect($collection->getRoutesByName());
 
         $routes = [];
 
-        foreach($allRoutes as $route) {
-
+        foreach ($allRoutes as $route) {
             $middleware = implode(", ", $route->gatherMiddleware());
             $routes[] = [
                 'Route(uri)' => $route->uri(),
@@ -223,6 +225,5 @@ class PermissionController extends Controller
             ->toMediaCollection("excel_report_for_routes_permissions{$today->toDateString()}");
 
         return $this->downloadMedia($excel);
-
     }
 }

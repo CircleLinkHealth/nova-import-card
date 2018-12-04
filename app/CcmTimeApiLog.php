@@ -20,7 +20,6 @@ use Prettus\Repository\Traits\TransformableTrait;
  */
 class CcmTimeApiLog extends \App\BaseModel implements Transformable
 {
-
     use TransformableTrait;
 
     protected $guarded = [];

@@ -36,6 +36,5 @@ class PracticeInvoiceTest extends TestCase
         $this->patient  = factory(User::class)->create();
         $this->practice  = factory(Practice::class)->create();
         $this->date  = new Carbon('2017-08-01');
-
     }
 }

@@ -14,7 +14,7 @@ class AddPracticeIdToCareAmbassadorLogsTable extends Migration
     public function up()
     {
         Schema::table('care_ambassador_logs', function (Blueprint $table) {
-            if ( ! Schema::hasColumn('care_ambassador_logs', 'practice_id')) {
+            if (! Schema::hasColumn('care_ambassador_logs', 'practice_id')) {
                 $table->unsignedInteger('practice_id')
                       ->after('enroller_id')
                       ->nullable();

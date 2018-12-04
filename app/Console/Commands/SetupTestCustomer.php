@@ -44,7 +44,5 @@ class SetupTestCustomer extends Command
 
 
         $this->createTestCustomerData($count);
-
-
     }
 }

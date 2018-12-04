@@ -43,7 +43,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CcdVendor extends \App\BaseModel
 {
-
     use MedicalRecordItemLoggerRelationships;
 
     protected $guarded = [];

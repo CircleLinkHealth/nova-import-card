@@ -52,7 +52,7 @@ class NoteService
         return $assessments->map([$this, 'createNoteFromAssessment']);
     }
 
-    function createNoteFromAssessment($assessment)
+    public function createNoteFromAssessment($assessment)
     {
         if ($assessment) {
             $note                       = new Note();
@@ -75,9 +75,9 @@ class NoteService
     public function add($userId, $authorId, $body, $type, $isTCM, $did_medication_recon)
     {
         if ($userId && $authorId && ($body || $type == 'Biometrics')) {
-            if ( ! $this->userRepo->exists($userId)) {
+            if (! $this->userRepo->exists($userId)) {
                 throw new Exception('user with id "' . $userId . '" does not exist');
-            } else if ($type != 'Biometrics' && ! $this->userRepo->exists($authorId)) {
+            } elseif ($type != 'Biometrics' && ! $this->userRepo->exists($authorId)) {
                 throw new Exception('user with id "' . $authorId . '" does not exist');
             } else {
                 if ($type != 'Biometrics') {
@@ -91,8 +91,11 @@ class NoteService
 
                     return $this->repo()->add($note);
                 } else {
-                    return $this->createNoteFromAssessment($this->assessmentRepo->editKeyTreatment($userId, $authorId,
-                        $body));
+                    return $this->createNoteFromAssessment($this->assessmentRepo->editKeyTreatment(
+                        $userId,
+                        $authorId,
+                        $body
+                    ));
                 }
             }
         } else {
@@ -102,14 +105,14 @@ class NoteService
 
     public function editPatientNote($id, $userId, $authorId, $body, $isTCM, $did_medication_recon, $type = null)
     {
-        if ( ! $type) {
-            if ( ! $id) {
+        if (! $type) {
+            if (! $id) {
                 throw new Exception('$id is required');
             } else {
                 $note = $this->repo()->model()->find($id);
                 if ($note->patient_id != $userId) {
                     throw new Exception('Note with id "' . $id . '" does not belong to patient with id "' . $userId . '"');
-                } else if ($note->author_id != $authorId) {
+                } elseif ($note->author_id != $authorId) {
                     throw new Exception('Attempt to edit note blocked because note does not belong to author');
                 } else {
                     $note                       = new Note();
@@ -192,13 +195,11 @@ class NoteService
         $start,
         $end
     ) {
-
         $patients = User::whereHas(
             'careTeamMembers',
             function ($q) use (
                 $provider
             ) {
-
                 $q->where('member_user_id', $provider)
                   ->where('type', 'billing_provider');
             }
@@ -214,7 +215,6 @@ class NoteService
         $start,
         $end
     ) {
-
         return Note::whereIn('patient_id', $patients)
                    ->whereBetween('performed_at', [
                        $start,
@@ -230,7 +230,6 @@ class NoteService
         $start,
         $end
     ) {
-
         $patients = User::whereHas('careTeamMembers', function ($q) use (
             $provider
         ) {
@@ -256,7 +255,6 @@ class NoteService
         $start,
         $end
     ) {
-
         return Note::whereIn('patient_id', $patients)
                    ->whereBetween('performed_at', [
                        $start,
@@ -272,7 +270,6 @@ class NoteService
         Carbon $start,
         Carbon $end
     ) {
-
         $patients = User::ofType('participant')
                         ->get()
                         ->pluck('id');
@@ -314,7 +311,6 @@ class NoteService
         Patient $patient,
         $ccmComplex
     ) {
-
         $date_index = Carbon::now()->firstOfMonth()->toDateString();
 
         $patientRecord = PatientMonthlySummary::where('patient_id', $patient->user_id)
@@ -354,7 +350,6 @@ class NoteService
         $scheduler,
         $attemptNote = ''
     ) {
-
         if ($phone_direction == 'inbound') {
             $outbound_num  = $patient->getPrimaryPhone();
             $outbound_id   = $patient->id;
@@ -400,7 +395,6 @@ class NoteService
 
     public function getPatientCareTeamMembers($patientId)
     {
-
         $careteam_info = [];
         $careteam_ids  = CarePerson
             ::whereUserId($patientId)->pluck('member_user_id');
@@ -466,7 +460,7 @@ class NoteService
                     ->with('notifiable')
                     ->get()
                     ->mapWithKeys(function ($notification) {
-                        if ( ! $notification->notifiable) {
+                        if (! $notification->notifiable) {
                             return ['N/A' => $notification->created_at->format('m/d/y h:iA T')];
                         }
 

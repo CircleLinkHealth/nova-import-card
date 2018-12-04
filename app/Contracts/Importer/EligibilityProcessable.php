@@ -9,7 +9,6 @@ namespace App\Contracts\Importer;
 
 interface EligibilityProcessable
 {
-
     public function getEligibilityBatch();
 
     public function getEligibilityJob();
@@ -36,7 +35,4 @@ interface EligibilityProcessable
 
     //may be redundant because of the above
     public function getCsvPatientData();
-
-
-
 }

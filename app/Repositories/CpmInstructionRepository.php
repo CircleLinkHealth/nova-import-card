@@ -8,7 +8,6 @@
 
 namespace App\Repositories;
 
-
 use App\Models\CPM\CpmInstruction;
 
 class CpmInstructionRepository

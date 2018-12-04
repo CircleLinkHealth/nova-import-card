@@ -2,7 +2,6 @@
 
 namespace App\Filters;
 
-
 use App\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -73,7 +72,7 @@ class NurseFilters extends QueryFilters
      */
     public function states($states = null, $operator = 'and')
     {
-        if ( ! $states) {
+        if (! $states) {
             return $this->builder->with('states');
         }
 
@@ -81,7 +80,7 @@ class NurseFilters extends QueryFilters
             $states = explode(',', $states);
         }
 
-        if ( ! is_array($states)) {
+        if (! is_array($states)) {
             $states = [$states];
         }
 
@@ -114,7 +113,7 @@ class NurseFilters extends QueryFilters
                        ->where('id', $patientUserId)
                        ->first();
 
-        return $this->builder->whereHas('user', function ($q) use ($user) { 
+        return $this->builder->whereHas('user', function ($q) use ($user) {
             return $q->ofPractice($user->program_id);
         });
     }
@@ -166,7 +165,8 @@ class NurseFilters extends QueryFilters
      *
      * @return Builder
      */
-    public function user() {
+    public function user()
+    {
         if ($this->request->has('compressed')) {
             return $this->builder->select([ 'id', 'user_id', 'status' ])->with(['user' => function ($q) {
                 return $q->select([ 'id', 'display_name', 'program_id' ]);
@@ -185,7 +185,8 @@ class NurseFilters extends QueryFilters
      *
      * @return $this
      */
-    public function search($term) {
+    public function search($term)
+    {
         return $this->builder
             ->whereHas('user', function ($q) use ($term) {
                 $q->where('display_name', 'like', "%$term%");

@@ -13,12 +13,13 @@ class TargetPatient extends BaseModel
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function enrollee(){
+    public function enrollee()
+    {
         return $this->belongsTo(Enrollee::class, 'enrollee_id');
     }
 
-    public function ehr(){
-
+    public function ehr()
+    {
         return $this->belongsTo(Ehr::class, 'ehr_id');
     }
 }

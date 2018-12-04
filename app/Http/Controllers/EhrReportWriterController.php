@@ -27,7 +27,6 @@ class EhrReportWriterController extends Controller
      */
     public function index()
     {
-
         $messages  = [];
         $files     = [];
         $user      = auth()->user();
@@ -52,7 +51,6 @@ class EhrReportWriterController extends Controller
      */
     public function validateJson(Request $request)
     {
-
         $messages = [];
         $json     = $request->get('json');
 
@@ -61,14 +59,14 @@ class EhrReportWriterController extends Controller
         $pathToFile   = storage_path("app/$fileName");
         $savedLocally = $localDisk->put($fileName, $json);
 
-        if ( ! $savedLocally) {
+        if (! $savedLocally) {
             throw new \Exception("Failed saving $pathToFile");
         }
         $parser   = new \Seld\JsonLint\JsonParser;
         $iterator = read_file_using_generator($pathToFile);
         $i        = 1;
         foreach ($iterator as $iteration) {
-            if ( ! $iteration) {
+            if (! $iteration) {
                 continue;
             }
             try {
@@ -96,23 +94,21 @@ class EhrReportWriterController extends Controller
         }
 
         return redirect()->back()->withErrors($messages);
-
     }
 
-    public function downloadCsvTemplate($name){
-
+    public function downloadCsvTemplate($name)
+    {
         $filename = $name;
 
         try {
             $contents = $this->googleDrive->getContents('1zpiBkegqjTioZGzdoPqZQAqWvXkaKEgB');
-
         } catch (\Exception $e) {
             \Log::alert($e);
             $messages['warnings'][] = 'Folder Eligibility Templates not found!';
             return redirect()->back()->withErrors($messages);
         }
 
-        if ($contents->isEmpty()){
+        if ($contents->isEmpty()) {
             $messages['warnings'][] = 'Folder Eligibility Templates not found!';
             return redirect()->back()->withErrors($messages);
         }
@@ -122,7 +118,7 @@ class EhrReportWriterController extends Controller
             ->where('type', '=', 'file')
             ->where('filename', '=', $filename)
             ->first();
-        if (is_null($file)){
+        if (is_null($file)) {
             $messages['warnings'][] = 'File not found!';
             return redirect()->back()->withErrors($messages);
         }
@@ -131,7 +127,6 @@ class EhrReportWriterController extends Controller
         $mimeType = 'text/csv';
         $export = $service->files->export($file['basename'], $mimeType);
         return response($export->getBody(), 200, $export->getHeaders());
-
     }
 
     /**
@@ -146,13 +141,13 @@ class EhrReportWriterController extends Controller
         $user       = auth()->user();
         $practiceId = $request->input('practice_id');
 
-        if ( ! $user->ehrReportWriterInfo) {
+        if (! $user->ehrReportWriterInfo) {
             $messages['errors'][] = "You need to be an EHR Report Writer to use this feature.";
 
             return redirect()->back()->withErrors($messages);
         }
 
-        if ( ! $practiceId) {
+        if (! $practiceId) {
             $messages['warnings'][] = "Please select a Practice!";
 
             return redirect()->back()->withErrors($messages);
@@ -164,9 +159,10 @@ class EhrReportWriterController extends Controller
 
 
         $files = collect($request->input('googleDriveFiles', []))
-            ->filter(function ($file) {
-                return array_key_exists('path', $file);
-            }
+            ->filter(
+                function ($file) {
+                    return array_key_exists('path', $file);
+                }
             )->values();
 
 
@@ -178,19 +174,31 @@ class EhrReportWriterController extends Controller
 
         foreach ($files as $file) {
             if ($file['ext'] == 'csv') {
-                $batch = $service->createSingleCSVBatchFromGoogleDrive($user->ehrReportWriterInfo->google_drive_folder_path,
-                    $file['name'], $practiceId, $filterLastEncounter, $filterInsurance,
-                    $filterProblems, $file['path']);
+                $batch = $service->createSingleCSVBatchFromGoogleDrive(
+                    $user->ehrReportWriterInfo->google_drive_folder_path,
+                    $file['name'],
+                    $practiceId,
+                    $filterLastEncounter,
+                    $filterInsurance,
+                    $filterProblems,
+                    $file['path']
+                );
             }
             if ($file['ext'] == 'json') {
-                $batch = $service->createClhMedicalRecordTemplateBatch($user->ehrReportWriterInfo->google_drive_folder_path,
-                    $file['name'], $practiceId, $filterLastEncounter, $filterInsurance,
-                    $filterProblems, false, $file['path']);
+                $batch = $service->createClhMedicalRecordTemplateBatch(
+                    $user->ehrReportWriterInfo->google_drive_folder_path,
+                    $file['name'],
+                    $practiceId,
+                    $filterLastEncounter,
+                    $filterInsurance,
+                    $filterProblems,
+                    false,
+                    $file['path']
+                );
             }
-            if ( ! $batch) {
+            if (! $batch) {
                 $messages['warnings'][] = "Something went wrong with file: {$file['name']}.";
             }
-
         }
         if (empty($messages)) {
             $messages['success'][] = "Thanks! CLH will review the file and get back to you. This may take a few business days.";
@@ -249,5 +257,4 @@ class EhrReportWriterController extends Controller
             \Log::alert($e);
         }
     }
-
 }

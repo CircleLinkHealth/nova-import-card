@@ -34,7 +34,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CareAmbassadorLog extends \App\BaseModel
 {
-
     protected $fillable  = [
         'enroller_id',
         'day',
@@ -48,12 +47,11 @@ class CareAmbassadorLog extends \App\BaseModel
 
     public function enroller()
     {
-
         return $this->belongsTo(CareAmbassador::class, 'enroller_id');
     }
 
-    public function practice(){
-
+    public function practice()
+    {
         return $this->hasOne(Practice::class, 'practice_id');
     }
 
@@ -65,7 +63,6 @@ class CareAmbassadorLog extends \App\BaseModel
 
     public static function createOrGetLogs($enroller_id)
     {
-
         $date = Carbon::now()->format('Y-m-d');
         $report =
                 self

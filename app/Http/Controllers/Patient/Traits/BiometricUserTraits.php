@@ -11,11 +11,13 @@ trait BiometricUserTraits
         return response()->json($this->biometricUserService->patientBiometrics($userId));
     }
 
-    public function removeBiometric($userId, $id) {
+    public function removeBiometric($userId, $id)
+    {
         return response()->json($this->biometricUserService->removePatientBiometric($userId, $id));
     }
 
-    public function addBiometric($userId, Request $request) {
+    public function addBiometric($userId, Request $request)
+    {
         $biometricId = $request->input('biometric_id');
         $starting = $request->input('starting');
         $target = $request->input('target');
@@ -63,8 +65,9 @@ trait BiometricUserTraits
                     ]);
                     break;
             }
+        } else {
+            return $this->badRequest('"biometric_id" is important');
         }
-        else return $this->badRequest('"biometric_id" is important');
         return response()->json($result);
     }
 }

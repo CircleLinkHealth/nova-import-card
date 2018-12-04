@@ -64,8 +64,10 @@ class CountPatientMonthlySummaryCalls extends Command
                                  foreach ($summaries as $pms) {
                                      $save = false;
 
-                                     $noOfSuccessfulCalls = $this->callRepository->numberOfSuccessfulCalls($pms->patient_id,
-                                         $date);
+                                     $noOfSuccessfulCalls = $this->callRepository->numberOfSuccessfulCalls(
+                                         $pms->patient_id,
+                                         $date
+                                     );
 
                                      if ($noOfSuccessfulCalls != $pms->no_of_successful_calls) {
                                          $this->comment("user_id:$pms->patient_id no_of_successful_calls changing from $pms->no_of_successful_calls to $noOfSuccessfulCalls");

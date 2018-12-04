@@ -24,7 +24,7 @@ trait ConsolidatesMedicationInfo
         $consolidatedMedication->cons_name             = null;
         $consolidatedMedication->cons_text             = null;
 
-        if ( ! empty($medicationLog->translation_code)) {
+        if (! empty($medicationLog->translation_code)) {
             $consolidatedMedication->cons_code             = $medicationLog->translation_code;
             $consolidatedMedication->cons_code_system      = $medicationLog->translation_code_system;
             $consolidatedMedication->cons_code_system_name = $medicationLog->translation_code_system_name;
@@ -57,7 +57,7 @@ trait ConsolidatesMedicationInfo
             $medicationLog->reference_title,
             $medicationLog->translation_name,
         ])->each(function ($c) use (&$consolidatedMedication) {
-            if ( ! empty($c) && ! $this->containsSigKeywords($c)) {
+            if (! empty($c) && ! $this->containsSigKeywords($c)) {
                 $consolidatedMedication->cons_name = $c;
 
                 return false;
@@ -77,7 +77,7 @@ trait ConsolidatesMedicationInfo
             $medicationLog->text,
             $medicationLog->reference_title,
         ])->each(function ($c) use (&$consolidatedMedication) {
-            if ( ! empty($c) && $this->containsSigKeywords($c)) {
+            if (! empty($c) && $this->containsSigKeywords($c)) {
                 $consolidatedMedication->cons_text = $c;
 
                 return false;
@@ -267,6 +267,5 @@ trait ConsolidatesMedicationInfo
             'vag.',
             'w/o',
         ];
-
     }
 }

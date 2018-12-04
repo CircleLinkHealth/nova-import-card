@@ -8,7 +8,6 @@
 
 namespace App\Repositories;
 
-
 use App\CarePlan;
 use App\Patient;
 use App\User;
@@ -37,7 +36,6 @@ class OpsDashboardPatientEloquentRepository
                                 $patient->byStatus($fromDate, $toDate);
                             })
                             ->get();
-
         } else {
             $patients = User::with([
                 'patientInfo' => function ($patient) {
@@ -45,8 +43,10 @@ class OpsDashboardPatientEloquentRepository
                 },
             ])
                             ->whereHas('patientInfo', function ($patient) {
-                                $patient->whereIn('ccm_status',
-                                    [Patient::PAUSED, Patient::WITHDRAWN, Patient::ENROLLED]);
+                                $patient->whereIn(
+                                    'ccm_status',
+                                    [Patient::PAUSED, Patient::WITHDRAWN, Patient::ENROLLED]
+                                );
                             })
                             ->get();
         }
@@ -54,6 +54,4 @@ class OpsDashboardPatientEloquentRepository
 
         return $patients;
     }
-
 }
-

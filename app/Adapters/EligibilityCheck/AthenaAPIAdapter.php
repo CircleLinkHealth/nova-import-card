@@ -8,7 +8,6 @@
 
 namespace App\Adapters\EligibilityCheck;
 
-
 use App\EligibilityBatch;
 use App\EligibilityJob;
 use App\Services\WelcomeCallListGenerator;
@@ -42,8 +41,18 @@ class AthenaAPIAdapter
 
         $patientList->push($patient);
 
-        $check = new WelcomeCallListGenerator($patientList, false, true, true, false, null, null, null,
-            $this->eligibilityBatch, $this->eligibilityJob);
+        $check = new WelcomeCallListGenerator(
+            $patientList,
+            false,
+            true,
+            true,
+            false,
+            null,
+            null,
+            null,
+            $this->eligibilityBatch,
+            $this->eligibilityJob
+        );
 
         $this->eligibilityJob      = $check->getEligibilityJob();
         $this->eligiblePatientList = $check->getPatientList();

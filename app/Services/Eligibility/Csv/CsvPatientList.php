@@ -8,7 +8,6 @@
 
 namespace App\Services\Eligibility\Csv;
 
-
 use App\Services\Eligibility\Csv\Validators\PatientList\NumberedFieldsValidator;
 use App\Services\Eligibility\Csv\Validators\PatientList\PatientListValidator;
 use App\Services\Eligibility\Csv\Validators\PatientList\SingleFieldsValidator;
@@ -44,7 +43,7 @@ class CsvPatientList
 
     private function validate()
     {
-        if ( ! $this->validator) {
+        if (! $this->validator) {
             return null;
         }
 

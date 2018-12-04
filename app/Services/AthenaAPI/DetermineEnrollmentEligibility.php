@@ -39,10 +39,15 @@ class DetermineEnrollmentEligibility
                                        ->count();
             }
 
-            $response = $this->api->getBookedAppointments($ehrPracticeId, $start, $end, $department['departmentid'],
-                $offsetBy);
+            $response = $this->api->getBookedAppointments(
+                $ehrPracticeId,
+                $start,
+                $end,
+                $department['departmentid'],
+                $offsetBy
+            );
 
-            if ( ! isset($response['appointments'])) {
+            if (! isset($response['appointments'])) {
                 return;
             }
 
@@ -54,7 +59,7 @@ class DetermineEnrollmentEligibility
                 $ehrPatientId = $bookedAppointment['patientid'];
                 $departmentId = $bookedAppointment['departmentid'];
 
-                if ( ! $ehrPatientId) {
+                if (! $ehrPatientId) {
                     continue;
                 }
 
@@ -65,16 +70,15 @@ class DetermineEnrollmentEligibility
                     'ehr_department_id' => $departmentId,
                 ]);
 
-                if ($batchId !== null){
+                if ($batchId !== null) {
                     $target->batch_id = $batchId;
                 }
 
-                if ( ! $target->status) {
+                if (! $target->status) {
                     $target->status = 'to_process';
                     $target->save();
                 }
             }
-
         }
     }
 

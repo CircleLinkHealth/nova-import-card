@@ -56,7 +56,6 @@ class CarePlanApprovalReminderTest extends TestCase
             $this->provider,
             CarePlanApprovalReminder::class,
             function ($notification) use ($numberOfCareplans) {
-
                 $this->checkToMail($notification, $this->provider, $numberOfCareplans);
                 $this->checkToDatabase($notification, $this->provider, $numberOfCareplans);
 
@@ -78,7 +77,6 @@ class CarePlanApprovalReminderTest extends TestCase
 
     public function checkToDatabase($notification, $recipient, $numberOfCareplans)
     {
-
         $databaseData = $notification->toDatabase($recipient);
 
         $expected = ['numberOfCareplans' => $numberOfCareplans];

@@ -4,7 +4,6 @@ namespace App\CLH\CCD\Identifier\IdentificationStrategies;
 
 class CustodianName extends BaseIdentificationStrategy
 {
-
     public function identify()
     {
         if (empty($this->ccd->document->custodian->name)) {

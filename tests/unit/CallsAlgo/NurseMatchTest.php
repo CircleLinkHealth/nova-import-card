@@ -74,7 +74,6 @@ class NurseMatchTest extends TestCase
 
     public function createPatientWindows()
     {
-
         for ($i = 1; $i < 6; $i++) {
             $windows[] = $this->createWindowForPatient(
                 $this->patient,

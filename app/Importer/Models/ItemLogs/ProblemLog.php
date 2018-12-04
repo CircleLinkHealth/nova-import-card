@@ -67,7 +67,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ProblemLog extends \App\BaseModel implements ItemLog, Problem
 {
-
     use BelongsToCcda,
         BelongsToVendor,
         HasProblemCodes;

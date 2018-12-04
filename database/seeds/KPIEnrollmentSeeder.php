@@ -17,15 +17,11 @@ class KPIEnrollmentSeeder extends Seeder
         $data = collect($this->csvData());
 
         foreach ($data as $row) {
-
-
             $fullname = explode(' ', $row['caller']);
 
             $firstName = $fullname[0];
             if (count($fullname) > 1) {
-
                 $lastName = $fullname[1];
-
             } else {
                 $lastName = '';
             }
@@ -34,8 +30,7 @@ class KPIEnrollmentSeeder extends Seeder
                         ->where('last_name', $lastName)
                         ->first();
 
-            if ( ! $user) {
-
+            if (! $user) {
                 $user = User::create([
                     'email'           => "$firstName$lastName@clh.com",
                     'password'        => 'password',
@@ -91,7 +86,6 @@ class KPIEnrollmentSeeder extends Seeder
 
     public function determinePracticeId($customer)
     {
-
         $arr = [
             'Clinica Los Angeles' => 30,
             'Clinica LA'          => 30,

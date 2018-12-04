@@ -20,7 +20,6 @@ class SalesReportsController extends Controller
 
     public function createProviderReport(Request $request)
     {
-
         $providers = User::ofType('provider')->get()->sortBy('display_name')->pluck('display_name', 'id');
 
         $sections = SalesByProviderReport::SECTIONS;
@@ -38,7 +37,6 @@ class SalesReportsController extends Controller
 
     public function makeProviderReport(Request $request)
     {
-
         $input = $request->all();
 
         $provider = User::find($input['provider']);
@@ -79,7 +77,6 @@ class SalesReportsController extends Controller
 
     public function createPracticeReport(Request $request)
     {
-
         $practices = Practice::active()->get()->pluck('display_name', 'id');
 
         $sections = SalesByPracticeReport::SECTIONS;
@@ -143,12 +140,11 @@ class SalesReportsController extends Controller
         return view('sales.by-practice.report', ['data' => $data]);
     }
 
-//LOCATION REPORTS
+    //LOCATION REPORTS
 
     public function createLocationReport(
         Request $request
     ) {
-
         $programs = Practice::all()->pluck('display_name', 'id');
 
         $sections = [
@@ -170,7 +166,6 @@ class SalesReportsController extends Controller
     public function makeLocationReport(
         Request $request
     ) {
-
         $input = $request->all();
 
         $programs = $input['programs'];

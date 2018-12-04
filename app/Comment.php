@@ -54,7 +54,7 @@ class Comment extends \App\BaseModel
 
     /**
      * The database table used by the model.
-     * 
+     *
      * @var string
      */
     protected $table = 'lv_comments';

@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\DB;
  */
 class SalesByLocationReport
 {
-
     protected $startDate;
     protected $startDateString;
     protected $endDate;
@@ -33,8 +32,6 @@ class SalesByLocationReport
         Carbon $end,
         $withLastMonth = true
     ) {
-
-
         $this->startDate = $start;
         $this->startDateString = Carbon::parse($start)->toDateString();
         $this->endDate = $end;
@@ -52,7 +49,6 @@ class SalesByLocationReport
 
     public function handle()
     {
-
         $this->patientsForProgram();
 
 //        $this->getStatsByProvider();
@@ -66,7 +62,6 @@ class SalesByLocationReport
 
     public function patientsForProgram()
     {
-
         $this->currentMonth = $this->program->enrollmentByProgram(
             Carbon::parse($this->startDateString),
             Carbon::parse($this->endDate)
@@ -134,7 +129,6 @@ class SalesByLocationReport
     public function getEnrollmentNumbers()
     {
         $this->enrollmentCount = Patient::whereHas('user', function ($q) {
-
             $q->where('program_id', $this->program->id);
         })
             ->whereNotNull('ccm_status')
@@ -148,7 +142,6 @@ class SalesByLocationReport
 
     public function formatSalesData()
     {
-
         $this->data = [
             'current' => $this->currentMonth,
             'last' => $this->lastMonth,
@@ -165,7 +158,6 @@ class SalesByLocationReport
 
     public function generatePdf()
     {
-
         $pdf = PDF::loadView('sales.by-location.make', ['data' => $this->data]);
 
         $name = trim($this->program->name).'-'.Carbon::now()->toDateString();
@@ -178,6 +170,4 @@ class SalesByLocationReport
     public function introParagraph()
     {
     }
-
-
 }

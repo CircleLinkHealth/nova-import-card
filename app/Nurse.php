@@ -78,7 +78,6 @@ class Nurse extends \App\BaseModel
 
     public static function careGivenToPatientForCurrentMonthByNurse(Patient $patient, Nurse $nurse)
     {
-
         return Activity::where('provider_id', $nurse->user_id)
             ->where('patient_id', $patient->user_id)
             ->where(function ($q) {

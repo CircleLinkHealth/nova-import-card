@@ -11,7 +11,6 @@ use Carbon\Carbon;
  */
 abstract class SalesReportSection implements Section
 {
-
     protected $start;
     protected $end;
     protected $for;
@@ -27,5 +26,5 @@ abstract class SalesReportSection implements Section
         $this->end = $end;
     }
 
-    abstract function render();
+    abstract public function render();
 }

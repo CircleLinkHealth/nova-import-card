@@ -192,27 +192,34 @@ class Location extends \App\BaseModel
         return $this->belongsToMany(User::class);
     }
 
-    public function saasAccount() {
+    public function saasAccount()
+    {
         return $this->practice->saasAccount();
     }
 
-    public function isSaas() {
+    public function isSaas()
+    {
         return $this->practice->saas_account_id > 1;
     }
 
-    public function isNotSaas() {
+    public function isNotSaas()
+    {
         return !$this->isSaas();
     }
 
-    public function saasAccountName() {
+    public function saasAccountName()
+    {
         $saasAccount = $this->saasAccount->first();
 
-        if ($saasAccount) return $saasAccount->name;
+        if ($saasAccount) {
+            return $saasAccount->name;
+        }
 
         return 'CircleLink Health';
     }
 
-    public function routeNotificationForMail() {
+    public function routeNotificationForMail()
+    {
         return optional($this->user()->first())->email;
     }
 }

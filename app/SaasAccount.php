@@ -19,14 +19,16 @@ class SaasAccount extends BaseModel implements HasMedia
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function practices() {
+    public function practices()
+    {
         return $this->hasMany(Practice::class);
     }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function users() {
+    public function users()
+    {
         return $this->hasMany(User::class);
     }
 }

@@ -37,7 +37,6 @@ class CreateOrReplaceCallsViewTable extends Command
      */
     public function handle()
     {
-
         $startOfMonthQuery = config('database.connections')[config('database.default')]['driver'] === 'mysql'
             ? "DATE_ADD(DATE_ADD(LAST_DAY(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')), INTERVAL 1 DAY), INTERVAL - 1 MONTH)"
             : "date('now','start of month')"; //sqlite

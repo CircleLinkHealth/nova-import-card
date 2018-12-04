@@ -7,7 +7,6 @@ use App\Contracts\Importer\MedicalRecord\Section\Validator as SectionValidator;
 
 class ValidStartDateNoEndDate implements SectionValidator
 {
-
     public function isValid(ItemLog $item) : bool
     {
         if (!$this->shouldValidate($item)) {

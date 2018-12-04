@@ -26,9 +26,8 @@ class EligibilityPhones implements Rule
      */
     public function passes($attribute, $value)
     {
-            $count = collect($value)
+        $count = collect($value)
                 ->reject(function ($phone) {
-
                     $validator = Validator::make(['phoneNumber' => $phone], [
                         'phoneNumber'     => 'required|phone:AUTO,US',
                     ]);

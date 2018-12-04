@@ -37,7 +37,6 @@ class SalesByProviderReport extends SalesReport
         Carbon $start,
         Carbon $end
     ) {
-
         parent::__construct($provider, $sections, $start, $end);
         $this->providerInfo = $provider->providerInfo;
         $this->user = $provider;
@@ -56,7 +55,6 @@ class SalesByProviderReport extends SalesReport
 
     public function data($defaultSections = false)
     {
-
         if ($defaultSections) {
             $this->requestedSections = self::SECTIONS;
             return parent::data();

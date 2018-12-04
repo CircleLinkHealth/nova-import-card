@@ -36,18 +36,21 @@ class NotificationsTest extends TestCase
 
     protected $provider;
 
-    public function test_it_sends_careplan_approval_reminder(){
+    public function test_it_sends_careplan_approval_reminder()
+    {
         Notification::fake();
 
         $reminder = new CarePlanApprovalReminder(5);
         $this->provider->notify($reminder);
 
         Notification::assertSentTo(
-            [$this->provider], CarePlanApprovalReminder::class
+            [$this->provider],
+            CarePlanApprovalReminder::class
         );
 
         Notification::assertNotSentTo(
-            [$this->patient], CarePlanApprovalReminder::class
+            [$this->patient],
+            CarePlanApprovalReminder::class
         );
 
         Notification::assertSentTo(
@@ -65,23 +68,23 @@ class NotificationsTest extends TestCase
                 return $notification->id === $reminder->id;
             }
         );
-
-
     }
 
-    public function test_it_sends_careplan_provider_approved(){
-
+    public function test_it_sends_careplan_provider_approved()
+    {
         Notification::fake();
 
         $carePlanApproved = new CarePlanProviderApproved($this->patient->carePlan, $this->channels);
         $this->location->notify($carePlanApproved);
 
         Notification::assertSentTo(
-            [$this->location], CarePlanProviderApproved::class
+            [$this->location],
+            CarePlanProviderApproved::class
         );
 
         Notification::assertNotSentTo(
-            [$this->provider], CarePlanProviderApproved::class
+            [$this->provider],
+            CarePlanProviderApproved::class
         );
 
         Notification::assertSentTo(
@@ -101,7 +104,6 @@ class NotificationsTest extends TestCase
                 return $notification->id === $carePlanApproved->id;
             }
         );
-
     }
     /**
      * A basic test example.
@@ -118,18 +120,21 @@ class NotificationsTest extends TestCase
         $token = 'asdfg';
         $this->provider->notify(new ResetPassword($token));
         Notification::assertSentTo(
-            [$this->provider], ResetPassword::class
+            [$this->provider],
+            ResetPassword::class
         );
 
 
-        $this->provider->notify(new WeeklyPracticeReport([],'test'));
+        $this->provider->notify(new WeeklyPracticeReport([], 'test'));
         Notification::assertSentTo(
-            [$this->provider], WeeklyPracticeReport::class
+            [$this->provider],
+            WeeklyPracticeReport::class
         );
 
         $this->provider->notify(new WeeklyProviderReport([]));
         Notification::assertSentTo(
-            [$this->provider], WeeklyProviderReport::class
+            [$this->provider],
+            WeeklyProviderReport::class
         );
     }
 
@@ -167,6 +172,5 @@ class NotificationsTest extends TestCase
             'performed_at' => Carbon::now(),
             'type'         => 'Patient Consented',
         ]);
-
     }
 }

@@ -8,7 +8,6 @@
 
 namespace App\Contracts;
 
-
 use App\User;
 
 interface DirectMail

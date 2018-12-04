@@ -34,7 +34,8 @@ class ActivityController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function ccmTime($patientId) {
+    public function ccmTime($patientId)
+    {
         return response()->json($this->activityService->totalCcmTime($patientId));
     }
 }

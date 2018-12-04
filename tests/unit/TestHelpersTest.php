@@ -21,9 +21,8 @@ class TestHelpersTest extends TestCase
     private $total;
 
 
-    public function test_setup_test_customer(){
-
-
+    public function test_setup_test_customer()
+    {
         $this->assertInstanceOf('App\Practice', $this->practice);
         $this->assertInstanceOf('App\Location', $this->location);
         $this->assertInstanceOf('App\User', $this->patient);
@@ -38,12 +37,11 @@ class TestHelpersTest extends TestCase
         $this->assertInstanceOf('App\Location', $this->total['location']);
         $this->assertInstanceOf('App\User', $this->total['provider']);
         $this->assertInstanceOf('App\Practice', $this->total['practice']);
-        foreach ($this->total['patients'] as $patient){
+        foreach ($this->total['patients'] as $patient) {
             $this->assertInstanceOf('App\User', $patient);
             $this->assertEquals($patient->program_id, $this->total['practice']->id);
             $this->assertEquals($patient->billingProvider->first()->member_user_id, $this->total['provider']->id);
         }
-
     }
 
     public function setUp()

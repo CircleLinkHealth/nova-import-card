@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Auth;
 
 class CallController extends Controller
 {
-
     private $scheduler;
 
     public function __construct(SchedulerService $callScheduler)
@@ -23,7 +22,6 @@ class CallController extends Controller
 
     public function index(Request $request)
     {
-
         $calls = Call::where(function ($q) {
             $q->whereNull('type')
               ->orWhere('type', '=', 'call');
@@ -36,7 +34,7 @@ class CallController extends Controller
     {
         $input = $request->all();
         $call  = $this->createCall($input);
-        if ( ! isset($call['errors'])) {
+        if (! isset($call['errors'])) {
             return response()
                 ->json($call, 201);
         } else {
@@ -94,7 +92,7 @@ class CallController extends Controller
 
         // validate patient doesnt already have a scheduled call
         $patient = User::find($input['inbound_cpm_id']);
-        if ( ! $patient) {
+        if (! $patient) {
             return [
                 'errors' => ['could not find patient'],
                 'code'   => 406,
@@ -119,10 +117,13 @@ class CallController extends Controller
         }
 
         $isFamilyOverride = ! empty($input['family_override']);
-        if ( ! $isFamilyOverride
-             && $this->hasAlreadyFamilyCallAtDifferentTime($patient->patientInfo, $input['scheduled_date'],
-                $input['window_start'], $input['window_end'])) {
-
+        if (! $isFamilyOverride
+             && $this->hasAlreadyFamilyCallAtDifferentTime(
+                 $patient->patientInfo,
+                 $input['scheduled_date'],
+                $input['window_start'],
+                 $input['window_end']
+             )) {
             return [
                 'errors' => ['patient belongs to family and the family has a call at different time'],
                 'code'   => 418,
@@ -140,13 +141,12 @@ class CallController extends Controller
 
     private function storeNewCallForFamilyMembers(User $patient, $input)
     {
-
-        if ( ! $patient->patientInfo->hasFamilyId()) {
+        if (! $patient->patientInfo->hasFamilyId()) {
             return;
         }
 
         $familyMembers = $patient->patientInfo->getFamilyMembers($patient->patientInfo);
-        if ( ! empty($familyMembers)) {
+        if (! empty($familyMembers)) {
             foreach ($familyMembers as $familyMember) {
                 $familyMemberCall = $this->scheduler->getScheduledCallForPatient($familyMember->user);
                 if ($familyMemberCall) {
@@ -159,7 +159,6 @@ class CallController extends Controller
                     //cancel this call
                     $familyMemberCall->status = 'rescheduled/family';
                     $familyMemberCall->save();
-
                 }
                 $this->storeNewCall($familyMember->user, $input);
             }
@@ -284,13 +283,13 @@ class CallController extends Controller
         if (empty($data['callId'])) {
             return response("missing required params", 401);
         }
-        if ( ! Auth::user()) {
+        if (! Auth::user()) {
             return response("missing required scheduler user", 401);
         }
 
         // find call
         $call = Call::find($data['callId']);
-        if ( ! $call) {
+        if (! $call) {
             return response("could not locate call " . $data['callId'], 401);
         }
 
@@ -301,27 +300,39 @@ class CallController extends Controller
             && ! $isFamilyOverride
             && $call->inboundUser
             && $call->inboundUser->patientInfo) {
-
             $mustConfirm = false;
             switch ($col) {
                 case 'scheduled_date':
-                    $mustConfirm = $this->hasAlreadyFamilyCallAtDifferentTime($call->inboundUser->patientInfo, $value,
-                        $call->window_start, $call->window_end);
+                    $mustConfirm = $this->hasAlreadyFamilyCallAtDifferentTime(
+                        $call->inboundUser->patientInfo,
+                        $value,
+                        $call->window_start,
+                        $call->window_end
+                    );
                     break;
                 case 'window_start':
-                    $mustConfirm = $this->hasAlreadyFamilyCallAtDifferentTime($call->inboundUser->patientInfo,
-                        $call->scheduled_date, $value, $call->window_end);
+                    $mustConfirm = $this->hasAlreadyFamilyCallAtDifferentTime(
+                        $call->inboundUser->patientInfo,
+                        $call->scheduled_date,
+                        $value,
+                        $call->window_end
+                    );
                     break;
                 case 'window_end':
-                    $mustConfirm = $this->hasAlreadyFamilyCallAtDifferentTime($call->inboundUser->patientInfo,
-                        $call->scheduled_date, $call->window_start, $value);
+                    $mustConfirm = $this->hasAlreadyFamilyCallAtDifferentTime(
+                        $call->inboundUser->patientInfo,
+                        $call->scheduled_date,
+                        $call->window_start,
+                        $value
+                    );
                     break;
             }
 
             if ($mustConfirm) {
                 return response(
                     'patient belongs to family and the family has a call at different time',
-                    418);
+                    418
+                );
             }
         }
 
@@ -334,9 +345,9 @@ class CallController extends Controller
         if ($col == 'outbound_cpm_id' && (empty($value) || strtolower($value) == 'unassigned')) {
             $call->scheduler = Auth::user()->id;
             $call->$col      = null;
-        } else if ($col == 'attempt_note' && (empty($value) || strtolower($value) == 'add text')) {
+        } elseif ($col == 'attempt_note' && (empty($value) || strtolower($value) == 'add text')) {
             $call->attempt_note = '';
-        } else if ($col == 'general_comment') {
+        } elseif ($col == 'general_comment') {
             if ((empty($value) || strtolower($value) == 'add text')) {
                 $value = '';
             }
@@ -352,7 +363,6 @@ class CallController extends Controller
             if ($col != 'outbound_cpm_id') {
                 $call->scheduler = Auth::id();
             }
-
         }
 
         $call->save();
@@ -367,28 +377,26 @@ class CallController extends Controller
     {
         $mustConfirm = false;
 
-        if ( ! $patient->hasFamilyId()) {
+        if (! $patient->hasFamilyId()) {
             return $mustConfirm;
         }
 
         //now find if a another call is scheduled for any of the members of the family
         $familyMembers = $patient->getFamilyMembers($patient);
-        if ( ! empty($familyMembers)) {
+        if (! empty($familyMembers)) {
             foreach ($familyMembers as $familyMember) {
                 $callForMember = $this->scheduler->getScheduledCallForPatient($familyMember->user);
-                if ( ! $callForMember) {
+                if (! $callForMember) {
                     continue;
                 }
 
                 if ($callForMember->scheduled_date != $scheduledDate
                     || $callForMember->window_start != $windowStart
                     || $callForMember->window_end != $windowEnd) {
-
                     $mustConfirm = true;
                     //no need to check other calls, so we break
                     break;
                 }
-
             }
         }
 
@@ -428,7 +436,6 @@ class CallController extends Controller
         //we do not have outbound_cpm_id when we are not sending a call to reschedule/cancel
         //and we are just creating a new one.
         if (empty($input['outbound_cpm_id'])) {
-
             $user = Auth::user();
             if ($user->hasRole('care-center')) {
                 $request->merge(['outbound_cpm_id' => auth()->user()->id]);
@@ -437,9 +444,9 @@ class CallController extends Controller
             }
         }
 
-        if ( ! empty($input['id'])) {
+        if (! empty($input['id'])) {
             $previousCall = Call::find($input['id']);
-            if ( ! $previousCall) {
+            if (! $previousCall) {
                 return response("could not locate call " . $input['id'], 401);
             }
 

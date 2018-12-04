@@ -32,7 +32,6 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
         $this->date = $forDate ?? Carbon::now();
 
         $this->reportData = NurseDailyReport::data($forDate)->map(function ($nurseReport) {
-
             $fullName = explode(' ', $nurseReport['name']);
             $first    = $fullName[0];
             $last     = $fullName[1];
@@ -45,7 +44,7 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
                          ])
                          ->first();
 
-            if ( ! $nurse) {
+            if (! $nurse) {
                 \Log::error("User not found: {$nurseReport['name']}");
                 return [];
             }

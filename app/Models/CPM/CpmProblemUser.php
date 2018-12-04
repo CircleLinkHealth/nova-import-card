@@ -37,7 +37,8 @@ class CpmProblemUser extends \App\BaseModel
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function instruction() {
+    public function instruction()
+    {
         return $this->belongsTo(CpmInstruction::class, 'cpm_instruction_id');
     }
 }

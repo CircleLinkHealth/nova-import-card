@@ -16,7 +16,6 @@ use App\Practice;
 use App\User;
 use Carbon\Carbon;
 
-
 class ImportService
 {
     /**
@@ -34,7 +33,7 @@ class ImportService
                     ->with('patient.patientInfo')
                     ->find($ccdaId);
 
-        if ( ! $ccda) {
+        if (! $ccda) {
             $response->success = false;
             $response->message = "We could not locate CCDA with id $ccdaId";
             $response->imr     = null;
@@ -44,7 +43,6 @@ class ImportService
 
         if ($ccda->imported) {
             if ($ccda->patient) {
-
             }
             $response->success = false;
             $response->message = "CCDA with id $ccdaId has already been imported.";
@@ -163,7 +161,7 @@ class ImportService
         if ($practice->id == 139) {
             $mrn = $this->lookupPHXmrn($row['first_name'], $row['last_name'], $row['dob'], $row['mrn']);
 
-            if ( ! $mrn) {
+            if (! $mrn) {
                 throw new \Exception("Phoenix Heart Patient not found");
             }
 
@@ -211,7 +209,7 @@ class ImportService
 
         $imr = $this->createTabularMedicalRecordAndImport($patient, $phx);
 
-        if ( ! $imr) {
+        if (! $imr) {
             return null;
         }
 

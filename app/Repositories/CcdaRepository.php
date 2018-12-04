@@ -11,28 +11,31 @@ class CcdaRepository
         return app(Ccda::class);
     }
 
-    public function count() {
+    public function count()
+    {
         return $this->model()->count();
     }
     
-    function setupCcda($ccda) {
+    public function setupCcda($ccda)
+    {
         $ccda->xml = null;
         $ccda->json = null;
         return $ccda;
     }
     
-    public function ccda($id = null) {
+    public function ccda($id = null)
+    {
         if ($id) {
             return $this->setupCcda($this->model()->findOrFail($id));
-        }
-        else {
+        } else {
             $ccda = $this->model()->exclude([ 'xml', 'json' ])->paginate();
             $ccda->getCollection()->transform([$this, 'setupCcda']);
             return $ccda;
         }
     }
 
-    public function exists($id) {
+    public function exists($id)
+    {
         return !!$this->model()->find($id);
     }
 }

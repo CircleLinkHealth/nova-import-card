@@ -20,7 +20,6 @@ class RedirectIfAuthenticated
         Closure $next,
         $guard = null
     ) {
-
         return $next($request);
     }
 }

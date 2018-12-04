@@ -13,7 +13,7 @@ class AddTwilioFeatureToggleInCpmSettings extends Migration
      */
     public function up()
     {
-        if ( ! Schema::hasColumn('cpm_settings', 'twilio_enabled')) {
+        if (! Schema::hasColumn('cpm_settings', 'twilio_enabled')) {
             Schema::table('cpm_settings', function (Blueprint $table) {
                 $table->boolean('twilio_enabled')->default(0);
             });
@@ -27,7 +27,6 @@ class AddTwilioFeatureToggleInCpmSettings extends Migration
      */
     public function down()
     {
-
         if (Schema::hasColumn('cpm_settings', 'twilio_enabled')) {
             Schema::table('cpm_settings', function (Blueprint $table) {
                 $table->dropColumn('twilio_enabled');

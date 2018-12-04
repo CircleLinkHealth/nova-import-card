@@ -105,8 +105,10 @@
                                         header: ["Patient", {content: "textFilter", placeholder: "Filter"}],
                                         sort: 'string',
                                         adjust: true,
-                                        template: "<a href='<?php echo route('patient.activity.providerUIIndex',
-                                            array('patient' => '#patient_id#')); ?>'>#patient_name#</a>"
+                                        template: "<a href='<?php echo route(
+    'patient.activity.providerUIIndex',
+                                            array('patient' => '#patient_id#')
+); ?>'>#patient_name#</a>"
 
                                     },
                                     {

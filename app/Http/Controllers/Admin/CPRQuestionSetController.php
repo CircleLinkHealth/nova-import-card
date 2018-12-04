@@ -100,8 +100,10 @@ class CPRQuestionSetController extends Controller
         $questionSet->action = $params['action'];
         $questionSet->save();
 
-        return redirect()->route('admin.questionSets.edit', [$questionSet->qsid])->with('messages',
-            ['successfully added new question set']);
+        return redirect()->route('admin.questionSets.edit', [$questionSet->qsid])->with(
+            'messages',
+            ['successfully added new question set']
+        );
     }
 
     /**

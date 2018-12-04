@@ -150,7 +150,6 @@ class Practice extends BaseModel implements HasMedia
 
     public function getCountOfUserTypeAtPractice($role)
     {
-
         $id = $this->id;
 
         return User
@@ -182,7 +181,8 @@ class Practice extends BaseModel implements HasMedia
     /**
      * @return \App\PracticeEnrollmentTips|\Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function enrollmentTips() {
+    public function enrollmentTips()
+    {
         return $this->hasOne('App\PracticeEnrollmentTips', 'practice_id');
     }
 
@@ -219,9 +219,7 @@ class Practice extends BaseModel implements HasMedia
         Carbon $start,
         Carbon $end
     ) {
-
         $patients = Patient::whereHas('user', function ($q) {
-
             $q->where('program_id', $this->id);
         })
                            ->whereNotNull('ccm_status')
@@ -258,7 +256,6 @@ class Practice extends BaseModel implements HasMedia
      */
     public function getAddress()
     {
-
         $primary = $this->locations()->where('is_primary', 1)->first();
 
         if (is_null($primary)) {
@@ -299,13 +296,11 @@ class Practice extends BaseModel implements HasMedia
 
     public function scopeActiveBillable($q)
     {
-        if (app()->environment(['local', 'staging', 'testing'])){
+        if (app()->environment(['local', 'staging', 'testing'])) {
             return $q->whereActive(1);
         }
         return $q->whereActive(1)
                      ->whereNotIn('name', ['demo', 'testdrive', 'mdally-demo']);
-
-
     }
 
     public function scopeAuthUserCanAccess($q)

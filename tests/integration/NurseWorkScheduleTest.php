@@ -115,7 +115,7 @@ class NurseWorkScheduleTest extends DuskTestCase
             ]);
         }
 
-        if ( ! $valid) {
+        if (! $valid) {
             $response = $this->call('GET', '/care-center/work-schedule/destroy/71');
 
             $this->actingAs($nurse)

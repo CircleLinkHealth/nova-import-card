@@ -13,8 +13,8 @@ use Carbon\Carbon;
 //READ ME
 /*
  * This class can be used to generate nurse invoices for a given time range.
- * 
- * Either use handle() or email() for generating vs. sending invoices. 
+ *
+ * Either use handle() or email() for generating vs. sending invoices.
  */
 
 class NurseMonthlyBillGenerator
@@ -58,7 +58,6 @@ class NurseMonthlyBillGenerator
         $manualTimeAdd = 0,
         $notes = ''
     ) {
-
         $this->nurse = $newNurse;
         $this->nurseName = $newNurse->user->getFullName();
         $this->startDate = $billingDateStart;
@@ -79,7 +78,6 @@ class NurseMonthlyBillGenerator
 
     private function getSystemTimeForNurse()
     {
-
         $this->systemTime = PageTimer::where('provider_id', $this->nurse->user_id)
             ->where(function ($q) {
                 $q->where('created_at', '>=', $this->startDate)
@@ -117,31 +115,30 @@ class NurseMonthlyBillGenerator
             } else {
                 $this->formattedSystemTime = ceil(($this->systemTime  * 2) / 3600) / 2;
             }
-        } else if ($this->systemTime == null) {
+        } elseif ($this->systemTime == null) {
             $this->formattedSystemTime = 0;
         }
     }
 
     private function getItemizedActivities()
     {
-
         $data = [];
 
         $pageTimers = PageTimer::where('provider_id', $this->nurse->user_id)
                                ->select(['id', 'duration', 'created_at'])
                                ->where(function ($q) {
-                $q->where('created_at', '>=', $this->startDate)
+                                   $q->where('created_at', '>=', $this->startDate)
                     ->where('created_at', '<=', $this->endDate);
-            })
+                               })
                                ->get();
 
 
         $offlineActivities = Activity::where('provider_id', $this->nurse->user_id)
                                      ->select(['id', 'duration', 'created_at'])
                                      ->where(function ($q) {
-                $q->where('created_at', '>=', $this->startDate)
+                                         $q->where('created_at', '>=', $this->startDate)
                     ->where('created_at', '<=', $this->endDate);
-            })
+                                     })
                                      ->where('logged_from', 'manual_input')
                                      ->get();
 
@@ -179,8 +176,11 @@ class NurseMonthlyBillGenerator
         $this->payable = $this->formattedSystemTime * $this->nurse->hourly_rate;
 
         if ($this->withVariablePaymentSystem) {
-            $variable               = (new VariablePay($this->nurse, $this->startDate,
-                $this->endDate))->getItemizedActivities();
+            $variable               = (new VariablePay(
+                $this->nurse,
+                $this->startDate,
+                $this->endDate
+            ))->getItemizedActivities();
             $this->total['after']   = $variable['total']['after'];
             $this->total['towards'] = $variable['total']['towards'];
 
@@ -312,7 +312,6 @@ class NurseMonthlyBillGenerator
 
     private function getCallsPerHourOverPeriod()
     {
-
         $duration = intval(PageTimer::where('provider_id', $this->nurse->user_id)
             ->where(function ($q) {
                 $q->where('created_at', '>=', $this->startDate->toDateString())

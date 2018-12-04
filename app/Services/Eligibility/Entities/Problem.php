@@ -8,7 +8,6 @@
 
 namespace App\Services\Eligibility\Entities;
 
-
 use Illuminate\Contracts\Support\Arrayable;
 
 class Problem implements Arrayable

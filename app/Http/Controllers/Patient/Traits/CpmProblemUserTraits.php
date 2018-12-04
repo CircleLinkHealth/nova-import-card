@@ -24,7 +24,8 @@ trait CpmProblemUserTraits
         return response()->json($this->cpmProblemUserService->getPatientProblems($userId));
     }
 
-    public function addCpmProblem($userId, Request $request) {
+    public function addCpmProblem($userId, Request $request)
+    {
         $cpmProblemId = $request->input('cpmProblemId');
         if ($userId && $cpmProblemId) {
             $this->cpmProblemUserService->addProblemToPatient($userId, $cpmProblemId);
@@ -33,7 +34,8 @@ trait CpmProblemUserTraits
         return $this->badRequest('"userId" and "cpmProblemId" are important');
     }
     
-    public function removeCpmProblem($userId, $cpmId) {
+    public function removeCpmProblem($userId, $cpmId)
+    {
         if ($userId && $cpmId) {
             $this->cpmProblemUserService->removeProblemFromPatient($userId, $cpmId);
             return $this->getCpmProblems($userId);

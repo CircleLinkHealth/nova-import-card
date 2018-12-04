@@ -11,7 +11,6 @@ use Carbon\Carbon;
 
 class PracticeInvoiceGenerator
 {
-
     private $practice;
     private $month;
     private $patients;
@@ -31,7 +30,6 @@ class PracticeInvoiceGenerator
         Practice $practice,
         Carbon $month
     ) {
-
         $this->practice = $practice;
         $this->month    = $month->firstOfMonth();
         $this->patientSummaryEloquentRepository = app(PatientSummaryEloquentRepository::class);
@@ -55,7 +53,6 @@ class PracticeInvoiceGenerator
         ];
 
         if ($withItemized) {
-
             $reportName           = trim($this->practice->name) . '-' . $this->month->toDateString() . '-patients';
             $pdfPatientReport = $this->makePatientReportPdf($reportName);
 
@@ -115,7 +112,6 @@ class PracticeInvoiceGenerator
 
     public function getInvoiceData($chargeableServiceId = null)
     {
-
         $practiceId = $this->practice->id;
 
         if ($chargeableServiceId) {
@@ -219,7 +215,7 @@ class PracticeInvoiceGenerator
         return $data;
     }
 
-    function array_orderby()
+    public function array_orderby()
     {
         $args = func_get_args();
         $data = array_shift($args);

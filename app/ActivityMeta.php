@@ -34,12 +34,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class ActivityMeta extends \App\BaseModel
 {
-
     use SoftDeletes;
 
     /**
      * The database table used by the model.
-     * 
+     *
      * @var string
      */
     protected $table = 'lv_activitymeta';

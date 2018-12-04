@@ -35,19 +35,19 @@ class OpsDashboardDataSeeder extends Seeder
         ]);
 
         $patients = User::with('patientInfo')
-            ->whereHas('patientInfo', function ($p){
+            ->whereHas('patientInfo', function ($p) {
                 $p->enrolled();
             })
             ->get();
 
         $patientsToLose = $patients->random(40);
-        foreach ($patientsToLose as $p){
+        foreach ($patientsToLose as $p) {
             $p->patientInfo->ccm_status = $ccmStatuses->random();
             $p->save();
         }
 
-        foreach($patients as $patient){
-            if ($patient->primaryPractice){
+        foreach ($patients as $patient) {
+            if ($patient->primaryPractice) {
                 $patient->activities()->createMany([
                     [
                         'type' => $activityType->random(),
@@ -57,7 +57,7 @@ class OpsDashboardDataSeeder extends Seeder
                         'provider_id' => $nurses->random(),
                         ],
                     ]);
-            }else{
+            } else {
                 $patient->attachPractice($practiceIds->random(), null, null, 2);
                 $patient->activities()->createMany([
                     [
@@ -68,8 +68,6 @@ class OpsDashboardDataSeeder extends Seeder
                         'provider_id' => $nurses->random(),],
                 ]);
             }
-
         }
-
     }
 }

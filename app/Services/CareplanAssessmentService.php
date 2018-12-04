@@ -17,25 +17,30 @@ class CareplanAssessmentService
     private $noteRepo;
     private $patientRepo;
 
-    public function __construct(CareplanAssessmentRepository $assessmentRepo, 
-                                    CareplanRepository $careplanRepo, 
+    public function __construct(
+        CareplanAssessmentRepository $assessmentRepo,
+                                    CareplanRepository $careplanRepo,
                                         NoteRepository $noteRepo,
-                                            PatientWriteRepository $patientRepo) {
+                                            PatientWriteRepository $patientRepo
+    ) {
         $this->assessmentRepo = $assessmentRepo;
         $this->careplanRepo = $careplanRepo;
         $this->noteRepo = $noteRepo;
         $this->patientRepo = $patientRepo;
     }
 
-    public function repo() {
+    public function repo()
+    {
         return $this->assessmentRepo;
     }
 
-    function exists($careplanId, $approverId) {
+    public function exists($careplanId, $approverId)
+    {
         return !!$this->repo()->model()->where([ 'careplan_id' => $careplanId, 'provider_approver_id' => $approverId ])->first();
     }
 
-    function createAssessmentNote(CareplanAssessment $assessment, $body, $type) {
+    public function createAssessmentNote(CareplanAssessment $assessment, $body, $type)
+    {
         $note = new Note();
         $note->patient_id = $assessment->careplan_id;
         $note->author_id = $assessment->provider_approver_id;
@@ -44,7 +49,8 @@ class CareplanAssessmentService
         return $this->noteRepo->add($note);
     }
 
-    function after(CareplanAssessment $assessment) {
+    public function after(CareplanAssessment $assessment)
+    {
         $this->createAssessmentNote($assessment, $assessment->note(), 'Enrollment');
 
         $practice = $assessment->approver()->first()->practices()->first();
@@ -56,14 +62,14 @@ class CareplanAssessmentService
         }
     }
 
-    public function save(CareplanAssessment $assessment) {
+    public function save(CareplanAssessment $assessment)
+    {
         if ($assessment) {
             if (!$this->exists($assessment->careplan_id, $assessment->provider_approver_id)) {
                 $assessment->save();
                 $this->after($assessment);
                 return $assessment;
-            }
-            else {
+            } else {
                 $savedAssessments = $this->repo()->model()->where([ 'careplan_id' => $assessment->careplan_id ]);
                 $savedAssessments->update([
                     'provider_approver_id' => $assessment->provider_approver_id,
@@ -86,7 +92,8 @@ class CareplanAssessmentService
 
                 return $savedAssessments->first();
             }
+        } else {
+            throw new Exception('invalid parameter "assessments"');
         }
-        else throw new Exception('invalid parameter "assessments"');
     }
 }

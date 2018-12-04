@@ -168,7 +168,8 @@ class ImportedMedicalRecord extends \App\BaseModel implements ImportedMedicalRec
      *
      * @return int|mixed|null
      */
-    public function checkDuplicity() {
+    public function checkDuplicity()
+    {
         $demos = $this->demographics()->first();
 
         if ($demos) {

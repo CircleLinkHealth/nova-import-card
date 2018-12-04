@@ -7,7 +7,6 @@ use \Prettus\Validator\LaravelValidator;
 
 class CcdaRequestValidator extends LaravelValidator
 {
-
     protected $rules = [
         ValidatorInterface::RULE_CREATE => [
             'patient_id' => 'required',

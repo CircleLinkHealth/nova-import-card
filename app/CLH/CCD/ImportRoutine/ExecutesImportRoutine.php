@@ -23,7 +23,7 @@ trait ExecutesImportRoutine
             $items = $parser->parse($ccd, $validator);
         }
         if (class_exists($storageStrategy)) {
-            $storage = new $storageStrategy( $blogId, $userId );
+            $storage = new $storageStrategy($blogId, $userId);
             $storage->import($items);
         }
     }

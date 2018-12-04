@@ -80,12 +80,14 @@ class Calls
     ) {
         $this->api->setPracticeId($practiceId);
 
-        $response = $this->api->GET("patients/{$patientId}/appointments",
+        $response = $this->api->GET(
+            "patients/{$patientId}/appointments",
             [
                 'showpast'      => $showPast,
                 'showcancelled' => $showCancelled,
 
-            ]);
+            ]
+        );
 
         return $this->response($response);
     }
@@ -108,7 +110,7 @@ class Calls
 
             \Log::error(\GuzzleHttp\json_encode($response));
 
-            if ( ! empty($response)) {
+            if (! empty($response)) {
                 abort(400, json_encode($response));
             }
         }
@@ -175,7 +177,6 @@ class Calls
      */
     public function getPatientInsurances($patientId, $practiceId, $departmentId)
     {
-
         $response = $this->api->GET("$practiceId/patients/$patientId/insurances", [
             'departmentid' => $departmentId,
         ]);
@@ -194,7 +195,6 @@ class Calls
      */
     public function getDemographics($patientId, $practiceId)
     {
-
         $response = $this->api->GET("$practiceId/patients/$patientId");
 
         return $this->response($response);
@@ -293,7 +293,7 @@ class Calls
         return $this->response($response);
     }
 
-    public  function getDepartmentInfo($practiceId, $departmentId, $providerList = false)
+    public function getDepartmentInfo($practiceId, $departmentId, $providerList = false)
     {
         $this->api->setPracticeId($practiceId);
 
@@ -302,7 +302,6 @@ class Calls
         ]);
 
         return $this->response($response);
-
     }
 
     /**
@@ -440,7 +439,7 @@ class Calls
         $noteText,
         $showOnDisplay = false
 
-    ){
+    ) {
         $this->api->setPracticeId($practiceId);
 
         $response = $this->api->POST("appointments/{$appointmentId}/notes", [
@@ -466,7 +465,7 @@ class Calls
         $practiceId,
         $appointmentId,
         $showDeleted = false
-    ){
+    ) {
         $this->api->setPracticeId($practiceId);
 
         $response = $this->api->GET("appointments/{$appointmentId}/notes", [
@@ -474,18 +473,15 @@ class Calls
         ]);
 
         return $this->response($response);
-
-
     }
 
 
     //create method to create patient in athena (for testing), issue with date format
     public function createNewPatient(Patient $patient)
     {
-
         $practiceId = $patient->getPracticeId();
 
-        if ( ! $practiceId) {
+        if (! $practiceId) {
             throw new \Exception("practiceid is required.", 422);
         }
 
@@ -518,13 +514,13 @@ class Calls
     {
         $practiceId = $problem->getPracticeId();
 
-        if ( ! $practiceId) {
+        if (! $practiceId) {
             throw new \Exception("practiceid is required.", 422);
         }
 
         $patientId = $problem->getPatientId();
 
-        if ( ! $patientId) {
+        if (! $patientId) {
             throw new \Exception("practiceid is required.", 422);
         }
 
@@ -572,7 +568,6 @@ class Calls
         ]);
 
         return $this->response($response);
-
     }
 
     /**
@@ -610,6 +605,5 @@ class Calls
         ]);
 
         return $this->response($response);
-
     }
 }

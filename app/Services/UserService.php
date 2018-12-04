@@ -14,11 +14,13 @@ class UserService
 {
     private $userRepo;
 
-    public function __construct(UserRepositoryEloquent $userRepo) {
+    public function __construct(UserRepositoryEloquent $userRepo)
+    {
         $this->userRepo = $userRepo;
     }
 
-    public function repo() {
+    public function repo()
+    {
         return $this->userRepo;
     }
 

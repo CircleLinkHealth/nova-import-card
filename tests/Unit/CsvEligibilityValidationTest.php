@@ -65,11 +65,10 @@ class CsvEligibilityValidationTest extends TestCase
             ))->handle();
         });
 
-        foreach($jobs as $job){
+        foreach ($jobs as $job) {
             $this->assertEquals("3", $job->status);
             $this->assertNotNull($job->outcome);
         }
-
     }
 
     public function testSingleFieldsPasses()
@@ -116,11 +115,10 @@ class CsvEligibilityValidationTest extends TestCase
             ))->handle();
         });
 
-        foreach($jobs as $job){
+        foreach ($jobs as $job) {
             $this->assertEquals("3", $job->status);
             $this->assertNotNull($job->outcome);
         }
-
     }
 
     protected function setUp()
@@ -128,6 +126,5 @@ class CsvEligibilityValidationTest extends TestCase
         parent::setUp();
         $this->service  = new ProcessEligibilityService();
         $this->practice = factory(Practice::class)->create();
-
     }
 }

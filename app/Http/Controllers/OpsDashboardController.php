@@ -14,7 +14,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class OpsDashboardController extends Controller
 {
-
     private $service;
     private $repo;
 
@@ -66,21 +65,21 @@ class OpsDashboardController extends Controller
             ->getFile();
 
         //first check if we have a valid file
-        if ( ! $json || $date <= $noReportDates) {
+        if (! $json || $date <= $noReportDates) {
             $hoursBehind = 'N/A';
             $rows        = null;
         } else {
             //then check if it's in json format
-            if ( ! is_json($json)) {
+            if (! is_json($json)) {
                 throw new \Exception("File retrieved is not in json format.", 500);
             }
 
             $data        = json_decode($json, true);
             $hoursBehind = $data['hoursBehind'];
             $rows        = $data['rows'];
-            if(array_key_exists('dateGenerated', $data)){
-            $dateGenerated = Carbon::parse($data['dateGenerated']);
-        }
+            if (array_key_exists('dateGenerated', $data)) {
+                $dateGenerated = Carbon::parse($data['dateGenerated']);
+            }
         }
 
         return view('admin.opsDashboard.daily', compact([
@@ -94,16 +93,13 @@ class OpsDashboardController extends Controller
 
     public function dailyCsv()
     {
-
         GenerateOpsDashboardCSVReport::dispatch(auth()->user())->onQueue('high');
 
         return "Waldo is working on compiling the reports you requested. <br> Give it a minute, and then head to " . link_to('/jobs/completed') . " and refresh frantically to see a link to the report you requested.";
-
     }
 
     public function downloadCsvReport($fileName, $collection)
     {
-
         $csv = auth()->user()
             ->saasAccount
             ->getMedia($collection)
@@ -111,7 +107,6 @@ class OpsDashboardController extends Controller
             ->first();
 
         return $this->downloadMedia($csv);
-
     }
 
     public function getLostAdded(Request $request)
@@ -134,8 +129,11 @@ class OpsDashboardController extends Controller
                                  'patients' => function ($p) use ($fromDate) {
                                      $p->with([
                                          'activities'      => function ($a) use ($fromDate) {
-                                             $a->where('performed_at', '>=',
-                                                 $fromDate->copy()->startOfMonth()->startOfDay());
+                                             $a->where(
+                                                 'performed_at',
+                                                 '>=',
+                                                 $fromDate->copy()->startOfMonth()->startOfDay()
+                                             );
                                          },
                                          'revisionHistory' => function ($r) use ($fromDate) {
                                              $r->where('key', 'ccm_status')
@@ -167,7 +165,6 @@ class OpsDashboardController extends Controller
             'maxDate',
             'rows',
         ]));
-
     }
 
     public function getPatientListIndex()
@@ -202,7 +199,6 @@ class OpsDashboardController extends Controller
             'status',
             'practiceId',
         ]));
-
     }
 
     public function getPatientList(Request $request)
@@ -222,8 +218,10 @@ class OpsDashboardController extends Controller
         $practices = Practice::activeBillable()->get()->sortBy('display_name');
 
 
-        $patients = $this->repo->getPatientsByStatus($fromDate->startOfDay()->toDateTimeString(),
-            $toDate->endOfDay()->toDateTimeString());
+        $patients = $this->repo->getPatientsByStatus(
+            $fromDate->startOfDay()->toDateTimeString(),
+            $toDate->endOfDay()->toDateTimeString()
+        );
 
         $patients = $patients->whereIn('program_id', $practices->pluck('id')->all());
 
@@ -247,7 +245,6 @@ class OpsDashboardController extends Controller
             'status',
             'practiceId',
         ]));
-
     }
 
     public function getBillingChurn(Request $request)
@@ -282,8 +279,6 @@ class OpsDashboardController extends Controller
 
 
         foreach ($practices as $practice) {
-
-
             $summaries                     = $practice->patients->map(function ($p) {
                 return $p->patientSummaries;
             })->filter()->flatten();
@@ -299,30 +294,24 @@ class OpsDashboardController extends Controller
             'months',
             'total',
         ]));
-
     }
 
     private function paginatePatients($patients)
     {
-
         $currentPage              = LengthAwarePaginator::resolveCurrentPage();
         $perPage                  = 20;
         $currentPageSearchResults = $patients->slice(($currentPage - 1) * $perPage, $perPage)->all();
         $patients                 = new LengthAwarePaginator($currentPageSearchResults, count($patients), $perPage);
 
         return $patients;
-
     }
 
     public function getMonths(Carbon $date, $number)
     {
-
         $months = [];
 
         for ($x = $number; $x > 0; $x--) {
-
             $months[] = $date->copy()->subMonth($x)->startOfMonth();
-
         }
 
         return collect($months);
@@ -358,7 +347,6 @@ class OpsDashboardController extends Controller
         $totalRow['Delta']     = array_sum($total['Delta']);
 
         return collect($totalRow);
-
     }
 
     public function calculateDailyTotalRow($rows)
@@ -369,10 +357,8 @@ class OpsDashboardController extends Controller
             foreach ($row as $key => $value) {
                 $totalCounts[$key][] = $value;
             }
-
         }
         foreach ($totalCounts as $key => $value) {
-
             $totalCounts[$key] = array_sum($value);
         }
 
@@ -381,7 +367,6 @@ class OpsDashboardController extends Controller
 
     public function calculateBillingChurnTotalRow($rows, $months)
     {
-
         $total['Billed']            = [];
         $total['Added to Billing']  = [];
         $total['Lost from Billing'] = [];
@@ -407,9 +392,5 @@ class OpsDashboardController extends Controller
         }
 
         return collect($totalRow);
-
-
     }
-
-
 }

@@ -8,7 +8,6 @@
 
 namespace App\Filters;
 
-
 use Illuminate\Http\Request;
 
 class CallViewFilters extends QueryFilters

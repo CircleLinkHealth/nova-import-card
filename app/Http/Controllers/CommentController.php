@@ -36,10 +36,10 @@ class CommentController extends Controller
 
     public function store(Request $request)
     {
-            $statusCode = 200;
+        $statusCode = 200;
 
-            \JWTAuth::setIdentifier('id');
-            $user = \JWTAuth::parseToken()->authenticate();
+        \JWTAuth::setIdentifier('id');
+        $user = \JWTAuth::parseToken()->authenticate();
         if (!$user) {
             return response()->json(['error' => 'invalid_credentials'], 401);
         } else {

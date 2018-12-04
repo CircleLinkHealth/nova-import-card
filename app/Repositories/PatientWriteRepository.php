@@ -2,7 +2,6 @@
 
 namespace App\Repositories;
 
-
 use App\Exceptions\InvalidArgumentException;
 use App\Patient;
 use App\PatientMonthlySummary;
@@ -29,7 +28,7 @@ class PatientWriteRepository
             $userId = $user;
         }
 
-        if ( ! isset($userId)) {
+        if (! isset($userId)) {
             throw new InvalidArgumentException();
         }
 
@@ -38,7 +37,7 @@ class PatientWriteRepository
 
     public function storeCcdProblem(User $patient, array $args)
     {
-        if ( ! $args['code']) {
+        if (! $args['code']) {
             return;
         }
 
@@ -125,7 +124,7 @@ class PatientWriteRepository
      */
     public function updatePausedLetterPrintedDate(array $userIdsToPrint, Carbon $dateTime = null)
     {
-        if ( ! $dateTime) {
+        if (! $dateTime) {
             $dateTime = Carbon::now();
         }
 

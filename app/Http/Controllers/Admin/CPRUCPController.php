@@ -89,8 +89,10 @@ class CPRUCPController extends Controller
         $ucp->meta_value = $params['meta_value'];
         $ucp->save();
 
-        return redirect()->route('admin.ucp.edit', [$ucp->qid])->with('messages',
-            ['successfully added new ucp - ' . $params['msg_id']]);
+        return redirect()->route('admin.ucp.edit', [$ucp->qid])->with(
+            'messages',
+            ['successfully added new ucp - ' . $params['msg_id']]
+        );
     }
 
     /**

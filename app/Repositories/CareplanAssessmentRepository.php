@@ -8,7 +8,6 @@
 
 namespace App\Repositories;
 
-
 use App\CareplanAssessment;
 
 class CareplanAssessmentRepository
@@ -18,17 +17,24 @@ class CareplanAssessmentRepository
         return app(CareplanAssessment::class);
     }
 
-    public function assessments($userId = null) {
-        if (!$userId) return $this->model()->paginate();
-        else return $this->model()->where([ 'careplan_id' => $userId ])->get();
+    public function assessments($userId = null)
+    {
+        if (!$userId) {
+            return $this->model()->paginate();
+        } else {
+            return $this->model()->where([ 'careplan_id' => $userId ])->get();
+        }
     }
 
-    public function editKeyTreatment($userId, $approverId, $keyTreatment) {
+    public function editKeyTreatment($userId, $approverId, $keyTreatment)
+    {
         $model = $this->model()->where([ 'careplan_id' => $userId ]);
         $assessment = $model->firstOrNew([]);
         $assessment->key_treatment = $keyTreatment;
         $assessment->careplan_id = $userId;
-        if (!$assessment->provider_approver_id) $assessment->provider_approver_id = $approverId;
+        if (!$assessment->provider_approver_id) {
+            $assessment->provider_approver_id = $approverId;
+        }
         $assessment->save();
         return $model->first();
     }

@@ -95,7 +95,7 @@ class OnboardingService
                              ->sortBy('first_name')
                              ->values();
 
-        if ( ! auth()->user()->isAdmin()) {
+        if (! auth()->user()->isAdmin()) {
             $practiceUsers->reject(function ($user) {
                 return $user->isAdmin();
             })
@@ -120,10 +120,16 @@ class OnboardingService
                                           ?? null;
 
             $forwardCarePlanApprovalEmailsToContactUser = $user->forwardAlertsTo()
-                                                               ->having('name', '=',
-                                                                   User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER)
-                                                               ->orHaving('name', '=',
-                                                                   User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER)
+                                                               ->having(
+                                                                   'name',
+                                                                   '=',
+                                                                   User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER
+                                                               )
+                                                               ->orHaving(
+                                                                   'name',
+                                                                   '=',
+                                                                   User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER
+                                                               )
                                                                ->first()
                                                           ?? null;
 
@@ -203,7 +209,6 @@ class OnboardingService
             ->map(function ($loc) use (
                 $primaryPractice
             ) {
-
                 $contactType = $loc->clinicalEmergencyContact->first()->pivot->name ?? null;
                 $contactUser = $loc->clinicalEmergencyContact->first() ?? null;
 
@@ -260,7 +265,7 @@ class OnboardingService
         $sameEHRLogin        = $request->input('sameEHRLogin');
 
         foreach ($request->input('locations') as $index => $newLocation) {
-            if ( ! $newLocation['name']) {
+            if (! $newLocation['name']) {
                 continue;
             }
 
@@ -351,7 +356,7 @@ class OnboardingService
                 $clinicalContactUser = User::whereEmail($newLocation['clinical_contact']['email'])
                                            ->first();
 
-                if ( ! $newLocation['clinical_contact']['email']) {
+                if (! $newLocation['clinical_contact']['email']) {
                     $clinicalContactUser = null;
 
                     $errors[] = [
@@ -363,7 +368,7 @@ class OnboardingService
                     ];
                 }
 
-                if ( ! $clinicalContactUser) {
+                if (! $clinicalContactUser) {
                     try {
                         $clinicalContactUser = $this->users->create([
                             'program_id' => $primaryPractice->id,
@@ -423,7 +428,7 @@ class OnboardingService
         foreach ($request->input('users') as $index => $newUser) {
             //create the user
             try {
-                if ( ! $newUser['first_name'] && ! $newUser['last_name']) {
+                if (! $newUser['first_name'] && ! $newUser['last_name']) {
                     continue;
                 }
 

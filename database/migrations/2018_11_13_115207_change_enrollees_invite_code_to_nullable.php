@@ -13,8 +13,7 @@ class ChangeEnrolleesInviteCodeToNullable extends Migration
      */
     public function up()
     {
-        Schema::table('enrollees', function($table)
-        {
+        Schema::table('enrollees', function ($table) {
             $table->text('invite_code')->nullable(true)->change();
             $table->string('status')->nullable(true)->change();
             $table->integer('attempt_count')->nullable(true)->change();
@@ -28,8 +27,7 @@ class ChangeEnrolleesInviteCodeToNullable extends Migration
      */
     public function down()
     {
-        Schema::table('enrollees', function($table)
-        {
+        Schema::table('enrollees', function ($table) {
             $table->text('invite_code')->nullable(false)->change();
             $table->string('status')->nullable(false)->change();
             $table->integer('attempt_count')->nullable(false)->change();

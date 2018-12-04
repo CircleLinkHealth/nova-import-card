@@ -8,7 +8,6 @@
 
 namespace App\Services;
 
-
 use App\Activity;
 use App\Patient;
 use App\Repositories\OpsDashboardPatientEloquentRepository;
@@ -19,7 +18,6 @@ use Illuminate\Support\Facades\DB;
 
 class OpsDashboardService
 {
-
     private $repo;
 
     public function __construct(OpsDashboardPatientEloquentRepository $repo)
@@ -58,12 +56,10 @@ class OpsDashboardService
         }
 
         return $this->makeExcelReport($data, $fromDate, $toDate);
-
     }
 
     public function makeExcelReport($rows, $fromDate, $toDate)
     {
-
         $report = Excel::create("Ops Dashboard Patients Report - $fromDate to $toDate", function ($excel) use ($rows) {
             $excel->sheet('Ops Dashboard Patients', function ($sheet) use ($rows) {
                 $sheet->fromArray($rows);
@@ -79,8 +75,6 @@ class OpsDashboardService
 
     public function makeExcelRow($patient, $fromDate, $toDate)
     {
-
-
         if ($patient->patientInfo->registration_date >= $fromDate->toDateTimeString() && $patient->patientInfo->registration_date <= $toDate->toDateTimeString() && $patient->patientInfo->ccm_status != 'enrolled') {
             $status       = $patient->patientInfo->ccm_status;
             $statusColumn = "Added - $status ";
@@ -109,7 +103,6 @@ class OpsDashboardService
         ];
 
         return collect($rowData);
-
     }
 
 
@@ -125,7 +118,6 @@ class OpsDashboardService
      */
     public function getPausedPatients($fromDate, $toDate)
     {
-
         $patients = User::with([
             'patientInfo' => function ($patient) use ($fromDate, $toDate) {
                 $patient->ccmStatus(Patient::PAUSED)
@@ -142,7 +134,6 @@ class OpsDashboardService
 
 
         return $patients;
-
     }
 
 
@@ -160,13 +151,11 @@ class OpsDashboardService
 
 
         return $filteredPatients;
-
     }
 
 
     public function filterPatientsByStatus($patients, $status)
     {
-
         $filteredPatients = [];
 
         foreach ($patients as $patient) {
@@ -178,7 +167,6 @@ class OpsDashboardService
         }
 
         return collect($filteredPatients);
-
     }
 
     public function filterSummariesByPractice($summaries, $practiceId)
@@ -217,7 +205,7 @@ class OpsDashboardService
         $count['20+']    = 0;
 
         foreach ($patients as $patient) {
-            if ( ! $patient->patientInfo) {
+            if (! $patient->patientInfo) {
                 continue;
             }
             if ($patient->patientInfo->ccm_status == Patient::ENROLLED) {
@@ -251,7 +239,7 @@ class OpsDashboardService
             $revisionHistory = $patient->patientInfo->revisionHistory->sortByDesc('created_at');
 
             if ($revisionHistory->isNotEmpty()) {
-                if ($revisionHistory->last()->old_value == Patient::ENROLLED){
+                if ($revisionHistory->last()->old_value == Patient::ENROLLED) {
                     if ($revisionHistory->first()->new_value == Patient::UNREACHABLE) {
                         $unreachable[] = $patient;
                     }
@@ -263,7 +251,7 @@ class OpsDashboardService
                     }
                 }
                 if ($revisionHistory->last()->old_value !== Patient::ENROLLED &&
-                    $revisionHistory->first()->new_value == Patient::ENROLLED){
+                    $revisionHistory->first()->new_value == Patient::ENROLLED) {
                     $enrolled[] = $patient;
                 }
             }
@@ -320,12 +308,10 @@ class OpsDashboardService
 
 
         return collect($row);
-
     }
 
     public function lostAddedRow($patientsByPractice, $fromDate)
     {
-
         $countsByStatus = $this->countPatientsByStatus($patientsByPractice, $fromDate);
 
         return collect($countsByStatus);
@@ -334,7 +320,6 @@ class OpsDashboardService
 
     public function calculateBilledPatients($summaries, Carbon $month)
     {
-
         $filteredSummaries = $summaries->where('month_year', '>=', $month->copy()->startOfMonth())
                                        ->where('month_year', '<=', $month->copy()->endOfMonth());
 
@@ -343,7 +328,6 @@ class OpsDashboardService
 
     public function calculateAddedToBilling($summaries, Carbon $month)
     {
-
         $added = 0;
 
         $filteredSummaries = $summaries->where('month_year', '>=', $month->copy()->startOfMonth())
@@ -362,7 +346,6 @@ class OpsDashboardService
 
 
         return $added;
-
     }
 
     public function calculateLostFromBilling($summaries, Carbon $month)
@@ -387,7 +370,6 @@ class OpsDashboardService
         }
 
         return $lost;
-
     }
 
     /**
@@ -401,10 +383,10 @@ class OpsDashboardService
     {
         $enrolledPatients = $practices->map(function ($practice) {
             return $practice->patients->filter(function ($user) {
-                if ( ! $user) {
+                if (! $user) {
                     return false;
                 }
-                if ( ! $user->patientInfo) {
+                if (! $user->patientInfo) {
                     return false;
                 }
 
@@ -418,8 +400,10 @@ class OpsDashboardService
         $startOfMonth       = $date->copy()->startOfMonth();
         $endOfMonth         = $date->copy()->endOfMonth();
         $workingDaysElapsed = $this->calculateWeekdays($startOfMonth->toDateTimeString(), $date->toDateTimeString());
-        $workingDaysMonth   = $this->calculateWeekdays($startOfMonth->toDateTimeString(),
-            $endOfMonth->toDateTimeString());
+        $workingDaysMonth   = $this->calculateWeekdays(
+            $startOfMonth->toDateTimeString(),
+            $endOfMonth->toDateTimeString()
+        );
         $avgMinT            = ($workingDaysElapsed / $workingDaysMonth) * $targetMinutesPerPatient;
 
         $allPatients = $enrolledPatients->pluck('id')->unique()->all();
@@ -457,7 +441,6 @@ class OpsDashboardService
      */
     public function calculateDelta($enrolled, $paused, $withdrawn, $unreachable)
     {
-
         $delta = $enrolled - $paused - $withdrawn - $unreachable;
 
         return $delta;
@@ -477,15 +460,10 @@ class OpsDashboardService
     {
         $holidays = DB::table('company_holidays')->get();
 
-        return Carbon::parse($fromDate)->diffInDaysFiltered(function (Carbon $date) use ($holidays){
-
+        return Carbon::parse($fromDate)->diffInDaysFiltered(function (Carbon $date) use ($holidays) {
             $matchingHolidays = $holidays->where('holiday_date', $date->toDateString());
 
             return ! $date->isWeekend() && ! $matchingHolidays->count() >= 1;
-
         }, new Carbon($toDate));
-
     }
-
-
 }

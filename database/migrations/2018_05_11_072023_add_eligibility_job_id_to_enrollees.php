@@ -13,7 +13,7 @@ class AddEligibilityJobIdToEnrollees extends Migration
      */
     public function up()
     {
-        if ( ! Schema::hasColumn('enrollees', 'eligibility_job_id')) {
+        if (! Schema::hasColumn('enrollees', 'eligibility_job_id')) {
             Schema::table('enrollees', function (Blueprint $table) {
                 $table->unsignedInteger('eligibility_job_id')
                       ->nullable()

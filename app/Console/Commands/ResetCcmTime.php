@@ -46,9 +46,7 @@ class ResetCcmTime extends Command
                    $q->where('month_year', '=', Carbon::now()->startOfMonth());
                })
                ->chunk(200, function ($patients) {
-
                    foreach ($patients as $patient) {
-
                        $summary = PatientMonthlySummary::where('patient_id', '=', $patient->user_id)
                                                        ->orderBy('id', 'desc')->first();
 
@@ -78,7 +76,6 @@ class ResetCcmTime extends Command
                        $newSummary->needs_qa               = null;
                        $newSummary->save();
                    }
-
                });
 
         AppConfig::updateOrCreate([

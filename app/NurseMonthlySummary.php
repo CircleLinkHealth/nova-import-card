@@ -31,7 +31,6 @@ use Illuminate\Support\Facades\App;
  */
 class NurseMonthlySummary extends \App\BaseModel
 {
-
     protected $fillable = [
         'nurse_id',
         'month_year',
@@ -43,7 +42,6 @@ class NurseMonthlySummary extends \App\BaseModel
 
     public function nurse()
     {
-
         $this->belongsTo(Nurse::class, 'id', 'nurse_id');
     }
 }

@@ -8,13 +8,11 @@
 
 namespace App\Services\Cache;
 
-
 use App\Repositories\Cache\UserNotificationList;
 use App\User;
 
 class NotificationService
 {
-
     public function notifyAdmins($title, $description, $link, $linkTitle)
     {
         User::ofType('administrator')

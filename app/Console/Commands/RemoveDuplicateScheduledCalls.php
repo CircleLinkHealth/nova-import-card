@@ -48,8 +48,10 @@ having c > 1
 ');
 
         foreach ($users as $u) {
-            $calls = Call::scheduled()->where('inbound_cpm_id',
-                $u->inbound_cpm_id)->orderByDesc('updated_at')->get();
+            $calls = Call::scheduled()->where(
+                'inbound_cpm_id',
+                $u->inbound_cpm_id
+            )->orderByDesc('updated_at')->get();
 
             for ($i = 1; $i < $calls->count(); $i++) {
                 $deleted = $calls[$i]->delete();

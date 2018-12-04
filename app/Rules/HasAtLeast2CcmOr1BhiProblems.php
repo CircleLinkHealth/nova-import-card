@@ -26,7 +26,7 @@ class HasAtLeast2CcmOr1BhiProblems implements Rule
      */
     public function passes($attribute, $value)
     {
-        if ($value->isEmpty()){
+        if ($value->isEmpty()) {
             return false;
         }
 
@@ -34,7 +34,6 @@ class HasAtLeast2CcmOr1BhiProblems implements Rule
         $bhiProblems = $value->where('cpmProblem.is_behavioral', true)->count();
 
         return $cpmProblems >= 2 || $bhiProblems >= 1;
-
     }
 
     /**

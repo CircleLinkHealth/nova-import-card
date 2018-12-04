@@ -8,13 +8,11 @@
 
 namespace App\Importer\Loggers\Problem;
 
-
 use App\Contracts\Importer\MedicalRecord\Section\Logger;
 use App\Services\Eligibility\Entities\Problem;
 
 class CommaDelimitedListProblemLogger implements Logger
 {
-
     public function handle($problemsString): array
     {
         $problems = explode(',', $problemsString);

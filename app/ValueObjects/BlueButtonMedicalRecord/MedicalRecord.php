@@ -8,7 +8,6 @@
 
 namespace App\ValueObjects\BlueButtonMedicalRecord;
 
-
 use App\EligibilityJob;
 use App\Practice;
 
@@ -179,7 +178,7 @@ class MedicalRecord
     {
         return collect($this->data['allergies'] ?? $this->data['Allergies'])
             ->map(function ($allergy) {
-                if ( ! validAllergyName($allergy['name'])) {
+                if (! validAllergyName($allergy['name'])) {
                     return false;
                 }
 
@@ -417,7 +416,7 @@ class MedicalRecord
     {
         return collect($this->data['problems'])
             ->map(function ($problem) {
-                if ( ! validProblemName($problem['name'])) {
+                if (! validProblemName($problem['name'])) {
                     return false;
                 }
 

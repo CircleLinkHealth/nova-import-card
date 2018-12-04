@@ -68,7 +68,6 @@ class ObservationController extends Controller
      */
     public function store(Request $request)
     {
-
         $params = $request->input();
         $observation = new Observation;
         $observation->msg_id = $params['msg_id'];
@@ -79,8 +78,10 @@ class ObservationController extends Controller
         $observation->category = $params['category'];
         $observation->save();
 
-        return redirect()->route('admin.observations.edit', [$observation->qid])->with('messages',
-            ['successfully added new observation - ' . $params['msg_id']]);
+        return redirect()->route('admin.observations.edit', [$observation->qid])->with(
+            'messages',
+            ['successfully added new observation - ' . $params['msg_id']]
+        );
     }
 
     /**
@@ -105,7 +106,6 @@ class ObservationController extends Controller
      */
     public function edit($id)
     {
-
         $observation = Observation::find($id);
         return view('admin.observations.edit', [ 'observation' => $observation, 'messages' => \Session::get('messages') ]);
     }
@@ -118,7 +118,6 @@ class ObservationController extends Controller
      */
     public function update(Request $request, $id)
     {
-
         $params = $request->input();
         $observation = Observation::find($id);
         $observation->msg_id = $params['msg_id'];

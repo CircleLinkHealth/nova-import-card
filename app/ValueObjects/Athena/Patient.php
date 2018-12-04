@@ -8,7 +8,6 @@
 
 namespace App\ValueObjects\Athena;
 
-
 use Carbon\Carbon;
 
 class Patient
@@ -46,7 +45,6 @@ class Patient
 
     public function __construct()
     {
-
     }
 
 
@@ -293,6 +291,4 @@ class Patient
     {
         $this->gender = $gender;
     }
-
-
 }

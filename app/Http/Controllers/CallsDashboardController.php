@@ -14,20 +14,17 @@ class CallsDashboardController extends Controller
 {
     public function index()
     {
-
         return view('admin.CallsDashboard.index');
     }
 
     public function create(Request $request)
     {
-
         $note = Note::with(['patient', 'author'])->where('id', $request['noteId'])->first();
 
 
         if ($note) {
             $call = $note->call()->first();
             if ($call) {
-
                 return view('admin.CallsDashboard.edit', compact(['note', 'call']));
             }
             $nurses = User::ofType('care-center')->get();
@@ -35,13 +32,10 @@ class CallsDashboardController extends Controller
         }
         $message = 'Note Does Not Exist.';
         return redirect()->route('CallsDashboard.index')->with('msg', $message);
-
-
     }
 
     public function edit(Request $request)
     {
-
         $note   = Note::with(['patient', 'author'])->where('id', $request['noteId'])->first();
         $call   = Call::find($request['callId']);
         $status = $request['status'];
@@ -60,16 +54,13 @@ class CallsDashboardController extends Controller
 
 
         return redirect()->route('CallsDashboard.create', ['noteId'=> $request['noteId']])->with('msg', $message);
-
-
-
     }
 
     public function createCall(Request $request, NoteService $service)
     {
         $note            = Note::with(['patient', 'author', 'call'])->where('id', $request['noteId'])->first();
         $call            = $note->call;
-        if ($call){
+        if ($call) {
             return view('admin.CallsDashboard.edit', compact(['note', 'call']));
         }
 
@@ -84,7 +75,8 @@ class CallsDashboardController extends Controller
         $service->storeCallForNote(
             $note,
             $status,
-            $patient, $nurse,
+            $patient,
+            $nurse,
             $phone_direction,
             null
         );
@@ -94,7 +86,5 @@ class CallsDashboardController extends Controller
 
 
         return redirect()->route('CallsDashboard.index')->with('msg', $message);
-
     }
-
-    }
+}

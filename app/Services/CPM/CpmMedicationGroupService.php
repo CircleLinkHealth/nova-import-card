@@ -16,11 +16,13 @@ class CpmMedicationGroupService implements CpmModel
 {
     private $medicationGroupRepo;
     
-    public function __construct(CpmMedicationGroupRepository $medicationGroupRepo) {
+    public function __construct(CpmMedicationGroupRepository $medicationGroupRepo)
+    {
         $this->medicationGroupRepo = $medicationGroupRepo;
     }
 
-    public function repo() {
+    public function repo()
+    {
         return $this->medicationGroupRepo;
     }
 

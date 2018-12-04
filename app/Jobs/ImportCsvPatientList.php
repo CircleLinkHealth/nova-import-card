@@ -41,7 +41,7 @@ class ImportCsvPatientList implements ShouldQueue
 
         $this->practice = Practice::whereDisplayName(explode('-', $filename)[0])->first();
 
-        if ( ! $this->practice) {
+        if (! $this->practice) {
             dd('Please include the Practice name (as it appears on CPM) in the beginning of the csv filename as such. Demo name - Import List.');
         }
     }
@@ -78,8 +78,10 @@ class ImportCsvPatientList implements ShouldQueue
 
         $url = url('import.ccd.remix');
 
-        sendSlackMessage('#background-tasks',
-            "Queued job Import CSV for {$this->practice->display_name} completed! Visit $url.");
+        sendSlackMessage(
+            '#background-tasks',
+            "Queued job Import CSV for {$this->practice->display_name} completed! Visit $url."
+        );
     }
 
     /**
@@ -90,7 +92,6 @@ class ImportCsvPatientList implements ShouldQueue
      */
     public function replaceWithValuesFromCsv(ImportedMedicalRecord $importedMedicalRecord, array $row)
     {
-
         $demographics = $importedMedicalRecord->demographics;
 
         $demographics->primary_phone        = $row['primary_phone'] ?? '';
@@ -98,7 +99,7 @@ class ImportCsvPatientList implements ShouldQueue
         $demographics->preferred_call_days  = $row['preferred_call_days'] ?? '';
 
         foreach (['cell_phone', 'home_phone', 'work_phone'] as $phone) {
-            if ( ! array_key_exists($phone, $row)) {
+            if (! array_key_exists($phone, $row)) {
                 continue;
             }
 
@@ -111,15 +112,15 @@ class ImportCsvPatientList implements ShouldQueue
 
         $demographics->save();
 
-        if ( ! $importedMedicalRecord->practice_id) {
+        if (! $importedMedicalRecord->practice_id) {
             $importedMedicalRecord->practice_id = $this->practice->id;
         }
 
-        if ( ! $importedMedicalRecord->location_id) {
+        if (! $importedMedicalRecord->location_id) {
             $importedMedicalRecord->location_id = $this->practice->primary_location_id;
         }
 
-        if ( ! $importedMedicalRecord->billing_provider_id && array_key_exists('billing_provider', $row)) {
+        if (! $importedMedicalRecord->billing_provider_id && array_key_exists('billing_provider', $row)) {
             $providerName = explode(' ', $row['billing_provider']);
 
             if (count($providerName) >= 2) {
@@ -128,7 +129,7 @@ class ImportCsvPatientList implements ShouldQueue
                                 ->first();
             }
 
-            if ( ! empty($provider)) {
+            if (! empty($provider)) {
                 $importedMedicalRecord->billing_provider_id = $provider->id;
 
                 if ($provider->locations->first()) {
@@ -160,7 +161,7 @@ class ImportCsvPatientList implements ShouldQueue
         $demographicsLogs = optional($mr->demographics)->first();
 
         if ($demographicsLogs) {
-            if ( ! $demographicsLogs->mrn_number) {
+            if (! $demographicsLogs->mrn_number) {
                 $demographicsLogs->mrn_number = "clh#$mr->id";
                 $demographicsLogs->save();
             }

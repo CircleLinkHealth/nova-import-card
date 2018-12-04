@@ -108,13 +108,11 @@ class PatientMonthlySummary extends BaseModel
 
     public function scopeGetCurrent($q)
     {
-
         return $q->whereMonthYear(Carbon::now()->firstOfMonth()->toDateString());
     }
 
     public function scopeGetForMonth($q, Carbon $month)
     {
-
         return $q->whereMonthYear(Carbon::parse($month)->firstOfMonth()->toDateString());
     }
 
@@ -124,8 +122,6 @@ class PatientMonthlySummary extends BaseModel
         Practice $practice,
         Carbon $month
     ) {
-
-
         $patients = User::where('program_id', $practice->id)
                         ->whereHas('roles', function ($q) {
                             $q->where('name', '=', 'participant');
@@ -146,7 +142,6 @@ class PatientMonthlySummary extends BaseModel
         Practice $practice,
         Carbon $month
     ) {
-
         $patients = User::where('program_id', $practice->id)
                         ->whereHas('roles', function ($q) {
                             $q->where('name', '=', 'participant');
@@ -167,7 +162,7 @@ class PatientMonthlySummary extends BaseModel
                                            ->where('patient_id', $p->id)->first();
 
 
-            if ( ! $report) {
+            if (! $report) {
                 continue;
             }
 
@@ -179,9 +174,9 @@ class PatientMonthlySummary extends BaseModel
 
             if (($report->rejected == 0 && $report->approved == 0) || $emptyProblemOrCode) {
                 $count['toQA'] += 1;
-            } else if ($report->rejected == 1) {
+            } elseif ($report->rejected == 1) {
                 $count['rejected'] += 1;
-            } else if ($report->approved == 1) {
+            } elseif ($report->approved == 1) {
                 $count['approved'] += 1;
             }
         }

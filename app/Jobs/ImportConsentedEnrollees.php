@@ -52,8 +52,10 @@ class ImportConsentedEnrollees implements ShouldQueue
                             ->with(['targetPatient', 'practice'])
                             ->get()
                             ->map(function ($enrollee) use ($importService) {
-                                $url = route('import.ccd.remix',
-                                    'Click here to Create and a CarePlan and review.');
+                                $url = route(
+                                    'import.ccd.remix',
+                                    'Click here to Create and a CarePlan and review.'
+                                );
 
                                 //verify it wasn't already imported
                                 if ($enrollee->user_id) {
@@ -134,16 +136,20 @@ class ImportConsentedEnrollees implements ShouldQueue
 
     private function importTargetPatient(Enrollee $enrollee)
     {
-        $url = route('import.ccd.remix',
-            'Click here to Create and a CarePlan and review.');
+        $url = route(
+            'import.ccd.remix',
+            'Click here to Create and a CarePlan and review.'
+        );
 
         $athenaApi = app(Calls::class);
 
-        $ccdaExternal = $athenaApi->getCcd($enrollee->targetPatient->ehr_patient_id,
+        $ccdaExternal = $athenaApi->getCcd(
+            $enrollee->targetPatient->ehr_patient_id,
             $enrollee->targetPatient->ehr_practice_id,
-            $enrollee->targetPatient->ehr_department_id);
+            $enrollee->targetPatient->ehr_department_id
+        );
 
-        if ( ! isset($ccdaExternal[0])) {
+        if (! isset($ccdaExternal[0])) {
             return [
                 'patient' => $enrollee->nameAndDob(),
                 'message' => 'Could not retrieve CCD from Athena',

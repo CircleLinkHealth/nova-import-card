@@ -26,10 +26,11 @@ class SnomedToIcd9TestMapTableSeeder extends Seeder
         });
     }
 
-    public function items() : Collection {
-        $items = array (
-            0 => 
-            array (
+    public function items() : Collection
+    {
+        $items = array(
+            0 =>
+            array(
                 'id' => 1,
                 'ccm_eligible' => 0,
                 'code' => 'V76.12',
@@ -39,8 +40,8 @@ class SnomedToIcd9TestMapTableSeeder extends Seeder
                 'snomed_code' => 0,
                 'snomed_name' => '',
             ),
-            1 => 
-            array (
+            1 =>
+            array(
                 'id' => 2,
                 'ccm_eligible' => 0,
                 'code' => '250',
@@ -50,8 +51,8 @@ class SnomedToIcd9TestMapTableSeeder extends Seeder
                 'snomed_code' => 44054006,
             'snomed_name' => 'Diabetes mellitus type 2 (disorder)',
             ),
-            2 => 
-            array (
+            2 =>
+            array(
                 'id' => 3,
                 'ccm_eligible' => 0,
                 'code' => '250',
@@ -61,8 +62,8 @@ class SnomedToIcd9TestMapTableSeeder extends Seeder
                 'snomed_code' => 73211009,
             'snomed_name' => 'Diabetes mellitus (disorder)',
             ),
-            3 => 
-            array (
+            3 =>
+            array(
                 'id' => 4,
                 'ccm_eligible' => 0,
                 'code' => '250',
@@ -72,8 +73,8 @@ class SnomedToIcd9TestMapTableSeeder extends Seeder
                 'snomed_code' => 313436004,
             'snomed_name' => 'Type II diabetes mellitus without complication (disorder)',
             ),
-            4 => 
-            array (
+            4 =>
+            array(
                 'id' => 5,
                 'ccm_eligible' => 0,
                 'code' => '250',
@@ -83,8 +84,8 @@ class SnomedToIcd9TestMapTableSeeder extends Seeder
                 'snomed_code' => 11530004,
             'snomed_name' => 'Brittle diabetes mellitus (finding)',
             ),
-            5 => 
-            array (
+            5 =>
+            array(
                 'id' => 6,
                 'ccm_eligible' => 0,
                 'code' => '250',
@@ -94,8 +95,8 @@ class SnomedToIcd9TestMapTableSeeder extends Seeder
                 'snomed_code' => 237599002,
             'snomed_name' => 'Insulin treated type 2 diabetes mellitus (disorder)',
             ),
-            6 => 
-            array (
+            6 =>
+            array(
                 'id' => 7,
                 'ccm_eligible' => 0,
                 'code' => '250',
@@ -105,8 +106,8 @@ class SnomedToIcd9TestMapTableSeeder extends Seeder
                 'snomed_code' => 81531005,
             'snomed_name' => 'Diabetes mellitus type 2 in obese (disorder)',
             ),
-            7 => 
-            array (
+            7 =>
+            array(
                 'id' => 8,
                 'ccm_eligible' => 0,
                 'code' => '250',
@@ -116,8 +117,8 @@ class SnomedToIcd9TestMapTableSeeder extends Seeder
                 'snomed_code' => 199230006,
             'snomed_name' => 'Pre-existing type 2 diabetes mellitus (disorder)',
             ),
-            8 => 
-            array (
+            8 =>
+            array(
                 'id' => 9,
                 'ccm_eligible' => 0,
                 'code' => '250',
@@ -127,8 +128,8 @@ class SnomedToIcd9TestMapTableSeeder extends Seeder
                 'snomed_code' => 609572000,
             'snomed_name' => 'Maturity-onset diabetes of the young, type 5 (disorder)',
             ),
-            9 => 
-            array (
+            9 =>
+            array(
                 'id' => 10,
                 'ccm_eligible' => 0,
                 'code' => '250',
@@ -138,8 +139,8 @@ class SnomedToIcd9TestMapTableSeeder extends Seeder
                 'snomed_code' => 609573005,
             'snomed_name' => 'Maturity-onset diabetes of the young, type 6 (disorder)',
             ),
-            10 => 
-            array (
+            10 =>
+            array(
                 'id' => 11,
                 'ccm_eligible' => 0,
                 'code' => '250',

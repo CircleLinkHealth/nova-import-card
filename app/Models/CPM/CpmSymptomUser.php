@@ -25,7 +25,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CpmSymptomUser extends \App\BaseModel
 {
-    
     use Instructable;
 
     protected $guarded = [];

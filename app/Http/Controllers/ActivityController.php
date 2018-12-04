@@ -30,7 +30,6 @@ class ActivityController extends Controller
         Request $request,
         $patientId
     ) {
-
         $patient = User::find($patientId);
 
         $input = $request->all();
@@ -146,13 +145,13 @@ class ActivityController extends Controller
             return abort(403);
         }
 
-        if ( ! $patientId) {
+        if (! $patientId) {
             return abort(404);
         }
 
         $patient = User::find($patientId);
 
-        if ( ! $patient) {
+        if (! $patient) {
             return response("User not found", 401);
         }
 
@@ -189,7 +188,6 @@ class ActivityController extends Controller
         Request $request,
         $params = false
     ) {
-
         if ($params) {
             $input = $request->all();
         } else {
@@ -324,9 +322,10 @@ class ActivityController extends Controller
         if ((@unserialize($careteam_ids) !== false)) {
             $careteam_ids = unserialize($careteam_ids);
         }
-        if ( ! empty($careteam_ids) && is_array($careteam_ids)) {
+        if (! empty($careteam_ids) && is_array($careteam_ids)) {
             foreach ($careteam_ids as $id) {
-                $careteam_info[$id] = User::find($id)->getFullName();;
+                $careteam_info[$id] = User::find($id)->getFullName();
+                ;
             }
         }
 

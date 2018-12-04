@@ -8,7 +8,6 @@
 
 namespace App\Services\Eligibility\Adapters;
 
-
 use App\EligibilityBatch;
 use App\EligibilityJob;
 use App\Services\Eligibility\Entities\MedicalRecord;
@@ -60,7 +59,6 @@ class JsonMedicalRecordAdapter
      */
     public function createMedicalRecord(): ?MedicalRecord
     {
-
     }
 
     /**
@@ -84,7 +82,7 @@ class JsonMedicalRecordAdapter
             $this->source = str_replace('n\a', 'n/a', $this->source);
         }
 
-        if ( ! $this->isValid()) {
+        if (! $this->isValid()) {
             return null;
         }
 
@@ -116,7 +114,7 @@ class JsonMedicalRecordAdapter
      */
     public function isValid(): bool
     {
-        if ( ! is_null($this->isValid)) {
+        if (! is_null($this->isValid)) {
             return $this->isValid;
         }
 
@@ -145,7 +143,7 @@ class JsonMedicalRecordAdapter
     {
         $isJson = is_json($this->source);
 
-        if ( ! $isJson) {
+        if (! $isJson) {
             $parser = new JsonParser;
 
             try {

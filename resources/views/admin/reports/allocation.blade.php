@@ -25,11 +25,9 @@
                                 <?php
 
                                 if ($count == 0) {
-
                                     $boxSpaces = Carbon\Carbon::parse($date)->dayOfWeek;
 
                                     for ($i = 0; $i < $boxSpaces; $i++) {
-
                                         $d = Carbon\Carbon::parse($date)->subDays($boxSpaces - $i)->format('m/d/y D');
 
                                         echo '<div class="container"style="display:inline-block; width: 130px; vertical-align: text-top;">

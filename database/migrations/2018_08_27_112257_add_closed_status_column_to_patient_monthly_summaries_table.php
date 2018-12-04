@@ -30,6 +30,5 @@ class AddClosedStatusColumnToPatientMonthlySummariesTable extends Migration
         Schema::table('patient_monthly_summaries', function (Blueprint $table) {
             $table->dropColumn('closed_ccm_status');
         });
-
     }
 }

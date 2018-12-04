@@ -10,10 +10,9 @@ namespace App\Importer\Loggers\Problem;
 
 class NumberedProblemFields
 {
-
     public function handle(&$patient): array
     {
-        if ( ! is_array($patient)) {
+        if (! is_array($patient)) {
             return [];
         }
 
@@ -21,11 +20,11 @@ class NumberedProblemFields
         $i        = 1;
 
         do {
-            if ( ! array_key_exists("problem_$i", $patient)) {
+            if (! array_key_exists("problem_$i", $patient)) {
                 break;
             }
 
-            if ( ! empty($patient["problem_$i"]) && $patient["problem_$i"] != '#N/A') {
+            if (! empty($patient["problem_$i"]) && $patient["problem_$i"] != '#N/A') {
                 $problems[] = [
                     'Name'        => $patient["problem_$i"],
                     'CodeType'    => '',
@@ -46,7 +45,7 @@ class NumberedProblemFields
 
     public function shouldHandle($patient)
     {
-        if ( ! is_array($patient)) {
+        if (! is_array($patient)) {
             return false;
         }
 

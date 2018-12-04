@@ -37,6 +37,5 @@ class FaxServiceProvider extends ServiceProvider
 
             return new PhaxioService($phaxio);
         });
-
     }
 }

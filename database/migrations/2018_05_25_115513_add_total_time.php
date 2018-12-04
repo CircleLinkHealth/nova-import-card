@@ -13,8 +13,7 @@ class AddTotalTime extends Migration
      */
     public function up()
     {
-
-        if ( ! Schema::hasColumn('patient_monthly_summaries', 'total_time')) {
+        if (! Schema::hasColumn('patient_monthly_summaries', 'total_time')) {
             Schema::table('patient_monthly_summaries', function (Blueprint $table) {
                 $table->integer('total_time')
                       ->nullable()
@@ -22,7 +21,6 @@ class AddTotalTime extends Migration
                       ->after('patient_id');
             });
         }
-
     }
 
     /**

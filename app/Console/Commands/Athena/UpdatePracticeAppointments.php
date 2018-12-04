@@ -82,7 +82,6 @@ class UpdatePracticeAppointments extends Command
 
         //updateOrCreate Appointments
         foreach ($patients as $patient) {
-
             $ehrInfo = $patient->ehrInfo;
 
             $response = $this->api->getPatientAppointments($ehrInfo->ehr_practice_id, $ehrInfo->ehr_patient_id, false);
@@ -103,11 +102,15 @@ class UpdatePracticeAppointments extends Command
                               ->where('first_name', 'Athena')
                               ->first();
 
-                $providerResponse   = $this->api->getBillingProviderName($ehrInfo->ehr_practice_id,
-                    $ehrAppointment['providerid']);
+                $providerResponse   = $this->api->getBillingProviderName(
+                    $ehrInfo->ehr_practice_id,
+                    $ehrAppointment['providerid']
+                );
                 $provider           = $providerResponse[0];
-                $departmentResponse = $this->api->getDepartmentInfo($ehrInfo->ehr_practice_id,
-                    $ehrAppointment['departmentid']);
+                $departmentResponse = $this->api->getDepartmentInfo(
+                    $ehrInfo->ehr_practice_id,
+                    $ehrAppointment['departmentid']
+                );
                 $department         = $departmentResponse[0];
 
                 $date = new Carbon($ehrAppointment['date']);
@@ -130,11 +133,7 @@ class UpdatePracticeAppointments extends Command
                     $call->attempt_note = $appointment->comment;
                     $call->save();
                 }
-
-
             }
         }
-
-
     }
 }

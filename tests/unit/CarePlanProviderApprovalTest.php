@@ -47,8 +47,10 @@ class CarePlanProviderApprovalTest extends TestCase
         $validator   = $this->carePlan->validator();
 
         $this->assertTrue($validator->fails());
-        $this->assertEquals('The Care Plan must have two CPM problems, or one BHI problem.',
-            $validator->errors()->first('conditions'));
+        $this->assertEquals(
+            'The Care Plan must have two CPM problems, or one BHI problem.',
+            $validator->errors()->first('conditions')
+        );
         $this->assertEquals('The dob field is required.', $validator->errors()->first('dob'));
         $this->assertEquals('The mrn field is required.', $validator->errors()->first('mrn'));
         $this->assertEquals('The billing provider field is required.', $validator->errors()->first('billingProvider'));
@@ -83,7 +85,6 @@ class CarePlanProviderApprovalTest extends TestCase
         $validator = $this->carePlan->validator();
 
         $this->assertTrue($validator->passes());
-
     }
 
     public function test_provider_cannot_qa_approve()

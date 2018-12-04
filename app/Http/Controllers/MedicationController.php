@@ -9,7 +9,6 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
-
 class MedicationController extends Controller
 {
     private $medicationService;
@@ -19,7 +18,7 @@ class MedicationController extends Controller
      *
      */
     public function __construct(CpmMedicationService $medicationService)
-    {   
+    {
         $this->medicationService = $medicationService;
     }
 
@@ -37,7 +36,8 @@ class MedicationController extends Controller
         if ($term) {
             $terms = explode(',', $term);
             return response()->json($this->medicationService->search($terms));
+        } else {
+            return $this->badRequest('missing parameter: "term"');
         }
-        else return $this->badRequest('missing parameter: "term"');
     }
 }

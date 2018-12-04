@@ -120,10 +120,12 @@ class Problem extends \App\BaseModel implements \App\Contracts\Models\CCD\Proble
         return $this->hasMany(ProblemCode::class);
     }
 
-    public function getNameAttribute($name) 
+    public function getNameAttribute($name)
     {
         $this->original_name = $name;
-        if ($this->cpm_problem_id) return optional($this->cpmProblem)->name;
+        if ($this->cpm_problem_id) {
+            return optional($this->cpmProblem)->name;
+        }
         return $name;
     }
 
@@ -134,7 +136,8 @@ class Problem extends \App\BaseModel implements \App\Contracts\Models\CCD\Proble
                     ->withTimestamps();
     }
 
-    public function isBehavioral() : bool {
+    public function isBehavioral() : bool
+    {
         return ! ! optional($this->cpmProblem)->is_behavioral;
     }
 }

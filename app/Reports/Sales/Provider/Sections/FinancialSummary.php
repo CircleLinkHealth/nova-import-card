@@ -10,7 +10,6 @@ use Carbon\Carbon;
 
 class FinancialSummary extends SalesReportSection
 {
-
     private $provider;
     private $service;
     private $clhpppm;

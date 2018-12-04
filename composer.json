@@ -91,6 +91,7 @@
     "yajra/laravel-datatables-oracle": "~8.0"
   },
   "require-dev": {
+    "friendsofphp/php-cs-fixer": "^2.13",
     "Xethron/Laravel-4-Generators": "*",
     "barryvdh/laravel-ide-helper": "^2.4",
     "darkaonline/l5-swagger": "^5.5",

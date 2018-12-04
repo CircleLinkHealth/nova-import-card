@@ -14,7 +14,7 @@ class AddIpToRevisionable extends Migration
     public function up()
     {
         Schema::table('revisions', function (Blueprint $table) {
-            if ( ! Schema::hasColumns('revisions', ['ip'])) {
+            if (! Schema::hasColumns('revisions', ['ip'])) {
                 $table->string('ip')
                       ->nullable()
                       ->after('new_value');

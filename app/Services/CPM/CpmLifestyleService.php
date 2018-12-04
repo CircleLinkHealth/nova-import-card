@@ -18,31 +18,38 @@ class CpmLifestyleService implements CpmModel
     private $lifestyleRepo;
     private $lifestyleUserRepo;
 
-    public function __construct(CpmLifestyleRepository $lifestyleRepo, CpmLifestyleUserRepository $lifestyleUserRepo) {
+    public function __construct(CpmLifestyleRepository $lifestyleRepo, CpmLifestyleUserRepository $lifestyleUserRepo)
+    {
         $this->lifestyleRepo = $lifestyleRepo;
         $this->lifestyleUserRepo = $lifestyleUserRepo;
     }
 
-    public function repo() {
+    public function repo()
+    {
         return $this->lifestyleRepo;
     }
 
-    public function lifestylePatients($lifestyleId) {
+    public function lifestylePatients($lifestyleId)
+    {
         return $this->lifestyleUserRepo->lifestylePatients($lifestyleId);
     }
 
-    public function patientLifestyles($userId) {
+    public function patientLifestyles($userId)
+    {
         return $this->lifestyleUserRepo->patientLifestyles($userId);
     }
 
-    public function addLifestyleToPatient($lifestyleId, $userId) {
+    public function addLifestyleToPatient($lifestyleId, $userId)
+    {
         if ($this->repo()->exists($lifestyleId)) {
             return $this->lifestyleUserRepo->addLifestyleToPatient($lifestyleId, $userId);
+        } else {
+            throw new Exception('lifestyle with id "' . $lifestyleId . '" does not exist');
         }
-        else throw new Exception('lifestyle with id "' . $lifestyleId . '" does not exist');
     }
 
-    public function removeLifestyleFromPatient($lifestyleId, $userId) {
+    public function removeLifestyleFromPatient($lifestyleId, $userId)
+    {
         return $this->lifestyleUserRepo->removeLifestyleFromPatient($lifestyleId, $userId);
     }
 

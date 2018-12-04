@@ -33,7 +33,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class AllergyImport extends \App\BaseModel
 {
-
     protected $guarded = [];
 
     public function ccdLog()

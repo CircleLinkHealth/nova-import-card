@@ -1,9 +1,10 @@
 <div>
     <?php
         use \App\User;
-        use \App\Location;
-        use \Carbon\Carbon;
-        $patient = $assessment->patient()->first();
+use \App\Location;
+use \Carbon\Carbon;
+
+$patient = $assessment->patient()->first();
         $approver = $assessment->approver()->first();
     ?>
     <p>

@@ -9,7 +9,6 @@ use Carbon\Carbon;
 
 class PracticeDemographics extends SalesReportSection
 {
-
     private $practice;
 
     public function __construct(
@@ -23,7 +22,6 @@ class PracticeDemographics extends SalesReportSection
 
     public function render()
     {
-
         $lead = optional($this->practice->lead)->getFullName() ?? 'N/A';
         $providers = $this->practice->getCountOfUserTypeAtPractice('provider');
         $mas = $this->practice->getCountOfUserTypeAtPractice('med_assistant');

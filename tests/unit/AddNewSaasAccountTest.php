@@ -26,7 +26,7 @@ class AddNewSaasAccountTest
      *
      * @return void
      */
-//  commenting out because it doesn't run with sqlite. Michalis says no point fixing as we don't use saas.
+    //  commenting out because it doesn't run with sqlite. Michalis says no point fixing as we don't use saas.
 //    public function test_flow()
 //    {
 //        $result = $this->createSaasAccountAndAdmin();
@@ -34,7 +34,8 @@ class AddNewSaasAccountTest
 //
 //    }
 
-    private function createSaasAccountAndAdmin() {
+    private function createSaasAccountAndAdmin()
+    {
         Notification::fake();
 
         $name        = $this->faker->company;
@@ -60,7 +61,8 @@ class AddNewSaasAccountTest
         $this->assertEquals($saasAccount->id, $user->saas_account_id);
 
         Notification::assertSentTo(
-            [$user], SendInternalUserSignupInvitation::class
+            [$user],
+            SendInternalUserSignupInvitation::class
         );
 
         $result = new \stdClass();

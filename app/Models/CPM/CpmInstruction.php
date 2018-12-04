@@ -19,7 +19,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CpmInstruction extends \App\BaseModel
 {
-
     protected $guarded = [];
 
     public function cpmBiometrics()

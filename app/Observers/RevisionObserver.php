@@ -8,7 +8,6 @@
 
 namespace App\Observers;
 
-
 use Venturecraft\Revisionable\Revision;
 
 class RevisionObserver

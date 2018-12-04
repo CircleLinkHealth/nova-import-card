@@ -41,16 +41,19 @@ class CreateTestSuiteDatabase extends Command
     {
         $database = config('database.connections.test_suite.database');
 
-        if ( ! $database) {
+        if (! $database) {
             $this->info('Skipping creation of database as env(TEST_SUITE_DB_DATABASE) is empty');
 
             return;
         }
 
         try {
-            $pdo = $this->getPDOConnection(config('database.connections.test_suite.host'),
-                config('database.connections.test_suite.port'), config('database.connections.test_suite.username'),
-                config('database.connections.test_suite.password'));
+            $pdo = $this->getPDOConnection(
+                config('database.connections.test_suite.host'),
+                config('database.connections.test_suite.port'),
+                config('database.connections.test_suite.username'),
+                config('database.connections.test_suite.password')
+            );
 
             $pdo->exec(sprintf(
                 'CREATE DATABASE IF NOT EXISTS %s CHARACTER SET %s COLLATE %s;',

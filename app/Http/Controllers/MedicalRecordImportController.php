@@ -13,7 +13,8 @@ class MedicalRecordImportController extends Controller
         $this->repo = $repo;
     }
 
-    public function deleteRecords(Request $request) {
+    public function deleteRecords(Request $request)
+    {
         $recordsToDelete = explode(',', $request->input('records'));
         $recordsNotFound = [];
 
@@ -31,8 +32,7 @@ class MedicalRecordImportController extends Controller
                 ]);
     
                 $imr->delete();
-            }
-            else {
+            } else {
                 array_push($recordsNotFound, $id);
                 array_splice($recordsToDelete, array_search($id, $recordsToDelete));
             }
@@ -41,7 +41,8 @@ class MedicalRecordImportController extends Controller
         return response()->json([ 'deleted' => $recordsToDelete, 'not_found' => $recordsNotFound ], 200);
     }
 
-    public function importDEPRECATED(Request $request) {
+    public function importDEPRECATED(Request $request)
+    {
         $import = $request->input('medicalRecordsToImport');
         $delete = $request->input('medicalRecordsToDelete');
 
@@ -88,17 +89,19 @@ class MedicalRecordImportController extends Controller
         return response()->json(compact('imported', 'deleted'), 200);
     }
 
-    public function import(Request $request) {
+    public function import(Request $request)
+    {
         $recordsToImport = $request->all();
 
         if (is_array($recordsToImport)) {
             $importedRecords = [];
-            foreach($recordsToImport as $record) {
+            foreach ($recordsToImport as $record) {
                 if ($record) {
                     $id = $record['id'];
                     $imr = ImportedMedicalRecord::find($id);
-                    if (empty($imr)) continue;
-                    else {
+                    if (empty($imr)) {
+                        continue;
+                    } else {
                         try {
                             $imr['location_id'] = $record['Location'];
                             $imr['practice_id'] = $record['Practice'];
@@ -109,8 +112,7 @@ class MedicalRecordImportController extends Controller
                                 'completed' => true,
                                 'patient' => $carePlan->patient()->first()
                             ]);
-                        }
-                        catch (\Exception $ex) {
+                        } catch (\Exception $ex) {
                             //throwing Exceptions to help debug importing issues
                             throw $ex;
 //                            array_push($importedRecords, [
@@ -123,8 +125,7 @@ class MedicalRecordImportController extends Controller
                 }
             }
             return response()->json($importedRecords, 200);
-        }
-        else {
+        } else {
             return response()->json([
                 'message' => 'no records provided'
             ], 400);

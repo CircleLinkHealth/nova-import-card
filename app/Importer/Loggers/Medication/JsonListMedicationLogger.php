@@ -8,12 +8,10 @@
 
 namespace App\Importer\Loggers\Medication;
 
-
 use App\Contracts\Importer\MedicalRecord\Section\Logger;
 
 class JsonListMedicationLogger implements Logger
 {
-
     public function handle($medicationsString): array
     {
         //Expects format

@@ -30,6 +30,5 @@ class ConsolidatedMedicationTest extends TestCase
 //        $import = $medications->import($record->medical_record_id, $record->medical_record_type, $record);
 //
         $this->assertTrue(true);
-
     }
 }

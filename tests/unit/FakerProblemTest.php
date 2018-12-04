@@ -16,7 +16,6 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Collection;
 
-
 class FakerProblemTest
 {
     use UserHelpers,
@@ -67,6 +66,4 @@ class FakerProblemTest
         $this->faker = new Problem();
         $this->patient = $this->createUser($this->practice->id, 'participant');
     }
-
-
 }

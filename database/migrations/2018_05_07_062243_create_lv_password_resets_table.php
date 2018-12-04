@@ -3,32 +3,31 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateLvPasswordResetsTable extends Migration {
+class CreateLvPasswordResetsTable extends Migration
+{
 
-	/**
-	 * Run the migrations.
-	 *
-	 * @return void
-	 */
-	public function up()
-	{
-		Schema::create('lv_password_resets', function(Blueprint $table)
-		{
-			$table->string('email')->index('password_resets_email_index');
-			$table->string('token')->index('password_resets_token_index');
-			$table->dateTime('created_at')->nullable();
-		});
-	}
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('lv_password_resets', function (Blueprint $table) {
+            $table->string('email')->index('password_resets_email_index');
+            $table->string('token')->index('password_resets_token_index');
+            $table->dateTime('created_at')->nullable();
+        });
+    }
 
 
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down()
-	{
-		Schema::drop('lv_password_resets');
-	}
-
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::drop('lv_password_resets');
+    }
 }

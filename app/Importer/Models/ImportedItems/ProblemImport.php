@@ -41,7 +41,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ProblemImport extends \App\BaseModel
 {
-
     protected $guarded = [];
 
     public function ccdLog()

@@ -30,7 +30,7 @@ class GenerateOpsDailyReport implements ShouldQueue
      */
     public function __construct(Carbon $date = null)
     {
-        if ( ! $date) {
+        if (! $date) {
             $date = Carbon::now();
         }
 
@@ -58,8 +58,11 @@ class GenerateOpsDailyReport implements ShouldQueue
                                          },
                                          'patientInfo.revisionHistory' => function ($r) {
                                              $r->where('key', 'ccm_status')
-                                               ->where('created_at', '>=',
-                                                   $this->date->copy()->subDay()->setTimeFromTimeString('23:30'));
+                                               ->where(
+                                                   'created_at',
+                                                   '>=',
+                                                   $this->date->copy()->subDay()->setTimeFromTimeString('23:30')
+                                               );
                                          },
                                      ]);
                                  },
@@ -90,10 +93,12 @@ class GenerateOpsDailyReport implements ShouldQueue
 
         $saved = file_put_contents($path, json_encode($data));
 
-        if ( ! $saved) {
+        if (! $saved) {
             if (app()->environment('worker')) {
-                sendSlackMessage('#callcenter_ops',
-                    "Daily Call Center Operations Report for {$this->date->toDateString()} could not be created. \n");
+                sendSlackMessage(
+                    '#callcenter_ops',
+                    "Daily Call Center Operations Report for {$this->date->toDateString()} could not be created. \n"
+                );
             }
         }
 
@@ -103,8 +108,10 @@ class GenerateOpsDailyReport implements ShouldQueue
                    ->toMediaCollection("ops-daily-report-{$this->date->toDateString()}.json");
 
         if (app()->environment('worker')) {
-            sendSlackMessage('#callcenter_ops',
-                "Daily Call Center Operations Report for {$this->date->toDateString()} created. \n");
+            sendSlackMessage(
+                '#callcenter_ops',
+                "Daily Call Center Operations Report for {$this->date->toDateString()} created. \n"
+            );
         }
     }
 
@@ -117,14 +124,11 @@ class GenerateOpsDailyReport implements ShouldQueue
             foreach ($row as $key => $value) {
                 $totalCounts[$key][] = $value;
             }
-
         }
         foreach ($totalCounts as $key => $value) {
-
             $totalCounts[$key] = array_sum($value);
         }
 
         return $totalCounts;
-
     }
 }

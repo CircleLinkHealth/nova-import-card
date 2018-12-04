@@ -17,7 +17,6 @@
  */
 class UserMeta extends BaseModel
 {
-
     public $timestamps = false;
 
     /**

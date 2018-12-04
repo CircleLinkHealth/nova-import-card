@@ -27,7 +27,8 @@ trait HasProblemCodes
     public function snomedCodes()
     {
         return $this->codes()
-            ->where('problem_code_system_id', '=', '3');;
+            ->where('problem_code_system_id', '=', '3');
+        ;
     }
 
     public function codeMap()

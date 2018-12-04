@@ -39,7 +39,8 @@ trait TimezoneTrait
         return $date->timezone($this->timezone ?? 'America/New_York');
     }
 
-    public function resolveTimezoneToGMT($date) {
+    public function resolveTimezoneToGMT($date)
+    {
         if (is_string($date)) {
             $date = Carbon::parse($date);
         }

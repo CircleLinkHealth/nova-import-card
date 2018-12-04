@@ -26,7 +26,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CpmLifestyleUser extends \App\BaseModel
 {
-    
     use Instructable;
 
     protected $guarded = [];

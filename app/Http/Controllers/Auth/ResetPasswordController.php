@@ -70,7 +70,6 @@ class ResetPasswordController extends Controller
      */
     public function reset(Request $request)
     {
-
         $input        = $request->only(['email', 'password']);
         $email        = $input['email'];
         $new_password = $input['password'];
@@ -78,9 +77,8 @@ class ResetPasswordController extends Controller
         $current_password = null;
 
         if ($email && $new_password) {
-
             $this->userToReset = $this->getUserToReset($email);
-            if ( ! $this->userToReset) {
+            if (! $this->userToReset) {
                 return redirect()->back()
                                  ->withErrors([
                                      'email' => 'No user found with the supplied email address.',
@@ -89,7 +87,7 @@ class ResetPasswordController extends Controller
 
             $current_password = $this->userToReset->password;
 
-            if ( ! $this->validateNewPasswordUsingPasswordsHistory($current_password, $new_password)) {
+            if (! $this->validateNewPasswordUsingPasswordsHistory($current_password, $new_password)) {
                 return redirect()->back()
                                  ->withInput($request->only('email'))
                                  ->withErrors([
@@ -101,7 +99,7 @@ class ResetPasswordController extends Controller
         $resetResponse = $this->traitReset($request);
 
         //won't even reach here if traitReset fails (throws exception)
-        if ( ! ($resetResponse->isClientError() || $resetResponse->isServerError()) && $current_password) {
+        if (! ($resetResponse->isClientError() || $resetResponse->isServerError()) && $current_password) {
             $this->saveOldPasswordInHistory($current_password);
         }
 
@@ -137,7 +135,7 @@ class ResetPasswordController extends Controller
     {
         $isDiff = ! \Hash::check($new_password, $current_password);
 
-        if ( ! $isDiff) {
+        if (! $isDiff) {
             //new password is same as current password
             return $isDiff;
         }
@@ -158,7 +156,7 @@ class ResetPasswordController extends Controller
     {
         $history = $this->userToReset->passwordsHistory;
 
-        if ( ! $history) {
+        if (! $history) {
             $history          = new UserPasswordsHistory();
             $history->user_id = $this->userToReset->id;
         }

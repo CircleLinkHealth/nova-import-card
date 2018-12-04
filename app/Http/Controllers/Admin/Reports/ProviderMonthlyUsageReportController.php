@@ -54,8 +54,7 @@ class ProviderMonthlyUsageReportController extends Controller
             /***** OFFICE USERS *******/
             // get users
             $officeUserIds = User::
-            whereHas('practices', function ($q) use
-                (
+            whereHas('practices', function ($q) use (
                 $programId
             ) {
                 $q->whereIn('program_id', [$programId]);
@@ -72,8 +71,7 @@ class ProviderMonthlyUsageReportController extends Controller
 
             // get all pagetimes for users, per day:
             $pagetimes = PageTimer::
-            whereHas('logger', function ($q) use
-                (
+            whereHas('logger', function ($q) use (
                 $officeUserIds
             ) {
                 $q->whereIn('id', $officeUserIds);
@@ -88,8 +86,7 @@ class ProviderMonthlyUsageReportController extends Controller
                 $programStats[$programName]['dates'][$monthDateStart . '-' . $monthDateEnd] = [];
                 $pagetimesForDate = 0;
                 if ($pagetimes->count() > 0) {
-                    $pagetimesForDate = $pagetimes->filter(function ($item) use
-                        (
+                    $pagetimesForDate = $pagetimes->filter(function ($item) use (
                         $monthDateStart,
                         $monthDateEnd
                     ) {
@@ -106,8 +103,7 @@ class ProviderMonthlyUsageReportController extends Controller
             /***** CARE CENTER USERS *******/
             // get users
             $nurseUserIds = User::
-            whereHas('practices', function ($q) use
-                (
+            whereHas('practices', function ($q) use (
                 $programId
             ) {
                 $q->whereIn('program_id', [$programId]);
@@ -123,8 +119,7 @@ class ProviderMonthlyUsageReportController extends Controller
 
             // get participants
             $participantUserIds = User::
-            whereHas('practices', function ($q) use
-                (
+            whereHas('practices', function ($q) use (
                 $programId
             ) {
                 $q->whereIn('program_id', [$programId]);
@@ -140,14 +135,12 @@ class ProviderMonthlyUsageReportController extends Controller
 
             // get all pagetimes for users, per day:
             $pagetimes = PageTimer::
-            whereHas('logger', function ($q) use
-                (
+            whereHas('logger', function ($q) use (
                 $nurseUserIds
             ) {
                 $q->whereIn('id', $nurseUserIds);
             })
-                ->whereHas('patient', function ($q) use
-                    (
+                ->whereHas('patient', function ($q) use (
                     $participantUserIds
                 ) {
                     $q->whereIn('id', $participantUserIds);
@@ -161,8 +154,7 @@ class ProviderMonthlyUsageReportController extends Controller
             foreach ($monthDates as $monthDateStart => $monthDateEnd) {
                 $pagetimesForDate = 0;
                 if ($pagetimes->count() > 0) {
-                    $pagetimesForDate = $pagetimes->filter(function ($item) use
-                        (
+                    $pagetimesForDate = $pagetimes->filter(function ($item) use (
                         $monthDateStart,
                         $monthDateEnd
                     ) {
@@ -182,8 +174,7 @@ class ProviderMonthlyUsageReportController extends Controller
         $worksheets = $programStats;
 
 
-        Excel::create('CLH-Provider-Usage-Report-2016-' . $program, function ($excel) use
-            (
+        Excel::create('CLH-Provider-Usage-Report-2016-' . $program, function ($excel) use (
             $worksheets,
             $program
         ) {
@@ -207,8 +198,7 @@ class ProviderMonthlyUsageReportController extends Controller
 
             // sheet for each program
             foreach ($worksheets as $worksheetName => $worksheetData) {
-                $excel->sheet(substr($worksheetName, 0, 20), function ($sheet) use
-                    (
+                $excel->sheet(substr($worksheetName, 0, 20), function ($sheet) use (
                     $worksheetData,
                     $headers
                 ) {

@@ -4,7 +4,6 @@ namespace App\CLH\CCD\Identifier\IdentificationStrategies;
 
 class AuthorName extends BaseIdentificationStrategy
 {
-
     public function identify()
     {
         if (empty($this->ccd->document->author->name->given[0])) {

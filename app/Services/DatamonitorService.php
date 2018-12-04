@@ -443,7 +443,7 @@ class DatamonitorService
      *
      * @return mixed
      */
-    function process_message_substitutions(
+    public function process_message_substitutions(
         $email_message,
         $extra_vars
     ) {
@@ -767,7 +767,7 @@ class DatamonitorService
      *
      * @return string
      */
-    function get_alerts_url(
+    public function get_alerts_url(
         $user_id,
         $id
     ) {

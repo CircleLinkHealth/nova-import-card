@@ -8,7 +8,6 @@
 
 namespace App\ValueObjects\Athena;
 
-
 use Carbon\Carbon;
 
 /**

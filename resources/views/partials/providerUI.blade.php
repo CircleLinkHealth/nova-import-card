@@ -24,6 +24,7 @@
      * We have to make sure that $user is always an instance of User::class by deriving it from $patient
      */
     use App\Patient;
+
     $user = null;
     if (isset($patient)) {
         if (is_a($patient, Patient::class)) {

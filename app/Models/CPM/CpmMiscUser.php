@@ -24,7 +24,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CpmMiscUser extends \App\BaseModel
 {
-    
     use Instructable;
 
     protected $table = 'cpm_miscs_users';

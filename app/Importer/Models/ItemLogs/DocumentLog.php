@@ -46,7 +46,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class DocumentLog extends \App\BaseModel implements ItemLog
 {
-
     use BelongsToCcda,
         BelongsToVendor;
 

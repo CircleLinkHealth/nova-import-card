@@ -64,14 +64,13 @@ class PracticeReportsService
             $practice = Practice::find($practiceId);
 
             if ($practice->cpmSettings()->bill_to == 'practice') {
-
                 $chargeableServices = $this->getChargeableServices($practice);
 
 
                 foreach ($chargeableServices as $service) {
                     $row    = $this->makeRow($practice, $date, $service);
 
-                    if (!$row == null){
+                    if (!$row == null) {
                         $data[] = $row->toArray();
                     }
                 }
@@ -79,22 +78,19 @@ class PracticeReportsService
                 $providers = $practice->providers();
 
                 foreach ($providers as $provider) {
-
                     $chargeableServices = $this->getChargeableServices($provider);
 
                     foreach ($chargeableServices as $service) {
                         $row    = $this->makeRow($practice, $date, $service, $provider);
-                        if (!$row == null){
+                        if (!$row == null) {
                             $data[] = $row->toArray();
                         }
-
                     }
                 }
             }
         }
 
         return $this->makeQuickbookReport($data, $format, $date);
-
     }
 
     /**
@@ -126,16 +122,14 @@ class PracticeReportsService
      */
     private function getChargeableServices($chargeable)
     {
-
         $chargeableServices = $chargeable->chargeableServices()->get();
 
         //defaults to CPT 99490 if practice doesnt have a chargeableService, until further notice
-        if ( ! $chargeableServices) {
+        if (! $chargeableServices) {
             $chargeableServices = ChargeableService::where('id', 1)->get();
         }
 
         return $chargeableServices;
-
     }
 
     /**
@@ -163,7 +157,7 @@ class PracticeReportsService
 
         $data = $generator->getInvoiceData($chargeableService->id);
 
-        if($data['billable'] == 0){
+        if ($data['billable'] == 0) {
             return null;
         }
 
@@ -228,8 +222,5 @@ Address: Shippan Landing Workpoint, 290 Harbor Drive, Stamford, CT 06902
         $quickBooksRow = new QuickBooksRow($rowData);
 
         return $quickBooksRow;
-
-
     }
-
 }

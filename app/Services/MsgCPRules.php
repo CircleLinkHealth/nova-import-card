@@ -147,7 +147,7 @@ class MsgCPRules
          *  @todo       Currently query may blurr question categories between list, Range; FreeText may not be combined at this time
          *
          */
-// if((u2.meta_value = 'Active' or im2.meta_value = 'Active'), 'Active', 'Inactive') as status
+        // if((u2.meta_value = 'Active' or im2.meta_value = 'Active'), 'Active', 'Inactive') as status
 
         // remove leading and trailing spaces for msgId
         $strMsgId = trim($strMsgId);
@@ -169,7 +169,7 @@ left join rules_ucp u2 on u2.items_id = i.items_id and u2.meta_key = 'status' an
 WHERE msg_id = '".$strMsgId."'
 limit 1";
 
-// echo $query;
+        // echo $query;
 
         $results = DB::select(DB::raw($query));
         if (isset($results[0])) {
@@ -186,7 +186,7 @@ limit 1";
                     if (isset($qSet->low)) {
                         if (($qSet->low == 0)) {
                             $qInfo->low = $qSet->low;
-                        } else if ($qInfo->low == '' || ($qSet->low < $qInfo->low)) {
+                        } elseif ($qInfo->low == '' || ($qSet->low < $qInfo->low)) {
                             if ($qInfo->low != '0') {
                                 $qInfo->low = $qSet->low;
                             }
@@ -214,7 +214,7 @@ limit 1";
             $qInfo->valid_answers = '';
             if ($strMsgId == 'CF_HSP_10') {
                 $qInfo->valid_answers = 'Yes,No';
-            } else if ($strMsgId == 'CF_HSP_20') {
+            } elseif ($strMsgId == 'CF_HSP_20') {
                 $qInfo->valid_answers = 'ER,HSP';
             }
             if ($qInfo->obs_key == 'Severity') {
@@ -234,7 +234,6 @@ limit 1";
         $pid,
         $strResponse
     ) {
-
         $query = "select qs.*
             from rules_question_sets qs
             join rules_questions q on q.qid = qs.qid
@@ -284,7 +283,7 @@ limit 1";
          *
          */
 
-// if((u2.meta_value = 'Active' or im2.meta_value = 'Active'), 'Active', 'Inactive') as status
+        // if((u2.meta_value = 'Active' or im2.meta_value = 'Active'), 'Active', 'Inactive') as status
 
         $query = <<<query
 select q.qid, q.msg_id, q.qtype, im.meta_key as msgtype, im.meta_value as message, q.obs_key,
@@ -304,7 +303,7 @@ WHERE q.qid = {$intID}
 LIMIT 1
 query;
 
-//echo $query;
+        //echo $query;
 
         $results = DB::select(DB::raw($query));
         //dd($results[0]);
@@ -348,7 +347,7 @@ group by i.items_id
 order by qs.qs_sort
 query;
 
-// echo $query;
+        // echo $query;
 
         $results = DB::select(DB::raw($query));
         //dd($results[0]);
@@ -389,7 +388,7 @@ query;
             if ($row->obs_unit != 'scheduled') {
                 if (in_array($row->obs_value, ['Y', 'y', 'Yes', 'yes'])) {
                     $y++;
-                } else if (in_array($row->obs_value, ['N', 'n', 'No', 'no'])) {
+                } elseif (in_array($row->obs_value, ['N', 'n', 'No', 'no'])) {
                     $n++;
                 }
             }
@@ -498,7 +497,7 @@ where i.items_text = 'Monitor Weight Changes for CHF'
 and u.user_id = {$user}
 query;
 
-// echo $query;
+        // echo $query;
 
         $results = DB::select(DB::raw($query));
         if (isset($results[0])) {
@@ -527,7 +526,7 @@ query;
             and o.obs_unit = ''
             and o.obs_key in ('Blood_Sugar', 'Blood_Pressure', 'Weight', 'Cigarettes')";
 
-// echo $query;
+        // echo $query;
         $results = DB::select(DB::raw($sql));
 
         return $results;
@@ -560,7 +559,7 @@ where q.obs_key in ('Blood_Sugar', 'Blood_Pressure', 'Weight', 'Cigarettes')
 and p.prov_id = {$id}
 query;
 
-// echo $query;
+        // echo $query;
 
         $results = DB::select(DB::raw($sql));
 
@@ -589,7 +588,7 @@ query;
             order by obs_date desc
             limit 1";
 
-// echo $query;
+        // echo $query;
 
         $results = DB::select(DB::raw($query));
         if (isset($results[0])) {
@@ -662,7 +661,7 @@ where i.items_text = 'Target Weight'
 and p.user_id = {$intID}
 query;
 
-// echo $query;
+        // echo $query;
 
         $results = DB::select(DB::raw($query));
         if (isset($results[0])) {
@@ -700,7 +699,7 @@ query;
                 $result = $query->result_array();
                 if (empty($result)) {
                     $target_qid = '';
-                } else if (isset($result[0]['qid'])) {
+                } elseif (isset($result[0]['qid'])) {
                     $target_qid = $result[0]['qid'];
                 }
             }

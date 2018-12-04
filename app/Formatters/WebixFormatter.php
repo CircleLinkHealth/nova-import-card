@@ -185,7 +185,7 @@ class WebixFormatter implements ReportFormatter
                              ->values()
                              ->toJson();
 
-        if ( ! empty($report_data)) {
+        if (! empty($report_data)) {
             return $report_data;
         }
 
@@ -194,10 +194,11 @@ class WebixFormatter implements ReportFormatter
 
     public function formatDataForViewPrintCareplanReport($users)
     {
-
         $careplanReport    = [];
-        $cpmProblemService = (new \App\Services\CPM\CpmProblemService(new \App\Repositories\CpmProblemRepository(app()),
-            new \App\Repositories\UserRepositoryEloquent(app())));
+        $cpmProblemService = (new \App\Services\CPM\CpmProblemService(
+            new \App\Repositories\CpmProblemRepository(app()),
+            new \App\Repositories\UserRepositoryEloquent(app())
+        ));
 
         foreach ($users as $user) {
             $careplanReport[$user->id]['symptoms']    = $user->cpmSymptoms()->get()->pluck('name')->all();
@@ -210,8 +211,8 @@ class WebixFormatter implements ReportFormatter
 
         $other_problems = (new ReportsService())->getInstructionsforOtherProblems($user);
 
-        if ( ! empty($other_problems) && isset($careplanReport[$user->id]) && isset($careplanReport[$user->id]['problems'])) {
-            if ( ! is_string($careplanReport[$user->id]['problems'])) {
+        if (! empty($other_problems) && isset($careplanReport[$user->id]) && isset($careplanReport[$user->id]['problems'])) {
+            if (! is_string($careplanReport[$user->id]['problems'])) {
                 $careplanReport[$user->id]['problems']['Full Conditions List'] = $other_problems;
             }
         }
@@ -315,7 +316,7 @@ class WebixFormatter implements ReportFormatter
         //Medications List
         $careplanReport[$user->id]['taking_meds'] = 'No instructions at this time';
         $medicationList                           = $user->cpmMiscs->where('name', CpmMisc::MEDICATION_LIST)->all();
-        if ( ! empty($medicationList)) {
+        if (! empty($medicationList)) {
             $meds = Medication::where('patient_id', '=', $user->id)->orderBy('name')->get();
             if ($meds->count() > 0) {
                 $i                                        = 0;
@@ -325,7 +326,7 @@ class WebixFormatter implements ReportFormatter
                         ? $medText = ''
                         : $medText = '' . $med->name;
 
-                    if ( ! empty($med->sig)) {
+                    if (! empty($med->sig)) {
                         $medText .= '<br /><span style="font-style:italic;">- ' . $med->sig . '</span>';
                     }
                     $careplanReport[$user->id]['taking_meds'][] = $medText;
@@ -436,7 +437,7 @@ class WebixFormatter implements ReportFormatter
         foreach ($past as $appt) {
             $provider = User::find($appt->provider_id);
 
-            if ( ! $provider) {
+            if (! $provider) {
                 continue;
             }
 
@@ -485,7 +486,7 @@ class WebixFormatter implements ReportFormatter
         $patientData = [];
         $auth        = \Auth::user();
 
-        if ( ! $patients) {
+        if (! $patients) {
             $patients = $auth->patientList();
         }
 
@@ -550,7 +551,7 @@ class WebixFormatter implements ReportFormatter
             // get billing provider name
             $bpName = '';
             $bpID   = $patient->billingProviderID;
-            if ( ! isset($foundPrograms[$patient->program_id])) {
+            if (! isset($foundPrograms[$patient->program_id])) {
                 $program                             = $patient->primaryPractice;
                 $foundPrograms[$patient->program_id] = $program;
             } else {
@@ -563,7 +564,7 @@ class WebixFormatter implements ReportFormatter
             if ($bpCareTeamMember) {
                 $bpUser = $bpCareTeamMember->user;
 
-                if ( ! $bpUser) {
+                if (! $bpUser) {
                     continue;
                 }
 

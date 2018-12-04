@@ -8,7 +8,6 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class CarePlanRepository
 {
-
     public function updateCarePlan(CarePlan $carePlan, ParameterBag $params)
     {
         $carePlan->name = $params->get('name');
@@ -82,7 +81,6 @@ class CarePlanRepository
         CarePlan $carePlan,
         ParameterBag $params
     ) {
-    
         $carePlan->name = $params->get('name');
         $carePlan->display_name = $params->get('display_name');
         $carePlan->type = $params->get('type');

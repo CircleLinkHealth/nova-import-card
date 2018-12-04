@@ -55,8 +55,10 @@ class CPRItemController extends Controller
         $item->items_text = $params['items_text'];
         $item->save();
 
-        return redirect()->route('admin.items.edit', [$item->items_id])->with('messages',
-            ['successfully added new item - ']);
+        return redirect()->route('admin.items.edit', [$item->items_id])->with(
+            'messages',
+            ['successfully added new item - ']
+        );
     }
 
     /**

@@ -217,7 +217,6 @@ class Enrollee extends \App\BaseModel
 
     public function user()
     {
-
         return $this->belongsTo(User::class, 'user_id');
     }
 
@@ -233,7 +232,6 @@ class Enrollee extends \App\BaseModel
 
     public function practice()
     {
-
         return $this->belongsTo(Practice::class, 'practice_id');
     }
 
@@ -254,14 +252,16 @@ class Enrollee extends \App\BaseModel
 
     public function getPracticeNameAttribute()
     {
-
         return $this->practice->display_name ?? null;
     }
 
     public function sendEnrollmentConsentSMS()
     {
-        $twilio = new Twilio(config('services.twilio.sid'), config('services.twilio.token'),
-            config('services.twilio.from'));
+        $twilio = new Twilio(
+            config('services.twilio.sid'),
+            config('services.twilio.token'),
+            config('services.twilio.from')
+        );
 
         $link          = url("join/$this->invite_code");
         $provider_name = User::find($this->provider_id)->getFullName();
@@ -336,11 +336,13 @@ class Enrollee extends \App\BaseModel
 
     public function sendEnrollmentConsentReminderSMS()
     {
-
         $emjo = 'u"\U0001F31F"';
 
-        $twilio = new Twilio(config('services.twilio.sid'), config('services.twilio.token'),
-            config('services.twilio.from'));
+        $twilio = new Twilio(
+            config('services.twilio.sid'),
+            config('services.twilio.token'),
+            config('services.twilio.from')
+        );
 
         $link = url("join/$this->invite_code");
 
@@ -354,7 +356,6 @@ class Enrollee extends \App\BaseModel
 
     public function scopeToSMS($query)
     {
-
         return $query
             ->where('status', self::TO_SMS)
             ->whereNotNull('cell_phone');

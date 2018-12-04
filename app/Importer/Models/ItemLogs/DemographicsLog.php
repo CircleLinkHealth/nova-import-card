@@ -78,7 +78,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class DemographicsLog extends \App\BaseModel implements ItemLog
 {
-
     use BelongsToCcda,
         BelongsToVendor;
 

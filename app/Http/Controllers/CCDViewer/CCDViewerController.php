@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 
 class CCDViewerController extends Controller
 {
-
     private $repo;
 
     public function __construct(CCDImporterRepository $repo)

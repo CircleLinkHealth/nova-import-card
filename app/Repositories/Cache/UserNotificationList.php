@@ -8,7 +8,6 @@
 
 namespace App\Repositories\Cache;
 
-
 use App\Constants;
 use App\Contracts\UserNotificationListInterface;
 use App\User;
@@ -117,7 +116,8 @@ class UserNotificationList implements UserNotificationListInterface
             ->reverse();
     }
 
-    public function delete($notification) {
+    public function delete($notification)
+    {
         return \Redis::lrem($this->userHashKey(), 0, $notification);
     }
 }

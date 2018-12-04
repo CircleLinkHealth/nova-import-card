@@ -25,7 +25,7 @@ class DirectMailServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(DirectMail::class, function() {
+        $this->app->bind(DirectMail::class, function () {
             return new PhiMail();
         });
     }

@@ -42,7 +42,8 @@ class PatientController extends Controller
 
         if (auth()->user()->canApproveCarePlans()) {
             $showPatientsPendingApprovalBox = true;
-            $patients                       = auth()->user()->patientsPendingApproval()->get()->filter(function ($user
+            $patients                       = auth()->user()->patientsPendingApproval()->get()->filter(function (
+                $user
             ) {
                 return $user->getCarePlanStatus() == CarePlan::QA_APPROVED;
             });
@@ -51,7 +52,8 @@ class PatientController extends Controller
         }
         $noLiveCountTimeTracking = true;
 
-        return view('wpUsers.patient.dashboard',
+        return view(
+            'wpUsers.patient.dashboard',
             array_merge(
                 compact([
                     'pendingApprovals',
@@ -99,7 +101,7 @@ class PatientController extends Controller
                       ->where('id', $patientId)
                       ->first();
 
-        if ( ! $wpUser) {
+        if (! $wpUser) {
             return response("User not found", 401);
         }
 
@@ -215,7 +217,7 @@ class PatientController extends Controller
                             $observation['description'] = $item->display_name;
                         }
                     }
-                    if (($observation['obs_key'] == 'Call') || ( ! is_numeric($observation['obs_value']))) {
+                    if (($observation['obs_key'] == 'Call') || (! is_numeric($observation['obs_value']))) {
                         $obs_by_pcp['obs_lifestyle'][] = $observation;
                     }
                     break;
@@ -237,13 +239,16 @@ class PatientController extends Controller
                 }
                 // set default
                 $alertLevel = 'default';
-                if ( ! empty($observation->alert_level)) {
+                if (! empty($observation->alert_level)) {
                     $alertLevel = $observation->alert_level;
                 }
                 // lastly format json
                 $observation_json[$section] .= "{ obs_key:'" . $observation->obs_key . "', " .
-                                               "description:'" . str_replace('_', " ",
-                        $observation->description) . "', " .
+                                               "description:'" . str_replace(
+                                                   '_',
+                                                   " ",
+                        $observation->description
+                                               ) . "', " .
                                                "obs_value:'" . $observation->obs_value . "', " .
                                                "dm_alert_level:'" . $alertLevel . "', " .
                                                "obs_unit:'" . $observation->obs_unit . "', " .
@@ -330,18 +335,17 @@ class PatientController extends Controller
         // get number of approvals
         $patients = User::intersectPracticesWith(auth()->user())
                         ->with('phoneNumbers', 'patientInfo', 'careTeamMembers')->whereHas('roles', function ($q) {
-                $q->where('name', '=', 'participant');
-            })->get()->pluck('fullNameWithId', 'id')->all();
+                            $q->where('name', '=', 'participant');
+                        })->get()->pluck('fullNameWithId', 'id')->all();
 
         return view('wpUsers.patient.select', compact(['patients']));
     }
 
     public function queryPatient(Request $request)
     {
-
         $input = $request->all();
 
-        if ( ! array_key_exists('users', $input)) {
+        if (! array_key_exists('users', $input)) {
             return;
         }
 
@@ -388,7 +392,6 @@ class PatientController extends Controller
 
     public function patientAjaxSearch(Request $request)
     {
-
         return view('wpUsers.patient.select');
     }
 
@@ -400,7 +403,7 @@ class PatientController extends Controller
     public function processPatientSelect(Request $request)
     {
         $params = $request->all();
-        if ( ! empty($params)) {
+        if (! empty($params)) {
             if (isset($params['findUser'])) {
                 $user = User::find($params['findUser']);
                 if ($user) {
@@ -427,7 +430,7 @@ class PatientController extends Controller
         $wpUser = [];
         if ($patientId) {
             $wpUser = User::find($patientId);
-            if ( ! $wpUser) {
+            if (! $wpUser) {
                 return response("User not found", 401);
             }
         }
@@ -456,7 +459,7 @@ class PatientController extends Controller
         $wpUser = [];
         if ($patientId) {
             $wpUser = User::find($patientId);
-            if ( ! $wpUser) {
+            if (! $wpUser) {
                 return response("User not found", 401);
             }
         }
@@ -480,7 +483,7 @@ class PatientController extends Controller
         if ($patientId) {
             // patient view
             $wpUser = User::find($patientId);
-            if ( ! $wpUser) {
+            if (! $wpUser) {
                 return response("User not found", 401);
             }
             // program
@@ -510,14 +513,14 @@ class PatientController extends Controller
         $patient = [];
         if ($patientId) {
             $patient = User::find($patientId);
-            if ( ! $patient) {
+            if (! $patient) {
                 return response("User not found", 401);
             }
         }
 
         //leave it here?
         // security
-        if ( ! Auth::user()->hasPermissionForSite('observation.create', $patient->getPrimaryPracticeId())) {
+        if (! Auth::user()->hasPermissionForSite('observation.create', $patient->getPrimaryPracticeId())) {
             abort(403);
         }
 

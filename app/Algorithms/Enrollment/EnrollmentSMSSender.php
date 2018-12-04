@@ -14,7 +14,6 @@ use Carbon\Carbon;
  */
 class EnrollmentSMSSender
 {
-
     private $twilio;
 
     public function __construct()

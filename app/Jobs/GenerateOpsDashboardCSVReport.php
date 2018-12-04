@@ -45,7 +45,7 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
     {
         $date = Carbon::now();
 
-        ini_set('memory_limit','512M');
+        ini_set('memory_limit', '512M');
 
         $practices = Practice::select(['id', 'display_name'])
                              ->activeBillable()
@@ -57,8 +57,11 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
                                          },
                                          'patientInfo.revisionHistory' => function ($r) use ($date) {
                                              $r->where('key', 'ccm_status')
-                                               ->where('created_at', '>=',
-                                                   $date->copy()->subDay()->setTimeFromTimeString('23:30'));
+                                               ->where(
+                                                   'created_at',
+                                                   '>=',
+                                                   $date->copy()->subDay()->setTimeFromTimeString('23:30')
+                                               );
                                          },
                                      ]);
                                  },
@@ -105,12 +108,10 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
                 $sheet->cell('A1', function ($cell) use ($date) {
                     // manipulate the cell
                     $cell->setValue("Ops Report from: {$date->copy()->subDay()->setTimeFromTimeString('23:30')->toDateTimeString()} to: {$date->toDateTimeString()}");
-
                 });
                 $sheet->cell('A2', function ($cell) use ($hoursBehind) {
                     // manipulate the cell
                     $cell->setValue("HoursBehind: {$hoursBehind}");
-
                 });
 
 
@@ -150,8 +151,6 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
                         $value['G0506 To Enroll'],
                     ]);
                 }
-
-
             });
         });
 
@@ -181,12 +180,12 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
 
         $userNotification = new UserNotificationList($this->user);
 
-        $userNotification->push('Ops Dashboard CSV report',
+        $userNotification->push(
+            'Ops Dashboard CSV report',
             "Ops Dashboard CSV report for {$date->toDateTimeString()}",
             linkToCachedView($viewHashKey),
             'Go to page'
         );
-
     }
 
     public function calculateDailyTotalRow($rows)
@@ -197,14 +196,11 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
             foreach ($row as $key => $value) {
                 $totalCounts[$key][] = $value;
             }
-
         }
         foreach ($totalCounts as $key => $value) {
-
             $totalCounts[$key] = array_sum($value);
         }
 
         return $totalCounts;
-
     }
 }

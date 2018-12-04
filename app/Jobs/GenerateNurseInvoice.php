@@ -36,14 +36,15 @@ class GenerateNurseInvoice implements ShouldQueue
      * @param int $addTime
      * @param string $addNotes
      */
-    public function __construct(array $nurseUserIds,
+    public function __construct(
+        array $nurseUserIds,
                                 Carbon $startDate,
                                 Carbon $endDate,
                                 $requestors,
                                 bool $variablePay = false,
                                 int $addTime = 0,
-                                string $addNotes = '')
-    {
+                                string $addNotes = ''
+    ) {
         $this->nurses = Nurse::whereIn('user_id', $nurseUserIds)->with('user')->get();
         $this->startDate = $startDate;
         $this->endDate = $endDate;
@@ -99,12 +100,14 @@ class GenerateNurseInvoice implements ShouldQueue
                 return;
             }
 
-            $userNotification->push('Nurse Invoices',
-                "Invoice(s) were generated for {$this->nurses->count()} nurse(s): {$this->nurses->map(function($n) {return $n->user->getFullName();})->implode(', ')}",
+            $userNotification->push(
+                'Nurse Invoices',
+                "Invoice(s) were generated for {$this->nurses->count()} nurse(s): {$this->nurses->map(function ($n) {
+                    return $n->user->getFullName();
+                })->implode(', ')}",
                 linkToCachedView($viewHashKey),
                 'Go to page'
             );
         });
-
     }
 }

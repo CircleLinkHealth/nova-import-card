@@ -8,7 +8,6 @@
 
 namespace App\Contracts\Importer\MedicalRecord\Section;
 
-
 interface Logger
 {
     public function handle($problemsString): array;

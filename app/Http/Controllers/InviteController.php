@@ -27,7 +27,6 @@ class InviteController extends Controller
      */
     public function create()
     {
-
         return view('admin.invites.create');
     }
 
@@ -40,7 +39,6 @@ class InviteController extends Controller
      */
     public function store(Request $request)
     {
-
         $input = $request->input();
 
         $exists = Invite::whereEmail($input['email'])->first();

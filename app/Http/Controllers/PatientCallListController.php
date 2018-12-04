@@ -37,7 +37,7 @@ class PatientCallListController extends Controller
 
         // filter status
         $filterStatus = 'scheduled';
-        if ( ! empty($request->input('filterStatus'))) {
+        if (! empty($request->input('filterStatus'))) {
             $filterStatus = $request->input('filterStatus');
         }
 

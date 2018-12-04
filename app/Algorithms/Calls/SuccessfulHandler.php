@@ -36,7 +36,6 @@ use Carbon\Carbon;
 
 class SuccessfulHandler implements CallHandler
 {
-
     use CallAlgoHelper;
 
     const VERSION = '2.2';
@@ -65,7 +64,6 @@ class SuccessfulHandler implements CallHandler
         $isComplex,
         $previousCall
     ) {
-
         $this->week = $initTime->weekOfMonth;
         $this->patient = $calledPatient;
         $this->ccmTime = $calledPatient->user->getCcmTime();
@@ -112,7 +110,6 @@ class SuccessfulHandler implements CallHandler
         $ccmTime,
         $week
     ) {
-
         if ($ccmTime > 3599) { // More than 60 mins
 
             if ($week == 1 || $week == 2) { // We are in the first three weeks of the month
@@ -190,7 +187,6 @@ class SuccessfulHandler implements CallHandler
         $ccmTime,
         $week
     ) {
-
         if ($ccmTime > 1199) { // More than 20 mins
 
             //find out if patient likes to be called monthly
@@ -308,7 +304,6 @@ class SuccessfulHandler implements CallHandler
 
     public function createSchedulerInfoString()
     {
-
         $status = '<span style="color: green">successfully</span>';
         $this->prediction['complex'] = $this->isComplex;
 

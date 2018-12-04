@@ -54,8 +54,7 @@ class RecalculateCcmTime extends Command
         $userIds = $this->argument('userIds') ?? null;
         if ($userIds != null) {
             $userIds = explode(',', $userIds);
-        }
-        else {
+        } else {
             $userIds = User::ofType('participant')
                            ->pluck('id')
                            ->all();

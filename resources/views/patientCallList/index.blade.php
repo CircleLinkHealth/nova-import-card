@@ -242,7 +242,7 @@
                                             </tbody>
                                         </table>
                                         </form>
-                                        <?php //$calls->links() ?>
+                                        <?php //$calls->links()?>
                                     </div>
                                 </div>
                             </div>

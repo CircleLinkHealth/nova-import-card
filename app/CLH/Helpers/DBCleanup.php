@@ -5,7 +5,6 @@ use App\CPRulesPCP;
 
 class DBCleanup
 {
-
     public static function nukeItemsAndTheirMeta($itemText)
     {
         $rulesItem = CPRulesItem::whereItemsText($itemText)->get();

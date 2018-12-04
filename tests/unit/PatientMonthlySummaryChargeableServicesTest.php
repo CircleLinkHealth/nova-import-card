@@ -15,7 +15,6 @@ use Illuminate\Support\Collection;
 use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
 
-
 class PatientMonthlySummaryChargeableServicesTest extends TestCase
 {
     use UserHelpers,
@@ -45,7 +44,6 @@ class PatientMonthlySummaryChargeableServicesTest extends TestCase
         ], ['X-Requested-With' => 'XMLHttpRequest']);
 
         $response->assertStatus(200);
-
     }
 
     /**
@@ -69,8 +67,6 @@ class PatientMonthlySummaryChargeableServicesTest extends TestCase
             ], ['X-Requested-With' => 'XMLHttpRequest']);
 
         $response->assertStatus(200);
-
-
     }
 
     /**
@@ -84,10 +80,12 @@ class PatientMonthlySummaryChargeableServicesTest extends TestCase
      */
     private function createMonthlySummary(User $patient, Carbon $monthYear, $ccmTime)
     {
-        return $patient->patientSummaries()->updateOrCreate([
+        return $patient->patientSummaries()->updateOrCreate(
+            [
             'month_year' => $monthYear->startOfMonth(),
         ],
-            ['ccm_time' => $ccmTime,]);
+            ['ccm_time' => $ccmTime,]
+        );
     }
 
     /**

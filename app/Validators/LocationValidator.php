@@ -7,7 +7,6 @@ use Prettus\Validator\LaravelValidator;
 
 class LocationValidator extends LaravelValidator
 {
-
     protected $rules = [
         ValidatorInterface::RULE_CREATE => [
             'practice_id'    => 'required|exists:practices,id',

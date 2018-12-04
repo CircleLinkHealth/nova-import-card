@@ -27,10 +27,10 @@ class EligibilityProblems implements Rule
     {
         $count = collect($value)
             ->reject(function ($problem) {
-                if (array_key_exists('Name', $problem)){
+                if (array_key_exists('Name', $problem)) {
                     $name = $problem['Name'] ?? null;
                     $code = $problem['Code'] ?? null;
-                }else{
+                } else {
                     $name = $problem['name'] ?? null;
                     $code = $problem['code'] ?? null;
                 }

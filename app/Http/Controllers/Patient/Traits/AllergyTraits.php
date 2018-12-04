@@ -16,15 +16,17 @@ trait AllergyTraits
         $name = $request->input('name');
         if ($name) {
             return response()->json($this->allergyService->addPatientAllergy($userId, $name));
+        } else {
+            return $this->badRequest('"name" is important');
         }
-        else return $this->badRequest('"name" is important');
     }
     
     public function deleteCcdAllergy($userId, $allergyId)
     {
         if ($userId && $allergyId) {
             return response()->json($this->allergyService->deletePatientAllergy($userId, $allergyId));
+        } else {
+            return $this->badRequest('"userId" and "allergyId" are important');
         }
-        else return $this->badRequest('"userId" and "allergyId" are important');
     }
 }

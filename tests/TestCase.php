@@ -31,7 +31,6 @@ abstract class TestCase extends BaseTestCase
         //Since we have commented out $this->refreshTestDatabase()
         //Adding this to rollback transactions at the end of each test
         $this->beginDatabaseTransaction();
-
     }
 
     public function seedDatabase()

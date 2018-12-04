@@ -5,6 +5,7 @@
 
 <?php
     use \Carbon\Carbon;
+
 ?>
 
 @section('content')

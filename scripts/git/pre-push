@@ -5,13 +5,17 @@ composer dumpautoload
 
 COMPOSER_DUMP_AUTOLOAD_EC=$?
 
-echo 'Checking Javascript code quality...'
-jscs ./js
-JSCS_EC=$?
+#echo 'Checking Javascript code quality...'
+#jscs ./js
+#JSCS_EC=$?
 
 echo 'Checking PHP code style...'
-phpcs -h . --standard=PSR2
-PHPCS_EC=$?
+php ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix app/ --rules=@PSR2 --show-progress=estimating --verbose --diff
+php ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix config/ --rules=@PSR2 --show-progress=estimating --verbose --diff
+php ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix database/ --rules=@PSR2 --show-progress=estimating --verbose --diff
+php ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix resources/ --rules=@PSR2 --show-progress=estimating --verbose --diff
+php ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix routes/ --rules=@PSR2 --show-progress=estimating --verbose --diff
+php ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix tests/ --rules=@PSR2 --show-progress=estimating --verbose --diff
 
 # composer test
 # COMPOSER_TEST_EC=$?

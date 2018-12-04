@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\API\Admin;
 
-
 use App\CallView;
 use App\Filters\CallViewFilters;
 use App\Http\Resources\CallView as CallViewResource;
@@ -11,7 +10,6 @@ use Illuminate\Http\Request;
 
 class CallsViewController extends ApiController
 {
-
     public function __construct()
     {
     }
@@ -40,5 +38,4 @@ class CallsViewController extends ApiController
                          ->paginate($rows ?? 15);
         return CallViewResource::collection($calls);
     }
-
 }

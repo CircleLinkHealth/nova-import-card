@@ -62,5 +62,4 @@ class AddForeignKeysToPatientInfoTable extends Migration
             tryDropForeignKey($table, 'patient_info_user_id_foreign');
         });
     }
-
 }

@@ -11,7 +11,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class WT1ImportTest extends TestCase
 {
-
     public function test_csv_to_json()
     {
         $parser   = new WT1CsvParser();
@@ -46,5 +45,4 @@ class WT1ImportTest extends TestCase
 //
 //        $this->assertTrue($incomplete === 0);
 //    }
-
 }

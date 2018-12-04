@@ -23,8 +23,7 @@ trait DateScopesTrait
         Carbon $date,
         $field = 'created_at'
     ) {
-        $builder->where(function ($q) use
-        (
+        $builder->where(function ($q) use (
             $field, $date
         ) {
             $q->where($field, '>=', $date->copy()->startOfDay())
@@ -43,8 +42,7 @@ trait DateScopesTrait
         $builder,
         $field = 'created_at'
     ) {
-        $builder->where(function ($q) use
-            (
+        $builder->where(function ($q) use (
             $field
         ) {
             $q->where($field, '>=', Carbon::now()->startOfDay())
@@ -63,8 +61,7 @@ trait DateScopesTrait
         $builder,
         $field = 'created_at'
     ) {
-        $builder->where(function ($q) use
-            (
+        $builder->where(function ($q) use (
             $field
         ) {
             $q->where($field, '>=', Carbon::yesterday()->startOfDay())
@@ -83,8 +80,7 @@ trait DateScopesTrait
         $builder,
         $field = 'created_at'
     ) {
-        $builder->where(function ($q) use
-            (
+        $builder->where(function ($q) use (
             $field
         ) {
             $q->where($field, '>=', Carbon::now()->startOfMonth())

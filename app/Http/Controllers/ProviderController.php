@@ -51,7 +51,7 @@ class ProviderController extends Controller
                 return $user->getCarePlanStatus() == CarePlan::QA_APPROVED;
             })->first();
 
-            if ( ! $nextPatient) {
+            if (! $nextPatient) {
                 return redirect()->to('/');
             }
 
@@ -68,7 +68,7 @@ class ProviderController extends Controller
     {
         $user = User::find($patientId);
 
-        if ( ! $user) {
+        if (! $user) {
             return response("User not found", 401);
         }
 
@@ -83,7 +83,7 @@ class ProviderController extends Controller
                 return $user->getCarePlanStatus() == CarePlan::QA_APPROVED;
             })->first();
 
-            if ( ! $nextPatient) {
+            if (! $nextPatient) {
                 return redirect()->to('/');
             }
 
@@ -93,7 +93,6 @@ class ProviderController extends Controller
                 'patientId'    => $patientId,
                 'clearSession' => $viewNext,
             ]));
-
         }
 
         return redirect()->to('/');

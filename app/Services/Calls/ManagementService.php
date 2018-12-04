@@ -8,7 +8,6 @@
 
 namespace App\Services\Calls;
 
-
 use App\Repositories\CallRepository;
 use Carbon\Carbon;
 
@@ -21,7 +20,8 @@ class ManagementService
         $this->repository = $repository;
     }
 
-    public function getScheduledCalls(Carbon $month = null) {
+    public function getScheduledCalls(Carbon $month = null)
+    {
         return $this->repository->scheduledCalls($month);
     }
 

@@ -63,16 +63,21 @@ class PostPatientCarePlanAsAppointmentNote extends Command
                                     ->primaryPractice
                                     ->external_id;
 
-                                $appointments       = $this->api->getPatientAppointments($practiceId, $c->user_id,
-                                    false);
+                                $appointments       = $this->api->getPatientAppointments(
+                                    $practiceId,
+                                    $c->user_id,
+                                    false
+                                );
                                 $sortedAppointments = collect($appointments['appointments'])->sortBy('date');
                                 $nextAppointment    = $sortedAppointments->first();
 
 
-                                $response = $this->api->postAppointmentNotes($practiceId,
-                                    $nextAppointment['appointmentid'], $link, true);
-
-
+                                $response = $this->api->postAppointmentNotes(
+                                    $practiceId,
+                                    $nextAppointment['appointmentid'],
+                                    $link,
+                                    true
+                                );
                             });
     }
 }

@@ -51,7 +51,7 @@ class GetPatientIdFromLastYearAppointments extends Command
     {
         $athenaPracticeId = $this->argument('athenaPracticeId');
 
-        if ( ! $athenaPracticeId) {
+        if (! $athenaPracticeId) {
             return;
         }
 
@@ -81,8 +81,10 @@ class GetPatientIdFromLastYearAppointments extends Command
         }
 
         if (app()->environment('worker')) {
-            sendSlackMessage('#background-tasks',
-                "Getting patient ids from the appointments from Athena, for practice_athena_id: $athenaPracticeId. \n");
+            sendSlackMessage(
+                '#background-tasks',
+                "Getting patient ids from the appointments from Athena, for practice_athena_id: $athenaPracticeId. \n"
+            );
         }
 
         $this->service->getPatientIdFromAppointments($athenaPracticeId, $startDate, $endDate, $offset, $batchId);

@@ -11,16 +11,19 @@ class AppointmentController extends ApiController
     private $patientService;
     private $appointmentService;
 
-    public function __construct(PatientService $patientService, AppointmentService $appointmentService) {
+    public function __construct(PatientService $patientService, AppointmentService $appointmentService)
+    {
         $this->patientService = $patientService;
         $this->appointmentService = $appointmentService;
     }
 
-    public function index() {
+    public function index()
+    {
         return response()->json($this->appointmentService->appointments());
     }
 
-    public function show($id) {
+    public function show($id)
+    {
         return response()->json($this->appointmentService->repo()->appointment($id));
     }
 }

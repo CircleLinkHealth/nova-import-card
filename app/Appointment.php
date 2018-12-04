@@ -38,7 +38,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Appointment extends \App\BaseModel
 {
-
     protected $table = 'appointments';
 
     protected $fillable = [
@@ -56,19 +55,16 @@ class Appointment extends \App\BaseModel
 
     public function patient()
     {
-
         return $this->belongsTo(User::class, 'patient_id');
     }
 
     public function author()
     {
-
         return $this->belongsTo(User::class, 'author_id');
     }
 
     public function provider()
     {
-
         return $this->belongsTo(User::class, 'provider_id');
     }
 }

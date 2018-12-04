@@ -8,7 +8,6 @@
 
 namespace App\Repositories;
 
-
 use App\User;
 use App\Patient;
 use App\Models\CPM\CpmProblem;
@@ -20,11 +19,13 @@ class CpmProblemRepository
         return app(CpmProblem::class);
     }
 
-    public function count() {
+    public function count()
+    {
         return $this->model()->count();
     }
 
-    public function noDiabetesFilter() {
+    public function noDiabetesFilter()
+    {
         return $this->model()->where('name', '!=', 'Diabetes');
     }
 }

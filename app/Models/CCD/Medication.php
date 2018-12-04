@@ -45,7 +45,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Medication extends \App\BaseModel
 {
-
     protected $fillable = [
         'ccda_id',
         'vendor_id',

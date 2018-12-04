@@ -13,12 +13,11 @@ class AddsTimestamps extends Migration
      */
     public function up()
     {
-        if ( ! Schema::hasColumn('practice_role_user', 'created_at')) {
+        if (! Schema::hasColumn('practice_role_user', 'created_at')) {
             Schema::table('practice_role_user', function (Blueprint $table) {
                 $table->timestamps();
             });
         }
-
     }
 
     /**

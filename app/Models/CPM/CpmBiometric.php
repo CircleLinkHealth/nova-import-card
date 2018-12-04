@@ -31,7 +31,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CpmBiometric extends \App\BaseModel implements Serviceable
 {
-
     use Instructable;
 
     const BLOOD_PRESSURE = 'Blood Pressure';

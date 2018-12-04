@@ -19,7 +19,8 @@ class EhrReportWriterInfo extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function getFolderUrl(){
+    public function getFolderUrl()
+    {
         return Storage::drive('google')->url($this->google_drive_folder_path);
     }
 }

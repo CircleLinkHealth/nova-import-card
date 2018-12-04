@@ -12,7 +12,6 @@ use App\Models\CPM\CpmBiometric;
  */
 class Weight extends BaseStorageStrategy implements StorageStrategy
 {
-
     public function import($weight)
     {
         $this->user->cpmWeight()->create([

@@ -31,7 +31,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CpmBloodSugar extends \App\BaseModel implements Biometric
 {
-
     public static $rules = [
         'starting' => 'max:999|numeric',
         'target' => 'max:999|numeric',
@@ -68,7 +67,8 @@ class CpmBloodSugar extends \App\BaseModel implements Biometric
         return $this->belongsTo(User::class, 'patient_id');
     }
     
-    public function biometric() {
+    public function biometric()
+    {
         return CpmBiometric::where('name', 'LIKE', '%sugar%');
     }
 

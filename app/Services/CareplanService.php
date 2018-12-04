@@ -29,11 +29,12 @@ class CareplanService
     private $appointmentService;
     private $noteService;
 
-    public function __construct(CareplanRepository $careplanRepo, 
-                                CpmProblemService $cpmService, 
-                                CpmProblemUserService $cpmUserService, 
-                                CcdProblemService $ccdUserService, 
-                                CpmMedicationService $medicationService, 
+    public function __construct(
+        CareplanRepository $careplanRepo,
+                                CpmProblemService $cpmService,
+                                CpmProblemUserService $cpmUserService,
+                                CcdProblemService $ccdUserService,
+                                CpmMedicationService $medicationService,
                                 CpmMedicationGroupService $medicationGroupService,
                                 CpmBiometricService $biometricService,
                                 CpmSymptomService $symptomService,
@@ -41,7 +42,8 @@ class CareplanService
                                 CcdAllergyService $allergyService,
                                 CpmMiscService $miscService,
                                 AppointmentService $appointmentService,
-                                NoteService $noteService) {
+                                NoteService $noteService
+    ) {
         $this->careplanRepo = $careplanRepo;
         $this->cpmService = $cpmService;
         $this->cpmUserService = $cpmUserService;
@@ -57,11 +59,13 @@ class CareplanService
         $this->noteService = $noteService;
     }
 
-    public function repo() {
+    public function repo()
+    {
         return $this->careplanRepo;
     }
 
-    public function careplan($userId) {
+    public function careplan($userId)
+    {
         $user = is_a($userId, User::class)
             ? $userId
             : User::findOrFail($userId);

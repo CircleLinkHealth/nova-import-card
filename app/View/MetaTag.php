@@ -8,7 +8,6 @@
 
 namespace App\View;
 
-
 class MetaTag
 {
     public $severity;

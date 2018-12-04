@@ -43,12 +43,11 @@
                             array('section' => 'obs_lifestyle', 'id' => 'obs_lifestyle_dtable', 'title' => 'Lifestyle', 'col_name_question' => 'Question', 'col_name_severity' => 'Response'),
                     );
                     foreach ($sections as $section) {
-                    if (!empty($detailSection)) {
-                        if ($detailSection != $section['section']) {
-                            continue 1;
-                        }
-                    }
-                    ?>
+                        if (!empty($detailSection)) {
+                            if ($detailSection != $section['section']) {
+                                continue 1;
+                            }
+                        } ?>
                     <div class="sub-form-title">
                         <div class="sub-form-title-lh"><?php echo $section['title']; ?></div>
                         <div class="sub-form-title-rh">
@@ -154,14 +153,16 @@
                             ready: function () {
                                 this.adjustRowHeight("description");
                             },
-                            <?php if(!empty($detailSection)) { ?>
+                            <?php if (!empty($detailSection)) {
+                            ?>
                             pager: {
                                 container: "paging_container",// the container where the pager controls will be placed into
                                 template: "{common.first()} {common.prev()} {common.pages()} {common.next()} {common.last()}",
                                 size: 10, // the number of records per a page
                                 group: 5   // the number of pages in the pager
                             },
-                            <?php } ?>
+                            <?php
+                        } ?>
                             <?php echo $observation_data[$section['section']]; ?>
                             /*
                              data:[{ obs_key:'Cigarettes', description:'Smoking (# per day)', obs_value:'8', dm_alert_level:'default', obs_unit:'', obs_message_id:'CF_RPT_50', comment_date:'09-04-15 06:43:56 PM', }, { obs_key:'Weight', description:'Weight', obs_value:'80', dm_alert_level:'default', obs_unit:'', obs_message_id:'CF_RPT_40', comment_date:'09-04-15 06:43:44 PM', }, { obs_key:'Weight', description:'Weight', obs_value:'80', dm_alert_level:'default', obs_unit:'', obs_message_id:'CF_RPT_40', comment_date:'09-02-15 09:11:14 PM', }, ],

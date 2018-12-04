@@ -8,7 +8,6 @@
 
 namespace App\Services;
 
-
 use App\Contracts\HtmlToPdfService;
 use Barryvdh\Snappy\PdfWrapper;
 

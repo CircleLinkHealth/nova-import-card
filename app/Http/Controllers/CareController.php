@@ -13,32 +13,32 @@ class CareController extends Controller
     private $userService;
     private $careplanService;
 
-    public function __construct(UserService $userService, CareplanService $careplanService) {
+    public function __construct(UserService $userService, CareplanService $careplanService)
+    {
         $this->userService = $userService;
         $this->careplanService = $careplanService;
     }
 
-    function validate_user_id($enrollUserId, $callbackFn) {
+    public function validate_user_id($enrollUserId, $callbackFn)
+    {
         if (!$enrollUserId) {
             return redirect('/');
-        }
-        else {
+        } else {
             $patient = User::find($enrollUserId);
             if (!$patient) {
                 return redirect()->route('patient.careplan.print', ['patientId' => $enrollUserId]);
-            }
-            else {
+            } else {
                 if (!$patient->isCCMEligible()) {
                     return redirect()->route('patient.careplan.print', ['patientId' => $enrollUserId]);
-                }
-                else {
+                } else {
                     return call_user_func($callbackFn, $enrollUserId);
                 }
             }
         }
     }
 
-    function render($enrollUserId) {
+    public function render($enrollUserId)
+    {
         return view('care.index', [
             'enrollUserId' => $enrollUserId
         ]);
@@ -49,7 +49,8 @@ class CareController extends Controller
         return $this->validate_user_id($enrollUserId, [$this, 'render']);
     }
 
-    public function store($enrollUserId, Request $request) {
+    public function store($enrollUserId, Request $request)
+    {
         $status = $request->input('status');
         
         return $this->validate_user_id($enrollUserId, function () use ($enrollUserId, $status) {

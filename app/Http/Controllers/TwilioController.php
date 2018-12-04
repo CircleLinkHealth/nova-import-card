@@ -15,7 +15,6 @@ use Twilio\Rest\Client;
 
 class TwilioController extends Controller
 {
-
     private $capability;
     private $token;
 
@@ -40,7 +39,6 @@ class TwilioController extends Controller
      */
     public function placeCall(Request $request)
     {
-
         $validation = \Validator::make($request->all(), [
             'To'   => 'required|phone:AUTO,US',
             'From' => 'nullable|phone:AUTO,US', //could be the practice outgoing phone number (in case of enrollment)
@@ -77,7 +75,6 @@ class TwilioController extends Controller
 
     public function sendTestSMS()
     {
-
         $client = new Client($_ENV['TWILIO_SID'], $_ENV['TWILIO_TOKEN']);
 
         $smsQueue = Enrollee::toSMS()->get();

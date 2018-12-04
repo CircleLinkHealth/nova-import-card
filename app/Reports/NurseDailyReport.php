@@ -8,7 +8,6 @@
 
 namespace App\Reports;
 
-
 use App\Activity;
 use App\PageTimer;
 use App\User;
@@ -29,13 +28,12 @@ class NurseDailyReport
         $i = 0;
 
         foreach ($nurse_users as $nurse) {
-
             $mostRecentPageTimer = PageTimer::select('end_time')
                                             ->where('provider_id', $nurse->id)
                                             ->orderBy('end_time', 'desc')
                                             ->first();
 
-            if ( ! optional($mostRecentPageTimer)->end_time) {
+            if (! optional($mostRecentPageTimer)->end_time) {
                 continue;
             }
 

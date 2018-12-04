@@ -83,7 +83,8 @@ class PhoneNumber extends \App\BaseModel
      *
      * @return string
      */
-    public function getNumberWithDashesAttribute() {
+    public function getNumberWithDashesAttribute()
+    {
         return (new StringManipulation())->formatPhoneNumber($this->number);
     }
 
@@ -93,7 +94,8 @@ class PhoneNumber extends \App\BaseModel
      * @param $value
      * @return void
      */
-    public function setNumberAttribute($value) {
+    public function setNumberAttribute($value)
+    {
         $this->attributes['number'] = (new StringManipulation())->formatPhoneNumberE164($value);
     }
 }

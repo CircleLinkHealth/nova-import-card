@@ -22,7 +22,9 @@
 <input type="hidden" name="activityName" id="activityName" value="@yield('activity')">
 
 <?php
-use App\User;use Carbon\Carbon;
+use App\User;
+use Carbon\Carbon;
+
 if (!isset($activity)) {
     $activity = 'Undefined';
 }

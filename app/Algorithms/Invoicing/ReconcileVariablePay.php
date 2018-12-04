@@ -9,7 +9,6 @@ use Carbon\Carbon;
 
 class ReconcileVariablePay
 {
-
     private $nurses;
     private $start;
     private $end;
@@ -18,7 +17,6 @@ class ReconcileVariablePay
 
     public function __construct()
     {
-
         $this->nurses = [
 
             Nurse::$nurseMap['Patricia'],
@@ -32,7 +30,6 @@ class ReconcileVariablePay
 
     public function adjust()
     {
-
         $data = [];
 
         foreach ($this->nurses as $nurse) {

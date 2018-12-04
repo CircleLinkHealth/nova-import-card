@@ -21,7 +21,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CpmInstructable extends \App\BaseModel
 {
-
     protected $table = 'instructables';
 
     public function cpmInstruction()

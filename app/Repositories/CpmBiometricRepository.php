@@ -8,7 +8,6 @@
 
 namespace App\Repositories;
 
-
 use App\Models\CPM\CpmBiometric;
 
 class CpmBiometricRepository
@@ -18,7 +17,8 @@ class CpmBiometricRepository
         return app(CpmBiometric::class);
     }
 
-    public function biometrics() {
+    public function biometrics()
+    {
         return $this->model()->get();
     }
 }

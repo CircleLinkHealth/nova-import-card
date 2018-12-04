@@ -10,10 +10,8 @@ use Illuminate\Http\Request;
 
 class EnrollmentCenterController extends Controller
 {
-
     public function dashboard()
     {
-
         $careAmbassador = auth()->user()->careAmbassador;
 
         if (!$careAmbassador) {
@@ -82,7 +80,6 @@ class EnrollmentCenterController extends Controller
 
     public function consented(Request $request)
     {
-
         $careAmbassador = auth()->user()->careAmbassador;
 
         $enrollee = Enrollee::find($request->input('enrollee_id'));
@@ -150,7 +147,6 @@ class EnrollmentCenterController extends Controller
 
     public function unableToContact(Request $request)
     {
-
         $enrollee = Enrollee::find($request->input('enrollee_id'));
         $careAmbassador = auth()->user()->careAmbassador;
 
@@ -191,7 +187,6 @@ class EnrollmentCenterController extends Controller
      */
     public function rejected(Request $request)
     {
-
         $enrollee = Enrollee::find($request->input('enrollee_id'));
         $careAmbassador = auth()->user()->careAmbassador;
 
@@ -203,8 +198,7 @@ class EnrollmentCenterController extends Controller
 
         if ($status === 'rejected') {
             $report->no_rejected = $report->no_rejected + 1;
-        }
-        else {
+        } else {
             $report->no_soft_rejected = $report->no_soft_rejected + 1;
         }
 
@@ -237,7 +231,6 @@ class EnrollmentCenterController extends Controller
 
     public function training()
     {
-
         return view('enrollment-ui.training');
     }
 }

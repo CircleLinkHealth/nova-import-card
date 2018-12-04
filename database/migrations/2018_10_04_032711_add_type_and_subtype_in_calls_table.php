@@ -33,7 +33,6 @@ class AddTypeAndSubtypeInCallsTable extends Migration
         Schema::table('calls', function (Blueprint $table) {
             $table->dropColumn('type');
             $table->dropColumn('sub_type');
-
         });
     }
 }

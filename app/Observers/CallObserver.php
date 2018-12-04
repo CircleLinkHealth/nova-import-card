@@ -8,7 +8,6 @@
 
 namespace App\Observers;
 
-
 use App\Call;
 use App\PatientMonthlySummary;
 use App\Services\ActivityService;
@@ -30,7 +29,6 @@ class CallObserver
     public function saved(Call $call)
     {
         if ($call->isDirty('status')) {
-
             $patient = User::ofType('participant')
                            ->where('id', $call->inbound_cpm_id)
                            ->orWhere('id', $call->outbound_cpm_id)
@@ -66,7 +64,5 @@ class CallObserver
                                                 'no_of_successful_calls' => $no_of_successful_calls,
                                             ]);
         }
-
     }
-
 }

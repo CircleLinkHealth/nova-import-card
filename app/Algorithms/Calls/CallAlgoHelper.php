@@ -15,10 +15,8 @@ use Carbon\Carbon;
 
 trait CallAlgoHelper
 {
-
     public function getNextWindow()
     {
-
         if ($this->attemptNote != 'Call This Weekend') {
             //this will give us the first available call window from the date the logic offsets, per the patient's preferred times.
             $next_predicted_contact_window = (new PatientContactWindow)->getEarliestWindowForPatientFromDate(
@@ -179,7 +177,6 @@ trait CallAlgoHelper
     //supplies $this->matchArray()
     public function checkForIntersectingDays($nurse)
     {
-
         $patientWindow['date'] = Carbon::parse($this->prediction['date'])->toDateString();
         $patientWindow['window_start'] = $this->prediction['window_start'];
         $patientWindow['window_end'] = $this->prediction['window_end'];
@@ -205,8 +202,7 @@ trait CallAlgoHelper
             $nurseWindow = $nurse->windows->first(function (
                 $value,
                 $key
-            ) use
-                ($dayString) {
+            ) use ($dayString) {
 
                 //check whether any days fall in this window
                 return $value->date->toDateString() == $dayString;
@@ -227,9 +223,7 @@ trait CallAlgoHelper
             $patientWindow = $patientUpcomingWindows->filter(function (
                 $value,
                 $key
-            ) use
-                ($day) {
-
+            ) use ($day) {
                 return Carbon::parse($value['window_start'])->toDateString() == $day->toDateString();
             })->first();
 
@@ -249,7 +243,6 @@ trait CallAlgoHelper
         $patientWindow,
         $nurseWindow
     ) {
-
         $patientStartCarbon = Carbon::parse($patientWindow['window_start']);
         $patientEndCarbon = Carbon::parse($patientWindow['window_end']);
 

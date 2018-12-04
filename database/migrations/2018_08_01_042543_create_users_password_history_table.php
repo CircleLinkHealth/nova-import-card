@@ -33,7 +33,6 @@ class CreateUsersPasswordHistoryTable extends Migration
                 $model->save();
             }
         });
-
     }
 
     /**

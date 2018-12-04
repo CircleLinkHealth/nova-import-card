@@ -12,7 +12,6 @@ use App\User;
  */
 class CcdInsurancePolicyService
 {
-
     public function checkPendingInsuranceApproval(User $patient)
     {
         $hasPolicies = $patient->ccdInsurancePolicies()->get();

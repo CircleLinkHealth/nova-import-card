@@ -50,8 +50,7 @@ abstract class BaseHistoricPredictor
             ->map(function (
                 $item,
                 $key
-            ) use
-                (
+            ) use (
                 $label
             ) {
                 $collection = new Collection($item);
@@ -97,18 +96,16 @@ abstract class BaseHistoricPredictor
         $collection = $results->map(function (
             $item,
             $key
-        ) use
-            (
+        ) use (
             $weightMultiplier,
             $label
         ) {
-                return [
+            return [
                     $label        => $item->{$label},
                     'total_count' => $item->total_count * $weightMultiplier,
                 ];
         })
-            ->reject(function ($item) use
-                (
+            ->reject(function ($item) use (
                 $label
             ) {
                 return !$item[$label];
@@ -141,8 +138,7 @@ abstract class BaseHistoricPredictor
         $collection = $results->map(function (
             $item,
             $weightMultiplier
-        ) use
-            (
+        ) use (
             $label
         ) {
             return [
@@ -150,8 +146,7 @@ abstract class BaseHistoricPredictor
                 'total_count' => $item->total_count * $weightMultiplier,
             ];
         })
-            ->reject(function ($item) use
-                (
+            ->reject(function ($item) use (
                 $label
             ) {
                 return !$item[$label];
@@ -182,8 +177,7 @@ abstract class BaseHistoricPredictor
             ->groupBy("$label")
             ->get();
 
-        $collection = $results->map(function ($item) use
-            (
+        $collection = $results->map(function ($item) use (
             $label,
             $weightMultiplier
         ) {
@@ -192,8 +186,7 @@ abstract class BaseHistoricPredictor
                 'total_count' => $item->total_count * $weightMultiplier,
             ];
         })
-            ->reject(function ($item) use
-                (
+            ->reject(function ($item) use (
                 $label
             ) {
                 return !$item[$label];

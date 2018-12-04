@@ -67,8 +67,10 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
             $patient->put('cell_phone', $patient['phone_2']);
             $patient->put('home_phone', $patient['phone_3']);
 
-            $patient->put('referring_provider_name',
-                $patient['provider_last_name'] . ' ' . $patient['provider_first_name']);
+            $patient->put(
+                'referring_provider_name',
+                $patient['provider_last_name'] . ' ' . $patient['provider_first_name']
+            );
 
             foreach ($problems as $problem) {
                 if (str_contains($problem->code, ['-'])) {
@@ -81,7 +83,7 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
                     $problemCode = $problem->code;
                 }
 
-                if ( ! $problemCode && ! $problem->description) {
+                if (! $problemCode && ! $problem->description) {
                     continue;
                 }
 
@@ -105,7 +107,7 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
                                                ->sortBy('order')
                                                ->pluck('name')
                                                ->map(function ($ins) {
-                                                   if ( ! $ins) {
+                                                   if (! $ins) {
                                                        return null;
                                                    }
 
@@ -120,8 +122,18 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
         })->map(function ($p) use ($phxPractice) {
             $job = $this->createEligibilityJob($p, $phxPractice);
 
-            $list = (new WelcomeCallListGenerator(collect([0 => $p]), false, true, true, true,
-                $phxPractice, null, null, $this->batch, $job));
+            $list = (new WelcomeCallListGenerator(
+                collect([0 => $p]),
+                false,
+                true,
+                true,
+                true,
+                $phxPractice,
+                null,
+                null,
+                $this->batch,
+                $job
+            ));
 
             if ($list->patientList->count() > 0) {
                 $attr = [
@@ -138,8 +150,6 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
             return PhoenixHeartName::where('patient_id', '=', $p['patient_id'])
                                    ->update($attr);
         });
-
-
     }
 
     /**

@@ -18,7 +18,6 @@ class RemoveRnCanApproveCareplans extends Migration
                 $table->dropColumn('rn_can_approve_careplans');
             });
         }
-
     }
 
     /**
@@ -28,7 +27,7 @@ class RemoveRnCanApproveCareplans extends Migration
      */
     public function down()
     {
-        if ( ! Schema::hasColumn('cpm_settings', 'rn_can_approve_careplans')) {
+        if (! Schema::hasColumn('cpm_settings', 'rn_can_approve_careplans')) {
             Schema::table('cpm_settings', function (Blueprint $table) {
                 $table->boolean('rn_can_approve_careplans')->default(0);
             });

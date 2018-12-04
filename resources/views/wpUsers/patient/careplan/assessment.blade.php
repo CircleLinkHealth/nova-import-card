@@ -2,7 +2,8 @@
 
 <?php
     use \Carbon\Carbon;
-    $today = \Carbon\Carbon::now()->toFormattedDateString();
+
+$today = \Carbon\Carbon::now()->toFormattedDateString();
 ?>
 
 @section('title', 'G0506 Enrollment Assessment')
@@ -90,12 +91,12 @@
     </div>
     @push('styles')
         <script type="application/json" id="questions-script">
-            <?php 
+            <?php
                 include app_path() . '/../public/data/ccm-eligibility-questions.json';
             ?>
         </script>
         <script type="application/json" id="assessment-script">
-            <?php 
+            <?php
                 echo json_encode($assessment);
             ?>
         </script>

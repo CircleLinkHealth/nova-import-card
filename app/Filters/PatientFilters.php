@@ -125,29 +125,41 @@ class PatientFilters extends QueryFilters
     {
         $patientTable = (new Patient())->getTable();
 
-        return $this->builder->select('users.*')->with('patientInfo')->join($patientTable, 'users.id', '=',
-            "$patientTable.user_id")->orderBy("$patientTable.ccm_status", $type)->groupBy('users.id');
+        return $this->builder->select('users.*')->with('patientInfo')->join(
+            $patientTable,
+            'users.id',
+            '=',
+            "$patientTable.user_id"
+        )->orderBy("$patientTable.ccm_status", $type)->groupBy('users.id');
     }
 
     public function sort_careplanStatus($type = null)
     {
         $careplanTable = (new CarePlan())->getTable();
 
-        return $this->builder->select('users.*')->with('carePlan')->join($careplanTable, 'users.id', '=',
-            "$careplanTable.user_id")->orderBy("$careplanTable.status", $type)->groupBy('users.id');
+        return $this->builder->select('users.*')->with('carePlan')->join(
+            $careplanTable,
+            'users.id',
+            '=',
+            "$careplanTable.user_id"
+        )->orderBy("$careplanTable.status", $type)->groupBy('users.id');
     }
 
     public function sort_dob($type = null)
     {
         $patientTable = (new Patient())->getTable();
 
-        return $this->builder->select('users.*')->with('patientInfo')->join($patientTable, 'users.id', '=',
-            "$patientTable.user_id")->orderBy("$patientTable.birth_date", $type)->groupBy('users.id');
+        return $this->builder->select('users.*')->with('patientInfo')->join(
+            $patientTable,
+            'users.id',
+            '=',
+            "$patientTable.user_id"
+        )->orderBy("$patientTable.birth_date", $type)->groupBy('users.id');
     }
 
     public function sort_age($type = null)
     {
-        return $this->sort_dob(( ! $type || $type == 'asc')
+        return $this->sort_dob((! $type || $type == 'asc')
             ? 'desc'
             : 'asc');
     }
@@ -218,10 +230,11 @@ class PatientFilters extends QueryFilters
                       $subQuery->where('ccm_status', Patient::UNREACHABLE)
                                ->where('date_unreachable', 'LIKE', "%$date%");
                   })
-                  ->orWhere(function ($subQuery) use ($date) {
-                      $subQuery->where('ccm_status', Patient::WITHDRAWN)
+                  ->orWhere(
+                      function ($subQuery) use ($date) {
+                          $subQuery->where('ccm_status', Patient::WITHDRAWN)
                                ->where('date_withdrawn', 'LIKE', "%$date%");
-                  }
+                      }
                   );
         });
     }
@@ -235,7 +248,6 @@ class PatientFilters extends QueryFilters
                              ->orderBy("$patientTable.date_withdrawn", $type)
                              ->orderBy("$patientTable.date_unreachable", $type)
                              ->groupBy('users.id');
-
     }
 
     public function globalFilters(): array

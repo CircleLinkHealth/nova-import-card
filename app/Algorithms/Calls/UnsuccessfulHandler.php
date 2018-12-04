@@ -31,7 +31,6 @@ use Carbon\Carbon;
 
 class UnsuccessfulHandler implements CallHandler
 {
-
     use CallAlgoHelper;
 
     private $week;
@@ -114,7 +113,6 @@ class UnsuccessfulHandler implements CallHandler
         $ccmTime,
         $week
     ) {
-
         $successfulCallsThisMonth = Call::numberOfSuccessfulCallsForPatientForMonth(
             $this->patient->user,
             Carbon::now()->toDateTimeString()
@@ -260,7 +258,6 @@ class UnsuccessfulHandler implements CallHandler
 
     public function createSchedulerInfoString()
     {
-
         $status                      = '<span style="color: red">unsuccessfully</span>';
         $this->prediction['complex'] = $this->isComplex;
 

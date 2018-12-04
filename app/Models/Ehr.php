@@ -34,8 +34,8 @@ class Ehr extends \App\BaseModel
         return $this->hasMany(Practice::class);
     }
 
-    public function targetPatient(){
-
+    public function targetPatient()
+    {
         return $this->hasMany(TargetPatient::class);
     }
 }
