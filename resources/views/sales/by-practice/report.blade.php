@@ -3,7 +3,7 @@
 <?php
 
 $enrollmentSection = \App\Reports\Sales\Practice\Sections\EnrollmentSummary::class;
-   $rangeSection     = \App\Reports\Sales\Practice\Sections\RangeSummary::class;
+$rangeSection  = \App\Reports\Sales\Practice\Sections\RangeSummary::class;
 $financialSection  = \App\Reports\Sales\Practice\Sections\FinancialSummary::class;
 $practiceSection   = \App\Reports\Sales\Practice\Sections\PracticeDemographics::class;
 
