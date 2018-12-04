@@ -1,12 +1,36 @@
 <?php
 
+//PDF Binary
+$debianPdfLib = '/usr/local/bin/wkhtmltopdf';
+$localPdfLib  = base_path('bin/wkhtmltopdf/wkhtmltopdf-amd64');
+
+if (file_exists($debianPdfLib)) {
+    $pdfBinary = $debianPdfLib;
+} elseif (file_exists($localPdfLib)) {
+    $pdfBinary = $localPdfLib;
+} else {
+    throw new \Exception('wkhtmltopdf binary not found.', 500);
+}
+
+//Img Binary
+$debianImgLib   = '/usr/local/bin/wkhtmltoimage';
+$composerImgLib = base_path('bin/wkhtmltoimage/wkhtmltoimage-amd64');
+
+if (file_exists($debianImgLib)) {
+    $imgBinary = $debianImgLib;
+} elseif (file_exists($composerImgLib)) {
+    $imgBinary = $composerImgLib;
+} else {
+    throw new \Exception('wkhtmltoimage binary not found.', 500);
+}
+
 return [
-    'pdf' => [
+    'pdf'   => [
         'enabled' => true,
-        'binary'  => base_path('vendor/h4cc/wkhtmltopdf-amd64/bin/wkhtmltopdf-amd64'),
+        'binary'  => $pdfBinary,
         'timeout' => false,
         'options' => [
-            'collate' => true,
+            'collate'                => true,
             'disable-external-links' => true,
             'disable-internal-links' => true,
             'enable-smart-shrinking' => true,
@@ -23,7 +47,7 @@ return [
     ],
     'image' => [
         'enabled' => true,
-        'binary'  => base_path('vendor/h4cc/wkhtmltoimage-amd64/bin/wkhtmltoimage'),
+        'binary'  => $imgBinary,
         'timeout' => false,
         'options' => [],
         'env'     => [],

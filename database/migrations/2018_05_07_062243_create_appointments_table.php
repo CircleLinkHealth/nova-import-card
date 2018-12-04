@@ -22,9 +22,9 @@ class CreateAppointmentsTable extends Migration {
 			$table->time('time');
 			$table->text('status', 65535);
 			$table->text('comment', 65535);
-			$table->boolean('was_completed');
-			$table->timestamps();
-			$table->text('type', 65535);
+            $table->text('type', 65535);
+            $table->boolean('was_completed');
+            $table->timestamps();
 		});
 	}
 
@@ -36,7 +36,7 @@ class CreateAppointmentsTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('appointments');
+		Schema::dropIfExists('appointments');
 	}
 
 }

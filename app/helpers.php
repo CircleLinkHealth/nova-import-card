@@ -9,6 +9,8 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\QueryException;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Collection;
 
 if ( ! function_exists('parseIds')) {
@@ -619,13 +621,13 @@ if ( ! function_exists('defaultCarePlanTemplate')) {
     /**
      * Returns CircleLink's default CarePlanTemplate
      *
-     * @return CarePlanTemplate
+     * @return CarePlanTemplate|null
      */
-    function getDefaultCarePlanTemplate(): CarePlanTemplate
+    function getDefaultCarePlanTemplate(): ?CarePlanTemplate
     {
         $id = getAppConfig('default_care_plan_template_id');
 
-        return CarePlanTemplate::find($id);
+        return CarePlanTemplate::findOrFail($id);
     }
 }
 
@@ -1130,5 +1132,23 @@ if ( ! function_exists('isAllowedToSee2FA')) {
     function isAllowedToSee2FA(User $user = null)
     {
         return ! ! config('auth.two_fa_enabled') && optional($user ?? auth()->user())->isAdmin();
+    }
+}
+
+if ( ! function_exists('tryDropForeignKey')) {
+    function tryDropForeignKey(Blueprint $table, $key)
+    {
+        try {
+            $table->dropForeign($key);
+        } catch (QueryException $e) {
+            $errorCode = $e->errorInfo[1];
+            if ($errorCode == 1091) {
+                Log::debug("Key `$key` does not exist. Nothing to delete." . __FILE__);
+            }
+
+            return false;
+        }
+
+        return true;
     }
 }

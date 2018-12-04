@@ -235,6 +235,7 @@ return [
         ManageInternalUser::class,
         LynX39\LaraPdfMerger\PdfMergerServiceProvider::class,
         AuthyServiceProvider::class,
+        PragmaRX\Health\ServiceProvider::class,
     ],
 
     /*

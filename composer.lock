@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e9e1db59badd1fec7792b6073605e3fb",
+    "content-hash": "a410435d2ffb205f66d66e0d0c269a0d",
     "packages": [
         {
             "name": "amnuts/opcache-gui",
@@ -262,16 +262,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.80.0",
+            "version": "3.80.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "1783f1f861c94eef24d968eba3e5becf9b4a339b"
+                "reference": "16819253927a18f96c9bbd85cb1b47419e5bc371"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/1783f1f861c94eef24d968eba3e5becf9b4a339b",
-                "reference": "1783f1f861c94eef24d968eba3e5becf9b4a339b",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/16819253927a18f96c9bbd85cb1b47419e5bc371",
+                "reference": "16819253927a18f96c9bbd85cb1b47419e5bc371",
                 "shasum": ""
             },
             "require": {
@@ -341,7 +341,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2018-11-29T18:42:56+00:00"
+            "time": "2018-11-30T00:01:18+00:00"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -474,16 +474,16 @@
         },
         {
             "name": "blackfire/php-sdk",
-            "version": "v1.17.2",
+            "version": "v1.17.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/blackfireio/php-sdk.git",
-                "reference": "78fee1aa2d30655059bc528af23e4b01367cc95f"
+                "reference": "e9b945d8566e7eeb71d6d371e6d2bd5960e8e31d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/blackfireio/php-sdk/zipball/78fee1aa2d30655059bc528af23e4b01367cc95f",
-                "reference": "78fee1aa2d30655059bc528af23e4b01367cc95f",
+                "url": "https://api.github.com/repos/blackfireio/php-sdk/zipball/e9b945d8566e7eeb71d6d371e6d2bd5960e8e31d",
+                "reference": "e9b945d8566e7eeb71d6d371e6d2bd5960e8e31d",
                 "shasum": ""
             },
             "require": {
@@ -525,7 +525,7 @@
                 "uprofiler",
                 "xhprof"
             ],
-            "time": "2018-10-22T13:57:29+00:00"
+            "time": "2018-11-29T15:38:47+00:00"
         },
         {
             "name": "cakephp/chronos",
@@ -1286,16 +1286,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.74",
+            "version": "v0.76",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "1582b1a96fdbe7fdee910477bb6e86fd3110b5ee"
+                "reference": "50c4a818ad269839ad2c20f03828cd6f346ec887"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/1582b1a96fdbe7fdee910477bb6e86fd3110b5ee",
-                "reference": "1582b1a96fdbe7fdee910477bb6e86fd3110b5ee",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/50c4a818ad269839ad2c20f03828cd6f346ec887",
+                "reference": "50c4a818ad269839ad2c20f03828cd6f346ec887",
                 "shasum": ""
             },
             "require": {
@@ -1319,7 +1319,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2018-10-29T00:22:47+00:00"
+            "time": "2018-12-01T00:23:06+00:00"
         },
         {
             "name": "google/auth",
@@ -1486,32 +1486,33 @@
         },
         {
             "name": "guzzlehttp/psr7",
-            "version": "1.4.2",
+            "version": "1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
-                "reference": "f5b8a8512e2b58b0071a7280e39f14f72e05d87c"
+                "reference": "53662d6688033a5eccde987bdd5a4a98ebe2d952"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/psr7/zipball/f5b8a8512e2b58b0071a7280e39f14f72e05d87c",
-                "reference": "f5b8a8512e2b58b0071a7280e39f14f72e05d87c",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/53662d6688033a5eccde987bdd5a4a98ebe2d952",
+                "reference": "53662d6688033a5eccde987bdd5a4a98ebe2d952",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.4.0",
-                "psr/http-message": "~1.0"
+                "psr/http-message": "~1.0",
+                "ralouphie/getallheaders": "^2.0.5"
             },
             "provide": {
                 "psr/http-message-implementation": "1.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.0"
+                "phpunit/phpunit": "~4.8.36 || ^5.7.27 || ^6.5.8"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.4-dev"
+                    "dev-master": "1.5-dev"
                 }
             },
             "autoload": {
@@ -1541,98 +1542,14 @@
             "keywords": [
                 "http",
                 "message",
+                "psr-7",
                 "request",
                 "response",
                 "stream",
                 "uri",
                 "url"
             ],
-            "time": "2017-03-20T17:10:46+00:00"
-        },
-        {
-            "name": "h4cc/wkhtmltoimage-amd64",
-            "version": "0.12.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/h4cc/wkhtmltoimage-amd64.git",
-                "reference": "c4e33f635207af89a704205b8902fb5715ca88be"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/h4cc/wkhtmltoimage-amd64/zipball/c4e33f635207af89a704205b8902fb5715ca88be",
-                "reference": "c4e33f635207af89a704205b8902fb5715ca88be",
-                "shasum": ""
-            },
-            "bin": [
-                "bin/wkhtmltoimage-amd64"
-            ],
-            "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "LGPL Version 3"
-            ],
-            "authors": [
-                {
-                    "name": "Julius Beckmann",
-                    "email": "github@h4cc.de"
-                }
-            ],
-            "description": "Convert html to image using webkit (qtwebkit). Static linked linux binary for amd64 systems.",
-            "homepage": "http://wkhtmltopdf.org/",
-            "keywords": [
-                "binary",
-                "convert",
-                "image",
-                "snapshot",
-                "thumbnail",
-                "wkhtmltoimage"
-            ],
-            "time": "2018-01-15T07:23:40+00:00"
-        },
-        {
-            "name": "h4cc/wkhtmltopdf-amd64",
-            "version": "0.12.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/h4cc/wkhtmltopdf-amd64.git",
-                "reference": "4e2ab2d032a5d7fbe2a741de8b10b8989523c95b"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/h4cc/wkhtmltopdf-amd64/zipball/4e2ab2d032a5d7fbe2a741de8b10b8989523c95b",
-                "reference": "4e2ab2d032a5d7fbe2a741de8b10b8989523c95b",
-                "shasum": ""
-            },
-            "bin": [
-                "bin/wkhtmltopdf-amd64"
-            ],
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "h4cc\\WKHTMLToPDF\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "LGPL Version 3"
-            ],
-            "authors": [
-                {
-                    "name": "Julius Beckmann",
-                    "email": "github@h4cc.de"
-                }
-            ],
-            "description": "Convert html to pdf using webkit (qtwebkit). Static linked linux binary for amd64 systems.",
-            "homepage": "http://wkhtmltopdf.org/",
-            "keywords": [
-                "binary",
-                "convert",
-                "pdf",
-                "snapshot",
-                "thumbnail",
-                "wkhtmltopdf"
-            ],
-            "time": "2018-01-15T06:57:33+00:00"
+            "time": "2018-12-03T05:07:51+00:00"
         },
         {
             "name": "intervention/image",
@@ -4248,6 +4165,193 @@
             "time": "2018-11-04T05:45:48+00:00"
         },
         {
+            "name": "phpunit/php-timer",
+            "version": "1.0.9",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sebastianbergmann/php-timer.git",
+                "reference": "3dcf38ca72b158baf0bc245e9184d3fdffa9c46f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-timer/zipball/3dcf38ca72b158baf0bc245e9184d3fdffa9c46f",
+                "reference": "3dcf38ca72b158baf0bc245e9184d3fdffa9c46f",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.3.3 || ^7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Sebastian Bergmann",
+                    "email": "sb@sebastian-bergmann.de",
+                    "role": "lead"
+                }
+            ],
+            "description": "Utility class for timing",
+            "homepage": "https://github.com/sebastianbergmann/php-timer/",
+            "keywords": [
+                "timer"
+            ],
+            "time": "2017-02-26T11:10:40+00:00"
+        },
+        {
+            "name": "pragmarx/health",
+            "version": "v0.9.16",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/antonioribeiro/health.git",
+                "reference": "ceb2d1d02da8dea6dd91fa0e595735b2e430230d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/antonioribeiro/health/zipball/ceb2d1d02da8dea6dd91fa0e595735b2e430230d",
+                "reference": "ceb2d1d02da8dea6dd91fa0e595735b2e430230d",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": "5.5.*|5.6.*|5.7.*",
+                "php": ">=7.0",
+                "phpunit/php-timer": "^1.0|^2.0",
+                "pragmarx/yaml": "^0.1.7"
+            },
+            "require-dev": {
+                "docusign/esign-client": "^2.0",
+                "guzzlehttp/guzzle": "~6.0",
+                "laravel/laravel": "^5.5",
+                "nesbot/carbon": ">=1.34",
+                "orchestra/testbench": "~3.5",
+                "phpunit/phpunit": "~6.5|~7.3",
+                "predis/predis": "^1.0",
+                "sensiolabs/security-checker": "^4.1"
+            },
+            "suggest": {
+                "docusign/esign-client": "^2.0",
+                "guzzlehttp/guzzle": "~6.0",
+                "league/flysystem-aws-s3-v3": "^1.0",
+                "predis/predis": "^1.0",
+                "sensiolabs/security-checker": "^4.1"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "PragmaRX\\Health\\ServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/Support/Throwable.php",
+                    "src/Support/helpers.php"
+                ],
+                "psr-4": {
+                    "PragmaRX\\Health\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Antonio Carlos Ribeiro",
+                    "email": "acr@antoniocarlosribeiro.com",
+                    "role": "Creator & Designer"
+                }
+            ],
+            "description": "Laravel Server & App Health Monitor and Notifier",
+            "keywords": [
+                "app",
+                "health",
+                "laravel",
+                "monitor",
+                "notifications",
+                "panel",
+                "pragmarx",
+                "server"
+            ],
+            "time": "2018-10-08T16:42:42+00:00"
+        },
+        {
+            "name": "pragmarx/yaml",
+            "version": "v0.1.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/antonioribeiro/yaml.git",
+                "reference": "0c704b622ce276904eda7f09dd43f756ddc89910"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/antonioribeiro/yaml/zipball/0c704b622ce276904eda7f09dd43f756ddc89910",
+                "reference": "0c704b622ce276904eda7f09dd43f756ddc89910",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": ">=5.5.33",
+                "php": "^7.0",
+                "symfony/yaml": "^3.4|^4.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "3.5|^3.6",
+                "phpunit/phpunit": "^6.4|^4.0"
+            },
+            "type": "library",
+            "extra": {
+                "component": "package",
+                "laravel": {
+                    "providers": [
+                        "PragmaRX\\Yaml\\Package\\ServiceProvider"
+                    ],
+                    "aliases": {
+                        "Yaml": "PragmaRX\\Yaml\\Package\\Facade"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "PragmaRX\\Yaml\\Package\\": "src/package",
+                    "PragmaRX\\Yaml\\Tests\\": "tests/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Antonio Carlos Ribeiro",
+                    "email": "acr@antoniocarlosribeiro.com",
+                    "role": "Creator & Designer"
+                }
+            ],
+            "description": "Load your Laravel config files using yaml",
+            "keywords": [
+                "config",
+                "laravel",
+                "yaml"
+            ],
+            "time": "2018-09-22T17:12:12+00:00"
+        },
+        {
             "name": "predis/predis",
             "version": "v1.1.1",
             "source": {
@@ -4779,6 +4883,46 @@
                 "shell"
             ],
             "time": "2018-10-13T15:16:03+00:00"
+        },
+        {
+            "name": "ralouphie/getallheaders",
+            "version": "2.0.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ralouphie/getallheaders.git",
+                "reference": "5601c8a83fbba7ef674a7369456d12f1e0d0eafa"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ralouphie/getallheaders/zipball/5601c8a83fbba7ef674a7369456d12f1e0d0eafa",
+                "reference": "5601c8a83fbba7ef674a7369456d12f1e0d0eafa",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~3.7.0",
+                "satooshi/php-coveralls": ">=1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/getallheaders.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ralph Khattar",
+                    "email": "ralph.khattar@gmail.com"
+                }
+            ],
+            "description": "A polyfill for getallheaders.",
+            "time": "2016-02-11T07:05:27+00:00"
         },
         {
             "name": "ramsey/uuid",
@@ -5609,6 +5753,74 @@
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
             "time": "2018-11-26T12:48:07+00:00"
+        },
+        {
+            "name": "symfony/contracts",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/contracts.git",
+                "reference": "3edf0ab943d1985a356721952cba36ff31bd6e5f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/contracts/zipball/3edf0ab943d1985a356721952cba36ff31bd6e5f",
+                "reference": "3edf0ab943d1985a356721952cba36ff31bd6e5f",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1.3"
+            },
+            "require-dev": {
+                "psr/cache": "^1.0",
+                "psr/container": "^1.0"
+            },
+            "suggest": {
+                "psr/cache": "When using the Cache contracts",
+                "psr/container": "When using the Service contracts",
+                "symfony/cache-contracts-implementation": "",
+                "symfony/service-contracts-implementation": "",
+                "symfony/translation-contracts-implementation": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Contracts\\": ""
+                },
+                "exclude-from-classmap": [
+                    "**/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "A set of abstractions extracted out of the Symfony components",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "abstractions",
+                "contracts",
+                "decoupling",
+                "interfaces",
+                "interoperability",
+                "standards"
+            ],
+            "time": "2018-11-24T09:35:08+00:00"
         },
         {
             "name": "symfony/css-selector",
@@ -6447,26 +6659,30 @@
         },
         {
             "name": "symfony/translation",
-            "version": "v4.1.8",
+            "version": "v4.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/translation.git",
-                "reference": "615e3cf75d00a7d6788316d9631957991ba9c26a"
+                "reference": "ff9a878c9b8f8bcd4d9138e2d32f508c942773d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/translation/zipball/615e3cf75d00a7d6788316d9631957991ba9c26a",
-                "reference": "615e3cf75d00a7d6788316d9631957991ba9c26a",
+                "url": "https://api.github.com/repos/symfony/translation/zipball/ff9a878c9b8f8bcd4d9138e2d32f508c942773d9",
+                "reference": "ff9a878c9b8f8bcd4d9138e2d32f508c942773d9",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.1.3",
+                "symfony/contracts": "^1.0",
                 "symfony/polyfill-mbstring": "~1.0"
             },
             "conflict": {
                 "symfony/config": "<3.4",
                 "symfony/dependency-injection": "<3.4",
                 "symfony/yaml": "<3.4"
+            },
+            "provide": {
+                "symfony/translation-contracts-implementation": "1.0"
             },
             "require-dev": {
                 "psr/log": "~1.0",
@@ -6485,7 +6701,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "4.1-dev"
+                    "dev-master": "4.2-dev"
                 }
             },
             "autoload": {
@@ -6512,7 +6728,7 @@
             ],
             "description": "Symfony Translation Component",
             "homepage": "https://symfony.com",
-            "time": "2018-11-26T10:26:29+00:00"
+            "time": "2018-11-27T07:20:32+00:00"
         },
         {
             "name": "symfony/var-dumper",
@@ -6582,6 +6798,65 @@
                 "dump"
             ],
             "time": "2018-11-20T16:10:26+00:00"
+        },
+        {
+            "name": "symfony/yaml",
+            "version": "v3.4.19",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/yaml.git",
+                "reference": "291e13d808bec481eab83f301f7bff3e699ef603"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/291e13d808bec481eab83f301f7bff3e699ef603",
+                "reference": "291e13d808bec481eab83f301f7bff3e699ef603",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.5.9|>=7.0.8",
+                "symfony/polyfill-ctype": "~1.8"
+            },
+            "conflict": {
+                "symfony/console": "<3.4"
+            },
+            "require-dev": {
+                "symfony/console": "~3.4|~4.0"
+            },
+            "suggest": {
+                "symfony/console": "For validating YAML files using the lint command"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Yaml\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Yaml Component",
+            "homepage": "https://symfony.com",
+            "time": "2018-11-11T19:48:54+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",
@@ -7461,16 +7736,16 @@
         },
         {
             "name": "composer/composer",
-            "version": "1.7.3",
+            "version": "1.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "e965b9aaa8854c3067f1ed2ae45f436572d73eb7"
+                "reference": "d8aef3af866b28786ce9b8647e52c42496436669"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/e965b9aaa8854c3067f1ed2ae45f436572d73eb7",
-                "reference": "e965b9aaa8854c3067f1ed2ae45f436572d73eb7",
+                "url": "https://api.github.com/repos/composer/composer/zipball/d8aef3af866b28786ce9b8647e52c42496436669",
+                "reference": "d8aef3af866b28786ce9b8647e52c42496436669",
                 "shasum": ""
             },
             "require": {
@@ -7506,7 +7781,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.7-dev"
+                    "dev-master": "1.8-dev"
                 }
             },
             "autoload": {
@@ -7537,7 +7812,7 @@
                 "dependency",
                 "package"
             ],
-            "time": "2018-11-01T09:05:06+00:00"
+            "time": "2018-12-03T09:31:16+00:00"
         },
         {
             "name": "composer/semver",
@@ -9211,55 +9486,6 @@
             "time": "2015-06-21T13:50:34+00:00"
         },
         {
-            "name": "phpunit/php-timer",
-            "version": "1.0.9",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/sebastianbergmann/php-timer.git",
-                "reference": "3dcf38ca72b158baf0bc245e9184d3fdffa9c46f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-timer/zipball/3dcf38ca72b158baf0bc245e9184d3fdffa9c46f",
-                "reference": "3dcf38ca72b158baf0bc245e9184d3fdffa9c46f",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^5.3.3 || ^7.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0-dev"
-                }
-            },
-            "autoload": {
-                "classmap": [
-                    "src/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Sebastian Bergmann",
-                    "email": "sb@sebastian-bergmann.de",
-                    "role": "lead"
-                }
-            ],
-            "description": "Utility class for timing",
-            "homepage": "https://github.com/sebastianbergmann/php-timer/",
-            "keywords": [
-                "timer"
-            ],
-            "time": "2017-02-26T11:10:40+00:00"
-        },
-        {
             "name": "phpunit/php-token-stream",
             "version": "2.0.2",
             "source": {
@@ -10169,16 +10395,16 @@
         },
         {
             "name": "symfony/filesystem",
-            "version": "v4.1.8",
+            "version": "v4.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/filesystem.git",
-                "reference": "71cc7693940bdad4dac4b038acd46b4f1ae7d2ca"
+                "reference": "2f4c8b999b3b7cadb2a69390b01af70886753710"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/filesystem/zipball/71cc7693940bdad4dac4b038acd46b4f1ae7d2ca",
-                "reference": "71cc7693940bdad4dac4b038acd46b4f1ae7d2ca",
+                "url": "https://api.github.com/repos/symfony/filesystem/zipball/2f4c8b999b3b7cadb2a69390b01af70886753710",
+                "reference": "2f4c8b999b3b7cadb2a69390b01af70886753710",
                 "shasum": ""
             },
             "require": {
@@ -10188,7 +10414,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "4.1-dev"
+                    "dev-master": "4.2-dev"
                 }
             },
             "autoload": {
@@ -10215,66 +10441,7 @@
             ],
             "description": "Symfony Filesystem Component",
             "homepage": "https://symfony.com",
-            "time": "2018-11-11T19:51:29+00:00"
-        },
-        {
-            "name": "symfony/yaml",
-            "version": "v3.4.19",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/yaml.git",
-                "reference": "291e13d808bec481eab83f301f7bff3e699ef603"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/291e13d808bec481eab83f301f7bff3e699ef603",
-                "reference": "291e13d808bec481eab83f301f7bff3e699ef603",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^5.5.9|>=7.0.8",
-                "symfony/polyfill-ctype": "~1.8"
-            },
-            "conflict": {
-                "symfony/console": "<3.4"
-            },
-            "require-dev": {
-                "symfony/console": "~3.4|~4.0"
-            },
-            "suggest": {
-                "symfony/console": "For validating YAML files using the lint command"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.4-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\Yaml\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony Yaml Component",
-            "homepage": "https://symfony.com",
-            "time": "2018-11-11T19:48:54+00:00"
+            "time": "2018-11-11T19:52:12+00:00"
         },
         {
             "name": "theseer/tokenizer",
@@ -10543,7 +10710,10 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=7.1.0"
+        "php": ">=7.2.0",
+        "ext-dom": "*",
+        "ext-json": "*",
+        "ext-libxml": "*"
     },
     "platform-dev": []
 }

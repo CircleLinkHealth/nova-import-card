@@ -35,10 +35,8 @@ class AddPracticeIdToCareAmbassadorLogsTable extends Migration
     public function down()
     {
         Schema::table('care_ambassador_logs', function (Blueprint $table) {
-
-            $table->dropColumn('practice_id');
             $table->dropForeign(['practice_id']);
-
+            $table->dropColumn('practice_id');
         });
     }
 }

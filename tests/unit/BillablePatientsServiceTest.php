@@ -12,7 +12,6 @@ use App\Repositories\PatientSummaryEloquentRepository;
 use App\Services\ApproveBillablePatientsService;
 use App\User;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Collection;
@@ -21,8 +20,7 @@ use Tests\TestCase;
 
 class BillablePatientsServiceTest extends TestCase
 {
-    use DatabaseTransactions,
-        UserHelpers,
+    use UserHelpers,
         WithoutMiddleware,
         WithFaker;
 
