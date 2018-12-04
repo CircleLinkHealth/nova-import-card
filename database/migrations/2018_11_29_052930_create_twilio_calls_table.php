@@ -30,6 +30,11 @@ class CreateTwilioCallsTable extends Migration
             $table->integer('recording_duration')->default(0);
             $table->string('recording_url')->nullable();
             $table->integer('sequence_number')->nullable();
+
+            $table->string('dial_call_sid')->nullable();
+            $table->integer('dial_call_duration')->default(0);
+            $table->string('dial_call_status')->nullable();
+
             $table->timestamps();
         });
     }

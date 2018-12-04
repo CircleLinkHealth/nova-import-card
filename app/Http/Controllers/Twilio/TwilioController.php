@@ -4,13 +4,13 @@ namespace App\Http\Controllers\Twilio;
 
 use App\Enrollee;
 use App\Http\Controllers\Controller;
-use App\Practice;
 use App\TwilioCall;
 use App\TwilioRawLog;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use SimpleXMLElement;
+use Twilio\Exceptions\TwimlException;
 use Twilio\Jwt\ClientToken;
 use Twilio\Twiml;
 use Twilio\Rest\Client;
@@ -43,7 +43,7 @@ class TwilioController extends Controller
      */
     public function placeCall(Request $request)
     {
-        $this->logRawToDb($request);
+        $this->logRawToDb($request, 'init');
 
         $input = $request->all();
 
@@ -51,11 +51,10 @@ class TwilioController extends Controller
             $input['From'] = config('services.twilio')['from'];
         }
 
-//        $input['To'] = '+35799451430';
-        $validation = \Validator::make($input, [
-            'To'               => 'required|phone:AUTO,US',
+        $validation  = \Validator::make($input, [
             //could be the practice outgoing phone number (in case of enrollment)
-            'From'             => 'nullable|phone:AUTO,US',
+            'From'             => 'required|phone:AUTO,US',
+            'To'               => 'required|phone:AUTO,US',
             'InboundUserId'    => 'required',
             'OutboundUserId'   => 'required',
             'IsUnlistedNumber' => '',
@@ -68,11 +67,18 @@ class TwilioController extends Controller
         $this->logToDb($request, $input);
 
         $response = new Twiml();
-
-        $dial = $response->dial('', [
+        $dial     = $response->dial($input['To'], [
+            //action url will tell us the duration of this call and the status of it when it ends
+            'action'   => route('twilio.call.dial.status'),
             'callerId' => $input['From'],
         ]);
-        $dial->number($input['To']);
+
+        /**
+         * $dial->number($input['To'], [
+         * 'statusCallback' => route('twilio.call.number.status'),
+         * 'statusCallbackEvent' => 'initiated ringing answered completed'
+         * ]);
+         */
 
         return $this->responseWithXmlType(response($response));
     }
@@ -171,6 +177,31 @@ class TwilioController extends Controller
     }
 
     /**
+     * This function is called from Twilio (Dial Action URL - see placeCall above)
+     * When the call ends, this handler is called (different from callStatusCallback below)
+     * This handler decides what happens next:
+     * We simply log the status and duration and hang up.
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function dialStatusCallback(Request $request)
+    {
+        $this->logRawToDb($request, 'dial-status');
+        $this->logDialToDb($request);
+
+        try {
+            $response = new Twiml();
+            $response->hangup();
+
+            return $this->responseWithXmlType(response($response));
+        } catch (TwimlException $e) {
+            return $this->responseWithXmlData(['error' => $e->getMessage()], 400);
+        }
+    }
+
+    /**
      * This function is called from Twilio (status callback)
      * - It inserts a record in our DB for raw logs (for debugging)
      * - It inspects the status request from Twilio and creates or updates any existing calls (using call sid)
@@ -191,12 +222,10 @@ class TwilioController extends Controller
                 $input = $request->all();
             }
 
-            $callStatus = $input['CallStatus'];
-            $callSid    = $input['CallSid'];
+            $callSid = $input['CallSid'];
 
             $fields = [
-                'call_sid'    => $callSid,
-                'call_status' => $callStatus,
+                'call_sid' => $callSid,
             ];
 
             if ( ! empty($input['ApplicationSid'])) {
@@ -205,6 +234,10 @@ class TwilioController extends Controller
 
             if ( ! empty($input['AccountSid'])) {
                 $fields['account_sid'] = $input['AccountSid'];
+            }
+
+            if ( ! empty($input['CallStatus'])) {
+                $fields['call_status'] = $input['CallStatus'];
             }
 
             if ( ! empty($input['Direction'])) {
@@ -262,20 +295,57 @@ class TwilioController extends Controller
         }
     }
 
-    private function logRawToDb(Request $request)
+    private function logRawToDb(Request $request, $type = null)
     {
         try {
             TwilioRawLog::create([
-                'call_sid'        => $request->get('CallSid'),
                 'application_sid' => $request->get('ApplicationSid'),
                 'account_sid'     => $request->get('AccountSid'),
+                'call_sid'        => $request->get('CallSid'),
                 'call_status'     => $request->get('CallStatus'),
                 'log'             => json_encode($request->all()),
+                'type'            => $type == null
+                    ? $request->get('CallbackSource', null)
+                    : $type
             ]);
         } catch (\Throwable $e) {
             \Log::critical("Exception while storing twilio raw log: " . $e->getMessage());
         }
+    }
 
+    private function logDialToDb(Request $request)
+    {
+        $input = $request->all();
 
+        $callSid = $input['CallSid'];
+
+        $fields = [
+            'call_sid' => $callSid,
+        ];
+
+        if ( ! empty($input['CallStatus'])) {
+            $fields['call_status'] = $input['CallStatus'];
+        }
+
+        if ( ! empty($input['DialCallSid'])) {
+            $fields['dial_call_sid'] = $input['DialCallSid'];
+        }
+
+        if ( ! empty($input['DialCallDuration'])) {
+            $fields['dial_call_duration'] = $input['DialCallDuration'];
+        }
+
+        if ( ! empty($input['DialCallStatus'])) {
+            $fields['dial_call_status'] = $input['DialCallStatus'];
+        }
+
+        if ( ! empty($input['RecordingUrl'])) {
+            $fields['dial_recording_url'] = $input['RecordingUrl'];
+        }
+
+        TwilioCall::updateOrCreate(
+            ['call_sid' => $callSid],
+            $fields
+        );
     }
 }
