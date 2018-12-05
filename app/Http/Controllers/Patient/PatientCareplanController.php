@@ -230,7 +230,7 @@ class PatientCareplanController extends Controller
             // add to array
             $pageFileNames[] = $fileNameWithPath;
 
-            if (auth()->user()->isAdmin() && $letter ==  true) {
+            if (auth()->user()->isAdmin() && true == $letter) {
                 $careplanObj               = $user->carePlan;
                 $careplanObj->last_printed = Carbon::now()->toDateTimeString();
                 if ( ! $careplanObj->first_printed) {
