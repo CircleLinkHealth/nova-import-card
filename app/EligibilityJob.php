@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App;
 
 use App\Services\WelcomeCallListGenerator;
@@ -9,26 +13,30 @@ class EligibilityJob extends BaseModel
 {
     use SoftDeletes;
 
+    //Outcome: A patient that exists more than once in the same batch
+    const DUPLICATE = 'duplicate';
+
     //Outcome: A patient that was found to be eligible for the first time in this batch
     const ELIGIBLE = 'eligible';
 
     //Outcome: A patient that was found to be eligible in this batch, but was also found eligible in a previous batch
     const ELIGIBLE_ALSO_IN_PREVIOUS_BATCH = 'eligible_also_in_previous_batch';
 
-    //Outcome: An ineligile patient
-    const INELIGIBLE = 'ineligible';
-
-    //Outcome: A patient that exists more than once in the same batch
-    const DUPLICATE = 'duplicate';
-
     //Outcome: A patient that was found eligible, but is already an enrolled patient in CPM
     const ENROLLED = 'enrolled';
+
+    //Outcome: An ineligile patient
+    const INELIGIBLE = 'ineligible';
 
     const STATUSES = [
         'not_started' => 0,
         'processing'  => 1,
         'error'       => 2,
         'complete'    => 3,
+    ];
+
+    protected $attributes = [
+        'status' => 0,
     ];
 
     /**
@@ -40,6 +48,10 @@ class EligibilityJob extends BaseModel
         'data'     => 'array',
         'messages' => 'array',
         'errors'   => 'array',
+    ];
+
+    protected $dates = [
+        'last_encounter',
     ];
 
     protected $fillable = [
@@ -68,13 +80,15 @@ class EligibilityJob extends BaseModel
         'invalid_phones',
     ];
 
-    protected $attributes = [
-        'status' => 0,
-    ];
+    public function batch()
+    {
+        return $this->belongsTo(EligibilityBatch::class, 'batch_id');
+    }
 
-    protected $dates = [
-        'last_encounter',
-    ];
+    public function enrollee()
+    {
+        return $this->hasOne(Enrollee::class);
+    }
 
     public function getStatus($statusId = null)
     {
@@ -85,7 +99,6 @@ class EligibilityJob extends BaseModel
             $statusId = $this->status;
         }
 
-
         foreach (self::STATUSES as $name => $id) {
             if ($id == $statusId) {
                 return $name;
@@ -95,32 +108,19 @@ class EligibilityJob extends BaseModel
         return null;
     }
 
-    public function scopeEligible($builder)
-    {
-        return $builder->where('outcome', '=', self::ELIGIBLE);
-    }
-
-    public function enrollee()
-    {
-        return $this->hasOne(Enrollee::class);
-    }
-
-    public function batch()
-    {
-        return $this->belongsTo(EligibilityBatch::class, 'batch_id');
-    }
-
     /**
      * Putting this here for conveniece.
      * It is NOT safe to use as $batch may not exist. Should we make processing without a batch possible?
+     *
      * @todo: figure out above, buy beer
      *
      * @param $filterLastEncounter
      * @param $filterInsurance
      * @param $filterProblems
      *
-     * @return WelcomeCallListGenerator
      * @throws \Exception
+     *
+     * @return WelcomeCallListGenerator
      */
     public function process($filterLastEncounter, $filterInsurance, $filterProblems)
     {
@@ -136,5 +136,10 @@ class EligibilityJob extends BaseModel
             $this->batch,
             $this
         );
+    }
+
+    public function scopeEligible($builder)
+    {
+        return $builder->where('outcome', '=', self::ELIGIBLE);
     }
 }

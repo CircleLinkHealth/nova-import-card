@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Reports\Sales;
 
 use App\Activity;
@@ -22,46 +26,6 @@ class ProviderReportable implements Reportable
     }
 
     /**
-     * All patients for this Reportable.
-     *
-     * @return mixed
-     */
-    public function patients()
-    {
-        return User::ofType('participant')
-                   ->hasBillingProvider($this->provider->id)
-                   ->get();
-    }
-
-    /**
-     * Call count for this Reportable.
-     *
-     * @param Carbon $start
-     * @param Carbon $end
-     * @param null $status
-     *
-     * @return mixed
-     */
-    public function callCount(Carbon $start, Carbon $end, $status = null)
-    {
-        $q = Call::where(function ($q) {
-            $q->whereNull('type')
-              ->orWhere('type', '=', 'call')
-              ->orWhere('sub_type', '=', 'Call Back');
-        })->whereHas('inboundUser', function ($q) {
-            $q->hasBillingProvider($this->provider->id);
-        })
-                 ->where('called_date', '>=', $start)
-                 ->where('called_date', '<=', $end);
-
-        if ($status) {
-            $q->whereStatus($status);
-        }
-
-        return $q->count();
-    }
-
-    /**
      * Sum of activity time for this Reportable.
      *
      * @param Carbon $start
@@ -75,9 +39,88 @@ class ProviderReportable implements Reportable
             ::whereHas('patient', function ($q) {
                 $q->hasBillingProvider($this->provider->id);
             })
-            ->where('created_at', '>=', $start->toDateTimeString())
-            ->where('created_at', '<=', $end->toDateTimeString())
-            ->sum('duration');
+                ->where('created_at', '>=', $start->toDateTimeString())
+                ->where('created_at', '<=', $end->toDateTimeString())
+                ->sum('duration');
+    }
+
+    /**
+     * Total eligible-to-be-billed patients count (for given month) for this Reportable.
+     *
+     * @param Carbon $month
+     *
+     * @return mixed
+     */
+    public function billablePatientsCountForMonth(Carbon $month)
+    {
+        return $this->totalBilledPatientsCount($month);
+    }
+
+    /**
+     * Call count for this Reportable.
+     *
+     * @param Carbon $start
+     * @param Carbon $end
+     * @param null   $status
+     *
+     * @return mixed
+     */
+    public function callCount(Carbon $start, Carbon $end, $status = null)
+    {
+        $q = Call::where(function ($q) {
+            $q->whereNull('type')
+                ->orWhere('type', '=', 'call')
+                ->orWhere('sub_type', '=', 'Call Back');
+        })->whereHas('inboundUser', function ($q) {
+            $q->hasBillingProvider($this->provider->id);
+        })
+            ->where('called_date', '>=', $start)
+            ->where('called_date', '<=', $end);
+
+        if ($status) {
+            $q->whereStatus($status);
+        }
+
+        return $q->count();
+    }
+
+    /**
+     * Forwarded emergency notes count for this Reportable.
+     *
+     * @param Carbon $start
+     * @param Carbon $end
+     *
+     * @return mixed
+     */
+    public function forwardedEmergencyNotesCount(Carbon $start, Carbon $end)
+    {
+        return Note::forwardedTo(get_class($this->provider), $this->provider->id, $start, $end)
+            ->emergency()
+            ->count();
+    }
+
+    /**
+     * Forwarded notes count for this Reportable.
+     *
+     * @param Carbon $start
+     * @param Carbon $end
+     *
+     * @return mixed
+     */
+    public function forwardedNotesCount(Carbon $start, Carbon $end)
+    {
+        return Note::forwardedTo(get_class($this->provider), $this->provider->id, $start, $end)
+            ->count();
+    }
+
+    /**
+     * The link to view this Reportable's notes.
+     *
+     * @return mixed
+     */
+    public function linkToNotes()
+    {
+        return route('patient.note.listing')."/?provider={$this->provider->id}";
     }
 
     /**
@@ -94,50 +137,21 @@ class ProviderReportable implements Reportable
             ::whereHas('user', function ($q) {
                 $q->hasBillingProvider($this->provider->id);
             })
-            ->where('created_at', '>=', $start)
-            ->where('created_at', '<=', $end)
-            ->count();
+                ->where('created_at', '>=', $start)
+                ->where('created_at', '<=', $end)
+                ->count();
     }
 
     /**
-     * Forwarded notes count for this Reportable.
-     *
-     * @param Carbon $start
-     * @param Carbon $end
+     * All patients for this Reportable.
      *
      * @return mixed
      */
-    public function forwardedNotesCount(Carbon $start, Carbon $end)
+    public function patients()
     {
-        return Note::forwardedTo(get_class($this->provider), $this->provider->id, $start, $end)
-                   ->count();
-    }
-
-    /**
-     * Forwarded emergency notes count for this Reportable.
-     *
-     * @param Carbon $start
-     * @param Carbon $end
-     *
-     * @return mixed
-     */
-    public function forwardedEmergencyNotesCount(Carbon $start, Carbon $end)
-    {
-        return Note::forwardedTo(get_class($this->provider), $this->provider->id, $start, $end)
-                   ->emergency()
-                   ->count();
-    }
-
-    /**
-     * Total eligible-to-be-billed patients count (for given month) for this Reportable.
-     *
-     * @param Carbon $month
-     *
-     * @return mixed
-     */
-    public function billablePatientsCountForMonth(Carbon $month)
-    {
-        return $this->totalBilledPatientsCount($month);
+        return User::ofType('participant')
+            ->hasBillingProvider($this->provider->id)
+            ->get();
     }
 
     /**
@@ -152,25 +166,15 @@ class ProviderReportable implements Reportable
         $q = PatientMonthlySummary::whereHas('patient', function ($q) {
             $q->whereHas('careTeamMembers', function ($q) {
                 $q->whereType(CarePerson::BILLING_PROVIDER)
-                  ->whereMemberUserId($this->provider->id);
+                    ->whereMemberUserId($this->provider->id);
             });
         })
-                                  ->where('total_time', '>', 1199);
+            ->where('total_time', '>', 1199);
 
         if ($month) {
             $q->where('month_year', $month->firstOfMonth());
         }
 
         return $q->count();
-    }
-
-    /**
-     * The link to view this Reportable's notes.
-     *
-     * @return mixed
-     */
-    public function linkToNotes()
-    {
-        return route('patient.note.listing') . "/?provider={$this->provider->id}";
     }
 }

@@ -82,6 +82,7 @@
     "spatie/laravel-google-calendar": "^2.0",
     "spatie/laravel-medialibrary": "^7.0.0",
     "spiritix/lada-cache": "^2.1",
+    "squizlabs/php_codesniffer": "*",
     "twilio/sdk": "5.7",
     "tylercd100/lern": "^3.8",
     "tymon/jwt-auth": "0.5.*",
@@ -94,6 +95,7 @@
     "ext-simplexml": "*"
   },
   "require-dev": {
+    "friendsofphp/php-cs-fixer": "^2.13",
     "Xethron/Laravel-4-Generators": "*",
     "barryvdh/laravel-ide-helper": "^2.4",
     "darkaonline/l5-swagger": "^5.5",
@@ -128,6 +130,12 @@
     }
   },
   "scripts": {
+    "lint-php": [
+      "php -d memory_limit=2048M ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --show-progress=dots --diff --verbose --config=.php_cs.dist"
+    ],
+    "lint-views": [
+      "php -d memory_limit=2048M ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --show-progress=dots --diff --verbose --config=.php_cs_views.php"
+    ],
     "post-root-package-install": [
       "php -r \"file_exists('.env') || copy('.env.example', '.env');\""
     ],
@@ -141,20 +149,20 @@
     "post-update-cmd": [
       "Illuminate\\Foundation\\ComposerScripts::postUpdate"
     ],
-    "prepare-test-db": [
+    "test-db-mysql": [
       "php artisan config:clear && php artisan db:test && php artisan migrate:fresh && php artisan migrate && php artisan db:seed && php artisan db:seed --class=TestSuiteSeeder"
     ],
-    "test": [
+    "test-mysql": [
       "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner WrapperRunner -p8"
     ],
-    "test-sqlite": [
-      "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner SqliteRunner -p8"
+    "test": [
+      "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner SqliteRunner -p4"
     ],
-    "integration-sqlite": [
-      "./vendor/bin/paratest ./tests/integration --stop-on-failure --colors --runner SqliteRunner"
+    "integration": [
+      "./vendor/bin/paratest ./tests/integration --stop-on-failure --colors --runner SqliteRunner -p4"
     ],
-    "feature-sqlite": [
-      "./vendor/bin/paratest ./tests/feature --stop-on-failure --colors --runner SqliteRunner"
+    "feature": [
+      "./vendor/bin/paratest ./tests/feature --stop-on-failure --colors --runner SqliteRunner -p4"
     ],
     "clear": [
       "php artisan clear-compiled",

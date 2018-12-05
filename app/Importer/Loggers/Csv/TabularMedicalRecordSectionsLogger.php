@@ -1,4 +1,10 @@
-<?php namespace App\Importer\Loggers\Csv;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Importer\Loggers\Csv;
 
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
 use App\Importer\Models\ItemLogs\AllergyLog;
@@ -16,7 +22,7 @@ use App\User;
 class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
 {
     /**
-     * The Medical Record
+     * The Medical Record.
      *
      * @var TabularMedicalRecord
      */
@@ -42,22 +48,8 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
     }
 
     /**
-     * Log all Sections.
-     */
-    public function logAllSections()
-    {
-        $this
-            ->logDemographicsSection()
-            ->logAllergiesSection()
-            ->logDocumentSection()
-            ->logInsuranceSection()
-            ->logMedicationsSection()
-            ->logProblemsSection()
-            ->logProvidersSection();
-    }
-
-    /**
      * Log Allergies Section.
+     *
      * @return MedicalRecordLogger
      */
     public function logAllergiesSection(): MedicalRecordLogger
@@ -91,22 +83,38 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
     }
 
     /**
+     * Log all Sections.
+     */
+    public function logAllSections()
+    {
+        $this
+            ->logDemographicsSection()
+            ->logAllergiesSection()
+            ->logDocumentSection()
+            ->logInsuranceSection()
+            ->logMedicationsSection()
+            ->logProblemsSection()
+            ->logProvidersSection();
+    }
+
+    /**
      * Log Demographics Section.
+     *
      * @return MedicalRecordLogger
      */
     public function logDemographicsSection(): MedicalRecordLogger
     {
         $saved = DemographicsLog::create(
             array_merge([
-                'first_name'           => $this->medicalRecord->first_name,
-                'last_name'            => $this->medicalRecord->last_name,
-                'dob'                  => $this->medicalRecord->dob,
-                'provider_name'        => $this->medicalRecord->provider_name,
-                'phone'                => $this->medicalRecord->phone,
-                'mrn_number'           => $this->medicalRecord->mrn,
-                'gender'               => $this->medicalRecord->gender,
-                'language'             => $this->medicalRecord->language ?? 'EN',
-                'consent_date'         => $this->medicalRecord->consent_date
+                'first_name'    => $this->medicalRecord->first_name,
+                'last_name'     => $this->medicalRecord->last_name,
+                'dob'           => $this->medicalRecord->dob,
+                'provider_name' => $this->medicalRecord->provider_name,
+                'phone'         => $this->medicalRecord->phone,
+                'mrn_number'    => $this->medicalRecord->mrn,
+                'gender'        => $this->medicalRecord->gender,
+                'language'      => $this->medicalRecord->language ?? 'EN',
+                'consent_date'  => $this->medicalRecord->consent_date
                     ? $this->medicalRecord->consent_date->format('Y-m-d') > 0
                         ? $this->medicalRecord->consent_date
                         : date('Y-m-d')
@@ -130,7 +138,18 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
     }
 
     /**
+     * Log Document Section.
+     *
+     * @return MedicalRecordLogger
+     */
+    public function logDocumentSection(): MedicalRecordLogger
+    {
+        return $this;
+    }
+
+    /**
      * Log Insurance Section.
+     *
      * @return MedicalRecordLogger
      */
     public function logInsuranceSection(): MedicalRecordLogger
@@ -161,16 +180,8 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
     }
 
     /**
-     * Log Document Section.
-     * @return MedicalRecordLogger
-     */
-    public function logDocumentSection(): MedicalRecordLogger
-    {
-        return $this;
-    }
-
-    /**
      * Log Medications Section.
+     *
      * @return MedicalRecordLogger
      */
     public function logMedicationsSection(): MedicalRecordLogger
@@ -203,6 +214,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
 
     /**
      * Log Problems Section.
+     *
      * @return MedicalRecordLogger
      */
     public function logProblemsSection(): MedicalRecordLogger
@@ -231,10 +243,10 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
 
             $problemLog = ProblemLog::create(
                 array_merge([
-                    'name'                   => $problem['name'],
-                    'start'                  => $problem['start'],
-                    'end'                    => $problem['end'],
-                    'status'                 => $problem['status'],
+                    'name'   => $problem['name'],
+                    'start'  => $problem['start'],
+                    'end'    => $problem['end'],
+                    'status' => $problem['status'],
                 ], $this->foreignKeys)
             );
 
@@ -251,6 +263,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
 
     /**
      * Log Providers Section.
+     *
      * @return MedicalRecordLogger
      */
     public function logProvidersSection(): MedicalRecordLogger
@@ -271,36 +284,36 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
 
         if ($matchProvider) {
             $provider = ProviderLog::create(array_merge([
-                'first_name' => trim($name[1] ?? ''),
-                'last_name'  => trim($name[0] ?? ''),
+                'first_name'          => trim($name[1] ?? ''),
+                'last_name'           => trim($name[0] ?? ''),
                 'billing_provider_id' => $matchProvider->id,
-                'location_id' => $this->practice->primary_location_id ?? optional($this->practice->locations->first())->id
+                'location_id'         => $this->practice->primary_location_id ?? optional($this->practice->locations->first())->id,
             ], $this->foreignKeys));
 
             return $this;
         }
 
         $matchProvider = User::ofType('provider')
-                             ->ofPractice($this->practice->id)
-                             ->whereFirstName($name[0] ?? '')
-                             ->whereLastName($name[1] ?? '')
-                             ->first();
+            ->ofPractice($this->practice->id)
+            ->whereFirstName($name[0] ?? '')
+            ->whereLastName($name[1] ?? '')
+            ->first();
 
         if ($matchProvider) {
             $provider = ProviderLog::create(array_merge([
-                'first_name' => trim($name[0] ?? ''),
-                'last_name'  => trim($name[1] ?? ''),
+                'first_name'          => trim($name[0] ?? ''),
+                'last_name'           => trim($name[1] ?? ''),
                 'billing_provider_id' => $matchProvider->id,
-                'location_id' => $this->practice->primary_location_id ?? optional($this->practice->locations->first())->id
+                'location_id'         => $this->practice->primary_location_id ?? optional($this->practice->locations->first())->id,
             ], $this->foreignKeys));
 
             return $this;
         }
 
         $provider = ProviderLog::create(array_merge([
-            'first_name' => trim($name[0] ?? ''),
-            'last_name'  => trim($name[1] ?? ''),
-            'location_id' => $this->practice->primary_location_id ?? optional($this->practice->locations->first())->id
+            'first_name'  => trim($name[0] ?? ''),
+            'last_name'   => trim($name[1] ?? ''),
+            'location_id' => $this->practice->primary_location_id ?? optional($this->practice->locations->first())->id,
         ], $this->foreignKeys));
 
         return $this;

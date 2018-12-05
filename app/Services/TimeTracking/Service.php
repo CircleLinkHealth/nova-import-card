@@ -1,4 +1,10 @@
-<?php namespace App\Services\TimeTracking;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Services\TimeTracking;
 
 use App\PageTimer;
 use Carbon\Carbon;
@@ -8,7 +14,7 @@ use Illuminate\Support\Collection;
  * Created by PhpStorm.
  * User: michalis
  * Date: 17/10/16
- * Time: 11:14 AM
+ * Time: 11:14 AM.
  */
 class Service
 {
@@ -26,42 +32,42 @@ class Service
 
         foreach ($overlappingActivities as $overlap) {
             if ($this->isCcmActivity($newActivity)
-                || (!$this->isCcmActivity($newActivity)
-                    && !$this->isCcmActivity($overlap))
+                || ( ! $this->isCcmActivity($newActivity)
+                    && ! $this->isCcmActivity($overlap))
             ) {
-                $greedy = $newActivity;
+                $greedy    = $newActivity;
                 $secondary = $overlap;
             } else {
-                $greedy = $overlap;
+                $greedy    = $overlap;
                 $secondary = $newActivity;
             }
 
             $greedyStart = Carbon::createFromFormat('Y-m-d H:i:s', $greedy->start_time);
-            $greedyEnd = Carbon::createFromFormat('Y-m-d H:i:s', $greedy->end_time);
+            $greedyEnd   = Carbon::createFromFormat('Y-m-d H:i:s', $greedy->end_time);
 
             $secondaryStart = Carbon::createFromFormat('Y-m-d H:i:s', $secondary->start_time);
-            $secondaryEnd = Carbon::createFromFormat('Y-m-d H:i:s', $secondary->end_time);
+            $secondaryEnd   = Carbon::createFromFormat('Y-m-d H:i:s', $secondary->end_time);
 
             if ($greedyStart->gte($secondaryStart) && $greedyEnd->gte($secondaryEnd)) {
                 if ($secondaryStart->gt($minDate)) {
                     $secondary->billable_duration = 0;
-                    $secondary->start_time = '0000-00-00 00:00:00';
-                    $secondary->end_time = '0000-00-00 00:00:00';
+                    $secondary->start_time        = '0000-00-00 00:00:00';
+                    $secondary->end_time          = '0000-00-00 00:00:00';
                     $secondary->save();
                 } //if the secondary start is the minDate, we want to get $secondaryStart->diffInSeconds($greedyStart)
                 // we are assuming that only the $secondary activity has this start date
                 elseif ($minDate == $secondaryStart) {
-                    $secondaryDuration = $secondaryStart->diffInSeconds($greedyStart);
+                    $secondaryDuration            = $secondaryStart->diffInSeconds($greedyStart);
                     $secondary->billable_duration = $secondaryDuration;
-                    $secondary->end_time = $secondaryStart->addSeconds($secondaryDuration)->toDateTimeString();
+                    $secondary->end_time          = $secondaryStart->addSeconds($secondaryDuration)->toDateTimeString();
                     $secondary->save();
 
                     $greedy->billable_duration = $greedyStart->diffInSeconds($greedyEnd);
                 } else {
-                    $secondaryDuration = $secondaryStart->diffInSeconds($minDate);
-                    $minDate = $secondaryStart->copy();
+                    $secondaryDuration            = $secondaryStart->diffInSeconds($minDate);
+                    $minDate                      = $secondaryStart->copy();
                     $secondary->billable_duration = $secondaryDuration;
-                    $secondary->end_time = $secondaryStart->addSeconds($secondaryDuration)->toDateTimeString();
+                    $secondary->end_time          = $secondaryStart->addSeconds($secondaryDuration)->toDateTimeString();
                     $secondary->save();
 
                     $greedy->billable_duration = $greedyStart->diffInSeconds($greedyEnd);
@@ -109,17 +115,17 @@ class Service
                 }
 
                 if ($secondaryEnd->gte($maxDate)) {
-                    $maxDate = $secondaryEnd->copy();
-                    $secondaryStart = $greedyEnd->copy();
-                    $secondary->start_time = $secondaryStart->toDateTimeString();
+                    $maxDate                      = $secondaryEnd->copy();
+                    $secondaryStart               = $greedyEnd->copy();
+                    $secondary->start_time        = $secondaryStart->toDateTimeString();
                     $secondary->billable_duration = $secondaryStart->diffInSeconds($secondaryEnd);
                 } elseif ($secondaryStart->lte($minDate)) {
-                    $minDate = $secondaryStart->copy();
+                    $minDate                      = $secondaryStart->copy();
                     $secondary->billable_duration = $secondaryStart->diffInSeconds($greedyStart);
                 } else {
                     $secondary->billable_duration = 0;
-                    $secondary->start_time = '0000-00-00 00:00:00';
-                    $secondary->end_time = '0000-00-00 00:00:00';
+                    $secondary->start_time        = '0000-00-00 00:00:00';
+                    $secondary->end_time          = '0000-00-00 00:00:00';
                 }
 
                 $secondary->save();
@@ -133,18 +139,18 @@ class Service
 
             //If new activity is null, it means it was completely overlapped by another activity.
             //We want to stop at this point to avoid getting other dates compared with this and getting huge duration
-            if ($newActivity->start_time == '0000-00-00 00:00:00'
-                && $newActivity->end_time == '0000-00-00 00:00:00'
+            if ('0000-00-00 00:00:00' == $newActivity->start_time
+                && '0000-00-00 00:00:00' == $newActivity->end_time
             ) {
                 break;
             }
         }
     }
 
-    public function isCcmActivity(PageTimer $activity) : bool
+    public function isCcmActivity(PageTimer $activity): bool
     {
-        return !($activity->patient_id == 0
-            || $activity->title == 'patient.activity.create'
-            || $activity->title == 'patient.activity.providerUIIndex');
+        return ! (0 == $activity->patient_id
+            || 'patient.activity.create' == $activity->title
+            || 'patient.activity.providerUIIndex' == $activity->title);
     }
 }

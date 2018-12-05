@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\CLH\CCD\Importer\ParsingStrategies\Helpers;
 
 use App\Facades\StringManipulation;
@@ -37,15 +41,12 @@ class UserMetaParserHelpers
                 case 'home':
                     array_push($home, $number);
                     break;
-
                 case 'mobile':
                     array_push($mobile, $number);
                     break;
-
                 case 'work':
                     array_push($work, $number);
                     break;
-
                 case 'primary_phone':
                     array_push($primary, $number);
                     break;

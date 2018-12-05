@@ -1,13 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 01/28/2018
- * Time: 11:03 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\View\Composers\SAAS\Admin;
-
 
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -16,8 +13,6 @@ class ManageInternalUser extends ServiceProvider
 {
     /**
      * Register bindings in the container.
-     *
-     * @return void
      */
     public function boot()
     {
@@ -32,13 +27,13 @@ class ManageInternalUser extends ServiceProvider
                 $autoAttachPrograms = $editedUser->auto_attach_programs
                     ? 'checked'
                     : '';
-                $usernameField      = $editedUser->username;
-                $emailField         = $editedUser->email;
-                $firstNameField     = $editedUser->getFirstName();
-                $lastNameField      = $editedUser->getLastName();
-                $practicesField     = $data->get('editedUser')->getPractices();
-                $roleField          = $data->get('editedUser')->getRole();
-                $internalUserId     = $editedUser->id;
+                $usernameField = $editedUser->username;
+                $emailField = $editedUser->email;
+                $firstNameField = $editedUser->getFirstName();
+                $lastNameField = $editedUser->getLastName();
+                $practicesField = $data->get('editedUser')->getPractices();
+                $roleField = $data->get('editedUser')->getRole();
+                $internalUserId = $editedUser->id;
 
                 //Removing since we are not including this in the SAAS product yet
 //                $showNurseInfo      = $editedUser->hasRole('care-center');
@@ -62,11 +57,8 @@ class ManageInternalUser extends ServiceProvider
 
     /**
      * Register the service provider.
-     *
-     * @return void
      */
     public function register()
     {
-        //
     }
 }

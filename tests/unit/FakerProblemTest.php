@@ -1,27 +1,20 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Unit;
 
 use App\CLH\Faker\Patient\Problem;
 use App\Practice;
-use App\Models\CCD\Problem as CcdProblem;
-use Tests\TestCase;
-use Tests\Helpers\UserHelpers;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-
-use App\User;
-use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Support\Collection;
-
+use Tests\Helpers\UserHelpers;
 
 class FakerProblemTest
 {
     use UserHelpers,
         DatabaseTransactions;
-
 
     protected $faker;
     protected $patient;
@@ -56,17 +49,12 @@ class FakerProblemTest
 //
 //    }
 
-    /**
-     *
-     */
     protected function setUp()
     {
         parent::setUp();
 
         $this->practice = factory(Practice::class)->create();
-        $this->faker = new Problem();
-        $this->patient = $this->createUser($this->practice->id, 'participant');
+        $this->faker    = new Problem();
+        $this->patient  = $this->createUser($this->practice->id, 'participant');
     }
-
-
 }

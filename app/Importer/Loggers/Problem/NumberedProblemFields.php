@@ -1,16 +1,13 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 5/11/18
- * Time: 2:08 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Importer\Loggers\Problem;
 
 class NumberedProblemFields
 {
-
     public function handle(&$patient): array
     {
         if ( ! is_array($patient)) {
@@ -21,24 +18,24 @@ class NumberedProblemFields
         $i        = 1;
 
         do {
-            if ( ! array_key_exists("problem_$i", $patient)) {
+            if ( ! array_key_exists("problem_${i}", $patient)) {
                 break;
             }
 
-            if ( ! empty($patient["problem_$i"]) && $patient["problem_$i"] != '#N/A') {
+            if ( ! empty($patient["problem_${i}"]) && '#N/A' != $patient["problem_${i}"]) {
                 $problems[] = [
-                    'Name'        => $patient["problem_$i"],
+                    'Name'        => $patient["problem_${i}"],
                     'CodeType'    => '',
-                    'Code'        => $patient["problem_$i"],
+                    'Code'        => $patient["problem_${i}"],
                     'AddedDate'   => '',
                     'ResolveDate' => '',
                     'Status'      => '',
                 ];
             }
 
-            unset($patient["problem_$i"]);
+            unset($patient["problem_${i}"]);
 
-            $i++;
+            ++$i;
         } while (true);
 
         return $problems;

@@ -1,22 +1,19 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: RohanM
- * Date: 9/17/16
- * Time: 1:58 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Contracts;
 
 interface CallHandler
 {
-
-    //exec function
-    public function handle();
+    //calculate how much time to wait before next call
+    public function getComplexPatientOffset($ccmTime, $week);
 
     //calculate how much time to wait before next call
     public function getPatientOffset($ccmTime, $week);
 
-    //calculate how much time to wait before next call
-    public function getComplexPatientOffset($ccmTime, $week);
+    //exec function
+    public function handle();
 }

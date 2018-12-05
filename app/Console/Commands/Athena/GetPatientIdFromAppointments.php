@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands\Athena;
 
 use App\Practice;
@@ -10,26 +14,22 @@ use Illuminate\Console\Command;
 class GetPatientIdFromAppointments extends Command
 {
     /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Retrieve patient Ids from past booked appointments from the Athena API';
+    /**
      * The name and signature of the console command.
      *
      * @var string
      */
     protected $signature = 'athena:getPatientIdFromAppointments';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Retrieve patient Ids from past booked appointments from the Athena API';
-
-
     private $service;
 
     /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct(DetermineEnrollmentEligibility $athenaApi)
     {
@@ -52,14 +52,16 @@ class GetPatientIdFromAppointments extends Command
             ->whereNotNull('external_id')
             ->get();
 
-        $endDate = Carbon::today();
+        $endDate   = Carbon::today();
         $startDate = $endDate->copy()->subWeeks(2);
 
         //loop to getPatientIds from each practice found
         foreach ($practices as $practice) {
             if (app()->environment('worker')) {
-                sendSlackMessage('#background-tasks',
-                    "Getting patient ids from the appointments from Athena, for practice: {$practice->display_name}. \n");
+                sendSlackMessage(
+                    '#background-tasks',
+                    "Getting patient ids from the appointments from Athena, for practice: {$practice->display_name}. \n"
+                );
             }
 
             $this->service->getPatientIdFromAppointments($practice->external_id, $startDate, $endDate);

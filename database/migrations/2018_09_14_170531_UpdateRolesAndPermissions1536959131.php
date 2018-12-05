@@ -1,32 +1,29 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 
 class UpdateRolesAndPermissions1536959131 extends Migration
 {
     /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+    }
+
+    /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
-        if ( ! app()->environment(['testing'])) {
+        if (!app()->environment(['testing'])) {
             Artisan::call('db:seed', [
                 '--class' => 'RequiredRolesPermissionsSeeder',
             ]);
         }
     }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        //
-    }
 }
-
-

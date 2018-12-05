@@ -1,4 +1,10 @@
-<?php namespace App\Http\Controllers;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Http\Controllers;
 
 use App\Call;
 use Carbon\Carbon;
@@ -6,6 +12,14 @@ use Illuminate\Http\Request;
 
 class PatientCallListController extends Controller
 {
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Response
+     */
+    public function create()
+    {
+    }
 
     /**
      * Display a listing of the resource.
@@ -18,7 +32,7 @@ class PatientCallListController extends Controller
 
         $dateFilter = 'All';
         $date       = Carbon::now();
-        if ($request->has('date') && strtolower($request->input('date')) != 'all') {
+        if ($request->has('date') && 'all' != strtolower($request->input('date'))) {
             $date = $dateFilter = Carbon::parse($request->input('date'));
             $calls->where('scheduled_date', '=', $date->toDateString());
         }
@@ -28,7 +42,7 @@ class PatientCallListController extends Controller
                 $u->with([
                     'patientSummaries' => function ($q) use ($date) {
                         $q->where('month_year', $date->startOfMonth()->toDateString())
-                          ->orderBy('id', 'desc');
+                            ->orderBy('id', 'desc');
                     },
                     'patientInfo.contactWindows',
                 ]);
@@ -41,7 +55,7 @@ class PatientCallListController extends Controller
             $filterStatus = $request->input('filterStatus');
         }
 
-        if ($filterStatus != 'all') {
+        if ('all' != $filterStatus) {
             $calls->where('status', '=', $filterStatus);
         }
 
@@ -49,7 +63,6 @@ class PatientCallListController extends Controller
         $calls->orderBy('window_start', 'asc');
 
         $calls = $calls->get();
-
 
         return view('patientCallList.index', compact([
             'calls',
@@ -59,22 +72,11 @@ class PatientCallListController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @return Response
      */
     public function store(Request $request)
     {
-        //
     }
 }

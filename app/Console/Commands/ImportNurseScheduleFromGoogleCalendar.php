@@ -1,9 +1,13 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
-use App\NurseContactWindow;
 use App\Nurse;
+use App\NurseContactWindow;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -12,6 +16,12 @@ use Spatie\GoogleCalendar\Event as GoogleCalendarEvent;
 class ImportNurseScheduleFromGoogleCalendar extends Command
 {
     /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Import Nurse Schedule from Google Calendar.';
+    /**
      * The name and signature of the console command.
      *
      * @var string
@@ -19,16 +29,7 @@ class ImportNurseScheduleFromGoogleCalendar extends Command
     protected $signature = 'nurseSchedule:import';
 
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Import Nurse Schedule from Google Calendar.';
-
-    /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -45,7 +46,7 @@ class ImportNurseScheduleFromGoogleCalendar extends Command
         $nextWeek = Carbon::now()->addWeek(1);
 
         $startDateTime = $nextWeek->startOfWeek()->copy();
-        $endDateTime = $nextWeek->endOfWeek()->copy();
+        $endDateTime   = $nextWeek->endOfWeek()->copy();
 
         $events = GoogleCalendarEvent::get($startDateTime, $endDateTime);
 
@@ -60,7 +61,7 @@ class ImportNurseScheduleFromGoogleCalendar extends Command
                 continue;
             }
 
-            $nurse = User::find($nurseId);
+            $nurse  = User::find($nurseId);
             $window = timestampsToWindow($event->startDateTime, $event->endDateTime);
 
             NurseContactWindow::updateOrCreate([

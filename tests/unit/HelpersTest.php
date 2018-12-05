@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Unit;
 
 use App\User;
@@ -9,11 +13,9 @@ use Tests\TestCase;
 class HelpersTest extends TestCase
 {
     /**
-     * Tests parseIds()
-     *
-     * @return void
+     * Tests parseIds().
      */
-    public function testParseIds()
+    public function test_parse_ids()
     {
         //test model
         $model     = new User();
@@ -47,22 +49,22 @@ class HelpersTest extends TestCase
 
         //test array of ids
         $arrayOfIds = [5, 6, 7];
-        $ids = parseIds($arrayOfIds);
+        $ids        = parseIds($arrayOfIds);
         $this->assertEquals([5, 6, 7], $ids);
 
         //test array of objects
         $arrayOfObjects = [$model, $model2];
-        $ids = parseIds($arrayOfObjects);
-        $this->assertEquals([1,2], $ids);
+        $ids            = parseIds($arrayOfObjects);
+        $this->assertEquals([1, 2], $ids);
 
         //test comma delimited string of id's
         $string = '1,2';
-        $ids = parseIds($string);
-        $this->assertEquals([1,2], $ids);
+        $ids    = parseIds($string);
+        $this->assertEquals([1, 2], $ids);
 
         //test string of single id
         $string = '1';
-        $ids = parseIds($string);
+        $ids    = parseIds($string);
         $this->assertEquals([1], $ids);
 
         //test id int

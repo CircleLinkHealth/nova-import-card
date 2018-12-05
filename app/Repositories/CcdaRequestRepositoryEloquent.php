@@ -1,44 +1,29 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Repositories;
 
-use Prettus\Repository\Eloquent\BaseRepository;
-use Prettus\Repository\Criteria\RequestCriteria;
 use App\Contracts\Repositories\CcdaRequestRepository;
 use App\Entities\CcdaRequest;
 use App\Validators\CcdaRequestValidator;
+use Prettus\Repository\Criteria\RequestCriteria;
+use Prettus\Repository\Eloquent\BaseRepository;
 
 /**
- * Class CcdaRequestRepositoryEloquent
- * @package namespace App\Repositories;
+ * Class CcdaRequestRepositoryEloquent.
  */
 class CcdaRequestRepositoryEloquent extends BaseRepository implements CcdaRequestRepository
 {
     /**
-     * Specify Model class name
-     *
-     * @return string
-     */
-    public function model()
-    {
-        return CcdaRequest::class;
-    }
-
-
-    /**
-     * Boot up the repository, pushing criteria
+     * Boot up the repository, pushing criteria.
      */
     public function boot()
     {
         $this->pushCriteria(app(RequestCriteria::class));
     }
-
-
-    public function validator()
-    {
-        return CcdaRequestValidator::class;
-    }
-
 
     public function create(array $attributes)
     {
@@ -52,5 +37,20 @@ class CcdaRequestRepositoryEloquent extends BaseRepository implements CcdaReques
         }
 
         return $created;
+    }
+
+    /**
+     * Specify Model class name.
+     *
+     * @return string
+     */
+    public function model()
+    {
+        return CcdaRequest::class;
+    }
+
+    public function validator()
+    {
+        return CcdaRequestValidator::class;
     }
 }

@@ -3,9 +3,9 @@
 <?php
 
 $enrollmentSection = \App\Reports\Sales\Practice\Sections\EnrollmentSummary::class;
-$rangeSection = \App\Reports\Sales\Practice\Sections\RangeSummary::class;
-$financialSection = \App\Reports\Sales\Practice\Sections\FinancialSummary::class;
-$practiceSection = \App\Reports\Sales\Practice\Sections\PracticeDemographics::class;
+$rangeSection      = \App\Reports\Sales\Practice\Sections\RangeSummary::class;
+$financialSection  = \App\Reports\Sales\Practice\Sections\FinancialSummary::class;
+$practiceSection   = \App\Reports\Sales\Practice\Sections\PracticeDemographics::class;
 
 ?>
 
@@ -29,7 +29,6 @@ $practiceSection = \App\Reports\Sales\Practice\Sections\PracticeDemographics::cl
 
 
 @section('content')
-
     <div class="page-header">
         @if($data['isEmail'])
             <div style="text-align: center">
@@ -74,8 +73,7 @@ $practiceSection = \App\Reports\Sales\Practice\Sections\PracticeDemographics::cl
 
             @if($data['isEmail'])
             <p style="font-size: 16px">
-                You can see a list of forwarded notes <a
-                        href="{{$data[$rangeSection]['link_to_notes_listing']}}">here</a>,
+                You can see a list of forwarded notes <a href="{{$data[$rangeSection]['link_to_notes_listing']}}">here</a>,
                 including <b>{{$data[$rangeSection]['no_of_forwarded_emergency_notes']}}</b> notification(s) indicating
                 a patient visited an ER/Hospital.
             </p>

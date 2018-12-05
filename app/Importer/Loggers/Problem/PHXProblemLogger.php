@@ -1,13 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 9/11/18
- * Time: 10:35 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Importer\Loggers\Problem;
-
 
 use App\Contracts\Importer\MedicalRecord\Section\Logger;
 use App\Services\Eligibility\Entities\Problem;
@@ -17,7 +14,6 @@ class PHXProblemLogger implements Logger
     public function handle($problems): array
     {
         foreach ($problems as $p) {
-
             $results[] = Problem::create([
                 'end'                    => $p['end'],
                 'code'                   => $p['code'],

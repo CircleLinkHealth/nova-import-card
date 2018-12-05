@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands\Athena;
 
 use App\Services\AthenaAPI\DetermineEnrollmentEligibility;
@@ -10,6 +14,12 @@ use Psr\Log\InvalidArgumentException;
 class GetPatientIdFromLastYearAppointments extends Command
 {
     /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Retrieve patient Ids from past booked appointments from the Athena API';
+    /**
      * The name and signature of the console command.
      *
      * @var string
@@ -19,14 +29,6 @@ class GetPatientIdFromLastYearAppointments extends Command
                                                                         {to? : To date yyyy-mm-dd}
                                                                         {offset? : Offset results from athena api using number of target patients in the table}
                                                                         {batchId? : The Eligibility Batch Id}';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Retrieve patient Ids from past booked appointments from the Athena API';
-
 
     private $service;
 
@@ -65,7 +67,7 @@ class GetPatientIdFromLastYearAppointments extends Command
         }
 
         if ($this->argument('offset')) {
-            $offset = (boolean)$this->argument('offset');
+            $offset = (bool) $this->argument('offset');
         }
 
         if ($this->argument('from')) {
@@ -77,12 +79,14 @@ class GetPatientIdFromLastYearAppointments extends Command
         }
 
         if ($startDate->greaterThan($endDate)) {
-            throw new InvalidArgumentException("Start date cannot be greater than end date.", 422);
+            throw new InvalidArgumentException('Start date cannot be greater than end date.', 422);
         }
 
         if (app()->environment('worker')) {
-            sendSlackMessage('#background-tasks',
-                "Getting patient ids from the appointments from Athena, for practice_athena_id: $athenaPracticeId. \n");
+            sendSlackMessage(
+                '#background-tasks',
+                "Getting patient ids from the appointments from Athena, for practice_athena_id: ${athenaPracticeId}. \n"
+            );
         }
 
         $this->service->getPatientIdFromAppointments($athenaPracticeId, $startDate, $endDate, $offset, $batchId);

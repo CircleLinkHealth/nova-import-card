@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Notifications\Channels;
 
 use App\Contracts\Efax;
@@ -15,10 +19,8 @@ class FaxChannel
     /**
      * Send the given notification.
      *
-     * @param  mixed $notifiable
-     * @param  \Illuminate\Notifications\Notification $notification
-     *
-     * @return void
+     * @param mixed                                  $notifiable
+     * @param \Illuminate\Notifications\Notification $notification
      */
     public function send($notifiable, Notification $notification)
     {

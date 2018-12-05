@@ -1,12 +1,16 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App;
 
 use App\Filters\Filterable;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property int $id
+ * @property int            $id
  * @property \Carbon\Carbon $patient_created_at
  * @property string preferred_call_days
  * @property int|null no_call_attempts_since_last_success
@@ -24,6 +28,7 @@ class CallView extends Model
         foreach ($days as $day) {
             $result[] = $this->getDayFromInt($day);
         }
+
         return implode(',', $result);
     }
 

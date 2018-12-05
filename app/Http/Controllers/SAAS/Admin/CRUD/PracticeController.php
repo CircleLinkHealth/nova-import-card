@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers\SAAS\Admin\CRUD;
 
 use App\Http\Controllers\Controller;
@@ -10,6 +14,40 @@ use Illuminate\Http\Request;
 
 class PracticeController extends Controller
 {
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        $messages = \Session::get('messages');
+
+        $locations = Location::whereIn('practice_id', auth()->user()->practices->pluck('id')->all())
+            ->pluck('name', 'id')
+            ->all();
+
+        return view('saas.admin.practice.create', compact(['locations', 'errors', 'messages']));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        $messages = \Session::get('messages');
+
+        $program = Practice::find($id);
+
+        $locations = $program->locations->all();
+
+        return view('saas.admin.practice.edit', compact(['program', 'locations', 'errors', 'messages']));
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -39,9 +77,9 @@ class PracticeController extends Controller
         }
 
         $practices = Practice::orderBy('id', 'desc')
-                             ->whereIn('active', $filterOptions)
-                             ->authUserCanAccess()
-                             ->get();
+            ->whereIn('active', $filterOptions)
+            ->authUserCanAccess()
+            ->get();
 
         return view('saas.admin.practice.index')
             ->with('practices', $practices)
@@ -49,25 +87,20 @@ class PracticeController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display the specified resource.
+     *
+     * @param int $id
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function show($id)
     {
-        $messages = \Session::get('messages');
-
-        $locations = Location::whereIn('practice_id', auth()->user()->practices->pluck('id')->all())
-                             ->pluck('name', 'id')
-                             ->all();
-
-        return view('saas.admin.practice.create', compact(['locations', 'errors', 'messages']));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param \Illuminate\Http\Request $request
      *
      * @return \Illuminate\Http\Response
      */
@@ -76,11 +109,11 @@ class PracticeController extends Controller
         $saasAccount = auth()->user()->saasAccount;
 
         $practice = Practice::where('name', $saasAccount->name)
-                            ->where('saas_account_id', $saasAccount->id)
-                            ->first();
+            ->where('saas_account_id', $saasAccount->id)
+            ->first();
 
         if ( ! $practice) {
-            $practice = new Practice;
+            $practice = new Practice();
         }
 
         $practice->saas_account_id = $saasAccount->id;
@@ -95,54 +128,23 @@ class PracticeController extends Controller
         $practice->save();
 
         $practice->chargeableServices()
-                 ->attach($request['service_id'], [
-                     'amount' => $request['amount'],
-                 ]);
+            ->attach($request['service_id'], [
+                'amount' => $request['amount'],
+            ]);
 
         return redirect()->route('provider.dashboard.manage.locations', ['practiceSlug' => $practice->name])
-                         ->with('messages', ['successfully created new program']);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $messages = \Session::get('messages');
-
-        $program = Practice::find($id);
-
-        $locations = $program->locations->all();
-
-        return view('saas.admin.practice.edit', compact(['program', 'locations', 'errors', 'messages']));
+            ->with('messages', ['successfully created new program']);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  int $id
+     * @param \Illuminate\Http\Request $request
+     * @param int                      $id
      *
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-        //
     }
 }

@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 23/02/2017
- * Time: 7:46 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Traits;
@@ -12,6 +10,11 @@ use App\EmrDirectAddress;
 
 trait HasEmrDirectAddress
 {
+    public function emrDirect()
+    {
+        return $this->morphMany(EmrDirectAddress::class, 'emrDirectable');
+    }
+
     public function getEmrDirectAddressAttribute()
     {
         return $this->emrDirect->first()->address ?? null;
@@ -29,10 +32,5 @@ trait HasEmrDirectAddress
         $this->emrDirect()->create([
             'address' => $address,
         ]);
-    }
-
-    public function emrDirect()
-    {
-        return $this->morphMany(EmrDirectAddress::class, 'emrDirectable');
     }
 }

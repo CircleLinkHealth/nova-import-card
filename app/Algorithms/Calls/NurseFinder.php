@@ -1,40 +1,34 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: RohanM
- * Date: 2/13/17
- * Time: 11:23 AM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Algorithms\Calls;
 
 use App\Call;
 use App\Nurse;
-use App\NurseContactWindow;
 use App\Patient;
-use App\PatientContactWindow;
 use App\User;
 use Carbon\Carbon;
 
 class NurseFinder
 {
+    protected $data;
+    protected $matchArray;
+    protected $nursesForPatient;
 
-    /***
+    protected $offsetDate;
+
+    /*
      * Locates an RN for a given patient
      * Use function handle to get (Nurse, target date, start window and end window)
      */
 
     protected $patient;
-    protected $nursesForPatient;
-
-    protected $offsetDate;
-    protected $windowStart;
-    protected $windowEnd;
-    protected $matchArray;
     protected $previousCall;
-
-
-    protected $data;
+    protected $windowEnd;
+    protected $windowStart;
 
     public function __construct(
         Patient $patient,
@@ -43,7 +37,6 @@ class NurseFinder
         $windowEnd,
         Call $previousCall = null
     ) {
-
         $this->patient          = $patient;
         $this->offsetDate       = $date;
         $this->windowStart      = $windowStart;
@@ -52,190 +45,12 @@ class NurseFinder
         $this->previousCall     = $previousCall;
     }
 
-    public function find()
-    {
-
-//        foreach ($this->nursesForPatient as $nurseId => $count) {
-//
-//            $nurse = Nurse::where('user_id', $nurseId)->first();
-//
-//            $date_match = $this->checkNurseForTargetDays($nurse); //first days
-//
-//            if ($date_match) {
-//
-//                $no_of_calls_in_window = $this->countScheduledCallCountForNurseForWindow($date_match);
-//
-//                //check threshold for nurse
-//                if ($no_of_calls_in_window < 6) {
-//
-//                    return $date_match;
-//
-//                }// else keep looking!
-//
-//            }
-//
-//        }
-//        $match['nurse'] = current(array_keys($this->nursesForPatient));
-
-        $user = auth()->user();
-        $isCurrentUserNurse = $user->hasRole('care-center');
-
-        if ($isCurrentUserNurse) {
-            $match['nurse']        = auth()->id();
-            $match['window_match'] = "Assigning next call to current care coach.";
-            return $match;
-        }
-
-        if ( ! $this->previousCall) {
-            if ($isCurrentUserNurse) {
-                $match['nurse']        = auth()->id();
-                $match['window_match'] = "No previous call found, assigning to you.";
-                return $match;
-            } else {
-                return null;
-            }
-        }
-
-        $isPreviousCallNurseActive = false;
-        $previousCallUser          = User::ofType('care-center')
-                                         ->whereHas('nurseInfo', function ($q) {
-                                             $q->where('status', 'active');
-                                         })
-                                         ->with('nurseInfo')
-                                         ->find($this->previousCall['outbound_cpm_id']);
-
-        if ($previousCallUser) {
-            $isPreviousCallNurseActive = true;
-        }
-
-        if ( ! $isPreviousCallNurseActive) {
-            if ($isCurrentUserNurse) {
-                $match['nurse']        = auth()->id();
-                $match['window_match'] = "No previous call with active nurse found, assigning to you.";
-                return $match;
-            }
-        }
-
-        $nurseDisplayName = '';
-
-        if ($isPreviousCallNurseActive && $this->previousCall['attempt_note'] == '') {
-            $match['nurse']        = $this->previousCall['outbound_cpm_id'];
-            $match['window_match'] = 'Attempt Note was empty, assigning to care person that last contacted patient. ';
-            $nurseDisplayName      = $previousCallUser->display_name;
-        } else {
-
-            $data = $this->getLastRNCallWithoutAttemptNote($this->patient, $this->previousCall['outbound_cpm_id']);
-
-            if ($this->previousCall['attempt_note'] != '') {
-                $match['window_match'] = 'Attempt Note present, looking for last care person that contacted patient without one..';
-            }
-            else {
-                $match['window_match'] = '';
-            }
-
-            if ($data != null) {
-                $match['nurse']        = $data->id;
-                $match['window_match'] .= " Found care person that contacted patient in the past without attempt note. ";
-                $nurseDisplayName      = $data->display_name;
-            } else if ($isPreviousCallNurseActive) {
-                //assign back to RN that first called patient
-                $match['nurse']        = $this->previousCall['outbound_cpm_id'];
-                $match['window_match'] .= " No previous care person without attempt note found, assigning to last contacted care person. ";
-                $nurseDisplayName      = $previousCallUser->display_name;
-            } else {
-                return null;
-            }
-        }
-
-        /*
-         *
-        Always schedule next call to RN who made last call EXCEPT:
-        if attempt note exists for a call: then assign next call to RN who performed the last call without an attempt note
-        note: if there is no such RN (ex: first call ever has an attempt note), then assign next call to RN who made last call
-         */
-
-        $match['window_match'] .= '(' . $nurseDisplayName . ')';
-
-        return $match;
-    }
-
-    public function getMostFrequentNursesForPatient()
-    {
-
-        //get all nurses that can care for a patient
-        $nurses = Nurse::whereHas('user', function ($q) {
-
-            $q->where('user_status', 1);
-        })->get();
-
-        //Result array with Nurses
-        $canCare = [];
-
-        foreach ($nurses as $nurse) {
-            //get all locations for nurse
-            $nurse_programs = $nurse->user->viewableProgramIds();
-
-            $intersection = in_array($this->patient->user->program_id, $nurse_programs);
-
-            if ($intersection) {
-                $successfulCallCount =
-                    Call
-                        ::where('outbound_cpm_id', $nurse->user_id)
-                        ->where('inbound_cpm_id', $this->patient->user_id)
-                        ->where('status', 'reached')
-                        ->count();
-
-                $canCare[$nurse->user_id] = $successfulCallCount;
-            }
-        }
-
-        arsort($canCare);
-
-        return $canCare;
-    }
-
-
-    public function checkNurseForTargetDays(
-        $nurse
-    ) {
-
-        //see if there are any window intersections within the next 3 days.
-        //supplies $this->matchArray
-        $date_matches = $this->checkForIntersectingDays($nurse); //first days
-
-        if ( ! is_null($date_matches)) {
-            foreach ($date_matches as $key => $value) {
-                if (isset($value['patient']) && isset($value['nurse'])) {
-                    if ($this->checkForIntersectingTimes($value['patient'], $value['nurse'])) {
-                        $startWindow = Carbon::parse($value['patient']['window_start']);
-                        $endWindow   = Carbon::parse($value['patient']['window_end']);
-
-                        $match['date']         = $startWindow->toDateString();
-                        $match['window_start'] = $startWindow->format('H:i');
-                        $match['window_end']   = $endWindow->format('H:i');
-
-                        $match['window_match'] = 'We found an intersecting nurse window with: ' . $nurse->user->getFullName();
-                        $match['nurse']        = $nurse->user_id;
-
-                        return $match;
-                    }
-                }
-            }
-        }
-
-        //nurse has no windows
-        return false;
-    }
-
-
-
-//finds any days that have windows for patient and nurse
-//supplies $this->matchArray()
+    //finds any days that have windows for patient and nurse
+    //supplies $this->matchArray()
 
     public function checkForIntersectingDays(
         $nurse
     ) {
-
         $matchArray = [];
 
         $patientWindow['date']         = Carbon::parse($this->offsetDate)->toDateString();
@@ -243,11 +58,9 @@ class NurseFinder
         $patientWindow['window_end']   = $this->windowEnd;
 
         $targetDays = [
-
             Carbon::parse($patientWindow['date']),
             Carbon::parse($patientWindow['date'])->addDays(1),
             Carbon::parse($patientWindow['date'])->addDays(2),
-
         ];
 
         $patientUpcomingWindows = $this->getNextWindowsForPatient();
@@ -270,7 +83,7 @@ class NurseFinder
                 return $value->date->toDateString() == $dayString;
             });
 
-            if ($nurseWindow != null) {
+            if (null != $nurseWindow) {
                 $matchArray[$dayString]['nurse'] = clhWindowToTimestamps(
                     $nurseWindow['date'],
                     $nurseWindow['window_time_start'],
@@ -288,11 +101,10 @@ class NurseFinder
             ) use (
                 $day
             ) {
-
                 return Carbon::parse($value['window_start'])->toDateString() == $day->toDateString();
             })->first();
 
-            if ($patientWindow != null) {
+            if (null != $patientWindow) {
                 $matchArray[$dayString]['patient'] = $patientWindow;
             }
 
@@ -302,9 +114,234 @@ class NurseFinder
         return $matchArray;
     }
 
+    //for every day window-pair given for nurses and patients, this will return whether they intersect.
+    //supplies $this->matchArray()
+
+    public function checkForIntersectingTimes(
+        $patientWindow,
+        $nurseWindow
+    ) {
+        $patientStartCarbon = Carbon::parse($patientWindow['window_start']);
+        $patientEndCarbon   = Carbon::parse($patientWindow['window_end']);
+
+        $nurseStartCarbon = Carbon::parse($nurseWindow['window_start'])->subMinutes(15); //padding
+        $nurseEndCarbon   = Carbon::parse($nurseWindow['window_end'])->addMinutes(15); //padding
+
+        //any overlap is true
+        return ($patientStartCarbon < $nurseEndCarbon) && ($patientEndCarbon > $nurseStartCarbon);
+    }
+
+    public function checkNurseForTargetDays(
+        $nurse
+    ) {
+        //see if there are any window intersections within the next 3 days.
+        //supplies $this->matchArray
+        $date_matches = $this->checkForIntersectingDays($nurse); //first days
+
+        if ( ! is_null($date_matches)) {
+            foreach ($date_matches as $key => $value) {
+                if (isset($value['patient'], $value['nurse'])) {
+                    if ($this->checkForIntersectingTimes($value['patient'], $value['nurse'])) {
+                        $startWindow = Carbon::parse($value['patient']['window_start']);
+                        $endWindow   = Carbon::parse($value['patient']['window_end']);
+
+                        $match['date']         = $startWindow->toDateString();
+                        $match['window_start'] = $startWindow->format('H:i');
+                        $match['window_end']   = $endWindow->format('H:i');
+
+                        $match['window_match'] = 'We found an intersecting nurse window with: '.$nurse->user->getFullName();
+                        $match['nurse']        = $nurse->user_id;
+
+                        return $match;
+                    }
+                }
+            }
+        }
+
+        //nurse has no windows
+        return false;
+    }
+
+    public function countScheduledCallCountForNurseForWindow(
+        $date_matches
+    ) {
+        return Call::where('outbound_cpm_id', $date_matches['nurse'])
+            ->where('scheduled_date', $date_matches['date'])
+            ->where('window_start', '>=', $date_matches['window_start'])
+            ->where('window_end', '<=', $date_matches['window_end'])
+            ->count();
+    }
+
+    public function find()
+    {
+//        foreach ($this->nursesForPatient as $nurseId => $count) {
+//
+//            $nurse = Nurse::where('user_id', $nurseId)->first();
+//
+//            $date_match = $this->checkNurseForTargetDays($nurse); //first days
+//
+//            if ($date_match) {
+//
+//                $no_of_calls_in_window = $this->countScheduledCallCountForNurseForWindow($date_match);
+//
+//                //check threshold for nurse
+//                if ($no_of_calls_in_window < 6) {
+//
+//                    return $date_match;
+//
+//                }// else keep looking!
+//
+//            }
+//
+//        }
+//        $match['nurse'] = current(array_keys($this->nursesForPatient));
+
+        $user               = auth()->user();
+        $isCurrentUserNurse = $user->hasRole('care-center');
+
+        if ($isCurrentUserNurse) {
+            $match['nurse']        = auth()->id();
+            $match['window_match'] = 'Assigning next call to current care coach.';
+
+            return $match;
+        }
+
+        if ( ! $this->previousCall) {
+            if ($isCurrentUserNurse) {
+                $match['nurse']        = auth()->id();
+                $match['window_match'] = 'No previous call found, assigning to you.';
+
+                return $match;
+            }
+
+            return null;
+        }
+
+        $isPreviousCallNurseActive = false;
+        $previousCallUser          = User::ofType('care-center')
+            ->whereHas('nurseInfo', function ($q) {
+                $q->where('status', 'active');
+            })
+            ->with('nurseInfo')
+            ->find($this->previousCall['outbound_cpm_id']);
+
+        if ($previousCallUser) {
+            $isPreviousCallNurseActive = true;
+        }
+
+        if ( ! $isPreviousCallNurseActive) {
+            if ($isCurrentUserNurse) {
+                $match['nurse']        = auth()->id();
+                $match['window_match'] = 'No previous call with active nurse found, assigning to you.';
+
+                return $match;
+            }
+        }
+
+        $nurseDisplayName = '';
+
+        if ($isPreviousCallNurseActive && '' == $this->previousCall['attempt_note']) {
+            $match['nurse']        = $this->previousCall['outbound_cpm_id'];
+            $match['window_match'] = 'Attempt Note was empty, assigning to care person that last contacted patient. ';
+            $nurseDisplayName      = $previousCallUser->display_name;
+        } else {
+            $data = $this->getLastRNCallWithoutAttemptNote($this->patient, $this->previousCall['outbound_cpm_id']);
+
+            if ('' != $this->previousCall['attempt_note']) {
+                $match['window_match'] = 'Attempt Note present, looking for last care person that contacted patient without one..';
+            } else {
+                $match['window_match'] = '';
+            }
+
+            if (null != $data) {
+                $match['nurse'] = $data->id;
+                $match['window_match'] .= ' Found care person that contacted patient in the past without attempt note. ';
+                $nurseDisplayName = $data->display_name;
+            } elseif ($isPreviousCallNurseActive) {
+                //assign back to RN that first called patient
+                $match['nurse'] = $this->previousCall['outbound_cpm_id'];
+                $match['window_match'] .= ' No previous care person without attempt note found, assigning to last contacted care person. ';
+                $nurseDisplayName = $previousCallUser->display_name;
+            } else {
+                return null;
+            }
+        }
+
+        /*
+         *
+        Always schedule next call to RN who made last call EXCEPT:
+        if attempt note exists for a call: then assign next call to RN who performed the last call without an attempt note
+        note: if there is no such RN (ex: first call ever has an attempt note), then assign next call to RN who made last call
+         */
+
+        $match['window_match'] .= '('.$nurseDisplayName.')';
+
+        return $match;
+    }
+
+    /**
+     * Get last RN without attempt note.
+     *
+     * Edit (Pangratios) - also filters out nurses that are not active
+     *
+     * @param User $patient
+     * @param int  $nurseToIgnore
+     *
+     * @return User|null
+     */
+    public function getLastRNCallWithoutAttemptNote($patient, $nurseToIgnore)
+    {
+        $user = optional(Call
+            ::where('inbound_cpm_id', $patient->user_id)
+                ->where('status', '!=', 'scheduled')
+                ->where('called_date', '!=', '')
+                ->where('attempt_note', '=', '')
+                ->where('outbound_cpm_id', '!=', $nurseToIgnore)
+                ->whereHas('outboundUser', function ($q) {
+                    $q->whereHas('nurseInfo', function ($q2) {
+                        $q2->where('status', '=', 'active');
+                    });
+                })
+                ->orderBy('called_date', 'desc')
+                ->first())->outboundUser;
+
+        return $user;
+    }
+
+    public function getMostFrequentNursesForPatient()
+    {
+        //get all nurses that can care for a patient
+        $nurses = Nurse::whereHas('user', function ($q) {
+            $q->where('user_status', 1);
+        })->get();
+
+        //Result array with Nurses
+        $canCare = [];
+
+        foreach ($nurses as $nurse) {
+            //get all locations for nurse
+            $nurse_programs = $nurse->user->viewableProgramIds();
+
+            $intersection = in_array($this->patient->user->program_id, $nurse_programs);
+
+            if ($intersection) {
+                $successfulCallCount = Call
+                        ::where('outbound_cpm_id', $nurse->user_id)
+                            ->where('inbound_cpm_id', $this->patient->user_id)
+                            ->where('status', 'reached')
+                            ->count();
+
+                $canCare[$nurse->user_id] = $successfulCallCount;
+            }
+        }
+
+        arsort($canCare);
+
+        return $canCare;
+    }
+
     public function getNextWindowsForPatient()
     {
-
         $patient_windows = $this->patient->contactWindows->all();
 
         //to count the current day in the calculation as well, we sub one day.
@@ -328,7 +365,7 @@ class NurseFinder
 
         // leaving first blank to offset weird way of storing week as 1-7 instead of 0-6.
         // Returns a datetime string with all the necessary time information
-        $week  = [
+        $week = [
             '',
             Carbon::MONDAY,
             Carbon::TUESDAY,
@@ -351,14 +388,14 @@ class NurseFinder
 
         $weeks_range = 2;
 
-        for ($i = 0; $i < $weeks_range; $i++) {
+        for ($i = 0; $i < $weeks_range; ++$i) {
             //add windows for each week needed.
 
             foreach ($patient_windows as $window) {
                 //the first date should include the target date, so we backtrack one day
                 //and see whether the date is a window.
 
-                if ($i == 0) {
+                if (0 == $i) {
                     $carbon_date_start = Carbon::parse($offset_date)->subDay()->next($week[$window->day_of_week]);
                     $carbon_date_end   = Carbon::parse($offset_date)->subDay()->next($week[$window->day_of_week]);
                 } else {
@@ -377,69 +414,10 @@ class NurseFinder
 
                 $windows[$count]['window_start'] = $carbon_date_start->toDateTimeString();
                 $windows[$count]['window_end']   = $carbon_date_end->toDateTimeString();
-                $count++;
+                ++$count;
             }
         }
 
         return collect($windows)->sort();
-    }
-
-//for every day window-pair given for nurses and patients, this will return whether they intersect.
-//supplies $this->matchArray()
-
-    public function checkForIntersectingTimes(
-        $patientWindow,
-        $nurseWindow
-    ) {
-
-        $patientStartCarbon = Carbon::parse($patientWindow['window_start']);
-        $patientEndCarbon   = Carbon::parse($patientWindow['window_end']);
-
-        $nurseStartCarbon = Carbon::parse($nurseWindow['window_start'])->subMinutes(15); //padding
-        $nurseEndCarbon   = Carbon::parse($nurseWindow['window_end'])->addMinutes(15); //padding
-
-        //any overlap is true
-        return ($patientStartCarbon < $nurseEndCarbon) && ($patientEndCarbon > $nurseStartCarbon);
-    }
-
-    public function countScheduledCallCountForNurseForWindow(
-        $date_matches
-    ) {
-
-        return Call::where('outbound_cpm_id', $date_matches['nurse'])
-                   ->where('scheduled_date', $date_matches['date'])
-                   ->where('window_start', '>=', $date_matches['window_start'])
-                   ->where('window_end', '<=', $date_matches['window_end'])
-                   ->count();
-    }
-
-    /**
-     * Get last RN without attempt note.
-     *
-     * Edit (Pangratios) - also filters out nurses that are not active
-     *
-     * @param User $patient
-     * @param int $nurseToIgnore
-     *
-     * @return User|null
-     */
-    public function getLastRNCallWithoutAttemptNote($patient, $nurseToIgnore)
-    {
-
-        $user = optional(Call
-            ::where('inbound_cpm_id', $patient->user_id)
-            ->where('status', '!=', 'scheduled')
-            ->where('called_date', '!=', '')
-            ->where('attempt_note', '=', '')
-            ->where('outbound_cpm_id', '!=', $nurseToIgnore)
-            ->whereHas('outboundUser', function ($q) {
-                $q->whereHas('nurseInfo', function ($q2) {
-                    $q2->where('status', '=', 'active');
-                });
-            })
-            ->orderBy('called_date', 'desc')
-            ->first())->outboundUser;
-
-        return $user;
     }
 }

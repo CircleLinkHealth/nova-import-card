@@ -1,15 +1,20 @@
-<?php namespace App\Models\CPM;
+<?php
 
-use Illuminate\Database\Eloquent\Model;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Models\CPM;
 
 /**
- * App\Models\CPM\CpmInstruction
+ * App\Models\CPM\CpmInstruction.
  *
- * @property int $id
- * @property int $is_default
- * @property string $name
+ * @property int            $id
+ * @property int            $is_default
+ * @property string         $name
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstruction whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstruction whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstruction whereIsDefault($value)
@@ -19,7 +24,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CpmInstruction extends \App\BaseModel
 {
-
     protected $guarded = [];
 
     public function cpmBiometrics()

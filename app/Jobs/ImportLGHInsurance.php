@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Jobs;
 
 use App\Models\PatientData\LGH\LGHInsurance;
@@ -14,9 +18,7 @@ class ImportLGHInsurance implements ShouldQueue
     use InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     *
-     *
-     * @var string $fileName
+     * @var string
      */
     protected $fileName;
 
@@ -32,36 +34,34 @@ class ImportLGHInsurance implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
     public function handle()
     {
-        if (stripos($this->fileName, 'circlelink_supplement_') === false) {
+        if (false === stripos($this->fileName, 'circlelink_supplement_')) {
             return;
         }
 
-        $path = config('filesystems.disks.ccdas.root') . '/' . $this->fileName;
+        $path = config('filesystems.disks.ccdas.root').'/'.$this->fileName;
 
         $exists = ProcessedFile::wherePath($path)->first();
 
         if ($exists) {
-            \Log::info("Already processed $path");
+            \Log::info("Already processed ${path}");
 
             return;
         }
 
-        \Log::info("Started Importing LGH Insurance from: $this->fileName");
+        \Log::info("Started Importing LGH Insurance from: {$this->fileName}");
 
         $csv = parseCsvToArray($path);
 
-        if (!$csv) {
+        if ( ! $csv) {
             return;
         }
 
         foreach ($csv as $row) {
             LGHInsurance::updateOrCreate([
-                'mrn' => $row['mrn']
+                'mrn' => $row['mrn'],
             ], $row);
         }
 

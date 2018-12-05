@@ -1,13 +1,26 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 
 class ChangeCareCenterDisplayName extends Migration
 {
     /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        $role = \App\Role::where('name', 'care-center')->first();
+
+        $role->display_name = 'Care Center';
+        $role->save();
+    }
+
+    /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -17,18 +30,5 @@ class ChangeCareCenterDisplayName extends Migration
             $role->display_name = 'Care Coach';
             $role->save();
         }
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        $role = \App\Role::where('name', 'care-center')->first();
-
-        $role->display_name = 'Care Center';
-        $role->save();
     }
 }

@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 3/12/18
- * Time: 2:14 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Importer\Loggers\Allergy;
@@ -19,7 +17,7 @@ class CommaDelimitedListAllergyLogger implements Logger
         $allergiesToImport = [];
 
         foreach ($allergies as $allergy) {
-            if (strtolower($allergy) == 'no') {
+            if ('no' == strtolower($allergy)) {
                 continue;
             }
 

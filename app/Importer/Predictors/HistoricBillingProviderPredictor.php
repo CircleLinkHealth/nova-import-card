@@ -1,4 +1,10 @@
-<?php namespace App\Importer\Predictors;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Importer\Predictors;
 
 use App\Contracts\Importer\Predictor;
 
@@ -6,7 +12,7 @@ use App\Contracts\Importer\Predictor;
  * Created by PhpStorm.
  * User: michalis
  * Date: 16/01/2017
- * Time: 5:36 PM
+ * Time: 5:36 PM.
  */
 class HistoricBillingProviderPredictor extends BaseHistoricPredictor implements Predictor
 {
@@ -14,7 +20,7 @@ class HistoricBillingProviderPredictor extends BaseHistoricPredictor implements 
      * Predicts the Billing Provider for a medical record.
      * Returns a Billing Provider id.
      *
-     * @return integer
+     * @return int
      */
     public function predict()
     {

@@ -1,14 +1,16 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Models\PatientData\Rappa;
 
-use Illuminate\Database\Eloquent\Model;
-
 /**
- * App\Models\PatientData\Rappa\RappaInsAllergy
+ * App\Models\PatientData\Rappa\RappaInsAllergy.
  *
  * @property string|null $patient_name
- * @property int|null $patient_id
+ * @property int|null    $patient_id
  * @property string|null $last_encounter
  * @property string|null $allergy
  * @property string|null $primary_insurance
@@ -22,6 +24,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $home_phone
  * @property string|null $primary_phone
  * @property string|null $preferred_contact_method
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\Rappa\RappaInsAllergy whereAddress1($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\Rappa\RappaInsAllergy whereAddress2($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\Rappa\RappaInsAllergy whereAllergy($value)

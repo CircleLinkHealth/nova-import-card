@@ -1,10 +1,13 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\CLH\CCD\ImportRoutine;
 
 use App\CLH\CCD\Identifier\IdentificationManager;
 use App\Models\CCD\CcdVendor;
-use Illuminate\Support\Facades\Log;
 
 class RoutineBuilder
 {
@@ -15,12 +18,19 @@ class RoutineBuilder
         $this->ccd = $ccd;
     }
 
+    public function getDefaultRoutine()
+    {
+        $routine = CcdImportRoutine::find(1);
+
+        return $routine->strategies()->get();
+    }
+
     public function getRoutine()
     {
-        $idManager = new IdentificationManager($this->ccd);
+        $idManager          = new IdentificationManager($this->ccd);
         $matchedIdentifiers = $idManager->identify();
 
-        if (!$matchedIdentifiers) {
+        if ( ! $matchedIdentifiers) {
             return $this->getDefaultRoutine();
         }
 
@@ -31,6 +41,7 @@ class RoutineBuilder
                 if (empty($vendor->$key)) {
                     return true;
                 }
+
                 return $vendor->$key == $value;
             });
             //@todo: this will not fly because if the last irrelevant rule is left, it will pick it
@@ -56,19 +67,8 @@ class RoutineBuilder
 
         $keys = array_keys($vendors);
 
-        $routine = $vendors[ $keys[0] ]->routine()->get()[0];
+        $routine = $vendors[$keys[0]]->routine()->get()[0];
 
-        $strategies = $routine->strategies()->get();
-
-        return $strategies;
-    }
-
-    public function getDefaultRoutine()
-    {
-        $routine = CcdImportRoutine::find(1);
-
-        $strategies = $routine->strategies()->get();
-
-        return $strategies;
+        return $routine->strategies()->get();
     }
 }

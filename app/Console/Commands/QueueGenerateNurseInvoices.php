@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\Jobs\GenerateNurseInvoice;
@@ -10,6 +14,12 @@ use Illuminate\Console\Command;
 class QueueGenerateNurseInvoices extends Command
 {
     /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Generate Nurse Invoice cached view for the current month.';
+    /**
      * The name and signature of the console command.
      *
      * @var string
@@ -17,16 +27,7 @@ class QueueGenerateNurseInvoices extends Command
     protected $signature = 'report:nurseInvoices';
 
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Generate Nurse Invoice cached view for the current month.';
-
-    /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {

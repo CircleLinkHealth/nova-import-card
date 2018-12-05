@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Jobs;
 
 use App\Importer\Models\ItemLogs\DocumentLog;
@@ -14,7 +18,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Maknz\Slack\Facades\Slack;
 
 class ImportCsvPatientList implements ShouldQueue
 {
@@ -33,7 +36,7 @@ class ImportCsvPatientList implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @return void
+     * @param mixed $filename
      */
     public function __construct(array $file, $filename)
     {
@@ -47,16 +50,24 @@ class ImportCsvPatientList implements ShouldQueue
     }
 
     /**
+     * The job failed to process.
+     *
+     * @param \Exception $exception
+     */
+    public function failed(\Exception $exception)
+    {
+        sendSlackMessage('#background-tasks', "Queued job Import CSV patient list failed: ${exception}");
+    }
+
+    /**
      * Execute the job.
      *
      * @param ProcessEligibilityService $importService
-     *
-     * @return void
      */
     public function handle(ImportService $importService)
     {
         foreach ($this->patientsArr as $row) {
-            if (isset($row['medical_record_type']) && isset($row['medical_record_id'])) {
+            if (isset($row['medical_record_type'], $row['medical_record_id'])) {
                 if ($importService->isCcda($row['medical_record_type'])) {
                     $response = $importService->importExistingCcda($row['medical_record_id']);
 
@@ -78,19 +89,20 @@ class ImportCsvPatientList implements ShouldQueue
 
         $url = url('import.ccd.remix');
 
-        sendSlackMessage('#background-tasks',
-            "Queued job Import CSV for {$this->practice->display_name} completed! Visit $url.");
+        sendSlackMessage(
+            '#background-tasks',
+            "Queued job Import CSV for {$this->practice->display_name} completed! Visit ${url}."
+        );
     }
 
     /**
      * Get the most updated information from the csv (phone numbers, preferred call days/times, provider and so on).
      *
      * @param ImportedMedicalRecord $importedMedicalRecord
-     * @param array $row
+     * @param array                 $row
      */
     public function replaceWithValuesFromCsv(ImportedMedicalRecord $importedMedicalRecord, array $row)
     {
-
         $demographics = $importedMedicalRecord->demographics;
 
         $demographics->primary_phone        = $row['primary_phone'] ?? '';
@@ -124,8 +136,8 @@ class ImportCsvPatientList implements ShouldQueue
 
             if (count($providerName) >= 2) {
                 $provider = User::whereFirstName($providerName[0])
-                                ->whereLastName($providerName[1])
-                                ->first();
+                    ->whereLastName($providerName[1])
+                    ->first();
             }
 
             if ( ! empty($provider)) {
@@ -141,44 +153,31 @@ class ImportCsvPatientList implements ShouldQueue
 
         if (optional($mr->documents)->isNotEmpty()) {
             DocumentLog::whereIn('id', $mr->document->pluck('id')->all())
-                       ->update([
-                           'location_id'         => $importedMedicalRecord->location_id,
-                           'billing_provider_id' => $importedMedicalRecord->billing_provider_id,
-                           'practice_id'         => $importedMedicalRecord->practice_id,
-                       ]);
+                ->update([
+                    'location_id'         => $importedMedicalRecord->location_id,
+                    'billing_provider_id' => $importedMedicalRecord->billing_provider_id,
+                    'practice_id'         => $importedMedicalRecord->practice_id,
+                ]);
         }
 
         if (optional($mr->providers)->isNotEmpty()) {
             ProviderLog::whereIn('id', $mr->providers->pluck('id')->all())
-                       ->update([
-                           'location_id'         => $importedMedicalRecord->location_id,
-                           'billing_provider_id' => $importedMedicalRecord->billing_provider_id,
-                           'practice_id'         => $importedMedicalRecord->practice_id,
-                       ]);
+                ->update([
+                    'location_id'         => $importedMedicalRecord->location_id,
+                    'billing_provider_id' => $importedMedicalRecord->billing_provider_id,
+                    'practice_id'         => $importedMedicalRecord->practice_id,
+                ]);
         }
 
         $demographicsLogs = optional($mr->demographics)->first();
 
         if ($demographicsLogs) {
             if ( ! $demographicsLogs->mrn_number) {
-                $demographicsLogs->mrn_number = "clh#$mr->id";
+                $demographicsLogs->mrn_number = "clh#{$mr->id}";
                 $demographicsLogs->save();
             }
         }
 
         $importedMedicalRecord->save();
-    }
-
-
-    /**
-     * The job failed to process.
-     *
-     * @param  \Exception $exception
-     *
-     * @return void
-     */
-    public function failed(\Exception $exception)
-    {
-        sendSlackMessage('#background-tasks', "Queued job Import CSV patient list failed: $exception");
     }
 }

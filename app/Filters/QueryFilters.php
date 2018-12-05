@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -8,17 +12,17 @@ use Illuminate\Http\Request;
 abstract class QueryFilters
 {
     /**
-     * The request object.
-     *
-     * @var Request
-     */
-    protected $request;
-    /**
      * The builder instance.
      *
      * @var Builder
      */
     protected $builder;
+    /**
+     * The request object.
+     *
+     * @var Request
+     */
+    protected $request;
 
     /**
      * Create a new QueryFilters instance.
@@ -33,7 +37,7 @@ abstract class QueryFilters
     /**
      * Apply the filters to the builder.
      *
-     * @param  Builder $builder
+     * @param Builder $builder
      *
      * @return Builder
      */
@@ -69,5 +73,5 @@ abstract class QueryFilters
      *
      * @return array
      */
-    abstract public function globalFilters() : array;
+    abstract public function globalFilters(): array;
 }

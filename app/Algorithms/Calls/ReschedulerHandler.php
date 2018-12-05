@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: RohanM
- * Date: 9/17/16
- * Time: 2:14 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Algorithms\Calls;
@@ -29,9 +27,10 @@ use Carbon\Carbon;
  *
  */
 
-
 class ReschedulerHandler
 {
+    protected $callsToReschedule;
+    protected $rescheduledCalls = [];
     private $schedulerService;
 
     public function __construct(SchedulerService $schedulerService)
@@ -39,32 +38,17 @@ class ReschedulerHandler
         $this->schedulerService = $schedulerService;
     }
 
-    protected $callsToReschedule;
-    protected $rescheduledCalls = [];
-
-    public function handle()
-    {
-
-        //Collect all calls that were missed.
-        $this->callsToReschedule = $this->collectCallsToBeRescheduled();
-
-        $this->handleCalls();
-
-        return $this->rescheduledCalls;
-    }
-
     public function collectCallsToBeRescheduled()
     {
-
         $calls = Call
             ::where(function ($q) {
                 $q->whereNull('type')
-                  ->orWhere('type', '=', 'call');
+                    ->orWhere('type', '=', 'call');
             })
-            ->whereStatus('scheduled')
-            ->with(['inboundUser'])
-            ->where('scheduled_date', '<=', Carbon::now()->toDateString())
-            ->get();
+                ->whereStatus('scheduled')
+                ->with(['inboundUser'])
+                ->where('scheduled_date', '<=', Carbon::now()->toDateString())
+                ->get();
 
         $missed = [];
 
@@ -93,9 +77,18 @@ class ReschedulerHandler
         return $missed;
     }
 
+    public function handle()
+    {
+        //Collect all calls that were missed.
+        $this->callsToReschedule = $this->collectCallsToBeRescheduled();
+
+        $this->handleCalls();
+
+        return $this->rescheduledCalls;
+    }
+
     public function handleCalls()
     {
-
         foreach ($this->callsToReschedule as $call) {
             //Handle Previous Call
             try {
@@ -117,7 +110,7 @@ class ReschedulerHandler
                     }
 
                     //this will give us the first available call window from the date the logic offsets, per the patient's preferred times.
-                    $next_predicted_contact_window = (new PatientContactWindow)->getEarliestWindowForPatientFromDate(
+                    $next_predicted_contact_window = (new PatientContactWindow())->getEarliestWindowForPatientFromDate(
                         $patient,
                         Carbon::now()
                     );
@@ -128,11 +121,10 @@ class ReschedulerHandler
 
                     $this->storeNewCallForPatient($patient, $call, $window_start, $window_end, $day);
                     $this->storeNewCallForFamilyMembers($patient, $call, $window_start, $window_end, $day);
-
                 }
             } catch (\Exception $exception) {
                 \Log::critical($exception);
-                \Log::info("Call Id $call->id");
+                \Log::info("Call Id {$call->id}");
                 continue;
             }
         }

@@ -1,14 +1,19 @@
 <?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Nurse;
 
-use Tests\TestCase;
 use App\Activity;
 use App\PageTimer;
 use App\User;
+use Tests\TestCase;
 
 class PerformanceTest extends TestCase
 {
-    public function testExample()
+    public function test_example()
     {
         $nurses = User::ofType('care-center')->all();
 

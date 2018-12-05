@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Services\SAAS\Admin;
 
 use App\Role;
@@ -20,8 +24,8 @@ class UserManagementService
         }
 
         $roles = Role::whereIn('name', $rolesChoices)
-                     ->get()
-                     ->pluck('display_name', 'id');
+            ->get()
+            ->pluck('display_name', 'id');
 
         $practices = auth()->user()
             ->practices
@@ -33,15 +37,33 @@ class UserManagementService
         ];
     }
 
+    public function getUser($userId)
+    {
+        $user = User::with(['practices', 'roles'])
+            ->whereId($userId)
+            ->firstOrFail();
+
+        $practices = $user->practices->isNotEmpty()
+            ? $user->practices->pluck('id')->all()
+            : '';
+
+        $roles = $user->roles->isNotEmpty()
+            ? $user->roles->first()->id
+            : '';
+
+        return new InternalUser($user, $practices, $roles);
+    }
+
     /**
      * @param $args
      *
-     * @return $this|\Illuminate\Database\Eloquent\Model
      * @throws \Exception
+     *
+     * @return $this|\Illuminate\Database\Eloquent\Model
      */
     public function storeInternalUser(InternalUser $internalUser)
     {
-        if (array_key_exists('id', $internalUser->getUser()) && !empty($internalUser->getUser()['id'])) {
+        if (array_key_exists('id', $internalUser->getUser()) && ! empty($internalUser->getUser()['id'])) {
             $user = User::find($internalUser->getUser()['id']);
             $user->update($internalUser->getUser());
         } else {
@@ -62,29 +84,12 @@ class UserManagementService
         $user->save();
 
         //if role = care-center
-        if ($internalUser->getRole() == 10) {
+        if (10 == $internalUser->getRole()) {
             $user->nurseInfo()->create([
                 'status' => 'active',
             ]);
         }
 
         return $user->fresh();
-    }
-
-    public function getUser($userId)
-    {
-        $user = User::with(['practices', 'roles'])
-                    ->whereId($userId)
-                    ->firstOrFail();
-
-        $practices = $user->practices->isNotEmpty()
-            ? $user->practices->pluck('id')->all()
-            : '';
-
-        $roles = $user->roles->isNotEmpty()
-            ? $user->roles->first()->id
-            : '';
-
-        return new InternalUser($user, $practices, $roles);
     }
 }

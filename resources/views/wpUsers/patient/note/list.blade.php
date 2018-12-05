@@ -12,7 +12,7 @@
      //this view.
 
     if (isset($results)) {
-        $webix = "data:" . json_encode(array_values($results)) . "";
+        $webix = 'data:'.json_encode(array_values($results)).'';
     }
 
     ?>
@@ -83,7 +83,7 @@
                         <option value="" {{auth()->user()->isAdmin() ? 'selected' : ''}}>Select Provider</option>
                         @foreach($providers_for_blog as $key => $value)
                             @if(isset($selected_provider) && $selected_provider->id == $key)
-                                <?php $selected = $selected_provider->display_name ?>
+                                <?php $selected = $selected_provider->display_name; ?>
                                 <option value="{{$selected_provider->id}}"
                                         selected>{{$selected_provider->display_name}}</option>
                             @else
@@ -165,10 +165,10 @@
                                                 header: ["Patient Name", {content: "textFilter", placeholder: "Filter"}],
                                                 width: 140,
                                                 sort: 'string',
-                                                template: "<a href='<?php echo route('patient.note.view', array(
-                                                        'patient' => '#patient_id#',
-                                                        'noteId'  => '#id#'
-                                                )); ?>'>#patient_name#</a>"
+                                                template: "<a href='<?php echo route('patient.note.view', [
+                                                    'patient' => '#patient_id#',
+                                                    'noteId'  => '#id#',
+                                                ]); ?>'>#patient_name#</a>"
 
 
                                             },
@@ -198,10 +198,10 @@
                                                 sort: 'string',
                                                 tooltip: ['#comment#'],
                                                 fillspace: true,
-                                                template: "<a href='<?php echo route('patient.note.view', array(
-                                                        'patient' => '#patient_id#',
-                                                        'noteId'  => '#id#'
-                                                )); ?>'>#comment#</a>"
+                                                template: "<a href='<?php echo route('patient.note.view', [
+                                                    'patient' => '#patient_id#',
+                                                    'noteId'  => '#id#',
+                                                ]); ?>'>#comment#</a>"
                                             },
                                             {
                                                 id: "date",
@@ -229,7 +229,7 @@
                                         },
 
 
-                                        <?php echo $webix  ?>
+                                        <?php echo $webix; ?>
                                     });
 
 
@@ -285,7 +285,7 @@
                                         <input type="button" value="Export as Excel" class="btn btn-primary"
                                                style='margin:15px;'
                                                onclick="webix.toExcel($$(obs_alerts_dtable), {
-                                                       header:'CarePlanManager.com - All Patient Notes @if(isset($selected_provider)) for {{$selected_provider->getFullName()}} @endif since <?=\Carbon\Carbon::now()->subMonth($dateFilter ?? 0)->format('F, Y') ?>',
+                                                       header:'CarePlanManager.com - All Patient Notes @if(isset($selected_provider)) for {{$selected_provider->getFullName()}} @endif since <?=\Carbon\Carbon::now()->subMonth($dateFilter ?? 0)->format('F, Y'); ?>',
                                                        orientation:'landscape',
                                                        autowidth:true,
                                                        columns:{
@@ -301,7 +301,7 @@
                                         <input type="button" value="Export as PDF" class="btn btn-primary"
                                                style='margin:15px;'
                                                onclick="webix.toPDF($$(obs_alerts_dtable), {
-                                                       header:'CarePlanManager.com - All Patient Notes @if(isset($selected_provider)) for {{$selected_provider->getFullName()}} @endif @if(isset($dateFilter)) since <?=\Carbon\Carbon::now()->subMonth($dateFilter)->format('F, Y') ?> @endif',
+                                                       header:'CarePlanManager.com - All Patient Notes @if(isset($selected_provider)) for {{$selected_provider->getFullName()}} @endif @if(isset($dateFilter)) since <?=\Carbon\Carbon::now()->subMonth($dateFilter)->format('F, Y'); ?> @endif',
                                                        orientation:'landscape',
                                                        autowidth:true,
                                                        columns:{

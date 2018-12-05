@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Reports\Sales;
 
 use App\Contracts\Reports\Reportable;
@@ -14,10 +18,25 @@ class StatsHelper
         $this->reportable = $reportable;
     }
 
+    public function billableCountForMonth(Carbon $month)
+    {
+        return $this->reportable->billablePatientsCountForMonth($month);
+    }
+
+    public function callCount(Carbon $start, Carbon $end, $status = null)
+    {
+        return $this->reportable->callCount($start->startOfDay(), $end->endOfDay(), $status);
+    }
+
+    public function emergencyNotesCount(Carbon $start, Carbon $end)
+    {
+        return $this->reportable->forwardedEmergencyNotesCount($start->startOfDay(), $end->endOfDay());
+    }
+
     public function enrollmentCount(Carbon $start, Carbon $end)
     {
         $start = $start->startOfDay();
-        $end = $end->endOfDay();
+        $end   = $end->endOfDay();
 
         $patients = $this->reportable->patients();
 
@@ -29,60 +48,23 @@ class StatsHelper
 
         foreach ($patients as $patient) {
             if ($patient->created_at->gte($start) && $patient->created_at->lte($end)) {
-                $data['added']++;
+                ++$data['added'];
             }
 
-            if (!$patient->patientInfo) {
+            if ( ! $patient->patientInfo) {
                 continue;
             }
 
             if ($patient->patientInfo->date_withdrawn && $patient->patientInfo->date_withdrawn->gte($start) && $patient->patientInfo->date_withdrawn->lte($end)) {
-                $data['withdrawn']++;
+                ++$data['withdrawn'];
             }
 
             if ($patient->patientInfo->date_paused && $patient->patientInfo->date_paused->gte($start) && $patient->patientInfo->date_paused->lte($end)) {
-                $data['paused']++;
+                ++$data['paused'];
             }
         }
 
         return $data;
-    }
-
-    public function successfulCallCount(Carbon $start, Carbon $end)
-    {
-        return $this->callCount($start->startOfDay(), $end->endOfDay(), 'reached');
-    }
-
-    public function callCount(Carbon $start, Carbon $end, $status = null)
-    {
-        return $this->reportable->callCount($start->startOfDay(), $end->endOfDay(), $status);
-    }
-
-    public function totalCCMTimeHours(Carbon $start, Carbon $end)
-    {
-        $duration = $this->reportable->activitiesDuration($start->startOfDay(), $end->endOfDay());
-
-        return round($duration / 3600, 1);
-    }
-
-    public function numberOfBiometricsRecorded(Carbon $start, Carbon $end)
-    {
-        return $this->reportable->observationsCount($start->startOfDay(), $end->endOfDay());
-    }
-
-    public function noteStats(Carbon $start, Carbon $end)
-    {
-        return $this->reportable->forwardedNotesCount($start->startOfDay(), $end->endOfDay());
-    }
-
-    public function emergencyNotesCount(Carbon $start, Carbon $end)
-    {
-        return $this->reportable->forwardedEmergencyNotesCount($start->startOfDay(), $end->endOfDay());
-    }
-
-    public function linkToNotes()
-    {
-        return $this->reportable->linkToNotes();
     }
 
     public function historicalEnrollmentPerformance(Carbon $start, Carbon $end)
@@ -91,9 +73,9 @@ class StatsHelper
 
         $patients = $this->reportable->patients();
 
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < 5; ++$i) {
             $start = $endMonthStart->copy()->subMonth($i)->firstOfMonth()->startOfDay();
-            $end = $start->copy()->endOfMonth()->endOfDay();
+            $end   = $start->copy()->endOfMonth()->endOfDay();
 
             $index = $start->toDateString();
 //            $data['withdrawn'][$index] = 0;
@@ -102,10 +84,10 @@ class StatsHelper
 
             foreach ($patients as $patient) {
                 if (optional($patient->created_at)->gte($start) && optional($patient->created_at)->lte($end)) {
-                    $data['added'][$index]++;
+                    ++$data['added'][$index];
                 }
 
-                if (!$patient->patientInfo) {
+                if ( ! $patient->patientInfo) {
                     continue;
                 }
 
@@ -122,13 +104,35 @@ class StatsHelper
         return $data;
     }
 
+    public function linkToNotes()
+    {
+        return $this->reportable->linkToNotes();
+    }
+
+    public function noteStats(Carbon $start, Carbon $end)
+    {
+        return $this->reportable->forwardedNotesCount($start->startOfDay(), $end->endOfDay());
+    }
+
+    public function numberOfBiometricsRecorded(Carbon $start, Carbon $end)
+    {
+        return $this->reportable->observationsCount($start->startOfDay(), $end->endOfDay());
+    }
+
+    public function successfulCallCount(Carbon $start, Carbon $end)
+    {
+        return $this->callCount($start->startOfDay(), $end->endOfDay(), 'reached');
+    }
+
     public function totalBilled()
     {
         return $this->reportable->totalBilledPatientsCount();
     }
 
-    public function billableCountForMonth(Carbon $month)
+    public function totalCCMTimeHours(Carbon $start, Carbon $end)
     {
-        return $this->reportable->billablePatientsCountForMonth($month);
+        $duration = $this->reportable->activitiesDuration($start->startOfDay(), $end->endOfDay());
+
+        return round($duration / 3600, 1);
     }
 }

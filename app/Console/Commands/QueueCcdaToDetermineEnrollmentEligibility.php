@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\EligibilityBatch;
@@ -13,6 +17,12 @@ use Illuminate\Console\Command;
 class QueueCcdaToDetermineEnrollmentEligibility extends Command
 {
     /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Determine whether a patient is eligible to receive an enrollment call using CCDAs.';
+    /**
      * The name and signature of the console command.
      *
      * @var string
@@ -20,16 +30,7 @@ class QueueCcdaToDetermineEnrollmentEligibility extends Command
     protected $signature = 'ccda:determineEligibility';
 
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Determine whether a patient is eligible to receive an enrollment call using CCDAs.';
-
-    /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -48,46 +49,45 @@ class QueueCcdaToDetermineEnrollmentEligibility extends Command
         $jobs = Ccda::where([
             ['status', '=', Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY],
         ])->whereNotNull('mrn')
-                    ->inRandomOrder()
-                    ->take(2000)
-                    ->get(['id', 'practice_id'])
-                    ->map(function ($ccda) use ($practices) {
-                        //lgh
-                        if ($ccda->practice_id == 141) {
-                            dispatch(
+            ->inRandomOrder()
+            ->take(2000)
+            ->get(['id', 'practice_id'])
+            ->map(function ($ccda) use ($practices) {
+                //lgh
+                if (141 == $ccda->practice_id) {
+                    dispatch(
                                 (new LGHDetermineCcdaEnrollmentEligibility($ccda))
                                     ->delay(Carbon::now()->addSeconds(5))
                                     ->onQueue('low')
                             );
 
-                            return true;
-                        }
+                    return true;
+                }
 
+                if ($ccda->practice_id) {
+                    $practice = $practices[$ccda->practice_id] ?? null;
 
-                        if ($ccda->practice_id) {
-                            $practice = $practices[$ccda->practice_id] ?? null;
+                    if ( ! $practice) {
+                        return false;
+                    }
 
-                            if ( ! $practice) {
-                                return false;
-                            }
+                    $batch = EligibilityBatch::findOrFail($ccda->batch_id);
 
-                            $batch = EligibilityBatch::findOrFail($ccda->batch_id);
-
-                            dispatch(
+                    dispatch(
                                 (new CheckCcdaEnrollmentEligibility($ccda, $practice, $batch))
                                     ->delay(Carbon::now()->addSeconds(5))
                                     ->onQueue('low')
                             );
 
-                            return true;
-                        }
+                    return true;
+                }
 
-                        return false;
-                    })
-                    ->filter()
-                    ->values()
-                    ->count();
+                return false;
+            })
+            ->filter()
+            ->values()
+            ->count();
 
-        $this->output->success("$jobs jobs scheduled.");
+        $this->output->success("${jobs} jobs scheduled.");
     }
 }

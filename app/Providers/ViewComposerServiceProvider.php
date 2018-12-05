@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
@@ -9,16 +13,11 @@ class ViewComposerServiceProvider extends ServiceProvider
 {
     /**
      * Register bindings in the container.
-     *
-     * @return void
      */
     public function boot()
     {
         View::composer(['eligibilityBatch.index'], function ($view) {
-
-
             $data = collect($view->getData());
-
 
             $batches = $data->get('batches')->map(function ($b) {
                 switch ($b->status) {
@@ -39,12 +38,10 @@ class ViewComposerServiceProvider extends ServiceProvider
                         break;
                 }
 
-
                 $b->statusPretty = snakeToSentenceCase($b->getStatus());
 
                 return $b;
             });
-
 
             $view->with(compact([
                 'batches',
@@ -54,11 +51,8 @@ class ViewComposerServiceProvider extends ServiceProvider
 
     /**
      * Register the service provider.
-     *
-     * @return void
      */
     public function register()
     {
-        //
     }
 }

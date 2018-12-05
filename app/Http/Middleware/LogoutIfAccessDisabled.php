@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Middleware;
 
 use Closure;
@@ -9,8 +13,8 @@ class LogoutIfAccessDisabled
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Closure $next
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure                 $next
      *
      * @return mixed
      */
@@ -19,7 +23,7 @@ class LogoutIfAccessDisabled
         Closure $next
     ) {
         if (auth()->check()) {
-            if (auth()->user()->status == 'Inactive' || auth()->user()->access_disabled == 1) {
+            if ('Inactive' == auth()->user()->status || 1 == auth()->user()->access_disabled) {
                 auth()->logout();
                 session()->flush();
 

@@ -1,21 +1,24 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Importer\Models\ItemLogs;
 
-use Illuminate\Database\Eloquent\Model;
-
 /**
- * App\Importer\Models\ItemLogs\ProblemCodeLog
+ * App\Importer\Models\ItemLogs\ProblemCodeLog.
  *
- * @property int $id
- * @property int|null $ccd_problem_log_id
- * @property string $code_system_name
- * @property string|null $code_system_oid
- * @property string $code
- * @property string|null $name
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
- * @property-read \App\Importer\Models\ItemLogs\ProblemLog|null $problemLog
+ * @property int                                           $id
+ * @property int|null                                      $ccd_problem_log_id
+ * @property string                                        $code_system_name
+ * @property string|null                                   $code_system_oid
+ * @property string                                        $code
+ * @property string|null                                   $name
+ * @property \Carbon\Carbon|null                           $created_at
+ * @property \Carbon\Carbon|null                           $updated_at
+ * @property \App\Importer\Models\ItemLogs\ProblemLog|null $problemLog
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemCodeLog whereCcdProblemLogId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemCodeLog whereCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemCodeLog whereCodeSystemName($value)
@@ -28,8 +31,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ProblemCodeLog extends \App\BaseModel
 {
-    protected $table = 'ccd_problem_code_logs';
-
     public $fillable = [
         'problem_code_system_id',
         'ccd_problem_log_id',
@@ -38,6 +39,7 @@ class ProblemCodeLog extends \App\BaseModel
         'code',
         'name',
     ];
+    protected $table = 'ccd_problem_code_logs';
 
     public function problemLog()
     {

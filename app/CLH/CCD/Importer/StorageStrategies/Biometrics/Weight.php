@@ -1,4 +1,10 @@
-<?php namespace App\CLH\CCD\Importer\StorageStrategies\Biometrics;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\CLH\CCD\Importer\StorageStrategies\Biometrics;
 
 use App\CLH\CCD\Importer\StorageStrategies\BaseStorageStrategy;
 use App\CLH\Contracts\CCD\StorageStrategy;
@@ -8,15 +14,14 @@ use App\Models\CPM\CpmBiometric;
  * Created by PhpStorm.
  * User: michalis
  * Date: 5/25/16
- * Time: 11:55 PM
+ * Time: 11:55 PM.
  */
 class Weight extends BaseStorageStrategy implements StorageStrategy
 {
-
     public function import($weight)
     {
         $this->user->cpmWeight()->create([
-            'starting' => $weight
+            'starting' => $weight,
         ]);
 
         $biometric = CpmBiometric::whereName(CpmBiometric::WEIGHT)->first();
@@ -27,7 +32,7 @@ class Weight extends BaseStorageStrategy implements StorageStrategy
             //check if this is a mysql exception for unique key constraint
             if ($e instanceof \Illuminate\Database\QueryException) {
                 $errorCode = $e->errorInfo[1];
-                if ($errorCode == 1062) {
+                if (1062 == $errorCode) {
                     //do nothing
                     //we don't actually want to terminate the program if we detect duplicates
                     //we just don't wanna add the row again

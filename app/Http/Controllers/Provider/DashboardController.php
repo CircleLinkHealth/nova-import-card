@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers\Provider;
 
 use App\ChargeableService;
@@ -24,10 +28,10 @@ class DashboardController extends Controller
 {
     protected $invites;
     protected $locations;
-    protected $practices;
-    protected $users;
     protected $onboardingService;
+    protected $practices;
     protected $primaryPractice;
+    protected $users;
 
     public function __construct(
         InviteRepository $inviteRepository,
@@ -53,6 +57,44 @@ class DashboardController extends Controller
         ];
     }
 
+    public function getCreateChargeableServices()
+    {
+        $practiceChargeableRel = $this->primaryPractice->chargeableServices;
+
+        $allChargeableServices = ChargeableService::all()
+            ->map(function ($service) use ($practiceChargeableRel) {
+                $existing = $practiceChargeableRel
+                    ->where('id', '=', $service->id)
+                    ->first();
+
+                $service->is_on = false;
+
+                if ($existing) {
+                    $service->amount = $existing->pivot->amount;
+                    $service->is_on = true;
+                }
+
+                return $service;
+            });
+
+        return view('provider.chargableServices.create', array_merge([
+            'practice'           => $this->primaryPractice,
+            'practiceSlug'       => $this->practiceSlug,
+            'practiceSettings'   => $this->primaryPractice->cpmSettings(),
+            'chargeableServices' => PracticeChargeableServices::collection($allChargeableServices),
+        ], $this->returnWithAll));
+    }
+
+    public function getCreateEnrollment()
+    {
+        return view('provider.enrollment.create', array_merge([
+            'practice'         => $this->primaryPractice,
+            'practiceSlug'     => $this->practiceSlug,
+            'practiceSettings' => $this->primaryPractice->cpmSettings(),
+            'tips'             => optional($this->primaryPractice->enrollmentTips)->content,
+        ], $this->returnWithAll));
+    }
+
     public function getCreateLocation()
     {
         $primaryPractice = $this->primaryPractice;
@@ -67,18 +109,6 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function getCreatePractice()
-    {
-        $users     = $this->onboardingService->getExistingStaff($this->primaryPractice);
-        $locations = $this->onboardingService->getExistingLocations($this->primaryPractice);
-
-        return view('provider.practice.create', array_merge([
-            'practiceSlug' => $this->practiceSlug,
-            'staff'        => $users['existingUsers'],
-            'locations'    => $locations,
-        ], $this->returnWithAll));
-    }
-
     public function getCreateNotifications()
     {
         $invoiceRecipients = $this->primaryPractice->getInvoiceRecipients()->pluck('email')->implode(',');
@@ -91,31 +121,15 @@ class DashboardController extends Controller
         ], $this->returnWithAll));
     }
 
-    public function getCreateChargeableServices()
+    public function getCreatePractice()
     {
-        $practiceChargeableRel = $this->primaryPractice->chargeableServices;
+        $users     = $this->onboardingService->getExistingStaff($this->primaryPractice);
+        $locations = $this->onboardingService->getExistingLocations($this->primaryPractice);
 
-        $allChargeableServices = ChargeableService::all()
-                                                  ->map(function ($service) use ($practiceChargeableRel) {
-                                                      $existing = $practiceChargeableRel
-                                                          ->where('id', '=', $service->id)
-                                                          ->first();
-
-                                                      $service->is_on = false;
-
-                                                      if ($existing) {
-                                                          $service->amount = $existing->pivot->amount;
-                                                          $service->is_on  = true;
-                                                      }
-
-                                                      return $service;
-                                                  });
-
-        return view('provider.chargableServices.create', array_merge([
-            'practice'           => $this->primaryPractice,
-            'practiceSlug'       => $this->practiceSlug,
-            'practiceSettings'   => $this->primaryPractice->cpmSettings(),
-            'chargeableServices' => PracticeChargeableServices::collection($allChargeableServices),
+        return view('provider.practice.create', array_merge([
+            'practiceSlug' => $this->practiceSlug,
+            'staff'        => $users['existingUsers'],
+            'locations'    => $locations,
         ], $this->returnWithAll));
     }
 
@@ -132,21 +146,48 @@ class DashboardController extends Controller
         return view('provider.user.create-staff', compact('invite', 'practiceSlug', 'practice'));
     }
 
-    public function getCreateEnrollment()
-    {
-        return view('provider.enrollment.create', array_merge([
-            'practice'         => $this->primaryPractice,
-            'practiceSlug'     => $this->practiceSlug,
-            'practiceSettings' => $this->primaryPractice->cpmSettings(),
-            'tips'             => optional($this->primaryPractice->enrollmentTips)->content,
-        ], $this->returnWithAll));
-    }
-
     public function getIndex()
     {
         return view('provider.layouts.dashboard', array_merge([
             'practiceSlug' => $this->practiceSlug,
         ], $this->returnWithAll));
+    }
+
+    public function postStoreChargeableServices(Request $request)
+    {
+        $services = $request['chargeable_services'];
+
+        $sync = [];
+
+        foreach ($services as $id => $service) {
+            if (array_key_exists('is_on', $service)) {
+                $sync[$id] = [
+                    'amount' => $service['amount'],
+                ];
+            }
+        }
+
+        $this->primaryPractice
+            ->chargeableServices()
+            ->sync($sync);
+
+        return redirect()->back();
+    }
+
+    public function postStoreEnrollment(SafeRequest $request)
+    {
+        //Summernote is vulnerable to XSS, so we remove entirely the special chars
+        //Laravel already sanitizes suspicious characters and can result to something like this:
+        //<p>all good</p>&lt;script&rt;alert('hi')&lt;script&gt;
+        //Also, Laravel does not handle this: <a href="javascript:alert('hi')">Click me. I am safe!</a>
+        $detail = $request->input('tips');
+        $detail = $this->removeEncodedSpecialChars($detail);
+        $detail = $this->removeSuspiciousJsCode($detail);
+        PracticeEnrollmentTips::updateOrCreate(['practice_id' => $this->primaryPractice->id], ['content' => $detail]);
+
+        return redirect()
+            ->back()
+            ->with('message', 'Enrollment tips were saved successfully.');
     }
 
     public function postStoreInvite(Request $request)
@@ -167,7 +208,7 @@ class DashboardController extends Controller
 
         $result = $this->onboardingService->postStoreLocations($primaryPractice, $request);
 
-        return get_class($result) == JsonResponse::class
+        return JsonResponse::class == get_class($result)
             ? $result
             : response()->json([
                 'message' => "{$primaryPractice->display_name}'s Locations were successfully updated.",
@@ -191,12 +232,11 @@ class DashboardController extends Controller
             if ($this->primaryPractice->locations->count() == $locationsWithoutDM->count()) {
                 unset($settingsInput['dm_audit_reports']);
                 $errors->push('Send Audit Reports via Direct Mail was not activated because none of the Locations have a DM address. Please add a Direct Address for at least one Location, and then try activating the Notification again.');
-            } elseif ($locationsWithoutDM->count() == 0) {
-                //
+            } elseif (0 == $locationsWithoutDM->count()) {
             } else {
                 $locs = implode(', ', $locationsWithoutDM->pluck('name')->all());
 
-                $errors->push("Locations: <strong>$locs</strong> are missing a <strong>Direct Address</strong>. Click Locations (left) to correct that.");
+                $errors->push("Locations: <strong>${locs}</strong> are missing a <strong>Direct Address</strong>. Click Locations (left) to correct that.");
             }
         }
 
@@ -212,12 +252,11 @@ class DashboardController extends Controller
             if ($this->primaryPractice->locations->count() == $locationsWithoutFax->count()) {
                 unset($settingsInput['efax_audit_reports']);
                 $errors->push('Send Audit Reports via eFax was not activated because none of the Locations have a fax number. Please add a Fax Number for at least one Location, and then try activating the Notification again.');
-            } elseif ($locationsWithoutFax->count() == 0) {
-                //
+            } elseif (0 == $locationsWithoutFax->count()) {
             } else {
                 $locs = implode(', ', $locationsWithoutFax->pluck('name')->all());
 
-                $errors->push("Locations: <strong>$locs</strong> are missing a <strong>Fax Number</strong>. Go to the Locations (left) to correct that.");
+                $errors->push("Locations: <strong>${locs}</strong> are missing a <strong>Fax Number</strong>. Go to the Locations (left) to correct that.");
             }
         }
 
@@ -242,38 +281,6 @@ class DashboardController extends Controller
         return redirect()->back()->withErrors($errors);
     }
 
-    public function postStoreChargeableServices(Request $request)
-    {
-        $services = $request['chargeable_services'];
-
-        $sync = [];
-
-        foreach ($services as $id => $service) {
-            if (array_key_exists('is_on', $service)) {
-                $sync[$id] = [
-                    'amount' => $service['amount'],
-                ];
-            }
-        }
-
-        $this->primaryPractice
-            ->chargeableServices()
-            ->sync($sync);
-
-        return redirect()->back();
-    }
-
-    public function postStoreStaff(Request $request)
-    {
-        $primaryPractice = $this->primaryPractice;
-
-        $this->onboardingService->postStoreStaff($primaryPractice, $request);
-
-        return response()->json([
-            'message' => "{$primaryPractice->display_name}'s Staff were successfully updated.",
-        ]);
-    }
-
     public function postStorePractice(Request $request)
     {
         $update['federal_tax_id'] = $request->input('federal_tax_id');
@@ -288,19 +295,19 @@ class DashboardController extends Controller
             $update['term_days']    = $request->input('term_days');
             $update['active']       = $request->input('is_active');
 
-            if ( ! ! $this->primaryPractice->active && ! ! ! $update['active']) {
+            if ((bool) $this->primaryPractice->active && ! (bool) $update['active']) {
                 $enrolledPatientsExist = User::ofPractice($this->primaryPractice->id)
-                                             ->ofType('participant')
-                                             ->whereHas('patientInfo', function ($q) {
-                                                 $q->enrolled();
-                                             })
-                                             ->exists();
+                    ->ofType('participant')
+                    ->whereHas('patientInfo', function ($q) {
+                        $q->enrolled();
+                    })
+                    ->exists();
 
                 if ($enrolledPatientsExist) {
                     return redirect()
                         ->back()
                         ->withErrors([
-                            'is_active' => "The practice cannot be deactivated because it has enrolled patients.",
+                            'is_active' => 'The practice cannot be deactivated because it has enrolled patients.',
                         ]);
                 }
             }
@@ -310,45 +317,43 @@ class DashboardController extends Controller
 
         if ($request->has('primary_location')) {
             Location::whereId($request['primary_location'])
-                    ->update([
-                        'is_primary' => true,
-                    ]);
+                ->update([
+                    'is_primary' => true,
+                ]);
         }
 
         return redirect()
             ->back()
-            ->with('message', "The practice has been updated successfully.");
+            ->with('message', 'The practice has been updated successfully.');
     }
 
-    public function postStoreEnrollment(SafeRequest $request)
+    public function postStoreStaff(Request $request)
     {
-        //Summernote is vulnerable to XSS, so we remove entirely the special chars
-        //Laravel already sanitizes suspicious characters and can result to something like this:
-        //<p>all good</p>&lt;script&rt;alert('hi')&lt;script&gt;
-        //Also, Laravel does not handle this: <a href="javascript:alert('hi')">Click me. I am safe!</a>
-        $detail = $request->input('tips');
-        $detail = $this->removeEncodedSpecialChars($detail);
-        $detail = $this->removeSuspiciousJsCode($detail);
-        PracticeEnrollmentTips::updateOrCreate([ 'practice_id' => $this->primaryPractice->id ],[ 'content' => $detail ]);
+        $primaryPractice = $this->primaryPractice;
 
-        return redirect()
-            ->back()
-            ->with('message', "Enrollment tips were saved successfully.");
+        $this->onboardingService->postStoreStaff($primaryPractice, $request);
+
+        return response()->json([
+            'message' => "{$primaryPractice->display_name}'s Staff were successfully updated.",
+        ]);
     }
 
-    private function removeEncodedSpecialChars($str) {
+    private function removeEncodedSpecialChars($str)
+    {
         /**
-        & (ampersand) becomes &amp;
-        " (double quote) becomes &quot;
-        ' (single quote) becomes &#039;
-        < (less than) becomes &lt;
-        > (greater than) becomes &gt;
+         * & (ampersand) becomes &amp;
+         * " (double quote) becomes &quot;
+         * ' (single quote) becomes &#039;
+         * < (less than) becomes &lt;
+         * > (greater than) becomes &gt;.
          */
         $pattern = ['/&amp;/', '/&quot;/', '/&#039;/', '/&lt;/', '/&gt;/'];
+
         return preg_replace($pattern, '', $str);
     }
 
-    private function removeSuspiciousJsCode($str) {
+    private function removeSuspiciousJsCode($str)
+    {
         return preg_replace('/javascript:/', '', $str);
     }
 }

@@ -1,7 +1,10 @@
 <?php
 
-return [
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
+return [
     /*
     |-------------------------------------------------------------
     | Incoming webhook endpoint
@@ -118,5 +121,4 @@ return [
 
     // Allow Markdown in all fields
     // 'markdown_in_attachments' => ['pretext', 'text', 'title', 'fields', 'fallback']
-
 ];

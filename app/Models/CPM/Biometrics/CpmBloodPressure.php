@@ -1,24 +1,30 @@
-<?php namespace App\Models\CPM\Biometrics;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Models\CPM\Biometrics;
 
 use App\Contracts\Models\CPM\Biometric;
-use App\User;
 use App\Models\CPM\CpmBiometric;
-use Illuminate\Database\Eloquent\Model;
+use App\User;
 
 /**
- * App\Models\CPM\Biometrics\CpmBloodPressure
+ * App\Models\CPM\Biometrics\CpmBloodPressure.
  *
- * @property int $id
- * @property int $patient_id
- * @property string $starting
- * @property string $target
- * @property string $systolic_high_alert
- * @property string $systolic_low_alert
- * @property string $diastolic_high_alert
- * @property string $diastolic_low_alert
+ * @property int            $id
+ * @property int            $patient_id
+ * @property string         $starting
+ * @property string         $target
+ * @property string         $systolic_high_alert
+ * @property string         $systolic_low_alert
+ * @property string         $diastolic_high_alert
+ * @property string         $diastolic_low_alert
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @property-read \App\User $patient
+ * @property \App\User      $patient
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure whereDiastolicHighAlert($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure whereDiastolicLowAlert($value)
@@ -33,11 +39,13 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CpmBloodPressure extends \App\BaseModel implements Biometric
 {
-    public function __construct(array $attributes = [])
-    {
-        parent::__construct($attributes);
-        $this->setDefaultTarget();
-    }
+    public static $messages = [
+        'systolic_high_alert.max'  => 'The Systolic Blood Pressure High Alert may not be greater than 999.',
+        'systolic_low_alert.max'   => 'The Systolic Blood Pressure Low Alert may not be greater than 999.',
+        'diastolic_high_alert.max' => 'The Diastolic Blood Pressure High Alert may not be greater than 999.',
+        'diastolic_low_alert.max'  => 'The Diastolic Blood Pressure Low Alert may not be greater than 999.',
+        'target.max'               => 'The Target Blood Pressure may not be greater than 7 characters.',
+    ];
 
     public static $rules = [
         'systolic_high_alert'  => 'max:999|numeric',
@@ -46,12 +54,12 @@ class CpmBloodPressure extends \App\BaseModel implements Biometric
         'diastolic_low_alert'  => 'max:999|numeric',
         'target'               => 'max:7',
     ];
-    public static $messages = [
-        'systolic_high_alert.max'  => 'The Systolic Blood Pressure High Alert may not be greater than 999.',
-        'systolic_low_alert.max'   => 'The Systolic Blood Pressure Low Alert may not be greater than 999.',
-        'diastolic_high_alert.max' => 'The Diastolic Blood Pressure High Alert may not be greater than 999.',
-        'diastolic_low_alert.max'  => 'The Diastolic Blood Pressure Low Alert may not be greater than 999.',
-        'target.max'               => 'The Target Blood Pressure may not be greater than 7 characters.',
+    protected $attributes = [
+        'systolic_high_alert'  => 180,
+        'systolic_low_alert'   => 80,
+        'diastolic_high_alert' => 90,
+        'diastolic_low_alert'  => 40,
+        'target'               => '130/80',
     ];
     protected $fillable = [
         'patient_id',
@@ -62,23 +70,15 @@ class CpmBloodPressure extends \App\BaseModel implements Biometric
         'diastolic_high_alert',
         'diastolic_low_alert',
     ];
-    protected $attributes = [
-        'systolic_high_alert'  => 180,
-        'systolic_low_alert'   => 80,
-        'diastolic_high_alert' => 90,
-        'diastolic_low_alert'  => 40,
-        'target'               => '130/80',
-    ];
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function patient()
+    public function __construct(array $attributes = [])
     {
-        return $this->belongsTo(User::class, 'patient_id');
+        parent::__construct($attributes);
+        $this->setDefaultTarget();
     }
-    
-    public function biometric() {
+
+    public function biometric()
+    {
         return CpmBiometric::where('name', 'LIKE', '%pressure%');
     }
 
@@ -94,20 +94,27 @@ class CpmBloodPressure extends \App\BaseModel implements Biometric
             : false;
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function patient()
+    {
+        return $this->belongsTo(User::class, 'patient_id');
+    }
+
     public function setDefaultTarget()
     {
         $patient = $this->patient;
 
-        if (!$patient) {
+        if ( ! $patient) {
             return;
-        };
-
+        }
 
         $settings = $this->patient->primaryPractice->settings->first();
 
-        if (!$settings) {
+        if ( ! $settings) {
             return;
-        };
+        }
 
         $this->attributes['target'] = $settings->default_target_bp;
     }

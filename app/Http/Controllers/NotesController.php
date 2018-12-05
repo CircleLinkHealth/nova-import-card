@@ -1,4 +1,10 @@
-<?php namespace App\Http\Controllers;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Http\Controllers;
 
 use App\Activity;
 use App\Call;
@@ -20,10 +26,9 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class NotesController extends Controller
 {
-
-    private $service;
     private $formatter;
     private $patientRepo;
+    private $service;
 
     public function __construct(
         NoteService $noteService,
@@ -35,39 +40,144 @@ class NotesController extends Controller
         $this->patientRepo = $patientWriteRepository;
     }
 
+    public function create(
+        Request $request,
+        $patientId,
+        CpmMedicationService $medicationService
+    ) {
+        //@todo segregate to helper functions :/
+
+        if ($patientId) {
+            // patient view
+            $patient = User::find($patientId);
+            if ( ! $patient) {
+                return response('User not found', 401);
+            }
+
+            //set contact flag
+            $patient_contact_window_exists = false;
+
+            if (0 != count($patient->patientInfo->contactWindows)) {
+                $patient_contact_window_exists = true;
+            }
+
+            $patient_name = $patient->getFullName();
+
+            //Pull up user's call information.
+
+            //Gather details to generate form
+
+            $careteam_info = $this->service->getPatientCareTeamMembers($patientId);
+
+            if ('' == $patient->timeZone) {
+                $userTimeZone = 'America/New_York';
+            } else {
+                $userTimeZone = $patient->timeZone;
+            }
+
+            //Check for User's blog
+            if (empty($patient->program_id)) {
+                return response("User's Program not found", 401);
+            }
+
+            //providers
+            $provider_info = [];
+
+            $author      = Auth::user();
+            $author_id   = $author->id;
+            $author_name = $author->getFullName();
+
+            //Patient Call Windows:
+            $window = PatientContactWindow::getPreferred($patient->patientInfo);
+
+            $contact_days_array = [];
+            if (is_object($patient->patientInfo->contactWindows)) {
+                $contact_days_array = array_merge(explode(',', $patient->patientInfo->preferred_cc_contact_days));
+            }
+
+            $ccm_complex = $patient->isCCMComplex() ?? false;
+
+            asort($provider_info);
+            asort($careteam_info);
+
+            $nurse_patient_tasks = Call::where('status', '=', 'scheduled')
+                ->where('type', '=', 'task')
+                ->where('inbound_cpm_id', '=', $patientId)
+                ->where('outbound_cpm_id', '=', $author_id)
+                ->select([
+                    'id',
+                    'type',
+                    'sub_type',
+                    'attempt_note',
+                    'scheduled_date',
+                    'window_start',
+                    'window_end',
+                ])
+                ->get();
+
+            $isCareCoach = Auth::user()->hasRole('care-center');
+            $meds        = [];
+            if ($isCareCoach && $this->shouldPrePopulateWithMedications($patient)) {
+                $meds = $medicationService->repo()->patientMedicationsList($patientId);
+            }
+
+            $view_data = [
+                'program_id'           => $patient->program_id,
+                'patient'              => $patient,
+                'patient_name'         => $patient_name,
+                'note_types'           => Activity::input_activity_types(),
+                'task_types_to_topics' => Activity::task_types_to_topics(),
+                'tasks'                => $nurse_patient_tasks,
+                'author_id'            => $author_id,
+                'author_name'          => $author_name,
+                'careteam_info'        => $careteam_info,
+                'userTimeZone'         => $userTimeZone,
+                'window'               => $window,
+                'window_flag'          => $patient_contact_window_exists,
+                'contact_days_array'   => $contact_days_array,
+                'ccm_complex'          => $ccm_complex,
+                'notifies_text'        => $patient->getNotifiesText(),
+                'note_channels_text'   => $patient->getNoteChannelsText(),
+                'medications'          => $meds,
+            ];
+
+            return view('wpUsers.patient.note.create', $view_data);
+        }
+    }
+
     public function index(
         Request $request,
         $patientId,
         $showAll = false
     ) {
         $date = Carbon::now()->subMonth(2);
-        if ($showAll == true) {
+        if (true == $showAll) {
             $date = 0;
         }
 
         $patient = User::with([
-            'activities'   => function ($q) use ($date) {
+            'activities' => function ($q) use ($date) {
                 $q->where('logged_from', '=', 'manual_input')
-                  ->where('performed_at', '>=', $date)
-                  ->with('meta')
-                  ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
-                  ->orderBy('performed_at', 'desc');
+                    ->where('performed_at', '>=', $date)
+                    ->with('meta')
+                    ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+                    ->orderBy('performed_at', 'desc');
             },
             'appointments' => function ($q) use ($date) {
                 $q->where('date', '>=', $date);
             },
             'billingProvider',
             'primaryPractice',
-            'notes'        => function ($q) use ($date) {
+            'notes' => function ($q) use ($date) {
                 $q->where('performed_at', '>=', $date)
-                  ->with(['author', 'call', 'notifications']);
+                    ->with(['author', 'call', 'notifications']);
             },
             'patientInfo',
         ])
-                       ->findOrFail($patientId);
+            ->findOrFail($patientId);
 
         //if a patient has no notes for the past 2 months, we load all the results and DON'T display 'show all notes button'
-        if ($patient->notes->isEmpty() and $showAll == false) {
+        if ($patient->notes->isEmpty() and false == $showAll) {
             $patient->load([
                 'notes' => function ($notes) {
                     $notes->with(['author', 'call', 'notifications']);
@@ -97,13 +207,12 @@ class NotesController extends Controller
 
     public function listing(Request $request)
     {
-
         $input = $request->all();
 
         $session_user = auth()->user();
 
         $providers_for_blog = User::whereIn('id', $session_user->viewableProviderIds())
-                                  ->pluck('display_name', 'id')->sort();
+            ->pluck('display_name', 'id')->sort();
 
         //TIME FILTERS
 
@@ -129,7 +238,7 @@ class NotesController extends Controller
             : false;
 
         //Check to see whether a provider was selected.
-        if (isset($input['provider']) && $input['provider'] != '') {
+        if (isset($input['provider']) && '' != $input['provider']) {
             $provider = User::find($input['provider']);
 
             if ($only_mailed_notes) {
@@ -137,7 +246,6 @@ class NotesController extends Controller
             } else {
                 $notes = $this->service->getNotesWithRangeForProvider($provider->id, $start, $end);
             }
-
 
             $title = $provider->display_name;
 
@@ -184,7 +292,6 @@ class NotesController extends Controller
                     'admin_filter'       => $admin_filter,
                 ];
             } else { // Not enough data for a report, return only the essentials
-
                 $data = [
                     'filter'             => 0,
                     'title'              => 'No Provider Selected',
@@ -200,120 +307,68 @@ class NotesController extends Controller
         return view('wpUsers.patient.note.list', $data);
     }
 
-    public function create(
-        Request $request,
+    public function send(
+        Request $input,
         $patientId,
-        CpmMedicationService $medicationService
+        $noteId
     ) {
+        $note = Note::findOrFail($input['noteId']);
 
-        //@todo segregate to helper functions :/
+        $note->forward($input['notify_careteam'], $input['notify_circlelink_support']);
 
-        if ($patientId) {
-            // patient view
-            $patient = User::find($patientId);
-            if ( ! $patient) {
-                return response("User not found", 401);
-            }
-
-            //set contact flag
-            $patient_contact_window_exists = false;
-
-            if (count($patient->patientInfo->contactWindows) != 0) {
-                $patient_contact_window_exists = true;
-            }
-
-            $patient_name = $patient->getFullName();
-
-            //Pull up user's call information.
-
-            //Gather details to generate form
-
-            $careteam_info = $this->service->getPatientCareTeamMembers($patientId);
-
-            if ($patient->timeZone == '') {
-                $userTimeZone = 'America/New_York';
-            } else {
-                $userTimeZone = $patient->timeZone;
-            }
-
-            //Check for User's blog
-            if (empty($patient->program_id)) {
-                return response("User's Program not found", 401);
-            }
-
-            //providers
-            $provider_info = [];
-
-            $author      = Auth::user();
-            $author_id   = $author->id;
-            $author_name = $author->getFullName();
-
-            //Patient Call Windows:
-            $window = PatientContactWindow::getPreferred($patient->patientInfo);
-
-            $contact_days_array = [];
-            if (is_object($patient->patientInfo->contactWindows)) {
-                $contact_days_array = array_merge(explode(',', $patient->patientInfo->preferred_cc_contact_days));
-            }
-
-            $ccm_complex = $patient->isCCMComplex() ?? false;
-
-            asort($provider_info);
-            asort($careteam_info);
-
-            $nurse_patient_tasks = Call::where('status', '=', 'scheduled')
-                                       ->where('type', '=', 'task')
-                                       ->where('inbound_cpm_id', '=', $patientId)
-                                       ->where('outbound_cpm_id', '=', $author_id)
-                                       ->select([
-                                           'id',
-                                           'type',
-                                           'sub_type',
-                                           'attempt_note',
-                                           'scheduled_date',
-                                           'window_start',
-                                           'window_end',
-                                       ])
-                                       ->get();
-
-            $isCareCoach = Auth::user()->hasRole('care-center');
-            $meds        = [];
-            if ($isCareCoach && $this->shouldPrePopulateWithMedications($patient)) {
-                $meds = $medicationService->repo()->patientMedicationsList($patientId);
-            }
-
-            $view_data = [
-                'program_id'           => $patient->program_id,
-                'patient'              => $patient,
-                'patient_name'         => $patient_name,
-                'note_types'           => Activity::input_activity_types(),
-                'task_types_to_topics' => Activity::task_types_to_topics(),
-                'tasks'                => $nurse_patient_tasks,
-                'author_id'            => $author_id,
-                'author_name'          => $author_name,
-                'careteam_info'        => $careteam_info,
-                'userTimeZone'         => $userTimeZone,
-                'window'               => $window,
-                'window_flag'          => $patient_contact_window_exists,
-                'contact_days_array'   => $contact_days_array,
-                'ccm_complex'          => $ccm_complex,
-                'notifies_text'        => $patient->getNotifiesText(),
-                'note_channels_text'   => $patient->getNoteChannelsText(),
-                'medications'          => $meds,
-            ];
-
-            return view('wpUsers.patient.note.create', $view_data);
-        }
+        return redirect()->route('patient.note.index', ['patient' => $patientId]);
     }
 
-    private function shouldPrePopulateWithMedications(User $patient)
-    {
-        return Practice::whereId($patient->program_id)
-                       ->where(function ($q) {
-                           $q->where('name', '=', 'phoenix-heart')
-                             ->orWhere('name', '=', 'demo');
-                       })
-                       ->exists();
+    public function show(
+        Request $input,
+        $patientId,
+        $noteId
+    ) {
+        $patient = User::find($patientId);
+        $note    = Note::where('id', $noteId)
+            ->with(['call', 'notifications'])
+            ->first();
+
+        $this->service->markNoteAsRead(auth()->user(), $note);
+
+        $readers = $this->service->getSeenForwards($note);
+
+        //Set up note packet for view
+        $data = [];
+
+        //Sets up tags for patient note tags
+        $meta_tags = $this->service->tags($note);
+
+        $data['type']         = $note->type;
+        $data['id']           = $note->id;
+        $data['performed_at'] = $note->performed_at;
+        $provider             = User::find($note->author_id);
+        if ($provider) {
+            $data['provider_name'] = $provider->getFullName();
+        } else {
+            $data['provider_name'] = '';
+        }
+
+        $data['comment']   = $note->body;
+        $data['addendums'] = $note->addendums->sortByDesc('created_at');
+
+        $careteam_info = $this->service->getPatientCareTeamMembers($patientId);
+
+        asort($careteam_info);
+
+        $view_data = [
+            'note'               => $data,
+            'userTimeZone'       => $patient->timeZone,
+            'careteam_info'      => $careteam_info,
+            'patient'            => $patient,
+            'program_id'         => $patient->program_id,
+            'meta'               => $meta_tags,
+            'hasReaders'         => $readers->all(),
+            'notifies_text'      => $patient->getNotifiesText(),
+            'note_channels_text' => $patient->getNoteChannelsText(),
+        ];
+
+        return view('wpUsers.patient.note.view', $view_data);
     }
 
     /**
@@ -328,7 +383,7 @@ class NotesController extends Controller
      * Also: in some conditions call will be stored for other roles as well.
      * They are never redirected to Schedule Next Calll page.
      *
-     * @param SafeRequest $request
+     * @param SafeRequest      $request
      * @param SchedulerService $schedulerService
      * @param $patientId
      *
@@ -339,7 +394,6 @@ class NotesController extends Controller
         SchedulerService $schedulerService,
         $patientId
     ) {
-
         $input = $request->allSafe();
 
         //in case Performed By field is removed from the form (per CPM-165)
@@ -387,7 +441,7 @@ class NotesController extends Controller
         $is_phone_session = isset($input['phone']);
         $is_task          = isset($input['task_id']);
 
-        /**
+        /*
          * If task:
          *   - update task id with note
          *   - if call/call back and reached - update last_successful_contact_time
@@ -404,9 +458,8 @@ class NotesController extends Controller
             $task_status = $input['task_status'];
             $call        = Call::find($task_id);
             if ($call) {
-                if ($task_status === "done") {
-                    if ($call->sub_type === "Call Back") {
-
+                if ('done' === $task_status) {
+                    if ('Call Back' === $call->sub_type) {
                         if ( ! isset($input['call_status'])) {
                             //exit with error
                             return redirect()
@@ -425,13 +478,12 @@ class NotesController extends Controller
                         if (auth()->user()->hasRole('provider')) {
                             $this->patientRepo->updateCallLogs($patient->patientInfo, true);
                         }
-
                     } else {
-                        $call->status = "done";
+                        $call->status = 'done';
                     }
                 }
 
-                if ($call->sub_type === "Call Back") {
+                if ('Call Back' === $call->sub_type) {
                     // add last contact time regardless of if success
                     $info->last_contact_time = Carbon::now()->format('Y-m-d H:i:s');
                     $info->save();
@@ -442,8 +494,7 @@ class NotesController extends Controller
             }
         } else {
             if (Auth::user()->hasRole('care-center')) {
-
-                $is_withdrawn = $info->ccm_status == 'withdrawn';
+                $is_withdrawn = 'withdrawn' == $info->ccm_status;
 
                 if ( ! $is_phone_session && $is_withdrawn) {
                     return redirect()->route('patient.note.index', ['patient' => $patientId])->with(
@@ -453,7 +504,6 @@ class NotesController extends Controller
                 }
 
                 if ($is_phone_session) {
-
                     if ( ! isset($input['call_status'])) {
                         //exit with error
                         return redirect()
@@ -466,21 +516,24 @@ class NotesController extends Controller
                     $is_saas     = auth()->user()->isSaas();
                     $prediction  = null;
 
-                    if ($call_status == Call::REACHED) {
+                    if (Call::REACHED == $call_status) {
                         //Updates when the patient was successfully contacted last
                         $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s'); // @todo add H:i:s
                     }
 
                     if ( ! $is_saas && ! $is_withdrawn) {
-                        $prediction = $schedulerService->updateTodaysCallAndPredictNext($patient, $note->id,
-                            $call_status);
+                        $prediction = $schedulerService->updateTodaysCallAndPredictNext(
+                            $patient,
+                            $note->id,
+                            $call_status
+                        );
                     }
 
                     // add last contact time regardless of if success
                     $info->last_contact_time = Carbon::now()->format('Y-m-d H:i:s');
                     $info->save();
 
-                    if ($is_withdrawn || $prediction == null || $is_saas) {
+                    if ($is_withdrawn || null == $prediction || $is_saas) {
                         return redirect()->route('patient.note.index', ['patient' => $patientId])->with(
                             'messages',
                             ['Successfully Created Note']
@@ -507,11 +560,16 @@ class NotesController extends Controller
 
             //If successful phone call and provider, also mark as the last successful day contacted. [ticket: 592]
             if ($is_phone_session) {
-
-                if (isset($input['call_status']) && $input['call_status'] == 'reached') {
+                if (isset($input['call_status']) && 'reached' == $input['call_status']) {
                     if (auth()->user()->hasRole('provider')) {
-                        $this->service->storeCallForNote($note, 'reached', $patient, Auth::user(), Auth::user()->id,
-                            null);
+                        $this->service->storeCallForNote(
+                            $note,
+                            'reached',
+                            $patient,
+                            Auth::user(),
+                            Auth::user()->id,
+                            null
+                        );
 
                         $this->patientRepo->updateCallLogs($patient->patientInfo, true);
 
@@ -564,71 +622,6 @@ class NotesController extends Controller
         );
     }
 
-    public function show(
-        Request $input,
-        $patientId,
-        $noteId
-    ) {
-
-        $patient = User::find($patientId);
-        $note    = Note::where('id', $noteId)
-                       ->with(['call', 'notifications'])
-                       ->first();
-
-        $this->service->markNoteAsRead(auth()->user(), $note);
-
-        $readers = $this->service->getSeenForwards($note);
-
-        //Set up note packet for view
-        $data = [];
-
-        //Sets up tags for patient note tags
-        $meta_tags = $this->service->tags($note);
-
-        $data['type']         = $note->type;
-        $data['id']           = $note->id;
-        $data['performed_at'] = $note->performed_at;
-        $provider             = User::find($note->author_id);
-        if ($provider) {
-            $data['provider_name'] = $provider->getFullName();
-        } else {
-            $data['provider_name'] = '';
-        }
-
-        $data['comment']   = $note->body;
-        $data['addendums'] = $note->addendums->sortByDesc('created_at');
-
-        $careteam_info = $this->service->getPatientCareTeamMembers($patientId);
-
-        asort($careteam_info);
-
-        $view_data = [
-            'note'               => $data,
-            'userTimeZone'       => $patient->timeZone,
-            'careteam_info'      => $careteam_info,
-            'patient'            => $patient,
-            'program_id'         => $patient->program_id,
-            'meta'               => $meta_tags,
-            'hasReaders'         => $readers->all(),
-            'notifies_text'      => $patient->getNotifiesText(),
-            'note_channels_text' => $patient->getNoteChannelsText(),
-        ];
-
-        return view('wpUsers.patient.note.view', $view_data);
-    }
-
-    public function send(
-        Request $input,
-        $patientId,
-        $noteId
-    ) {
-        $note = Note::findOrFail($input['noteId']);
-
-        $note->forward($input['notify_careteam'], $input['notify_circlelink_support']);
-
-        return redirect()->route('patient.note.index', ['patient' => $patientId]);
-    }
-
     public function storeAddendum(
         Request $request,
         $patientId,
@@ -643,7 +636,19 @@ class NotesController extends Controller
             'author_user_id' => auth()->user()->id,
         ]);
 
-        return redirect()->to(route('patient.note.view',
-                ['patientId' => $patientId, 'noteId' => $noteId]) . '#create-addendum');
+        return redirect()->to(route(
+            'patient.note.view',
+                ['patientId' => $patientId, 'noteId' => $noteId]
+        ).'#create-addendum');
+    }
+
+    private function shouldPrePopulateWithMedications(User $patient)
+    {
+        return Practice::whereId($patient->program_id)
+            ->where(function ($q) {
+                $q->where('name', '=', 'phoenix-heart')
+                    ->orWhere('name', '=', 'demo');
+            })
+            ->exists();
     }
 }

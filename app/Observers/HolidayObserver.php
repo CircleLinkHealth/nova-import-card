@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Observers;
 
 use App\Jobs\SendSlackMessage;
@@ -17,7 +21,7 @@ class HolidayObserver
      */
     public function created(Holiday $holiday)
     {
-        if (!app()->environment('production')) {
+        if ( ! app()->environment('production')) {
             return;
         }
 
@@ -28,14 +32,13 @@ class HolidayObserver
         }
 
         $sentence = "Nurse {$auth->getFullName()} will take the day off on {$holiday->date->format('l, F j Y')}";
-        $sentence .= " View Schedule at ";
+        $sentence .= ' View Schedule at ';
         $sentence .= route('get.admin.nurse.schedules');
 
         $job = new SendSlackMessage('#carecoachscheduling', $sentence);
 
         dispatch($job);
     }
-
 
     /**
      * Listen for the NurseContactWindow deleted event.
@@ -46,7 +49,7 @@ class HolidayObserver
      */
     public function deleted(Holiday $holiday)
     {
-        if (!app()->environment('production')) {
+        if ( ! app()->environment('production')) {
             return;
         }
 
@@ -57,7 +60,7 @@ class HolidayObserver
         }
 
         $sentence = "Change of plans y'all! Nurse {$auth->getFullName()} will NOT be taking the day off on {$holiday->date->format('l, F j Y')}";
-        $sentence .= " View Schedule at ";
+        $sentence .= ' View Schedule at ';
         $sentence .= route('get.admin.nurse.schedules');
 
         $job = new SendSlackMessage('#carecoachscheduling', $sentence);

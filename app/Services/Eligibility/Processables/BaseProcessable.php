@@ -1,18 +1,14 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 01/22/2018
- * Time: 7:20 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Services\Eligibility\Processables;
 
-
 use App\Contracts\EligibilityProcessable;
 use App\Jobs\ProcessEligibilityProcessable;
 use App\Practice;
-use Illuminate\Http\File;
 
 abstract class BaseProcessable implements EligibilityProcessable
 {
@@ -22,14 +18,9 @@ abstract class BaseProcessable implements EligibilityProcessable
     public $createEnrollees;
 
     /**
-     * @var
+     * @var bool
      */
-    private $file;
-
-    /**
-     * @var Practice
-     */
-    public $practice;
+    public $filterInsurance;
 
     /**
      * @var bool
@@ -39,22 +30,27 @@ abstract class BaseProcessable implements EligibilityProcessable
     /**
      * @var bool
      */
-    public $filterInsurance;
+    public $filterProblems;
 
     /**
-     * @var bool
+     * @var Practice
      */
-    public $filterProblems;
+    public $practice;
+
+    /**
+     * @var
+     */
+    private $file;
 
     /**
      * BaseProcessable constructor.
      *
      * @param $file
      * @param Practice $practice
-     * @param bool $filterLastEncounter
-     * @param bool $filterInsurance
-     * @param bool $filterProblems
-     * @param bool $createEnrollees
+     * @param bool     $filterLastEncounter
+     * @param bool     $filterInsurance
+     * @param bool     $filterProblems
+     * @param bool     $createEnrollees
      */
     public function __construct(
         $file,
@@ -73,22 +69,23 @@ abstract class BaseProcessable implements EligibilityProcessable
     }
 
     /**
-     * Queue a file to process for eligibility.
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     *
+     * @return string
      */
-    public function queue()
+    public function getFilePath()
     {
-        ProcessEligibilityProcessable::dispatch($this);
+        return $this->file;
     }
 
     abstract public function processEligibility();
 
     /**
-     * @return string
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * Queue a file to process for eligibility.
      */
-    public function getFilePath()
+    public function queue()
     {
-        return $this->file;
+        ProcessEligibilityProcessable::dispatch($this);
     }
 
     /**

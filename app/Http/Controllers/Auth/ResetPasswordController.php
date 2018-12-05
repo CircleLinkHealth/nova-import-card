@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -34,43 +38,25 @@ class ResetPasswordController extends Controller
     protected $redirectTo = '/home';
 
     /**
+     * @var \App\User
+     */
+    private $userToReset;
+
+    /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct(Request $request)
     {
         $this->middleware('guest');
     }
 
-    protected function rules()
-    {
-        return [
-            'token'    => 'required',
-            'email'    => 'required|email',
-            'password' => [
-                'required',
-                'filled',
-                'min:8',
-                'confirmed',
-                new PasswordCharacters,
-            ],
-        ];
-    }
-
-    /**
-     * @var \App\User
-     */
-    private $userToReset;
-
     /**
      * @param Request $request
      *
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
      */
     public function reset(Request $request)
     {
-
         $input        = $request->only(['email', 'password']);
         $email        = $input['email'];
         $new_password = $input['password'];
@@ -78,23 +64,22 @@ class ResetPasswordController extends Controller
         $current_password = null;
 
         if ($email && $new_password) {
-
             $this->userToReset = $this->getUserToReset($email);
             if ( ! $this->userToReset) {
                 return redirect()->back()
-                                 ->withErrors([
-                                     'email' => 'No user found with the supplied email address.',
-                                 ]);
+                    ->withErrors([
+                        'email' => 'No user found with the supplied email address.',
+                    ]);
             }
 
             $current_password = $this->userToReset->password;
 
             if ( ! $this->validateNewPasswordUsingPasswordsHistory($current_password, $new_password)) {
                 return redirect()->back()
-                                 ->withInput($request->only('email'))
-                                 ->withErrors([
-                                     'email' => 'You have used this password again in the past. Please choose a different one.',
-                                 ]);
+                    ->withInput($request->only('email'))
+                    ->withErrors([
+                        'email' => 'You have used this password again in the past. Please choose a different one.',
+                    ]);
             }
         }
 
@@ -108,6 +93,21 @@ class ResetPasswordController extends Controller
         return $resetResponse;
     }
 
+    protected function rules()
+    {
+        return [
+            'token'    => 'required',
+            'email'    => 'required|email',
+            'password' => [
+                'required',
+                'filled',
+                'min:8',
+                'confirmed',
+                new PasswordCharacters(),
+            ],
+        ];
+    }
+
     /**
      * Get User model with passwordsHistory relation.
      *
@@ -118,12 +118,25 @@ class ResetPasswordController extends Controller
     private function getUserToReset(string $email)
     {
         return User::where('email', '=', $email)
-                   ->with('passwordsHistory')
-                   ->first();
+            ->with('passwordsHistory')
+            ->first();
+    }
+
+    private function saveOldPasswordInHistory($old_password)
+    {
+        $history = $this->userToReset->passwordsHistory;
+
+        if ( ! $history) {
+            $history          = new UserPasswordsHistory();
+            $history->user_id = $this->userToReset->id;
+        }
+
+        $history->older_password = $history->old_password;
+        $history->old_password   = $old_password;
+        $history->save();
     }
 
     /**
-     *
      * Check new password against current password and previous two previous passwords.
      * If one of them is the same as the new password,
      * reject it.
@@ -151,20 +164,7 @@ class ResetPasswordController extends Controller
                 $isDiff = ! \Hash::check($new_password, $history->older_password);
             }
         }
+
         return $isDiff;
-    }
-
-    private function saveOldPasswordInHistory($old_password)
-    {
-        $history = $this->userToReset->passwordsHistory;
-
-        if ( ! $history) {
-            $history          = new UserPasswordsHistory();
-            $history->user_id = $this->userToReset->id;
-        }
-
-        $history->older_password = $history->old_password;
-        $history->old_password   = $old_password;
-        $history->save();
     }
 }

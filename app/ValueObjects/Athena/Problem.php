@@ -1,13 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 12/22/2017
- * Time: 1:44 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\ValueObjects\Athena;
-
 
 use Carbon\Carbon;
 
@@ -17,28 +14,13 @@ use Carbon\Carbon;
  * @see: https://developer.athenahealth.com/docs/read/chart/Problems#section-0
  *
  * Class Problem
- * @package App\ValueObjects\Athena
  */
 class Problem
 {
     /**
-     * The athenaNet practice id. (required)
+     * The athenaNet department id. (required).
      *
-     * @var integer
-     */
-    protected $practiceId;
-
-    /**
-     * The athenaNet patient id. (required)
-     *
-     * @var integer
-     */
-    protected $patientId;
-
-    /**
-     * The athenaNet department id. (required)
-     *
-     * @var integer
+     * @var int
      */
     protected $departmentId;
 
@@ -47,7 +29,7 @@ class Problem
      *
      * @var string|null
      */
-    protected $laterality = null;
+    protected $laterality;
 
     /**
      * The note to be attached to this problem.
@@ -57,9 +39,22 @@ class Problem
     protected $note;
 
     /**
-     * The SNOMED code of the problem you are adding. (required)
+     * The athenaNet patient id. (required).
      *
-     * @var integer
+     * @var int
+     */
+    protected $patientId;
+    /**
+     * The athenaNet practice id. (required).
+     *
+     * @var int
+     */
+    protected $practiceId;
+
+    /**
+     * The SNOMED code of the problem you are adding. (required).
+     *
+     * @var int
      */
     protected $snomedCode;
 
@@ -86,14 +81,6 @@ class Problem
     }
 
     /**
-     * @param $departmentId
-     */
-    public function setDepartmentId($departmentId)
-    {
-        $this->departmentId = $departmentId;
-    }
-
-    /**
      * @return string
      */
     public function getLaterality(): string
@@ -102,75 +89,11 @@ class Problem
     }
 
     /**
-     * @param string $laterality
-     */
-    public function setLaterality(string $laterality)
-    {
-        $this->laterality = $laterality;
-    }
-
-    /**
-     * @return null|string
+     * @return string|null
      */
     public function getNote()
     {
         return $this->note;
-    }
-
-    /**
-     * @param null|string $note
-     */
-    public function setNote($note)
-    {
-        $this->note = $note;
-    }
-
-    /**
-     * @return int
-     */
-    public function getSnomedCode(): int
-    {
-        return $this->snomedCode;
-    }
-
-    /**
-     * @param int $snomedCode
-     */
-    public function setSnomedCode(int $snomedCode)
-    {
-        $this->snomedCode = $snomedCode;
-    }
-
-    /**
-     * @return Carbon
-     */
-    public function getStartDate(): Carbon
-    {
-        return $this->startDate;
-    }
-
-    /**
-     * @param Carbon $startDate
-     */
-    public function setStartDate(Carbon $startDate)
-    {
-        $this->startDate = $startDate;
-    }
-
-    /**
-     * @return int
-     */
-    public function getPracticeId(): int
-    {
-        return $this->practiceId;
-    }
-
-    /**
-     * @param int $practiceId
-     */
-    public function setPracticeId(int $practiceId)
-    {
-        $this->practiceId = $practiceId;
     }
 
     /**
@@ -182,11 +105,27 @@ class Problem
     }
 
     /**
-     * @param int $patientId
+     * @return int
      */
-    public function setPatientId(int $patientId)
+    public function getPracticeId(): int
     {
-        $this->patientId = $patientId;
+        return $this->practiceId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSnomedCode(): int
+    {
+        return $this->snomedCode;
+    }
+
+    /**
+     * @return Carbon
+     */
+    public function getStartDate(): Carbon
+    {
+        return $this->startDate;
     }
 
     /**
@@ -195,6 +134,62 @@ class Problem
     public function getStatus(): string
     {
         return $this->status;
+    }
+
+    /**
+     * @param $departmentId
+     */
+    public function setDepartmentId($departmentId)
+    {
+        $this->departmentId = $departmentId;
+    }
+
+    /**
+     * @param string $laterality
+     */
+    public function setLaterality(string $laterality)
+    {
+        $this->laterality = $laterality;
+    }
+
+    /**
+     * @param string|null $note
+     */
+    public function setNote($note)
+    {
+        $this->note = $note;
+    }
+
+    /**
+     * @param int $patientId
+     */
+    public function setPatientId(int $patientId)
+    {
+        $this->patientId = $patientId;
+    }
+
+    /**
+     * @param int $practiceId
+     */
+    public function setPracticeId(int $practiceId)
+    {
+        $this->practiceId = $practiceId;
+    }
+
+    /**
+     * @param int $snomedCode
+     */
+    public function setSnomedCode(int $snomedCode)
+    {
+        $this->snomedCode = $snomedCode;
+    }
+
+    /**
+     * @param Carbon $startDate
+     */
+    public function setStartDate(Carbon $startDate)
+    {
+        $this->startDate = $startDate;
     }
 
     /**

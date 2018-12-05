@@ -1,6 +1,12 @@
-<?php namespace App\Importer;
+<?php
 
-/**
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Importer;
+
+/*
  * Created by PhpStorm.
  * User: michalis
  * Date: 16/01/2017
@@ -32,89 +38,14 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
     protected $billingProviderIdPrediction;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $locationIdPrediction;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $practiceIdPrediction;
-
-    /**
-     * Handles importing a MedicalRecord for QA.
-     *
-     * @return ImportedMedicalRecord
-     *
-     */
-    public function import()
-    {
-        $this->createLogs()
-             ->predictPractice()
-             ->predictLocation()
-             ->predictBillingProvider()
-             ->createImportedMedicalRecord()
-             ->importAllergies()
-             ->importDemographics()
-             ->importDocument()
-             ->importInsurance()
-             ->importMedications()
-             ->importProblems()
-             ->importProviders()
-             ->raiseConcerns();
-
-        return $this->importedMedicalRecord;
-    }
-
-    public function raiseConcerns()
-    {
-        $demos = $this->demographics()->first();
-
-        if ($demos) {
-            $practiceId = optional($demos->ccda)->practice_id;
-
-            $query = User::whereFirstName($demos->first_name)
-                         ->whereLastName($demos->last_name)
-                         ->whereHas('patientInfo', function ($q) use ($demos) {
-                             $q->whereBirthDate($demos->dob);
-                         });
-            if ($practiceId) {
-                $query = $query->where('program_id', $practiceId);
-            }
-
-            $user = $query->first();
-
-            if ($user) {
-                $this->importedMedicalRecord->duplicate_id = $user->id;
-                $this->importedMedicalRecord->save();
-
-                return true;
-            }
-
-            $patient = Patient::whereHas('user', function ($q) use ($practiceId) {
-                $q->where('program_id', $practiceId);
-            })->whereMrnNumber($demos->mrn_number)->first();
-
-            if ($patient) {
-                $this->importedMedicalRecord->duplicate_id = $patient->user_id;
-                $this->importedMedicalRecord->save();
-
-                return true;
-            }
-        }
-    }
-
-    /**
-     * Log the data into MedicalRecordSectionLogs, so that they can be fed to the Importer
-     *
-     * @return MedicalRecord
-     */
-    public function createLogs(): MedicalRecord
-    {
-        $this->getLogger()->logAllSections();
-
-        return $this;
-    }
 
     /**
      * @return MedicalRecord
@@ -133,23 +64,23 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
     }
 
     /**
+     * Log the data into MedicalRecordSectionLogs, so that they can be fed to the Importer.
+     *
+     * @return MedicalRecord
+     */
+    public function createLogs(): MedicalRecord
+    {
+        $this->getLogger()->logAllSections();
+
+        return $this;
+    }
+
+    /**
      * @return mixed
      */
     public function getBillingProviderIdPrediction()
     {
         return $this->billingProviderIdPrediction;
-    }
-
-    /**
-     * @param mixed $billingProviderId
-     *
-     * @return MedicalRecord
-     */
-    public function setBillingProviderIdPrediction($billingProviderId): MedicalRecord
-    {
-        $this->billingProviderIdPrediction = $billingProviderId;
-
-        return $this;
     }
 
     /**
@@ -161,18 +92,6 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
     }
 
     /**
-     * @param mixed $locationId
-     *
-     * @return MedicalRecord
-     */
-    public function setLocationIdPrediction($locationId): MedicalRecord
-    {
-        $this->locationIdPrediction = $locationId;
-
-        return $this;
-    }
-
-    /**
      * @return mixed
      */
     public function getPracticeIdPrediction()
@@ -181,19 +100,31 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
     }
 
     /**
-     * @param mixed $practiceId
+     * Handles importing a MedicalRecord for QA.
      *
-     * @return MedicalRecord
+     * @return ImportedMedicalRecord
      */
-    public function setPracticeIdPrediction($practiceId): MedicalRecord
+    public function import()
     {
-        $this->practiceIdPrediction = $practiceId;
+        $this->createLogs()
+            ->predictPractice()
+            ->predictLocation()
+            ->predictBillingProvider()
+            ->createImportedMedicalRecord()
+            ->importAllergies()
+            ->importDemographics()
+            ->importDocument()
+            ->importInsurance()
+            ->importMedications()
+            ->importProblems()
+            ->importProviders()
+            ->raiseConcerns();
 
-        return $this;
+        return $this->importedMedicalRecord;
     }
 
     /**
-     * Import Allergies for QA
+     * Import Allergies for QA.
      *
      * @return MedicalRecord
      */
@@ -206,7 +137,7 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
     }
 
     /**
-     * Import Demographics for QA
+     * Import Demographics for QA.
      *
      * @return \App\Contracts\Importer\MedicalRecord\MedicalRecord
      */
@@ -219,7 +150,7 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
     }
 
     /**
-     * Import Document for QA
+     * Import Document for QA.
      *
      * @return \App\Contracts\Importer\MedicalRecord\MedicalRecord
      */
@@ -229,7 +160,25 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
     }
 
     /**
-     * Import Medications for QA
+     * @return mixed
+     */
+    abstract public function importedMedicalRecord();
+
+    /**
+     * Import Insurance Policies for QA.
+     *
+     * @return MedicalRecord
+     */
+    public function importInsurance(): MedicalRecord
+    {
+        $importer = new Insurance();
+        $importer->import($this->id, get_class($this), $this->importedMedicalRecord);
+
+        return $this;
+    }
+
+    /**
+     * Import Medications for QA.
      *
      * @return \App\Contracts\Importer\MedicalRecord\MedicalRecord
      */
@@ -242,7 +191,7 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
     }
 
     /**
-     * Import Problems for QA
+     * Import Problems for QA.
      *
      * @return \App\Contracts\Importer\MedicalRecord\MedicalRecord
      */
@@ -255,7 +204,7 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
     }
 
     /**
-     * Import Providers for QA
+     * Import Providers for QA.
      *
      * @return \App\Contracts\Importer\MedicalRecord\MedicalRecord
      */
@@ -265,14 +214,71 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
     }
 
     /**
-     * Import Insurance Policies for QA
+     * Predict which BillingProvider should be attached to this MedicalRecord.
      *
      * @return MedicalRecord
      */
-    public function importInsurance(): MedicalRecord
+    public function predictBillingProvider(): MedicalRecord
     {
-        $importer = new Insurance();
-        $importer->import($this->id, get_class($this), $this->importedMedicalRecord);
+        if ($this->billing_provider_id) {
+            $this->setBillingProviderIdPrediction($this->billing_provider_id);
+
+            return $this;
+        }
+
+        if ($this->getBillingProviderIdPrediction()) {
+            return $this;
+        }
+
+        //historic lookup
+        $historicPredictor  = new HistoricBillingProviderPredictor($this->getDocumentCustodian(), $this->providers);
+        $historicPrediction = $historicPredictor->predict();
+
+        if ($historicPrediction) {
+            $this->setBillingProviderIdPrediction($historicPrediction);
+
+            return $this;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Predict which Location should be attached to this MedicalRecord.
+     *
+     * @return MedicalRecord
+     */
+    public function predictLocation(): MedicalRecord
+    {
+        if ($this->getLocationIdPrediction()) {
+            return $this;
+        }
+
+        if ( ! empty($this->location_id)) {
+            $this->setLocationIdPrediction($this->location_id);
+
+            return $this;
+        }
+
+        //historic lookup
+        $historicPredictor  = new HistoricLocationPredictor($this->getDocumentCustodian(), $this->providers);
+        $historicPrediction = $historicPredictor->predict();
+
+        if ($this->getPracticeIdPrediction()) {
+            $practice = Practice::find($this->getPracticeIdPrediction());
+
+            $this->setLocationIdPrediction($practice->primary_location_id);
+        }
+
+        if ($historicPrediction) {
+            if (isset($practice) && ! $practice->locations->pluck('id')->contains($historicPrediction)) {
+                ! $practice->primary_location_id
+                    ?: $this->setLocationIdPrediction($practice->primary_location_id);
+
+                return $this;
+            }
+            $this->setLocationIdPrediction($historicPrediction);
+        }
 
         return $this;
     }
@@ -304,86 +310,80 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
             return $this;
         }
 
-
         return $this;
     }
 
-    /**
-     * Predict which Location should be attached to this MedicalRecord.
-     *
-     * @return MedicalRecord
-     */
-    public function predictLocation(): MedicalRecord
+    public function raiseConcerns()
     {
-        if ($this->getLocationIdPrediction()) {
-            return $this;
-        }
+        $demos = $this->demographics()->first();
 
-        if (!empty($this->location_id)) {
-            $this->setLocationIdPrediction($this->location_id);
+        if ($demos) {
+            $practiceId = optional($demos->ccda)->practice_id;
 
-            return $this;
-        }
-
-
-        //historic lookup
-        $historicPredictor  = new HistoricLocationPredictor($this->getDocumentCustodian(), $this->providers);
-        $historicPrediction = $historicPredictor->predict();
-
-        if ($this->getPracticeIdPrediction()) {
-            $practice = Practice::find($this->getPracticeIdPrediction());
-
-            $this->setLocationIdPrediction($practice->primary_location_id);
-        }
-
-        if ($historicPrediction) {
-            if (isset($practice) && ! $practice->locations->pluck('id')->contains($historicPrediction)) {
-                ! $practice->primary_location_id
-                    ?: $this->setLocationIdPrediction($practice->primary_location_id);
-
-                return $this;
+            $query = User::whereFirstName($demos->first_name)
+                ->whereLastName($demos->last_name)
+                ->whereHas('patientInfo', function ($q) use ($demos) {
+                    $q->whereBirthDate($demos->dob);
+                });
+            if ($practiceId) {
+                $query = $query->where('program_id', $practiceId);
             }
-            $this->setLocationIdPrediction($historicPrediction);
+
+            $user = $query->first();
+
+            if ($user) {
+                $this->importedMedicalRecord->duplicate_id = $user->id;
+                $this->importedMedicalRecord->save();
+
+                return true;
+            }
+
+            $patient = Patient::whereHas('user', function ($q) use ($practiceId) {
+                $q->where('program_id', $practiceId);
+            })->whereMrnNumber($demos->mrn_number)->first();
+
+            if ($patient) {
+                $this->importedMedicalRecord->duplicate_id = $patient->user_id;
+                $this->importedMedicalRecord->save();
+
+                return true;
+            }
         }
-
-
-        return $this;
     }
 
     /**
-     * Predict which BillingProvider should be attached to this MedicalRecord.
+     * @param mixed $billingProviderId
      *
      * @return MedicalRecord
      */
-    public function predictBillingProvider(): MedicalRecord
+    public function setBillingProviderIdPrediction($billingProviderId): MedicalRecord
     {
-        if ($this->billing_provider_id) {
-            $this->setBillingProviderIdPrediction($this->billing_provider_id);
-
-            return $this;
-        }
-
-
-        if ($this->getBillingProviderIdPrediction()) {
-            return $this;
-        }
-
-        //historic lookup
-        $historicPredictor  = new HistoricBillingProviderPredictor($this->getDocumentCustodian(), $this->providers);
-        $historicPrediction = $historicPredictor->predict();
-
-        if ($historicPrediction) {
-            $this->setBillingProviderIdPrediction($historicPrediction);
-
-            return $this;
-        }
-
+        $this->billingProviderIdPrediction = $billingProviderId;
 
         return $this;
     }
 
     /**
-     * @return mixed
+     * @param mixed $locationId
+     *
+     * @return MedicalRecord
      */
-    abstract public function importedMedicalRecord();
+    public function setLocationIdPrediction($locationId): MedicalRecord
+    {
+        $this->locationIdPrediction = $locationId;
+
+        return $this;
+    }
+
+    /**
+     * @param mixed $practiceId
+     *
+     * @return MedicalRecord
+     */
+    public function setPracticeIdPrediction($practiceId): MedicalRecord
+    {
+        $this->practiceIdPrediction = $practiceId;
+
+        return $this;
+    }
 }

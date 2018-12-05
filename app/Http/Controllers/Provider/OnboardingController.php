@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers\Provider;
 
 use App\Contracts\Repositories\InviteRepository;
@@ -35,6 +39,11 @@ class OnboardingController extends Controller
     protected $locations;
 
     /**
+     * @var OnboardingService
+     */
+    protected $onboardingService;
+
+    /**
      * @var PracticeRepository
      */
     protected $practices;
@@ -45,17 +54,12 @@ class OnboardingController extends Controller
     protected $users;
 
     /**
-     * @var OnboardingService
-     */
-    protected $onboardingService;
-
-    /**
      * OnboardingController constructor.
      *
-     * @param InviteRepository $inviteRepository
+     * @param InviteRepository   $inviteRepository
      * @param LocationRepository $locationRepository
      * @param PracticeRepository $practiceRepository
-     * @param UserRepository $userRepository
+     * @param UserRepository     $userRepository
      */
     public function __construct(
         InviteRepository $inviteRepository,
@@ -84,32 +88,23 @@ class OnboardingController extends Controller
     public function getCreateInvitedUser()
     {
         $user = User::whereEmail($this->invite->email)
-                    ->first();
+            ->first();
 
         return view('provider.onboarding.invited-staff', [
-            'user' => $user,
+            'user'   => $user,
             'invite' => $this->invite,
         ]);
     }
 
     /**
-     * Show the form to create practice lead user.
+     * Show the form to create Locations.
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    public function getCreatePracticeLeadUser()
-    {
-        $invite = $this->invite ?? new Invite();
-
-        return view('provider.onboarding.create-practice-lead', compact('invite'));
-    }
-
-    /**
-     * Show the form to create Locations
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      * @internal param $numberOfLocations
      *
+     * @param mixed $practiceSlug
+     * @param mixed $leadId
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function getCreateLocations(
         $practiceSlug,
@@ -131,7 +126,9 @@ class OnboardingController extends Controller
     }
 
     /**
-     * Show the form to create a practice
+     * Show the form to create a practice.
+     *
+     * @param mixed $leadId
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
@@ -140,9 +137,22 @@ class OnboardingController extends Controller
         return view('provider.onboarding.create-practice', compact(['leadId']));
     }
 
+    /**
+     * Show the form to create practice lead user.
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function getCreatePracticeLeadUser()
+    {
+        $invite = $this->invite ?? new Invite();
+
+        return view('provider.onboarding.create-practice-lead', compact('invite'));
+    }
 
     /**
-     * Show the form to create staff members
+     * Show the form to create staff members.
+     *
+     * @param mixed $practiceSlug
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
@@ -164,31 +174,7 @@ class OnboardingController extends Controller
     }
 
     /**
-     * Store locations.
-     *
-     * @param Request $request
-     */
-    public function postStoreLocations(
-        Request $request,
-        $leadId
-    ) {
-        $primaryPractice = $this->practices
-            ->skipPresenter()
-            ->findWhere([
-                'user_id' => $leadId,
-            ])->first();
-
-        $this->onboardingService->postStoreLocations($primaryPractice, $request);
-
-        return response()->json([
-            'redirect_to' => route('get.onboarding.create.staff', [
-                'practiceSlug' => $primaryPractice->name,
-            ]),
-        ]);
-    }
-
-    /**
-     * Store Invited User
+     * Store Invited User.
      *
      * @param Request $request
      *
@@ -215,58 +201,27 @@ class OnboardingController extends Controller
     }
 
     /**
-     * Store Practice Lead User
+     * Store locations.
      *
      * @param Request $request
-     *
-     * @return \Illuminate\Http\RedirectResponse
+     * @param mixed   $leadId
      */
-    public function postStorePracticeLeadUser(Request $request)
-    {
-        $input = $request->input();
+    public function postStoreLocations(
+        Request $request,
+        $leadId
+    ) {
+        $primaryPractice = $this->practices
+            ->skipPresenter()
+            ->findWhere([
+                'user_id' => $leadId,
+            ])->first();
 
-        //Create the User
-        try {
-            $user = $this->users->skipPresenter()->create([
-                'email'          => $input['email'],
-                'first_name'     => $input['firstName'],
-                'last_name'      => $input['lastName'],
-                'password'       => $input['password'],
-                'count_ccm_time' => isset($input['countCcmTime'])
-                    ? (bool)$input['countCcmTime']
-                    : false,
-            ]);
+        $this->onboardingService->postStoreLocations($primaryPractice, $request);
 
-            $user->password = bcrypt($user->password);
-            $user->save();
-        } catch (ValidatorException $e) {
-            return redirect()
-                ->back()
-                ->withInput($input)
-                ->withErrors($e->getMessageBag()->getMessages());
-        }
-
-        //Attach role
-        $role = Role::whereName('practice-lead')->first();
-
-        $user->roles()
-             ->attach($role->id);
-
-        if ( ! auth()->user()->hasRole('salesperson')) {
-            auth()->login($user);
-        }
-
-        if (isset($input['code'])) {
-            $invite = Invite::whereCode($input['code'])
-                            ->first();
-
-            if ($invite) {
-                $invite->delete();
-            }
-        }
-
-        return redirect()->route('get.onboarding.create.practice', [
-            'lead_id' => $user->id,
+        return response()->json([
+            'redirect_to' => route('get.onboarding.create.staff', [
+                'practiceSlug' => $primaryPractice->name,
+            ]),
         ]);
     }
 
@@ -274,8 +229,9 @@ class OnboardingController extends Controller
      * Store a Practice.
      *
      * @param Request $request
+     * @param mixed   $leadId
      *
-     * @return OnboardingController|\Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\RedirectResponse|OnboardingController
      */
     public function postStorePractice(
         Request $request,
@@ -317,11 +273,68 @@ class OnboardingController extends Controller
     }
 
     /**
-     * Store Staff.
+     * Store Practice Lead User.
      *
      * @param Request $request
      *
-     * @return OnboardingController|array|\Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postStorePracticeLeadUser(Request $request)
+    {
+        $input = $request->input();
+
+        //Create the User
+        try {
+            $user = $this->users->skipPresenter()->create([
+                'email'          => $input['email'],
+                'first_name'     => $input['firstName'],
+                'last_name'      => $input['lastName'],
+                'password'       => $input['password'],
+                'count_ccm_time' => isset($input['countCcmTime'])
+                    ? (bool) $input['countCcmTime']
+                    : false,
+            ]);
+
+            $user->password = bcrypt($user->password);
+            $user->save();
+        } catch (ValidatorException $e) {
+            return redirect()
+                ->back()
+                ->withInput($input)
+                ->withErrors($e->getMessageBag()->getMessages());
+        }
+
+        //Attach role
+        $role = Role::whereName('practice-lead')->first();
+
+        $user->roles()
+            ->attach($role->id);
+
+        if ( ! auth()->user()->hasRole('salesperson')) {
+            auth()->login($user);
+        }
+
+        if (isset($input['code'])) {
+            $invite = Invite::whereCode($input['code'])
+                ->first();
+
+            if ($invite) {
+                $invite->delete();
+            }
+        }
+
+        return redirect()->route('get.onboarding.create.practice', [
+            'lead_id' => $user->id,
+        ]);
+    }
+
+    /**
+     * Store Staff.
+     *
+     * @param Request $request
+     * @param mixed   $practiceSlug
+     *
+     * @return array|\Illuminate\Http\RedirectResponse|OnboardingController
      */
     public function postStoreStaff(
         Request $request,

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Unit\CallsAlgo;
 
 use App\Algorithms\Calls\SuccessfulHandler;
@@ -55,9 +59,7 @@ class SuccessfulCallHandlerTest extends TestCase
 
     /**
      * Test that a patient who has reached 20 minutes in the first week of the month, and wants to be called more than
-     * once will get a scheduled call on the last week of the month
-     *
-     * @return void
+     * once will get a scheduled call on the last week of the month.
      */
     public function test_patient_over_20_mins_in_first_week_call_more_than_once()
     {
@@ -73,10 +75,25 @@ class SuccessfulCallHandlerTest extends TestCase
     }
 
     /**
+     * Test that a patient who has reached 20 minutes in the fourth week of the month, and wants to be called more than
+     * once will get a scheduled call next month.
+     */
+    public function test_patient_over_20_mins_in_fourth_week_call_more_than_once()
+    {
+        $called  = Carbon::now()->endOfMonth()->subWeek()->addDays(3);
+        $patient = $this->fakePatient($called);
+
+        $prediction = (new SuccessfulHandler($patient->patientInfo, $called, false, $patient->inboundCalls->first()))
+            ->handle();
+
+        $this->assertNotEmpty($prediction);
+
+        $this->assertTrue($prediction['date'] <= $called->copy()->addMonth()->endOfMonth()->subWeek(2)->toDateString() && $prediction['date'] > $called->copy()->addWeek()->toDateString());
+    }
+
+    /**
      * Test that a patient who has reached 20 minutes in the second week of the month, and wants to be called once a
-     * month will get a scheduled call next month
-     *
-     * @return void
+     * month will get a scheduled call next month.
      */
     public function test_patient_over_20_mins_in_second_week_call_once()
     {
@@ -94,29 +111,8 @@ class SuccessfulCallHandlerTest extends TestCase
     }
 
     /**
-     * Test that a patient who has reached 20 minutes in the fourth week of the month, and wants to be called more than
-     * once will get a scheduled call next month
-     *
-     * @return void
-     */
-    public function test_patient_over_20_mins_in_fourth_week_call_more_than_once()
-    {
-        $called  = Carbon::now()->endOfMonth()->subWeek()->addDays(3);
-        $patient = $this->fakePatient($called);
-
-        $prediction = (new SuccessfulHandler($patient->patientInfo, $called, false, $patient->inboundCalls->first()))
-            ->handle();
-
-        $this->assertNotEmpty($prediction);
-
-        $this->assertTrue($prediction['date'] <= $called->copy()->addMonth()->endOfMonth()->subWeek(2)->toDateString() && $prediction['date'] > $called->copy()->addWeek()->toDateString());
-    }
-
-    /**
      * Test that a patient who has reached 20 minutes in the third week of the month, and wants to be called once a
-     * month will get a scheduled call on next month
-     *
-     * @return void
+     * month will get a scheduled call on next month.
      */
     public function test_patient_over_20_mins_in_third_week_call_once()
     {

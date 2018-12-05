@@ -1,12 +1,15 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Repositories;
 
 use App\User;
 
 /**
- * Class UserRepositoryEloquent
- * @package namespace App\Repositories;
+ * Class UserRepositoryEloquent.
  */
 class UserRepositoryEloquent
 {
@@ -15,7 +18,8 @@ class UserRepositoryEloquent
         return app(User::class);
     }
 
-    public function user($id) {
+    public function user($id)
+    {
         return $this->model()->findOrFail($id);
     }
 }

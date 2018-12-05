@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: RohanM
- * Date: 12/19/16
- * Time: 5:53 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Reports\Sales\Practice;
@@ -33,6 +31,17 @@ class SalesByPracticeReport extends SalesReport
         parent::__construct($for, $sections, $start, $end);
     }
 
+    public function data($defaultSections = false)
+    {
+        if ($defaultSections) {
+            $this->requestedSections = self::SECTIONS;
+
+            return parent::data();
+        }
+
+        return parent::data();
+    }
+
     public function renderPDF(
         $name,
         $view = 'sales.by-practice.create'
@@ -40,16 +49,6 @@ class SalesByPracticeReport extends SalesReport
         $this->data();
 
         return parent::renderPDF($name, $view);
-    }
-
-    public function data($defaultSections = false)
-    {
-        if ($defaultSections) {
-            $this->requestedSections = self::SECTIONS;
-            return parent::data();
-        } else {
-            return parent::data();
-        }
     }
 
     public function renderView($view = 'sales.by-practice.create')

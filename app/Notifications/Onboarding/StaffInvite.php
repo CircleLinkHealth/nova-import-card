@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Notifications\Onboarding;
 
 use App\Entities\Invite;
@@ -36,7 +40,7 @@ class StaffInvite extends Notification
     /**
      * Create a new notification instance.
      *
-     * @param User $implementationLead
+     * @param User     $implementationLead
      * @param Practice $practice
      */
     public function __construct(
@@ -44,64 +48,9 @@ class StaffInvite extends Notification
         Practice $practice
     ) {
         $this->practice = $practice;
-        $this->sender = $implementationLead;
+        $this->sender   = $implementationLead;
 
         $this->code = generateRandomString(40);
-    }
-
-    /**
-     * Get the notification's delivery channels.
-     *
-     * @param  mixed $notifiable
-     *
-     * @return array
-     */
-    public function via($notifiable)
-    {
-        return ['mail'];
-    }
-
-    /**
-     * Get the mail representation of the notification.
-     *
-     * @param  mixed $notifiable
-     *
-     * @return \Illuminate\Notifications\Messages\MailMessage
-     */
-    public function toMail($notifiable)
-    {
-        $arr = $this->toArray($notifiable);
-
-        $this->logInvite($notifiable);
-
-        return (new MailMessage)
-            ->subject($arr['subject'])
-            ->greeting($arr['greeting'])
-            ->line($arr['line'])
-            ->action($arr['action_text'], $arr['action_link']);
-    }
-
-    /**
-     * Get the array representation of the notification.
-     *
-     * @param  mixed $notifiable
-     *
-     * @return array
-     */
-    public function toArray($notifiable)
-    {
-        $invitor_name = $this->sender->getFullName();
-        $program_name = $this->practice->formatted_name;
-
-        return [
-            'subject'     => "$invitor_name Invited You to the Personalized Care Management Team with CircleLink!",
-            'greeting'    => "Dear {$notifiable->getFullName()}:",
-            'line'        => "$invitor_name at $program_name just invited you the Personalized Care Management team!",
-            'action_text' => 'Confirm and create a password',
-            'action_link' => route('get.onboarding.create.invited.user', [
-                'code' => $this->code,
-            ]),
-        ];
     }
 
     public function logInvite($notifiable)
@@ -113,8 +62,63 @@ class StaffInvite extends Notification
             'role_id'    => $notifiable->roles()->first()->id,
             'email'      => $notifiable->email,
             'subject'    => $arr['subject'],
-            'message'    => $arr['greeting'] . PHP_EOL . $arr['line'] . PHP_EOL . $arr['action_text'] . PHP_EOL,
+            'message'    => $arr['greeting'].PHP_EOL.$arr['line'].PHP_EOL.$arr['action_text'].PHP_EOL,
             'code'       => $this->code,
         ]);
+    }
+
+    /**
+     * Get the array representation of the notification.
+     *
+     * @param mixed $notifiable
+     *
+     * @return array
+     */
+    public function toArray($notifiable)
+    {
+        $invitor_name = $this->sender->getFullName();
+        $program_name = $this->practice->formatted_name;
+
+        return [
+            'subject'     => "${invitor_name} Invited You to the Personalized Care Management Team with CircleLink!",
+            'greeting'    => "Dear {$notifiable->getFullName()}:",
+            'line'        => "${invitor_name} at ${program_name} just invited you the Personalized Care Management team!",
+            'action_text' => 'Confirm and create a password',
+            'action_link' => route('get.onboarding.create.invited.user', [
+                'code' => $this->code,
+            ]),
+        ];
+    }
+
+    /**
+     * Get the mail representation of the notification.
+     *
+     * @param mixed $notifiable
+     *
+     * @return \Illuminate\Notifications\Messages\MailMessage
+     */
+    public function toMail($notifiable)
+    {
+        $arr = $this->toArray($notifiable);
+
+        $this->logInvite($notifiable);
+
+        return (new MailMessage())
+            ->subject($arr['subject'])
+            ->greeting($arr['greeting'])
+            ->line($arr['line'])
+            ->action($arr['action_text'], $arr['action_link']);
+    }
+
+    /**
+     * Get the notification's delivery channels.
+     *
+     * @param mixed $notifiable
+     *
+     * @return array
+     */
+    public function via($notifiable)
+    {
+        return ['mail'];
     }
 }

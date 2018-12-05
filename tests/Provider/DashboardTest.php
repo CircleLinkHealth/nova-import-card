@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Provider;
 
 use App\Role;
@@ -13,7 +17,7 @@ class DashboardTest extends DuskTestCase
     protected $faker;
 
     /**
-     * @var User $programLead
+     * @var User
      */
     protected $programLead;
     private $practiceSlug;
@@ -23,12 +27,6 @@ class DashboardTest extends DuskTestCase
         parent::__construct();
 
         $this->faker = Factory::create();
-    }
-
-    public function testMain()
-    {
-        $this->createPractice();
-        $this->inviteStaff();
     }
 
     public function createPractice()
@@ -44,10 +42,10 @@ class DashboardTest extends DuskTestCase
 
         $this->browse(function (Browser $browser) use ($name) {
             $browser->loginAs($this->programLead)
-                    ->visitRoute('get.onboarding.create.practice', ['lead_id' => $this->programLead->id])
-                    ->assertRouteIs('get.onboarding.create.practice', ['lead_id' => $this->programLead->id])
-                    ->type('name', $name)
-                    ->press('@save-practice');
+                ->visitRoute('get.onboarding.create.practice', ['lead_id' => $this->programLead->id])
+                ->assertRouteIs('get.onboarding.create.practice', ['lead_id' => $this->programLead->id])
+                ->type('name', $name)
+                ->press('@save-practice');
         });
 
         $this->practiceSlug = str_slug($name);
@@ -70,13 +68,13 @@ class DashboardTest extends DuskTestCase
 
         $this->browse(function (Browser $browser) use ($inviteeEmail, $subject, $message, $role) {
             $browser
-                    ->visitRoute('get.onboarding.create.staff', ['practiceSlug' => $this->practiceSlug])
-                    ->assertRouteIs('get.onboarding.create.staff', ['practiceSlug' => $this->practiceSlug])
-                    ->type('email', $inviteeEmail)
-                    ->type('subject', $subject)
-                    ->type('message', $message)
-                    ->type('role', $role->id)
-                    ->press('Invite');
+                ->visitRoute('get.onboarding.create.staff', ['practiceSlug' => $this->practiceSlug])
+                ->assertRouteIs('get.onboarding.create.staff', ['practiceSlug' => $this->practiceSlug])
+                ->type('email', $inviteeEmail)
+                ->type('subject', $subject)
+                ->type('message', $message)
+                ->type('role', $role->id)
+                ->press('Invite');
         });
 
         $this->assertDatabaseHas('invites', [
@@ -86,5 +84,11 @@ class DashboardTest extends DuskTestCase
             'subject'    => $subject,
             'message'    => $message,
         ]);
+    }
+
+    public function test_main()
+    {
+        $this->createPractice();
+        $this->inviteStaff();
     }
 }

@@ -1,7 +1,10 @@
 <?php
 
-namespace App\Repositories;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
+namespace App\Repositories;
 
 use App\Exceptions\InvalidArgumentException;
 use App\Patient;
@@ -36,6 +39,17 @@ class PatientWriteRepository
         return Patient::where('user_id', $userId)->update(['ccm_status' => 'paused']);
     }
 
+    public function setStatus($userId, $status)
+    {
+        $stati = new Collection([Patient::PAUSED, Patient::ENROLLED, Patient::WITHDRAWN]);
+        $user  = User::find($userId);
+        if ($stati->contains($status) && $user) {
+            Patient::where(['user_id' => $userId])->update(['ccm_status' => $status]);
+        }
+
+        return Patient::where(['user_id' => $userId])->first();
+    }
+
     public function storeCcdProblem(User $patient, array $args)
     {
         if ( ! $args['code']) {
@@ -47,8 +61,8 @@ class PatientWriteRepository
             'cpm_problem_id' => empty($args['cpm_problem_id'])
                 ? null
                 : $args['cpm_problem_id'],
-            'billable'       => $args['billable'] ?? null,
-            'is_monitored'     => $args['is_monitored'] ?? false,
+            'billable'     => $args['billable'] ?? null,
+            'is_monitored' => $args['is_monitored'] ?? false,
         ]);
 
         if ($args['code']) {
@@ -66,23 +80,22 @@ class PatientWriteRepository
     }
 
     /**
-     * Updates the patient's call info based on the status of the last call
+     * Updates the patient's call info based on the status of the last call.
      *
      * @param Patient $patient
      * @param $successfulLastCall
      *
-     * @return PatientMonthlySummary|\Illuminate\Database\Eloquent\Model|null|static
+     * @return \Illuminate\Database\Eloquent\Model|PatientMonthlySummary|static|null
      */
     public function updateCallLogs(
         Patient $patient,
         bool $successfulLastCall
     ) {
-
         // get record for month
         $day_start = Carbon::parse(Carbon::now()->firstOfMonth())->format('Y-m-d');
-        $record = PatientMonthlySummary::where('patient_id', $patient->user_id)
-                                       ->where('month_year', $day_start)
-                                       ->first();
+        $record    = PatientMonthlySummary::where('patient_id', $patient->user_id)
+            ->where('month_year', $day_start)
+            ->first();
 
         // set increment var
         $successful_call_increment = 0;
@@ -93,23 +106,23 @@ class PatientWriteRepository
         } else {
             $patient->no_call_attempts_since_last_success = ($patient->no_call_attempts_since_last_success + 1);
 
-            if ($patient->no_call_attempts_since_last_success == 5 && optional($record)->no_of_successful_calls < 1) {
+            if (5 == $patient->no_call_attempts_since_last_success && optional($record)->no_of_successful_calls < 1) {
                 $patient->ccm_status = Patient::UNREACHABLE;
             }
         }
         $patient->save();
 
         // Determine whether to add to record or not
-        if (!$record) {
-            $record = new PatientMonthlySummary;
-            $record->patient_id = $patient->user_id;
-            $record->ccm_time = 0;
-            $record->month_year = $day_start;
-            $record->no_of_calls = 1;
+        if ( ! $record) {
+            $record                         = new PatientMonthlySummary();
+            $record->patient_id             = $patient->user_id;
+            $record->ccm_time               = 0;
+            $record->month_year             = $day_start;
+            $record->no_of_calls            = 1;
             $record->no_of_successful_calls = $successful_call_increment;
             $record->save();
         } else {
-            $record->no_of_calls = $record->no_of_calls + 1;
+            $record->no_of_calls            = $record->no_of_calls + 1;
             $record->no_of_successful_calls = ($record->no_of_successful_calls + $successful_call_increment);
             $record->save();
         }
@@ -118,7 +131,7 @@ class PatientWriteRepository
     }
 
     /**
-     * @param array $userIdsToPrint
+     * @param array       $userIdsToPrint
      * @param Carbon|null $dateTime
      *
      * @return bool
@@ -130,19 +143,8 @@ class PatientWriteRepository
         }
 
         return Patient::whereIn('user_id', $userIdsToPrint)
-                      ->update([
-                          'paused_letter_printed_at' => $dateTime->toDateTimeString(),
-                      ]);
-    }
-
-    public function setStatus($userId, $status)
-    {
-        $stati = new Collection([Patient::PAUSED, Patient::ENROLLED, Patient::WITHDRAWN]);
-        $user  = User::find($userId);
-        if ($stati->contains($status) && $user) {
-            Patient::where(['user_id' => $userId])->update(['ccm_status' => $status]);
-        }
-
-        return Patient::where(['user_id' => $userId])->first();
+            ->update([
+                'paused_letter_printed_at' => $dateTime->toDateTimeString(),
+            ]);
     }
 }

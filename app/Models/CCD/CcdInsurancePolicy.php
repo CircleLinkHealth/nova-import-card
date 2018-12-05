@@ -1,29 +1,33 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Models\CCD;
 
 use App\Scopes\Universal\MedicalRecordIdAndTypeTrait;
 use App\User;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * App\Models\CCD\CcdInsurancePolicy
+ * App\Models\CCD\CcdInsurancePolicy.
  *
- * @property int $id
- * @property int|null $medical_record_id
- * @property string|null $medical_record_type
- * @property int|null $patient_id
- * @property string $name
- * @property string|null $type
- * @property string|null $policy_id
- * @property string|null $relation
- * @property string|null $subscriber
- * @property int $approved
+ * @property int            $id
+ * @property int|null       $medical_record_id
+ * @property string|null    $medical_record_type
+ * @property int|null       $patient_id
+ * @property string         $name
+ * @property string|null    $type
+ * @property string|null    $policy_id
+ * @property string|null    $relation
+ * @property string|null    $subscriber
+ * @property int            $approved
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @property string|null $deleted_at
- * @property-read \App\User|null $patient
+ * @property string|null    $deleted_at
+ * @property \App\User|null $patient
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\CCD\CcdInsurancePolicy onlyTrashed()
  * @method static bool|null restore()

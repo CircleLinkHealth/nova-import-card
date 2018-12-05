@@ -1,4 +1,10 @@
-<?php namespace App\Models\CCD;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Models\CCD;
 
 use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Models\CPM\CpmInstruction;
@@ -10,25 +16,26 @@ use App\User;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * App\Models\CCD\Problem
+ * App\Models\CCD\Problem.
  *
- * @property int $id
- * @property int|null $problem_import_id
- * @property int|null $ccda_id
- * @property int $patient_id
- * @property int|null $ccd_problem_log_id
- * @property string|null $name
- * @property string|null $original_name
- * @property int|null $cpm_problem_id
- * @property int|null $cpm_instruction_id
- * @property string|null $deleted_at
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property-read \App\Importer\Models\ItemLogs\ProblemLog|null $ccdLog
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ProblemCode[] $codes
- * @property-read \App\Models\CPM\CpmProblem|null $cpmProblem
- * @property-read \App\User $patient
- * @property-read \App\Models\CPM\CpmInstruction $cpmInstruction
+ * @property int                                                                $id
+ * @property int|null                                                           $problem_import_id
+ * @property int|null                                                           $ccda_id
+ * @property int                                                                $patient_id
+ * @property int|null                                                           $ccd_problem_log_id
+ * @property string|null                                                        $name
+ * @property string|null                                                        $original_name
+ * @property int|null                                                           $cpm_problem_id
+ * @property int|null                                                           $cpm_instruction_id
+ * @property string|null                                                        $deleted_at
+ * @property \Carbon\Carbon                                                     $created_at
+ * @property \Carbon\Carbon                                                     $updated_at
+ * @property \App\Importer\Models\ItemLogs\ProblemLog|null                      $ccdLog
+ * @property \App\Models\ProblemCode[]|\Illuminate\Database\Eloquent\Collection $codes
+ * @property \App\Models\CPM\CpmProblem|null                                    $cpmProblem
+ * @property \App\User                                                          $patient
+ * @property \App\Models\CPM\CpmInstruction                                     $cpmInstruction
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereActivate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereCcdProblemLogId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereCcdaId($value)
@@ -81,24 +88,34 @@ class Problem extends \App\BaseModel implements \App\Contracts\Models\CCD\Proble
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function cpmProblem()
+    public function codes()
     {
-        return $this->belongsTo(CpmProblem::class, 'cpm_problem_id', 'id');
+        return $this->hasMany(ProblemCode::class);
     }
-    
+
     public function cpmInstruction()
     {
         return $this->hasOne(CpmInstruction::class, 'id', 'cpm_instruction_id');
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function patient()
+    public function cpmProblem()
     {
-        return $this->belongsTo(User::class, 'patient_id');
+        return $this->belongsTo(CpmProblem::class, 'cpm_problem_id', 'id');
+    }
+
+    public function getNameAttribute($name)
+    {
+        $this->original_name = $name;
+        if ($this->cpm_problem_id) {
+            return optional($this->cpmProblem)->name;
+        }
+
+        return $name;
     }
 
     public function icd10Code()
@@ -112,29 +129,23 @@ class Problem extends \App\BaseModel implements \App\Contracts\Models\CCD\Proble
         return $this->cpmProblem->default_icd_10_code ?? null;
     }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function codes()
+    public function isBehavioral(): bool
     {
-        return $this->hasMany(ProblemCode::class);
+        return (bool) optional($this->cpmProblem)->is_behavioral;
     }
 
-    public function getNameAttribute($name) 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function patient()
     {
-        $this->original_name = $name;
-        if ($this->cpm_problem_id) return optional($this->cpmProblem)->name;
-        return $name;
+        return $this->belongsTo(User::class, 'patient_id');
     }
 
     public function patientSummaries()
     {
         return $this->belongsToMany(PatientMonthlySummary::class, 'patient_summary_problems', 'problem_id')
-                    ->withPivot('name', 'icd_10_code')
-                    ->withTimestamps();
-    }
-
-    public function isBehavioral() : bool {
-        return ! ! optional($this->cpmProblem)->is_behavioral;
+            ->withPivot('name', 'icd_10_code')
+            ->withTimestamps();
     }
 }

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Importer\Section\Importers;
 
 use App\Importer\Models\ItemLogs\ProblemLog;
@@ -20,32 +24,32 @@ trait ConsolidatesProblemInfo
     {
         $consolidatedProblem = new \stdClass();
 
-        $consolidatedProblem->cons_code = null;
-        $consolidatedProblem->cons_code_system = null;
+        $consolidatedProblem->cons_code             = null;
+        $consolidatedProblem->cons_code_system      = null;
         $consolidatedProblem->cons_code_system_name = null;
-        $consolidatedProblem->cons_name = $problemLog->name;
+        $consolidatedProblem->cons_name             = $problemLog->name;
 
-        if (!empty($problemLog->code)) {
-            $consolidatedProblem->cons_code = $problemLog->code;
-            $consolidatedProblem->cons_code_system = $problemLog->code_system;
+        if ( ! empty($problemLog->code)) {
+            $consolidatedProblem->cons_code             = $problemLog->code;
+            $consolidatedProblem->cons_code_system      = $problemLog->code_system;
             $consolidatedProblem->cons_code_system_name = $problemLog->code_system_name;
-            $consolidatedProblem->cons_name = $problemLog->name;
+            $consolidatedProblem->cons_name             = $problemLog->name;
 
-            if (empty($consolidatedProblem->cons_name) && !empty($problemLog->translation_name)) {
+            if (empty($consolidatedProblem->cons_name) && ! empty($problemLog->translation_name)) {
                 $consolidatedProblem->cons_name = $problemLog->translation_name;
             }
-        } elseif (!empty($problemLog->translation_code)) {
-            $consolidatedProblem->cons_code = $problemLog->translation_code;
-            $consolidatedProblem->cons_code_system = $problemLog->translation_code_system;
+        } elseif ( ! empty($problemLog->translation_code)) {
+            $consolidatedProblem->cons_code             = $problemLog->translation_code;
+            $consolidatedProblem->cons_code_system      = $problemLog->translation_code_system;
             $consolidatedProblem->cons_code_system_name = $problemLog->translation_code_system_name;
-            $consolidatedProblem->cons_name = $problemLog->translation_name;
+            $consolidatedProblem->cons_name             = $problemLog->translation_name;
 
-            if (empty($consolidatedProblem->cons_name) && !empty($problemLog->name)) {
+            if (empty($consolidatedProblem->cons_name) && ! empty($problemLog->name)) {
                 $consolidatedProblem->cons_name = $problemLog->name;
             }
         }
 
-        if (empty($consolidatedProblem->cons_name) && !empty($problemLog->reference_title)) {
+        if (empty($consolidatedProblem->cons_name) && ! empty($problemLog->reference_title)) {
             $consolidatedProblem->cons_name = $problemLog->reference_title;
         }
 

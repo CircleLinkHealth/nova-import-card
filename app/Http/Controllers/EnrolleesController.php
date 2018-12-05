@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers;
 
 use App\EligibilityBatch;
@@ -11,14 +15,6 @@ use Illuminate\Http\Request;
 
 class EnrolleesController extends Controller
 {
-    public function showBatch(EligibilityBatch $batch)
-    {
-        $enrollees = Enrollee::whereBatchId($batch->id)->orderBy('last_name')->get();
-        $practice  = Practice::findOrFail($batch->practice_id);
-
-        return view('admin.enrollees.show-batch', compact(['enrollees', 'practice', 'batch']));
-    }
-
     public function import(Request $request, EligibilityBatch $batch = null)
     {
         $input = $request->input('enrollee_id');
@@ -32,7 +28,7 @@ class EnrolleesController extends Controller
         $url = link_to_route('import.ccd.remix', 'Imported CCDAs.');
 
         return redirect()->back()->with([
-            'message' => "A job has been scheduled. Imported CCDs should start showing up in $url in 4-5 minutes. Something went wrong otherwise, and you should reach Michalis with a link to the Batch you were trying to import.",
+            'message' => "A job has been scheduled. Imported CCDs should start showing up in ${url} in 4-5 minutes. Something went wrong otherwise, and you should reach Michalis with a link to the Batch you were trying to import.",
             'type'    => 'success',
         ]);
     }
@@ -48,9 +44,11 @@ class EnrolleesController extends Controller
         $url = link_to_route('import.ccd.remix', 'Imported CCDAs.');
 
         return [
-            'message' => "A job has been scheduled. Imported CCDs should start showing up in $url in 5-10 minutes. Importing " . implode(',',
-                    $ids),
-            'type'    => 'success',
+            'message' => "A job has been scheduled. Imported CCDs should start showing up in ${url} in 5-10 minutes. Importing ".implode(
+                ',',
+                    $ids
+            ),
+            'type' => 'success',
         ];
     }
 
@@ -67,7 +65,7 @@ class EnrolleesController extends Controller
         $url = link_to_route('import.ccd.remix', 'Imported CCDAs.');
 
         return redirect()->back()->with([
-            'message' => "A job has been scheduled. Imported CCDs should start showing up in $url in 4-5 minutes. Something went wrong otherwise, and you should reach Michalis with a link to the Batch you were trying to import.",
+            'message' => "A job has been scheduled. Imported CCDs should start showing up in ${url} in 4-5 minutes. Something went wrong otherwise, and you should reach Michalis with a link to the Batch you were trying to import.",
             'type'    => 'success',
         ]);
     }
@@ -78,5 +76,13 @@ class EnrolleesController extends Controller
         $practices = Practice::get()->keyBy('id');
 
         return view('admin.enrollees.index', compact(['enrollees', 'practices']));
+    }
+
+    public function showBatch(EligibilityBatch $batch)
+    {
+        $enrollees = Enrollee::whereBatchId($batch->id)->orderBy('last_name')->get();
+        $practice  = Practice::findOrFail($batch->practice_id);
+
+        return view('admin.enrollees.show-batch', compact(['enrollees', 'practice', 'batch']));
     }
 }

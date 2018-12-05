@@ -3,9 +3,8 @@
 <?php
 /**
  * Could generate careplan in HTML or PDF
- * https://cpm-web.dev/manage-patients/careplan-print-multi?letter&users={patientId}
+ * https://cpm-web.dev/manage-patients/careplan-print-multi?letter&users={patientId}.
  */
-
 use Illuminate\Support\Collection;
 
 if ( ! function_exists('checkIfExists')) {
@@ -32,7 +31,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
 @section('content')
     @foreach($careplans as $id => $careplan)
         <?php
-        $patient = App\User::find($id);
+        $patient       = App\User::find($id);
         $billingDoctor = $patient->billingProviderUser();
         $regularDoctor = $patient->regularDoctorUser();
         ?>
@@ -172,7 +171,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                                 </div>
                                                 <div class="col-xs-4 text-right">
                                                     <br>
-                                                    <?= date("F d, Y") ?>
+                                                    <?= date('F d, Y'); ?>
                                                 </div>
                                             </div>
 
@@ -312,11 +311,11 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 </div>
             <?php
             $allCpmProblems = new Collection($data['allCpmProblems']);
-            $cpmProblems = new Collection($data['cpmProblems']);
-            $ccdProblems = new Collection($data['ccdProblems']);
-            $healthGoals = new Collection($data['healthGoals']);
-            $baseGoals = new Collection($data['baseHealthGoals']);
-            $healthNote = $data['healthGoalNote'];
+            $cpmProblems    = new Collection($data['cpmProblems']);
+            $ccdProblems    = new Collection($data['ccdProblems']);
+            $healthGoals    = new Collection($data['healthGoals']);
+            $baseGoals      = new Collection($data['baseHealthGoals']);
+            $healthNote     = $data['healthGoalNote'];
             ?>
             <!-- CARE AREAS -->
                 <div class="patient-info__subareas">
@@ -393,44 +392,44 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         return $goal['enabled'];
                     })->map(function ($goal) {
                         $start = $goal['info']['starting'];
-                        $start = (int)($start
+                        $start = (int) ($start
                             ? explode('/', $start)[0]
                             : 'N/A');
-                        $end   = $goal['info']['target'];
-                        $end   = (int)($end
+                        $end = $goal['info']['target'];
+                        $end = (int) ($end
                             ? explode('/', $end)[0]
                             : 0);
 
-                        if ($goal['info']['starting'] == '') {
+                        if ('' == $goal['info']['starting']) {
                             $goal['info']['starting'] = 'N/A';
                         }
 
-                        if ($goal['name'] == 'Blood Sugar') {
+                        if ('Blood Sugar' == $goal['name']) {
                             $goal['info']['target'] = $goal['info']['target'] ?? '120';
-                            if ($goal['info']['target'] == '0') {
+                            if ('0' == $goal['info']['target']) {
                                 $goal['info']['target'] = '120';
                             }
                             if ($start > 130) {
                                 $goal['verb'] = 'Decrease';
-                            } else if ($goal['info']['starting'] == 'N/A' || $goal['info']['target'] == 'TBD' || ! $goal['info']['starting'] || ($start >= 80 && $start <= 130)) {
+                            } elseif ('N/A' == $goal['info']['starting'] || 'TBD' == $goal['info']['target'] || ! $goal['info']['starting'] || ($start >= 80 && $start <= 130)) {
                                 $goal['verb'] = 'Regulate';
                             } else {
                                 $goal['verb'] = 'Increase';
                             }
-                        } else if ($goal['name'] == 'Blood Pressure') {
+                        } elseif ('Blood Pressure' == $goal['name']) {
                             $goal['info']['target'] = $goal['info']['target'] ?? '130/80';
-                            if ($goal['info']['target'] == '0') {
+                            if ('0' == $goal['info']['target']) {
                                 $goal['info']['target'] = '130/80';
                             }
 
-                            if ($goal['info']['starting'] == 'N/A' || $goal['info']['target'] == 'TBD' || ! $goal['info']['starting'] || ($start < 130)) {
+                            if ('N/A' == $goal['info']['starting'] || 'TBD' == $goal['info']['target'] || ! $goal['info']['starting'] || ($start < 130)) {
                                 $goal['verb'] = 'Regulate';
-                            } else if ($start >= 130) {
+                            } elseif ($start >= 130) {
                                 $goal['verb'] = 'Decrease';
                             }
                         } else {
-                            if ( ! $goal['info']['starting'] || $goal['info']['starting'] == 'N/A' || ! $goal['info']['target'] || ($goal['name'] == 'Weight' && $goal['info']['target'] == '0')) {
-                                if (($goal['name'] == 'Weight' && $goal['info']['target'] == '0')) {
+                            if ( ! $goal['info']['starting'] || 'N/A' == $goal['info']['starting'] || ! $goal['info']['target'] || ('Weight' == $goal['name'] && '0' == $goal['info']['target'])) {
+                                if (('Weight' == $goal['name'] && '0' == $goal['info']['target'])) {
                                     $goal['info']['target'] = 'N/A';
                                 }
                                 $goal['verb'] = 'Regulate';
@@ -444,7 +443,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                         'Regulate');
                             }
                         }
-                        $goal['action'] = $goal['verb'] == 'Regulate'
+                        $goal['action'] = 'Regulate' == $goal['verb']
                             ? 'keep under'
                             : 'to';
 
@@ -459,7 +458,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     </div>
                     <div class="row">
                         <?php
-                        $noteIsAvailable = $healthNote && ($healthNote['body'] != '');
+                        $noteIsAvailable = $healthNote && ('' != $healthNote['body']);
                         ?>
                         @if ($noteIsAvailable)
                             <div class="col-xs-12 top-10">
@@ -490,7 +489,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
 
                 <!-- MEDICATIONS -->
                 <?php
-                $medications = new Collection($data['medications']);
+                $medications      = new Collection($data['medications']);
                 $medicationGroups = new Collection($data['medicationGroups']);
 
                 $medications = $medications->map(function ($medication) use ($medicationGroups) {
@@ -653,7 +652,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         </div>
                         <div class="col-xs-12">
                             @if($careplan['allergies'])
-                                <p><?= nl2br($careplan['allergies']) ?></p>
+                                <p><?= nl2br($careplan['allergies']); ?></p>
                             @else
                                 <p>No instructions at this time</p>
                             @endif
@@ -671,7 +670,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         </div>
                         <div class="col-xs-12">
                             @if($careplan['social'])
-                                <p><?= nl2br($careplan['social']) ?></p>
+                                <p><?= nl2br($careplan['social']); ?></p>
                             @else
                                 <p>No instructions at this time</p>
                             @endif
@@ -763,10 +762,10 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                 Notes:</h2>
                         </div>
                         <div class="col-xs-12">
-                            <?php $careplan['other'] ?>
+                            <?php $careplan['other']; ?>
 
                             @if($careplan['other'])
-                                <p><?= nl2br($careplan['other']) ?></p>
+                                <p><?= nl2br($careplan['other']); ?></p>
                             @else
                                 <p>No instructions at this time</p>
                             @endif
@@ -782,7 +781,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
         @push('styles')
             <script>
                 var careplan = (<?php
-                    echo json_encode($data)
+                    echo json_encode($data);
                     ?>) || {}
             </script>
         @endpush

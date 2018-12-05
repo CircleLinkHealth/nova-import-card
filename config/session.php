@@ -1,7 +1,10 @@
 <?php
 
-return [
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
+return [
     /*
     |--------------------------------------------------------------------------
     | Default Session Driver
@@ -124,7 +127,7 @@ return [
 
     'cookie' => env(
         'SESSION_COOKIE',
-        'cpm_' . env('APP_ENV') . '_laravel_session'
+        'cpm_'.env('APP_ENV').'_laravel_session'
     ),
 
     /*
@@ -164,7 +167,7 @@ return [
     |
     */
 
-    'secure' => env('SESSION_SECURE_COOKIE', env('APP_ENV') != 'local'),
+    'secure' => env('SESSION_SECURE_COOKIE', 'local' != env('APP_ENV')),
 
     /*
     |--------------------------------------------------------------------------
@@ -193,5 +196,4 @@ return [
     */
 
     'same_site' => null,
-
 ];

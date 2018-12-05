@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Events;
 
 use Carbon\Carbon;
@@ -9,20 +13,15 @@ class UpdateUserLoginInfo
 {
     /**
      * Create the event listener.
-     *
-     * @return void
      */
     public function __construct()
     {
-        //
     }
 
     /**
      * Handle the event.
      *
-     * @param  Login $event
-     *
-     * @return void
+     * @param Login $event
      */
     public function handle(Login $event)
     {
@@ -31,7 +30,7 @@ class UpdateUserLoginInfo
 
         $authyUser = optional($event->user->authyUser);
 
-        if ($event->user->isAdmin() && ! ! config('auth.two_fa_enabled') && $authyUser->authy_id && ! $authyUser->is_authy_enabled) {
+        if ($event->user->isAdmin() && (bool) config('auth.two_fa_enabled') && $authyUser->authy_id && ! $authyUser->is_authy_enabled) {
             $authyUser->is_authy_enabled = true;
             $authyUser->save();
         }

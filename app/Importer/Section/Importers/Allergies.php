@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 11/01/2017
- * Time: 7:21 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Importer\Section\Importers;
@@ -20,13 +18,13 @@ class Allergies extends BaseImporter
         ImportedMedicalRecord $importedMedicalRecord
     ) {
         $itemLogs = AllergyLog::where('medical_record_type', '=', $medicalRecordType)
-                              ->where('medical_record_id', '=', $medicalRecordId)
-                              ->get()
-                              ->unique('allergen_name')
-                              ->values();
+            ->where('medical_record_id', '=', $medicalRecordId)
+            ->get()
+            ->unique('allergen_name')
+            ->values();
 
         foreach ($itemLogs as $itemLog) {
-            if (!$this->validate($itemLog)) {
+            if ( ! $this->validate($itemLog)) {
                 continue;
             }
 

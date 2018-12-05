@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
@@ -9,6 +13,12 @@ use PDOException;
 class CreateTestSuiteDatabase extends Command
 {
     /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Create a mysql database for the test suite.';
+    /**
      * The name and signature of the console command.
      *
      * @var string
@@ -16,16 +26,7 @@ class CreateTestSuiteDatabase extends Command
     protected $signature = 'db:test';
 
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Create a mysql database for the test suite.';
-
-    /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -48,9 +49,12 @@ class CreateTestSuiteDatabase extends Command
         }
 
         try {
-            $pdo = $this->getPDOConnection(config('database.connections.test_suite.host'),
-                config('database.connections.test_suite.port'), config('database.connections.test_suite.username'),
-                config('database.connections.test_suite.password'));
+            $pdo = $this->getPDOConnection(
+                config('database.connections.test_suite.host'),
+                config('database.connections.test_suite.port'),
+                config('database.connections.test_suite.username'),
+                config('database.connections.test_suite.password')
+            );
 
             $pdo->exec(sprintf(
                 'CREATE DATABASE IF NOT EXISTS %s CHARACTER SET %s COLLATE %s;',
@@ -66,10 +70,10 @@ class CreateTestSuiteDatabase extends Command
     }
 
     /**
-     * @param  string $host
-     * @param  integer $port
-     * @param  string $username
-     * @param  string $password
+     * @param string $host
+     * @param int    $port
+     * @param string $username
+     * @param string $password
      *
      * @return PDO
      */

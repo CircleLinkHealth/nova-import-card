@@ -1,16 +1,13 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: pangratioscosma
- * Date: 28/09/2018
- * Time: 13:16
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App;
 
 class WT1CsvParser
 {
-
     /**
      * @var
      */
@@ -24,17 +21,17 @@ class WT1CsvParser
         $this->patients = [];
     }
 
-    public function parseFile(String $fileName)
-    {
-        $arr = parseCsvToArray($fileName);
-        $this->parseCsvArray($arr);
-    }
-
     public function parseCsvArray($arr)
     {
         foreach ($arr as $row) {
             $this->addToResult($row);
         }
+    }
+
+    public function parseFile(String $fileName)
+    {
+        $arr = parseCsvToArray($fileName);
+        $this->parseCsvArray($arr);
     }
 
     public function toArray()
@@ -126,6 +123,26 @@ class WT1CsvParser
         $this->patients[$patientId] = $entry;
     }
 
+    /**
+     * Returns true if value is Y, false if N.
+     * All other fields return false.
+     *
+     * @param $row
+     * @param $key
+     * @param bool $default
+     *
+     * @return bool|null
+     */
+    private function getBoolValue($row, $key, $default = false)
+    {
+        $val = $this->getValue($row, $key, $default);
+        if (false === $val) {
+            return $val;
+        }
+
+        return 'Y' === $val;
+    }
+
     private function getInsurances($row)
     {
         $result    = [];
@@ -138,43 +155,36 @@ class WT1CsvParser
         if ($secondary) {
             $result['secondary'] = $secondary;
         }
-        return $result;
 
-    }
-
-    private function getPrimaryInsurance($row)
-    {
-
-        /**
-         * "plan"           => "Test Medicare",
-         * "group_number"   => "",
-         * "policy_number"  => "123455",
-         * "insurance_type" => "Medicare",
-         */
-
-        $plan = $this->getValue($row, 'primaryins');
-        if ( ! $plan) {
-            return null;
-        }
-
-        $result                   = [];
-        $result["plan"]           = $plan;
-        $result["policy_number"]  = $this->getValue($row, 'primaryinspol');
-        $result["group_number"]   = null;
-        $result["insurance_type"] = "Medicare";
         return $result;
     }
 
-    private function getSecondaryInsurance($row)
+    private function getListFromFields($row, $fieldName)
     {
-        $plan = $this->getValue($row, 'secondaryins');
-        if ( ! $plan) {
-            return null;
+        $lookingFor = $fieldName;
+        $result     = [];
+        foreach ($row as $key => $value) {
+            $isFieldFound = 0 === strcasecmp(substr($key, 0, strlen($lookingFor)), $lookingFor);
+            if ( ! $isFieldFound) {
+                continue;
+            }
+
+            $fieldValue = str_replace($lookingFor, '', $key);
+            //ignore {FieldName}None
+            if (0 === strcasecmp($fieldValue, 'none')) {
+                continue;
+            }
+
+            //ignore MedsNoMeds
+            if (0 === strcasecmp($key, 'MedsNoMeds')) {
+                continue;
+            }
+
+            if ($this->getBoolValue($row, $key)) {
+                $result[] = $fieldValue;
+            }
         }
 
-        $result                  = [];
-        $result["plan"]          = $plan;
-        $result["policy_number"] = $this->getValue($row, 'secondaryinspol');
         return $result;
     }
 
@@ -183,10 +193,9 @@ class WT1CsvParser
         $rowList = $this->getListFromFields($row, $fieldName);
 
         foreach ($rowList as $fieldValue) {
-
             $found = false;
             foreach ($currentList as $entry) {
-                if (strcasecmp($entry['name'], $fieldValue) === 0) {
+                if (0 === strcasecmp($entry['name'], $fieldValue)) {
                     $found = true;
                     break;
                 }
@@ -196,35 +205,29 @@ class WT1CsvParser
                 $currentList[] = $mapper($fieldValue);
             }
         }
+
         return $currentList;
     }
 
-    private function getListFromFields($row, $fieldName)
+    private function getPrimaryInsurance($row)
     {
-        $lookingFor = $fieldName;
-        $result     = [];
-        foreach ($row as $key => $value) {
-
-            $isFieldFound = strcasecmp(substr($key, 0, strlen($lookingFor)), $lookingFor) === 0;
-            if ( ! $isFieldFound) {
-                continue;
-            }
-
-            $fieldValue = str_replace($lookingFor, "", $key);
-            //ignore {FieldName}None
-            if (strcasecmp($fieldValue, 'none') === 0) {
-                continue;
-            }
-
-            //ignore MedsNoMeds
-            if (strcasecmp($key, 'MedsNoMeds') === 0) {
-                continue;
-            }
-
-            if ($this->getBoolValue($row, $key)) {
-                $result[] = $fieldValue;
-            }
+        /**
+         * "plan"           => "Test Medicare",
+         * "group_number"   => "",
+         * "policy_number"  => "123455",
+         * "insurance_type" => "Medicare",.
+         */
+        $plan = $this->getValue($row, 'primaryins');
+        if ( ! $plan) {
+            return null;
         }
+
+        $result                   = [];
+        $result['plan']           = $plan;
+        $result['policy_number']  = $this->getValue($row, 'primaryinspol');
+        $result['group_number']   = null;
+        $result['insurance_type'] = 'Medicare';
+
         return $result;
     }
 
@@ -253,6 +256,21 @@ class WT1CsvParser
         if (empty($result)) {
             $result = $default;
         }
+
+        return $result;
+    }
+
+    private function getSecondaryInsurance($row)
+    {
+        $plan = $this->getValue($row, 'secondaryins');
+        if ( ! $plan) {
+            return null;
+        }
+
+        $result                  = [];
+        $result['plan']          = $plan;
+        $result['policy_number'] = $this->getValue($row, 'secondaryinspol');
+
         return $result;
     }
 
@@ -266,29 +284,10 @@ class WT1CsvParser
             return $default;
         }
 
-        if ($row[$key] === "null" || $row[$key] === "NULL" || $row[$key] === "\\N") {
+        if ('null' === $row[$key] || 'NULL' === $row[$key] || '\\N' === $row[$key]) {
             return $default;
         }
+
         return $row[$key];
     }
-
-    /**
-     * Returns true if value is Y, false if N.
-     * All other fields return false.
-     *
-     * @param $row
-     * @param $key
-     * @param bool $default
-     *
-     * @return bool|null
-     */
-    private function getBoolValue($row, $key, $default = false)
-    {
-        $val = $this->getValue($row, $key, $default);
-        if ($val === false) {
-            return $val;
-        }
-        return $val === 'Y';
-    }
-
 }

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Jobs;
 
 use App\Notifications\WeeklyPracticeReport;
@@ -15,10 +19,10 @@ use Illuminate\Support\Facades\Notification;
 class EmailWeeklyPracticeReport implements ShouldQueue
 {
     use InteractsWithQueue, Queueable, SerializesModels;
+    protected $endRange;
 
     protected $practice;
     protected $startRange;
-    protected $endRange;
     protected $tester;
 
     /**
@@ -39,8 +43,6 @@ class EmailWeeklyPracticeReport implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
     public function handle()
     {
@@ -50,7 +52,7 @@ class EmailWeeklyPracticeReport implements ShouldQueue
 
         $organizationSummaryRecipients = $this->practice->getWeeklyReportRecipientsArray();
 
-        $subjectPractice = $this->practice->display_name . '\'s CCM Weekly Summary';
+        $subjectPractice = $this->practice->display_name.'\'s CCM Weekly Summary';
 
         //get Range Summary for this week, and for the other sections get month to date
         $practiceData = (new SalesByPracticeReport(
@@ -77,7 +79,7 @@ class EmailWeeklyPracticeReport implements ShouldQueue
                     $user->notify($notification);
                 } else {
                     Notification::route('mail', $recipient)
-                                ->notify($notification);
+                        ->notify($notification);
                 }
             }
         }

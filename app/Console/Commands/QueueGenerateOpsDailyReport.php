@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\Jobs\GenerateOpsDailyReport;
@@ -9,6 +13,12 @@ use Illuminate\Console\Command;
 class QueueGenerateOpsDailyReport extends Command
 {
     /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Generate daily operations report in json format, to be viewed in the admin OpsDashboard';
+    /**
      * The name and signature of the console command.
      *
      * @var string
@@ -16,16 +26,7 @@ class QueueGenerateOpsDailyReport extends Command
     protected $signature = 'report:OpsDailyReport {endDate? : End date in YYYY-MM-DD. The report will be produced up to 11pm of endDate.}';
 
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Generate daily operations report in json format, to be viewed in the admin OpsDashboard';
-
-    /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {

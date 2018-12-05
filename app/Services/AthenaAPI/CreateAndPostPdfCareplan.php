@@ -1,20 +1,16 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 26/08/16
- * Time: 1:16 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Services\AthenaAPI;
 
-use App\CLH\CCD\Importer\QAImportManager;
 use App\Contracts\Repositories\CcdaRepository;
 use App\Contracts\Repositories\CcdaRequestRepository;
 use App\Models\CCD\CcdVendor;
 use App\Models\MedicalRecords\Ccda;
 use Carbon\Carbon;
-use Maknz\Slack\Facades\Slack;
 
 class CreateAndPostPdfCareplan
 {
@@ -39,62 +35,13 @@ class CreateAndPostPdfCareplan
 
         $departments = $this->api->getDepartmentIds($practiceId);
 
-        if (!array_key_exists('departments', $departments)) {
+        if ( ! array_key_exists('departments', $departments)) {
             return false;
         }
 
         foreach ($departments['departments'] as $department) {
             $response = $this->api->getBookedAppointments($practiceId, $start, $end, $department['departmentid']);
             $this->logPatientIdsFromAppointments($response, $practiceId);
-        }
-    }
-
-    public function logPatientIdsFromAppointments($response, $practiceId)
-    {
-        if ( ! isset($response['appointments'])) {
-            return;
-        }
-
-        if (count($response['appointments']) == 0) {
-            return;
-        }
-
-        $practiceCustomFields = $this->api->getPracticeCustomFields($practiceId);
-
-        //Get 'CCM Enabled' custom field id from the practice's custom fields
-        foreach ($practiceCustomFields as $customField) {
-            if (strtolower($customField['name']) == 'ccm enabled') {
-                $ccmEnabledFieldId = $customField['customfieldid'];
-            }
-        }
-
-        if ( ! isset($ccmEnabledFieldId)) {
-            return;
-        }
-
-        foreach ($response['appointments'] as $bookedAppointment) {
-            $patientId    = $bookedAppointment['patientid'];
-            $departmentId = $bookedAppointment['departmentid'];
-
-            $patientCustomFields = $this->api->getPatientCustomFields($patientId, $practiceId, $departmentId);
-
-            //If 'CCM Enabled' contains a y (meaning yes), then save the patient id
-            foreach ($patientCustomFields as $customField) {
-                if ($customField['customfieldid'] == $ccmEnabledFieldId
-                    && str_contains($customField['customfieldvalue'], ['Y', 'y'])
-                ) {
-                    $ccdaRequest = $this->ccdaRequests->create([
-                        'patient_id'    => $patientId,
-                        'department_id' => $departmentId,
-                        'vendor'        => 'athena',
-                        'practice_id'   => $practiceId,
-                    ]);
-                }
-            }
-        }
-
-        if (isset($response['next'])) {
-            $this->logPatientIdsFromAppointments($this->api->getNextPage($response['next']), $practiceId);
         }
     }
 
@@ -129,7 +76,7 @@ class CreateAndPostPdfCareplan
                 'source'    => Ccda::ATHENA_API,
             ]);
 
-            $ccdaRequest->ccda_id         = $ccda->id;
+            $ccdaRequest->ccda_id = $ccda->id;
             $ccdaRequest->successful_call = true;
             $ccdaRequest->save();
 
@@ -146,6 +93,55 @@ class CreateAndPostPdfCareplan
 
             return $ccda;
         });
+    }
+
+    public function logPatientIdsFromAppointments($response, $practiceId)
+    {
+        if ( ! isset($response['appointments'])) {
+            return;
+        }
+
+        if (0 == count($response['appointments'])) {
+            return;
+        }
+
+        $practiceCustomFields = $this->api->getPracticeCustomFields($practiceId);
+
+        //Get 'CCM Enabled' custom field id from the practice's custom fields
+        foreach ($practiceCustomFields as $customField) {
+            if ('ccm enabled' == strtolower($customField['name'])) {
+                $ccmEnabledFieldId = $customField['customfieldid'];
+            }
+        }
+
+        if ( ! isset($ccmEnabledFieldId)) {
+            return;
+        }
+
+        foreach ($response['appointments'] as $bookedAppointment) {
+            $patientId    = $bookedAppointment['patientid'];
+            $departmentId = $bookedAppointment['departmentid'];
+
+            $patientCustomFields = $this->api->getPatientCustomFields($patientId, $practiceId, $departmentId);
+
+            //If 'CCM Enabled' contains a y (meaning yes), then save the patient id
+            foreach ($patientCustomFields as $customField) {
+                if ($customField['customfieldid'] == $ccmEnabledFieldId
+                    && str_contains($customField['customfieldvalue'], ['Y', 'y'])
+                ) {
+                    $ccdaRequest = $this->ccdaRequests->create([
+                        'patient_id'    => $patientId,
+                        'department_id' => $departmentId,
+                        'vendor'        => 'athena',
+                        'practice_id'   => $practiceId,
+                    ]);
+                }
+            }
+        }
+
+        if (isset($response['next'])) {
+            $this->logPatientIdsFromAppointments($this->api->getNextPage($response['next']), $practiceId);
+        }
     }
 
     public function postPatientDocument($patientId, $practiceId, $attachmentContentPath, $departmentId)

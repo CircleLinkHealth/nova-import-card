@@ -1,4 +1,10 @@
-<?php namespace App\Http\Controllers;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Http\Controllers;
 
 use App\Activity;
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
@@ -24,78 +30,6 @@ class PageTimerController extends Controller
         $this->timeTrackingService = $timeTrackingService;
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     */
-    public function index()
-    {
-        $pageTimes = PageTimer::orderBy('id', 'desc')->paginate(10);
-
-        return view('pageTimer.index', ['pageTimes' => $pageTimes]);
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return Response
-     */
-    public function store(Request $request)
-    {
-        $data = $request->input();
-
-        $patientId  = $request->input('patientId');
-        $providerId = $data['providerId'] ?? null;
-
-        foreach ($data['activities'] as $activity) {
-            $duration = $activity['duration'];
-
-            $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $activity['start_time']);
-            $endTime   = $startTime->copy()->addSeconds($duration);
-
-            $redirectTo = $data['redirectLocation'] ?? null;
-
-            $isBhi = User::isBhiChargeable()
-                         ->where('id', $patientId)
-                         ->exists();
-
-            $newActivity                    = new PageTimer();
-            $newActivity->redirect_to       = $redirectTo;
-            $newActivity->billable_duration = $duration;
-            $newActivity->duration          = $duration;
-            $newActivity->duration_unit     = 'seconds';
-            $newActivity->patient_id        = $patientId;
-            $newActivity->provider_id       = $providerId;
-            $newActivity->start_time        = $startTime->toDateTimeString();
-            $newActivity->end_time          = $endTime->toDateTimeString();
-            $is_behavioral                  = isset($activity['is_behavioral'])
-                ? (boolean)$activity['is_behavioral'] && $isBhi
-                : $isBhi;
-            $newActivity->url_full          = $activity['url'];
-            $newActivity->url_short         = $activity['url_short'];
-            $newActivity->program_id        = $data['programId'];
-            $newActivity->ip_addr           = $data['ipAddr'];
-            $newActivity->activity_type     = $activity['name'];
-            $newActivity->title             = $activity['title'];
-            $newActivity->user_agent        = $request->userAgent();
-            $newActivity->save();
-
-
-            $activityId = null;
-
-            if ($newActivity->billable_duration > 0) {
-                $activityId = $this->addPageTimerActivities($newActivity, $is_behavioral);
-            }
-
-            if ($activityId) {
-                $this->handleNurseLogs($activityId);
-            }
-        }
-
-        return response("PageTimer activities logged.", 201);
-    }
-
     public function addPageTimerActivities(PageTimer $pageTimer, $is_behavioral = false)
     {
         // check params to see if rule exists
@@ -104,7 +38,7 @@ class PageTimerController extends Controller
         //user
         $user = User::find($pageTimer->provider_id);
 
-        if (( ! (bool)$user->isCCMCountable()) || ($pageTimer->patient_id == 0)) {
+        if (( ! (bool) $user->isCCMCountable()) || (0 == $pageTimer->patient_id)) {
             return false;
         }
 
@@ -154,14 +88,14 @@ class PageTimerController extends Controller
     public function handleNurseLogs($activityId)
     {
         $activity = Activity::with('patient.patientInfo')
-                            ->find($activityId);
+            ->find($activityId);
 
         if ( ! $activity) {
             return;
         }
 
         $nurse = Nurse::whereUserId($activity->provider_id)
-                      ->first();
+            ->first();
 
         if ( ! $nurse) {
             return;
@@ -172,9 +106,21 @@ class PageTimerController extends Controller
     }
 
     /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function index()
+    {
+        $pageTimes = PageTimer::orderBy('id', 'desc')->paginate(10);
+
+        return view('pageTimer.index', ['pageTimes' => $pageTimes]);
+    }
+
+    /**
      * Display the specified resource.
      *
-     * @param  int $id
+     * @param int $id
      *
      * @return Response
      */
@@ -183,5 +129,64 @@ class PageTimerController extends Controller
         $pageTime = PageTimer::find($id);
 
         return view('pageTimer.show', ['pageTime' => $pageTime]);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @return Response
+     */
+    public function store(Request $request)
+    {
+        $data = $request->input();
+
+        $patientId  = $request->input('patientId');
+        $providerId = $data['providerId'] ?? null;
+
+        foreach ($data['activities'] as $activity) {
+            $duration = $activity['duration'];
+
+            $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $activity['start_time']);
+            $endTime   = $startTime->copy()->addSeconds($duration);
+
+            $redirectTo = $data['redirectLocation'] ?? null;
+
+            $isBhi = User::isBhiChargeable()
+                ->where('id', $patientId)
+                ->exists();
+
+            $newActivity                    = new PageTimer();
+            $newActivity->redirect_to       = $redirectTo;
+            $newActivity->billable_duration = $duration;
+            $newActivity->duration          = $duration;
+            $newActivity->duration_unit     = 'seconds';
+            $newActivity->patient_id        = $patientId;
+            $newActivity->provider_id       = $providerId;
+            $newActivity->start_time        = $startTime->toDateTimeString();
+            $newActivity->end_time          = $endTime->toDateTimeString();
+            $is_behavioral                  = isset($activity['is_behavioral'])
+                ? (bool) $activity['is_behavioral'] && $isBhi
+                : $isBhi;
+            $newActivity->url_full      = $activity['url'];
+            $newActivity->url_short     = $activity['url_short'];
+            $newActivity->program_id    = $data['programId'];
+            $newActivity->ip_addr       = $data['ipAddr'];
+            $newActivity->activity_type = $activity['name'];
+            $newActivity->title         = $activity['title'];
+            $newActivity->user_agent    = $request->userAgent();
+            $newActivity->save();
+
+            $activityId = null;
+
+            if ($newActivity->billable_duration > 0) {
+                $activityId = $this->addPageTimerActivities($newActivity, $is_behavioral);
+            }
+
+            if ($activityId) {
+                $this->handleNurseLogs($activityId);
+            }
+        }
+
+        return response('PageTimer activities logged.', 201);
     }
 }

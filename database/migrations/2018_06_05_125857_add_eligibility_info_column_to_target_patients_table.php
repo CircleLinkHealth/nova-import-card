@@ -1,32 +1,32 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddEligibilityInfoColumnToTargetPatientsTable extends Migration
 {
     /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        Schema::table('target_patients', function (Blueprint $table) {
-            $table->text('eligibility_job_id')->nullable()->after('batch_id');
-        });
-    }
-
-    /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
         Schema::table('target_patients', function (Blueprint $table) {
             $table->dropColumn('eligibility_job_id');
+        });
+    }
+
+    /**
+     * Run the migrations.
+     */
+    public function up()
+    {
+        Schema::table('target_patients', function (Blueprint $table) {
+            $table->text('eligibility_job_id')->nullable()->after('batch_id');
         });
     }
 }

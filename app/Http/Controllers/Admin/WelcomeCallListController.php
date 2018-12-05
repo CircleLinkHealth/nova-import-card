@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -24,45 +28,21 @@ class WelcomeCallListController extends Controller
     }
 
     /**
-     * @param Request $request
-     *
-     * @return array|string
-     * @throws \Exception
+     * Create Phoenix Heart Call List from phoenix_heart_* tables.
      */
-    public function makeWelcomeCallList(Request $request)
+    public function makePhoenixHeartCallList()
     {
-        if ( ! $request->hasFile('patient_list')) {
-            dd('Please upload a CSV file.');
-        }
+        $batch = $this->processEligibilityService->createPhoenixHeartBatch();
 
-        if ( ! $request['practice_id']) {
-            dd('`practice_id` is a required field.');
-        }
-
-        $practiceId = $request->input('practice_id');
-        $patients   = parseCsvToArray($request->file('patient_list'));
-
-        $filterLastEncounter = (boolean)$request->input('filterLastEncounter');
-        $filterInsurance     = (boolean)$request->input('filterInsurance');
-        $filterProblems      = (boolean)$request->input('filterProblems');
-
-        $csvPatientList = new CsvPatientList(collect($patients));
-        $isValid        = $csvPatientList->guessValidator();
-
-        if ( ! $isValid) {
-            return [
-                'errors' => 'This csv does not match any of the supported templates. you can see supported templates here https://drive.google.com/drive/folders/1zpiBkegqjTioZGzdoPqZQAqWvXkaKEgB',
-            ];
-        }
-
-        $batch = $this->processEligibilityService
-            ->createSingleCSVBatch($patients, $practiceId, $filterLastEncounter, $filterInsurance, $filterProblems);
-
-        return redirect()->route('eligibility.batch.show', [$batch->id]);
+        return link_to_route(
+            'eligibility.batch.show',
+            'Job Scheduled. Click here to view progress. Make sure you bookmark the link.',
+            [$batch->id]
+        );
     }
 
     /**
-     * Create Rappahannock Call List from rappa_* tables
+     * Create Rappahannock Call List from rappa_* tables.
      */
     public function makeRappahannockCallList()
     {
@@ -79,7 +59,6 @@ class WelcomeCallListController extends Controller
 
             return collect($rappaInsAllergy);
         });
-
 
         $patientList = $merged->map(function ($patient) {
             $data = RappaData::where('patient_id', '=', $patient->get('patient_id'))->get();
@@ -115,7 +94,7 @@ class WelcomeCallListController extends Controller
     }
 
     /**
-     * Create Rocky Mountain Call List from rocky_* tables
+     * Create Rocky Mountain Call List from rocky_* tables.
      */
     public function makeRockyMtnCallList()
     {
@@ -129,9 +108,9 @@ class WelcomeCallListController extends Controller
             $patient->put('problems', collect());
 
             foreach ($data as $d) {
-                for ($i = 1; $i < 11; $i++) {
-                    if ($d["DIAG$i"] && ! $patient['problems']->contains($d["DIAG$i"])) {
-                        $patient['problems']->push($d["DIAG$i"]);
+                for ($i = 1; $i < 11; ++$i) {
+                    if ($d["DIAG${i}"] && ! $patient['problems']->contains($d["DIAG${i}"])) {
+                        $patient['problems']->push($d["DIAG${i}"]);
                     }
                 }
             }
@@ -145,15 +124,42 @@ class WelcomeCallListController extends Controller
 //        $list->exportIneligibleToCsv();
     }
 
-
     /**
-     * Create Phoenix Heart Call List from phoenix_heart_* tables
+     * @param Request $request
+     *
+     * @throws \Exception
+     *
+     * @return array|string
      */
-    public function makePhoenixHeartCallList()
+    public function makeWelcomeCallList(Request $request)
     {
-        $batch = $this->processEligibilityService->createPhoenixHeartBatch();
+        if ( ! $request->hasFile('patient_list')) {
+            dd('Please upload a CSV file.');
+        }
 
-        return link_to_route('eligibility.batch.show',
-            'Job Scheduled. Click here to view progress. Make sure you bookmark the link.', [$batch->id]);
+        if ( ! $request['practice_id']) {
+            dd('`practice_id` is a required field.');
+        }
+
+        $practiceId = $request->input('practice_id');
+        $patients   = parseCsvToArray($request->file('patient_list'));
+
+        $filterLastEncounter = (bool) $request->input('filterLastEncounter');
+        $filterInsurance     = (bool) $request->input('filterInsurance');
+        $filterProblems      = (bool) $request->input('filterProblems');
+
+        $csvPatientList = new CsvPatientList(collect($patients));
+        $isValid        = $csvPatientList->guessValidator();
+
+        if ( ! $isValid) {
+            return [
+                'errors' => 'This csv does not match any of the supported templates. you can see supported templates here https://drive.google.com/drive/folders/1zpiBkegqjTioZGzdoPqZQAqWvXkaKEgB',
+            ];
+        }
+
+        $batch = $this->processEligibilityService
+            ->createSingleCSVBatch($patients, $practiceId, $filterLastEncounter, $filterInsurance, $filterProblems);
+
+        return redirect()->route('eligibility.batch.show', [$batch->id]);
     }
 }

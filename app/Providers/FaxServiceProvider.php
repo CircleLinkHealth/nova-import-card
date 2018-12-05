@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Providers;
 
 use App\Contracts\Efax;
@@ -11,18 +15,13 @@ class FaxServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the application services.
-     *
-     * @return void
      */
     public function boot()
     {
-        //
     }
 
     /**
      * Register the application services.
-     *
-     * @return void
      */
     public function register()
     {
@@ -37,6 +36,5 @@ class FaxServiceProvider extends ServiceProvider
 
             return new PhaxioService($phaxio);
         });
-
     }
 }

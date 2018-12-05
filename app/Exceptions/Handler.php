@@ -1,4 +1,10 @@
-<?php namespace App\Exceptions;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -13,6 +19,15 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class Handler extends ExceptionHandler
 {
+    /**
+     * A list of the inputs that are never flashed for validation exceptions.
+     *
+     * @var array
+     */
+    protected $dontFlash = [
+        'password',
+        'password_confirmation',
+    ];
 
     /**
      * A list of the exception types that should not be reported.
@@ -30,6 +45,7 @@ class Handler extends ExceptionHandler
 
     /**
      * A list of the exception types that should be recorded, but no notification should be sent.
+     *
      * @var array
      */
     protected $recordButNotNotify = [
@@ -37,30 +53,50 @@ class Handler extends ExceptionHandler
     ];
 
     /**
-     * A list of the inputs that are never flashed for validation exceptions.
+     * Render an exception into an HTTP response.
      *
-     * @var array
+     * @param \Illuminate\Http\Request $request
+     * @param \Exception               $e
+     *
+     * @return \Illuminate\Http\Response
      */
-    protected $dontFlash = [
-        'password',
-        'password_confirmation',
-    ];
+    public function render(
+        $request,
+        Exception $e
+    ) {
+        if ($e instanceof ModelNotFoundException) {
+            return response($e->getMessage(), 400);
+        }
+        if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        }
+        if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }
+        if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenBlacklistedException) {
+            return response()->json(['token_blacklisted'], '403');
+        }
+        if ($this->isHttpException($e)) {
+            return $this->renderHttpException($e);
+        }
+
+        return parent::render($request, $e);
+    }
 
     /**
      * Report or log an exception.
      *
      * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
      *
-     * @param  \Exception $e
+     * @param \Exception $e
      *
-     * @return void
      * @throws Exception
      */
     public function report(Exception $e)
     {
         if ($e instanceof \Illuminate\Database\QueryException) {
             $errorCode = $e->errorInfo[1];
-            if ($errorCode == 1062) {
+            if (1062 == $errorCode) {
                 //do nothing
                 //we don't actually want to terminate the program if we detect duplicates
                 //we just don't wanna add the row again
@@ -69,15 +105,14 @@ class Handler extends ExceptionHandler
         }
 
         if ($this->shouldReport($e) && ! in_array(config('app.env'), [
-                'local',
-                'development',
-                'dev',
-                'testing',
-            ])
+            'local',
+            'development',
+            'dev',
+            'testing',
+        ])
         ) {
             //Check to see if LERN is installed otherwise you will not get an exception.
-            if (app()->bound("lern")) {
-                //
+            if (app()->bound('lern')) {
                 LERN::pushHandler(
                     new \Monolog\Handler\SlackWebhookHandler(
                         config('lern.notify.slack.webhook'),
@@ -90,11 +125,11 @@ class Handler extends ExceptionHandler
                 );
 
                 if ($this->shouldRecordOnly($e)) {
-                    app()->make("lern")->record($e);
+                    app()->make('lern')->record($e);
                 } else {
-                    app()->make("lern")->handle($e); //Record and Notify the Exception
+                    //Record and Notify the Exception
+                    app()->make('lern')->handle($e);
                 }
-
 
                 /*
                 OR...
@@ -108,37 +143,10 @@ class Handler extends ExceptionHandler
     }
 
     /**
-     * Render an exception into an HTTP response.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Exception $e
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function render(
-        $request,
-        Exception $e
-    ) {
-        if ($e instanceof ModelNotFoundException) {
-            return response($e->getMessage(), 400);
-        } elseif ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException) {
-            return response()->json(['token_expired'], $e->getStatusCode());
-        } elseif ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
-            return response()->json(['token_invalid'], $e->getStatusCode());
-        } elseif ($e instanceof \Tymon\JWTAuth\Exceptions\TokenBlacklistedException) {
-            return response()->json(['token_blacklisted'], '403');
-        } elseif ($this->isHttpException($e)) {
-            return $this->renderHttpException($e);
-        }
-
-        return parent::render($request, $e);
-    }
-
-    /**
      * Convert an authentication exception into an unauthenticated response.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Illuminate\Auth\AuthenticationException $exception
+     * @param \Illuminate\Http\Request                 $request
+     * @param \Illuminate\Auth\AuthenticationException $exception
      *
      * @return \Illuminate\Http\Response
      */

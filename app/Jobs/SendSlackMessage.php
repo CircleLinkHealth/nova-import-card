@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
@@ -11,25 +15,24 @@ use Illuminate\Queue\SerializesModels;
 class SendSlackMessage implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    protected $message;
 
     protected $to;
-    protected $message;
 
     /**
      * Create a new job instance.
      *
-     * @return void
+     * @param mixed $to
+     * @param mixed $message
      */
     public function __construct($to, $message)
     {
-        $this->to = $to;
+        $this->to      = $to;
         $this->message = $message;
     }
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
     public function handle()
     {

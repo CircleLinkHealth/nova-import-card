@@ -1,14 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 11/01/2017
- * Time: 7:24 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Contracts\Importer\ImportedMedicalRecord;
 
 interface ImportedItem
 {
-
 }

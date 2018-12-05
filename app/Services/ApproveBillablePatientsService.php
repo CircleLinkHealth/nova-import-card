@@ -1,4 +1,10 @@
-<?php namespace App\Services;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Services;
 
 use App\Http\Resources\ApprovableBillablePatient;
 use App\Repositories\BillablePatientsEloquentRepository;
@@ -16,6 +22,17 @@ class ApproveBillablePatientsService
     ) {
         $this->approvePatientsRepo = $approvePatientsRepo;
         $this->patientSummaryRepo  = $patientSummaryRepo;
+    }
+
+    public function attachDefaultChargeableService($summary, $defaultCodeId = null, $detach = false)
+    {
+        return $this->patientSummaryRepo->attachChargeableService($summary, $defaultCodeId, $detach);
+    }
+
+    public function billablePatientSummaries($practiceId, Carbon $month)
+    {
+        return $this->approvePatientsRepo
+            ->billablePatientSummaries($practiceId, $month);
     }
 
     public function counts($practiceId, Carbon $month)
@@ -41,43 +58,8 @@ class ApproveBillablePatientsService
         return $count;
     }
 
-    public function patientsToApprove($practiceId, Carbon $month)
+    public function detachDefaultChargeableService($summary, $defaultCodeId)
     {
-        $summaries = $this->approvePatientsRepo
-            ->billablePatientSummaries($practiceId, $month)
-            ->paginate();
-        $summaries->getCollection()->transform(function ($summary) {
-            $summary = $this->patientSummaryRepo
-                ->attachChargeableService($summary);
-
-            return $this->patientSummaryRepo->attachBillableProblems($summary->patient, $summary);
-        });
-
-        return $summaries;
-    }
-
-    public function transformPatientsToApprove($practiceId, Carbon $month)
-    {
-        $summaries = $this->patientsToApprove($practiceId, $month);
-
-        $summaries->getCollection()->transform(function ($summary) {
-            return ApprovableBillablePatient::make($summary);
-        });
-
-        return $summaries;
-    }
-
-    public function billablePatientSummaries($practiceId, Carbon $month)
-    {
-        return $this->approvePatientsRepo
-            ->billablePatientSummaries($practiceId, $month);
-    }
-
-    public function attachDefaultChargeableService($summary, $defaultCodeId = null, $detach = false) {
-        return $this->patientSummaryRepo->attachChargeableService($summary, $defaultCodeId, $detach);
-    }
-    
-    public function detachDefaultChargeableService($summary, $defaultCodeId) {
         return $this->patientSummaryRepo->detachChargeableService($summary, $defaultCodeId);
     }
 
@@ -108,13 +90,39 @@ class ApproveBillablePatientsService
             return ApprovableBillablePatient::make($summary);
         });
 
-        $isClosed = ! ! $summaries->getCollection()->every(function ($summary) {
-            return ! ! $summary->actor_id;
+        $isClosed = (bool) $summaries->getCollection()->every(function ($summary) {
+            return (bool) $summary->actor_id;
         });
 
         return collect([
             'summaries' => $summaries,
             'is_closed' => $isClosed,
         ]);
+    }
+
+    public function patientsToApprove($practiceId, Carbon $month)
+    {
+        $summaries = $this->approvePatientsRepo
+            ->billablePatientSummaries($practiceId, $month)
+            ->paginate();
+        $summaries->getCollection()->transform(function ($summary) {
+            $summary = $this->patientSummaryRepo
+                ->attachChargeableService($summary);
+
+            return $this->patientSummaryRepo->attachBillableProblems($summary->patient, $summary);
+        });
+
+        return $summaries;
+    }
+
+    public function transformPatientsToApprove($practiceId, Carbon $month)
+    {
+        $summaries = $this->patientsToApprove($practiceId, $month);
+
+        $summaries->getCollection()->transform(function ($summary) {
+            return ApprovableBillablePatient::make($summary);
+        });
+
+        return $summaries;
     }
 }

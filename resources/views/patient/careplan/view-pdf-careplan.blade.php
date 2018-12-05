@@ -9,9 +9,9 @@ if (isset($patient)) {
     $H           = floor($seconds / 3600);
     $i           = ($seconds / 60) % 60;
     $s           = $seconds % 60;
-    $monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
+    $monthlyTime = sprintf('%02d:%02d:%02d', $H, $i, $s);
 } else {
-    $monthlyTime = "";
+    $monthlyTime = '';
 }
 ?>
 
@@ -54,7 +54,7 @@ if (isset($patient)) {
                         @else
                             <?php
                             $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
-                            $ccmCountableUser = auth()->user()->isCCMCountable();
+                            $ccmCountableUser        = auth()->user()->isCCMCountable();
                             ?>
                             <time-tracker ref="TimeTrackerApp"
                                           class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Observers;
 
 use App\CarePlan;
@@ -9,19 +13,39 @@ use Carbon\Carbon;
 
 class CarePlanObserver
 {
+    public function addCarePlanPrintedNote(CarePlan $carePlan)
+    {
+        $date = $carePlan->first_printed->format('m/d/Y');
+        $time = $carePlan->first_printed->setTimezone($carePlan->patient->timezone ?? 'America/New_York')->format('g:i A T');
+
+        $note = $carePlan->patient->notes()->create([
+            'author_id'    => 948,
+            'body'         => "Care plan printed for mailing on ${date} at ${time}",
+            'type'         => 'CarePlan Printed',
+            'performed_at' => Carbon::now()->toDateTimeString(),
+        ]);
+    }
+
+    public function saved(CarePlan $carePlan)
+    {
+        if ($carePlan->isDirty('first_printed')) {
+            $carePlan->load('patient');
+            $this->addCarePlanPrintedNote($carePlan);
+        }
+    }
+
     /**
      * Listen to the CarePlan saving event.
      *
      * @param CarePlan $carePlan
-     *
      */
     public function saving(CarePlan $carePlan)
     {
-        if ($carePlan->status == CarePlan::QA_APPROVED) {
+        if (CarePlan::QA_APPROVED == $carePlan->status) {
             $carePlan->provider_approver_id = null;
         }
 
-        if (!array_key_exists('care_plan_template_id', $carePlan->getAttributes())) {
+        if ( ! array_key_exists('care_plan_template_id', $carePlan->getAttributes())) {
             $carePlan->care_plan_template_id = getDefaultCarePlanTemplate()->id;
         }
 
@@ -53,26 +77,5 @@ class CarePlanObserver
                 'cpm_instruction_id' => $instruction->id,
             ]);
         }
-    }
-
-    public function saved(CarePlan $carePlan)
-    {
-        if ($carePlan->isDirty('first_printed')) {
-            $carePlan->load('patient');
-            $this->addCarePlanPrintedNote($carePlan);
-        }
-    }
-
-    public function addCarePlanPrintedNote(CarePlan $carePlan)
-    {
-        $date = $carePlan->first_printed->format('m/d/Y');
-        $time = $carePlan->first_printed->setTimezone($carePlan->patient->timezone ?? 'America/New_York')->format('g:i A T');
-
-        $note = $carePlan->patient->notes()->create([
-            'author_id'    => 948,
-            'body'         => "Care plan printed for mailing on $date at $time",
-            'type'         => 'CarePlan Printed',
-            'performed_at' => Carbon::now()->toDateTimeString(),
-        ]);
     }
 }

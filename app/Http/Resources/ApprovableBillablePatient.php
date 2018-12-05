@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Resources;
 
 use App\User;
@@ -7,10 +11,22 @@ use Illuminate\Http\Resources\Json\Resource;
 
 class ApprovableBillablePatient extends Resource
 {
+    public function allCcdProblems(User $patient)
+    {
+        return $patient->ccdProblems->map(function ($prob) {
+            return [
+                'id'            => $prob->id,
+                'name'          => $prob->name,
+                'code'          => $prob->icd10Code(),
+                'is_behavioral' => $prob->isBehavioral(),
+            ];
+        });
+    }
+
     /**
      * Transform the resource into an array.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */
@@ -45,7 +61,7 @@ class ApprovableBillablePatient extends Resource
         }
 
         $status = $this->closed_ccm_status;
-        if ($status == null){
+        if (null == $status) {
             $status = $this->patient->patientInfo->ccm_status;
         }
 
@@ -55,11 +71,11 @@ class ApprovableBillablePatient extends Resource
         $problems['problem2_code'] = $this->billable_problem2_code;
 
         return array_merge([
-            'id'                     => $this->patient->id,
-            'mrn'                    => $this->patient->getMRN(),
-            'name'                   => $name,
-            'url'                    => $url,
-            'provider'               => $bP
+            'id'       => $this->patient->id,
+            'mrn'      => $this->patient->getMRN(),
+            'name'     => $name,
+            'url'      => $url,
+            'provider' => $bP
                 ? optional($bP->user)->getFullName()
                 : '',
             'practice'               => $this->patient->primaryPractice->display_name,
@@ -79,19 +95,6 @@ class ApprovableBillablePatient extends Resource
             'qa'                     => $this->needs_qa,
 
             'chargeable_services' => ChargeableService::collection($this->whenLoaded('chargeableServices')),
-
         ], $problems);
-    }
-
-    public function allCcdProblems(User $patient)
-    {
-        return $patient->ccdProblems->map(function ($prob) {
-            return [
-                'id'   => $prob->id,
-                'name' => $prob->name,
-                'code' => $prob->icd10Code(),
-                'is_behavioral' => $prob->isBehavioral()
-            ];
-        });
     }
 }

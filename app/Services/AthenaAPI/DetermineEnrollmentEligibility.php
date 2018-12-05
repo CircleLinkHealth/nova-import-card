@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Services\AthenaAPI;
 
 use App\TargetPatient;
@@ -17,6 +21,10 @@ class DetermineEnrollmentEligibility
         $this->api = $api;
     }
 
+    public function getDemographics($patientId, $practiceId)
+    {
+        return $this->api->getDemographics($patientId, $practiceId);
+    }
 
     public function getPatientIdFromAppointments(
         $ehrPracticeId,
@@ -35,18 +43,23 @@ class DetermineEnrollmentEligibility
 
             if ($offset) {
                 $offsetBy = TargetPatient::where('ehr_practice_id', $ehrPracticeId)
-                                       ->where('ehr_department_id', $department['departmentid'])
-                                       ->count();
+                    ->where('ehr_department_id', $department['departmentid'])
+                    ->count();
             }
 
-            $response = $this->api->getBookedAppointments($ehrPracticeId, $start, $end, $department['departmentid'],
-                $offsetBy);
+            $response = $this->api->getBookedAppointments(
+                $ehrPracticeId,
+                $start,
+                $end,
+                $department['departmentid'],
+                $offsetBy
+            );
 
             if ( ! isset($response['appointments'])) {
                 return;
             }
 
-            if (count($response['appointments']) == 0) {
+            if (0 == count($response['appointments'])) {
                 return;
             }
 
@@ -65,7 +78,7 @@ class DetermineEnrollmentEligibility
                     'ehr_department_id' => $departmentId,
                 ]);
 
-                if ($batchId !== null){
+                if (null !== $batchId) {
                     $target->batch_id = $batchId;
                 }
 
@@ -74,7 +87,6 @@ class DetermineEnrollmentEligibility
                     $target->save();
                 }
             }
-
         }
     }
 
@@ -95,10 +107,5 @@ class DetermineEnrollmentEligibility
         $problemsAndInsurance->setInsurances($insurancesResponse['insurances']);
 
         return $problemsAndInsurance;
-    }
-
-    public function getDemographics($patientId, $practiceId)
-    {
-        return $this->api->getDemographics($patientId, $practiceId);
     }
 }

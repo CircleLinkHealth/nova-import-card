@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Resources;
 
 use App\User;
@@ -12,6 +16,8 @@ class NurseInfo extends Resource
      * Transform the resource into an array.
      *
      * @param  \Illuminate\Http\Request
+     * @param mixed $request
+     *
      * @return array
      */
     public function toArray($request)
@@ -28,6 +34,7 @@ class NurseInfo extends Resource
                 });
             }
         }
+
         return $nurse;
     }
 }

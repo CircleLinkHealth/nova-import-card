@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers\CareCenter;
 
 use App\Http\Controllers\Controller;
@@ -28,14 +32,85 @@ class WorkScheduleController extends Controller
         WorkHours $workHours
     ) {
         $this->nextWeekStart = Carbon::parse('this sunday')->copy();
-        $this->nextWeekEnd = Carbon::parse('next sunday')
+        $this->nextWeekEnd   = Carbon::parse('next sunday')
             ->endOfDay()
             ->addWeek(1)
             ->copy();
         $this->nurseContactWindows = $nurseContactWindow;
-        $this->workHours = $workHours;
-        $this->holiday = $holiday;
-        $this->today = Carbon::today()->copy();
+        $this->workHours           = $workHours;
+        $this->holiday             = $holiday;
+        $this->today               = Carbon::today()->copy();
+    }
+
+    public function destroy($windowId)
+    {
+        $window = $this->nurseContactWindows
+            ->find($windowId);
+
+        if ( ! $window) {
+            $errors['window'] = 'This window does not exist.';
+
+            return redirect()->route('care.center.work.schedule.index')
+                ->withErrors($errors)
+                ->withInput();
+        }
+
+        if ( ! auth()->user()->isAdmin()) {
+            if ($window->nurse_info_id != auth()->user()->nurseInfo->id) {
+                $errors['window'] = 'This window does not belong to you.';
+
+                return redirect()->route('care.center.work.schedule.index')
+                    ->withErrors($errors)
+                    ->withInput();
+            }
+        }
+
+        $window->forceDelete();
+
+        return redirect()->back();
+    }
+
+    public function destroyHoliday($holidayId)
+    {
+        $holiday = $this->holiday
+            ->find($holidayId);
+
+        if ( ! $holiday) {
+            $errors['holiday'] = 'This holiday does not exist.';
+
+            return redirect()->route('care.center.work.schedule.index')
+                ->withErrors($errors)
+                ->withInput();
+        }
+
+        if (auth()->user()->nurseInfo) {
+            if ($holiday->nurse_info_id != auth()->user()->nurseInfo->id) {
+                $errors['holiday'] = 'This holiday does not belong to you.';
+
+                return redirect()->route('care.center.work.schedule.index')
+                    ->withErrors($errors)
+                    ->withInput();
+            }
+        }
+
+        $holiday->forceDelete();
+
+        return redirect()->back();
+    }
+
+    public function getAllNurseSchedules()
+    {
+        $data = User::ofType('care-center')
+            ->with('nurseInfo.windows')
+            ->whereHas('nurseInfo', function ($q) {
+                $q->where('status', 'active');
+            })
+            ->get()
+            ->sortBy('first_name');
+
+        $tzAbbr = auth()->user()->timezone_abbr ?? 'EDT';
+
+        return view('admin.nurse.schedules.index', compact(['data', 'tzAbbr', 'workHours']));
     }
 
     public function index()
@@ -48,11 +123,11 @@ class WorkScheduleController extends Controller
             ->sortBy(function ($item) {
                 return Carbon::createFromFormat(
                     'H:i:s',
-                    "$item->window_time_start"
+                    "{$item->window_time_start}"
                 );
             });
 
-        $holidays = $nurse->upcoming_holiday_dates;
+        $holidays         = $nurse->upcoming_holiday_dates;
         $holidaysThisWeek = $nurse->holidays_this_week;
 
         $tzAbbr = auth()->user()->timezone_abbr;
@@ -71,39 +146,6 @@ class WorkScheduleController extends Controller
         ]));
     }
 
-    public function storeHoliday(Request $request)
-    {
-        $user = auth()->user();
-
-        $request->replace([
-            'holiday' => Carbon::parse($request->input('holiday'))->toDateTimeString(),
-        ]);
-
-        $validator = Validator::make($request->all(), [
-            'holiday' => [
-                Rule::unique('holidays', 'date')->where(function ($query) use ($user) {
-                    $query->where('nurse_info_id', $user->nurseInfo->id);
-                }),
-                'required',
-                'date',
-                'after:tomorrow',
-            ],
-        ]);
-
-
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
-        }
-
-        $holiday = $user->nurseInfo->holidays()->create([
-            'date' => Carbon::parse($request->input('holiday'))->format('Y-m-d'),
-        ]);
-
-        return redirect()->back();
-    }
-
     public function store(Request $request)
     {
         $isAdmin = auth()->user()->isAdmin();
@@ -112,12 +154,12 @@ class WorkScheduleController extends Controller
             ? $request->input('nurse_info_id')
             : auth()->user()->nurseInfo->id;
 
-        if (!$nurseInfoId) {
+        if ( ! $nurseInfoId) {
             $nurseInfoId = auth()->user()->nurseInfo->id;
         }
 
         $validator = Validator::make($request->all(), [
-            'day_of_week'       => "required",
+            'day_of_week'       => 'required',
             'window_time_start' => 'required|date_format:H:i',
             'window_time_end'   => 'required|date_format:H:i|after:window_time_start',
         ]);
@@ -146,19 +188,19 @@ class WorkScheduleController extends Controller
         ])->first();
 
         $hoursSum = NurseContactWindow::where([
-                ['nurse_info_id', '=', $nurseInfoId],
-                ['day_of_week', '=', $request->input('day_of_week')],
-            ])
-                ->get()
-                ->sum(function ($window) {
-                    return Carbon::createFromFormat(
+            ['nurse_info_id', '=', $nurseInfoId],
+            ['day_of_week', '=', $request->input('day_of_week')],
+        ])
+            ->get()
+            ->sum(function ($window) {
+                return Carbon::createFromFormat(
                         'H:i:s',
                         $window->window_time_end
                     )->diffInHours(Carbon::createFromFormat(
                         'H:i:s',
                         $window->window_time_start
                     ));
-                }) + Carbon::createFromFormat(
+            }) + Carbon::createFromFormat(
                     'H:i',
                     $request->input('window_time_end')
                 )->diffInHours(Carbon::createFromFormat(
@@ -206,9 +248,9 @@ class WorkScheduleController extends Controller
 
             $nurseUser = Nurse::find($nurseInfoId)->user;
 
-            $dayName = clhDayOfWeekToDayName($window->day_of_week);
+            $dayName      = clhDayOfWeekToDayName($window->day_of_week);
             $nurseMessage = "Admin {$user->display_name} assigned Nurse {$nurseUser->display_name} to work for";
-            $message = "$nurseMessage {$request->input('work_hours')} hours on $dayName between {$window->range()->start->format('h:i A T')} to {$window->range()->end->format('h:i A T')}";
+            $message      = "${nurseMessage} {$request->input('work_hours')} hours on ${dayName} between {$window->range()->start->format('h:i A T')} to {$window->range()->end->format('h:i A T')}";
             sendSlackMessage('#carecoachscheduling', $message);
         } else {
             $user = auth()->user();
@@ -231,80 +273,41 @@ class WorkScheduleController extends Controller
         return redirect()->back()->with(['editedNurseId' => $nurseInfoId]);
     }
 
-    public function destroy($windowId)
+    public function storeHoliday(Request $request)
     {
-        $window = $this->nurseContactWindows
-            ->find($windowId);
+        $user = auth()->user();
 
-        if (!$window) {
-            $errors['window'] = 'This window does not exist.';
+        $request->replace([
+            'holiday' => Carbon::parse($request->input('holiday'))->toDateTimeString(),
+        ]);
 
-            return redirect()->route('care.center.work.schedule.index')
-                ->withErrors($errors)
+        $validator = Validator::make($request->all(), [
+            'holiday' => [
+                Rule::unique('holidays', 'date')->where(function ($query) use ($user) {
+                    $query->where('nurse_info_id', $user->nurseInfo->id);
+                }),
+                'required',
+                'date',
+                'after:tomorrow',
+            ],
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
                 ->withInput();
         }
 
-        if (!auth()->user()->isAdmin()) {
-            if ($window->nurse_info_id != auth()->user()->nurseInfo->id) {
-                $errors['window'] = 'This window does not belong to you.';
-
-                return redirect()->route('care.center.work.schedule.index')
-                    ->withErrors($errors)
-                    ->withInput();
-            }
-        }
-
-        $window->forceDelete();
+        $holiday = $user->nurseInfo->holidays()->create([
+            'date' => Carbon::parse($request->input('holiday'))->format('Y-m-d'),
+        ]);
 
         return redirect()->back();
-    }
-
-    public function destroyHoliday($holidayId)
-    {
-        $holiday = $this->holiday
-            ->find($holidayId);
-
-        if (!$holiday) {
-            $errors['holiday'] = 'This holiday does not exist.';
-
-            return redirect()->route('care.center.work.schedule.index')
-                ->withErrors($errors)
-                ->withInput();
-        }
-
-        if (auth()->user()->nurseInfo) {
-            if ($holiday->nurse_info_id != auth()->user()->nurseInfo->id) {
-                $errors['holiday'] = 'This holiday does not belong to you.';
-
-                return redirect()->route('care.center.work.schedule.index')
-                    ->withErrors($errors)
-                    ->withInput();
-            }
-        }
-
-        $holiday->forceDelete();
-
-        return redirect()->back();
-    }
-
-    public function getAllNurseSchedules()
-    {
-        $data = User::ofType('care-center')
-            ->with('nurseInfo.windows')
-            ->whereHas('nurseInfo', function ($q) {
-                $q->where('status', 'active');
-            })
-            ->get()
-            ->sortBy('first_name');
-
-        $tzAbbr = auth()->user()->timezone_abbr ?? 'EDT';
-
-        return view('admin.nurse.schedules.index', compact(['data', 'tzAbbr', 'workHours']));
     }
 
     public function updateDailyHours(Request $request, $id)
     {
-        $workHours = WorkHours::find($id);
+        $workHours                           = WorkHours::find($id);
         $workHours->{$request->input('day')} = $request->input('workHours');
         $workHours->save();
 

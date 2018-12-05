@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 08/17/2017
- * Time: 11:24 AM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Contracts\Reports;
@@ -12,24 +10,6 @@ use Carbon\Carbon;
 
 interface Reportable
 {
-    /**
-     * All patients for this Reportable.
-     *
-     * @return mixed
-     */
-    public function patients();
-
-    /**
-     * Call count for this Reportable.
-     *
-     * @param Carbon $start
-     * @param Carbon $end
-     * @param null $status
-     *
-     * @return mixed
-     */
-    public function callCount(Carbon $start, Carbon $end, $status = null);
-
     /**
      * Sum of activity time for this Reportable.
      *
@@ -41,24 +21,24 @@ interface Reportable
     public function activitiesDuration(Carbon $start, Carbon $end);
 
     /**
-     * Observation count for this Reportable.
+     * Total eligible-to-be-billed patients count (for given month) for this Reportable.
      *
-     * @param Carbon $start
-     * @param Carbon $end
+     * @param Carbon $month
      *
      * @return mixed
      */
-    public function observationsCount(Carbon $start, Carbon $end);
+    public function billablePatientsCountForMonth(Carbon $month);
 
     /**
-     * Forwarded notes count for this Reportable.
+     * Call count for this Reportable.
      *
      * @param Carbon $start
      * @param Carbon $end
+     * @param null   $status
      *
      * @return mixed
      */
-    public function forwardedNotesCount(Carbon $start, Carbon $end);
+    public function callCount(Carbon $start, Carbon $end, $status = null);
 
     /**
      * Forwarded emergency notes count for this Reportable.
@@ -71,22 +51,14 @@ interface Reportable
     public function forwardedEmergencyNotesCount(Carbon $start, Carbon $end);
 
     /**
-     * Total billed patients count (since the beginning of time) for this Reportable.
+     * Forwarded notes count for this Reportable.
      *
-     * @param Carbon|null $month
-     *
-     * @return mixed
-     */
-    public function totalBilledPatientsCount(Carbon $month = null);
-
-    /**
-     * Total eligible-to-be-billed patients count (for given month) for this Reportable.
-     *
-     * @param Carbon $month
+     * @param Carbon $start
+     * @param Carbon $end
      *
      * @return mixed
      */
-    public function billablePatientsCountForMonth(Carbon $month);
+    public function forwardedNotesCount(Carbon $start, Carbon $end);
 
     /**
      * The link to view this Reportable's notes.
@@ -94,4 +66,30 @@ interface Reportable
      * @return mixed
      */
     public function linkToNotes();
+
+    /**
+     * Observation count for this Reportable.
+     *
+     * @param Carbon $start
+     * @param Carbon $end
+     *
+     * @return mixed
+     */
+    public function observationsCount(Carbon $start, Carbon $end);
+
+    /**
+     * All patients for this Reportable.
+     *
+     * @return mixed
+     */
+    public function patients();
+
+    /**
+     * Total billed patients count (since the beginning of time) for this Reportable.
+     *
+     * @param Carbon|null $month
+     *
+     * @return mixed
+     */
+    public function totalBilledPatientsCount(Carbon $month = null);
 }

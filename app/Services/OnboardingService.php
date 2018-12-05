@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 13/02/2017
- * Time: 11:29 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Services;
@@ -49,10 +47,10 @@ class OnboardingService
     /**
      * OnboardingController constructor.
      *
-     * @param InviteRepository $inviteRepository
+     * @param InviteRepository   $inviteRepository
      * @param LocationRepository $locationRepository
      * @param PracticeRepository $practiceRepository
-     * @param UserRepository $userRepository
+     * @param UserRepository     $userRepository
      */
     public function __construct(
         InviteRepository $inviteRepository,
@@ -67,132 +65,7 @@ class OnboardingService
     }
 
     /**
-     * Gets existing staff, and outputs them on window.cpm
-     *
-     * @param Practice $primaryPractice
-     */
-    public function getExistingStaff(Practice $primaryPractice)
-    {
-        $relevantRoles = [
-            'med_assistant',
-            'office_admin',
-            'provider',
-            'registered-nurse',
-            'specialist',
-        ];
-
-//        if (auth()->user()->isAdmin()) {
-//            $relevantRoles[] = 'administrator';
-//        }
-
-        $practiceUsers = User::ofType(array_merge($relevantRoles, ['practice-lead']))
-                             ->whereHas('practices', function ($q) use (
-                                 $primaryPractice
-                             ) {
-                                 $q->where('id', '=', $primaryPractice->id);
-                             })
-                             ->get()
-                             ->sortBy('first_name')
-                             ->values();
-
-        if ( ! auth()->user()->isAdmin()) {
-            $practiceUsers->reject(function ($user) {
-                return $user->isAdmin();
-            })
-                          ->values();
-        }
-
-        //Get the users that were as clinical emergency contacts from the locations page
-        $existingUsers = $practiceUsers->map(function ($user) use (
-            $primaryPractice
-        ) {
-            $permissions = $user->practice($primaryPractice->id);
-            $phone       = $user->phoneNumbers->first();
-
-            $roleId = $permissions->pivot->role_id
-                ? $permissions->pivot->role_id
-                : $user->roles->first()['id'];
-
-            $forwardAlertsToContactUser = $user->forwardAlertsTo()
-                                               ->having('name', '=', User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER)
-                                               ->orHaving('name', '=', User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER)
-                                               ->first()
-                                          ?? null;
-
-            $forwardCarePlanApprovalEmailsToContactUser = $user->forwardAlertsTo()
-                                                               ->having('name', '=',
-                                                                   User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER)
-                                                               ->orHaving('name', '=',
-                                                                   User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER)
-                                                               ->first()
-                                                          ?? null;
-
-            return [
-                'id'                                  => $user->id,
-                'email'                               => $user->email,
-                'last_name'                           => $user->last_name,
-                'first_name'                          => $user->first_name,
-                'phone_number'                        => $phone->number ?? '',
-                'phone_extension'                     => $phone->extension ?? '',
-                'phone_type'                          => array_search(
-                                                             $phone->type ?? '',
-                                                             PhoneNumber::getTypes()
-                                                         ) ?? '',
-                'isComplete'                          => false,
-                'validated'                           => false,
-                'grantAdminRights'                    => $permissions->pivot->has_admin_rights ?? false,
-                'sendBillingReports'                  => $permissions->pivot->send_billing_reports ?? false,
-                'errorCount'                          => 0,
-                'role_id'                             => $roleId,
-                'locations'                           => $user->locations->pluck('id'),
-                'emr_direct_address'                  => $user->emr_direct_address,
-                'forward_alerts_to'                   => [
-                    'who'     => $forwardAlertsToContactUser->pivot->name ?? 'billing_provider',
-                    'user_id' => $forwardAlertsToContactUser->id ?? null,
-                ],
-                'forward_careplan_approval_emails_to' => [
-                    'who'     => $forwardCarePlanApprovalEmailsToContactUser->pivot->name ?? 'billing_provider',
-                    'user_id' => $forwardCarePlanApprovalEmailsToContactUser->id ?? null,
-                ],
-            ];
-        });
-
-        $locations = $primaryPractice->locations->map(function ($loc) {
-            return [
-                'id'   => $loc->id,
-                'name' => $loc->name,
-            ];
-        });
-
-        $locationIds = $primaryPractice->locations->map(function ($loc) {
-            return $loc->id;
-        });
-
-        //get the relevant roles
-        $roles = Role::whereIn('name', $relevantRoles)
-                     ->get([
-                         'id',
-                         'display_name',
-                     ])
-                     ->sortBy('display_name');
-
-        $result = [
-            'existingUsers' => $existingUsers,
-            'locations'     => $locations,
-            'locationIds'   => $locationIds,
-            'phoneTypes'    => PhoneNumber::getTypes(),
-            'roles'         => $roles->all(),
-            //this will help us get role names on the views: rolesMap[id]
-            'rolesMap'      => $roles->keyBy('id')->all(),
-        ];
-
-        \JavaScript::put($result);
-
-        return $result;
-    }
-
-    /**
-     * Gets existing locations, and outputs them on window.cpm
+     * Gets existing locations, and outputs them on window.cpm.
      *
      * @param Practice $primaryPractice
      */
@@ -203,13 +76,12 @@ class OnboardingService
             ->map(function ($loc) use (
                 $primaryPractice
             ) {
-
                 $contactType = $loc->clinicalEmergencyContact->first()->pivot->name ?? null;
                 $contactUser = $loc->clinicalEmergencyContact->first() ?? null;
 
                 return [
-                    'id'                        => $loc->id,
-                    'clinical_contact'          => [
+                    'id'               => $loc->id,
+                    'clinical_contact' => [
                         'email'      => $contactUser->email ?? null,
                         'first_name' => $contactUser->first_name ?? null,
                         'last_name'  => $contactUser->last_name ?? null,
@@ -236,12 +108,142 @@ class OnboardingService
                 ];
             });
 
-
         \JavaScript::put([
             'existingLocations' => $existingLocations,
         ]);
 
         return $existingLocations;
+    }
+
+    /**
+     * Gets existing staff, and outputs them on window.cpm.
+     *
+     * @param Practice $primaryPractice
+     */
+    public function getExistingStaff(Practice $primaryPractice)
+    {
+        $relevantRoles = [
+            'med_assistant',
+            'office_admin',
+            'provider',
+            'registered-nurse',
+            'specialist',
+        ];
+
+//        if (auth()->user()->isAdmin()) {
+//            $relevantRoles[] = 'administrator';
+//        }
+
+        $practiceUsers = User::ofType(array_merge($relevantRoles, ['practice-lead']))
+            ->whereHas('practices', function ($q) use (
+                                 $primaryPractice
+                             ) {
+                $q->where('id', '=', $primaryPractice->id);
+            })
+            ->get()
+            ->sortBy('first_name')
+            ->values();
+
+        if ( ! auth()->user()->isAdmin()) {
+            $practiceUsers->reject(function ($user) {
+                return $user->isAdmin();
+            })
+                ->values();
+        }
+
+        //Get the users that were as clinical emergency contacts from the locations page
+        $existingUsers = $practiceUsers->map(function ($user) use (
+            $primaryPractice
+        ) {
+            $permissions = $user->practice($primaryPractice->id);
+            $phone = $user->phoneNumbers->first();
+
+            $roleId = $permissions->pivot->role_id
+                ? $permissions->pivot->role_id
+                : $user->roles->first()['id'];
+
+            $forwardAlertsToContactUser = $user->forwardAlertsTo()
+                ->having('name', '=', User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER)
+                ->orHaving('name', '=', User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER)
+                ->first()
+                                          ?? null;
+
+            $forwardCarePlanApprovalEmailsToContactUser = $user->forwardAlertsTo()
+                ->having(
+                                                                   'name',
+                                                                   '=',
+                                                                   User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER
+                                                               )
+                ->orHaving(
+                                                                   'name',
+                                                                   '=',
+                                                                   User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER
+                                                               )
+                ->first()
+                                                          ?? null;
+
+            return [
+                'id'              => $user->id,
+                'email'           => $user->email,
+                'last_name'       => $user->last_name,
+                'first_name'      => $user->first_name,
+                'phone_number'    => $phone->number ?? '',
+                'phone_extension' => $phone->extension ?? '',
+                'phone_type'      => array_search(
+                                                             $phone->type ?? '',
+                                                             PhoneNumber::getTypes()
+                                                         ) ?? '',
+                'isComplete'         => false,
+                'validated'          => false,
+                'grantAdminRights'   => $permissions->pivot->has_admin_rights ?? false,
+                'sendBillingReports' => $permissions->pivot->send_billing_reports ?? false,
+                'errorCount'         => 0,
+                'role_id'            => $roleId,
+                'locations'          => $user->locations->pluck('id'),
+                'emr_direct_address' => $user->emr_direct_address,
+                'forward_alerts_to'  => [
+                    'who'     => $forwardAlertsToContactUser->pivot->name ?? 'billing_provider',
+                    'user_id' => $forwardAlertsToContactUser->id ?? null,
+                ],
+                'forward_careplan_approval_emails_to' => [
+                    'who'     => $forwardCarePlanApprovalEmailsToContactUser->pivot->name ?? 'billing_provider',
+                    'user_id' => $forwardCarePlanApprovalEmailsToContactUser->id ?? null,
+                ],
+            ];
+        });
+
+        $locations = $primaryPractice->locations->map(function ($loc) {
+            return [
+                'id'   => $loc->id,
+                'name' => $loc->name,
+            ];
+        });
+
+        $locationIds = $primaryPractice->locations->map(function ($loc) {
+            return $loc->id;
+        });
+
+        //get the relevant roles
+        $roles = Role::whereIn('name', $relevantRoles)
+            ->get([
+                'id',
+                'display_name',
+            ])
+            ->sortBy('display_name');
+
+        $result = [
+            'existingUsers' => $existingUsers,
+            'locations'     => $locations,
+            'locationIds'   => $locationIds,
+            'phoneTypes'    => PhoneNumber::getTypes(),
+            'roles'         => $roles->all(),
+            //this will help us get role names on the views: rolesMap[id]
+            'rolesMap' => $roles->keyBy('id')->all(),
+        ];
+
+        \JavaScript::put($result);
+
+        return $result;
     }
 
     public function postStoreLocations(
@@ -254,7 +256,6 @@ class OnboardingService
 
         $created = [];
         $i       = 0;
-
 
         $sameClinicalContact = $request->input('sameClinicalIssuesContact');
         $sameEHRLogin        = $request->input('sameEHRLogin');
@@ -282,7 +283,7 @@ class OnboardingService
                             'ehr_login'      => $sameEHRLogin
                                 ? $request->input('locations')[0]['ehr_login']
                                 : $newLocation['ehr_login'] ?? null,
-                            'ehr_password'   => $sameEHRLogin
+                            'ehr_password' => $sameEHRLogin
                                 ? $request->input('locations')[0]['ehr_password']
                                 : $newLocation['ehr_password'] ?? null,
                         ], $newLocation['id']);
@@ -303,7 +304,7 @@ class OnboardingService
                             'ehr_login'      => $sameEHRLogin
                                 ? $request->input('locations')[0]['ehr_login']
                                 : $newLocation['ehr_login'] ?? null,
-                            'ehr_password'   => $sameEHRLogin
+                            'ehr_password' => $sameEHRLogin
                                 ? $request->input('locations')[0]['ehr_password']
                                 : $newLocation['ehr_password'] ?? null,
                         ]);
@@ -318,7 +319,7 @@ class OnboardingService
                 ];
             }
 
-            if (Location::where('practice_id', $primaryPractice->id)->count() == 1) {
+            if (1 == Location::where('practice_id', $primaryPractice->id)->count()) {
                 $location->is_primary = 1;
                 $location->save();
             }
@@ -344,12 +345,12 @@ class OnboardingService
 
             $primaryPractice->save();
 
-            if ($newLocation['clinical_contact']['type'] == CarePerson::BILLING_PROVIDER) {
+            if (CarePerson::BILLING_PROVIDER == $newLocation['clinical_contact']['type']) {
                 //clean up other contacts, just in case this was just set as the billing provider
                 $location->clinicalEmergencyContact()->sync([]);
             } else {
                 $clinicalContactUser = User::whereEmail($newLocation['clinical_contact']['email'])
-                                           ->first();
+                    ->first();
 
                 if ( ! $newLocation['clinical_contact']['email']) {
                     $clinicalContactUser = null;
@@ -359,7 +360,7 @@ class OnboardingService
                         'messages' => [
                             'email' => ['Clinical Contact email is a required field.'],
                         ],
-                        'input'    => $newLocation,
+                        'input' => $newLocation,
                     ];
                 }
 
@@ -395,7 +396,7 @@ class OnboardingService
             if ($primaryPractice->lead) {
                 $primaryPractice->lead->attachLocation($location);
             }
-            $i++;
+            ++$i;
         }
 
         if (isset($errors)) {
@@ -499,11 +500,11 @@ class OnboardingService
                 //clean up other contacts before adding the new one
                 $user->forwardAlertsTo()->sync([]);
 
-                if ($newUser['forward_alerts_to']['who'] != 'billing_provider') {
+                if ('billing_provider' != $newUser['forward_alerts_to']['who']) {
                     $user->forwardTo($newUser['forward_alerts_to']['user_id'], $newUser['forward_alerts_to']['who']);
                 }
 
-                if ($newUser['forward_careplan_approval_emails_to']['who'] != 'billing_provider') {
+                if ('billing_provider' != $newUser['forward_careplan_approval_emails_to']['who']) {
                     $user->forwardTo(
                         $newUser['forward_careplan_approval_emails_to']['user_id'],
                         $newUser['forward_careplan_approval_emails_to']['who']
@@ -515,7 +516,7 @@ class OnboardingService
                 \Log::alert($e);
                 if ($e instanceof QueryException) {
                     $errorCode = $e->errorInfo[1];
-                    if ($errorCode == 1062) {
+                    if (1062 == $errorCode) {
                         //do nothing
                         //we don't actually want to terminate the program if we detect duplicates
                         //we just don't wanna add the row again
@@ -529,7 +530,7 @@ class OnboardingService
                 }
             }
 
-            $i++;
+            ++$i;
         }
 
         if (isset($errors)) {

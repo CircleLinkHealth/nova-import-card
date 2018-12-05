@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Jobs;
 
 use App\EligibilityBatch;
@@ -18,6 +22,30 @@ class ProcessSinglePatientEligibility implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
+     * @var EligibilityBatch
+     */
+    private $batch;
+    /**
+     * @var EligibilityJob
+     */
+    private $eligibilityJob;
+
+    /**
+     * @var bool
+     */
+    private $filterInsurance;
+
+    /**
+     * @var bool
+     */
+    private $filterLastEncounter;
+
+    /**
+     * @var bool
+     */
+    private $filterProblems;
+
+    /**
      * @var Collection
      */
     private $patient;
@@ -28,36 +56,12 @@ class ProcessSinglePatientEligibility implements ShouldQueue
     private $practice;
 
     /**
-     * @var EligibilityBatch
-     */
-    private $batch;
-
-    /**
-     * @var bool
-     */
-    private $filterLastEncounter;
-
-    /**
-     * @var bool
-     */
-    private $filterInsurance;
-
-    /**
-     * @var bool
-     */
-    private $filterProblems;
-    /**
-     * @var EligibilityJob
-     */
-    private $eligibilityJob;
-
-    /**
      * Create a new job instance.
      *
-     * @param Collection $patient
-     * @param Practice $practice
+     * @param Collection       $patient
+     * @param Practice         $practice
      * @param EligibilityBatch $batch
-     * @param EligibilityJob $eligibilityJob
+     * @param EligibilityJob   $eligibilityJob
      */
     public function __construct(
         Collection $patient,
@@ -68,21 +72,19 @@ class ProcessSinglePatientEligibility implements ShouldQueue
         $this->patient             = $patient;
         $this->practice            = $practice;
         $this->batch               = $batch;
-        $this->filterLastEncounter = (boolean)$batch->options['filterLastEncounter'];
-        $this->filterProblems      = (boolean)$batch->options['filterProblems'];
-        $this->filterInsurance     = (boolean)$batch->options['filterInsurance'];
+        $this->filterLastEncounter = (bool) $batch->options['filterLastEncounter'];
+        $this->filterProblems      = (bool) $batch->options['filterProblems'];
+        $this->filterInsurance     = (bool) $batch->options['filterInsurance'];
         $this->eligibilityJob      = $eligibilityJob;
     }
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
     public function handle()
     {
         //Only process if EligibilityJob status is 0 (not_started)
-        if ($this->eligibilityJob->status == 0) {
+        if (0 == $this->eligibilityJob->status) {
             new WelcomeCallListGenerator(
                 $this->patient,
                 $this->filterLastEncounter,

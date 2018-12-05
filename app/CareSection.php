@@ -1,19 +1,24 @@
-<?php namespace App;
+<?php
 
-use Illuminate\Database\Eloquent\Model;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App;
 
 /**
- * App\CareSection
+ * App\CareSection.
  *
- * @property int $id
- * @property string $name
- * @property string $display_name
- * @property string $description
- * @property string $template
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\CarePlanItem[] $carePlanItems
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\CarePlan[] $carePlans
+ * @property int                                                          $id
+ * @property string                                                       $name
+ * @property string                                                       $display_name
+ * @property string                                                       $description
+ * @property string                                                       $template
+ * @property \Carbon\Carbon                                               $created_at
+ * @property \Carbon\Carbon                                               $updated_at
+ * @property \App\CarePlanItem[]|\Illuminate\Database\Eloquent\Collection $carePlanItems
+ * @property \App\CarePlan[]|\Illuminate\Database\Eloquent\Collection     $carePlans
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareSection whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareSection whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareSection whereDisplayName($value)
@@ -25,15 +30,12 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CareSection extends \App\BaseModel
 {
-
-
-
     /**
-     * The database table used by the model.
+     * The attributes that are mass assignable.
      *
-     * @var string
+     * @var array
      */
-    protected $table = 'care_sections';
+    protected $fillable = ['plan_id', 'display_name', 'description'];
 
     /**
      * The primary key for the model.
@@ -43,15 +45,20 @@ class CareSection extends \App\BaseModel
     protected $primaryKey = 'id';
 
     /**
-     * The attributes that are mass assignable.
+     * The database table used by the model.
      *
-     * @var array
+     * @var string
      */
-    protected $fillable = ['plan_id', 'display_name', 'description'];
+    protected $table = 'care_sections';
 
-    public function carePlans()
+    public static function boot()
     {
-        return $this->belongsToMany('App\CarePlan', 'care_item_care_plan', 'section_id', 'plan_id');
+        parent::boot();
+
+        // Automatically delete and item's meta when the item is deleted
+        CPRulesItem::deleting(function ($CPRulesItem) {
+            $CPRulesItem->meta()->delete();
+        });
     }
 
     public function carePlanItems()
@@ -59,15 +66,8 @@ class CareSection extends \App\BaseModel
         return $this->hasMany('App\CarePlanItem', 'section_id');
     }
 
-    public static function boot()
+    public function carePlans()
     {
-        parent::boot();
-
-        /**
-         * Automatically delete and item's meta when the item is deleted
-         */
-        CPRulesItem::deleting(function ($CPRulesItem) {
-            $CPRulesItem->meta()->delete();
-        });
+        return $this->belongsToMany('App\CarePlan', 'care_item_care_plan', 'section_id', 'plan_id');
     }
 }

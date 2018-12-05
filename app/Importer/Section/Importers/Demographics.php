@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 12/01/2017
- * Time: 1:05 AM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Importer\Section\Importers;
@@ -25,10 +23,10 @@ class Demographics extends BaseImporter
             ->first();
 
         $demographicsImport = DemographicsImport::updateOrCreate([
-            'first_name'                 => ucwords(strtolower($itemLog->first_name)),
-            'last_name'                  => ucwords(strtolower($itemLog->last_name)),
-            'dob'                        => (new Carbon($itemLog->dob, 'America/New_York'))->format('Y-m-d'),
-            'gender'                     => call_user_func(function () use (
+            'first_name' => ucwords(strtolower($itemLog->first_name)),
+            'last_name'  => ucwords(strtolower($itemLog->last_name)),
+            'dob'        => (new Carbon($itemLog->dob, 'America/New_York'))->format('Y-m-d'),
+            'gender'     => call_user_func(function () use (
                 $itemLog
             ) {
                 $maleVariations = [
@@ -54,19 +52,19 @@ class Demographics extends BaseImporter
                 return empty($gender)
                     ?: $gender;
             }),
-            'mrn_number'                 => $itemLog->mrn_number,
-            'street'                     => empty($itemLog->street2)
+            'mrn_number' => $itemLog->mrn_number,
+            'street'     => empty($itemLog->street2)
                 ? $itemLog->street
                 : "{$itemLog->street}, {$itemLog->street2}",
-            'city'                       => $itemLog->city,
-            'state'                      => $itemLog->state,
-            'zip'                        => $itemLog->zip,
-            'cell_phone'                 => $itemLog->cell_phone,
-            'home_phone'                 => $itemLog->home_phone,
-            'work_phone'                 => $itemLog->work_phone,
-            'primary_phone'              => $itemLog->primary_phone,
-            'email'                      => strtolower(str_replace('/', '', $itemLog->email)),
-            'study_phone_number'         => empty($itemLog->cell_phone)
+            'city'               => $itemLog->city,
+            'state'              => $itemLog->state,
+            'zip'                => $itemLog->zip,
+            'cell_phone'         => $itemLog->cell_phone,
+            'home_phone'         => $itemLog->home_phone,
+            'work_phone'         => $itemLog->work_phone,
+            'primary_phone'      => $itemLog->primary_phone,
+            'email'              => strtolower(str_replace('/', '', $itemLog->email)),
+            'study_phone_number' => empty($itemLog->cell_phone)
                 ? empty($itemLog->home_phone)
                     ? $itemLog->work_phone
                     : $itemLog->home_phone

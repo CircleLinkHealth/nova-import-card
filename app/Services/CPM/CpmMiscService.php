@@ -1,16 +1,14 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 5/3/16
- * Time: 2:20 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Services\CPM;
 
+use App\Contracts\Services\CpmModel;
 use App\Repositories\CpmMiscRepository;
 use App\Repositories\CpmMiscUserRepository;
-use App\Contracts\Services\CpmModel;
 use App\User;
 
 class CpmMiscService implements CpmModel
@@ -18,47 +16,76 @@ class CpmMiscService implements CpmModel
     private $cpmMiscRepo;
     private $cpmMiscUserRepo;
 
-    public function __construct(CpmMiscRepository $cpmMiscRepo, CpmMiscUserRepository $cpmMiscUserRepo) {
-        $this->cpmMiscRepo = $cpmMiscRepo;
+    public function __construct(CpmMiscRepository $cpmMiscRepo, CpmMiscUserRepository $cpmMiscUserRepo)
+    {
+        $this->cpmMiscRepo     = $cpmMiscRepo;
         $this->cpmMiscUserRepo = $cpmMiscUserRepo;
     }
 
-    public function repo() {
-        return $this->cpmMiscRepo;
+    public function addMiscToPatient($miscId, $userId)
+    {
+        if ($this->repo()->exists($miscId)) {
+            return $this->cpmMiscUserRepo->addMiscToPatient($miscId, $userId);
+        }
+        throw new Exception('misc with id "'.$miscId.'" does not exist');
     }
 
-    public function miscPatients($miscId) {
-        return $this->cpmMiscUserRepo->miscPatients($miscId);
-    }
-    
-    public function patientMisc($userId) {
-        return $this->cpmMiscUserRepo->patientMisc($userId);
-    }
-    
-    public function patientMiscByType($userId, $miscTypeId) {
-        return $this->cpmMiscUserRepo->patientMisc($userId, $miscTypeId)->first();
-    }
-
-    public function editPatientMisc($userId, $miscId, $instructionId) {
+    public function editPatientMisc($userId, $miscId, $instructionId)
+    {
         return $this->cpmMiscUserRepo->editPatientMisc($userId, $miscId, $instructionId);
     }
 
-    public function addMiscToPatient($miscId, $userId) {
-        if ($this->repo()->exists($miscId)) return $this->cpmMiscUserRepo->addMiscToPatient($miscId, $userId);
-        else throw new Exception('misc with id "' . $miscId . '" does not exist');
+    public function getMiscWithInstructionsForUser(User $user, $miscName)
+    {
+        $misc = $user->cpmMiscs->where('name', $miscName)->first();
+        //For the CPM Misc Item, extract the instruction and
+        //store in a key value pair
+        if ($misc) {
+            $instruction = \App\Models\CPM\CpmInstruction::find($misc->pivot->cpm_instruction_id);
+        } else {
+            return '';
+        }
+
+        if ($instruction) {
+            return $instruction->name;
+        }
+
+        return '';
     }
-    
-    public function removeMiscFromPatient($miscId, $userId) {
+
+    public function miscPatients($miscId)
+    {
+        return $this->cpmMiscUserRepo->miscPatients($miscId);
+    }
+
+    public function patientMisc($userId)
+    {
+        return $this->cpmMiscUserRepo->patientMisc($userId);
+    }
+
+    public function patientMiscByType($userId, $miscTypeId)
+    {
+        return $this->cpmMiscUserRepo->patientMisc($userId, $miscTypeId)->first();
+    }
+
+    public function removeInstructionFromPatientMisc($userId, $miscId, $instructionId)
+    {
+        return $this->cpmMiscUserRepo->removeInstructionFromPatientMisc($userId, $miscId, $instructionId);
+    }
+
+    public function removeMiscFromPatient($miscId, $userId)
+    {
         return $this->cpmMiscUserRepo->removeMiscFromPatient($miscId, $userId);
     }
-    
-    public function removeInstructionFromPatientMisc($userId, $miscId, $instructionId) {
-        return $this->cpmMiscUserRepo->removeInstructionFromPatientMisc($userId, $miscId, $instructionId);
+
+    public function repo()
+    {
+        return $this->cpmMiscRepo;
     }
 
     public function syncWithUser(User $user, array $ids, $page, array $instructions)
     {
-        if (!is_int($page)) {
+        if ( ! is_int($page)) {
             throw new \Exception('The page number needs to be an integer.');
         }
 
@@ -84,6 +111,7 @@ class CpmMiscService implements CpmModel
             foreach ($cptMiscsIds as $cptMiscId) {
                 $user->cpmMiscs()->detach($cptMiscId);
             }
+
             return true;
         }
 
@@ -98,13 +126,13 @@ class CpmMiscService implements CpmModel
 
             //if it's in $ids keep it, or detach it
             if (in_array($cptMiscId, $ids)) {
-                if (!in_array($cptMiscId, $userMiscs)) {
+                if ( ! in_array($cptMiscId, $userMiscs)) {
                     //if the field is not already related attach it
                     $user->cpmMiscs()->attach($cptMiscId);
                 }
 
-                $relationship = 'cpmMiscs';
-                $entityId = $cptMiscId;
+                $relationship  = 'cpmMiscs';
+                $entityId      = $cptMiscId;
                 $entityForeign = 'cpm_misc_id';
 
                 if (isset($instructions[$relationship][$entityId])) {
@@ -116,25 +144,7 @@ class CpmMiscService implements CpmModel
                 $user->cpmMiscs()->detach($cptMiscId);
             }
         }
+
         return true;
-    }
-
-    public function getMiscWithInstructionsForUser(User $user, $miscName)
-    {
-
-        $misc = $user->cpmMiscs->where('name', $miscName)->first();
-        //For the CPM Misc Item, extract the instruction and
-        //store in a key value pair
-        if ($misc) {
-            $instruction = \App\Models\CPM\CpmInstruction::find($misc->pivot->cpm_instruction_id);
-        } else {
-            return '';
-        }
-
-        if ($instruction) {
-            return $instruction->name;
-        } else {
-            return '';
-        }
     }
 }

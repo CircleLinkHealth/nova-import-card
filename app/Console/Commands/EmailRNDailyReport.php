@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\Activity;
@@ -8,10 +12,15 @@ use App\PageTimer;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Mail;
 
 class EmailRNDailyReport extends Command
 {
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = '';
     /**
      * The name and signature of the console command.
      *
@@ -20,16 +29,7 @@ class EmailRNDailyReport extends Command
     protected $signature = 'nurses:emailDailyReport';
 
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = '';
-
-    /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -45,11 +45,11 @@ class EmailRNDailyReport extends Command
     {
         $nurses = User::ofType('care-center')->get();
 
-        $counter = 0;
+        $counter    = 0;
         $emailsSent = [];
 
         foreach ($nurses as $nurse) {
-            if (!$nurse->nurseInfo) {
+            if ( ! $nurse->nurseInfo) {
                 continue;
             }
             $activityTime = Activity::createdBy($nurse)
@@ -64,32 +64,32 @@ class EmailRNDailyReport extends Command
                 ->createdThisMonth()
                 ->sum('billable_duration');
 
-            if ($systemTime == 0) {
+            if (0 == $systemTime) {
                 continue;
             }
 
             if ($nurse->nurseInfo->hourly_rate < 1
-                && $nurse->nurseInfo != 'active'
+                && 'active' != $nurse->nurseInfo
             ) {
                 continue;
             }
 
-            $performance = round((float)($activityTime / $systemTime) * 100);
+            $performance = round((float) ($activityTime / $systemTime) * 100);
 
             $totalTimeInSystemToday = secondsToHMS($systemTime);
 
             $totalTimeInSystemThisMonth = secondsToHMS($totalMonthSystemTimeSeconds);
 
             $totalEarningsThisMonth = round(
-                (float)($totalMonthSystemTimeSeconds * $nurse->nurseInfo->hourly_rate / 60 / 60),
+                (float) ($totalMonthSystemTimeSeconds * $nurse->nurseInfo->hourly_rate / 60 / 60),
                 2
             );
 
             $nextUpcomingWindow = $nurse->nurseInfo->firstWindowAfter(Carbon::now());
 
             if ($nextUpcomingWindow) {
-                $carbonDate = Carbon::parse($nextUpcomingWindow->date);
-                $nextUpcomingWindowLabel = clhDayOfWeekToDayName($nextUpcomingWindow->day_of_week) . " {$carbonDate->format('m/d/Y')}";
+                $carbonDate              = Carbon::parse($nextUpcomingWindow->date);
+                $nextUpcomingWindowLabel = clhDayOfWeekToDayName($nextUpcomingWindow->day_of_week)." {$carbonDate->format('m/d/Y')}";
             }
 
             $hours = $nurse->nurseInfo->workhourables
@@ -122,7 +122,7 @@ class EmailRNDailyReport extends Command
                 'email' => $nurse->email,
             ];
 
-            $counter++;
+            ++$counter;
         }
 
         $this->table([
@@ -130,6 +130,6 @@ class EmailRNDailyReport extends Command
             'email',
         ], $emailsSent);
 
-        $this->info("$counter email(s) sent.");
+        $this->info("${counter} email(s) sent.");
     }
 }

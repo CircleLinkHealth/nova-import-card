@@ -19,33 +19,35 @@
     //$modal_content .= $key . " "; // HIDE CONTACT DAYS
     $modal_content = '<div class="row"><div class="form-group">
         <div class="form-item col-sm-12">'; // HIDE CONTACT DAYS
-    for ($i = 1; $i < 8; $i++) {
-        if ($i == 1) {
+    for ($i = 1; $i < 8; ++$i) {
+        if (1 == $i) {
             $day = 'M';
         }
-        if ($i == 2) {
+        if (2 == $i) {
             $day = 'T';
         }
-        if ($i == 3) {
+        if (3 == $i) {
             $day = 'W';
         }
-        if ($i == 4) {
+        if (4 == $i) {
             $day = 'T';
         }
-        if ($i == 5) {
+        if (5 == $i) {
             $day = 'F';
         }
-        if ($i == 6) {
+        if (6 == $i) {
             $day = 'S';
         }
-        if ($i == 7) {
+        if (7 == $i) {
             $day = 'S';
         }
         $status = '';
-        if (strpos($planItem->meta_value, strval($i)) > -1) $status = ' checked="checked"';
+        if (strpos($planItem->meta_value, strval($i)) > -1) {
+            $status = ' checked="checked"';
+        }
         // $modal_content .= '<input type="checkbox" name="test" id="" value="1">';
         $name = $planItem->careItem->name;
-        $modal_content .= '<div class="radio-inline"><input type="checkbox" id="' . $name . $i . '" name="' . $name . '[]" value="' . $i . '" ' . $status . '><label for="' . $name . $i . '"><span> </span>&nbsp;' . $day . '</label></div>';  // HIDE CONTACT DAYS
+        $modal_content .= '<div class="radio-inline"><input type="checkbox" id="'.$name.$i.'" name="'.$name.'[]" value="'.$i.'" '.$status.'><label for="'.$name.$i.'"><span> </span>&nbsp;'.$day.'</label></div>';  // HIDE CONTACT DAYS
     }
     $modal_content .= '</div></div></div>';
     ?>

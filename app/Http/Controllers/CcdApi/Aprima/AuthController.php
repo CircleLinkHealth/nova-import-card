@@ -1,4 +1,10 @@
-<?php namespace App\Http\Controllers\CcdApi\Aprima;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Http\Controllers\CcdApi\Aprima;
 
 use App\Contracts\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
@@ -6,7 +12,6 @@ use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
-
     protected $user;
 
     public function __construct(UserRepository $userRepository)
@@ -18,11 +23,12 @@ class AuthController extends Controller
      * This function will authenticate the user using their username and password and return an access token.
      *
      * @param Request $request
+     *
      * @return string access_token
      */
     public function getAccessToken(Request $request)
     {
-        if (!$request->filled('username') || !$request->filled('password')) {
+        if ( ! $request->filled('username') || ! $request->filled('password')) {
             response()->json(['error' => 'Username and password need to be included on the request.'], 400);
         }
 
@@ -34,9 +40,8 @@ class AuthController extends Controller
             return response()->json(['error' => 'Invalid Credentials.'], 400);
         }
 
-
         //Verify Role for UPG
-        if (!$user->hasRoleForSite('aprima-api-location', 16)) {
+        if ( ! $user->hasRoleForSite('aprima-api-location', 16)) {
             return response()->json(['error' => 'Invalid Credentials.'], 400);
         }
 
@@ -48,7 +53,7 @@ class AuthController extends Controller
 
         \JWTAuth::setIdentifier('id');
 
-        if (!$access_token = \JWTAuth::attempt($credentials)) {
+        if ( ! $access_token = \JWTAuth::attempt($credentials)) {
             return response()->json(['error' => 'Invalid Credentials.'], 400);
         }
 

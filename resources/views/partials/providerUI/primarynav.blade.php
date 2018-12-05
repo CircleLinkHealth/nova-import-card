@@ -5,9 +5,9 @@ if (isset($patient)) {
     $H           = floor($seconds / 3600);
     $i           = ($seconds / 60) % 60;
     $s           = $seconds % 60;
-    $monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
+    $monthlyTime = sprintf('%02d:%02d:%02d', $H, $i, $s);
 } else {
-    $monthlyTime = "";
+    $monthlyTime = '';
 }
 ?>
 @push('styles')
@@ -45,7 +45,7 @@ if (isset($patient)) {
                 @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && auth()->user()->hasRole('care-center') && isset($patient) && optional($patient)->id && (!isset($noLiveCountTimeTracking)))
                     <li>
                         <time-tracker-call-mode ref="timeTrackerCallMode"
-                                                :twilio-enabled="{{ $patient->primaryPractice->cpmSettings()->twilio_enabled }}"
+                                                :twilio-enabled="{{$patient->primaryPractice ? $patient->primaryPractice->cpmSettings()->twilio_enabled : false}}"
                                                 :patient-id="{{ $patient->id }}"></time-tracker-call-mode>
                     </li>
                 @endif
