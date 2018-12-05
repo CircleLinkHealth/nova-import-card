@@ -182,11 +182,11 @@ class TwilioController extends Controller
         foreach ($participants as $participant) {
             $call               = $this->client->calls($participant->callSid)->fetch();
             $participantsSids[] = [
-                    'from'     => $call->from,
-                    'to'       => $call->to,
-                    'call_sid' => $participant->callSid,
-                    'status'   => $call->status,
-                ];
+                'from'     => $call->from,
+                'to'       => $call->to,
+                'call_sid' => $participant->callSid,
+                'status'   => $call->status,
+            ];
         }
 
         return response()->json(
@@ -273,7 +273,7 @@ class TwilioController extends Controller
             ->where('outbound_user_id', '=', $input['outbound_user_id'])
             ->where(function ($q) {
                 $q->where('call_status', '=', 'ringing')
-                                    ->orWhere('call_status', '=', 'in-progress');
+                    ->orWhere('call_status', '=', 'in-progress');
             })
             ->orderBy('updated_at', 'desc')
             ->first();
