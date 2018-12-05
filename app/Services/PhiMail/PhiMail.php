@@ -12,11 +12,14 @@ use App\Models\MedicalRecords\Ccda;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
-use Maknz\Slack\Facades\Slack;
 
 class PhiMail implements DirectMail
 {
     protected $ccdas = [];
+    
+    /**
+     * @var PhiMailConnector
+     */
     private $connector;
     
     public function __destruct()
