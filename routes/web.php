@@ -2246,6 +2246,18 @@ Route::group([
         'uses' => 'Twilio\TwilioController@jsCreateConference',
         'as'   => 'twilio.js.create.conference',
     ]);
+    Route::post('/call/get-conference-info', [
+        'uses' => 'Twilio\TwilioController@getConferenceInfo',
+        'as'   => 'twilio.js.get.conference.info',
+    ]);
+    Route::post('/call/join-conference', [
+        'uses' => 'Twilio\TwilioController@joinConference',
+        'as'   => 'twilio.call.join.conference',
+    ]);
+    Route::post('/call/end', [
+        'uses' => 'Twilio\TwilioController@endCall',
+        'as'   => 'twilio.call.leave.conference',
+    ]);
 });
 
 Route::group([
@@ -2254,10 +2266,6 @@ Route::group([
     Route::post('/call/place', [
         'uses' => 'Twilio\TwilioController@placeCall',
         'as'   => 'twilio.call.place',
-    ]);
-    Route::post('/call/join-conference', [
-        'uses' => 'Twilio\TwilioController@joinConference',
-        'as'   => 'twilio.call.join.conference',
     ]);
     Route::post('/call/status', [
         'uses' => 'Twilio\TwilioController@callStatusCallback',

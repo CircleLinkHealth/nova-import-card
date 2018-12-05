@@ -45,8 +45,8 @@ class TwilioController extends Controller
      * From,
      * InboundUserId - the target user we are calling (a patient or a practice)
      * OutboundUserId - the user making the call (i.e nurse)
-     * ConferenceName - the conference to join/create (usually userId_patientUserId)
      * IsUnlistedNumber - has value if the number we are calling is manually inserted from the client side
+     * IsCallToPatient - true if calling a patient, false if calling another party (eg patient's practice)
      *
      * @param Request $request
      *
@@ -97,13 +97,27 @@ class TwilioController extends Controller
         return $this->responseWithXmlType(response($response));
     }
 
+    /**
+     *
+     * Initiated from client-side. This handler will:
+     * - Trigger an update to the current call session
+     * - This trigger will call dialActionCallback, which will return with a Twiml Conference
+     * - The dialActionCallback will be called again, this time for the parent call session,
+     *   which will also return with a Twiml Conference
+     *
+     * So, the parent call (inbound) and the child call leg (outbound) will move to a conference
+     * without hanging up!
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function jsCreateConference(Request $request)
     {
         $input      = $request->all();
         $validation = \Validator::make($input, [
             'inbound_user_id'  => 'required',
             'outbound_user_id' => 'required',
-            'conference_name'  => 'required',
         ]);
 
         if ($validation->fails()) {
@@ -131,26 +145,6 @@ class TwilioController extends Controller
             $calls       = $this->client->calls->read(["parentCallSid" => $dbCall->call_sid]);
             $dialCallSid = $calls[0]->sid;
 
-            /*
-            $accountSid  = $calls[0]->accountSid;
-            $uri         = 'https://api.twilio.com/2010-04-01/Accounts/' . rawurlencode($accountSid) . '/Calls/' . rawurlencode($dialCallSid) . '.json';
-            $this->client->request(
-                "POST",
-                $uri,
-                [
-                    'StartConference' => true,
-                    'X-StartConference' => true,
-                    'x-StartConference' => true,
-                ],
-                [
-                    "Method"          => "POST",
-                    "Url"             => route('twilio.call.dial.status'),
-                    'StartConference' => true,
-                    'X-StartConference' => true,
-                    'x-StartConference' => true,
-                ]
-            );
-            */
             $this->client->calls($dialCallSid)
                          ->update([
                                  "method" => "POST",
@@ -164,6 +158,70 @@ class TwilioController extends Controller
         }
     }
 
+    /**
+     *
+     * Get conference info using inbound user id and outbound user id.
+     * These two fields make the conference friendly name.
+     * Returns the conference sid and participant's sid(s).
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getConferenceInfo(Request $request)
+    {
+        $input = $request->all();
+
+        $validation = \Validator::make($input, [
+            'inbound_user_id'  => 'required',
+            'outbound_user_id' => 'required',
+        ]);
+
+        if ($validation->fails()) {
+            return response()->json($validation->errors()->all());
+        }
+
+        $confs = $this->client->conferences->read([
+            'FriendlyName' => $input['inbound_user_id'] . '_' . $input['outbound_user_id'],
+        ]);
+
+        if (empty($confs)) {
+            return response()->json(['errors' => ['not found']]);
+        }
+
+        $conference   = $confs[0];
+        $participants = $this->client->conferences($conference->sid)
+            ->participants
+            ->read();
+
+        $participantsInfo = [];
+        foreach ($participants as $participant) {
+            $call               = $this->client->calls($participant->callSid)->fetch();
+            $participantsSids[] =
+                [
+                    'from'     => $call->from,
+                    'to'       => $call->to,
+                    'call_sid' => $participant->callSid,
+                    'status'   => $call->status,
+                ];
+        }
+
+        return response()->json(
+            [
+                'sid'          => $conference->sid,
+                'status'       => $conference->status,
+                'participants' => $participantsInfo,
+            ]);
+    }
+
+    /**
+     *
+     * Join an active conference using the conference sid
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function joinConference(Request $request)
     {
         $input = $request->all();
@@ -188,13 +246,43 @@ class TwilioController extends Controller
 
         $confs = $this->client->conferences->read([
             'FriendlyName' => $input['InboundUserId'] . '_' . $input['OutboundUserId'],
+            'Status'       => 'in-progress',
         ]);
 
         $conference = $confs[0];
 
-        $this->client->conferences($conference->sid)
+        $participant = $this->client->conferences($conference->sid)
             ->participants
-            ->create($input['From'], $input['To']);
+            ->create($input['From'], $input['To'], [
+                'endConferenceOnExit' => false,
+            ]);
+
+        return response()->json(['call_sid' => $participant->callSid]);
+    }
+
+    /**
+     *
+     * End a call using an sid. Usually used to end a call in a conference.
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function endCall(Request $request)
+    {
+        $input      = $request->all();
+        $validation = \Validator::make($input, [
+            'CallSid'        => 'required',
+            'InboundUserId'  => 'required',
+            'OutboundUserId' => 'required',
+        ]);
+
+        if ($validation->fails()) {
+            return response()->json($validation->errors()->all());
+        }
+
+        $this->client->calls($input['CallSid'])
+                     ->update(["status" => "completed"]);
 
         return response()->json([]);
     }
@@ -240,7 +328,9 @@ class TwilioController extends Controller
                         if ($call->in_conference && $isCallUpdateToConference && $parentCallStatus === 'in-progress') {
                             $conferenceName = $call->inbound_user_id . '_' . $call->outbound_user_id;
                             $dial           = $response->dial();
-                            $dial->conference($conferenceName);
+                            $dial->conference($conferenceName, [
+                                'endConferenceOnExit' => false,
+                            ]);
                         } else {
                             $response->hangup();
                         }
@@ -256,7 +346,9 @@ class TwilioController extends Controller
                     if ($call->in_conference) {
                         $conferenceName = $call->inbound_user_id . '_' . $call->outbound_user_id;
                         $dial           = $response->dial();
-                        $dial->conference($conferenceName);
+                        $dial->conference($conferenceName, [
+                            'endConferenceOnExit' => true,
+                        ]);
                     } else {
                         $response->hangup();
                     }

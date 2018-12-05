@@ -40,12 +40,9 @@
 
             <br/>
 
-            <div class="row">
-
-
+            <div class="row" v-show="isCurrentlyOnPhone">
                 <div class="col-sm-12">
                     <button class="btn btn-default"
-                            :disabled="!isCurrentlyOnPhone"
                             @click="createConference">
                         Create a conference call
                     </button>
@@ -128,12 +125,13 @@
                 muted: {},
                 onPhone: {},
                 log: 'Initializing',
-                connections: {},
+                connection: null,
                 //twilio device
                 device: null,
                 dropdownNumber: Object.values(this.patientNumbers).length > 0 ? Object.values(this.patientNumbers)[0] : null,
                 patientUnlistedNumber: '+35799451430',
                 otherUnlistedNumber: '',
+                callSids: {}
             }
         },
         computed: {
@@ -157,6 +155,9 @@
             },
             isCurrentlyOnPhone() {
                 return Object.values(this.onPhone).some(x => x);
+            },
+            isCurrentlyOnConference() {
+                return Object.values(this.onPhone).filter(x => x).length > 1;
             }
         },
         methods: {
@@ -205,6 +206,7 @@
                 //important - need to get a copy of the variable here
                 //otherwise the computed value changes and our logic does not work
                 const isCurrentlyOnPhone = this.isCurrentlyOnPhone;
+                const isCurrentlyOnConference = this.isCurrentlyOnConference;
 
                 if (!this.onPhone[number]) {
 
@@ -220,7 +222,43 @@
                                 IsCallToPatient: isCallToPatient,
                                 InboundUserId: this.inboundUserId,
                                 OutboundUserId: this.outboundUserId,
-                                ConferenceName: `${this.outboundUserId}_${this.inboundUserId}`
+                            })
+                            .then(resp => {
+                                console.log(resp.data);
+                                if (resp && resp.data && resp.data.call_sid) {
+                                    this.$set(this.callSids, number, resp.data.call_sid);
+                                }
+                            })
+                            .catch(err => {
+                                self.log = err.message;
+                                this.$set(this.muted, number, false);
+                                this.$set(this.onPhone, number, false);
+                            });
+                    }
+                    else {
+                        this.log = 'Calling ' + number;
+                        this.connection = this.device.connect({
+                            To: number.startsWith('+') ? number : '+1' + number,
+                            IsUnlistedNumber: isUnlisted,
+                            IsCallToPatient: isCallToPatient,
+                            InboundUserId: this.inboundUserId,
+                            OutboundUserId: this.outboundUserId,
+                        });
+                    }
+                    EventBus.$emit('tracker:call-mode:enter');
+
+                } else {
+
+                    this.$set(this.muted, number, false);
+                    this.$set(this.onPhone, number, false);
+
+                    if (isCurrentlyOnConference) {
+                        this.log = `Hanging up call to ${number}`;
+                        this.axios
+                            .post(rootUrl('twilio/call/end'), {
+                                CallSid: this.callSids[number],
+                                InboundUserId: this.inboundUserId,
+                                OutboundUserId: this.outboundUserId,
                             })
                             .then(resp => {
 
@@ -232,25 +270,14 @@
                             });
                     }
                     else {
-                        this.log = 'Calling ' + number;
-                        this.connections[number] = this.device.connect({
-                            To: number.startsWith('+') ? number : '+1' + number,
-                            IsUnlistedNumber: isUnlisted,
-                            IsCallToPatient: isCallToPatient,
-                            InboundUserId: this.inboundUserId,
-                            OutboundUserId: this.outboundUserId,
-                            ConferenceName: `${this.outboundUserId}_${this.inboundUserId}`
-                        });
+                        this.log = 'Ending call';
+                        if (this.connection) {
+                            this.connection.disconnect();
+                        }
+                        //exit call mode when all calls are disconnected
+                        EventBus.$emit('tracker:call-mode:exit');
                     }
-                    EventBus.$emit('tracker:call-mode:enter');
 
-                } else {
-                    this.$set(this.muted, number, false);
-                    this.$set(this.onPhone, number, false);
-                    if (this.connections[number]) {
-                        this.connections[number].disconnect();
-                    }
-                    EventBus.$emit('tracker:call-mode:exit');
                 }
             },
             createConference: function () {
@@ -259,13 +286,68 @@
                     {
                         'inbound_user_id': this.inboundUserId,
                         'outbound_user_id': this.outboundUserId,
-                        'conference_name': `${this.outboundUserId}_${this.inboundUserId}`
                     })
                     .then(resp => {
+
+                        if (resp.data.errors) {
+                            throw new Error(resp.data.errors.join('\n'));
+                        }
+                        setTimeout(() => {
+                            this.getConferenceInfo();
+                        }, 1000);
+                    })
+                    .catch(err => {
+                        this.enableConference = false;
                         this.waitingForConference = false;
-                        //should check for errors here
-                        this.enableConference = true;
-                        console.log('conference created. now you should actually add the participant', resp.data);
+                        self.log = err.message;
+                    });
+            },
+            getConferenceInfo: function () {
+                this.axios.post(rootUrl(`twilio/call/get-conference-info`),
+                    {
+                        'inbound_user_id': this.inboundUserId,
+                        'outbound_user_id': this.outboundUserId,
+                    })
+                    .then(resp => {
+
+                        if (resp.data.errors) {
+                            throw new Error(resp.data.errors.join('\n'));
+                        }
+
+                        if (resp.data.participants) {
+
+                            //set the callsids
+                            //also set the onphone using status
+
+                            const participants = resp.data.participants;
+                            for (let i = 0; i < participants.length; i++) {
+                                const participant = participants[i];
+                                let to = participant.to;
+
+                                //we might have called with '+' but on client side we entered without the '+'
+                                if (typeof this.onPhone[to] === 'undefined') {
+                                    to = to.substring(1);
+                                }
+
+                                if (this.onPhone[to]) {
+                                    this.$set(this.callSids, to, participant.call_sid);
+                                    if (participant.status === 'completed' || participant.status === 'no-answer') {
+                                        this.$set(this.onPhone, to, false);
+                                        this.$set(this.muted, to, false);
+                                    }
+                                }
+                            }
+                        }
+
+                        if (resp.data.status === 'in-progress') {
+                            this.enableConference = true;
+                            this.waitingForConference = false;
+                        }
+                        else {
+                            this.enableConference = false;
+                        }
+
+                        setTimeout(this.getConferenceInfo.bind(this), 1000);
                     })
                     .catch(err => {
                         this.enableConference = false;
@@ -300,14 +382,14 @@
                         self.device.on('disconnect', () => {
                             console.log('twilio device: disconnect');
                             self.resetPhoneState();
-                            self.connections = {};
+                            self.connection = null;
                             self.log = 'Call ended.';
                         });
 
                         self.device.on('offline', () => {
                             console.log('twilio device: offline');
                             self.resetPhoneState();
-                            self.connections = {};
+                            self.connection = null;
                             self.log = 'Offline.';
                         });
 
