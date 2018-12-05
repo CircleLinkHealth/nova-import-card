@@ -68,6 +68,8 @@ class PhiMail implements DirectMail
                         // when you originally sent the corresponding message
                         // See the API documentation for information about
                         // status notification types and their meanings.
+                        
+                        Log::error("DirectMail Message Fail. Message ID: `$message->messageId`. Logged from:".__METHOD__.':'.__LINE__);
                     }
                     
                     // This signals the server that the status update can be
