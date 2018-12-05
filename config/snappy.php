@@ -37,7 +37,7 @@ return [
             'disable-external-links' => true,
             'disable-internal-links' => true,
             'enable-smart-shrinking' => true,
-
+            
             'margin-bottom' => '1cm',
             'margin-left'   => '1cm',
             'margin-right'  => '1cm',
