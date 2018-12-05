@@ -52,8 +52,6 @@ class PatientCareplanController extends Controller
     public function index(Request $request)
     {
         $carePlans = CarePlan::with('providerApproverUser')
-            ->whereNull('first_printed')
-            ->whereNull('last_printed')
             ->whereHas('patient', function ($q) {
                 $q->intersectPracticesWith(auth()->user());
             })
@@ -232,7 +230,7 @@ class PatientCareplanController extends Controller
             // add to array
             $pageFileNames[] = $fileNameWithPath;
 
-            if (auth()->user()->isAdmin() && true == $letter) {
+            if (auth()->user()->isAdmin() && $letter ==  true) {
                 $careplanObj               = $user->carePlan;
                 $careplanObj->last_printed = Carbon::now()->toDateTimeString();
                 if ( ! $careplanObj->first_printed) {
