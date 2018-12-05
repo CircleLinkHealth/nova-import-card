@@ -69,7 +69,7 @@
                                 filter = '<' + filter.toString().toLowerCase();
                                 return value.indexOf(filter) === 0;
                             }
-                            function durationTitle(obj){
+                            function durationType(obj){
                                 let title = 'CCM';
                                 if (obj.is_behavioral === 1){
                                     title = 'BHI';
@@ -86,8 +86,8 @@
                                 refresh: function (master, node, value) {
                                     var seconds = 0;
                                     master.data.each(function (obj) {
-                                        let test = durationTitle(obj);
-                                        if (test === 'CCM'){
+                                        let type = durationType(obj);
+                                        if (type === 'CCM'){
                                             seconds = seconds + parseInt(obj.duration);
                                         }
                                     });
@@ -112,8 +112,8 @@
                                 refresh: function (master, node, value) {
                                     var seconds = 0;
                                     master.data.each(function (obj) {
-                                        let test = durationTitle(obj);
-                                        if (test === 'BHI'){
+                                        let type = durationType(obj);
+                                        if (type === 'BHI'){
                                             seconds = seconds + parseInt(obj.duration);
                                         }
                                     });
@@ -190,8 +190,8 @@
                                         css: {"color": "black", "text-align": "right"},
                                         footer: {content: "mySummColumnCCM"},
                                         template: function (obj) {
-                                            var test = durationTitle(obj);
-                                            if (test === 'CCM'){
+                                            var type = durationType(obj);
+                                            if (type === 'CCM'){
                                             var seconds = obj.duration;
                                             var date = new Date(seconds * 1000);
                                             var hh = Math.floor(seconds / 3600);
@@ -223,8 +223,8 @@
                                         css: {"color": "black", "text-align": "right"},
                                         footer: {content: "mySummColumnBHI"},
                                         template: function (obj) {
-                                            var test = durationTitle(obj);
-                                            if (test === 'BHI'){
+                                            var type = durationType(obj);
+                                            if (type === 'BHI'){
                                             var seconds = obj.duration;
                                             var date = new Date(seconds * 1000);
                                             var hh = Math.floor(seconds / 3600);
@@ -278,8 +278,10 @@
                                            'performed_at':       { header:'Date', width: 200, template: webix.template('#performed_at#') },
                                            'type':             { header:'Activity',    width:150, sort:'string', template: webix.template('#type#')},
                                            'provider_name':    { header:'Provider',    width:200, sort:'string', template: webix.template('#provider_name#') },
-                                           'duration':  { header: 'Total (Min:Sec)', width: 70, sort: 'string',
+                                           'duration':  { header: 'Total CCM (Min:Sec)', width: 70, sort: 'string',
                                            template: function (obj) {
+                                           var type = durationType(obj);
+                                           if (type === 'CCM'){
                                            var seconds = obj.duration;
                                            var date = new Date(seconds * 1000);
                                            var mm = Math.floor(seconds/60);
@@ -287,6 +289,25 @@
                                            if (ss < 10) {ss = '0'+ss;}
                                            var time = mm+':'+ss;
                                            return mm+':'+ss;
+                                           }else {
+                                               return '--';
+                                           }
+                                           }
+                                           },
+                                           'durationBHI':  { header: 'Total BHI (Min:Sec)', width: 70, sort: 'string',
+                                           template: function (obj) {
+                                           var type = durationType(obj);
+                                           if (type === 'BHI'){
+                                           var seconds = obj.duration;
+                                           var date = new Date(seconds * 1000);
+                                           var mm = Math.floor(seconds/60);
+                                           var ss = date.getSeconds();
+                                           if (ss < 10) {ss = '0'+ss;}
+                                           var time = mm+':'+ss;
+                                           return mm+':'+ss;
+                                           }else {
+                                           return '--';
+                                           }
                                            }
                                            }
                                            }
