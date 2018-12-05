@@ -4,6 +4,15 @@
 @section('activity', 'Patient Activity Report')
 
 @section('content')
+    @push('styles')
+        <style>
+            .durationFooter {
+                float: right;
+                text-align: right;
+                font-weight: bold;
+            }
+        </style>
+        @endpush
     <div class="row" style="margin-top:60px;">
         <div class="main-form-container col-lg-8 col-lg-offset-2">
             <div class="row">
@@ -104,7 +113,7 @@
                                     mm = pad(mm, 2)
                                     hh = pad(hh, 2)
                                     var time = hh + ':' + mm + ":" + ss;
-                                    result = "<span title='" + mm + ":" + ss + "' style='float:right;'><b>" + time + "</b></span>";
+                                    result = time;
                                     node.firstChild.innerHTML = result;
                                 }
                             }, webix.ui.datafilter.summColumn);
@@ -130,7 +139,7 @@
                                     mm = pad(mm, 2)
                                     hh = pad(hh, 2)
                                     var time = hh + ':' + mm + ":" + ss;
-                                    result = "<span title='" + mm + ":" + ss + "' style='float:right;'><b>" + time + "</b></span>";
+                                    result = time;
                                     node.firstChild.innerHTML = result;
                                 }
                             }, webix.ui.datafilter.summColumn);
@@ -183,12 +192,12 @@
                                         css: {"color": "black", "text-align": "right"}
                                     },
                                     {
-                                        id: "duration",
+                                        id: "durationCCM",
                                         header: ["Total CCM", "(HH:MM:SS)"],
                                         width: 100,
                                         sort: 'string',
                                         css: {"color": "black", "text-align": "right"},
-                                        footer: {content: "mySummColumnCCM"},
+                                        footer: {content: "mySummColumnCCM", css: "durationFooter"},
                                         template: function (obj) {
                                             var type = durationType(obj);
                                             if (type === 'CCM'){
@@ -208,20 +217,20 @@
 
                                             var time = hh + ':' + mm + ":" + ss;
 
-                                                return "<span title=':" + mm + ":" + ss + "' style='float:right;'>" + time +"</span>";
+                                                return time;
                                             }else{
-                                                return "<span title=':" + mm + ":" + ss + "' style='float:right;'>" + "--" +"</span>";
+                                                return "--";
                                             }
 
                                         }
                                     },
                                     {
-                                        id: "duration",
+                                        id: "durationBHI",
                                         header: ["Total BHI", "(HH:MM:SS)"],
                                         width: 100,
                                         sort: 'string',
                                         css: {"color": "black", "text-align": "right"},
-                                        footer: {content: "mySummColumnBHI"},
+                                        footer: {content: "mySummColumnBHI", css: "durationFooter"},
                                         template: function (obj) {
                                             var type = durationType(obj);
                                             if (type === 'BHI'){
@@ -241,9 +250,9 @@
 
                                             var time = hh + ':' + mm + ":" + ss;
 
-                                                return "<span title=':" + mm + ":" + ss + "' style='float:right;'>" + time +"</span>";
+                                                return time;
                                             }else{
-                                                return "<span title=':" + mm + ":" + ss + "' style='float:right;'>" + "--" +"</span>";
+                                                return "--";
                                             }
 
                                         }
@@ -278,7 +287,7 @@
                                            'performed_at':       { header:'Date', width: 200, template: webix.template('#performed_at#') },
                                            'type':             { header:'Activity',    width:150, sort:'string', template: webix.template('#type#')},
                                            'provider_name':    { header:'Provider',    width:200, sort:'string', template: webix.template('#provider_name#') },
-                                           'duration':  { header: 'Total CCM (Min:Sec)', width: 70, sort: 'string',
+                                           'durationCCM':  { header: 'Total CCM (Min:Sec)', width: 70, sort: 'string',
                                            template: function (obj) {
                                            var type = durationType(obj);
                                            if (type === 'CCM'){
