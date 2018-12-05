@@ -226,6 +226,7 @@ class PatientCareplanController extends Controller
                 ], $fileNameWithPath);
             }
 
+
             // add to array
             $pageFileNames[] = $fileNameWithPath;
 
