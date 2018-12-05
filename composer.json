@@ -45,6 +45,7 @@
     "ext-dom": "*",
     "ext-json": "*",
     "ext-libxml": "*",
+    "ext-simplexml": "*",
     "amnuts/opcache-gui": "dev-master",
     "appstract/laravel-opcache": "^2.0",
     "arcturial/clickatell": "*",
@@ -88,11 +89,7 @@
     "tymon/jwt-auth": "0.5.*",
     "venturecraft/revisionable": "dev-master",
     "waavi/url-shortener": "dev-master",
-    "yajra/laravel-datatables-oracle": "~8.0",
-    "ext-dom": "*",
-    "ext-libxml": "*",
-    "ext-json": "*",
-    "ext-simplexml": "*"
+    "yajra/laravel-datatables-oracle": "~8.0"
   },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^2.13",

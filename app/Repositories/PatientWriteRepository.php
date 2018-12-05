@@ -106,7 +106,7 @@ class PatientWriteRepository
         } else {
             $patient->no_call_attempts_since_last_success = ($patient->no_call_attempts_since_last_success + 1);
 
-            if ($patient->no_call_attempts_since_last_success % 5 === 0 && optional($record)->no_of_successful_calls < 1) {
+            if (0 === $patient->no_call_attempts_since_last_success % 5 && optional($record)->no_of_successful_calls < 1) {
                 $patient->ccm_status = Patient::UNREACHABLE;
             }
         }
