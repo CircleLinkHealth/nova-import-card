@@ -21,10 +21,9 @@ namespace App;
  * @property string $recording_sid
  * @property int    $recording_duration
  * @property string $recording_url
- * @property string $sequence_number The order in which events are fired. Events are fired in order, but may not be
- *     received in order.
- * @property boolean $in_conference States whether the call is in conference mode
- *
+ * @property string $sequence_number    The order in which events are fired. Events are fired in order, but may not be
+ *                                      received in order.
+ * @property bool   $in_conference      States whether the call is in conference mode
  */
 class TwilioCall extends BaseModel
 {
@@ -46,7 +45,7 @@ class TwilioCall extends BaseModel
         'dial_call_sid',
         'dial_call_duration',
         'dial_call_status',
-        'in_conference'
+        'in_conference',
     ];
     protected $table = 'twilio_calls';
 }
