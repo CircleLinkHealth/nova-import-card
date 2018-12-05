@@ -69,7 +69,7 @@ class Handler extends ExceptionHandler
             }
         }
 
-        if ($this->shouldReport($e) && ! in_array(app()->environment(), [
+        if ($this->shouldReport($e) && ! in_array(config('app.env'), [
                 'local',
                 'development',
                 'dev',
