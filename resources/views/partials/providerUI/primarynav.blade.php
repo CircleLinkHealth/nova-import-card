@@ -45,7 +45,7 @@ if (isset($patient)) {
                 @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && auth()->user()->hasRole('care-center') && isset($patient) && optional($patient)->id && (!isset($noLiveCountTimeTracking)))
                     <li>
                         <time-tracker-call-mode ref="timeTrackerCallMode"
-                                                :twilio-enabled="{{ $patient->primaryPractice->cpmSettings()->twilio_enabled }}"
+                                                :twilio-enabled="{{$patient->primaryPractice ? $patient->primaryPractice->cpmSettings()->twilio_enabled : false}}"
                                                 :patient-id="{{ $patient->id }}"></time-tracker-call-mode>
                     </li>
                 @endif
