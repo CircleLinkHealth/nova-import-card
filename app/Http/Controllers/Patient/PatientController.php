@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers\Patient;
 
 use App\CarePlan;
+use App\CLH\Helpers\StringManipulation;
 use App\Contracts\ReportFormatter;
 use App\Http\Controllers\Controller;
 use App\Practice;
@@ -273,13 +274,18 @@ class PatientController extends Controller
                     ->firstOrFail();
 
         $phoneNumbers = $user->phoneNumbers
-            ->map(function ($p) {
-                return $p->number;
+            ->mapWithKeys(function ($p) {
+                return [$p->type => $p->number];
             });
+
+        $otherNumbers = collect([
+            'Practice' => (new StringManipulation())->formatPhoneNumberE164($user->primaryPractice->outgoing_phone_number),
+        ]);
 
         return view('wpUsers.patient.calls.index')
             ->with('patient', $user)
-            ->with('phoneNumbers', $phoneNumbers);
+            ->with('phoneNumbers', $phoneNumbers)
+            ->with('otherNumbers', $otherNumbers);
     }
 
     /**

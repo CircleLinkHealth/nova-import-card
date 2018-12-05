@@ -20,6 +20,7 @@ namespace App;
  * @property string $recording_url
  * @property string $sequence_number The order in which events are fired. Events are fired in order, but may not be
  *     received in order.
+ * @property boolean $in_conference States whether the call is in conference mode
  *
  */
 class TwilioCall extends BaseModel
@@ -43,6 +44,7 @@ class TwilioCall extends BaseModel
         'sequence_number',
         'dial_call_sid',
         'dial_call_duration',
-        'dial_call_status'
+        'dial_call_status',
+        'in_conference'
     ];
 }
