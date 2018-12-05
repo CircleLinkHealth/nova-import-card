@@ -27,6 +27,8 @@ class CsvEligibilityValidationTest extends TestCase
     {
         $csv = getcwd() . '/Tests/Feature/EligibleCsvFormat/Numbered_Fields_1.csv';
 
+        $this->assertFileExists($csv);
+
         $patients = parseCsvToArray($csv);
 
         $csvPatientList = new CsvPatientList(collect($patients));
@@ -73,6 +75,8 @@ class CsvEligibilityValidationTest extends TestCase
     public function testSingleFieldsPasses()
     {
         $csv = getcwd() . '/Tests/Feature/EligibleCsvFormat/Single_Fields_1.csv';
+
+        $this->assertFileExists($csv);
 
         $patients = parseCsvToArray($csv);
 
