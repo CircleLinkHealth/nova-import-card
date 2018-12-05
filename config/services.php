@@ -24,10 +24,11 @@ return [
     ],
 
     'twilio' => [
-        'sid'           => env('TWILIO_SID'),
-        'token'         => env('TWILIO_TOKEN'),
-        'from'          => env('TWILIO_FROM'),
-        'twiml-app-sid' => env('TWIML_APP_SID'),
+        'sid'              => env('TWILIO_SID'),
+        'token'            => env('TWILIO_TOKEN'),
+        'from'             => env('TWILIO_FROM'),
+        'twiml-app-sid'    => env('TWIML_APP_SID'),
+        'allow-conference' => env('TWIML_ALLOW_CONFERENCE', false),
     ],
 
     'authy' => [

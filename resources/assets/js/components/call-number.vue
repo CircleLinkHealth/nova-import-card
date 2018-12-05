@@ -40,7 +40,7 @@
 
             <br/>
 
-            <div class="row" v-show="isCurrentlyOnPhone">
+            <div class="row" v-if="allowConference" v-show="isCurrentlyOnPhone">
                 <div class="col-sm-12">
                     <button class="btn btn-default"
                             @click="createConference">
@@ -106,6 +106,7 @@
             loader: LoaderComponent
         },
         props: {
+            allowConference: Boolean,
             inboundUserId: String,
             outboundUserId: String,
             patientNumbers: {

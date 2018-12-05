@@ -580,6 +580,10 @@ class TwilioController extends Controller
             $fields['call_status'] = $input['CallStatus'];
         }
 
+        if ( ! empty($input['Direction'])) {
+            $fields['direction'] = $input['Direction'];
+        }
+
         if ( ! empty($input['DialCallSid'])) {
             $fields['dial_call_sid'] = $input['DialCallSid'];
         }
