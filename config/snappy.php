@@ -5,7 +5,7 @@
  */
 
 $debianPdfLib = '/usr/local/bin/wkhtmltopdf';
-$localPdfLib  = base_path('bin/wkhtmltopdf/wkhtmltopdf-amd64');
+$localPdfLib  = base_path('vendor/h4cc/wkhtmltopdf-amd64/bin/wkhtmltopdf-amd64');
 
 if (file_exists($debianPdfLib)) {
     $pdfBinary = $debianPdfLib;
@@ -17,7 +17,7 @@ if (file_exists($debianPdfLib)) {
 
 //Img Binary
 $debianImgLib   = '/usr/local/bin/wkhtmltoimage';
-$composerImgLib = base_path('bin/wkhtmltoimage/wkhtmltoimage-amd64');
+$composerImgLib = base_path('vendor/h4cc/wkhtmltoimage-amd64/bin/wkhtmltoimage-amd64');
 
 if (file_exists($debianImgLib)) {
     $imgBinary = $debianImgLib;
