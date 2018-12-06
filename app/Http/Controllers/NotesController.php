@@ -320,14 +320,13 @@ class NotesController extends Controller
     }
 
     public function show(
-        Request $input,
         $patientId,
         $noteId
     ) {
-        $patient = User::find($patientId);
+        $patient = User::findOrFail($patientId);
         $note    = Note::where('id', $noteId)
             ->with(['call', 'notifications'])
-            ->first();
+            ->firstOrFail();
 
         $this->service->markNoteAsRead(auth()->user(), $note);
 
