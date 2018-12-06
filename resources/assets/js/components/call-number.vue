@@ -12,14 +12,25 @@
                 </div>
 
                 <div v-if="dropdownNumber === 'patientUnlisted'" class="col-sm-12" style="margin-top: 5px">
-                    <label for="patient-unlisted-number">Please input a 10 digit US Phone Number</label>
+                    <label>Please input a 10 digit US Phone Number</label>
                     <div class="input-group">
                         <span class="input-group-addon">+1</span>
-                        <!--maxlength="10" minlength="10"-->
-                        <input id="patient-unlisted-number" name="patien-unlisted-number"
-                               class="form-control" type="tel"
-                               title="10-digit US Phone Number" placeholder="1234567890"
-                               v-model="patientUnlistedNumber" :disabled="onPhone[patientUnlistedNumber]"/>
+
+                        <template v-if="debug">
+                            <input name="patient-unlisted-number"
+                                   class="form-control" type="tel"
+                                   title="10-digit US Phone Number" placeholder="1234567890"
+                                   v-model="patientUnlistedNumber" :disabled="onPhone[patientUnlistedNumber]"/>
+                        </template>
+                        <template v-else>
+                            <input name="patient-unlisted-number"
+                                   maxlength="10" minlength="10"
+                                   class="form-control" type="tel"
+                                   title="10-digit US Phone Number" placeholder="1234567890"
+                                   v-model="patientUnlistedNumber" :disabled="onPhone[patientUnlistedNumber]"/>
+                        </template>
+
+
                     </div>
                 </div>
 
@@ -67,12 +78,23 @@
                     <div class="col-sm-9 no-padding">
                         <div class="input-group">
                             <span class="input-group-addon">+1</span>
-                            <!--maxlength="10" minlength="10"-->
-                            <input id="other-unlisted-number" name="other-number"
-                                   class="form-control" type="tel"
-                                   title="10-digit US Phone Number" placeholder="1234567890"
-                                   v-model="otherUnlistedNumber"
-                                   :disabled="onPhone[otherUnlistedNumber] ||!enableConference"/>
+
+                            <template v-if="debug">
+                                <input name="other-number"
+                                       class="form-control" type="tel"
+                                       title="10-digit US Phone Number" placeholder="1234567890"
+                                       v-model="otherUnlistedNumber"
+                                       :disabled="onPhone[otherUnlistedNumber] ||!enableConference"/>
+                            </template>
+                            <template v-else>
+                                <input name="other-number"
+                                       maxlength="10" minlength="10"
+                                       class="form-control" type="tel"
+                                       title="10-digit US Phone Number" placeholder="1234567890"
+                                       v-model="otherUnlistedNumber"
+                                       :disabled="onPhone[otherUnlistedNumber] ||!enableConference"/>
+                            </template>
+
                         </div>
                     </div>
                     <div class="col-sm-3 no-padding" style="margin-top: 4px; padding-left: 2px">
@@ -106,6 +128,10 @@
             loader: LoaderComponent,
         },
         props: {
+            debug: {
+                type: Boolean,
+                default: false
+            },
             fromNumber: {
                 type: String,
                 default: null
@@ -141,14 +167,19 @@
         },
         computed: {
             invalidPatientUnlistedNumber() {
-                // if (this.dropdownNumber === 'patientUnlisted') {
-                //     return isNaN(this.patientUnlistedNumber.toString()) || this.patientUnlistedNumber.toString().length !== 10;
-                // }
+                if (this.debug) {
+                    return false;
+                }
+                if (this.dropdownNumber === 'patientUnlisted') {
+                    return isNaN(this.patientUnlistedNumber.toString()) || this.patientUnlistedNumber.toString().length !== 10;
+                }
                 return false;
             },
             invalidOtherUnlistedNumber() {
-                // return isNaN(this.otherUnlistedNumber.toString()) || this.otherUnlistedNumber.toString().length !== 10;
-                return false;
+                if (this.debug) {
+                    return false;
+                }
+                return isNaN(this.otherUnlistedNumber.toString()) || this.otherUnlistedNumber.toString().length !== 10;
             },
             selectedPatientNumber() {
                 if (this.dropdownNumber === 'patientUnlisted') {

@@ -50,6 +50,7 @@
                             <div class="col-sm-12">
                                 @if($phoneNumbers->isNotEmpty())
                                     <call-number
+                                            :debug="@json(!in_array(app()->environment(), ['production', 'worker']))"
                                             from-number="{{$patient->primaryProgramPhone()}}"
                                             :allow-conference="@json(config('services.twilio.allow-conference'))"
                                             inbound-user-id="{{$patient->id}}"
