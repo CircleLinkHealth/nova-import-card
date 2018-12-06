@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
         $this->call(RequiredRolesPermissionsSeeder::class);
         $this->call(ChargeableServiceSeeder::class);
         $this->call(ProblemCodeSystemsSeeder::class);
+        $this->call(SaasAccountsSeeder::class);
         $this->call(SnomedToIcd9TestMapTableSeeder::class);
     }
 }
