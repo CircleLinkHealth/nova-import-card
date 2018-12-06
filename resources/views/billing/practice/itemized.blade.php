@@ -15,10 +15,13 @@
             <th>DOB</th>
             <th>Billing Code</th>
             <th>CCM Mins</th>
+            <th>BHI Mins</th>
             <th>Condition I</th>
             <th>Condition I Code</th>
             <th>Condition II</th>
             <th>Condition II Code</th>
+            <th>BHI Problem</th>
+            <th>BHI Code</th>
 
         </tr>
 
@@ -31,10 +34,13 @@
                     <td>{{$data['dob']}}</td>
                     <td>{{$data['billing_codes']}}</td>
                     <td>{{$data['ccm_time']}}</td>
+                    <td>{{$data['bhi_time']}}</td>
                     <td>{{$data['problem1']}}</td>
                     <td>{{$data['problem1_code']}}</td>
                     <td>{{$data['problem2']}}</td>
                     <td>{{$data['problem2_code']}}</td>
+                    <td>{{$data['bhi_problem']}}</td>
+                    <td>{{$data['bhi_code']}}</td>
                 </tr>
             @endforeach
         @endif
