@@ -103,9 +103,13 @@
     export default {
         name: 'call-number',
         components: {
-            loader: LoaderComponent
+            loader: LoaderComponent,
         },
         props: {
+            fromNumber: {
+                type: String,
+                default: null
+            },
             allowConference: Boolean,
             inboundUserId: String,
             outboundUserId: String,
@@ -181,23 +185,43 @@
 
             togglePatientCallMessage: function (number) {
                 const isUnlisted = this.dropdownNumber === 'patientUnlisted';
-                this.toggleCallMessage(number, isUnlisted, true);
+                let makeTheCall = true;
+
+                if (!this.onPhone[number] && isUnlisted && !confirm('This is a new number. Please confirm this is a patient-related call.')) {
+                    makeTheCall = false;
+                }
+
+                if (makeTheCall) {
+                    this.toggleCallMessage(number, isUnlisted, true);
+                }
             },
 
             toggleOtherCallMessage: function (number) {
                 //if not found in otherNumbers, its unlisted
                 const isUnlisted = !Object.values(this.otherNumbers).some(x => x === number);
-                this.toggleCallMessage(number, isUnlisted, false);
+                let makeTheCall = true;
+
+                if (!this.onPhone[number] && isUnlisted && !confirm('This is a new number. Please confirm this is a patient-related call.')) {
+                    makeTheCall = false;
+                }
+
+                if (makeTheCall) {
+                    this.toggleCallMessage(number, isUnlisted, false);
+                }
             },
 
             toggleCallMessage: function (number, isUnlisted, isCallToPatient) {
                 const action = this.onPhone[number] ? "call_ended" : "call_started";
                 this.toggleCall(number, isUnlisted, isCallToPatient);
-                sendRequest(action, {number: {value: number, muted: self.muted[number]}})
-                    .then(() => {
 
-                    })
-                    .catch(err => console.error(err));
+                //inform other pages only about patient calls
+                if (!isCallToPatient) {
+                    sendRequest(action, {number: {value: number, muted: self.muted[number]}})
+                        .then(() => {
+
+                        })
+                        .catch(err => console.error(err));
+                }
             },
 
             // Make an outbound call with the current number,
@@ -218,8 +242,9 @@
                         this.log = 'Adding to call: ' + number;
                         this.axios
                             .post(rootUrl('twilio/call/join-conference'), {
-                                To: number.startsWith('+') ? number : '+1' + number,
-                                IsUnlistedNumber: isUnlisted,
+                                From: this.fromNumber,
+                                To: number.startsWith('+') ? number : ('+1' + number),
+                                IsUnlistedNumber: isUnlisted ? 1 : 0,
                                 IsCallToPatient: isCallToPatient,
                                 InboundUserId: this.inboundUserId,
                                 OutboundUserId: this.outboundUserId,
@@ -239,8 +264,9 @@
                     else {
                         this.log = 'Calling ' + number;
                         this.connection = this.device.connect({
-                            To: number.startsWith('+') ? number : '+1' + number,
-                            IsUnlistedNumber: isUnlisted,
+                            From: this.fromNumber,
+                            To: number.startsWith('+') ? number : ('+1' + number),
+                            IsUnlistedNumber: isUnlisted ? 1 : 0,
                             IsCallToPatient: isCallToPatient,
                             InboundUserId: this.inboundUserId,
                             OutboundUserId: this.outboundUserId,
@@ -275,8 +301,6 @@
                         if (this.connection) {
                             this.connection.disconnect();
                         }
-                        //exit call mode when all calls are disconnected
-                        EventBus.$emit('tracker:call-mode:exit');
                     }
 
                 }
@@ -304,6 +328,12 @@
                     });
             },
             getConferenceInfo: function () {
+
+                if (!this.connection) {
+                    //no need to keep asking for conference if we have no connection
+                    return;
+                }
+
                 this.axios.post(rootUrl(`twilio/call/get-conference-info`),
                     {
                         'inbound_user_id': this.inboundUserId,
@@ -336,6 +366,10 @@
                                         this.$set(this.onPhone, to, false);
                                         this.$set(this.muted, to, false);
                                     }
+                                    else if (participant.status === 'in-progress') {
+                                        //should never actually have to change from false to true, but leaving here for my sanity
+                                        this.$set(this.onPhone, to, true);
+                                    }
                                 }
                             }
                         }
@@ -348,6 +382,10 @@
                             this.enableConference = false;
                         }
 
+                        if (!this.isCurrentlyOnPhone && this.connection != null) {
+                            this.connection.disconnect();
+                        }
+
                         setTimeout(this.getConferenceInfo.bind(this), 1000);
                     })
                     .catch(err => {
@@ -358,7 +396,7 @@
             },
             resetPhoneState: function () {
 
-                if (self.onPhone) {
+                if (self.isCurrentlyOnPhone) {
                     sendRequest("call_ended", {number: {value: self.selectedPatientNumber, muted: false}})
                         .then(() => {
 
@@ -381,6 +419,8 @@
                         });
 
                         self.device.on('disconnect', () => {
+                            //exit call mode when all calls are disconnected
+                            EventBus.$emit('tracker:call-mode:exit');
                             console.log('twilio device: disconnect');
                             self.resetPhoneState();
                             self.connection = null;
@@ -422,7 +462,7 @@
                     }
                     else {
                         status = self.device.status();
-                        if (status === "ready" && self.onPhone) {
+                        if (status === "ready" && self.isCurrentlyOnPhone) {
                             number = self.selectedPatientNumber;
                         }
                     }

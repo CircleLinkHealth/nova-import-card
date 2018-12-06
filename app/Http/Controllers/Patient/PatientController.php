@@ -76,7 +76,7 @@ class PatientController extends Controller
                     ->orWhere('id', 'like', "%${term}%")
                     ->orWhereHas('patientInfo', function ($query) use ($term) {
                         $query->where('mrn_number', 'like', "%${term}%")
-                          ->orWhere('birth_date', 'like', "%${term}%");
+                            ->orWhere('birth_date', 'like', "%${term}%");
                     })
                     ->orWhereHas('phoneNumbers', function ($query) use ($term) {
                         $query->where('number', 'like', "%${term}%");

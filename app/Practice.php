@@ -129,6 +129,11 @@ class Practice extends BaseModel implements HasMedia
             : $this->settings->first();
     }
 
+    public function isTwilioEnabled() {
+        $settings = $this->cpmSettings();
+        return boolval($settings->twilio_enabled);
+    }
+
     public function ehr()
     {
         return $this->belongsTo(Ehr::class);
