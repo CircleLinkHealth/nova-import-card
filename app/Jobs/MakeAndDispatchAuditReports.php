@@ -98,5 +98,7 @@ class MakeAndDispatchAuditReports implements ShouldQueue
 
             return $location;
         });
+        
+        \File::delete($path);
     }
 }
