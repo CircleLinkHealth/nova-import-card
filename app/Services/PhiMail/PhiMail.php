@@ -21,8 +21,9 @@ class PhiMail implements DirectMail
      */
     private $connector;
     
-    public function __construct(IncomingMessageHandler $incomingMessageHandler)
+    public function __construct(PhiMailConnector $connector, IncomingMessageHandler $incomingMessageHandler)
     {
+        $this->connector = $connector;
         $this->incomingMessageHandler = $incomingMessageHandler;
     }
     
@@ -51,14 +52,6 @@ class PhiMail implements DirectMail
      */
     public function receive()
     {
-        if ( ! $this->initPhiMailConnection()) {
-            return false;
-        }
-        
-        if ( ! $this->connector) {
-            return false;
-        }
-        
         try {
             while ($message = $this->connector->check()) {
                 if ( ! $message->isMail()) {
@@ -153,10 +146,6 @@ class PhiMail implements DirectMail
         $ccdaAttachmentPath = null,
         User $patient = null
     ) {
-        if ( ! $this->initPhiMailConnection()) {
-            return false;
-        }
-        
         try {
             // After authentication, the server has a blank outgoing message
             // template. Begin building this message by adding a recipient.
@@ -223,47 +212,6 @@ class PhiMail implements DirectMail
         Log::critical($traceString);
         
         throw $e;
-    }
-    
-    /**
-     * @return bool
-     * @throws \Exception
-     */
-    private function initPhiMailConnection()
-    {
-        try {
-            $phiMailUser = config('services.emr-direct.user');
-            $phiMailPass = config('services.emr-direct.password');
-            
-            // Use the following command to enable client TLS authentication, if
-            // required. The key file referenced should contain the following
-            // PEM data concatenated into one file:
-            //   <your_private_key.pem>
-            //   <your_client_certificate.pem>
-            //   <intermediate_CA_certificate.pem>
-            //   <root_CA_certificate.pem>
-            //
-            PhiMailConnector::setClientCertificate(
-                base_path().config('services.emr-direct.conc-keys-pem-path'),
-                config('services.emr-direct.pass-phrase')
-            );
-            
-            // This command is recommended for added security to set the trusted
-            // SSL certificate or trust anchor for the phiMail server.
-            PhiMailConnector::setServerCertificate(base_path().config('services.emr-direct.server-cert-pem-path'));
-            
-            $phiMailServer = config('services.emr-direct.mail-server');
-            $phiMailPort   = config('services.emr-direct.port');
-            
-            $this->connector = new PhiMailConnector($phiMailServer, $phiMailPort);
-            $this->connector->authenticateUser($phiMailUser, $phiMailPass);
-            
-            return true;
-        } catch (\Exception $e) {
-            $this->handleException($e);
-        }
-        
-        return false;
     }
     
     /**
