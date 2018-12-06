@@ -93,12 +93,13 @@ if ( ! function_exists('sendSlackMessage')) {
     /**
      * Sends a message to Slack.
      *
-     * @param $to
-     * @param $message
+     * @param string $to      - slack channel (should start with '#')
+     * @param string $message
+     * @param bool   $force   - in case you really want the message to go to slack (testing | debugging)
      */
-    function sendSlackMessage($to, $message)
+    function sendSlackMessage($to, $message, $force = false)
     {
-        if ( ! in_array(app()->environment(), ['production', 'worker'])) {
+        if ( ! $force && ! in_array(app()->environment(), ['production', 'worker'])) {
             return;
         }
         
@@ -1201,5 +1202,12 @@ if ( ! function_exists('tryDropForeignKey')) {
         }
 
         return true;
+    }
+}
+
+if ( ! function_exists('isProductionEnv')) {
+    function isProductionEnv()
+    {
+        return in_array(config('app.env'), ['production', 'worker']);
     }
 }

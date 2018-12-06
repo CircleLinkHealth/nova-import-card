@@ -109,14 +109,19 @@ class PatientController extends Controller
             ->where('id', $patientId)
             ->firstOrFail();
 
-        $phoneNumbers = $user->phoneNumbers
-            ->map(function ($p) {
-                return $p->number;
-            });
+        $phoneNumbers = $user->phoneNumbers->mapWithKeys(function ($p) {
+            return [$p->type => $p->number];
+        });
+
+        $otherNumbers = collect();
+        if ($user->primaryPractice && $user->primaryPractice->outgoing_phone_number) {
+            $otherNumbers->put('Practice', formatPhoneNumberE164($user->primaryPractice->outgoing_phone_number));
+        }
 
         return view('wpUsers.patient.calls.index')
             ->with('patient', $user)
-            ->with('phoneNumbers', $phoneNumbers);
+            ->with('phoneNumbers', $phoneNumbers)
+            ->with('otherNumbers', $otherNumbers);
     }
 
     /**
@@ -232,6 +237,7 @@ class PatientController extends Controller
             // program
             $program = Practice::find($wpUser->program_id);
         }
+
         // program view
 
         return view('wpUsers.patient.notes', [
@@ -464,7 +470,7 @@ class PatientController extends Controller
                                                "description:'".str_replace(
                                                    '_',
                                                    ' ',
-                        $observation->description
+                                                   $observation->description
                                                )."', ".
                                                "obs_value:'".$observation->obs_value."', ".
                                                "dm_alert_level:'".$alertLevel."', ".

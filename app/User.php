@@ -2129,6 +2129,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->primaryPractice->display_name;
     }
 
+    public function primaryProgramPhoneE164()
+    {
+        return formatPhoneNumberE164(optional($this->primaryPractice)->outgoing_phone_number);
+    }
+
     public function problemsWithIcd10Code()
     {
         $billableProblems = new Collection();
