@@ -1150,8 +1150,9 @@ if ( ! function_exists('tryDropForeignKey')) {
     }
 }
 
-if (! function_exists('isProductionEnv')) {
-    function isProductionEnv() {
+if ( ! function_exists('isProductionEnv')) {
+    function isProductionEnv()
+    {
         return app()->environment(['production', 'worker']);
     }
 }
