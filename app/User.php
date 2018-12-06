@@ -321,7 +321,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         'zip',
         'timezone',
         'is_auto_generated',
-        'approve_own_care_plans',
         'program_id',
         'remember_token',
         'last_login',
@@ -2009,7 +2008,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     ['type', '=', CarePerson::BILLING_PROVIDER],
                     ['member_user_id', '=', $this->id],
                 ])
-                    ->when(!$approveOwnCarePlans, function ($q) use ($approveOwnCarePlans) {
+                    ->when(!$approveOwnCarePlans, function ($q){
                         $q->orWhere(function ($q) {
                             $q->whereHas('user', function ($q) {
                                 $q->whereHas('forwardAlertsTo', function ($q) {

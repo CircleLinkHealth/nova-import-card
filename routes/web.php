@@ -854,7 +854,7 @@ Route::group(['middleware' => 'auth'], function () {
         ])->middleware('permission:legacy-bhi-consent-decision.create');
     });
 
-    Route::get('update-approve-own-care-plans', [
+    Route::post('update-approve-own-care-plans', [
         'uses' => 'ProviderController@updateApproveOwnCarePlan',
         'as'   => 'provider.update-approve-own',
     ])->middleware('permission:care-plan-approve');

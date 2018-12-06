@@ -109,11 +109,8 @@ class ProviderController extends Controller
             return redirect()->back()->withErrors(['errors' => 'Please log in as a Provider.']);
         }
 
-        $own = $user->providerInfo->approve_own_care_plans;
+        $user->providerInfo->approve_own_care_plans = ! $user->providerInfo->approve_own_care_plans;
 
-        $user->providerInfo->approve_own_care_plans = $own
-            ? 0
-            : 1;
         $user->providerInfo->save();
 
         return redirect()->route('patients.dashboard');

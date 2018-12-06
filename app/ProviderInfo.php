@@ -58,6 +58,7 @@ class ProviderInfo extends \App\BaseModel
         'prefix',
         'npi_number',
         'specialty',
+        'approve_own_care_plans',
     ];
     /**
      * The primary key for the model.
