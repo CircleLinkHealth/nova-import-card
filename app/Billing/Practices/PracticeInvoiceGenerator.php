@@ -99,8 +99,8 @@ class PracticeInvoiceGenerator
                     $query->whereHas('chargeableServices', function ($query) use ($chargeableServiceId) {
                         $query->where('id', $chargeableServiceId);
                     })
-                                    ->where('month_year', $this->month->toDateString())
-                                    ->where('approved', '=', true);
+                        ->where('month_year', $this->month->toDateString())
+                        ->where('approved', '=', true);
                 })
                 ->count() ?? 0;
         } else {
@@ -108,7 +108,7 @@ class PracticeInvoiceGenerator
                 ->ofPractice($this->practice->id)
                 ->whereHas('patientSummaries', function ($query) {
                     $query->where('month_year', $this->month->toDateString())
-                                    ->where('approved', '=', true);
+                        ->where('approved', '=', true);
                 })
                 ->count() ?? 0;
         }
@@ -149,7 +149,7 @@ class PracticeInvoiceGenerator
             ->whereProgramId($this->practice->id)
             ->whereHas('patientSummaries', function ($query) {
                 $query->where('month_year', $this->month->toDateString())
-                                ->where('approved', '=', true);
+                    ->where('approved', '=', true);
             })
             ->chunk(500, function ($patients) use (&$data) {
                 foreach ($patients as $u) {
