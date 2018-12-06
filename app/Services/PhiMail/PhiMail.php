@@ -71,47 +71,47 @@ class PhiMail implements DirectMail
                     // Note: this is NOT the same method used to acknowledge
                     // regular messages.
                     $this->connector->acknowledgeStatus();
-                }
-
-                // If you are checking messages for an address group,
-                // $message->recipient will contain the address in that
-                // group to which this message should be delivered.
+                } else {
+                    // If you are checking messages for an address group,
+                    // $message->recipient will contain the address in that
+                    // group to which this message should be delivered.
 //                Log::critical("A new message is available for " . $message->recipient . "\n");
 //                Log::critical("from " . $message->sender . "; id "
 //                    . $message->messageId . "; #att=" . $message->numAttachments
 //                    . "\n");
-
-                $dm = $this
-                    ->incomingMessageHandler
-                    ->createNewDirectMessage($message);
-
-                for ($i = 0; $i <= $message->numAttachments; ++$i) {
-                    // Get content for part i of the current message.
-                    $showRes = $this->connector->show($i);
-
-                    $this
+    
+                    $dm = $this
                         ->incomingMessageHandler
-                        ->handleMessageAttachment($dm, $showRes);
-
-                    // Store the list of attachments and associated info. This info is only
-                    // included with message part 0.
-                    if (0 == $i) {
+                        ->createNewDirectMessage($message);
+    
+                    for ($i = 0; $i <= $message->numAttachments; ++$i) {
+                        // Get content for part i of the current message.
+                        $showRes = $this->connector->show($i);
+        
                         $this
                             ->incomingMessageHandler
-                            ->storeMessageSubject($dm, $showRes);
+                            ->handleMessageAttachment($dm, $showRes);
+        
+                        // Store the list of attachments and associated info. This info is only
+                        // included with message part 0.
+                        if (0 == $i) {
+                            $this
+                                ->incomingMessageHandler
+                                ->storeMessageSubject($dm, $showRes);
+                        }
                     }
-                }
-                // This signals the server that the message can be safely removed from the queue
-                // and should only be sent after all required parts of the message have been
-                // retrieved and processed.:log
-                $this->connector->acknowledgeMessage();
-
-                if ($message->numAttachments > 0) {
-                    $this->notifyAdmins($dm);
-
-                    $message = "Checked EMR Direct Mailbox. There where {$message->numAttachments} attachment(s). \n";
-
-                    sendSlackMessage('#background-tasks', $message);
+                    // This signals the server that the message can be safely removed from the queue
+                    // and should only be sent after all required parts of the message have been
+                    // retrieved and processed.:log
+                    $this->connector->acknowledgeMessage();
+    
+                    if ($message->numAttachments > 0) {
+                        $this->notifyAdmins($dm);
+        
+                        $message = "Checked EMR Direct Mailbox. There where {$message->numAttachments} attachment(s). \n";
+        
+                        sendSlackMessage('#background-tasks', $message);
+                    }
                 }
             }
         } catch (\Exception $e) {
