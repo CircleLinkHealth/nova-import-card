@@ -270,6 +270,13 @@ class Practice extends BaseModel implements HasMedia
         return array_map('trim', explode(',', $this->weekly_report_recipients));
     }
 
+    public function isTwilioEnabled()
+    {
+        $settings = $this->cpmSettings();
+
+        return boolval($settings->twilio_enabled);
+    }
+
     public function lead()
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -357,12 +364,5 @@ class Practice extends BaseModel implements HasMedia
         return $this->belongsToMany(User::class, 'practice_role_user', 'program_id', 'user_id')
             ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports')
             ->withTimestamps();
-    }
-
-    public function isTwilioEnabled()
-    {
-        $settings = $this->cpmSettings();
-
-        return boolval($settings->twilio_enabled);
     }
 }
