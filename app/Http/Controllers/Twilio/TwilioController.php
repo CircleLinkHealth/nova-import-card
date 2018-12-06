@@ -6,35 +6,28 @@
 
 namespace App\Http\Controllers\Twilio;
 
-use App\CLH\Helpers\StringManipulation;
+use App\Contracts\Services\TwilioClientable;
 use App\Enrollee;
 use App\Http\Controllers\Controller;
 use App\TwilioCall;
 use App\TwilioRawLog;
-use App\User;
 use Carbon\Carbon;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Http\Request;
 use SimpleXMLElement;
 use Twilio\Exceptions\TwimlException;
-use Twilio\Jwt\ClientToken;
-use Twilio\Rest\Client;
 use Twilio\Twiml;
 
 class TwilioController extends Controller
 {
     const CLIENT_ANONYMOUS = 'client:Anonymous';
-    private $capability;
-
     private $client;
     private $token;
 
-    public function __construct()
+    public function __construct(TwilioClientable $twilioClientService)
     {
-        $this->client     = new Client(config('services.twilio.sid'), config('services.twilio.token'));
-        $this->capability = new ClientToken(config('services.twilio.sid'), config('services.twilio.token'));
-        $this->capability->allowClientOutgoing(config('services.twilio.twiml-app-sid'));
-        $this->token = $this->capability->generateToken();
+        $this->client = $twilioClientService->getClient();
+        $this->token  = $twilioClientService->generateCapabilityToken();
     }
 
     /**
@@ -77,7 +70,7 @@ class TwilioController extends Controller
                     $response->hangup();
                 } else {
                     $call = TwilioCall::where('call_sid', '=', $request->input('ParentCallSid'))
-                        ->first();
+                                      ->first();
                     if ( ! $call) {
                         $response->hangup();
                     } else {
@@ -85,7 +78,7 @@ class TwilioController extends Controller
                         $parentCallStatus         = $request->input('CallStatus');
 
                         if ($call->in_conference && $isCallUpdateToConference && 'in-progress' === $parentCallStatus) {
-                            $conferenceName = $call->inbound_user_id.'_'.$call->outbound_user_id;
+                            $conferenceName = $call->inbound_user_id . '_' . $call->outbound_user_id;
                             $dial           = $response->dial();
                             $dial->conference($conferenceName, [
                                 'endConferenceOnExit' => false,
@@ -102,7 +95,7 @@ class TwilioController extends Controller
                     $response->hangup();
                 } else {
                     if ($call->in_conference) {
-                        $conferenceName = $call->inbound_user_id.'_'.$call->outbound_user_id;
+                        $conferenceName = $call->inbound_user_id . '_' . $call->outbound_user_id;
                         $dial           = $response->dial();
                         $dial->conference($conferenceName, [
                             'endConferenceOnExit' => true,
@@ -153,7 +146,7 @@ class TwilioController extends Controller
         }
 
         $this->client->calls($input['CallSid'])
-            ->update(['status' => 'completed']);
+                     ->update(['status' => 'completed']);
 
         return response()->json([]);
     }
@@ -181,28 +174,26 @@ class TwilioController extends Controller
         }
 
         $confs = $this->client->conferences->read([
-            'FriendlyName' => $input['inbound_user_id'].'_'.$input['outbound_user_id'],
+            'FriendlyName' => $input['inbound_user_id'] . '_' . $input['outbound_user_id'],
         ]);
 
         if (empty($confs)) {
             return response()->json(['errors' => ['not found']]);
         }
 
-        $conference   = $confs[0];
-        $participants = $this->client->conferences($conference->sid)
-            ->participants
-            ->read();
+        $conference = $confs[0];
 
-        $participantsInfo = [];
-        foreach ($participants as $participant) {
-            $call               = $this->client->calls($participant->callSid)->fetch();
-            $participantsSids[] = [
-                'from'     => $call->from,
-                'to'       => $call->to,
-                'call_sid' => $participant->callSid,
-                'status'   => $call->status,
-            ];
-        }
+        $participantsInfo = collect($this->client->conferences($conference->sid)->participants->read())
+            ->map(function ($participant) {
+                $call = $this->client->calls($participant->callSid)->fetch();
+
+                return [
+                    'from'     => $call->from,
+                    'to'       => $call->to,
+                    'call_sid' => $participant->callSid,
+                    'status'   => $call->status,
+                ];
+            });
 
         return response()->json(
             [
@@ -224,15 +215,15 @@ class TwilioController extends Controller
     {
         $input = $request->all();
 
-        $isProduction = in_array(app()->environment(), ['production', 'worker']);
+        $isProduction = isProductionEnv();
 
         //use default From number if we are not on production
         if ( ! $isProduction || empty($input['From']) || TwilioController::CLIENT_ANONYMOUS === $input['From']) {
             $input['From'] = config('services.twilio')['from'];
         }
 
-        $input['From'] = (new StringManipulation())->formatPhoneNumberE164($input['From']);
-        //$input['To'] = (new StringManipulation())->formatPhoneNumberE164($input['To']);
+        $input['From'] = formatPhoneNumberE164($input['From']);
+        //$input['To'] = formatPhoneNumberE164($input['To']);
 
         //why do I have to do this?
         if ( ! empty($input['IsUnlistedNumber'])) {
@@ -241,10 +232,16 @@ class TwilioController extends Controller
                 : false;
         }
 
+        if ( ! empty($input['IsCallToPatient'])) {
+            $input['IsCallToPatient'] = '1' === $input['IsCallToPatient']
+                ? true
+                : false;
+        }
+
         $validation = \Validator::make($input, [
             //could be the practice outgoing phone number (in case of enrollment)
-            'From' => 'required|phone:AUTO,US',
-            'To'   => [
+            'From'             => 'required|phone:AUTO,US',
+            'To'               => [
                 'required',
                 $isProduction
                     ? Rule::phone()->detect()->country('US')
@@ -253,7 +250,7 @@ class TwilioController extends Controller
             'InboundUserId'    => 'required',
             'OutboundUserId'   => 'required',
             'IsUnlistedNumber' => 'nullable|boolean',
-            'IsCallToPatient'  => '',
+            'IsCallToPatient'  => 'nullable|boolean',
         ]);
 
         if ($validation->fails()) {
@@ -261,7 +258,7 @@ class TwilioController extends Controller
         }
 
         $confs = $this->client->conferences->read([
-            'FriendlyName' => $input['InboundUserId'].'_'.$input['OutboundUserId'],
+            'FriendlyName' => $input['InboundUserId'] . '_' . $input['OutboundUserId'],
             'Status'       => 'in-progress',
         ]);
 
@@ -303,13 +300,13 @@ class TwilioController extends Controller
         }
 
         $dbCall = TwilioCall::where('inbound_user_id', '=', $input['inbound_user_id'])
-            ->where('outbound_user_id', '=', $input['outbound_user_id'])
-            ->where(function ($q) {
-                $q->where('call_status', '=', 'ringing')
-                                    ->orWhere('call_status', '=', 'in-progress');
-            })
-            ->orderBy('updated_at', 'desc')
-            ->first();
+                            ->where('outbound_user_id', '=', $input['outbound_user_id'])
+                            ->where(function ($q) {
+                                $q->where('call_status', '=', 'ringing')
+                                  ->orWhere('call_status', '=', 'in-progress');
+                            })
+                            ->orderBy('updated_at', 'desc')
+                            ->first();
 
         if ( ! $dbCall) {
             return response()->json(['errors' => ['could not find active call with user ids supplied']]);
@@ -323,7 +320,7 @@ class TwilioController extends Controller
             $dialCallSid = $calls[0]->sid;
 
             $this->client->calls($dialCallSid)
-                ->update(
+                         ->update(
                              [
                                  'method' => 'POST',
                                  'url'    => route('twilio.call.dial.action'),
@@ -363,15 +360,15 @@ class TwilioController extends Controller
 
         $input = $request->all();
 
-        $isProduction = in_array(app()->environment(), ['production', 'worker']);
+        $isProduction = isProductionEnv();
 
         //use default From number if we are not on production
         if ( ! $isProduction || empty($input['From']) || TwilioController::CLIENT_ANONYMOUS === $input['From']) {
             $input['From'] = config('services.twilio')['from'];
         }
 
-        $input['From'] = (new StringManipulation())->formatPhoneNumberE164($input['From']);
-        //$input['To'] = (new StringManipulation())->formatPhoneNumberE164($input['To']);
+        $input['From'] = formatPhoneNumberE164($input['From']);
+        //$input['To'] = formatPhoneNumberE164($input['To']);
 
         //why do I have to do this?
         if ( ! empty($input['IsUnlistedNumber'])) {
@@ -380,10 +377,16 @@ class TwilioController extends Controller
                 : false;
         }
 
+        if ( ! empty($input['IsCallToPatient'])) {
+            $input['IsCallToPatient'] = '1' === $input['IsCallToPatient']
+                ? true
+                : false;
+        }
+
         $validation = \Validator::make($input, [
             //could be the practice outgoing phone number (in case of enrollment)
-            'From' => 'required|phone:AUTO,US',
-            'To'   => [
+            'From'             => 'required|phone:AUTO,US',
+            'To'               => [
                 'required',
                 $isProduction
                     ? Rule::phone()->detect()->country('US')
@@ -392,7 +395,7 @@ class TwilioController extends Controller
             'InboundUserId'    => 'required',
             'OutboundUserId'   => 'required',
             'IsUnlistedNumber' => 'nullable|boolean',
-            'IsCallToPatient'  => '',
+            'IsCallToPatient'  => 'nullable|boolean',
         ]);
 
         if ($validation->fails()) {
@@ -421,17 +424,15 @@ class TwilioController extends Controller
 
     public function sendTestSMS()
     {
-        $client = new Client($_ENV['TWILIO_SID'], $_ENV['TWILIO_TOKEN']);
-
-        $smsQueue = Enrollee::toSMS()->get();
+        $smsQueue = Enrollee::toSMS()->with('provider')->get();
 
         foreach ($smsQueue as $recipient) {
-            $provider_name = User::find($recipient->provider_id)->getFullName();
+            $provider_name = optional($recipient->provider)->getProviderFullNameAttribute();
 
             if (null == $recipient->invite_sent_at) {
                 //first go, make invite code:
 
-                $recipient->invite_code     = rand(183, 982).substr(uniqid(), -3);
+                $recipient->invite_code     = rand(183, 982) . substr(uniqid(), -3);
                 $link                       = url("join/$recipient->invite_code");
                 $recipient->invite_sent_at  = Carbon::now()->toDateTimeString();
                 $recipient->last_attempt_at = Carbon::now()->toDateTimeString();
@@ -440,7 +441,7 @@ class TwilioController extends Controller
 
                 $message = "Dr. $provider_name has invited you to their new wellness program! Please enroll here: $link";
 
-                $client->account->messages->create(
+                $this->client->account->messages->create(
                 // the number we are sending to - Any phone number
                     $recipient->cell_phone,
                     [
@@ -459,7 +460,7 @@ class TwilioController extends Controller
 
                 $message = "Dr. $provider_name hasn’t heard from you regarding their new wellness program. $sad_face_emoji Please enroll here: $link";
 
-                $client->account->messages->create(
+                $this->client->account->messages->create(
                 // the number we are sending to - Any phone number
                     $recipient->cell_phone,
                     [
@@ -568,7 +569,7 @@ class TwilioController extends Controller
                 $fields
             );
         } catch (\Throwable $e) {
-            \Log::critical('Exception while storing twilio log: '.$e->getMessage());
+            \Log::critical('Exception while storing twilio log: ' . $e->getMessage());
         }
     }
 
@@ -621,7 +622,7 @@ class TwilioController extends Controller
                 $fields
             );
         } catch (\Throwable $e) {
-            \Log::critical('Exception while storing twilio log: '.$e->getMessage());
+            \Log::critical('Exception while storing twilio log: ' . $e->getMessage());
         }
     }
 
@@ -639,7 +640,7 @@ class TwilioController extends Controller
                     : $type,
             ]);
         } catch (\Throwable $e) {
-            \Log::critical('Exception while storing twilio raw log: '.$e->getMessage());
+            \Log::critical('Exception while storing twilio raw log: ' . $e->getMessage());
         }
     }
 
@@ -651,7 +652,7 @@ class TwilioController extends Controller
         $xml = null
     ) {
         if (is_null($xml)) {
-            $xml = new SimpleXMLElement('<'.$rootElement.'/>');
+            $xml = new SimpleXMLElement('<' . $rootElement . '/>');
         }
 
         foreach ($vars as $key => $value) {

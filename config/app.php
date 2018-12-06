@@ -10,6 +10,7 @@ use App\Providers\EmailArrayValidatorServiceProvider;
 use App\Providers\FaxServiceProvider;
 use App\Providers\GoogleDriveServiceProvider;
 use App\Providers\ObserversServiceProvider;
+use App\Providers\TwilioClientServiceProvider;
 use App\Providers\ViewComposerServiceProvider;
 use App\View\Composers\ProviderUITimerComposer;
 use App\View\Composers\SAAS\Admin\ManageInternalUser;
@@ -230,6 +231,7 @@ return [
         LynX39\LaraPdfMerger\PdfMergerServiceProvider::class,
         AuthyServiceProvider::class,
         PragmaRX\Health\ServiceProvider::class,
+        TwilioClientServiceProvider::class
     ],
 
     /*

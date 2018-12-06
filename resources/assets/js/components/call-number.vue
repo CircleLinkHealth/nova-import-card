@@ -272,14 +272,7 @@
                     if (isCurrentlyOnPhone) {
                         this.log = 'Adding to call: ' + number;
                         this.axios
-                            .post(rootUrl('twilio/call/join-conference'), {
-                                From: this.fromNumber,
-                                To: number.startsWith('+') ? number : ('+1' + number),
-                                IsUnlistedNumber: isUnlisted ? 1 : 0,
-                                IsCallToPatient: isCallToPatient,
-                                InboundUserId: this.inboundUserId,
-                                OutboundUserId: this.outboundUserId,
-                            })
+                            .post(rootUrl('twilio/call/join-conference'), this.getTwimlAppRequest(number, isUnlisted, isCallToPatient))
                             .then(resp => {
                                 console.log(resp.data);
                                 if (resp && resp.data && resp.data.call_sid) {
@@ -294,14 +287,7 @@
                     }
                     else {
                         this.log = 'Calling ' + number;
-                        this.connection = this.device.connect({
-                            From: this.fromNumber,
-                            To: number.startsWith('+') ? number : ('+1' + number),
-                            IsUnlistedNumber: isUnlisted ? 1 : 0,
-                            IsCallToPatient: isCallToPatient,
-                            InboundUserId: this.inboundUserId,
-                            OutboundUserId: this.outboundUserId,
-                        });
+                        this.connection = this.device.connect(this.getTwimlAppRequest(number, isUnlisted, isCallToPatient));
                     }
                     EventBus.$emit('tracker:call-mode:enter');
 
@@ -335,6 +321,22 @@
                     }
 
                 }
+            },
+            getTwimlAppRequest: function (number, isUnlisted, isCallToPatient) {
+
+                //if calling a practice, the fromNumber will be practice's phone number,
+                //the same as the 'to' number. so don't send From and will be decided on server
+                const to = number.startsWith('+') ? number : ('+1' + number);
+                const from = this.fromNumber !== to ? this.fromNumber : undefined;
+
+                return {
+                    From: from,
+                    To: to,
+                    IsUnlistedNumber: isUnlisted ? 1 : 0,
+                    IsCallToPatient: isCallToPatient ? 1 : 0,
+                    InboundUserId: this.inboundUserId,
+                    OutboundUserId: this.outboundUserId,
+                };
             },
             createConference: function () {
                 this.waitingForConference = true;
