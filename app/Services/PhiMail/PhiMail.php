@@ -7,20 +7,24 @@
 namespace App\Services\PhiMail;
 
 use App\Contracts\DirectMail;
-use App\Jobs\ImportCcda;
-use App\Models\MedicalRecords\Ccda;
 use App\User;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
 class PhiMail implements DirectMail
 {
-    protected $ccdas = [];
-    
+    /**
+     * @var IncomingMessageHandler
+     */
+    protected $incomingMessageHandler;
     /**
      * @var PhiMailConnector
      */
     private $connector;
+    
+    public function __construct(IncomingMessageHandler $incomingMessageHandler)
+    {
+        $this->incomingMessageHandler = $incomingMessageHandler;
+    }
     
     public function __destruct()
     {
@@ -41,6 +45,10 @@ class PhiMail implements DirectMail
         return file_get_contents($filename);
     }
     
+    /**
+     * @return bool
+     * @throws \Exception
+     */
     public function receive()
     {
         if ( ! $this->initPhiMailConnection()) {
@@ -52,14 +60,7 @@ class PhiMail implements DirectMail
         }
         
         try {
-            while (true) {
-                // check next message or status update
-                $message = $this->connector->check();
-                
-                if (null == $message) {
-                    break;
-                }
-                
+            while ($message = $this->connector->check()) {
                 if ( ! $message->isMail()) {
                     // Process a status update for a previously sent message.
 //                        echo ("Status message for id = " . $message->messageId . "\n");
@@ -72,7 +73,9 @@ class PhiMail implements DirectMail
                         // See the API documentation for information about
                         // status notification types and their meanings.
                         
-                        Log::error("DirectMail Message Fail. Message ID: `$message->messageId`. Logged from:".__METHOD__.':'.__LINE__);
+                        Log::error(
+                            "DirectMail Message Fail. Message ID: `$message->messageId`. Logged from:".__METHOD__.':'.__LINE__
+                        );
                     }
                     
                     // This signals the server that the status update can be
@@ -91,47 +94,24 @@ class PhiMail implements DirectMail
 //                    . $message->messageId . "; #att=" . $message->numAttachments
 //                    . "\n");
                 
+                $dm = $this
+                    ->incomingMessageHandler
+                    ->createNewDirectMessage($message);
+                
                 for ($i = 0; $i <= $message->numAttachments; ++$i) {
                     // Get content for part i of the current message.
                     $showRes = $this->connector->show($i);
-
-//                    Log::critical("MimeType = " . $showRes->mimeType
-//                        . "; length=" . $showRes->length . "\n");
                     
-                    // List all the headers. Headers are set by the
-                    // sender and may include Subject, Date, additional
-                    // addresses to which the message was sent, etc.
-                    // Do NOT use the To: header to determine the address
-                    // to which this message should be delivered
-                    // internally; use $messagerecipient instead.
-//                    foreach ($showRes->headers as $header) {
-//                        Log::critical("Header: " . $header . "\n");
-//                    }
+                    $this
+                        ->incomingMessageHandler
+                        ->handleMessageAttachment($dm, $showRes);
                     
-                    // Process the content; for this example text data
-                    // is echoed to the console and non-text data is
-                    // written to files.
-                    
-                    if (str_contains($showRes->mimeType, 'plain')) {
-                        Log::info('Plain Mime Type');
-                        self::writeDataFile(storage_path(Carbon::now()->toAtomString().'.txt'), $showRes->data);
-                    } elseif (str_contains($showRes->mimeType, 'xml')) {
-                        Log::info('XML Mime Type');
-                        self::writeDataFile(storage_path(Carbon::now()->toAtomString().'.xml'), $showRes->data);
-                        $this->importCcd($showRes);
-                    } else {
-                        Log::info('Other Mime Type');
-                        self::writeDataFile(storage_path(Carbon::now()->toAtomString().'.txt'), $showRes->data);
-                    }
-                    
-                    // Display the list of attachments and associated info. This info is only
+                    // Store the list of attachments and associated info. This info is only
                     // included with message part 0.
-                    for ($k = 0; 0 == $i && $k < $message->numAttachments; ++$k) {
-                        Log::info('Attachment '.($k + 1)
-                                  .': '.$showRes->attachmentInfo[$k]->mimeType
-                                  .' fn:'.$showRes->attachmentInfo[$k]->filename
-                                  .' Desc:'.$showRes->attachmentInfo[$k]->description
-                                  ."\n");
+                    if (0 == $i) {
+                        $this
+                            ->incomingMessageHandler
+                            ->storeMessageSubject($dm, $showRes);
                     }
                 }
                 // This signals the server that the message can be safely removed from the queue
@@ -156,6 +136,16 @@ class PhiMail implements DirectMail
         }
     }
     
+    /**
+     * @param $outboundRecipient
+     * @param $binaryAttachmentFilePath
+     * @param $binaryAttachmentFileName
+     * @param null $ccdaAttachmentPath
+     * @param User|null $patient
+     *
+     * @return SendResult[]|bool
+     * @throws \Exception
+     */
     public function send(
         $outboundRecipient,
         $binaryAttachmentFilePath,
@@ -207,13 +197,15 @@ class PhiMail implements DirectMail
             // If more than one recipient was specified, then each would have an entry.
             $srList = $this->connector->send();
             
-            //Report to Slack
-            foreach ($srList as $sr) {
-                $status = $sr->succeeded
-                    ? " succeeded id={$sr->messageId}"
-                    : "failed err={$sr->errorText}";
-                
-                sendSlackMessage('#background-tasks', "Send to {$sr->recipient}: ${status} \n");
+            if (app()->environment('worker')) {
+                //Report to Slack
+                foreach ($srList as $sr) {
+                    $status = $sr->succeeded
+                        ? " succeeded id={$sr->messageId}"
+                        : "failed err={$sr->errorText}";
+                    
+                    sendSlackMessage('#background-tasks', "Send to {$sr->recipient}: ${status} \n");
+                }
             }
         } catch (\Exception $e) {
             $this->handleException($e);
@@ -229,21 +221,14 @@ class PhiMail implements DirectMail
         
         Log::critical($message);
         Log::critical($traceString);
-    }
-    
-    private function importCcd(
-        $attachment
-    ) {
-        $this->ccda = Ccda::create([
-                                       'user_id'   => null,
-                                       'vendor_id' => 1,
-                                       'xml'       => $attachment->data,
-                                       'source'    => Ccda::EMR_DIRECT,
-                                   ]);
         
-        ImportCcda::dispatch($this->ccda)->onQueue('low');
+        throw $e;
     }
     
+    /**
+     * @return bool
+     * @throws \Exception
+     */
     private function initPhiMailConnection()
     {
         try {
@@ -299,12 +284,5 @@ class PhiMail implements DirectMail
             '#ccd-file-status',
             "We received {$numberOfCcds} CCDs from EMR Direct. \n Please visit {$link} to import."
         );
-    }
-    
-    private function writeDataFile(
-        $filename,
-        $data
-    ) {
-        return file_put_contents($filename, $data);
     }
 }
