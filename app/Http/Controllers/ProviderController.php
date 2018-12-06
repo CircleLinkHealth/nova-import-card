@@ -105,7 +105,7 @@ class ProviderController extends Controller
     public function updateApproveOwnCarePlan(Request $request)
     {
         $user = auth()->user();
-        if (!$user->providerInfo) {
+        if ( ! $user->providerInfo) {
             return redirect()->back()->withErrors(['errors' => 'Please log in as a Provider.']);
         }
 
