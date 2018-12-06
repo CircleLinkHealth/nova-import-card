@@ -6,7 +6,6 @@
 
 namespace App\Contracts\Services;
 
-use Twilio\Jwt\ClientToken;
 use Twilio\Rest\Client;
 
 /**
