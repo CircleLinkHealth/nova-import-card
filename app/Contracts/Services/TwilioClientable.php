@@ -20,9 +20,9 @@ interface TwilioClientable
     /**
      * Generate a capability token.
      *
-     * @return ClientToken
+     * @return string
      */
-    public function generateCapabilityToken(): ClientToken;
+    public function generateCapabilityToken(): string;
 
     /**
      * Get an instance of a the Twilio REST API Client.

@@ -28,7 +28,7 @@ class TwilioClientService implements TwilioClientable
         $this->capability->allowClientOutgoing(config('services.twilio.twiml-app-sid'));
     }
 
-    public function generateCapabilityToken(): ClientToken
+    public function generateCapabilityToken(): string
     {
         return $this->capability->generateToken();
     }
