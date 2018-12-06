@@ -7,6 +7,7 @@
 namespace App\Services\PhiMail;
 
 use App\Contracts\DirectMail;
+use App\DirectMailMessage;
 use App\User;
 use Illuminate\Support\Facades\Log;
 
@@ -104,14 +105,10 @@ class PhiMail implements DirectMail
                 // retrieved and processed.:log
                 $this->connector->acknowledgeMessage();
                 
-                Log::info('Number of Attachments: '.$message->numAttachments);
-                
                 if ($message->numAttachments > 0) {
-                    $this->notifyAdmins($message->numAttachments);
+                    $this->notifyAdmins($dm);
                     
                     $message = "Checked EMR Direct Mailbox. There where {$message->numAttachments} attachment(s). \n";
-                    
-                    echo $message;
                     
                     sendSlackMessage('#background-tasks', $message);
                 }
@@ -209,20 +206,21 @@ class PhiMail implements DirectMail
     /**
      * This is to help notify us of the status of CCDs we receive.
      *
-     * @param $numberOfCcds
+     * @param DirectMailMessage $dm
      */
     private function notifyAdmins(
-        $numberOfCcds
+        DirectMailMessage $dm
     ) {
         if (app()->environment('local')) {
             return;
         }
         
         $link = route('import.ccd.remix');
+        $messageLink = route('direct-mail.show', [$dm->id]);
         
         sendSlackMessage(
             '#ccd-file-status',
-            "We received {$numberOfCcds} CCDs from EMR Direct. \n Please visit {$link} to import."
+            "We received a message from EMR Direct. \n Click here to see the message {$messageLink}. \n If a CCD was included in the message, it has been imported. Click here {$link} to QA and Import."
         );
     }
 }
