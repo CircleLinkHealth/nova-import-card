@@ -1,6 +1,7 @@
 <?php namespace App\Models\MedicalRecords;
 
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
+use App\DirectMailMessage;
 use App\Entities\CcdaRequest;
 use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
 use App\Importer\MedicalRecordEloquent;
@@ -101,6 +102,7 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
     ];
 
     protected $fillable = [
+        'direct_mail_message_id',
         'batch_id',
         'date',
         'mrn',
@@ -247,5 +249,9 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
         $this->addMedia(storage_path("ccda-{$this->id}.xml"))->toMediaCollection('ccd');
 
         return $this;
+    }
+    
+    public function directMessage() {
+        return $this->belongsTo(DirectMailMessage::class);
     }
 }
