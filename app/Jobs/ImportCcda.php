@@ -33,10 +33,10 @@ class ImportCcda implements ShouldQueue
     public function handle()
     {
         $importedMedicalRecord = $this->ccda->import();
-        
+
         if (is_a($importedMedicalRecord, ImportedMedicalRecord::class)) {
             $this->ccda->imported = true;
-            $this->ccda->status = Ccda::QA;
+            $this->ccda->status   = Ccda::QA;
             $this->ccda->save();
         }
     }

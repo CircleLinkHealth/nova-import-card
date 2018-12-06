@@ -1050,7 +1050,7 @@ Route::group(['middleware' => 'auth'], function () {
         ],
         'prefix' => 'admin',
     ], function () {
-        Route::group(['prefix' => 'direct-mail'], function (){
+        Route::group(['prefix' => 'direct-mail'], function () {
             Route::get('{directMailId}', [
                 'uses' => 'DirectMailController@show',
                 'as'   => 'direct-mail.show',

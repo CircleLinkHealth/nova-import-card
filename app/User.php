@@ -2198,7 +2198,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         if ($saasAccount) {
             return $saasAccount->name;
         }
-        $saasAccount = $this->primaryPractice->saasAccount;
+        $saasAccount = optional($this->primaryPractice)->saasAccount;
         if ( ! $saasAccount) {
             if (auth()->check()) {
                 $saasAccount = auth()->user()->saasAccount;
@@ -2242,44 +2242,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             'created_at'            => optional($this->created_at)->format('c') ?? null,
             'updated_at'            => optional($this->updated_at)->format('c') ?? null,
         ];
-    }
-
-    public function saasAccountName()
-    {
-        $saasAccount = $this->saasAccount;
-        if ($saasAccount) {
-            return $saasAccount->name;
-        }
-        $saasAccount = optional($this->primaryPractice)->saasAccount;
-        if ( ! $saasAccount) {
-            if (auth()->check()) {
-                $saasAccount = auth()->user()->saasAccount;
-            }
-        }
-        if ($saasAccount) {
-            $this->saasAccount()
-                 ->associate($saasAccount);
-
-            return $saasAccount->name;
-        }
-
-        return 'CircleLink Health';
-    }
-
-    public function billingCodes(Carbon $monthYear)
-    {
-        $summary = $this->patientSummaries()
-                        ->where('month_year', $monthYear->toDateString())
-                        ->with('chargeableServices')
-                        ->has('chargeableServices')
-                        ->first();
-
-        if ( ! $summary) {
-            return '';
-        }
-
-        return $summary->chargeableServices
-            ->implode('code', ', ');
     }
 
     /**

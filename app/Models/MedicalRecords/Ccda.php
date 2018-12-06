@@ -168,6 +168,11 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
         return $ccda;
     }
 
+    public function directMessage()
+    {
+        return $this->belongsTo(DirectMailMessage::class);
+    }
+
     /**
      * @return string
      */
@@ -256,9 +261,5 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
         }
 
         return $responseBody;
-    }
-    
-    public function directMessage() {
-        return $this->belongsTo(DirectMailMessage::class);
     }
 }

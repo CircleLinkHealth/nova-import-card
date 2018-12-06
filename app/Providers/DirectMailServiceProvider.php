@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Providers;
 
 use App\Contracts\DirectMail;
@@ -12,18 +16,13 @@ class DirectMailServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the application services.
-     *
-     * @return void
      */
     public function boot()
     {
-        //
     }
-    
+
     /**
      * Register the application services.
-     *
-     * @return void
      */
     public function register()
     {
@@ -37,16 +36,17 @@ class DirectMailServiceProvider extends ServiceProvider
             }
         );
     }
-    
+
     /**
-     * @return PhiMailConnector
      * @throws \Exception
+     *
+     * @return PhiMailConnector
      */
     private function initPhiMailConnection(): PhiMailConnector
     {
         $phiMailUser = config('services.emr-direct.user');
         $phiMailPass = config('services.emr-direct.password');
-        
+
         // Use the following command to enable client TLS authentication, if
         // required. The key file referenced should contain the following
         // PEM data concatenated into one file:
@@ -59,17 +59,17 @@ class DirectMailServiceProvider extends ServiceProvider
             base_path(config('services.emr-direct.conc-keys-pem-path')),
             config('services.emr-direct.pass-phrase')
         );
-        
+
         // This command is recommended for added security to set the trusted
         // SSL certificate or trust anchor for the phiMail server.
         PhiMailConnector::setServerCertificate(base_path(config('services.emr-direct.server-cert-pem-path')));
-        
+
         $phiMailServer = config('services.emr-direct.mail-server');
         $phiMailPort   = config('services.emr-direct.port');
-        
+
         $connector = new PhiMailConnector($phiMailServer, $phiMailPort);
         $connector->authenticateUser($phiMailUser, $phiMailPass);
-        
+
         return $connector;
     }
 }

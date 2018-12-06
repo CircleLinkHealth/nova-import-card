@@ -1,19 +1,16 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 12/28/2017
- * Time: 7:13 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Exceptions;
-
 
 use Throwable;
 
 class FileNotFoundException extends \Exception
 {
-    public function __construct($message = "File Not Found", $code = 404, Throwable $previous = null)
+    public function __construct($message = 'File Not Found', $code = 404, Throwable $previous = null)
     {
     }
 }

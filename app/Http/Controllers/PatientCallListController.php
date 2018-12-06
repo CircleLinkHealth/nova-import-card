@@ -36,10 +36,9 @@ class PatientCallListController extends Controller
             try {
                 $date = $dateFilter = Carbon::parse($request->input('date'));
             } catch (\Exception $e) {
-                return redirect()->back()->withErrors("Invalid date format. Please use yyyy-mm-dd instead.");
+                return redirect()->back()->withErrors('Invalid date format. Please use yyyy-mm-dd instead.');
             }
             $calls->where('scheduled_date', '=', $date->toDateString());
-
         }
 
         $calls->with([

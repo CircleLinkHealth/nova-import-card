@@ -10,7 +10,6 @@ use App\CLH\Helpers\StringManipulation;
 use App\Contracts\DirectMail;
 use App\Contracts\Efax;
 use App\Reports\PatientDailyAuditReport;
-use App\Services\PhiMail\PhiMail;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -28,6 +27,21 @@ class MakeAndDispatchAuditReports implements ShouldQueue
     protected $date;
 
     /**
+     * @var Carbon
+     */
+    protected $date;
+
+    /**
+     * @var DirectMail
+     */
+    protected $directMail;
+
+    /**
+     * @var Efax
+     */
+    protected $eFax;
+
+    /**
      * @var Efax
      */
     protected $eFax;
@@ -40,25 +54,9 @@ class MakeAndDispatchAuditReports implements ShouldQueue
     protected $patient;
 
     /**
-     *
-     * @var DirectMail
-     */
-    protected $directMail;
-
-    /**
-     * @var Efax
-     */
-    protected $eFax;
-
-    /**
-     * @var Carbon
-     */
-    protected $date;
-    
-    /**
      * Create a new job instance.
      *
-     * @param User $patient
+     * @param User   $patient
      * @param Carbon $date
      */
     public function __construct(User $patient, Carbon $date = null)
@@ -106,7 +104,7 @@ class MakeAndDispatchAuditReports implements ShouldQueue
 
             return $location;
         });
-        
+
         \File::delete($path);
     }
 }

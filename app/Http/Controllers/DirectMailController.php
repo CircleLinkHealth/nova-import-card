@@ -15,7 +15,7 @@ class DirectMailController extends Controller
         $dm = DirectMailMessage::query()
             ->with('ccdas', 'media')
             ->findOrFail($directMailId);
-        
+
         return view('direct-mail.show-message')
             ->with('dm', $dm);
     }

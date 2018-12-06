@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\Contracts\DirectMail;
@@ -8,22 +12,22 @@ use Illuminate\Console\Command;
 class CheckEmrDirectInbox extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'emrDirect:checkInbox';
-    /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Check EMR Direct Mailbox';
     /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'emrDirect:checkInbox';
+    /**
      * @var DirectMail
      */
     private $directMail;
-    
+
     /**
      * Create a new command instance.
      *

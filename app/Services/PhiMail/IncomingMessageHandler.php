@@ -1,13 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 12/5/18
- * Time: 7:27 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Services\PhiMail;
-
 
 use App\DirectMailMessage;
 use App\Jobs\ImportCcda;
@@ -15,15 +12,14 @@ use App\Models\MedicalRecords\Ccda;
 use Carbon\Carbon;
 
 /**
- * Handle an incoming message from EMR Direct Mail API
+ * Handle an incoming message from EMR Direct Mail API.
  *
  * Class IncomingMessageHandler
- * @package App\Services\PhiMail
  */
 class IncomingMessageHandler
 {
     /**
-     * Creates a new Direct Message
+     * Creates a new Direct Message.
      *
      * @param CheckResult $message
      *
@@ -41,30 +37,48 @@ class IncomingMessageHandler
             ]
         );
     }
-    
+
     /**
-     * Handles the message's attachments
+     * Handles the message's attachments.
      *
      * @param DirectMailMessage $dm
-     * @param ShowResult $showRes
+     * @param ShowResult        $showRes
      */
     public function handleMessageAttachment(DirectMailMessage &$dm, ShowResult $showRes)
     {
         if (str_contains($showRes->mimeType, 'plain')) {
             $dm->body = $showRes->data;
             $dm->save();
-        } elseif (str_contains($showRes->mimeType, 'xml') && stripos($showRes->data, '<ClinicalDocument') !== false) {
+        } elseif (str_contains($showRes->mimeType, 'xml') && false !== stripos($showRes->data, '<ClinicalDocument')) {
             $this->storeAndImportCcd($showRes, $dm);
         } else {
             $path = storage_path('dm_id_'.$dm->id.'_attachment_'.Carbon::now()->toAtomString());
             file_put_contents($path, $showRes->data);
             $dm->addMedia($path)
-               ->toMediaCollection("dm_{$dm->id}_attachments");
+                ->toMediaCollection("dm_{$dm->id}_attachments");
         }
     }
-    
+
     /**
-     * Stores and imports a CCDA
+     * Store the subject of the message.
+     *
+     * @param $dm
+     * @param ShowResult $showRes
+     */
+    public function storeMessageSubject(&$dm, ShowResult $showRes)
+    {
+        // Headers are set by the sender and may include Subject, Date, additional addresses to which the message was sent, etc.
+        // Do NOT use the To: header to determine the address to which this message should be delivered internally; use $message->recipient instead.
+        foreach ($showRes->headers as $header) {
+            if (false !== ($pos = strpos($header, 'Subject:'))) {
+                $dm->subject = trim(substr($header, $pos + 8));
+                $dm->save();
+            }
+        }
+    }
+
+    /**
+     * Stores and imports a CCDA.
      *
      * @param $attachment
      * @param DirectMailMessage $dm
@@ -82,25 +96,7 @@ class IncomingMessageHandler
                 'source'                 => Ccda::EMR_DIRECT,
             ]
         );
-        
+
         ImportCcda::dispatch($ccda)->onQueue('low');
-    }
-    
-    /**
-     * Store the subject of the message
-     *
-     * @param $dm
-     * @param ShowResult $showRes
-     */
-    public function storeMessageSubject(&$dm, ShowResult $showRes)
-    {
-        // Headers are set by the sender and may include Subject, Date, additional addresses to which the message was sent, etc.
-        // Do NOT use the To: header to determine the address to which this message should be delivered internally; use $message->recipient instead.
-        foreach ($showRes->headers as $header) {
-            if (($pos = strpos($header, 'Subject:')) !== false) {
-                $dm->subject = trim(substr($header, $pos+8));
-                $dm->save();
-            }
-        }
     }
 }
