@@ -2244,7 +2244,43 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         ];
     }
 
-    // user data scrambler
+    public function saasAccountName()
+    {
+        $saasAccount = $this->saasAccount;
+        if ($saasAccount) {
+            return $saasAccount->name;
+        }
+        $saasAccount = optional($this->primaryPractice)->saasAccount;
+        if ( ! $saasAccount) {
+            if (auth()->check()) {
+                $saasAccount = auth()->user()->saasAccount;
+            }
+        }
+        if ($saasAccount) {
+            $this->saasAccount()
+                 ->associate($saasAccount);
+
+            return $saasAccount->name;
+        }
+
+        return 'CircleLink Health';
+    }
+
+    public function billingCodes(Carbon $monthYear)
+    {
+        $summary = $this->patientSummaries()
+                        ->where('month_year', $monthYear->toDateString())
+                        ->with('chargeableServices')
+                        ->has('chargeableServices')
+                        ->first();
+
+        if ( ! $summary) {
+            return '';
+        }
+
+        return $summary->chargeableServices
+            ->implode('code', ', ');
+    }
 
     /**
      * Scope a query to include users NOT of a given type (Role).

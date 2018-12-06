@@ -10,6 +10,8 @@ use App\User;
 
 interface DirectMail
 {
+    public function receive();
+    
     public function send(
         $outboundRecipient,
         $binaryAttachmentFilePath,

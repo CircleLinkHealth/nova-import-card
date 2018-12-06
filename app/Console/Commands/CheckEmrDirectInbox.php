@@ -1,16 +1,18 @@
 <?php
 
-/*
- * This file is part of CarePlan Manager by CircleLink Health.
- */
-
 namespace App\Console\Commands;
 
-use App\Services\PhiMail\PhiMail;
+use App\Contracts\DirectMail;
 use Illuminate\Console\Command;
 
 class CheckEmrDirectInbox extends Command
 {
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'emrDirect:checkInbox';
     /**
      * The console command description.
      *
@@ -18,23 +20,20 @@ class CheckEmrDirectInbox extends Command
      */
     protected $description = 'Check EMR Direct Mailbox';
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
+     * @var DirectMail
      */
-    protected $signature = 'emrDirect:checkInbox';
-    private $phiMail;
-
+    private $directMail;
+    
     /**
      * Create a new command instance.
      *
-     * @param PhiMail $phiMail
+     * @param DirectMail $directMail
      */
-    public function __construct(PhiMail $phiMail)
+    public function __construct(DirectMail $directMail)
     {
         parent::__construct();
 
-        $this->phiMail = $phiMail;
+        $this->directMail = $directMail;
     }
 
     /**
@@ -44,6 +43,6 @@ class CheckEmrDirectInbox extends Command
      */
     public function handle()
     {
-        $this->phiMail->receive();
+        $this->directMail->receive();
     }
 }

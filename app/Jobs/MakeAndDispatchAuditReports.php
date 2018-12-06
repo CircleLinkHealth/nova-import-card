@@ -40,26 +40,33 @@ class MakeAndDispatchAuditReports implements ShouldQueue
     protected $patient;
 
     /**
-     * An instance of PhiMail.
      *
-     * @var PhiMail
+     * @var DirectMail
      */
-    protected $phiMail;
+    protected $directMail;
 
+    /**
+     * @var Efax
+     */
+    protected $eFax;
+
+    /**
+     * @var Carbon
+     */
+    protected $date;
+    
     /**
      * Create a new job instance.
      *
-     * @param User         $patient
-     * @param Carbon       $date
-     * @param Efax|null    $eFax
-     * @param PhiMail|null $phiMail
+     * @param User $patient
+     * @param Carbon $date
      */
     public function __construct(User $patient, Carbon $date = null)
     {
-        $this->patient = $patient;
-        $this->date    = $date ?? Carbon::now();
-        $this->phiMail = app(DirectMail::class);
-        $this->eFax    = app(Efax::class);
+        $this->patient    = $patient;
+        $this->date       = $date ?? Carbon::now();
+        $this->directMail = app(DirectMail::class);
+        $this->eFax       = app(Efax::class);
     }
 
     /**
@@ -86,7 +93,7 @@ class MakeAndDispatchAuditReports implements ShouldQueue
         $sent = $this->patient->locations->map(function ($location) use ($path, $settings, $fileName) {
             //Send DM mail
             if ($settings->dm_audit_reports) {
-                $this->phiMail->send($location->emr_direct_address, $path, $fileName);
+                $this->directMail->send($location->emr_direct_address, $path, $fileName);
             }
 
             //Send eFax
@@ -99,5 +106,7 @@ class MakeAndDispatchAuditReports implements ShouldQueue
 
             return $location;
         });
+        
+        \File::delete($path);
     }
 }
