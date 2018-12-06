@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\CLH\Helpers\StringManipulation;
 use App\Contracts\DirectMail;
 use App\Contracts\Efax;
-use App\Services\Phaxio\PhaxioService;
-use App\Services\PhiMail\PhiMail;
 use Illuminate\Http\Request;
 
 class DemoController extends Controller

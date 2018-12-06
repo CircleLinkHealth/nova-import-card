@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Services\PhiMail\PhiMail;
+use App\Contracts\DirectMail;
 use Illuminate\Console\Command;
 
 class CheckEmrDirectInbox extends Command
@@ -13,25 +13,27 @@ class CheckEmrDirectInbox extends Command
      * @var string
      */
     protected $signature = 'emrDirect:checkInbox';
-
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Check EMR Direct Mailbox';
-    private $phiMail;
-
+    /**
+     * @var DirectMail
+     */
+    private $directMail;
+    
     /**
      * Create a new command instance.
      *
-     * @param PhiMail $phiMail
+     * @param DirectMail $directMail
      */
-    public function __construct(PhiMail $phiMail)
+    public function __construct(DirectMail $directMail)
     {
         parent::__construct();
 
-        $this->phiMail = $phiMail;
+        $this->directMail = $directMail;
     }
 
     /**
@@ -41,6 +43,6 @@ class CheckEmrDirectInbox extends Command
      */
     public function handle()
     {
-        $this->phiMail->receive();
+        $this->directMail->receive();
     }
 }

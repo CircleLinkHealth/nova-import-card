@@ -2940,7 +2940,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         if ($saasAccount) {
             return $saasAccount->name;
         }
-        $saasAccount = $this->primaryPractice->saasAccount;
+        $saasAccount = optional($this->primaryPractice)->saasAccount;
         if ( ! $saasAccount) {
             if (auth()->check()) {
                 $saasAccount = auth()->user()->saasAccount;
