@@ -50,10 +50,13 @@
                             <div class="col-sm-12">
                                 @if($phoneNumbers->isNotEmpty())
                                     <call-number
+                                            :debug="@json(!isProductionEnv())"
+                                            from-number="{{$patient->primaryProgramPhoneE164()}}"
+                                            :allow-conference="@json(config('services.twilio.allow-conference'))"
                                             inbound-user-id="{{$patient->id}}"
                                             outbound-user-id="{{auth()->id()}}"
-                                            :numbers="{{$phoneNumbers}}">
-
+                                            :other-numbers="{{$otherNumbers}}"
+                                            :patient-numbers="{{$phoneNumbers}}">
                                     </call-number>
                                 @else
                                     <p>No phone numbers found</p>
