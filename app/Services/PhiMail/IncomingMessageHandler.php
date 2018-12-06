@@ -59,7 +59,7 @@ class IncomingMessageHandler
             $path = storage_path('dm_id_'.$dm->id.'_attachment_'.Carbon::now()->toAtomString());
             file_put_contents($path, $showRes->data);
             $dm->addMedia($path)
-               ->toMediaCollection('attachments');
+               ->toMediaCollection("dm_{$dm->id}_attachments");
         }
     }
     
