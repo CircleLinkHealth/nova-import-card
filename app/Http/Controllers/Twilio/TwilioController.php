@@ -46,7 +46,20 @@ class TwilioController extends Controller
     public function callStatusCallback(Request $request)
     {
         $this->logRawToDb($request);
-        $this->logToDb($request);
+        $this->logParentCallToDb($request);
+    }
+
+    /**
+     * This function is called from Twilio (status callback)
+     * - It inserts a record in our DB for raw logs (for debugging)
+     * - It inspects the status request from Twilio and creates or updates any existing calls (using call sid).
+     *
+     * @param Request $request
+     */
+    public function dialNumberStatusCallback(Request $request)
+    {
+        $this->logRawToDb($request, 'dial-number-status-callback');
+        $this->logDialToDb($request);
     }
 
     /**
@@ -61,8 +74,8 @@ class TwilioController extends Controller
      */
     public function dialActionCallback(Request $request)
     {
-        $this->logRawToDb($request, 'dial-action');
-        $this->logDialToDb($request);
+        $this->logRawToDb($request, 'dial-action-callback');
+        $this->logDialActionToDb($request);
 
         try {
             $response = new Twiml();
@@ -214,13 +227,23 @@ class TwilioController extends Controller
             $input['From'] = config('services.twilio')['from'];
         }
 
+        $input['From'] = (new StringManipulation())->formatPhoneNumberE164($input['From']);
+        //$input['To'] = (new StringManipulation())->formatPhoneNumberE164($input['To']);
+
+        //why do I have to do this?
+        if ( ! empty($input['IsUnlistedNumber'])) {
+            $input['IsUnlistedNumber'] = '1' === $input['IsUnlistedNumber']
+                ? true
+                : false;
+        }
+
         $validation = \Validator::make($input, [
             'To'               => 'required', //|phone:AUTO,US',
             //could be the practice outgoing phone number (in case of enrollment)
             'From'             => 'required', //|phone:AUTO,US',
             'InboundUserId'    => 'required',
             'OutboundUserId'   => 'required',
-            'IsUnlistedNumber' => '',
+            'IsUnlistedNumber' => 'nullable|boolean',
             'IsCallToPatient'  => '',
         ]);
 
@@ -332,7 +355,10 @@ class TwilioController extends Controller
         $input = $request->all();
 
         //use default From number if we are not on production
-        if (!in_array(app()->environment(), ['production', 'worker']) || empty($input['From']) || TwilioController::CLIENT_ANONYMOUS === $input['From']) {
+        if ( ! in_array(app()->environment(), [
+                'production',
+                'worker',
+            ]) || empty($input['From']) || TwilioController::CLIENT_ANONYMOUS === $input['From']) {
             $input['From'] = config('services.twilio')['from'];
         }
 
@@ -341,7 +367,7 @@ class TwilioController extends Controller
 
         //why do I have to do this?
         if ( ! empty($input['IsUnlistedNumber'])) {
-            $input['IsUnlistedNumber'] = $input['IsUnlistedNumber'] === '1'
+            $input['IsUnlistedNumber'] = '1' === $input['IsUnlistedNumber']
                 ? true
                 : false;
         }
@@ -364,7 +390,7 @@ class TwilioController extends Controller
             $this->sendUnlistedNumberToSlack($input);
         }
 
-        $this->logToDb($request, $input);
+        $this->logParentCallToDb($request);
 
         $response = new Twiml();
         $dial     = $response->dial('', [
@@ -372,14 +398,10 @@ class TwilioController extends Controller
             'action'   => route('twilio.call.dial.action'),
             'callerId' => $input['From'],
         ]);
-        $dial->number($input['To']);
-
-        /*
-         * $dial->number($input['To'], [
-         * 'statusCallback' => route('twilio.call.number.status'),
-         * 'statusCallbackEvent' => 'initiated ringing answered completed'
-         * ]);
-         */
+        $dial->number($input['To'], [
+            'statusCallback'      => route('twilio.call.number.status'),
+            'statusCallbackEvent' => 'completed',
+        ]);
 
         return $this->responseWithXmlType(response($response));
     }
@@ -436,38 +458,30 @@ class TwilioController extends Controller
         }
     }
 
-    private function logDialToDb(Request $request)
+    /**
+     *
+     * Log sequence number and recording url of a dial call
+     * The rest we can get from dialNumberStatusCallback
+     *
+     * @param Request $request
+     */
+    private function logDialActionToDb(Request $request)
     {
         $input = $request->all();
 
+        //CallSid in dial action url is the sid of the main call leg (the parent)
         $callSid = $input['CallSid'];
 
         $fields = [
             'call_sid' => $callSid,
         ];
 
-        if ( ! empty($input['CallStatus'])) {
-            $fields['call_status'] = $input['CallStatus'];
-        }
-
-        if ( ! empty($input['Direction'])) {
-            $fields['direction'] = $input['Direction'];
-        }
-
-        if ( ! empty($input['DialCallSid'])) {
-            $fields['dial_call_sid'] = $input['DialCallSid'];
-        }
-
-        if ( ! empty($input['DialCallDuration'])) {
-            $fields['dial_call_duration'] = $input['DialCallDuration'];
-        }
-
-        if ( ! empty($input['DialCallStatus'])) {
-            $fields['dial_call_status'] = $input['DialCallStatus'];
-        }
-
         if ( ! empty($input['RecordingUrl'])) {
             $fields['dial_recording_url'] = $input['RecordingUrl'];
+        }
+
+        if ( ! empty($input['SequenceNumber'])) {
+            $fields['sequence_number'] = $input['SequenceNumber'];
         }
 
         TwilioCall::updateOrCreate(
@@ -494,12 +508,82 @@ class TwilioController extends Controller
         }
     }
 
-    private function logToDb(Request $request, $input = null)
+    private function logDialToDb(Request $request)
     {
         try {
-            if ( ! $input) {
-                $input = $request->all();
+            $input = $request->all();
+
+            $callSid = $input['ParentCallSid'];
+
+            $fields = [
+                'call_sid' => $callSid,
+            ];
+
+            if ( ! empty($input['ApplicationSid'])) {
+                $fields['application_sid'] = $input['ApplicationSid'];
             }
+
+            if ( ! empty($input['AccountSid'])) {
+                $fields['account_sid'] = $input['AccountSid'];
+            }
+
+            if ( ! empty($input['Direction'])) {
+                $fields['direction'] = $input['Direction'];
+            }
+
+            if ( ! empty($input['From'])) {
+                $fields['from'] = $input['From'];
+            }
+
+            if ( ! empty($input['To'])) {
+                $fields['to'] = $input['To'];
+            }
+
+            if ( ! empty($input['RecordingSid'])) {
+                $fields['recording_sid'] = $input['RecordingSid'];
+            }
+
+            if ( ! empty($input['RecordingDuration'])) {
+                $fields['recording_duration'] = $input['RecordingDuration'];
+            }
+
+            if ( ! empty($input['RecordingUrl'])) {
+                $fields['recording_url'] = $input['RecordingUrl'];
+            }
+
+            if ( ! empty($input['SequenceNumber'])) {
+                $fields['sequence_number'] = $input['SequenceNumber'];
+            }
+
+            /**
+             * For the next properties, we append dial_ because we want to keep information from parent call as well
+             */
+
+            if ( ! empty($input['CallSid'])) {
+                $fields['dial_call_sid'] = $input['CallSid'];
+            }
+
+            if ( ! empty($input['CallDuration'])) {
+                $fields['dial_call_duration'] = $input['CallDuration'];
+            }
+
+            if ( ! empty($input['CallStatus'])) {
+                $fields['dial_call_status'] = $input['CallStatus'];
+            }
+
+            TwilioCall::updateOrCreate(
+                ['call_sid' => $callSid],
+                $fields
+            );
+        } catch (\Throwable $e) {
+            \Log::critical('Exception while storing twilio log: ' . $e->getMessage());
+        }
+    }
+
+    private function logParentCallToDb(Request $request)
+    {
+        try {
+            $input = $request->all();
 
             $callSid = $input['CallSid'];
 
@@ -519,21 +603,9 @@ class TwilioController extends Controller
                 $fields['call_status'] = $input['CallStatus'];
             }
 
-            if ( ! empty($input['Direction'])) {
-                $fields['direction'] = $input['Direction'];
-            }
-
             //only present in 'completed' status event
             if ( ! empty($input['CallDuration'])) {
                 $fields['call_duration'] = $input['CallDuration'];
-            }
-
-            if ( ! empty($input['From']) && TwilioController::CLIENT_ANONYMOUS != $input['From']) {
-                $fields['from'] = $input['From'];
-            }
-
-            if ( ! empty($input['To'])) {
-                $fields['to'] = $input['To'];
             }
 
             if ( ! empty($input['InboundUserId'])) {
@@ -546,18 +618,6 @@ class TwilioController extends Controller
 
             if ( ! empty($input['IsUnlistedNumber'])) {
                 $fields['is_unlisted_number'] = $input['IsUnlistedNumber'];
-            }
-
-            if ( ! empty($input['RecordingSid'])) {
-                $fields['recording_sid'] = $input['RecordingSid'];
-            }
-
-            if ( ! empty($input['RecordingDuration'])) {
-                $fields['recording_duration'] = $input['RecordingDuration'];
-            }
-
-            if ( ! empty($input['RecordingUrl'])) {
-                $fields['recording_url'] = $input['RecordingUrl'];
             }
 
             if ( ! empty($input['SequenceNumber'])) {
@@ -613,7 +673,9 @@ class TwilioController extends Controller
     {
         $userId         = $input['InboundUserId'];
         $unlistedNumber = $input['To'];
-        sendSlackMessage("#twilio-calls",
-            "User [$userId] is trying to call a non-predefined phone number [$unlistedNumber].");
+        sendSlackMessage(
+            '#twilio-calls',
+            "User [$userId] is trying to call a non-predefined phone number [$unlistedNumber]."
+        );
     }
 }

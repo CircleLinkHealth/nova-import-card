@@ -2129,7 +2129,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->primaryPractice->display_name;
     }
 
-    public function primaryProgramPhone() {
+    public function primaryProgramPhone()
+    {
         return optional($this->primaryPractice)->outgoing_phone_number;
     }
 

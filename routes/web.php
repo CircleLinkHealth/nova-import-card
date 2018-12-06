@@ -2311,6 +2311,10 @@ Route::group([
         'uses' => 'Twilio\TwilioController@callStatusCallback',
         'as'   => 'twilio.call.status',
     ]);
+    Route::post('/call/number-status', [
+        'uses' => 'Twilio\TwilioController@dialNumberStatusCallback',
+        'as'   => 'twilio.call.number.status',
+    ]);
     Route::post('/call/dial-action', [
         'uses' => 'Twilio\TwilioController@dialActionCallback',
         'as'   => 'twilio.call.dial.action',

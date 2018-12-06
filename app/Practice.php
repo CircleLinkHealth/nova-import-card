@@ -129,11 +129,6 @@ class Practice extends BaseModel implements HasMedia
             : $this->settings->first();
     }
 
-    public function isTwilioEnabled() {
-        $settings = $this->cpmSettings();
-        return boolval($settings->twilio_enabled);
-    }
-
     public function ehr()
     {
         return $this->belongsTo(Ehr::class);
@@ -273,6 +268,13 @@ class Practice extends BaseModel implements HasMedia
     public function getWeeklyReportRecipientsArray()
     {
         return array_map('trim', explode(',', $this->weekly_report_recipients));
+    }
+
+    public function isTwilioEnabled()
+    {
+        $settings = $this->cpmSettings();
+
+        return boolval($settings->twilio_enabled);
     }
 
     public function lead()
