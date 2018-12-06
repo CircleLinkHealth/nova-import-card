@@ -23,21 +23,13 @@ class PhiMail implements DirectMail
     
     public function __construct(PhiMailConnector $connector, IncomingMessageHandler $incomingMessageHandler)
     {
-        $this->connector = $connector;
+        $this->connector              = $connector;
         $this->incomingMessageHandler = $incomingMessageHandler;
     }
     
     public function __destruct()
     {
-        if ( ! $this->connector) {
-            return;
-        }
-        
-        try {
-            $this->connector->close();
-        } catch (\Exception $ignore) {
-            Log::critical($ignore);
-        }
+        optional($this->connector)->close();
     }
     
     public function loadFile(
