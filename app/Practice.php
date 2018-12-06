@@ -358,4 +358,11 @@ class Practice extends BaseModel implements HasMedia
             ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports')
             ->withTimestamps();
     }
+
+    public function isTwilioEnabled()
+    {
+        $settings = $this->cpmSettings();
+
+        return boolval($settings->twilio_enabled);
+    }
 }
