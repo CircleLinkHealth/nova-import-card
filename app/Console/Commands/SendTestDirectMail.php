@@ -30,7 +30,7 @@ class SendTestDirectMail extends Command
     /**
      * Create a new command instance.
      *
-     * @param PhiMail $phiMail
+     * @param DirectMail $directMail
      */
     public function __construct(DirectMail $directMail)
     {
