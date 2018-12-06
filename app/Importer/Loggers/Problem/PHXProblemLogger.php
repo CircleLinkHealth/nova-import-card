@@ -30,12 +30,12 @@ class PHXProblemLogger implements Logger
 
     public function shouldHandle($problems)
     {
-        if (!is_array($problems)) {
+        if ( ! is_array($problems)) {
             return false;
         }
 
         foreach ($problems as $prob) {
-            if (!array_keys_exist([
+            if ( ! array_keys_exist([
                 'end',
                 'code',
                 'name',

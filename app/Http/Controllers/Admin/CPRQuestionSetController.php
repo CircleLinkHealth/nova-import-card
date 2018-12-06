@@ -50,7 +50,7 @@ class CPRQuestionSetController extends Controller
     {
         $questionSet = CPRulesQuestionSets::find($id);
         $programs    = Practice::get();
-        if (!empty($questionSet->rulesItems)) {
+        if ( ! empty($questionSet->rulesItems)) {
             foreach ($questionSet->rulesItems as $item) {
                 if (isset($item->pcp->program->first()->domain)) {
                     $programItems[] = $item->pcp->program->first()->domain;
@@ -77,7 +77,7 @@ class CPRQuestionSetController extends Controller
         // filter qsType
         $qsTypes      = ['SYM' => 'SYM', 'RPT' => 'RPT', 'HSP' => 'HSP'];
         $filterQsType = 'all';
-        if (!empty($params['filterQsType'])) {
+        if ( ! empty($params['filterQsType'])) {
             $filterQsType = $params['filterQsType'];
             if ('all' != $params['filterQsType']) {
                 $questionSets->where('qs_type', '=', $filterQsType);
@@ -87,7 +87,7 @@ class CPRQuestionSetController extends Controller
         // filter question
         $questions      = CPRulesQuestions::orderBy('qid', 'desc')->get()->pluck('msgIdAndObsKey', 'qid')->all();
         $filterQuestion = 'all';
-        if (!empty($params['filterQuestion'])) {
+        if ( ! empty($params['filterQuestion'])) {
             $filterQuestion = $params['filterQuestion'];
             if ('all' != $params['filterQuestion']) {
                 $questionSets = $questionSets->whereHas('question', function ($q) use ($filterQuestion) {
@@ -99,7 +99,7 @@ class CPRQuestionSetController extends Controller
         // filter program
         $programs      = Practice::orderBy('id', 'desc')->get()->pluck('domain', 'id')->all();
         $filterProgram = 'all';
-        if (!empty($params['filterProgram'])) {
+        if ( ! empty($params['filterProgram'])) {
             $filterProgram = $params['filterProgram'];
             if ('all' != $params['filterProgram']) {
                 $questionSets->where('provider_id', '=', $filterProgram);
@@ -172,7 +172,7 @@ class CPRQuestionSetController extends Controller
     {
         $params      = $request->input();
         $questionSet = CPRulesQuestionSets::find($id);
-        if (!$questionSet) {
+        if ( ! $questionSet) {
             return redirect()->back()->with('messages', ['could not find question set'.$id]);
         }
         $questionSet->provider_id     = $params['provider_id'];

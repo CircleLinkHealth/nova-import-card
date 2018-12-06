@@ -4,9 +4,9 @@
 #jscs ./js
 JSCS_EC=$?
 
-echo 'Checking PHP code style...'
-composer lint-php
-composer lint-views
+#echo 'Checking PHP code style...'
+#composer lint-php
+#composer lint-views
 
 #composer test
 #COMPOSER_TEST_EC=$?

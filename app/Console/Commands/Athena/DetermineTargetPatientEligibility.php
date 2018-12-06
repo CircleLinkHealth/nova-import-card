@@ -71,7 +71,7 @@ class DetermineTargetPatientEligibility extends Command
                 $job = $adapter->getEligibilityJob();
                 $patient->eligibility_job_id = $job->id;
 
-                if (!$isEligible) {
+                if ( ! $isEligible) {
                     $patient->status = 'ineligible';
                     $patient->save();
 
@@ -102,7 +102,7 @@ class DetermineTargetPatientEligibility extends Command
                                          $patient->ehr_practice_id
                                      )->first();
 
-                if (!$practice) {
+                if ( ! $practice) {
                     throw new \Exception(
                                              "Practice with AthenaId {$patient->ehr_practice_id} was not found.",
                                              500

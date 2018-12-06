@@ -32,13 +32,13 @@ class AthenaApiPdfHandler implements PdfReportHandler
             $ccda = $report->patient
                 ->latestCcda();
 
-            if (!$ccda) {
+            if ( ! $ccda) {
                 return false;
             }
 
             $ccdaRequest = $ccda->ccdaRequest;
 
-            if (!$ccdaRequest) {
+            if ( ! $ccdaRequest) {
                 return false;
             }
 
@@ -51,7 +51,7 @@ class AthenaApiPdfHandler implements PdfReportHandler
 
             $decodedResponse = json_decode($response, true);
 
-            if (!is_array($decodedResponse)) {
+            if ( ! is_array($decodedResponse)) {
                 $line = __METHOD__.__LINE__;
                 throw new \Exception("Athena Response is not an array on: ${line}");
             }

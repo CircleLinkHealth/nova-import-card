@@ -127,7 +127,7 @@ class Note extends \App\BaseModel implements PdfReport
             $channels[] = DirectMailChannel::class;
         }
 
-        if (!$notifyCareteam || empty($channels)) {
+        if ( ! $notifyCareteam || empty($channels)) {
             return;
         }
 
@@ -285,9 +285,9 @@ class Note extends \App\BaseModel implements PdfReport
                 ->note_font_size;
         }
 
-        if (!empty($scale)) {
+        if ( ! empty($scale)) {
             $pdf->setOption('zoom', $scale);
-        } elseif (!empty($fontSize)) {
+        } elseif ( ! empty($fontSize)) {
             $pdf->setOption('zoom', $fontSize);
         }
 

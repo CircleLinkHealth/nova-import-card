@@ -66,7 +66,7 @@ class CcdApiController extends Controller
 
     public function getCcmTime(Request $request)
     {
-        if (!\Session::has('apiUser')) {
+        if ( ! \Session::has('apiUser')) {
             return response()->json(['error' => 'Authentication failed.'], 403);
         }
 
@@ -130,7 +130,7 @@ class CcdApiController extends Controller
 
     public function notes(Request $request)
     {
-        if (!\Session::has('apiUser')) {
+        if ( ! \Session::has('apiUser')) {
             return response()->json(['error' => 'Authentication failed.'], 403);
         }
 
@@ -235,7 +235,7 @@ class CcdApiController extends Controller
 
     public function reports(Request $request)
     {
-        if (!\Session::has('apiUser')) {
+        if ( ! \Session::has('apiUser')) {
             return response()->json(['error' => 'Authentication failed.'], 403);
         }
 
@@ -317,21 +317,21 @@ class CcdApiController extends Controller
 
     public function uploadCcd(Request $request)
     {
-        if (!\Session::has('apiUser')) {
+        if ( ! \Session::has('apiUser')) {
             return response()->json(['error' => 'Authentication failed.'], 403);
         }
 
         $user = \Session::get('apiUser');
 
-        if (!$user->hasPermissionForSite('post-ccd-to-api', $user->getPrimaryPracticeId())) {
+        if ( ! $user->hasPermissionForSite('post-ccd-to-api', $user->getPrimaryPracticeId())) {
             return response()->json(['error' => 'You are not authorized to submit CCDs to this API.'], 403);
         }
 
-        if (!$request->filled('file')) {
+        if ( ! $request->filled('file')) {
             return response()->json(['error' => 'file is a required field.'], 422);
         }
 
-        if (!$request->filled('provider')) {
+        if ( ! $request->filled('provider')) {
             return response()->json(['error' => 'provider is a required field.'], 422);
         }
 
@@ -342,7 +342,7 @@ class CcdApiController extends Controller
             return response()->json(['error' => 'Invalid json in provider field.'], 400);
         }
 
-        if (!empty($providerInput['firstName']) && !empty($providerInput['lastName'])) {
+        if ( ! empty($providerInput['firstName']) && ! empty($providerInput['lastName'])) {
             //Check if the provider exists
             $provider = $this->users->findWhere([
                 'display_name' => $providerInput['firstName'].' '.$providerInput['lastName'],

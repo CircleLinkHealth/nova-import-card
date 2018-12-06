@@ -69,7 +69,7 @@ class ObservationController extends Controller
         // filter user
         $users      = User::OrderBy('id', 'desc')->get()->pluck('fullNameWithId', 'id')->all();
         $filterUser = 'all';
-        if (!empty($params['filterUser'])) {
+        if ( ! empty($params['filterUser'])) {
             $filterUser = $params['filterUser'];
             if ('all' != $params['filterUser']) {
                 $observations = $observations->whereHas('user', function ($q) use ($filterUser) {
@@ -81,7 +81,7 @@ class ObservationController extends Controller
         // filter key
         $obsKeys      = ['Severity' => 'Severity', 'Other' => 'Other', 'Blood_Pressure' => 'Blood_Pressure', 'Blood_Sugar' => 'Blood_Sugar', 'Cigarettes' => 'Cigarettes', 'Weight' => 'Weight', 'Adherence' => 'Adherence'];
         $filterObsKey = 'all';
-        if (!empty($params['filterObsKey'])) {
+        if ( ! empty($params['filterObsKey'])) {
             $filterObsKey = $params['filterObsKey'];
             if ('all' != $params['filterObsKey']) {
                 $observations = $observations->where('obs_key', '=', $filterObsKey);

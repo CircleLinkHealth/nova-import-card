@@ -35,7 +35,7 @@ class AuthyController extends Controller
             $response = $this->service->checkOneTouchRequestStatus($uuid);
         }
 
-        if (!$response->ok()) {
+        if ( ! $response->ok()) {
             return response()
                 ->json([
                     'errors' => $response->errors(),
@@ -60,7 +60,7 @@ class AuthyController extends Controller
         $response = $this->service
             ->createOneTouchRequest($authyUser, $user);
 
-        if (!$response->ok()) {
+        if ( ! $response->ok()) {
             return response()
                 ->json([
                     'errors' => $response->errors(),
@@ -128,7 +128,7 @@ class AuthyController extends Controller
         $authyUser = $this->service
             ->register($authyUser, $user);
 
-        if (!$authyUser->ok()) {
+        if ( ! $authyUser->ok()) {
             return response()
                 ->json([
                     'errors' => $authyUser->errors(),

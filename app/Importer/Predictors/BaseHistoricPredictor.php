@@ -41,7 +41,7 @@ abstract class BaseHistoricPredictor
         $weightMultiplier = 1
     ) {
         //return an empty collection if the lookup value is empty
-        if (!$this->providerLogs) {
+        if ( ! $this->providerLogs) {
             return new Collection();
         }
 
@@ -77,7 +77,7 @@ abstract class BaseHistoricPredictor
             ->reject(function ($item) use (
                 $label
             ) {
-                return !$item[$label];
+                return ! $item[$label];
             });
 
         if ($collection->isEmpty()) {
@@ -92,7 +92,7 @@ abstract class BaseHistoricPredictor
         $weightMultiplier = 1
     ) {
         //return an empty collection if the lookup value is empty
-        if (!$this->custodian) {
+        if ( ! $this->custodian) {
             return new Collection();
         }
 
@@ -118,7 +118,7 @@ abstract class BaseHistoricPredictor
             ->reject(function ($item) use (
                 $label
             ) {
-                return !$item[$label];
+                return ! $item[$label];
             });
 
         if ($collection->isEmpty()) {
@@ -161,7 +161,7 @@ abstract class BaseHistoricPredictor
         $weightMultiplier = 1
     ) {
         //return an empty collection if the lookup value is empty
-        if (!$this->providerLogs) {
+        if ( ! $this->providerLogs) {
             return new Collection();
         }
 
@@ -186,7 +186,7 @@ abstract class BaseHistoricPredictor
             ->reject(function ($item) use (
                 $label
             ) {
-                return !$item[$label];
+                return ! $item[$label];
             });
 
         if ($collection->isEmpty()) {

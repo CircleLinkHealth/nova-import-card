@@ -45,6 +45,7 @@
     "ext-dom": "*",
     "ext-json": "*",
     "ext-libxml": "*",
+    "ext-simplexml": "*",
     "amnuts/opcache-gui": "dev-master",
     "appstract/laravel-opcache": "^2.0",
     "arcturial/clickatell": "*",

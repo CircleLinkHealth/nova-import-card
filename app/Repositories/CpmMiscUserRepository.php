@@ -14,7 +14,7 @@ class CpmMiscUserRepository
 {
     public function addMiscToPatient($miscId, $userId, $instructionId = null)
     {
-        if (!$this->patientHasMisc($userId, $miscId, $instructionId)) {
+        if ( ! $this->patientHasMisc($userId, $miscId, $instructionId)) {
             $miscUser                     = new CpmMiscUser();
             $miscUser->patient_id         = $userId;
             $miscUser->cpm_misc_id        = $miscId;
@@ -82,7 +82,7 @@ class CpmMiscUserRepository
             return $misc;
         });
 
-        if (!$miscData->count() && $miscTypeId) {
+        if ( ! $miscData->count() && $miscTypeId) {
             $misc                 = CpmMisc::findOrFail($miscTypeId);
             $misc['instructions'] = [];
             $miscCollection       = new Collection();

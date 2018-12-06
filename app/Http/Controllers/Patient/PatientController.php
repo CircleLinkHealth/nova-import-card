@@ -41,7 +41,7 @@ class PatientController extends Controller
     public function processPatientSelect(Request $request)
     {
         $params = $request->all();
-        if (!empty($params)) {
+        if ( ! empty($params)) {
             if (isset($params['findUser'])) {
                 $user = User::find($params['findUser']);
                 if ($user) {
@@ -58,7 +58,7 @@ class PatientController extends Controller
     {
         $input = $request->all();
 
-        if (!array_key_exists('users', $input)) {
+        if ( ! array_key_exists('users', $input)) {
             return;
         }
 
@@ -177,7 +177,7 @@ class PatientController extends Controller
         $wpUser = [];
         if ($patientId) {
             $wpUser = User::find($patientId);
-            if (!$wpUser) {
+            if ( ! $wpUser) {
                 return response('User not found', 401);
             }
         }
@@ -226,7 +226,7 @@ class PatientController extends Controller
         if ($patientId) {
             // patient view
             $wpUser = User::find($patientId);
-            if (!$wpUser) {
+            if ( ! $wpUser) {
                 return response('User not found', 401);
             }
             // program
@@ -254,14 +254,14 @@ class PatientController extends Controller
         $patient = [];
         if ($patientId) {
             $patient = User::find($patientId);
-            if (!$patient) {
+            if ( ! $patient) {
                 return response('User not found', 401);
             }
         }
 
         //leave it here?
         // security
-        if (!Auth::user()->hasPermissionForSite('observation.create', $patient->getPrimaryPracticeId())) {
+        if ( ! Auth::user()->hasPermissionForSite('observation.create', $patient->getPrimaryPracticeId())) {
             abort(403);
         }
 
@@ -319,7 +319,7 @@ class PatientController extends Controller
             ->where('id', $patientId)
             ->first();
 
-        if (!$wpUser) {
+        if ( ! $wpUser) {
             return response('User not found', 401);
         }
 
@@ -434,7 +434,7 @@ class PatientController extends Controller
                             $observation['description'] = $item->display_name;
                         }
                     }
-                    if (('Call' == $observation['obs_key']) || (!is_numeric($observation['obs_value']))) {
+                    if (('Call' == $observation['obs_key']) || ( ! is_numeric($observation['obs_value']))) {
                         $obs_by_pcp['obs_lifestyle'][] = $observation;
                     }
                     break;
@@ -456,7 +456,7 @@ class PatientController extends Controller
                 }
                 // set default
                 $alertLevel = 'default';
-                if (!empty($observation->alert_level)) {
+                if ( ! empty($observation->alert_level)) {
                     $alertLevel = $observation->alert_level;
                 }
                 // lastly format json
@@ -502,7 +502,7 @@ class PatientController extends Controller
         $wpUser = [];
         if ($patientId) {
             $wpUser = User::find($patientId);
-            if (!$wpUser) {
+            if ( ! $wpUser) {
                 return response('User not found', 401);
             }
         }

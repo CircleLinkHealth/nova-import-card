@@ -174,7 +174,7 @@ trait CallAlgoHelper
         }
         $found = $this->checkAdditionalNurses();
 
-        if (!$found) {
+        if ( ! $found) {
             $this->prediction['nurse']        = null;
             $this->prediction['window_match'] = 'We didn\'t find a free nurse but will reassign patient name to a call soon!';
         }

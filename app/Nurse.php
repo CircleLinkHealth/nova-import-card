@@ -121,11 +121,11 @@ class Nurse extends \App\BaseModel
             }
         }
 
-        if (!$result) {
+        if ( ! $result) {
             $result = $weeklySchedule->first()[0];
         }
 
-        if (!$result) {
+        if ( ! $result) {
             return false;
         }
 

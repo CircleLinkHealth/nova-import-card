@@ -12,7 +12,7 @@ trait SaasAccountable
 {
     public function isNotSaas()
     {
-        return !$this->isSaas();
+        return ! $this->isSaas();
     }
 
     public function isSaas()

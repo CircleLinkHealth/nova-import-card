@@ -112,7 +112,7 @@ class PracticeController extends Controller
             ->where('saas_account_id', $saasAccount->id)
             ->first();
 
-        if (!$practice) {
+        if ( ! $practice) {
             $practice = new Practice();
         }
 

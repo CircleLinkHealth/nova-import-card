@@ -78,7 +78,7 @@ class CpmInstructionService
 
     public function syncWithUser(User $user, $relationship, $entityForeign, $entityId, $instructionInput)
     {
-        if (!method_exists($user, $relationship)) {
+        if ( ! method_exists($user, $relationship)) {
             throw new \Exception('Relationship does not exist', 500);
         }
 
@@ -89,7 +89,7 @@ class CpmInstructionService
             ->whereNotNull('cpm_instruction_id')
             ->first();
 
-        if (!empty($userRel)) {
+        if ( ! empty($userRel)) {
             $oldInstructionId = $userRel->pivot->cpm_instruction_id;
 
             $oldInstruction = CpmInstruction::find($oldInstructionId);
@@ -135,7 +135,7 @@ class CpmInstructionService
             ->whereNotNull('cpm_instruction_id')
             ->first();
 
-        if (!empty($templateRel)) {
+        if ( ! empty($templateRel)) {
             $oldInstructionId = $templateRel->pivot->cpm_instruction_id;
 
             $oldInstruction = CpmInstruction::find($oldInstructionId);
@@ -164,7 +164,7 @@ class CpmInstructionService
             }
         }
 
-        if (!empty(trim($instructionInput))) {
+        if ( ! empty(trim($instructionInput))) {
             $newInstruction = CpmInstruction::create([
                 'name' => $instructionInput,
             ]);

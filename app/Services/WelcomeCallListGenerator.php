@@ -173,7 +173,7 @@ class WelcomeCallListGenerator
      */
     public function createEnrollees()
     {
-        if (!$this->createEnrollees) {
+        if ( ! $this->createEnrollees) {
             return $this;
         }
 
@@ -210,7 +210,7 @@ class WelcomeCallListGenerator
                 $args['eligibility_job_id'] = $this->eligibilityJob->id;
             }
 
-            if (array_key_exists('postal_code', $args) && !array_key_exists('zip', $args)) {
+            if (array_key_exists('postal_code', $args) && ! array_key_exists('zip', $args)) {
                 $args['zip'] = $args['postal_code'];
             }
 
@@ -222,7 +222,7 @@ class WelcomeCallListGenerator
                 $args['problems'] = json_encode($args['problems']);
             }
 
-            if (array_key_exists('insurances', $args) && !array_key_exists('primary_insurance', $args)) {
+            if (array_key_exists('insurances', $args) && ! array_key_exists('primary_insurance', $args)) {
                 $insurances = is_array($args['insurances'])
                     ? collect($args['insurances'])
                     : $args['insurances'];
@@ -433,7 +433,7 @@ class WelcomeCallListGenerator
             $keys = $patient->keys();
 
             foreach ($requiredKeys as $k) {
-                if (!$keys->contains($k)) {
+                if ( ! $keys->contains($k)) {
                     $patient->put($k, '');
                 }
             }
@@ -510,7 +510,7 @@ class WelcomeCallListGenerator
             $keys = $patient->keys();
 
             foreach ($requiredKeys as $k) {
-                if (!$keys->contains($k)) {
+                if ( ! $keys->contains($k)) {
                     $patient->put($k, '');
                 }
             }
@@ -533,7 +533,7 @@ class WelcomeCallListGenerator
         });
 
         if ($storeOnServer) {
-            if (!$returnStorageInfo) {
+            if ( ! $returnStorageInfo) {
                 $excel->store('xls', false, false);
             } else {
                 return $excel->store('xls', false, true);
@@ -560,7 +560,7 @@ class WelcomeCallListGenerator
 
     protected function byInsurance(): WelcomeCallListGenerator
     {
-        if (!$this->filterInsurance) {
+        if ( ! $this->filterInsurance) {
             return $this;
         }
 
@@ -571,10 +571,10 @@ class WelcomeCallListGenerator
             }
 
             if (isset($record['insurances'])) {
-                return !$this->validateInsuranceWithCollection($record);
+                return ! $this->validateInsuranceWithCollection($record);
             }
             if (isset($record['primary_insurance']) || isset($record['secondary_insurance']) || isset($record['tertiary_insurance'])) {
-                return !$this->validateInsuranceWithPrimarySecondaryTertiary($record);
+                return ! $this->validateInsuranceWithPrimarySecondaryTertiary($record);
             }
             $this->ineligiblePatients->push($record);
 
@@ -598,7 +598,7 @@ class WelcomeCallListGenerator
      */
     protected function byLastEncounter(): WelcomeCallListGenerator
     {
-        if (!$this->filterLastEncounter) {
+        if ( ! $this->filterLastEncounter) {
             return $this;
         }
 
@@ -618,7 +618,7 @@ class WelcomeCallListGenerator
             }
 
             //If last encounter is not set, the check is skipped
-            if (!isset($lastEncounter)) {
+            if ( ! isset($lastEncounter)) {
 //                $this->ineligiblePatients->push($row);
 
 //                $this->setEligibilityJobStatus(3, ['last_encounter' => 'No last encounter field found'],
@@ -676,7 +676,7 @@ class WelcomeCallListGenerator
 
     protected function byNumberOfProblems(): WelcomeCallListGenerator
     {
-        if (!$this->filterProblems || $this->patientList->isEmpty()) {
+        if ( ! $this->filterProblems || $this->patientList->isEmpty()) {
             return $this;
         }
 
@@ -766,13 +766,13 @@ class WelcomeCallListGenerator
 
             $eligibleBhiProblemIds = [];
 
-            if (!(is_array($problems) || is_a($problems, Collection::class))) {
+            if ( ! (is_array($problems) || is_a($problems, Collection::class))) {
                 $problems = [$problems];
             }
 
             if ($problems) {
                 foreach ($problems as $p) {
-                    if (!is_a($p, Problem::class)) {
+                    if ( ! is_a($p, Problem::class)) {
                         throw new \Exception('This is not an object of type '.Problem::class);
                     }
 
@@ -782,7 +782,7 @@ class WelcomeCallListGenerator
                         $codeType = getProblemCodeSystemName([$p->getCodeSystemName()]);
                     }
 
-                    if (!$codeType) {
+                    if ( ! $codeType) {
                         $codeType = 'all';
                     }
 
@@ -790,7 +790,7 @@ class WelcomeCallListGenerator
                         if (in_array($codeType, [Constants::ICD9_NAME, 'all'])) {
                             $cpmProblemId = $icd9Map->get($p->getCode());
 
-                            if ($cpmProblemId && !in_array($cpmProblemId, $qualifyingCcmProblemsCpmIdStack)) {
+                            if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingCcmProblemsCpmIdStack)) {
                                 $qualifyingCcmProblems[] = "{$cpmProblemsMap->get($cpmProblemId)}, ICD9: {$p->getCode()}";
                                 $qualifyingCcmProblemsCpmIdStack[] = $cpmProblemId;
 
@@ -805,7 +805,7 @@ class WelcomeCallListGenerator
                         if (in_array($codeType, [Constants::ICD10_NAME, 'all'])) {
                             $cpmProblemId = $icd10Map->get($p->getCode());
 
-                            if ($cpmProblemId && !in_array($cpmProblemId, $qualifyingCcmProblemsCpmIdStack)) {
+                            if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingCcmProblemsCpmIdStack)) {
                                 $qualifyingCcmProblems[] = "{$cpmProblemsMap->get($cpmProblemId)}, ICD10: {$p->getCode()}";
                                 $qualifyingCcmProblemsCpmIdStack[] = $cpmProblemId;
 
@@ -820,7 +820,7 @@ class WelcomeCallListGenerator
                         if (in_array($codeType, [Constants::SNOMED_NAME, 'all'])) {
                             $cpmProblemId = $snomedMap->get($p->getCode());
 
-                            if ($cpmProblemId && !in_array($cpmProblemId, $qualifyingCcmProblemsCpmIdStack)) {
+                            if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingCcmProblemsCpmIdStack)) {
                                 $qualifyingCcmProblems[] = "{$cpmProblemsMap->get($cpmProblemId)}, ICD10: {$p->getCode()}";
                                 $qualifyingCcmProblemsCpmIdStack[] = $cpmProblemId;
 
@@ -842,7 +842,7 @@ class WelcomeCallListGenerator
                                 }
 
                                 if (str_contains(strtolower($p->getName()), strtolower($keyword))
-                                    && !in_array($problem->id, $qualifyingCcmProblemsCpmIdStack)
+                                    && ! in_array($problem->id, $qualifyingCcmProblemsCpmIdStack)
                                 ) {
                                     $code = SnomedToCpmIcdMap::where('icd_9_code', '!=', '')
                                         ->whereCpmProblemId($problem->id)
@@ -856,7 +856,7 @@ class WelcomeCallListGenerator
                                         }
                                     }
 
-                                    if (!$code) {
+                                    if ( ! $code) {
                                         $code = SnomedToCpmIcdMap::where('icd_10_code', '!=', '')
                                             ->whereCpmProblemId($problem->id)
                                             ->first();
@@ -910,7 +910,7 @@ class WelcomeCallListGenerator
             }
 
             if ($ccmProbCount < 2 && $bhiProbCount > 0) {
-                if (!$this->practice->hasServiceCode('CPT 99484')) {
+                if ( ! $this->practice->hasServiceCode('CPT 99484')) {
                     $this->ineligiblePatients->push($row);
 
                     $this->setEligibilityJobStatus(
@@ -952,7 +952,7 @@ class WelcomeCallListGenerator
 
             $this->patientList->each(function ($patient) use ($isValid) {
                 $errors = [];
-                if (!$isValid) {
+                if ( ! $isValid) {
                     $errors[] = 'structure';
                     $this->invalidStructure = true;
                 }
@@ -1004,7 +1004,7 @@ class WelcomeCallListGenerator
      */
     private function setEligibilityJobStatus(int $status, $messages = [], $outcome = null, $reason = null)
     {
-        if (!$this->eligibilityJob) {
+        if ( ! $this->eligibilityJob) {
             return;
         }
 
@@ -1030,7 +1030,7 @@ class WelcomeCallListGenerator
                 $eligibleInsurances[] = $insurance['type'];
             }
 
-            if ($this->eligibilityJob && !empty($insurance) && $i < 3) {
+            if ($this->eligibilityJob && ! empty($insurance) && $i < 3) {
                 switch ($i) {
                     case 0:
                         $this->eligibilityJob->primary_insurance = $insurance['type'];

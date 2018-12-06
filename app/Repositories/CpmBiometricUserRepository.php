@@ -19,10 +19,10 @@ class CpmBiometricUserRepository
 {
     public function addPatientBiometric($userId, $biometricId)
     {
-        if (!CpmBiometric::find($biometricId)) {
+        if ( ! CpmBiometric::find($biometricId)) {
             throw new \Exception('invalid biometric id "'.$biometricId.'"');
         }
-        if (!User::find($userId)) {
+        if ( ! User::find($userId)) {
             throw new \Exception('invalid user id "'.$userId.'"');
         }
         if ($this->model()->where(['patient_id' => $userId, 'cpm_biometric_id' => $biometricId])->first()) {
@@ -38,7 +38,7 @@ class CpmBiometricUserRepository
 
     public function addPatientBloodPressure($userId, $biometricId, $biometric)
     {
-        if (!$this->exists($userId, $biometricId)) {
+        if ( ! $this->exists($userId, $biometricId)) {
             $this->addPatientBiometric($userId, $biometricId);
         }
         $biometric['patient_id'] = $userId;
@@ -51,7 +51,7 @@ class CpmBiometricUserRepository
 
     public function addPatientBloodSugar($userId, $biometricId, $biometric)
     {
-        if (!$this->exists($userId, $biometricId)) {
+        if ( ! $this->exists($userId, $biometricId)) {
             $this->addPatientBiometric($userId, $biometricId);
         }
         $biometric['patient_id'] = $userId;
@@ -64,7 +64,7 @@ class CpmBiometricUserRepository
 
     public function addPatientSmoking($userId, $biometricId, $biometric)
     {
-        if (!$this->exists($userId, $biometricId)) {
+        if ( ! $this->exists($userId, $biometricId)) {
             $this->addPatientBiometric($userId, $biometricId);
         }
         $biometric['patient_id'] = $userId;
@@ -77,7 +77,7 @@ class CpmBiometricUserRepository
 
     public function addPatientWeight($userId, $biometricId, $biometric)
     {
-        if (!$this->exists($userId, $biometricId)) {
+        if ( ! $this->exists($userId, $biometricId)) {
             $this->addPatientBiometric($userId, $biometricId);
         }
         $biometric['patient_id'] = $userId;

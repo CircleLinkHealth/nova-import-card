@@ -105,11 +105,11 @@ class LoginController extends Controller
 
         $isClh = auth()->user()->hasRole(['care-center', 'administrator']);
 
-        if (!$this->validateBrowserCompatibility($agent, $isClh)) {
+        if ( ! $this->validateBrowserCompatibility($agent, $isClh)) {
             $this->sendInvalidBrowserResponse($agent->browser(), $isClh);
         }
 
-        if (!$this->validatePasswordAge()) {
+        if ( ! $this->validatePasswordAge()) {
             auth()->logout();
             $days = LoginController::MIN_PASSWORD_CHANGE_IN_DAYS;
 
@@ -129,7 +129,7 @@ class LoginController extends Controller
     {
         $agent = new Agent();
 
-        if (!$this->validateBrowserVersion($agent) && !optional(session('errors'))->has('invalid-browser-force-switch')) {
+        if ( ! $this->validateBrowserVersion($agent) && ! optional(session('errors'))->has('invalid-browser-force-switch')) {
             $message = "You are using an outdated version of {$agent->browser()}. Please update to a newer version.";
 
             return view('auth.login')->withErrors(['outdated-browser' => [$message]]);
@@ -218,7 +218,7 @@ class LoginController extends Controller
      */
     protected function storeBrowserCompatibilityCheckPreference(Request $request)
     {
-        if (!auth()->check() || auth()->user()->hasRole('care-center')) {
+        if ( ! auth()->check() || auth()->user()->hasRole('care-center')) {
             return;
         }
 
@@ -238,13 +238,13 @@ class LoginController extends Controller
      */
     protected function usernameOrEmail(Request $request)
     {
-        if (!$request->filled('email')) {
+        if ( ! $request->filled('email')) {
             return false;
         }
 
         $request->merge(array_map('trim', $request->input()));
 
-        if (!str_contains($request->input('email'), '@')) {
+        if ( ! str_contains($request->input('email'), '@')) {
             $this->username = 'username';
 
             $request->merge([
@@ -324,7 +324,7 @@ class LoginController extends Controller
         $user = auth()->user();
 
         //nothing to validate if not auth
-        if (!$user) {
+        if ( ! $user) {
             return true;
         }
 

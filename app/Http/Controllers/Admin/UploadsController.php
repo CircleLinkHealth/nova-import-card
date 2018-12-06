@@ -15,7 +15,7 @@ class UploadsController extends Controller
 {
     public function postGeneralCommentsCsv(Request $request)
     {
-        if (!$request->hasFile('uploadedCsv')) {
+        if ( ! $request->hasFile('uploadedCsv')) {
             dd('File was not uploaded. Please try again.');
         }
 
@@ -38,7 +38,7 @@ class UploadsController extends Controller
                 })
                 ->first();
 
-            if (!$patient) {
+            if ( ! $patient) {
                 $failed[] = "${firstName} ${lastName}";
                 continue;
             }
@@ -49,13 +49,13 @@ class UploadsController extends Controller
                 $generalComment = $row['General Comment'];
             }
 
-            if (!empty($generalComment)) {
+            if ( ! empty($generalComment)) {
                 $info->general_comment = $generalComment;
                 $info->save();
             }
         }
 
-        if (!empty($failed)) {
+        if ( ! empty($failed)) {
             echo 'We could not find these patients. Is the name spelled correctly?';
 
             dd($failed);

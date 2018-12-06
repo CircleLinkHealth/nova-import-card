@@ -405,7 +405,7 @@ class ReportsController extends Controller
 
                     $billingProvider = User::find($user->getBillingProviderId());
                     //is billingProviderPhone to be used anywhere?
-                    if (!$billingProvider) {
+                    if ( ! $billingProvider) {
                         $billingProviderName = '';
                         $billingProviderPhone = '';
                     } else {
@@ -414,7 +414,7 @@ class ReportsController extends Controller
                     }
 
                     $location = Location::find($user->getPreferredContactLocation());
-                    if (!$location) {
+                    if ( ! $location) {
                         $locationName = '';
                         $locationPhone = '';
                         $locationAddress = '';
@@ -712,7 +712,7 @@ class ReportsController extends Controller
 
     public function getPausedLettersFile(Request $request)
     {
-        if (!$request->has('patientUserIds')) {
+        if ( ! $request->has('patientUserIds')) {
             throw new \InvalidArgumentException('patientUserIds is a required parameter', 422);
         }
 
@@ -816,13 +816,13 @@ class ReportsController extends Controller
         $approverId = null,
         CcdInsurancePolicyService $insurances
     ) {
-        if (!$patientId) {
+        if ( ! $patientId) {
             return 'Patient Not Found..';
         }
 
         $patient = User::with('carePlan')->find($patientId);
 
-        if (!$patient) {
+        if ( ! $patient) {
             return 'Patient Not Found..';
         }
 
@@ -832,7 +832,7 @@ class ReportsController extends Controller
 
         $careplan = $this->formatter->formatDataForViewPrintCareplanReport([$patient]);
 
-        if (!$careplan) {
+        if ( ! $careplan) {
             return 'Careplan not found...';
         }
 
@@ -901,13 +901,13 @@ class ReportsController extends Controller
             // get and validate current user
             \JWTAuth::setIdentifier('id');
             $wpUser = \JWTAuth::parseToken()->authenticate();
-            if (!$wpUser) {
+            if ( ! $wpUser) {
                 return response()->json(['error' => 'invalid_credentials'], 401);
             }
         } else {
             // get user
             $wpUser = User::find($id);
-            if (!$wpUser) {
+            if ( ! $wpUser) {
                 return response('User not found', 401);
             }
         }
@@ -1082,7 +1082,7 @@ class ReportsController extends Controller
         Request $request,
         $patientId = false
     ) {
-        if (!$patientId) {
+        if ( ! $patientId) {
             return 'Patient Not Found..';
         }
 
@@ -1097,7 +1097,7 @@ class ReportsController extends Controller
         CcdInsurancePolicyService $insurances,
         CareplanService $careplanService
     ) {
-        if (!$patientId) {
+        if ( ! $patientId) {
             return 'Patient Not Found..';
         }
 
@@ -1109,7 +1109,7 @@ class ReportsController extends Controller
 
         $careplan = $this->formatter->formatDataForViewPrintCareplanReport([$patient]);
 
-        if (!$careplan) {
+        if ( ! $careplan) {
             return 'Careplan not found...';
         }
 

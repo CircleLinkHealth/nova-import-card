@@ -25,7 +25,7 @@ class UserMetaParserHelpers
         $primary = [];
 
         foreach ($phones as $phone) {
-            if (!isset($phone->number)) {
+            if ( ! isset($phone->number)) {
                 continue;
             }
 
@@ -33,7 +33,7 @@ class UserMetaParserHelpers
                 ? $phone->type
                 : 'home';
 
-            if (!$number = StringManipulation::formatPhoneNumber($phone->number)) {
+            if ( ! $number = StringManipulation::formatPhoneNumber($phone->number)) {
                 continue;
             }
 

@@ -85,7 +85,7 @@ class GenerateNurseInvoice implements ShouldQueue
         }
 
         $viewHashKey = null;
-        if (!empty($links) && !empty($data)) {
+        if ( ! empty($links) && ! empty($data)) {
             $viewHashKey = (new View())->storeViewInCache('billing.nurse.list', [
                 'invoices' => $links,
                 'data'     => $data,

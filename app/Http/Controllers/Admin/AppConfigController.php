@@ -33,7 +33,7 @@ class AppConfigController extends Controller
     public function destroy($id)
     {
         $appConfig = AppConfig::find($id);
-        if (!$appConfig) {
+        if ( ! $appConfig) {
             return response('User not found', 401);
         }
 

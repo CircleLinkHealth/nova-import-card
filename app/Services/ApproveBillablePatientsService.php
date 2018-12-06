@@ -80,7 +80,7 @@ class ApproveBillablePatientsService
         $summaries = $this->billablePatientSummaries($practiceId, $date)->paginate(100);
 
         $summaries->getCollection()->transform(function ($summary) {
-            if (!$summary->actor_id) {
+            if ( ! $summary->actor_id) {
                 $summary = $this->patientSummaryRepo->attachChargeableServices($summary);
                 $summary = $this->patientSummaryRepo->attachBillableProblems($summary->patient, $summary);
             }

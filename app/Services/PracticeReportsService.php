@@ -68,7 +68,7 @@ class PracticeReportsService
                 foreach ($chargeableServices as $service) {
                     $row = $this->makeRow($practice, $date, $service);
 
-                    if (null == !$row) {
+                    if (null == ! $row) {
                         $data[] = $row->toArray();
                     }
                 }
@@ -80,7 +80,7 @@ class PracticeReportsService
 
                     foreach ($chargeableServices as $service) {
                         $row = $this->makeRow($practice, $date, $service, $provider);
-                        if (null == !$row) {
+                        if (null == ! $row) {
                             $data[] = $row->toArray();
                         }
                     }
@@ -101,7 +101,7 @@ class PracticeReportsService
         $chargeableServices = $chargeable->chargeableServices()->get();
 
         //defaults to CPT 99490 if practice doesnt have a chargeableService, until further notice
-        if (!$chargeableServices) {
+        if ( ! $chargeableServices) {
             $chargeableServices = ChargeableService::where('id', 1)->get();
         }
 
@@ -175,7 +175,7 @@ class PracticeReportsService
             $lineUnitPrice = $chargeableServiceWithPivot->pivot->amount;
         }
 
-        if (!$lineUnitPrice) {
+        if ( ! $lineUnitPrice) {
             if ($data['practice']->clh_pppm) {
                 $lineUnitPrice = $data['practice']->clh_pppm;
             } else {

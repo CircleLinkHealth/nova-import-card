@@ -99,7 +99,7 @@ class DashboardController extends Controller
     {
         $primaryPractice = $this->primaryPractice;
 
-        if (!$primaryPractice) {
+        if ( ! $primaryPractice) {
             return response('Practice not found', 404);
         }
 
@@ -137,7 +137,7 @@ class DashboardController extends Controller
     {
         $practice = $this->primaryPractice->load('settings');
 
-        if (!$practice) {
+        if ( ! $practice) {
             return response('Practice not found', 404);
         }
 
@@ -224,7 +224,7 @@ class DashboardController extends Controller
             $locationsWithoutDM = collect();
 
             foreach ($this->primaryPractice->locations as $location) {
-                if (!$location->emr_direct_address) {
+                if ( ! $location->emr_direct_address) {
                     $locationsWithoutDM->push($location);
                 }
             }
@@ -244,7 +244,7 @@ class DashboardController extends Controller
             $locationsWithoutFax = collect();
 
             foreach ($this->primaryPractice->locations as $location) {
-                if (!$location->fax) {
+                if ( ! $location->fax) {
                     $locationsWithoutFax->push($location);
                 }
             }
@@ -260,7 +260,7 @@ class DashboardController extends Controller
             }
         }
 
-        if (!isset($settingsInput['api_auto_pull'])) {
+        if ( ! isset($settingsInput['api_auto_pull'])) {
             $settingsInput['api_auto_pull'] = 0;
         }
 
@@ -295,7 +295,7 @@ class DashboardController extends Controller
             $update['term_days']    = $request->input('term_days');
             $update['active']       = $request->input('is_active');
 
-            if ((bool) $this->primaryPractice->active && !(bool) $update['active']) {
+            if ((bool) $this->primaryPractice->active && ! (bool) $update['active']) {
                 $enrolledPatientsExist = User::ofPractice($this->primaryPractice->id)
                     ->ofType('participant')
                     ->whereHas('patientInfo', function ($q) {

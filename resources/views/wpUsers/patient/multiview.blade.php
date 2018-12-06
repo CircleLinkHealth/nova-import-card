@@ -7,7 +7,7 @@
  */
 use Illuminate\Support\Collection;
 
-if (!function_exists('checkIfExists')) {
+if ( ! function_exists('checkIfExists')) {
     //check if exists
     function checkIfExists(
         $arr,
@@ -321,7 +321,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 <div class="patient-info__subareas">
                     <?php
                     $ccdProblems = $ccdProblems->map(function ($problem) use ($allCpmProblems) {
-                        if (!$problem['instruction']) {
+                        if ( ! $problem['instruction']) {
                             $cpmProblem = $allCpmProblems->first(function ($cpm) use ($problem) {
                                 return ($cpm['name'] == $problem['name']) || ($cpm['id'] == $problem['cpm_id']);
                             });
@@ -344,7 +344,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     });
 
                     $ccdProblemsForListing = $ccdProblems->filter(function ($problem) {
-                        return !$problem['is_monitored'];
+                        return ! $problem['is_monitored'];
                     })->groupBy('name')->values()->map(function ($problems) {
                         return $problems->first();
                     });
@@ -411,7 +411,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             }
                             if ($start > 130) {
                                 $goal['verb'] = 'Decrease';
-                            } elseif ('N/A' == $goal['info']['starting'] || 'TBD' == $goal['info']['target'] || !$goal['info']['starting'] || ($start >= 80 && $start <= 130)) {
+                            } elseif ('N/A' == $goal['info']['starting'] || 'TBD' == $goal['info']['target'] || ! $goal['info']['starting'] || ($start >= 80 && $start <= 130)) {
                                 $goal['verb'] = 'Regulate';
                             } else {
                                 $goal['verb'] = 'Increase';
@@ -422,13 +422,13 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                 $goal['info']['target'] = '130/80';
                             }
 
-                            if ('N/A' == $goal['info']['starting'] || 'TBD' == $goal['info']['target'] || !$goal['info']['starting'] || ($start < 130)) {
+                            if ('N/A' == $goal['info']['starting'] || 'TBD' == $goal['info']['target'] || ! $goal['info']['starting'] || ($start < 130)) {
                                 $goal['verb'] = 'Regulate';
                             } elseif ($start >= 130) {
                                 $goal['verb'] = 'Decrease';
                             }
                         } else {
-                            if (!$goal['info']['starting'] || 'N/A' == $goal['info']['starting'] || !$goal['info']['target'] || ('Weight' == $goal['name'] && '0' == $goal['info']['target'])) {
+                            if ( ! $goal['info']['starting'] || 'N/A' == $goal['info']['starting'] || ! $goal['info']['target'] || ('Weight' == $goal['name'] && '0' == $goal['info']['target'])) {
                                 if (('Weight' == $goal['name'] && '0' == $goal['info']['target'])) {
                                     $goal['info']['target'] = 'N/A';
                                 }

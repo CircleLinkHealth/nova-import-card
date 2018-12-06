@@ -44,7 +44,7 @@ class Problems extends BaseImporter
                                         $medicalRecordId,
                                         $importedMedicalRecord
                                     ) {
-                if (!$this->validate($itemLog)) {
+                if ( ! $this->validate($itemLog)) {
                     return ['do_not_import' => $itemLog->id];
                 }
 
@@ -53,7 +53,7 @@ class Problems extends BaseImporter
                  */
                 $problemCodes = $this->consolidateProblemInfo($itemLog);
 
-                if (!validProblemName($problemCodes->cons_name)) {
+                if ( ! validProblemName($problemCodes->cons_name)) {
                     return ['do_not_import' => $itemLog->id];
                 }
 
@@ -124,7 +124,7 @@ class Problems extends BaseImporter
 
     private function getCpmProblemId(ProblemLog $itemLog, $problemName)
     {
-        if (!validProblemName($problemName)) {
+        if ( ! validProblemName($problemName)) {
             return null;
         }
 
@@ -151,7 +151,7 @@ class Problems extends BaseImporter
             $keywords = array_merge(explode(',', $cpmProblem->contains), [$cpmProblem->name]);
 
             foreach ($keywords as $keyword) {
-                if (!$keyword || empty($keyword)) {
+                if ( ! $keyword || empty($keyword)) {
                     continue;
                 }
 

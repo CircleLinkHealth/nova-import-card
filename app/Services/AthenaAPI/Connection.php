@@ -67,7 +67,7 @@ class Connection
      */
     public function __construct($version, $key, $secret, $practiceid = null)
     {
-        if (!$version || !$key || !$secret) {
+        if ( ! $version || ! $key || ! $secret) {
             return 'Required parameters missing.';
         }
 
@@ -223,7 +223,7 @@ class Connection
 
         $authorization = $this->call('POST', $url, $parameters, $headers);
 
-        if (!is_array($authorization) || !array_key_exists('access_token', $authorization)) {
+        if ( ! is_array($authorization) || ! array_key_exists('access_token', $authorization)) {
             return false;
         }
 
@@ -251,7 +251,7 @@ class Connection
         $response    = $this->call($verb, $url, $body, array_merge($auth_header, $headers));
 
         // $response is false if we had a 401 Not Authorized, so re-authenticate and try again.
-        if (false === $response && !$secondcall) {
+        if (false === $response && ! $secondcall) {
             $this->authenticate();
 
             return $this->authorized_call($verb, $url, $body, $headers, $secondcall = true);
@@ -298,7 +298,7 @@ class Connection
         // $contents is false if there was an error, so if it was a 401 Not Authorized, propogate the
         // false.  Otherwise, try it again with ignored errors.
         if (false === $contents) {
-            if (!app()->environment('local') && function_exists('http_parse_headers')) {
+            if ( ! app()->environment('local') && function_exists('http_parse_headers')) {
                 $response_headers = http_parse_headers(implode("\r\n", $http_response_header));
                 $response_code    = $response_headers['Response Code'];
                 if (401 === $response_code) {
@@ -311,7 +311,7 @@ class Connection
                 }
             }
 
-            if (!$secondcall) {
+            if ( ! $secondcall) {
                 return $this->call($verb, $url, $body, $headers, $secondcall = true);
             }
         }
@@ -331,7 +331,7 @@ class Connection
         return join('/', array_map(function ($p) {
             return trim($p, '/');
         }, array_filter(func_get_args(), function ($value) {
-            return !(is_null($value) || '' == $value);
+            return ! (is_null($value) || '' == $value);
         })));
     }
 }

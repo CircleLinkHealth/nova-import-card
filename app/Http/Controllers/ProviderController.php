@@ -40,7 +40,7 @@ class ProviderController extends Controller
                 return CarePlan::QA_APPROVED == $user->getCarePlanStatus();
             })->first();
 
-            if (!$nextPatient) {
+            if ( ! $nextPatient) {
                 return redirect()->to('/');
             }
 
@@ -67,7 +67,7 @@ class ProviderController extends Controller
     {
         $user = User::find($patientId);
 
-        if (!$user) {
+        if ( ! $user) {
             return response('User not found', 401);
         }
 
@@ -82,7 +82,7 @@ class ProviderController extends Controller
                 return CarePlan::QA_APPROVED == $user->getCarePlanStatus();
             })->first();
 
-            if (!$nextPatient) {
+            if ( ! $nextPatient) {
                 return redirect()->to('/');
             }
 

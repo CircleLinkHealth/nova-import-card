@@ -12,7 +12,7 @@ class CareplanAssessmentRepository
 {
     public function assessments($userId = null)
     {
-        if (!$userId) {
+        if ( ! $userId) {
             return $this->model()->paginate();
         }
 
@@ -25,7 +25,7 @@ class CareplanAssessmentRepository
         $assessment                = $model->firstOrNew([]);
         $assessment->key_treatment = $keyTreatment;
         $assessment->careplan_id   = $userId;
-        if (!$assessment->provider_approver_id) {
+        if ( ! $assessment->provider_approver_id) {
             $assessment->provider_approver_id = $approverId;
         }
         $assessment->save();

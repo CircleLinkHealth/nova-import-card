@@ -46,11 +46,11 @@ class ImportService
             $row['address2'] = $row['street_2'];
         }
 
-        if (array_key_exists('problems', $row) & !array_key_exists('problems_string', $row)) {
+        if (array_key_exists('problems', $row) & ! array_key_exists('problems_string', $row)) {
             $row['problems_string'] = $row['problems'];
         }
 
-        if (array_key_exists('referring_provider_name', $row) & !array_key_exists('provider_name', $row)) {
+        if (array_key_exists('referring_provider_name', $row) & ! array_key_exists('provider_name', $row)) {
             $row['provider_name'] = $row['referring_provider_name'];
         }
 
@@ -91,7 +91,7 @@ class ImportService
         if (139 == $practice->id) {
             $mrn = $this->lookupPHXmrn($row['first_name'], $row['last_name'], $row['dob'], $row['mrn']);
 
-            if (!$mrn) {
+            if ( ! $mrn) {
                 throw new \Exception('Phoenix Heart Patient not found');
             }
 
@@ -118,7 +118,7 @@ class ImportService
             ->with('patient.patientInfo')
             ->find($ccdaId);
 
-        if (!$ccda) {
+        if ( ! $ccda) {
             $response->success = false;
             $response->message = "We could not locate CCDA with id ${ccdaId}";
             $response->imr     = null;
@@ -180,7 +180,7 @@ class ImportService
 
         $imr = $this->createTabularMedicalRecordAndImport($patient, $phx);
 
-        if (!$imr) {
+        if ( ! $imr) {
             return null;
         }
 

@@ -70,7 +70,7 @@ class CareplanAssessmentService
     public function save(CareplanAssessment $assessment)
     {
         if ($assessment) {
-            if (!$this->exists($assessment->careplan_id, $assessment->provider_approver_id)) {
+            if ( ! $this->exists($assessment->careplan_id, $assessment->provider_approver_id)) {
                 $assessment->save();
                 $this->after($assessment);
 

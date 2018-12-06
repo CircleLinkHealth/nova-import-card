@@ -44,6 +44,6 @@ class NewLineDelimitedListMedicationLogger implements Logger
         return str_contains(
             optional($medicalRecord)->medications_string,
                 "\n"
-        ) && !starts_with(optional($medicalRecord)->medications_string, ['[', '{']);
+        ) && ! starts_with(optional($medicalRecord)->medications_string, ['[', '{']);
     }
 }

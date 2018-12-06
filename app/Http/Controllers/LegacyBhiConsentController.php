@@ -30,7 +30,7 @@ class LegacyBhiConsentController extends Controller
 
     private function createNote($patientId, $type)
     {
-        if (!in_array($type, [Patient::BHI_REJECTION_NOTE_TYPE, Patient::BHI_CONSENT_NOTE_TYPE])) {
+        if ( ! in_array($type, [Patient::BHI_REJECTION_NOTE_TYPE, Patient::BHI_CONSENT_NOTE_TYPE])) {
             throw new InvalidArgumentException("`${type}` is not a valid type for a legacy BHI consent note type");
         }
 

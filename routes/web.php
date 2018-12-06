@@ -2283,7 +2283,7 @@ Route::group([
     'middleware' => 'auth',
 ], function () {
     Route::get('/token', [
-        'uses' => 'TwilioController@obtainToken',
+        'uses' => 'Twilio\TwilioController@obtainToken',
         'as'   => 'twilio.token',
     ]);
 });
@@ -2292,8 +2292,16 @@ Route::group([
     'prefix' => 'twilio',
 ], function () {
     Route::post('/call/place', [
-        'uses' => 'TwilioController@placeCall',
+        'uses' => 'Twilio\TwilioController@placeCall',
         'as'   => 'twilio.call.place',
+    ]);
+    Route::post('/call/status', [
+        'uses' => 'Twilio\TwilioController@callStatusCallback',
+        'as'   => 'twilio.call.status',
+    ]);
+    Route::post('/call/dial-status', [
+        'uses' => 'Twilio\TwilioController@dialStatusCallback',
+        'as'   => 'twilio.call.dial.status',
     ]);
 });
 

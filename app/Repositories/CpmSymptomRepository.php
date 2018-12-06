@@ -13,7 +13,7 @@ class CpmSymptomRepository
 {
     public function addSymptomToPatient($symptomId, $userId)
     {
-        if (!$this->patientHasSymptom($userId, $symptomId)) {
+        if ( ! $this->patientHasSymptom($userId, $symptomId)) {
             $symptomUser                 = new CpmSymptomUser();
             $symptomUser->cpm_symptom_id = $symptomId;
             $symptomUser->patient_id     = $userId;

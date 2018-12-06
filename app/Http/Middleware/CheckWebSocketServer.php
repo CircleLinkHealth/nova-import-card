@@ -21,7 +21,7 @@ class CheckWebSocketServer
      */
     public function handle($request, Closure $next)
     {
-        if (!cache()->get('ws:server:working')) {
+        if ( ! cache()->get('ws:server:working')) {
             try {
                 $client = new Client();
                 $url    = config('services.ws.server-url').'/';
@@ -39,7 +39,7 @@ class CheckWebSocketServer
             }
         }
 
-        view()->share('useOldTimeTracker', $request->has('useOldTimeTracker') ?? !cache()->get('ws:server:working'));
+        view()->share('useOldTimeTracker', $request->has('useOldTimeTracker') ?? ! cache()->get('ws:server:working'));
 
         return $next($request);
     }

@@ -10,7 +10,7 @@ class NumberedAllergyFields
 {
     public function handle(&$patient): array
     {
-        if (!is_array($patient)) {
+        if ( ! is_array($patient)) {
             return [];
         }
 
@@ -18,11 +18,11 @@ class NumberedAllergyFields
         $i         = 1;
 
         do {
-            if (!array_key_exists("allergy_${i}", $patient)) {
+            if ( ! array_key_exists("allergy_${i}", $patient)) {
                 break;
             }
 
-            if (!empty($patient["allergy_${i}"]) && !str_contains(
+            if ( ! empty($patient["allergy_${i}"]) && ! str_contains(
                 strtolower($patient["allergy_${i}"]),
                     ['#n/a', 'no known']
             )) {
@@ -41,7 +41,7 @@ class NumberedAllergyFields
 
     public function shouldHandle($patient)
     {
-        if (!is_array($patient)) {
+        if ( ! is_array($patient)) {
             return false;
         }
 

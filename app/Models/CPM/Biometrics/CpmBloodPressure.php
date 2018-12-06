@@ -106,13 +106,13 @@ class CpmBloodPressure extends \App\BaseModel implements Biometric
     {
         $patient = $this->patient;
 
-        if (!$patient) {
+        if ( ! $patient) {
             return;
         }
 
         $settings = $this->patient->primaryPractice->settings->first();
 
-        if (!$settings) {
+        if ( ! $settings) {
             return;
         }
 

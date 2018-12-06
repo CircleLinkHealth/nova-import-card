@@ -116,7 +116,7 @@ class Call extends BaseModel
 
     public function getIsFromCareCenterAttribute()
     {
-        if (!is_a($this->schedulerUser, User::class)) {
+        if ( ! is_a($this->schedulerUser, User::class)) {
             //null in cases of scheduler = 'algorithm'
             return false;
         }
@@ -145,7 +145,7 @@ class Call extends BaseModel
         // get record for month
         $day_start = $d->startOfMonth()->toDateString();
         $record    = PatientMonthlySummary::where('month_year', $day_start)->where('patient_id', $user->id)->first();
-        if (!$record) {
+        if ( ! $record) {
             return 0;
         }
 
@@ -215,7 +215,7 @@ class Call extends BaseModel
      */
     public function scopeOfStatus($builder, $status)
     {
-        if (!is_array($status)) {
+        if ( ! is_array($status)) {
             $status = [$status];
         }
 

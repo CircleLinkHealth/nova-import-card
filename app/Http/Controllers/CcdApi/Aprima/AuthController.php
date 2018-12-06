@@ -28,7 +28,7 @@ class AuthController extends Controller
      */
     public function getAccessToken(Request $request)
     {
-        if (!$request->filled('username') || !$request->filled('password')) {
+        if ( ! $request->filled('username') || ! $request->filled('password')) {
             response()->json(['error' => 'Username and password need to be included on the request.'], 400);
         }
 
@@ -41,7 +41,7 @@ class AuthController extends Controller
         }
 
         //Verify Role for UPG
-        if (!$user->hasRoleForSite('aprima-api-location', 16)) {
+        if ( ! $user->hasRoleForSite('aprima-api-location', 16)) {
             return response()->json(['error' => 'Invalid Credentials.'], 400);
         }
 
@@ -53,7 +53,7 @@ class AuthController extends Controller
 
         \JWTAuth::setIdentifier('id');
 
-        if (!$access_token = \JWTAuth::attempt($credentials)) {
+        if ( ! $access_token = \JWTAuth::attempt($credentials)) {
             return response()->json(['error' => 'Invalid Credentials.'], 400);
         }
 

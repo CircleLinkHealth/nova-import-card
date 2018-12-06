@@ -75,7 +75,7 @@ class CPRUCPController extends Controller
 
         $filterUser = 'all';
 
-        if (!empty($params['filterUser'])) {
+        if ( ! empty($params['filterUser'])) {
             $filterUser = $params['filterUser'];
             if ('all' != $params['filterUser']) {
                 $ucps->where('user_id', '=', $filterUser);
@@ -88,7 +88,7 @@ class CPRUCPController extends Controller
             'section_text'
         )->all();
         $filterPCP = 'all';
-        if (!empty($params['filterPCP'])) {
+        if ( ! empty($params['filterPCP'])) {
             $filterPCP = $params['filterPCP'];
             if ('all' != $params['filterPCP']) {
                 $ucps->whereHas('item', function ($q) use ($filterPCP) {

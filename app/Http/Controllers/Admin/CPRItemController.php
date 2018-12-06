@@ -20,7 +20,7 @@ class CPRItemController extends Controller
      */
     public function create()
     {
-        if (!Auth::user()->isAdmin()) {
+        if ( ! Auth::user()->isAdmin()) {
             abort(403);
         }
         // display view
@@ -36,7 +36,7 @@ class CPRItemController extends Controller
      */
     public function destroy($id)
     {
-        if (!Auth::user()->isAdmin()) {
+        if ( ! Auth::user()->isAdmin()) {
             abort(403);
         }
         CPRulesItem::destroy($id);
@@ -53,7 +53,7 @@ class CPRItemController extends Controller
      */
     public function edit($id)
     {
-        if (!Auth::user()->isAdmin()) {
+        if ( ! Auth::user()->isAdmin()) {
             abort(403);
         }
         $item = CPRulesItem::find($id);
@@ -68,7 +68,7 @@ class CPRItemController extends Controller
      */
     public function index(Request $request)
     {
-        if (!Auth::user()->isAdmin()) {
+        if ( ! Auth::user()->isAdmin()) {
             abort(403);
         }
         // display view
@@ -86,7 +86,7 @@ class CPRItemController extends Controller
      */
     public function show($id)
     {
-        if (!Auth::user()->isAdmin()) {
+        if ( ! Auth::user()->isAdmin()) {
             abort(403);
         }
         // display view
@@ -102,7 +102,7 @@ class CPRItemController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Auth::user()->isAdmin()) {
+        if ( ! Auth::user()->isAdmin()) {
             abort(403);
         }
         $params             = $request->input();
@@ -128,7 +128,7 @@ class CPRItemController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!Auth::user()->isAdmin()) {
+        if ( ! Auth::user()->isAdmin()) {
             abort(403);
         }
         $params             = $request->input();

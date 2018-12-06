@@ -132,12 +132,12 @@ class ReschedulerHandler
 
     private function storeNewCallForFamilyMembers(Patient $patient, $oldCall, $window_start, $window_end, $day)
     {
-        if (!$patient->hasFamilyId()) {
+        if ( ! $patient->hasFamilyId()) {
             return;
         }
 
         $familyMembers = $patient->getFamilyMembers($patient);
-        if (!empty($familyMembers)) {
+        if ( ! empty($familyMembers)) {
             foreach ($familyMembers as $familyMember) {
                 $familyMemberCall = $this->schedulerService->getScheduledCallForPatient($familyMember->user);
                 //if manually scheduled by nurse or admin, do not do anything

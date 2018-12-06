@@ -24,7 +24,7 @@ class Allergies extends BaseImporter
             ->values();
 
         foreach ($itemLogs as $itemLog) {
-            if (!$this->validate($itemLog)) {
+            if ( ! $this->validate($itemLog)) {
                 continue;
             }
 

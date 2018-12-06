@@ -48,19 +48,19 @@ class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
             $patient->put('problems', collect());
 
             foreach ($data as $d) {
-                if ($d['medication'] && !$patient['medications']->contains($d['medication'])) {
+                if ($d['medication'] && ! $patient['medications']->contains($d['medication'])) {
                     $patient['medications']->push($d['medication']);
                 }
 
-                if ($d['condition'] && !$patient['problems']->contains($d['condition'])) {
+                if ($d['condition'] && ! $patient['problems']->contains($d['condition'])) {
                     $patient['problems']->push($d['condition']);
                 }
 
-                if (!$patient->contains($d['last_name'])) {
+                if ( ! $patient->contains($d['last_name'])) {
                     $patient->put('last_name', $d['last_name']);
                 }
 
-                if (!$patient->contains($d['first_name'])) {
+                if ( ! $patient->contains($d['first_name'])) {
                     $patient->put('first_name', $d['first_name']);
                 }
             }

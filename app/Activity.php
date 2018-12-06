@@ -165,7 +165,7 @@ class Activity extends BaseModel implements Transformable
 
     public function getPerformedAtYearMonthAttribute()
     {
-        if (!empty($this->attributes['performed_at'])) {
+        if ( ! empty($this->attributes['performed_at'])) {
             return Carbon::parse($this->attributes['performed_at'])->format('Y-m');
         }
     }
@@ -191,7 +191,7 @@ class Activity extends BaseModel implements Transformable
             Carbon::createFromFormat('Y-n', $months[1])->endOfMonth(),
         ]);
 
-        !empty($patientIds)
+        ! empty($patientIds)
             ? $query->whereIn('patient_id', $patientIds)
             : '';
 
@@ -221,7 +221,7 @@ class Activity extends BaseModel implements Transformable
             $reportData[$patientAct[0]['patient_id']] = collect($patientAct)->groupBy('performed_at_year_month');
         }
 
-        if (!empty($reportData)) {
+        if ( ! empty($reportData)) {
             return $reportData;
         }
 

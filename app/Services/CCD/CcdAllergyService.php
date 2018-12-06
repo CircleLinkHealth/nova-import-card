@@ -22,7 +22,7 @@ class CcdAllergyService
 
     public function addPatientAllergy($userId, $name)
     {
-        if (!$this->repo()->patientAllergyExists($userId, $name)) {
+        if ( ! $this->repo()->patientAllergyExists($userId, $name)) {
             return $this->setupAllergy($this->repo()->addPatientAllergy($userId, $name));
         }
 

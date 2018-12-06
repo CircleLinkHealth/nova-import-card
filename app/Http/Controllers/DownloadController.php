@@ -24,15 +24,15 @@ class DownloadController extends Controller
         $path = storage_path($filePath);
 
         //try looking in the download folder
-        if (!file_exists($path)) {
+        if ( ! file_exists($path)) {
             $path = storage_path("download/${filePath}");
         }
 
-        if (!file_exists($path)) {
+        if ( ! file_exists($path)) {
             $path = storage_path("eligibility-templates/${filePath}");
         }
 
-        if (!file_exists($path)) {
+        if ( ! file_exists($path)) {
             $downloadMedia = $this->mediaFileExists($filePath);
 
             if ($downloadMedia) {
@@ -42,15 +42,15 @@ class DownloadController extends Controller
             $path = storage_path($filePath);
         }
 
-        if (!file_exists($path)) {
+        if ( ! file_exists($path)) {
             $path = $filePath;
         }
 
-        if (!file_exists($path)) {
+        if ( ! file_exists($path)) {
             $path = base64_decode($filePath);
         }
 
-        if (!file_exists($path)) {
+        if ( ! file_exists($path)) {
             return "Could not locate file with name: ${filePath}";
         }
 
@@ -68,10 +68,10 @@ class DownloadController extends Controller
         if (is_json($filePath)) {
             $decoded = json_decode($filePath, true);
 
-            if (!empty($decoded['media_id'])) {
+            if ( ! empty($decoded['media_id'])) {
                 $media = Media::findOrFail($decoded['media_id']);
 
-                if (!$this->canDownload($media)) {
+                if ( ! $this->canDownload($media)) {
                     abort(403);
                 }
 

@@ -24,7 +24,7 @@
 <?php
 use Carbon\Carbon;
 
-if (!isset($activity)) {
+if ( ! isset($activity)) {
     $activity = 'Undefined';
 }
 $title              = Route::currentRouteName();
@@ -32,7 +32,7 @@ $ipAddr             = Request::ip();
 $requestUri         = Request::getRequestUri();
 $pieces             = explode('?', $requestUri);
 $urlShort           = $pieces[0];
-$enableTimeTracking = !isset($disableTimeTracking);
+$enableTimeTracking = ! isset($disableTimeTracking);
 // disable if login
 if (false !== strpos($requestUri, 'login')) {
 //    $enableTimeTracking = false;
@@ -40,10 +40,10 @@ if (false !== strpos($requestUri, 'login')) {
 // set patient vars
 $patientId        = '';
 $patientProgramId = '';
-if (isset($patient) && !empty($patient) && is_a($patient, App\User::class)) {
+if (isset($patient) && ! empty($patient) && is_a($patient, App\User::class)) {
     $patientId        = $patient->id;
     $patientProgramId = $patient->program_id;
-} elseif (isset($patient) && !empty($patient) && is_a($patient, App\Patient::class)) {
+} elseif (isset($patient) && ! empty($patient) && is_a($patient, App\Patient::class)) {
     $patientId        = $patient->user_id;
     $patientProgramId = $patient->user->program_id;
 }

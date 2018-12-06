@@ -46,7 +46,7 @@ class PatientContactWindow extends BaseModel
         $patient_windows = $patient->patientInfo->contactWindows()->get();
 
         //If there are no contact windows, we just return the next day for now. @todo confirm logic
-        if (!$patient_windows) {
+        if ( ! $patient_windows) {
             return Carbon::tomorrow()->toDateTimeString();
         }
 
@@ -101,7 +101,7 @@ class PatientContactWindow extends BaseModel
             //to make sure the day returned is a weekday for calls.
             do {
                 $offset_date->addDay();
-            } while (!$offset_date->isWeekday());
+            } while ( ! $offset_date->isWeekday());
 
             $day = $offset_date->toDateTimeString();
 
@@ -136,7 +136,7 @@ class PatientContactWindow extends BaseModel
         $patient_windows = $patient->patientInfo->contactWindows()->get();
 
         //If there are no contact windows, we just return the next day for now. @todo confirm logic
-        if (!$patient_windows) {
+        if ( ! $patient_windows) {
             return Carbon::tomorrow()->toDateTimeString();
         }
 
@@ -210,7 +210,7 @@ class PatientContactWindow extends BaseModel
         $windows = [];
 
         //If there are no contact windows, we just the same day. @todo confirm logic
-        if (!$patient_windows) {
+        if ( ! $patient_windows) {
             $carbon_date_start = Carbon::parse($offset_date);
             $carbon_date_end   = Carbon::parse($offset_date);
 

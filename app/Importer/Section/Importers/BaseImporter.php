@@ -36,7 +36,7 @@ abstract class BaseImporter implements SectionImporter
     {
         $validator = $this->chooseValidator($item);
 
-        if (!$validator) {
+        if ( ! $validator) {
             return false;
         }
 

@@ -83,7 +83,7 @@ class EmailSettingsController extends Controller
         ]);
 
         return view('emailSettings.create', [
-            'showSuccessMessage' => !empty($created),
+            'showSuccessMessage' => ! empty($created),
             'settings'           => $created,
         ]);
     }

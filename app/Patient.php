@@ -237,17 +237,17 @@ class Patient extends BaseModel
             5,
         ];
 
-        if (!empty($days)) {
+        if ( ! empty($days)) {
             $daysNumber = $days;
         }
 
         $timeFrom = '09:00:00';
         $timeTo   = '17:00:00';
 
-        if (!empty($fromTime)) {
+        if ( ! empty($fromTime)) {
             $timeFrom = Carbon::parse($fromTime)->format('H:i:s');
         }
-        if (!empty($toTime)) {
+        if ( ! empty($toTime)) {
             $timeTo = Carbon::parse($toTime)->format('H:i:s');
         }
 
@@ -381,7 +381,7 @@ class Patient extends BaseModel
     public function getPreferences()
     {
         $patientTimezone = $this->user->timezone;
-        if (!isset($patientTimezone)) {
+        if ( ! isset($patientTimezone)) {
             $patientTimezone = 'America/New_York';
         }
         $tzAbbr = Carbon::now()->setTimezone($patientTimezone)->format('T');

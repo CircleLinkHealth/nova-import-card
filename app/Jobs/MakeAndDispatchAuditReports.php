@@ -75,7 +75,7 @@ class MakeAndDispatchAuditReports implements ShouldQueue
 
         $path = storage_path("download/${fileName}");
 
-        if (!$path) {
+        if ( ! $path) {
             \Log::error("File not found: ${path}");
 
             return;

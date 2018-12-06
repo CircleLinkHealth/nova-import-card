@@ -51,7 +51,7 @@ class StatsHelper
                 ++$data['added'];
             }
 
-            if (!$patient->patientInfo) {
+            if ( ! $patient->patientInfo) {
                 continue;
             }
 
@@ -87,7 +87,7 @@ class StatsHelper
                     ++$data['added'][$index];
                 }
 
-                if (!$patient->patientInfo) {
+                if ( ! $patient->patientInfo) {
                     continue;
                 }
 

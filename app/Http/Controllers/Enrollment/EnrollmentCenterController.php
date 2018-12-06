@@ -85,7 +85,7 @@ class EnrollmentCenterController extends Controller
     {
         $careAmbassador = auth()->user()->careAmbassador;
 
-        if (!$careAmbassador) {
+        if ( ! $careAmbassador) {
             return view('errors.403', [
                 'message'   => 'You need to be a Care Ambassador to acccess this page.',
                 'hideLinks' => true,

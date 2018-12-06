@@ -116,7 +116,7 @@ class OnboardingController extends Controller
                 'name' => $practiceSlug,
             ])->first();
 
-        if (!$primaryPractice) {
+        if ( ! $primaryPractice) {
             return response('Practice not found', 404);
         }
 
@@ -164,7 +164,7 @@ class OnboardingController extends Controller
                 'name' => $practiceSlug,
             ])->first();
 
-        if (!$primaryPractice) {
+        if ( ! $primaryPractice) {
             return response('Practice not found', 404);
         }
 
@@ -310,7 +310,7 @@ class OnboardingController extends Controller
         $user->roles()
             ->attach($role->id);
 
-        if (!auth()->user()->hasRole('salesperson')) {
+        if ( ! auth()->user()->hasRole('salesperson')) {
             auth()->login($user);
         }
 

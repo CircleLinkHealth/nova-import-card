@@ -18,7 +18,7 @@ class UserCacheController extends Controller
             return 'This view has expired.';
         }
 
-        if (!$cached['view']) {
+        if ( ! $cached['view']) {
             return $cached['message'];
         }
 

@@ -13,7 +13,7 @@ class ValidStartDateNoEndDate implements SectionValidator
 {
     public function isValid(ItemLog $item): bool
     {
-        if (!$this->shouldValidate($item)) {
+        if ( ! $this->shouldValidate($item)) {
             return false;
         }
 
@@ -22,6 +22,6 @@ class ValidStartDateNoEndDate implements SectionValidator
 
     public function shouldValidate(ItemLog $item): bool
     {
-        return !empty($item->start) && empty($item->end);
+        return ! empty($item->start) && empty($item->end);
     }
 }

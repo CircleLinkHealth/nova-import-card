@@ -70,7 +70,7 @@ class EligibilityBatch extends BaseModel
 
     public function getStatus($statusId = null)
     {
-        if (!$statusId) {
+        if ( ! $statusId) {
             if (is_null($this->status)) {
                 return null;
             }
@@ -196,7 +196,7 @@ class EligibilityBatch extends BaseModel
      */
     public function linkToView()
     {
-        if (!$this->id) {
+        if ( ! $this->id) {
             return null;
         }
 

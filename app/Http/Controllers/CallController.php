@@ -28,7 +28,7 @@ class CallController extends Controller
     {
         $input = $request->all();
         $call  = $this->createCall($input);
-        if (!isset($call['errors'])) {
+        if ( ! isset($call['errors'])) {
             return response()
                 ->json($call, 201);
         }
@@ -107,9 +107,9 @@ class CallController extends Controller
             }
         }
 
-        if (!empty($input['id'])) {
+        if ( ! empty($input['id'])) {
             $previousCall = Call::find($input['id']);
-            if (!$previousCall) {
+            if ( ! $previousCall) {
                 return response('could not locate call '.$input['id'], 401);
             }
 
@@ -191,19 +191,19 @@ class CallController extends Controller
         );
 
         $columnsToCheckForOverride = ['scheduled_date', 'window_start', 'window_end'];
-        $isFamilyOverride          = !empty($data['familyOverride']);
+        $isFamilyOverride          = ! empty($data['familyOverride']);
 
         // VALIDATION
         if (empty($data['callId'])) {
             return response('missing required params', 401);
         }
-        if (!Auth::user()) {
+        if ( ! Auth::user()) {
             return response('missing required scheduler user', 401);
         }
 
         // find call
         $call = Call::find($data['callId']);
-        if (!$call) {
+        if ( ! $call) {
             return response('could not locate call '.$data['callId'], 401);
         }
 
@@ -211,7 +211,7 @@ class CallController extends Controller
         $value = $data['value'];
 
         if (in_array($col, $columnsToCheckForOverride)
-            && !$isFamilyOverride
+            && ! $isFamilyOverride
             && $call->inboundUser
             && $call->inboundUser->patientInfo) {
             $mustConfirm = false;
@@ -322,7 +322,7 @@ class CallController extends Controller
 
         // validate patient doesnt already have a scheduled call
         $patient = User::find($input['inbound_cpm_id']);
-        if (!$patient) {
+        if ( ! $patient) {
             return [
                 'errors' => ['could not find patient'],
                 'code'   => 406,
@@ -346,8 +346,8 @@ class CallController extends Controller
             }
         }
 
-        $isFamilyOverride = !empty($input['family_override']);
-        if (!$isFamilyOverride
+        $isFamilyOverride = ! empty($input['family_override']);
+        if ( ! $isFamilyOverride
              && $this->hasAlreadyFamilyCallAtDifferentTime(
                  $patient->patientInfo,
                  $input['scheduled_date'],
@@ -373,16 +373,16 @@ class CallController extends Controller
     {
         $mustConfirm = false;
 
-        if (!$patient->hasFamilyId()) {
+        if ( ! $patient->hasFamilyId()) {
             return $mustConfirm;
         }
 
         //now find if a another call is scheduled for any of the members of the family
         $familyMembers = $patient->getFamilyMembers($patient);
-        if (!empty($familyMembers)) {
+        if ( ! empty($familyMembers)) {
             foreach ($familyMembers as $familyMember) {
                 $callForMember = $this->scheduler->getScheduledCallForPatient($familyMember->user);
-                if (!$callForMember) {
+                if ( ! $callForMember) {
                     continue;
                 }
 
@@ -407,7 +407,7 @@ class CallController extends Controller
      */
     private function storeNewCall(User $user, $input)
     {
-        $isFamilyOverride = !empty($input['family_override']);
+        $isFamilyOverride = ! empty($input['family_override']);
 
         $call                  = new Call();
         $call->type            = $input['type'];
@@ -437,12 +437,12 @@ class CallController extends Controller
 
     private function storeNewCallForFamilyMembers(User $patient, $input)
     {
-        if (!$patient->patientInfo->hasFamilyId()) {
+        if ( ! $patient->patientInfo->hasFamilyId()) {
             return;
         }
 
         $familyMembers = $patient->patientInfo->getFamilyMembers($patient->patientInfo);
-        if (!empty($familyMembers)) {
+        if ( ! empty($familyMembers)) {
             foreach ($familyMembers as $familyMember) {
                 $familyMemberCall = $this->scheduler->getScheduledCallForPatient($familyMember->user);
                 if ($familyMemberCall) {

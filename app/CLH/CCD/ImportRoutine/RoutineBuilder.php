@@ -30,7 +30,7 @@ class RoutineBuilder
         $idManager          = new IdentificationManager($this->ccd);
         $matchedIdentifiers = $idManager->identify();
 
-        if (!$matchedIdentifiers) {
+        if ( ! $matchedIdentifiers) {
             return $this->getDefaultRoutine();
         }
 

@@ -70,7 +70,7 @@ class ObservationMeta extends \App\BaseModel
         $comment     = Comment::find($observation->comment_id);
         $wpUser      = User::find($observation->user_id);
 
-        if (!$wpUser || !$observation) {
+        if ( ! $wpUser || ! $observation) {
             return false;
         }
 

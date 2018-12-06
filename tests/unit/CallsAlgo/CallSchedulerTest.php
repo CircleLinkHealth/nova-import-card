@@ -43,7 +43,7 @@ class CallSchedulerTest extends TestCase
 
         do {
             $now->addDay();
-        } while (!$now->isWeekday());
+        } while ( ! $now->isWeekday());
 
         $this->assertEquals([
             'day'          => $now->toDateTimeString(),

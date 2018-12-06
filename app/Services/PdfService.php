@@ -65,11 +65,11 @@ class PdfService
      */
     public function createPdfFromView($view, array $args, array $options = [], $outputFullPath = null)
     {
-        if (!$outputFullPath) {
+        if ( ! $outputFullPath) {
             $outputFullPath = $this->randomFileFullPath();
         }
 
-        if (!array_key_exists('isPdf', $args)) {
+        if ( ! array_key_exists('isPdf', $args)) {
             $args['isPdf'] = true;
         }
 //            leaving these here in case we need them
@@ -85,7 +85,7 @@ class PdfService
             ->setOption('margin-bottom', '15')
             ->setOption('margin-right', '0.75');
 
-        if (!empty($options)) {
+        if ( ! empty($options)) {
             foreach ($options as $key => $value) {
                 $pdf = $pdf->setOption($key, $value);
             }
@@ -119,7 +119,7 @@ class PdfService
             return false;
         }
 
-        if (!$outputFullPath) {
+        if ( ! $outputFullPath) {
             $outputFullPath = $this->randomFileFullPath();
         }
 

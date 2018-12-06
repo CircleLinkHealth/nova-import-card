@@ -13,7 +13,7 @@ class ValidStatus implements SectionValidator
 {
     public function isValid(ItemLog $item): bool
     {
-        if (!$this->shouldValidate($item)) {
+        if ( ! $this->shouldValidate($item)) {
             return false;
         }
 

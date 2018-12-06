@@ -106,7 +106,7 @@ class NurseController extends Controller
 
         while ($dayCounter->lte($last)) {
             foreach ($nurses as $nurse) {
-                if (!$nurse->nurseInfo) {
+                if ( ! $nurse->nurseInfo) {
                     continue;
                 }
 

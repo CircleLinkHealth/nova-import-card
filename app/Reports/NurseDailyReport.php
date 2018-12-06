@@ -31,7 +31,7 @@ class NurseDailyReport
                 ->orderBy('end_time', 'desc')
                 ->first();
 
-            if (!optional($mostRecentPageTimer)->end_time) {
+            if ( ! optional($mostRecentPageTimer)->end_time) {
                 continue;
             }
 

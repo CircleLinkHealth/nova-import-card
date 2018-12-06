@@ -47,17 +47,17 @@ class PatientCarePlanController extends Controller
     {
         $path = storage_path("patient/pdf-careplans/${fileName}");
 
-        if (!file_exists($path)) {
+        if ( ! file_exists($path)) {
             $pdf = Pdf::whereFilename($fileName)->first();
 
-            if (!$pdf) {
+            if ( ! $pdf) {
                 return "Could not find PDF with filename: ${fileName}";
             }
 
             file_put_contents($path, base64_decode($pdf->file));
         }
 
-        if (!file_exists($path)) {
+        if ( ! file_exists($path)) {
             return "Could not locate file with name: ${fileName}";
         }
 
@@ -91,7 +91,7 @@ class PatientCarePlanController extends Controller
             ->where('user_id', '=', $patientId)
             ->first();
 
-        if (!$cp) {
+        if ( ! $cp) {
             return response()->json([
                 'message' => 'Careplan not found.',
             ], 404);
@@ -143,7 +143,7 @@ class PatientCarePlanController extends Controller
     {
         $carePlan = CarePlan::with('patient')->whereId($careplanId)->first();
 
-        if (!$carePlan) {
+        if ( ! $carePlan) {
             return 'careplan not found';
         }
 

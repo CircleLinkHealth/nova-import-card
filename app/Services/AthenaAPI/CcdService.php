@@ -33,7 +33,7 @@ class CcdService
             $id           = trim($id);
             $ccdaExternal = $this->athenaApi->getCcd($id, $practiceId, $departmentId);
 
-            if (!isset($ccdaExternal[0])) {
+            if ( ! isset($ccdaExternal[0])) {
                 continue;
             }
 

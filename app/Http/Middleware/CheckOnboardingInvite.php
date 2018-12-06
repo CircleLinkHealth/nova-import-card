@@ -33,14 +33,14 @@ class CheckOnboardingInvite
         //Otherwise, a code is required
         $code = $request->route('code');
 
-        if (!$code) {
+        if ( ! $code) {
             abort(403);
         }
 
         $invite = Invite::whereCode($code)
             ->exists();
 
-        if (!$invite) {
+        if ( ! $invite) {
             abort(403);
         }
 

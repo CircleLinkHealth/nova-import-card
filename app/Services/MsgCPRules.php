@@ -145,7 +145,7 @@ class MsgCPRules
          *
          */
 
-        if (!$date) {
+        if ( ! $date) {
             $date = date('Y-m-d');
         }
         $query = "select max(obs_id), obs_message_id, obs_value, obs_date, obs_unit, count(*) as count
@@ -590,7 +590,7 @@ query;
         // check for Blood Pressure format
         if ('Blood_Pressure' == $qdata->obs_key) {
             // make sure both halves contain numbers else reject
-            if (!is_numeric($tmpArray[0]) || empty($tmpArray[1]) || !is_numeric($tmpArray[1])) {
+            if ( ! is_numeric($tmpArray[0]) || empty($tmpArray[1]) || ! is_numeric($tmpArray[1])) {
                 return [];
             }
         }
@@ -602,7 +602,7 @@ query;
                 $questionSet = CPRulesQuestionSets::where('qid', '=', $question->qid)
                     ->where('provider_id', '=', $pid)
                     ->first();
-                if (!empty($questionSet)) {
+                if ( ! empty($questionSet)) {
                     return $questionSet;
                 }
             }
@@ -627,7 +627,7 @@ query;
                 $questionSet = CPRulesQuestionSets::where('qid', '=', $question->qid)
                     ->where('provider_id', '=', $pid)
                     ->first();
-                if (!empty($questionSet)) {
+                if ( ! empty($questionSet)) {
                     return $questionSet;
                 }
             }
@@ -641,7 +641,7 @@ query;
         // }
 
         $strQS = '';
-        if (!empty($qstype)) {
+        if ( ! empty($qstype)) {
             $strQS = " AND qs.qs_type = '{$qstype}' ";
         }
 
@@ -734,7 +734,7 @@ query;
         //replace the response
         $dbState = unserialize($row->comment_content);
         // only continue if we have comment_content
-        if (is_array($dbState) && !empty($dbState)) {
+        if (is_array($dbState) && ! empty($dbState)) {
             error_log('Recieved: '.urldecode($input[usermeta]['curresp']));
             end($dbState);
             $lastkey = key($dbState);

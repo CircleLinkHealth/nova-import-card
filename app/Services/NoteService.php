@@ -42,10 +42,10 @@ class NoteService
     public function add($userId, $authorId, $body, $type, $isTCM, $did_medication_recon)
     {
         if ($userId && $authorId && ($body || 'Biometrics' == $type)) {
-            if (!$this->userRepo->exists($userId)) {
+            if ( ! $this->userRepo->exists($userId)) {
                 throw new Exception('user with id "'.$userId.'" does not exist');
             }
-            if ('Biometrics' != $type && !$this->userRepo->exists($authorId)) {
+            if ('Biometrics' != $type && ! $this->userRepo->exists($authorId)) {
                 throw new Exception('user with id "'.$authorId.'" does not exist');
             }
             if ('Biometrics' != $type) {
@@ -109,8 +109,8 @@ class NoteService
 
     public function editPatientNote($id, $userId, $authorId, $body, $isTCM, $did_medication_recon, $type = null)
     {
-        if (!$type) {
-            if (!$id) {
+        if ( ! $type) {
+            if ( ! $id) {
                 throw new Exception('$id is required');
             }
             $note = $this->repo()->model()->find($id);
@@ -211,7 +211,7 @@ class NoteService
             ->with('notifiable')
             ->get()
             ->mapWithKeys(function ($notification) {
-                if (!$notification->notifiable) {
+                if ( ! $notification->notifiable) {
                     return ['N/A' => $notification->created_at->format('m/d/y h:iA T')];
                 }
 

@@ -18,9 +18,9 @@ class MedicationListItemController extends Controller
     public function destroy(Request $request)
     {
         $medication = $request->input('medication');
-        if (!empty($medication)) {
+        if ( ! empty($medication)) {
             $ccdMedication = Medication::find($medication['id']);
-            if (!$ccdMedication) {
+            if ( ! $ccdMedication) {
                 return response('Medication '.$medication['id'].' not found', 401);
             }
             $ccdMedication->delete();
@@ -51,7 +51,7 @@ class MedicationListItemController extends Controller
     {
         // pass back some data, along with the original data, just to prove it was received
         $medication = $request->input('medication');
-        if (!empty($medication)) {
+        if ( ! empty($medication)) {
             $ccdMedication             = new Medication();
             $ccdMedication->patient_id = $medication['patient_id'];
             $ccdMedication->name       = $medication['name'];
@@ -68,9 +68,9 @@ class MedicationListItemController extends Controller
     {
         // pass back some data, along with the original data, just to prove it was received
         $medication = $request->input('medication');
-        if (!empty($medication)) {
+        if ( ! empty($medication)) {
             $ccdMedication = Medication::find($medication['id']);
-            if (!$ccdMedication) {
+            if ( ! $ccdMedication) {
                 return response('Medication not found', 401);
             }
             $ccdMedication->name = $medication['name'];

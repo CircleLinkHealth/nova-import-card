@@ -78,7 +78,7 @@ class PrintPausedPatientLettersService
                 return $this->pdfService->mergeFiles([$fullPathToLetter, $pathToFlyer]);
             });
 
-        if (!$viewOnly) {
+        if ( ! $viewOnly) {
             $this->patientWriteRepository->updatePausedLetterPrintedDate($userIdsToPrint);
         }
 

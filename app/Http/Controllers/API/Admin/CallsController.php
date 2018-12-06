@@ -108,7 +108,7 @@ class CallsController extends ApiController
             $ids = explode(',', $ids);
         }
 
-        if (!is_array($ids)) {
+        if ( ! is_array($ids)) {
             $ids = [$ids];
         }
 
@@ -201,7 +201,7 @@ class CallsController extends ApiController
             })
             ->addColumn('general_comment_html', function ($call) {
                 $generalComment = 'Add Text';
-                if (!empty($call->general_comment)) {
+                if ( ! empty($call->general_comment)) {
                     $generalComment = $call->general_comment;
                 }
 
@@ -209,7 +209,7 @@ class CallsController extends ApiController
             })
             ->addColumn('attempt_note_html', function ($call) {
                 $attemptNote = 'Add Text';
-                if (!empty($call->attempt_note)) {
+                if ( ! empty($call->attempt_note)) {
                     $attemptNote = $call->attempt_note;
                 }
 
@@ -270,7 +270,7 @@ class CallsController extends ApiController
                 return 'n/a';
             })
             ->editColumn('scheduler', function ($call) {
-                if (!empty($call->scheduler_user_name)) {
+                if ( ! empty($call->scheduler_user_name)) {
                     return $call->scheduler_user_name;
                 }
 
@@ -351,7 +351,7 @@ class CallsController extends ApiController
                 return '<span style="font-weight:bold;color:green;">'.$dateTime->format('T').'</a>';
             })
             ->addColumn('notes_link', function ($call) {
-                if (!$call) {
+                if ( ! $call) {
                     return '';
                 }
 

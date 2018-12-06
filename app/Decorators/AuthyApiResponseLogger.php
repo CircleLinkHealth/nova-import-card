@@ -257,7 +257,7 @@ class AuthyResponseLogger implements AuthyApiable
 
     private function log($response, $arguments = [])
     {
-        if (!is_a($response, AuthyResponse::class) || !$response) {
+        if ( ! is_a($response, AuthyResponse::class) || ! $response) {
             return null;
         }
 

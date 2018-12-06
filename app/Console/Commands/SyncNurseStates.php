@@ -49,14 +49,14 @@ class SyncNurseStates extends Command
             ->each(function ($n) use ($states) {
                 $user = $n->user;
 
-                if (!$user) {
+                if ( ! $user) {
                     return false;
                 }
 
                 $practices = $user
                     ->practices;
 
-                if (!$practices) {
+                if ( ! $practices) {
                     return false;
                 }
 

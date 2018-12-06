@@ -63,7 +63,7 @@ class UserManagementService
      */
     public function storeInternalUser(InternalUser $internalUser)
     {
-        if (array_key_exists('id', $internalUser->getUser()) && !empty($internalUser->getUser()['id'])) {
+        if (array_key_exists('id', $internalUser->getUser()) && ! empty($internalUser->getUser()['id'])) {
             $user = User::find($internalUser->getUser()['id']);
             $user->update($internalUser->getUser());
         } else {

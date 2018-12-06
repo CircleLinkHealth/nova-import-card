@@ -20,7 +20,7 @@ class LocationController extends Controller
      */
     public function create()
     {
-        if (!Auth::user()->isAdmin()) {
+        if ( ! Auth::user()->isAdmin()) {
             abort(403);
         }
 
@@ -38,7 +38,7 @@ class LocationController extends Controller
      */
     public function destroy($id)
     {
-        if (!Auth::user()->isAdmin()) {
+        if ( ! Auth::user()->isAdmin()) {
             abort(403);
         }
         Location::destroy($id);
@@ -55,7 +55,7 @@ class LocationController extends Controller
      */
     public function edit($id)
     {
-        if (!Auth::user()->isAdmin()) {
+        if ( ! Auth::user()->isAdmin()) {
             abort(403);
         }
 
@@ -75,7 +75,7 @@ class LocationController extends Controller
      */
     public function index(Request $request)
     {
-        if (!Auth::user()->isAdmin()) {
+        if ( ! Auth::user()->isAdmin()) {
             abort(403);
         }
         $messages = \Session::get('messages');
@@ -95,7 +95,7 @@ class LocationController extends Controller
      */
     public function show($id)
     {
-        if (!Auth::user()->isAdmin()) {
+        if ( ! Auth::user()->isAdmin()) {
             abort(403);
         }
         $messages = \Session::get('messages');
@@ -115,7 +115,7 @@ class LocationController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Auth::user()->isAdmin()) {
+        if ( ! Auth::user()->isAdmin()) {
             abort(403);
         }
 
@@ -124,7 +124,7 @@ class LocationController extends Controller
         $newLocation = new Location($input);
         $saved       = $newLocation->save();
 
-        if (!empty($input['emr_direct'])) {
+        if ( ! empty($input['emr_direct'])) {
             $saved->emr_direct_address = $input['emr_direct'];
         }
 
@@ -144,7 +144,7 @@ class LocationController extends Controller
      */
     public function update(Request $request)
     {
-        if (!Auth::user()->isAdmin()) {
+        if ( ! Auth::user()->isAdmin()) {
             abort(403);
         }
 
@@ -163,7 +163,7 @@ class LocationController extends Controller
         $loc = Location::find($input['id']);
         $loc->update($input);
 
-        if (!empty($input['emr_direct'])) {
+        if ( ! empty($input['emr_direct'])) {
             $loc->emr_direct_address = $input['emr_direct'];
         }
 

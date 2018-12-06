@@ -97,7 +97,7 @@ class PracticeController extends Controller
                         return $state->code;
                     });
 
-                if ($nurse->state && !$states->contains($nurse->state)) {
+                if ($nurse->state && ! $states->contains($nurse->state)) {
                     $states->push($nurse->state);
                 }
 

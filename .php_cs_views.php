@@ -14,6 +14,7 @@ $finders = PhpCsFixer\Finder::create()
     ]);
 
 $config = PhpCsFixer\Config::create()
+    ->setUsingCache(false)
     ->setRiskyAllowed(false)
     ->setRules([
         '@Symfony'                => true,
@@ -63,6 +64,7 @@ $config = PhpCsFixer\Config::create()
         'no_unused_imports'               => false,
         'no_useless_else'                 => true,
         'no_useless_return'               => true,
+        'not_operator_with_space'         => true,
         'ordered_class_elements'          => [
             'order' => [
                 'use_trait',

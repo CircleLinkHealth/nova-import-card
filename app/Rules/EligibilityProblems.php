@@ -54,7 +54,7 @@ class EligibilityProblems implements Rule
                     $code = null;
                 }
 
-                return !$name && !$code;
+                return ! $name && ! $code;
             })->count();
 
         return $count >= 1;

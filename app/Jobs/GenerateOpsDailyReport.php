@@ -32,7 +32,7 @@ class GenerateOpsDailyReport implements ShouldQueue
      */
     public function __construct(Carbon $date = null)
     {
-        if (!$date) {
+        if ( ! $date) {
             $date = Carbon::now();
         }
 
@@ -108,7 +108,7 @@ class GenerateOpsDailyReport implements ShouldQueue
 
         $saved = file_put_contents($path, json_encode($data));
 
-        if (!$saved) {
+        if ( ! $saved) {
             if (app()->environment('worker')) {
                 sendSlackMessage(
                     '#callcenter_ops',

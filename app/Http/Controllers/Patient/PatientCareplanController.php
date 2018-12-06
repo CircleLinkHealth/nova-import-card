@@ -52,8 +52,6 @@ class PatientCareplanController extends Controller
     public function index(Request $request)
     {
         $carePlans = CarePlan::with('providerApproverUser')
-            ->whereNull('first_printed')
-            ->whereNull('last_printed')
             ->whereHas('patient', function ($q) {
                 $q->intersectPracticesWith(auth()->user());
             })
@@ -82,7 +80,6 @@ class PatientCareplanController extends Controller
                     $printed_status = 'No';
                     $printed_date = null;
                 }
-
                 $last_printed
                                      ? $printed = $last_printed
                                      : $printed = 'No';
@@ -119,9 +116,9 @@ class PatientCareplanController extends Controller
                 }
 
                 if ($cp->patient->patientInfo
-                                     && !empty($cp->patient->getFullName())
-                                     && !empty($cp->patient->first_name)
-                                     && !empty($cp->patient->last_name)) {
+                                     && ! empty($cp->patient->getFullName())
+                                     && ! empty($cp->patient->first_name)
+                                     && ! empty($cp->patient->last_name)) {
                     return [
                         'key'                        => $cp->patient->id,
                         'id'                         => $cp->patient->id,
@@ -160,7 +157,7 @@ class PatientCareplanController extends Controller
         CareplanService $careplanService,
         PatientService $patientService
     ) {
-        if (!$request['users']) {
+        if ( ! $request['users']) {
             return response()->json('Something went wrong..');
         }
 
@@ -235,7 +232,7 @@ class PatientCareplanController extends Controller
             if (auth()->user()->isAdmin() && true == $letter) {
                 $careplanObj               = $user->carePlan;
                 $careplanObj->last_printed = Carbon::now()->toDateTimeString();
-                if (!$careplanObj->first_printed) {
+                if ( ! $careplanObj->first_printed) {
                     $careplanObj->first_printed    = Carbon::now()->toDateTimeString();
                     $careplanObj->first_printed_by = auth()->id();
                 }
@@ -311,7 +308,7 @@ class PatientCareplanController extends Controller
         $programId = false;
         if ($patientId) {
             $user = User::with('patientInfo.contactWindows')->find($patientId);
-            if (!$user) {
+            if ( ! $user) {
                 return response('User not found', 401);
             }
             $programId = $user->program_id;
@@ -451,14 +448,14 @@ class PatientCareplanController extends Controller
         $user = new User();
         if ($patientId) {
             $user = User::with('phoneNumbers', 'patientInfo', 'careTeamMembers')->find($patientId);
-            if (!$user) {
+            if ( ! $user) {
                 return response('User not found', 401);
             }
         }
 
         if ($params->has('insurance')) {
             foreach ($params->get('insurance') as $id => $approved) {
-                if (!$approved) {
+                if ( ! $approved) {
                     CcdInsurancePolicy::destroy($id);
                     continue;
                 }
@@ -476,7 +473,7 @@ class PatientCareplanController extends Controller
             //Update patient info changes
             $info = $patient->patientInfo;
 
-            if (!$patient->patientInfo) {
+            if ( ! $patient->patientInfo) {
                 $info = new Patient([
                     'user_id' => $patient->id,
                 ]);
@@ -549,23 +546,23 @@ class PatientCareplanController extends Controller
             //in case we want to delete all call windows
             if ($params->get('days') || $info->contactWindows()->exists()) {
                 PatientContactWindow::sync(
-                        $info,
-                        $params->get('days', []),
-                        $params->get('window_start'),
-                        $params->get('window_end')
-                    );
+                    $info,
+                    $params->get('days', []),
+                    $params->get('window_start'),
+                    $params->get('window_end')
+                );
             }
             $info->save();
 
-            if ($newUser->carePlan && !$newUser->primaryPractice->settings->isEmpty()) {
+            if ($newUser->carePlan && ! $newUser->primaryPractice->settings->isEmpty()) {
                 $newUser->carePlan->mode = $newUser->primaryPractice->settings->first()->careplan_mode;
                 $newUser->carePlan->save();
             }
         }
 
         return redirect(\route('patient.demographics.show', ['patientId' => $newUser->id]))->with(
-                'messages',
-                ['Successfully created new patient with demographics.']
-            );
+            'messages',
+            ['Successfully created new patient with demographics.']
+        );
     }
 }

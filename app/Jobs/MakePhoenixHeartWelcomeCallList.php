@@ -86,7 +86,7 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
                     $problemCode = $problem->code;
                 }
 
-                if (!$problemCode && !$problem->description) {
+                if ( ! $problemCode && ! $problem->description) {
                     continue;
                 }
 
@@ -110,7 +110,7 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
                 ->sortBy('order')
                 ->pluck('name')
                 ->map(function ($ins) {
-                    if (!$ins) {
+                    if ( ! $ins) {
                         return null;
                     }
 

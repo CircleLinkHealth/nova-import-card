@@ -75,7 +75,7 @@ class BloodPressure extends BaseStorageStrategy implements StorageStrategy
                     $diastolic = $result->value;
                 }
 
-                if (!empty($systolic) && !empty($diastolic)) {
+                if ( ! empty($systolic) && ! empty($diastolic)) {
                     return "{$systolic}/{$diastolic}";
                 }
             }

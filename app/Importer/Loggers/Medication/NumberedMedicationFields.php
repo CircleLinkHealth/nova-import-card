@@ -10,7 +10,7 @@ class NumberedMedicationFields
 {
     public function handle(&$patient): array
     {
-        if (!is_array($patient)) {
+        if ( ! is_array($patient)) {
             return [];
         }
 
@@ -18,11 +18,11 @@ class NumberedMedicationFields
         $i           = 1;
 
         do {
-            if (!array_key_exists("medication_${i}", $patient)) {
+            if ( ! array_key_exists("medication_${i}", $patient)) {
                 break;
             }
 
-            if (!empty($patient["medication_${i}"]) && '#N/A' != $patient["medication_${i}"]) {
+            if ( ! empty($patient["medication_${i}"]) && '#N/A' != $patient["medication_${i}"]) {
                 $decoded = json_decode($patient["medication_${i}"], true);
 
                 $medications[] = [
@@ -44,7 +44,7 @@ class NumberedMedicationFields
 
     public function shouldHandle($patient)
     {
-        if (!is_array($patient)) {
+        if ( ! is_array($patient)) {
             return false;
         }
 

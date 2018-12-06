@@ -57,7 +57,7 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
 
     public function logDemographicsSection(): MedicalRecordLogger
     {
-        if (!$this->medicalRecord->mrn) {
+        if ( ! $this->medicalRecord->mrn) {
             $this->medicalRecord->mrn = $this->lookupMrn(
                 $this->medicalRecord->first_name,
                 $this->medicalRecord->last_name,
@@ -65,7 +65,7 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
             );
         }
 
-        if (!$this->medicalRecord->gender && $this->medicalRecord->mrn) {
+        if ( ! $this->medicalRecord->gender && $this->medicalRecord->mrn) {
             $phx = PhoenixHeartName::where('patient_id', $this->medicalRecord->mrn)
                 ->where('created_at', $this->lastPhxImportDate)
                 ->first();
@@ -218,7 +218,7 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
             ->where('created_at', $this->lastPhxImportDate)
             ->first();
 
-        if (!$name) {
+        if ( ! $name) {
             return $this;
         }
 

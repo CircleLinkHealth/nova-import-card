@@ -173,7 +173,7 @@ class SchedulerService
                 })
                 ->first();
 
-            if (!$patient) {
+            if ( ! $patient) {
                 $failed[] = "{$row['Patient First Name']} {$row['Patient Last Name']}";
                 continue;
             }
@@ -191,7 +191,7 @@ class SchedulerService
                 $generalComment = $row['General Comment'];
             }
 
-            if (!empty($generalComment)) {
+            if ( ! empty($generalComment)) {
                 $info->general_comment = $generalComment;
                 $info->save();
             }
@@ -344,7 +344,7 @@ class SchedulerService
 
                 if (is_a($call, Call::class)) {
                     //If the patient has a call and is not manual,
-                    if (!$call->is_manual) {
+                    if ( ! $call->is_manual) {
                         $window_start = $call->window_start;
                         $window_end   = $call->window_end;
 
@@ -432,7 +432,7 @@ class SchedulerService
         $reprocess_bucket = [];
 
         foreach ($patients as $patient) {
-            if (!$patient->user) {
+            if ( ! $patient->user) {
                 continue;
             }
 

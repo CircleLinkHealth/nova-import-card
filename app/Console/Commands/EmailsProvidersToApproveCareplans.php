@@ -44,7 +44,7 @@ class EmailsProvidersToApproveCareplans extends Command
             $bar,
             $pretend
         ) {
-            if (!$this->shouldSend($providerUser)) {
+            if ( ! $this->shouldSend($providerUser)) {
                 return false;
             }
 
@@ -113,7 +113,7 @@ class EmailsProvidersToApproveCareplans extends Command
 
     public function sendEmail(User $recipient, $numberOfCareplans, bool $pretend)
     {
-        if (!$pretend) {
+        if ( ! $pretend) {
             if ($recipient->email) {
                 $recipient->sendCarePlanApprovalReminderEmail($numberOfCareplans);
             }
@@ -140,11 +140,11 @@ class EmailsProvidersToApproveCareplans extends Command
             return false;
         }
 
-        if (!$providerUser->primaryPractice) {
+        if ( ! $providerUser->primaryPractice) {
             return false;
         }
 
-        if (!$providerUser->primaryPractice->cpmSettings()->email_careplan_approval_reminders) {
+        if ( ! $providerUser->primaryPractice->cpmSettings()->email_careplan_approval_reminders) {
             return false;
         }
 

@@ -114,13 +114,13 @@ class EhrReportWriterController extends Controller
         $user       = auth()->user();
         $practiceId = $request->input('practice_id');
 
-        if (!$user->ehrReportWriterInfo) {
+        if ( ! $user->ehrReportWriterInfo) {
             $messages['errors'][] = 'You need to be an EHR Report Writer to use this feature.';
 
             return redirect()->back()->withErrors($messages);
         }
 
-        if (!$practiceId) {
+        if ( ! $practiceId) {
             $messages['warnings'][] = 'Please select a Practice!';
 
             return redirect()->back()->withErrors($messages);
@@ -167,7 +167,7 @@ class EhrReportWriterController extends Controller
                     $file['path']
                 );
             }
-            if (!$batch) {
+            if ( ! $batch) {
                 $messages['warnings'][] = "Something went wrong with file: {$file['name']}.";
             }
         }
@@ -193,14 +193,14 @@ class EhrReportWriterController extends Controller
         $pathToFile   = storage_path("app/${fileName}");
         $savedLocally = $localDisk->put($fileName, $json);
 
-        if (!$savedLocally) {
+        if ( ! $savedLocally) {
             throw new \Exception("Failed saving ${pathToFile}");
         }
         $parser   = new \Seld\JsonLint\JsonParser();
         $iterator = read_file_using_generator($pathToFile);
         $i        = 1;
         foreach ($iterator as $iteration) {
-            if (!$iteration) {
+            if ( ! $iteration) {
                 continue;
             }
             try {
