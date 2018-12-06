@@ -14,6 +14,7 @@ $finders = PhpCsFixer\Finder::create()
     ]);
 
 $config = PhpCsFixer\Config::create()
+    ->setUsingCache(false)
     ->setRiskyAllowed(false)
     ->setRules([
         '@Symfony'                => true,
