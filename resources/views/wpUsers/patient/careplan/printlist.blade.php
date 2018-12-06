@@ -64,6 +64,12 @@
                                     return a > b ? 1 : (a < b ? -1 : 0);
                                 }
 
+                                function nameCompare(columnValue, filterValue, obj){
+                                    let value = obj.patient_name.toLowerCase();
+                                    filterValue = filterValue.toLowerCase();
+                                    return value.indexOf(filterValue) >= 0
+                                };
+
                                 webix.locale.pager = {
                                     first: "<<",// the first button
                                     last: ">>",// the last button
@@ -85,7 +91,7 @@
                                     columns: [
                                         {
                                             id: "first_name",
-                                            header: ["Patient Name", {content: "textFilter", placeholder: "Filter"}],
+                                            header: ["Patient Name", {content: "textFilter", compare: nameCompare, placeholder: "Filter"}],
                                             template: "#first_name# #last_name#",
                                             width: 100,
                                             sort: 'string',
@@ -94,7 +100,7 @@
                                         },
                                         {
                                             id: "last_name",
-                                            header: ["Patient Name", {content: "textFilter", placeholder: "Filter"}],
+                                            header: ["Patient Name", {content: "textFilter", compare: nameCompare, placeholder: "Filter"}],
                                             template: "#last_name#, #first_name#",
                                             width: 120,
                                             sort: 'string',

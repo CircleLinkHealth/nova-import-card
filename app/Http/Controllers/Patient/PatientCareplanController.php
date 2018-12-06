@@ -52,8 +52,6 @@ class PatientCareplanController extends Controller
     public function index(Request $request)
     {
         $carePlans = CarePlan::with('providerApproverUser')
-            ->whereNull('first_printed')
-            ->whereNull('last_printed')
             ->whereHas('patient', function ($q) {
                 $q->intersectPracticesWith(auth()->user());
             })
@@ -82,7 +80,6 @@ class PatientCareplanController extends Controller
                     $printed_status = 'No';
                     $printed_date = null;
                 }
-
                 $last_printed
                                      ? $printed = $last_printed
                                      : $printed = 'No';
@@ -549,11 +546,11 @@ class PatientCareplanController extends Controller
             //in case we want to delete all call windows
             if ($params->get('days') || $info->contactWindows()->exists()) {
                 PatientContactWindow::sync(
-                        $info,
-                        $params->get('days', []),
-                        $params->get('window_start'),
-                        $params->get('window_end')
-                    );
+                    $info,
+                    $params->get('days', []),
+                    $params->get('window_start'),
+                    $params->get('window_end')
+                );
             }
             $info->save();
 
@@ -564,8 +561,8 @@ class PatientCareplanController extends Controller
         }
 
         return redirect(\route('patient.demographics.show', ['patientId' => $newUser->id]))->with(
-                'messages',
-                ['Successfully created new patient with demographics.']
-            );
+            'messages',
+            ['Successfully created new patient with demographics.']
+        );
     }
 }
