@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\MedicalRecords\Ccda;
+use App\Models\MedicalRecords\ImportedMedicalRecord;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -32,5 +33,11 @@ class ImportCcda implements ShouldQueue
     public function handle()
     {
         $importedMedicalRecord = $this->ccda->import();
+        
+        if (is_a($importedMedicalRecord, ImportedMedicalRecord::class)) {
+            $this->ccda->imported = true;
+            $this->ccda->status = Ccda::QA;
+            $this->ccda->save();
+        }
     }
 }
