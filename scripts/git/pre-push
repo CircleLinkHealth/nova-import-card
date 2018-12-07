@@ -8,13 +8,13 @@ JSCS_EC=$?
 #composer lint-php
 #composer lint-views
 
-#composer test
-#COMPOSER_TEST_EC=$?
+composer test
+COMPOSER_TEST_EC=$?
 
 # npm test -- --silent
 NPM_TEST_EC=$?
 
-let "ERROR = $NPM_TEST_EC + $JSCS_EC"
+let "ERROR = $NPM_TEST_EC + $JSCS_EC + $COMPOSER_TEST_EC"
 # ERROR=$NPM_TEST_EC
 
 if [ ${ERROR} -eq "0" ]
