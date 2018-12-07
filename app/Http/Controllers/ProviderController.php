@@ -101,4 +101,18 @@ class ProviderController extends Controller
     {
         return $this->providerInfoService->repo()->provider($id);
     }
+
+    public function updateApproveOwnCarePlan(Request $request)
+    {
+        $user = auth()->user();
+        if ( ! $user->providerInfo) {
+            return redirect()->back()->withErrors(['errors' => 'Please log in as a Provider.']);
+        }
+
+        $user->providerInfo->approve_own_care_plans = ! $user->providerInfo->approve_own_care_plans;
+
+        $user->providerInfo->save();
+
+        return redirect()->route('patients.dashboard');
+    }
 }

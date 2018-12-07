@@ -58,6 +58,7 @@ class ProviderInfo extends \App\BaseModel
         'prefix',
         'npi_number',
         'specialty',
+        'approve_own_care_plans',
     ];
     /**
      * The primary key for the model.
@@ -73,41 +74,31 @@ class ProviderInfo extends \App\BaseModel
      */
     protected $table = 'provider_info';
 
-    // address
     public function getAddressAttribute()
     {
         return $this->user->address;
     }
 
-    // city
     public function getCityAttribute()
     {
         return $this->user->city;
     }
 
-    // END RELATIONSHIPS
-
-    // START ATTRIBUTES
-
-    // first_name
     public function getFirstNameAttribute()
     {
         return $this->user->getFirstName();
     }
 
-    // last_name
     public function getLastNameAttribute()
     {
         return $this->user->getLastName();
     }
 
-    // state
     public function getStateAttribute()
     {
         return $this->user->state;
     }
 
-    // zip
     public function getZipAttribute()
     {
         return $this->user->zip;
@@ -161,14 +152,8 @@ class ProviderInfo extends \App\BaseModel
         return true;
     }
 
-    // START RELATIONSHIPS
-
-    // user
-
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
-
-    // END ATTRIBUTES
 }
