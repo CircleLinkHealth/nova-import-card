@@ -82,6 +82,7 @@
                 </ul>
             </div>
         </div>
+        @include('errors.errors')
 
         @if($nurse && auth()->user()->isNotSaas())
             @include('partials.care-center.dashboard-schedule', [$nurse])

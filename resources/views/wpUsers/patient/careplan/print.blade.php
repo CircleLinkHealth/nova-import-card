@@ -149,6 +149,16 @@ if (isset($patient) && ! empty($patient)) {
                                                             }
                                                         </script>
                                                     </form>
+
+                                                    @if(auth()->user()->providerInfo)
+                                                        <form class="inline-block" action="{{route('provider.update-approve-own')}}"
+                                                              method="POST">
+                                                            {{csrf_field()}}
+                                                            <input class="btn btn-sm btn-default" aria-label="..."
+                                                                   type="submit"
+                                                                   value="@if(auth()->user()->providerInfo->approve_own_care_plans)Approve all practice patients @else Approve my patients only @endif">
+                                                        </form>
+                                                    @endif
                                                 @endif
                                             @endif
 

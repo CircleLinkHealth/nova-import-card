@@ -854,6 +854,10 @@ Route::group(['middleware' => 'auth'], function () {
         ])->middleware('permission:legacy-bhi-consent-decision.create');
     });
 
+    Route::post('update-approve-own-care-plans', [
+        'uses' => 'ProviderController@updateApproveOwnCarePlan',
+        'as'   => 'provider.update-approve-own',
+    ])->middleware('permission:care-plan-approve');
     // **** PATIENTS (/manage-patients/{patientId}/)
     Route::group([
         'prefix'     => 'manage-patients/{patientId}',
