@@ -13,22 +13,15 @@ interface Efax
      *
      * @return mixed
      */
-    public
-    function
-    getStatus($faxId);
-    
+    public function getStatus($faxId);
+
     /**
      * @param $faxNumber
      * @param $pathOrMessage
      *
      * @return mixed
      */
-    public
-    
-    function
-    
-    
-    send(
+    public function send(
         $faxNumber,
         $pathOrMessage
     );

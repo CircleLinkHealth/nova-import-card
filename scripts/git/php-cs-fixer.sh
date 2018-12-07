@@ -66,10 +66,9 @@ do
         error_message+="  - ${txtred}${path}${txtrst}\n"
         php_errors_found=true
     else
+        echo -e "git add ${path}"
         git add ${path}
     fi
-
-
 done;
 
 # There is currently debate about exit codes in php-cs-fixer
