@@ -27,6 +27,7 @@ class ImportCcda implements ShouldQueue
         $this->ccda = $ccda;
     }
     
+    
     /**
      * Execute the job.
      */
