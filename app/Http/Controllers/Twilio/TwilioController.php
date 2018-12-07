@@ -309,7 +309,7 @@ class TwilioController extends Controller
             ->where('outbound_user_id', '=', $input['outbound_user_id'])
             ->where(function ($q) {
                 $q->where('call_status', '=', 'ringing')
-                                    ->orWhere('call_status', '=', 'in-progress');
+                    ->orWhere('call_status', '=', 'in-progress');
             })
             ->orderBy('updated_at', 'desc')
             ->first();

@@ -7,12 +7,7 @@
 namespace App\Contracts;
 
 /**
- *
- *
- *
- *
- * Interface Serviceable
- * @package App\Contracts
+ * Interface Serviceable.
  */
 interface Serviceable
 {

@@ -20,12 +20,43 @@ class PhiMail implements DirectMail
     /**
      * @var PhiMailConnector
      */
-    private $connector;
+    private $connector = null;
 
-    public function __construct(PhiMailConnector $connector, IncomingMessageHandler $incomingMessageHandler)
+    public function __construct(IncomingMessageHandler $incomingMessageHandler)
     {
-        $this->connector              = $connector;
         $this->incomingMessageHandler = $incomingMessageHandler;
+    }
+    
+    /**
+     * @throws \Exception
+     */
+    private function initPhiMailConnection(): PhiMailConnector
+    {
+        $phiMailUser = config('services.emr-direct.user');
+        $phiMailPass = config('services.emr-direct.password');
+        
+        // Use the following command to enable client TLS authentication, if
+        // required. The key file referenced should contain the following
+        // PEM data concatenated into one file:
+        //   <your_private_key.pem>
+        //   <your_client_certificate.pem>
+        //   <intermediate_CA_certificate.pem>
+        //   <root_CA_certificate.pem>
+        //
+        PhiMailConnector::setClientCertificate(
+            base_path(config('services.emr-direct.conc-keys-pem-path')),
+            config('services.emr-direct.pass-phrase')
+        );
+        
+        // This command is recommended for added security to set the trusted
+        // SSL certificate or trust anchor for the phiMail server.
+        PhiMailConnector::setServerCertificate(base_path(config('services.emr-direct.server-cert-pem-path')));
+        
+        $phiMailServer = config('services.emr-direct.mail-server');
+        $phiMailPort   = config('services.emr-direct.port');
+        
+        $this->connector = new PhiMailConnector($phiMailServer, $phiMailPort);
+        $this->connector->authenticateUser($phiMailUser, $phiMailPass);
     }
 
     public function __destruct()
@@ -46,6 +77,12 @@ class PhiMail implements DirectMail
      */
     public function receive()
     {
+        $this->initPhiMailConnection();
+        
+        if (!is_a($this->connector, PhiMailConnector::class)) {
+            return false;
+        }
+        
         try {
             while ($message = $this->connector->check()) {
                 if ( ! $message->isMail()) {
@@ -79,19 +116,19 @@ class PhiMail implements DirectMail
 //                Log::critical("from " . $message->sender . "; id "
 //                    . $message->messageId . "; #att=" . $message->numAttachments
 //                    . "\n");
-    
+
                     $dm = $this
                         ->incomingMessageHandler
                         ->createNewDirectMessage($message);
-    
+
                     for ($i = 0; $i <= $message->numAttachments; ++$i) {
                         // Get content for part i of the current message.
                         $showRes = $this->connector->show($i);
-        
+
                         $this
                             ->incomingMessageHandler
                             ->handleMessageAttachment($dm, $showRes);
-        
+
                         // Store the list of attachments and associated info. This info is only
                         // included with message part 0.
                         if (0 == $i) {
@@ -104,12 +141,12 @@ class PhiMail implements DirectMail
                     // and should only be sent after all required parts of the message have been
                     // retrieved and processed.:log
                     $this->connector->acknowledgeMessage();
-    
+
                     if ($message->numAttachments > 0) {
                         $this->notifyAdmins($dm);
-        
+
                         $message = "Checked EMR Direct Mailbox. There where {$message->numAttachments} attachment(s). \n";
-        
+
                         sendSlackMessage('#background-tasks', $message);
                     }
                 }
@@ -137,6 +174,12 @@ class PhiMail implements DirectMail
         $ccdaAttachmentPath = null,
         User $patient = null
     ) {
+        $this->initPhiMailConnection();
+    
+        if (!is_a($this->connector, PhiMailConnector::class)) {
+            return false;
+        }
+        
         try {
             // After authentication, the server has a blank outgoing message
             // template. Begin building this message by adding a recipient.
