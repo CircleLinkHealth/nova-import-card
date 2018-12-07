@@ -37,20 +37,11 @@ source $DIR/helpers/locate.sh
 # a valid path
 CHANGED_FILES=$(git diff --name-only --diff-filter=ACM)
 args="--verbose --show-progress=dots --diff --path-mode=override"
-files=()
-for arg in ${CHANGED_FILES}
-do
-    if [ -e $arg ]; then
-        files+=("$arg")
-    else
-        args+=" $arg"
-    fi
-done;
 
 # Run the command on each file
 php_errors_found=false
 error_message=""
-for path in "${files[@]}"
+for path in "${CHANGED_FILES[@]}"
 do
     if [[ ${path} == *"resources/views/"* ]]; then
         echo -e "${txtylw} $exec_command fix ${path} --config=.php_cs_views.php ${args} ${txtrst}"

@@ -18,7 +18,7 @@ class ImportCcda implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     private $ccda;
-    
+
     /**
      * Create a new job instance.
      */
