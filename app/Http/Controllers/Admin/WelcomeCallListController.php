@@ -143,12 +143,12 @@ class WelcomeCallListController extends Controller
 
         $practiceId = $request->input('practice_id');
 
-        if ($request->file('patient_list')->getClientMimeType() !== 'text/csv'){
+        if ('text/csv' !== $request->file('patient_list')->getClientMimeType()) {
             return [
                 'errors' => 'This file is not in a CSV format.',
             ];
         }
-        $patients   = parseCsvToArray($request->file('patient_list'));
+        $patients = parseCsvToArray($request->file('patient_list'));
 
         $filterLastEncounter = (bool) $request->input('filterLastEncounter');
         $filterInsurance     = (bool) $request->input('filterInsurance');
