@@ -23,7 +23,7 @@ class SendTestDirectMail extends Command
      *
      * @var string
      */
-    protected $signature = 'emrDirect:sendTest --to=careplanmanager@direct.circlelinkhealth.com';
+    protected $signature = 'emrDirect:sendTest {to=circlelinkhealth@test.directproject.net : The receiver\'s address.}';
 
     /**
      * @var DirectMail

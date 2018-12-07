@@ -30,7 +30,7 @@ class PhiMail implements DirectMail
     /**
      * @throws \Exception
      */
-    private function initPhiMailConnection(): PhiMailConnector
+    private function initPhiMailConnection()
     {
         $phiMailUser = config('services.emr-direct.user');
         $phiMailPass = config('services.emr-direct.password');

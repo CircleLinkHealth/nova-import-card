@@ -47,6 +47,8 @@ class CheckEmrDirectInbox extends Command
      */
     public function handle()
     {
+        $this->warn('Checking EMR Direct Inbox.');
         $this->directMail->receive();
+        $this->comment('Checked EMR Direct Inbox.');
     }
 }
