@@ -18,7 +18,7 @@ class ImportCcda implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     private $ccda;
-
+    
     /**
      * Create a new job instance.
      */
@@ -26,20 +26,22 @@ class ImportCcda implements ShouldQueue
     {
         $this->ccda = $ccda;
     }
-
+    
     /**
      * Execute the job.
      */
     public function handle()
     {
         $importedMedicalRecord = $this->ccda->import();
-
+        
         if (is_a($importedMedicalRecord, ImportedMedicalRecord::class)) {
             $update = Ccda::whereId($this->ccda->id)
-                ->update([
-                    'status'   => Ccda::QA,
-                    'imported' => true,
-                                        ]);
+                          ->update(
+                              [
+                                  'status'   => Ccda::QA,
+                                  'imported' => true,
+                              ]
+                          );
         }
     }
 }
