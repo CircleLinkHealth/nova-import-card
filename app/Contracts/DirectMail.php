@@ -10,8 +10,20 @@ use App\User;
 
 interface DirectMail
 {
+    /**
+     * @return mixed
+     */
     public function receive();
 
+    /**
+     * @param $outboundRecipient
+     * @param $binaryAttachmentFilePath
+     * @param $binaryAttachmentFileName
+     * @param null      $ccdaAttachmentPath
+     * @param User|null $patient
+     *
+     * @return mixed
+     */
     public function send(
         $outboundRecipient,
         $binaryAttachmentFilePath,

@@ -35,7 +35,7 @@ source $DIR/helpers/locate.sh
 
 # Build our list of files, and our list of args by testing if the argument is
 # a valid path
-CHANGED_FILES=$(git status --porcelain | cut -c 4-)
+CHANGED_FILES=$(git diff --name-only --diff-filter=ACM)
 args="--verbose --show-progress=dots --diff --path-mode=override"
 files=()
 for arg in ${CHANGED_FILES}
@@ -65,7 +65,11 @@ do
     if [ $? -ne 0 ]; then
         error_message+="  - ${txtred}${path}${txtrst}\n"
         php_errors_found=true
+    else
+        git add ${path}
     fi
+
+
 done;
 
 # There is currently debate about exit codes in php-cs-fixer
