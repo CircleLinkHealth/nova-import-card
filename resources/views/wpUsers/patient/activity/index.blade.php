@@ -6,7 +6,7 @@
 @section('content')
     @push('styles')
         <style>
-            .durationFooter {
+            .duration-footer {
                 float: right;
                 text-align: right;
                 font-weight: bold;
@@ -79,11 +79,52 @@
                                 return value.indexOf(filter) === 0;
                             }
                             function durationType(obj){
-                                let title = 'CCM';
-                                if (obj.is_behavioral === 1){
-                                    title = 'BHI';
+                                return obj.is_behavioral ? 'BHI' : 'CCM';
+                            }
+                            function durationSumm(master, type){
+                                var seconds = 0;
+                                master.data.each(function (obj) {
+                                    if (durationType(obj) == type){
+                                        seconds = seconds + parseInt(obj.duration);
+                                    }
+                                });
+                                var date = new Date(seconds * 1000);
+                                var hh = Math.floor(seconds / 3600);
+                                var mm = Math.floor(seconds / 60) % 60;
+                                var ss = date.getSeconds();
+                                function pad (num, count) {
+                                    count = count || 0;
+                                    const $num = num + '';
+                                    return '0'.repeat(Math.max(count - $num.length, 0)) + $num;
                                 }
-                                return title;
+                                ss = pad(ss, 2)
+                                mm = pad(mm, 2)
+                                hh = pad(hh, 2)
+                                var time = hh + ':' + mm + ":" + ss;
+                                return time;
+                            }
+                            function durationData(obj, type){
+                                if (durationType(obj) === type){
+                                    var seconds = obj.duration;
+                                    var date = new Date(seconds * 1000);
+                                    var hh = Math.floor(seconds / 3600);
+                                    var mm = Math.floor(seconds / 60) % 60;
+                                    var ss = date.getSeconds();
+                                    function pad (num, count) {
+                                        count = count || 0;
+                                        const $num = num + '';
+                                        return '0'.repeat(Math.max(count - $num.length, 0)) + $num;
+                                    }
+                                    ss = pad(ss, 2)
+                                    mm = pad(mm, 2)
+                                    hh = pad(hh, 2)
+
+                                    var time = hh + ':' + mm + ":" + ss;
+
+                                    return time;
+                                }else{
+                                    return "--";
+                                }
                             }
                             webix.locale.pager = {
                                 first: "<<",// the first button
@@ -93,54 +134,12 @@
                             };
                             webix.ui.datafilter.mySummColumnCCM = webix.extend({
                                 refresh: function (master, node, value) {
-                                    var seconds = 0;
-                                    master.data.each(function (obj) {
-                                        let type = durationType(obj);
-                                        if (type === 'CCM'){
-                                            seconds = seconds + parseInt(obj.duration);
-                                        }
-                                    });
-                                    var date = new Date(seconds * 1000);
-                                    var hh = Math.floor(seconds / 3600);
-                                    var mm = Math.floor(seconds / 60) % 60;
-                                    var ss = date.getSeconds();
-                                    function pad (num, count) {
-                                        count = count || 0;
-                                        const $num = num + '';
-                                        return '0'.repeat(Math.max(count - $num.length, 0)) + $num;
-                                    }
-                                    ss = pad(ss, 2)
-                                    mm = pad(mm, 2)
-                                    hh = pad(hh, 2)
-                                    var time = hh + ':' + mm + ":" + ss;
-                                    result = time;
-                                    node.firstChild.innerHTML = result;
+                                    node.firstChild.innerHTML = durationSumm(master, 'CCM');
                                 }
                             }, webix.ui.datafilter.summColumn);
                             webix.ui.datafilter.mySummColumnBHI = webix.extend({
                                 refresh: function (master, node, value) {
-                                    var seconds = 0;
-                                    master.data.each(function (obj) {
-                                        let type = durationType(obj);
-                                        if (type === 'BHI'){
-                                            seconds = seconds + parseInt(obj.duration);
-                                        }
-                                    });
-                                    var date = new Date(seconds * 1000);
-                                    var hh = Math.floor(seconds / 3600);
-                                    var mm = Math.floor(seconds / 60) % 60;
-                                    var ss = date.getSeconds();
-                                    function pad (num, count) {
-                                        count = count || 0;
-                                        const $num = num + '';
-                                        return '0'.repeat(Math.max(count - $num.length, 0)) + $num;
-                                    }
-                                    ss = pad(ss, 2)
-                                    mm = pad(mm, 2)
-                                    hh = pad(hh, 2)
-                                    var time = hh + ':' + mm + ":" + ss;
-                                    result = time;
-                                    node.firstChild.innerHTML = result;
+                                    node.firstChild.innerHTML = durationSumm(master, 'BHI');
                                 }
                             }, webix.ui.datafilter.summColumn);
 
@@ -197,31 +196,9 @@
                                         width: 100,
                                         sort: 'string',
                                         css: {"color": "black", "text-align": "right"},
-                                        footer: {content: "mySummColumnCCM", css: "durationFooter"},
+                                        footer: {content: "mySummColumnCCM", css: "duration-footer"},
                                         template: function (obj) {
-                                            var type = durationType(obj);
-                                            if (type === 'CCM'){
-                                            var seconds = obj.duration;
-                                            var date = new Date(seconds * 1000);
-                                            var hh = Math.floor(seconds / 3600);
-                                            var mm = Math.floor(seconds / 60) % 60;
-                                            var ss = date.getSeconds();
-                                            function pad (num, count) {
-                                                count = count || 0;
-                                                const $num = num + '';
-                                                return '0'.repeat(Math.max(count - $num.length, 0)) + $num;
-                                            }
-                                            ss = pad(ss, 2)
-                                            mm = pad(mm, 2)
-                                            hh = pad(hh, 2)
-
-                                            var time = hh + ':' + mm + ":" + ss;
-
-                                                return time;
-                                            }else{
-                                                return "--";
-                                            }
-
+                                            return durationData(obj, 'CCM');
                                         }
                                     },
                                     {
@@ -230,31 +207,9 @@
                                         width: 100,
                                         sort: 'string',
                                         css: {"color": "black", "text-align": "right"},
-                                        footer: {content: "mySummColumnBHI", css: "durationFooter"},
+                                        footer: {content: "mySummColumnBHI", css: "duration-footer"},
                                         template: function (obj) {
-                                            var type = durationType(obj);
-                                            if (type === 'BHI'){
-                                            var seconds = obj.duration;
-                                            var date = new Date(seconds * 1000);
-                                            var hh = Math.floor(seconds / 3600);
-                                            var mm = Math.floor(seconds / 60) % 60;
-                                            var ss = date.getSeconds();
-                                            function pad (num, count) {
-                                                count = count || 0;
-                                                const $num = num + '';
-                                                return '0'.repeat(Math.max(count - $num.length, 0)) + $num;
-                                            }
-                                            ss = pad(ss, 2)
-                                            mm = pad(mm, 2)
-                                            hh = pad(hh, 2)
-
-                                            var time = hh + ':' + mm + ":" + ss;
-
-                                                return time;
-                                            }else{
-                                                return "--";
-                                            }
-
+                                            return durationData(obj, 'BHI');
                                         }
                                     }
                                 ],
