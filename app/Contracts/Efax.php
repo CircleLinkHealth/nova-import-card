@@ -13,11 +13,8 @@ interface Efax
      *
      * @return mixed
      */
-    public function
-    
-    
-    
-    
+    public
+    function
     getStatus($faxId);
     
     /**
@@ -26,7 +23,9 @@ interface Efax
      *
      * @return mixed
      */
-    public function
+    public
+    
+    function
     
     
     send(
