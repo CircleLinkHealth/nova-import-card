@@ -54,7 +54,7 @@ class EnrollmentCenterController extends Controller
         $enrollee->email              = $request->input('email');
         $enrollee->dob                = $request->input('dob');
         $enrollee->last_call_outcome  = $request->input('consented');
-        $enrollee->care_ambassador_id = $careAmbassador->id;
+        $enrollee->care_ambassador_id = $careAmbassador->user_id;
 
         $enrollee->total_time_spent = $enrollee->total_time_spent + $request->input('time_elapsed');
 
@@ -136,7 +136,7 @@ class EnrollmentCenterController extends Controller
 
         //mark as engaged to prevent double dipping
         $enrollee->status             = 'engaged';
-        $enrollee->care_ambassador_id = $careAmbassador->id;
+        $enrollee->care_ambassador_id = $careAmbassador->user_id;
         $enrollee->save();
 
         return view(
@@ -180,7 +180,7 @@ class EnrollmentCenterController extends Controller
             $enrollee->last_call_outcome_reason = $request->input('reason_other');
         }
 
-        $enrollee->care_ambassador_id = $careAmbassador->id;
+        $enrollee->care_ambassador_id = $careAmbassador->user_id;
 
         $enrollee->status = $status;
         if ($request->has('soft_decline_callback')) {
@@ -219,7 +219,7 @@ class EnrollmentCenterController extends Controller
             $enrollee->last_call_outcome_reason = $request->input('reason_other');
         }
 
-        $enrollee->care_ambassador_id = $careAmbassador->id;
+        $enrollee->care_ambassador_id = $careAmbassador->user_id;
 
         if ('requested callback' == $request->input('reason')) {
             $enrollee->status = 'call_queue';
