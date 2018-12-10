@@ -262,16 +262,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.81.1",
+            "version": "3.81.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "02a3ea09dd846c2d3bb923d6c91902f08c5bf2af"
+                "reference": "1dd023879874ce22a7f8e2b2e014166cd1160b0d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/02a3ea09dd846c2d3bb923d6c91902f08c5bf2af",
-                "reference": "02a3ea09dd846c2d3bb923d6c91902f08c5bf2af",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/1dd023879874ce22a7f8e2b2e014166cd1160b0d",
+                "reference": "1dd023879874ce22a7f8e2b2e014166cd1160b0d",
                 "shasum": ""
             },
             "require": {
@@ -341,7 +341,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2018-12-06T20:10:37+00:00"
+            "time": "2018-12-07T19:55:05+00:00"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1286,16 +1286,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.76",
+            "version": "v0.77",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "50c4a818ad269839ad2c20f03828cd6f346ec887"
+                "reference": "f16907e09b5529cd92b109cfdadcd5260691a477"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/50c4a818ad269839ad2c20f03828cd6f346ec887",
-                "reference": "50c4a818ad269839ad2c20f03828cd6f346ec887",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/f16907e09b5529cd92b109cfdadcd5260691a477",
+                "reference": "f16907e09b5529cd92b109cfdadcd5260691a477",
                 "shasum": ""
             },
             "require": {
@@ -1319,7 +1319,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2018-12-01T00:23:06+00:00"
+            "time": "2018-12-08T00:22:54+00:00"
         },
         {
             "name": "google/auth",
@@ -5188,16 +5188,16 @@
         },
         {
             "name": "spatie/db-dumper",
-            "version": "2.11.1",
+            "version": "2.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/db-dumper.git",
-                "reference": "858ea38e341e2e5f74a5b59cc8184c5c7e94b50d"
+                "reference": "61cf73e3b53e163d6e888a0013b9df6bb235752c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/db-dumper/zipball/858ea38e341e2e5f74a5b59cc8184c5c7e94b50d",
-                "reference": "858ea38e341e2e5f74a5b59cc8184c5c7e94b50d",
+                "url": "https://api.github.com/repos/spatie/db-dumper/zipball/61cf73e3b53e163d6e888a0013b9df6bb235752c",
+                "reference": "61cf73e3b53e163d6e888a0013b9df6bb235752c",
                 "shasum": ""
             },
             "require": {
@@ -5234,7 +5234,7 @@
                 "mysqldump",
                 "spatie"
             ],
-            "time": "2018-09-27T06:30:34+00:00"
+            "time": "2018-12-10T10:41:18+00:00"
         },
         {
             "name": "spatie/image",
@@ -9083,12 +9083,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/orangehill/iseed.git",
-                "reference": "b166c1c12118b7e553222e374715f60d0f87f604"
+                "reference": "360ba1314e1dc950438bbb8006fc220de47dca00"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/orangehill/iseed/zipball/b166c1c12118b7e553222e374715f60d0f87f604",
-                "reference": "b166c1c12118b7e553222e374715f60d0f87f604",
+                "url": "https://api.github.com/repos/orangehill/iseed/zipball/360ba1314e1dc950438bbb8006fc220de47dca00",
+                "reference": "360ba1314e1dc950438bbb8006fc220de47dca00",
                 "shasum": ""
             },
             "require": {
@@ -9134,7 +9134,7 @@
                 "laravel",
                 "seed"
             ],
-            "time": "2018-10-01T07:59:18+00:00"
+            "time": "2018-12-07T08:06:29+00:00"
         },
         {
             "name": "phar-io/manifest",
