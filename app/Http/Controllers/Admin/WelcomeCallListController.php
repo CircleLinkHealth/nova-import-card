@@ -134,7 +134,6 @@ class WelcomeCallListController extends Controller
      */
     public function makeWelcomeCallList(UploadEligibilityCsv $request)
     {
-
         $practiceId = $request->input('practice_id');
 
         $patients = parseCsvToArray($request->file('patient_list'));

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -25,14 +29,14 @@ class UploadEligibilityCsv extends FormRequest
     {
         return [
             'patient_list' => ['required',
-            function ($attribute, $value, $fail) {
-                try {
-                    parseCsvToArray($value);
-                } catch (\Exception $e) {
-                    return $fail('This file is not in a CSV format.');
-                }
-            }],
-            'practice_id'  => 'required|numeric',
+                function ($attribute, $value, $fail) {
+                    try {
+                        parseCsvToArray($value);
+                    } catch (\Exception $e) {
+                        return $fail('This file is not in a CSV format.');
+                    }
+                }, ],
+            'practice_id' => 'required|numeric',
         ];
     }
 }
