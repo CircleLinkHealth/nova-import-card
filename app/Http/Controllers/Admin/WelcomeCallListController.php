@@ -7,6 +7,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UploadEligibilityCsv;
 use App\Models\PatientData\Rappa\RappaData;
 use App\Models\PatientData\Rappa\RappaInsAllergy;
 use App\Models\PatientData\Rappa\RappaName;
@@ -131,23 +132,11 @@ class WelcomeCallListController extends Controller
      *
      * @return array|string
      */
-    public function makeWelcomeCallList(Request $request)
+    public function makeWelcomeCallList(UploadEligibilityCsv $request)
     {
-        if ( ! $request->hasFile('patient_list')) {
-            dd('Please upload a CSV file.');
-        }
-
-        if ( ! $request['practice_id']) {
-            dd('`practice_id` is a required field.');
-        }
 
         $practiceId = $request->input('practice_id');
 
-        if ('text/csv' !== $request->file('patient_list')->getClientMimeType()) {
-            return [
-                'errors' => 'This file is not in a CSV format.',
-            ];
-        }
         $patients = parseCsvToArray($request->file('patient_list'));
 
         $filterLastEncounter = (bool) $request->input('filterLastEncounter');
