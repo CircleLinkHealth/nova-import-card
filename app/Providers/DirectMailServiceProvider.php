@@ -9,7 +9,6 @@ namespace App\Providers;
 use App\Contracts\DirectMail;
 use App\Services\PhiMail\IncomingMessageHandler;
 use App\Services\PhiMail\PhiMail;
-use App\Services\PhiMail\PhiMailConnector;
 use Illuminate\Support\ServiceProvider;
 
 class DirectMailServiceProvider extends ServiceProvider

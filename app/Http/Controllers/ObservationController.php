@@ -157,12 +157,9 @@ class ObservationController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            //***** start extra work here to decode from quirky UI ******
-            // creates params array to mimick the way mobi sends it
-
             $params['user_id'] = $wpUser->id;
-            //$date = DateTime::createFromFormat("Y-m-d\TH:i", $input['observationDate']);
-            $date = DateTime::createFromFormat('Y-m-d H:i', $input['observationDate']);
+
+            $date = DateTime::createFromFormat('Y-m-d', $input['observationDate']);
             $date = $date->format('Y-m-d H:i:s');
 
             if (isset($input['parent_id'])) {

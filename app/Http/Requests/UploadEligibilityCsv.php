@@ -35,29 +35,28 @@ class UploadEligibilityCsv extends FormRequest
                     } catch (\Exception $e) {
                         return $fail('This file is not in a CSV format.');
                     }
-                    if (empty($patients)){
+                    if (empty($patients)) {
                         return $fail('We could not read data from the file you uploaded. It appears to be empty or not invalid. Please upload a non-empty/valid CSV file.');
                     }
 
                     //check if each row parsed from file is the same length, in case the file is json.
                     $count = null;
-                    foreach($patients as $patient){
+                    foreach ($patients as $patient) {
                         $newCount = count($patient);
-                        if ($count == null){
+                        if (null == $count) {
                             $count = $newCount;
-                        }elseif($count !== $newCount ){
+                        } elseif ($count !== $newCount) {
                             return $fail('This file is not in a CSV format.');
-                        }else{
+                        } else {
                             $count = $newCount;
                         }
                     }
-                    
+
                     $this->request->add(['patients' => $patients]);
-                    
+
                     return true;
                 }, ],
             'practice_id' => 'required|numeric',
         ];
     }
-
 }

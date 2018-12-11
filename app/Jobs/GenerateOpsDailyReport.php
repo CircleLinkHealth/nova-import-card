@@ -21,6 +21,13 @@ class GenerateOpsDailyReport implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
+     * The number of times the job may be attempted.
+     *
+     * @var int
+     */
+    public $tries = 3;
+
+    /**
      * @var Carbon
      */
     private $date;
@@ -43,7 +50,6 @@ class GenerateOpsDailyReport implements ShouldQueue
 
         $this->date = $date;
 
-
         //If the job was not run between 23:30-23:59 we need to get revisions from 23:30, 2 days before.
         //Example: we need data for 12/5 23:30 - 12/6 23:30 (time the report was supposed to run). If the job runs at 12/7 04:25,
         //we need fromDate = date->subDay(2)->setTimeFromTimeString('23:30')
@@ -51,19 +57,12 @@ class GenerateOpsDailyReport implements ShouldQueue
         //Even though this will make the report more accurate, it still makes the report not agree with the next day report (if that was ran at the designated time.
         //Example: if the report gets data for 12/5 23:30 - 12/7 02:30, the next day report will get data for 12/6 23:30 - 12/7 23:30.
         //Thus changes between 12/6 23:30 and 12/7 2:30 will be calculated in both reports, making (total added/lost patients and prior day totals have potential discrepancies)
-        if ($this->date->gte($this->date->copy()->setTimeFromTimeString('00:00')) && $this->date->lte($this->date->copy()->setTimeFromTimeString('23:29'))){
+        if ($this->date->gte($this->date->copy()->setTimeFromTimeString('00:00')) && $this->date->lte($this->date->copy()->setTimeFromTimeString('23:29'))) {
             $this->fromDate = $this->date->copy()->subDay(2)->setTimeFromTimeString('23:30');
-        }else{
+        } else {
             $this->fromDate = $this->date->copy()->subDay()->setTimeFromTimeString('23:30');
         }
     }
-
-    /**
-     * The number of times the job may be attempted.
-     *
-     * @var int
-     */
-    public $tries = 3;
 
     public function calculateDailyTotalRow($rows)
     {
@@ -91,24 +90,27 @@ class GenerateOpsDailyReport implements ShouldQueue
         ini_set('memory_limit', '512M');
 
         $practices = Practice::select(['id', 'display_name'])
-                             ->activeBillable()
-                             ->with([
-                                 'patients' => function ($p) {
-                                     $p->with([
-                                         'patientSummaries'            => function ($s) {
-                                             $s->where('month_year', $this->date->copy()->startOfMonth());
-                                         },
-                                         'patientInfo.revisionHistory' => function ($r) {
-                                             $r->where('key', 'ccm_status')
-                                               ->where('created_at', '>=',
-                                                   $this->fromDate);
-                                         },
-                                     ]);
-                                 },
-                             ])
-                             ->whereHas('patients.patientInfo')
-                             ->get()
-                             ->sortBy('display_name');
+            ->activeBillable()
+            ->with([
+                'patients' => function ($p) {
+                    $p->with([
+                        'patientSummaries' => function ($s) {
+                            $s->where('month_year', $this->date->copy()->startOfMonth());
+                        },
+                        'patientInfo.revisionHistory' => function ($r) {
+                            $r->where('key', 'ccm_status')
+                                ->where(
+                                    'created_at',
+                                    '>=',
+                                  $this->fromDate
+                                );
+                        },
+                    ]);
+                },
+            ])
+            ->whereHas('patients.patientInfo')
+            ->get()
+            ->sortBy('display_name');
 
         $hoursBehind = $opsDashboardService->calculateHoursBehind($this->date, $practices);
 

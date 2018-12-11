@@ -58,7 +58,7 @@ class PdfService
      *
      * @param $view
      * @param array $args
-     * @param null $outputFullPath
+     * @param null  $outputFullPath
      * @param array $options
      *
      * @return string|null
@@ -98,14 +98,12 @@ class PdfService
 
         $pdf = $pdf->save($outputFullPath, true);
 
-
         if ( ! $args['generatePdfCareplan']) {
             $outputFullPath = $this->mergeFiles([
                 $outputFullPath,
                 storage_path("patient/pdf-careplans/{$args['pdfCareplan']->filename}"),
             ]);
         }
-
 
         return $outputFullPath;
     }
@@ -115,7 +113,7 @@ class PdfService
      * NOTE: Each index in the array has to be a full path to a file.
      *
      * @param array $filesWithFullPath
-     * @param null $outputFullPath
+     * @param null  $outputFullPath
      *
      * @throws \Exception
      *
@@ -155,7 +153,7 @@ class PdfService
      */
     private function randomFileFullPath()
     {
-        $name = Carbon::now()->toAtomString() . str_random(20);
+        $name = Carbon::now()->toAtomString().str_random(20);
 
         return storage_path("pdfs/${name}.pdf");
     }

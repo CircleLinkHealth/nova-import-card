@@ -28,7 +28,7 @@ class Handler extends ExceptionHandler
         'password',
         'password_confirmation',
     ];
-    
+
     /**
      * A list of the exception types that should not be reported.
      *
@@ -42,7 +42,7 @@ class Handler extends ExceptionHandler
         TokenMismatchException::class,
         ValidationException::class,
     ];
-    
+
     /**
      * A list of the exception types that should be recorded, but no notification should be sent.
      *
@@ -51,12 +51,12 @@ class Handler extends ExceptionHandler
     protected $recordButNotNotify = [
         SuspiciousOperationException::class,
     ];
-    
+
     /**
      * Render an exception into an HTTP response.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \Exception $e
+     * @param \Exception               $e
      *
      * @return \Illuminate\Http\Response
      */
@@ -79,10 +79,10 @@ class Handler extends ExceptionHandler
         if ($this->isHttpException($e)) {
             return $this->renderHttpException($e);
         }
-        
+
         return parent::render($request, $e);
     }
-    
+
     /**
      * Report or log an exception.
      *
@@ -94,12 +94,12 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $e)
     {
-        if (!$this->shouldReport($e)) {
+        if ( ! $this->shouldReport($e)) {
             return;
         }
-        
+
         $this->addSlackHandler();
-        
+
         if ($e instanceof \Illuminate\Database\QueryException) {
             $errorCode = $e->errorInfo[1];
             if (1062 == $errorCode) {
@@ -109,24 +109,24 @@ class Handler extends ExceptionHandler
                 return;
             }
         }
-        
+
         if (app()->bound('lern')) {
             if ($this->shouldRecordOnly($e)) {
                 app()->make('lern')->record($e);
-                
+
                 return;
             }
-            
+
             app()->make('lern')->handle($e);
         }
-        
+
         return parent::report($e);
     }
-    
+
     /**
      * Convert an authentication exception into an unauthenticated response.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param \Illuminate\Http\Request                 $request
      * @param \Illuminate\Auth\AuthenticationException $exception
      *
      * @return \Illuminate\Http\Response
@@ -138,17 +138,12 @@ class Handler extends ExceptionHandler
         if ($request->expectsJson()) {
             return response()->json(['error' => 'Unauthenticated.'], 401);
         }
-        
+
         return redirect()->guest('login');
     }
-    
-    private function shouldRecordOnly($e)
-    {
-        return in_array(get_class($e), $this->recordButNotNotify);
-    }
-    
+
     /**
-     * Add Slack Handler if this is a a production environment
+     * Add Slack Handler if this is a a production environment.
      */
     private function addSlackHandler()
     {
@@ -173,5 +168,10 @@ class Handler extends ExceptionHandler
                 )
             );
         }
+    }
+
+    private function shouldRecordOnly($e)
+    {
+        return in_array(get_class($e), $this->recordButNotNotify);
     }
 }
