@@ -12,7 +12,7 @@ use App\Http\Controllers\Controller;
 use App\TwilioCall;
 use App\TwilioRawLog;
 use Carbon\Carbon;
-use Illuminate\Contracts\Validation\Rule;
+use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 use SimpleXMLElement;
 use Twilio\Exceptions\TwimlException;
