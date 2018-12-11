@@ -688,7 +688,7 @@ class TwilioController extends Controller
 
     private function sendUnlistedNumberToSlack($input)
     {
-        $userId         = $input['InboundUserId'];
+        $userId         = $input['OutboundUserId'];
         $unlistedNumber = $input['To'];
         sendSlackMessage(
             '#twilio-calls',
