@@ -32,6 +32,7 @@ return [
         'from'             => env('TWILIO_FROM'),
         'twiml-app-sid'    => env('TWIML_APP_SID'),
         'allow-conference' => env('TWIML_ALLOW_CONFERENCE', false),
+        'allow-recording'  => env('TWIML_ALLOW_RECORDING', false),
     ],
 
     'authy' => [

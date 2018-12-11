@@ -439,6 +439,13 @@
                 self.onPhone = {};
                 self.muted = {};
                 self.waiting = false;
+                self.enableConference = false;
+            },
+            twilioOffline: function () {
+                self.waiting = true;
+            },
+            twilioOnline: function () {
+                self.waiting = false;
             },
             initTwilio: function () {
                 const url = rootUrl(`twilio/token`);
@@ -461,9 +468,10 @@
                         });
 
                         self.device.on('offline', () => {
+                            //this event can be raised on a temporary disconnection
+                            //we should disable any actions when this event is fired
                             console.log('twilio device: offline');
-                            self.resetPhoneState();
-                            self.connection = null;
+                            self.twilioOffline();
                             self.log = 'Offline.';
                         });
 
@@ -476,7 +484,7 @@
                         self.device.on('ready', () => {
                             console.log('twilio device: ready');
                             self.log = 'Ready to make call';
-                            self.waiting = false;
+                            self.twilioOnline();
                         });
                     })
                     .catch(error => {
