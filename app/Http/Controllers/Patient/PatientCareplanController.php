@@ -209,7 +209,7 @@ class PatientCareplanController extends Controller
             }
 
             $pdfCareplan = null;
-            if ($user->carePlan->mode == 'pdf' && $letter == true) {
+            if ($letter == true && $user->carePlan->mode == 'pdf') {
                 $pdfCareplan = $user->carePlan->pdfs->sortByDesc('created_at')->first();
             }
 

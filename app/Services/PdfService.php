@@ -72,10 +72,11 @@ class PdfService
         if ( ! array_key_exists('isPdf', $args)) {
             $args['isPdf'] = true;
         }
-        if ( array_key_exists('pdfCareplan', $args)) {
-            //if a user's careplan is mode=pdf, then we should not generatePdfCareplan from careplan data in the view
-            $args['generatePdfCareplan'] = $args['pdfCareplan'] ? false : true;
-        }
+
+        //if a user's careplan is mode=pdf we might have a pdf already. so no need to generate
+        //check that pdfCareplan is provided with $args and is not null
+        $args['generatePdfCareplan'] = empty($args['pdfCareplan']);
+
 //            leaving these here in case we need them
 //            $pdf->setOption('disable-javascript', false);
 //            $pdf->setOption('enable-javascript', true);
@@ -97,11 +98,14 @@ class PdfService
 
         $pdf = $pdf->save($outputFullPath, true);
 
-        if ( array_key_exists('generatePdfCareplan', $args)) {
-            if( ! $args['generatePdfCareplan']){
-                $outputFullPath = $this->mergeFiles([$outputFullPath, storage_path("patient/pdf-careplans/{$args['pdfCareplan']->filename}")]);
-            }
+
+        if ( ! $args['generatePdfCareplan']) {
+            $outputFullPath = $this->mergeFiles([
+                $outputFullPath,
+                storage_path("patient/pdf-careplans/{$args['pdfCareplan']->filename}"),
+            ]);
         }
+
 
         return $outputFullPath;
     }
