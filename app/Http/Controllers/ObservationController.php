@@ -78,10 +78,19 @@ class ObservationController extends Controller
 
             //***** start extra work here to decode from quirky UI ******
             // creates params array to mimick the way mobi sends it
-
             $params['user_id'] = $wpUser->id;
             //$date = DateTime::createFromFormat("Y-m-d\TH:i", $input['observationDate']);
             $date = DateTime::createFromFormat("Y-m-d H:i", $input['observationDate']);
+
+            //could not reproduce invalid date being sent here, but we found exception where Date could not be parsed (probably from an old IE browser)
+            if (!$date) {
+                if ($request->header('Client')) {
+                    return response()->json(['response' => 'Validation Error'], 500);
+                } else {
+                    return redirect()->back()->withErrors(['observationDate' => 'The date and/or time could not be parsed.'])->withInput();
+                }
+            }
+
             $date = $date->format("Y-m-d H:i:s");
 
             if (isset($input['parent_id'])) {
