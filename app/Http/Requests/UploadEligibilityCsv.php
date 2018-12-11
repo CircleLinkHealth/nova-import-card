@@ -32,7 +32,6 @@ class UploadEligibilityCsv extends FormRequest
                 function ($attribute, $value, $fail) {
                     try {
                         $patients = parseCsvToArray($value);
-                        $this->request->add(['patients' => $patients]);
                     } catch (\Exception $e) {
                         return $fail('This file is not in a CSV format.');
                     }
@@ -52,6 +51,9 @@ class UploadEligibilityCsv extends FormRequest
                             $count = $newCount;
                         }
                     }
+                    
+                    $this->request->add(['patients' => $patients]);
+                    
                     return true;
                 }, ],
             'practice_id' => 'required|numeric',
