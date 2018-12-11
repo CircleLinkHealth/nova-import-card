@@ -261,6 +261,8 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         <div class="breakhere"></div>
                         <!-- <div class="row pb-before" style="color:white;">This page left intentionally blank</div> -->
                     @endif
+                    @if($generatePdfCareplan)
+
                     <div class="row gutter">
                         <div class="col-xs-7">
                             <h1 class="patient-summary__title patient-summary__title_9 patient-summary--careplan">Care
@@ -308,7 +310,9 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             </div>
                         </div>
                     @endif
+                        @endif
                 </div>
+                @if($generatePdfCareplan)
             <?php
             $allCpmProblems = new Collection($data['allCpmProblems']);
             $cpmProblems    = new Collection($data['cpmProblems']);
@@ -777,6 +781,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
             </section>
         </div>
         <div class="row pb-before"></div>
+        @endif
 
         @push('styles')
             <script>

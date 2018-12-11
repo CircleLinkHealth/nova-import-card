@@ -58,7 +58,7 @@ class PdfService
      *
      * @param $view
      * @param array $args
-     * @param null  $outputFullPath
+     * @param null $outputFullPath
      * @param array $options
      *
      * @return string|null
@@ -72,6 +72,11 @@ class PdfService
         if ( ! array_key_exists('isPdf', $args)) {
             $args['isPdf'] = true;
         }
+
+        //if a user's careplan is mode=pdf we might have a pdf already. so no need to generate
+        //check that pdfCareplan is provided with $args and is not null
+        $args['generatePdfCareplan'] = empty($args['pdfCareplan']);
+
 //            leaving these here in case we need them
 //            $pdf->setOption('disable-javascript', false);
 //            $pdf->setOption('enable-javascript', true);
@@ -93,6 +98,15 @@ class PdfService
 
         $pdf = $pdf->save($outputFullPath, true);
 
+
+        if ( ! $args['generatePdfCareplan']) {
+            $outputFullPath = $this->mergeFiles([
+                $outputFullPath,
+                storage_path("patient/pdf-careplans/{$args['pdfCareplan']->filename}"),
+            ]);
+        }
+
+
         return $outputFullPath;
     }
 
@@ -101,7 +115,7 @@ class PdfService
      * NOTE: Each index in the array has to be a full path to a file.
      *
      * @param array $filesWithFullPath
-     * @param null  $outputFullPath
+     * @param null $outputFullPath
      *
      * @throws \Exception
      *
@@ -141,7 +155,7 @@ class PdfService
      */
     private function randomFileFullPath()
     {
-        $name = Carbon::now()->toAtomString().str_random(20);
+        $name = Carbon::now()->toAtomString() . str_random(20);
 
         return storage_path("pdfs/${name}.pdf");
     }
