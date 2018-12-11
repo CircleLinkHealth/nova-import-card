@@ -85,7 +85,7 @@ class ObservationController extends Controller
             //could not reproduce invalid date being sent here, but we found exception where Date could not be parsed (probably from an old IE browser)
             if (!$date) {
                 if ($request->header('Client')) {
-                    return response()->json(['response' => 'Validation Error'], 500);
+                    return response()->json(['response' => 'Validation Error'], 400);
                 } else {
                     return redirect()->back()->withErrors(['observationDate' => 'The date and/or time could not be parsed.'])->withInput();
                 }
