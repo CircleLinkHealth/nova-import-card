@@ -19,10 +19,17 @@ use Illuminate\Http\Request;
 use SimpleXMLElement;
 use Twilio\Exceptions\TwimlException;
 use Twilio\Twiml;
+use Tylercd100\Notify\Drivers\Twilio;
 
 class TwilioController extends Controller
 {
     const CLIENT_ANONYMOUS = 'client:Anonymous';
+
+    const CONFERENCE_START = 'conference-start';
+    const CONFERENCE_END = 'conference-end';
+    const CONFERENCE_PARTICIPANT_JOIN = 'participant-join';
+    const CONFERENCE_PARTICIPANT_LEAVE = 'participant-leave';
+
     private $client;
     private $token;
 
@@ -84,7 +91,7 @@ class TwilioController extends Controller
                             $dial           = $response->dial();
                             $dial->conference($conferenceName, [
                                 'endConferenceOnExit'           => false,
-                                'statusCallbackEvent'           => 'start end',
+                                'statusCallbackEvent'           => 'start end join leave',
                                 'statusCallback'                => route('twilio.call.conference.status'),
                                 'statusCallbackMethod'          => 'POST',
                                 'record'                        => config('services.twilio.allow-recording')
@@ -110,7 +117,7 @@ class TwilioController extends Controller
                         $dial           = $response->dial();
                         $dial->conference($conferenceName, [
                             'endConferenceOnExit'           => true,
-                            'statusCallbackEvent'           => 'start end',
+                            'statusCallbackEvent'           => 'start end join leave',
                             'statusCallback'                => route('twilio.call.conference.status'),
                             'statusCallbackMethod'          => 'POST',
                             'record'                        => config('services.twilio.allow-recording')
@@ -592,46 +599,68 @@ class TwilioController extends Controller
         try {
             $input = $request->all();
 
+            $callbackEvent = $input['StatusCallbackEvent'];
             $conferenceSid = $input['ConferenceSid'];
             $fields        = [
-                'conference_sid' => $conferenceSid,
+                'conference_sid'    => $conferenceSid,
+                'conference_status' => $callbackEvent === 'conference-end'
+                    ? 'completed'
+                    : 'in-progress',
             ];
 
             if ( ! empty($input['FriendlyName'])) {
                 $fields['conference_friendly_name'] = $input['FriendlyName'];
             }
 
-            if ( ! empty($input['StatusCallbackEvent'])) {
-                $fields['conference_status'] = $input['StatusCallbackEvent'] === 'conference-end' ? 'completed' : 'in-progress';
+            if ($callbackEvent === TwilioController::CONFERENCE_END) {
+                //at this point, the conference_sid should be in the twilio_calls table
+                TwilioCall::updateOrCreate(
+                    ['conference_sid' => $conferenceSid],
+                    $fields
+                );
             }
 
-            //add participants in our db
-            collect($this->client->conferences($conferenceSid)->participants->read())
-                ->each(function ($participant, $key) use ($fields) {
-                    $call = $this->client->calls($participant->callSid)->fetch();
 
-                    //one of the participants must be the one with the parent call
-                    if (TwilioCall::where('call_sid', '=', $call->sid)->exists()) {
-                        TwilioCall::updateOrCreate(
-                            ['call_sid' => $call->sid],
-                            $fields
-                        );
-                    }
+            if ($callbackEvent === TwilioController::CONFERENCE_PARTICIPANT_JOIN || $callbackEvent === TwilioController::CONFERENCE_PARTICIPANT_LEAVE) {
 
-                    TwilioConferenceCallParticipant::updateOrCreate(
-                        [
-                            'call_sid'       => $participant->callSid,
-                            'conference_sid' => $fields['conference_sid'],
-                        ],
-                        [
-                            'account_sid'        => $call->accountSid,
-                            'call_sid'           => $call->sid,
-                            'conference_sid'     => $fields['conference_sid'],
-                            'participant_number' => $call->to,
-                        ]
+                $call = $this->client->calls($input['CallSid'])->fetch();
+
+                //callbacks arrive asynchronously
+                //there is high chance that the conference-end will be received and then the participant-leave
+                $shouldUpdateTwilioCallsTable = TwilioCall::where('call_sid', '=', $call->sid)
+                                                          ->whereNull('conference_status')
+                                                          ->exists();
+                if ($shouldUpdateTwilioCallsTable) {
+                    TwilioCall::updateOrCreate(
+                        ['call_sid' => $call->sid],
+                        $fields
                     );
-                });
+                }
 
+                $participantFields = [
+                    'account_sid'    => $input['AccountSid'],
+                    'call_sid'       => $input['CallSid'],
+                    'conference_sid' => $conferenceSid,
+                    'duration'       => $call->duration ?? 0,
+                    'status'         => $call->status,
+                ];
+
+                $participantNumber = $call->to;
+                if ( ! empty($participantNumber)) {
+                    //$call->from will be CLIENT_ANONYMOUS. correct number will be set in dialNumberStatusCallback
+                    $participantFields['participant_number'] = $participantNumber;
+                } else {
+                    $participantFields['participant_number'] = $call->from;
+                }
+
+                TwilioConferenceCallParticipant::updateOrCreate(
+                    [
+                        'call_sid'       => $input['CallSid'],
+                        'conference_sid' => $conferenceSid,
+                    ],
+                    $participantFields
+                );
+            }
 
         } catch (\Throwable $e) {
             \Log::critical('Exception while storing twilio conference log: ' . $e->getMessage());
@@ -773,6 +802,21 @@ class TwilioController extends Controller
                 ['call_sid' => $callSid],
                 $fields
             );
+
+            //if this call is a participant in a conference, we might need to set the correct participant_number
+            //this happens because in the conference callbacks we do not have the actual number but a 'client:Anonymous'
+            if ( ! empty($fields['from'])) {
+                $conferenceParticipant = TwilioConferenceCallParticipant::where('call_sid', '=', $callSid)
+                                                                        ->where('participant_number', '=',
+                                                                            TwilioController::CLIENT_ANONYMOUS)
+                                                                        ->first();
+
+                if ($conferenceParticipant) {
+                    $conferenceParticipant->participant_number = $fields['from'];
+                    $conferenceParticipant->save();
+                }
+            }
+
         } catch (\Throwable $e) {
             \Log::critical('Exception while storing twilio log: ' . $e->getMessage());
         }

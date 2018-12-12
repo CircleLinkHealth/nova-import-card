@@ -19,8 +19,9 @@ class CreateTwilioConferenceCallsParticipantsTable extends Migration
             $table->string('call_sid');
             $table->string('conference_sid');
             $table->string('participant_number');
+            $table->string('status')->nullable();
+            $table->integer('duration')->default(0);
             $table->timestamps();
-
         });
     }
 
