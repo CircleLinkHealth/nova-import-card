@@ -52,18 +52,14 @@
             <br/>
 
             <div class="row" v-if="allowConference" v-show="isCurrentlyOnPhone">
+
                 <div class="col-sm-12">
-                    <button class="btn btn-default"
-                            @click="createConference">
-                        Create a conference call
-                    </button>
                     <loader v-if="waitingForConference"></loader>
                 </div>
 
                 <div class="col-sm-12" v-for="(value, key) in otherNumbers" :key="key" style="margin-top: 5px">
                     <span>{{key}} [{{value}}]</span>
                     <button class="btn btn-circle" @click="toggleOtherCallMessage(value)"
-                            :disabled="!enableConference"
                             :class="onPhone[value] ? 'btn-danger': 'btn-success'">
                         <i class="fa fa-fw fa-phone" :class="onPhone[value] ? 'fa-close': 'fa-phone'"></i>
                     </button>
@@ -84,7 +80,7 @@
                                        class="form-control" type="tel"
                                        title="10-digit US Phone Number" placeholder="1234567890"
                                        v-model="otherUnlistedNumber"
-                                       :disabled="onPhone[otherUnlistedNumber] ||!enableConference"/>
+                                       :disabled="onPhone[otherUnlistedNumber] || isCurrentlyOnConference"/>
                             </template>
                             <template v-else>
                                 <input name="other-number"
@@ -92,14 +88,14 @@
                                        class="form-control" type="tel"
                                        title="10-digit US Phone Number" placeholder="1234567890"
                                        v-model="otherUnlistedNumber"
-                                       :disabled="onPhone[otherUnlistedNumber] ||!enableConference"/>
+                                       :disabled="onPhone[otherUnlistedNumber] || isCurrentlyOnConference"/>
                             </template>
 
                         </div>
                     </div>
                     <div class="col-sm-3 no-padding" style="margin-top: 4px; padding-left: 2px">
                         <button class="btn btn-circle" @click="toggleOtherCallMessage(otherUnlistedNumber)"
-                                :disabled="invalidOtherUnlistedNumber || !enableConference"
+                                :disabled="invalidOtherUnlistedNumber"
                                 :class="onPhone[otherUnlistedNumber] ? 'btn-danger': 'btn-success'">
                             <i class="fa fa-fw fa-phone"
                                :class="onPhone[otherUnlistedNumber] ? 'fa-close': 'fa-phone'"></i>
@@ -152,7 +148,7 @@
             return {
                 waiting: false,
                 waitingForConference: false,
-                enableConference: false,
+                queuedNumbersForConference: [],
                 muted: {},
                 onPhone: {},
                 log: 'Initializing',
@@ -271,19 +267,8 @@
 
                     if (isCurrentlyOnPhone) {
                         this.log = 'Adding to call: ' + number;
-                        this.axios
-                            .post(rootUrl('twilio/call/join-conference'), this.getTwimlAppRequest(number, isUnlisted, isCallToPatient))
-                            .then(resp => {
-                                console.log(resp.data);
-                                if (resp && resp.data && resp.data.call_sid) {
-                                    this.$set(this.callSids, number, resp.data.call_sid);
-                                }
-                            })
-                            .catch(err => {
-                                self.log = err.message;
-                                this.$set(this.muted, number, false);
-                                this.$set(this.onPhone, number, false);
-                            });
+                        this.queuedNumbersForConference.push({number, isUnlisted, isCallToPatient});
+                        this.createConference();
                     }
                     else {
                         this.log = 'Calling ' + number;
@@ -355,7 +340,6 @@
                         }, 1000);
                     })
                     .catch(err => {
-                        this.enableConference = false;
                         this.waitingForConference = false;
                         self.log = err.message;
                     });
@@ -408,11 +392,8 @@
                         }
 
                         if (resp.data.status === 'in-progress') {
-                            this.enableConference = true;
                             this.waitingForConference = false;
-                        }
-                        else {
-                            this.enableConference = false;
+                            this.addQueuedParticipants();
                         }
 
                         if (!this.isCurrentlyOnPhone && this.connection != null) {
@@ -422,10 +403,36 @@
                         setTimeout(this.getConferenceInfo.bind(this), 1000);
                     })
                     .catch(err => {
-                        this.enableConference = false;
                         this.waitingForConference = false;
                         self.log = err.message;
                     });
+            },
+            addQueuedParticipants: function () {
+                if (!this.queuedNumbersForConference || !this.queuedNumbersForConference.length) {
+                    return;
+                }
+
+                const {number, isUnlisted, isCallToPatient} = this.queuedNumbersForConference.pop();
+                this.axios
+                    .post(rootUrl('twilio/call/join-conference'), this.getTwimlAppRequest(number, isUnlisted, isCallToPatient))
+                    .then(resp => {
+                        console.log(resp.data);
+                        if (resp && resp.data && resp.data.call_sid) {
+                            this.$set(this.callSids, number, resp.data.call_sid);
+                        }
+
+                        //continue adding participants until all are added
+                        this.addQueuedParticipants();
+                    })
+                    .catch(err => {
+                        self.log = err.message;
+                        this.$set(this.muted, number, false);
+                        this.$set(this.onPhone, number, false);
+
+                        //continue adding participants until all are added
+                        this.addQueuedParticipants();
+                    });
+
             },
             resetPhoneState: function () {
 
@@ -439,7 +446,6 @@
                 self.onPhone = {};
                 self.muted = {};
                 self.waiting = false;
-                self.enableConference = false;
             },
             twilioOffline: function () {
                 self.waiting = true;
