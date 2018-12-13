@@ -17,23 +17,24 @@ namespace App;
  * @property string $to                 The target call
  * @property string $inbound_user_id    The user receiving the call
  * @property string $outbound_user_id   The user making the call
- * @property int    $call_duration      The total duration from the moment you press Call on the web site until the
+ * @property int $call_duration      The total duration from the moment you press Call on the web site until the
  *                                      connection is closed.
  * @property string $direction          inbound for inbound calls, outbound-api for calls initiated via the REST API or
  *                                      outbound-dial for calls initiated by a <Dial> verb.
- * @property string $recording_sid
- * @property int    $recording_duration
- * @property string $recording_url
- * @property string $sequence_number    The order in which events are fired. Events are fired in order, but may not be
- *                                      received in order.
- * @property bool   $in_conference      States whether the call is in conference mode
- * @property bool   $is_unlisted_number States whether the phone number was manually entered on client side
- * @property int    $dial_call_duration The total duration from the moment you press Call on the web site until
- *                                      the connection is closed.
- * @property int    $dial_call_status   Read this value to see if the other party has picked up (queued, ringing,
+ * @property bool $in_conference      States whether the call is in conference mode
+ * @property bool $is_unlisted_number States whether the phone number was manually entered on client side
+ * @property int $dial_conference_duration The effective duration of a call from the moment the first participant
+ *     answers until close.
+ * @property int $dial_call_status   Read this value to see if the other party has picked up (queued, ringing,
  *                                      in-progress, completed, busy, failed, no-answer)
- * @property int    $dial_call_sid      The session id of the call to the other party. Different from call_sid.
+ * @property int $dial_call_sid      The session id of the call to the other party. Different from call_sid.
  *                                      call_sid is the Parent session. connection is closed.
+ * @property string $dial_recording_sid
+ * @property string $conference_sid
+ * @property integer $conference_duration
+ * @property integer $conference_status
+ * @property string $conference_recording_sid
+ * @property string $conference_friendly_name
  */
 class TwilioCall extends BaseModel
 {
@@ -48,15 +49,20 @@ class TwilioCall extends BaseModel
         'outbound_user_id',
         'call_duration',
         'direction',
-        'recording_sid',
-        'recording_duration',
-        'recording_url',
         'sequence_number',
         'dial_call_sid',
-        'dial_call_duration',
         'dial_call_status',
+        'dial_recording_sid',
+        'conference_sid',
+        'conference_duration',
+        'conference_status',
+        'conference_recording_sid',
+        'conference_friendly_name',
         'in_conference',
         'is_unlisted_number',
+        'dial_conference_duration',
     ];
     protected $table = 'twilio_calls';
+
+    public $phi = ['from', 'to'];
 }
