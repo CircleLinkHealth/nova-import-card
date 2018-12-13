@@ -119,6 +119,8 @@
 
     let self;
 
+    const PARTICIPANT_ADDED_IN_CONFERENCE_THRESHOLD = 60000;
+
     export default {
         name: 'call-number',
         components: {
@@ -150,6 +152,7 @@
                 waiting: false,
                 waitingForConference: false,
                 queuedNumbersForConference: [],
+                addedNumbersInConference: [],
                 muted: {},
                 onPhone: {},
                 log: 'Initializing',
@@ -279,6 +282,14 @@
 
                 } else {
 
+                    //remove from numbers that are in conference
+                    for (let i = 0; i < this.addedNumbersInConference.length; i++) {
+                        if (this.addedNumbersInConference[i].number === number) {
+                            this.addedNumbersInConference.splice(i, 1);
+                            break;
+                        }
+                    }
+
                     this.$set(this.muted, number, false);
                     this.$set(this.onPhone, number, false);
 
@@ -404,7 +415,13 @@
                                 //this number is queued to be added in the conference,
                                 //it will not be found in participants but we should not mark as onPhone=false
                                 //since we will add soon
-                                if (this.queuedNumbersForConference.some(x=>x.number === i)) {
+                                if (this.queuedNumbersForConference.some(x => x.number === i)) {
+                                    continue;
+                                }
+
+                                //if only recently added, do not mark as onPhone=false
+                                const numberAddedEntry = this.addedNumbersInConference.find(x => x.number === i);
+                                if (numberAddedEntry && ((Date.now() - numberAddedEntry.date) < PARTICIPANT_ADDED_IN_CONFERENCE_THRESHOLD)) {
                                     continue;
                                 }
 
@@ -425,6 +442,18 @@
                             this.addQueuedParticipants();
                         }
 
+                        //this might be problematic if:
+                        // 1. Nurse on call with patient
+                        // 2. Nurse calls practice (conference)
+                        // 3. Practice hangs up
+                        // 4. Nurse decides to call Practice again
+                        // 5. Patient hangs up before practice answers
+                        // At this moment, the conference has no participants (practice not answered yet),
+                        // so we decide to end the connection. A 'corner-case' you might say.
+                        // By letting this piece of code here, we provide the convenience of
+                        // ending the conference if there are no more participants
+                        // (and not specifically asking for the nurse to press the end call button)
+                        // NOTE: this applies only to conference calls (not direct outbound calls)
                         if (!this.isCurrentlyOnPhone && this.connection != null) {
                             this.connection.disconnect();
                         }
@@ -442,6 +471,7 @@
                 }
 
                 const {number, isUnlisted, isCallToPatient} = this.queuedNumbersForConference.pop();
+                this.addedNumbersInConference.push({number, date: Date.now()});
                 this.axios
                     .post(rootUrl('twilio/call/join-conference'), this.getTwimlAppRequest(number, isUnlisted, isCallToPatient))
                     .then(resp => {
@@ -475,6 +505,10 @@
                 self.onPhone = {};
                 self.muted = {};
                 self.waiting = false;
+
+                self.waitingForConference = false;
+                self.queuedNumbersForConference = [];
+                self.addedNumbersInConference = [];
             },
             twilioOffline: function () {
                 self.waiting = true;
