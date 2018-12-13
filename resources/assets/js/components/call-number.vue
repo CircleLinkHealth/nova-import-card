@@ -211,7 +211,9 @@
             toggleMute: function (number) {
                 const value = !this.muted[number];
                 this.muted[number] = value;
-                this.device.activeConnection().mute(value);
+                if (this.device && this.device.activeConnection()) {
+                    this.device.activeConnection().mute(value);
+                }
             },
 
             togglePatientCallMessage: function (number) {
@@ -246,7 +248,7 @@
                 this.toggleCall(number, isUnlisted, isCallToPatient);
 
                 //inform other pages only about patient calls
-                if (!isCallToPatient) {
+                if (isCallToPatient) {
                     sendRequest(action, {number: {value: number, muted: self.muted[number]}})
                         .then(() => {
 
