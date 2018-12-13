@@ -52,18 +52,15 @@
             <br/>
 
             <div class="row" v-if="allowConference" v-show="isCurrentlyOnPhone">
+
                 <div class="col-sm-12">
-                    <button class="btn btn-default"
-                            @click="createConference">
-                        Create a conference call
-                    </button>
                     <loader v-if="waitingForConference"></loader>
                 </div>
 
                 <div class="col-sm-12" v-for="(value, key) in otherNumbers" :key="key" style="margin-top: 5px">
                     <span>{{key}} [{{value}}]</span>
                     <button class="btn btn-circle" @click="toggleOtherCallMessage(value)"
-                            :disabled="!enableConference"
+                            :disabled="!onPhone[value] && isCurrentlyOnConference"
                             :class="onPhone[value] ? 'btn-danger': 'btn-success'">
                         <i class="fa fa-fw fa-phone" :class="onPhone[value] ? 'fa-close': 'fa-phone'"></i>
                     </button>
@@ -84,7 +81,7 @@
                                        class="form-control" type="tel"
                                        title="10-digit US Phone Number" placeholder="1234567890"
                                        v-model="otherUnlistedNumber"
-                                       :disabled="onPhone[otherUnlistedNumber] ||!enableConference"/>
+                                       :disabled="onPhone[otherUnlistedNumber] || isCurrentlyOnConference"/>
                             </template>
                             <template v-else>
                                 <input name="other-number"
@@ -92,14 +89,14 @@
                                        class="form-control" type="tel"
                                        title="10-digit US Phone Number" placeholder="1234567890"
                                        v-model="otherUnlistedNumber"
-                                       :disabled="onPhone[otherUnlistedNumber] ||!enableConference"/>
+                                       :disabled="onPhone[otherUnlistedNumber] || isCurrentlyOnConference"/>
                             </template>
 
                         </div>
                     </div>
                     <div class="col-sm-3 no-padding" style="margin-top: 4px; padding-left: 2px">
                         <button class="btn btn-circle" @click="toggleOtherCallMessage(otherUnlistedNumber)"
-                                :disabled="invalidOtherUnlistedNumber || !enableConference"
+                                :disabled="invalidOtherUnlistedNumber || (!onPhone[otherUnlistedNumber] && isCurrentlyOnConference)"
                                 :class="onPhone[otherUnlistedNumber] ? 'btn-danger': 'btn-success'">
                             <i class="fa fa-fw fa-phone"
                                :class="onPhone[otherUnlistedNumber] ? 'fa-close': 'fa-phone'"></i>
@@ -121,6 +118,8 @@
     import Twilio from 'twilio-client';
 
     let self;
+
+    const PARTICIPANT_ADDED_IN_CONFERENCE_THRESHOLD = 60000;
 
     export default {
         name: 'call-number',
@@ -152,7 +151,8 @@
             return {
                 waiting: false,
                 waitingForConference: false,
-                enableConference: false,
+                queuedNumbersForConference: [],
+                addedNumbersInConference: [],
                 muted: {},
                 onPhone: {},
                 log: 'Initializing',
@@ -271,19 +271,8 @@
 
                     if (isCurrentlyOnPhone) {
                         this.log = 'Adding to call: ' + number;
-                        this.axios
-                            .post(rootUrl('twilio/call/join-conference'), this.getTwimlAppRequest(number, isUnlisted, isCallToPatient))
-                            .then(resp => {
-                                console.log(resp.data);
-                                if (resp && resp.data && resp.data.call_sid) {
-                                    this.$set(this.callSids, number, resp.data.call_sid);
-                                }
-                            })
-                            .catch(err => {
-                                self.log = err.message;
-                                this.$set(this.muted, number, false);
-                                this.$set(this.onPhone, number, false);
-                            });
+                        this.queuedNumbersForConference.push({number, isUnlisted, isCallToPatient});
+                        this.createConference();
                     }
                     else {
                         this.log = 'Calling ' + number;
@@ -292,6 +281,14 @@
                     EventBus.$emit('tracker:call-mode:enter');
 
                 } else {
+
+                    //remove from numbers that are in conference
+                    for (let i = 0; i < this.addedNumbersInConference.length; i++) {
+                        if (this.addedNumbersInConference[i].number === number) {
+                            this.addedNumbersInConference.splice(i, 1);
+                            break;
+                        }
+                    }
 
                     this.$set(this.muted, number, false);
                     this.$set(this.onPhone, number, false);
@@ -355,7 +352,6 @@
                         }, 1000);
                     })
                     .catch(err => {
-                        this.enableConference = false;
                         this.waitingForConference = false;
                         self.log = err.message;
                     });
@@ -386,6 +382,7 @@
                             const participants = resp.data.participants;
                             for (let i = 0; i < participants.length; i++) {
                                 const participant = participants[i];
+
                                 let to = participant.to;
 
                                 //we might have called with '+' but on client side we entered without the '+'
@@ -393,28 +390,70 @@
                                     to = to.substring(1);
                                 }
 
-                                if (this.onPhone[to]) {
-                                    this.$set(this.callSids, to, participant.call_sid);
-                                    if (participant.status === 'completed' || participant.status === 'no-answer') {
-                                        this.$set(this.onPhone, to, false);
-                                        this.$set(this.muted, to, false);
-                                    }
-                                    else if (participant.status === 'in-progress') {
-                                        //should never actually have to change from false to true, but leaving here for my sanity
-                                        this.$set(this.onPhone, to, true);
-                                    }
+                                //number not on client, ignore
+                                if (typeof this.onPhone[to] === 'undefined') {
+                                    continue;
+                                }
+
+                                this.$set(this.callSids, to, participant.call_sid);
+
+                                if (participant.status === 'in-progress') {
+                                    //should never actually have to change from false to true, but leaving here for my sanity
+                                    this.$set(this.onPhone, to, true);
+                                }
+                                else {
+                                    this.$set(this.onPhone, to, false);
+                                    this.$set(this.muted, to, false);
+                                }
+                            }
+
+                            for (let i in this.onPhone) {
+                                if (!this.onPhone.hasOwnProperty(i)) {
+                                    continue;
+                                }
+
+                                //this number is queued to be added in the conference,
+                                //it will not be found in participants but we should not mark as onPhone=false
+                                //since we will add soon
+                                if (this.queuedNumbersForConference.some(x => x.number === i)) {
+                                    continue;
+                                }
+
+                                //if only recently added, do not mark as onPhone=false
+                                const numberAddedEntry = this.addedNumbersInConference.find(x => x.number === i);
+                                if (numberAddedEntry && ((Date.now() - numberAddedEntry.date) < PARTICIPANT_ADDED_IN_CONFERENCE_THRESHOLD)) {
+                                    continue;
+                                }
+
+                                //we might have called with '+' but on client side we entered without the '+'
+                                let info = participants.find(x => x.to === i);
+                                if (!info) {
+                                    info = participants.find(x => x.to.substring(1) === i);
+                                }
+                                if (!info) {
+                                    this.$set(this.onPhone, i, false);
+                                    this.$set(this.muted, i, false);
                                 }
                             }
                         }
 
                         if (resp.data.status === 'in-progress') {
-                            this.enableConference = true;
                             this.waitingForConference = false;
-                        }
-                        else {
-                            this.enableConference = false;
+                            this.addQueuedParticipants();
                         }
 
+                        //this might be problematic if:
+                        // 1. Nurse on call with patient
+                        // 2. Nurse calls practice (conference)
+                        // 3. Practice hangs up
+                        // 4. Nurse decides to call Practice again
+                        // 5. Patient hangs up before practice answers
+                        // At this moment, the conference has no participants (practice not answered yet),
+                        // so we decide to end the connection. A 'corner-case' you might say.
+                        // By letting this piece of code here, we provide the convenience of
+                        // ending the conference if there are no more participants
+                        // (and not specifically asking for the nurse to press the end call button)
+                        // NOTE: this applies only to conference calls (not direct outbound calls)
                         if (!this.isCurrentlyOnPhone && this.connection != null) {
                             this.connection.disconnect();
                         }
@@ -422,10 +461,37 @@
                         setTimeout(this.getConferenceInfo.bind(this), 1000);
                     })
                     .catch(err => {
-                        this.enableConference = false;
                         this.waitingForConference = false;
                         self.log = err.message;
                     });
+            },
+            addQueuedParticipants: function () {
+                if (!this.queuedNumbersForConference || !this.queuedNumbersForConference.length) {
+                    return;
+                }
+
+                const {number, isUnlisted, isCallToPatient} = this.queuedNumbersForConference.pop();
+                this.addedNumbersInConference.push({number, date: Date.now()});
+                this.axios
+                    .post(rootUrl('twilio/call/join-conference'), this.getTwimlAppRequest(number, isUnlisted, isCallToPatient))
+                    .then(resp => {
+                        console.log(resp.data);
+                        if (resp && resp.data && resp.data.call_sid) {
+                            this.$set(this.callSids, number, resp.data.call_sid);
+                        }
+
+                        //continue adding participants until all are added
+                        this.addQueuedParticipants();
+                    })
+                    .catch(err => {
+                        self.log = err.message;
+                        this.$set(this.muted, number, false);
+                        this.$set(this.onPhone, number, false);
+
+                        //continue adding participants until all are added
+                        this.addQueuedParticipants();
+                    });
+
             },
             resetPhoneState: function () {
 
@@ -438,6 +504,16 @@
                 }
                 self.onPhone = {};
                 self.muted = {};
+                self.waiting = false;
+
+                self.waitingForConference = false;
+                self.queuedNumbersForConference = [];
+                self.addedNumbersInConference = [];
+            },
+            twilioOffline: function () {
+                self.waiting = true;
+            },
+            twilioOnline: function () {
                 self.waiting = false;
             },
             initTwilio: function () {
@@ -461,9 +537,10 @@
                         });
 
                         self.device.on('offline', () => {
+                            //this event can be raised on a temporary disconnection
+                            //we should disable any actions when this event is fired
                             console.log('twilio device: offline');
-                            self.resetPhoneState();
-                            self.connection = null;
+                            self.twilioOffline();
                             self.log = 'Offline.';
                         });
 
@@ -476,7 +553,7 @@
                         self.device.on('ready', () => {
                             console.log('twilio device: ready');
                             self.log = 'Ready to make call';
-                            self.waiting = false;
+                            self.twilioOnline();
                         });
                     })
                     .catch(error => {
