@@ -60,6 +60,7 @@
                 <div class="col-sm-12" v-for="(value, key) in otherNumbers" :key="key" style="margin-top: 5px">
                     <span>{{key}} [{{value}}]</span>
                     <button class="btn btn-circle" @click="toggleOtherCallMessage(value)"
+                            :disabled="!onPhone[value] && isCurrentlyOnConference"
                             :class="onPhone[value] ? 'btn-danger': 'btn-success'">
                         <i class="fa fa-fw fa-phone" :class="onPhone[value] ? 'fa-close': 'fa-phone'"></i>
                     </button>
@@ -95,7 +96,7 @@
                     </div>
                     <div class="col-sm-3 no-padding" style="margin-top: 4px; padding-left: 2px">
                         <button class="btn btn-circle" @click="toggleOtherCallMessage(otherUnlistedNumber)"
-                                :disabled="invalidOtherUnlistedNumber"
+                                :disabled="invalidOtherUnlistedNumber || (!onPhone[otherUnlistedNumber] && isCurrentlyOnConference)"
                                 :class="onPhone[otherUnlistedNumber] ? 'btn-danger': 'btn-success'">
                             <i class="fa fa-fw fa-phone"
                                :class="onPhone[otherUnlistedNumber] ? 'fa-close': 'fa-phone'"></i>
@@ -370,6 +371,7 @@
                             const participants = resp.data.participants;
                             for (let i = 0; i < participants.length; i++) {
                                 const participant = participants[i];
+
                                 let to = participant.to;
 
                                 //we might have called with '+' but on client side we entered without the '+'
@@ -377,16 +379,43 @@
                                     to = to.substring(1);
                                 }
 
-                                if (this.onPhone[to]) {
-                                    this.$set(this.callSids, to, participant.call_sid);
-                                    if (participant.status === 'completed' || participant.status === 'no-answer') {
-                                        this.$set(this.onPhone, to, false);
-                                        this.$set(this.muted, to, false);
-                                    }
-                                    else if (participant.status === 'in-progress') {
-                                        //should never actually have to change from false to true, but leaving here for my sanity
-                                        this.$set(this.onPhone, to, true);
-                                    }
+                                //number not on client, ignore
+                                if (typeof this.onPhone[to] === 'undefined') {
+                                    continue;
+                                }
+
+                                this.$set(this.callSids, to, participant.call_sid);
+
+                                if (participant.status === 'in-progress') {
+                                    //should never actually have to change from false to true, but leaving here for my sanity
+                                    this.$set(this.onPhone, to, true);
+                                }
+                                else {
+                                    this.$set(this.onPhone, to, false);
+                                    this.$set(this.muted, to, false);
+                                }
+                            }
+
+                            for (let i in this.onPhone) {
+                                if (!this.onPhone.hasOwnProperty(i)) {
+                                    continue;
+                                }
+
+                                //this number is queued to be added in the conference,
+                                //it will not be found in participants but we should not mark as onPhone=false
+                                //since we will add soon
+                                if (this.queuedNumbersForConference.some(x=>x.number === i)) {
+                                    continue;
+                                }
+
+                                //we might have called with '+' but on client side we entered without the '+'
+                                let info = participants.find(x => x.to === i);
+                                if (!info) {
+                                    info = participants.find(x => x.to.substring(1) === i);
+                                }
+                                if (!info) {
+                                    this.$set(this.onPhone, i, false);
+                                    this.$set(this.muted, i, false);
                                 }
                             }
                         }

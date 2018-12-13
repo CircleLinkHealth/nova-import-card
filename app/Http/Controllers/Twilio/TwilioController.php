@@ -19,7 +19,6 @@ use Illuminate\Http\Request;
 use SimpleXMLElement;
 use Twilio\Exceptions\TwimlException;
 use Twilio\Twiml;
-use Tylercd100\Notify\Drivers\Twilio;
 
 class TwilioController extends Controller
 {
@@ -647,19 +646,27 @@ class TwilioController extends Controller
 
                 $participantNumber = $call->to;
                 if ( ! empty($participantNumber)) {
-                    //$call->from will be CLIENT_ANONYMOUS. correct number will be set in dialNumberStatusCallback
                     $participantFields['participant_number'] = $participantNumber;
-                } else {
-                    $participantFields['participant_number'] = $call->from;
                 }
 
-                TwilioConferenceCallParticipant::updateOrCreate(
+                $participant = TwilioConferenceCallParticipant::updateOrCreate(
                     [
                         'call_sid'       => $input['CallSid'],
                         'conference_sid' => $conferenceSid,
                     ],
                     $participantFields
                 );
+
+                //$call->from is usually client:Anonymous. the correct value will be set in dial-number-status-callback
+                //we have to check the value we have in DB before setting client:Anonymous though, because the correct
+                //number might have already been set in db. consider this scenario:
+                // 1. participant-join (client:Anonymous).
+                // 2. dial-number-status-callback (correct number).
+                // 3. participant-leave (client:Anonymous) -> should not set this value
+                if (empty($participant->participant_number)) {
+                    $participant->participant_number = $call->from;
+                    $participant->save();
+                }
             }
 
         } catch (\Throwable $e) {

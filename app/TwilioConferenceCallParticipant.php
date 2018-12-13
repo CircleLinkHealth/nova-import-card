@@ -20,4 +20,5 @@ class TwilioConferenceCallParticipant extends BaseModel
 {
     protected $fillable = ['call_sid', 'account_sid', 'conference_sid', 'participant_number', 'status', 'duration'];
     protected $table = 'twilio_conference_calls_participants';
+    public $phi = ['participant_number'];
 }

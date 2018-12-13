@@ -63,4 +63,6 @@ class TwilioCall extends BaseModel
         'dial_conference_duration',
     ];
     protected $table = 'twilio_calls';
+
+    public $phi = ['from', 'to'];
 }
