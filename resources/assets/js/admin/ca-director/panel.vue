@@ -2,9 +2,14 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-6 text-left">
+                <button class="btn btn-info btn-xs" @click="assignSelectedToCa">Show Assigned</button>
+                <button class="btn btn-info btn-xs" @click="assignSelectedToCa">Show Consented</button>
+                <button class="btn btn-info btn-xs" @click="assignSelectedToCa">Show Ineligible</button>
+
+            </div>
+            <div class="col-sm-6 text-right">
                 <button class="btn btn-primary btn-xs" @click="assignSelectedToCa">Assign To CA</button>
                 <button class="btn btn-danger btn-xs" @click="assignSelectedToCa">Mark as Ineligible</button>
-                <button class="btn btn-info btn-xs" @click="assignSelectedToCa">Show Consented</button>
             </div>
         </div>
         <div class="panel-body" id="enrollees">
@@ -15,14 +20,12 @@
                            :value='allSelected'
                            @change="toggleAll()">
                 </div>
-
                 <template slot="select" slot-scope="props">
                     <input type="checkbox"
                            class="form-control"
                            :v-model="props.row.select"
                            @change="toggleId(props.row.id)">
                 </template>
-
             </v-server-table>
         </div>
         <select-ca-modal ref="selectCaModal" :selected-enrollee-ids="selectedEnrolleeIds"></select-ca-modal>
