@@ -198,7 +198,7 @@ class UserRepository
         $cloudDisk   = Storage::drive('google');
 
         if (app()->environment(['staging', 'local'])) {
-            $ehr = getGoogleDirectoryByName('ehr-data-from-report-writers');
+            $ehr = collect(getGoogleDirectoryByName('ehr-data-from-report-writers'));
 
             if ( ! $ehr) {
                 $cloudDisk->makeDirectory('ehr-data-from-report-writers');
