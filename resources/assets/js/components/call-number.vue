@@ -574,7 +574,7 @@
                     }
                     else {
                         status = self.device.status();
-                        if (status === "ready" && self.isCurrentlyOnPhone) {
+                        if ((status === "ready" || status === "busy") && self.isCurrentlyOnPhone) {
                             number = self.selectedPatientNumber;
                         }
                     }
@@ -582,7 +582,7 @@
                         status: status,
                         number: number ? {
                             value: number,
-                            muted: self.muted
+                            muted: self.muted[number]
                         } : null
                     });
                 });
