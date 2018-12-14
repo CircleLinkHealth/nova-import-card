@@ -574,7 +574,7 @@
                     }
                     else {
                         status = self.device.status();
-                        if (status === "ready" && self.isCurrentlyOnPhone) {
+                        if ((status === "ready" || status === "busy") && self.isCurrentlyOnPhone) {
                             number = self.selectedPatientNumber;
                         }
                     }
