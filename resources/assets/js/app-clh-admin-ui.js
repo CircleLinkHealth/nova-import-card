@@ -31,7 +31,7 @@ Vue.use(VueForm, {
 });
 
 import EventBus from './admin/time-tracker/comps/event-bus'
-import { ClientTable } from 'vue-tables-2'
+import { ClientTable, ServerTable } from 'vue-tables-2'
 
 const DatepickerComponent = () => import(/* webpackChunkName: "chunk-datepicker" */ 'vuejs-datepicker')
 const CallMgmtApp = () => import(/* webpackChunkName: "chunk-admin" */ './admin/calls/app')
@@ -46,6 +46,7 @@ const PassportAuthorizedClientsComponent = () => import(/* webpackChunkName: "ch
 const PassportPersonalAccessTokensComponent = () => import(/* webpackChunkName: "chunk-admin" */ './components/passport/PersonalAccessTokens')
 
 Vue.use(ClientTable, {}, false)
+Vue.use(ServerTable, {}, false)
 
 Vue.component('v-datepicker', DatepickerComponent)
 Vue.component('call-mgmt-app', CallMgmtApp)

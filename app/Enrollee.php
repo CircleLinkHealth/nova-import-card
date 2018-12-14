@@ -8,6 +8,7 @@ namespace App;
 
 use App\Facades\StringManipulation;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
+use App\Filters\Filterable;
 use Carbon\Carbon;
 
 /**
@@ -122,6 +123,9 @@ use Carbon\Carbon;
  */
 class Enrollee extends \App\BaseModel
 {
+
+    use Filterable;
+
     /**
      * status = eligible.
      */

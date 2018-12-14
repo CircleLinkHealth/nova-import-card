@@ -1161,6 +1161,16 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'EnrollmentDirectorController@index',
                 'as'   => 'ca-director.index',
             ]);
+
+            Route::get('/enrollees', [
+                'uses' => 'EnrollmentDirectorController@getEnrollees',
+                'as'   => 'ca-director.enrollees',
+            ]);
+
+            Route::get('/ambassadors', [
+                'uses' => 'EnrollmentDirectorController@getCareAmbassadors',
+                'as'   => 'ca-director.ambassadors',
+            ]);
         });
 
         Route::group(['prefix' => 'enrollees'], function () {
