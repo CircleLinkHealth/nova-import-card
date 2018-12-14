@@ -56,7 +56,7 @@ class EnrollmentDirectorController extends Controller
                            ->select(['id', 'display_name'])
                            ->get();
 
-        return ['data' => $ambassadors->toArray()];
+        return response()->json($ambassadors->toArray());
     }
 
     protected function filterByColumn($data, $queries)

@@ -36,9 +36,9 @@
 @section('content')
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-11 main-section">
+            <div class="col-md-12 main-section">
                 <div class="row">
-                    <div class="col-sm-8">
+                    <div class="col-sm-12" style="text-align: center">
                         <h1>Care Ambassador Director Panel</h1>
                     </div>
                 </div>

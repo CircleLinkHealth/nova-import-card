@@ -1,30 +1,31 @@
 <template>
     <div class="container">
         <div class="row">
-            <div class="col-sm-6 text-right">
+            <div class="col-sm-6 text-left">
                 <button class="btn btn-primary btn-xs" @click="assignSelectedToCa">Assign To CA</button>
+                <button class="btn btn-danger btn-xs" @click="assignSelectedToCa">Mark as Ineligible</button>
+                <button class="btn btn-info btn-xs" @click="assignSelectedToCa">Show Consented</button>
             </div>
         </div>
         <div class="panel-body" id="enrollees">
-            <v-server-table :url="getUrl()" :data="tableData" :columns="columns" :options="options" ref="table">
+            <v-server-table :url="getUrl()" :columns="columns" :options="options" ref="table">
                 <div slot="filter__select">
                     <input type="checkbox"
                            class="form-control check-all"
-                           v-model='allMarked'
+                           :value='allSelected'
                            @change="toggleAll()">
                 </div>
 
                 <template slot="select" slot-scope="props">
                     <input type="checkbox"
-                           @change="unmarkAll()"
                            class="form-control"
-                           :value="props.row.id"
-                           v-model="markedRows">
+                           :v-model="props.row.select"
+                           @change="toggleId(props.row.id)">
                 </template>
 
             </v-server-table>
         </div>
-        <select-ca-modal ref="selectCaModal" :selected-patients="selectedPatients" :ambassadors="getAmbassadors"></select-ca-modal>
+        <select-ca-modal ref="selectCaModal" :selected-enrollee-ids="selectedEnrolleeIds"></select-ca-modal>
     </div>
 </template>
 
@@ -44,18 +45,15 @@
         props: [],
         data() {
             return {
-                selected: [],
-                columns: [ 'select', 'id', 'user_id','first_name', 'last_name', 'batch_id', 'eligibility_job_id', 'medical_record_type', 'practice_id', 'provider_id', 'primary_insurance', 'primary_phone', 'created_at'],
-                tableData: [],
-                allMarked:false,
-                markedRows:[],
+                selectedEnrolleeIds: [],
+                columns: ['select', 'id', 'user_id', 'first_name', 'last_name', 'batch_id', 'eligibility_job_id', 'medical_record_type', 'practice_id', 'provider_id', 'primary_insurance', 'primary_phone', 'created_at'],
                 options: {
                     columnsClasses: {
                         'selected': 'blank',
                         'Type': 'padding-2'
                     },
                     perPage: 100,
-                    perPageValues: [10,25,50,100],
+                    perPageValues: [10, 25, 50, 100],
                     skin: "table-striped table-bordered table-hover",
                     filterByColumn: true,
                     filterable: ['practice_id', 'provider_id', 'primary_insurance'],
@@ -72,6 +70,9 @@
 
         },
         computed: {
+            allSelected: function () {
+                return false;
+            },
             selectAll: {
                 get: function () {
                     return this.users ? this.selected.length === this.users.length : false
@@ -86,29 +87,29 @@
                     this.selected = selected
                 }
             },
-            selectedPatients() {
-                return this.tableData.filter(row => row.selected && row.Patient);
-            },
-            getAmbassadors(){
-                return axios.get(rootUrl('/admin/ca-director/ambassadors')).then(response => {
-                    return response.data;
-                });
-            }
+            // selectedPatients() {
+            //     return this.tableData.filter(row => row.selected && row.Patient);
+            // }
         },
         methods: {
             getUrl() {
                 return rootUrl('/admin/ca-director/enrollees');
             },
             assignSelectedToCa() {
-
-                Event.$emit("modal-select-ca:show")
-            },
-            unmarkAll() {
-                this.allMarked = false;
+                Event.$emit("modal-select-ca:show", {enrolleeIds: []});
             },
             toggleAll() {
-                this.markedRows = this.allMarked?this.$refs.table.data.map(row=>row.id):[];
+                return
             },
+            toggleId(id) {
+                const pos = this.selectedEnrolleeIds.indexOf(id);
+                if (pos === -1) {
+                    this.selectedEnrolleeIds.push(id);
+                }
+                else {
+                    this.selectedEnrolleeIds.splice(pos, 1);
+                }
+            }
 
         },
 
