@@ -278,7 +278,7 @@
                     }
                     else {
                         this.log = 'Calling ' + number;
-                        // this.connection = this.device.connect(this.getTwimlAppRequest(number, isUnlisted, isCallToPatient));
+                        this.connection = this.device.connect(this.getTwimlAppRequest(number, isUnlisted, isCallToPatient));
                     }
                     EventBus.$emit('tracker:call-mode:enter');
 
