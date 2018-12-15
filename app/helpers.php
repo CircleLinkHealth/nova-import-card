@@ -1075,6 +1075,12 @@ if ( ! function_exists('getEhrReportWritersFolderUrl')) {
             return 'https://drive.google.com/drive/folders/1NMMNIZKKicOVDNEUjXf6ayAjRbBbFAgh';
         }
 
+        //this is to make local environments faster for devs
+        //comment out this if section to use the feature
+        if (app()->environment('local')){
+            return null;
+        }
+
         $dir = getGoogleDirectoryByName('ehr-data-from-report-writers');
 
         if ( ! $dir) {
