@@ -1,9 +1,10 @@
 <template>
     <modal name="select-ca" :no-title="true" :no-footer="true" :info="selectCaModalInfo">
         <div class="row">
-            <v-select max-height="200px" class="form-control" v-model="selectedAmbassador"
-                      :options="list">
-            </v-select>
+            <p>
+                Are you sure you want to mark the Enrolees as ineligible?
+                (they will be no longer be shown in the table)
+            </p>
         </div>
         <div class="row">
             <div class="col-sm-12">
@@ -22,11 +23,10 @@
     import VueSelect from 'vue-select';
     import {Event} from 'vue-tables-2'
 
-    let ambassadors = null;
     let self;
 
     export default {
-        name: "select-ca-modal",
+        name: "mark-ineligible-modal",
         props: {
             selectedEnrolleeIds: {
                 type: Array,
@@ -36,12 +36,10 @@
         data: () => {
             return {
                 loading: false,
-                list: [],
-                selectedAmbassador: null,
                 selectCaModalInfo: {
                     okHandler: () => {
                         Event.$emit('notifications-select-ca-modal:dismissAll');
-                        self.assignEnrolleesToAmbassador();
+                        self.markEnrolleesAsIneligible();
                     },
                     cancelHandler: () => {
                         Event.$emit('notifications-select-ca-modal:dismissAll');
@@ -52,27 +50,11 @@
         },
         methods: {
 
-            getAmbassadors() {
-                return this.axios
-                    .get(rootUrl('/admin/ca-director/ambassadors'))
-                    .then(response => {
-                        this.loading = false;
-                        ambassadors = response.data;
-                        this.list = ambassadors.map(x => {
-                            return {label: x.display_name, value: x.id};
-                        });
-                        return this.list;
-                    })
-                    .catch(err => {
-                        this.loading = false;
-                    });
-            },
-            assignEnrolleesToAmbassador() {
+            markEnrolleesAsIneligible() {
 
                 this.loading = true;
 
-                this.axios.post(rootUrl('/admin/ca-director/assign-ambassador'), {
-                    ambassadorId: this.selectedAmbassador.value,
+                this.axios.post(rootUrl('/admin/ca-director/mark-ineligible'), {
                     enrolleeIds: this.selectedEnrolleeIds
                 })
                     .then(resp => {
@@ -99,13 +81,10 @@
         mounted: function () {
             self = this;
 
-            if (ambassadors != null) {
-                this.loading = false;
-                this.list = ambassadors;
-                return;
-            }
 
-            this.getAmbassadors();
+            this.loading = false;
+
+            return;
 
         }
     }

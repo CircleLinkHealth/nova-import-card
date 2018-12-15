@@ -1171,6 +1171,16 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'EnrollmentDirectorController@getCareAmbassadors',
                 'as'   => 'ca-director.ambassadors',
             ]);
+
+            Route::post('/assign-ambassador', [
+                'uses' => 'EnrollmentDirectorController@assignCareAmbassadorToEnrollees',
+                'as'   => 'ca-director.assign-ambassador',
+            ]);
+
+            Route::post('/mark-ineligible', [
+                'uses' => 'EnrollmentDirectorController@markEnrolleesAsIneligible',
+                'as'   => 'ca-director.mark-ineligible',
+            ]);
         });
 
         Route::group(['prefix' => 'enrollees'], function () {

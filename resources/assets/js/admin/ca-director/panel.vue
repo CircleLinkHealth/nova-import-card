@@ -24,11 +24,13 @@
                     <input type="checkbox"
                            class="form-control"
                            :v-model="props.row.select"
+                           :checked="selected(props.row.id)"
                            @change="toggleId(props.row.id)">
                 </template>
             </v-server-table>
         </div>
         <select-ca-modal ref="selectCaModal" :selected-enrollee-ids="selectedEnrolleeIds"></select-ca-modal>
+        <mark-ineligible-modal ref="selectCaModal" :selected-enrollee-ids="selectedEnrolleeIds"></mark-ineligible-modal>
     </div>
 </template>
 
@@ -37,10 +39,14 @@
     import Modal from '../common/modal';
     import SelectCaModal from './comps/modals/select-ca.modal'
     import {Event} from 'vue-tables-2'
+    import MarkIneligibleModal from "./comps/modals/mark-ineligible.modal";
+
+    let self;
 
     export default {
         name: "CaDirectorPanel",
         components: {
+            MarkIneligibleModal,
             'modal': Modal,
             'select-ca-modal': SelectCaModal,
 
@@ -49,7 +55,7 @@
         data() {
             return {
                 selectedEnrolleeIds: [],
-                columns: ['select', 'id', 'user_id', 'first_name', 'last_name', 'batch_id', 'eligibility_job_id', 'medical_record_type', 'practice_id', 'provider_id', 'primary_insurance', 'primary_phone', 'created_at'],
+                columns: ['select', 'id', 'user_id', 'first_name', 'last_name', 'care_ambassador_id', 'status', 'batch_id', 'eligibility_job_id', 'medical_record_type', 'practice_id', 'provider_id', 'primary_insurance', 'primary_phone', 'created_at'],
                 options: {
                     columnsClasses: {
                         'selected': 'blank',
@@ -74,7 +80,8 @@
         },
         computed: {
             allSelected: function () {
-                return false;
+                return true;
+
             },
             selectAll: {
                 get: function () {
@@ -102,7 +109,16 @@
                 Event.$emit("modal-select-ca:show", {enrolleeIds: []});
             },
             toggleAll() {
-                return
+                let selected = [];
+                if (this.selectedEnrolleeIds.length === 0) {
+                    this.$refs.table.data.forEach(function (user) {
+                        selected.push(user.id);
+                    })
+                    this.selectedEnrolleeIds = selected;
+                }else{
+                    this.selectedEnrolleeIds = [];
+                }
+
             },
             toggleId(id) {
                 const pos = this.selectedEnrolleeIds.indexOf(id);
@@ -111,6 +127,15 @@
                 }
                 else {
                     this.selectedEnrolleeIds.splice(pos, 1);
+                }
+            },
+            selected(id){
+                const pos = this.selectedEnrolleeIds.indexOf(id);
+                if (pos === -1) {
+                    return false;
+                }
+                else {
+                    return true;
                 }
             }
 

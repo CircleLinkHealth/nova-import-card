@@ -59,31 +59,24 @@ class EnrollmentDirectorController extends Controller
         return response()->json($ambassadors->toArray());
     }
 
-    protected function filterByColumn($data, $queries)
+    public function assignCareAmbassadorToEnrollees(Request $request)
     {
-        return $data->where(function ($q) use ($queries) {
-            foreach ($queries as $field => $query) {
-                if (is_string($query)) {
-                    $q->where($field, 'LIKE', "%{$query}%");
-                } else {
-                    $start = Carbon::createFromFormat('Y-m-d', $query['start'])->startOfDay();
-                    $end   = Carbon::createFromFormat('Y-m-d', $query['end'])->endOfDay();
 
-                    $q->whereBetween($field, [$start, $end]);
-                }
-            }
+        Enrollee::find($request->input('enrolleeIds'))->map(function($e) use ($request){
+            $e->update(['care_ambassador_id' => $request->input('ambassadorId')]);
         });
+
+        return null;
+
     }
 
-    protected function filter($data, $query, $fields)
+    public function markEnrolleesAsIneligible(Request $request)
     {
-        return $data->where(function ($q) use ($query, $fields) {
-            foreach ($fields as $index => $field) {
-                $method = $index
-                    ? 'orWhere'
-                    : 'where';
-                $q->{$method}($field, 'LIKE', "%{$query}%");
-            }
+        Enrollee::find($request->input('enrolleeIds'))->map(function($e) use ($request){
+            $e->update(['status' => Enrollee::INELIGIBLE]);
         });
+
+        return null;
+
     }
 }
