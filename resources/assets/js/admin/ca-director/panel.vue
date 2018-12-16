@@ -23,7 +23,7 @@
                 <div slot="filter__select">
                     <input type="checkbox"
                            class="form-control check-all"
-                           :value='allSelected'
+                           :checked="allSelected()"
                            @change="toggleAll()">
                 </div>
                 <template slot="select" slot-scope="props">
@@ -94,16 +94,15 @@
             enrolleesAreSelected () {
                 return this.selectedEnrolleeIds.length !== 0;
             },
+        },
+        methods: {
             allSelected () {
                 if (this.$refs.table){
                     return this.selectedEnrolleeIds.length === this.$refs.table.data.length;
                 }else {
                     return false;
                 }
-
-            }
-        },
-        methods: {
+            },
             getUrl() {
                 return rootUrl('/admin/ca-director/enrollees');
             },
