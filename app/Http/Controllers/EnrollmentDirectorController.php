@@ -61,20 +61,47 @@ class EnrollmentDirectorController extends Controller
 
     public function assignCareAmbassadorToEnrollees(Request $request)
     {
+        if (! $request->input('enrolleeIds')){
+            return response()->json([
+                'errors' => 'No enrollee Ids were sent in the request'
+            ], 400);
+        }
+        if (! $request->input('ambassadorId')){
+            return response()->json([
+                'errors' => 'No ambassador Id was sent in the request'
+            ], 400);
+        }
 
-        Enrollee::find($request->input('enrolleeIds'))->map(function($e) use ($request){
-            $e->update(['care_ambassador_id' => $request->input('ambassadorId')]);
-        });
+        $enrollees = Enrollee::whereIn('id', $request->input('enrolleeIds'))->update([ 'care_ambassador_id' => $request->input('ambassadorId')]);
 
-        return null;
+        if (! $enrollees){
+            return response()->json([
+            ], 400);
+        }
+
+        return response()->json([],200);
 
     }
 
     public function markEnrolleesAsIneligible(Request $request)
     {
-        Enrollee::find($request->input('enrolleeIds'))->map(function($e) use ($request){
-            $e->update(['status' => Enrollee::INELIGIBLE]);
-        });
+        if (! $request->input('enrolleeIds')){
+            return response()->json();
+        }
+
+
+        $enrollees = Enrollee::whereIn('id', $request->input('enrolleeIds'))->update([ 'status' => Enrollee::INELIGIBLE]);
+
+        if (! $enrollees){
+            return response()->json([
+            ], 400);
+        }
+
+        return response()->json([],200);
+
+    }
+
+    public function editEnrolleeData(Request $request){
 
         return null;
 

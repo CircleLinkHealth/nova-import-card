@@ -1,20 +1,16 @@
 <template>
-    <modal name="mark-ineligible" class="modal-mark-ineligible" :no-title="true" :no-footer="true" :info="markIneligibleModalInfo">
-        <div class="row">
-            <p>
-                You have selected <b>{{this.enrolleeCount()}}</b> patient(s).
-                <br>
-                <br>
-                <br>
-                <b>Warning:</b>
-                Are you sure you want to mark selected patient(s) as ineligible?
-                <br>
-                (you will have to enable the <b>Show Ineligible</b> filter to view them)
-            </p>
-        </div>
+    <modal name="edit-patient" class="modal-select-ca" :no-footer="true" :info="editPatientModalInfo">
+        <template slot="title">
+            <div class="row">
+                <div class="col-sm-6">
+                    <h3>Edit Patient Data</h3>
+                </div>
+            </div>
+        </template>
+
         <div class="row">
             <div class="col-sm-12">
-                <notifications ref="notificationsComponent" name="mark-ineligible-modal"></notifications>
+                <notifications ref="notificationsComponent" name="edit-patient-modal"></notifications>
             </div>
         </div>
         <loader v-if="loading"/>
@@ -28,60 +24,39 @@
     import Loader from '../../../../components/loader';
     import VueSelect from 'vue-select';
     import {Event} from 'vue-tables-2'
+    import Textfield from "vue-mdl/src/textfield";
 
     let self;
 
     export default {
-        name: "mark-ineligible-modal",
+        name: "edit-patient-modal",
         props: {
-            selectedEnrolleeIds: {
-                type: Array,
+            enrollee: {
+                type: Object,
                 required: true
             },
         },
         data: () => {
             return {
                 loading: false,
-                markIneligibleModalInfo: {
+                enrolleeData: [],
+                editPatientModalInfo: {
                     okHandler: () => {
-                        Event.$emit('notifications-mark-ineligible-modal:dismissAll');
-                        self.markEnrolleesAsIneligible();
+                        Event.$emit('notifications-edit-patient-modal:dismissAll');
+                        Event.$emit("modal-edit-patient:hide");
                     },
                     cancelHandler: () => {
-                        Event.$emit('notifications-mark-ineligible-modal:dismissAll');
-                        Event.$emit("modal-mark-ineligible:hide");
+                        Event.$emit('notifications-edit-patient-modal:dismissAll');
+                        Event.$emit("modal-edit-patient:hide");
                     }
                 }
             }
         },
         methods: {
 
-            markEnrolleesAsIneligible() {
-
-                this.loading = true;
-
-                this.axios.post(rootUrl('/admin/ca-director/mark-ineligible'), {
-                    enrolleeIds: this.selectedEnrolleeIds
-                })
-                    .then(resp => {
-                        this.loading = false;
-                        Event.$emit("modal-mark-ineligible:hide");
-                        this.$parent.$refs.table.refresh();
-                    })
-                    .catch(err => {
-                        this.loading = false;
-                        Event.$emit('notifications-mark-ineligible-modal:create', {
-                            noTimeout: true,
-                            text: err.message,
-                            type: 'error'
-                        });
-                    });
-            },
-            enrolleeCount(){
-                return this.selectedEnrolleeIds.length;
-        }
         },
         components: {
+            Textfield,
             'modal': Modal,
             'notifications': Notifications,
             'loader': Loader,
@@ -90,13 +65,12 @@
         mounted: function () {
             self = this;
 
-            this.loading = false;
         }
     }
 </script>
 
 <style>
-    .modal-mark-ineligible .modal-wrapper {
+    .modal-edit-patient .modal-wrapper {
         overflow-x: auto;
         white-space: nowrap;
         display: block;
@@ -107,14 +81,14 @@
     }
 
     /*width will be set automatically when modal is mounted*/
-    .modal-mark-ineligible .modal-container {
-        width: 600px;
+    .modal-edit-patient .modal-container {
+        width: 800px;
     }
 
 
 
 
-    .modal-mark-ineligible .loader {
+    .modal-edit-patient .loader {
         position: absolute;
         right: 5px;
         top: 5px;
@@ -122,7 +96,7 @@
         height: 20px;
     }
 
-    .modal-mark-ineligible .glyphicon-remove {
+    .modal-edit-patient .glyphicon-remove {
         width: 20px;
         height: 20px;
         color: #d44a4a;
@@ -165,7 +139,6 @@
         top: 2px;
     }
 
-
     .dropdown.v-select.form-control {
         height: auto;
         padding: 0;
@@ -176,7 +149,7 @@
         overflow: hidden;
     }
 
-    .modal-mark-ineligible .modal-body {
+    .modal-edit-patient .modal-body {
         min-height: 300px;
     }
 

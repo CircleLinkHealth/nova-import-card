@@ -142,7 +142,7 @@ class Enrollee extends \App\BaseModel
     const TO_SMS = 'sms_queue';
 
     /**
-     * status = to_sms.
+     * status = ineligible.
      */
     const INELIGIBLE = 'ineligible';
 

@@ -1181,6 +1181,11 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'EnrollmentDirectorController@markEnrolleesAsIneligible',
                 'as'   => 'ca-director.mark-ineligible',
             ]);
+
+            Route::post('/edit-enrollee', [
+                'uses' => 'EnrollmentDirectorController@editEnrolleeData',
+                'as'   => 'ca-director.edit-enrollee',
+            ]);
         });
 
         Route::group(['prefix' => 'enrollees'], function () {
