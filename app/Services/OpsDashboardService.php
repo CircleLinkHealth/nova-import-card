@@ -17,6 +17,8 @@ class OpsDashboardService
 {
     private $repo;
 
+    const TWENTY_MINUTES = 1200;
+
     public function __construct(OpsDashboardPatientEloquentRepository $repo)
     {
         $this->repo = $repo;
@@ -229,13 +231,13 @@ class OpsDashboardService
                     if ($ccmTime > 600 and $ccmTime <= 900) {
                         ++$count['10-15'];
                     }
-                    if ($ccmTime > 900 and $ccmTime <= 1200) {
+                    if ($ccmTime > 900 and $ccmTime <= $this::TWENTY_MINUTES) {
                         ++$count['15-20'];
                     }
-                    if ($ccmTime > 1200) {
+                    if ($ccmTime > $this::TWENTY_MINUTES) {
                         ++$count['20+'];
                     }
-                    if ($bhiTime > 1200) {
+                    if ($bhiTime > $this::TWENTY_MINUTES) {
                         ++$count['20+ BHI'];
                     }
                 } else {

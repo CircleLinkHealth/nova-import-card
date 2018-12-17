@@ -152,7 +152,7 @@
                                         <td>{{$value['15-20']}}</td>
                                         <td>{{$value['20+']}}</td>
                                         @if(isset($value['20+ BHI']))
-                                            <td>{{$value['20+']}}</td>
+                                            <td>{{$value['20+ BHI']}}</td>
                                         @else
                                             <td>N/A</td>
                                         @endif
@@ -185,7 +185,7 @@
                                         <td>{{$value['15-20']}}</td>
                                         <td>{{$value['20+']}}</td>
                                         @if(isset($value['20+ BHI']))
-                                            <td>{{$value['20+']}}</td>
+                                            <td>{{$value['20+ BHI']}}</td>
                                         @else
                                             <td>N/A</td>
                                         @endif
