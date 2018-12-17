@@ -54,6 +54,13 @@
                            value="1" @if($practiceSettings->twilio_enabled){{'checked'}}@endif>
                     <label for="twilio_enabled">Use Twilio for Calls</label>
                 </div>
+
+                <div class="input-field col s6">
+                    <input name="settings[twilio_recordings_enabled]" type="checkbox"
+                           id="twilio_recordings_enabled"
+                           value="1" @if($practiceSettings->twilio_recordings_enabled){{'checked'}}@endif>
+                    <label for="twilio_recordings_enabled">Record calls</label>
+                </div>
             </div>
 
             <div class="row">
