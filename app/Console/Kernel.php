@@ -14,6 +14,7 @@ use App\Console\Commands\AttachBillableProblemsToLastMonthSummary;
 use App\Console\Commands\CareplanEnrollmentAdminNotification;
 use App\Console\Commands\CheckEmrDirectInbox;
 use App\Console\Commands\DeleteProcessedFiles;
+use App\Console\Commands\DownloadTwilioRecordings;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\QueueEligibilityBatchForProcessing;
@@ -36,7 +37,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
         require base_path('routes/console.php');
     }
 
@@ -50,14 +51,14 @@ class Kernel extends ConsoleKernel
         $schedule->command('horizon:snapshot')->everyFiveMinutes();
 
         $schedule->command(DetermineTargetPatientEligibility::class)
-            ->everyTenMinutes();
+                 ->everyTenMinutes();
 
         $schedule->command(QueueEligibilityBatchForProcessing::class)
-            ->everyMinute()
-            ->withoutOverlapping();
+                 ->everyMinute()
+                 ->withoutOverlapping();
 
         $schedule->command(AutoPullEnrolleesFromAthena::class)
-            ->monthlyOn(1);
+                 ->monthlyOn(1);
 
         $schedule->command(RescheduleMissedCalls::class)->dailyAt('00:01');
 
@@ -74,53 +75,53 @@ class Kernel extends ConsoleKernel
         $schedule->command(RemoveScheduledCallsForWithdrawnAndPausedPatients::class)->everyFiveMinutes()->withoutOverlapping();
 
         $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
-            ->weeklyOn(1, '10:00');
+                 ->weeklyOn(1, '10:00');
 
         $schedule->command('emailapprovalreminder:providers')
-            ->weekdays()
-            ->at('08:00');
+                 ->weekdays()
+                 ->at('08:00');
 
         //commenting out due to isues with google calendar
 //        $schedule->command('nurseSchedule:export')
 //                 ->hourly();
 
         $schedule->command(GetAppointments::class)
-            ->dailyAt('22:30');
+                 ->dailyAt('22:30');
 
         $schedule->command(GetCcds::class)
-            ->everyThirtyMinutes();
+                 ->everyThirtyMinutes();
 
         $schedule->command(EmailRNDailyReport::class)
-            ->dailyAt('21:00');
+                 ->dailyAt('21:00');
 
         $schedule->command(QueueSendApprovedCareplanSlackNotification::class)
-            ->dailyAt('23:40');
+                 ->dailyAt('23:40');
 
         $schedule->command(QueueGenerateOpsDailyReport::class)
-            ->dailyAt('23:30');
+                 ->dailyAt('23:30');
 
         //Run at 12:01am every 1st of month
         $schedule->command(ResetPatients::class)
-            ->cron('1 0 1 * *');
+                 ->cron('1 0 1 * *');
 
         //Run at 12:30am every 1st of month
         $schedule->command(AttachBillableProblemsToLastMonthSummary::class)
-            ->cron('30 0 1 * *');
+                 ->cron('30 0 1 * *');
 
 //        $schedule->command('lgh:importInsurance')
 //            ->dailyAt('05:00');
 
         $schedule->command(QueueGenerateNurseInvoices::class)
-            ->dailyAt('23:40')
-            ->withoutOverlapping();
+                 ->dailyAt('23:40')
+                 ->withoutOverlapping();
 
         $schedule->command(QueueGenerateNurseDailyReport::class)
-            ->dailyAt('23:45')
-            ->withoutOverlapping();
+                 ->dailyAt('23:45')
+                 ->withoutOverlapping();
 
         $schedule->command(CareplanEnrollmentAdminNotification::class)
-            ->dailyAt('09:00')
-            ->withoutOverlapping();
+                 ->dailyAt('09:00')
+                 ->withoutOverlapping();
 
 //        $schedule->command('ccda:determineEligibility')
 //                 ->everyFiveMinutes()
@@ -139,15 +140,19 @@ class Kernel extends ConsoleKernel
 //            ->cron('0 */2 * * *');
 
         $schedule->command(QueueSendAuditReports::class)
-            ->monthlyOn(1, '02:00');
+                 ->monthlyOn(1, '02:00');
 
         $schedule->command(CheckEmrDirectInbox::class)
-            ->everyFiveMinutes()
-            ->withoutOverlapping();
+                 ->everyFiveMinutes()
+                 ->withoutOverlapping();
 
         $schedule->command(DeleteProcessedFiles::class)
-            ->everyThirtyMinutes()
-            ->withoutOverlapping();
+                 ->everyThirtyMinutes()
+                 ->withoutOverlapping();
+
+        $schedule->command(DownloadTwilioRecordings::class)
+                 ->everyThirtyMinutes()
+                 ->withoutOverlapping();
 
 //        Disable backup till we fix the issue of it not running
 //        if (app()->environment('worker')) {
