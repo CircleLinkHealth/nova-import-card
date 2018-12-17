@@ -37,4 +37,42 @@ class TwilioClientService implements TwilioClientable
     {
         return $this->client;
     }
+
+    public function downloadMedia($url)
+    {
+        $accountSid = config('services.twilio.sid');
+        $token      = config('services.twilio.token');
+        $path       = 'tmp/twilio-recordings/';
+        $path       = $path . basename($url);
+        exec("curl -u $accountSid:$token $url --create-dirs -o $path");
+
+        //check the file that was downloaded
+        $str = file_get_contents($path, false, null, 0, 500);
+        $xml = $this->parseXMLFromString($str);
+        if ($xml) {
+            unlink($path);
+            return [
+                'errorCode' => $xml->RestException->Code,
+                'errorDetail' => $xml->RestException->Detail,
+                'mediaUrl' => null
+            ];
+        }
+
+        return [
+            'errorCode' => 0,
+            'errorDetail' => null,
+            'mediaUrl' => $path
+        ];
+    }
+
+    /**
+     * @param $str - an XML string
+     *
+     * @return \SimpleXMLElement|null - return the parsed xml document or null if cannot be parsed
+     */
+    private function parseXMLFromString($str) {
+        libxml_use_internal_errors(true);
+        $doc = simplexml_load_string($str);
+        return $doc;
+    }
 }
