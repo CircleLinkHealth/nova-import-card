@@ -536,6 +536,13 @@
                             self.resetPhoneState();
                             self.connection = null;
                             self.log = 'Call ended.';
+
+                            //make sure UI on the other page is up to date
+                            sendRequest('call_ended', {number: {value: '', muted: false}})
+                                .then(() => {
+
+                                })
+                                .catch(err => console.error(err));
                         });
 
                         self.device.on('offline', () => {
