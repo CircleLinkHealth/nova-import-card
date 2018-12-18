@@ -1,14 +1,89 @@
 <template>
-    <modal name="edit-patient" class="modal-select-ca" :no-footer="true" :info="editPatientModalInfo">
-        <template slot="title">
-            <div class="row">
-                <div class="col-sm-6">
-                    <h3>Edit Patient Data</h3>
+    <modal name="edit-patient" class="modal-edit-patient" :no-footer="true" :info="editPatientModalInfo">
+        <template class="modal-container">
+            <template slot="title">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h3>Edit Patient Data</h3>
+                    </div>
                 </div>
-            </div>
+            </template>
+            <template class="modal-body">
+                <div class="patient-data">
+                    <div class="patient-row">
+                        <div class="col-md-3 patient-data-label">
+                            <label for="first-name">First Name</label>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" class="patient-data-textarea" id="first-name" v-model="enrolleeData.first_name"/>
+                        </div>
+                        <div class="col-md-3 patient-data-label">
+                            <label for="last-name">Last Name</label>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" class="patient-data-textarea" id="last-name" v-model="enrolleeData.last_name"/>
+                        </div>
+                    </div>
+                    <div class="patient-row">
+                        <div class="col-md-3 patient-data-label">
+                            <label for="status">Status</label>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" class="patient-data-textarea" id="status" v-model="enrolleeData.status"/>
+                        </div>
+                        <div class="col-md-3 patient-data-label">
+                            <label for="lang">Language</label>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" class="patient-data-textarea" id="lang" v-model="enrolleeData.lang"/>
+                        </div>
+                    </div>
+                    <div class="patient-row">
+                        <div class="col-md-3 patient-data-label">
+                            <label for="address">Address</label>
+                        </div>
+                        <div class="col-md-3 ">
+                            <input type="text" class="patient-data-textarea" id="address" v-model="enrolleeData.address"/>
+                        </div>
+                        <div class="col-md-3 patient-data-label">
+                            <label for="address-2">Address 2</label>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" class="patient-data-textarea" id="address-2" v-model="enrolleeData.address_2"/>
+                        </div>
+                    </div>
+                    <div class="patient-row">
+                        <div class="col-md-3 patient-data-label">
+                            <label for="primary-phone">Primary Phone</label>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" class="patient-data-textarea"id="primary-phone" v-model="enrolleeData.primary_phone"/>
+                        </div>
+                        <div class="col-md-3 patient-data-label">
+                            <label for="home-phone">Home Phone</label>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" class="patient-data-textarea" id="home-phone" v-model="enrolleeData.home_phone"/>
+                        </div>
+                    </div>
+                    <div class="patient-row">
+                        <div class="col-md-3 patient-data-label">
+                            <label for="cell-phone">Cell Phone</label>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" class="patient-data-textarea" id="cell-phone" v-model="enrolleeData.cell_phone"/>
+                        </div>
+                        <div class="col-md-3 patient-data-label">
+                            <label for="other-phone">Other Phone</label>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" class="patient-data-textarea" id="other-phone" v-model="enrolleeData.other_phone"/>
+                        </div>
+                    </div>
+                </div>
+            </template>
         </template>
 
-        <input type="text" v-model="enrolleeData.address" />
 
         <div class="row">
             <div class="col-sm-12">
@@ -72,7 +147,17 @@
         mounted: function () {
             self = this;
             Event.$on('modal-edit-patient:show', (enrollee) => {
+                this.enrolleeData.first_name = enrollee.first_name;
+                this.enrolleeData.last_name = enrollee.last_name;
+                this.enrolleeData.status = enrollee.status;
+                this.enrolleeData.lang = enrollee.lang;
                 this.enrolleeData.address = enrollee.address;
+                this.enrolleeData.address_2 = enrollee.address_2;
+                this.enrolleeData.primary_phone = enrollee.primary_phone;
+                this.enrolleeData.home_phone = enrollee.home_phone;
+                this.enrolleeData.cell_phone = enrollee.cell_phone;
+                this.enrolleeData.other_phone = enrollee.other_phone;
+
             });
         }
     }
@@ -91,7 +176,8 @@
 
     /*width will be set automatically when modal is mounted*/
     .modal-edit-patient .modal-container {
-        width: 800px;
+        width: 900px;
+        height: 600px;
     }
 
     .modal-edit-patient .loader {
@@ -156,19 +242,50 @@
     }
 
     .modal-edit-patient .modal-body {
-        min-height: 300px;
+        width: 820px;
+        height: 400px;
     }
 
-    .selected-tag {
-        width: 80%;
-        text-overflow: ellipsis;
+    .patient-data {
+        overflow-x: auto;
         white-space: nowrap;
-        overflow: hidden;
+        display: block;
+        margin-top: 40px;
+        vertical-align: unset;
+        margin-left: auto;
+        margin-right: auto;
+        width: 800px;
+        height: 400px;
+
     }
 
-    a.my-tool-tip {
-        float: right;
-        margin-right: 4px;
+    .patient-row {
+        overflow-x: auto;
+        white-space: nowrap;
+        display: block;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        vertical-align: unset;
+        margin-left: auto;
+        margin-right: auto;
     }
+
+    .patient-data-label{
+        display: block;
+        margin-top: 20px;
+        padding-left: 20px;
+    }
+    .patient-data-textarea{
+        display: block;
+        resize: none;
+        overflow: auto;
+        border-radius: 10px;
+        outline: none;
+        padding: 1px;
+        transition: border 0.5s;
+        border: solid 1px #9da8ad;
+        box-sizing:border-box;
+    }
+
 
 </style>

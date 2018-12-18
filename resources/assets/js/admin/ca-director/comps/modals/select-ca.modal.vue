@@ -135,6 +135,7 @@
     /*width will be set automatically when modal is mounted*/
     .modal-select-ca .modal-container {
         width: 600px;
+        height: 300px;
     }
 
 
@@ -202,7 +203,8 @@
     }
 
     .modal-select-ca .modal-body {
-        min-height: 300px;
+        height: 200px;
+        width: 600px;
     }
 
     .selected-tag {

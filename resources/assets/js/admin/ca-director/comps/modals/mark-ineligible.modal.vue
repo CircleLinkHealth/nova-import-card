@@ -97,7 +97,6 @@
 
 <style>
     .modal-mark-ineligible .modal-wrapper {
-        overflow-x: auto;
         white-space: nowrap;
         display: block;
         margin-top: 40px;
@@ -109,6 +108,7 @@
     /*width will be set automatically when modal is mounted*/
     .modal-mark-ineligible .modal-container {
         width: 600px;
+        height: 300px;
     }
 
 
@@ -166,30 +166,11 @@
     }
 
 
-    .dropdown.v-select.form-control {
-        height: auto;
-        padding: 0;
-    }
-
-    .v-select .dropdown-toggle {
-        height: 34px;
-        overflow: hidden;
-    }
-
     .modal-mark-ineligible .modal-body {
-        min-height: 300px;
+        height: 200px;
+        width: 600px;
     }
 
-    .selected-tag {
-        width: 80%;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
-    }
 
-    a.my-tool-tip {
-        float: right;
-        margin-right: 4px;
-    }
 
 </style>
