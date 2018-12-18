@@ -2,12 +2,12 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-6 text-left">
-                <button class="btn btn-info btn-xs" @click="assignSelectedToCa">Show Assigned</button>
-                <button class="btn btn-info btn-xs" @click="assignSelectedToCa">Show Consented</button>
-                <button class="btn btn-info btn-xs" @click="assignSelectedToCa">Show Ineligible</button>
+                <button class="btn btn-info btn-xs" @click="showAssigned">Show Assigned</button>
+                <button class="btn btn-info btn-xs" @click="showConsented">Show Consented</button>
+                <button class="btn btn-info btn-xs" @click="showIneligible">Show Ineligible</button>
 
             </div>
-            <div class="col-sm-6 text-right"  v-if="enrolleesAreSelected">
+            <div class="col-sm-6 text-right" v-if="enrolleesAreSelected">
                 <button class="btn btn-primary btn-s" @click="assignSelectedToCa">Assign To CA</button>
                 <button class="btn btn-danger btn-s" @click="markSelectedAsIneligible">Mark as Ineligible</button>
             </div>
@@ -36,8 +36,9 @@
             </v-server-table>
         </div>
         <select-ca-modal ref="selectCaModal" :selected-enrollee-ids="selectedEnrolleeIds"></select-ca-modal>
-        <mark-ineligible-modal ref="markIneligibleModal" :selected-enrollee-ids="selectedEnrolleeIds"></mark-ineligible-modal>
-        <edit-patient-modal ref="editPatientModal" :enrollee="editableEnrollee"></edit-patient-modal>
+        <mark-ineligible-modal ref="markIneligibleModal"
+                               :selected-enrollee-ids="selectedEnrolleeIds"></mark-ineligible-modal>
+        <edit-patient-modal ref="editPatientModal"></edit-patient-modal>
     </div>
 </template>
 
@@ -54,7 +55,7 @@
     export default {
         name: "CaDirectorPanel",
         components: {
-            'mark-ineligible-modal' : MarkIneligibleModal,
+            'mark-ineligible-modal': MarkIneligibleModal,
             'modal': Modal,
             'select-ca-modal': SelectCaModal,
             'edit-patient-modal': EditPatientModal,
@@ -64,8 +65,10 @@
         data() {
             return {
                 selectedEnrolleeIds: [],
-                editableEnrollee: [],
-                columns: ['select', 'edit', 'id', 'user_id', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_id', 'status', 'eligibility_job_id', 'medical_record_id', 'practice_id', 'provider_id', 'total_time_spent',
+                ineligible: false,
+                consented: false,
+                assigned: false,
+                columns: ['select', 'edit', 'id', 'user_id', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'status', 'eligibility_job_id', 'medical_record_id', 'practice_name', 'provider_name', 'total_time_spent',
                     'last_call_outcome', 'last_call_outcome_reason', 'address', 'address_2', 'city', 'state', 'zip', 'primary_phone', 'other_phone', 'home_phone', 'cell_phone', 'dob', 'preferred_days', 'preferred_window',
                     'primary_insurance', 'secondary_insurance', 'tertiary_insurance', 'has_copay', 'email', 'cpm_problem_1', 'cpm_problem_2', 'soft_rejected_callback', 'created_at'],
                 options: {
@@ -77,8 +80,8 @@
                     perPageValues: [10, 25, 50, 100],
                     skin: "table-striped table-bordered table-hover",
                     filterByColumn: true,
-                    filterable: ['mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_id', 'status', 'eligibility_job_id', 'medical_record_id','practice_id', 'provider_id', 'primary_insurance','secondary_insurance', 'tertiary_insurance'],
-                    sortable: ['first_name', 'last_name', 'practice_id', 'provider_id', 'primary_insurance', 'status', 'created_at', 'state', 'city'],
+                    filterable: ['ineligible', 'consented', 'assigned', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'status', 'eligibility_job_id', 'medical_record_id', 'practice_name', 'provider_name', 'primary_insurance', 'secondary_insurance', 'tertiary_insurance'],
+                    sortable: ['first_name', 'last_name', 'practice_name', 'provider_name', 'primary_insurance', 'status', 'created_at', 'state', 'city'],
                     // listColumns: {
                     //     practice_id: [{
                     //         id: '8',
@@ -91,15 +94,15 @@
 
         },
         computed: {
-            enrolleesAreSelected () {
+            enrolleesAreSelected() {
                 return this.selectedEnrolleeIds.length !== 0;
             },
         },
         methods: {
-            allSelected () {
-                if (this.$refs.table){
+            allSelected() {
+                if (this.$refs.table) {
                     return this.selectedEnrolleeIds.length === this.$refs.table.data.length;
-                }else {
+                } else {
                     return false;
                 }
             },
@@ -107,14 +110,13 @@
                 return rootUrl('/admin/ca-director/enrollees');
             },
             assignSelectedToCa() {
-                Event.$emit("modal-select-ca:show", {enrolleeIds: []});
+                Event.$emit("modal-select-ca:show");
             },
             markSelectedAsIneligible() {
-                Event.$emit("modal-mark-ineligible:show", {enrolleeIds: []});
+                Event.$emit("modal-mark-ineligible:show");
             },
-            editPatient(patient){
-                this.editableEnrollee = patient;
-                Event.$emit("modal-edit-patient:show", {enrollee: []});
+            editPatient(patient) {
+                Event.$emit("modal-edit-patient:show", patient);
             },
             toggleAll() {
                 let selected = [];
@@ -123,7 +125,7 @@
                         selected.push(user.id);
                     })
                     this.selectedEnrolleeIds = selected;
-                }else{
+                } else {
                     this.selectedEnrolleeIds = [];
                 }
 
@@ -137,7 +139,7 @@
                     this.selectedEnrolleeIds.splice(pos, 1);
                 }
             },
-            selected(id){
+            selected(id) {
                 const pos = this.selectedEnrolleeIds.indexOf(id);
                 if (pos === -1) {
                     return false;
@@ -146,8 +148,36 @@
                     return true;
                 }
             },
-
-
+            showIneligible() {
+                this._data.ineligible = !this._data.ineligible;
+                const query = {ineligible: this._data.ineligible,
+                consented: this._data.consented,
+                assigned: this._data.assigned};
+                this.axios.get(rootUrl(`/admin/ca-director/enrollees?query=${JSON.stringify(query)}&limit=100&ascending=1&page=1&byColumn=1`))
+                    .then(resp => {
+                        this.$refs.table.setData(resp.data);
+                    })
+            },
+            showConsented() {
+                this._data.consented = !this._data.consented;
+                const query = {ineligible: this._data.ineligible,
+                    consented: this._data.consented,
+                    assigned: this._data.assigned};
+                this.axios.get(rootUrl(`/admin/ca-director/enrollees?query=${JSON.stringify(query)}&limit=100&ascending=1&page=1&byColumn=1`))
+                    .then(resp => {
+                        this.$refs.table.setData(resp.data);
+                    })
+            },
+            showAssigned() {
+                this._data.assigned = !this._data.assigned;
+                const query = {ineligible: this._data.ineligible,
+                    consented: this._data.consented,
+                    assigned: this._data.assigned};
+                this.axios.get(rootUrl(`/admin/ca-director/enrollees?query=${JSON.stringify(query)}&limit=100&ascending=1&page=1&byColumn=1`))
+                    .then(resp => {
+                        this.$refs.table.setData(resp.data);
+                    })
+            }
         },
 
 

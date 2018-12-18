@@ -8,6 +8,8 @@
             </div>
         </template>
 
+        <input type="text" v-model="enrolleeData.address" />
+
         <div class="row">
             <div class="col-sm-12">
                 <notifications ref="notificationsComponent" name="edit-patient-modal"></notifications>
@@ -24,26 +26,21 @@
     import Loader from '../../../../components/loader';
     import VueSelect from 'vue-select';
     import {Event} from 'vue-tables-2'
-    import Textfield from "vue-mdl/src/textfield";
 
     let self;
 
     export default {
         name: "edit-patient-modal",
-        props: {
-            enrollee: {
-                type: Object,
-                required: true
-            },
-        },
+        props: [],
         data: () => {
             return {
                 loading: false,
-                enrolleeData: [],
+                enrolleeData: {
+                    address: '',
+                },
                 editPatientModalInfo: {
                     okHandler: () => {
-                        Event.$emit('notifications-edit-patient-modal:dismissAll');
-                        Event.$emit("modal-edit-patient:hide");
+                        self.updateEnrolleeData();
                     },
                     cancelHandler: () => {
                         Event.$emit('notifications-edit-patient-modal:dismissAll');
@@ -53,10 +50,20 @@
             }
         },
         methods: {
+            updateEnrolleeData() {
+                Event.$emit('notifications-edit-patient-modal:dismissAll');
 
+                this.axios
+                    .post(rootUrl('/admin/ca-director/edit-enrollee'), this.enrollee)
+                    .then(() => {
+
+                    })
+                    .catch(err => {
+
+                    });
+            }
         },
         components: {
-            Textfield,
             'modal': Modal,
             'notifications': Notifications,
             'loader': Loader,
@@ -64,7 +71,9 @@
         },
         mounted: function () {
             self = this;
-
+            Event.$on('modal-edit-patient:show', (enrollee) => {
+                this.enrolleeData.address = enrollee.address;
+            });
         }
     }
 </script>
@@ -84,9 +93,6 @@
     .modal-edit-patient .modal-container {
         width: 800px;
     }
-
-
-
 
     .modal-edit-patient .loader {
         position: absolute;

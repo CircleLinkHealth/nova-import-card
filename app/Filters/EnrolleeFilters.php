@@ -23,6 +23,9 @@ class EnrolleeFilters extends QueryFilters
         $query = $this->request->get('query');
 
         $decoded = json_decode($query, true);
+        $decoded['ineligible'] = empty($decoded['ineligible']) ? 'hide' : 'show';
+        $decoded['consented'] = empty($decoded['consented']) ? 'hide' : 'show';
+        $decoded['assigned'] = empty($decoded['assigned']) ? 'hide' : 'show';
         $filtered = collect($decoded)->filter();
         return $filtered->all();
     }
@@ -52,13 +55,13 @@ class EnrolleeFilters extends QueryFilters
 
         return $this->builder->where('last_name', 'like', '%' . $name . '%');
     }
-    public function provider_id($id)
+    public function provider_name($name)
     {
-        if (empty($id)) {
+        if (empty($name)) {
             return $this->builder;
         }
 
-        return $this->builder->where('provider_id', 'like', '%' . $id . '%');
+        return $this->builder->where('provider_name', 'like', '%' . $name . '%');
     }
 
     public function lang($lang)
@@ -70,22 +73,22 @@ class EnrolleeFilters extends QueryFilters
         return $this->builder->where('lang', 'like', '%' . $lang . '%');
     }
 
-    public function practice_id($id)
+    public function practice_name($name)
     {
-        if (empty($id)) {
+        if (empty($name)) {
             return $this->builder;
         }
 
-        return $this->builder->where('practice_id', 'like', '%' . $id . '%');
+        return $this->builder->where('practice_name', 'like', '%' . $name . '%');
     }
 
-    public function care_ambassador_id($id)
+    public function care_ambassador_name($name)
     {
-        if (empty($id)) {
+        if (empty($name)) {
             return $this->builder;
         }
 
-        return $this->builder->where('care_ambassador_id', 'like', '%' . $id . '%');
+        return $this->builder->where('care_ambassador_name', 'like', '%' . $name . '%');
     }
 
     public function status($status)
@@ -141,5 +144,27 @@ class EnrolleeFilters extends QueryFilters
         }
 
         return $this->builder->where('medical_record_id', 'like', '%' . $id . '%');
+    }
+
+    public function ineligible($ineligible)
+    {
+        if ($ineligible == 'hide') {
+            return $this->builder->where('status', '!=', 'ineligible' );
+        }
+        return $this->builder;
+    }
+    public function consented($consented)
+    {
+        if ($consented == 'hide') {
+            return $this->builder->where('status', '!=', 'consented' );
+        }
+        return $this->builder;
+    }
+    public function assigned($assigned)
+    {
+        if ($assigned == 'hide') {
+            return $this->builder->where('care_ambassador_name', '=', null );
+        }
+        return $this->builder;
     }
 }

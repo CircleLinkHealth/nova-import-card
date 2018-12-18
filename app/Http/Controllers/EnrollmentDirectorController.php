@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enrollee;
+use App\EnrolleeView;
 use App\Filters\EnrolleeFilters;
 use App\User;
 use Carbon\Carbon;
@@ -27,7 +28,7 @@ class EnrollmentDirectorController extends Controller
         $ascending = $request->get('ascending');
         $page      = $request->get('page');
 
-        $data = Enrollee::filter($filters)->select($fields);
+        $data = EnrolleeView::filter($filters)->select($fields);
 
         $count = $data->count();
 
@@ -72,12 +73,8 @@ class EnrollmentDirectorController extends Controller
             ], 400);
         }
 
-        $enrollees = Enrollee::whereIn('id', $request->input('enrolleeIds'))->update([ 'care_ambassador_id' => $request->input('ambassadorId')]);
+        Enrollee::whereIn('id', $request->input('enrolleeIds'))->update([ 'care_ambassador_id' => $request->input('ambassadorId')]);
 
-        if (! $enrollees){
-            return response()->json([
-            ], 400);
-        }
 
         return response()->json([],200);
 
@@ -86,22 +83,22 @@ class EnrollmentDirectorController extends Controller
     public function markEnrolleesAsIneligible(Request $request)
     {
         if (! $request->input('enrolleeIds')){
-            return response()->json();
-        }
-
-
-        $enrollees = Enrollee::whereIn('id', $request->input('enrolleeIds'))->update([ 'status' => Enrollee::INELIGIBLE]);
-
-        if (! $enrollees){
             return response()->json([
             ], 400);
         }
+
+
+        Enrollee::whereIn('id', $request->input('enrolleeIds'))->update([ 'status' => Enrollee::INELIGIBLE]);
+
+
 
         return response()->json([],200);
 
     }
 
     public function editEnrolleeData(Request $request){
+
+        $x = 1;
 
         return null;
 
