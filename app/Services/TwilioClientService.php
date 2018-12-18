@@ -7,6 +7,7 @@
 namespace App\Services;
 
 use App\Contracts\Services\TwilioClientable;
+use Symfony\Component\Process\Process;
 use Twilio\Jwt\ClientToken;
 use Twilio\Rest\Client;
 
@@ -44,6 +45,14 @@ class TwilioClientService implements TwilioClientable
         $token      = config('services.twilio.token');
         $path       = 'tmp/twilio-recordings/';
         $path       = $path . basename($url);
+
+        //todo - try these
+//        $c = new \GuzzleHttp\Client();
+//        $c->get();
+
+//        $p = new Process("curl -u $accountSid:$token $url --create-dirs -o $path");
+//        $x = $p->run();
+
         exec("curl -u $accountSid:$token $url --create-dirs -o $path");
 
         //check the file that was downloaded

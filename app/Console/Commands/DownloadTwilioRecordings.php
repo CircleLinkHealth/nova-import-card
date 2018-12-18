@@ -58,7 +58,7 @@ class DownloadTwilioRecordings extends Command
     {
         $success = $this->download($recording);
         if ($success) {
-            //$this->delete($recording->sid);
+            $this->delete($recording->sid);
         }
     }
 
