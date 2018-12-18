@@ -24,7 +24,6 @@ class EditEnrolleeData extends FormRequest
      */
     public function rules()
     {
-
         return [
             'id'                  => 'required',
             'first_name'          => 'required|alpha_num',

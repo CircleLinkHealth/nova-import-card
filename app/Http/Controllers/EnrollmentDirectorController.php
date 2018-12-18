@@ -98,7 +98,8 @@ class EnrollmentDirectorController extends Controller
 
     public function editEnrolleeData(EditEnrolleeData $request)
     {
-        $x =1;
+        $phones = $request->input('phones');
+
         Enrollee::where('id', $request->input('id'))
                 ->update([
                     'first_name'          => $request->input('first_name'),
@@ -107,10 +108,10 @@ class EnrollmentDirectorController extends Controller
                     'status'              => $request->input('status'),
                     'address'             => $request->input('address'),
                     'address_2'           => $request->input('address_2'),
-                    'primary_phone'       => $request->input('primary_phone'),
-                    'home_phone'          => $request->input('home_phone'),
-                    'other_phone'         => $request->input('other_phone'),
-                    'cell_phone'          => $request->input('cell_phone'),
+                    'primary_phone'       => $phones['primary_phone'],
+                    'home_phone'          => $phones['home_phone'],
+                    'other_phone'         => $phones['other_phone'],
+                    'cell_phone'          => $phones['cell_phone'],
                     'primary_insurance'   => $request->input('primary_insurance'),
                     'secondary_insurance' => $request->input('secondary_insurance'),
                     'tertiary_insurance'  => $request->input('tertiary_insurance'),
