@@ -24,8 +24,8 @@
                     </div>
                     <div class="form-row col-md-12">
                         <div class="form-group col-md-6">
-                                <label for="lang">Language:</label>
-                                <input type="text" class="form-control" id="lang" v-model="enrolleeData.lang"/>
+                            <label for="lang">Language:</label>
+                            <input type="text" class="form-control" id="lang" v-model="enrolleeData.lang"/>
                         </div>
                         <div class="form-group col-md-6">
                         </div>
@@ -40,6 +40,25 @@
                             <label for="address-2">Address 2:</label>
                             <input type="text" class="form-control" id="address-2"
                                    v-model="enrolleeData.address_2"/>
+                        </div>
+                    </div>
+                    <div class="form-row col-md-12">
+                        <div class="form-group col-md-6">
+                            <label for="city">City:</label>
+                            <input type="text" class="form-control" id="city"
+                                   v-model="enrolleeData.city"/>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="state">State:</label>
+                            <input type="text" class="form-control" id="state"
+                                   v-model="enrolleeData.state"/>
+                        </div>
+                    </div>
+                    <div class="form-row col-md-12">
+                        <div class="form-group col-md-6 ">
+                            <label for="zip">Zip:</label>
+                            <input type="text" class="form-control" id="zip"
+                                   v-model="enrolleeData.zip"/>
                         </div>
                     </div>
                     <div class="form-row col-md-12">
@@ -63,24 +82,24 @@
                         <div class="form-group col-md-6">
                             <label for="primary-phone">Primary Phone:</label>
                             <input type="text" class="form-control" id="primary-phone"
-                                   v-model="enrolleeData.primary_phone"/>
+                                   v-model="enrolleeData.phones.primary_phone"/>
                         </div>
                         <div class="form-group col-md-6">
                             <label for="home-phone">Home Phone:</label>
                             <input type="text" class="form-control" id="home-phone"
-                                   v-model="enrolleeData.home_phone"/>
+                                   v-model="enrolleeData.phones.home_phone"/>
                         </div>
                     </div>
                     <div class="form-row col-md-12">
                         <div class="form-group col-md-6">
                             <label for="cell-phone">Cell Phone:</label>
                             <input type="text" class="form-control" id="cell-phone"
-                                   v-model="enrolleeData.cell_phone"/>
+                                   v-model="enrolleeData.phones.cell_phone"/>
                         </div>
                         <div class="form-group col-md-6">
                             <label for="other-phone">Other Phone:</label>
                             <input type="text" class="form-control" id="other-phone"
-                                   v-model="enrolleeData.other_phone"/>
+                                   v-model="enrolleeData.phones.other_phone"/>
                         </div>
                     </div>
                     <div class="form-row col-md-12">
@@ -134,7 +153,12 @@
             return {
                 loading: false,
                 enrolleeData: {
-                    address: '',
+                    phones: {
+                        primary_phone: '',
+                        cell_phone: '',
+                        home_phone: '',
+                        other_phone: '',
+                    }
                 },
                 editPatientModalInfo: {
                     okHandler: () => {
@@ -160,9 +184,11 @@
                     })
                     .catch(err => {
                         this.loading = false;
+                        let errors = err.response.data.errors ? err.response.data.errors : [];
+
                         Event.$emit('notifications-edit-patient-modal:create', {
                             noTimeout: true,
-                            text: err.message,
+                            text: errors,
                             type: 'error'
                         });
                     });
@@ -184,10 +210,13 @@
                 this.enrolleeData.lang = enrollee.lang;
                 this.enrolleeData.address = enrollee.address;
                 this.enrolleeData.address_2 = enrollee.address_2;
-                this.enrolleeData.primary_phone = enrollee.primary_phone;
-                this.enrolleeData.home_phone = enrollee.home_phone;
-                this.enrolleeData.cell_phone = enrollee.cell_phone;
-                this.enrolleeData.other_phone = enrollee.other_phone;
+                this.enrolleeData.city = enrollee.city;
+                this.enrolleeData.state = enrollee.state;
+                this.enrolleeData.zip = enrollee.zip;
+                this.enrolleeData.phones.primary_phone = enrollee.primary_phone;
+                this.enrolleeData.phones.home_phone = enrollee.home_phone;
+                this.enrolleeData.phones.cell_phone = enrollee.cell_phone;
+                this.enrolleeData.phones.other_phone = enrollee.other_phone;
                 this.enrolleeData.primary_insurance = enrollee.primary_insurance;
                 this.enrolleeData.secondary_insurance = enrollee.secondary_insurance;
                 this.enrolleeData.tertiary_insurance = enrollee.tertiary_insurance;
@@ -337,7 +366,6 @@
         text-underline-mode: true;
         color: #42b983;
     }
-
 
 
 </style>

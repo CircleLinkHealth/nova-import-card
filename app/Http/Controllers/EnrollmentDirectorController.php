@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enrollee;
 use App\EnrolleeView;
 use App\Filters\EnrolleeFilters;
+use App\Http\Requests\EditEnrolleeData;
 use App\User;
 use Illuminate\Http\Request;
 
@@ -95,8 +96,9 @@ class EnrollmentDirectorController extends Controller
 
     }
 
-    public function editEnrolleeData(Request $request)
+    public function editEnrolleeData(EditEnrolleeData $request)
     {
+        $x =1;
         Enrollee::where('id', $request->input('id'))
                 ->update([
                     'first_name'          => $request->input('first_name'),
