@@ -2,10 +2,15 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-6 text-left">
-                <button class="btn btn-info btn-xs" @click="showAssigned">Show Assigned</button>
-                <button class="btn btn-info btn-xs" @click="showConsented">Show Consented</button>
-                <button class="btn btn-info btn-xs" @click="showIneligible">Show Ineligible</button>
-
+                <button class="btn btn-info btn-xs" v-bind:class="{'active': this._data.assigned}"
+                        @click="showAssigned">Show Assigned
+                </button>
+                <button class="btn btn-info btn-xs" v-bind:class="{'active': this._data.consented}"
+                        @click="showConsented">Show Consented
+                </button>
+                <button class="btn btn-info btn-xs" v-bind:class="{'active': this._data.ineligible}"
+                        @click="showIneligible">Show Ineligible
+                </button>
             </div>
             <div class="col-sm-6 text-right" v-if="enrolleesAreSelected">
                 <button class="btn btn-primary btn-s" @click="assignSelectedToCa">Assign To CA</button>
@@ -150,9 +155,11 @@
             },
             showIneligible() {
                 this._data.ineligible = !this._data.ineligible;
-                const query = {ineligible: this._data.ineligible,
-                consented: this._data.consented,
-                assigned: this._data.assigned};
+                const query = {
+                    ineligible: this._data.ineligible,
+                    consented: this._data.consented,
+                    assigned: this._data.assigned
+                };
                 this.axios.get(rootUrl(`/admin/ca-director/enrollees?query=${JSON.stringify(query)}&limit=100&ascending=1&page=1&byColumn=1`))
                     .then(resp => {
                         this.$refs.table.setData(resp.data);
@@ -160,9 +167,11 @@
             },
             showConsented() {
                 this._data.consented = !this._data.consented;
-                const query = {ineligible: this._data.ineligible,
+                const query = {
+                    ineligible: this._data.ineligible,
                     consented: this._data.consented,
-                    assigned: this._data.assigned};
+                    assigned: this._data.assigned
+                };
                 this.axios.get(rootUrl(`/admin/ca-director/enrollees?query=${JSON.stringify(query)}&limit=100&ascending=1&page=1&byColumn=1`))
                     .then(resp => {
                         this.$refs.table.setData(resp.data);
@@ -170,9 +179,11 @@
             },
             showAssigned() {
                 this._data.assigned = !this._data.assigned;
-                const query = {ineligible: this._data.ineligible,
+                const query = {
+                    ineligible: this._data.ineligible,
                     consented: this._data.consented,
-                    assigned: this._data.assigned};
+                    assigned: this._data.assigned
+                };
                 this.axios.get(rootUrl(`/admin/ca-director/enrollees?query=${JSON.stringify(query)}&limit=100&ascending=1&page=1&byColumn=1`))
                     .then(resp => {
                         this.$refs.table.setData(resp.data);
