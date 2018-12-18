@@ -73,6 +73,8 @@ const PatientNextCallComponent = () => import(/* webpackChunkName: "chunk-patien
 const CallNumberComponent = () => import(/* webpackChunkName: "chunk-call-number" */ './components/call-number');
 const UserAccountSettings = () => import(/* webpackChunkName: "chunk-user-account-settings" */ './components/user-account-settings');
 const AuthyPerform2FA = () => import(/* webpackChunkName: "chunk-authy-perform-2fa" */ './components/authy-perform-2fa');
+const CcdUploader = () => import(/* webpackChunkName: "chunk-ccd-uploader" */ './components/importer/ccd-upload');
+const CcdViewer = () => import(/* webpackChunkName: "chunk-ccd-viewer" */ './components/importer/ccd-viewer');
 
 import EventBus from './admin/time-tracker/comps/event-bus'
 import {BindWindowFocusChange, BindWindowVisibilityChange} from './admin/time-tracker/events/window.event'
@@ -117,6 +119,8 @@ Vue.component('add-task-modal', AddTaskModalComponent);
 Vue.component('call-number', CallNumberComponent);
 Vue.component('user-account-settings', UserAccountSettings);
 Vue.component('authy-perform-2fa', AuthyPerform2FA);
+Vue.component('ccd-upload', CcdUploader)
+Vue.component('ccd-viewer', CcdViewer)
 
 const App = new Vue({
     el: '#app',
