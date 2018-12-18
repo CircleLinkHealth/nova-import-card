@@ -49,10 +49,37 @@
                 <div class="input-field col s12"><h6>Twilio</h6></div>
 
                 <div class="input-field col s6">
-                    <input name="settings[twilio_enabled]" type="checkbox"
-                           id="twilio_enabled"
-                           value="1" @if($practiceSettings->twilio_enabled){{'checked'}}@endif>
+
+                    @if (config('services.twilio.enabled'))
+                        <input name="settings[twilio_enabled]" type="checkbox"
+                               id="twilio_enabled"
+                               value="1" @if($practiceSettings->twilio_enabled){{'checked'}}@endif />
+                    @else
+                        <input name="settings[twilio_enabled]" type="checkbox"
+                               disabled="disabled"
+                               id="twilio_enabled"
+                               value="1"/>
+                    @endif
+
                     <label for="twilio_enabled">Use Twilio for Calls</label>
+
+                </div>
+
+                <div class="input-field col s6">
+
+                    @if(config('services.twilio.enabled') && config('services.twilio.allow-recording'))
+                        <input name="settings[twilio_recordings_enabled]" type="checkbox"
+                               id="twilio_recordings_enabled"
+                               value="1" @if($practiceSettings->twilio_recordings_enabled){{'checked'}}@endif />
+                    @else
+                        <input name="settings[twilio_recordings_enabled]" type="checkbox"
+                               disabled="disabled"
+                               id="twilio_recordings_enabled"
+                               value="1"/>
+                    @endif
+
+                    <label for="twilio_recordings_enabled">Record calls</label>
+
                 </div>
             </div>
 
@@ -140,7 +167,8 @@
                 <div class="input-field col s12" style="margin-top: 3rem;">
                     <textarea id="wekly-summary-recipients" name="weekly_report_recipients"
                               class="materialize-textarea">{{$practice->weekly_report_recipients}}</textarea>
-                    <label for="wekly-summary-recipients">Weekly Organization Summary Recipients (comma separated, w/ spaces after comma)</label>
+                    <label for="wekly-summary-recipients">Weekly Organization Summary Recipients (comma separated, w/
+                        spaces after comma)</label>
                     <small>The emails above will receive weekly summary reports.</small>
                 </div>
             </div>

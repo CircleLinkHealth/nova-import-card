@@ -74,6 +74,7 @@ class Settings extends \App\BaseModel
         'api_auto_pull',
 
         'twilio_enabled',
+        'twilio_recordings_enabled',
     ];
     protected $table = 'cpm_settings';
 
