@@ -6,7 +6,6 @@ use App\Enrollee;
 use App\EnrolleeView;
 use App\Filters\EnrolleeFilters;
 use App\User;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class EnrollmentDirectorController extends Controller
@@ -62,45 +61,60 @@ class EnrollmentDirectorController extends Controller
 
     public function assignCareAmbassadorToEnrollees(Request $request)
     {
-        if (! $request->input('enrolleeIds')){
+        if ( ! $request->input('enrolleeIds')) {
             return response()->json([
-                'errors' => 'No enrollee Ids were sent in the request'
+                'errors' => 'No enrollee Ids were sent in the request',
             ], 400);
         }
-        if (! $request->input('ambassadorId')){
+        if ( ! $request->input('ambassadorId')) {
             return response()->json([
-                'errors' => 'No ambassador Id was sent in the request'
+                'errors' => 'No ambassador Id was sent in the request',
             ], 400);
         }
 
-        Enrollee::whereIn('id', $request->input('enrolleeIds'))->update([ 'care_ambassador_id' => $request->input('ambassadorId')]);
+        Enrollee::whereIn('id',
+            $request->input('enrolleeIds'))->update(['care_ambassador_id' => $request->input('ambassadorId')]);
 
 
-        return response()->json([],200);
+        return response()->json([], 200);
 
     }
 
     public function markEnrolleesAsIneligible(Request $request)
     {
-        if (! $request->input('enrolleeIds')){
+        if ( ! $request->input('enrolleeIds')) {
             return response()->json([
             ], 400);
         }
 
 
-        Enrollee::whereIn('id', $request->input('enrolleeIds'))->update([ 'status' => Enrollee::INELIGIBLE]);
+        Enrollee::whereIn('id', $request->input('enrolleeIds'))->update(['status' => Enrollee::INELIGIBLE]);
 
 
-
-        return response()->json([],200);
+        return response()->json([], 200);
 
     }
 
-    public function editEnrolleeData(Request $request){
+    public function editEnrolleeData(Request $request)
+    {
+        Enrollee::where('id', $request->input('id'))
+                ->update([
+                    'first_name'          => $request->input('first_name'),
+                    'last_name'           => $request->input('last_name'),
+                    'lang'                => $request->input('lang'),
+                    'status'              => $request->input('status'),
+                    'address'             => $request->input('address'),
+                    'address_2'           => $request->input('address_2'),
+                    'primary_phone'       => $request->input('primary_phone'),
+                    'home_phone'          => $request->input('home_phone'),
+                    'other_phone'         => $request->input('other_phone'),
+                    'cell_phone'          => $request->input('cell_phone'),
+                    'primary_insurance'   => $request->input('primary_insurance'),
+                    'secondary_insurance' => $request->input('secondary_insurance'),
+                    'tertiary_insurance'  => $request->input('tertiary_insurance'),
+                ]);
 
-        $x = 1;
-
-        return null;
+        return response()->json([], 200);
 
     }
 }

@@ -2,11 +2,6 @@
 
 @push('styles')
     <style>
-        #calls-table tbody>tr>td {
-            vertical-align: middle;
-            white-space: nowrap;
-        }
-
         .cpm-editable {
             color:#000;
         }
