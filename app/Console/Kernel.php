@@ -150,9 +150,10 @@ class Kernel extends ConsoleKernel
                  ->everyThirtyMinutes()
                  ->withoutOverlapping();
 
-        $schedule->command(DownloadTwilioRecordings::class)
-                 ->everyThirtyMinutes()
-                 ->withoutOverlapping();
+        //uncomment when ready
+//        $schedule->command(DownloadTwilioRecordings::class)
+//                 ->everyThirtyMinutes()
+//                 ->withoutOverlapping();
 
 //        Disable backup till we fix the issue of it not running
 //        if (app()->environment('worker')) {
