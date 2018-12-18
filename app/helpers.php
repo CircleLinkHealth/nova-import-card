@@ -123,7 +123,7 @@ if ( ! function_exists('formatPhoneNumber')) {
             return false;
         }
 
-        if (10 > strlen($sanitized)) {
+        if (10 < strlen($sanitized)) {
             $sanitized = substr($sanitized, -10);
         }
 

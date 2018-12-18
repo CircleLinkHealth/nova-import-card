@@ -18,13 +18,13 @@ class RequiredRolesPermissionsSeeder extends Seeder
     public function grantSuperAdminPermissionsToRole($roleName)
     {
         $adminRole = Role::whereName($roleName)->first();
-
+        
         $permissions = Permission::whereNotIn('name', $this->doNotGrantThesePermissionsToSuperAdmins())
-            ->get();
-
+                                 ->get();
+        
         $adminRole->perms()->sync($permissions->pluck('id')->all());
     }
-
+    
     public function roles()
     {
         return [
@@ -911,6 +911,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'call.read',
                     'call.update',
                     'call.delete',
+                    'ccd-import',
                     'location.read',
                     'observation.create',
                     'observation.read',
@@ -1095,7 +1096,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
             ],
         ];
     }
-
+    
     /**
      * Run the database seeds.
      *
@@ -1104,29 +1105,29 @@ class RequiredRolesPermissionsSeeder extends Seeder
     public function run()
     {
         $this->call(RequiredPermissionsTableSeeder::class);
-
+        
         foreach ($this->roles() as $role) {
             $permissionsArr = $role['permissions'];
-
+            
             unset($role['permissions']);
-
+            
             $role = Role::updateOrCreate(['name' => $role['name']], $role);
-
+            
             $permissionIds = Permission::whereIn('name', $permissionsArr)
-                ->pluck('id')->all();
-
+                                       ->pluck('id')->all();
+            
             $role->perms()->sync($permissionIds);
-
+            
             $name = $role['name'];
             $this->command->info("role ${name} created");
         }
-
+        
         $this->grantSuperAdminPermissionsToRole('administrator');
         $this->grantSuperAdminPermissionsToRole('saas-admin');
-
+        
         $this->command->info('all roles and permissions created');
     }
-
+    
     /**
      * These are the only permissions tha will not be granted to Users with Role `administrator` (CLH Super Admin).
      *

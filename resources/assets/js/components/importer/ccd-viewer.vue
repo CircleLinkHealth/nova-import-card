@@ -73,7 +73,7 @@
                 <input class="btn btn-success btn-round" type="button" v-if="multipleSelected" @click="submitMultiple" value="✔" />
             </template>
             <template slot="Submit" slot-scope="props">
-                <input class="btn btn-success btn-round" v-if="!props.row.loaders.confirm" :class="{ 'btn-gray': multipleSelected }" type="button" @click="submitOne(props.row.id)" value="✔" :disabled="!props.row.validate()" />
+                <input class="btn btn-default btn-round" v-if="!props.row.loaders.confirm" :class="{ 'btn-gray': multipleSelected }" type="button" @click="submitOne(props.row.id)" value="✔" :disabled="!props.row.validate()" />
                 <div v-if="props.row.loaders.confirm">
                     <loader></loader>
                 </div>
@@ -470,5 +470,9 @@
     .btn-gray {
         background-color: #999;
         border-color: transparent;
+    }
+
+    .row-select {
+        display: inline-block !important;
     }
 </style>
