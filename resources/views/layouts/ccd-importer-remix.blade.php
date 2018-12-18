@@ -21,7 +21,7 @@
 
     @include('partials.footer')
 
-    <script src="{{ mix('compiled/js/app-ccd-importer.js') }}"></script>
+    <script src="{{ mix('compiled/js/app-provider-ui.js') }}"></script>
 </body>
 </html>
 
