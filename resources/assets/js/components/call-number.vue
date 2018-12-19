@@ -399,11 +399,32 @@
 
                                 this.$set(this.callSids, to, participant.call_sid);
 
-                                if (participant.status === 'in-progress') {
+                                if (participant.status === 'in-progress' || participant.status === 'queued') {
+
+                                    let found = false;
+                                    for (let i = 0; i < this.addedNumbersInConference.length; i++) {
+                                        if (this.addedNumbersInConference[i].number === to) {
+                                            found = true;
+                                            break;
+                                        }
+                                    }
+
+                                    if (!found) {
+                                        this.addedNumbersInConference.push({to, date: Date.now()});
+                                    }
+
                                     //should never actually have to change from false to true, but leaving here for my sanity
                                     this.$set(this.onPhone, to, true);
                                 }
                                 else {
+
+                                    for (let i = 0; i < this.addedNumbersInConference.length; i++) {
+                                        if (this.addedNumbersInConference[i].number === to) {
+                                            this.addedNumbersInConference.splice(i, 1);
+                                            break;
+                                        }
+                                    }
+
                                     this.$set(this.onPhone, to, false);
                                     this.$set(this.muted, to, false);
                                 }
@@ -536,6 +557,13 @@
                             self.resetPhoneState();
                             self.connection = null;
                             self.log = 'Call ended.';
+
+                            //make sure UI on the other page is up to date
+                            sendRequest('call_ended', {number: {value: '', muted: false}})
+                                .then(() => {
+
+                                })
+                                .catch(err => console.error(err));
                         });
 
                         self.device.on('offline', () => {

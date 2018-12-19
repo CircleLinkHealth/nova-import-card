@@ -13,6 +13,7 @@ use App\TwilioCall;
 use App\TwilioConferenceCallParticipant;
 use App\TwilioRawLog;
 use App\TwilioRecording;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
@@ -86,6 +87,15 @@ class TwilioController extends Controller
                         $parentCallStatus         = $request->input('CallStatus');
 
                         if ($call->in_conference && $isCallUpdateToConference && 'in-progress' === $parentCallStatus) {
+
+                            $recordCalls = config('services.twilio.allow-recording');
+                            if ($recordCalls) {
+                                $inboundUser = User::whereHas('primaryPractice')->find($call->inbound_user_id);
+                                if ($inboundUser) {
+                                    $recordCalls = $inboundUser->primaryPractice->cpmSettings()->twilio_recordings_enabled;
+                                }
+                            }
+
                             $conferenceName = $call->inbound_user_id . '_' . $call->outbound_user_id;
                             $dial           = $response->dial();
                             $dial->conference($conferenceName, [
@@ -93,7 +103,7 @@ class TwilioController extends Controller
                                 'statusCallbackEvent'           => 'start end join leave',
                                 'statusCallback'                => route('twilio.call.conference.status'),
                                 'statusCallbackMethod'          => 'POST',
-                                'record'                        => config('services.twilio.allow-recording')
+                                'record'                        => $recordCalls
                                     ? 'record-from-start'
                                     : 'do-not-record',
                                 'recordingStatusCallback'       => route('twilio.call.recording.status'),
@@ -112,6 +122,15 @@ class TwilioController extends Controller
                     $response->hangup();
                 } else {
                     if ($call->in_conference) {
+
+                        $recordCalls = config('services.twilio.allow-recording');
+                        if ($recordCalls) {
+                            $inboundUser = User::whereHas('primaryPractice')->find($call->inbound_user_id);
+                            if ($inboundUser) {
+                                $recordCalls = $inboundUser->primaryPractice->cpmSettings()->twilio_recordings_enabled;
+                            }
+                        }
+
                         $conferenceName = $call->inbound_user_id . '_' . $call->outbound_user_id;
                         $dial           = $response->dial();
                         $dial->conference($conferenceName, [
@@ -119,7 +138,7 @@ class TwilioController extends Controller
                             'statusCallbackEvent'           => 'start end join leave',
                             'statusCallback'                => route('twilio.call.conference.status'),
                             'statusCallbackMethod'          => 'POST',
-                            'record'                        => config('services.twilio.allow-recording')
+                            'record'                        => $recordCalls
                                 ? 'record-from-start'
                                 : 'do-not-record',
                             'recordingStatusCallback'       => route('twilio.call.recording.status'),
