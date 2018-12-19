@@ -84,6 +84,7 @@ if (isset($patient)) {
                     <li data-monthly-time="{{$monthlyTime}}"
                         style="line-height: 20px;">
                         <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo" :hide-tracker="true"
+                                      :twilio-enabled="@json(config('services.twilio.enabled'))"
                                       :no-live-count="{{$noLiveCountTimeTracking ?? true}}"
                                       :override-timeout="{{config('services.time-tracker.override-timeout')}}"></time-tracker>
                     </li>

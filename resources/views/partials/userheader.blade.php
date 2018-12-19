@@ -29,11 +29,14 @@
 
                 <ul class="inline-block" style="margin-left: -40px; font-size: 16px">
                     <b>
-                        <li class="inline-block">{{$patient->getBirthDate() ?? 'N/A'}} <span style="color: #4390b5">•</span>
+                        <li class="inline-block">{{$patient->getBirthDate() ?? 'N/A'}} <span
+                                    style="color: #4390b5">•</span>
                         </li>
-                        <li class="inline-block">{{$patient->getGender() ?? 'N/A'}} <span style="color: #4390b5">•</span>
+                        <li class="inline-block">{{$patient->getGender() ?? 'N/A'}} <span
+                                    style="color: #4390b5">•</span>
                         </li>
-                        <li class="inline-block">{{$patient->getAge() ?? 'N/A'}} yrs <span style="color: #4390b5">•</span>
+                        <li class="inline-block">{{$patient->getAge() ?? 'N/A'}} yrs <span
+                                    style="color: #4390b5">•</span>
                         </li>
                         <li class="inline-block">{{formatPhoneNumber($patient->getPhone()) ?? 'N/A'}} </li>
                     </b>
@@ -85,6 +88,7 @@
                                     </a>
                                     <span style="display:none">
                                         <time-tracker ref="TimeTrackerApp"
+                                                      :twilio-enabled="@json(config('services.twilio.enabled') && (isset($patient) && $patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : true))"
                                                       class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
                                                       :info="timeTrackerInfo"
                                                       :no-live-count="{{($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? 1 : 0}}"
@@ -94,6 +98,7 @@
                             @else
                                 <time-tracker ref="TimeTrackerApp"
                                               class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
+                                              :twilio-enabled="@json(config('services.twilio.enabled') && (isset($patient) && $patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : true))"
                                               :info="timeTrackerInfo"
                                               :no-live-count="{{($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? 1 : 0}}"
                                               :override-timeout="{{config('services.time-tracker.override-timeout')}}">
@@ -111,7 +116,8 @@
                         <select id="status" name="status" class="selectpickerX dropdownValid form-control" data-size="2"
                                 style="width: 135px">
                             <option style="color: #47beab"
-                                    value="enrolled" {{$patient->getCcmStatus() == 'enrolled' ? 'selected' : ''}}> Enrolled
+                                    value="enrolled" {{$patient->getCcmStatus() == 'enrolled' ? 'selected' : ''}}>
+                                Enrolled
                             </option>
                             <option class="withdrawn"
                                     value="withdrawn" {{$patient->getCcmStatus() == 'withdrawn' ? 'selected' : ''}}>

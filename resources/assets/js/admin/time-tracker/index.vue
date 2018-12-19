@@ -8,37 +8,38 @@
         </div>
         <span v-if="visible" class="time-tracker">
             <div v-if="noLiveCount" :class="{ hidden: showLoader }">{{info.monthlyTime}}</div>
-            <bhi-switch ref="bhiSwitch" :is-manual-behavioral="info.isManualBehavioral" 
-                :user-id="info.providerId" :is-bhi="info.isBehavioral" :is-ccm="info.isCcm" 
-                v-if="!info.noBhiSwitch && (info.isCcm || info.isBehavioral)"></bhi-switch>
+            <bhi-switch ref="bhiSwitch" :is-manual-behavioral="info.isManualBehavioral"
+                        :user-id="info.providerId" :is-bhi="info.isBehavioral" :is-ccm="info.isCcm"
+                        v-if="!info.noBhiSwitch && (info.isCcm || info.isBehavioral)"></bhi-switch>
 
             <br><br>
             <span :class="{ hidden: showLoader, 'hide-tracker': hideTracker }">
-                <time-display v-if="!noLiveCount" ref="timeDisplay" :seconds="totalTime" :no-live-count="!!noLiveCount" 
-                    :redirect-url="'manage-patients/' + info.patientId + '/activities'" />
+                <time-display v-if="!noLiveCount" ref="timeDisplay" :seconds="totalTime" :no-live-count="!!noLiveCount"
+                              :redirect-url="'manage-patients/' + info.patientId + '/activities'"/>
             </span>
             
-            <inactivity-tracker :call-mode="callMode" ref="inactivityTracker" />
-            <away ref="away" />
+            <inactivity-tracker :call-mode="callMode" ref="inactivityTracker"/>
+            <away ref="away"/>
         </span>
     </div>
 </template>
 
 <script>
-    import { rootUrl } from '../../app.config'
+    import {rootUrl} from '../../app.config'
     import startupTime from '../../startup-time'
     import InactivityTracker from './comps/inactivity-tracker'
     import TimeDisplay from './comps/time-display'
     import EventBus from './comps/event-bus'
-    import { Event } from 'vue-tables-2'
+    import {Event} from 'vue-tables-2'
     import LoaderComponent from '../../components/loader'
     import AwayComponent from './comps/away'
     import BhiComponent from './comps/bhi-switch'
     import stor from '../../stor'
-    
+
     export default {
         name: 'time-tracker',
         props: {
+            twilioEnabled: Boolean,
             info: {
                 type: Object,
                 required: true
@@ -57,7 +58,7 @@
         },
         data() {
             return {
-                seconds: 0,/** from when page loads, till the page ends */
+                seconds: 0, /** from when page loads, till the page ends */
                 visible: false,
                 socket: null,
                 startCount: 0,
@@ -66,7 +67,7 @@
                 callMode: false
             }
         },
-        components: { 
+        components: {
             'inactivity-tracker': InactivityTracker,
             'time-display': TimeDisplay,
             'loader': LoaderComponent,
@@ -86,8 +87,8 @@
                 console.log('tracker:init-seconds', this.info.initSeconds)
                 if (this.socket.readyState === this.socket.OPEN) {
                     this.socket.send(
-                        JSON.stringify({ 
-                            message: 'client:start', 
+                        JSON.stringify({
+                            message: 'client:start',
                             info: this.info
                         })
                     );
@@ -109,7 +110,7 @@
                     self.socketReloadCount = (self.socketReloadCount || 0) + 1;
                     this.socket = this.socket || (function () {
                         const socket = new WebSocket(self.info.wsUrl);
-        
+
                         socket.onmessage = (res) => {
                             if (res.data) {
                                 const data = JSON.parse(res.data)
@@ -144,7 +145,7 @@
                                 console.log(data);
                             }
                         }
-                
+
                         socket.onopen = (ev) => {
                             if (EventBus.isInFocus) {
                                 self.updateTime()
@@ -156,7 +157,7 @@
                             console.log("socket connection opened", ev, self.startCount, EventBus.isInFocus)
                             if (EventBus.isInFocus) EventBus.$emit('tracker:start')
                         }
-                
+
                         socket.onclose = (ev) => {
                             console.warn("socket connection has closed", ev)
                             self.socket = null;
@@ -171,7 +172,7 @@
                         socket.onerror = (err) => {
                             console.error('socket-error:', err)
                         }
-        
+
                         return socket;
                     })()
                 }
@@ -211,21 +212,35 @@
                 }
 
                 EventBus.$on('tracker:start', () => {
+
+                    //start inactivity tracker only if not on call mode and not on twilio
+                    if (!(this.callMode && this.twilioEnabled)) {
+                        EventBus.$emit('inactivity:start');
+                    }
+
                     if (this.state !== STATE.SHOW_INACTIVE_MODAL) {
                         if (this.socket && this.socket.readyState === WebSocket.OPEN) {
                             if (this.startCount === 0) this.updateTime();
                             this.state = STATE.ENTER
-                            this.socket.send(JSON.stringify({ message: STATE.ENTER, info: this.info }))
+                            this.socket.send(JSON.stringify({message: STATE.ENTER, info: this.info}))
                         }
                     }
                 })
 
                 EventBus.$on('tracker:stop', () => {
+
+                    EventBus.$emit("inactivity:stop");
+
+                    //do not stop tracker if we are on twilio calls
+                    if (this.callMode && this.twilioEnabled) {
+                        return;
+                    }
+
                     if (this.state !== STATE.SHOW_INACTIVE_MODAL) {
                         if (this.socket) {
                             this.showTimer = false
                             this.state = STATE.LEAVE;
-                            this.socket.send(JSON.stringify({ message: STATE.LEAVE, info: this.info }))
+                            this.socket.send(JSON.stringify({message: STATE.LEAVE, info: this.info}))
                         }
                         this.showLoader = true
                     }
@@ -236,7 +251,7 @@
                     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
                         if (this.startCount === 0) this.updateTime();
                         this.state = STATE.ENTER
-                        this.socket.send(JSON.stringify({ message: STATE.ENTER, info: this.info }))
+                        this.socket.send(JSON.stringify({message: STATE.ENTER, info: this.info}))
                     }
                 })
 
@@ -244,44 +259,48 @@
                     if (this.socket) {
                         this.showTimer = false
                         this.state = STATE.SHOW_INACTIVE_MODAL;
-                        this.socket.send(JSON.stringify({ message: STATE.SHOW_INACTIVE_MODAL, info: this.info }))
+                        this.socket.send(JSON.stringify({message: STATE.SHOW_INACTIVE_MODAL, info: this.info}))
                     }
                     this.showLoader = true
                 })
 
                 EventBus.$on('tracker:modal:reply', (response) => {
                     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-                        this.socket.send(JSON.stringify({ message: STATE.MODAL_RESPONSE, info: this.info, response }))
+                        this.socket.send(JSON.stringify({message: STATE.MODAL_RESPONSE, info: this.info, response}))
                     }
                 })
 
                 EventBus.$on('tracker:inactive-modal:close', (response) => {
                     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-                        this.socket.send(JSON.stringify({ message: STATE.CLOSE_INACTIVE_MODAL, info: this.info, response }))
+                        this.socket.send(JSON.stringify({
+                            message: STATE.CLOSE_INACTIVE_MODAL,
+                            info: this.info,
+                            response
+                        }))
                     }
                 })
 
                 EventBus.$on('tracker:call-mode:enter', () => {
                     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-                        this.socket.send(JSON.stringify({ message: STATE.ENTER_CALL_MODE, info: this.info }))
+                        this.socket.send(JSON.stringify({message: STATE.ENTER_CALL_MODE, info: this.info}))
                     }
                 })
 
                 EventBus.$on('tracker:call-mode:exit', () => {
                     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-                        this.socket.send(JSON.stringify({ message: STATE.EXIT_CALL_MODE, info: this.info }))
+                        this.socket.send(JSON.stringify({message: STATE.EXIT_CALL_MODE, info: this.info}))
                     }
                 })
 
                 EventBus.$on('tracker:timeouts:override', (timeouts = {}) => {
                     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-                        this.socket.send(JSON.stringify({ message: STATE.TIMEOUTS_OVERRIDE, info: this.info, timeouts }))
+                        this.socket.send(JSON.stringify({message: STATE.TIMEOUTS_OVERRIDE, info: this.info, timeouts}))
                     }
                 })
 
                 EventBus.$on('tracker:logout', () => {
                     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-                        this.socket.send(JSON.stringify({ message: STATE.LOGOUT, info: this.info }))
+                        this.socket.send(JSON.stringify({message: STATE.LOGOUT, info: this.info}))
                     }
                 })
 
@@ -296,30 +315,30 @@
                         this.info.isManualBehavioral = (this.info.isBehavioral && !this.info.isCcm) || false
                     }
                     if (this.socket && this.socket.readyState === WebSocket.OPEN && shouldUpdateNetwork) {
-                        this.socket.send(JSON.stringify({ message: STATE.BHI, info: this.info }))
+                        this.socket.send(JSON.stringify({message: STATE.BHI, info: this.info}))
                     }
                     console.log('tracker:bhi:switch', mode)
                 })
 
-                Event.$on('careplan:bhi', ({ hasCcm, hasBehavioral }) => {
+                Event.$on('careplan:bhi', ({hasCcm, hasBehavioral}) => {
                     const shouldUpdateNetwork = (this.info.isBehavioral && this.info.isCcm) !== (hasCcm && hasBehavioral)
                     this.info.isBehavioral = hasBehavioral
                     this.info.isCcm = hasCcm
                     if (shouldUpdateNetwork) {
                         this.info.isManualBehavioral = (this.info.isBehavioral && !this.info.isCcm) || false
                         if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-                            this.socket.send(JSON.stringify({ message: STATE.BHI, info: this.info }))
+                            this.socket.send(JSON.stringify({message: STATE.BHI, info: this.info}))
                         }
                     }
                     console.log('careplan:bhi:network-update', shouldUpdateNetwork, hasCcm, hasBehavioral)
-                    
+
                 })
 
                 this.createSocket()
 
                 setInterval(() => {
                     if (this.socket.readyState === this.socket.OPEN) {
-                        this.socket.send(JSON.stringify({ message: 'PING' }))
+                        this.socket.send(JSON.stringify({message: 'PING'}))
                     }
                 }, 5000)
             }
