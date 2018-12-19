@@ -52,13 +52,15 @@ class DownloadTwilioRecordings extends Command
         foreach ($recordings as $record) {
             $this->downloadAndDelete($record);
         }
+
+        $this->info('Done');
     }
 
     private function downloadAndDelete(RecordingInstance $recording)
     {
         $success = $this->download($recording);
         if ($success) {
-            //$this->delete($recording->sid);
+            $this->delete($recording->sid);
         }
     }
 
@@ -70,11 +72,11 @@ class DownloadTwilioRecordings extends Command
         $result = $this->twilioService->downloadMedia($url);
         if ($result && $result['errorDetail']) {
             $this->sendFailedDownloadToSlack($recording->sid, $result['errorCode'], $result['errorDetail']);
+            $this->error($result['errorDetail']);
 
             return false;
         }
-        $pathOnDisk = $result['mediaUrl'];
-
+        $pathOnDisk   = $result['mediaUrl'];
         $uploadResult = SaasAccount::whereSlug('circlelink-health')
                                    ->first()
                                    ->addMedia($pathOnDisk)

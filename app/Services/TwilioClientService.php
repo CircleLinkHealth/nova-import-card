@@ -7,6 +7,7 @@
 namespace App\Services;
 
 use App\Contracts\Services\TwilioClientable;
+use Symfony\Component\Process\Process;
 use Twilio\Jwt\ClientToken;
 use Twilio\Rest\Client;
 
@@ -38,30 +39,66 @@ class TwilioClientService implements TwilioClientable
         return $this->client;
     }
 
+    /**
+     *
+     * Download media from Twilio Cloud
+     *
+     * @param $url
+     *
+     * @return array of [ errorCode, errorDetail, mediaUrl (path on disk) ]
+     */
     public function downloadMedia($url)
     {
         $accountSid = config('services.twilio.sid');
         $token      = config('services.twilio.token');
         $path       = 'tmp/twilio-recordings/';
         $path       = $path . basename($url);
-        exec("curl -u $accountSid:$token $url --create-dirs -o $path");
 
-        //check the file that was downloaded
-        $str = file_get_contents($path, false, null, 0, 500);
-        $xml = $this->parseXMLFromString($str);
-        if ($xml) {
-            unlink($path);
+        try {
+            $c = new \GuzzleHttp\Client();
+
+            //this could fail with 401 Authorization
+            //or if cannot write file
+            $c->get($url, [
+                'sink' => $path,
+                'auth' => [
+                    $accountSid,
+                    $token,
+                ],
+            ]);
+
+            //this could fail if file does not exist
+            $str = file_get_contents($path, false, null, 0, 500);
+
+            //check the file that was downloaded
+            //if we have XML, it means that there was an error downloading the mp3
+            $xml = $this->parseXMLFromString($str);
+            if ($xml) {
+                unlink($path);
+
+                return [
+                    'errorCode'   => $xml->RestException->Code,
+                    'errorDetail' => $xml->RestException->Detail,
+                    'mediaUrl'    => null,
+                ];
+            }
+
+
+        } catch (\Exception $e) {
             return [
-                'errorCode' => $xml->RestException->Code,
-                'errorDetail' => $xml->RestException->Detail,
-                'mediaUrl' => null
+                //make sure code is not 0, 0 means no error
+                'errorCode'   => $e->getCode() === 0
+                    ? 1
+                    : $e->getTrace(),
+                'errorDetail' => $e->getMessage(),
+                'mediaUrl'    => null,
             ];
         }
 
         return [
-            'errorCode' => 0,
+            'errorCode'   => 0,
             'errorDetail' => null,
-            'mediaUrl' => $path
+            'mediaUrl'    => $path,
         ];
     }
 
@@ -70,9 +107,11 @@ class TwilioClientService implements TwilioClientable
      *
      * @return \SimpleXMLElement|null - return the parsed xml document or null if cannot be parsed
      */
-    private function parseXMLFromString($str) {
+    private function parseXMLFromString($str)
+    {
         libxml_use_internal_errors(true);
         $doc = simplexml_load_string($str);
+
         return $doc;
     }
 }
