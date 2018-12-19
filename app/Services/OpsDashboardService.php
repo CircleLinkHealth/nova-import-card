@@ -269,7 +269,9 @@ class OpsDashboardService
                 $to_enroll[] = $patient;
             }
         }
-        $count['Total'] = $count['0 mins'] + $count['0-5'] + $count['5-10'] + $count['10-15'] + $count['15-20'] + $count['20+'];
+        $count['Total'] = $patients->filter(function($value, $key){
+            return $value->patientInfo->ccm_status == 'enrolled' && $value->patientSummaries->first() !== null;
+        })->count();
 
         $pausedCount      = count($paused);
         $withdrawnCount   = count($withdrawn);
