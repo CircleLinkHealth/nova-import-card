@@ -18,7 +18,6 @@ class EnrollmentDirectorController extends Controller
 
     public function getEnrollees(Request $request, EnrolleeFilters $filters)
     {
-
         $fields = ['*'];
 
         $byColumn  = $request->get('byColumn');

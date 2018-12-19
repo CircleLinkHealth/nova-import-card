@@ -1,26 +1,30 @@
 <template>
     <modal name="select-ca" class="modal-select-ca" :no-footer="true" :info="selectCaModalInfo">
-        <template slot="title">
-            <div class="row">
-                <div class="col-sm-6">
-                    <h3>Assign Care Ambassador to selected Patient(s)</h3>
+        <template class="modal-container">
+            <template slot="title">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h3>Assign Care Ambassador to selected Patient(s)</h3>
+                    </div>
                 </div>
-            </div>
+            </template>
+            <template class="modal-body">
+                <div class="row">
+                    <p>Select Care Ambassador:</p>
+                </div>
+                <div class="row">
+                    <v-select max-height="200px" class="form-control" v-model="selectedAmbassador"
+                              :options="list">
+                    </v-select>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <notifications ref="notificationsComponent" name="select-ca-modal"></notifications>
+                    </div>
+                </div>
+                <loader v-if="loading"/>
+            </template>
         </template>
-        <div class="row">
-            <p>Select Care Ambassador:</p>
-        </div>
-        <div class="row">
-            <v-select max-height="200px" class="form-control" v-model="selectedAmbassador"
-                      :options="list">
-            </v-select>
-        </div>
-        <div class="row">
-            <div class="col-sm-12">
-                <notifications ref="notificationsComponent" name="select-ca-modal"></notifications>
-            </div>
-        </div>
-        <loader v-if="loading"/>
     </modal>
 </template>
 
@@ -37,6 +41,12 @@
 
     export default {
         name: "select-ca-modal",
+        components: {
+            'modal': Modal,
+            'notifications': Notifications,
+            'loader': Loader,
+            'v-select': VueSelect
+        },
         props: {
             selectedEnrolleeIds: {
                 type: Array,
@@ -100,12 +110,6 @@
                     });
             }
         },
-        components: {
-            'modal': Modal,
-            'notifications': Notifications,
-            'loader': Loader,
-            'v-select': VueSelect
-        },
         mounted: function () {
             self = this;
 
@@ -135,7 +139,7 @@
     /*width will be set automatically when modal is mounted*/
     .modal-select-ca .modal-container {
         width: 600px;
-        height: 300px;
+        height: 380px;
     }
 
 
@@ -149,48 +153,7 @@
         height: 20px;
     }
 
-    .modal-select-ca .glyphicon-remove {
-        width: 20px;
-        height: 20px;
-        color: #d44a4a;
-        vertical-align: middle;
-        font-size: 20px;
-    }
 
-    .width-90 {
-        float: left;
-        width: 90%;
-    }
-
-    .width-82 {
-        float: left;
-        width: 82%;
-    }
-
-    .width-18 {
-        float: left;
-        width: 18%;
-    }
-
-    .width-10 {
-        float: left;
-        width: 10%;
-    }
-
-    .padding-left-5 {
-        padding-left: 5px;
-    }
-
-    .padding-top-7 {
-        padding-top: 7px;
-    }
-
-    span.required {
-        color: red;
-        font-size: 18px;
-        position: absolute;
-        top: 2px;
-    }
 
     .dropdown.v-select.form-control {
         height: auto;
@@ -204,19 +167,8 @@
 
     .modal-select-ca .modal-body {
         height: 200px;
-        width: 600px;
+        width: 500px;
     }
 
-    .selected-tag {
-        width: 80%;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
-    }
-
-    a.my-tool-tip {
-        float: right;
-        margin-right: 4px;
-    }
 
 </style>

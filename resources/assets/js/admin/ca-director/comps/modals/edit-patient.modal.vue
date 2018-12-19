@@ -259,34 +259,6 @@
         font-size: 20px;
     }
 
-    .width-90 {
-        float: left;
-        width: 90%;
-    }
-
-    .width-82 {
-        float: left;
-        width: 82%;
-    }
-
-    .width-18 {
-        float: left;
-        width: 18%;
-    }
-
-    .width-10 {
-        float: left;
-        width: 10%;
-    }
-
-    .padding-left-5 {
-        padding-left: 5px;
-    }
-
-    .padding-top-7 {
-        padding-top: 7px;
-    }
-
     span.required {
         color: red;
         font-size: 18px;
@@ -311,54 +283,7 @@
         padding: 0px;
     }
 
-    .patient-data {
-        overflow-x: auto;
-        white-space: nowrap;
-        display: block;
-        margin-top: 40px;
-        vertical-align: unset;
-        margin-left: auto;
-        margin-right: auto;
-        width: 800px;
-        height: 400px;
 
-    }
-
-    .patient-row {
-        overflow-x: auto;
-        white-space: nowrap;
-        display: block;
-        margin-top: 10px;
-        margin-bottom: 10px;
-        vertical-align: unset;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .patient-data-label {
-        display: block;
-        margin-top: 30px;
-        padding-left: 20px;
-        background-color: #eaf3ff;
-        border: solid 1px #f7fcfe;
-        border-radius: 15px;
-        box-sizing: border-box;
-        overflow: auto;
-
-    }
-
-    .patient-data-textarea {
-        display: block;
-        resize: none;
-        overflow: auto;
-        border-radius: 10px;
-        outline: none;
-        transition: border 0.5s;
-        border: solid 1px #eaf3ff;
-        box-sizing: border-box;
-        margin-top: 20px;
-        padding-left: 20px;
-    }
 
     h4 {
         display: block;
