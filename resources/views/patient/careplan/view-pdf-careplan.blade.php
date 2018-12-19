@@ -57,6 +57,7 @@ if (isset($patient)) {
                             $ccmCountableUser        = auth()->user()->isCCMCountable();
                             ?>
                             <time-tracker ref="TimeTrackerApp"
+                                          :twilio-enabled="@json(config('services.twilio.enabled') && (isset($patient) && $patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : true))"
                                           class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
                                           :info="timeTrackerInfo"
                                           :no-live-count="{{($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? 1 : 0}}"
