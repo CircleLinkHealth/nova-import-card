@@ -4,6 +4,7 @@
 @section('activity', 'Call Patient Page')
 
 @section('app')
+
     <div class="container">
         <div class="row">
             <div class="main-form-container col-lg-4 col-lg-offset-4">
@@ -45,6 +46,20 @@
                                         <li class="inline-block"></li>
                                     @endif
                                 </ul>
+                            </div>
+
+                            <div class="col-sm-12">
+                                <?php
+                                $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
+                                $ccmCountableUser = auth()->user()->isCCMCountable();
+                                ?>
+                                <time-tracker ref="TimeTrackerApp"
+                                              :twilio-enabled="true"
+                                              class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
+                                              :info="timeTrackerInfo"
+                                              :no-live-count="{{($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? 1 : 0}}"
+                                              :override-timeout="{{config('services.time-tracker.override-timeout')}}"></time-tracker>
+
                             </div>
 
                             <div class="col-sm-12">
