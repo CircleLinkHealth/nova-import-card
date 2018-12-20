@@ -123,7 +123,7 @@ if ( ! function_exists('formatPhoneNumber')) {
             return false;
         }
 
-        if (10 > strlen($sanitized)) {
+        if (10 < strlen($sanitized)) {
             $sanitized = substr($sanitized, -10);
         }
 
@@ -1073,6 +1073,12 @@ if ( ! function_exists('getEhrReportWritersFolderUrl')) {
     {
         if (app()->environment(['production', 'worker'])) {
             return 'https://drive.google.com/drive/folders/1NMMNIZKKicOVDNEUjXf6ayAjRbBbFAgh';
+        }
+
+        //this is to make local environments faster for devs
+        //comment out this if section to use the feature
+        if (app()->environment('local')){
+            return null;
         }
 
         $dir = getGoogleDirectoryByName('ehr-data-from-report-writers');

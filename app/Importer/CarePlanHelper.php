@@ -143,7 +143,7 @@ class CarePlanHelper
         $misc = CpmMisc::whereName(CpmMisc::ALLERGIES)
             ->first();
 
-        $this->user->cpmMiscs()->attach($misc->id);
+        $this->user->cpmMiscs()->attach(optional($misc)->id);
 
         return $this;
     }
@@ -298,7 +298,7 @@ class CarePlanHelper
         $misc = CpmMisc::whereName(CpmMisc::MEDICATION_LIST)
             ->first();
 
-        $this->user->cpmMiscs()->attach($misc->id);
+        $this->user->cpmMiscs()->attach(optional($misc)->id);
         $this->user->cpmMedicationGroups()->sync(array_filter($medicationGroups));
 
         return $this;
@@ -528,7 +528,7 @@ class CarePlanHelper
         $misc = CpmMisc::whereName(CpmMisc::OTHER_CONDITIONS)
             ->first();
 
-        $this->user->cpmMiscs()->attach($misc->id);
+        $this->user->cpmMiscs()->attach(optional($misc)->id);
 
         return $this;
     }

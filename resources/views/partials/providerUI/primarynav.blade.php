@@ -45,7 +45,7 @@ if (isset($patient)) {
                 @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && auth()->user()->hasRole('care-center') && isset($patient) && optional($patient)->id && (!isset($noLiveCountTimeTracking)))
                     <li>
                         <time-tracker-call-mode ref="timeTrackerCallMode"
-                                                :twilio-enabled="@json($patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : false)"
+                                                :twilio-enabled="@json(config('services.twilio.enabled') && ($patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : false))"
                                                 :patient-id="{{ $patient->id }}"></time-tracker-call-mode>
                     </li>
                 @endif
@@ -84,6 +84,7 @@ if (isset($patient)) {
                     <li data-monthly-time="{{$monthlyTime}}"
                         style="line-height: 20px;">
                         <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo" :hide-tracker="true"
+                                      :twilio-enabled="@json(config('services.twilio.enabled'))"
                                       :no-live-count="{{$noLiveCountTimeTracking ?? true}}"
                                       :override-timeout="{{config('services.time-tracker.override-timeout')}}"></time-tracker>
                     </li>

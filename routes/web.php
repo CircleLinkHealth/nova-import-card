@@ -2362,6 +2362,14 @@ Route::group([
         'uses' => 'Twilio\TwilioController@dialActionCallback',
         'as'   => 'twilio.call.dial.action',
     ]);
+    Route::post('/call/conference-status', [
+        'uses' => 'Twilio\TwilioController@conferenceStatusCallback',
+        'as'   => 'twilio.call.conference.status',
+    ]);
+    Route::post('/call/recording-status', [
+        'uses' => 'Twilio\TwilioController@recordingStatusCallback',
+        'as'   => 'twilio.call.recording.status',
+    ]);
 });
 
 Route::group([

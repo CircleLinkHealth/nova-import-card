@@ -60,7 +60,7 @@
                     @endif
                     @if( auth()->user()->hasPermission(['ccd-import']) )
                         <li class="menu-item">
-                            <a id="patient-list" href="{{ route('import.ccd') }}">
+                            <a id="patient-list" href="{{ route('import.ccd.remix') }}">
                                 <div class="icon-container column-centered">
                                     <i class="icon--menu" aria-hidden="true">
                                         <img src="{{mix('/img/icon--download.png')}}"
