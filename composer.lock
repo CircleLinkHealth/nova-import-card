@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8a51f244b089e727dced591571a8c43f",
+    "content-hash": "0b2b477d1b5c0c86154efe2c6f446d87",
     "packages": [
         {
             "name": "amnuts/opcache-gui",
@@ -4297,6 +4297,55 @@
                 "timer"
             ],
             "time": "2017-02-26T11:10:40+00:00"
+        },
+        {
+            "name": "pokitdok/pokitdok-php",
+            "version": "1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pokitdok/pokitdok-php.git",
+                "reference": "e1acd7898b2c44fd97cd358463070bb8289b7260"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pokitdok/pokitdok-php/zipball/e1acd7898b2c44fd97cd358463070bb8289b7260",
+                "reference": "e1acd7898b2c44fd97cd358463070bb8289b7260",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "PokitDok": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Tim Dunlevy",
+                    "email": "tim.dunlevy@pokitdok.com",
+                    "homepage": "https://pokitdok.com",
+                    "role": "Director of Engineering"
+                }
+            ],
+            "description": "PHP client for http://platform.pokitdok.com",
+            "keywords": [
+                "claims",
+                "doctor",
+                "edi",
+                "eligibility",
+                "health",
+                "healthcare",
+                "patient",
+                "provider",
+                "x12"
+            ],
+            "time": "2017-03-29T20:43:37+00:00"
         },
         {
             "name": "pragmarx/health",
