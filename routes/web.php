@@ -1054,6 +1054,8 @@ Route::group(['middleware' => 'auth'], function () {
         ],
         'prefix' => 'admin',
     ], function () {
+        Route::get('pokit', 'PokitDokController@thisIsJustToTryThingsOut');
+
         Route::group(['prefix' => 'direct-mail'], function () {
             Route::get('{directMailId}', [
                 'uses' => 'DirectMailController@show',

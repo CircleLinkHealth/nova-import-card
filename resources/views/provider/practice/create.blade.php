@@ -24,6 +24,16 @@
 
         <div class="row">
             <div class="input-field col s6">
+                <span class="prefix">+1</span>
+                <input id="outgoing_phone_number" type="tel"
+                       name="outgoing_phone_number"
+                       value="{{$practice->outgoing_phone_number}}">
+                <label for="outgoing_phone_number">Outgoing Phone Number</label>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="input-field col s6">
                 <label for="lead" class="active" data-error="required">Practice Lead</label>
                 <div style="height: 15px;"></div>
                 <select id="lead" name="lead_id"
@@ -86,6 +96,7 @@
             </div>
         @endif
 
+        <br/>
 
         <button class="btn blue waves-effect waves-light col s12"
                 id="update-practice"
@@ -101,13 +112,54 @@
 @push('scripts')
     <script src="{{mix('/js/materialize.min.js')}}"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+    <script src="https://unpkg.com/libphonenumber-js/bundle/libphonenumber-js.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
             $('select').material_select();
 
             @if(\Session::has('message'))
             Materialize.toast('{{\Session::get('message')}}', 4000)
-            @endif
+                    @endif
+
+            const submit = $('#update-practice');
+            const el = $('#outgoing_phone_number');
+
+            // we don't want to force anyone to set the phone number if its already invalid
+            // someone might visit this page to edit some other data
+            if (el.val().length > 0) {
+                toggleValidInvalidClass(el, validateNumber(el.val()));
+            }
+
+            el.keyup(function (e) {
+                const isValid = validateNumber(el.val());
+                toggleValidInvalidClass(el, isValid);
+                toggleDisabledSubmitButton(submit, isValid);
+            });
+
+            function validateNumber(text) {
+                try {
+                    const number = libphonenumber.parsePhoneNumber(text, 'US');
+                    return number.isValid() && number.country === 'US';
+                }
+                catch (e) {
+                    return false;
+                }
+            }
+
+            function toggleValidInvalidClass(el, valid) {
+                if (valid) {
+                    el.addClass('valid');
+                    el.removeClass('invalid');
+                }
+                else {
+                    el.addClass('invalid');
+                    el.removeClass('valid');
+                }
+            }
+
+            function toggleDisabledSubmitButton(button, valid) {
+                button.prop('disabled', !valid);
+            }
         });
     </script>
 @endpush
