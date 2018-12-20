@@ -6,6 +6,18 @@
                     <notifications ref="notificationsComponent" name="ca-panel"></notifications>
                 </div>
             </div>
+            <div class="col-sm-12 text-left">
+                <button class="btn btn-primary btn-s"
+                        @click="addCustomFilter">Add Custom Filter
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="row">
+                <div class="col-sm-12">
+                    <notifications ref="notificationsComponent" name="ca-panel"></notifications>
+                </div>
+            </div>
             <div class="col-sm-5 text-left">
                 <button class="btn btn-info btn-xs" v-bind:class="{'btn-selected': this._data.assigned}"
                         @click="showAssigned">Show Assigned
@@ -53,6 +65,7 @@
         <mark-ineligible-modal ref="markIneligibleModal"
                                :selected-enrollee-ids="selectedEnrolleeIds"></mark-ineligible-modal>
         <edit-patient-modal ref="editPatientModal"></edit-patient-modal>
+        <add-custom-filter-modal></add-custom-filter-modal>
     </div>
 </template>
 
@@ -62,6 +75,7 @@
     import SelectCaModal from './comps/modals/select-ca.modal'
     import {Event} from 'vue-tables-2'
     import MarkIneligibleModal from "./comps/modals/mark-ineligible.modal";
+    import AddCustomFilterModal from "./comps/modals/add-custom-filter.modal";
     import EditPatientModal from "./comps/modals/edit-patient.modal";
     import Loader from '../../components/loader';
     import Notifications from '../../components/notifications';
@@ -75,6 +89,7 @@
             'modal': Modal,
             'select-ca-modal': SelectCaModal,
             'edit-patient-modal': EditPatientModal,
+            'add-custom-filter-modal': AddCustomFilterModal,
             'loader': Loader,
             'notifications': Notifications
 
@@ -137,6 +152,9 @@
             },
             editPatient(patient) {
                 Event.$emit("modal-edit-patient:show", patient);
+            },
+            addCustomFilter() {
+                Event.$emit("modal-add-custom-filter:show");
             },
             toggleAll() {
                 let selected = [];

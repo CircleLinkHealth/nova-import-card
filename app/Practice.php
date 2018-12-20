@@ -117,6 +117,12 @@ class Practice extends BaseModel implements HasMedia
         return $this->belongsToMany(CareAmbassadorLog::class);
     }
 
+    public function enrolleeCustomFilters(){
+
+        return $this->belongsToMany(EnrolleeCustomFilter::class, 'practice_enrollee_filters', 'practice_id');
+
+    }
+
     public function careplan()
     {
         return $this->hasMany('App\CarePlanTemplate', 'patient_id');

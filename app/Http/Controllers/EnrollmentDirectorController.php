@@ -119,4 +119,14 @@ class EnrollmentDirectorController extends Controller
         return response()->json([], 200);
 
     }
+
+    public function addEnrolleeCustomFilter(){
+        //make lower case before storing
+
+
+    }
+
+    public function getPractices(){
+
+    }
 }

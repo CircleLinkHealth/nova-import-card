@@ -1186,6 +1186,11 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'EnrollmentDirectorController@editEnrolleeData',
                 'as'   => 'ca-director.edit-enrollee',
             ]);
+
+            Route::post('/add-enrollee-custom-filter', [
+                'uses' => 'EnrollmentDirectorController@addEnrolleeCustomFilter',
+                'as'   => 'ca-director.add-enrollee-custom-filter',
+            ]);
         });
 
         Route::group(['prefix' => 'enrollees'], function () {
