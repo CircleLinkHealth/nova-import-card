@@ -144,7 +144,7 @@ class EhrReportWriterController extends Controller
         }
 
         foreach ($files as $file) {
-            if (strcasecmp('csv', $file['ext'])) {
+            if (strcasecmp('csv', $file['ext']) == 0) {
                 $batch = $service->createSingleCSVBatchFromGoogleDrive(
                     $user->ehrReportWriterInfo->google_drive_folder_path,
                     $file['name'],
@@ -155,7 +155,7 @@ class EhrReportWriterController extends Controller
                     $file['path']
                 );
             }
-            if (strcasecmp('json', $file['ext'])) {
+            if (strcasecmp('json', $file['ext']) == 0) {
                 $batch = $service->createClhMedicalRecordTemplateBatch(
                     $user->ehrReportWriterInfo->google_drive_folder_path,
                     $file['name'],
