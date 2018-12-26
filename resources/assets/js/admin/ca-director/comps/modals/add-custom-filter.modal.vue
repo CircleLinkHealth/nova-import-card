@@ -1,5 +1,5 @@
 <template>
-    <modal name="add-custom-filter" class="" :no-footer="true" :info="addCustomFilterModalInfo">
+    <modal name="add-custom-filter" class="modal-add-custom-filter" :no-footer="true" :info="addCustomFilterModalInfo">
         <template class="modal-container">
             <template slot="title">
                 <div class="col-sm-12" style="text-align: center">
@@ -7,22 +7,36 @@
                 </div>
             </template>
             <template class="modal-body">
-                <div class="row">
-                    <p>Select Practice to add Filter:</p>
+                <div class="form">
+                    <div class="form-row col-md-12">
+                        <h4>Select Practice to add Filter:</h4>
+                        <hr>
+                        <div class="form-group col-md-6">
+                            <v-select max-height="200px" class="form-control" v-model="customFilterData.practice_id"
+                                      :options="list">
+                            </v-select>
+                        </div>
+
+                    </div>
+                    <div class="form-row col-md-12">
+                        <h4>Select Filter Type</h4>
+                        <hr>
+                        <div class="form-group col-md-6">
+                            <v-select max-height="200px" class="form-control" v-model="customFilterData.filter_type"
+                                      :options="filterTypes">
+                            </v-select>
+                        </div>
+                    </div>
+                    <div class="form-row col-md-12">
+                        <h4>Filter Name</h4>
+                        <hr>
+                        <div class="form-group col-md-6">
+                            <input type="text" class="form-control" id="first-name"
+                                   v-model="customFilterData.filter_name"/>
+                        </div>
+                    </div>
                 </div>
-                <div class="row">
-                    <v-select max-height="200px" class="form-control" v-model="customFilterData.practice_id"
-                              :options="list">
-                    </v-select>
-                </div>
-                <div class="row">
-                    <p>Select Filter Type</p>
-                </div>
-                <div class="row">
-                    <v-select max-height="200px" class="form-control" v-model="customFilterData.filter_type"
-                              :options="filterTypes">
-                    </v-select>
-                </div>
+
 
                 <loader v-if="loading"/>
             </template>
@@ -54,7 +68,12 @@
         data: () => {
             return {
                 loading: false,
-                list: [],
+                list: [
+                    {
+                        label: 'All Practices',
+                        value: 'all'
+                    },
+                ],
                 customFilterData: {
                     'practice_id': '',
                     'filter_name': '',
@@ -88,8 +107,8 @@
                     .then(response => {
                         this.loading = false;
                         practices = response.data;
-                        this.list = practices.map(x => {
-                            return {label: x.display_name, value: x.id};
+                        practices.map(x => {
+                            this.list.push({label: x.display_name, value: x.id});
                         });
                         return this.list;
                     })
@@ -128,7 +147,7 @@
 
 
 <style>
-    .modal-edit-patient .modal-wrapper {
+    .modal-add-custom-filter .modal-wrapper {
         overflow-x: auto;
         white-space: nowrap;
         display: block;
@@ -138,13 +157,13 @@
     }
 
     /*width will be set automatically when modal is mounted*/
-    .modal-edit-patient .modal-container {
+    .modal-add-custom-filter .modal-container {
         width: 900px;
         height: 600px;
         margin-top: 20px;
     }
 
-    .modal-edit-patient .loader {
+    .modal-add-custom-filter .loader {
         position: absolute;
         right: 5px;
         top: 5px;
@@ -152,7 +171,7 @@
         height: 20px;
     }
 
-    .modal-edit-patient .glyphicon-remove {
+    .modal-add-custom-filter .glyphicon-remove {
         width: 20px;
         height: 20px;
         color: #d44a4a;
@@ -177,7 +196,7 @@
         overflow: hidden;
     }
 
-    .modal-edit-patient .modal-body {
+    .modal-add-custom-filter .modal-body {
         width: 820px;
         height: 400px;
         margin: 0px;

@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Enrollee;
+use App\EnrolleeCustomFilter;
 use App\EnrolleeView;
 use App\Filters\EnrolleeFilters;
 use App\Http\Requests\EditEnrolleeData;
+use App\Practice;
 use App\User;
 use Illuminate\Http\Request;
 
@@ -120,13 +122,47 @@ class EnrollmentDirectorController extends Controller
 
     }
 
-    public function addEnrolleeCustomFilter(){
-        //make lower case before storing
+    public function addEnrolleeCustomFilter(Request $request)
+    {
+        if (empty($request['practice_id']['value'])){
+            return response()->json([
+                'errors' => 'Please select Practice or all Practices',
+            ], 400);
+        }
+
+        if (empty($request['filter_type']['value'])){
+            return response()->json([
+                'errors' => 'Please select a filter type',
+            ], 400);
+        }
+
+        if (empty($request['filter_name'])){
+            return response()->json([
+                'errors' => 'Please type in the name of the filter you would like to add.',
+            ], 400);
+        }
+
+        $customFilter = EnrolleeCustomFilter::updateOrCreate([
+            'name' => strtolower($request['filter_name']),
+            'type' => $request['filter_type']['value'],
+        ]);
+
+
+        if ($request['practice_id']['value'] == 'all'){
+            $practices = Practice::active()->get();
+            $practices->map(function($p) use ($customFilter){
+                $p->enrolleeCustomFilters()->attach($customFilter->id, ['include' => 1]);
+            });
+        }else{
+            $practice = Practice::find($request['practice_id']['value']);
+
+            $practice->enrolleeCustomFilters()->attach($customFilter->id, ['include' => 1]);
+        }
+
+
+        return response()->json([], 200);
 
 
     }
 
-    public function getPractices(){
-
-    }
 }

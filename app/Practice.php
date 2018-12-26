@@ -119,7 +119,7 @@ class Practice extends BaseModel implements HasMedia
 
     public function enrolleeCustomFilters(){
 
-        return $this->belongsToMany(EnrolleeCustomFilter::class, 'practice_enrollee_filters', 'practice_id');
+        return $this->belongsToMany(EnrolleeCustomFilter::class, 'practice_enrollee_filters', 'practice_id', 'filter_id');
 
     }
 

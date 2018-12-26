@@ -12,7 +12,7 @@ class EnrolleeCustomFilter extends Model
     ];
 
     public function practices(){
-        return $this->belongsToMany(Practice::class, 'practice_enrollee_filters', 'filter_id')
+        return $this->belongsToMany(Practice::class, 'practice_enrollee_filters', 'filter_id', 'practice_id')
             ->withPivot('include');
     }
 }
