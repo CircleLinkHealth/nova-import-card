@@ -23,6 +23,10 @@
                                 <th scope="col">Patient</th>
                                 <th scope="col">Performed At</th>
                                 <th scope="col">Comment</th>
+                                @if(auth()->user()->isAdmin())
+                                    <th scope="col">Approve</th>
+                                    <th scope="col">Reject</th>
+                                @endif
                             </tr>
                             </thead>
                             <tbody>
@@ -31,9 +35,36 @@
                                     <td><b>{{$r->status()}}</b></td>
                                     <th scope="row">{{$r->id}}</th>
                                     <td>{{$r->durationInMinutes()}}</td>
-                                    <td><a href="{{route('patient.careplan.print', [$r->patient->id])}}">{{$r->patient->getFullName()}}</a> </td>
+                                    <td>
+                                        <a href="{{route('patient.careplan.print', [$r->patient->id])}}">{{$r->patient->getFullName()}}</a>
+                                    </td>
                                     <td>{{$r->performed_at}}</td>
                                     <td>{{$r->comment}}</td>
+                                    @if(auth()->user()->isAdmin())
+                                        <td>
+                                            {!! Form::open([
+    'url' => route('admin.offline-activity-time-requests.respond'),
+    'method' => 'post'
+]) !!}
+                                            <input type="hidden" name="offline_time_request_id" value="{{$r->id}}">
+                                            <input type="hidden" name="approved" value="1">
+
+                                            <input class="btn btn-success" type="submit" value="Approve" onclick="var result = confirm('Are you sure you want to approve this request?');if (!result) {event.preventDefault();}">
+                                            {!! Form::close() !!}
+                                        </td>
+
+                                        <td>
+                                            {!! Form::open([
+    'url' => route('admin.offline-activity-time-requests.respond'),
+    'method' => 'post'
+]) !!}
+                                            <input type="hidden" name="offline_time_request_id" value="{{$r->id}}">
+                                            <input type="hidden" name="approved" value="0">
+
+                                            <input class="btn btn-danger" type="submit" value="Reject" onclick="var result = confirm('Are you sure you want to reject this request?');if (!result) {event.preventDefault();}">
+                                            {!! Form::close() !!}
+                                        </td>
+                                    @endif
                                 </tr>
                             @endforeach
                             </tbody>

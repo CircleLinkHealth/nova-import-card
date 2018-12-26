@@ -123,6 +123,7 @@
                                     Nurses <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu" role="menu">
+                                    <li><a href="{{ route('admin.offline-activity-time-requests.index') }}">Offline Activity Time Requests</a>
                                     <li><a href="{{ route('get.admin.nurse.schedules') }}">Schedules</a>
                                     <li><a href="{{ route('admin.reports.nurse.daily') }}">Daily
                                             Report</a></li>

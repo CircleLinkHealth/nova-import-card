@@ -1070,6 +1070,17 @@ Route::group(['middleware' => 'auth'], function () {
         ],
         'prefix' => 'admin',
     ], function () {
+        Route::group(['prefix' => 'offline-activity-time-requests'], function () {
+            Route::get('', [
+                'uses' => 'OfflineActivityTimeRequestController@adminIndex',
+                'as'   => 'admin.offline-activity-time-requests.index',
+            ])->middleware('permission:patient.read,offlineActivityRequest.read');
+            Route::post('respond', [
+                'uses' => 'OfflineActivityTimeRequestController@adminRespond',
+                'as'   => 'admin.offline-activity-time-requests.respond',
+            ])->middleware('permission:patient.read,offlineActivityRequest.read');
+        });
+        
         Route::get('pokit', 'PokitDokController@thisIsJustToTryThingsOut');
 
         Route::group(['prefix' => 'direct-mail'], function () {

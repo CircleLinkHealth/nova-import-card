@@ -45,10 +45,38 @@ class OfflineActivityTimeRequestController extends Controller
     public function index()
     {
         $requests = OfflineActivityTimeRequest::with('patient')
+                                              ->where('requester_id', auth()->id())
                                               ->get();
         
         return view('care-center.offlineActivityTimeRequest.index')
             ->with('requests', $requests);
+    }
+    
+    public function adminIndex()
+    {
+        $requests = OfflineActivityTimeRequest::with('patient')
+                                              ->whereNull('is_approved')
+                                              ->get();
+        
+        return view('care-center.offlineActivityTimeRequest.index')
+            ->with('requests', $requests);
+    }
+    
+    public function adminRespond(Request $request)
+    {
+        $timeRequest = OfflineActivityTimeRequest::findOrFail($request->input('offline_time_request_id'));
+        
+        $isApproved = (boolean) $request->input('approved');
+        
+        $timeRequest->is_approved = $isApproved;
+        
+        if ($isApproved) {
+            $timeRequest->approve();
+        } else {
+            $timeRequest->reject();
+        }
+        
+        return redirect()->route('admin.offline-activity-time-requests.index');
     }
     
     /**
