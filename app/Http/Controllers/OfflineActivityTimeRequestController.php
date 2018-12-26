@@ -96,7 +96,7 @@ class OfflineActivityTimeRequestController extends Controller
                 'patient_id'       => $request->input('patient_id'),
                 'requester_id'     => auth()->id(),
                 'is_behavioral'    => $request->input('is_behavioral'),
-                'performed_at'     => $request->input('performed_at'),
+                'performed_at'     => \Carbon::parse($request->input('performed_at')),
             ]
         );
         
