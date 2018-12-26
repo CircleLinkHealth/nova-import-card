@@ -3,6 +3,8 @@
       content="{{ route('patient.observation.create', ['patient' => $patient->id]) }}">
 <meta name="route.patient.activity.create"
       content="{{ route('patient.activity.create', ['patient' => $patient->id]) }}">
+<meta name="route.offline-activity-time-request.create"
+      content="{{ route('offline-activity-time-requests.create', ['patient' => $patient->id]) }}">
 <meta name="route.patient.appointment.create"
       content="{{ route('patient.appointment.create', ['patientId' => $patient->id]) }}">
 <meta name="provider-update-route" content="{{ route('user.care-team.update', ['userId' => $patient->id, 'id'=>'']) }}">
