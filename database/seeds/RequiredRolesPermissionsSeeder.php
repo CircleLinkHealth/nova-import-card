@@ -971,6 +971,8 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'workHours.delete',
                     'workHours.read',
                     'note.send',
+                    'offlineActivityRequest.create',
+                    'offlineActivityRequest.read',
                 ],
             ],
             [

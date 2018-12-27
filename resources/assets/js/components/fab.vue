@@ -17,11 +17,18 @@
                     <p class="text">Add Observation</p>
                 </div>
 
-                <div class="mini-action-button">
+                <div v-if="theCurrentUser.role.name === 'administrator'" class="mini-action-button">
                     <a :href="createActivityUrl">
                         <i class="icon material-icons">local_hospital</i>
                     </a>
                     <p class="text">Add Offline Activity</p>
+                </div>
+
+                <div v-if="theCurrentUser.role.name === 'care-center'" class="mini-action-button">
+                    <a :href="createOfflineActivityTimeRequestUrl">
+                        <i class="icon material-icons">local_hospital</i>
+                    </a>
+                    <p class="text">Request Offline Activity Time</p>
                 </div>
 
                 <div class="mini-action-button">
@@ -67,6 +74,7 @@
                 createNoteUrl: this.document().querySelector('meta[name="route.patient.note.create"]').getAttribute('content'),
                 createObservationUrl: this.document().querySelector('meta[name="route.patient.observation.create"]').getAttribute('content'),
                 createActivityUrl: this.document().querySelector('meta[name="route.patient.activity.create"]').getAttribute('content'),
+                createOfflineActivityTimeRequestUrl: this.document().querySelector('meta[name="route.offline-activity-time-request.create"]').getAttribute('content'),
                 createAppointmentUrl: this.document().querySelector('meta[name="route.patient.appointment.create"]').getAttribute('content'),
             }
         },
