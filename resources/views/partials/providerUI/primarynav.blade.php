@@ -137,6 +137,12 @@ if (isset($patient)) {
 
                         @if(auth()->user()->hasRole(['care-center']) && auth()->user()->isNotSaas())
                             <li>
+                                <a href="{{ route('offline-activity-time-requests.index') }}"
+                                   id="offline-activity-time-requests-index-link">
+                                    Offline Activity Time Requests
+                                </a>
+                            </li>
+                            <li>
                                 <a href="{{ route('care.center.work.schedule.index') }}" id="work-schedule-link">
                                     Work Schedule
                                 </a>
