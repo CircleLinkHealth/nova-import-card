@@ -33,6 +33,7 @@ use Illuminate\Notifications\Channels\DatabaseChannel;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\HasDatabaseNotifications;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Dusk\DuskServiceProvider;
 use Laravel\Horizon\Horizon;
@@ -48,6 +49,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+
+        //need to set trusted hosts before request is passed on to our routers
+        Request::setTrustedHosts(config('trustedhosts.hosts'));
+
         Horizon::auth(function ($request) {
             return optional(auth()->user())->isAdmin();
         });
