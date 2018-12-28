@@ -221,7 +221,7 @@ if (isset($patient) && ! empty($patient)) {
                     @if($regularDoctor)
                         <div class="row gutter">
                             <div class="col-xs-5 print-row text-bold">
-                                {{$regularDoctor->getFullName()}} {!! ($regularDoctor->getSpecialty() == '')? '' :  "<br> {$regularDoctor->getSpecialty()}"!!}
+                                {{$regularDoctor->getFullName()}} {!! ($regularDoctor->getSpecialty() == '')? '' :   ( $regularDoctor->getSpecialty() == $regularDoctor->getSuffix() ? '' : "<br> {$regularDoctor->getSpecialty()}")!!}
                             </div>
                             <div class="col-xs-3 print-row">
                                 {{$regularDoctor->getPhone()}}
