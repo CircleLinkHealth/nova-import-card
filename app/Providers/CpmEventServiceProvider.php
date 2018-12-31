@@ -9,9 +9,11 @@ namespace App\Providers;
 use App\Events\CarePlanWasApproved;
 use App\Events\PdfableCreated;
 use App\Events\UpdateUserLoginInfo;
+use App\Events\UpdateUserSessionInfo;
 use App\Listeners\CreateAndHandlePdfReport;
 use App\Listeners\UpdateCarePlanStatus;
 use App\Listeners\UserLoggedOut;
+use Illuminate\Auth\Events\Authenticated;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -27,6 +29,9 @@ class CpmEventServiceProvider extends ServiceProvider
     protected $listen = [
         Login::class => [
             UpdateUserLoginInfo::class,
+        ],
+        Authenticated::class => [
+            UpdateUserSessionInfo::class,
         ],
         CarePlanWasApproved::class => [
             UpdateCarePlanStatus::class,
