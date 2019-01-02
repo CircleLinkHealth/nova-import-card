@@ -9,6 +9,9 @@
             <template class="modal-body">
                 <div class="form">
                     <div class="form-row col-md-12">
+                        <h5>(<strong>Warning:</strong> Adding a filter will permanently omit patients that match the filter criteria) </h5>
+                    </div>
+                    <div class="form-row col-md-12">
                         <h4>Select Practice to add Filter:</h4>
                         <hr>
                         <div class="form-group col-md-6">

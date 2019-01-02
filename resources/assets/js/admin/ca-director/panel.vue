@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
             <div class="row">
                 <div class="col-sm-12">
@@ -279,13 +279,14 @@
 
 <style>
     .VueTables__child-row-toggler {
-        width: 16px;
+        width: 100%;
         height: 16px;
         line-height: 16px;
         display: block;
         margin: auto;
         text-align: center;
     }
+
 
     th {
         min-width: 80px;
