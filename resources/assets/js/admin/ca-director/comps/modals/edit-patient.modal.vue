@@ -24,7 +24,7 @@
                     </div>
                     <div class="form-row col-md-12">
                         <div class="form-group col-md-6">
-                            <label for="lang">Language:</label>
+                            <label for="lang">Language: (EN or ES)</label>
                             <input type="text" class="form-control" id="lang" v-model="enrolleeData.lang"/>
                         </div>
                         <div class="form-group col-md-6">

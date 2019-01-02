@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
             <div class="row">
                 <div class="col-sm-12">
@@ -16,6 +16,12 @@
             <div class="row">
                 <div class="col-sm-12">
                     <notifications ref="notificationsComponent" name="ca-panel"></notifications>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12" style="margin-left: 20px; margin-top: 10px; margin-bottom: 10px">
+                    <p>Patients with <strong>ineligible</strong> or <strong>consented</strong> statuses and patients that are assigned to a Care Ambassador are omitted from the table. <br>
+                    Click on any of the buttons below to include assigned, consented or ineligible patients in the table results.</p>
                 </div>
             </div>
             <div class="col-sm-5 text-left">
@@ -279,13 +285,14 @@
 
 <style>
     .VueTables__child-row-toggler {
-        width: 16px;
+        width: 100%;
         height: 16px;
         line-height: 16px;
         display: block;
         margin: auto;
         text-align: center;
     }
+
 
     th {
         min-width: 80px;
