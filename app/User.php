@@ -1314,6 +1314,18 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return trim("${firstName} ${lastName} ${suffix}");
     }
 
+    public function getDoctorFullNameWithSpecialty(){
+
+        if ( ! $this->providerInfo) {
+            return '';
+        }
+
+        $specialty = $this->getSpecialty() == $this->getSuffix() ? '' : "<br> {$this->getSpecialty()}";
+
+
+        return $this->getFullName() . $specialty;
+    }
+
     public function getFullNameWithId()
     {
         $name = $this->getFullName();
