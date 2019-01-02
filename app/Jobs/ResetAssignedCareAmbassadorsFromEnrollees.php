@@ -32,5 +32,6 @@ class ResetAssignedCareAmbassadorsFromEnrollees implements ShouldQueue
     {
         Enrollee::whereNotIn('status', ['ineligible', 'consented'])
             ->update(['care_ambassador_id' => null]);
+
     }
 }
