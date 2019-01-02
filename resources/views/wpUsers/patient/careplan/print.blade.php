@@ -202,7 +202,7 @@ if (isset($patient) && ! empty($patient)) {
                     <div class="row gutter">
                         @if($billingDoctor)
                             <div class="col-xs-5 print-row text-bold">
-                                {{ $regularDoctor->getDoctorFullNameWithSpecialty() }}
+                                {{ $billingDoctor->getDoctorFullNameWithSpecialty() }}
                             </div>
                             <div class="col-xs-3 print-row">
                                 {{$billingDoctor->getPhone()}}
