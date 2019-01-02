@@ -81,11 +81,9 @@ class ImportService
         ])->first();
 
         if ($exists) {
-            if ($exists->importedMedicalRecord()) {
-                return null;
+            if (! $exists->importedMedicalRecord()) {
+                $exists->delete();
             }
-
-            $exists->delete();
         }
 
         if (139 == $practice->id) {

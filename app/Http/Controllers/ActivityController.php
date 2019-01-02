@@ -35,10 +35,6 @@ class ActivityController extends Controller
         Request $request,
         $patientId
     ) {
-        if (auth()->user()->hasRole('care-center') && ! in_array(app()->environment(), ['local', 'staging'])) {
-            return abort(403);
-        }
-
         if ( ! $patientId) {
             return abort(404);
         }

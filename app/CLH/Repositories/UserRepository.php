@@ -228,14 +228,14 @@ class UserRepository
         $permission->setType('user');
         $permission->setEmailAddress($user->email);
 
-        $service->permissions->create($writerFolder['basename'], $permission);
+        $service->permissions->create($writerFolder['basename'], $permission, ['emailMessage' => 'CircleLink Health has shared this folder so you can upload CSV or JSON files that can be later submitted for eligibility through CarePlan manager.']);
 
         $permission = new \Google_Service_Drive_Permission();
         $permission->setRole('writer');
         $permission->setType('user');
         $permission->setEmailAddress('joe@circlelinkhealth.com');
 
-        $service->permissions->create($writerFolder['basename'], $permission);
+        $service->permissions->create($writerFolder['basename'], $permission, ['emailMessage' => 'You have been granted permission to this EHR Report Writer folder.']);
 
         if (app()->environment('staging')) {
             //only staging, so we can have the ability to test, but not get access to PHI
@@ -253,7 +253,7 @@ class UserRepository
                 $permission->setRole('writer');
                 $permission->setType('user');
                 $permission->setEmailAddress($email);
-                $service->permissions->create($writerFolder['basename'], $permission);
+                $service->permissions->create($writerFolder['basename'], $permission, ['emailMessage' => 'You have been granted permission to this EHR Report Writer folder.']);
             }
         }
 

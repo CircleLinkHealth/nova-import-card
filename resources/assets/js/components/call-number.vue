@@ -159,7 +159,7 @@
                 connection: null,
                 //twilio device
                 device: null,
-                dropdownNumber: Object.values(this.patientNumbers).length > 0 ? Object.values(this.patientNumbers)[0] : null,
+                dropdownNumber: Object.values(this.patientNumbers).length > 0 ? Object.values(this.patientNumbers)[0] : 'patientUnlisted',
                 patientUnlistedNumber: '',
                 otherUnlistedNumber: '',
                 callSids: {}

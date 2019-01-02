@@ -62,20 +62,20 @@ class DashboardController extends Controller
         $practiceChargeableRel = $this->primaryPractice->chargeableServices;
 
         $allChargeableServices = ChargeableService::all()
-            ->map(function ($service) use ($practiceChargeableRel) {
-                $existing = $practiceChargeableRel
-                    ->where('id', '=', $service->id)
-                    ->first();
+                                                  ->map(function ($service) use ($practiceChargeableRel) {
+                                                      $existing = $practiceChargeableRel
+                                                          ->where('id', '=', $service->id)
+                                                          ->first();
 
-                $service->is_on = false;
+                                                      $service->is_on = false;
 
-                if ($existing) {
-                    $service->amount = $existing->pivot->amount;
-                    $service->is_on = true;
-                }
+                                                      if ($existing) {
+                                                          $service->amount = $existing->pivot->amount;
+                                                          $service->is_on  = true;
+                                                      }
 
-                return $service;
-            });
+                                                      return $service;
+                                                  });
 
         return view('provider.chargableServices.create', array_merge([
             'practice'           => $this->primaryPractice,
@@ -295,13 +295,13 @@ class DashboardController extends Controller
             $update['term_days']    = $request->input('term_days');
             $update['active']       = $request->input('is_active');
 
-            if ((bool) $this->primaryPractice->active && ! (bool) $update['active']) {
+            if ((bool)$this->primaryPractice->active && ! (bool)$update['active']) {
                 $enrolledPatientsExist = User::ofPractice($this->primaryPractice->id)
-                    ->ofType('participant')
-                    ->whereHas('patientInfo', function ($q) {
-                        $q->enrolled();
-                    })
-                    ->exists();
+                                             ->ofType('participant')
+                                             ->whereHas('patientInfo', function ($q) {
+                                                 $q->enrolled();
+                                             })
+                                             ->exists();
 
                 if ($enrolledPatientsExist) {
                     return redirect()
@@ -313,13 +313,29 @@ class DashboardController extends Controller
             }
         }
 
+        if ($request->input('outgoing_phone_number')) {
+
+            $str         = $request->get('outgoing_phone_number');
+            $phoneNumber = $this->getUSPhoneNumber($str);
+
+            if ( ! $phoneNumber) {
+                return redirect()
+                    ->back()
+                    ->withErrors([
+                        'outgoing_phone_number' => 'The phone number you entered is invalid.',
+                    ]);
+            }
+
+            $update['outgoing_phone_number'] = $phoneNumber;
+        }
+
         $this->primaryPractice->update($update);
 
         if ($request->has('primary_location')) {
             Location::whereId($request['primary_location'])
-                ->update([
-                    'is_primary' => true,
-                ]);
+                    ->update([
+                        'is_primary' => true,
+                    ]);
         }
 
         return redirect()
@@ -355,5 +371,32 @@ class DashboardController extends Controller
     private function removeSuspiciousJsCode($str)
     {
         return preg_replace('/javascript:/', '', $str);
+    }
+
+
+    /**
+     * Returns a US phone number in a simple string format. i.e. +12082014567
+     * Null if not a valid US number
+     *
+     * @param $str
+     *
+     * @return null|string
+     */
+    private function getUSPhoneNumber($str)
+    {
+        try {
+            $phoneNumberUtil = \libphonenumber\PhoneNumberUtil::getInstance();
+            $phoneNumber     = $phoneNumberUtil->parse($str, 'US');
+            $isValid         = $phoneNumberUtil->isValidNumberForRegion($phoneNumber, 'US');
+
+            if (!$isValid) {
+                return null;
+            }
+
+            return '+' . $phoneNumber->getCountryCode() . $phoneNumber->getNationalNumber();
+        } catch (\Exception $e) {
+        return null;
+    }
+
     }
 }
