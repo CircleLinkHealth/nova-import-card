@@ -197,6 +197,7 @@ class WelcomeCallListGenerator
             }
 
             $args['status'] = Enrollee::TO_CALL;
+
 //
 //            if (isset($args['cell_phone'])) {
 //                $args['status'] = Enrollee::TO_SMS;
