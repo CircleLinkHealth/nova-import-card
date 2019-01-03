@@ -75,8 +75,17 @@ class EnrollmentDirectorController extends Controller
         }
 
         Enrollee::whereIn('id',
-            $request->input('enrolleeIds'))->update(['care_ambassador_id' => $request->input('ambassadorId')]);
+            $request->input('enrolleeIds'))
+                ->get()
+                ->map(function ($e) use ($request) {
+                    $e->care_ambassador_id = $request->input('ambassadorId');
 
+                    if ($e->status != Enrollee::SOFT_REJECTED) {
+                        $e->status = Enrollee::TO_CALL;
+
+                    }
+                    $e->save();
+                });
 
         return response()->json([], 200);
 
@@ -124,19 +133,19 @@ class EnrollmentDirectorController extends Controller
 
     public function addEnrolleeCustomFilter(Request $request)
     {
-        if (empty($request['practice_id']['value'])){
+        if (empty($request['practice_id']['value'])) {
             return response()->json([
                 'errors' => 'Please select Practice or all Practices',
             ], 400);
         }
 
-        if (empty($request['filter_type']['value'])){
+        if (empty($request['filter_type']['value'])) {
             return response()->json([
                 'errors' => 'Please select a filter type',
             ], 400);
         }
 
-        if (empty($request['filter_name'])){
+        if (empty($request['filter_name'])) {
             return response()->json([
                 'errors' => 'Please type in the name of the filter you would like to add.',
             ], 400);
@@ -148,12 +157,12 @@ class EnrollmentDirectorController extends Controller
         ]);
 
 
-        if ($request['practice_id']['value'] == 'all'){
+        if ($request['practice_id']['value'] == 'all') {
             $practices = Practice::active()->get();
-            $practices->map(function($p) use ($customFilter){
+            $practices->map(function ($p) use ($customFilter) {
                 $p->enrolleeCustomFilters()->attach($customFilter->id, ['include' => 1]);
             });
-        }else{
+        } else {
             $practice = Practice::find($request['practice_id']['value']);
 
             $practice->enrolleeCustomFilters()->attach($customFilter->id, ['include' => 1]);
