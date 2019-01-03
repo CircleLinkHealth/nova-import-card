@@ -27,10 +27,10 @@ abstract class TestCase extends BaseTestCase
         /*
          * Uncomment below to refresh and seed a conventional database
          *
-         * NOTE: If you're using paratest to run the test suite, and mysql, leave below commented out.
+         * NOTE: If you're using multiple processes in paratest to run the test suite, and the database for the test suite is mysql, leave below commented out.
          */
-//        $this->refreshTestDatabase();
-//        $this->seedDatabase();
+        $this->refreshTestDatabase();
+        $this->seedDatabase();
 
         //Since we have commented out $this->refreshTestDatabase()
         //Adding this to rollback transactions at the end of each test

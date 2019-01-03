@@ -46,6 +46,7 @@ class PageTimerController extends Controller
         $params['activity'] = $pageTimer->activity_type;
 
         $omitted_routes = [
+            'offline-activity-time-requests.create',
             'patient.activity.create',
             'patient.activity.providerUIIndex',
         ];

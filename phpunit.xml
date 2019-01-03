@@ -51,10 +51,10 @@
         <env name="QUEUE_DRIVER" value="sync"/>
 
         <!--You may use this for running the test suite locally using mysql-->
-        <!--<env name="DB_CONNECTION" value="test_suite"/>-->
+        <env name="DB_CONNECTION" value="test_suite"/>
 
         <!--Leave sqlite uncommented for circleci to work-->
-        <env name="DB_CONNECTION" value="sqlite"/>
+        <!--<env name="DB_CONNECTION" value="sqlite"/>-->
 
         <env name="MAIL_DRIVER" value="log"/>
 
