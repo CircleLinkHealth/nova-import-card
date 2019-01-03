@@ -146,6 +146,16 @@ class Enrollee extends BaseModel
      */
     const INELIGIBLE = 'ineligible';
 
+    /**
+     * status = rejected.
+     */
+    const REJECTED = 'rejected';
+
+    /**
+     * status = rejected.
+     */
+    const SOFT_REJECTED = 'soft_rejected';
+
     protected $dates = [
         'consented_at',
         'dob',
@@ -234,17 +244,8 @@ class Enrollee extends BaseModel
         
         'soft_rejected_callback',
     ];
-    
-    /**
-     * STATUS TYPES:
-     * eligble, , , mailed, consented, rejected
-     * eligible: just imported to enrollees table, queue of sms recipients.
-     * smsed: initial sms sent
-     * call_queue: patient will show up in enrollment UI
-     * consented: client consented
-     * ccd_obtained: medical records were imported
-     * ccd_qaed: QAed, good to go for enrollment.
-     */
+
+
     protected $table = 'enrollees';
     
     public function careAmbassador()
