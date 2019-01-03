@@ -28,10 +28,10 @@ return [
 
     'twilio' => [
         'enabled'          => env('TWILIO_ENABLED', false),
-        'sid'              => env('TWILIO_SID'),
-        'token'            => env('TWILIO_TOKEN'),
-        'from'             => env('TWILIO_FROM'),
-        'twiml-app-sid'    => env('TWIML_APP_SID'),
+        'sid'              => env('TWILIO_SID', null),
+        'token'            => env('TWILIO_TOKEN', null),
+        'from'             => env('TWILIO_FROM', null),
+        'twiml-app-sid'    => env('TWIML_APP_SID', null),
         'allow-conference' => env('TWIML_ALLOW_CONFERENCE', false),
         'allow-recording'  => env('TWIML_ALLOW_RECORDING', false),
     ],
