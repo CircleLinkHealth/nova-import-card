@@ -25,13 +25,13 @@
                 </div>
             </div>
             <div class="col-sm-5 text-left">
-                <button class="btn btn-info btn-xs" v-bind:class="{'btn-selected': this._data.assigned}"
+                <button class="btn btn-info btn-xs" v-bind:class="{'btn-selected': !this.hideAssigned}"
                         @click="showAssigned">Show Assigned
                 </button>
-                <button class="btn btn-info btn-xs" v-bind:class="{'btn-selected': this._data.consented}"
+                <button class="btn btn-info btn-xs" v-bind:class="{'btn-selected': !this.hideStatus.includes('consented')}"
                         @click="showConsented">Show Consented
                 </button>
-                <button class="btn btn-info btn-xs" v-bind:class="{'btn-selected': this._data.ineligible}"
+                <button class="btn btn-info btn-xs" v-bind:class="{'btn-selected': !this.hideStatus.includes('ineligible')}"
                         @click="showIneligible">Show Ineligible
                 </button>
             </div>
@@ -105,18 +105,16 @@
             return {
                 loading: false,
                 selectedEnrolleeIds: [],
-                ineligible: false,
-                consented: false,
-                assigned: false,
+                hideStatus: ['ineligible', 'consented'],
+                hideAssigned: true,
                 columns: ['select', 'edit', 'id', 'user_id', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'status', 'eligibility_job_id', 'medical_record_id', 'practice_name', 'provider_name', 'total_time_spent',
                     'last_call_outcome', 'last_call_outcome_reason', 'address', 'address_2', 'city', 'state', 'zip', 'primary_phone', 'other_phone', 'home_phone', 'cell_phone', 'dob', 'preferred_days', 'preferred_window',
                     'primary_insurance', 'secondary_insurance', 'tertiary_insurance', 'has_copay', 'email', 'cpm_problem_1', 'cpm_problem_2', 'soft_rejected_callback', 'created_at'],
                 options: {
                     requestAdapter(data) {
                         if (typeof (self) !== 'undefined') {
-                            data.query.ineligible = self.ineligible;
-                            data.query.consented = self.consented;
-                            data.query.assigned = self.assigned;
+                            data.query.hideStatus = self.hideStatus;
+                            data.query.hideAssigned = self.hideAssigned;
                         }
                         return data;
                     },
@@ -128,7 +126,7 @@
                     perPageValues: [10, 25, 50, 100],
                     skin: "table-striped table-bordered table-hover",
                     filterByColumn: true,
-                    filterable: ['ineligible', 'consented', 'assigned', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'status', 'eligibility_job_id', 'medical_record_id', 'practice_name', 'provider_name', 'primary_insurance', 'secondary_insurance', 'tertiary_insurance'],
+                    filterable: ['hideStatus', 'hideAssigned', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'status', 'eligibility_job_id', 'medical_record_id', 'practice_name', 'provider_name', 'primary_insurance', 'secondary_insurance', 'tertiary_insurance'],
                     sortable: ['first_name', 'last_name', 'practice_name', 'provider_name', 'primary_insurance', 'status', 'created_at', 'state', 'city', 'care_ambassador_name'],
                 },
             }
@@ -195,11 +193,14 @@
             showIneligible() {
                 Event.$emit('notifications-ca-panel:dismissAll');
                 this.loading = true;
-                this._data.ineligible = !this._data.ineligible;
+                if (this.hideStatus.includes('ineligible'))
+                    this.hideStatus = this.hideStatus.filter(item => item !== 'ineligible');
+                else
+                    this.hideStatus.push('ineligible');
+
                 const query = {
-                    ineligible: this._data.ineligible,
-                    consented: this._data.consented,
-                    assigned: this._data.assigned
+                    hideStatus: this.hideStatus,
+                    hideAssigned: this.hideAssigned
                 };
                 this.axios.get(rootUrl(`/admin/ca-director/enrollees?query=${JSON.stringify(query)}&limit=100&ascending=1&page=1&byColumn=1`))
                     .then(resp => {
@@ -219,11 +220,14 @@
             showConsented() {
                 Event.$emit('notifications-ca-panel:dismissAll');
                 this.loading = true;
-                this._data.consented = !this._data.consented;
+                if (this.hideStatus.includes('consented'))
+                    this.hideStatus = this.hideStatus.filter(item => item !== 'consented');
+                else
+                    this.hideStatus.push('consented');
+
                 const query = {
-                    ineligible: this._data.ineligible,
-                    consented: this._data.consented,
-                    assigned: this._data.assigned
+                    hideStatus: this.hideStatus,
+                    hideAssigned: this.hideAssigned
                 };
                 this.axios.get(rootUrl(`/admin/ca-director/enrollees?query=${JSON.stringify(query)}&limit=100&ascending=1&page=1&byColumn=1`))
                     .then(resp => {
@@ -242,11 +246,10 @@
             showAssigned() {
                 Event.$emit('notifications-ca-panel:dismissAll');
                 this.loading = true;
-                this._data.assigned = !this._data.assigned;
+                this.hideAssigned = !this.hideAssigned;
                 const query = {
-                    ineligible: this._data.ineligible,
-                    consented: this._data.consented,
-                    assigned: this._data.assigned
+                    hideStatus: this.hideStatus,
+                    hideAssigned: this.hideAssigned
                 };
                 this.axios.get(rootUrl(`/admin/ca-director/enrollees?query=${JSON.stringify(query)}&limit=100&ascending=1&page=1&byColumn=1`))
                     .then(resp => {

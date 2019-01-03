@@ -22,13 +22,14 @@ class EnrolleeFilters extends QueryFilters
     {
         $query = $this->request->get('query');
 
-        $decoded = json_decode($query, true);
-        $decoded['ineligible'] = empty($decoded['ineligible']) ? 'hide' : 'show';
-        $decoded['consented'] = empty($decoded['consented']) ? 'hide' : 'show';
-        $decoded['assigned'] = empty($decoded['assigned']) ? 'hide' : 'show';
-        $decoded['legacy'] = 'hide';
-        $decoded['rejected'] = 'hide';
-        $filtered = collect($decoded)->filter();
+        $decoded               = json_decode($query, true);
+        $decoded['hideStatus'] = array_merge($decoded['hideStatus'], [
+            'legacy',
+            'rejected',
+        ] );
+
+        $filtered              = collect($decoded)->filter();
+
         return $filtered->all();
     }
 
@@ -40,6 +41,7 @@ class EnrolleeFilters extends QueryFilters
 
         return $this->builder->where('mrn', 'like', '%' . $id . '%');
     }
+
     public function first_name($name)
     {
         if (empty($name)) {
@@ -57,6 +59,7 @@ class EnrolleeFilters extends QueryFilters
 
         return $this->builder->where('last_name', 'like', '%' . $name . '%');
     }
+
     public function provider_name($name)
     {
         if (empty($name)) {
@@ -148,41 +151,16 @@ class EnrolleeFilters extends QueryFilters
         return $this->builder->where('medical_record_id', 'like', '%' . $id . '%');
     }
 
-    public function ineligible($ineligible)
-    {
-        if ($ineligible == 'hide') {
-            return $this->builder->where('status', '!=', 'ineligible' );
-        }
-        return $this->builder;
-    }
-    public function consented($consented)
-    {
-        if ($consented == 'hide') {
-            return $this->builder->where('status', '!=', 'consented' );
-        }
-        return $this->builder;
-    }
-    public function assigned($assigned)
-    {
-        if ($assigned == 'hide') {
-            return $this->builder->where('care_ambassador_name', '=', null );
-        }
-        return $this->builder;
+    public function hideStatus($statuses){
+            return $this->builder->whereNotIn('status', $statuses);
     }
 
-    public function legacy($legacy)
+    public function hideAssigned($hideAssigned)
     {
-        if ($legacy == 'hide') {
-            return $this->builder->where('status', '!=', 'legacy' );
+        if ($hideAssigned) {
+            return $this->builder->where('care_ambassador_name', '=', null);
         }
-        return $this->builder;
-    }
 
-    public function rejected($rejected)
-    {
-        if ($rejected == 'hide') {
-            return $this->builder->where('status', '!=', 'rejected' );
-        }
         return $this->builder;
     }
 }
