@@ -34,7 +34,9 @@ class OpsDashboardDataSeeder extends Seeder
             'Alerts Review',
         ]);
 
-        $patients = User::with('patientInfo')
+        $patients = User::with(['patientInfo', 'patientSummaries' => function ($s) use ($date){
+            $s->where('month_year', '=', $date->copy()->startOfMonth()->toDateString());
+        }])
             ->whereHas('patientInfo', function ($p) {
                 $p->enrolled();
             })
@@ -46,28 +48,42 @@ class OpsDashboardDataSeeder extends Seeder
             $p->save();
         }
 
-        foreach ($patients as $patient) {
-            if ($patient->primaryPractice) {
-                $patient->activities()->createMany([
-                    [
-                        'type'          => $activityType->random(),
-                        'duration'      => $activityDuration->random(),
-                        'duration_unit' => 'seconds',
-                        'performed_at'  => $date->copy()->subDay(1)->toDateTimeString(),
-                        'provider_id'   => $nurses->random(),
-                    ],
-                ]);
-            } else {
-                $patient->attachPractice($practiceIds->random(), null, null, 2);
-                $patient->activities()->createMany([
-                    [
-                        'type'          => $activityType->random(),
-                        'duration'      => $activityDuration->random(),
-                        'duration_unit' => 'seconds',
-                        'performed_at'  => $date->copy()->subDay(5)->toDateTimeString(),
-                        'provider_id'   => $nurses->random(), ],
-                ]);
+        foreach($patients as $patient){
+            $summary = $patient->patientSummaries()->first();
+            if ($summary){
+                $summary->ccm_time = $activityDuration->random();
+                $summary->bhi_time = $activityDuration->random();
+                $summary->save();
             }
         }
+//        $sum = new \App\PatientMonthlySummary();
+//        $sum->createCallReportsForCurrentMonth();
+
+
+
+        //create ccm time from activities
+//        foreach ($patients as $patient) {
+//            if ($patient->primaryPractice) {
+//                $patient->activities()->createMany([
+//                    [
+//                        'type'          => $activityType->random(),
+//                        'duration'      => $activityDuration->random(),
+//                        'duration_unit' => 'seconds',
+//                        'performed_at'  => $date->copy()->subDay(1)->toDateTimeString(),
+//                        'provider_id'   => $nurses->random(),
+//                    ],
+//                ]);
+//            } else {
+//                $patient->attachPractice($practiceIds->random(), null, null, 2);
+//                $patient->activities()->createMany([
+//                    [
+//                        'type'          => $activityType->random(),
+//                        'duration'      => $activityDuration->random(),
+//                        'duration_unit' => 'seconds',
+//                        'performed_at'  => $date->copy()->subDay(5)->toDateTimeString(),
+//                        'provider_id'   => $nurses->random(), ],
+//                ]);
+//            }
+//        }
     }
 }

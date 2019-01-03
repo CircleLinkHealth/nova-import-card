@@ -28,6 +28,9 @@ class UserLoggedOut
     {
         $user = $event->user;
         if ($user) {
+            //not really needed here, but is saves the trip to redis when trying to destroy a non-existing session
+            $user->last_session_id = null;
+
             $user->is_online = false;
             $user->save();
 

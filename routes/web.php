@@ -1185,6 +1185,43 @@ Route::group(['middleware' => 'auth'], function () {
             });
         });
 
+        Route::group(['prefix' => 'ca-director'], function(){
+            Route::get('', [
+                'uses' => 'EnrollmentDirectorController@index',
+                'as'   => 'ca-director.index',
+            ]);
+
+            Route::get('/enrollees', [
+                'uses' => 'EnrollmentDirectorController@getEnrollees',
+                'as'   => 'ca-director.enrollees',
+            ]);
+
+            Route::get('/ambassadors', [
+                'uses' => 'EnrollmentDirectorController@getCareAmbassadors',
+                'as'   => 'ca-director.ambassadors',
+            ]);
+
+            Route::post('/assign-ambassador', [
+                'uses' => 'EnrollmentDirectorController@assignCareAmbassadorToEnrollees',
+                'as'   => 'ca-director.assign-ambassador',
+            ]);
+
+            Route::post('/mark-ineligible', [
+                'uses' => 'EnrollmentDirectorController@markEnrolleesAsIneligible',
+                'as'   => 'ca-director.mark-ineligible',
+            ]);
+
+            Route::post('/edit-enrollee', [
+                'uses' => 'EnrollmentDirectorController@editEnrolleeData',
+                'as'   => 'ca-director.edit-enrollee',
+            ]);
+
+            Route::post('/add-enrollee-custom-filter', [
+                'uses' => 'EnrollmentDirectorController@addEnrolleeCustomFilter',
+                'as'   => 'ca-director.add-enrollee-custom-filter',
+            ]);
+        });
+
         Route::group(['prefix' => 'enrollees'], function () {
             Route::get('', [
                 'uses' => 'EnrolleesController@index',
