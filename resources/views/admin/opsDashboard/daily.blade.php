@@ -12,6 +12,7 @@
                 margin-top: 3px;
                 margin-bottom: 3px;
             }
+
             .ops-csv {
                 margin-top: 13px;
                 text-align: right;
@@ -21,35 +22,40 @@
                 background: #e0e0e0;
                 width: 1px;
                 content: "";
-                display:block;
+                display: block;
                 position: absolute;
-                top:0;
+                top: 0;
                 bottom: 0;
                 right: 0;
                 min-height: 70px;
             }
+
             .nav-tabs > li, .nav-pills > li {
-                float:none;
-                display:inline-block;
-                *display:inline; /* ie7 fix */
-                zoom:1; /* hasLayout ie7 trigger */
+                float: none;
+                display: inline-block;
+                *display: inline; /* ie7 fix */
+                zoom: 1; /* hasLayout ie7 trigger */
             }
 
             .nav-tabs, .nav-pills {
-                text-align:center;
+                text-align: center;
             }
 
             .table td {
                 text-align: center;
             }
 
-            table { white-space: nowrap; }
+            table {
+                white-space: nowrap;
+            }
 
             .panel-body {
                 overflow-x: auto;
             }
 
-            .table { white-space: nowrap; }
+            .table {
+                white-space: nowrap;
+            }
 
             .color-green {
                 color: green;
@@ -69,10 +75,13 @@
             <form action="{{route('OpsDashboard.index')}}" method="GET">
                 <div class="form-group">
                     <div class="col-md-12">
-                        <article>Active Patients as of @if($dateGenerated){{$dateGenerated->toTimeString()}}@else 11pm ET @endif on:</article>
+                        <article>Active Patients as of @if($dateGenerated){{$dateGenerated->toTimeString()}}@else 11pm
+                            ET @endif on:
+                        </article>
                     </div>
                     <div class="col-md-8">
-                        <input id="date" type="date" name="date" value="{{$date->toDateString()}}" max="{{$maxDate->toDateString()}}" required class="form-control">
+                        <input id="date" type="date" name="date" value="{{$date->toDateString()}}"
+                               max="{{$maxDate->toDateString()}}" required class="form-control">
                     </div>
                     <div class="col-md-4">
                         <input type="submit" value="Submit" class="btn btn-info">
@@ -89,7 +98,8 @@
                 </div>
                 <div class="col-md-12">
                     <div class="ops-csv">
-                        <a href="{{route('OpsDashboard.dailyCsv')}}" class="btn btn-info">Generate CSV: From 11pm to Now</a>
+                        <a href="{{route('OpsDashboard.dailyCsv')}}" class="btn btn-info">Generate CSV: From 11pm to
+                            Now</a>
                     </div>
                 </div>
             </div>
@@ -105,92 +115,121 @@
     </div>
     <div class="container">
         @if($rows != null)
-        <div class="panel panel-default">
-            {{--<div class="panel-heading">CarePlan Manager Patient Totals for {{$date->toDateString()}}</div>--}}
-            <div class="panel-body">
-                <table class="table table-striped table-bordered table-curved table-condensed table-hover">
-                    <thead>
-                    <tr>
-                        <th>Active Accounts</th>
-                        <th>0 mins</th>
-                        <th>0-5</th>
-                        <th>5-10</th>
-                        <th>10-15</th>
-                        <th>15-20</th>
-                        <th>20+</th>
-                        <th>Total</th>
-                        <th>Prior Day totals</th>
-                        <th>Added</th>
-                        <th>Unreachable</th>
-                        <th>Paused</th>
-                        <th>Withdrawn</th>
-                        <th>DELTA</th>
-                        <th>G0506 To Enroll</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach($rows as $key => $value)
-                        @if($key == 'CircleLink Total')
-                            <div class="row vdivide">
-                                <tr class="table-info">
-                                    <td><strong>{{$key}}</strong></td>
-                                    <td>{{$value['0 mins']}}</td>
-                                    <td>{{$value['0-5']}}</td>
-                                    <td>{{$value['5-10']}}</td>
-                                    <td>{{$value['10-15']}}</td>
-                                    <td>{{$value['15-20']}}</td>
-                                    <td>{{$value['20+']}}</td>
-                                    <td>{{$value['Total']}}</td>
-                                    <td>{{$value['Prior Day totals']}}</td>
-                                    @if($value['Added'] != 0)<td class="color-green">{{$value['Added']}}</td>@else<td>{{$value['Added']}}</td>@endif
-                                    @if($value['Unreachable'] != 0)<td class="color-red">-{{$value['Unreachable']}}</td>@else<td>{{$value['Unreachable']}}</td>@endif
-                                    @if($value['Paused'] != 0)<td class="color-red">-{{$value['Paused']}}</td>@else<td>{{$value['Paused']}}</td>@endif
-                                    @if($value['Withdrawn'] != 0)<td class="color-red">-{{$value['Withdrawn']}}</td>@else<td>{{$value['Withdrawn']}}</td>@endif
-                                    <td>{{$value['Delta']}}</td>
-                                    <td>{{$value['G0506 To Enroll']}}</td>
-                                </tr>
-                            </div>
-                        @else
-                            <div class="row vdivide">
-                                <tr>
-                                    <th>{{$key}}</th>
-                                    <td>{{$value['0 mins']}}</td>
-                                    <td>{{$value['0-5']}}</td>
-                                    <td>{{$value['5-10']}}</td>
-                                    <td>{{$value['10-15']}}</td>
-                                    <td>{{$value['15-20']}}</td>
-                                    <td>{{$value['20+']}}</td>
-                                    <td>{{$value['Total']}}</td>
-                                    <td>{{$value['Prior Day totals']}}</td>
-                                    @if($value['Added'] != 0)<td class="color-green">{{$value['Added']}}</td>@else<td>{{$value['Added']}}</td>@endif
-                                    @if($value['Unreachable'] != 0)<td class="color-red">-{{$value['Unreachable']}}</td>@else<td>{{$value['Unreachable']}}</td>@endif
-                                    @if($value['Paused'] != 0)<td class="color-red">-{{$value['Paused']}}</td>@else<td>{{$value['Paused']}}</td>@endif
-                                    @if($value['Withdrawn'] != 0)<td class="color-red">-{{$value['Withdrawn']}}</td>@else<td>{{$value['Withdrawn']}}</td>@endif
-                                    <td>{{$value['Delta']}}</td>
-                                    <td>{{$value['G0506 To Enroll']}}</td>
-                                </tr>
-                            </div>
-                        @endif
+            <div class="panel panel-default">
+                {{--<div class="panel-heading">CarePlan Manager Patient Totals for {{$date->toDateString()}}</div>--}}
+                <div class="panel-body">
+                    <table class="table table-striped table-bordered table-curved table-condensed table-hover">
+                        <thead>
+                        <tr>
+                            <th>Active Accounts</th>
+                            <th>0 mins</th>
+                            <th>0-5</th>
+                            <th>5-10</th>
+                            <th>10-15</th>
+                            <th>15-20</th>
+                            <th>20+</th>
+                            <th>20+ BHI</th>
+                            <th>Total</th>
+                            <th>Prior Day totals</th>
+                            <th>Added</th>
+                            <th>Unreachable</th>
+                            <th>Paused</th>
+                            <th>Withdrawn</th>
+                            <th>DELTA</th>
+                            <th>G0506 To Enroll</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach($rows as $key => $value)
+                            @if($key == 'CircleLink Total')
+                                <div class="row vdivide">
+                                    <tr class="table-info">
+                                        <td><strong>{{$key}}</strong></td>
+                                        <td>{{$value['0 mins']}}</td>
+                                        <td>{{$value['0-5']}}</td>
+                                        <td>{{$value['5-10']}}</td>
+                                        <td>{{$value['10-15']}}</td>
+                                        <td>{{$value['15-20']}}</td>
+                                        <td>{{$value['20+']}}</td>
+                                        @if(isset($value['20+ BHI']))
+                                            <td>{{$value['20+ BHI']}}</td>
+                                        @else
+                                            <td>N/A</td>
+                                        @endif
+                                        <td>{{$value['Total']}}</td>
+                                        <td>{{$value['Prior Day totals']}}</td>
+                                        @if($value['Added'] != 0)
+                                            <td class="color-green">{{$value['Added']}}</td>@else
+                                            <td>{{$value['Added']}}</td>@endif
+                                        @if($value['Unreachable'] != 0)
+                                            <td class="color-red">-{{$value['Unreachable']}}</td>@else
+                                            <td>{{$value['Unreachable']}}</td>@endif
+                                        @if($value['Paused'] != 0)
+                                            <td class="color-red">-{{$value['Paused']}}</td>@else
+                                            <td>{{$value['Paused']}}</td>@endif
+                                        @if($value['Withdrawn'] != 0)
+                                            <td class="color-red">-{{$value['Withdrawn']}}</td>@else
+                                            <td>{{$value['Withdrawn']}}</td>@endif
+                                        <td>{{$value['Delta']}}</td>
+                                        <td>{{$value['G0506 To Enroll']}}</td>
+                                    </tr>
+                                </div>
+                            @else
+                                <div class="row vdivide">
+                                    <tr>
+                                        <th>{{$key}}</th>
+                                        <td>{{$value['0 mins']}}</td>
+                                        <td>{{$value['0-5']}}</td>
+                                        <td>{{$value['5-10']}}</td>
+                                        <td>{{$value['10-15']}}</td>
+                                        <td>{{$value['15-20']}}</td>
+                                        <td>{{$value['20+']}}</td>
+                                        @if(isset($value['20+ BHI']))
+                                            <td>{{$value['20+ BHI']}}</td>
+                                        @else
+                                            <td>N/A</td>
+                                        @endif
+                                        <td>{{$value['Total']}}</td>
+                                        <td>{{$value['Prior Day totals']}}</td>
+                                        @if($value['Added'] != 0)
+                                            <td class="color-green">{{$value['Added']}}</td>@else
+                                            <td>{{$value['Added']}}</td>@endif
+                                        @if($value['Unreachable'] != 0)
+                                            <td class="color-red">-{{$value['Unreachable']}}</td>@else
+                                            <td>{{$value['Unreachable']}}</td>@endif
+                                        @if($value['Paused'] != 0)
+                                            <td class="color-red">-{{$value['Paused']}}</td>@else
+                                            <td>{{$value['Paused']}}</td>@endif
+                                        @if($value['Withdrawn'] != 0)
+                                            <td class="color-red">-{{$value['Withdrawn']}}</td>@else
+                                            <td>{{$value['Withdrawn']}}</td>@endif
+                                        <td>{{$value['Delta']}}</td>
+                                        <td>{{$value['G0506 To Enroll']}}</td>
+                                    </tr>
+                                </div>
+                            @endif
 
 
-                    @endforeach
-                    </tbody>
-                </table>
-            </div>
-            <div class="panel-footer">
-                <div class="row">
-                    <div class="col-md-4">
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-md-4">
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-            @else
+        @else
             <div class="well well-sm">
                 <div class="alert alert-danger" role="alert">
-                    <article>No report found for {{$date->toDateString()}}. Please select another date, or generate CSV report for today.</article>
+                    <article>No report found for {{$date->toDateString()}}. Please select another date, or generate CSV
+                        report for today.
+                    </article>
                 </div>
             </div>
-            @endif
+        @endif
     </div>
 
 

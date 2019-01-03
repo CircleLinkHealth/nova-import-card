@@ -54,13 +54,13 @@ class ActivityController extends Controller
         }
 
         $provider_info = User::ofType(['care-center', 'provider'])
-            ->intersectPracticesWith($patient)
-            ->orderBy('first_name')
-            ->get()
-            ->mapWithKeys(function ($user) {
-                return [$user->id => $user->getFullName()];
-            })
-            ->all();
+                             ->intersectPracticesWith($patient)
+                             ->orderBy('first_name')
+                             ->get()
+                             ->mapWithKeys(function ($user) {
+                                 return [$user->id => $user->getFullName()];
+                             })
+                             ->all();
 
         $view_data = [
             'program_id'     => $patient->program_id,
@@ -118,18 +118,18 @@ class ActivityController extends Controller
         }
 
         $acts = DB::table('lv_activities')
-            ->select(DB::raw('id,provider_id,logged_from,DATE(performed_at)as performed_at, type, SUM(duration) as duration, is_behavioral'))
-            ->where('performed_at', '>=', $start)
-            ->where('performed_at', '<=', $end)
-            ->where('patient_id', $patientId)
-            ->where(function ($q) {
-                $q->where('logged_from', 'activity')
-                    ->Orwhere('logged_from', 'manual_input')
-                    ->Orwhere('logged_from', 'pagetimer');
-            })
-            ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
-            ->orderBy('created_at', 'desc')
-            ->get();
+                  ->select(DB::raw('id,provider_id,logged_from,DATE(performed_at)as performed_at, type, SUM(duration) as duration, is_behavioral'))
+                  ->where('performed_at', '>=', $start)
+                  ->where('performed_at', '<=', $end)
+                  ->where('patient_id', $patientId)
+                  ->where(function ($q) {
+                      $q->where('logged_from', 'activity')
+                        ->orWhere('logged_from', 'manual_input')
+                        ->orWhere('logged_from', 'pagetimer');
+                  })
+                  ->groupBy(DB::raw('provider_id, DATE(performed_at),type,is_behavioral'))
+                  ->orderBy('created_at', 'desc')
+                  ->get();
 
         $acts = json_decode(json_encode($acts), true);            //debug($acts);
 
@@ -146,7 +146,7 @@ class ActivityController extends Controller
             $data = false;
         }
 
-        $reportData = 'data:'.json_encode($acts).'';
+        $reportData = 'data:' . json_encode($acts) . '';
 
         $years = [];
         for ($i = 0; $i < 3; ++$i) {
@@ -200,7 +200,7 @@ class ActivityController extends Controller
         $activity['provider_name'] = User::find($act->provider_id)
             ? (User::find($act->provider_id)->getFullName())
             : '';
-        $activity['duration'] = intval($act->duration) / 60;
+        $activity['duration']      = intval($act->duration) / 60;
 
         $careteam_info = [];
         $careteam_ids  = $patient->getCareTeam();
@@ -254,7 +254,7 @@ class ActivityController extends Controller
 
             $nurseId   = $input['provider_id'];
             $patientId = $input['patient_id'];
-            $duration  = (int) $input['duration'];
+            $duration  = (int)$input['duration'];
 
             $patient = User::find($patientId);
 
@@ -262,7 +262,7 @@ class ActivityController extends Controller
                 $isCcm        = $patient->isCcm();
                 $isBehavioral = $patient->isBhi();
                 if ($isCcm && $isBehavioral) {
-                    $is_bhi = isset($input['is_behavioral'])
+                    $is_bhi                 = isset($input['is_behavioral'])
                         ? ('true' != $input['is_behavioral']
                             ? false
                             : true)
@@ -272,24 +272,24 @@ class ActivityController extends Controller
                     $input['is_behavioral'] = $isBehavioral;
                 }
             } else {
-                throw new \Exception('patient_id '.$patientId.' does not correspond to any patient');
+                throw new \Exception('patient_id ' . $patientId . ' does not correspond to any patient');
             }
 
             // Send a request to the time-tracking server to increment the start-time by the duration of the offline-time activity (in seconds)
             if ($nurseId && $patientId && $duration) {
-                $url = config('services.ws.server-url').'/'.$nurseId.'/'.$patientId;
+                $url = config('services.ws.server-url') . '/' . $nurseId . '/' . $patientId;
                 try {
                     $timeParam = $is_bhi
                         ? 'bhiTime'
                         : 'ccmTime';
-                    $res = $client->put($url, [
+                    $res       = $client->put($url, [
                         'form_params' => [
                             'startTime' => $duration,
                             $timeParam  => $duration,
                         ],
                     ]);
-                    $status = $res->getStatusCode();
-                    $body   = $res->getBody();
+                    $status    = $res->getStatusCode();
+                    $body      = $res->getBody();
                     if (200 == $status) {
                         Log::info($body);
                     } else {

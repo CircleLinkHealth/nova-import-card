@@ -8,6 +8,7 @@ namespace App;
 
 use App\Facades\StringManipulation;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
+use App\Filters\Filterable;
 use Carbon\Carbon;
 
 /**
@@ -122,6 +123,9 @@ use Carbon\Carbon;
  */
 class Enrollee extends BaseModel
 {
+
+    use Filterable;
+
     /**
      * status = eligible.
      */
@@ -136,7 +140,12 @@ class Enrollee extends BaseModel
      * status = to_sms.
      */
     const TO_SMS = 'sms_queue';
-    
+
+    /**
+     * status = ineligible.
+     */
+    const INELIGIBLE = 'ineligible';
+
     protected $dates = [
         'consented_at',
         'dob',

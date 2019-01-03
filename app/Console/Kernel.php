@@ -21,6 +21,7 @@ use App\Console\Commands\QueueEligibilityBatchForProcessing;
 use App\Console\Commands\QueueGenerateNurseDailyReport;
 use App\Console\Commands\QueueGenerateNurseInvoices;
 use App\Console\Commands\QueueGenerateOpsDailyReport;
+use App\Console\Commands\QueueResetAssignedCareAmbassadorsFromEnrollees;
 use App\Console\Commands\QueueSendApprovedCareplanSlackNotification;
 use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
@@ -87,6 +88,9 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(GetAppointments::class)
                  ->dailyAt('22:30');
+
+        $schedule->command(QueueResetAssignedCareAmbassadorsFromEnrollees::class)
+                 ->dailyAt('00:30');
 
         $schedule->command(GetCcds::class)
                  ->everyThirtyMinutes();

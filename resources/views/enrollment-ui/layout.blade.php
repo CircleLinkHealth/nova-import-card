@@ -36,7 +36,7 @@
                 <li><a href="{{route('patients.dashboard')}}">Patient Dashboard</a></li>
             @endif
 
-            @if($enrollee && ($enrollee->practice->enrollmentTips() ?? collect())->count() > 0)
+            @if(isset($enrollee) && ($enrollee->practice->enrollmentTips() ?? collect())->count() > 0)
                 <li>
                     <!-- #tips is a modal in dashboard.blade -->
                     <a href="#tips" id="tips-link" class="modal-trigger">

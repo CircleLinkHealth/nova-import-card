@@ -61,7 +61,7 @@
 					<div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
 
 						<form class="form-horizontal" role="form" method="POST"
-							  action="{{ url('auth/password/email') }}">
+							  action="{{ url('auth/password/email') }}" autocomplete="off">
 							<input type="hidden" name="_token" value="{{ csrf_token() }}">
 
 							<div class="form-group">
