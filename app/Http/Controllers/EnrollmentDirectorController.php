@@ -75,8 +75,17 @@ class EnrollmentDirectorController extends Controller
         }
 
         Enrollee::whereIn('id',
-            $request->input('enrolleeIds'))->update(['care_ambassador_id' => $request->input('ambassadorId')]);
+            $request->input('enrolleeIds'))
+                ->get()
+                ->map(function($e) use ($request) {
+                    $e->care_ambassador_id = $request->input('ambassadorId');
 
+                    if ($e->status != Enrollee::SOFT_REJECTED){
+                        $e->status = Enrollee::TO_CALL;
+
+                    }
+                    $e->save();
+        });
 
         return response()->json([], 200);
 

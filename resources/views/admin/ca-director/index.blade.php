@@ -39,7 +39,7 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
-                        <div class="panel panel-default">
+                        <div>
                             <div class="panel-body">
                                 <div>
                                     @include('errors.errors')

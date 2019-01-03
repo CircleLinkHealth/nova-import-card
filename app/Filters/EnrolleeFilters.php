@@ -26,6 +26,8 @@ class EnrolleeFilters extends QueryFilters
         $decoded['ineligible'] = empty($decoded['ineligible']) ? 'hide' : 'show';
         $decoded['consented'] = empty($decoded['consented']) ? 'hide' : 'show';
         $decoded['assigned'] = empty($decoded['assigned']) ? 'hide' : 'show';
+        $decoded['legacy'] = 'hide';
+        $decoded['rejected'] = 'hide';
         $filtered = collect($decoded)->filter();
         return $filtered->all();
     }
@@ -164,6 +166,22 @@ class EnrolleeFilters extends QueryFilters
     {
         if ($assigned == 'hide') {
             return $this->builder->where('care_ambassador_name', '=', null );
+        }
+        return $this->builder;
+    }
+
+    public function legacy($legacy)
+    {
+        if ($legacy == 'hide') {
+            return $this->builder->where('status', '!=', 'legacy' );
+        }
+        return $this->builder;
+    }
+
+    public function rejected($rejected)
+    {
+        if ($rejected == 'hide') {
+            return $this->builder->where('status', '!=', 'rejected' );
         }
         return $this->builder;
     }

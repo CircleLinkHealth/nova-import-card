@@ -196,7 +196,7 @@ class WelcomeCallListGenerator
                 $args['lang'] = $args['language'];
             }
 
-//            $args['status'] = Enrollee::TO_CALL;
+            $args['status'] = Enrollee::TO_CALL;
 //
 //            if (isset($args['cell_phone'])) {
 //                $args['status'] = Enrollee::TO_SMS;
