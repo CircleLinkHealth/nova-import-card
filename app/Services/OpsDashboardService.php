@@ -270,7 +270,7 @@ class OpsDashboardService
             }
         }
         $count['Total'] = $patients->filter(function($value, $key){
-            return $value->patientInfo->ccm_status == 'enrolled' && $value->patientSummaries->first() !== null;
+            return $value->patientInfo->ccm_status == 'enrolled';
         })->count();
 
         $pausedCount      = count($paused);
