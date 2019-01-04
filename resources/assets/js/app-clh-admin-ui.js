@@ -31,11 +31,12 @@ Vue.use(VueForm, {
 });
 
 import EventBus from './admin/time-tracker/comps/event-bus'
-import { ClientTable } from 'vue-tables-2'
+import { ClientTable, ServerTable } from 'vue-tables-2'
 
 const DatepickerComponent = () => import(/* webpackChunkName: "chunk-datepicker" */ 'vuejs-datepicker')
 const CallMgmtApp = () => import(/* webpackChunkName: "chunk-admin" */ './admin/calls/app')
 const CallMgmtAppV2 = () => import(/* webpackChunkName: "chunk-admin" */ './admin/calls/app-v2')
+const CaDirectorPanel = () => import(/* webpackChunkName: "chunk-admin" */ './admin/ca-director/panel')
 const NurseDailyHours = () => import(/* webpackChunkName: "chunk-admin" */ './components/pages/work-schedule/daily-hours')
 const ImporterTrainerComponent = () => import(/* webpackChunkName: "chunk-importer-trainer" */ './components/Importer/trainer')
 const Select2Component = () => import(/* webpackChunkName: "chunk-admin" */ './components/src/select2')
@@ -45,10 +46,12 @@ const PassportAuthorizedClientsComponent = () => import(/* webpackChunkName: "ch
 const PassportPersonalAccessTokensComponent = () => import(/* webpackChunkName: "chunk-admin" */ './components/passport/PersonalAccessTokens')
 
 Vue.use(ClientTable, {}, false)
+Vue.use(ServerTable, {}, false)
 
 Vue.component('v-datepicker', DatepickerComponent)
 Vue.component('call-mgmt-app', CallMgmtApp)
 Vue.component('call-mgmt-app-v2', CallMgmtAppV2)
+Vue.component('ca-director-panel', CaDirectorPanel)
 Vue.component('nurseDailyHours', NurseDailyHours)
 Vue.component('select2', Select2Component)
 Vue.component('time-tracker-events', TimeTrackerEventsComponent)

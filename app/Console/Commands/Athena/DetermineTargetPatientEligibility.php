@@ -121,6 +121,8 @@ class DetermineTargetPatientEligibility extends Command
                         'practice_id' => $practice->id,
                         'batch_id'    => $this->argument('batchId') ?? null,
 
+                        'status'      => Enrollee::TO_CALL,
+
                         //notRequired
                         'address'   => $demos['address1'] ?? null,
                         'address_2' => $demos['address2'] ?? null,

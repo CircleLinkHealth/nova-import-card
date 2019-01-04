@@ -92,35 +92,36 @@ class EnrollmentCenterController extends Controller
             ]);
         }
 
+        //This will only bring enrollees assigned to care ambassador from CA Director Panel
+        $enrolleeQuery = Enrollee::where('care_ambassador_id', $careAmbassador->user_id);
+
         //if logged in ambassador is spanish, pick up a spanish patient
         if ($careAmbassador->speaks_spanish) {
-            $enrollee = Enrollee
-                ::toCall()
-                    ->where('lang', 'ES')
-                    ->orderBy('attempt_count')
-                    ->with('practice.enrollmentTips')
-                    ->first();
+            $enrollee = $enrolleeQuery
+                ->toCall()
+                ->where('lang', 'ES')
+                ->orderBy('attempt_count')
+                ->with('practice.enrollmentTips')
+                ->first();
 
             //if no spanish, get a EN user.
             if (null == $enrollee) {
-                $enrollee = Enrollee
-                    ::toCall()
-                        ->orderBy('attempt_count')
-                        ->with('practice.enrollmentTips')
-                        ->first();
-            }
-        } else { // auth ambassador doesn't speak ES, get a regular user.
-            $enrollee = Enrollee
-                ::toCall()
+                $enrollee = $enrolleeQuery
+                    ->toCall()
                     ->orderBy('attempt_count')
                     ->with('practice.enrollmentTips')
                     ->first();
+            }
+        } else { // auth ambassador doesn't speak ES, get a regular user.
+            $enrollee = $enrolleeQuery
+                ->toCall()
+                ->orderBy('attempt_count')
+                ->with('practice.enrollmentTips')
+                ->first();
         }
 
-        $engagedEnrollee = Enrollee::where([
-            'status'             => 'engaged',
-            'care_ambassador_id' => $careAmbassador->user_id,
-        ])
+        $engagedEnrollee = $enrolleeQuery
+            ->where('status', '=', 'engaged')
             ->orderBy('attempt_count')
             ->with('practice.enrollmentTips')
             ->first();
@@ -135,8 +136,7 @@ class EnrollmentCenterController extends Controller
         }
 
         //mark as engaged to prevent double dipping
-        $enrollee->status             = 'engaged';
-        $enrollee->care_ambassador_id = $careAmbassador->user_id;
+        $enrollee->status = 'engaged';
         $enrollee->save();
 
         return view(
@@ -159,12 +159,12 @@ class EnrollmentCenterController extends Controller
         $careAmbassador = auth()->user()->careAmbassador;
 
         //soft_rejected or rejected
-        $status = $request->input('status', 'rejected');
+        $status = $request->input('status', Enrollee::REJECTED);
 
         //update report for care ambassador:
         $report = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
 
-        if ('rejected' === $status) {
+        if (Enrollee::REJECTED === $status) {
             $report->no_rejected = $report->no_rejected + 1;
         } else {
             $report->no_soft_rejected = $report->no_soft_rejected + 1;

@@ -48,7 +48,7 @@ abstract class QueryFilters
             if ( ! method_exists($this, $name)) {
                 continue;
             }
-            if (strlen($value)) {
+            if (!empty($value)) {
                 $this->$name($value);
             } else {
                 $this->$name();

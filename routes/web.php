@@ -756,6 +756,13 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix'     => 'manage-patients/',
         'middleware' => ['patientProgramSecurity'],
     ], function () {
+        Route::group(['prefix' => 'offline-activity-time-requests'], function () {
+            Route::get('', [
+                'uses' => 'OfflineActivityTimeRequestController@index',
+                'as'   => 'offline-activity-time-requests.index',
+            ])->middleware('permission:patient.read,offlineActivityRequest.read');
+        });
+
         Route::get('demographics/create', [
             'uses' => 'Patient\PatientCareplanController@createPatientDemographics',
             'as'   => 'patient.demographics.create',
@@ -957,7 +964,6 @@ Route::group(['middleware' => 'auth'], function () {
             ])->middleware('permission:appointment.create,patient.read');
         });
 
-        // notes
         Route::group(['prefix' => 'notes'], function () {
             Route::get('create', [
                 'uses' => 'NotesController@create',
@@ -995,16 +1001,26 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'patient.reports.progress',
         ])->middleware('permission:patient.read,provider.read,biometric.read,biometric.update,medication.read,medication.update');
 
-        // activities
+        Route::group(['prefix' => 'offline-activity-time-requests'], function () {
+            Route::get('create', [
+                'uses' => 'OfflineActivityTimeRequestController@create',
+                'as'   => 'offline-activity-time-requests.create',
+            ])->middleware('permission:patient.read,offlineActivityRequest.create');
+            Route::post('store', [
+                'uses' => 'OfflineActivityTimeRequestController@store',
+                'as'   => 'offline-activity-time-requests.store',
+            ])->middleware('permission:offlineActivityRequest.create');
+        });
+
         Route::group(['prefix' => 'activities'], function () {
             Route::get('create', [
                 'uses' => 'ActivityController@create',
                 'as'   => 'patient.activity.create',
-            ])->middleware('permission:patient.read');
+            ])->middleware('permission:patient.read,offlineActivity.create');
             Route::post('store', [
                 'uses' => 'ActivityController@store',
                 'as'   => 'patient.activity.store',
-            ])->middleware('permission:activity.create,patientSummary.create,patientSummary.update');
+            ])->middleware('permission:activity.create,offlineActivity.create,patientSummary.create,patientSummary.update');
             Route::get('view/{actId}', [
                 'uses' => 'ActivityController@show',
                 'as'   => 'patient.activity.view',
@@ -1054,6 +1070,17 @@ Route::group(['middleware' => 'auth'], function () {
         ],
         'prefix' => 'admin',
     ], function () {
+        Route::group(['prefix' => 'offline-activity-time-requests'], function () {
+            Route::get('', [
+                'uses' => 'OfflineActivityTimeRequestController@adminIndex',
+                'as'   => 'admin.offline-activity-time-requests.index',
+            ])->middleware('permission:patient.read,offlineActivityRequest.read');
+            Route::post('respond', [
+                'uses' => 'OfflineActivityTimeRequestController@adminRespond',
+                'as'   => 'admin.offline-activity-time-requests.respond',
+            ])->middleware('permission:patient.read,offlineActivityRequest.read');
+        });
+        
         Route::get('pokit', 'PokitDokController@thisIsJustToTryThingsOut');
 
         Route::group(['prefix' => 'direct-mail'], function () {
@@ -1156,6 +1183,43 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'eligibility.download.logs.csv',
                 ])->middleware('permission:batch.read');
             });
+        });
+
+        Route::group(['prefix' => 'ca-director'], function(){
+            Route::get('', [
+                'uses' => 'EnrollmentDirectorController@index',
+                'as'   => 'ca-director.index',
+            ]);
+
+            Route::get('/enrollees', [
+                'uses' => 'EnrollmentDirectorController@getEnrollees',
+                'as'   => 'ca-director.enrollees',
+            ]);
+
+            Route::get('/ambassadors', [
+                'uses' => 'EnrollmentDirectorController@getCareAmbassadors',
+                'as'   => 'ca-director.ambassadors',
+            ]);
+
+            Route::post('/assign-ambassador', [
+                'uses' => 'EnrollmentDirectorController@assignCareAmbassadorToEnrollees',
+                'as'   => 'ca-director.assign-ambassador',
+            ]);
+
+            Route::post('/mark-ineligible', [
+                'uses' => 'EnrollmentDirectorController@markEnrolleesAsIneligible',
+                'as'   => 'ca-director.mark-ineligible',
+            ]);
+
+            Route::post('/edit-enrollee', [
+                'uses' => 'EnrollmentDirectorController@editEnrolleeData',
+                'as'   => 'ca-director.edit-enrollee',
+            ]);
+
+            Route::post('/add-enrollee-custom-filter', [
+                'uses' => 'EnrollmentDirectorController@addEnrolleeCustomFilter',
+                'as'   => 'ca-director.add-enrollee-custom-filter',
+            ]);
         });
 
         Route::group(['prefix' => 'enrollees'], function () {
