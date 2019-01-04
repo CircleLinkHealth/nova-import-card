@@ -8,7 +8,7 @@
                 </div>
                 <div class="col-sm-12" :class="{ 'problem-container': problems.length > 12 }">
                     <div class="btn-group" :class="{ 'problem-buttons': problems.length > 12 }" role="group" aria-label="We are managing">
-                        <div class="btn btn-secondary problem-button" :class="{ selected: selectedProblem && (selectedProblem.id === problem.id) }" 
+                        <div class="btn btn-secondary problem-button" :class="{ selected: selectedProblem && (selectedProblem.id === problem.id) }"
                                 v-for="(problem, index) in problemsForListing" :key="index" @click="select(problem)">
                             {{problem.name || `no name (${problem.id})`}}
                             <span class="delete" title="remove this cpm problem" @click="removeProblem">x</span>
@@ -46,7 +46,7 @@
                             </div>
                         </form>
                     </div>
-                    
+
                 </div>
                 <div class="col-sm-12 top-20" v-if="selectedProblem">
                      <div class="row top-20">
@@ -78,11 +78,11 @@
                                             <div class="col-sm-2">
                                                 <br>
                                                 <loader class="absolute" v-if="loaders.editProblem"></loader>
-                                                <input type="submit" class="btn btn-secondary margin-0 instruction-add selected" value="Save" 
+                                                <input type="submit" class="btn btn-secondary margin-0 instruction-add selected" value="Save"
                                                     title="Edit this problem" :disabled="(selectedProblem.name || '').length === 0 || patientHasSelectedProblem" />
                                             </div>
                                         </div>
-                                        
+
                                     </div>
                                 </div>
                             </form>
@@ -117,7 +117,7 @@
                                     <div class="row">
                                         <form @submit="addCode">
                                             <div class="col-sm-5">
-                                                <v-select class="form-control" v-model="selectedProblem.newCode.selectedCode" 
+                                                <v-select class="form-control" v-model="selectedProblem.newCode.selectedCode"
                                                     :options="codesForSelect" :class="{ error: codeHasBeenSelectedBefore }" required></v-select>
                                             </div>
                                             <div class="col-sm-5">
@@ -125,7 +125,7 @@
                                             </div>
                                             <div class="col-sm-2 text-right">
                                                 <loader class="absolute" v-if="loaders.addCode"></loader>
-                                                <input type="submit" class="btn btn-secondary selected margin-0" value="Add" 
+                                                <input type="submit" class="btn btn-secondary selected margin-0" value="Add"
                                                     :disabled="!selectedProblem.newCode.code || !(selectedProblem.newCode.selectedCode || {}).value || codeHasBeenSelectedBefore" />
                                             </div>
                                         </form>
@@ -184,7 +184,10 @@
                         id: pB.id,
                         code: snomed.icd_10_code
                     })) : [])])
-                }, []).distinct(p => p.name)
+                }, []).distinct(p => p.name).sort((a,b) => {
+                    if(a.name > b.name) {return -1;}
+                    return 0;
+                })
             },
             codeHasBeenSelectedBefore() {
                 return !!this.selectedProblem.codes.find(code => !!code.id && code.problem_code_system_id === (this.selectedProblem.newCode.selectedCode || {}).value)
@@ -259,8 +262,8 @@
             addCcdProblem(e) {
                 e.preventDefault()
                 this.loaders.addProblem = true
-                return this.axios.post(rootUrl(`api/patients/${this.patientId}/problems/ccd`), { 
-                                    name: this.newProblem.name, 
+                return this.axios.post(rootUrl(`api/patients/${this.patientId}/problems/ccd`), {
+                                    name: this.newProblem.name,
                                     cpm_problem_id: this.newProblem.cpm_problem_id,
                                     is_monitored: this.newProblem.is_monitored,
                                     icd10: this.newProblem.icd10
@@ -279,8 +282,8 @@
             editCcdProblem(e) {
                 e.preventDefault()
                 this.loaders.editProblem = true
-                return this.axios.put(rootUrl(`api/patients/${this.patientId}/problems/ccd/${this.selectedProblem.id}`), { 
-                        name: this.selectedProblem.original_name, 
+                return this.axios.put(rootUrl(`api/patients/${this.patientId}/problems/ccd/${this.selectedProblem.id}`), {
+                        name: this.selectedProblem.original_name,
                         cpm_problem_id: this.selectedProblem.is_monitored ? this.selectedProblem.cpm_id : null,
                         is_monitored: this.selectedProblem.is_monitored,
                         icd10: this.selectedProblem.icd10,
@@ -310,10 +313,10 @@
             addCode(e) {
                 e.preventDefault()
                 this.loaders.addCode = true
-                return this.axios.post(rootUrl(`api/problems/codes`), { 
-                                problem_id: this.selectedProblem.id, 
+                return this.axios.post(rootUrl(`api/problems/codes`), {
+                                problem_id: this.selectedProblem.id,
                                 problem_code_system_id: this.selectedProblem.newCode.selectedCode.value,
-                                code: this.selectedProblem.newCode.code 
+                                code: this.selectedProblem.newCode.code
                             }).then(response => {
                     console.log('full-conditions:add-code', response.data)
                     this.loaders.addCode = false
@@ -353,7 +356,7 @@
                         return cpmProblem ? cpmProblem.is_behavioral: false
                     }).length
                 console.log('ccm', ccmCount, 'bhi', bhiCount)
-                Event.$emit('careplan:bhi', { 
+                Event.$emit('careplan:bhi', {
                     hasCcm: ccmCount > 0,
                     hasBehavioral: bhiCount > 0
                 })
@@ -378,7 +381,7 @@
     .btn.btn-secondary {
         background-color: #ddd;
         padding: 10 20 10 20;
-        margin-right: 15px; 
+        margin-right: 15px;
         margin-bottom: 5px;
     }
 
