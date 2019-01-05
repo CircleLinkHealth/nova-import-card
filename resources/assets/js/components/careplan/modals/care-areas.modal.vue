@@ -231,24 +231,7 @@
                             return -1;
                         }
                     })
-                   /* .sort((a, b) => {
-                        if (a.is_snomed === false && b.is_snomed === false) {
-                            if (a.name < b.name) {
-                                return 1;
-                            }
-                        }
-                        if (a.is_snomed === false) {
-                            return 1;
-                        }
 
-                        if (b.is_snomed === false) {
-                            return -1;
-                        }
-
-                        if (a.name < b.name) {
-                            return 1;
-                        }
-                    })*/
             },
             codeHasBeenSelectedBefore() {
                 return !!this.selectedProblem.codes.find(code => !!code.id && code.problem_code_system_id === (this.selectedProblem.newCode.selectedCode || {}).value)
