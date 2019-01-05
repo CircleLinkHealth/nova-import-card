@@ -178,16 +178,16 @@
                     return pA.concat([ {
                         name: pB.name,
                         id: pB.id,
-                        code: pB.code
+                        code: pB.code,
                     }, ...(pB.is_behavioral ? pB.snomeds.map(snomed => ({
                         name: snomed.icd_10_name,
                         id: pB.id,
-                        code: snomed.icd_10_code
+                        code: snomed.icd_10_code,
                     })) : [])])
                 }, []).distinct(p => p.name).sort((a,b) => {
-                    if(a.name > b.name) {return -1;}
+                    if(a.name < b.name) {return -1;}
                     return 0;
-                })
+                }).reverse()
             },
             codeHasBeenSelectedBefore() {
                 return !!this.selectedProblem.codes.find(code => !!code.id && code.problem_code_system_id === (this.selectedProblem.newCode.selectedCode || {}).value)
