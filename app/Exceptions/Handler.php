@@ -82,7 +82,7 @@ class Handler extends ExceptionHandler
 
         return parent::render($request, $e);
     }
-
+    
     /**
      * Report or log an exception.
      *
@@ -90,14 +90,13 @@ class Handler extends ExceptionHandler
      *
      * @param \Exception $e
      *
-     * @throws Exception
-     *
      * @return mixed|void
+     * @throws Exception
      */
     public function report(Exception $e)
     {
         parent::report($e);
-
+        
         if ( ! $this->shouldReport($e)) {
             return;
         }
