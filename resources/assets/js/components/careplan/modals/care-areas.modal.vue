@@ -220,18 +220,18 @@
                         is_snomed: true,
                     })) : [])])
                 }, []).distinct(p => p.name)
+                /*.sort((a, b) => (+a.is_snomed) - (+b.is_snomed) || a.name.localeCompare(b.name));*/
                     .sort((a, b) => {
-                        if (a.is_snomed === true){
+                        if (a.is_snomed){
                             return -1;
                         }
-                        if(b.is_snomed === true){
+                        if(b.is_snomed){
                             return 1;
                         }
                         if(a.name > b.name){
                             return -1;
                         }
                     })
-
             },
             codeHasBeenSelectedBefore() {
                 return !!this.selectedProblem.codes.find(code => !!code.id && code.problem_code_system_id === (this.selectedProblem.newCode.selectedCode || {}).value)
