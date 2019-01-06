@@ -220,18 +220,7 @@
                         is_snomed: true,
                     })) : [])])
                 }, []).distinct(p => p.name)
-                /*.sort((a, b) => (+a.is_snomed) - (+b.is_snomed) || a.name.localeCompare(b.name));*/
-                    .sort((a, b) => {
-                        if (a.is_snomed){
-                            return -1;
-                        }
-                        if(b.is_snomed){
-                            return 1;
-                        }
-                        if(a.name > b.name){
-                            return -1;
-                        }
-                    })
+                .sort((a, b) => (+b.is_snomed) - (+a.is_snomed) || b.name.localeCompare(a.name));
             },
             codeHasBeenSelectedBefore() {
                 return !!this.selectedProblem.codes.find(code => !!code.id && code.problem_code_system_id === (this.selectedProblem.newCode.selectedCode || {}).value)
