@@ -1,5 +1,6 @@
 <template>
-    <modal name="care-areas" :no-title="true" :no-footer="true" :no-cancel="true" :no-buttons="true" class-name="modal-care-areas">
+    <modal name="care-areas" :no-title="true" :no-footer="true" :no-cancel="true" :no-buttons="true"
+           class-name="modal-care-areas">
         <template slot-scope="props">
             <div class="row">
                 <div class="col-sm-12">
@@ -7,14 +8,19 @@
                     </div>
                 </div>
                 <div class="col-sm-12" :class="{ 'problem-container': problems.length > 12 }">
-                    <div class="btn-group" :class="{ 'problem-buttons': problems.length > 12 }" role="group" aria-label="We are managing">
-                        <div class="btn btn-secondary problem-button" :class="{ selected: selectedProblem && (selectedProblem.id === problem.id) }" 
-                                v-for="(problem, index) in problemsForListing" :key="index" @click="select(problem)">
+                    <div class="btn-group" :class="{ 'problem-buttons': problems.length > 12 }" role="group"
+                         aria-label="We are managing">
+                        <div class="btn btn-secondary problem-button"
+                             :class="{ selected: selectedProblem && (selectedProblem.id === problem.id) }"
+                             v-for="(problem, index) in problemsForListing" :key="index" @click="select(problem)">
                             {{problem.name || `no name (${problem.id})`}}
                             <span class="delete" title="remove this cpm problem" @click="removeProblem">x</span>
-                            <loader class="absolute" v-if="loaders.removeProblem && selectedProblem && (selectedProblem.id === problem.id)"></loader>
+                            <loader class="absolute"
+                                    v-if="loaders.removeProblem && selectedProblem && (selectedProblem.id === problem.id)"></loader>
                         </div>
-                        <input type="button" class="btn btn-secondary" :class="{ selected: !selectedProblem || !selectedProblem.id }" value="+" @click="select(null)" />
+                        <input type="button" class="btn btn-secondary"
+                               :class="{ selected: !selectedProblem || !selectedProblem.id }" value="+"
+                               @click="select(null)"/>
                     </div>
                 </div>
                 <div class="col-sm-12 top-20" v-if="!selectedProblem">
@@ -26,63 +32,79 @@
                                 </label>
                             </div>
                             <div class="col-sm-12 top-10">
-                                <v-complete placeholder="Enter a Condition" :required="true" v-model="newProblem.name" :value="newProblem.name" :limit="15"
-                                    :suggestions="cpmProblemsForAutoComplete" :class="{ error: patientHasSelectedProblem }" :threshold="0.5"
-                                    @input="resolveIcd10Code">
+                                <v-complete placeholder="Enter a Condition" :required="true" v-model="newProblem.name"
+                                            :value="newProblem.name" :limit="15"
+                                            :suggestions="cpmProblemsForAutoComplete"
+                                            :class="{ error: patientHasSelectedProblem }" :threshold="0.5"
+                                            @input="resolveIcd10Code">
                                 </v-complete>
                             </div>
                             <div class="col-sm-6 font-14 top-20">
-                                <label><input type="radio" :value="true" v-model="newProblem.is_monitored" /> For Care Management</label>
+                                <label><input type="radio" :value="true" v-model="newProblem.is_monitored"/> For Care
+                                    Management</label>
                             </div>
                             <div class="col-sm-6 font-14 top-20">
-                                <label><input type="radio" :value="false" v-model="newProblem.is_monitored" /> Other Condition</label>
+                                <label><input type="radio" :value="false" v-model="newProblem.is_monitored"/> Other
+                                    Condition</label>
                             </div>
                             <div class="col-sm-12 top-20" v-if="newProblem.is_monitored">
-                                <input type="text" class="form-control" v-model="newProblem.icd10" placeholder="ICD10 Code" />
+                                <input type="text" class="form-control" v-model="newProblem.icd10"
+                                       placeholder="ICD10 Code"/>
                             </div>
                             <div class="col-sm-12 text-right top-20">
                                 <loader v-if="loaders.addProblem"></loader>
-                                <input type="submit" class="btn btn-secondary right-0 selected" value="Add Condition" :disabled="patientHasSelectedProblem" />
+                                <input type="submit" class="btn btn-secondary right-0 selected" value="Add Condition"
+                                       :disabled="patientHasSelectedProblem"/>
                             </div>
                         </form>
                     </div>
-                    
+
                 </div>
                 <div class="col-sm-12 top-20" v-if="selectedProblem">
-                     <div class="row top-20">
+                    <div class="row top-20">
                         <div class="col-sm-12">
                             <form @submit="editCcdProblem">
                                 <div class="row">
                                     <div class="col-sm-12 top-20">
                                         <textarea class="form-control height-200"
-                                            v-model="selectedProblem.instruction.name" placeholder="Enter Instructions"></textarea>
+                                                  v-model="selectedProblem.instruction.name"
+                                                  placeholder="Enter Instructions"></textarea>
                                         <loader class="absolute" v-if="loaders.addInstruction"></loader>
                                         <div class="font-14 color-blue" v-if="selectedProblem.original_name">
-                                            Full Name: {{ selectedProblem.original_name }} {{ (selectedProblem.count() > 1) ? ` (+${selectedProblem.count() - 1})` : '' }}
+                                            Full Name: {{ selectedProblem.original_name }} {{ (selectedProblem.count() >
+                                            1) ? ` (+${selectedProblem.count() - 1})` : '' }}
                                         </div>
                                     </div>
                                     <div class="col-sm-12 top-20 text-right font-14">
                                         <div class="row">
                                             <div class="col-sm-7">
-                                                <label class="color-red" v-if="selectedProblem.is_monitored">Mapped To:</label>
-                                                <select class="form-control" v-model="selectedProblem.cpm_id" v-if="selectedProblem.is_monitored">
+                                                <label class="color-red" v-if="selectedProblem.is_monitored">Mapped
+                                                    To:</label>
+                                                <select class="form-control" v-model="selectedProblem.cpm_id"
+                                                        v-if="selectedProblem.is_monitored">
                                                     <option :value="null">Selected a Related Condition</option>
-                                                    <option v-for="problem in cpmProblemsForSelect" :key="problem.value" :value="problem.value">{{problem.label}}</option>
+                                                    <option v-for="problem in cpmProblemsForSelect" :key="problem.value"
+                                                            :value="problem.value">{{problem.label}}
+                                                    </option>
                                                 </select>
                                             </div>
                                             <div class="col-sm-3 text-right">
                                                 <label class="top-30">
-                                                    <input type="checkbox" :value="true" v-model="selectedProblem.is_monitored"> We are managing
+                                                    <input type="checkbox" :value="true"
+                                                           v-model="selectedProblem.is_monitored"> We are managing
                                                 </label>
                                             </div>
                                             <div class="col-sm-2">
                                                 <br>
                                                 <loader class="absolute" v-if="loaders.editProblem"></loader>
-                                                <input type="submit" class="btn btn-secondary margin-0 instruction-add selected" value="Save" 
-                                                    title="Edit this problem" :disabled="(selectedProblem.name || '').length === 0 || patientHasSelectedProblem" />
+                                                <input type="submit"
+                                                       class="btn btn-secondary margin-0 instruction-add selected"
+                                                       value="Save"
+                                                       title="Edit this problem"
+                                                       :disabled="(selectedProblem.name || '').length === 0 || patientHasSelectedProblem"/>
                                             </div>
                                         </div>
-                                        
+
                                     </div>
                                 </div>
                             </form>
@@ -96,7 +118,8 @@
                                 </template>
                                 <template>
                                     <ul class="list-group font-16 border-bottom">
-                                        <li class="row list-group-item" v-for="code in selectedProblem.codes" :key="code.id">
+                                        <li class="row list-group-item" v-for="code in selectedProblem.codes"
+                                            :key="code.id">
                                             <div class="col-sm-5">
                                                 <p>
                                                     {{code.code_system_name}}
@@ -107,7 +130,9 @@
                                             </div>
                                             <div class="col-sm-2 text-right">
                                                 <loader class="absolute" v-if="loaders.removeCode"></loader>
-                                                <input type="button" class="btn btn-danger margin-0" value="-" @click="removeCode(selectedProblem.id, code.id)" :disabled="!code.id" />
+                                                <input type="button" class="btn btn-danger margin-0" value="-"
+                                                       @click="removeCode(selectedProblem.id, code.id)"
+                                                       :disabled="!code.id"/>
                                             </div>
                                         </li>
                                         <li class="row list-group-item" v-if="selectedProblem.codes.length === 0">
@@ -117,16 +142,21 @@
                                     <div class="row">
                                         <form @submit="addCode">
                                             <div class="col-sm-5">
-                                                <v-select class="form-control" v-model="selectedProblem.newCode.selectedCode" 
-                                                    :options="codesForSelect" :class="{ error: codeHasBeenSelectedBefore }" required></v-select>
+                                                <v-select class="form-control"
+                                                          v-model="selectedProblem.newCode.selectedCode"
+                                                          :options="codesForSelect"
+                                                          :class="{ error: codeHasBeenSelectedBefore }"
+                                                          required></v-select>
                                             </div>
                                             <div class="col-sm-5">
-                                                <input class="form-control" v-model="selectedProblem.newCode.code" placeholder="Code" required />
+                                                <input class="form-control" v-model="selectedProblem.newCode.code"
+                                                       placeholder="Code" required/>
                                             </div>
                                             <div class="col-sm-2 text-right">
                                                 <loader class="absolute" v-if="loaders.addCode"></loader>
-                                                <input type="submit" class="btn btn-secondary selected margin-0" value="Add" 
-                                                    :disabled="!selectedProblem.newCode.code || !(selectedProblem.newCode.selectedCode || {}).value || codeHasBeenSelectedBefore" />
+                                                <input type="submit" class="btn btn-secondary selected margin-0"
+                                                       value="Add"
+                                                       :disabled="!selectedProblem.newCode.code || !(selectedProblem.newCode.selectedCode || {}).value || codeHasBeenSelectedBefore"/>
                                             </div>
                                         </form>
                                     </div>
@@ -155,7 +185,7 @@
             'patient-id': String,
             problems: Array
         },
-        mixins: [ CareplanMixin ],
+        mixins: [CareplanMixin],
         components: {
             'modal': Modal,
             'v-select': VueSelect,
@@ -171,26 +201,32 @@
                 else return (this.selectedProblem.name !== '') && this.problems.findIndex(problem => (problem != this.selectedProblem) && ((problem.name || '').toLowerCase() == (this.selectedProblem.name || '').toLowerCase())) >= 0
             },
             cpmProblemsForSelect() {
-                return this.cpmProblems.map(p => ({ label: p.name, value: p.id })).sort((a, b) => a.label < b.label ? -1 : 1)
+                return this.cpmProblems.map(p => ({
+                    label: p.name,
+                    value: p.id
+                })).sort((a, b) => a.label < b.label ? -1 : 1)
             },
             cpmProblemsForAutoComplete() {
                 return this.cpmProblems.filter(p => p && p.name).reduce((pA, pB) => {
-                    return pA.concat([ {
+                    return pA.concat([{
                         name: pB.name,
                         id: pB.id,
-                        code: pB.code
+                        code: pB.code,
+                        is_snomed: false,
                     }, ...(pB.is_behavioral ? pB.snomeds.map(snomed => ({
                         name: snomed.icd_10_name,
                         id: pB.id,
-                        code: snomed.icd_10_code
+                        code: snomed.icd_10_code,
+                        is_snomed: true,
                     })) : [])])
                 }, []).distinct(p => p.name)
+                .sort((a, b) => (+b.is_snomed) - (+a.is_snomed) || b.name.localeCompare(a.name));
             },
             codeHasBeenSelectedBefore() {
                 return !!this.selectedProblem.codes.find(code => !!code.id && code.problem_code_system_id === (this.selectedProblem.newCode.selectedCode || {}).value)
             },
             codesForSelect() {
-                return this.codes.map(p => ({ label: p.name, value: p.id }))
+                return this.codes.map(p => ({label: p.name, value: p.id}))
             }
         },
         data() {
@@ -224,7 +260,7 @@
             select(problem) {
                 this.selectedProblem = problem
             },
-            reset () {
+            reset() {
                 this.newProblem.name = ''
                 this.newProblem.problem = ''
                 this.newProblem.is_monitored = true
@@ -259,12 +295,12 @@
             addCcdProblem(e) {
                 e.preventDefault()
                 this.loaders.addProblem = true
-                return this.axios.post(rootUrl(`api/patients/${this.patientId}/problems/ccd`), { 
-                                    name: this.newProblem.name, 
-                                    cpm_problem_id: this.newProblem.cpm_problem_id,
-                                    is_monitored: this.newProblem.is_monitored,
-                                    icd10: this.newProblem.icd10
-                                }).then(response => {
+                return this.axios.post(rootUrl(`api/patients/${this.patientId}/problems/ccd`), {
+                    name: this.newProblem.name,
+                    cpm_problem_id: this.newProblem.cpm_problem_id,
+                    is_monitored: this.newProblem.is_monitored,
+                    icd10: this.newProblem.icd10
+                }).then(response => {
                     console.log('full-conditions:add', response.data)
                     this.loaders.addProblem = false
                     Event.$emit('full-conditions:add', response.data)
@@ -279,13 +315,13 @@
             editCcdProblem(e) {
                 e.preventDefault()
                 this.loaders.editProblem = true
-                return this.axios.put(rootUrl(`api/patients/${this.patientId}/problems/ccd/${this.selectedProblem.id}`), { 
-                        name: this.selectedProblem.original_name, 
-                        cpm_problem_id: this.selectedProblem.is_monitored ? this.selectedProblem.cpm_id : null,
-                        is_monitored: this.selectedProblem.is_monitored,
-                        icd10: this.selectedProblem.icd10,
-                        instruction: this.selectedProblem.instruction.name
-                    }).then(response => {
+                return this.axios.put(rootUrl(`api/patients/${this.patientId}/problems/ccd/${this.selectedProblem.id}`), {
+                    name: this.selectedProblem.original_name,
+                    cpm_problem_id: this.selectedProblem.is_monitored ? this.selectedProblem.cpm_id : null,
+                    is_monitored: this.selectedProblem.is_monitored,
+                    icd10: this.selectedProblem.icd10,
+                    instruction: this.selectedProblem.instruction.name
+                }).then(response => {
                     console.log('full-conditions:edit', response.data)
                     this.loaders.editProblem = false
                     Event.$emit('full-conditions:edit', response.data)
@@ -310,11 +346,11 @@
             addCode(e) {
                 e.preventDefault()
                 this.loaders.addCode = true
-                return this.axios.post(rootUrl(`api/problems/codes`), { 
-                                problem_id: this.selectedProblem.id, 
-                                problem_code_system_id: this.selectedProblem.newCode.selectedCode.value,
-                                code: this.selectedProblem.newCode.code 
-                            }).then(response => {
+                return this.axios.post(rootUrl(`api/problems/codes`), {
+                    problem_id: this.selectedProblem.id,
+                    problem_code_system_id: this.selectedProblem.newCode.selectedCode.value,
+                    code: this.selectedProblem.newCode.code
+                }).then(response => {
                     console.log('full-conditions:add-code', response.data)
                     this.loaders.addCode = false
                     Event.$emit('full-conditions:add-code', response.data)
@@ -344,16 +380,16 @@
                 const ccmCount = this.problems.filter(problem => {
                     if (problem.is_monitored) {
                         const cpmProblem = this.cpmProblems.find(cpm => cpm.id == problem.cpm_id)
-                        return cpmProblem ? !cpmProblem.is_behavioral: false
+                        return cpmProblem ? !cpmProblem.is_behavioral : false
                     }
                     return false
                 }).length
                 const bhiCount = this.problems.filter(problem => {
-                        const cpmProblem = this.cpmProblems.find(cpm => cpm.id == problem.cpm_id)
-                        return cpmProblem ? cpmProblem.is_behavioral: false
-                    }).length
+                    const cpmProblem = this.cpmProblems.find(cpm => cpm.id == problem.cpm_id)
+                    return cpmProblem ? cpmProblem.is_behavioral : false
+                }).length
                 console.log('ccm', ccmCount, 'bhi', bhiCount)
-                Event.$emit('careplan:bhi', { 
+                Event.$emit('careplan:bhi', {
                     hasCcm: ccmCount > 0,
                     hasBehavioral: bhiCount > 0
                 })
@@ -378,7 +414,7 @@
     .btn.btn-secondary {
         background-color: #ddd;
         padding: 10 20 10 20;
-        margin-right: 15px; 
+        margin-right: 15px;
         margin-bottom: 5px;
     }
 
@@ -528,7 +564,7 @@
     }
 
     .modal-care-areas input[type="radio"] {
-        display:inline;
+        display: inline;
     }
 
     .v-complete.error {
