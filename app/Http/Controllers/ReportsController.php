@@ -1141,4 +1141,18 @@ class ReportsController extends Controller
             ]
         );
     }
+
+    public function viewCareDocumentsPage(
+        Request $request,
+        $patientId = false
+    ){
+        if ( ! $patientId) {
+            return 'Patient Not Found..';
+        }
+
+        $patient = User::find($patientId);
+
+        return view('patient.care-docs.index', compact(['patient']));
+
+    }
 }
