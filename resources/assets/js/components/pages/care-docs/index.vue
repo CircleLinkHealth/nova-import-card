@@ -22,30 +22,21 @@
 
 
             <div v-for="file in careDocs" class="col-xs-3 box">
+                <div class="col-xs-12 box-title">
+                    <h4>{{file.file_name}}</h4>
+                </div>
                 <div class="col-md-7">
                     <p style="margin-left: -10px;">
                         <strong>test </strong>test<em>test</em>
                     </p>
                 </div>
-                <div class="col-md-3">
-                    <p v-show="">Receives Alerts</p>
-                </div>
-                <div class="col-md-2">
-                    <button class="btn btn-xs btn-danger problem-delete-btn"
-                            v-on:click.stop.prevent=""><span> <i
-                            class="glyphicon glyphicon-remove"></i> </span></button>
 
-                    <button class="btn btn-xs btn-primary problem-edit-btn"
-                            v-on:click.stop.prevent=""><span> <i
-                            class="glyphicon glyphicon-pencil"></i> </span></button>
-                </div>
             </div>
 
-        <!--<upload-care-doc-modal v-show="showUploadModal" ref="updloadCareDoc" :patient="this.patient"></upload-care-doc-modal>-->
         <modal v-show="showUploadModal" name="upload-care-doc" class="modal-upload-care-doc" :no-title="true" :no-footer="true">
             <template slot="header">
                 <button type="button" class="close" @click="showUploadModal = false">×</button>
-                <h4 class="modal-title">Upload Care Document</h4>
+                <h3 class="modal-title">Upload Care Document</h3>
             </template>
             <template slot="body">
                 <div class="col-md-12" style="margin: 20px">
@@ -125,9 +116,10 @@
                     timeout: 3000,
                 },
                 list: [
-                    {label: 'TEST1', value: 1},
-                    {label: 'TEST2', value: 2},
-                    {label: 'TEST3', value: 3},
+                    {label: 'Personalized Preventative Plan (PPP)', value: 1},
+                    {label: 'Health Risk Assessment', value: 2},
+                    {label: 'Provider Report', value: 3},
+                    {label: 'Wellness Survey', value: 4},
                 ],
                 selectedDocumentType: null,
                 careDocs: null,
@@ -143,12 +135,6 @@
         mounted() {
 
             self = this;
-
-            // if (ambassadors != null) {
-            //     // this.loading = false;
-            //     this.list = ambassadors;
-            //     return;
-            // }
 
             this.getCareDocuments();
         },
@@ -178,8 +164,8 @@
 
             showSuccess() {
 
-                this.$refs.pdfCareDocsDropzone.url =   this.uploadUrl();
                 this.$refs.pdfCareDocsDropzone.removeAllFiles();
+                this.selectedDocumentType = null;
                 this.getCareDocuments();
                 this.showUploadModal = false;
 
@@ -191,10 +177,10 @@
                 })
             },
             afterComplete(){
-              this.$refs.pdfCareDocsDropzone.url =   this.uploadUrl();
+                this.$refs.pdfCareDocsDropzone.url =   this.uploadUrl();
             },
             getSelectedType(){
-                return this.selectedDocumentType ? this.selectedDocumentType.value : null;
+                return this.selectedDocumentType != null ? this.selectedDocumentType.value : null;
             }
         }
     }
@@ -208,6 +194,18 @@
         background-color: #ffffff;
         margin-right: 30px;
         margin-bottom: 30px;
+        padding: 0px;
+    }
+
+    .box-title {
+        width: 250px;
+        height: 50px;
+        border-radius: 5px;
+        background-color: #5cc0dd;
+    }
+
+    h4 {
+        color: #ffffff;
     }
 
 </style>
