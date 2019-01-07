@@ -25,7 +25,7 @@ class PatientCareDocumentsController extends Controller
 
         foreach ($request->file()['file'] as $file) {
 
-            $patient->addMedia($file->path())
+            $patient->addMedia($file)
                 ->usingFileName('otherFileName.txt')
                                  ->toMediaCollection("patient-care-documents");
         }
