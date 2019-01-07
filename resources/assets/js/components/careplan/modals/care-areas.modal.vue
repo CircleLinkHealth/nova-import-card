@@ -35,7 +35,7 @@
                                 <v-complete placeholder="Enter a Condition" :required="true" v-model="newProblem.name"
                                             :value="newProblem.name" :limit="15"
                                             :suggestions="cpmProblemsForAutoComplete"
-                                            :class="{ error: patientHasSelectedProblem }" :threshold="0.5"
+                                            :class="{ error: patientHasSelectedProblem }" :threshold="0.9"
                                             @input="resolveIcd10Code">
                                 </v-complete>
                             </div>
