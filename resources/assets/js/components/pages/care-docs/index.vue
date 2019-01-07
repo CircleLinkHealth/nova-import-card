@@ -81,10 +81,8 @@
 </template>
 
 <script>
-    import UploadCareDocModal from './comps/modals/upload-care-doc.modal'
     import {rootUrl} from '../../../app.config.js'
     import modal from '../../shared/modal.vue'
-    import {Event} from 'vue-tables-2'
     import Dropzone from 'vue2-dropzone'
     import Loader from '../../../components/loader.vue';
     import Notifications from '../../../components/notifications';
