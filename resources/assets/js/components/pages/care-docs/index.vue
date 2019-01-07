@@ -21,16 +21,10 @@
         </div>
 
 
-            <div v-for="file in careDocs" class="col-xs-3 box">
-                <div class="col-xs-12 box-title">
-                    <h4>{{file.file_name}}</h4>
+            <div v-for="(docs, type) in careDocs" class="col-md-12">
+                <div v-for="doc in docs">
+                    <doc :doc="doc" :type="type"></doc>
                 </div>
-                <div class="col-md-7">
-                    <p style="margin-left: -10px;">
-                        <strong>test </strong>test<em>test</em>
-                    </p>
-                </div>
-
             </div>
 
         <modal v-show="showUploadModal" name="upload-care-doc" class="modal-upload-care-doc" :no-title="true" :no-footer="true">
@@ -60,12 +54,11 @@
                             id="upload-pdf-dropzone"
                             ref="pdfCareDocsDropzone"
                             :headers="csrfHeader"
-                            :url="uploadUrl()"
-                              @vdropzone-files-added="afterComplete"
+                            :url="uploadUrl"
                             @vdropzone-success-multiple="showSuccess"
                             acceptedFileTypes="application/pdf"
                             dictDefaultMessage="Drop a PDF here, or click to choose a file to upload."
-
+                              v-on:vdropzone-sending="sendingEvent"
                             :maxFileSizeInMB="10"
                             :createImageThumbnails="false"
                             :uploadMultiple="true">
@@ -87,6 +80,7 @@
     import Loader from '../../../components/loader.vue';
     import Notifications from '../../../components/notifications';
     import VueSelect from 'vue-select';
+    import CareDocumentBox from './comps/care-document-box';
 
 
     let self;
@@ -94,13 +88,12 @@
     export default {
         name: "care-docs-index",
         components: {
-            'upload-care-doc-modal': UploadCareDocModal,
             'modal': modal,
             'loader': Loader,
             'notifications': Notifications,
             'dropzone': Dropzone,
-            'v-select': VueSelect
-
+            'v-select': VueSelect,
+            'doc': CareDocumentBox
         },
         data() {
             return {
@@ -114,10 +107,11 @@
                     timeout: 3000,
                 },
                 list: [
-                    {label: 'Personalized Preventative Plan (PPP)', value: 1},
-                    {label: 'Health Risk Assessment', value: 2},
-                    {label: 'Provider Report', value: 3},
-                    {label: 'Wellness Survey', value: 4},
+                    {label: 'Personalized Preventative Plan (PPP)', value: 'PPP'},
+                    {label: 'Lab Results', value: 'Lab Results'},
+                    {label: 'Provider Report', value: 'Provider Report'},
+                    {label: 'Wellness Survey', value: 'Wellness Survey'},
+                    {label: 'Vitals', value: 'Vitals'},
                 ],
                 selectedDocumentType: null,
                 careDocs: null,
@@ -136,6 +130,11 @@
 
             this.getCareDocuments();
         },
+        computed: {
+            uploadUrl() {
+                return rootUrl('/care-docs/'+ this.patient.id);
+            },
+        },
         methods: {
             uploadCareDocument(){
                 this.showUploadModal = true
@@ -152,9 +151,6 @@
                     .catch(err => {
                         // this.loading = false;
                     });
-            },
-            uploadUrl() {
-                return rootUrl('/care-docs/'+ this.patient.id + '/' + this.getSelectedType());
             },
             deletePdf(pdf) {
                 return true;
@@ -174,36 +170,61 @@
                     timeout: true
                 })
             },
-            afterComplete(){
-                this.$refs.pdfCareDocsDropzone.url =   this.uploadUrl();
-            },
             getSelectedType(){
-                return this.selectedDocumentType != null ? this.selectedDocumentType.value : null;
+                return this.selectedDocumentType !== null ? this.selectedDocumentType.value : null;
+            },
+            sendingEvent (file, xhr, formData) {
+                formData.append('doc_type', this.selectedDocumentType.value);
             }
         }
     }
 </script>
 
 <style>
-    .box{
-        width: 250px;
-        height: 300px;
-        border-radius: 5px;
-        background-color: #ffffff;
-        margin-right: 30px;
-        margin-bottom: 30px;
-        padding: 0px;
+
+    .modal-upload-care-doc .modal-wrapper {
+        overflow-x: auto;
+        white-space: nowrap;
+        display: block;
+        margin-top: 40px;
+        vertical-align: unset;
+        margin-left: auto;
+        margin-right: auto;
     }
 
-    .box-title {
-        width: 250px;
-        height: 50px;
-        border-radius: 5px;
-        background-color: #5cc0dd;
+    /*width will be set automatically when modal is mounted*/
+    .modal-upload-care-doc .modal-container {
+        width: 600px;
+        height: 380px;
     }
 
-    h4 {
-        color: #ffffff;
+
+
+
+    .modal-upload-care-doc .loader {
+        position: absolute;
+        right: 5px;
+        top: 5px;
+        width: 20px;
+        height: 20px;
     }
+
+
+
+    .dropdown.v-select.form-control {
+        height: auto;
+        padding: 0;
+    }
+
+    .v-select .dropdown-toggle {
+        height: 34px;
+        overflow: hidden;
+    }
+
+    .modal-upload-care-doc .modal-body {
+        height: 200px;
+        width: 500px;
+    }
+
 
 </style>

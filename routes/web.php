@@ -608,7 +608,7 @@ Route::group(['middleware' => 'auth'], function () {
     ])->middleware('permission:careplan-pdf.read');
 
     Route::post(
-        'care-docs/{patient_id}/{doc_type}',
+        'care-docs/{patient_id}',
         'API\PatientCareDocumentsController@uploadCareDocuments'
     );
 

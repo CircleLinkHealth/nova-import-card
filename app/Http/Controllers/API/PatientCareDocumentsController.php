@@ -14,21 +14,29 @@ class PatientCareDocumentsController extends Controller
         //return json with caredoc details not actual files
         $patient = User::findOrFail($patientId);
 
-        $files = $patient->getMedia("patient-care-documents");
 
-        return response()->json($files->all());
+        $files = $patient->getMedia("patient-care-documents")->mapToGroups(function ($item, $key){
+            $docType = $item->getCustomProperty('doc_type');
+
+             return [ $docType => $item];
+        })->reject(function($value, $key){
+            return ! $key;
+        });
+
+        return response()->json($files->toArray());
     }
 
-    public function uploadCareDocuments(Request $request, $patientId, $docType = 'test')
+    public function uploadCareDocuments(Request $request, $patientId)
     {
 
         $patient = User::findOrFail($patientId);
 
 
+
         foreach ($request->file()['file'] as $file) {
 
             $patient->addMedia($file)
-                    ->usingFileName($docType)
+                    ->withCustomProperties(['doc_type' => $request->doc_type])
                     ->toMediaCollection("patient-care-documents");
         }
 
