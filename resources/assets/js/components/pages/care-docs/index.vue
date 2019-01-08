@@ -1,15 +1,13 @@
 <template>
     <div class="container-fluid">
         <div class="col-sm-12" style="margin-top: 20px">
-            <div class="col-sm-4 text-left">
-                <button class="btn btn-info btn-xs"
+            <div class="col-sm-12 text-left">
+                <button class="btn btn-secondary btn-xs" v-bind:class="{'btn-info': !this.showPast}"
                         @click="showCurrentDocuments()">Current
                 </button>
-                <button class="btn btn-info btn-xs"
+                <button class="btn btn-secondary btn-xs" v-bind:class="{'btn-info': this.showPast}" style="margin-right: 40px"
                         @click="showPastDocuments()">Past
                 </button>
-            </div>
-            <div class="col-sm-8 text-left">
                 <button class="btn btn-info btn-xs"
                         @click="uploadCareDocument()">Upload Documents
                 </button>
@@ -115,9 +113,7 @@
                 ],
                 selectedDocumentType: null,
                 careDocs: [],
-                showPast: {
-                    status: false
-                },
+                showPast: false,
             }
 
         },
@@ -144,16 +140,11 @@
             },
             getCareDocuments(){
                 return this.axios
-                    .get(rootUrl('/care-docs/' + this.patient.id + '/' + this.showPast.status))
+                    .get(rootUrl('/care-docs/' + this.patient.id + '/' + this.showPast))
                     .then(response => {
                         // this.loading = false;
-                        // this.list.map(obj =>{
-                        //    this.careDocs[obj.value] = [];
-                        // });
+
                         this.careDocs = response.data;
-                        // response.data.map(obj => {
-                        //     this.careDocs.push(obj);
-                        // });
 
                         return this.careDocs;
                     })
@@ -186,11 +177,11 @@
                 formData.append('doc_type', this.selectedDocumentType.value);
             },
             showCurrentDocuments() {
-                this.showPast.status = false;
+                this.showPast = false;
                 this.getCareDocuments();
             },
             showPastDocuments(){
-                this.showPast.status = true;
+                this.showPast = true;
                 this.getCareDocuments();
             }
 
@@ -244,5 +235,8 @@
         width: 500px;
     }
 
+    .btn {
+        min-width: 100px;
+    }
 
 </style>

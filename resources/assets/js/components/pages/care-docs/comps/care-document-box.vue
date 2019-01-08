@@ -4,7 +4,30 @@
             <h4>{{ type }}</h4>
         </div>
         <div class="panel-body">
-            <p>{{doc.name}}</p>
+            <div class="col-md-12 panel-section">
+                <button class="btn btn-warning btn-xs">
+                    Status
+                </button>
+                <a>
+                    View
+                </a>
+            </div>
+            <div class="col-md-12  panel-section">
+                <div v-if="doc.created_at">
+                    {{doc.created_at}}
+                </div>
+            </div>
+            <div class="col-md-12  panel-section">
+                <p>Send Assessment Link to Provider via:</p>
+            </div>
+            <div class="col-md-12  panel-section">
+                <button class="btn btn-method btn-xs">
+                    SMS
+                </button>
+                <button class="btn btn-method btn-xs">
+                    Email
+                </button>
+            </div>
         </div>
     </div>
 </template>
@@ -38,6 +61,8 @@
 
     .panel {
         border: 0;
+        width: 250px;
+        height: 300px;
     }
 
     .panel-primary>.panel-heading {
@@ -54,5 +79,12 @@
 
     h4 {
         color: #ffffff;
+    }
+    .panel-section{
+        margin-bottom: 20px;
+    }
+
+    .btn-method{
+        border-color: #5cc0dd;
     }
 </style>
