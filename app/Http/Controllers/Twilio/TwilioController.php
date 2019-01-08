@@ -480,8 +480,8 @@ class TwilioController extends Controller
                     ? Rule::phone()->detect()->country('US')
                     : '',
             ],
-            'InboundUserId'    => 'required',
-            'OutboundUserId'   => 'required',
+            'InboundUserId'    => '',
+            'OutboundUserId'   => '',
             'IsUnlistedNumber' => 'nullable|boolean',
             'IsCallToPatient'  => 'nullable|boolean',
         ]);
