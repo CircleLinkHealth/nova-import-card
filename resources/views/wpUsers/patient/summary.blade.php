@@ -80,7 +80,7 @@
                                 @if ($section['section'] == 'obs_biometrics')
                                     <a href="{{ route('patient.charts', ['patient' => $wpUser->id]) }}"><span class="glyphicon glyphicon-stats"></span></a> &nbsp;&nbsp;
                                 @endif
-                                <a href="{{route('patient.summary', ['patient' => $wpUser->id])}}"><< Return</a>;
+                                <a href="{{route('patient.summary', ['patient' => $wpUser->id])}}"><< Return</a>
                             @else
                                 <a href="{{route('patient.summary', ['patient' => $wpUser->id, 'user' => $wpUser->id, 'detail' => $section['section'] ])}}">Details >></a>
                             @endif
