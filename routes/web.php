@@ -612,7 +612,7 @@ Route::group(['middleware' => 'auth'], function () {
         'API\PatientCareDocumentsController@uploadCareDocuments'
     );
 
-    Route::get('care-docs/{patient_id}', [
+    Route::get('care-docs/{patient_id}/{show_past?}', [
         'uses' => 'API\PatientCareDocumentsController@getCareDocuments',
         'as'    => 'get.care-docs'
     ]);

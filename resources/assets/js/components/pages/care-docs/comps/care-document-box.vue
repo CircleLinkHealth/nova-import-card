@@ -1,9 +1,9 @@
 <template>
-    <div class="col-xs-3 box">
-        <div class="box-title">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
             <h4>{{ type }}</h4>
         </div>
-        <div class="">
+        <div class="panel-body">
             <p>{{doc.name}}</p>
         </div>
     </div>
@@ -19,7 +19,7 @@
             },
             doc: {
                 type: Object,
-                required: true
+                required: false
             }
         }
     }
@@ -34,6 +34,15 @@
         margin-right: 30px;
         margin-bottom: 30px;
         padding: 0;
+    }
+
+    .panel {
+        border: 0;
+    }
+
+    .panel-primary>.panel-heading {
+        background-color: #5cc0dd;
+        border-color:  #5cc0dd;
     }
 
     .box-title {

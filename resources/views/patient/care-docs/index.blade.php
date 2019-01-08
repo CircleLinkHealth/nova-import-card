@@ -27,45 +27,47 @@ if (isset($patient) && ! empty($patient)) {
             }
             .patient-documents-container {
                 background-color: #f2f6f9;
+                min-height: 1000px;
             }
+
 
         </style>
     @endpush
-    <div class="container-fluid">
+    <div class="container-fluid patient-documents-container">
         <div class="row">
             <div class="col-md-12">
-                <div class="row">
-                    <div class="col-sm-12 patient-details">
-                        <div class="col-sm-12">
-                            <div class="col-sm-4">
-                                Patient Name<br>
-                                {{$patient->getFullName()}}
-                            </div>
-                            <div class="col-sm-4">
-                                Date of Birth (DOB)<br>
-                                {{$patient->getBirthDate()}}
-                            </div>
-                            <div class="col-sm-4">
-                                Phone Number<br>
-                                {{$patient->getPhone()}}
-                            </div>
-                        </div>
-                        <div class="col-sm-12">
-                            <div class="col-sm-4">
-                                Provider Name<br>
-                                {{$patient->getBillingProviderName()}}
-                            </div>
-                            <div class="col-sm-4">
-                                Practice<br>
-                                {{$patient->getPrimaryPracticeName()}}
-                            </div>
-                            <div class="col-sm-4">
-                                Phone Number<br>
-                                {{$patient->getBillingProviderPhone()}}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {{--<div class="row">--}}
+                    {{--<div class="col-sm-12 patient-details">--}}
+                        {{--<div class="col-sm-12">--}}
+                            {{--<div class="col-sm-4">--}}
+                                {{--Patient Name<br>--}}
+                                {{--{{$patient->getFullName()}}--}}
+                            {{--</div>--}}
+                            {{--<div class="col-sm-4">--}}
+                                {{--Date of Birth (DOB)<br>--}}
+                                {{--{{$patient->getBirthDate()}}--}}
+                            {{--</div>--}}
+                            {{--<div class="col-sm-4">--}}
+                                {{--Phone Number<br>--}}
+                                {{--{{$patient->getPhone()}}--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
+                        {{--<div class="col-sm-12">--}}
+                            {{--<div class="col-sm-4">--}}
+                                {{--Provider Name<br>--}}
+                                {{--{{$patient->getBillingProviderName()}}--}}
+                            {{--</div>--}}
+                            {{--<div class="col-sm-4">--}}
+                                {{--Practice<br>--}}
+                                {{--{{$patient->getPrimaryPracticeName()}}--}}
+                            {{--</div>--}}
+                            {{--<div class="col-sm-4">--}}
+                                {{--Phone Number<br>--}}
+                                {{--{{$patient->getBillingProviderPhone()}}--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
+                    {{--</div>--}}
+                {{--</div>--}}
                 <div class="row">
                     <div class="col-sm-12 patient-documents-container">
                         <div>

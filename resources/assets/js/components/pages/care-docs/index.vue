@@ -3,10 +3,10 @@
         <div class="col-sm-12" style="margin-top: 20px">
             <div class="col-sm-4 text-left">
                 <button class="btn btn-info btn-xs"
-                        @click="">Current
+                        @click="showCurrentDocuments()">Current
                 </button>
                 <button class="btn btn-info btn-xs"
-                        @click="">Past
+                        @click="showPastDocuments()">Past
                 </button>
             </div>
             <div class="col-sm-8 text-left">
@@ -21,9 +21,9 @@
         </div>
 
 
-            <div v-for="(docs, type) in careDocs" class="col-md-12">
-                <div v-for="doc in docs">
-                    <doc :doc="doc" :type="type"></doc>
+            <div v-for="(docs, type) in careDocs">
+                <div v-for="doc in docs"  class="col-md-3">
+                    <care-document-box :doc="doc" :type="type"></care-document-box>
                 </div>
             </div>
 
@@ -93,7 +93,7 @@
             'notifications': Notifications,
             'dropzone': Dropzone,
             'v-select': VueSelect,
-            'doc': CareDocumentBox
+            'care-document-box': CareDocumentBox
         },
         data() {
             return {
@@ -114,7 +114,10 @@
                     {label: 'Vitals', value: 'Vitals'},
                 ],
                 selectedDocumentType: null,
-                careDocs: null,
+                careDocs: [],
+                showPast: {
+                    status: false
+                },
             }
 
         },
@@ -141,10 +144,16 @@
             },
             getCareDocuments(){
                 return this.axios
-                    .get(rootUrl('/care-docs/' + this.patient.id))
+                    .get(rootUrl('/care-docs/' + this.patient.id + '/' + this.showPast.status))
                     .then(response => {
                         // this.loading = false;
+                        // this.list.map(obj =>{
+                        //    this.careDocs[obj.value] = [];
+                        // });
                         this.careDocs = response.data;
+                        // response.data.map(obj => {
+                        //     this.careDocs.push(obj);
+                        // });
 
                         return this.careDocs;
                     })
@@ -175,7 +184,16 @@
             },
             sendingEvent (file, xhr, formData) {
                 formData.append('doc_type', this.selectedDocumentType.value);
+            },
+            showCurrentDocuments() {
+                this.showPast.status = false;
+                this.getCareDocuments();
+            },
+            showPastDocuments(){
+                this.showPast.status = true;
+                this.getCareDocuments();
             }
+
         }
     }
 </script>

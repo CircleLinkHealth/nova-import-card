@@ -8,20 +8,24 @@ use Illuminate\Http\Request;
 
 class PatientCareDocumentsController extends Controller
 {
-    public function getCareDocuments(Request $request, $patientId)
+    public function getCareDocuments(Request $request, $patientId, $showPast)
     {
-        //get current care docs
-        //return json with caredoc details not actual files
+
         $patient = User::findOrFail($patientId);
 
-
-        $files = $patient->getMedia("patient-care-documents")->mapToGroups(function ($item, $key){
+        $files = $patient->getMedia("patient-care-documents")->sortByDesc('created_at')->mapToGroups(function ($item, $key) {
             $docType = $item->getCustomProperty('doc_type');
 
-             return [ $docType => $item];
-        })->reject(function($value, $key){
+            return [$docType => $item];
+        })->reject(function ($value, $key) {
             return ! $key;
-        });
+        })->unless($showPast == "true", function ($files){
+            return $files->map(function($typeGroup){
+                return collect([$typeGroup->first()]);
+            });
+        })->union(['Vitals' => [0] , 'PPP' => [0], 'Provider Report' => [0], 'Wellness Survey' => [0], 'Lab Results' => [0]]);
+
+
 
         return response()->json($files->toArray());
     }
@@ -30,8 +34,6 @@ class PatientCareDocumentsController extends Controller
     {
 
         $patient = User::findOrFail($patientId);
-
-
 
         foreach ($request->file()['file'] as $file) {
 
