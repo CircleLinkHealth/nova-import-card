@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\NurseWeeklyRep;
+use App\Call;
+use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class NursesWeeklyRepController extends Controller
@@ -10,11 +12,21 @@ class NursesWeeklyRepController extends Controller
     /**
      * Display a listing of the resource.
      *
+     *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        return view('admin.reports.nurseweekly');
+        $weekStart = Carbon::now()->startOfWeek()->toDateString();
+        $weekEnd = Carbon::now()->endOfWeek()->toDateString();
+
+        $nurses = User::ofType('care-center')->whereHas('outboundCalls', function ($q) use ($weekStart, $weekEnd) {
+            $q->whereBetween('scheduled_date', [$weekStart, $weekEnd]);
+        })->with(['outboundCalls' => function ($q) use ($weekStart, $weekEnd) {
+            $q->whereBetween('scheduled_date', [$weekStart, $weekEnd]);
+        }])->get();
+
+        return view('admin.reports.nurseweekly', compact('nurses'));
     }
 
     /**

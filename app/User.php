@@ -1745,6 +1745,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->exists();
     }
 
+
+
     /**
      * Calls made from CLH to the User.
      *
@@ -1946,6 +1948,20 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     ->orWhere('type', '=', 'call');
             });
     }
+    /*public function hasScheduledCallThisWeek()
+    {
+        $weekStart = Carbon::now()->startOfWeek()->toDateString();
+        $weekEnd = Carbon::now()->endOfWeek()->toDateString();
+
+        return Call::where(function ($q) {
+            $q->whereNull('type')
+              ->orWhere('type', '=', 'call');
+        })
+                   ->where('outbound_cpm_id', $this->id)
+                   ->where('status', 'scheduled')
+                   ->whereBetween('scheduled_date', [$weekStart, $weekEnd])
+                   ->exists();
+    }*/
 
     public function outboundMessages()
     {
