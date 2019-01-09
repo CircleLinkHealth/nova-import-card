@@ -53,36 +53,43 @@
         },
         methods: {
             create(note) {
-                if (note) {
-                    const id = ((this.notes.map(note => note.id)[this.notes.length - 1] || 0) + 1)
-                    const newNote = {
-                        id,
-                        type: note.type || 'success',
-                        close: () => {
-                            this.notes.splice(this.notes.findIndex(note => note.id === id), 1)
-                        }
-                    }
-                    if (typeof(note) === 'string') {
-                        newNote.text = note
-                    }
-                    else if (note.constructor.name === 'Object') {
-                        Object.assign(newNote, note)
-                    }
-                    else {
-                        newNote.data = note
-                    }
-                    if (!note.noTimeout) {
-                        newNote.timeout = setTimeout(() => {
-                            newNote.close()
-                        }, note.interval || 15000)
-                    }
 
-                    if (!this.reverse) this.notes.push(newNote)
-                    else this.notes.unshift(newNote)
-
-                    return newNote
+                if (!note) {
+                    throw new Error('no note provided');
                 }
-                throw new Error('no note provided')
+
+                const id = ((this.notes.map(note => note.id)[this.notes.length - 1] || 0) + 1)
+                const newNote = {
+                    id,
+                    type: note.type || 'success',
+                    close: () => {
+                        this.notes.splice(this.notes.findIndex(note => note.id === id), 1)
+                    }
+                }
+                if (typeof(note) === 'string') {
+                    newNote.text = note
+                }
+                else if (note.constructor.name === 'Object') {
+                    Object.assign(newNote, note)
+                }
+                else {
+                    newNote.data = note
+                }
+                if (!note.noTimeout) {
+                    newNote.timeout = setTimeout(() => {
+                        newNote.close()
+                    }, note.interval || 15000)
+                }
+
+                if (note.overwrite) {
+                    this.notes.splice(0);
+                    this.notes.push(newNote);
+                }
+                else if (!this.reverse) this.notes.push(newNote)
+                else this.notes.unshift(newNote)
+
+                return newNote
+
             },
             remove(id) {
                 const note = this.notes.find(n => n.id === id)
@@ -91,7 +98,7 @@
                 }
             },
             removeAll() {
-                this.notes.length = 0;
+                this.notes.splice(0);
             }
         },
         created() {

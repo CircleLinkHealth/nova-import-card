@@ -1,5 +1,9 @@
 <template>
     <div>
+        <div id="notifications-wrapper">
+            <notifications name="connection-error"></notifications>
+        </div>
+
         <div v-if="showLoader || !visible" :class="{ 'hide-tracker': hideTracker }">
             <div class="loader-filler"></div>
             <div class="loader-container">
@@ -34,7 +38,7 @@
     import LoaderComponent from '../../components/loader'
     import AwayComponent from './comps/away'
     import BhiComponent from './comps/bhi-switch'
-    import stor from '../../stor'
+    import Notifications from '../../components/notifications';
 
     export default {
         name: 'time-tracker',
@@ -73,7 +77,8 @@
             'time-display': TimeDisplay,
             'loader': LoaderComponent,
             'away': AwayComponent,
-            'bhi-switch': BhiComponent
+            'bhi-switch': BhiComponent,
+            'notifications': Notifications
         },
         computed: {
             totalTime() {
@@ -149,6 +154,9 @@
                         }
 
                         socket.onopen = (ev) => {
+
+                            Event.$emit('notifications-connection-error:dismissAll');
+
                             if (EventBus.isInFocus) {
                                 self.updateTime()
                                 self.callMode = false
@@ -172,8 +180,16 @@
                         }
 
                         socket.onerror = (err) => {
+
+                            Event.$emit('notifications-connection-error:create', {
+                                text: `Cannot connect to time tracker. If this note does not go away soon, please contact CLH support.`,
+                                type: 'error',
+                                noTimeout: true,
+                                overwrite: true
+                            });
+
                             console.error('socket-error:', err)
-                        }
+                        };
 
                         return socket;
                     })()
@@ -181,9 +197,20 @@
                 catch (ex) {
                     console.error(ex);
                 }
+            },
+            positionNotificationsBox() {
+
+                $('#notifications-wrapper').offset({
+                    top: 20,
+                    left: $(document).width() - 330
+                });
+
             }
         },
         mounted() {
+
+            this.positionNotificationsBox();
+
             this.previousSeconds = this.info.totalTime || 0;
             this.info.initSeconds = 0
             this.info.isManualBehavioral = (this.info.isBehavioral && !this.info.isCcm) || false
@@ -241,11 +268,13 @@
                     }
 
                     if (this.state !== STATE.SHOW_INACTIVE_MODAL) {
-                        if (this.socket) {
-                            this.showTimer = false
-                            this.state = STATE.LEAVE;
+                        this.showTimer = false;
+                        this.state = STATE.LEAVE;
+
+                        if (this.socket && this.socket.readyState === WebSocket.OPEN) {
                             this.socket.send(JSON.stringify({message: STATE.LEAVE, info: this.info}))
                         }
+
                         this.active = false;
                         // this.showLoader = true
                     }
@@ -343,7 +372,7 @@
                 this.createSocket()
 
                 setInterval(() => {
-                    if (this.socket.readyState === this.socket.OPEN) {
+                    if (this.socket && this.socket.readyState === this.socket.OPEN) {
                         this.socket.send(JSON.stringify({message: 'PING'}))
                     }
                 }, 5000)
@@ -379,4 +408,15 @@
     .inactive {
         color: red;
     }
+
+    #notifications-wrapper {
+        width: 300px;
+        font-size: small;
+        text-align: left;
+    }
+
+    .notifications-connection-error {
+        position: absolute;
+    }
+
 </style>
