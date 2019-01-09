@@ -26,24 +26,23 @@
                                     <thead>
 
 
-                                            <tr>
-                                                <th>Name</th>
-                                                <th>Scheduled calls</th>
-                                            </tr>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Scheduled calls</th>
+                                    </tr>
                                     </thead>
                                     @foreach ($nurses as $nurse)
-                                    <tbody>
-
+                                        <tbody>
                                         <tr>
                                             <td>{{$nurse->getFullName()}}</td>
                                             <td>{{$nurse->outboundCalls->count()}}</td>
                                         </tr>
-                                    @endforeach
-                                    </tbody>
+                                        @endforeach
+                                        </tbody>
                                 </table>
                             </div>
 
-                                  <br>
+                            <br>
 
 
                         </div>
