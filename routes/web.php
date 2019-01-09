@@ -617,7 +617,7 @@ Route::group(['middleware' => 'auth'], function () {
         'as'    => 'get.care-docs'
     ]);
 
-    Route::get('download-care-document/{filePath}', [
+    Route::get('download-care-document/{patient_id}/{doc_id}', [
         'uses' => 'API\PatientCareDocumentsController@downloadCareDocument',
         'as'    => 'download.care-doc'
     ]);
