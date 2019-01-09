@@ -60,6 +60,14 @@
     </div>
 </nav>
 
+<script>
+    $(document).ready(function () {
+        $('.dropdown-trigger').dropdown({
+            coverTrigger: false
+        });
+    });
+</script>
+
 @yield('content')
 
 </html>

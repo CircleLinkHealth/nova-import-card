@@ -60,6 +60,7 @@
     "h4cc/wkhtmltopdf-amd64": "*",
     "jenssegers/agent": "^2.5",
     "jeremykenedy/slack-laravel": "^2.2",
+    "jorijn/laravel-security-checker": "^0.3.0",
     "lab404/laravel-impersonate": "^1.2",
     "laracasts/utilities": "~2.0",
     "laravel/framework": "5.5.*",
