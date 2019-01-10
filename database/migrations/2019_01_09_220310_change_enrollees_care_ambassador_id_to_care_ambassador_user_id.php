@@ -20,7 +20,7 @@ class ChangeEnrolleesCareAmbassadorIdToCareAmbassadorUserId extends Migration
             $table->foreign('care_ambassador_user_id')
                   ->references('id')->on('users')
                   ->onUpdate('cascade')
-                  ->onDelete('cascade');
+                  ->onDelete('set null');
         });
 
 
@@ -40,7 +40,7 @@ class ChangeEnrolleesCareAmbassadorIdToCareAmbassadorUserId extends Migration
             $table->foreign('care_ambassador_id')
                   ->references('id')->on('users')
                   ->onUpdate('cascade')
-                  ->onDelete('cascade');
+                  ->onDelete('set null');
         });
 
     }
