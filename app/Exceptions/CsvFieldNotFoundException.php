@@ -8,9 +8,9 @@ namespace App\Exceptions;
 
 use Throwable;
 
-class FileNotFoundException extends \Exception
+class CsvFieldNotFoundException extends \Exception
 {
-    public function __construct($message = 'File Not Found', $code = 404, Throwable $previous = null)
+    public function __construct($message = 'Csv Field Not Found', $code = 422, Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }
