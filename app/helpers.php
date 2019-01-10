@@ -7,6 +7,7 @@
 use App\AppConfig;
 use App\CarePlanTemplate;
 use App\Constants;
+use App\Exceptions\CsvFieldNotFoundException;
 use App\Jobs\SendSlackMessage;
 use App\User;
 use Carbon\Carbon;
@@ -29,29 +30,29 @@ if ( ! function_exists('parseIds')) {
         if ($value instanceof Model) {
             return [$value->getKey()];
         }
-
+        
         if ($value instanceof EloquentCollection) {
             return $value->modelKeys();
         }
-
+        
         if (is_array($value)) {
             $value = collect($value);
         }
-
+        
         if ($value instanceof Collection) {
             return $value->map(
                 function ($el) {
                     $id = parseIds($el);
-
+                    
                     return $id[0];
                 }
             )->values()->toArray();
         }
-
+        
         if (is_string($value) && str_contains($value, ',')) {
             return explode(',', $value);
         }
-
+        
         return array_filter((array) $value);
     }
 }
@@ -68,7 +69,7 @@ if ( ! function_exists('str_substr_after')) {
     function str_substr_after($string, $character = '/')
     {
         $pos = strrpos($string, $character);
-
+        
         return false === $pos
             ? $string
             : substr($string, $pos + 1);
@@ -84,8 +85,8 @@ if ( ! function_exists('activeNurseNames')) {
     function activeNurseNames()
     {
         return User::ofType('care-center')
-            ->where('user_status', 1)
-            ->pluck('display_name', 'id');
+                   ->where('user_status', 1)
+                   ->pluck('display_name', 'id');
     }
 }
 
@@ -93,16 +94,16 @@ if ( ! function_exists('sendSlackMessage')) {
     /**
      * Sends a message to Slack.
      *
-     * @param string $to      - slack channel (should start with '#')
+     * @param string $to - slack channel (should start with '#')
      * @param string $message
-     * @param bool   $force   - in case you really want the message to go to slack (testing | debugging)
+     * @param bool $force - in case you really want the message to go to slack (testing | debugging)
      */
     function sendSlackMessage($to, $message, $force = false)
     {
         if ( ! $force && ! in_array(app()->environment(), ['production', 'worker'])) {
             return;
         }
-
+        
         SendSlackMessage::dispatch($to, $message)->onQueue('default');
     }
 }
@@ -118,19 +119,19 @@ if ( ! function_exists('formatPhoneNumber')) {
     function formatPhoneNumber($string)
     {
         $sanitized = extractNumbers($string);
-
+        
         if (10 > strlen($sanitized)) {
             return false;
         }
-
+        
         if (10 < strlen($sanitized)) {
             $sanitized = substr($sanitized, -10);
         }
-
+        
         if (10 === strlen($sanitized)) {
             return substr($sanitized, 0, 3).'-'.substr($sanitized, 3, 3).'-'.substr($sanitized, 6, 4);
         }
-
+        
         return null;
     }
 }
@@ -149,15 +150,15 @@ if ( ! function_exists('formatPhoneNumberE164')) {
         $countryCode = '1'
     ) {
         $sanitized = extractNumbers($string);
-
+        
         if (strlen($sanitized) < 10) {
             return '';
         }
-
+        
         if (strlen($sanitized) > 10) {
             $sanitized = substr($sanitized, -10);
         }
-
+        
         return '+'.$countryCode.$sanitized;
     }
 }
@@ -173,7 +174,7 @@ if ( ! function_exists('extractNumbers')) {
     function extractNumbers($string)
     {
         preg_match_all('/([\d]+)/', $string, $match);
-
+        
         return implode($match[0]);
     }
 }
@@ -181,7 +182,7 @@ if ( ! function_exists('extractNumbers')) {
 if ( ! function_exists('detectDelimiter')) {
     /**
      * @param bool|resource $csvFileHandle The handle of a file opened with fopen
-     * @param int           $length
+     * @param int $length
      *
      * @return false|int|string
      */
@@ -193,13 +194,13 @@ if ( ! function_exists('detectDelimiter')) {
             ';'  => 0,
             '|'  => 0,
         ];
-
+        
         foreach ($delimiters as $delimiter => &$count) {
             $firstLine = fgetcsv($csvFileHandle, $length, $delimiter);
             $count     = count($firstLine);
             rewind($csvFileHandle);
         }
-
+        
         return array_search(max($delimiters), $delimiters);
     }
 }
@@ -209,34 +210,37 @@ if ( ! function_exists('parseCsvToArray')) {
      * Parses a CSV file into an array.
      *
      * @param $file
-     * @param int  $length
+     * @param int $length
      * @param null $delimiter
      *
      * @return array
      */
     function parseCsvToArray($file, $length = 0, $delimiter = null)
     {
-        $csvArray  = $fields  = [];
+        $csvArray  = $fields = [];
         $i         = 0;
         $handle    = @fopen($file, 'r');
         $delimiter = $delimiter ?? detectDelimiter($handle);
-
+        
         if ($handle) {
             while (false !== ($row = fgetcsv($handle, $length, $delimiter))) {
                 if (empty($fields)) {
                     $row = array_map('strtolower', $row);
-
+                    
                     $row = array_map(
                         function ($string) {
                             return str_replace(' ', '_', $string);
                         },
                         $row
                     );
-
+                    
                     $fields = array_map('trim', $row);
                     continue;
                 }
                 foreach ($row as $k => $value) {
+                    if ( ! array_key_exists($k, $fields)) {
+                        throw new CsvFieldNotFoundException("Could not find CSV Field with index $k. Check row number $i for bad data.");
+                    }
                     $csvArray[$i][$fields[$k]] = trim($value);
                 }
                 ++$i;
@@ -246,7 +250,7 @@ if ( ! function_exists('parseCsvToArray')) {
             }
             fclose($handle);
         }
-
+        
         return $csvArray;
     }
 }
@@ -256,7 +260,7 @@ if ( ! function_exists('secondsToHHMM')) {
     {
         $getHours = sprintf('%02d', floor($seconds / 3600));
         $getMins  = sprintf('%02d', floor(($seconds - ($getHours * 3600)) / 60));
-
+        
         return $getHours.':'.$getMins;
     }
 }
@@ -266,7 +270,7 @@ if ( ! function_exists('secondsToMMSS')) {
     {
         $minutes = sprintf('%02d', floor($seconds / 60));
         $seconds = sprintf(':%02d', (int) $seconds % 60);
-
+        
         return $minutes.$seconds;
     }
 }
@@ -287,17 +291,17 @@ if ( ! function_exists('parseDaysStringToNumbers')) {
         if (empty($daysAsString)) {
             return [];
         }
-
+        
         //eg. Monday, Tuesday, Wednesday
         $daysString = new Collection(explode($delimiter, $daysAsString));
-
+        
         // 1 for Monday, 2 for Tuesday, blah, blah
         $daysNumber = $daysString->map(
             function ($day) {
                 return Carbon::parse("Next ${day}")->dayOfWeek;
             }
         )->toArray();
-
+        
         return $daysNumber;
     }
 }
@@ -318,15 +322,15 @@ if ( ! function_exists('validateBloodPressureString')) {
         if (empty($bloodPressureString)) {
             return true;
         }
-
+        
         $readings = new Collection(explode($delimiter, $bloodPressureString));
-
+        
         foreach ($readings as $reading) {
             if ( ! is_numeric($reading) || $reading > 999 || $reading < 10) {
                 return false;
             }
         }
-
+        
         return true;
     }
 }
@@ -345,22 +349,22 @@ if ( ! function_exists('carbonGetNext')) {
             $dayOfWeek = clhToCarbonDayOfWeek(dayNameToClhDayOfWeek($day));
             $dayName   = $day;
         }
-
+        
         if (is_numeric($day)) {
             $dayOfWeek = clhToCarbonDayOfWeek($day);
             $dayName   = clhDayOfWeekToDayName($day);
         }
-
+        
         if ( ! isset($dayOfWeek)) {
             return false;
         }
-
+        
         $now = Carbon::now();
-
+        
         if ($now->dayOfWeek == $dayOfWeek) {
             return $now;
         }
-
+        
         return $now->parse("next ${dayName}");
     }
 }
@@ -421,7 +425,7 @@ if ( ! function_exists('clhDayOfWeekToDayName')) {
             'Saturday',
             'Sunday',
         ];
-
+        
         return $days[$clhDayOfWeek];
     }
 }
@@ -445,7 +449,7 @@ if ( ! function_exists('dayNameToClhDayOfWeek')) {
             'Saturday'  => 6,
             'Sunday'    => 7,
         ];
-
+        
         return $days[ucfirst(strtolower(trim($clhDayOfWeek)))] ?? false;
     }
 }
@@ -487,7 +491,7 @@ if ( ! function_exists('timestampsToWindow')) {
     ) {
         $startDate = Carbon::parse($startTimestamp, $timezone);
         $endDate   = Carbon::parse($endTimestamp, $timezone);
-
+        
         return [
             'day'   => carbonToClhDayOfWeek($startDate->dayOfWeek),
             'start' => $startDate->format('H:i:s'),
@@ -511,7 +515,7 @@ if ( ! function_exists('generateRandomString')) {
     ) {
         for ($s = '', $cl = strlen($c) - 1, $i = 0; $i < $l; $s .= $c[mt_rand(0, $cl)], ++$i) {
         }
-
+        
         return $s;
     }
 }
@@ -523,9 +527,9 @@ if ( ! function_exists('windowToTimestamps')) {
      * @param $startTimestamp
      * @param $endTimestamp
      * @param string $timezone
-     * @param mixed  $date
-     * @param mixed  $start
-     * @param mixed  $end
+     * @param mixed $date
+     * @param mixed $start
+     * @param mixed $end
      *
      * @return array
      */
@@ -535,19 +539,19 @@ if ( ! function_exists('windowToTimestamps')) {
         $end
     ) {
         $startDate = Carbon::parse($date);
-
+        
         $startTimeH = Carbon::parse($start)->format('H');
         $startTimei = Carbon::parse($start)->format('i');
-
+        
         $startDate = $startDate->setTime($startTimeH, $startTimei)->toDateTimeString();
-
+        
         $endDate = Carbon::parse($date);
-
+        
         $endTimeH = Carbon::parse($end)->format('H');
         $endTimei = Carbon::parse($end)->format('i');
-
+        
         $endDate = $endDate->setTime($endTimeH, $endTimei)->toDateTimeString();
-
+        
         return [
             'window_start' => $startDate,
             'window_end'   => $endDate,
@@ -569,11 +573,11 @@ if ( ! function_exists('dateAndTimeToCarbon')) {
         $time
     ) {
         $carbon_date = Carbon::parse($date);
-
+        
         $carbon_hour    = Carbon::parse($time)->format('H');
         $carbon_minutes = Carbon::parse($time)->format('i');
         $carbon_date->setTime($carbon_hour, $carbon_minutes);
-
+        
         return $carbon_date;
     }
 }
@@ -594,7 +598,7 @@ if ( ! function_exists('secondsToHMS')) {
         $H2 = floor($totalTimeInSeconds / 3600);
         $m2 = ($totalTimeInSeconds / 60) % 60;
         $s2 = $totalTimeInSeconds % 60;
-
+        
         return sprintf("%02d${delimiter}%02d${delimiter}%02d", $H2, $m2, $s2);
     }
 }
@@ -632,7 +636,7 @@ if ( ! function_exists('defaultCarePlanTemplate')) {
     function getDefaultCarePlanTemplate(): ?CarePlanTemplate
     {
         $id = getAppConfig('default_care_plan_template_id');
-
+        
         return CarePlanTemplate::findOrFail($id);
     }
 }
@@ -648,7 +652,7 @@ if ( ! function_exists('getAppConfig')) {
     function getAppConfig(string $key)
     {
         $conf = AppConfig::whereConfigKey($key)->first();
-
+        
         return $conf
             ? $conf->config_value
             : null;
@@ -660,7 +664,7 @@ if ( ! function_exists('setAppConfig')) {
      * Save an AppConfig key, value and then return it.
      *
      * @param string $key
-     * @param mixed  $value
+     * @param mixed $value
      *
      * @return CarePlanTemplate
      */
@@ -674,7 +678,7 @@ if ( ! function_exists('setAppConfig')) {
                 'config_value' => $value,
             ]
         );
-
+        
         return $conf
             ? $conf->config_value
             : null;
@@ -712,7 +716,7 @@ if ( ! function_exists('linkToDownloadFile')) {
         if ( ! $path) {
             throw new \Exception('File path cannot be empty');
         }
-
+        
         return route(
             'download',
             [
@@ -739,7 +743,7 @@ if ( ! function_exists('linkToCachedView')) {
         if ( ! $viewHashKey) {
             throw new \Exception('File path cannot be empty');
         }
-
+        
         return route('get.cached.view.by.key', ['key' => $viewHashKey], $absolute);
     }
 }
@@ -750,26 +754,26 @@ if ( ! function_exists('parseCallDays')) {
         if ( ! $preferredCallDays || str_contains(strtolower($preferredCallDays), ['any'])) {
             return [1, 2, 3, 4, 5];
         }
-
+        
         $days = [];
-
+        
         if (str_contains($preferredCallDays, [','])) {
             foreach (explode(',', $preferredCallDays) as $dayName) {
                 $days[] = dayNameToClhDayOfWeek($dayName);
             }
         } elseif (str_contains($preferredCallDays, ['-'])) {
             $exploded = explode('-', $preferredCallDays);
-
+            
             $from = array_search($exploded[0], weekDays());
             $to   = array_search($exploded[1], weekDays());
-
+            
             for ($i = $from; $i <= $to; ++$i) {
                 $days[] = $i;
             }
         } else {
             $days[] = dayNameToClhDayOfWeek($preferredCallDays);
         }
-
+        
         return array_filter($days);
     }
 }
@@ -783,17 +787,17 @@ if ( ! function_exists('parseCallTimes')) {
                 'end'   => '17:00:00',
             ];
         }
-
+        
         $times = [];
-
+        
         if (str_contains($preferredCallTimes, ['-'])) {
             $delimiter = '-';
         }
-
+        
         if (str_contains($preferredCallTimes, ['to'])) {
             $delimiter = 'to';
         }
-
+        
         if (isset($delimiter)) {
             $preferredTimes = explode($delimiter, $preferredCallTimes);
             $times['start'] = Carbon::parse(trim($preferredTimes[0]))->toTimeString();
@@ -804,7 +808,7 @@ if ( ! function_exists('parseCallTimes')) {
                 'end'   => '17:00:00',
             ];
         }
-
+        
         return $times;
     }
 }
@@ -824,18 +828,18 @@ if ( ! function_exists('getProblemCodeSystemName')) {
                 || str_contains(strtolower($clue), ['snomed'])) {
                 return Constants::SNOMED_NAME;
             }
-
+            
             if ('2.16.840.1.113883.6.103' == $clue
                 || str_contains(strtolower($clue), ['9'])) {
                 return Constants::ICD9_NAME;
             }
-
+            
             if ('2.16.840.1.113883.6.3' == $clue
                 || str_contains(strtolower($clue), ['10'])) {
                 return Constants::ICD10_NAME;
             }
         }
-
+        
         return null;
     }
 }
@@ -851,13 +855,13 @@ if ( ! function_exists('getProblemCodeSystemCPMId')) {
     function getProblemCodeSystemCPMId(array $clues)
     {
         $name = getProblemCodeSystemName($clues);
-
+        
         $map = Constants::CODE_SYSTEM_NAME_ID_MAP;
-
+        
         if (array_key_exists($name, $map)) {
             return $map[$name];
         }
-
+        
         return null;
     }
 }
@@ -874,33 +878,36 @@ if ( ! function_exists('validProblemName')) {
     {
         return ! str_contains(
                 strtolower($name),
-            ['screening',
-                'history',
-                'scan',
-                'immunization',
-                'immunisation',
-                'injection',
-                'vaccine',
-                'vaccination',
-                'vaccin',
-                'screen',
-                'follow up',
-                'followup',
-                'labs',
-                'f/u',
-                'mo fu',
-                'fu on',
-                'fu from',
-                'm fu',
-                'counsel',
-                'adverse effect drug',
-                'counseling',
-                'new pt', ]
-        ) && ! in_array(
+                [
+                    'screening',
+                    'history',
+                    'scan',
+                    'immunization',
+                    'immunisation',
+                    'injection',
+                    'vaccine',
+                    'vaccination',
+                    'vaccin',
+                    'screen',
+                    'follow up',
+                    'followup',
+                    'labs',
+                    'f/u',
+                    'mo fu',
+                    'fu on',
+                    'fu from',
+                    'm fu',
+                    'counsel',
+                    'adverse effect drug',
+                    'counseling',
+                    'new pt',
+                ]
+            ) && ! in_array(
                 strtolower($name),
-            ['fu',
-            ]
-        );
+                [
+                    'fu',
+                ]
+            );
     }
 }
 
@@ -936,7 +943,7 @@ if ( ! function_exists('showDiabetesBanner')) {
 //        ) {
 //            return true;
 //        }
-
+        
         return false;
     }
 }
@@ -972,11 +979,11 @@ if ( ! function_exists('validateYYYYMMDDDateString')) {
     function validateYYYYMMDDDateString($date, $throwException = true)
     {
         $isValid = (bool) preg_match('/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/', $date);
-
+        
         if ( ! $isValid && $throwException) {
             throw new \Exception('Invalid Date');
         }
-
+        
         return $isValid;
     }
 }
@@ -993,7 +1000,7 @@ if ( ! function_exists('cast')) {
      * incompatable classes.
      *
      * @param object $object the object to cast
-     * @param string $class  the class to cast the object into
+     * @param string $class the class to cast the object into
      *
      * @return object
      */
@@ -1012,7 +1019,7 @@ if ( ! function_exists('cast')) {
         foreach (get_object_vars($object) as $key => $value) {
             $ret[$key] = $value;
         }
-
+        
         return $ret;
     }
 }
@@ -1034,12 +1041,12 @@ if ( ! function_exists('is_json')) {
         if ('' === $string || ! is_string($string)) {
             return null;
         }
-
+        
         \json_decode($string);
         if (\json_last_error()) {
             return false;
         }
-
+        
         return true;
     }
 }
@@ -1058,13 +1065,13 @@ if ( ! function_exists('read_file_using_generator')) {
         if ( ! file_exists($path)) {
             return false;
         }
-
+        
         $handle = fopen($path, 'r');
-
+        
         while ( ! feof($handle)) {
             yield fgets($handle);
         }
-
+        
         fclose($handle);
     }
 }
@@ -1074,19 +1081,19 @@ if ( ! function_exists('getEhrReportWritersFolderUrl')) {
         if (app()->environment(['production', 'worker'])) {
             return 'https://drive.google.com/drive/folders/1NMMNIZKKicOVDNEUjXf6ayAjRbBbFAgh';
         }
-
+        
         //this is to make local environments faster for devs
         //comment out this if section to use the feature
-        if (app()->environment('local')){
+        if (app()->environment('local')) {
             return null;
         }
-
+        
         $dir = getGoogleDirectoryByName('ehr-data-from-report-writers');
-
+        
         if ( ! $dir) {
             return null;
         }
-
+        
         return "https://drive.google.com/drive/folders/{$dir['path']}";
     }
 }
@@ -1095,14 +1102,14 @@ if ( ! function_exists('getGoogleDirectoryByName')) {
     function getGoogleDirectoryByName($name)
     {
         $clh = collect(Storage::drive('google')->listContents('/', true));
-
+        
         $directory = $clh->where('type', '=', 'dir')
-            ->where('filename', '=', $name)
-            ->first();
+                         ->where('filename', '=', $name)
+                         ->first();
         if ( ! $directory) {
             return null;
         }
-
+        
         return $directory;
     }
 }
@@ -1111,17 +1118,17 @@ if ( ! function_exists('format_bytes')) {
     function format_bytes($bytes, $precision = 2)
     {
         $units = ['b', 'kb', 'mb', 'gb', 'tb'];
-
+        
         $bytes = max($bytes, 0);
         $pow   = floor(
             ($bytes
                 ? log($bytes)
                 : 0) / log(1024)
         );
-        $pow = min($pow, count($units) - 1);
-
+        $pow   = min($pow, count($units) - 1);
+        
         $bytes /= (1 << (10 * $pow));
-
+        
         return round($bytes, $precision).' '.$units[$pow];
     }
 }
@@ -1132,16 +1139,16 @@ if ( ! function_exists('array_keys_exist')) {
      *
      * @see array_key_exists()
      *
-     * @param string[] $keys    keys to check
-     * @param array    $array   an array with keys to check
-     * @param mixed    $missing reference to a variable that that contains the missing keys
+     * @param string[] $keys keys to check
+     * @param array $array an array with keys to check
+     * @param mixed $missing reference to a variable that that contains the missing keys
      *
      * @return bool true if all given keys exist in the given array, false if not
      */
     function array_keys_exist(array $keys, array $array, &$missing = null)
     {
         $missing = array_diff($keys, array_keys($array));
-
+        
         return array_reduce(
             $keys,
             function ($carry, $key) use ($array) {
@@ -1170,11 +1177,11 @@ if ( ! function_exists('getSampleNotePdfPath')) {
     function getSampleNotePdfPath()
     {
         $path = public_path('assets/pdf/sample-note.pdf');
-
+        
         if ( ! file_exists($path)) {
             throw new \App\Exceptions\FileNotFoundException();
         }
-
+        
         return $path;
     }
 }
@@ -1183,11 +1190,11 @@ if ( ! function_exists('getSampleCcdaPath')) {
     function getSampleCcdaPath()
     {
         $path = public_path('demo.xml');
-
+        
         if ( ! file_exists($path)) {
             throw new \App\Exceptions\FileNotFoundException();
         }
-
+        
         return $path;
     }
 }
@@ -1202,10 +1209,10 @@ if ( ! function_exists('tryDropForeignKey')) {
             if (1091 == $errorCode) {
                 Log::debug("Key `${key}` does not exist. Nothing to delete.".__FILE__);
             }
-
+            
             return false;
         }
-
+        
         return true;
     }
 }
