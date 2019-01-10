@@ -9,6 +9,11 @@ use Spatie\MediaLibrary\Models\Media;
 
 class PatientCareDocumentsController extends Controller
 {
+    /**
+     * The size of ten megabytes, used for file validation
+     */
+    const TEN_MB = 10485760;
+
     public function getCareDocuments(Request $request, $patientId, $showPast)
     {
         $patient = User::findOrFail($patientId);
@@ -46,7 +51,7 @@ class PatientCareDocumentsController extends Controller
                     , 400);
             }
             //if file is larger than 10MB
-            if ($file->getSize() > 10000000){
+            if ($file->getSize() > $this::TEN_MB){
                 return response()->json(
                     'The file you are trying to upload is too large.'
                     , 400);
