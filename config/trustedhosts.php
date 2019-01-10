@@ -12,6 +12,7 @@ return [
             'circlelink-worker.medstack.net',
         ]
         : [
+            '.*ngrok.io',
             '.*dev',
             '.*test',
             '.*careplanmanager.com',
