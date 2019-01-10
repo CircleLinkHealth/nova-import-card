@@ -124,7 +124,7 @@
                                     self.seconds = self.info.isManualBehavioral ? data.bhiSeconds : data.ccmSeconds
                                     self.visible = true //display the component when the previousSeconds value has been received from the server to keep the display up-to-date
                                     self.showLoader = false;
-                                    self.active = true;
+                                    // self.active = true;
                                 }
                                 else if (data.message === 'server:modal') {
                                     EventBus.$emit('away:trigger-modal')
@@ -244,6 +244,8 @@
 
                 EventBus.$on('tracker:start', () => {
 
+                    this.active = true;
+
                     //start inactivity tracker only if not on call mode and not on twilio
                     if (!(this.callMode && this.twilioEnabled)) {
                         EventBus.$emit('inactivity:start');
@@ -261,11 +263,6 @@
                 EventBus.$on('tracker:stop', () => {
 
                     EventBus.$emit("inactivity:stop");
-
-                    //do not stop tracker if we are on twilio calls
-                    if (this.callMode && this.twilioEnabled) {
-                        return;
-                    }
 
                     if (this.state !== STATE.SHOW_INACTIVE_MODAL) {
                         this.showTimer = false;
