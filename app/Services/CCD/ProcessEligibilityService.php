@@ -31,7 +31,7 @@ class ProcessEligibilityService
      * @param int   $practiceId
      * @param array $options
      *
-     * @return $this|\Illuminate\Database\Eloquent\Model
+     * @return EligibilityBatch
      */
     public function createBatch($type, int $practiceId, $options = [])
     {
@@ -116,25 +116,24 @@ class ProcessEligibilityService
             ]
         );
     }
-
+    
     /**
-     * @param $patientList
      * @param int $practiceId
      * @param $filterLastEncounter
      * @param $filterInsurance
      * @param $filterProblems
      *
-     * @return \Illuminate\Database\Eloquent\Model|ProcessEligibilityService
+     * @return EligibilityBatch
      */
     public function createSingleCSVBatch(
-        $patientList,
         int $practiceId,
         $filterLastEncounter,
         $filterInsurance,
         $filterProblems
     ) {
         return $this->createBatch(EligibilityBatch::TYPE_ONE_CSV, $practiceId, [
-            'patientList'         => $patientList,
+            //SAVING patientList has been DEPRECATED on Jan 11 2019
+            'patientList'         => [],
             'filterLastEncounter' => (bool) $filterLastEncounter,
             'filterInsurance'     => (bool) $filterInsurance,
             'filterProblems'      => (bool) $filterProblems,
@@ -538,20 +537,7 @@ class ProcessEligibilityService
 
             $patientList[] = $patient;
 
-            $patient = $this->transformCsvRow($patient);
-
-            $validator = $this->validateRow($patient);
-
-            $hash = $batch->practice->name.$patient['first_name'].$patient['last_name'].$patient['mrn'];
-
-            $job = EligibilityJob::create([
-                'batch_id' => $batch->id,
-                'hash'     => $hash,
-                'data'     => $patient,
-                'errors'   => $validator->fails()
-                    ? $validator->errors()
-                    : null,
-            ]);
+            $job = $this->createEligibilityJobFromCsvRow($patient, $batch);
 
             $patient['eligibility_job_id'] = $job->id;
         }
@@ -726,5 +712,33 @@ class ProcessEligibilityService
         }
 
         return $patient;
+    }
+    
+    /**
+     *
+     *
+     * @param array $patient
+     * @param EligibilityBatch $batch
+     *
+     * @return EligibilityJob|\Illuminate\Database\Eloquent\Model
+     */
+    public function createEligibilityJobFromCsvRow(array $patient, EligibilityBatch $batch)
+    {
+        $patient = $this->transformCsvRow($patient);
+    
+        $validator = $this->validateRow($patient);
+    
+        $hash = $batch->practice->name.$patient['first_name'].$patient['last_name'].$patient['mrn'];
+    
+        $job = EligibilityJob::create([
+                                          'batch_id' => $batch->id,
+                                          'hash'     => $hash,
+                                          'data'     => $patient,
+                                          'errors'   => $validator->fails()
+                                              ? $validator->errors()
+                                              : null,
+                                      ]);
+        
+        return $job;
     }
 }

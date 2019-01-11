@@ -936,7 +936,10 @@ class WelcomeCallListGenerator
 
         return $this;
     }
-
+    
+    /**
+     * @throws \Exception
+     */
     protected function filterPatientList()
     {
         $this->validateStructureAndData()
@@ -944,7 +947,11 @@ class WelcomeCallListGenerator
             ->byLastEncounter()
             ->byInsurance();
     }
-
+    
+    /**
+     * @return $this
+     * @throws \Exception
+     */
     protected function validateStructureAndData()
     {
         if (EligibilityBatch::TYPE_ONE_CSV == $this->batch->type && $this->eligibilityJob) {

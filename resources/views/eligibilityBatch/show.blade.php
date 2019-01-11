@@ -82,7 +82,7 @@
 
                         <br><br>
 
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <h4>Counts</h4>
 
                             @if(isset($stats) && !empty($stats))
@@ -117,7 +117,8 @@
                                 <p>No options found.</p>
                             @endforelse
                         </div>
-                        @if(optional($initiatorUser)->hasRole('ehr-report-writer'))
+
+                        <div class="col-md-8">
                             <h4>Validation Stats</h4>
                             Total records: {{$validationStats['total']}}<br>
 
@@ -131,7 +132,17 @@
                             0 problems: {{$validationStats['problems']}}<br>
                             0 phones: {{$validationStats['phones']}}<br>
 
-                        @endif
+                            @isset($batch->options['errors'])
+                                <br><br>
+
+                                <h4>Records not processed due to invalid data</h4>
+
+                                @foreach($batch->options['errors'] as $error)
+                                    <p>Row {{$error['row_number']}}: {{$error['message']}}</p>
+                                @endforeach
+                            @endisset
+                        </div>
+
                         <script>
                             function notifyReportWriter() {
                                 var x = document.getElementById("notify");
