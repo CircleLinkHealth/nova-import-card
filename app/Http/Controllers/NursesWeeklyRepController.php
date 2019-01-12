@@ -17,80 +17,51 @@ class NursesWeeklyRepController extends Controller
     {
         $dayCounter = Carbon::now()->startOfWeek()->startOfDay();
         $last       = Carbon::now()->endOfWeek()->endOfDay();
-
         $nurses = User::ofType('care-center')
                       ->with([
                           'nurseInfo.windows',
                           'pageTimersAsProvider' => function ($q) use ($dayCounter, $last) {
                               $q->whereBetween('start_time', [$dayCounter, $last]);
                           },
+                          'outboundCalls'        => function ($q) use ($dayCounter, $last) {
+                              $q->whereBetween('scheduled_date', [$dayCounter, $last])
+                                ->orWhereBetween('called_date', [$dayCounter, $last]);
+                          },
                       ])
                       ->whereHas('outboundCalls', function ($q) use ($dayCounter, $last) {
                           $q->whereBetween('scheduled_date', [$dayCounter, $last]);
-                      })->get()->transform(function ($nurse) use ($dayCounter, $last){
-                          return collect(array_merge($nurse->toArray(),[
-                              'actualWorkhours'   => $nurse->pageTimersAsProvider,
-                              'name'              => $nurse->first_name,
-                              'commitedWorkhours' => $nurse->nurseInfo->windows,
-                              'scheduledCalls'    => $nurse->countScheduledCallsFor($dayCounter),
-                              'completedCalls'    => $nurse->countCompletedCallsFor($dayCounter),
-                              'successful'        => $nurse->countSuccessfulCallsFor($dayCounter),
-                              'unsuccessful'      => $nurse->countUnSuccessfulCallsFor($dayCounter),
-                          ]));
-            });
-/*dd($nurses);
+                      })->get();
+
         $x = collect();
         foreach ($nurses as $nurse) {
             $x[] = [
                 'actualWorkhours'   => $nurse->pageTimersAsProvider,
                 'name'              => $nurse->first_name,
                 'commitedWorkhours' => $nurse->nurseInfo->windows,
-                'scheduledCalls'    => $nurse->countScheduledCallsFor($dayCounter),
-                'completedCalls'    => $nurse->countCompletedCallsFor($dayCounter),
-                'successful'        => $nurse->countSuccessfulCallsFor($dayCounter),
-                'unsuccessful'      => $nurse->countUnSuccessfulCallsFor($dayCounter),
+                'scheduledCalls'    => $nurse->outboundCalls->where('status', 'scheduled')->count(),
+                'actualCalls'       => $nurse->outboundCalls->whereIn('status', ['reached', 'not reached'])->count(),
+                'successful'        => $nurse->outboundCalls->where('status', 'reached')->count(),
+                'unsuccessful'      => $nurse->outboundCalls->whereIn('status', ['not reached', 'dropped'])->count(),
             ];
-        }*/
+        }
+//dd($x);
+
+        /*       $x = collect();
+               foreach ($nurses as $nurse) {
+                   $x[] = [
+                       'actualWorkhours'   => $nurse->pageTimersAsProvider,
+                       'name'              => $nurse->first_name,
+                       'commitedWorkhours' => $nurse->nurseInfo->windows,
+                       'scheduledCalls'    => $nurse->countScheduledCallsFor($dayCounter),
+                       'completedCalls'    => $nurse->countCompletedCallsFor($dayCounter),
+                       'successful'        => $nurse->countSuccessfulCallsFor($dayCounter),
+                       'unsuccessful'      => $nurse->countUnSuccessfulCallsFor($dayCounter),
+                   ];
+               }
+
+             */
+        $nurses = $x;
 
         return view('admin.reports.nurseweekly', compact('nurses', 'dayCounter'));
-
     }
-
-//                          'outboundCalls' => function ($nurses) use (&$rows, $dayCounter, $last) {
-//                              $nurses->whereBetween('scheduled_date', [$dayCounter, $last]);
-//                          },
-
-
-    /* $weekStart = Carbon::now()->startOfWeek()->toDateString();
-    $weekEnd   = Carbon::now()->endOfWeek()->toDateString();
-    $calls     = [];
-    $nurses    = User::ofType('care-center')->whereHas('outboundCalls', function ($q) use ($weekStart, $weekEnd) {
-        $q->whereBetween('scheduled_date', [$weekStart, $weekEnd]);
-
-    })->with([
-        'outboundCalls' => function ($q) use ($weekStart, $weekEnd) {
-            $q->whereBetween('scheduled_date', [$weekStart, $weekEnd]);
-
-        },
-    ])->chunk(50, function ($nurses) use (&$calls, $weekStart, $weekEnd) {
-        foreach ($nurses as $nurse) {
-             $calls[$nurse->display_name] = $nurse->outboundCalls
-                 ->where('scheduled_date', '>=', $weekStart)
-                 ->where('scheduled_date', '<=', $weekEnd)
-                 ->transform(function ($call) {
-                     return collect(array_merge($call->toArray(), [
-                         'status'        => $call->status,
-
-                     ]));
-                 });*/
-    /* ->mapToGroups(function ($call) {
-       return [$call->status => $call->outbound_cpm_id];
-     });*/
-    /*       }*/
-
-    /*   });*/
-
-
-    /*  return view('admin.reports.nurseweekly', compact('nurses'));*/
-//}
 }

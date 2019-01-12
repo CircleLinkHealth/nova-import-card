@@ -24,7 +24,7 @@
                                 @foreach ($nurses as $nurse)
                                     {{$nurse['name']}}
                                     {{$nurse['scheduledCalls']}}
-                                    {{$nurse['completedCalls']}}
+                                    {{$nurse['actualCalls']}}
                                     {{$nurse['successful']}}
                                     {{$nurse['unsuccessful']}}<br>
                                 @endforeach

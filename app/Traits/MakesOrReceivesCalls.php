@@ -153,7 +153,7 @@ trait MakesOrReceivesCalls
             ]);
     }
 
-    public function unSuccessfulCallsFor(Carbon $date)
+   /* public function unsuccessfulCallsFor(Carbon $date)
     {
         return $this->calls()
                     ->where([
@@ -161,7 +161,7 @@ trait MakesOrReceivesCalls
                         ['called_date', '<=', $date->endOfDay()->toDateTimeString()],
                         ['calls.status', '=', 'not reached'],
                     ]);
-    }
+    }*/
 
     /**
      * Returns today's successful calls.
