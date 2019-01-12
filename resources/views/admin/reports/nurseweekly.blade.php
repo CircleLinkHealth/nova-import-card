@@ -17,29 +17,45 @@
             <div class="col-md-10 col-md-offset-1">
                 <div class="row">
                     <div class="col-md-12">
-
-
                         <div class="panel panel-default">
                             <div class="panel-heading">Nurse Weekly Report</div>
                             <div class="panel-body">
-                                <table class="table table-striped" id="nurse_daily">
+
+                                @foreach ($x as $n)
+                                {{$n['name']}}
+                                @endforeach
+                                {{--@foreach ($nurses as $nurse)
+                                    NAme: {{$nurse->first_name}}
+                                    Scheduled : {{$nurse->countScheduledCallsFor($dayCounter)}}
+                                    Completed: {{$nurse->countCompletedCallsFor($dayCounter)}}
+                                    Successful: {{$nurse->countSuccessfulCallsFor($dayCounter)}}
+                                    Unsucceful: {{$nurse->countUnSuccessfulCallsFor($dayCounter)}}<br>
+                               @endforeach
+--}}
+                                {{--<table class="table table-striped" id="nurse_daily">
                                     <thead>
-
-
                                     <tr>
                                         <th>Name</th>
                                         <th>Scheduled calls</th>
+                                        <th>Actual Calls</th>
+                                        <th>Successfull Calls</th>
+                                        <th>Unsuccessful Calls</th>
+                                        <th>Actual Hours Worked</th>
+                                        <th>Hours Commited</th>
                                     </tr>
                                     </thead>
-                                    @foreach ($nurses as $nurse)
+                                    @foreach ($calls as $call)
                                         <tbody>
                                         <tr>
-                                            <td>{{$nurse->getFullName()}}</td>
-                                            <td>{{$nurse->outboundCalls->count()}}</td>
+                                            <td>{{$call}}</td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+
                                         </tr>
                                         @endforeach
                                         </tbody>
-                                </table>
+                                </table>--}}
                             </div>
 
                             <br>

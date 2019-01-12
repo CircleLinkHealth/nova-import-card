@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Call;
 use App\User;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 
 class NursesWeeklyRepController extends Controller
 {
@@ -17,81 +15,69 @@ class NursesWeeklyRepController extends Controller
      */
     public function index()
     {
-        $weekStart = Carbon::now()->startOfWeek()->toDateString();
-        $weekEnd = Carbon::now()->endOfWeek()->toDateString();
+        $dayCounter = Carbon::now()->startOfWeek()->startOfDay();
+        $last       = Carbon::now()->endOfWeek()->endOfDay();
 
-        $nurses = User::ofType('care-center')->whereHas('outboundCalls', function ($q) use ($weekStart, $weekEnd) {
+        $nurses = User::ofType('care-center')
+                      ->with([
+                          'nurseInfo.windows',
+                          'pageTimersAsProvider' => function ($q) use ($dayCounter, $last) {
+                              $q->whereBetween('start_time', [$dayCounter, $last]);
+                          },
+                      ])->whereHas('outboundCalls', function ($nurses) use ($dayCounter, $last) {
+                          $nurses->whereBetween('scheduled_date', [$dayCounter, $last]);
+                      })->get();
+
+        $x = collect();
+        foreach ($nurses as $nurse) {
+            $x[] = [
+                'name'           => $nurse->first_name,
+                'scheduledCalls' => $nurse->countScheduledCallsFor($dayCounter),
+                'completedCalls' => $nurse->countCompletedCallsFor($dayCounter), //this migh be the wrong data
+                'successful'     => $nurse->countSuccessfulCallsFor($dayCounter),
+                'unsuccessful'   => $nurse->countUnSuccessfulCallsFor($dayCounter),
+            ];
+        }
+
+        return view('admin.reports.nurseweekly', compact('x', 'dayCounter'));
+
+    }
+
+//                          'outboundCalls' => function ($nurses) use (&$rows, $dayCounter, $last) {
+//                              $nurses->whereBetween('scheduled_date', [$dayCounter, $last]);
+//                          },
+
+
+    /* $weekStart = Carbon::now()->startOfWeek()->toDateString();
+    $weekEnd   = Carbon::now()->endOfWeek()->toDateString();
+    $calls     = [];
+    $nurses    = User::ofType('care-center')->whereHas('outboundCalls', function ($q) use ($weekStart, $weekEnd) {
+        $q->whereBetween('scheduled_date', [$weekStart, $weekEnd]);
+
+    })->with([
+        'outboundCalls' => function ($q) use ($weekStart, $weekEnd) {
             $q->whereBetween('scheduled_date', [$weekStart, $weekEnd]);
-        })->with(['outboundCalls' => function ($q) use ($weekStart, $weekEnd) {
-            $q->whereBetween('scheduled_date', [$weekStart, $weekEnd]);
-        }])->get();
 
-        return view('admin.reports.nurseweekly', compact('nurses'));
-    }
+        },
+    ])->chunk(50, function ($nurses) use (&$calls, $weekStart, $weekEnd) {
+        foreach ($nurses as $nurse) {
+             $calls[$nurse->display_name] = $nurse->outboundCalls
+                 ->where('scheduled_date', '>=', $weekStart)
+                 ->where('scheduled_date', '<=', $weekEnd)
+                 ->transform(function ($call) {
+                     return collect(array_merge($call->toArray(), [
+                         'status'        => $call->status,
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+                     ]));
+                 });*/
+    /* ->mapToGroups(function ($call) {
+       return [$call->status => $call->outbound_cpm_id];
+     });*/
+    /*       }*/
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+    /*   });*/
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\NurseWeeklyRep  $nurseWeeklyRep
-     * @return \Illuminate\Http\Response
-     */
-    public function show(NurseWeeklyRep $nurseWeeklyRep)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\NurseWeeklyRep  $nurseWeeklyRep
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(NurseWeeklyRep $nurseWeeklyRep)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\NurseWeeklyRep  $nurseWeeklyRep
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, NurseWeeklyRep $nurseWeeklyRep)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\NurseWeeklyRep  $nurseWeeklyRep
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(NurseWeeklyRep $nurseWeeklyRep)
-    {
-        //
-    }
+    /*  return view('admin.reports.nurseweekly', compact('nurses'));*/
+//}
 }
