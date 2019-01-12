@@ -22,7 +22,7 @@
                             <div class="panel-body">
 
                                 @foreach ($x as $n)
-                                {{$n['name']}}
+                                {{$n['provider_id']}}
                                 @endforeach
                                 {{--@foreach ($nurses as $nurse)
                                     NAme: {{$nurse->first_name}}

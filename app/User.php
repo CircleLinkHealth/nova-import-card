@@ -1973,6 +1973,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasMany(PageTimer::class, 'provider_id');
     }
 
+    public function workHours()
+    {
+        return $this->hasMany(PageTimer::class, 'start_time');
+    }
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
