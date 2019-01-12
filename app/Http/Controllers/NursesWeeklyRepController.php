@@ -24,24 +24,22 @@ class NursesWeeklyRepController extends Controller
                           'pageTimersAsProvider' => function ($q) use ($dayCounter, $last) {
                               $q->whereBetween('start_time', [$dayCounter, $last]);
                           },
-                      ])->whereHas('outboundCalls', function ($q) use ($dayCounter, $last) {
+                      ])
+                      ->whereHas('outboundCalls', function ($q) use ($dayCounter, $last) {
                           $q->whereBetween('scheduled_date', [$dayCounter, $last]);
-                      })->whereHas('pageTimersAsProvider', function ($q) use ($dayCounter, $last) {
-                          $q->whereBetween('start_time', [$dayCounter, $last]);
                       })->get();
 
         $x = collect();
         foreach ($nurses as $nurse) {
             $x[] = [
-                'provider_id'    => $nurse->workHours->provider_id,
-                'name'           => $nurse->first_name,
-                'scheduledCalls' => $nurse->countScheduledCallsFor($dayCounter),
-                'completedCalls' => $nurse->countCompletedCallsFor($dayCounter), //this migh be the wrong data
-                'successful'     => $nurse->countSuccessfulCallsFor($dayCounter),
-                'unsuccessful'   => $nurse->countUnSuccessfulCallsFor($dayCounter),
+                'actualWorkhours'   => $nurse->pageTimersAsProvider,
+                'name'              => $nurse->first_name,
+                'commitedWorkhours' => $nurse->nurseInfo->windows,
+                'scheduledCalls'    => $nurse->countScheduledCallsFor($dayCounter),
+                'completedCalls'    => $nurse->countCompletedCallsFor($dayCounter),
+                'successful'        => $nurse->countSuccessfulCallsFor($dayCounter),
+                'unsuccessful'      => $nurse->countUnSuccessfulCallsFor($dayCounter),
             ];
-
-
         }
 
         return view('admin.reports.nurseweekly', compact('x', 'dayCounter'));

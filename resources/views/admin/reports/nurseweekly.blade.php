@@ -22,40 +22,13 @@
                             <div class="panel-body">
 
                                 @foreach ($x as $n)
-                                {{$n['provider_id']}}
+                                    {{$n['name']}}
+                                    {{$n['scheduledCalls']}}
+                                    {{$n['completedCalls']}}
+                                    {{$n['successful']}}
+                                    {{$n['unsuccessful']}}<br>
                                 @endforeach
-                                {{--@foreach ($nurses as $nurse)
-                                    NAme: {{$nurse->first_name}}
-                                    Scheduled : {{$nurse->countScheduledCallsFor($dayCounter)}}
-                                    Completed: {{$nurse->countCompletedCallsFor($dayCounter)}}
-                                    Successful: {{$nurse->countSuccessfulCallsFor($dayCounter)}}
-                                    Unsucceful: {{$nurse->countUnSuccessfulCallsFor($dayCounter)}}<br>
-                               @endforeach
---}}
-                                {{--<table class="table table-striped" id="nurse_daily">
-                                    <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Scheduled calls</th>
-                                        <th>Actual Calls</th>
-                                        <th>Successfull Calls</th>
-                                        <th>Unsuccessful Calls</th>
-                                        <th>Actual Hours Worked</th>
-                                        <th>Hours Commited</th>
-                                    </tr>
-                                    </thead>
-                                    @foreach ($calls as $call)
-                                        <tbody>
-                                        <tr>
-                                            <td>{{$call}}</td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
 
-                                        </tr>
-                                        @endforeach
-                                        </tbody>
-                                </table>--}}
                             </div>
 
                             <br>
