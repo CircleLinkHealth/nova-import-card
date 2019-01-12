@@ -26,7 +26,9 @@
                                     {{$nurse['scheduledCalls']}}
                                     {{$nurse['actualCalls']}}
                                     {{$nurse['successful']}}
-                                    {{$nurse['unsuccessful']}}<br>
+                                    {{$nurse['unsuccessful']}}
+                                    {{$nurse['commitedWorkhours']}}
+                                    <br>
                                 @endforeach
 
                             </div>

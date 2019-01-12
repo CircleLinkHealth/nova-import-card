@@ -15,22 +15,23 @@ class NursesWeeklyRepController extends Controller
      */
     public function index()
     {
-        $dayCounter = Carbon::now()->startOfWeek()->startOfDay();
-        $last       = Carbon::now()->endOfWeek()->endOfDay();
-        $nurses = User::ofType('care-center')
-                      ->with([
-                          'nurseInfo.windows',
-                          'pageTimersAsProvider' => function ($q) use ($dayCounter, $last) {
-                              $q->whereBetween('start_time', [$dayCounter, $last]);
-                          },
-                          'outboundCalls'        => function ($q) use ($dayCounter, $last) {
-                              $q->whereBetween('scheduled_date', [$dayCounter, $last])
-                                ->orWhereBetween('called_date', [$dayCounter, $last]);
-                          },
-                      ])
-                      ->whereHas('outboundCalls', function ($q) use ($dayCounter, $last) {
-                          $q->whereBetween('scheduled_date', [$dayCounter, $last]);
-                      })->get();
+        $startDate = Carbon::now()->startOfWeek()->startOfDay();
+        $lastDate  = Carbon::now()->endOfWeek()->endOfDay();
+        $nurses    = User::ofType('care-center')
+                         ->with([
+                             'nurseInfo.windows',
+                             'pageTimersAsProvider' => function ($q) use ($startDate, $lastDate) {
+                                 $q->whereBetween('start_time', [$startDate, $lastDate]);
+                             },
+                             'outboundCalls'        => function ($q) use ($startDate, $lastDate) {
+                                 $q->whereBetween('scheduled_date', [$startDate, $lastDate])
+                                   ->orWhereBetween('called_date', [$startDate, $lastDate]);
+                             },
+                         ])
+                         ->whereHas('outboundCalls', function ($q) use ($startDate, $lastDate) {
+                             $q->whereBetween('scheduled_date', [$startDate, $lastDate])
+                               ->orWhereBetween('called_date', [$startDate, $lastDate]);
+                         })->get();
 
         $x = collect();
         foreach ($nurses as $nurse) {
@@ -39,12 +40,12 @@ class NursesWeeklyRepController extends Controller
                 'name'              => $nurse->first_name,
                 'commitedWorkhours' => $nurse->nurseInfo->windows,
                 'scheduledCalls'    => $nurse->outboundCalls->where('status', 'scheduled')->count(),
-                'actualCalls'       => $nurse->outboundCalls->whereIn('status', ['reached', 'not reached'])->count(),
+                'actualCalls'       => $nurse->outboundCalls->whereIn('status', ['reached', 'not reached', 'dropped'])->count(),
                 'successful'        => $nurse->outboundCalls->where('status', 'reached')->count(),
                 'unsuccessful'      => $nurse->outboundCalls->whereIn('status', ['not reached', 'dropped'])->count(),
             ];
         }
-//dd($x);
+
 
         /*       $x = collect();
                foreach ($nurses as $nurse) {
