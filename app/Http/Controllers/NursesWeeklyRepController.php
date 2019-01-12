@@ -27,8 +27,18 @@ class NursesWeeklyRepController extends Controller
                       ])
                       ->whereHas('outboundCalls', function ($q) use ($dayCounter, $last) {
                           $q->whereBetween('scheduled_date', [$dayCounter, $last]);
-                      })->get();
-
+                      })->get()->transform(function ($nurse) use ($dayCounter, $last){
+                          return collect(array_merge($nurse->toArray(),[
+                              'actualWorkhours'   => $nurse->pageTimersAsProvider,
+                              'name'              => $nurse->first_name,
+                              'commitedWorkhours' => $nurse->nurseInfo->windows,
+                              'scheduledCalls'    => $nurse->countScheduledCallsFor($dayCounter),
+                              'completedCalls'    => $nurse->countCompletedCallsFor($dayCounter),
+                              'successful'        => $nurse->countSuccessfulCallsFor($dayCounter),
+                              'unsuccessful'      => $nurse->countUnSuccessfulCallsFor($dayCounter),
+                          ]));
+            });
+/*dd($nurses);
         $x = collect();
         foreach ($nurses as $nurse) {
             $x[] = [
@@ -40,9 +50,9 @@ class NursesWeeklyRepController extends Controller
                 'successful'        => $nurse->countSuccessfulCallsFor($dayCounter),
                 'unsuccessful'      => $nurse->countUnSuccessfulCallsFor($dayCounter),
             ];
-        }
+        }*/
 
-        return view('admin.reports.nurseweekly', compact('x', 'dayCounter'));
+        return view('admin.reports.nurseweekly', compact('nurses', 'dayCounter'));
 
     }
 
