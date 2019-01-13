@@ -20,16 +20,14 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">Nurse Weekly Report</div>
                             <div class="panel-body">
-
                                 @foreach ($nurses as $nurse)
-                                    {{$nurse['name']}}
-                                    {{$nurse['scheduledCalls']}}
-                                    {{$nurse['actualCalls']}}
-                                    {{$nurse['successful']}}
-                                    {{$nurse['unsuccessful']}}
-                                    {{$nurse['commitedWorkhours']}}
-                                    <br>
-                                @endforeach
+                                        {{$nurse['name']}}
+                                        {{$nurse['scheduledCalls']}}
+                                        {{$nurse['actualCalls']}}
+                                        {{$nurse['successful']}}
+                                        {{$nurse['unsuccessful']}}
+                                        <br>
+                               @endforeach
 
                             </div>
 
