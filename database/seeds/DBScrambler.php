@@ -9,6 +9,7 @@ use App\Models\CCD\CcdInsurancePolicy;
 use App\Note;
 use App\PhoneNumber;
 use App\Practice;
+use App\User;
 use Faker\Factory;
 use Illuminate\Database\Seeder;
 
@@ -42,18 +43,24 @@ class DBScrambler extends Seeder
      */
     private function throwExceptionIfProduction()
     {
-        if (in_array(app()->environment(), [
-            'production',
-            'worker',
-        ])) {
+        if (in_array(
+            app()->environment(),
+            [
+                'production',
+                'worker',
+            ]
+        )) {
             $env = app()->environment();
             
             throw new \Exception("Not a good idea to run this on environment $env");
         }
         
-        if (in_array(env('DB_DATABASE'), [
-            'cpm_production',
-        ])) {
+        if (in_array(
+            env('DB_DATABASE'),
+            [
+                'cpm_production',
+            ]
+        )) {
             $db = env('DB_DATABASE');
             
             throw new \Exception("Not a good idea to run this on DB $db");
@@ -62,110 +69,147 @@ class DBScrambler extends Seeder
     
     public function scrambleDB()
     {
+        
         //scramble practices
         Practice::orderBy('id')
-                ->where('id', '!=', 8)
+                ->where('name', '!=', 'demo')
                 ->withTrashed()
-                ->chunk(100, function ($practices) {
-                    foreach ($practices as $practice) {
-                        $fakePractice = \factory(Practice::class)->make();
-                
-                        $practice->name                     = $fakePractice->name;
-                        $practice->display_name             = $fakePractice->display_name;
-                        $practice->federal_tax_id           = $fakePractice->federal_tax_id;
-                        $practice->sms_marketing_number     = $fakePractice->sms_marketing_number;
-                        $practice->weekly_report_recipients = $fakePractice->weekly_report_recipients;
-                        $practice->invoice_recipients       = $fakePractice->invoice_recipients;
-                        $practice->bill_to_name             = $fakePractice->bill_to_name;
-                        $practice->outgoing_phone_number    = $fakePractice->outgoing_phone_number;
-                
-                        $saved = $practice->save();
+                ->chunk(
+                    100,
+                    function ($practices) {
+                        foreach ($practices as $practice) {
+                            $fakePractice = \factory(Practice::class)->make();
+                    
+                            $practice->name                     = $fakePractice->name;
+                            $practice->display_name             = $fakePractice->display_name;
+                            $practice->federal_tax_id           = $fakePractice->federal_tax_id;
+                            $practice->sms_marketing_number     = $fakePractice->sms_marketing_number;
+                            $practice->weekly_report_recipients = $fakePractice->weekly_report_recipients;
+                            $practice->invoice_recipients       = $fakePractice->invoice_recipients;
+                            $practice->bill_to_name             = $fakePractice->bill_to_name;
+                            $practice->outgoing_phone_number    = $fakePractice->outgoing_phone_number;
+                    
+                            $saved = $practice->save();
+                        }
                     }
-                });
+                );
         
         Location::withTrashed()
-                ->chunk(100, function ($locations) {
-                    foreach ($locations as $location) {
-                        $location->name           = $this->faker->company;
-                        $location->phone          = formatPhoneNumber($this->faker->phoneNumber);
-                        $location->fax            = formatPhoneNumber($this->faker->phoneNumber);
-                        $location->address_line_1 = $this->faker->address;
-                        $location->address_line_2 = $this->faker->secondaryAddress;
-                        $location->city           = $this->faker->city;
-                        $location->state          = $this->faker->stateAbbr;
-                        $location->postal_code    = $this->faker->postcode;
-                        $location->ehr_login      = formatPhoneNumber($this->faker->phoneNumber);
-                        $location->ehr_password   = formatPhoneNumber($this->faker->phoneNumber);
-                
-                        $saved = $location->save();
+                ->chunk(
+                    100,
+                    function ($locations) {
+                        foreach ($locations as $location) {
+                            $location->name           = $this->faker->company;
+                            $location->phone          = formatPhoneNumber($this->faker->phoneNumber);
+                            $location->fax            = formatPhoneNumber($this->faker->phoneNumber);
+                            $location->address_line_1 = $this->faker->address;
+                            $location->address_line_2 = $this->faker->secondaryAddress;
+                            $location->city           = $this->faker->city;
+                            $location->state          = $this->faker->stateAbbr;
+                            $location->postal_code    = $this->faker->postcode;
+                            $location->ehr_login      = formatPhoneNumber($this->faker->phoneNumber);
+                            $location->ehr_password   = formatPhoneNumber($this->faker->phoneNumber);
+                    
+                            $saved = $location->save();
+                        }
                     }
-                });
+                );
         
         PhoneNumber::orderBy('id')
-                   ->chunk(100, function ($phones) {
-                       foreach ($phones as $phone) {
-                           $phone->number = formatPhoneNumber($this->faker->phoneNumber);
-                
-                           $saved = $phone->save();
+                   ->chunk(
+                       100,
+                       function ($phones) {
+                           foreach ($phones as $phone) {
+                               $phone->number = formatPhoneNumber($this->faker->phoneNumber);
+                    
+                               $saved = $phone->save();
+                           }
                        }
-                   });
+                   );
         
         
         Call::where('id', '>', 0)
-            ->update([
-                         'inbound_phone_number'  => formatPhoneNumber($this->faker->phoneNumber),
-                         'outbound_phone_number' => formatPhoneNumber($this->faker->phoneNumber),
-                     ]);
+            ->update(
+                [
+                    'inbound_phone_number'  => formatPhoneNumber($this->faker->phoneNumber),
+                    'outbound_phone_number' => formatPhoneNumber($this->faker->phoneNumber),
+                ]
+            );
         
         
         CcdInsurancePolicy::orderBy('id')
                           ->withTrashed()
-                          ->update([
-                                       'name'       => 'scrambled data',
-                                       'type'       => 'scrambled data',
-                                       'policy_id'  => 'scrambled data',
-                                       'relation'   => 'scrambled data',
-                                       'subscriber' => 'scrambled data',
-                                   ]);
+                          ->update(
+                              [
+                                  'name'       => 'scrambled data',
+                                  'type'       => 'scrambled data',
+                                  'policy_id'  => 'scrambled data',
+                                  'relation'   => 'scrambled data',
+                                  'subscriber' => 'scrambled data',
+                              ]
+                          );
         
         Addendum::where('id', '>', 0)
-                ->update([
-                             'body' => $this->faker->text(),
-                         ]);
+                ->update(
+                    [
+                        'body' => $this->faker->text(),
+                    ]
+                );
         
         Appointment::where('id', '>', 0)
-                   ->update([
-                                'comment' => $this->faker->text(),
-                            ]);
+                   ->update(
+                       [
+                           'comment' => $this->faker->text(),
+                       ]
+                   );
         
         CareplanAssessment::where('id', '>', 0)
-                          ->update([
-                                       'alcohol_misuse_counseling'           => $this->faker->text(),
-                                       'diabetes_screening_interval'         => $this->faker->text(),
-                                       'diabetes_screening_risk'             => $this->faker->text(),
-                                       'key_treatment'                       => $this->faker->text(),
-                                       'patient_functional_assistance_areas' => $this->faker->text(),
-                                       'patient_psychosocial_areas_to_watch' => $this->faker->text(),
-                                       'risk'                                => $this->faker->text(),
-                                       'risk_factors'                        => $this->faker->text(),
-                                       'tobacco_misuse_counseling'           => $this->faker->text(),
-                                   ]);
+                          ->update(
+                              [
+                                  'alcohol_misuse_counseling'           => $this->faker->text(),
+                                  'diabetes_screening_interval'         => $this->faker->text(),
+                                  'diabetes_screening_risk'             => $this->faker->text(),
+                                  'key_treatment'                       => $this->faker->text(),
+                                  'patient_functional_assistance_areas' => $this->faker->text(),
+                                  'patient_psychosocial_areas_to_watch' => $this->faker->text(),
+                                  'risk'                                => $this->faker->text(),
+                                  'risk_factors'                        => $this->faker->text(),
+                                  'tobacco_misuse_counseling'           => $this->faker->text(),
+                              ]
+                          );
         
         Note::where('id', '>', 0)
-            ->update([
-                         'body' => $this->faker->text(),
-                     ]);
+            ->update(
+                [
+                    'body' => $this->faker->text(),
+                ]
+            );
         
         DB::table('notifications')
-          ->update([
-                       'data' => '{}',
-                   ]);
+          ->update(
+              [
+                  'data' => '{}',
+              ]
+          );
+        
+        User::whereDoesntHave('practice', '!=', 8)
+            ->chunk(
+                500,
+                function ($users) {
+                    foreach ($users as $user) {
+                        $user->scramble();
+                    }
+                }
+            );
         
         $this->truncateTables();
         
-        Artisan::call('db:seed', [
-            '--class' => CreateTesterUsersSeeder::class,
-        ]);
+        Artisan::call(
+            'db:seed',
+            [
+                '--class' => CreateTesterUsersSeeder::class,
+            ]
+        );
     }
     
     private function truncateTables()
