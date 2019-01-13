@@ -41,7 +41,6 @@ if (isset($patient) && ! empty($patient)) {
                                               data-href="{{ empty($patient->id) ? route('patients.search') : route('patient.activity.providerUIIndex', array('patient' => $patient->id)) }}">
                                             <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo"
                                                           :twilio-enabled="@json(config('services.twilio.enabled') && (isset($patient) && $patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : true))"
-                                                          :hide-tracker="true"
                                                           :override-timeout="{{config('services.time-tracker.override-timeout')}}"></time-tracker>
                                         </span>
                                     </span>

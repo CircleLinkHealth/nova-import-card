@@ -1,5 +1,9 @@
 <template>
     <div>
+        <div id="notifications-wrapper">
+            <notifications name="connection-error"></notifications>
+        </div>
+
         <div v-if="showLoader || !visible" :class="{ 'hide-tracker': hideTracker }">
             <div class="loader-filler"></div>
             <div class="loader-container">
@@ -13,7 +17,7 @@
                         v-if="!info.noBhiSwitch && (info.isCcm || info.isBehavioral)"></bhi-switch>
 
             <br><br>
-            <span :class="{ hidden: showLoader, 'hide-tracker': hideTracker }">
+            <span :class="{ hidden: showLoader, 'hide-tracker': hideTracker, inactive: !active }">
                 <time-display v-if="!noLiveCount" ref="timeDisplay" :seconds="totalTime" :no-live-count="!!noLiveCount"
                               :redirect-url="'manage-patients/' + info.patientId + '/activities'"/>
             </span>
@@ -34,7 +38,7 @@
     import LoaderComponent from '../../components/loader'
     import AwayComponent from './comps/away'
     import BhiComponent from './comps/bhi-switch'
-    import stor from '../../stor'
+    import Notifications from '../../components/notifications';
 
     export default {
         name: 'time-tracker',
@@ -64,7 +68,8 @@
                 startCount: 0,
                 showTimer: true,
                 showLoader: true,
-                callMode: false
+                callMode: false,
+                active: false
             }
         },
         components: {
@@ -72,7 +77,8 @@
             'time-display': TimeDisplay,
             'loader': LoaderComponent,
             'away': AwayComponent,
-            'bhi-switch': BhiComponent
+            'bhi-switch': BhiComponent,
+            'notifications': Notifications
         },
         computed: {
             totalTime() {
@@ -117,7 +123,8 @@
                                 if (data.message === 'server:sync') {
                                     self.seconds = self.info.isManualBehavioral ? data.bhiSeconds : data.ccmSeconds
                                     self.visible = true //display the component when the previousSeconds value has been received from the server to keep the display up-to-date
-                                    self.showLoader = false
+                                    self.showLoader = false;
+                                    // self.active = true;
                                 }
                                 else if (data.message === 'server:modal') {
                                     EventBus.$emit('away:trigger-modal')
@@ -147,6 +154,9 @@
                         }
 
                         socket.onopen = (ev) => {
+
+                            Event.$emit('notifications-connection-error:dismissAll');
+
                             if (EventBus.isInFocus) {
                                 self.updateTime()
                                 self.callMode = false
@@ -170,8 +180,16 @@
                         }
 
                         socket.onerror = (err) => {
+
+                            Event.$emit('notifications-connection-error:create', {
+                                text: `Cannot connect to time tracker. If this note does not go away soon, please contact CLH support.`,
+                                type: 'error',
+                                noTimeout: true,
+                                overwrite: true
+                            });
+
                             console.error('socket-error:', err)
-                        }
+                        };
 
                         return socket;
                     })()
@@ -179,9 +197,20 @@
                 catch (ex) {
                     console.error(ex);
                 }
+            },
+            positionNotificationsBox() {
+
+                $('#notifications-wrapper').offset({
+                    top: 20,
+                    left: $(document).width() - 330
+                });
+
             }
         },
         mounted() {
+
+            this.positionNotificationsBox();
+
             this.previousSeconds = this.info.totalTime || 0;
             this.info.initSeconds = 0
             this.info.isManualBehavioral = (this.info.isBehavioral && !this.info.isCcm) || false
@@ -190,7 +219,9 @@
                 this.visible = false;
             }
             else {
-                EventBus.isInFocus = true;
+
+                EventBus.isInFocus = !document.hidden;
+                console.log('document is ', EventBus.isInFocus ? 'focused' : 'not focused');
 
                 EventBus.$on('tracker:tick', () => {
                     this.seconds++;
@@ -213,6 +244,8 @@
 
                 EventBus.$on('tracker:start', () => {
 
+                    this.active = true;
+
                     //start inactivity tracker only if not on call mode and not on twilio
                     if (!(this.callMode && this.twilioEnabled)) {
                         EventBus.$emit('inactivity:start');
@@ -231,18 +264,16 @@
 
                     EventBus.$emit("inactivity:stop");
 
-                    //do not stop tracker if we are on twilio calls
-                    if (this.callMode && this.twilioEnabled) {
-                        return;
-                    }
-
                     if (this.state !== STATE.SHOW_INACTIVE_MODAL) {
-                        if (this.socket) {
-                            this.showTimer = false
-                            this.state = STATE.LEAVE;
+                        this.showTimer = false;
+                        this.state = STATE.LEAVE;
+
+                        if (this.socket && this.socket.readyState === WebSocket.OPEN) {
                             this.socket.send(JSON.stringify({message: STATE.LEAVE, info: this.info}))
                         }
-                        this.showLoader = true
+
+                        this.active = false;
+                        // this.showLoader = true
                     }
                 })
 
@@ -261,7 +292,8 @@
                         this.state = STATE.SHOW_INACTIVE_MODAL;
                         this.socket.send(JSON.stringify({message: STATE.SHOW_INACTIVE_MODAL, info: this.info}))
                     }
-                    this.showLoader = true
+                    this.active = false;
+                    // this.showLoader = true
                 })
 
                 EventBus.$on('tracker:modal:reply', (response) => {
@@ -337,7 +369,7 @@
                 this.createSocket()
 
                 setInterval(() => {
-                    if (this.socket.readyState === this.socket.OPEN) {
+                    if (this.socket && this.socket.readyState === this.socket.OPEN) {
                         this.socket.send(JSON.stringify({message: 'PING'}))
                     }
                 }, 5000)
@@ -369,4 +401,19 @@
     .top-20 {
         margin-top: 20px;
     }
+
+    .inactive {
+        color: red;
+    }
+
+    #notifications-wrapper {
+        width: 300px;
+        font-size: small;
+        text-align: left;
+    }
+
+    .notifications-connection-error {
+        position: absolute;
+    }
+
 </style>

@@ -46,15 +46,15 @@ class EnrollmentCenterController extends Controller
                 $enrollee->setPrimaryPhoneNumberAttribute($request->input('home_phone'));
         }
 
-        $enrollee->address            = $request->input('address');
-        $enrollee->address_2          = $request->input('address_2');
-        $enrollee->state              = $request->input('state');
-        $enrollee->city               = $request->input('city');
-        $enrollee->zip                = $request->input('zip');
-        $enrollee->email              = $request->input('email');
-        $enrollee->dob                = $request->input('dob');
-        $enrollee->last_call_outcome  = $request->input('consented');
-        $enrollee->care_ambassador_id = $careAmbassador->user_id;
+        $enrollee->address                 = $request->input('address');
+        $enrollee->address_2               = $request->input('address_2');
+        $enrollee->state                   = $request->input('state');
+        $enrollee->city                    = $request->input('city');
+        $enrollee->zip                     = $request->input('zip');
+        $enrollee->email                   = $request->input('email');
+        $enrollee->dob                     = $request->input('dob');
+        $enrollee->last_call_outcome       = $request->input('consented');
+        $enrollee->care_ambassador_user_id = $careAmbassador->user_id;
 
         $enrollee->total_time_spent = $enrollee->total_time_spent + $request->input('time_elapsed');
 
@@ -93,7 +93,7 @@ class EnrollmentCenterController extends Controller
         }
 
         //This will only bring enrollees assigned to care ambassador from CA Director Panel
-        $enrolleeQuery = Enrollee::where('care_ambassador_id', $careAmbassador->user_id);
+        $enrolleeQuery = Enrollee::where('care_ambassador_user_id', $careAmbassador->user_id);
 
         //if logged in ambassador is spanish, pick up a spanish patient
         if ($careAmbassador->speaks_spanish) {
@@ -180,7 +180,7 @@ class EnrollmentCenterController extends Controller
             $enrollee->last_call_outcome_reason = $request->input('reason_other');
         }
 
-        $enrollee->care_ambassador_id = $careAmbassador->user_id;
+        $enrollee->care_ambassador_user_id = $careAmbassador->user_id;
 
         $enrollee->status = $status;
         if ($request->has('soft_decline_callback')) {
@@ -219,7 +219,7 @@ class EnrollmentCenterController extends Controller
             $enrollee->last_call_outcome_reason = $request->input('reason_other');
         }
 
-        $enrollee->care_ambassador_id = $careAmbassador->user_id;
+        $enrollee->care_ambassador_user_id = $careAmbassador->user_id;
 
         if ('requested callback' == $request->input('reason')) {
             $enrollee->status = 'call_queue';
