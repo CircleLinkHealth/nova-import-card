@@ -57,7 +57,7 @@ class NursesWeeklyRepController extends Controller
                     ];
                 }
             });
-dd($data);
+
         return view('admin.reports.nurseweekly', compact('data'));
     }
 }
