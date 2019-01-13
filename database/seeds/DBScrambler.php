@@ -70,7 +70,7 @@ class DBScrambler extends Seeder
     public function scrambleDB()
     {
         
-        //scramble practices
+        $this->command->warn('Scrambling Practices');
         Practice::orderBy('id')
                 ->where('name', '!=', 'demo')
                 ->withTrashed()
@@ -93,7 +93,9 @@ class DBScrambler extends Seeder
                         }
                     }
                 );
+        $this->command->info('Finished scrambling Practices');
         
+        $this->command->warn('Scrambling Locations');
         Location::withTrashed()
                 ->chunk(
                     100,
@@ -114,7 +116,9 @@ class DBScrambler extends Seeder
                         }
                     }
                 );
-        
+        $this->command->info('Finished scrambling Locations');
+    
+        $this->command->warn('Scrambling Phones');
         PhoneNumber::orderBy('id')
                    ->chunk(
                        100,
@@ -126,8 +130,9 @@ class DBScrambler extends Seeder
                            }
                        }
                    );
-        
-        
+        $this->command->info('Finished scrambling Phones');
+    
+        $this->command->warn('Scrambling Calls');
         Call::where('id', '>', 0)
             ->update(
                 [
@@ -135,8 +140,9 @@ class DBScrambler extends Seeder
                     'outbound_phone_number' => formatPhoneNumber($this->faker->phoneNumber),
                 ]
             );
-        
-        
+        $this->command->info('Finished scrambling Calls');
+    
+        $this->command->warn('Scrambling CcdInsurancePolicy');
         CcdInsurancePolicy::orderBy('id')
                           ->withTrashed()
                           ->update(
@@ -148,21 +154,27 @@ class DBScrambler extends Seeder
                                   'subscriber' => 'scrambled data',
                               ]
                           );
-        
+        $this->command->info('Finished scrambling CcdInsurancePolicy');
+    
+        $this->command->warn('Scrambling Addendum');
         Addendum::where('id', '>', 0)
                 ->update(
                     [
                         'body' => $this->faker->text(),
                     ]
                 );
-        
+        $this->command->info('Finished scrambling Addendum');
+    
+        $this->command->warn('Scrambling Appointment');
         Appointment::where('id', '>', 0)
                    ->update(
                        [
                            'comment' => $this->faker->text(),
                        ]
                    );
-        
+        $this->command->info('Finished scrambling Appointment');
+    
+        $this->command->warn('Scrambling CareplanAssessment');
         CareplanAssessment::where('id', '>', 0)
                           ->update(
                               [
@@ -177,22 +189,28 @@ class DBScrambler extends Seeder
                                   'tobacco_misuse_counseling'           => $this->faker->text(),
                               ]
                           );
-        
+        $this->command->info('Finished scrambling CareplanAssessment');
+    
+        $this->command->warn('Scrambling Note');
         Note::where('id', '>', 0)
             ->update(
                 [
                     'body' => $this->faker->text(),
                 ]
             );
-        
+        $this->command->info('Finished scrambling Note');
+    
+        $this->command->warn('Scrambling Notifications');
         DB::table('notifications')
           ->update(
               [
                   'data' => '{}',
               ]
           );
-        
-        User::whereDoesntHave('practice', '!=', 8)
+        $this->command->info('Finished scrambling Notifications');
+    
+        $this->command->warn('Scrambling Users');
+        User::where('program_id', '!=', 8)
             ->chunk(
                 500,
                 function ($users) {
@@ -201,6 +219,7 @@ class DBScrambler extends Seeder
                     }
                 }
             );
+        $this->command->info('Finished scrambling Users');
         
         $this->truncateTables();
         
