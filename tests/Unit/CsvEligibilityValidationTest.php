@@ -19,7 +19,10 @@ class CsvEligibilityValidationTest extends TestCase
     use UserHelpers;
 
     private $practice;
-
+    
+    /**
+     * @var ProcessEligibilityService
+     */
     private $service;
 
     protected function setUp()
@@ -35,22 +38,15 @@ class CsvEligibilityValidationTest extends TestCase
 
         $this->assertFileExists($csv);
 
-        $patients = parseCsvToArray($csv);
-
-        $csvPatientList = new CsvPatientList(collect($patients));
-        $isValid        = $csvPatientList->guessValidator();
-
-        $this->assertTrue($isValid);
-
         $batch = $this->service->createSingleCSVBatch($this->practice->id, false, false, true);
 
         $this->assertDatabaseHas('eligibility_batches', [
             'id' => $batch->id,
         ]);
+    
+        $results = $this->service->createEligibilityJobFromCsvBatch($batch, $csv);
 
-        $result = $this->service->processCsvForEligibility($batch);
-
-        if ($result) {
+        if ($results) {
             $batch->status = EligibilityBatch::STATUSES['processing'];
             $batch->save();
         }
