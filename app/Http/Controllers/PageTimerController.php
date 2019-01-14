@@ -87,30 +87,30 @@ class PageTimerController extends Controller
         return false;
     }
 
-    public function getTimeForPatients($patients = [])
-    {
-        if (empty($patients)) {
-            return response()->json([]);
-        }
-
-        $times = PatientMonthlySummary::whereIn('patient_id', $patients)
-            ->whereMonthYear(Carbon::now()->startOfMonth())
-            ->orderBy('id', 'desc')
-            ->get([
-                'ccm_time',
-                'patient_id',
-            ])
-            ->map(function ($p) {
-                return [
-                    $p->patient_id => [
-                        'ccm_time' => $p->ccm_time ?? 0,
-                        'bhi_time' => $p->bhi_time ?? 0, ],
-                ];
-            })
-            ->all();
-
-        return response()->json($times);
-    }
+//    public function getTimeForPatients($patients = [])
+//    {
+//        if (empty($patients)) {
+//            return response()->json([]);
+//        }
+//
+//        $times = PatientMonthlySummary::whereIn('patient_id', $patients)
+//            ->whereMonthYear(Carbon::now()->startOfMonth())
+//            ->orderBy('id', 'desc')
+//            ->get([
+//                'ccm_time',
+//                'patient_id',
+//            ])
+//            ->map(function ($p) {
+//                return [
+//                    $p->patient_id => [
+//                        'ccm_time' => $p->ccm_time ?? 0,
+//                        'bhi_time' => $p->bhi_time ?? 0, ],
+//                ];
+//            })
+//            ->all();
+//
+//        return response()->json($times);
+//    }
 
     public function handleNurseLogs($activityId)
     {
