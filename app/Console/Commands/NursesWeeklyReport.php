@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\SaasAccount;
+use App\Services\NursesWeeklyReportService;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -15,7 +16,6 @@ class NursesWeeklyReport extends Command
      * @var string
      */
     protected $signature = 'nurse:save';
-
     /**
      * The console command description.
      *
@@ -26,11 +26,12 @@ class NursesWeeklyReport extends Command
     /**
      * Create a new command instance.
      *
-     * @return void
+     * @param NursesWeeklyReportService $service
      */
     public function __construct()
     {
         parent::__construct();
+
     }
 
     /**
@@ -40,8 +41,8 @@ class NursesWeeklyReport extends Command
      */
     public function handle()
     {
-       $date=  Carbon::now();
-       $data   = [];
+        $date=  Carbon::parse('2019-1-12 00:00:00');
+        $data   = [];
         $nurses = User::ofType('care-center')
                       ->with([
                           'nurseInfo.windows',
@@ -105,4 +106,5 @@ class NursesWeeklyReport extends Command
 
         return info('Daily Nurses Calls & Work hrs uploaded to S3');
     }
+
 }

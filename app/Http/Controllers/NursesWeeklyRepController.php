@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Request;
-use App\SaasAccount;
+use Illuminate\Http\Request;
 use App\Services\NursesWeeklyReportService;
-use App\User;
 use Carbon\Carbon;
 
 class NursesWeeklyRepController extends Controller
@@ -16,23 +14,26 @@ class NursesWeeklyRepController extends Controller
     {
         $this->service = $service;
     }
-    /**
-     * Display a listing of the resource.
-     *
-     *
-     * @param Request $request
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        $date   = Carbon::parse('2019-1-07 00:00:00');//Carbon::now()->startOfWeek()->startOfDay();
 
-        if ($date >= today()){
-            $data = $this->service->getDataFromDb($date);
-        }else {
-            $data = $this->service->getDataFromS3($date);
+    public function index(Request $request)
+    {
+        $dataIfNoDateSelected = Carbon::today()->subDay(1);
+        //if the admin loads the page today, we need to display last night's report
+        if ($request->has('date')) {
+            $requestDate = new Carbon($request['date']);
+            $date        = $requestDate->copy();
+        } else {
+            $date = $dataIfNoDateSelected->copy();
         }
-        return view('admin.reports.nurseweekly', compact('data'));
+        //$date = Carbon::parse('2019-1-07 00:00:00');//Carbon::now()->startOfWeek()->startOfDay();
+
+        if ($date >= today()) {
+            $data = $this->service->showDataFromDb($date);
+        } else {
+            $data = $this->service->showDataFromS3($date);
+        }
+
+        return view('admin.reports.nurseweekly', compact('data', 'dataIfNoDateSelected', 'date'));
     }
+
 }
