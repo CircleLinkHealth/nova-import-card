@@ -41,7 +41,7 @@ class NursesWeeklyReport extends Command
      */
     public function handle()
     {
-        $date=  Carbon::parse('2019-1-12 00:00:00');
+        $date=  Carbon::today();
         $data   = [];
         $nurses = User::ofType('care-center')
                       ->with([
