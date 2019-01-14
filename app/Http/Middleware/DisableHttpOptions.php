@@ -23,9 +23,9 @@ class DisableHttpOptions
      */
     public function handle($request, Closure $next)
     {
-        if ($request->getMethod() === "OPTIONS") {
-            return response('', 405);
-        }
+//        if ($request->getMethod() === "OPTIONS") {
+//            return response('', 405);
+//        }
 
         return $next($request);
     }
