@@ -42,7 +42,7 @@ class CsvEligibilityValidationTest extends TestCase
 
         $this->assertTrue($isValid);
 
-        $batch = $this->service->createSingleCSVBatch($patients, $this->practice->id, false, false, true);
+        $batch = $this->service->createSingleCSVBatch($this->practice->id, false, false, true);
 
         $this->assertDatabaseHas('eligibility_batches', [
             'id' => $batch->id,
@@ -88,7 +88,7 @@ class CsvEligibilityValidationTest extends TestCase
         $isValid        = $csvPatientList->guessValidator();
 
         $this->assertTrue($isValid);
-        $batch = $this->service->createSingleCSVBatch($patients, $this->practice->id, false, false, true);
+        $batch = $this->service->createSingleCSVBatch($this->practice->id, false, false, true);
 
         $this->assertDatabaseHas('eligibility_batches', [
             'id' => $batch->id,
