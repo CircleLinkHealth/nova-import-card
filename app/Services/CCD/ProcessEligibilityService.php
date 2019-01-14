@@ -17,6 +17,7 @@ use App\Jobs\ProcessCcda;
 use App\Jobs\ProcessEligibilityFromGoogleDrive;
 use App\Models\MedicalRecords\Ccda;
 use App\Practice;
+use App\Services\Eligibility\Csv\CsvPatientList;
 use App\Services\GoogleDrive;
 use App\Traits\ValidatesEligibility;
 use Carbon\Carbon;
@@ -740,5 +741,31 @@ class ProcessEligibilityService
                                       ]);
         
         return $job;
+    }
+    
+    /**
+     * @param EligibilityBatch $batch
+     * @param $patientListCsvFilePath
+     *
+     * @return array
+     * @throws \Exception
+     */
+    public function createEligibilityJobFromCsvBatch(EligibilityBatch $batch, $patientListCsvFilePath)
+    {
+        return iterateCsv(
+            $patientListCsvFilePath,
+            function ($row) use ($batch) {
+                $csvPatientList = new CsvPatientList(collect([$row]));
+                $isValid        = $csvPatientList->guessValidator();
+            
+                if ( ! $isValid) {
+                    return [
+                        'error' => 'This csv does not match any of the supported templates. you can see supported templates here https://drive.google.com/drive/folders/1zpiBkegqjTioZGzdoPqZQAqWvXkaKEgB',
+                    ];
+                }
+            
+                return $this->createEligibilityJobFromCsvRow($row, $batch);
+            }
+        );
     }
 }
