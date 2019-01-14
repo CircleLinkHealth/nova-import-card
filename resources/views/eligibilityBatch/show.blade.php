@@ -132,7 +132,7 @@
                             0 problems: {{$validationStats['problems']}}<br>
                             0 phones: {{$validationStats['phones']}}<br>
 
-                            @isset($batch->options['errors'])
+                            @if(!empty($batch->options['errors']))
                                 <br><br>
 
                                 <h4>Records not processed due to invalid data</h4>
@@ -140,7 +140,7 @@
                                 @foreach($batch->options['errors'] as $error)
                                     <p>Row {{$error['row_number']}}: {{$error['message']}}</p>
                                 @endforeach
-                            @endisset
+                            @endif
                         </div>
 
                         <script>
