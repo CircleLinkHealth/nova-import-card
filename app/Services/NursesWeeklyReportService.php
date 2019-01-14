@@ -10,6 +10,7 @@ class NursesWeeklyReportService
 {
     public function collectData(Carbon $date)
     {
+        $oneWeekBeforeYesterday = Carbon::today()->subDay(5)->startOfDay();
         $data   = [];
         $nurses = User::ofType('care-center')
                       ->with([

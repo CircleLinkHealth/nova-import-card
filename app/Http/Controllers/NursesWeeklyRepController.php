@@ -17,8 +17,7 @@ class NursesWeeklyRepController extends Controller
 
     public function index(Request $request)
     {
-        $oneWeekBeforeYesterday = Carbon::today()->/*subDay(1)->*/startOfWeek()->startOfDay();
-        $yesterdayDate = Carbon::today();//->subDay(1);
+        $yesterdayDate = Carbon::today()->subDay(1);
         //if the admin loads the page today, we need to display last night's report
         if ($request->has('date')) {
             $requestDate = new Carbon($request['date']);
@@ -32,7 +31,6 @@ class NursesWeeklyRepController extends Controller
         } else {
             $data = $this->service->showDataFromS3($date);
         }
-
         return view('admin.reports.nurseweekly', compact('data', 'yesterdayDate', 'date'));
     }
 
