@@ -117,29 +117,8 @@ class ActivityController extends Controller
             return (new PatientDailyAuditReport($patient->patientInfo, Carbon::parse($start)))->renderPDF();
         }
 
-        $acts = DB::table('lv_activities')
-                  ->select(DB::raw('id,provider_id,logged_from,DATE(performed_at)as performed_at, type, SUM(duration) as duration, is_behavioral'))
-                  ->where('performed_at', '>=', $start)
-                  ->where('performed_at', '<=', $end)
-                  ->where('patient_id', $patientId)
-                  ->where(function ($q) {
-                      $q->where('logged_from', 'activity')
-                        ->orWhere('logged_from', 'manual_input')
-                        ->orWhere('logged_from', 'pagetimer');
-                  })
-                  ->groupBy(DB::raw('provider_id, DATE(performed_at),type,is_behavioral'))
-                  ->orderBy('created_at', 'desc')
-                  ->get();
+        $acts = $this->getActivityForPatient($patientId, $start, $end);
 
-        $acts = json_decode(json_encode($acts), true);            //debug($acts);
-
-        foreach ($acts as $key => $value) {
-            $provider = User::find($acts[$key]['provider_id']);
-            if ($provider) {
-                $acts[$key]['provider_name'] = $provider->getFullName();
-            }
-            unset($acts[$key]['provider_id']);
-        }
         if ($acts) {
             $data = true;
         } else {
@@ -183,6 +162,47 @@ class ActivityController extends Controller
                 'noLiveCountTimeTracking' => true,
             ]
         );
+    }
+
+    public function getCurrentForPatient($patientId)
+    {
+        $start = Carbon::now()->startOfMonth()->format('Y-m-d H:i:s');
+        $end   = Carbon::now()->endOfMonth()->format('Y-m-d H:i:s');
+        $acts  = $this->getActivityForPatient($patientId, $start, $end);
+
+        return response()->json([
+            'monthlyTime' => User::find($patientId)->formattedCcmTime(),
+            'table'        => $acts,
+        ]);
+    }
+
+    private function getActivityForPatient($patientId, $start, $end)
+    {
+        $acts = DB::table('lv_activities')
+                  ->select(DB::raw('id,provider_id,logged_from,DATE(performed_at)as performed_at, type, SUM(duration) as duration, is_behavioral'))
+                  ->where('performed_at', '>=', $start)
+                  ->where('performed_at', '<=', $end)
+                  ->where('patient_id', $patientId)
+                  ->where(function ($q) {
+                      $q->where('logged_from', 'activity')
+                        ->orWhere('logged_from', 'manual_input')
+                        ->orWhere('logged_from', 'pagetimer');
+                  })
+                  ->groupBy(DB::raw('provider_id, DATE(performed_at),type,is_behavioral'))
+                  ->orderBy('created_at', 'desc')
+                  ->get();
+
+        $acts = json_decode(json_encode($acts), true);            //debug($acts);
+
+        foreach ($acts as $key => $value) {
+            $provider = User::find($acts[$key]['provider_id']);
+            if ($provider) {
+                $acts[$key]['provider_name'] = $provider->getFullName();
+            }
+            unset($acts[$key]['provider_id']);
+        }
+
+        return $acts;
     }
 
     public function show(

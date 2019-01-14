@@ -10,6 +10,7 @@ use App\Activity;
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
 use App\Nurse;
 use App\PageTimer;
+use App\PatientMonthlySummary;
 use App\Services\ActivityService;
 use App\Services\TimeTracking\Service as TimeTrackingService;
 use App\User;
@@ -84,6 +85,31 @@ class PageTimerController extends Controller
         $pageTimer->save();
 
         return false;
+    }
+
+    public function getTimeForPatients($patients = [])
+    {
+        if (empty($patients)) {
+            return response()->json([]);
+        }
+
+        $times = PatientMonthlySummary::whereIn('patient_id', $patients)
+            ->whereMonthYear(Carbon::now()->startOfMonth())
+            ->orderBy('id', 'desc')
+            ->get([
+                'ccm_time',
+                'patient_id',
+            ])
+            ->map(function ($p) {
+                return [
+                    $p->patient_id => [
+                        'ccm_time' => $p->ccm_time ?? 0,
+                        'bhi_time' => $p->bhi_time ?? 0, ],
+                ];
+            })
+            ->all();
+
+        return response()->json($times);
     }
 
     public function handleNurseLogs($activityId)

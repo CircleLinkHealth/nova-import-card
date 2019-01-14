@@ -83,7 +83,7 @@
                             ?>
                             @if ($noLiveCountTimeTracking)
                                 <div class="color-grey">
-                                    <a href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patient' => $patient->id]) }}">
+                                    <a id="monthly-time-static" href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patient' => $patient->id]) }}">
                                         {{$monthlyTime}}
                                     </a>
                                     <span style="display:none">
