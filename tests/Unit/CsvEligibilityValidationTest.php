@@ -77,22 +77,16 @@ class CsvEligibilityValidationTest extends TestCase
         $csv = base_path('tests/Feature/EligibleCsvFormat/Single_Fields_1.csv');
 
         $this->assertFileExists($csv);
-
-        $patients = parseCsvToArray($csv);
-
-        $csvPatientList = new CsvPatientList(collect($patients));
-        $isValid        = $csvPatientList->guessValidator();
-
-        $this->assertTrue($isValid);
+        
         $batch = $this->service->createSingleCSVBatch($this->practice->id, false, false, true);
 
         $this->assertDatabaseHas('eligibility_batches', [
             'id' => $batch->id,
         ]);
+    
+        $results = $this->service->createEligibilityJobFromCsvBatch($batch, $csv);
 
-        $result = $this->service->processCsvForEligibility($batch);
-
-        if ($result) {
+        if ($results) {
             $batch->status = EligibilityBatch::STATUSES['processing'];
             $batch->save();
         }
