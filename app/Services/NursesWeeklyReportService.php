@@ -8,13 +8,6 @@ use Carbon\Carbon;
 
 class NursesWeeklyReportService
 {
-    public function showDataFromDb(Carbon $date)
-    {
-        $data = $this->collectData($date);
-
-        return $data;
-    }
-
     public function collectData(Carbon $date)
     {
         $data   = [];
@@ -58,9 +51,13 @@ class NursesWeeklyReportService
 
         return $data;
     }
+    public function showDataFromDb(Carbon $date)
+    {
+        $data = $this->collectData($date);
 
+        return $data;
+    }
     //UploadDataS3 runs daily @ 23:30 using Scheduled Command
-
     public function showDataFromS3(Carbon $date)
     {
         $noReportDates = Carbon::parse('2019-1-06');

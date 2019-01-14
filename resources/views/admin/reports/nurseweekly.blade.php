@@ -21,7 +21,7 @@
                                 </div>
                                 <div class="col-md-8">
                                     <input id="date" type="date" name="date" value="{{$date}}"
-                                           max="{{$dataIfNoDateSelected}}" required class="form-control">
+                                           max="{{$yesterdayDate}}" required class="form-control">
                                 </div>
                                 <div class="col-md-4">
                                     <input type="submit" value="Submit" class="btn btn-info">

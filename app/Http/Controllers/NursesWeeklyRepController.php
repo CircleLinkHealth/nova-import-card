@@ -17,23 +17,23 @@ class NursesWeeklyRepController extends Controller
 
     public function index(Request $request)
     {
-        $dataIfNoDateSelected = Carbon::today()->subDay(1);
+        $oneWeekBeforeYesterday = Carbon::today()->/*subDay(1)->*/startOfWeek()->startOfDay();
+        $yesterdayDate = Carbon::today();//->subDay(1);
         //if the admin loads the page today, we need to display last night's report
         if ($request->has('date')) {
             $requestDate = new Carbon($request['date']);
             $date        = $requestDate->copy();
         } else {
-            $date = $dataIfNoDateSelected->copy();
+            $date = $yesterdayDate->copy();
         }
-        //$date = Carbon::parse('2019-1-07 00:00:00');//Carbon::now()->startOfWeek()->startOfDay();
-
+        //checks date and gets data either from DB or S3
         if ($date >= today()) {
             $data = $this->service->showDataFromDb($date);
         } else {
             $data = $this->service->showDataFromS3($date);
         }
 
-        return view('admin.reports.nurseweekly', compact('data', 'dataIfNoDateSelected', 'date'));
+        return view('admin.reports.nurseweekly', compact('data', 'yesterdayDate', 'date'));
     }
 
 }
