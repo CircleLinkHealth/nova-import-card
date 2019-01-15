@@ -172,37 +172,52 @@ class ActivityController extends Controller
 
         return response()->json([
             'monthlyTime' => User::find($patientId)->formattedCcmTime(),
-            'table'        => $acts,
+            'table'       => $acts,
         ]);
     }
 
     private function getActivityForPatient($patientId, $start, $end)
     {
         $acts = DB::table('lv_activities')
-                  ->select(DB::raw('id,provider_id,logged_from,DATE(performed_at)as performed_at, type, SUM(duration) as duration, is_behavioral'))
-                  ->where('performed_at', '>=', $start)
-                  ->where('performed_at', '<=', $end)
-                  ->where('patient_id', $patientId)
+                  ->select(DB::raw('lv_activities.id,lv_activities.logged_from,DATE(lv_activities.performed_at)as performed_at, lv_activities.type, SUM(lv_activities.duration) as duration, lv_activities.is_behavioral, users.first_name as provider_first_name, users.last_name as provider_last_name, users.suffix as provider_suffix'))
+                  ->join('users', 'users.id', '=', 'lv_activities.provider_id')
+                  ->where('lv_activities.performed_at', '>=', $start)
+                  ->where('lv_activities.performed_at', '<=', $end)
+                  ->where('lv_activities.patient_id', $patientId)
                   ->where(function ($q) {
-                      $q->where('logged_from', 'activity')
-                        ->orWhere('logged_from', 'manual_input')
-                        ->orWhere('logged_from', 'pagetimer');
+                      $q->where('lv_activities.logged_from', 'activity')
+                        ->orWhere('lv_activities.logged_from', 'manual_input')
+                        ->orWhere('lv_activities.logged_from', 'pagetimer');
                   })
-                  ->groupBy(DB::raw('provider_id, DATE(performed_at),type,is_behavioral'))
-                  ->orderBy('created_at', 'desc')
+                  ->groupBy(DB::raw('lv_activities.provider_id, DATE(lv_activities.performed_at),lv_activities.type,lv_activities.is_behavioral'))
+                  ->orderBy('lv_activities.created_at', 'desc')
                   ->get();
 
         $acts = json_decode(json_encode($acts), true);            //debug($acts);
 
         foreach ($acts as $key => $value) {
-            $provider = User::find($acts[$key]['provider_id']);
-            if ($provider) {
-                $acts[$key]['provider_name'] = $provider->getFullName();
-            }
-            unset($acts[$key]['provider_id']);
+            $acts[$key]['provider_name'] = $this->getFullName(
+                empty($acts[$key]['provider_first_name'])
+                    ? ''
+                    : $acts[$key]['provider_first_name'],
+                empty($acts[$key]['provider_last_name'])
+                    ? ''
+                    : $acts[$key]['provider_last_name'],
+                empty($acts[$key]['provider_suffix'])
+                    ? ''
+                    : $acts[$key]['provider_suffix']
+            );
         }
 
         return $acts;
+    }
+
+    private function getFullName($firstName, $lastName, $suffix) {
+
+        $firstName = ucwords(strtolower($firstName));
+        $lastName  = ucwords(strtolower($lastName));
+
+        return trim("${firstName} ${lastName} ${suffix}");
     }
 
     public function show(
