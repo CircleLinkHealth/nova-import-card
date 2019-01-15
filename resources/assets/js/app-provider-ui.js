@@ -44,6 +44,7 @@ const FabComponent = () => import(/* webpackChunkName: "chunk-misc" */ './compon
 const OpenModalComponent = () => import(/* webpackChunkName: "chunk-misc" */ './components/shared/open-modal')
 const NotificationsComponent = () => import(/* webpackChunkName: "chunk-misc" */ './components/shared/notifications/notifications')
 const PdfCarePlans = () => import(/* webpackChunkName: "chunk" */ './components/pages/view-care-plan/pdf-careplans')
+const CareDocsIndex = () => import(/* webpackChunkName: "chunk" */ './components/pages/care-docs/index')
 const MedicationsListComponent = () => import(/* webpackChunkName: "chunk" */ './ccd-models/medications')
 const ProblemsList = () => import(/* webpackChunkName: "chunk" */ './ccd-models/problems')
 const AllergiesList = () => import(/* webpackChunkName: "chunk" */ './ccd-models/allergies')
@@ -90,6 +91,7 @@ Vue.component('fab', FabComponent);
 Vue.component('openModal', OpenModalComponent);
 Vue.component('notifications', NotificationsComponent);
 Vue.component('pdfCareplans', PdfCarePlans);
+Vue.component('careDocsIndex', CareDocsIndex);
 Vue.component('medicationsList', MedicationsListComponent);
 Vue.component('problemsList', ProblemsList);
 Vue.component('allergiesList', AllergiesList);
