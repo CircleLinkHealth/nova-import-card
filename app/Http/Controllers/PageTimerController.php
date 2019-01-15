@@ -90,9 +90,7 @@ class PageTimerController extends Controller
     public function getTimeForPatients(Request $request)
     {
 
-        $patients = $request->has('patients')
-            ? $request->get('patients')
-            : [];
+        $patients = $request->get('patients', []);
 
         if (empty($patients)) {
             return response()->json([]);
