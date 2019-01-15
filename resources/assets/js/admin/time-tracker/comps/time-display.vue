@@ -1,16 +1,20 @@
 <template>
-    <span class="time-display">
+    <span class="time-display" :class="{inactive: !noLiveCount && !running}">
         <a :href="redirectUrl">{{time}}</a>
     </span>
 </template>
 
 <script>
     import EventBus from './event-bus'
-    import { rootUrl } from '../../../app.config'
 
     export default {
         name: 'time-display',
         props: ['seconds', 'no-live-count', 'redirectUrl'],
+        data: () => {
+            return {
+                running: false
+            };
+        },
         computed: {
             hours() {
                 return this.pad(Math.floor(this.seconds / 3600), 2)
@@ -23,13 +27,14 @@
             }
         },
         methods: {
-            pad (num, count) {
+            pad(num, count) {
                 count = count || 0;
                 const $num = num + '';
                 return '0'.repeat(Math.max(count - $num.length, 0)) + $num;
             },
             start() {
                 if (!this.noLiveCount) {
+                    this.running = true;
                     const STEP = 1000;
                     if (this.interval) clearInterval(this.interval);
                     this.interval = setInterval((function () {
@@ -38,7 +43,9 @@
                 }
             },
             stop() {
-                clearInterval(this.interval)
+                //never stop the timer, let it show but with a red font.
+                this.running = false;
+                // clearInterval(this.interval)
             }
         },
         mounted() {
@@ -50,5 +57,9 @@
 </script>
 
 <style>
-    
+
+    .inactive {
+        color: red;
+    }
+
 </style>
