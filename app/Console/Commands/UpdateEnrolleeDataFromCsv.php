@@ -113,7 +113,7 @@ class UpdateEnrolleeDataFromCsv extends Command
                                 $e->last_attempt_at = Carbon::parse("{$date[0]}/{$date[1]}/{$date[2]}");
                             }
                             $e->save();
-                            echo $e->id;
+
                         }
                     });
                 });
