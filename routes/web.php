@@ -607,6 +607,21 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'download.pdf.careplan',
     ])->middleware('permission:careplan-pdf.read');
 
+    Route::post(
+        'care-docs/{patient_id}',
+        'API\PatientCareDocumentsController@uploadCareDocuments'
+    );
+
+    Route::get('care-docs/{patient_id}/{show_past?}', [
+        'uses' => 'API\PatientCareDocumentsController@getCareDocuments',
+        'as'    => 'get.care-docs'
+    ]);
+
+    Route::get('download-care-document/{patient_id}/{doc_id}', [
+        'uses' => 'API\PatientCareDocumentsController@downloadCareDocument',
+        'as'    => 'download.care-doc'
+    ]);
+
     Route::patch(
         'work-hours/{id}',
         'CareCenter\WorkScheduleController@updateDailyHours'
@@ -925,6 +940,13 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'ReportsController@viewPdfCarePlan',
             'as'   => 'patient.pdf.careplan.print',
         ]);
+
+        Route::get('view-care-docs', [
+            'uses' => 'ReportsController@viewCareDocumentsPage',
+            'as'   => 'patient.care-docs',
+        ]);
+
+
 
         Route::post('input/observation/create', [
             'uses' => 'ObservationController@store',
