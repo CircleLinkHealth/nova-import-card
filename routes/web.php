@@ -2128,10 +2128,10 @@ Route::group(['middleware' => 'auth'], function () {
 // pagetimer
 Route::group([], function () {
     //Route::get('pagetimer', 'PageTimerController@store');
-//    Route::get('api/v2.1/time/patients/{patients}', [
-//        'uses' => 'PageTimerController@getTimeForPatients',
-//        'as'   => 'api.get.time.patients',
-//    ]);
+    Route::post('api/v2.1/time/patients', [
+        'uses' => 'PageTimerController@getTimeForPatients',
+        'as'   => 'api.get.time.patients',
+    ]);
     Route::post('api/v2.1/pagetimer', [
         'uses' => 'PageTimerController@store',
         'as'   => 'api.pagetracking',

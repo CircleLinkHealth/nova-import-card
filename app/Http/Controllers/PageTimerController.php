@@ -39,7 +39,7 @@ class PageTimerController extends Controller
         //user
         $user = User::find($pageTimer->provider_id);
 
-        if (( ! (bool) $user->isCCMCountable()) || (0 == $pageTimer->patient_id)) {
+        if (( ! (bool)$user->isCCMCountable()) || (0 == $pageTimer->patient_id)) {
             return false;
         }
 
@@ -87,42 +87,48 @@ class PageTimerController extends Controller
         return false;
     }
 
-//    public function getTimeForPatients($patients = [])
-//    {
-//        if (empty($patients)) {
-//            return response()->json([]);
-//        }
-//
-//        $times = PatientMonthlySummary::whereIn('patient_id', $patients)
-//            ->whereMonthYear(Carbon::now()->startOfMonth())
-//            ->orderBy('id', 'desc')
-//            ->get([
-//                'ccm_time',
-//                'patient_id',
-//            ])
-//            ->map(function ($p) {
-//                return [
-//                    $p->patient_id => [
-//                        'ccm_time' => $p->ccm_time ?? 0,
-//                        'bhi_time' => $p->bhi_time ?? 0, ],
-//                ];
-//            })
-//            ->all();
-//
-//        return response()->json($times);
-//    }
+    public function getTimeForPatients(Request $request)
+    {
+
+        $patients = $request->has('patients')
+            ? $request->get('patients')
+            : [];
+
+        if (empty($patients)) {
+            return response()->json([]);
+        }
+
+        $times = PatientMonthlySummary::whereIn('patient_id', $patients)
+                                      ->whereMonthYear(Carbon::now()->startOfMonth())
+                                      ->orderBy('id', 'desc')
+                                      ->get([
+                                          'ccm_time',
+                                          'patient_id',
+                                      ])
+                                      ->mapWithKeys(function ($p) {
+                                          return [
+                                              $p->patient_id => [
+                                                  'ccm_time' => $p->ccm_time ?? 0,
+                                                  'bhi_time' => $p->bhi_time ?? 0,
+                                              ],
+                                          ];
+                                      })
+                                      ->all();
+
+        return response()->json($times);
+    }
 
     public function handleNurseLogs($activityId)
     {
         $activity = Activity::with('patient.patientInfo')
-            ->find($activityId);
+                            ->find($activityId);
 
         if ( ! $activity) {
             return;
         }
 
         $nurse = Nurse::whereUserId($activity->provider_id)
-            ->first();
+                      ->first();
 
         if ( ! $nurse) {
             return;
@@ -179,8 +185,8 @@ class PageTimerController extends Controller
             $redirectTo = $data['redirectLocation'] ?? null;
 
             $isBhi = User::isBhiChargeable()
-                ->where('id', $patientId)
-                ->exists();
+                         ->where('id', $patientId)
+                         ->exists();
 
             $newActivity                    = new PageTimer();
             $newActivity->redirect_to       = $redirectTo;
@@ -192,15 +198,15 @@ class PageTimerController extends Controller
             $newActivity->start_time        = $startTime->toDateTimeString();
             $newActivity->end_time          = $endTime->toDateTimeString();
             $is_behavioral                  = isset($activity['is_behavioral'])
-                ? (bool) $activity['is_behavioral'] && $isBhi
+                ? (bool)$activity['is_behavioral'] && $isBhi
                 : $isBhi;
-            $newActivity->url_full      = $activity['url'];
-            $newActivity->url_short     = $activity['url_short'];
-            $newActivity->program_id    = $data['programId'];
-            $newActivity->ip_addr       = $data['ipAddr'];
-            $newActivity->activity_type = $activity['name'];
-            $newActivity->title         = $activity['title'];
-            $newActivity->user_agent    = $request->userAgent();
+            $newActivity->url_full          = $activity['url'];
+            $newActivity->url_short         = $activity['url_short'];
+            $newActivity->program_id        = $data['programId'];
+            $newActivity->ip_addr           = $data['ipAddr'];
+            $newActivity->activity_type     = $activity['name'];
+            $newActivity->title             = $activity['title'];
+            $newActivity->user_agent        = $request->userAgent();
             $newActivity->save();
 
             $activityId = null;
