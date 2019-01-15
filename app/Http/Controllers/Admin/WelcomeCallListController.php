@@ -138,10 +138,10 @@ class WelcomeCallListController extends Controller
      *
      * @return array|string
      */
-    public function makeWelcomeCallList(UploadEligibilityCsv $request, ProcessEligibilityService $processEligibilityService)
+    public function makeWelcomeCallList(UploadEligibilityCsv $request)
     {
         $practiceId = $request->input('practice_id');
-        $patients   = $request->file('patient_list');
+        $patientListCsv   = $request->file('patient_list');
         
         $filterLastEncounter = (bool) $request->input('filterLastEncounter');
         $filterInsurance     = (bool) $request->input('filterInsurance');
@@ -150,21 +150,7 @@ class WelcomeCallListController extends Controller
         $batch = $this->processEligibilityService
             ->createSingleCSVBatch($practiceId, $filterLastEncounter, $filterInsurance, $filterProblems);
         
-        $results = iterateCsv(
-            $patients,
-            function ($row) use ($batch, $processEligibilityService) {
-                $csvPatientList = new CsvPatientList(collect([$row]));
-                $isValid        = $csvPatientList->guessValidator();
-                
-                if ( ! $isValid) {
-                    return [
-                        'error' => 'This csv does not match any of the supported templates. you can see supported templates here https://drive.google.com/drive/folders/1zpiBkegqjTioZGzdoPqZQAqWvXkaKEgB',
-                    ];
-                }
-                
-                return $processEligibilityService->createEligibilityJobFromCsvRow($row, $batch);
-            }
-        );
+        $results = $this->processEligibilityService->createEligibilityJobFromCsvBatch($batch, $patientListCsv);
         
         $options = $batch->options;
         $options['errors'] = $results['errors'] ?? [];

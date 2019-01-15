@@ -221,38 +221,41 @@ if ( ! function_exists('parseCsvToArray')) {
         $csvArray  = $fields = [];
         $i         = 0;
         $handle    = @fopen($file, 'r');
-        $delimiter = $delimiter ?? detectDelimiter($handle);
-        
-        if ($handle) {
-            while (false !== ($row = fgetcsv($handle, $length, $delimiter))) {
-                if (empty($fields)) {
-                    $row = array_map('strtolower', $row);
-                    
-                    $row = array_map(
-                        function ($string) {
-                            return str_replace(' ', '_', $string);
-                        },
-                        $row
-                    );
-                    
-                    $fields = array_map('trim', $row);
-                    continue;
-                }
-                foreach ($row as $k => $value) {
-                    if ( ! array_key_exists($k, $fields)) {
-                        throw new CsvFieldNotFoundException(
-                            "Could not find CSV Field with index $k. Check row number $i for bad data."
-                        );
-                    }
-                    $csvArray[$i][$fields[$k]] = trim($value);
-                }
-                ++$i;
-            }
-            if ( ! feof($handle)) {
-                echo "Error: unexpected fgets() fail\n";
-            }
-            fclose($handle);
+    
+        if (! $handle) {
+            throw new \Exception('Could not read CSV file.');
         }
+        
+        $delimiter = $delimiter ?? detectDelimiter($handle);
+    
+        while (false !== ($row = fgetcsv($handle, $length, $delimiter))) {
+            if (empty($fields)) {
+                $row = array_map('strtolower', $row);
+                
+                $row = array_map(
+                    function ($string) {
+                        return str_replace(' ', '_', $string);
+                    },
+                    $row
+                );
+                
+                $fields = array_map('trim', $row);
+                continue;
+            }
+            foreach ($row as $k => $value) {
+                if ( ! array_key_exists($k, $fields)) {
+                    throw new CsvFieldNotFoundException(
+                        "Could not find CSV Field with index $k. Check row number $i for bad data."
+                    );
+                }
+                $csvArray[$i][$fields[$k]] = trim($value);
+            }
+            ++$i;
+        }
+        if ( ! feof($handle)) {
+            throw new \Exception('Error: unexpected fgets() fail.');
+        }
+        fclose($handle);
         
         return $csvArray;
     }
@@ -274,60 +277,62 @@ if ( ! function_exists('iterateCsv')) {
      */
     function iterateCsv($file, $callback = null, $logAndReturnAllActivity = false, $length = 0, $delimiter = null)
     {
-        $results    = $fields = [];
+        $results    = $fields = $errors    = [];
         $i         = 0;
         $handle    = @fopen($file, 'r');
-        $delimiter = $delimiter ?? detectDelimiter($handle);
-        $errors    = [];
-        
-        if ($handle) {
-            while (false !== ($row = fgetcsv($handle, $length, $delimiter))) {
-                $csvRowArray = [];
-                
-                if (empty($fields)) {
-                    $row = array_map('strtolower', $row);
-                    
-                    $row = array_map(
-                        function ($string) {
-                            return str_replace(' ', '_', $string);
-                        },
-                        $row
-                    );
-                    
-                    $fields = array_map('trim', $row);
-                    continue;
-                }
-                foreach ($row as $k => $value) {
-                    if ( ! array_key_exists($k, $fields)) {
-                        $errors[] = [
-                            'row_number' => $i,
-                            'message'    => "Could not find CSV Field with index $k. Check row number $i for bad data.",
-                        ];
-                        
-                        continue 2;
-                    }
-                    $csvRowArray[$fields[$k]] = trim($value);
-                }
-                
-                if (isset($callback)) {
-                    $cb       = call_user_func($callback, $csvRowArray);
-                    
-                    if ($logAndReturnAllActivity) {
-                        $results[] = $cb;
-                    }
-                    
-                    if (array_key_exists('error', $cb)) {
-                        $errors[] = $cb['error'];
-                    }
-                }
-                
-                ++$i;
-            }
-            if ( ! feof($handle)) {
-                echo "Error: unexpected fgets() fail\n";
-            }
-            fclose($handle);
+    
+        if (! $handle) {
+            throw new \Exception('Could not read CSV file.');
         }
+    
+        $delimiter = $delimiter ?? detectDelimiter($handle);
+        
+        while (false !== ($row = fgetcsv($handle, $length, $delimiter))) {
+            $csvRowArray = [];
+            
+            if (empty($fields)) {
+                $row = array_map('strtolower', $row);
+                
+                $row = array_map(
+                    function ($string) {
+                        return str_replace(' ', '_', $string);
+                    },
+                    $row
+                );
+                
+                $fields = array_map('trim', $row);
+                continue;
+            }
+            foreach ($row as $k => $value) {
+                if ( ! array_key_exists($k, $fields)) {
+                    $errors[] = [
+                        'row_number' => $i,
+                        'message'    => "Could not find CSV Field with index $k. Check row number $i for bad data.",
+                    ];
+                    
+                    continue 2;
+                }
+                $csvRowArray[$fields[$k]] = trim($value);
+            }
+            
+            if (isset($callback)) {
+                $cb       = call_user_func($callback, $csvRowArray);
+                
+                if ($logAndReturnAllActivity) {
+                    $results[] = $cb;
+                }
+                
+                if (array_key_exists('error', $cb)) {
+                    $errors[] = $cb['error'];
+                }
+            }
+            
+            ++$i;
+        }
+        if ( ! feof($handle)) {
+            throw new \Exception('Error: unexpected fgets() fail.');
+        }
+        fclose($handle);
         
         return [
             'results' => $results,
