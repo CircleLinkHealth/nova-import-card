@@ -13,12 +13,19 @@ export const BindWindowFocusChange = function (window, App = EventBus) {
         App.isInFocus = true;
     }
     
-    window.onblur = function () {
-        console.log('leave')
-        App.$emit('tracker:stop');
-        //tracker:stop event will decide if inactivity will stop
-        // App.$emit("inactivity:stop");
-        App.isInFocus = false;
+    window.onblur = function (e) {
+
+        //when datetimepicker closes, this event is triggered (its a focusout event, not sure why it ends here)
+        //you can reproduce this issue in Add Observation page, when you set time
+        //so make sure that this is a blur of the Window
+        if (e && e.target && e.target instanceof Window) {
+            console.log('leave')
+            App.$emit('tracker:stop');
+            //tracker:stop event will decide if inactivity will stop
+            // App.$emit("inactivity:stop");
+            App.isInFocus = false;
+        }
+
     }
     
     window.onkeydown = window.onmousemove = 
