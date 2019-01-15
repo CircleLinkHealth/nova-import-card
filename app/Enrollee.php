@@ -147,6 +147,11 @@ class Enrollee extends BaseModel
     const INELIGIBLE = 'ineligible';
 
     /**
+     * status = unreachable.
+     */
+    const UNREACHABLE = 'unreachable';
+
+    /**
      * status = rejected.
      */
     const REJECTED = 'rejected';
@@ -155,6 +160,16 @@ class Enrollee extends BaseModel
      * status = rejected.
      */
     const SOFT_REJECTED = 'soft_rejected';
+
+    /**
+     * status = consented.
+     */
+    const CONSENTED = 'consented';
+
+    /**
+     * status = enrolled.
+     */
+    const ENROLLED = 'enrolled';
 
     protected $dates = [
         'consented_at',
