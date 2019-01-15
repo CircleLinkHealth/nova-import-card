@@ -12,7 +12,7 @@ export const BindWindowFocusChange = function (window, App = EventBus) {
         //App.$emit('inactivity:start', e);
         App.isInFocus = true;
     }
-    
+
     window.onblur = function (e) {
 
         //when datetimepicker closes, this event is triggered (its a focusout event, not sure why it ends here)
@@ -27,12 +27,12 @@ export const BindWindowFocusChange = function (window, App = EventBus) {
         }
 
     }
-    
-    window.onkeydown = window.onmousemove = 
-    window.onwheel = window.onmousewheel = 
-    window.onmousedown = window.onkeyup = function () {
-        App.$emit('inactivity:reset');
-    }
+
+    window.onkeydown = window.onmousemove =
+        window.onwheel = window.onmousewheel =
+            window.onmousedown = window.onkeyup = function () {
+                App.$emit('inactivity:reset');
+            }
 }
 
 /**
@@ -70,7 +70,7 @@ export const BindWindowVisibilityChange = function(window, document, App = Event
             };
 
         evt = evt || window.event;
-        
+
         const listener = (state) => {
             if (state === v) {
                 App.$emit('tracker:start');
@@ -88,7 +88,7 @@ export const BindWindowVisibilityChange = function(window, document, App = Event
 
         if (evt.type in evtMap) {
             listener(evtMap[evt.type]);
-            
+
         } else {
             listener(this[hidden] ? "hidden" : "visible");
         }
