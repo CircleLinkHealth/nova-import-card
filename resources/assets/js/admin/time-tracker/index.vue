@@ -17,7 +17,7 @@
                         v-if="!info.noBhiSwitch && (info.isCcm || info.isBehavioral)"></bhi-switch>
 
             <br><br>
-            <span :class="{ hidden: showLoader, 'hide-tracker': hideTracker, inactive: !active }">
+            <span :class="{ hidden: showLoader, 'hide-tracker': hideTracker }">
                 <time-display v-if="!noLiveCount" ref="timeDisplay" :seconds="totalTime" :no-live-count="!!noLiveCount"
                               :redirect-url="'manage-patients/' + info.patientId + '/activities'"/>
             </span>
@@ -69,7 +69,6 @@
                 showTimer: true,
                 showLoader: true,
                 callMode: false,
-                active: false
             }
         },
         components: {
@@ -124,7 +123,6 @@
                                     self.seconds = self.info.isManualBehavioral ? data.bhiSeconds : data.ccmSeconds
                                     self.visible = true //display the component when the previousSeconds value has been received from the server to keep the display up-to-date
                                     self.showLoader = false;
-                                    // self.active = true;
                                 }
                                 else if (data.message === 'server:modal') {
                                     EventBus.$emit('away:trigger-modal')
@@ -244,13 +242,6 @@
 
                 EventBus.$on('tracker:start', () => {
 
-                    this.active = true;
-
-                    //start inactivity tracker only if not on call mode and not on twilio
-                    if (!(this.callMode && this.twilioEnabled)) {
-                        EventBus.$emit('inactivity:start');
-                    }
-
                     if (this.state !== STATE.SHOW_INACTIVE_MODAL) {
                         if (this.socket && this.socket.readyState === WebSocket.OPEN) {
                             if (this.startCount === 0) this.updateTime();
@@ -272,7 +263,6 @@
                             this.socket.send(JSON.stringify({message: STATE.LEAVE, info: this.info}))
                         }
 
-                        this.active = false;
                         // this.showLoader = true
                     }
                 })
@@ -292,7 +282,6 @@
                         this.state = STATE.SHOW_INACTIVE_MODAL;
                         this.socket.send(JSON.stringify({message: STATE.SHOW_INACTIVE_MODAL, info: this.info}))
                     }
-                    this.active = false;
                     // this.showLoader = true
                 })
 
@@ -400,10 +389,6 @@
 
     .top-20 {
         margin-top: 20px;
-    }
-
-    .inactive {
-        color: red;
     }
 
     #notifications-wrapper {

@@ -1053,6 +1053,20 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             : '';
     }
 
+    /**
+     * Get billing provider's phone.
+     *
+     * @return string
+     */
+    public function getBillingProviderPhone()
+    {
+        $billingProvider = $this->billingProviderUser();
+
+        return $billingProvider
+            ? $billingProvider->getPhone()
+            : '';
+    }
+
     public function getBirthDate()
     {
         if ( ! $this->patientInfo) {
