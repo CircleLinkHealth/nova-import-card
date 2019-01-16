@@ -19,6 +19,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         patientId: info.patientId,
         providerId: info.providerId,
         url: info.submitUrl,
+        timeSyncUrl: info.timeSyncUrl,
         programId: info.programId,
         ipAddr: info.ipAddr,
         totalTime: (Number(info.totalTime) || 0),
