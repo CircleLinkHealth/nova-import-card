@@ -42,7 +42,10 @@ if (isset($patient)) {
 
         <div class="hidden-xs col-lg-7 col-sm-12">
             <ul class="nav navbar-nav navbar-right">
-                @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && auth()->user()->hasRole('care-center') && isset($patient) && optional($patient)->id && (!isset($noLiveCountTimeTracking)))
+                <?php
+                $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
+                ?>
+                @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && auth()->user()->hasRole('care-center') && isset($patient) && optional($patient)->id && !$noLiveCountTimeTracking)
                     <li>
                         <time-tracker-call-mode ref="timeTrackerCallMode"
                                                 :twilio-enabled="@json(config('services.twilio.enabled') && ($patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : false))"
