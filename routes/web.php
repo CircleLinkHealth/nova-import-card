@@ -1051,6 +1051,11 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'ActivityController@providerUIIndex',
                 'as'   => 'patient.activity.providerUIIndex',
             ])->middleware('permission:activity.read,patient.read,provider.read');
+
+            Route::get('getCurrent', [
+                'uses' => 'ActivityController@getCurrentForPatient',
+                'as'   => 'patient.activity.get.current.for.patient',
+            ])->middleware('permission:activity.read,patient.read,provider.read');
         });
 
         //call scheduling
@@ -1102,7 +1107,7 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'admin.offline-activity-time-requests.respond',
             ])->middleware('permission:patient.read,offlineActivityRequest.read');
         });
-        
+
         Route::get('pokit', 'PokitDokController@thisIsJustToTryThingsOut');
 
         Route::group(['prefix' => 'direct-mail'], function () {
@@ -1207,7 +1212,7 @@ Route::group(['middleware' => 'auth'], function () {
             });
         });
 
-        Route::group(['prefix' => 'ca-director'], function(){
+        Route::group(['prefix' => 'ca-director'], function () {
             Route::get('', [
                 'uses' => 'EnrollmentDirectorController@index',
                 'as'   => 'ca-director.index',
@@ -2145,6 +2150,10 @@ Route::group(['middleware' => 'auth'], function () {
 // pagetimer
 Route::group([], function () {
     //Route::get('pagetimer', 'PageTimerController@store');
+    Route::post('api/v2.1/time/patients', [
+        'uses' => 'PageTimerController@getTimeForPatients',
+        'as'   => 'api.get.time.patients',
+    ]);
     Route::post('api/v2.1/pagetimer', [
         'uses' => 'PageTimerController@store',
         'as'   => 'api.pagetracking',

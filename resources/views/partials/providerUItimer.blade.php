@@ -77,6 +77,7 @@ use App\Patient;
                 "activity": (document.getElementById('activityName') || {value: ''}).value,
                 "title": '{{$title}}',
                 "submitUrl": '{{route("api.pagetracking")}}',
+                "timeSyncUrl": '{{route("api.get.time.patients")}}',
                 "startTime": '{{Carbon\Carbon::now()->subSeconds(8)->toDateTimeString()}}',
                 "noLiveCount": ('{{$noLiveCountTimeTracking}}' == '1') ? 1 : 0,
                 "noCallMode": "{{ config('services.no-call-mode.env') }}",
