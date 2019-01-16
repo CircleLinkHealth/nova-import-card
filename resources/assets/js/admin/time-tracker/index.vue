@@ -55,7 +55,7 @@
                  * }
                  */
             },
-            'no-live-count': Number,
+            'no-live-count': Boolean,
             'class-name': String,
             'hide-tracker': Boolean,
             'override-timeout': Boolean
