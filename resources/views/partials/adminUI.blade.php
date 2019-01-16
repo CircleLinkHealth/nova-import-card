@@ -133,6 +133,8 @@
                                             Invoices</a></li>
                                     <li><a href="{{ route('admin.reports.nurse.allocation') }}">
                                             Allocation</a></li>
+                                    <li><a href="{{ route('admin.reports.nurse.weekly') }}">
+                                            Weekly Report</a></li>
 
                                 </ul>
                             </li>
