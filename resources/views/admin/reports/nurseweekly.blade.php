@@ -11,13 +11,13 @@
             </div>
         </div>
 
-        <div class="col-md-4">
+ {{--      <div class="col-md-4">
             <form action="{{route('admin.reports.nurse.weekly')}}" method="GET">
                 <div class="form-group">
                     <div class="col-md-12">
-                        {{-- <article>Active Patients as of @if($dataIfNoDateSelected){{$dataIfNoDateSelected->toDateString()}}@else 23:30
+                         <article>Active Patients as of @if($dataIfNoDateSelected){{$dataIfNoDateSelected->toDateString()}}@else 23:30
                              ET @endif on:
-                         </article>--}}
+                         </article>
                     </div>
                     <div class="col-md-8">
                         <input id="date" type="date" name="date" value="{{$date}}"
@@ -40,54 +40,44 @@
                             <th>Nurse</th>
                             @foreach($days as $weekDay)
                                 <th>{{$weekDay}}</th>
-                                @endforeach
-                            {{--<th scope="col">Name</th>--}}
-                            {{--<th scope="col">Scheduled Calls</th>--}}
-                            {{--<th scope="col">Actual Calls</th>--}}
-                            {{--<th scope="col">Successful Calls</th>--}}
-                            {{--<th scope="col">Unsuccessful Calls</th>--}}
-                            {{--<th scope="col">Committed Hours</th>--}}
-                            {{--<th scope="col">Actual Calls</th>--}}
+                                <th>{{$weekDay}}</th>
+                                <th>{{$weekDay}}</th>
+                                <th>{{$weekDay}}</th>
+                                <th>{{$weekDay}}</th>
+                                <th>{{$weekDay}}l</th>
+                            @endforeach
+                            <th scope="col">Name</th>
+                            <th scope="col">Scheduled Calls</th>
+                            <th scope="col">Actual Calls</th>
+                            <th scope="col">Successful Calls</th>
+                            <th scope="col">Unsuccessful Calls</th>
+                            <th scope="col">Committed Hours</th>
+                            <th scope="col">Actual Calls</th>
                         </tr>
                         </thead>
                         <tbody>
-
-                        @foreach($data as $nurse)
+                        @foreach($nurseData as $name => $dates)
                             <tr>
-                                <td>{{$nurse['name']}}</td>
-                                @foreach($days as $weekDay)
-                                    @if(array_key_exists($weekDay, $nurse['scheduledCalls']->toArray()))
-                                        <td> {{$nurse['scheduledCalls']->get($weekDay)}}</td>
-                                        @else
-                                        <td>  0 </td>
-                                        @endif
-                                    {{--@foreach($nurse['scheduledCalls'] as $day => $scheduledCalls)--}}
-                                        {{--@if ($day == $weekDay)--}}
-                                            {{--{{$weekDay}}--}}
-                                            {{--<td> {{$day}} . {{$scheduledCalls}}</td>--}}
-                                        {{--@else--}}
-                                            {{--{{$weekDay}}--}}
-                                            {{--0--}}
-                                        {{--@endif--}}
-                                    {{--@endforeach--}}
+                                <td>{{$name}}</td>
+
+                                @foreach($dates as $date)
+                                    <td>{{$date->first()['actualCalls']}} </td>
+                                    <td>{{$date->first()['committedHours']}} </td>
+                                    <td>{{$date->first()['scheduledCalls']}} </td>
+                                    <td>{{$date->first()['actualCalls']}} </td>
+                                    <td>{{$date->first()['successful']}} </td>
+                                    <td>{{$date->first()['unsuccessful']}} </td>
                                 @endforeach
                             </tr>
-                        {{--@empty--}}
-                            {{--<div class="well well-sm">--}}
-                                {{--<div class="alert alert-danger" role="alert">--}}
-                                    {{--<article>--}}
-                                        {{--No reports found for {{$date->toDateString()}}. Please select another date--}}
-                                    {{--</article>--}}
-                                {{--</div>--}}
-                            {{--</div>--}}
-
                         @endforeach
-
                         </tbody>
                     </table>
                 </div>
                 <br>
             </div>
         </div>
-    </div>
+    </div>--}}
+
+    @include('admin.reports.partials.dayFilterNav')
 @endsection
+

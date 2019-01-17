@@ -1921,6 +1921,12 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'admin.reports.nurse.weekly',
         ])->middleware('permission:nurseReport.read');
 
+        Route::get('reports/nurse/weekly/{weekDay}', [
+            'uses' => 'NursesWeeklyRepController@dayFilter',
+            'as'   => 'admin.reports.nurse.filterDay',
+        ])->middleware('permission:nurseReport.read');
+
+
         //STATS
 
         Route::get('reports/nurse/stats', [

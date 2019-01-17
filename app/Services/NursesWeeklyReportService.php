@@ -17,7 +17,7 @@ class NursesWeeklyReportService
 
     public function collectData(Carbon $date)
     {
-        $oneWeekBeforeYesterday = Carbon::today()->startOfWeek()->startOfDay();
+        $oneWeekBeforeYesterday = Carbon::today()->startOfDay();
         $data                   = [];
         $nurses                 = User::ofType('care-center')
                                       ->with([
@@ -39,10 +39,11 @@ class NursesWeeklyReportService
                   ->orWhere('called_date', '>=', $date->toDateTimeString());
             })->chunk(10, function ($nurses) use (&$data, $date) {
                 foreach ($nurses as $nurse) {
-                    $data[] = [
-                        'nurse_info_id'  => $nurse->nurseInfo->id,
-                        'name'           => $nurse->first_name,
-                        'last_name'      => $nurse->last_name,
+                    $data[] = collect([
+                        //changed to user id
+                        'nurse_id'  => $nurse->id,
+//                        'name'           => $nurse->first_name,
+//                        'last_name'      => $nurse->last_name,
                         'actualHours'    => $nurse->pageTimersAsProvider->sum('billable_duration'),
                         'committedHours' => $nurse->nurseInfo->windows->where('day_of_week',
                             carbonToClhDayOfWeek($date->dayOfWeek))->sum(function ($window) {
@@ -54,13 +55,11 @@ class NursesWeeklyReportService
                         'successful'     => $nurse->outboundCalls->where('status', 'reached')->count(),
                         'unsuccessful'   => $nurse->outboundCalls->whereIn('status',
                             ['not reached', 'dropped'])->count(),
-                    ];
+                    ]);
                 }
             });
 
-        dd($data);
-
-        return $data;
+        return collect($data);
     }
 
     //UploadDataS3 runs daily @ 23:30 using Scheduled Command
