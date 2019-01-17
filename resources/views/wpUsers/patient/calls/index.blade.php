@@ -57,7 +57,7 @@
                                               :twilio-enabled="true"
                                               class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
                                               :info="timeTrackerInfo"
-                                              :no-live-count="@json($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? true : false)"
+                                              :no-live-count="@json(($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? true : false)"
                                               :override-timeout="{{config('services.time-tracker.override-timeout')}}"></time-tracker>
 
                             </div>
