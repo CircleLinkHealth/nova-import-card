@@ -41,7 +41,7 @@ class NursesWeeklyReport extends Command
      */
     public function handle()
     {
-        $date=  Carbon::today();
+        $date=  Carbon::today()->subDay(10)->startOfDay();
         $data   = [];
         $nurses = User::ofType('care-center')
                       ->with([

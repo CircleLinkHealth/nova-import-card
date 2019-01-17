@@ -11,41 +11,23 @@
             </div>
         </div>
 
- {{--      <div class="col-md-4">
-            <form action="{{route('admin.reports.nurse.weekly')}}" method="GET">
-                <div class="form-group">
-                    <div class="col-md-12">
-                         <article>Active Patients as of @if($dataIfNoDateSelected){{$dataIfNoDateSelected->toDateString()}}@else 23:30
-                             ET @endif on:
-                         </article>
-                    </div>
-                    <div class="col-md-8">
-                        <input id="date" type="date" name="date" value="{{$date}}"
-                               max="{{$yesterdayDate}}" required class="form-control">
-                    </div>
-                    <div class="col-md-4">
-                        <input type="submit" value="Submit" class="btn btn-info">
-                    </div>
-                </div>
-            </form>
-        </div>
-
         <div class="col-md-12">
             <div class="panel panel-default">
-                <div class="panel-heading text-center"><b>Nurse Weekly Report</b> <br> {{$date->toDateString()}}</div>
+                <div class="panel-heading text-center"><b>Nurse Weekly Report</b></div>
                 <div class="panel-body">
+                    @include('admin.reports.partials.dayFilterNav')
                     <table class="table table-hover">
                         <thead>
                         <tr>
                             <th>Nurse</th>
-                            @foreach($days as $weekDay)
+                           {{-- @foreach($days as $weekDay)
                                 <th>{{$weekDay}}</th>
                                 <th>{{$weekDay}}</th>
                                 <th>{{$weekDay}}</th>
                                 <th>{{$weekDay}}</th>
                                 <th>{{$weekDay}}</th>
                                 <th>{{$weekDay}}l</th>
-                            @endforeach
+                            @endforeach--}}
                             <th scope="col">Name</th>
                             <th scope="col">Scheduled Calls</th>
                             <th scope="col">Actual Calls</th>
@@ -76,8 +58,6 @@
                 <br>
             </div>
         </div>
-    </div>--}}
-
-    @include('admin.reports.partials.dayFilterNav')
+    </div>
 @endsection
 
