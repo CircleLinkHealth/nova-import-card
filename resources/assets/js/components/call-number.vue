@@ -618,7 +618,7 @@
                         });
 
                         self.device.on('error', (err) => {
-                            console.log('twilio device: error');
+                            console.log('twilio device: error', err);
                             self.resetPhoneState();
                             self.log = err.message;
                         });
