@@ -86,7 +86,7 @@ if (isset($patient)) {
                         style="line-height: 20px;">
                         <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo" :hide-tracker="true"
                                       :twilio-enabled="@json(config('services.twilio.enabled'))"
-                                      :no-live-count="@json($noLiveCountTimeTracking ?? true)"
+                                      :no-live-count="@json($noLiveCountTimeTracking)"
                                       :override-timeout="{{config('services.time-tracker.override-timeout')}}"></time-tracker>
                     </li>
                 @endif
