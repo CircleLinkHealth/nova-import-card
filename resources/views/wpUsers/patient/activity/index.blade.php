@@ -22,7 +22,8 @@
                 @include('partials.userheader')
 
                 {!! Form::open(array('url' => route('patient.activity.providerUIIndex', ['patientId' => $patient]), 'method' => 'GET', 'class' => 'form-horizontal', 'style' => 'margin-right: 10px')) !!}
-                <div class="col-sm-3" style="top: 16px">
+                <div class="col-sm-6" style="top: 16px">
+
                     <button type="submit"
                             href="{{route('patient.activity.providerUIIndex', ['patientId' => $patient])}}"
                             value="audit" name="audit" id="audit" class="btn btn-primary">Audit Report
@@ -33,15 +34,9 @@
                             Reload Table
                         </button>
 
-                        <div style="right: -30px;" class="loader-container">
+                        <div style="left: 250px; right: 0px;" class="loader-container">
                             <div id="refresh-activity-loader" class="loader" style="display: none"></div>
                         </div>
-
-                        <script>
-                            setInterval(function () {
-                                $('#refresh-activity').click();
-                            }, 5000);
-                        </script>
                     @endif
 
                 </div>
@@ -349,6 +344,12 @@
 
     @push('scripts')
         <script>
+
+            @if ($data && $month_selected_text === \Carbon\Carbon::now()->format('F'))
+                setInterval(function () {
+                    $('#refresh-activity').click();
+                }, 5000);
+            @endif
 
             $("#audit").on('click', function () {
 
