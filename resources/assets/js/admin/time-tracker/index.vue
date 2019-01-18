@@ -195,19 +195,9 @@
                 catch (ex) {
                     console.error(ex);
                 }
-            },
-            positionNotificationsBox() {
-
-                $('#notifications-wrapper').offset({
-                    top: 20,
-                    left: $(document).width() - 330
-                });
-
             }
         },
         mounted() {
-
-            this.positionNotificationsBox();
 
             this.previousSeconds = this.info.totalTime || 0;
             this.info.initSeconds = 0
@@ -392,6 +382,9 @@
     }
 
     #notifications-wrapper {
+        position: fixed;
+        top: 65px;
+        right: 15px;
         width: 300px;
         font-size: small;
         text-align: left;
