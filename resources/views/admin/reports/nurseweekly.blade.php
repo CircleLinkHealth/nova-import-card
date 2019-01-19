@@ -10,48 +10,51 @@
                 @include('errors.errors')
             </div>
         </div>
-
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading text-center"><b>Nurse Weekly Report</b></div>
                 <div class="panel-body">
-                    @include('admin.reports.partials.dayFilterNav')
+                    @include('admin.reports.nursesWeeklyReportForm')
                     <table class="table table-hover">
                         <thead>
                         <tr>
-                            <th>Nurse</th>
-                           {{-- @foreach($days as $weekDay)
-                                <th>{{$weekDay}}</th>
-                                <th>{{$weekDay}}</th>
-                                <th>{{$weekDay}}</th>
-                                <th>{{$weekDay}}</th>
-                                <th>{{$weekDay}}</th>
-                                <th>{{$weekDay}}l</th>
-                            @endforeach--}}
+                            {{-- @foreach($days as $weekDay)
+                                 <th>{{$weekDay}}</th>
+                                 <th>{{$weekDay}}</th>
+                                 <th>{{$weekDay}}</th>
+                                 <th>{{$weekDay}}</th>
+                                 <th>{{$weekDay}}</th>
+                                 <th>{{$weekDay}}l</th>
+                             @endforeach--}}
+
                             <th scope="col">Name</th>
-                            <th scope="col">Scheduled Calls</th>
-                            <th scope="col">Actual Calls</th>
-                            <th scope="col">Successful Calls</th>
-                            <th scope="col">Unsuccessful Calls</th>
-                            <th scope="col">Committed Hours</th>
-                            <th scope="col">Actual Calls</th>
+
+                            @foreach($days as $weekDay)
+                                <th scope="col">{{$weekDay->format('D')}} Scheduled Calls</th>
+                                <th scope="col">{{$weekDay->format('D')}} Actual Calls</th>
+                                <th scope="col">{{$weekDay->format('D')}} Successful Calls</th>
+                                <th scope="col">{{$weekDay->format('D')}} Unsuccessful Calls</th>
+                                <th scope="col">{{$weekDay->format('D')}} Committed Hours</th>
+                            @endforeach
+
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach($nurseData as $name => $dates)
-                            <tr>
-                                <td>{{$name}}</td>
 
-                                @foreach($dates as $date)
-                                    <td>{{$date->first()['actualCalls']}} </td>
-                                    <td>{{$date->first()['committedHours']}} </td>
-                                    <td>{{$date->first()['scheduledCalls']}} </td>
-                                    <td>{{$date->first()['actualCalls']}} </td>
-                                    <td>{{$date->first()['successful']}} </td>
-                                    <td>{{$date->first()['unsuccessful']}} </td>
+                        @foreach($data as $name => $report)
+
+                            <tr>
+                                <td>{{$name}} </td>
+                                @foreach($report as $reportPerDay)
+                                    <td>{{$reportPerDay['scheduledCalls']}} </td>
+                                    <td>{{$reportPerDay['actualCalls']}} </td>
+                                    <td>{{$reportPerDay['successful']}} </td>
+                                    <td>{{$reportPerDay['unsuccessful']}} </td>
+                                    <td>{{$reportPerDay['committedHours']}} </td>
                                 @endforeach
                             </tr>
                         @endforeach
+
                         </tbody>
                     </table>
                 </div>

@@ -6,7 +6,7 @@ use App\SaasAccount;
 use App\User;
 use Carbon\Carbon;
 
-class NursesWeeklyReportService
+class NursesAndStatesDailyReportService
 {
     public function showDataFromDb(Carbon $date)
     {
@@ -30,57 +30,70 @@ class NursesWeeklyReportService
                           'outboundCalls'        => function ($q) use ($date) {
                               $q->where('scheduled_date', $date->toDateString())
                                 ->orWhere('called_date', '>=', $date->toDateTimeString())
-                                ->where('called_date', '<=',
-                                    $date->copy()->endOfDay()->toDateTimeString());
+                                ->where('called_date', '<=', $date->copy()->endOfDay()->toDateTimeString());
                           },
-                      ])->whereHas('outboundCalls', function ($q) use ($date) {
-                $q->where('scheduled_date', $date->toDateString())
-                  ->orWhere('called_date', '>=', $date->toDateTimeString());
-            })->chunk(10, function ($nurses) use (&$data, $date) {
-                foreach ($nurses as $nurse) {
-                    $data[] = collect([
-                        //changed to user id
-                        'nurse_id'       => $nurse->id,
-                        //                        'name'           => $nurse->first_name,
-                        //                        'last_name'      => $nurse->last_name,
-                        'actualHours'    => $nurse->pageTimersAsProvider->sum('billable_duration'),
-                        'committedHours' => $nurse->nurseInfo->windows->where('day_of_week',
-                            carbonToClhDayOfWeek($date->dayOfWeek))->sum(function ($window) {
-                            return $window->numberOfHoursCommitted();
-                        }),
-                        'scheduledCalls' => $nurse->outboundCalls->where('status', 'scheduled')->count(),
-                        'actualCalls'    => $nurse->outboundCalls->whereIn('status',
-                            ['reached', 'not reached', 'dropped'])->count(),
-                        'successful'     => $nurse->outboundCalls->where('status', 'reached')->count(),
-                        'unsuccessful'   => $nurse->outboundCalls->whereIn('status',
-                            ['not reached', 'dropped'])->count(),
-                    ]);
-                }
-            });
+                      ])
+                      ->whereHas('outboundCalls', function ($q) use ($date) {
+                          $q->where('scheduled_date', $date->toDateString())
+                            ->orWhere('called_date', '>=', $date->toDateTimeString());
+                      })
+                      ->chunk(10, function ($nurses) use (&$data, $date) {
+                          foreach ($nurses as $nurse) {
+                              $data[] = collect([
+                                  //changed to user id
+                                  'nurse_id'       => $nurse->id,
+                                  //'name'           => $nurse->first_name,
+                                  //'last_name'      => $nurse->last_name,
+                                  'actualHours'    => $nurse->pageTimersAsProvider->sum('billable_duration'),
+                                  'committedHours' => $nurse->nurseInfo->windows->where('day_of_week',
+                                      carbonToClhDayOfWeek($date->dayOfWeek))->sum(function ($window) {
+                                      return $window->numberOfHoursCommitted();
+                                  }),
+                                  'scheduledCalls' => $nurse->outboundCalls->where('status', 'scheduled')->count(),
+                                  'actualCalls'    => $nurse->outboundCalls->whereIn('status',
+                                      ['reached', 'not reached', 'dropped'])->count(),
+                                  'successful'     => $nurse->outboundCalls->where('status', 'reached')->count(),
+                                  'unsuccessful'   => $nurse->outboundCalls->whereIn('status',
+                                      ['not reached', 'dropped'])->count(),
+                              ]);
+                          }
+                      });
 
         return collect($data);
     }
 
+    /**
+     * @param Carbon $date
+     *
+     * @return mixed
+     * @throws \Exception
+     */
     public function showDataFromS3(Carbon $date)
     {
-        dd($date);
         $noReportDates = Carbon::parse('2019-1-06');
-        $json          = optional(SaasAccount::whereSlug('circlelink-health')
-                                             ->first()
-                                             ->getMedia("nurses-weekly-report-{$date->toDateString()}.json")
-                                             ->sortByDesc('id')
-                                             ->first())
-            ->getFile();
-        //first check if we have a valid file
-        if ( ! $json || $date <= $noReportDates) {
-            throw new \Exception('File doesnt exists for selected date.', 500);
-        } else {
-            //then check if it's in json format
-            if ( ! is_json($json)) {
-                throw new \Exception('File retrieved is not in json format.', 500);
-            }
-            $data = json_decode($json, true);
+
+        if ($date <= $noReportDates) {
+            throw new \Exception('File doesnt exists for selected date.', 400);
         }
+
+        $json = optional(SaasAccount::whereSlug('circlelink-health')
+                                    ->first()
+                                    ->getMedia("nurses-and-states-daily-report-{$date->toDateString()}.json")
+                                    ->sortByDesc('id')
+                                    ->first())
+            ->getFile();
+
+        //first check if we have a valid file
+        if ( ! $json) {
+            throw new \Exception('File doesnt exists for selected date.', 400);
+        }
+
+        //then check if it's in json format
+        if ( ! is_json($json)) {
+            throw new \Exception('File retrieved is not in json format.', 500);
+        }
+
+        $data = json_decode($json, true);
 
         return $data;
     }

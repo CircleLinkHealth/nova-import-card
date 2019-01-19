@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\NursesWeeklyReportService;
-use App\User;
+use App\Services\NursesAndStatesDailyReportService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -11,54 +10,59 @@ class NursesWeeklyRepController extends Controller
 {
     private $service;
 
-    public function __construct(NursesWeeklyReportService $service)
+    public function __construct(NursesAndStatesDailyReportService $service)
     {
         $this->service = $service;
     }
 
-    public function calendarInput()
-    {
-        return view('admin.reports.nursesWeeklyReportForm');
-    }
-
     public function index(Request $request)
     {
-        $date = Carbon::parse($request->input('date'));
-        $startOfWeek = $date->copy()->subWeek()->startOfWeek();
-        $days = [];
-        for ($i = 0; $i <= 2; $i++) {
-            $days[] = $startOfWeek->copy()->addDay($i)->toDateString();
-        }
-        if ($date >= today()->startOfDay()) {
-            //$data = $this->service->showDataFromDb($date);
-            return 'Please input past date';
+        $yesterdayDate = Carbon::yesterday()->startOfDay();
+        if ($request->has('date')) {
+            $requestDate = new Carbon($request['date']);
+            $date        = $requestDate->copy();
         } else {
-            foreach ($days as $day) {
-                $data[$day] = $this->service->showDataFromS3(Carbon::parse($day));
+            //if the admin loads the page today, we need to display last day's report
+            $date = $yesterdayDate->copy();
+        }
+
+        $startOfWeek   = $date->copy()->startOfWeek();
+        $days          = [];
+        $upToDayOfWeek = carbonToClhDayOfWeek($date->dayOfWeek);
+
+        for ($i = 0; $i < $upToDayOfWeek; $i++) {
+            $days[] = $startOfWeek->copy()->addDay($i);
+        }
+
+        if ($date >= today()->startOfDay()) {
+            $messages['errors'][] = 'Please input a date in the past.';
+            return redirect()->back()->withErrors($messages);
+        }
+
+        $dataPerDay = [];
+        foreach ($days as $day) {
+            try {
+                $dataPerDay[$day->toDateString()] = $this->service->showDataFromS3($day);
+            } catch (\Exception $e) {
+                $dataPerDay[$day->toDateString()] = []; //todo: return something here
             }
-            //$data = $this->service->showDataFromS3($date);
+        }
+        //data has per day per nurse
+        //need to go into per nurse per day
+        $data = [];
+        foreach ($dataPerDay as $day => $dataForDay) {
+            foreach ($dataForDay as $nurse) {
+                if ( ! isset($data[$nurse['nurse_full_name']])) {
+                    $data[$nurse['nurse_full_name']] = [];
+                }
+                $data[$nurse['nurse_full_name']][$day] = $nurse;
+            }
         }
 
-        $nurses = User::ofType('care-center')->whereHas('outboundCalls', function ($q) use ($day) {
-            $q->where([
-                ['scheduled_date', '>=', Carbon::parse($day)->copy()->startOfDay()->toDateString()],
-                ['scheduled_date', '<=', Carbon::parse($day)->endOfDay()->toDateTimeString()],
-            ])->orWhere([
-                ['called_date', '>=', Carbon::parse($day)->copy()->startOfDay()->toDateTimeString()],
-                ['called_date', '<=', Carbon::parse($day)->endOfDay()->toDateTimeString()],
-            ]);
-        })->get();
-
-        $nurseData = [];
-        foreach ($nurses as $nurse) {
-            $nurseData[$nurse->getFullName()][$day] = $data[$day]->where('nurse_id', $nurse->id);
-        }
-        $yesterdayDate = $date;
-
-        return view('admin.reports.nurseWeekly', compact('days', 'yesterdayDate', 'date', 'nurseData', 'data'));
+        return view('admin.reports.nurseWeekly', compact(['days', 'date', 'data']));
     }
 
-    public function dayFilter($weekDay)
+    /*public function dayFilter($weekDay)
     {
         $date        = $weekDay;
         $startOfWeek = Carbon::parse($date)->copy()->subWeek()->startOfWeek();
@@ -68,8 +72,8 @@ class NursesWeeklyRepController extends Controller
             $days[] = $startOfWeek->copy()->addDay($i)->toDateString();
         }
 
-        $data[$date] = $this->service->showDataFromDb(Carbon::parse($date));
-
+        $data[$date] = $this->service->showDataFromS3(Carbon::parse($date));
+//dd($data[$date]);
         $nurses = User::ofType('care-center')->whereHas('outboundCalls', function ($q) use ($date) {
             $q->where([
                 ['scheduled_date', '>=', Carbon::parse($date)->copy()->startOfDay()->toDateString()],
@@ -86,6 +90,8 @@ class NursesWeeklyRepController extends Controller
         }
         $yesterdayDate = $date;
 
+        // dd($nurseData);
+
         return view('admin.reports.nurseweekly', compact('days', 'yesterdayDate', 'date', 'nurseData', 'data'));
-    }
+    }*/
 }
