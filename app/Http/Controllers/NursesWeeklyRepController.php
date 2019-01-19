@@ -42,7 +42,7 @@ class NursesWeeklyRepController extends Controller
         $dataPerDay = [];
         foreach ($days as $day) {
             try {
-                $dataPerDay[$day->toDateString()] = $this->service->showDataFromS3($day);
+                $dataPerDay[$day->toDateString()] = $this->service->showDataFromDb($day);
             } catch (\Exception $e) {
                 $dataPerDay[$day->toDateString()] = []; //todo: return something here
             }
@@ -58,7 +58,6 @@ class NursesWeeklyRepController extends Controller
                 $data[$nurse['nurse_full_name']][$day] = $nurse;
             }
         }
-
         return view('admin.reports.nurseWeekly', compact(['days', 'date', 'data']));
     }
 

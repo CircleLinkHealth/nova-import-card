@@ -44,7 +44,7 @@ class NursesAndStatesDailyReportService
                                   'nurse_id'       => $nurse->id,
                                   //'name'           => $nurse->first_name,
                                   //'last_name'      => $nurse->last_name,
-                                  'actualHours'    => $nurse->pageTimersAsProvider->sum('billable_duration'),
+                                  'actualHours'    => $nurse->pageTimersAsProvider->sum('billable_duration')/3600,
                                   'committedHours' => $nurse->nurseInfo->windows->where('day_of_week',
                                       carbonToClhDayOfWeek($date->dayOfWeek))->sum(function ($window) {
                                       return $window->numberOfHoursCommitted();
@@ -58,7 +58,7 @@ class NursesAndStatesDailyReportService
                               ]);
                           }
                       });
-
+dd(collect($data));
         return collect($data);
     }
 

@@ -30,11 +30,12 @@
                             <th scope="col">Name</th>
 
                             @foreach($days as $weekDay)
-                                <th scope="col">{{$weekDay->format('D')}} Scheduled Calls</th>
-                                <th scope="col">{{$weekDay->format('D')}} Actual Calls</th>
-                                <th scope="col">{{$weekDay->format('D')}} Successful Calls</th>
-                                <th scope="col">{{$weekDay->format('D')}} Unsuccessful Calls</th>
-                                <th scope="col">{{$weekDay->format('D')}} Committed Hours</th>
+                                <th scope="col">{{$weekDay->format('D')}}<br>Assigned Calls</th>
+                                <th scope="col">{{$weekDay->format('D')}}<br>Actual Calls</th>
+                                <th scope="col">{{$weekDay->format('D')}}<br>Successful Calls</th>
+                                <th scope="col">{{$weekDay->format('D')}}<br>Unsuccessful Calls</th>
+                                <th scope="col">{{$weekDay->format('D')}}<br>Actual Hours Worked</th>
+                                <th scope="col">{{$weekDay->format('D')}}<br>Committed Hours</th>
                             @endforeach
 
                         </tr>
@@ -50,6 +51,7 @@
                                     <td>{{$reportPerDay['actualCalls']}} </td>
                                     <td>{{$reportPerDay['successful']}} </td>
                                     <td>{{$reportPerDay['unsuccessful']}} </td>
+                                    <td>{{$reportPerDay['actualHours']}} </td>
                                     <td>{{$reportPerDay['committedHours']}} </td>
                                 @endforeach
                             </tr>
