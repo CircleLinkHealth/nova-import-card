@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use App\SaasAccount;
 use App\Services\NursesAndStatesDailyReportService;
-use App\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
@@ -22,16 +21,17 @@ class NursesAndStatesDailyReport extends Command
      * @var string
      */
     protected $description = 'Uploads data to S3';
+    private $service;
 
     /**
      * Create a new command instance.
      *
      * @param NursesAndStatesDailyReportService $service
      */
-    public function __construct()
+    public function __construct(NursesAndStatesDailyReportService $service)
     {
         parent::__construct();
-
+        $this->service = $service;
     }
 
     /**
@@ -53,7 +53,9 @@ class NursesAndStatesDailyReport extends Command
             $date = Carbon::today()->subDay(1)->startOfDay();
         }
 
-        $data = [];
+        $data = $this->service->collectData($date);
+
+        /*$data = [];
         User::ofType('care-center')
             ->with([
                 'nurseInfo.windows',
@@ -95,11 +97,11 @@ class NursesAndStatesDailyReport extends Command
                             ['not reached', 'dropped'])->count(),
                     ]);
                 }
-            });
+            });*/
 
         $fileName = "nurses-and-states-daily-report-{$date->toDateString()}.json";
-        $path  = storage_path($fileName);
-        $saved = file_put_contents($path, json_encode($data));
+        $path     = storage_path($fileName);
+        $saved    = file_put_contents($path, json_encode($data));
 
         if ( ! $saved) {
             if (app()->environment('worker')) {

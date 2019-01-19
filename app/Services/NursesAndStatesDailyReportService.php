@@ -16,35 +16,55 @@ class NursesAndStatesDailyReportService
     }
 
     public function collectData(Carbon $date)
-    {
+    { //the injected $date = yesterday date
         $data   = [];
         $nurses = User::ofType('care-center')
                       ->with([
                           'nurseInfo.windows',
                           'pageTimersAsProvider' => function ($q) use ($date) {
                               $q->where([
-                                  ['start_time', '>=', $date->copy()->startOfDay()->toDateTimeString()],
-                                  ['end_time', '<=', $date->copy()->endOfDay()->toDateTimeString()],
+                                  ['start_time', '>=', $date->copy()->startOfDay()],
+                                  ['end_time', '<=', $date->copy()->endOfDay()],
                               ]);
                           },
                           'outboundCalls'        => function ($q) use ($date) {
-                              $q->where('scheduled_date', $date->toDateString())
-                                ->orWhere('called_date', '>=', $date->toDateTimeString())
-                                ->where('called_date', '<=', $date->copy()->endOfDay()->toDateTimeString());
+                              $q->where([
+                                  ['called_date', '>=', $date->copy()->startOfDay()],
+                                  ['called_date', '<=', $date->copy()->endOfDay()],
+                              ])
+                                ->orWhere('scheduled_date', $date->toDateString());
+
+                              /*>where('scheduled_date', $date->toDateString())
+                                ->orWhere('called_date', '>=', $date->copy()->startOfDay())
+                                ->where('called_date', '<=', $date->copy()->endOfDay());*/
+                          },
+                          'activitiesAsProvider' => function ($q) use ($date) {
+                              $q->where([
+                                  ['performed_at', '>=', $date->copy()->startOfDay()],
+                                  ['performed_at', '<=', $date->copy()->endOfDay()],
+                              ]);
+
+                              /*where('performed_at', '>=', $date->copy()->startOfDay());*/
                           },
                       ])
                       ->whereHas('outboundCalls', function ($q) use ($date) {
-                          $q->where('scheduled_date', $date->toDateString())
-                            ->orWhere('called_date', '>=', $date->toDateTimeString());
+                          $q->where([
+                              ['called_date', '>=', $date->copy()->startOfDay()],
+                              ['called_date', '<=', $date->copy()->endOfDay()],
+                          ])
+                            ->orWhere('scheduled_date', $date->toDateString());
+                      })
+                      ->orwhereHas('activitiesAsProvider', function ($q) use ($date) {
+                          $q->where('performed_at', $date->toDateTimeString());
                       })
                       ->chunk(10, function ($nurses) use (&$data, $date) {
                           foreach ($nurses as $nurse) {
                               $data[] = collect([
-                                  //changed to user id
+                                  //nurse_id = user id
                                   'nurse_id'       => $nurse->id,
-                                  //'name'           => $nurse->first_name,
-                                  //'last_name'      => $nurse->last_name,
-                                  'actualHours'    => $nurse->pageTimersAsProvider->sum('billable_duration')/3600,
+                                  'nurse_full_name' => $nurse->getFullName(),
+                                  //toDo: not sure if dividing here is the best solution
+                                  'actualHours'    => $nurse->pageTimersAsProvider->sum('billable_duration') / 3600,
                                   'committedHours' => $nurse->nurseInfo->windows->where('day_of_week',
                                       carbonToClhDayOfWeek($date->dayOfWeek))->sum(function ($window) {
                                       return $window->numberOfHoursCommitted();
@@ -55,10 +75,12 @@ class NursesAndStatesDailyReportService
                                   'successful'     => $nurse->outboundCalls->where('status', 'reached')->count(),
                                   'unsuccessful'   => $nurse->outboundCalls->whereIn('status',
                                       ['not reached', 'dropped'])->count(),
+                                  'activityTime'   => $nurse->activitiesAsProvider->where('provider_id', $nurse->id)
+                                                                                  ->sum('duration')/3600,
                               ]);
                           }
                       });
-dd(collect($data));
+
         return collect($data);
     }
 

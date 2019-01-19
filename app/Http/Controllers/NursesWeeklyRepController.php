@@ -18,6 +18,7 @@ class NursesWeeklyRepController extends Controller
     public function index(Request $request)
     {
         $yesterdayDate = Carbon::yesterday()->startOfDay();
+
         if ($request->has('date')) {
             $requestDate = new Carbon($request['date']);
             $date        = $requestDate->copy();
@@ -42,7 +43,7 @@ class NursesWeeklyRepController extends Controller
         $dataPerDay = [];
         foreach ($days as $day) {
             try {
-                $dataPerDay[$day->toDateString()] = $this->service->showDataFromDb($day);
+                $dataPerDay[$day->toDateString()] = $this->service->showDataFromS3($day);
             } catch (\Exception $e) {
                 $dataPerDay[$day->toDateString()] = []; //todo: return something here
             }
@@ -52,7 +53,7 @@ class NursesWeeklyRepController extends Controller
         $data = [];
         foreach ($dataPerDay as $day => $dataForDay) {
             foreach ($dataForDay as $nurse) {
-                if ( ! isset($data[$nurse['nurse_full_name']])) {
+                if (! isset($data[$nurse['nurse_full_name']])) {
                     $data[$nurse['nurse_full_name']] = [];
                 }
                 $data[$nurse['nurse_full_name']][$day] = $nurse;
