@@ -1,3 +1,4 @@
+{{--this folder is not used anywhere--}}
 <ul class>
     @foreach($days as $weekDay)
         <li>

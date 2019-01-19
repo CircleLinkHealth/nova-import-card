@@ -1,7 +1,8 @@
 @extends('partials.adminUI')
 @section('content')
     @push('styles')
-        <link rel="stylesheet" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css">
+        {{--<link rel="stylesheet" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css">--}}
+        @include('admin.reports.partials.nursesWeeklyreportTableStyles')
     @endpush
 
     <div class="container-fluid">
@@ -10,53 +11,47 @@
                 @include('errors.errors')
             </div>
         </div>
+
         <div class="col-md-12">
             <div class="panel panel-default">
-                <div class="panel-heading text-center"><b>Nurse Weekly Report</b></div>
+                <div class="panel-heading">Nurses and States Weekly Report</div>
                 <div class="panel-body">
-                    @include('admin.reports.nursesWeeklyReportForm')
+                    <div class="dates">
+                      From: {{$startOfWeek->format('l F jS')}} - {{max($days)->format('l F jS Y')}}
+                    </div>
+                    <div class="calendar-date">
+                        @include('admin.reports.nursesWeeklyReportForm')
+                    </div>
+
                     <table class="table table-hover">
                         <thead>
                         <tr>
-                            {{-- @foreach($days as $weekDay)
-                                 <th>{{$weekDay}}</th>
-                                 <th>{{$weekDay}}</th>
-                                 <th>{{$weekDay}}</th>
-                                 <th>{{$weekDay}}</th>
-                                 <th>{{$weekDay}}</th>
-                                 <th>{{$weekDay}}l</th>
-                             @endforeach--}}
-
-                            <th scope="col">Name</th>
-
+                            <th class="title" scope="col">Name</th>
                             @foreach($days as $weekDay)
-                                <th scope="col">{{$weekDay->format('D')}}<br>Assigned Calls</th>
-                                <th scope="col">{{$weekDay->format('D')}}<br>Actual Calls</th>
-                                <th scope="col">{{$weekDay->format('D')}}<br>Successful Calls</th>
-                                <th scope="col">{{$weekDay->format('D')}}<br>Unsuccessful Calls</th>
-                                <th scope="col">{{$weekDay->format('D')}}<br>Actual Hours Worked</th>
-                                <th scope="col">{{$weekDay->format('D')}}<br>Committed Hours</th>
+                                <th class="title" scope="col">{{$weekDay->format('D')}}<br>Assigned Calls</th>
+                                <th class="title" scope="col">{{$weekDay->format('D')}}<br>Actual Calls</th>
+                                <th class="title" scope="col">{{$weekDay->format('D')}}<br>Successful Calls</th>
+                                <th class="title" scope="col">{{$weekDay->format('D')}}<br>Unsuccessful Calls</th>
+                                <th class="title" scope="col">{{$weekDay->format('D')}}<br>Actual Hours Worked</th>
+                                <th class="title" scope="col">{{$weekDay->format('D')}}<br>Committed Hours</th>
                             @endforeach
-
                         </tr>
                         </thead>
                         <tbody>
 
                         @foreach($data as $name => $report)
-
                             <tr>
-                                <td>{{$name}} </td>
+                                <td class="fixed-left">{{$name}} </td>
                                 @foreach($report as $reportPerDay)
-                                    <td>{{$reportPerDay['scheduledCalls']}} </td>
-                                    <td>{{$reportPerDay['actualCalls']}} </td>
-                                    <td>{{$reportPerDay['successful']}} </td>
-                                    <td>{{$reportPerDay['unsuccessful']}} </td>
-                                    <td>{{$reportPerDay['actualHours']}} </td>
-                                    <td>{{$reportPerDay['committedHours']}} </td>
+                                    <td class="data">{{$reportPerDay['scheduledCalls']}} </td>
+                                    <td class="data">{{$reportPerDay['actualCalls']}} </td>
+                                    <td class="data">{{$reportPerDay['successful']}} </td>
+                                    <td class="data">{{$reportPerDay['unsuccessful']}} </td>
+                                    <td class="data">{{$reportPerDay['actualHours']}} </td>
+                                    <td class="data-highlight">{{$reportPerDay['committedHours']}} </td>
                                 @endforeach
                             </tr>
                         @endforeach
-
                         </tbody>
                     </table>
                 </div>

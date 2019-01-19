@@ -59,28 +59,27 @@ class NursesAndStatesDailyReportService
                       })
                       ->chunk(10, function ($nurses) use (&$data, $date) {
                           foreach ($nurses as $nurse) {
-                              $data[] = collect([
+                              $data[]     = collect([
                                   //nurse_id = user id
-                                  'nurse_id'       => $nurse->id,
+                                  'nurse_id'        => $nurse->id,
                                   'nurse_full_name' => $nurse->getFullName(),
                                   //toDo: not sure if dividing here is the best solution
-                                  'actualHours'    => $nurse->pageTimersAsProvider->sum('billable_duration') / 3600,
-                                  'committedHours' => $nurse->nurseInfo->windows->where('day_of_week',
+                                  'actualHours'     => $nurse->pageTimersAsProvider->sum('billable_duration') / 3600,
+                                  'committedHours'  => $nurse->nurseInfo->windows->where('day_of_week',
                                       carbonToClhDayOfWeek($date->dayOfWeek))->sum(function ($window) {
                                       return $window->numberOfHoursCommitted();
                                   }),
-                                  'scheduledCalls' => $nurse->outboundCalls->where('status', 'scheduled')->count(),
-                                  'actualCalls'    => $nurse->outboundCalls->whereIn('status',
+                                  'scheduledCalls'  => $nurse->outboundCalls->where('status', 'scheduled')->count(),
+                                  'actualCalls'     => $nurse->outboundCalls->whereIn('status',
                                       ['reached', 'not reached', 'dropped'])->count(),
-                                  'successful'     => $nurse->outboundCalls->where('status', 'reached')->count(),
-                                  'unsuccessful'   => $nurse->outboundCalls->whereIn('status',
+                                  'successful'      => $nurse->outboundCalls->where('status', 'reached')->count(),
+                                  'unsuccessful'    => $nurse->outboundCalls->whereIn('status',
                                       ['not reached', 'dropped'])->count(),
-                                  'activityTime'   => $nurse->activitiesAsProvider->where('provider_id', $nurse->id)
-                                                                                  ->sum('duration')/3600,
+                                  'activityTime'    => $nurse->activitiesAsProvider->where('provider_id', $nurse->id)
+                                                                                   ->sum('duration') / 3600,
                               ]);
                           }
                       });
-
         return collect($data);
     }
 
