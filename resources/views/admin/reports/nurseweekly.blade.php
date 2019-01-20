@@ -32,8 +32,9 @@
                                 <th class="title" scope="col">{{$weekDay->format('D')}}<br>Actual Calls</th>
                                 <th class="title" scope="col">{{$weekDay->format('D')}}<br>Successful Calls</th>
                                 <th class="title" scope="col">{{$weekDay->format('D')}}<br>Unsuccessful Calls</th>
-                                <th class="title" scope="col">{{$weekDay->format('D')}}<br>Actual Hours Worked</th>
-                                <th class="title" scope="col">{{$weekDay->format('D')}}<br>Committed Hours</th>
+                                <th class="title" scope="col">{{$weekDay->format('D')}}<br>Actual Hrs Worked</th>
+                                <th class="title" scope="col">{{$weekDay->format('D')}}<br>Committed Hrs</th>
+                                <th class="title" scope="col">{{$weekDay->format('D')}}<br>Efficiency</th>
                             @endforeach
                         </tr>
                         </thead>
@@ -49,6 +50,7 @@
                                     <td class="data">{{$reportPerDay['unsuccessful']}} </td>
                                     <td class="data">{{$reportPerDay['actualHours']}} </td>
                                     <td class="data-highlight">{{$reportPerDay['committedHours']}} </td>
+                                    <td class="data-highlight">{{$reportPerDay['efficiency']}} % </td>
                                 @endforeach
                             </tr>
                         @empty

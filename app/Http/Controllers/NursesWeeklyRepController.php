@@ -36,6 +36,7 @@ class NursesWeeklyRepController extends Controller
 //todo:need to add validation to front end also
         if ($date >= today()->startOfDay()) {
             $messages['errors'][] = 'Please input a date in the past.';
+
             return redirect()->back()->withErrors($messages);
         }
 
@@ -50,11 +51,8 @@ class NursesWeeklyRepController extends Controller
         //data has per day per nurse
         //need to go into per nurse per day
         $data       = [];
-        $efficiency = [];
         foreach ($dataPerDay as $day => $dataForDay) {
             foreach ($dataForDay as $nurse) {
-                //todo:values are converted to hrs - is /10 correct? in ops dashboard vals are in sec and divided/100
-                // $efficiency = round((float)($nurse['activityTime'] / $nurse['actualHours']) * 10);
                 if ( ! isset($data[$nurse['nurse_full_name']])) {
                     $data[$nurse['nurse_full_name']] = [];
                 }
@@ -71,5 +69,4 @@ class NursesWeeklyRepController extends Controller
             'upToDayOfWeekForUi',
         ]));
     }
-
 }
