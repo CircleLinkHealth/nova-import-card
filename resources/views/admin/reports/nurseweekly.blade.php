@@ -17,7 +17,7 @@
                 <div class="panel-heading">Nurses and States Weekly Report</div>
                 <div class="panel-body">
                     <div class="dates">
-                      From: {{$startOfWeek->format('l F jS')}} - {{max($days)->format('l F jS Y')}}
+                        From: {{$startOfWeek->format('l F jS')}} - {{max($days)->format('l F jS Y')}}
                     </div>
                     <div class="calendar-date">
                         @include('admin.reports.nursesWeeklyReportForm')
@@ -39,9 +39,9 @@
                         </thead>
                         <tbody>
 
-                        @foreach($data as $name => $report)
+                        @forelse($data as $name => $report)
                             <tr>
-                                <td class="fixed-left">{{$name}} </td>
+                                <td class="fixed-left">{{$name}} </td> {{--make this column static--}}
                                 @foreach($report as $reportPerDay)
                                     <td class="data">{{$reportPerDay['scheduledCalls']}} </td>
                                     <td class="data">{{$reportPerDay['actualCalls']}} </td>
@@ -51,7 +51,11 @@
                                     <td class="data-highlight">{{$reportPerDay['committedHours']}} </td>
                                 @endforeach
                             </tr>
-                        @endforeach
+                        @empty
+                            <div class="no-data">
+                                <h3>There are no data for this week</h3>
+                            </div>
+                        @endforelse
                         </tbody>
                     </table>
                 </div>

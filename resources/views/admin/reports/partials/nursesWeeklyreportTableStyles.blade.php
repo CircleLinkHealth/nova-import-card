@@ -37,6 +37,11 @@
         background-color: whitesmoke;
         font-weight: bold;
     }
+    .no-data{
+        text-align: center;
+        font-weight: bold;
+        color: #1b1613;
+    }
 
     .data-highlight{
         color: #0d8bf2;
