@@ -784,7 +784,7 @@
                 //make sure we have +1 on the phone,
                 //and remove any dashes
                 let phoneSanitized = phone.toString();
-                phoneSanitized = phoneSanitized.replace("-", "");
+                phoneSanitized = phoneSanitized.replace(/-/g, "");
                 if (!phoneSanitized.startsWith("+1")) {
                     phoneSanitized = "+1" + phoneSanitized;
                 }
