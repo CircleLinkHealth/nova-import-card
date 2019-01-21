@@ -40,77 +40,15 @@ class NursesWeeklyRepController extends Controller
             return redirect()->back()->withErrors($messages);
         }
 
-        $dataPerDay = [];
-        foreach ($days as $day) {
-            try {
-                $dataPerDay[$day->toDateString()] = $this->service->showDataFromS3($day);
-            } catch (\Exception $e) {
-                $dataPerDay[$day->toDateString()] = []; //todo: return something here
-            }
-        }
-        //get all nurses for all days - will need names to add default values **
-        $nursesNames = [];
-        foreach ($dataPerDay as $day => $dataForDay) {
-            foreach ($dataForDay as $nurse) {
-                $nursesNames[] = $nurse['nurse_full_name'];
-            }
-        }
+        $data = $this->service->munipulateData($days);
 
-        $data = [];
-        foreach ($dataPerDay as $day => $dataForDay) {
-            if (empty($dataForDay)) {
-                // If no data for that day - then go through all nurses and add some default values **
-                foreach ($nursesNames as $nurseName) {
-                    $data[$nurseName][$day]
-                        = [
-                        'nurse_full_name' => $nurseName,
-                        'committedHours'  => 0,
-                        'actualHours'     => 0,
-                        'unsuccessful'    => 0,
-                        'successful'      => 0,
-                        'actualCalls'     => 0,
-                        'scheduledCalls'  => 0,
-                        'efficiency'      => 0,
-                    ];
-                }
-            }
-
-            //data has per day per nurse
-            //need to go into per nurse per day
-            foreach ($dataForDay as $nurse) {
-                if ( ! isset($data[$nurse['nurse_full_name']])) {
-                    $data[$nurse['nurse_full_name']] = [];
-                }
-                $data[$nurse['nurse_full_name']][$day] = $nurse;
-            }
-        }
-
-        foreach ($data as $nurseName => $reportPerDayArr) {
-            foreach ($days as $day) {
-                //if no data array exists for date
-                if ( ! isset($reportPerDayArr[$day->toDateString()])) {
-                    $data[$nurseName][$day->toDateString()] = [
-                        'nurse_full_name' => $nurseName,
-                        'committedHours'  => 0,
-                        'actualHours'     => 0,
-                        'unsuccessful'    => 0,
-                        'successful'      => 0,
-                        'actualCalls'     => 0,
-                        'scheduledCalls'  => 0,
-                        'efficiency'      => 0,
-                    ];
-                }
-            }
-        }
-
-
-        return view('admin.reports.nurseWeekly', compact([
+        return view('admin.reports.nurseWeekly', compact(
             'days',
             'date',
             'yesterdayDate',
             'data',
             'startOfWeek',
-            'upToDayOfWeekForUi',
-        ]));
+            'upToDayOfWeekForUi'
+        ));
     }
 }

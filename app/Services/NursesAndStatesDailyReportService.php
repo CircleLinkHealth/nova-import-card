@@ -40,15 +40,15 @@ class NursesAndStatesDailyReportService
                       ->orWhere('called_date', '>=', $date->copy()->startOfDay())
                       ->where('called_date', '<=', $date->copy()->endOfDay());*/
                 }
-               //,
-               //'activitiesAsProvider' => function ($q) use ($date) {
-               //    $q->where([
-               //        ['performed_at', '>=', $date->copy()->startOfDay()],
-               //        ['performed_at', '<=', $date->copy()->endOfDay()],
-               //    ]);
+                //,
+                //'activitiesAsProvider' => function ($q) use ($date) {
+                //    $q->where([
+                //        ['performed_at', '>=', $date->copy()->startOfDay()],
+                //        ['performed_at', '<=', $date->copy()->endOfDay()],
+                //    ]);
 
-               //    /*where('performed_at', '>=', $date->copy()->startOfDay());*/
-               //},
+                //    /*where('performed_at', '>=', $date->copy()->startOfDay());*/
+                //},
             ])
             ->whereHas('outboundCalls', function ($q) use ($date) {
                 $q->where([
@@ -78,13 +78,38 @@ class NursesAndStatesDailyReportService
                             ['not reached', 'dropped'])->count(),
                         /*'activityTime'    => $nurse->activitiesAsProvider->where('provider_id', $nurse->id)
                                                                          ->sum('duration') / 3600,*/
-                        'efficiency' => $this->nursesEfficiencyPercentageDaily($date, $nurse)
+                        'efficiency'      => $this->nursesEfficiencyPercentageDaily($date, $nurse),
                     ]);
                 }
             });
 
         return collect($data);
     }
+
+    public function nursesEfficiencyPercentageDaily(Carbon $date, $nurse)
+    {
+        $actualHours = PageTimer::where([
+                ['start_time', '>=', $date->copy()->startOfDay()],
+                ['end_time', '<=', $date->copy()->endOfDay()],
+                ['provider_id', $nurse->id],
+            ])->sum('billable_duration') / 3600;
+
+        $activityTime = Activity::where([
+                ['performed_at', '>=', $date->copy()->startOfDay()],
+                ['performed_at', '<=', $date->copy()->endOfDay()],
+                ['provider_id', $nurse->id],
+            ])->sum('duration') / 3600;
+//todo:Please check if this makes logic for this scenario - im trying to avoid division by zero error
+        if ($actualHours == 0 || $activityTime == 0) {
+            $actualHours  = 1;
+            $activityTime = 0;
+        }
+        $performance = round((float)($activityTime / $actualHours) * 100);
+
+        return $performance;
+
+    }
+
     /**
      * @param Carbon $date
      *
@@ -116,27 +141,73 @@ class NursesAndStatesDailyReportService
         return $data;
     }
 
-    public function nursesEfficiencyPercentageDaily(Carbon $date, $nurse)
+    public function munipulateData($days)
     {
-        $actualHours = PageTimer::where([
-                ['start_time', '>=', $date->copy()->startOfDay()],
-                ['end_time', '<=', $date->copy()->endOfDay()],
-                ['provider_id', $nurse->id],
-            ])->sum('billable_duration') / 3600;
-
-        $activityTime = Activity::where([
-                ['performed_at', '>=', $date->copy()->startOfDay()],
-                ['performed_at', '<=', $date->copy()->endOfDay()],
-                ['provider_id', $nurse->id]
-            ])->sum('duration') / 3600;
-//todo:Please check if this makes logic for this scenario - im trying to avoid division by zero error
-        if ($actualHours == 0 || $activityTime == 0) {
-            $actualHours = 1;
-            $activityTime = 0;
+        $dataPerDay = [];
+        foreach ($days as $day) {
+            $day = Carbon::parse($day);
+            try {
+                $dataPerDay[$day->toDateString()] = $this->showDataFromS3($day);
+            } catch (\Exception $e) {
+                $dataPerDay[$day->toDateString()] = []; //todo: return something here
+            }
         }
-        $performance = round((float)($activityTime / $actualHours) * 100);
-        return $performance;
+        //get all nurses for all days - will need names to add default values **
+        $nursesNames = [];
+        foreach ($dataPerDay as $day => $dataForDay) {
+            foreach ($dataForDay as $nurse) {
+                $nursesNames[] = $nurse['nurse_full_name'];
+            }
+        }
 
+        $data = [];
+        foreach ($dataPerDay as $day => $dataForDay) {
+            if (empty($dataForDay)) {
+                // If no data for that day - then go through all nurses and add some default values **
+                foreach ($nursesNames as $nurseName) {
+                    $data[$nurseName][$day]
+                        = [
+                        'nurse_full_name' => $nurseName,
+                        'committedHours'  => 0,
+                        'actualHours'     => 0,
+                        'unsuccessful'    => 0,
+                        'successful'      => 0,
+                        'actualCalls'     => 0,
+                        'scheduledCalls'  => 0,
+                        'efficiency'      => 0,
+                    ];
+                }
+            }
+
+            //data has per day per nurse
+            //need to go into per nurse per day
+            foreach ($dataForDay as $nurse) {
+                if ( ! isset($data[$nurse['nurse_full_name']])) {
+                    $data[$nurse['nurse_full_name']] = [];
+                }
+                $data[$nurse['nurse_full_name']][$day] = $nurse;
+            }
+        }
+
+        foreach ($data as $nurseName => $reportPerDayArr) {
+            foreach ($days as $day) {
+                $day = Carbon::parse($day);
+                //if no data array exists for date
+                if ( ! isset($reportPerDayArr[$day->toDateString()])) {
+                    $data[$nurseName][$day->toDateString()] = [
+                        'nurse_full_name' => $nurseName,
+                        'committedHours'  => 0,
+                        'actualHours'     => 0,
+                        'unsuccessful'    => 0,
+                        'successful'      => 0,
+                        'actualCalls'     => 0,
+                        'scheduledCalls'  => 0,
+                        'efficiency'      => 0,
+                    ];
+                }
+            }
+        }
+        return $data;
     }
 }
 
