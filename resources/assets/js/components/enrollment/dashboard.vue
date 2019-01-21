@@ -780,12 +780,21 @@
                 return !(matchNumbers === null || matchNumbers.length < 10 || string.match(/[a-z]/i));
             },
             call(phone, type) {
+
+                //make sure we have +1 on the phone,
+                //and remove any dashes
+                let phoneSanitized = phoneSanitized.toString();
+                phoneSanitized = phoneSanitized.replace("-", "");
+                if (!phoneSanitized.startsWith("+1")) {
+                    phoneSanitized = "+1" + phoneSanitized;
+                }
+
                 this.callError = null;
                 this.onCall = true;
-                this.callStatus = "Calling " + type + "..." + phone;
+                this.callStatus = "Calling " + type + "..." + phoneSanitized;
                 M.toast({html: this.callStatus, displayLength: 3000});
                 this.device.connect({
-                    To: phone,
+                    To: phoneSanitized,
                     From: this.practice_phone ? this.practice_phone : undefined,
                     IsUnlistedNumber: false,
                     InboundUserId: this.enrolleeUserId,
