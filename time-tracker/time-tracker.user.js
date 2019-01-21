@@ -19,6 +19,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         patientId: info.patientId,
         providerId: info.providerId,
         url: info.submitUrl,
+        timeSyncUrl: info.timeSyncUrl,
         programId: info.programId,
         ipAddr: info.ipAddr,
         totalTime: (Number(info.totalTime) || 0),
@@ -365,14 +366,18 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         user.totalBHITime = 0;
         user.totalCCMTime = 0;
         user.totalTime = 0;
-        user.activities = [];
+
+        //CPM-176 Call mode turns off when switching screens
+        //user.activities = [];
+        user.activities.forEach(activity => {
+            activity.duration = 0
+        });
+
         /*
         user.totalTime += user.activities.reduce((a, b) => a + b.duration, 0)
         user.totalCCMTime += user.activities.filter(activity => !activity.isBehavioral).reduce((a, b) => a + b.duration, 0)
         user.totalBHITime += user.activities.filter(activity => activity.isBehavioral).reduce((a, b) => a + b.duration, 0)
-        user.activities.forEach(activity => {
-            activity.duration = 0
-        })
+
         */
         user.isLoggingOut = null
     }
@@ -380,6 +385,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
     user.report = () => ({
         seconds: user.totalSeconds,
         startTime: user.totalTime,
+        callMode: user.callMode,
         activities: user.activities.map(activity => ({
             name: activity.name,
             title: activity.title,
