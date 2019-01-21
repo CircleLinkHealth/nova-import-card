@@ -120,6 +120,7 @@
                                                 <th>Time Zone</th>
                                                 <th>Last Date called</th>
                                                 <th>CCM Time to date</th>
+                                                <th>BHI Time to date</th>
                                                 <th># Calls to date</th>
                                                 <th>Provider</th>
                                                 <th>Practice</th>
@@ -198,6 +199,13 @@
                                                         <td>
                                                             @if( $call->inboundUser)
                                                                 {{ $call->inboundUser->formattedCcmTime() }}
+                                                            @else
+                                                                <em style="color:red;">-</em>
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            @if( $call->inboundUser)
+                                                                {{ $call->inboundUser->formattedBhiTime() }}
                                                             @else
                                                                 <em style="color:red;">-</em>
                                                             @endif
