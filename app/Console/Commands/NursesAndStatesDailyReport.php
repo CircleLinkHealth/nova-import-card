@@ -55,50 +55,6 @@ class NursesAndStatesDailyReport extends Command
 
         $data = $this->service->collectData($date);
 
-        /*$data = [];
-        User::ofType('care-center')
-            ->with([
-                'nurseInfo.windows',
-                'pageTimersAsProvider' => function ($q) use ($date) {
-                    $q->where([
-                        ['start_time', '>=', $date->copy()->startOfDay()->toDateTimeString()],
-                        ['end_time', '<=', $date->copy()->endOfDay()->toDateTimeString()],
-                    ]);
-                },
-                'outboundCalls'        => function ($q) use ($date) {
-                    $q->where('scheduled_date', $date->toDateString())
-                      ->orWhere('called_date', '>=', $date->toDateTimeString())
-                      ->where('called_date', '<=',
-                          $date->copy()->endOfDay()->toDateTimeString());
-                },
-            ])
-            ->whereHas('outboundCalls', function ($q) use ($date) {
-                $q->where('scheduled_date', $date->toDateString())
-                  ->orWhere('called_date', '>=', $date->toDateTimeString());
-            })
-            ->chunk(10, function ($nurses) use (&$data, $date) {
-                foreach ($nurses as $nurse) {
-                    $data[] = collect([
-                        //changed to user id
-                        'nurse_id'        => $nurse->id,
-                        'nurse_full_name' => $nurse->getFullName(),
-                        //                        'name'           => $nurse->first_name,
-                        //                        'last_name'      => $nurse->last_name,
-                        'actualHours'     => $nurse->pageTimersAsProvider->sum('billable_duration'),
-                        'committedHours'  => $nurse->nurseInfo->windows->where('day_of_week',
-                            carbonToClhDayOfWeek($date->dayOfWeek))->sum(function ($window) {
-                            return $window->numberOfHoursCommitted();
-                        }),
-                        'scheduledCalls'  => $nurse->outboundCalls->where('status', 'scheduled')->count(),
-                        'actualCalls'     => $nurse->outboundCalls->whereIn('status',
-                            ['reached', 'not reached', 'dropped'])->count(),
-                        'successful'      => $nurse->outboundCalls->where('status', 'reached')->count(),
-                        'unsuccessful'    => $nurse->outboundCalls->whereIn('status',
-                            ['not reached', 'dropped'])->count(),
-                    ]);
-                }
-            });*/
-
         $fileName = "nurses-and-states-daily-report-{$date->toDateString()}.json";
         $path     = storage_path($fileName);
         $saved    = file_put_contents($path, json_encode($data));

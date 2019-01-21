@@ -62,9 +62,7 @@ class NursesAndStatesDailyReportService
             })
             ->chunk(10, function ($nurses) use (&$data, $date) {
                 foreach ($nurses as $nurse) {
-
                     $data[] = collect([
-                        //nurse_id = user id
                         'nurse_id'        => $nurse->id,
                         'nurse_full_name' => $nurse->getFullName(),
                         'actualHours'     => $nurse->pageTimersAsProvider->sum('billable_duration') / 3600,
@@ -126,17 +124,17 @@ class NursesAndStatesDailyReportService
                 ['provider_id', $nurse->id],
             ])->sum('billable_duration') / 3600;
 
-
         $activityTime = Activity::where([
                 ['performed_at', '>=', $date->copy()->startOfDay()],
                 ['performed_at', '<=', $date->copy()->endOfDay()],
                 ['provider_id', $nurse->id]
             ])->sum('duration') / 3600;
-
+//todo:Please check if this makes logic for this scenario - im trying to avoid division by zero error
         if ($actualHours == 0 || $activityTime == 0) {
             $actualHours = 1;
+            $activityTime = 0;
         }
-        $performance = round((float)($activityTime / $actualHours) * 10);
+        $performance = round((float)($activityTime / $actualHours) * 100);
         return $performance;
 
     }
