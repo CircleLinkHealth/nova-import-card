@@ -176,7 +176,6 @@ class NursesAndStatesDailyReportService
                 }
             }
         }
-
         $totalsPerDay = [];
         foreach ($dataPerDay as $day => $dataForDay) {
             $totalsPerDay[$day] =
@@ -188,7 +187,6 @@ class NursesAndStatesDailyReportService
                     'actualCallsSum'       => array_sum(array_column($dataForDay, 'actualCalls')),
                     'scheduledCallsSum'    => array_sum(array_column($dataForDay, 'scheduledCalls')),
                 ];
-
         }
 
         return [

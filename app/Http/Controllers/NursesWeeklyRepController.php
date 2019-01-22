@@ -40,8 +40,8 @@ class NursesWeeklyRepController extends Controller
             return redirect()->back()->withErrors($messages);
         }
 
-        $dataMixed = $this->service->munipulateData($days);
-        $data      = $dataMixed['data'];
+        $dataMixed    = $this->service->munipulateData($days);
+        $data         = $dataMixed['data'];
         $totalsPerDay = $dataMixed['totalsPerDay'];
 //dd($totalsPerDay);
         return view('admin.reports.nurseWeekly', compact(

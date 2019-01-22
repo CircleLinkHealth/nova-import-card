@@ -63,48 +63,48 @@
                         </table>
                     </div>
                 </div>
-                {{--           <div class="panel-body">
-                               <table class="table table-hover">
-                                   <thead>
-                                   <tr>
-                                       <th class="fixed-left" scope="col">Name</th>
-                                       @foreach($days as $weekDay)
-                                           <th class="title" scope="col">{{$weekDay->format('D')}}<br>Assigned Calls</th>
-                                           <th class="title" scope="col">{{$weekDay->format('D')}}<br>Actual Calls</th>
-                                           <th class="title" scope="col">{{$weekDay->format('D')}}<br>Successful Calls</th>
-                                           <th class="title" scope="col">{{$weekDay->format('D')}}<br>Unsuccessful Calls</th>
-                                           <th class="title" scope="col">{{$weekDay->format('D')}}<br>Actual Hrs Worked</th>
-                                           <th class="title" scope="col">{{$weekDay->format('D')}}<br>Committed Hrs</th>
-                                           <th class="title" scope="col">{{$weekDay->format('D')}}<br>Efficiency</th>
-                                       @endforeach
-                                   </tr>
-                                   </thead>
-                                   <tbody>
-                                   @forelse($data as $name => $report)
-                                       <tr>
-                                           <td class="fixed-left">{{$name}} </td> --}}{{--make this column static--}}{{--
-                                           @foreach($report as $reportPerDay)
-                                               <td class="data">{{$reportPerDay['scheduledCalls']}} </td>
-                                               <td class="data">{{$reportPerDay['actualCalls']}} </td>
-                                               <td class="data">{{$reportPerDay['successful']}} </td>
-                                               <td class="data">{{$reportPerDay['unsuccessful']}} </td>
-                                               <td class="data">{{$reportPerDay['actualHours']}} </td>
-                                               <td class="data-highlight">{{$reportPerDay['committedHours']}} </td>
-                                               <td class="data-highlight">{{$reportPerDay['efficiency']}} %</td>
-                                           @endforeach
-                                       </tr>
 
-                                   @empty
-                                       <div class="no-data">
-                                           <h4>There are no data for this week</h4>
-                                       </div>
-                                   @endforelse
-                                   </tbody>
-                               </table>
-                           </div>--}}
             </div>
         </div>
     </div>
-
 @endsection
 
+{{--           <div class="panel-body">
+                              <table class="table table-hover">
+                                  <thead>
+                                  <tr>
+                                      <th class="fixed-left" scope="col">Name</th>
+                                      @foreach($days as $weekDay)
+                                          <th class="title" scope="col">{{$weekDay->format('D')}}<br>Assigned Calls</th>
+                                          <th class="title" scope="col">{{$weekDay->format('D')}}<br>Actual Calls</th>
+                                          <th class="title" scope="col">{{$weekDay->format('D')}}<br>Successful Calls</th>
+                                          <th class="title" scope="col">{{$weekDay->format('D')}}<br>Unsuccessful Calls</th>
+                                          <th class="title" scope="col">{{$weekDay->format('D')}}<br>Actual Hrs Worked</th>
+                                          <th class="title" scope="col">{{$weekDay->format('D')}}<br>Committed Hrs</th>
+                                          <th class="title" scope="col">{{$weekDay->format('D')}}<br>Efficiency</th>
+                                      @endforeach
+                                  </tr>
+                                  </thead>
+                                  <tbody>
+                                  @forelse($data as $name => $report)
+                                      <tr>
+                                          <td class="fixed-left">{{$name}} </td> --}}{{--make this column static--}}{{--
+                                          @foreach($report as $reportPerDay)
+                                              <td class="data">{{$reportPerDay['scheduledCalls']}} </td>
+                                              <td class="data">{{$reportPerDay['actualCalls']}} </td>
+                                              <td class="data">{{$reportPerDay['successful']}} </td>
+                                              <td class="data">{{$reportPerDay['unsuccessful']}} </td>
+                                              <td class="data">{{$reportPerDay['actualHours']}} </td>
+                                              <td class="data-highlight">{{$reportPerDay['committedHours']}} </td>
+                                              <td class="data-highlight">{{$reportPerDay['efficiency']}} %</td>
+                                          @endforeach
+                                      </tr>
+
+                                  @empty
+                                      <div class="no-data">
+                                          <h4>There are no data for this week</h4>
+                                      </div>
+                                  @endforelse
+                                  </tbody>
+                              </table>
+                          </div>--}}
