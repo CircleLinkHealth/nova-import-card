@@ -110,37 +110,6 @@ class NursesAndStatesDailyReportService
 
     }
 
-    /**
-     * @param Carbon $date
-     *
-     * @return mixed
-     * @throws \Exception
-     */
-    public function showDataFromS3(Carbon $date)
-    {
-        $noReportDates = Carbon::parse('2019-1-06');
-        if ($date <= $noReportDates) {
-            throw new \Exception('File doesnt exists for selected date.', 400);
-        }
-        $json = optional(SaasAccount::whereSlug('circlelink-health')
-                                    ->first()
-                                    ->getMedia("nurses-and-states-daily-report-{$date->toDateString()}.json")
-                                    ->sortByDesc('id')
-                                    ->first())
-            ->getFile();
-        //first check if we have a valid file
-        if ( ! $json) {
-            throw new \Exception('File doesnt exists for selected date.', 400);
-        }
-        //then check if it's in json format
-        if ( ! is_json($json)) {
-            throw new \Exception('File retrieved is not in json format.', 500);
-        }
-        $data = json_decode($json, true);
-
-        return $data;
-    }
-
     public function munipulateData($days)
     {
         $dataPerDay = [];
@@ -207,8 +176,59 @@ class NursesAndStatesDailyReportService
                 }
             }
         }
+
+        $totalsPerDay = [];
+        foreach ($dataPerDay as $day => $dataForDay) {
+            $totalsPerDay[$day] =
+                [
+                    'committedHoursSum '   => array_sum(array_column($dataForDay, 'committedHours')),
+                    'actualHoursSum '      => array_sum(array_column($dataForDay, 'actualHours')),
+                    'unsuccessfulCallsSum' => array_sum(array_column($dataForDay, 'unsuccessful')),
+                    'successfulCallsSum'   => array_sum(array_column($dataForDay, 'successful')),
+                    'actualCallsSum'       => array_sum(array_column($dataForDay, 'actualCalls')),
+                    'scheduledCallsSum'    => array_sum(array_column($dataForDay, 'scheduledCalls')),
+                ];
+
+        }
+
+        return [
+            'data'         => $data,
+            'totalsPerDay' => $totalsPerDay,
+        ];
+    }
+
+    /**
+     * @param Carbon $date
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public function showDataFromS3(Carbon $date)
+    {
+        $noReportDates = Carbon::parse('2019-1-06');
+        if ($date <= $noReportDates) {
+            throw new \Exception('File doesnt exists for selected date.', 400);
+        }
+        $json = optional(SaasAccount::whereSlug('circlelink-health')
+                                    ->first()
+                                    ->getMedia("nurses-and-states-daily-report-{$date->toDateString()}.json")
+                                    ->sortByDesc('id')
+                                    ->first())
+            ->getFile();
+        //first check if we have a valid file
+        if ( ! $json) {
+            throw new \Exception('File doesnt exists for selected date.', 400);
+        }
+        //then check if it's in json format
+        if ( ! is_json($json)) {
+            throw new \Exception('File retrieved is not in json format.', 500);
+        }
+        $data = json_decode($json, true);
+
         return $data;
     }
+
+
 }
 
 

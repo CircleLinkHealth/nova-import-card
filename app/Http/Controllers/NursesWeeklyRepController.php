@@ -33,18 +33,21 @@ class NursesWeeklyRepController extends Controller
         for ($i = 0; $i < $upToDayOfWeek; $i++) {
             $days[] = $startOfWeek->copy()->addDay($i);
         }
-//todo:need to add validation to front end Calendar input
+
         if ($date >= today()->startOfDay()) {
             $messages['errors'][] = 'Please input a date in the past.';
 
             return redirect()->back()->withErrors($messages);
         }
 
-        $data = $this->service->munipulateData($days);
-
+        $dataMixed = $this->service->munipulateData($days);
+        $data      = $dataMixed['data'];
+        $totalsPerDay = $dataMixed['totalsPerDay'];
+//dd($totalsPerDay);
         return view('admin.reports.nurseWeekly', compact(
             'days',
             'date',
+            'totalsPerDay',
             'yesterdayDate',
             'data',
             'startOfWeek',
