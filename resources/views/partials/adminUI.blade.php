@@ -133,8 +133,6 @@
                                             Invoices</a></li>
                                     <li><a href="{{ route('admin.reports.nurse.allocation') }}">
                                             Allocation</a></li>
-                                    <li><a href="{{ route('admin.reports.nurse.weekly') }}">
-                                            Weekly Report</a></li>
 
                                 </ul>
                             </li>
@@ -199,6 +197,8 @@
                                 <li>
                                     <a href="{{route('OpsDashboard.index')}}">Ops Dashboard</a>
                                 </li>
+                                <li><a href="{{ route('admin.reports.nurse.weekly') }}">
+                                        Nurses & States Dashboard</a></li>
                                 <li>
                                     <a href="{{route('OpsDashboard.billingChurn')}}">Billing Churn</a>
                                 </li>

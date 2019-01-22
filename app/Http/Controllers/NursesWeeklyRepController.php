@@ -18,7 +18,6 @@ class NursesWeeklyRepController extends Controller
     public function index(Request $request)
     {
         $yesterdayDate = Carbon::yesterday()->startOfDay();
-
         if ($request->has('date')) {
             $requestDate = new Carbon($request['date']);
             $date        = $requestDate->copy();
@@ -27,31 +26,30 @@ class NursesWeeklyRepController extends Controller
             $date = $yesterdayDate->copy();
         }
 
-        $startOfWeek   = $date->copy()->startOfWeek();
-        $days          = [];
-        $upToDayOfWeek = carbonToClhDayOfWeek($date->dayOfWeek);
-        for ($i = 0; $i < $upToDayOfWeek; $i++) {
-            $days[] = $startOfWeek->copy()->addDay($i);
-        }
-
         if ($date >= today()->startOfDay()) {
-            $messages['errors'][] = 'Please input a date in the past.';
-
+            $messages['errors'][] = 'Please input a past date';
             return redirect()->back()->withErrors($messages);
         }
 
+        $days          = [];
+        $startOfWeek   = $date->copy()->startOfWeek();
+        $upToDayOfWeek = carbonToClhDayOfWeek($date->dayOfWeek);
+
+        for ($i = 0; $i < $upToDayOfWeek; $i++) {
+            $days[] = $startOfWeek->copy()->addDay($i);
+        }
+        //data are returned in 2 arrays. {Data} and the {Totals of data}.
         $dataMixed    = $this->service->munipulateData($days);
         $data         = $dataMixed['data'];
         $totalsPerDay = $dataMixed['totalsPerDay'];
-//dd($totalsPerDay);
+
         return view('admin.reports.nurseWeekly', compact(
             'days',
             'date',
             'totalsPerDay',
             'yesterdayDate',
             'data',
-            'startOfWeek',
-            'upToDayOfWeekForUi'
+            'startOfWeek'
         ));
     }
 }

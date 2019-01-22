@@ -10,13 +10,6 @@ use Carbon\Carbon;
 
 class NursesAndStatesDailyReportService
 {
-    public function showDataFromDb(Carbon $date)
-    {
-        $data = $this->collectData($date);
-
-        return $data;
-    }
-
     public function collectData(Carbon $date)
     {
         $data = [];
@@ -35,20 +28,7 @@ class NursesAndStatesDailyReportService
                         ['called_date', '<=', $date->copy()->endOfDay()],
                     ])
                       ->orWhere('scheduled_date', $date->toDateString());
-
-                    /*>where('scheduled_date', $date->toDateString())
-                      ->orWhere('called_date', '>=', $date->copy()->startOfDay())
-                      ->where('called_date', '<=', $date->copy()->endOfDay());*/
-                }
-                //,
-                //'activitiesAsProvider' => function ($q) use ($date) {
-                //    $q->where([
-                //        ['performed_at', '>=', $date->copy()->startOfDay()],
-                //        ['performed_at', '<=', $date->copy()->endOfDay()],
-                //    ]);
-
-                //    /*where('performed_at', '>=', $date->copy()->startOfDay());*/
-                //},
+                },
             ])
             ->whereHas('outboundCalls', function ($q) use ($date) {
                 $q->where([
@@ -76,8 +56,6 @@ class NursesAndStatesDailyReportService
                         'successful'      => $nurse->outboundCalls->where('status', 'reached')->count(),
                         'unsuccessful'    => $nurse->outboundCalls->whereIn('status',
                             ['not reached', 'dropped'])->count(),
-                        /*'activityTime'    => $nurse->activitiesAsProvider->where('provider_id', $nurse->id)
-                                                                         ->sum('duration') / 3600,*/
                         'efficiency'      => $this->nursesEfficiencyPercentageDaily($date, $nurse),
                     ]);
                 }
@@ -147,7 +125,6 @@ class NursesAndStatesDailyReportService
                     ];
                 }
             }
-
             //data has per day per nurse
             //need to go into per nurse per day
             foreach ($dataForDay as $nurse) {
@@ -180,12 +157,13 @@ class NursesAndStatesDailyReportService
         foreach ($dataPerDay as $day => $dataForDay) {
             $totalsPerDay[$day] =
                 [
-                    'committedHoursSum '   => array_sum(array_column($dataForDay, 'committedHours')),
-                    'actualHoursSum '      => array_sum(array_column($dataForDay, 'actualHours')),
-                    'unsuccessfulCallsSum' => array_sum(array_column($dataForDay, 'unsuccessful')),
-                    'successfulCallsSum'   => array_sum(array_column($dataForDay, 'successful')),
-                    'actualCallsSum'       => array_sum(array_column($dataForDay, 'actualCalls')),
                     'scheduledCallsSum'    => array_sum(array_column($dataForDay, 'scheduledCalls')),
+                    'actualCallsSum'       => array_sum(array_column($dataForDay, 'actualCalls')),
+                    'successfulCallsSum'   => array_sum(array_column($dataForDay, 'successful')),
+                    'unsuccessfulCallsSum' => array_sum(array_column($dataForDay, 'unsuccessful')),
+                    'actualHoursSum'       => array_sum(array_column($dataForDay, 'actualHours')),
+                    'committedHoursSum'    => array_sum(array_column($dataForDay, 'committedHours')),
+                    'efficiency'           => array_sum(array_column($dataForDay, 'efficiency')),
                 ];
         }
 
@@ -203,9 +181,9 @@ class NursesAndStatesDailyReportService
      */
     public function showDataFromS3(Carbon $date)
     {
-        $noReportDates = Carbon::parse('2019-1-06');
-        if ($date <= $noReportDates) {
-            throw new \Exception('File doesnt exists for selected date.', 400);
+        $noReportDatesBefore = Carbon::parse('2019-1-01');
+        if ($date <= $noReportDatesBefore) {
+            throw new \Exception('File does not exist for selected date.', 400);
         }
         $json = optional(SaasAccount::whereSlug('circlelink-health')
                                     ->first()
@@ -213,15 +191,20 @@ class NursesAndStatesDailyReportService
                                     ->sortByDesc('id')
                                     ->first())
             ->getFile();
-        //first check if we have a valid file
         if ( ! $json) {
-            throw new \Exception('File doesnt exists for selected date.', 400);
+            throw new \Exception('File does not exist for selected date.', 400);
         }
-        //then check if it's in json format
         if ( ! is_json($json)) {
             throw new \Exception('File retrieved is not in json format.', 500);
         }
         $data = json_decode($json, true);
+
+        return $data;
+    }
+    //showDataFromDb is not used
+    public function showDataFromDb(Carbon $date)
+    {
+        $data = $this->collectData($date);
 
         return $data;
     }
