@@ -253,48 +253,62 @@ module.exports = app => {
         });
 
         ws.on('close', ev => {
-            const keyInfo = {patientId: ws.patientId, providerId: ws.providerId}
-            const user = timeTracker.exists(keyInfo) ? timeTracker.get(keyInfo) :
-                (timeTrackerNoLiveCount.exists(keyInfo) ? timeTrackerNoLiveCount.get(keyInfo) : null)
+            const keyInfo = {patientId: ws.patientId, providerId: ws.providerId};
+
+            // there are cases where we have same keyInfo in timeTracker and timeTrackerNoLiveCount.
+            // for this reason, we should check both collections
+            // const user = timeTracker.exists(keyInfo) ? timeTracker.get(keyInfo) :
+            //    (timeTrackerNoLiveCount.exists(keyInfo) ? timeTrackerNoLiveCount.get(keyInfo) : null)
+
+            const user = timeTracker.exists(keyInfo) ? timeTracker.get(keyInfo) : null;
             if (user) {
-                user.exit(ws)
-                if (user.allSockets.length == 0) {
-                    //no active sessions
-                    const url = user.url
+               closeSessionAndPostToCPM(user, ws);
+            }
 
-                    if (user.timeSyncUrl) {
-                        ignorePatientTimeSync(user.timeSyncUrl, user.patientId);
-                    }
-
-                    const requestData = {
-                        patientId: user.patientId,
-                        providerId: user.providerId,
-                        ipAddr: user.ipAddr,
-                        programId: user.programId,
-                        activities: user.activities.filter(activity => activity.duration > 0).map(activity => ({
-                            name: activity.name,
-                            title: activity.title,
-                            duration: activity.duration,
-                            url: activity.url,
-                            url_short: activity.url_short,
-                            start_time: activity.start_time,
-                            is_behavioral: activity.isBehavioral
-                        }))
-                    }
-
-                    axios.post(url, requestData).then((response) => {
-                        console.log(response.status, response.data, requestData.patientId, requestData.activities.map(activity => activity.duration).join(', '))
-                    }).catch((err) => {
-                        console.error(err)
-                    })
-
-                    $emitter.emit('socket:server:logout', requestData)
-
-                    user.close()
-                }
+            const userNoLiveCount = timeTrackerNoLiveCount.exists(keyInfo) ? timeTrackerNoLiveCount.get(keyInfo) : null;
+            if (userNoLiveCount) {
+                closeSessionAndPostToCPM(userNoLiveCount, ws);
             }
         });
     });
+
+    function closeSessionAndPostToCPM(user, ws) {
+        user.exit(ws)
+        if (user.allSockets.length === 0) {
+            //no active sessions
+            const url = user.url
+
+            if (user.timeSyncUrl) {
+                ignorePatientTimeSync(user.timeSyncUrl, user.patientId);
+            }
+
+            const requestData = {
+                patientId: user.patientId,
+                providerId: user.providerId,
+                ipAddr: user.ipAddr,
+                programId: user.programId,
+                activities: user.activities.filter(activity => activity.duration > 0).map(activity => ({
+                    name: activity.name,
+                    title: activity.title,
+                    duration: activity.duration,
+                    url: activity.url,
+                    url_short: activity.url_short,
+                    start_time: activity.start_time,
+                    is_behavioral: activity.isBehavioral
+                }))
+            }
+
+            axios.post(url, requestData).then((response) => {
+                console.log(response.status, response.data, requestData.patientId, requestData.activities.map(activity => activity.duration).join(', '))
+            }).catch((err) => {
+                console.error(err)
+            })
+
+            $emitter.emit('socket:server:logout', requestData)
+
+            user.close()
+        }
+    }
 
     setInterval(() => {
         for (const user of [...timeTracker.users(), ...timeTrackerNoLiveCount.users()]) {
