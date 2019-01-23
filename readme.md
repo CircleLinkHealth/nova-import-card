@@ -2,14 +2,14 @@
 
 ## Setting up 
 
-1. First clone the repository: git clone https://git@bitbucket.org/medadherence/cpm-git.git
-2. Make necessary local hosting configurations (Homestead/Valet)
-3. Run `composer install` in the project's root directory
+1. Clone the repository by issuing command `git clone https://git@bitbucket.org/medadherence/cpm-git.git`
+2. If it's a local environment, make necessary local hosting configurations. Using Homestead or Valet is recommended.
+3. Run `composer install` in the project's root directory to install PHP dependencies.
 4. Generate App Key `php artisan key:generate`
-5. Run database migrations `php artisan migrate` (ask a team member for a copy of staging DB)
+5. Run database migrations `php artisan migrate` (alternatively, you may ask a team member for a copy of staging DB)
 6. Run database seeders with `php artisan db:seed`
-7. Set environment variables as structured in the /.env.example file
+7. Duplicate the environment variables exampled file using command `cp .env.example .env`, and fill in using your environment's variables.
 8. Run `npm install` to install npm dependencies.
 9. Run `npm run dev` to build js/css assets. Make sure your npm version is up to date. Check with `npm -v`
    
-   Fire up the server and you're good to go!
+   That's all folks!
