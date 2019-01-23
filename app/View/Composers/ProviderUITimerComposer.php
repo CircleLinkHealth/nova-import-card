@@ -89,19 +89,16 @@ class ProviderUITimerComposer extends ServiceProvider
             $patient = $view->patient;
 
             if ($patient) {
-                $seconds = $patient->getCcmTime();
-
-                $H = floor($seconds / 3600);
-                $i = ($seconds / 60) % 60;
-                $s = $seconds % 60;
-                $monthlyTime = sprintf('%02d:%02d:%02d', $H, $i, $s);
-                $ccm_above = false;
+                $ccmSeconds = $patient->getCcmTime();
+                $monthlyTime = $patient->formattedTime($ccmSeconds);
+                $monthlyBhiTime = $patient->formattedBhiTime();
 
                 $ccm_complex = $patient->isCCMComplex() ?? false;
 
-                if ($seconds > 1199 && ! $ccm_complex) {
+                $ccm_above = false;
+                if ($ccmSeconds > 1199 && ! $ccm_complex) {
                     $ccm_above = true;
-                } elseif ($seconds > 3599 && $ccm_complex) {
+                } elseif ($ccmSeconds > 3599 && $ccm_complex) {
                     $ccm_above = true;
                 }
 
@@ -118,6 +115,7 @@ class ProviderUITimerComposer extends ServiceProvider
                 $ccm_complex = false;
                 $location = 'N/A';
                 $monthlyTime = sprintf('%02d:%02d:%02d', 0, 0, 0);
+                $monthlyBhiTime = sprintf('%02d:%02d:%02d', 0, 0, 0);
                 $provider = 'N/A';
                 $billingDoctor = '';
                 $regularDoctor = '';
@@ -128,6 +126,7 @@ class ProviderUITimerComposer extends ServiceProvider
                 'ccm_complex',
                 'location',
                 'monthlyTime',
+                'monthlyBhiTime',
                 'provider',
                 'regularDoctor',
                 'billingDoctor',
