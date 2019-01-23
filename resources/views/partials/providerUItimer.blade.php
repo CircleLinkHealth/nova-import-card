@@ -67,8 +67,9 @@ use App\Patient;
                                             (hours * 60 * 60);
                                 }
                                 return 0;
-                            })(document.querySelector('[data-monthly-time]') ? document.querySelector('[data-monthly-time]').getAttribute('data-monthly-time') : null),
-                "monthlyTime": document.querySelector('[data-monthly-time]') ? document.querySelector('[data-monthly-time]').getAttribute('data-monthly-time') : null,
+                            })('{{$monthlyTime}}'),
+                "monthlyTime": '{{$monthlyTime}}',
+                "monthlyBhiTime": '{{$monthlyBhiTime}}',
                 "wsUrl": "{{ config('services.ws.url') }}",
                 "programId": '{{$patientProgramId}}',
                 "urlFull": '{{Request::url()}}',

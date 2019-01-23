@@ -267,6 +267,7 @@
                                         data: {},
                                         success: function (data) {
                                             $('#monthly-time-static').html(data.monthlyTime);
+                                            $('#monthly-bhi-time-static').html(data.monthlyBhiTime);
                                             obs_alerts_dtable.clearAll();
                                             obs_alerts_dtable.parse(data.table);
                                         },
