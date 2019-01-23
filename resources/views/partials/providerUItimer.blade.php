@@ -58,6 +58,7 @@ use App\Patient;
                 "providerId": '{{Auth::user()->id}}',
                 "totalCCMTime": "{{ $ccm_time }}",
                 "totalBHITime": "{{ $bhi_time }}",
+                //totalTime is wrong: hopefully, its not used on time tracker
                 "totalTime": (function (monthlyTime) {
                                 if (monthlyTime) {
                                     var split = monthlyTime.split(':');
