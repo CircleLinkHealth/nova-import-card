@@ -52,6 +52,9 @@
             <template slot="filter__ccm">
                 <div>(HH:MM:SS)</div>
             </template>
+            <template slot="filter__bhi">
+                <div>(HH:MM:SS)</div>
+            </template>
             <template slot="h__ccmStatus" slot-scope="props">
                 CCM Status
             </template>
@@ -69,6 +72,9 @@
             </template>
             <template slot="h__ccm" slot-scope="props">
                 CCM
+            </template>
+            <template slot="h__bhi" slot-scope="props">
+                BHI
             </template>
         </v-client-table>
         <div class="row">
@@ -124,7 +130,7 @@
                 practices: [],
                 providersForSelect: [],
                 nameDisplayType: NameDisplayType.FirstName,
-                columns: ['name', 'provider', 'ccmStatus', 'ccmStatusDate','careplanStatus', 'dob', 'phone', 'age', 'registeredOn', 'lastReading', 'ccm'],
+                columns: ['name', 'provider', 'ccmStatus', 'ccmStatusDate','careplanStatus', 'dob', 'phone', 'age', 'registeredOn', 'lastReading', 'ccm', 'bhi'],
                 loaders: {
                     next: false,
                     practices: null,
@@ -142,7 +148,7 @@
             options() {
                 return {
                     filterByColumn: true,
-                    sortable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'dob', 'age', 'registeredOn', 'ccm'],
+                    sortable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'dob', 'age', 'registeredOn', 'ccm', 'bhi'],
                     filterable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'dob', 'phone', 'age', 'registeredOn', 'lastReading'],
                     listColumns: {
                         provider: this.providersForSelect,
@@ -179,6 +185,7 @@
                         registeredOn: (ascending) => iSort,
                         lastReading: (ascending) => iSort,
                         ccm: (ascending) => iSort,
+                        bhi: (ascending) => iSort,
                         program: (ascending) => iSort
                     }
                 }
@@ -337,6 +344,10 @@
                         const seconds = patient.ccm_time || 0
                         patient.ccm = pad(Math.floor(seconds / 3600), 2) + ':' + pad(Math.floor(seconds / 60) % 60, 2) + ':' + pad(seconds % 60, 2);
                         patient.sort_ccm = seconds;
+
+                        const bhiSeconds = patient.bhi_time || 0
+                        patient.bhi = pad(Math.floor(bhiSeconds / 3600), 2) + ':' + pad(Math.floor(bhiSeconds / 60) % 60, 2) + ':' + pad(bhiSeconds % 60, 2);
+                        patient.sort_bhi = bhiSeconds;
                         return patient
                     }).map(patient => {
                         const loadColumnList = (list = [], item = null) => {

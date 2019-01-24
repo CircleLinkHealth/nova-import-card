@@ -47,6 +47,7 @@ class UserCsvResource extends Resource
                 : 0).'",'.
                '"'.$this->created_at.'",'.
                '"'.$this->getTimeInDecimals($this->getCcmTime()).'",'.
+               //'"'.$this->getTimeInDecimals($this->getBhiTime()).'",'. //need confirmation
                '"'.$ccmStatusDate.'"';
     }
 
