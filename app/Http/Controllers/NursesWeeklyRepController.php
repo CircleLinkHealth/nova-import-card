@@ -18,6 +18,8 @@ class NursesWeeklyRepController extends Controller
     public function index(Request $request)
     {
         $yesterdayDate = Carbon::yesterday()->startOfDay();
+        $limitDate = Carbon::parse('2018-12-23');
+
         if ($request->has('date')) {
             $requestDate = new Carbon($request['date']);
             $date        = $requestDate->copy();
@@ -26,7 +28,7 @@ class NursesWeeklyRepController extends Controller
             $date = $yesterdayDate->copy();
         }
 
-        if ($date >= today()->startOfDay()) {
+        if ($date->gte(today()->startOfDay())) {
             $messages['errors'][] = 'Please input a past date';
             return redirect()->back()->withErrors($messages);
         }
@@ -39,7 +41,7 @@ class NursesWeeklyRepController extends Controller
             $days[] = $startOfWeek->copy()->addDay($i);
         }
         //data are returned in 2 arrays. {Data} and the {Totals of data}.
-        $dataMixed    = $this->service->munipulateData($days);
+        $dataMixed    = $this->service->munipulateData($days, $limitDate);
         $data         = $dataMixed['data'];
         $totalsPerDay = $dataMixed['totalsPerDay'];
 
@@ -49,7 +51,8 @@ class NursesWeeklyRepController extends Controller
             'totalsPerDay',
             'yesterdayDate',
             'data',
-            'startOfWeek'
+            'startOfWeek',
+            'limitDate'
         ));
     }
 }

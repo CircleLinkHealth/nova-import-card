@@ -3,10 +3,12 @@
 namespace App\Services;
 
 use App\Activity;
+use App\Exceptions\FileNotFoundException;
 use App\PageTimer;
 use App\SaasAccount;
 use App\User;
 use Carbon\Carbon;
+
 
 class NursesAndStatesDailyReportService
 {
@@ -78,37 +80,60 @@ class NursesAndStatesDailyReportService
                 ['provider_id', $nurse->id],
             ])->sum('duration') / 3600;
 //todo:Please check if this makes logic for this scenario - im trying to avoid division by zero error
-        if ($actualHours == 0 || $activityTime == 0) {
-            $actualHours  = 1;
-            $activityTime = 0;
-        }
-        $performance = round((float)($activityTime / $actualHours) * 100);
+        /* if ($actualHours == 0 || $activityTime == 0) {
+             $actualHours  = 1;
+             $activityTime = 0;
+         }
+         $performance = round((float)($activityTime / $actualHours) * 100);*/
 
-        return $performance;
+        return $actualHours == 0 || $activityTime == 0
+            ? 0
+            : round((float)($activityTime / $actualHours) * 100);
+
 
     }
 
-    public function munipulateData($days)
+    /**
+     * @param $days
+     *
+     * @param $limitDate
+     *
+     * @return array
+     * @throws FileNotFoundException
+     */
+    public function munipulateData($days, $limitDate)
     {
         $dataPerDay = [];
         foreach ($days as $day) {
-            $day = Carbon::parse($day);
+            $day                 = Carbon::parse($day);
+            if ($day->lte($limitDate)) {
+                throw new FileNotFoundException();
+            }
             try {
                 $dataPerDay[$day->toDateString()] = $this->showDataFromS3($day);
             } catch (\Exception $e) {
                 $dataPerDay[$day->toDateString()] = []; //todo: return something here
             }
         }
+
+
         //get all nurses for all days - will need names to add default values **
-        $nursesNames = [];
+        // $nursesNames = [];
+        /* foreach ($dataPerDay as $day => $dataForDay) {
+             foreach ($dataForDay as $nurse) {
+                 $nursesNames[] = $nurse['nurse_full_name'];
+             }
+         }*/
+
+        $totalsPerDay = [];
+        $nursesNames  = [];
+        $data         = [];
         foreach ($dataPerDay as $day => $dataForDay) {
+            //get all nurses for all days - will need names to add default values **
             foreach ($dataForDay as $nurse) {
                 $nursesNames[] = $nurse['nurse_full_name'];
             }
-        }
 
-        $data = [];
-        foreach ($dataPerDay as $day => $dataForDay) {
             if (empty($dataForDay)) {
                 // If no data for that day - then go through all nurses and add some default values **
                 foreach ($nursesNames as $nurseName) {
@@ -125,6 +150,16 @@ class NursesAndStatesDailyReportService
                     ];
                 }
             }
+            $totalsPerDay[$day] =
+                [
+                    'scheduledCallsSum'    => array_sum(array_column($dataForDay, 'scheduledCalls')),
+                    'actualCallsSum'       => array_sum(array_column($dataForDay, 'actualCalls')),
+                    'successfulCallsSum'   => array_sum(array_column($dataForDay, 'successful')),
+                    'unsuccessfulCallsSum' => array_sum(array_column($dataForDay, 'unsuccessful')),
+                    'actualHoursSum'       => array_sum(array_column($dataForDay, 'actualHours')),
+                    'committedHoursSum'    => array_sum(array_column($dataForDay, 'committedHours')),
+                    'efficiency'           => array_sum(array_column($dataForDay, 'efficiency')),
+                ];
             //data has per day per nurse
             //need to go into per nurse per day
             foreach ($dataForDay as $nurse) {
@@ -153,7 +188,8 @@ class NursesAndStatesDailyReportService
                 }
             }
         }
-        $totalsPerDay = [];
+
+        /*$totalsPerDay = [];
         foreach ($dataPerDay as $day => $dataForDay) {
             $totalsPerDay[$day] =
                 [
@@ -165,7 +201,7 @@ class NursesAndStatesDailyReportService
                     'committedHoursSum'    => array_sum(array_column($dataForDay, 'committedHours')),
                     'efficiency'           => array_sum(array_column($dataForDay, 'efficiency')),
                 ];
-        }
+        }*/
 
         return [
             'data'         => $data,
@@ -174,33 +210,32 @@ class NursesAndStatesDailyReportService
     }
 
     /**
-     * @param Carbon $date
+     * @param Carbon $day
      *
      * @return mixed
      * @throws \Exception
      */
-    public function showDataFromS3(Carbon $date)
+    public function showDataFromS3(Carbon $day)
     {
-        $noReportDatesBefore = Carbon::parse('2019-1-01');
-        if ($date <= $noReportDatesBefore) {
-            throw new \Exception('File does not exist for selected date.', 400);
-        }
+
         $json = optional(SaasAccount::whereSlug('circlelink-health')
                                     ->first()
-                                    ->getMedia("nurses-and-states-daily-report-{$date->toDateString()}.json")
+                                    ->getMedia("nurses-and-states-daily-report-{$day->toDateString()}.json")
                                     ->sortByDesc('id')
                                     ->first())
             ->getFile();
+
         if ( ! $json) {
             throw new \Exception('File does not exist for selected date.', 400);
         }
         if ( ! is_json($json)) {
-            throw new \Exception('File retrieved is not in json format.', 500);
+            throw new \Exception ('File retrieved is not in json format.', 500);
         }
         $data = json_decode($json, true);
 
         return $data;
     }
+
     //showDataFromDb is not used
     public function showDataFromDb(Carbon $date)
     {

@@ -4,6 +4,7 @@
         <label for="day_time">Choose date:</label>
         <input type="date" class="form-control" id="date" name="date" value="{{$date->toDateString()}}"
                style="width: 250px"
+               min="{{$limitDate->toDateString()}}"
                max="{{$yesterdayDate->toDateString()}}" required>
     </div>
     <div class="form-group">

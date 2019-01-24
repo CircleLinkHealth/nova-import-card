@@ -20,7 +20,7 @@ class NursesAndStatesDailyReport extends Command
      *
      * @var string
      */
-    protected $description = 'Uploads data to S3';
+    protected $description = 'Uploads Nurses And States dashboard report to S3';
     private $service;
 
     /**
@@ -41,8 +41,8 @@ class NursesAndStatesDailyReport extends Command
      */
     public function handle()
     {
-        $date = $this->argument('forDate');
-        if ($date) {
+        $date = $this->argument('forDate') ?? null;
+       /* if ($date) {
             try {
                 $date = Carbon::parse($date);
             } catch (\Exception $e) {
@@ -51,6 +51,11 @@ class NursesAndStatesDailyReport extends Command
             }
         } else {
             $date = Carbon::today()->subDay(1)->startOfDay();
+        }*/
+        if ($date) {
+            $date = Carbon::parse($date);
+        } else {
+            $date = Carbon::yesterday()->startOfDay();
         }
 
         $data = $this->service->collectData($date);
@@ -59,14 +64,17 @@ class NursesAndStatesDailyReport extends Command
         $path     = storage_path($fileName);
         $saved    = file_put_contents($path, json_encode($data));
 
-        if ( ! $saved) {
-            if (app()->environment('worker')) {
+        if ( ! $saved && app()->environment('worker')) {
+            /*if (app()->environment('worker')) {*/
                 sendSlackMessage(
                     '#callcenter_ops',
-                    "Nurses weekly calls and work hours report {$date->toDateString()} could not be created. \n"
+                    "Nurses And States dashboard report {$date->toDateString()} could not be created. \n"
                 );
+
+                return 'Nurses And States dashboard report could not be uploaded to S3';
             }
-        }
+       /* }*/
+
         SaasAccount::whereSlug('circlelink-health')
                    ->first()
                    ->addMedia($path)
