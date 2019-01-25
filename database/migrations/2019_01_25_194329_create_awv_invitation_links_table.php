@@ -19,7 +19,6 @@ class CreateAwvInvitationLinksTable extends Migration
             $table->string('patient_name');
             $table->date('birth_date');
             $table->unsignedInteger('survey_id');
-            //$table->string('token');
             $table->string('link_token')->unique();
             $table->boolean('is_expired')->default(0);
             $table->timestamps();
