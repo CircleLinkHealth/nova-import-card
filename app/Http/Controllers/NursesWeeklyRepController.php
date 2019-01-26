@@ -18,19 +18,20 @@ class NursesWeeklyRepController extends Controller
     public function index(Request $request)
     {
         $yesterdayDate = Carbon::yesterday()->startOfDay();
-        //todo: set $limitDate before production (should be tuesday)
-        $limitDate = Carbon::parse('2018-12-23');
+        //todo: set $limitDate before production
+        $limitDate = Carbon::parse('2018-01-01');
 
         if ($request->has('date')) {
             $requestDate = new Carbon($request['date']);
             $date        = $requestDate->copy();
         } else {
-            //if the admin loads the page today, we need to display last day's report
+            //if the admin loads the page today, we need to display last day's report till start of that week
             $date = $yesterdayDate->copy();
         }
 
         if ($date->gte(today()->startOfDay())) {
             $messages['errors'][] = 'Please input a past date';
+
             return redirect()->back()->withErrors($messages);
         }
 
@@ -38,11 +39,12 @@ class NursesWeeklyRepController extends Controller
         $startOfWeek   = $date->copy()->startOfWeek();
         $upToDayOfWeek = carbonToClhDayOfWeek($date->dayOfWeek);
 
+
         for ($i = 0; $i < $upToDayOfWeek; $i++) {
-            $days[] = $startOfWeek->copy()->addDay($i);
+            $days[]      = $startOfWeek->copy()->addDay($i);
         }
         //data are returned in 2 arrays. {Data} and the {Totals of data}.
-        $dataMixed    = $this->service->munipulateData($days, $limitDate);
+        $dataMixed    = $this->service->manipulateData($days, $limitDate);
         $data         = $dataMixed['data'];
         $totalsPerDay = $dataMixed['totalsPerDay'];
 

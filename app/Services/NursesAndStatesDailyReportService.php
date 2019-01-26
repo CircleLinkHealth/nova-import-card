@@ -24,18 +24,18 @@ class NursesAndStatesDailyReportService
      * @param $limitDate
      *
      * @return array
-     * @throws FileNotFoundException
      */
-    public function munipulateData($days, $limitDate)
+    public function manipulateData($days, $limitDate)
     {
         $reports = [];
         foreach ($days as $day) {
             try {
-                $reports[$day->toDateString()] = collect($this->showDataFromS3($day));
+                $reports[$day->toDateString()] = collect($this->showDataFromS3($day, $limitDate));
             } catch (\Exception $e) {
                 $reports[$day->toDateString()] = [];
             }
         }
+
         $nurses  = [];
         $reports = collect($reports);
         foreach ($reports as $report) {
@@ -43,14 +43,15 @@ class NursesAndStatesDailyReportService
                 $nurses[] = $report->pluck('nurse_full_name');
             }
         }
+
         $nurses = collect($nurses)
             ->flatten()
             ->unique()
             ->mapWithKeys(function ($nurse) use ($reports) {
                 $week = [];
-                foreach ($reports as $dayOfWeek => $value) {
-                    if ( ! empty($value)) {
-                        $week[$dayOfWeek] = collect($value)->where('nurse_full_name', $nurse)->first();
+                foreach ($reports as $dayOfWeek => $reportPerDay) {
+                    if ( ! empty($reportPerDay)) {
+                        $week[$dayOfWeek] = collect($reportPerDay)->where('nurse_full_name', $nurse)->first();
                         if (empty($week[$dayOfWeek])) {
                             $week[$dayOfWeek] = [
                                 'nurse_full_name' => $nurse,
@@ -71,21 +72,21 @@ class NursesAndStatesDailyReportService
 
         //im repeating this cause i cant find a way to get $totalsPerDay out of mapWithKeys(). any suggestions???
         $totalsPerDay = [];
-        foreach ($reports as $dayOfWeek => $value) {
+        foreach ($reports as $dayOfWeek => $reportPerDay) {
             $totalsPerDay[$dayOfWeek] =
-                [
-                    'scheduledCallsSum'    => $value->sum('scheduledCalls'),
-                    'actualCallsSum'       => $value->sum('actualCalls'),
-                    'successfulCallsSum'   => $value->sum('successful'),
-                    'unsuccessfulCallsSum' => $value->sum('unsuccessful'),
-                    'actualHoursSum'       => $value->sum('actualHours'),
-                    'committedHoursSum'    => $value->sum('committedHours'),
-                    'efficiency'           => $value->sum('efficiency'),
-                ];
-
+                    [
+                        'scheduledCallsSum'    => $reportPerDay->sum('scheduledCalls'),
+                        'actualCallsSum'       => $reportPerDay->sum('actualCalls'),
+                        'successfulCallsSum'   => $reportPerDay->sum('successful'),
+                        'unsuccessfulCallsSum' => $reportPerDay->sum('unsuccessful'),
+                        'actualHoursSum'       => $reportPerDay->sum('actualHours'),
+                        'committedHoursSum'    => $reportPerDay->sum('committedHours'),
+                        'efficiency'           => $reportPerDay->sum('efficiency'),
+                    ];
         }
-        //Data structure
-        //Nurses < Days < Data
+
+        //Data structure -> Nurses < Days < Data
+        //Totals Structure -> date < total per column
         return [
             'data'         => $nurses,
             'totalsPerDay' => $totalsPerDay,
@@ -93,13 +94,18 @@ class NursesAndStatesDailyReportService
     }
 
     /**
-     * @param Carbon $day
+     * @param $day
+     *
+     * @param $limitDate
      *
      * @return mixed
-     * @throws \Exception
+     * @throws FileNotFoundException
      */
-    public function showDataFromS3(Carbon $day)
+    public function showDataFromS3($day, $limitDate)
     {
+        if ($day->lte($limitDate)) {
+            throw new FileNotFoundException('No reports exists before this date');
+        }
 
         $json = optional(SaasAccount::whereSlug('circlelink-health')
                                     ->first()
@@ -196,16 +202,11 @@ class NursesAndStatesDailyReportService
                 ['provider_id', $nurse->id],
             ])->sum('duration') / 3600;
 
-//todo:Please check if this makes logic for this scenario - im trying to avoid division by zero error
-
         return $actualHours == 0 || $activityTime == 0
             ? 0
             : round((float)($activityTime / $actualHours) * 100);
 
-
     }
-
-
 }
 
 
