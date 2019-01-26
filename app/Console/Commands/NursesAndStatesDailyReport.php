@@ -42,16 +42,7 @@ class NursesAndStatesDailyReport extends Command
     public function handle()
     {
         $date = $this->argument('forDate') ?? null;
-       /* if ($date) {
-            try {
-                $date = Carbon::parse($date);
-            } catch (\Exception $e) {
-                $this->error($e->getMessage());
-                die(1);
-            }
-        } else {
-            $date = Carbon::today()->subDay(1)->startOfDay();
-        }*/
+
         if ($date) {
             $date = Carbon::parse($date);
         } else {
@@ -65,15 +56,13 @@ class NursesAndStatesDailyReport extends Command
         $saved    = file_put_contents($path, json_encode($data));
 
         if ( ! $saved && app()->environment('worker')) {
-            /*if (app()->environment('worker')) {*/
-                sendSlackMessage(
-                    '#callcenter_ops',
-                    "Nurses And States dashboard report {$date->toDateString()} could not be created. \n"
-                );
+            sendSlackMessage(
+                '#callcenter_ops',
+                "Nurses And States dashboard report {$date->toDateString()} could not be created. \n"
+            );
 
-                return 'Nurses And States dashboard report could not be uploaded to S3';
-            }
-       /* }*/
+            $this->info('Nurses And States dashboard report could not be uploaded to S3');
+        }
 
         SaasAccount::whereSlug('circlelink-health')
                    ->first()

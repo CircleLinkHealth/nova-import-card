@@ -18,6 +18,7 @@ class NursesWeeklyRepController extends Controller
     public function index(Request $request)
     {
         $yesterdayDate = Carbon::yesterday()->startOfDay();
+        //todo: set $limitDate before production (should be tuesday)
         $limitDate = Carbon::parse('2018-12-23');
 
         if ($request->has('date')) {
