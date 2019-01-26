@@ -46,8 +46,8 @@ class UserCsvResource extends Resource
                 ? Carbon::parse($patient->birth_date)->age
                 : 0).'",'.
                '"'.$this->created_at.'",'.
+               '"'.$this->getTimeInDecimals($this->getBhiTime()).'",'.
                '"'.$this->getTimeInDecimals($this->getCcmTime()).'",'.
-               //'"'.$this->getTimeInDecimals($this->getBhiTime()).'",'. //need confirmation
                '"'.$ccmStatusDate.'"';
     }
 
