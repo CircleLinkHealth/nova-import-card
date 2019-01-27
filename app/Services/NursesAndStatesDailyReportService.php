@@ -99,7 +99,6 @@ class NursesAndStatesDailyReportService
         if ($day->lte($limitDate)) {
             throw new FileNotFoundException('No reports exists before this date');
         }
-
         $json = optional(SaasAccount::whereSlug('circlelink-health')
                                     ->first()
                                     ->getMedia("nurses-and-states-daily-report-{$day->toDateString()}.json")
