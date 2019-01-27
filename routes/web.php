@@ -11,6 +11,12 @@
 |
 */
 
+
+use App\Http\Controllers\InvitationLinksController;
+use App\InvitationLink;
+
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::post('/send.sms', 'InvitationLinksController@sendSms')->name('sendSms');
