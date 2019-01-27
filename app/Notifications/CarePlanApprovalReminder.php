@@ -22,7 +22,7 @@ class CarePlanApprovalReminder extends Notification
      */
     protected $numberOfCareplans;
 
-    public $channels = ['database', DirectMailChannel::class];
+    public $channels = ['database'];
 
     public function __construct($numberOfCareplans)
     {
