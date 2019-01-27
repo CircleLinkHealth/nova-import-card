@@ -24,6 +24,7 @@ class NursesAndStatesDailyReportService
      * @param $limitDate
      *
      * @return array
+     * @throws \Exception
      */
     public function manipulateData($days, $limitDate)
     {
@@ -31,11 +32,10 @@ class NursesAndStatesDailyReportService
         foreach ($days as $day) {
             try {
                 $reports[$day->toDateString()] = collect($this->showDataFromS3($day, $limitDate));
-            } catch (\Exception $e) {
+            } catch (FileNotFoundException $exception) {
                 $reports[$day->toDateString()] = [];
             }
         }
-
         $nurses  = [];
         $reports = collect($reports);
         foreach ($reports as $report) {
@@ -48,7 +48,8 @@ class NursesAndStatesDailyReportService
             ->flatten()
             ->unique()
             ->mapWithKeys(function ($nurse) use ($reports) {
-                $week = [];
+                $week         = [];
+                $totalsPerDay = [];
                 foreach ($reports as $dayOfWeek => $reportPerDay) {
                     if ( ! empty($reportPerDay)) {
                         $week[$dayOfWeek] = collect($reportPerDay)->where('nurse_full_name', $nurse)->first();
@@ -65,32 +66,23 @@ class NursesAndStatesDailyReportService
                             ];
                         }
                     }
+
+                    $totalsPerDay[$dayOfWeek] =collect(
+                        [
+                            'scheduledCallsSum'    => $reportPerDay->sum('scheduledCalls'),
+                            'actualCallsSum'       => $reportPerDay->sum('actualCalls'),
+                            'successfulCallsSum'   => $reportPerDay->sum('successful'),
+                            'unsuccessfulCallsSum' => $reportPerDay->sum('unsuccessful'),
+                            'actualHoursSum'       => $reportPerDay->sum('actualHours'),
+                            'committedHoursSum'    => $reportPerDay->sum('committedHours'),
+                            'efficiency'           => $reportPerDay->sum('efficiency'),
+                        ]);
                 }
 
-                return [$nurse => $week];
+                return [$nurse => $week, 'totals' => $totalsPerDay];
             });
 
-        //im repeating this cause i cant find a way to get $totalsPerDay out of mapWithKeys(). any suggestions???
-        $totalsPerDay = [];
-        foreach ($reports as $dayOfWeek => $reportPerDay) {
-            $totalsPerDay[$dayOfWeek] =
-                    [
-                        'scheduledCallsSum'    => $reportPerDay->sum('scheduledCalls'),
-                        'actualCallsSum'       => $reportPerDay->sum('actualCalls'),
-                        'successfulCallsSum'   => $reportPerDay->sum('successful'),
-                        'unsuccessfulCallsSum' => $reportPerDay->sum('unsuccessful'),
-                        'actualHoursSum'       => $reportPerDay->sum('actualHours'),
-                        'committedHoursSum'    => $reportPerDay->sum('committedHours'),
-                        'efficiency'           => $reportPerDay->sum('efficiency'),
-                    ];
-        }
-
-        //Data structure -> Nurses < Days < Data
-        //Totals Structure -> date < total per column
-        return [
-            'data'         => $nurses,
-            'totalsPerDay' => $totalsPerDay,
-        ];
+        return $nurses;
     }
 
     /**
@@ -100,6 +92,7 @@ class NursesAndStatesDailyReportService
      *
      * @return mixed
      * @throws FileNotFoundException
+     * @throws \Exception
      */
     public function showDataFromS3($day, $limitDate)
     {
@@ -121,14 +114,6 @@ class NursesAndStatesDailyReportService
             throw new \Exception ('File retrieved is not in json format.', 500);
         }
         $data = json_decode($json, true);
-
-        return $data;
-    }
-
-    //showDataFromDb is not used
-    public function showDataFromDb(Carbon $date)
-    {
-        $data = $this->collectData($date);
 
         return $data;
     }
@@ -186,7 +171,6 @@ class NursesAndStatesDailyReportService
 
         return collect($data);
     }
-
 
     public function nursesEfficiencyPercentageDaily(Carbon $date, $nurse)
     {

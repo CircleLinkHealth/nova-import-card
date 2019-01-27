@@ -56,14 +56,16 @@
                                 </tr>
                                 <tr>
                                     <td class="zui-sticky-col" style="font-weight: bolder">Totals:</td>
-                                    @foreach($totalsPerDay as $day)
-                                        <td style="font-weight: bolder">{{$day['scheduledCallsSum']}}</td>
-                                        <td style="font-weight: bolder">{{$day['actualCallsSum']}}</td>
-                                        <td style="font-weight: bolder">{{$day['successfulCallsSum']}}</td>
-                                        <td style="font-weight: bolder">{{$day['unsuccessfulCallsSum']}}</td>
-                                        <td style="font-weight: bolder">{{$day['actualHoursSum']}}</td>
-                                        <td style="font-weight: bolder">{{$day['committedHoursSum']}}</td>
-                                        <td style="font-weight: bolder">{{$day['efficiency']}} %</td>
+                                    @foreach ($totals as $total => $totalsPerDay)
+                                        @foreach($totalsPerDay as $totalsForDay)
+                                            <td style="font-weight: bolder">{{$totalsForDay['scheduledCallsSum']}}</td>
+                                            <td style="font-weight: bolder">{{$totalsForDay['actualCallsSum']}}</td>
+                                            <td style="font-weight: bolder">{{$totalsForDay['successfulCallsSum']}}</td>
+                                            <td style="font-weight: bolder">{{$totalsForDay['unsuccessfulCallsSum']}}</td>
+                                            <td style="font-weight: bolder">{{$totalsForDay['actualHoursSum']}}</td>
+                                            <td style="font-weight: bolder">{{$totalsForDay['committedHoursSum']}}</td>
+                                            <td style="font-weight: bolder">{{$totalsForDay['efficiency']}} %</td>
+                                        @endforeach
                                     @endforeach
                                 </tr>
                             </tbody>

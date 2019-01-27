@@ -19,7 +19,7 @@ class NursesWeeklyRepController extends Controller
     {
         $yesterdayDate = Carbon::yesterday()->startOfDay();
         //todo: set $limitDate before production
-        $limitDate = Carbon::parse('2018-01-01');
+        $limitDate = Carbon::parse('2018-12-30');
 
         if ($request->has('date')) {
             $requestDate = new Carbon($request['date']);
@@ -39,19 +39,18 @@ class NursesWeeklyRepController extends Controller
         $startOfWeek   = $date->copy()->startOfWeek();
         $upToDayOfWeek = carbonToClhDayOfWeek($date->dayOfWeek);
 
-
         for ($i = 0; $i < $upToDayOfWeek; $i++) {
-            $days[]      = $startOfWeek->copy()->addDay($i);
+            $days[] = $startOfWeek->copy()->addDay($i);
         }
         //data are returned in 2 arrays. {Data} and the {Totals of data}.
-        $dataMixed    = $this->service->manipulateData($days, $limitDate);
-        $data         = $dataMixed['data'];
-        $totalsPerDay = $dataMixed['totalsPerDay'];
+        $nurses = $this->service->manipulateData($days, $limitDate);
+        $totals = $nurses->only('totals');
+        $data   = $nurses->forget('totals');
 
         return view('admin.reports.nurseWeekly', compact(
             'days',
             'date',
-            'totalsPerDay',
+            'totals',
             'yesterdayDate',
             'data',
             'startOfWeek',
