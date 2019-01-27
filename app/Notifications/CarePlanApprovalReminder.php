@@ -7,8 +7,10 @@
 namespace App\Notifications;
 
 use App\Mail\CarePlanApprovalReminder as CarePlanApprovalReminderMailable;
+use App\Notifications\Channels\DirectMailChannel;
 use App\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Channels\MailChannel;
 use Illuminate\Notifications\Notification;
 
 class CarePlanApprovalReminder extends Notification
@@ -19,6 +21,8 @@ class CarePlanApprovalReminder extends Notification
      * Create a new notification instance.
      */
     protected $numberOfCareplans;
+
+    public $channels = ['database', DirectMailChannel::class];
 
     public function __construct($numberOfCareplans)
     {
@@ -58,6 +62,70 @@ class CarePlanApprovalReminder extends Notification
     }
 
     /**
+     * @param User $notifiable
+     *
+     * @return array|bool
+     * @throws \Exception
+     */
+    public function toDirectMail(User $notifiable)
+    {
+        if ( ! $notifiable || ! $notifiable->emr_direct_address) {
+            return false;
+        }
+
+        return [
+            'body'    => $this->directMailBody($notifiable),
+            'subject' => "{$this->numberOfCareplans} CircleLink Care Plan(s) for your Approval!",
+        ];
+    }
+
+    /**
+     * @return string
+     * @throws \Exception
+     */
+    private function directMailBody(User $notifiable)
+    {
+        return "Dear {$notifiable->getFullName()},
+ 
+Thank you for using CircleLink Health for Chronic Care Management!
+ 
+We are delighted to report {$this->numberOfCareplans} care plan(s) awaiting your approval.
+ 
+To review and approve, simply copy and paste www.careplanmanager.com into a web browser and login.
+ 
+Then, on the homepage, click \"Approve Now\" in the “Pending Care Plans” table/list (center of page), for the first patient you wish to approve.
+ 
+You can review and approve new CCM care plans in the next page. Just click “Approve and View Next” to approve and view the next pending care plan. You can edit the care plan with green edit icons.
+ 
+Alternatively, you can upload your own PDF care plan using the \"Upload PDF\" button. (NOTE: Please make sure uploaded PDF care plans conform to Medicare requirements.)
+ 
+Our registered nurses will take it from here!
+ 
+Thank you again,
+CircleLink Team
+ 
+To receive this notification less (or more) frequently, please adjust your settings by visiting this site: {$this->getManageNotificationsUrl($notifiable)}";
+    }
+
+    /**
+     * @param User $notifiable
+     *
+     * @return string
+     * @throws \Exception
+     */
+    private function getManageNotificationsUrl(User $notifiable)
+    {
+        try {
+            $practice = strtolower($notifiable->primaryPractice->name);
+            return "careplanmanager.com/practices/{$practice}/notifications";
+        } catch (\Exception $e) {
+            \Log::debug("EXCEPTION `{$e->getMessage()}`");
+            throw $e;
+        }
+    }
+
+
+    /**
      * Get the notification's delivery channels.
      *
      * @param mixed $notifiable
@@ -66,9 +134,13 @@ class CarePlanApprovalReminder extends Notification
      */
     public function via($notifiable)
     {
-        return [
-            'mail',
-            'database',
-        ];
+        array_push(
+            $this->channels,
+            $notifiable->primaryPractice->cpmSettings->dm_careplan_approval_reminders
+                ? DirectMailChannel::class
+                : MailChannel::class
+        );
+
+        return $this->channels;
     }
 }
