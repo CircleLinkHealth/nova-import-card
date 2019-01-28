@@ -134,10 +134,9 @@ To receive this notification less (or more) frequently, please adjust your setti
      */
     public function via($notifiable)
     {
-
         array_push(
             $this->channels,
-            $notifiable->primaryPractice->cpmSettings()->dm_careplan_approval_reminders
+            $notifiable->primaryPractice->cpmSettings()->dm_careplan_approval_reminders && $notifiable->emr_direct_address
                 ? DirectMailChannel::class
                 : MailChannel::class
         );
