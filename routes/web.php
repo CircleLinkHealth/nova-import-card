@@ -18,5 +18,8 @@ use App\InvitationLink;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('enter-phone-number', 'AwvPatientsController@enterPhoneNumber')->name('enter-phone-number');
+Route::get('create-url/{patient}', 'AwvPatientsController@createUrl')->name('create-url');
+Route::get('login-survey/{patient}', 'AwvPatientsController@authenticateInvitedUser')->name('login-survey')->middleware('signed');
 
-Route::post('/send.sms', 'InvitationLinksController@sendSms')->name('sendSms');
+Route::get('survey-auth', 'AwvPatientsController@authSurveyLogin')->name('survey-auth');

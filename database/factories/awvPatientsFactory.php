@@ -4,10 +4,10 @@ use Faker\Generator as Faker;
 
 $factory->define(App\awvPatients::class, function (Faker $faker) {
     return [
-        'cpm_user_id' =>  function () {
+        'cpm_user_id'  => function () {
             return factory(App\User::class)->create()->id;
         },
-
-        'number' => $faker->phoneNumber,
+        'birth_date'   => $faker->date('y-m-d'),
+        'number'       => $faker->phoneNumber,
     ];
 });

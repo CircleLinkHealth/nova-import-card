@@ -30,6 +30,6 @@ class User extends Authenticatable
 
     public function patient()
     {
-        return $this->belongsTo(awvPatients::class,'id');
+        return $this->belongsTo(awvPatients::class);
     }
 }
