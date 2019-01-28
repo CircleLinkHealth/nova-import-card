@@ -36,6 +36,7 @@ class NursesAndStatesDailyReportService
                 $reports[$day->toDateString()] = [];
             }
         }
+
         $nurses  = [];
         $reports = collect($reports);
         foreach ($reports as $report) {

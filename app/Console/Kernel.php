@@ -170,6 +170,6 @@ class Kernel extends ConsoleKernel
         
         $schedule->command(SecurityMailCommand::class)
                  ->weekly();
-        $schedule->command(NursesAndStatesDailyReport::class)->dailyAt('00:10');
+        $schedule->command(NursesAndStatesDailyReport::class)->dailyAt('00:05');
     }
 }
