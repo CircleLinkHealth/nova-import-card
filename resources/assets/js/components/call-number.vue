@@ -5,13 +5,15 @@
             <strong>
                 When the call is ended, this window will close after {{endCallWindowCloseDelay}} seconds.
             </strong>
-            <br />
+            <br/>
             <strong>
                 If you would like to make another call, please click on 'Open Calls Page' again.
             </strong>
         </div>
         <div>{{log}}</div>
-        <div v-show="closeCountdown > 0">This window will close in <span class="countdown-seconds">{{closeCountdown}}</span> seconds.</div>
+        <div v-show="closeCountdown > 0">This window will close in <span
+                class="countdown-seconds">{{closeCountdown}}</span> seconds.
+        </div>
         <template v-if="!waiting">
             <div class="row">
                 <div class="col-xs-12">
@@ -115,6 +117,18 @@
                 </div>
             </div>
 
+            <br/>
+
+            <div class="row" v-show="isCurrentlyOnPhone">
+                <input class="form-control" type="text" placeholder="Numeric Keypad" @focus="numpadShow"/>
+                <vue-touch-keyboard v-if="numpadVisible"
+                                    :layout="numpadCustomLayout"
+                                    :change="numpadChanged"
+                                    :cancel="numpadHide"
+                                    :accept="numpadDone"
+                                    :input="numpadInputElement"/>
+            </div>
+
         </template>
 
     </div>
@@ -126,6 +140,10 @@
     import {registerHandler, sendRequest} from "./bc-job-manager";
 
     import Twilio from 'twilio-client';
+    import VueTouchKeyboard from "vue-touch-keyboard";
+    import style from "vue-touch-keyboard/dist/vue-touch-keyboard.css"; // load default style
+
+    window.Vue.use(VueTouchKeyboard);
 
     let self;
 
@@ -159,6 +177,24 @@
         },
         data() {
             return {
+                numpadRegex: new RegExp('[0-9]|[*]|#'),
+                numpadVisible: false,
+                numpadInputElement: null,
+                numpadCustomLayout: {
+
+                    _meta: {
+                        "backspace": { func: "backspace", classes: "control"},
+                        "accept": { func: "accept", text: "Hide", classes: "control featured"},
+                        "zero": { key: "0", width: 130}
+                    },
+
+                    default: [
+                        "1 2 3",
+                        "4 5 6",
+                        "7 8 9",
+                        "* {zero} # {backspace} {accept}"
+                    ]
+                },
                 waiting: false,
                 waitingForConference: false,
                 queuedNumbersForConference: [],
@@ -210,6 +246,30 @@
             }
         },
         methods: {
+
+            numpadChanged: function (allInput, lastInput) {
+
+                if (!lastInput || lastInput.length > 1 || !this.numpadRegex.test(lastInput)) {
+                    return;
+                }
+                if (this.connection) {
+                    this.connection.sendDigits(lastInput.toString());
+                }
+            },
+
+            numpadDone: function (val) {
+                console.log(val);
+                this.numpadHide();
+            },
+
+            numpadShow: function (e) {
+                this.numpadInputElement = e.target;
+                this.numpadVisible = true;
+            },
+
+            numpadHide: function () {
+                this.numpadVisible = false;
+            },
 
             toggleMuteMessage: function (number) {
                 const action = this.muted[number] ? "call_unmuted" : "call_muted";
@@ -738,5 +798,9 @@
     .countdown-seconds {
         font-weight: bold;
         color: red;
+    }
+
+    .vue-touch-keyboard {
+        margin-top: 3px;
     }
 </style>
