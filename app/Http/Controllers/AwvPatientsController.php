@@ -55,7 +55,6 @@ class AwvPatientsController extends Controller
         if(! awvPatients::where('birth_date', $birthDate)->first()){
             return 'Date Of Birth is Wrong';
         }
-
         return 'Login to survey';
     }
 }
