@@ -20,14 +20,12 @@
     @push('scripts')
         <script>
             $(document).ready(function () {
-                $(".provider").select2();
-                $(".range").select2();
+                $(".provider-select").select2();
+                $(".range-select").select2();
 
             });
         </script>
     @endpush
-
-    
 
     <div class="row main-form-block" style="margin-top:30px;">
         <div class="main-form-container col-lg-8 col-lg-offset-2">
@@ -64,7 +62,7 @@
 
                     <div class="inline-block">
                         <label for="year" class="sr-only">Date Range:</label>
-                        <select name="range" id="range" class="range" data-width="250px">
+                        <select name="range" id="range" class="range-select" data-width="250px">
                             <option value="">Select Range</option>
                             @for($i = 0; $i < 4; $i++)
                                 <option value={{$i}}
@@ -75,7 +73,7 @@
                             @endfor
                         </select>
                         <button type="submit" id="find" class="btn btn-primary">Go</button><br>
-                        <select name="provider" id="provider" class="provider" data-width="200px"
+                        <select name="provider" id="provider" class="provider-select" data-width="200px"
                             data-size="10" style="display: none;" @if(auth()->user()->isAdmin() == false  &&
                                                           auth()->user()->hasRole('care-center') == false)
                             required
@@ -327,6 +325,9 @@
                 @else
                     <div style="text-align:center;margin:50px;">There are no patients notes
                         for {{$selected_provider->display_name}} in input range.
+                    </div>
+                    <div>
+                        @include('errors.errors')
                     </div>
                 @endif
                 @else
