@@ -20,3 +20,5 @@ public/*.js.map
 /tests/Browser/
 /coverage/
 .php_cs.cache
+/app/Services/NursesAndStatesDailyReportService.php
+!/app/Services/NursesAndStatesDailyReportService.php
