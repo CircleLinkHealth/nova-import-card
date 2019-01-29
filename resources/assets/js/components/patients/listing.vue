@@ -33,7 +33,7 @@
                 </div>
             </template>
             <template slot="h__ccmStatusDate" slot-scope="props">
-                CCM Status Date
+                CCM Status Change
             </template>
             <template slot="careplanStatus" slot-scope="props">
                 <a :href="props.row.careplanStatus === 'qa_approved' ? rootUrl('manage-patients/' + props.row.id + '/view-careplan') : null">
@@ -52,6 +52,9 @@
             <template slot="filter__ccm">
                 <div>(HH:MM:SS)</div>
             </template>
+            <template slot="filter__bhi">
+                <div>(HH:MM:SS)</div>
+            </template>
             <template slot="h__ccmStatus" slot-scope="props">
                 CCM Status
             </template>
@@ -64,8 +67,8 @@
             <template slot="h__registeredOn" slot-scope="props">
                 Registered On
             </template>
-            <template slot="h__lastReading" slot-scope="props">
-                Last Reading
+            <template slot="h__bhi" slot-scope="props">
+                BHI
             </template>
             <template slot="h__ccm" slot-scope="props">
                 CCM
@@ -124,7 +127,7 @@
                 practices: [],
                 providersForSelect: [],
                 nameDisplayType: NameDisplayType.FirstName,
-                columns: ['name', 'provider', 'ccmStatus', 'ccmStatusDate','careplanStatus', 'dob', 'phone', 'age', 'registeredOn', 'lastReading', 'ccm'],
+                columns: ['name', 'provider', 'ccmStatus', 'ccmStatusDate','careplanStatus', 'dob', 'phone', 'age', 'registeredOn', 'bhi', 'ccm'],
                 loaders: {
                     next: false,
                     practices: null,
@@ -142,8 +145,8 @@
             options() {
                 return {
                     filterByColumn: true,
-                    sortable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'dob', 'age', 'registeredOn', 'ccm'],
-                    filterable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'dob', 'phone', 'age', 'registeredOn', 'lastReading'],
+                    sortable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'dob', 'age', 'registeredOn', 'bhi', 'ccm'],
+                    filterable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'dob', 'phone', 'age', 'registeredOn'],
                     listColumns: {
                         provider: this.providersForSelect,
                         ccmStatus: [ 
@@ -177,7 +180,7 @@
                         phone: (ascending) => iSort,
                         age: (ascending) => iSort,
                         registeredOn: (ascending) => iSort,
-                        lastReading: (ascending) => iSort,
+                        bhi: (ascending) => iSort,
                         ccm: (ascending) => iSort,
                         program: (ascending) => iSort
                     }
@@ -331,12 +334,15 @@
                         patient.ccmStatusDate = (this.getStatusDate(patient) || '')
                         patient.sort_registeredOn = new Date(patient.created_at)
                         patient.sort_ccmStatusDate = new Date(patient.ccmStatusDate)
-                        patient.lastReading = (patient.last_read || '').split(' ')[0] || 'No Readings'
 
                         const pad = (num, count = 2) => '0'.repeat(count - num.toString().length) + num
                         const seconds = patient.ccm_time || 0
                         patient.ccm = pad(Math.floor(seconds / 3600), 2) + ':' + pad(Math.floor(seconds / 60) % 60, 2) + ':' + pad(seconds % 60, 2);
                         patient.sort_ccm = seconds;
+
+                        const bhiSeconds = patient.bhi_time || 0
+                        patient.bhi = pad(Math.floor(bhiSeconds / 3600), 2) + ':' + pad(Math.floor(bhiSeconds / 60) % 60, 2) + ':' + pad(bhiSeconds % 60, 2);
+                        patient.sort_bhi = bhiSeconds;
                         return patient
                     }).map(patient => {
                         const loadColumnList = (list = [], item = null) => {
@@ -408,7 +414,7 @@
                 return download().then(res => {
                     const link = document.createElement('a')
                     link.href = 'data:attachment/text,' + 
-                    encodeURI('name,provider,program,ccm status, careplan status,dob,phone,age,registered on,ccm, ccm status date\n'
+                    encodeURI('name,provider,program,ccm status,careplan status,dob,phone,age,registered on,bhi,ccm,ccm status change\n'
                                 + patients.join('\n'))
                     link.download = `patient-list-${Date.now()}.csv`
                     link.click()
@@ -466,9 +472,6 @@
 
                 const ccmStatusDateInput = patientListElem.querySelector('input[name="vf__ccmStatusDate"]')
                 ccmStatusDateInput.setAttribute('placeholder', 'Filter by CCM Status Date')
-
-                const lastReadingInput = patientListElem.querySelector('input[name="vf__lastReading"]')
-                lastReadingInput.setAttribute('placeholder', 'Filter by Last Reading')
             },
             clearFilters() {
                 Object.keys(this.$refs.tblPatientList.query).forEach((key) => {
@@ -520,8 +523,6 @@
 
             Event.$on('vue-tables.filter::ccmStatusDate', this.activateFilters)
 
-            Event.$on('vue-tables.filter::lastReading', this.activateFilters)
-    
             Event.$on('vue-tables.sorted', this.activateFilters)
 
             Event.$on('vue-tables.limit', this.activateFilters)

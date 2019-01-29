@@ -50,6 +50,7 @@ class PageTimerController extends Controller
             'offline-activity-time-requests.create',
             'patient.activity.create',
             'patient.activity.providerUIIndex',
+            'patient.reports.progress',
         ];
 
         $is_ommited = in_array($pageTimer->title, $omitted_routes);

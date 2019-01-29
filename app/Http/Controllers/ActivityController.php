@@ -170,8 +170,11 @@ class ActivityController extends Controller
         $end   = Carbon::now()->endOfMonth()->format('Y-m-d H:i:s');
         $acts  = $this->getActivityForPatient($patientId, $start, $end);
 
+        $patient = User::find($patientId);
+
         return response()->json([
-            'monthlyTime' => User::find($patientId)->formattedCcmTime(),
+            'monthlyTime' => $patient->formattedCcmTime(),
+            'monthlyBhiTime' => $patient->formattedBhiTime(),
             'table'       => $acts,
         ]);
     }
