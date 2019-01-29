@@ -210,10 +210,12 @@ class NotesController extends Controller
         $input = $request->all();
 
         $validation = \Validator::make($input, [
-            'range'        => 'nullable|numeric',
-            'provider'     => 'nullable|numeric',
-            'mail_filter'  => '',
-            'admin_filter' => '',
+            'range'        => 'sometimes|integer|between:0,4',
+            'provider'     => 'sometimes|numeric',
+            'mail_filter'  => 'sometimes|boolean',
+            'admin_filter' => 'sometimes|boolean',
+        ], [
+            'between' => 'Something went wrong with the date you have submitted. Please select one of the options in the dropdown.'
         ]);
 
         if ($validation->fails()) {
