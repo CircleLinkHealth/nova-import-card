@@ -9,6 +9,7 @@ namespace App\Http\Controllers;
 use App\Call;
 use App\Http\Resources\Call as CallResource;
 use App\Patient;
+use App\Rules\DateBeforeUsingCarbon;
 use App\Services\Calls\SchedulerService;
 use App\User;
 use Carbon\Carbon;
@@ -63,10 +64,10 @@ class CallController extends Controller
 
             $failed = $this->scheduler->importCallsFromCsv($csv);
 
-            echo 'Failed to schedule a call for these patients:'.PHP_EOL;
+            echo 'Failed to schedule a call for these patients:' . PHP_EOL;
 
             foreach ($failed as $fail) {
-                echo "Name: ${fail}".PHP_EOL;
+                echo "Name: ${fail}" . PHP_EOL;
             }
         }
     }
@@ -75,7 +76,7 @@ class CallController extends Controller
     {
         $calls = Call::where(function ($q) {
             $q->whereNull('type')
-                ->orWhere('type', '=', 'call');
+              ->orWhere('type', '=', 'call');
         })->where('status', 'scheduled')->get();
 
         return $calls;
@@ -110,7 +111,7 @@ class CallController extends Controller
         if ( ! empty($input['id'])) {
             $previousCall = Call::find($input['id']);
             if ( ! $previousCall) {
-                return response('could not locate call '.$input['id'], 401);
+                return response('could not locate call ' . $input['id'], 401);
             }
 
             $previousCall->status = 'rescheduled/cancelled';
@@ -132,6 +133,24 @@ class CallController extends Controller
     public function schedule(Request $request, $patientId)
     {
         $input = $request->all();
+
+        $validation = \Validator::make($input, [
+            'nurse'          => 'required|integer',
+            'suggested_date' => 'required|date',
+            'date'           => ['required', 'date:after_or_equal:today', new DateBeforeUsingCarbon('9999-12-31')],
+            'window_start'   => 'required|date_format:H:i',
+            'window_end'     => 'required|date_format:H:i',
+            'attempt_note'   => 'sometimes',
+        ]);
+
+        if ($validation->fails()) {
+            return redirect()
+                ->route('patient.note.index', [
+                    'patientId' => $patientId,
+                ])
+                ->with('messages', ['Successfully Created Note, but could not schedule next call:'])
+                ->withErrors($validation);
+        }
 
         $window_start = Carbon::parse($input['window_start'])->format('H:i');
         $window_end   = Carbon::parse($input['window_end'])->format('H:i');
@@ -164,7 +183,7 @@ class CallController extends Controller
         return redirect()->route('patient.note.index', [
             'patientId' => $patientId,
         ])
-            ->with('messages', ['Successfully Created Note']);
+                         ->with('messages', ['Successfully Created Note']);
     }
 
     public function show($id)
@@ -175,7 +194,7 @@ class CallController extends Controller
     {
         $calls = Call::where(function ($q) {
             $q->whereNull('type')
-                ->orWhere('type', '=', 'call');
+              ->orWhere('type', '=', 'call');
         })->where('inbound_cpm_id', $patientId)->paginate();
 
         return view('admin.calls.index', ['calls' => $calls, 'patient' => User::find($patientId)]);
@@ -204,7 +223,7 @@ class CallController extends Controller
         // find call
         $call = Call::find($data['callId']);
         if ( ! $call) {
-            return response('could not locate call '.$data['callId'], 401);
+            return response('could not locate call ' . $data['callId'], 401);
         }
 
         $col   = $data['columnName'];
@@ -281,7 +300,7 @@ class CallController extends Controller
         $call->save();
 
         return response(
-            'successfully updated call '.$data['columnName'].'='.$data['value'].' - CallId='.$data['callId'],
+            'successfully updated call ' . $data['columnName'] . '=' . $data['value'] . ' - CallId=' . $data['callId'],
             201
         );
     }
@@ -293,12 +312,14 @@ class CallController extends Controller
      */
     private function createCall($input)
     {
+        //our db does not support more than 4 digits for year (?)
+        //-> so DateBeforeUsingCarbon
         $validation = \Validator::make($input, [
             'type'            => 'required',
             'sub_type'        => '',
             'inbound_cpm_id'  => 'required',
             'outbound_cpm_id' => '',
-            'scheduled_date'  => 'required|date',
+            'scheduled_date'  => ["required", "after_or_equal:today", new DateBeforeUsingCarbon('9999-12-31')],
             'window_start'    => 'required|date_format:H:i',
             'window_end'      => 'required|date_format:H:i',
             'attempt_note'    => '',
@@ -331,13 +352,13 @@ class CallController extends Controller
 
         if ('call' === $input['type'] && $patient->inboundCalls) {
             $scheduledCall = $patient->inboundCalls()
-                ->where(function ($q) {
-                    $q->whereNull('type')
-                        ->orWhere('type', '=', 'call');
-                })
-                ->where('status', '=', 'scheduled')
-                ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'))
-                ->first();
+                                     ->where(function ($q) {
+                                         $q->whereNull('type')
+                                           ->orWhere('type', '=', 'call');
+                                     })
+                                     ->where('status', '=', 'scheduled')
+                                     ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'))
+                                     ->first();
             if ($scheduledCall) {
                 return [
                     'errors' => ['patient already has a scheduled call'],
@@ -349,11 +370,11 @@ class CallController extends Controller
         $isFamilyOverride = ! empty($input['family_override']);
         if ( ! $isFamilyOverride
              && $this->hasAlreadyFamilyCallAtDifferentTime(
-                 $patient->patientInfo,
-                 $input['scheduled_date'],
+                $patient->patientInfo,
+                $input['scheduled_date'],
                 $input['window_start'],
-                 $input['window_end']
-             )) {
+                $input['window_end']
+            )) {
             return [
                 'errors' => ['patient belongs to family and the family has a call at different time'],
                 'code'   => 418,
@@ -411,7 +432,9 @@ class CallController extends Controller
 
         $call                  = new Call();
         $call->type            = $input['type'];
-        $call->sub_type        = isset($input['sub_type']) ? $input['sub_type'] : null;
+        $call->sub_type        = isset($input['sub_type'])
+            ? $input['sub_type']
+            : null;
         $call->inbound_cpm_id  = $user->id;
         $call->scheduled_date  = $input['scheduled_date'];
         $call->window_start    = $input['window_start'];
