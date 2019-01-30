@@ -12,6 +12,7 @@ use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Channels\MailChannel;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\View;
 
 class CarePlanApprovalReminder extends Notification
 {
@@ -85,43 +86,10 @@ class CarePlanApprovalReminder extends Notification
      */
     private function directMailBody(User $notifiable)
     {
-        return "Dear {$notifiable->getFullName()},
- 
-Thank you for using CircleLink Health for Chronic Care Management!
- 
-We are delighted to report {$this->numberOfCareplans} care plan(s) awaiting your approval.
- 
-To review and approve, simply copy and paste www.careplanmanager.com into a web browser and login.
- 
-Then, on the homepage, click \"Approve Now\" in the “Pending Care Plans” table/list (center of page), for the first patient you wish to approve.
- 
-You can review and approve new CCM care plans in the next page. Just click “Approve and View Next” to approve and view the next pending care plan. You can edit the care plan with green edit icons.
- 
-Alternatively, you can upload your own PDF care plan using the \"Upload PDF\" button. (NOTE: Please make sure uploaded PDF care plans conform to Medicare requirements.)
- 
-Our registered nurses will take it from here!
- 
-Thank you again,
-CircleLink Team
- 
-To receive this notification less (or more) frequently, please adjust your settings by visiting this site: {$this->getManageNotificationsUrl($notifiable)}";
-    }
-
-    /**
-     * @param User $notifiable
-     *
-     * @return string
-     * @throws \Exception
-     */
-    private function getManageNotificationsUrl(User $notifiable)
-    {
-        try {
-            $practice = strtolower($notifiable->primaryPractice->name);
-            return "careplanmanager.com/practices/{$practice}/notifications";
-        } catch (\Exception $e) {
-            \Log::debug("EXCEPTION `{$e->getMessage()}`");
-            throw $e;
-        }
+        return View::make('emails.DmCareplanApprovalReminder', [
+            'notifiable'        => $notifiable,
+            'numberOfCareplans' => $this->numberOfCareplans,
+        ]);
     }
 
 
