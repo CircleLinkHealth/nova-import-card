@@ -90,7 +90,7 @@ class ActivityController extends Controller
         Request $request,
         $patientId
     ) {
-        $patient = User::find($patientId);
+        $patient = User::findOrFail($patientId);
 
         $input = $request->all();
 
@@ -112,6 +112,7 @@ class ActivityController extends Controller
             $year_selected       = $time->format('Y');
         }
 
+        dd($patient);
         //downloads patient audit
         if ($request->ajax()) {
             return (new PatientDailyAuditReport($patient->patientInfo, Carbon::parse($start)))->renderPDF();
