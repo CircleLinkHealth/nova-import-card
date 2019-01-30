@@ -9,7 +9,7 @@ class InvitationLink extends Model
   //  use SoftDeletes;
 
     protected $fillable = [
-        'aw_patient_id',
+        'awv_patient_id',
         'survey_id',
         'link_token',
         'is_expired'

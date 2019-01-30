@@ -16,8 +16,8 @@ use Illuminate\Http\Request;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('enter-phone-number', 'AwvPatientsController@enterPhoneNumber')->name('enterPhoneNumber');
+Route::get('enter-phone-number', 'InvitationLinksController@enterPhoneNumber')->name('enterPhoneNumber');
 Route::get('create-send-url/{number}', 'InvitationLinksController@createSendUrl')->name('createSendUrl');
-Route::get('login-survey/{patient}', 'AwvPatientsController@authenticateInvitedUser')->name('loginSurvey')/*->middleware('signed')*/;
-Route::get('survey-auth', 'AwvPatientsController@authSurveyLogin')->name('surveyAuth');
-Route::get('resend-link/{patient}', 'AwvPatientsController@resendUrl')->name('resendUrl');
+Route::get('login-survey/{patient}', 'InvitationLinksController@authenticateInvitedUser')->name('loginSurvey')/*->middleware('signed')*/;
+Route::get('survey-auth', 'InvitationLinksController@authSurveyLogin')->name('surveyAuth');
+Route::get('resend-link/{patient}', 'InvitationLinksController@resendUrl')->name('resendUrl');

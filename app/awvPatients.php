@@ -13,7 +13,7 @@ class awvPatients extends Model
 
     public function url()
     {
-        return $this->hasMany(InvitationLink::class, 'aw_patient_id');
+        return $this->hasMany(InvitationLink::class, 'awv_patient_id');
     }
    /* public function user()
     {
