@@ -11,8 +11,12 @@ class awvPatients extends Model
         'number',
     ];
 
-    public function user()
+    public function url()
+    {
+        return $this->hasMany(InvitationLink::class, 'aw_patient_id');
+    }
+   /* public function user()
     {
         return $this->hasOne(User::class, 'cpm_user_id');
-    }
+    }*/
 }

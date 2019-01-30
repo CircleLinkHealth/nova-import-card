@@ -6,14 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class InvitationLink extends Model
 {
-    protected $guarded = [];
+    protected $fillable = [
+        'aw_patient_id',
+        'survey_id',
+        'link_token',
+        'is_expired'
+    ];
     protected $casts = [
         'is_expired' => 'boolean'
     ];
-    protected $table = 'invitation_links';
+   // protected $table = 'invitation_links';
 
     public function patient()
     {
-        return $this->belongsTo(awvPatients::class, 'patient_user_id');
+        return $this->belongsTo(awvPatients::class);
     }
 }

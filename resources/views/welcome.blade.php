@@ -91,7 +91,7 @@
                     <a href="https://nova.laravel.com">Nova</a>
                     <a href="https://forge.laravel.com">Forge</a>
                     <a href="https://github.com/laravel/laravel">GitHub</a>
-                    <a href="{{route('createSendUrl')}}">Send Link To survey</a>
+                    <a href="{{route('enterPhoneNumber')}}">Invite Users To AWV</a>
                 </div>
             </div>
         </div>

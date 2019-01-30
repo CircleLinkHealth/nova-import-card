@@ -11,59 +11,74 @@ use Illuminate\Support\Facades\URL;
 
 class AwvPatientsController extends Controller
 {
-    public function enterPhoneNumber()
-    {
-        /*$number  = '987.449.0587';
-        $patient = awvPatients::where('number', $number)->first();
-
-        return redirect(route('createSendUrl', [$patient]));*/
+    public function enterPhoneNumber(Request $request)
+    {//this is temporary just to keep it running
+        if ($request->has('phone_number')) {
+            $number = $request['phone_number'];
+        } else {
+            $number = '987.449.0587';
+        }
+        return redirect(route('createSendUrl', [$number]));
     }
 
-    public function createSendUrl()
+    public function createSendUrl($number)
     {
-        $number  = '590.788.0724 x7232';
         $patient = awvPatients::where('number', $number)->first();
-        $url     = URL::temporarySignedRoute('loginSurvey', now()->addMinutes(1), ['patient' => $patient->id]);
+        //create a unique URL with patient id.
+        $url     = URL::temporarySignedRoute('loginSurvey', now()->addWeeks(2),
+            ['patient' => $patient->id]);
+        //save url
         InvitationLink::create([
             'aw_patient_id' => $patient->id,
-            'survey_id'     => '7',
+            //michalis how should i handle the survey_id? autoincrement?
+            'survey_id'     => '8',
             'link_token'    => $url,
             'is_expired'    => false,
         ]);
-
-        //todo:send SM with $url here and then return feedback
+        //todo:send SMS with $url here and then return feedback
         return 'invitation send';
     }
 
     public function authenticateInvitedUser(Request $request, $patient)
     {
-        //todo: if link has expired click and give option to create another one.
-        // Check if link has expired else expired the previous one an then create new//https://dev.to/fwartner/laravel-56---user-activation-with-signed-routes--notifications-oaa
-        //else{
-
-        if (! $request->hasValidSignature()) {
-            return 'Your link has expired mate! i ll send a new one soon';
+        $incomingUrl = url()->full();
+        //if link is expired
+        if ( ! $request->hasValidSignature()) {
+            InvitationLink::where('aw_patient_id', $patient)
+                          ->where('link_token', $incomingUrl)
+                          ->update(['is_expired' => true]);
+            return view('surveyUrlAuth.resendUrl', compact('patient'));
         }
+        return 'Direct user to Survey Here';
+    }
 
-        $patientUrlExp = InvitationLink::where('aw_patient_id', $patient)->get();
-        foreach ($patientUrlExp as $url) {
-            $url->update(['is_expired' => true]);
-        }
-        return 'Send User to Survey here';
+    public function resendUrl($patient)
+    {
+        $resendTo = awvPatients::with([
+            'url' => function ($expired) {
+                //if previous URLs for this user are not expired then set it to expired
+                $expired->where('is_expired', '=', 0)
+                        ->update(['is_expired' => true]);
+            },
+        ])->where('id', $patient)
+                               ->firstOrFail();
+
+        $phoneNumber = $resendTo->number;
+
+        return redirect(route('createSendUrl', [$phoneNumber]));
     }
 
     public function authSurveyLogin()
     {
         $name      = 'Lauren Breitenberg';
         $birthDate = '1991-06-06';
-
+        // i ll  use validator here
         if ( ! User::where('name', $name)->first()) {
             return 'Name does not exists in our DB'; //todo:something more graceful here
         }
         if ( ! awvPatients::where('birth_date', $birthDate)->first()) {
             return 'Date Of Birth is Wrong';
         }
-
         return 'Login to survey';
     }
 }
