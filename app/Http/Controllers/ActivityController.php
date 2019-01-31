@@ -112,7 +112,6 @@ class ActivityController extends Controller
             $year_selected       = $time->format('Y');
         }
 
-        dd($patient);
         //downloads patient audit
         if ($request->ajax()) {
             return (new PatientDailyAuditReport($patient->patientInfo, Carbon::parse($start)))->renderPDF();
