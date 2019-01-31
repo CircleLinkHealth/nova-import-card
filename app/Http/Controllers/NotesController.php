@@ -211,7 +211,7 @@ class NotesController extends Controller
 
         $validation = \Validator::make($input, [
             'range'        => 'sometimes|integer|between:0,4',
-            'provider'     => 'sometimes|numeric',
+            'provider'     => 'sometimes|integer',
             'mail_filter'  => 'sometimes|boolean',
             'admin_filter' => 'sometimes|boolean',
         ], [
