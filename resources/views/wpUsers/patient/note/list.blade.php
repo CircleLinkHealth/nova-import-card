@@ -6,17 +6,17 @@
 
     <?php
 
-     //Admins and Nurses have a complex role system which is regulated on the front end to minimize dev-time.
-     //Both of them will see all notes ever that were forwarded if they check the "All Forwa..." checkmark.
-     //Other users cannot see this. The regulation happens partly in NotesController@lisiting, which supplies
-     //this view.
+    //Admins and Nurses have a complex role system which is regulated on the front end to minimize dev-time.
+    //Both of them will see all notes ever that were forwarded if they check the "All Forwa..." checkmark.
+    //Other users cannot see this. The regulation happens partly in NotesController@lisiting, which supplies
+    //this view.
 
     if (isset($results)) {
-        $webix = 'data:'.json_encode(array_values($results)).'';
+        $webix = 'data:' . json_encode(array_values($results)) . '';
     }
 
     ?>
-    
+
     @push('scripts')
         <script>
             $(document).ready(function () {
@@ -40,14 +40,14 @@
                         @if(isset($only_mailed_notes) && $only_mailed_notes == true)
                             {{'checked'}}
                                 @endif>
-                        <label for="mail_filter"><span> </span>Only Forwarded Notes <br /></label>
+                        <label for="mail_filter"><span> </span>Only Forwarded Notes <br/></label>
                     </li>
                     <li class=""><input type="checkbox" id="admin_filter" name="admin_filter" value="true"
                         @if(isset($admin_filter) && $admin_filter == true)
                             {{'checked'}}
                                 @endif>
                         @if(auth()->user()->isAdmin() || auth()->user()->hasRole('care-center') )
-                            <label for="admin_filter"><span> </span>All Forwarded Notes for All Programs<br /></label>
+                            <label for="admin_filter"><span> </span>All Forwarded Notes for All Programs<br/></label>
                         @endif
                     </li>
                 </ul>
@@ -72,23 +72,24 @@
                                 >Since {{\Carbon\Carbon::now()->subMonth($i)->format('F, Y')}}</option>
                             @endfor
                         </select>
-                        <button type="submit" id="find" class="btn btn-primary">Go</button><br>
+                        <button type="submit" id="find" class="btn btn-primary">Go</button>
+                        <br>
                         <select name="provider" id="provider" class="provider-select" data-width="200px"
-                            data-size="10" style="display: none;" @if(auth()->user()->isAdmin() == false  &&
+                                data-size="10" style="display: none;" @if(auth()->user()->isAdmin() == false  &&
                                                           auth()->user()->hasRole('care-center') == false)
-                            required
-                            @endif>
-                        <option value="" {{auth()->user()->isAdmin() ? 'selected' : ''}}>Select Provider</option>
-                        @foreach($providers_for_blog as $key => $value)
-                            @if(isset($selected_provider) && $selected_provider->id == $key)
-                                <?php $selected = $selected_provider->display_name; ?>
-                                <option value="{{$selected_provider->id}}"
-                                        selected>{{$selected_provider->display_name}}</option>
-                            @else
-                                <option value={{$key}}>{{$value}}</option>
-                            @endif
-                        @endforeach
-                    </select>
+                                required
+                                @endif>
+                            <option value="" {{auth()->user()->isAdmin() ? 'selected' : ''}}>Select Provider</option>
+                            @foreach($providers_for_blog as $key => $value)
+                                @if(isset($selected_provider) && $selected_provider->id == $key)
+                                    <?php $selected = $selected_provider->display_name; ?>
+                                    <option value="{{$selected_provider->id}}"
+                                            selected>{{$selected_provider->display_name}}</option>
+                                @else
+                                    <option value={{$key}}>{{$value}}</option>
+                                @endif
+                            @endforeach
+                        </select>
                     </div>
                 </div>
                 @push('scripts')
@@ -105,6 +106,11 @@
 
                 <div class="main-form-horizontal main-form-primary-horizontal col-md-12"
                      style="border-top: 3px solid #50b2e2">
+
+                    <div style="margin-top:2px">
+                        @include('errors.errors')
+                    </div>
+
                     @if($isProviderSelected)
                         @if($notes)
                             <div id="obs_alerts_container" class=""></div><br/>
@@ -123,6 +129,7 @@
                                         filter = '<' + filter.toString().toLowerCase();
                                         return value.indexOf(filter) === 0;
                                     }
+
                                     webix.locale.pager = {
                                         first: "<<",// the first button
                                         last: ">>",// the last button
@@ -160,7 +167,10 @@
 
                                             {
                                                 id: "patient_name",
-                                                header: ["Patient Name", {content: "textFilter", placeholder: "Filter"}],
+                                                header: ["Patient Name", {
+                                                    content: "textFilter",
+                                                    placeholder: "Filter"
+                                                }],
                                                 width: 140,
                                                 sort: 'string',
                                                 template: "<a href='<?php echo route('patient.note.view', [
@@ -184,7 +194,13 @@
                                             },
                                             {
                                                 id: "tags",
-                                                css: {'text-align': 'left', 'top': 0, 'left': 0, 'bottom': 0, 'right': 0},
+                                                css: {
+                                                    'text-align': 'left',
+                                                    'top': 0,
+                                                    'left': 0,
+                                                    'bottom': 0,
+                                                    'right': 0
+                                                },
                                                 header: ["Status", {content: "textFilter", placeholder: "Filter"}],
                                                 width: 110,
                                                 sort: 'string'
@@ -325,9 +341,6 @@
                 @else
                     <div style="text-align:center;margin:50px;">There are no patients notes
                         for {{$selected_provider->display_name}} in input range.
-                    </div>
-                    <div>
-                        @include('errors.errors')
                     </div>
                 @endif
                 @else
