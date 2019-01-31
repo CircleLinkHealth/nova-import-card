@@ -137,7 +137,7 @@ class CallController extends Controller
         $validation = \Validator::make($input, [
             'nurse'          => 'required|integer',
             'suggested_date' => 'required|date',
-            'date'           => ['required', 'date:after_or_equal:today', new DateBeforeUsingCarbon('9999-12-31')],
+            'date'           => ['required', 'date:after_or_equal:today', new DateBeforeUsingCarbon()],
             'window_start'   => 'required|date_format:H:i',
             'window_end'     => 'required|date_format:H:i',
             'attempt_note'   => 'sometimes',
@@ -319,7 +319,7 @@ class CallController extends Controller
             'sub_type'        => '',
             'inbound_cpm_id'  => 'required',
             'outbound_cpm_id' => '',
-            'scheduled_date'  => ["required", "after_or_equal:today", new DateBeforeUsingCarbon('9999-12-31')],
+            'scheduled_date'  => ["required", "after_or_equal:today", new DateBeforeUsingCarbon()],
             'window_start'    => 'required|date_format:H:i',
             'window_end'      => 'required|date_format:H:i',
             'attempt_note'    => '',
