@@ -141,7 +141,6 @@ class GenerateOpsDailyReport implements ShouldQueue
                 );
             }
         }
-
         SaasAccount::whereSlug('circlelink-health')
             ->first()
             ->addMedia($path)

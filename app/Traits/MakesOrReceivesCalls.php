@@ -46,12 +46,12 @@ trait MakesOrReceivesCalls
     }
 
     /**
-     * Returns a count of the calls that were scheduled on a given day.
-     *
-     * @param Carbon $date
-     *
-     * @return int
-     */
+ * Returns a count of the calls that were scheduled on a given day.
+ *
+ * @param Carbon $date
+ *
+ * @return int
+ */
     public function countScheduledCallsFor(Carbon $date)
     {
         return $this->scheduledCallsFor($date)->count();
@@ -82,6 +82,18 @@ trait MakesOrReceivesCalls
     public function countSuccessfulCallsMadeToday()
     {
         return $this->successfulCallsFor(Carbon::now())->count();
+    }
+
+    /**
+     * Returns a count of the unsuccessful calls on a given day.
+     *
+     * @param Carbon $date
+     *
+     * @return int
+     */
+    public function countUnSuccessfulCallsFor(Carbon $date)
+    {
+        return $this->unSuccessfulCallsFor($date)->count();
     }
 
     /**
@@ -140,6 +152,16 @@ trait MakesOrReceivesCalls
                 ['calls.status', '=', 'reached'],
             ]);
     }
+
+   /* public function unsuccessfulCallsFor(Carbon $date)
+    {
+        return $this->calls()
+                    ->where([
+                        ['called_date', '>=', $date->startOfDay()->toDateTimeString()],
+                        ['called_date', '<=', $date->endOfDay()->toDateTimeString()],
+                        ['calls.status', '=', 'not reached'],
+                    ]);
+    }*/
 
     /**
      * Returns today's successful calls.

@@ -17,6 +17,7 @@ use App\Console\Commands\DeleteProcessedFiles;
 use App\Console\Commands\DownloadTwilioRecordings;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailWeeklyReports;
+use App\Console\Commands\NursesAndStatesDailyReport;
 use App\Console\Commands\QueueEligibilityBatchForProcessing;
 use App\Console\Commands\QueueGenerateNurseDailyReport;
 use App\Console\Commands\QueueGenerateNurseInvoices;
@@ -169,5 +170,6 @@ class Kernel extends ConsoleKernel
         
         $schedule->command(SecurityMailCommand::class)
                  ->weekly();
+        $schedule->command(NursesAndStatesDailyReport::class)->dailyAt('00:05');
     }
 }

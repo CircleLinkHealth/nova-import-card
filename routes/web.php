@@ -1943,8 +1943,11 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'admin.reports.nurse.monthly',
         ])->middleware('permission:nurseReport.create');
 
+        Route::get('reports/nurse/weekly', [
+            'uses' => 'NursesWeeklyRepController@index',
+            'as'   => 'admin.reports.nurse.weekly',
+        ])->middleware('permission:nurseReport.read');
         //STATS
-
         Route::get('reports/nurse/stats', [
             'uses' => 'NurseController@makeHourlyStatistics',
             'as'   => 'stats.nurse.info',

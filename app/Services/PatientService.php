@@ -61,6 +61,7 @@ class PatientService
                     'age',
                     'registeredOn',
                     'ccm',
+                    'bhi',
                 ]);
                 foreach ($users as $user) {
                     if ($i > 2000000) {
@@ -82,6 +83,7 @@ class PatientService
                             $patient ? ($patient['birth_date'] ? Carbon::parse($patient['birth_date'])->age : 0) : null,
                             $user['created_at'] ? Carbon::parse($user['created_at'])->format('Y-m-d') : null,
                             $patient ? gmdate('H:i:s', $user['ccm_time']) : null,
+                            $patient ? gmdate('H:i:s', $user['bhi_time']) : null,
                         ]);
                         ++$i;
                     }

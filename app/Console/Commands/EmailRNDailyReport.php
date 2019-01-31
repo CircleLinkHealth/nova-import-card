@@ -26,7 +26,9 @@ class EmailRNDailyReport extends Command
      *
      * @var string
      */
-    protected $signature = 'nurses:emailDailyReport {nurseUserIds? : Comma separated user IDs of nurses to email report to.}';
+    protected $signature = 'nurses:emailDailyReport {nurseUserIds? : Comma separated user IDs of nurses to email report to.}
+                                                    {date? : Date to generate report for in YYYY-MM-DD.}
+                                                    ';
     
     /**
      * Create a new command instance.
@@ -44,6 +46,11 @@ class EmailRNDailyReport extends Command
     public function handle()
     {
         $userIds = $this->argument('nurseUserIds') ?? null;
+        $date    = $this->argument('date') ?? Carbon::today();
+        
+        if ( ! is_a($date, Carbon::class)) {
+            $date = Carbon::parse($date);
+        }
         
         $counter    = 0;
         $emailsSent = [];
@@ -58,21 +65,21 @@ class EmailRNDailyReport extends Command
             )
             ->chunk(
                 20,
-                function ($nurses) use (&$counter, &$emailsSent) {
+                function ($nurses) use (&$counter, &$emailsSent, $date) {
                     foreach ($nurses as $nurse) {
                         if ( ! $nurse->nurseInfo) {
                             continue;
                         }
                         $activityTime = Activity::createdBy($nurse)
-                                                ->createdToday('performed_at')
+                                                ->createdOn($date,'performed_at')
                                                 ->sum('duration');
                     
                         $systemTime = PageTimer::where('provider_id', $nurse->id)
-                                               ->createdToday('start_time')
+                                               ->createdOn($date,'start_time')
                                                ->sum('billable_duration');
                     
                         $totalMonthSystemTimeSeconds = PageTimer::where('provider_id', $nurse->id)
-                                                                ->createdThisMonth('start_time')
+                                                                ->createdInMonth($date, 'start_time')
                                                                 ->sum('billable_duration');
                     
                         if (0 == $systemTime) {
