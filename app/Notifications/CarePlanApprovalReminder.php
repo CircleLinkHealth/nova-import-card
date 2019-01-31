@@ -96,17 +96,31 @@ class CarePlanApprovalReminder extends Notification
     /**
      * Get the notification's delivery channels.
      *
+     * The logic here is:
+     * If notifiable has email reminders enabled OR DIRECT reminders but NOT a direct address, we sent to mail.
+     * If notifiable has DIRECT reminders AND address we sent via DIRECT.
+     * If notifiable has BOTH email and direct reminders enabled AND a direct address, we sent both.
+     *
+     *
      * @param mixed $notifiable
      *
      * @return array
      */
     public function via($notifiable)
     {
-        array_push(
+
+        $channels = collect([]);
+
+        if ($notifiable->practiceSettings()->email_careplan_approval_reminders) {
+            $channels->push(MailChannel::class);
+        }
+        $channels->push($notifiable->practiceSettings()->dm_careplan_approval_reminders && $notifiable->emr_direct_address
+            ? DirectMailChannel::class
+            : MailChannel::class);
+
+        $this->channels = array_merge(
             $this->channels,
-            $notifiable->primaryPractice->cpmSettings()->dm_careplan_approval_reminders && $notifiable->emr_direct_address
-                ? DirectMailChannel::class
-                : MailChannel::class
+            $channels->unique()->toArray()
         );
 
         return $this->channels;

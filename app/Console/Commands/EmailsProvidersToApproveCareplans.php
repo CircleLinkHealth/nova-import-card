@@ -144,7 +144,7 @@ class EmailsProvidersToApproveCareplans extends Command
             return false;
         }
 
-        if ( ! $providerUser->primaryPractice->cpmSettings()->email_careplan_approval_reminders) {
+        if ( ! $providerUser->practiceSettings()->email_careplan_approval_reminders && ! $providerUser->practiceSettings()->dm_careplan_approval_reminders) {
             return false;
         }
 
