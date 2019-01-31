@@ -69,7 +69,7 @@
                                 @if(isset($dateFilter) && $dateFilter == $i)
                                     {{'selected'}}
                                         @endif
-                                >Since {{\Carbon\Carbon::now()->subMonth($i)->format('F, Y')}}</option>
+                                >Since {{\Carbon\Carbon::now()->startOfMonth()->subMonth($i)->format('F, Y')}}</option>
                             @endfor
                         </select>
                         <button type="submit" id="find" class="btn btn-primary">Go</button>
