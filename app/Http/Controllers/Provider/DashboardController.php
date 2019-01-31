@@ -224,7 +224,7 @@ class DashboardController extends Controller
 
         if (isset($settingsInput['dm_careplan_approval_reminders'])){
             $providers = $this->primaryPractice->getProviders($this->primaryPractice->id)->filter(function ($p){
-                return ! $p->emr_direct_address ? true : false;
+                return !!! $p->emr_direct_address;
             });
 
             if ($providers->count() > 0){
