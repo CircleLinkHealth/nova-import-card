@@ -428,6 +428,23 @@ class CallController extends Controller
      */
     private function storeNewCall(User $user, $input)
     {
+
+        $scheduledDate = $input['scheduled_date'];
+        $windowStart = $input['window_start'];
+        $windowEnd = $input['window_end'];
+
+        if (!($scheduledDate instanceof Carbon)) {
+            $scheduledDate = Carbon::parse($scheduledDate);
+        }
+
+        if (!($windowStart instanceof Carbon)) {
+            $windowStart = Carbon::parse($windowStart);
+        }
+
+        if (!($windowEnd instanceof Carbon)) {
+            $windowEnd = Carbon::parse($windowEnd);
+        }
+
         $isFamilyOverride = ! empty($input['family_override']);
 
         $call                  = new Call();
@@ -436,9 +453,12 @@ class CallController extends Controller
             ? $input['sub_type']
             : null;
         $call->inbound_cpm_id  = $user->id;
-        $call->scheduled_date  = $input['scheduled_date'];
-        $call->window_start    = $input['window_start'];
-        $call->window_end      = $input['window_end'];
+
+        //make sure we are sending the dates correctly formatted
+        $call->scheduled_date  = $scheduledDate->format('Y-m-d');
+        $call->window_start    = $windowStart->format('H:i');
+        $call->window_end      = $windowEnd->format('H:i');
+
         $call->attempt_note    = $input['attempt_note'];
         $call->note_id         = null;
         $call->is_cpm_outbound = 1;
