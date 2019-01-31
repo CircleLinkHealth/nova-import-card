@@ -987,6 +987,7 @@ if ( ! function_exists('validProblemName')) {
                     'adverse effect drug',
                     'counseling',
                     'new pt',
+                    'hx',
                 ]
             ) && ! in_array(
                 strtolower($name),

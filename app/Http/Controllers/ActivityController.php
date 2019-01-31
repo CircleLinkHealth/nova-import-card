@@ -90,7 +90,7 @@ class ActivityController extends Controller
         Request $request,
         $patientId
     ) {
-        $patient = User::find($patientId);
+        $patient = User::findOrFail($patientId);
 
         $input = $request->all();
 
