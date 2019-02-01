@@ -20,27 +20,41 @@ class SurveyInvitationLinksService
 
     public function createAndSaveUrl($patient)
     {
+        $surveyId = $this->tokenCreate();
         //create a unique URL with patient id.
         $url = URL::temporarySignedRoute('loginSurvey', now()->addWeeks(2),
-            ['patient' => $patient->id]);
-        //save URL to DB
+            [
+                'patient'   => $patient->id,
+                /*'survey_id' => $surveyId,*/ //@todo: if i pass survey_id to url, is different when i get it from the request
+            ]);
         InvitationLink::create([
             'awv_patient_id' => $patient->id,
-            //todo:ask how should i treat survey_id. Autoincrement??
-            'survey_id'     => '8',
-            'link_token'    => $url,
-            'is_expired'    => false,
+            'survey_id'      => $surveyId,
+            'link_token'     => $url,
+            'is_expired'     => false,
         ]);
-
         return $url;
+    }
+
+    /**
+     * @return string
+     */
+    protected function tokenCreate(): string
+    {
+        do {//generate a random numeric string
+            $surveyId = rand();
+            //check if the token already exists and if it does, try again
+        } while (InvitationLink::where('survey_id', $surveyId)->exists());
+
+        return $surveyId;
     }
 
     public function getPatientIdByPhoneNumber($phoneNumber)
     {
-        $patient = awvPatients::with('url')
+        $patientId = awvPatients::with('url')
                               ->where('number', $phoneNumber)
                               ->firstOrFail();
 
-        return $patient;
+        return $patientId;
     }
 }

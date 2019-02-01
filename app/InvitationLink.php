@@ -2,7 +2,6 @@
 
 namespace App;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class InvitationLink extends Model
 {
@@ -14,14 +13,14 @@ class InvitationLink extends Model
         'link_token',
         'is_expired'
     ];
-    //protected $dates = ['deleted_at'];
+
     protected $casts = [
         'is_expired' => 'boolean'
     ];
-   // protected $table = 'invitation_links';
+
 
     public function patient()
     {
-        return $this->belongsTo(awvPatients::class);
+        return $this->belongsTo(AwvPatients::class);
     }
 }

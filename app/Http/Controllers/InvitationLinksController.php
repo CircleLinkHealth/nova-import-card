@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\awvPatients;
+use App\AwvPatients;
 use App\InvitationLink;
-use App\User;
-use Illuminate\Http\Request;
 use App\Services\SurveyInvitationLinksService;
+use App\User;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 
 class InvitationLinksController extends Controller
@@ -17,61 +18,60 @@ class InvitationLinksController extends Controller
     {
         $this->service = $service;
     }
+
     public function enterPhoneNumber(Request $request)
     {//this is temporary just to keep it running.
-        //todo:validate input
-        if ($request->has('phone_number')) {
-            $phoneNumber = $request['phone_number'];
-        } else {
-            $phoneNumber = '601.472.3673';
-        }
-//todo:encrypt the phone number
-        return redirect(route('createSendUrl', [$phoneNumber]));
+        //@todo:validate input
+        $phoneNumber= $request->get('phone_number', '1-836-432-4663 x56539');
+        $this->createSendUrl($phoneNumber);
+        return 'Invitation has been sent';
     }
 
     public function createSendUrl($phoneNumber)
     {
-        $patient = $this->service->getPatientIdByPhoneNumber($phoneNumber);
-        $this->service->checkPatientHasPastUrl($patient);
-        $url = $this->service->createAndSaveUrl($patient);
-        //todo:HERE - send SMS using Twilio with $url and then return feedback
-        return 'Invitation has been send';
+        $patientId = $this->service->getPatientIdByPhoneNumber($phoneNumber);
+        $this->service->checkPatientHasPastUrl($patientId);
+        $url = $this->service->createAndSaveUrl($patientId);
+        //@todo:HERE - send SMS using Twilio with $url and then return feedback
     }
 
-    public function authenticateInvitedUser(Request $request, $patientId)
-    {//when patient clicks on the url will be redirected here
-        $incomingUrl = url()->full();
-        //get patient by id
-        $patient = InvitationLink::where('awv_patient_id', $patientId)
+    public function surveyFormAuth($patientId)
+    {
+        return view('surveyUrlAuth.surveyFormAuth', compact('patientId'));
+    }
+
+    public function resendUrl($patientId)
+    {
+        $resendTo    = AwvPatients::where('id', $patientId)->firstOrFail();
+        $phoneNumber = $resendTo->number;
+        $this->createSendUrl($phoneNumber);
+        return 'New link has is its way';
+    }
+
+    public function authSurveyLogin(Request $request, $patientId)
+    {
+        $name        = $request->input(['name']);
+        $birthDate   = $request->input(['date_of_birth']);
+        $incomingUrl = $request->input(['url']);
+        $invitationLink = InvitationLink::where('awv_patient_id', $patientId)
                                  ->where('link_token', $incomingUrl)
                                  ->firstOrFail();
-        //check url if has past active url.
-        //$request->hasValidSignature() -> checks if the url has expired(past 2 weeks) and if true set expired==true
-        $hasOldValidUrl = $patient->is_expired;
-        if ( ! $request->hasValidSignature() || ! $hasOldValidUrl == false) {
-            $patient->where('is_expired', '=', 0)->update(['is_expired' => true]);
-            return view('surveyUrlAuth.resendUrl', compact('patient'));
-        }
-        return 'Direct user to Survey Here';
-    }
 
-    public function resendUrl($patient)
-    {
-        $resendTo = awvPatients::where('id', $patient)->firstOrFail();
-        $phoneNumber   = $resendTo->number;
-        return redirect(route('createSendUrl', [$phoneNumber]));
-    }
-
-    public function authSurveyLogin()
-    {//input name & DOB
-        $name      = 'Lauren Breitenberg';
-        $birthDate = '1991-06-06';
+        $urlUpdatedAt    = $invitationLink->updated_at;
+        $isExpiredUrl = $invitationLink->is_expired;
+        $today = now();
+        $expireAfter = 14;//days - @todo: not use magic number
         //todo: use validator here
         if ( ! User::where('name', $name)->first()) {
-            return 'Name does not exists in our DB'; //todo:something more graceful here
+            return 'Name does not exists in our DB';
         }
-        if ( ! awvPatients::where('birth_date', $birthDate)->first()) {
+        if ( ! AwvPatients::where('birth_date', $birthDate)->first()) {
             return 'Date Of Birth is Wrong';
+        }
+        if (! $urlUpdatedAt->diffInDays($today) < $expireAfter || ! $isExpiredUrl == false) {
+
+            $invitationLink->where('is_expired', '=', 0)->update(['is_expired' => true]);
+            return view('surveyUrlAuth.resendUrl', compact('patientId'));
         }
         return 'Login to survey';
     }
