@@ -35,22 +35,26 @@ class EmailsProvidersToApproveCareplans extends Command
         $pretend = $this->option('pretend');
 
         $providers = User::ofType('provider')
-            ->with('forwardAlertsTo')
-            ->get();
+                         ->with('forwardAlertsTo')
+                         ->get();
 
         $bar = $this->output->createProgressBar(count($providers));
 
+        //Recipients that do NOT have emr_direct_address, and practice reminder notifications are DIRECT mail: 1, Email: 0
+        $recipientsWithNoDMAddresses = collect([]);
+
         $emailsSent = $providers->map(function ($providerUser) use (
             $bar,
-            $pretend
+            $pretend,
+            $recipientsWithNoDMAddresses
         ) {
             if ( ! $this->shouldSend($providerUser)) {
                 return false;
             }
 
             $recipients = $this->recipients($providerUser)
-                ->unique('id')
-                ->values();
+                               ->unique('id')
+                               ->values();
 
             if ($recipients->isEmpty()) {
                 return false;
@@ -63,8 +67,13 @@ class EmailsProvidersToApproveCareplans extends Command
             }
 
             foreach ($recipients as $recipient) {
-                $this->sendEmail($recipient, $numberOfCareplans, $pretend);
-                $bar->advance();
+                if ( ! $recipient->practiceSettings()->email_careplan_approval_reminders && $recipient->practiceSettings()->dm_careplan_approval_reminders && ! $recipient->emr_direct_address) {
+                    $recipientsWithNoDMAddresses->push("{$recipient->getFullName()}, number of careplans pending approval: {$numberOfCareplans}");
+                    $bar->advance();
+                } else {
+                    $this->sendEmail($recipient, $numberOfCareplans, $pretend);
+                    $bar->advance();
+                }
             }
 
             return [
@@ -74,6 +83,12 @@ class EmailsProvidersToApproveCareplans extends Command
             ];
         });
 
+        if ( ! app()->environment(['local', 'staging']) && $recipientsWithNoDMAddresses->isNotEmpty()) {
+            sendSlackMessage(
+                '#implementations',
+                "We were not able to send Care Plan Approval Notifications via DIRECT to these providers because no DIRECT addresses were found.\n{$recipientsWithNoDMAddresses->implode(",\n")}"
+            );
+        }
         $emailsSent = array_filter($emailsSent->all());
 
         $bar->finish();
