@@ -101,19 +101,19 @@ class NotesController extends Controller
             asort($careteam_info);
 
             $nurse_patient_tasks = Call::where('status', '=', 'scheduled')
-                ->where('type', '=', 'task')
-                ->where('inbound_cpm_id', '=', $patientId)
-                ->where('outbound_cpm_id', '=', $author_id)
-                ->select([
-                    'id',
-                    'type',
-                    'sub_type',
-                    'attempt_note',
-                    'scheduled_date',
-                    'window_start',
-                    'window_end',
-                ])
-                ->get();
+                                       ->where('type', '=', 'task')
+                                       ->where('inbound_cpm_id', '=', $patientId)
+                                       ->where('outbound_cpm_id', '=', $author_id)
+                                       ->select([
+                                           'id',
+                                           'type',
+                                           'sub_type',
+                                           'attempt_note',
+                                           'scheduled_date',
+                                           'window_start',
+                                           'window_end',
+                                       ])
+                                       ->get();
 
             $isCareCoach = Auth::user()->hasRole('care-center');
             $meds        = [];
@@ -156,25 +156,25 @@ class NotesController extends Controller
         }
 
         $patient = User::with([
-            'activities' => function ($q) use ($date) {
+            'activities'   => function ($q) use ($date) {
                 $q->where('logged_from', '=', 'manual_input')
-                    ->where('performed_at', '>=', $date)
-                    ->with('meta')
-                    ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
-                    ->orderBy('performed_at', 'desc');
+                  ->where('performed_at', '>=', $date)
+                  ->with('meta')
+                  ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+                  ->orderBy('performed_at', 'desc');
             },
             'appointments' => function ($q) use ($date) {
                 $q->where('date', '>=', $date);
             },
             'billingProvider',
             'primaryPractice',
-            'notes' => function ($q) use ($date) {
+            'notes'        => function ($q) use ($date) {
                 $q->where('performed_at', '>=', $date)
-                    ->with(['author', 'call', 'notifications']);
+                  ->with(['author', 'call', 'notifications']);
             },
             'patientInfo',
         ])
-            ->findOrFail($patientId);
+                       ->findOrFail($patientId);
 
         //if a patient has no notes for the past 2 months, we load all the results and DON'T display 'show all notes button'
         if ($patient->notes->isEmpty() and false == $showAll) {
@@ -209,10 +209,26 @@ class NotesController extends Controller
     {
         $input = $request->all();
 
+        $validation = \Validator::make($input, [
+            'range'        => 'sometimes|integer|between:0,4',
+            'provider'     => 'sometimes|integer',
+            'mail_filter'  => 'sometimes',
+            'admin_filter' => 'sometimes',
+        ], [
+            'between' => 'Something went wrong with the date you have submitted. Please select one of the options in the dropdown.'
+        ]);
+
+        if ($validation->fails()) {
+            return redirect()
+                ->back()
+                ->withErrors($validation->errors())
+                ->withInput();
+        }
+
         $session_user = auth()->user();
 
         $providers_for_blog = User::whereIn('id', $session_user->viewableProviderIds())
-            ->pluck('display_name', 'id')->sort();
+                                  ->pluck('display_name', 'id')->sort();
 
         //TIME FILTERS
 
@@ -240,6 +256,13 @@ class NotesController extends Controller
         //Check to see whether a provider was selected.
         if (isset($input['provider']) && '' != $input['provider']) {
             $provider = User::find($input['provider']);
+
+            if ( ! $provider) {
+                return redirect()
+                    ->back()
+                    ->withErrors(["Invalid provider id."])
+                    ->withInput();
+            }
 
             if ($only_mailed_notes) {
                 $notes = $this->service->getForwardedNotesWithRangeForProvider($provider->id, $start, $end);
@@ -325,8 +348,8 @@ class NotesController extends Controller
     ) {
         $patient = User::findOrFail($patientId);
         $note    = Note::where('id', $noteId)
-            ->with(['call', 'notifications'])
-            ->firstOrFail();
+                       ->with(['call', 'notifications'])
+                       ->firstOrFail();
 
         $this->service->markNoteAsRead(auth()->user(), $note);
 
@@ -382,7 +405,7 @@ class NotesController extends Controller
      * Also: in some conditions call will be stored for other roles as well.
      * They are never redirected to Schedule Next Calll page.
      *
-     * @param SafeRequest      $request
+     * @param SafeRequest $request
      * @param SchedulerService $schedulerService
      * @param $patientId
      *
@@ -636,18 +659,18 @@ class NotesController extends Controller
         ]);
 
         return redirect()->to(route(
-            'patient.note.view',
-                ['patientId' => $patientId, 'noteId' => $noteId]
-        ).'#create-addendum');
+                                  'patient.note.view',
+                                  ['patientId' => $patientId, 'noteId' => $noteId]
+                              ) . '#create-addendum');
     }
 
     private function shouldPrePopulateWithMedications(User $patient)
     {
         return Practice::whereId($patient->program_id)
-            ->where(function ($q) {
-                $q->where('name', '=', 'phoenix-heart')
-                    ->orWhere('name', '=', 'demo');
-            })
-            ->exists();
+                       ->where(function ($q) {
+                           $q->where('name', '=', 'phoenix-heart')
+                             ->orWhere('name', '=', 'demo');
+                       })
+                       ->exists();
     }
 }
