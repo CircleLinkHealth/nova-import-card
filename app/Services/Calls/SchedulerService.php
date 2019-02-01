@@ -272,6 +272,10 @@ class SchedulerService
             ? null
             : $nurse_id;
 
+        if (!($date instanceof Carbon)) {
+            $date = Carbon::parse($date);
+        }
+
         return Call::create([
             'type'    => 'call',
             'service' => 'phone',
@@ -294,7 +298,8 @@ class SchedulerService
             'call_time'  => 0,
             'created_at' => Carbon::now()->toDateTimeString(),
 
-            'scheduled_date' => $date,
+            //make sure we are sending the date correctly formatted
+            'scheduled_date' => $date->format('Y-m-d'),
             'window_start'   => $window_start,
             'window_end'     => $window_end,
 
