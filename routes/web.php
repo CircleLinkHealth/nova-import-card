@@ -17,6 +17,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 Route::get('enter-phone-number', 'InvitationLinksController@enterPhoneNumber')->name('enterPhoneNumber');
-Route::get('login-survey/{patient}', 'InvitationLinksController@surveyFormAuth')->name('loginSurvey');
+//this is a signed route
+Route::get('login-survey/{patient}/{survey}', 'InvitationLinksController@surveyFormAuth')->name('loginSurvey');
 Route::post('survey-auth/{patient}', 'InvitationLinksController@authSurveyLogin')->name('surveyAuth');
 Route::get('resend-link/{patient}', 'InvitationLinksController@resendUrl')->name('resendUrl');

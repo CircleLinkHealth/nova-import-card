@@ -19,7 +19,6 @@ class CreateInvitationLinksTable extends Migration
             $table->unsignedInteger('survey_id');
             $table->string('link_token')->unique();
             $table->boolean('is_expired')->default(false);
-            $table->softDeletes();
             $table->timestamps();
 
         });
