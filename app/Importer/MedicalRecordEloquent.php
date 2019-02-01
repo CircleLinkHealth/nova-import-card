@@ -334,10 +334,6 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
     public function raiseConcerns()
     {
         $isDuplicate = $this->isDuplicate();
-
-        if ( ! $isDuplicate) {
-            $this->createEligibilityJob();
-        }
     }
 
     /**
@@ -374,11 +370,6 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
         $this->practiceIdPrediction = $practiceId;
 
         return $this;
-    }
-
-    private function createEligibilityJob()
-    {
-        CheckCcdaEnrollmentEligibility::dispatch($this->id, $this->practiceIdPrediction);
     }
 
     /**
