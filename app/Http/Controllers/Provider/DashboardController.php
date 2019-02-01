@@ -230,7 +230,7 @@ class DashboardController extends Controller
             if ($providers->count() > 0){
                 $errors->push("You have selected the option to send Care Plan Approval Reminders via DIRECT. 
 <br><br>The following Providers at {$this->primaryPractice->display_name} do not have DIRECT addresses on file: <br>{$providers->implode('display_name', ", <br>")}<br><br>
-Please update their profiles <a href='staff'>here</a>. They will receive <strong>e-mail</strong> care plan reminders until their profiles are updated with DIRECT addresses.");
+Please update their profiles <a href='staff'>here</a>.");
             }
 
         }
