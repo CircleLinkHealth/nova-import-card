@@ -2152,7 +2152,6 @@ Route::group(['middleware' => 'auth'], function () {
 
 // pagetimer
 Route::group([], function () {
-    //Route::get('pagetimer', 'PageTimerController@store');
     Route::post('api/v2.1/time/patients', [
         'uses' => 'PageTimerController@getTimeForPatients',
         'as'   => 'api.get.time.patients',
@@ -2165,13 +2164,6 @@ Route::group([], function () {
         'uses' => 'CallController@update',
         'as'   => 'api.callupdate',
     ]);
-    /*
-     * Deprecated, in favor of callcreate-multi
-    Route::post('callcreate', [
-        'uses' => 'CallController@create',
-        'as'   => 'api.callcreate',
-    ]);
-    */
     Route::post('callcreate-multi', [
         'uses' => 'CallController@createMulti',
         'as'   => 'api.callcreate-multi',

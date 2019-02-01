@@ -14,18 +14,18 @@
             <div v-if="noLiveCount" class="no-live-count" :class="{ hidden: showLoader }">
                 <div v-if="shouldShowCcmTime()" :class="[ hasBhiTime() ? 'col-md-6' : '' ]">
                     <div>
-                        {{info.monthlyTime}}
+                        <small>CCM</small>
                     </div>
                     <div>
-                        <small>CCM</small>
+                        {{info.monthlyTime}}
                     </div>
                 </div>
                 <div v-if="hasBhiTime()" class="col-md-6">
                     <div>
-                        {{info.monthlyBhiTime}}
+                        <small>BHI</small>
                     </div>
                     <div>
-                        <small>BHI</small>
+                        {{info.monthlyBhiTime}}
                     </div>
                 </div>
             </div>
