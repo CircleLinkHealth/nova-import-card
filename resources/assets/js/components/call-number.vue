@@ -183,9 +183,9 @@
                 numpadCustomLayout: {
 
                     _meta: {
-                        "backspace": { func: "backspace", classes: "control"},
-                        "accept": { func: "accept", text: "Hide", classes: "control featured"},
-                        "zero": { key: "0", width: 130}
+                        "backspace": {func: "backspace", classes: "control"},
+                        "accept": {func: "accept", text: "Hide", classes: "control featured"},
+                        "zero": {key: "0", width: 130}
                     },
 
                     default: [
@@ -253,12 +253,12 @@
                     return;
                 }
                 if (this.connection) {
+                    console.debug('Sending digits to twilio', lastInput.toString());
                     this.connection.sendDigits(lastInput.toString());
                 }
             },
 
             numpadDone: function (val) {
-                console.log(val);
                 this.numpadHide();
             },
 
