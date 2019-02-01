@@ -58,25 +58,25 @@ if (isset($patient)) {
                                     <div>
                                         <div class="{{$monthlyBhiTime === '00:00:00' ? '' : 'col-md-6'}}">
                                             <div>
+                                                <small>CCM</small>
+                                            </div>
+                                            <div>
                                                  <a id="monthly-time-static"
                                                     href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patient' => $patient->id]) }}">
                                                     {{$monthlyTime}}
                                                 </a>
                                             </div>
-                                            <div>
-                                                <small>CCM</small>
-                                            </div>
                                         </div>
                                         @if ($monthlyBhiTime !== '00:00:00')
                                             <div class="col-md-6">
+                                                <div>
+                                                    <small>BHI</small>
+                                                </div>
                                                 <div>
                                                      <a id="monthly-bhi-time-static"
                                                         href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patient' => $patient->id]) }}">
                                                         {{$monthlyBhiTime}}
                                                      </a>
-                                                </div>
-                                                <div>
-                                                    <small>BHI</small>
                                                 </div>
                                         </div>
                                         @endif
