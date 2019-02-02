@@ -147,9 +147,9 @@ class Enrollee extends BaseModel
     const INELIGIBLE = 'ineligible';
 
     /**
-     * status = unreachable.
+     * status = utc.
      */
-    const UNREACHABLE = 'unreachable';
+    const UNREACHABLE = 'utc';
 
     /**
      * status = rejected.
