@@ -22,13 +22,8 @@ class InvitationLinkTest extends TestCase
             'is_expired'     => false,
         ];
 
-        $phoneNumber = [
-            'number' =>  $this->faker->phoneNumber,
-        ];
-
-        $this->post(route('createSendUrl', $phoneNumber) )
-        ->assertStatus(201);
-        //$this->assertDatabaseHas('invitation_links', $attributes);
+        $this->get(route('enterPhoneNumber', $attributes) );
+        $this->assertDatabaseHas('invitation_links', $attributes);
     }
 
     /** @test */

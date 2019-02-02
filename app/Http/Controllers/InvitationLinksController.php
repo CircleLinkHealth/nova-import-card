@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 
 class InvitationLinksController extends Controller
 {
+    const link_expires_in_days = 14;
     private $service;
 
     public function __construct(SurveyInvitationLinksService $service)
@@ -75,7 +76,7 @@ class InvitationLinksController extends Controller
         $urlUpdatedAt = $invitationLink->updated_at;
         $isExpiredUrl = $invitationLink->is_expired;
         $today        = now();
-        $expireRange  = 14; //days - how to avoid use of hardcoded numb. here?
+        $expireRange  = InvitationLinksController::link_expires_in_days;
 
         if ( ! $urlUpdatedAt->diffInDays($today) < $expireRange || ! $isExpiredUrl == false) {
             $invitationLink->where('is_expired', '=', 0)->update(['is_expired' => true]);
