@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class NursesWeeklyRepController extends Controller
 {
-    const no_data_to_s3_before = '2019-02-03';
+    const NO_DATA_ON_S3_BEFORE = '2019-02-03';
     private $service;
 
     public function __construct(NursesAndStatesDailyReportService $service)
@@ -19,7 +19,7 @@ class NursesWeeklyRepController extends Controller
     public function index(Request $request)
     {
         $yesterdayDate = Carbon::yesterday()->startOfDay();
-        $limitDate     = Carbon::parse(NursesWeeklyRepController::no_data_to_s3_before);
+        $limitDate     = Carbon::parse(NursesWeeklyRepController:: NO_DATA_ON_S3_BEFORE);
 
         if ($request->has('date')) {
             $requestDate = new Carbon($request['date']);
