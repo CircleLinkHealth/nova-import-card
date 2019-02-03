@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 
 class NursesWeeklyRepController extends Controller
 {
+    const NO_DATA_ON_S3_BEFORE = '2019-02-03';
     private $service;
 
     public function __construct(NursesAndStatesDailyReportService $service)
@@ -18,14 +19,12 @@ class NursesWeeklyRepController extends Controller
     public function index(Request $request)
     {
         $yesterdayDate = Carbon::yesterday()->startOfDay();
-        //todo: set $limitDate before production
-        $limitDate = Carbon::parse('2019-01-27');
+        $limitDate     = Carbon::parse(NursesWeeklyRepController:: NO_DATA_ON_S3_BEFORE);
 
         if ($request->has('date')) {
             $requestDate = new Carbon($request['date']);
             $date        = $requestDate->copy();
         } else {
-            //if the admin loads the page today, we need to display last day's report till start of that week
             $date = $yesterdayDate->copy();
         }
 
