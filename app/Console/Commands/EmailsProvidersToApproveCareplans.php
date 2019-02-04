@@ -35,13 +35,12 @@ class EmailsProvidersToApproveCareplans extends Command
         $pretend = $this->option('pretend');
 
         $providersCount = User::ofType('provider')
-                              ->with('forwardAlertsTo')
                               ->count();
 
         $bar = $this->output->createProgressBar($providersCount);
 
         //Recipients that do NOT have emr_direct_address, and practice reminder notifications are DIRECT mail: 1, Email: 0
-        $recipientsWithNoDMAddresses = collect([]);
+        $recipientsWithNoDMAddresses = collect();
 
         $emailsSent = [];
 
