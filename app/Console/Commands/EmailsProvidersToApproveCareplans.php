@@ -34,54 +34,62 @@ class EmailsProvidersToApproveCareplans extends Command
     {
         $pretend = $this->option('pretend');
 
-        $providers = User::ofType('provider')
-                         ->with('forwardAlertsTo')
-                         ->get();
+        $providersCount = User::ofType('provider')
+                              ->with('forwardAlertsTo')
+                              ->count();
 
-        $bar = $this->output->createProgressBar(count($providers));
+        $bar = $this->output->createProgressBar($providersCount);
 
         //Recipients that do NOT have emr_direct_address, and practice reminder notifications are DIRECT mail: 1, Email: 0
         $recipientsWithNoDMAddresses = collect([]);
 
-        $emailsSent = $providers->map(function ($providerUser) use (
-            $bar,
-            $pretend,
-            $recipientsWithNoDMAddresses
-        ) {
-            if ( ! $this->shouldSend($providerUser)) {
-                return false;
-            }
+        $emailsSent = [];
 
-            $recipients = $this->recipients($providerUser)
-                               ->unique('id')
-                               ->values();
+        User::ofType('provider')
+            ->with('forwardAlertsTo')
+            ->chunk(50, function ($providers) use (
+                $bar,
+                $pretend,
+                &$recipientsWithNoDMAddresses,
+                &$emailsSent
+            ) {
+                foreach ($providers as $providerUser) {
+                    if ( ! $this->shouldSend($providerUser)) {
+                        continue;
+                    }
 
-            if ($recipients->isEmpty()) {
-                return false;
-            }
+                    $recipients = $this->recipients($providerUser)
+                                       ->unique('id')
+                                       ->values();
 
-            $numberOfCareplans = CarePlan::getNumberOfCareplansPendingApproval($providerUser);
+                    if ($recipients->isEmpty()) {
+                        continue;
+                    }
 
-            if ($numberOfCareplans < 1) {
-                return false;
-            }
+                    $numberOfCareplans = CarePlan::getNumberOfCareplansPendingApproval($providerUser);
 
-            foreach ($recipients as $recipient) {
-                if ( ! $recipient->practiceSettings()->email_careplan_approval_reminders && $recipient->practiceSettings()->dm_careplan_approval_reminders && ! $recipient->emr_direct_address) {
-                    $recipientsWithNoDMAddresses->push("{$recipient->getFullName()}, number of careplans pending approval: {$numberOfCareplans}");
-                    $bar->advance();
-                } else {
-                    $this->sendEmail($recipient, $numberOfCareplans, $pretend);
-                    $bar->advance();
+                    if ($numberOfCareplans < 1) {
+                        continue;
+                    }
+
+                    foreach ($recipients as $recipient) {
+                        if ( ! $recipient->practiceSettings()->email_careplan_approval_reminders && $recipient->practiceSettings()->dm_careplan_approval_reminders && ! $recipient->emr_direct_address) {
+                            $recipientsWithNoDMAddresses->push("{$recipient->getFullName()}, number of careplans pending approval: {$numberOfCareplans}");
+                            $bar->advance();
+                        } else {
+                            $this->sendEmail($recipient, $numberOfCareplans, $pretend);
+                            $bar->advance();
+                        }
+                    }
+
+                    $emailsSent[] = [
+                        'practice'         => $providerUser->primaryPractice->display_name,
+                        'receivers'        => $recipients->implode('display_name', ', '),
+                        'pendingApprovals' => $numberOfCareplans,
+                    ];
                 }
-            }
+            });
 
-            return [
-                'practice'         => $providerUser->primaryPractice->display_name,
-                'receivers'        => $recipients->implode('display_name', ', '),
-                'pendingApprovals' => $numberOfCareplans,
-            ];
-        });
 
         if ( ! app()->environment(['local', 'staging']) && $recipientsWithNoDMAddresses->isNotEmpty()) {
             sendSlackMessage(
@@ -89,8 +97,6 @@ class EmailsProvidersToApproveCareplans extends Command
                 "We were not able to send Care Plan Approval Notifications via DIRECT to these providers because no DIRECT addresses were found.\n{$recipientsWithNoDMAddresses->implode(",\n")}"
             );
         }
-        $emailsSent = array_filter($emailsSent->all());
-
         $bar->finish();
 
         $this->table([
@@ -170,3 +176,4 @@ class EmailsProvidersToApproveCareplans extends Command
         return true;
     }
 }
+
