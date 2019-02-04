@@ -35,42 +35,14 @@ if (isset($patient) && ! empty($patient)) {
                     @if(!isset($isPdf))
                         <div class="row">
                             <div class="col-xs-12 text-right hidden-print">
-
-                                <div class="col-sm-12" style="text-align: center">
-                                    <br/>
+                                <div class="text-center">
                                     <span style="font-size: 27px;{{$ccm_above ? 'color: #47beab;' : ''}}">
-                                        <span data-monthly-time="{{$monthlyTime}}" style="color: inherit">
-
-                                            <?php
-                                            $noLiveCountTimeTracking = $useOldTimeTracker
-                                                ? true
-                                                : (isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking);
-                                            $ccmCountableUser = auth()->user()->isCCMCountable();
-                                            ?>
-                                            @if ($noLiveCountTimeTracking)
-                                                <div class="color-grey">
-                                                        <a href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patient' => $patient->id]) }}">
-                                                            {{$monthlyTime}}
-                                                        </a>
-                                                        <span style="display:none">
-                                                            <time-tracker ref="TimeTrackerApp"
-                                                                          :twilio-enabled="@json(config('services.twilio.enabled') && (isset($patient) && $patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : true))"
-                                                                          class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
-                                                                          :info="timeTrackerInfo"
-                                                                          :no-live-count="@json(($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? true : false)"
-                                                                          :override-timeout="{{config('services.time-tracker.override-timeout')}}"></time-tracker>
-                                                        </span>
-                                                    </div>
-                                            @else
-                                                <time-tracker ref="TimeTrackerApp"
-                                                              class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
-                                                              :twilio-enabled="@json(config('services.twilio.enabled') && (isset($patient) && $patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : true))"
-                                                              :info="timeTrackerInfo"
-                                                              :no-live-count="@json(($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? true : false)"
-                                                              :override-timeout="{{config('services.time-tracker.override-timeout')}}">
-                                                            @include('partials.tt-loader')
-                                                    </time-tracker>
-                                            @endif
+                                        <span data-monthly-time="{{$monthlyTime}}" style="color: inherit"
+                                              data-href="{{ empty($patient->id) ? route('patients.search') : route('patient.activity.providerUIIndex', array('patient' => $patient->id)) }}">
+                                            <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo"
+                                                          :twilio-enabled="@json(config('services.twilio.enabled') && (isset($patient) && $patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : true))"
+                                                          :hide-tracker="true"
+                                                          :override-timeout="{{config('services.time-tracker.override-timeout')}}"></time-tracker>
                                         </span>
                                     </span>
                                 </div>
@@ -129,28 +101,18 @@ if (isset($patient) && ! empty($patient)) {
                                     @else
                                         <pdf-careplans v-cloak>
                                             <template slot="buttons">
-                                                <?php
-                                                $patientCarePlan = isset($patient)
-                                                    ? $patient->carePlan
-                                                    : null;
-                                                $patientCarePlanPdfs = isset($patientCarePlan)
-                                                    ? $patientCarePlan->pdfs
-                                                    : null;
-                                                $patientCarePlanPdfsHasItems = isset($patientCarePlanPdfs)
-                                                    ? $patientCarePlanPdfs->count() > 0
-                                                    : false;
-                                                ?>
-                                                @if(auth()->user()->providerInfo && auth()->user()->hasRole('provider'))
-                                                    <form class="inline-block"
-                                                          action="{{route('provider.update-approve-own')}}"
-                                                          method="POST">
-                                                        {{csrf_field()}}
-                                                        <input class="btn btn-sm btn-default" aria-label="..."
-                                                               type="submit"
-                                                               value="@if(auth()->user()->providerInfo->approve_own_care_plans)View all Practice Care Plans @else View Assigned Care Plans Only @endif">
-                                                    </form>
-                                                @endif
-                                                @if ($patientCarePlanPdfsHasItems)
+                                            <?php
+                                            $patientCarePlan = isset($patient)
+                                                ? $patient->carePlan
+                                                : null;
+                                            $patientCarePlanPdfs = isset($patientCarePlan)
+                                                ? $patientCarePlan->pdfs
+                                                : null;
+                                            $patientCarePlanPdfsHasItems = isset($patientCarePlanPdfs)
+                                                ? $patientCarePlanPdfs->count() > 0
+                                                : false;
+                                            ?>
+                                            @if ($patientCarePlanPdfsHasItems)
                                                 <!--href="{{route('patient.pdf.careplan.print', ['patientId' => $patient->id])}}"-->
                                                     <a href="{{route('switch.to.pdf.careplan', ['carePlanId' => optional($patientCarePlan)->id])}}"
                                                        class="btn btn-info btn-sm inline-block">PDF CarePlans</a>
@@ -188,6 +150,16 @@ if (isset($patient) && ! empty($patient)) {
                                                             }
                                                         </script>
                                                     </form>
+
+                                                    @if(auth()->user()->providerInfo)
+                                                        <form class="inline-block" action="{{route('provider.update-approve-own')}}"
+                                                              method="POST">
+                                                            {{csrf_field()}}
+                                                            <input class="btn btn-sm btn-default" aria-label="..."
+                                                                   type="submit"
+                                                                   value="@if(auth()->user()->providerInfo->approve_own_care_plans)Approve all practice patients @else Approve my patients only @endif">
+                                                        </form>
+                                                    @endif
                                                 @endif
                                             @endif
 
