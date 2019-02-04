@@ -17,18 +17,22 @@ interface DirectMail
 
     /**
      * @param $outboundRecipient
-     * @param $binaryAttachmentFilePath
-     * @param $binaryAttachmentFileName
-     * @param null      $ccdaAttachmentPath
+     * @param null $binaryAttachmentFilePath
+     * @param null $binaryAttachmentFileName
+     * @param null $ccdaAttachmentPath
      * @param User|null $patient
+     * @param null $body
+     * @param null $subject
      *
      * @return mixed
      */
     public function send(
         $outboundRecipient,
-        $binaryAttachmentFilePath,
-        $binaryAttachmentFileName,
+        $binaryAttachmentFilePath = null,
+        $binaryAttachmentFileName = null,
         $ccdaAttachmentPath = null,
-        User $patient = null
+        User $patient = null,
+        $body = null,
+        $subject = null
     );
 }

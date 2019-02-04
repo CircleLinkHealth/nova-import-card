@@ -105,6 +105,13 @@
                            value="1" @if($practiceSettings->dm_audit_reports){{'checked'}}@endif>
                     <label for="dm_audit_reports">Send Audit Reports</label>
                 </div>
+
+                <div class="input-field col s6">
+                    <input name="settings[dm_careplan_approval_reminders]" type="checkbox"
+                           id="dm_careplan_approval_reminders"
+                           value="1" @if($practiceSettings->dm_careplan_approval_reminders){{'checked'}}@endif>
+                    <label for="dm_careplan_approval_reminders">Send Care Plan Approval Reminders</label>
+                </div>
             </div>
 
             <div class="row">
