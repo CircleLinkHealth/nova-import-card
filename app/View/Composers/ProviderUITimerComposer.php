@@ -71,8 +71,8 @@ class ProviderUITimerComposer extends ServiceProvider
                 $patientProgramId = $patient->user->program_id;
                 $ccm_time = $patient->user->getCcmTime();
                 $bhi_time = $patient->user->getBhiTime();
-                $monthlyTime = $patient->formattedTime($ccm_time);
-                $monthlyBhiTime = $patient->formattedTime($bhi_time);
+                $monthlyTime = $patient->user->formattedTime($ccm_time);
+                $monthlyBhiTime = $patient->user->formattedTime($bhi_time);
                 //also, do NOT show BHI switch if user's primary practice is not being charged for CPT 99484
                 $noBhiSwitch = $noBhiSwitch || ! optional($patient->user->primaryPractice()->first())->hasServiceCode('CPT 99484');
             }
