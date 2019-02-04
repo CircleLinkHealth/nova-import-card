@@ -151,6 +151,15 @@ class EnrolleeFilters extends QueryFilters
         return $this->builder->where('medical_record_id', 'like', '%' . $id . '%');
     }
 
+    public function attempt_count($count){
+
+        if (empty($count)) {
+            return $this->builder;
+        }
+
+        return $this->builder->where('attempt_count', 'like', '%' . $count . '%');
+    }
+
     public function hideStatus($statuses){
             return $this->builder->whereNotIn('status', $statuses);
     }

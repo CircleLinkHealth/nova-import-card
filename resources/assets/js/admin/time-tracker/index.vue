@@ -11,7 +11,24 @@
             </div>
         </div>
         <span v-if="visible" class="time-tracker">
-            <div v-if="noLiveCount" :class="{ hidden: showLoader }">{{info.monthlyTime}}</div>
+            <div v-if="noLiveCount" class="no-live-count" :class="{ hidden: showLoader }">
+                <div v-if="shouldShowCcmTime()" :class="[ hasBhiTime() ? 'col-md-6' : '' ]">
+                    <div>
+                        <small>CCM</small>
+                    </div>
+                    <div>
+                        {{info.monthlyTime}}
+                    </div>
+                </div>
+                <div v-if="hasBhiTime()" class="col-md-6">
+                    <div>
+                        <small>BHI</small>
+                    </div>
+                    <div>
+                        {{info.monthlyBhiTime}}
+                    </div>
+                </div>
+            </div>
             <bhi-switch ref="bhiSwitch" :is-manual-behavioral="info.isManualBehavioral"
                         :user-id="info.providerId" :is-bhi="info.isBehavioral" :is-ccm="info.isCcm"
                         v-if="!info.noBhiSwitch && (info.isCcm || info.isBehavioral)"></bhi-switch>
@@ -85,6 +102,14 @@
             }
         },
         methods: {
+            shouldShowCcmTime() {
+                //we show ccm time, even if zero time. we do not show when empty string
+                return this.info.monthlyBhiTime && this.info.monthlyBhiTime.length > 0;
+            },
+            hasBhiTime() {
+                const zeroTime = "00:00:00";
+                return this.info.monthlyBhiTime && this.info.monthlyBhiTime.length > 0 && this.info.monthlyBhiTime !== zeroTime;
+            },
             updateTime() {
                 if (this.info.initSeconds == 0) this.info.initSeconds = Math.ceil(startupTime() / 1000)
                 else this.info.initSeconds = -1
@@ -195,19 +220,9 @@
                 catch (ex) {
                     console.error(ex);
                 }
-            },
-            positionNotificationsBox() {
-
-                $('#notifications-wrapper').offset({
-                    top: 20,
-                    left: $(document).width() - 330
-                });
-
             }
         },
         mounted() {
-
-            this.positionNotificationsBox();
 
             this.previousSeconds = this.info.totalTime || 0;
             this.info.initSeconds = 0
@@ -392,6 +407,9 @@
     }
 
     #notifications-wrapper {
+        position: fixed;
+        top: 65px;
+        right: 15px;
         width: 300px;
         font-size: small;
         text-align: left;
@@ -399,6 +417,11 @@
 
     .notifications-connection-error {
         position: absolute;
+    }
+
+    .no-live-count {
+        max-width: 350px;
+        margin: auto;
     }
 
 </style>

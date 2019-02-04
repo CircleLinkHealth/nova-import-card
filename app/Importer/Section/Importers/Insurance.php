@@ -17,6 +17,8 @@ class Insurance extends BaseImporter
         $medicalRecordType,
         ImportedMedicalRecord $importedMedicalRecord
     ) {
+        $insurances = collect();
+
         $itemLogs = InsuranceLog::where('medical_record_type', '=', $medicalRecordType)
             ->where('medical_record_id', '=', $medicalRecordId)
             ->get();
@@ -33,6 +35,10 @@ class Insurance extends BaseImporter
                 'approved'            => false,
                 'import'              => true,
             ]);
+
+            $insurances->push($insurance);
         }
+
+        return $insurances;
     }
 }

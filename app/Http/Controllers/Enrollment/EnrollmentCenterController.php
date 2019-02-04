@@ -92,12 +92,9 @@ class EnrollmentCenterController extends Controller
             ]);
         }
 
-        //This will only bring enrollees assigned to care ambassador from CA Director Panel
-        $enrolleeQuery = Enrollee::where('care_ambassador_user_id', $careAmbassador->user_id);
-
         //if logged in ambassador is spanish, pick up a spanish patient
         if ($careAmbassador->speaks_spanish) {
-            $enrollee = $enrolleeQuery
+            $enrollee = Enrollee::where('care_ambassador_user_id', $careAmbassador->user_id)
                 ->toCall()
                 ->where('lang', 'ES')
                 ->orderBy('attempt_count')
@@ -106,21 +103,21 @@ class EnrollmentCenterController extends Controller
 
             //if no spanish, get a EN user.
             if (null == $enrollee) {
-                $enrollee = $enrolleeQuery
+                $enrollee = Enrollee::where('care_ambassador_user_id', $careAmbassador->user_id)
                     ->toCall()
                     ->orderBy('attempt_count')
                     ->with('practice.enrollmentTips')
                     ->first();
             }
         } else { // auth ambassador doesn't speak ES, get a regular user.
-            $enrollee = $enrolleeQuery
+            $enrollee = Enrollee::where('care_ambassador_user_id', $careAmbassador->user_id)
                 ->toCall()
                 ->orderBy('attempt_count')
                 ->with('practice.enrollmentTips')
                 ->first();
         }
 
-        $engagedEnrollee = $enrolleeQuery
+        $engagedEnrollee = Enrollee::where('care_ambassador_user_id', $careAmbassador->user_id)
             ->where('status', '=', 'engaged')
             ->orderBy('attempt_count')
             ->with('practice.enrollmentTips')

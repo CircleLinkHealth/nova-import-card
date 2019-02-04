@@ -102,7 +102,7 @@ class WebixFormatter implements ReportFormatter
             return [
                 'id'            => $activity->id,
                 'logger_name'   => $activity->provider->getFullName(),
-                'comment'       => $activity->getCommentForActivity(),
+                'comment'       => $activity->getCommentForActivity() ?? '',
                 'logged_from'   => 'manual_input',
                 'type_name'     => $activity->type,
                 'performed_at'  => $activity->performed_at,
