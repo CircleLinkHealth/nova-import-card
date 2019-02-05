@@ -22,12 +22,13 @@ class AttachBillableProblemsToLastMonthSummary extends Command
      * @var string
      */
     protected $description = 'Attach 2 billable problems to each of last month\'s summaries';
+    
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'summaries:attach-problems-to-last-month';
+    protected $signature = 'summaries:attach-problems-to-last-month  {practiceIds? : comma separated. leave empty to recalculate for all}';
 
     /**
      * Create a new command instance.
@@ -45,10 +46,15 @@ class AttachBillableProblemsToLastMonthSummary extends Command
      */
     public function handle()
     {
+        $practiceIds = array_filter(explode(',', $this->argument('practiceIds')));
+        
         $month = Carbon::now()
             ->subMonth();
 
         Practice::active()
+            ->when($practiceIds, function ($q) use ($practiceIds) {
+                $q->whereIn('id', $practiceIds);
+            })
             ->get()
             ->map(function ($practice) use ($month) {
                 $this->billablePatientsRepo->billablePatients($practice->id, $month)
