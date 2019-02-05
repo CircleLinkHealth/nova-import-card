@@ -64,25 +64,33 @@ class AttachBillableProblemsToLastMonthSummary extends Command
                         $q->whereIn('id', $practiceIds);
                     }
                 )
-                ->get()
-                ->map(
-                    function ($practice) use ($month) {
-                        $this->billablePatientsRepo->billablePatients($practice->id, $month)
-                                                   ->get()
-                                                   ->map(
-                                                       function ($u) {
-                                                           $pms = $u->patientSummaries->first();
-                        
-                                                           if ( ! ! $this->option('reset')) {
-                                                               $pms->reset();
-                                                               $pms->save();
+                ->chunk(
+                    5,
+                    function ($practices) use ($month) {
+                        foreach ($practices as $practice) {
+                            $this->comment("BEGIN processing $practice->display_name for {$month->toDateString()}");
+                    
+                            $this->billablePatientsRepo->billablePatients($practice->id, $month)
+                                                       ->get()
+                                                       ->map(
+                                                           function ($u) {
+                                                               $pms = $u->patientSummaries->first();
+                            
+                                                               if ( ! ! $this->option('reset')) {
+                                                                   $pms->reset();
+                                                                   $pms->save();
+                                                               }
+                            
+                                                               AttachBillableProblemsToSummary::dispatch(
+                                                                   $pms
+                                                               );
                                                            }
-
-                                                           AttachBillableProblemsToSummary::dispatch(
-                                                               $pms
-                                                           );
-                                                       }
-                                                   );
+                                                       );
+                    
+                            $this->output->success(
+                                "END processing $practice->display_name for {$month->toDateString()}"
+                            );
+                        }
                     }
                 );
     }
