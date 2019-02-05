@@ -1,6 +1,6 @@
 <?php
 
-use App\awvPatients;
+use App\AwvPatients;
 use Illuminate\Database\Seeder;
 
 class AwvPatientsTableSeeder extends Seeder
@@ -12,6 +12,6 @@ class AwvPatientsTableSeeder extends Seeder
      */
     public function run()
     {
-        factory(awvPatients::class, 100)->create();
+        factory(AwvPatients::class, 100)->create();
     }
 }

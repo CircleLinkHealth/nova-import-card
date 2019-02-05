@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class awvPatients extends Model
+class AwvPatients extends Model
 {
     protected $fillable = [
         'cpm_user_id',
@@ -13,6 +13,6 @@ class awvPatients extends Model
 
     public function url()
     {
-        return $this->hasMany(InvitationLink::class, 'awv_patient_id');
+        return $this->hasMany(InvitationLink::class, 'awv_user_id');
     }
 }

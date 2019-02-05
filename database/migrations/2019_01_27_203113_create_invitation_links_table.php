@@ -15,10 +15,10 @@ class CreateInvitationLinksTable extends Migration
     {
         Schema::create('invitation_links', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('awv_patient_id');
+            $table->unsignedInteger('awv_user_id');
             $table->unsignedInteger('survey_id');
             $table->string('link_token')->unique();
-            $table->boolean('is_expired')->default(false);
+            $table->boolean('is_manually_expired')->default(false);
             $table->timestamps();
 
         });

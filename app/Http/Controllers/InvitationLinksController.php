@@ -7,11 +7,12 @@ use App\InvitationLink;
 use App\Services\SurveyInvitationLinksService;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 
 class InvitationLinksController extends Controller
 {
-    const link_expires_in_days = 14;
+    const LINK_EXPIRES_IN_DAYS = 14;
     private $service;
 
     public function __construct(SurveyInvitationLinksService $service)
@@ -19,48 +20,52 @@ class InvitationLinksController extends Controller
         $this->service = $service;
     }
 
-    public function enterPhoneNumber(Request $request)
+    public function enterPatientForm()
     {
-        //@todo:create input form & validate input
-        $phoneNumber = $request->get('phone_number');
+        return view('invitationLink.enterPatientForm');
+    }
 
-        $this->createSendUrl($phoneNumber);
+    public function sendInvitationLink(Request $request)
+    {//@todo:should validate using more conditions
+
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|exists:users,id',
+        ]);
+
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $userId = $request->get('id');
+        $url    = $this->service->createAndSaveUrl($userId);
+
+        //@todo:HERE - send SMS using Twilio with $url and then return feedback
 
         return 'Invitation has been sent';
     }
 
-    public function createSendUrl($phoneNumber)
+    public function surveyFormAuth(Request $request, $userId)
     {
-        $patientId = $this->service->getPatientIdByPhoneNumber($phoneNumber);
-        $this->service->checkPatientHasPastUrl($patientId);
-        $url = $this->service->createAndSaveUrl($patientId);
+        $urlWithToken = $request->getRequestUri();
 
-        //@todo:HERE - send SMS using Twilio with $url and then return feedback
+        return view('surveyUrlAuth.surveyFormAuth', compact('userId', 'urlWithToken'));
     }
 
-    public function surveyFormAuth($patientId)
+    public function resendUrl($userId)
     {
-        return view('surveyUrlAuth.surveyFormAuth', compact('patientId'));
-    }
-
-    public function resendUrl($patientId)
-    {
-        $resendTo = AwvPatients::where('id', $patientId)
-                               ->firstOrFail();
-
-        $phoneNumber = $resendTo->number;
-        $this->createSendUrl($phoneNumber);
+        $this->service->createAndSaveUrl($userId);
 
         return 'New link is on its way';
     }
 
-    public function authSurveyLogin(Request $request, $patientId)
+    public function authSurveyLogin(Request $request, $userId)
     {
         $name      = $request->input(['name']);
         $birthDate = $request->input(['date_of_birth']);
-        $url       = $request->session()->previousUrl();
+        $url       = $request->input(['url']);
 
-        //todo: use validator here
         if ( ! User::where('name', $name)->first()) {
             return 'Name does not exists in our DB';
         }
@@ -69,19 +74,20 @@ class InvitationLinksController extends Controller
         }
 
         $urlToken = $this->service->parseUrl($url);
-        $invitationLink = InvitationLink::where('awv_patient_id', $patientId)
+
+        $invitationLink = InvitationLink::where('awv_user_id', $userId)
                                         ->where('link_token', $urlToken)
                                         ->firstOrFail();
 
         $urlUpdatedAt = $invitationLink->updated_at;
-        $isExpiredUrl = $invitationLink->is_expired;
+        $isExpiredUrl = $invitationLink->is_manually_expired;
         $today        = now();
-        $expireRange  = InvitationLinksController::link_expires_in_days;
+        $expireRange  = InvitationLinksController::LINK_EXPIRES_IN_DAYS;
 
         if ( ! $urlUpdatedAt->diffInDays($today) < $expireRange || ! $isExpiredUrl == false) {
-            $invitationLink->where('is_expired', '=', 0)->update(['is_expired' => true]);
+            $invitationLink->where('is_manually_expired', '=', 0)->update(['is_manually_expired' => true]);
 
-            return view('surveyUrlAuth.resendUrl', compact('patientId'));
+            return view('surveyUrlAuth.resendUrl', compact('userId'));
         }
 
         return 'Login to survey';

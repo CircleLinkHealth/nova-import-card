@@ -16,8 +16,10 @@ use Illuminate\Http\Request;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('enter-phone-number', 'InvitationLinksController@enterPhoneNumber')->name('enterPhoneNumber');
+
+Route::get('enter-patient-form', 'InvitationLinksController@enterPatientForm')->name('enterPatientForm');
+Route::post('send-invitation-link', 'InvitationLinksController@sendInvitationLink')->name('sendInvitationLink');
 //this is a signed route
-Route::get('login-survey/{patient}/{survey}', 'InvitationLinksController@surveyFormAuth')->name('loginSurvey');
-Route::post('survey-auth/{patient}', 'InvitationLinksController@authSurveyLogin')->name('surveyAuth');
-Route::get('resend-link/{patient}', 'InvitationLinksController@resendUrl')->name('resendUrl');
+Route::get('login-survey/{user}/{survey}', 'InvitationLinksController@surveyFormAuth')->name('loginSurvey');
+Route::post('survey-auth/{user}', 'InvitationLinksController@authSurveyLogin')->name('surveyAuth');
+Route::post('resend-link/{user}', 'InvitationLinksController@resendUrl')->name('resendUrl');
