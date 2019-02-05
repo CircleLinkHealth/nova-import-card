@@ -58,6 +58,7 @@ class Settings extends \App\BaseModel
         'dm_pdf_careplan',
         'dm_pdf_notes',
         'dm_audit_reports',
+        'dm_careplan_approval_reminders',
 
         //Efax Notifications
         'efax_pdf_careplan',
