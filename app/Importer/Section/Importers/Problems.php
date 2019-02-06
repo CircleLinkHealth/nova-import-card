@@ -59,12 +59,15 @@ class Problems extends BaseImporter
 
                 $cpmProblemId = $this->getCpmProblemId($itemLog, $problemCodes->cons_name);
 
+                //if problem is Diabetes and string contains 2, it's probably diabetes type 2
                 if (1 == $cpmProblemId && str_contains($problemCodes->cons_name, ['2'])) {
                     $cpmProblemId = $this->cpmProblems->firstWhere(
                                                 'name',
                                                 'Diabetes Type 2'
                                             )->id;
-                } elseif (1 == $cpmProblemId && str_contains(
+                }
+                //if problem is Diabetes and string contains 1, it's probably diabetes type 1
+                elseif (1 == $cpmProblemId && str_contains(
                                             $problemCodes->cons_name,
                                                 ['1']
                                         )) {

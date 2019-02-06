@@ -71,19 +71,21 @@ class AttachBillableProblemsToLastMonthSummary extends Command
                             $this->comment("BEGIN processing $practice->display_name for {$month->toDateString()}");
                     
                             $this->billablePatientsRepo->billablePatients($practice->id, $month)
-                                                       ->get()
-                                                       ->map(
-                                                           function ($u) {
-                                                               $pms = $u->patientSummaries->first();
-                            
-                                                               if ( ! ! $this->option('reset')) {
-                                                                   $pms->reset();
-                                                                   $pms->save();
+                                                       ->chunk(
+                                                           50,
+                                                           function ($users) {
+                                                               foreach ($users as $user) {
+                                                                   $pms = $user->patientSummaries->first();
+                                
+                                                                   if ( ! ! $this->option('reset')) {
+                                                                       $pms->reset();
+                                                                       $pms->save();
+                                                                   }
+                                
+                                                                   AttachBillableProblemsToSummary::dispatch(
+                                                                       $pms
+                                                                   );
                                                                }
-                            
-                                                               AttachBillableProblemsToSummary::dispatch(
-                                                                   $pms
-                                                               );
                                                            }
                                                        );
                     
