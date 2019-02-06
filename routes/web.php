@@ -550,7 +550,7 @@ Route::group(['middleware' => 'auth'], function () {
         });
     });
 
-    Route::resource('profiles', 'API\ProfileController')->middleware('permission:user.read,role.read');
+    Route::resource('profiles', 'API\ProfileController');
 
     Route::resource('user.care-plan', 'API\PatientCarePlanController')->middleware('permission:careplan.read');
 
