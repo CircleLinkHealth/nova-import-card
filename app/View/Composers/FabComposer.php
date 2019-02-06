@@ -21,7 +21,7 @@ class FabComposer extends ServiceProvider
             $sessionUser = auth()->user();
 
             if (! $sessionUser){
-                throw new \Exception('No authenticated User found.', 500);
+                throw new \Exception('No authenticated User found.', 403);
             }
 
             $canAddOfflineActivity = $sessionUser->hasPermission('offlineActivity.create');
