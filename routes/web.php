@@ -1108,8 +1108,6 @@ Route::group(['middleware' => 'auth'], function () {
             ])->middleware('permission:patient.read,offlineActivityRequest.read');
         });
 
-        Route::get('pokit', 'PokitDokController@thisIsJustToTryThingsOut');
-
         Route::group(['prefix' => 'direct-mail'], function () {
             Route::get('{directMailId}', [
                 'uses' => 'DirectMailController@show',
