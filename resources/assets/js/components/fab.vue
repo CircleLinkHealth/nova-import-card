@@ -17,7 +17,7 @@
                     <p class="text">Add Observation</p>
                 </div>
 
-                <div v-if="offlineActivityPermissibles.includes(theCurrentUser.role.name)" class="mini-action-button">
+                <div v-if="this.canAddOfflineActivity" class="mini-action-button">
                     <a :href="createActivityUrl">
                         <i class="icon material-icons">local_hospital</i>
                     </a>
@@ -71,7 +71,6 @@
         data() {
             return {
                 hasPractice: false,
-                offlineActivityPermissibles: ['administrator', 'provider', 'med_assistant', 'office_admin', 'registered-nurse', 'specialist'],
                 createNoteUrl: this.document().querySelector('meta[name="route.patient.note.create"]').getAttribute('content'),
                 createObservationUrl: this.document().querySelector('meta[name="route.patient.observation.create"]').getAttribute('content'),
                 createActivityUrl: this.document().querySelector('meta[name="route.patient.activity.create"]').getAttribute('content'),
@@ -80,6 +79,12 @@
             }
         },
 
+        props: {
+            canAddOfflineActivity: {
+                type: Boolean,
+                required: true
+            }
+        },
         computed: Object.assign(
             mapGetters({
                 theCurrentUser: 'currentUser'

@@ -13,6 +13,7 @@ use App\Providers\ObserversServiceProvider;
 use App\Providers\TwilioClientServiceProvider;
 use App\Providers\ViewComposerServiceProvider;
 use App\View\Composers\ProviderUITimerComposer;
+use App\View\Composers\FabComposer;
 use App\View\Composers\SAAS\Admin\ManageInternalUser;
 use Carbon\Carbon;
 
@@ -228,6 +229,7 @@ return [
         Waavi\UrlShortener\UrlShortenerServiceProvider::class,
         GoogleDriveServiceProvider::class,
         ManageInternalUser::class,
+        FabComposer::class,
         LynX39\LaraPdfMerger\PdfMergerServiceProvider::class,
         AuthyServiceProvider::class,
         PragmaRX\Health\ServiceProvider::class,
