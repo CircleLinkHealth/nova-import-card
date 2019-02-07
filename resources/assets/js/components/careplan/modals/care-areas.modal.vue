@@ -406,6 +406,12 @@
     .modal-care-areas .modal-container {
         width: 900px;
     }
+    @media only screen and (max-width: 768px) {
+        /* For mobile phones: */
+        .modal-care-areas .modal-container {
+            width: 95%;
+        }
+    }
 
     .modal-care-areas .modal-footer {
         padding: 0px;
@@ -574,4 +580,6 @@
     input.warning {
         border: 1px solid #fa0;
     }
+
+
 </style>

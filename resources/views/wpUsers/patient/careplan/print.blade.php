@@ -180,7 +180,7 @@ if (isset($patient) && ! empty($patient)) {
                         </div>
                     @endif
                     <div class="row gutter">
-                        <div class="col-xs-12">
+                        <div class="col-lg-12 col-lg-offset-0 col-xs-12 col-xs-offset-2">
                             <h1 class="patient-summary__title patient-summary__title_9 patient-summary--careplan">Care
                                 Plan</h1>
                         </div>
@@ -191,16 +191,16 @@ if (isset($patient) && ! empty($patient)) {
                     <br>
 
                     <div class="row gutter">
-                        <div class="col-xs-5 print-row text-bold">{{$patient->getFullName()}}
+                        <div class="col-xs-8 col-xs-offset-3 print-row text-bold">{{$patient->getFullName()}}
                             (DOB: {{$patient->patientInfo->dob()}})
                         </div>
-                        <div class="col-xs-3 print-row">{{$patient->getPhone()}}</div>
-                        <div class="col-xs-4 print-row text-right">{{$today}}</div>
+                        <div class="col-xs-6 print-row">{{$patient->getPhone()}}</div>
+                        <div class="col-xs-6 print-row text-right">{{$today}}</div>
                     </div>
 
                     <div class="row gutter">
                         @if($billingDoctor)
-                            <div class="col-xs-5 print-row text-bold">
+                            <div class="col-xs-6 print-row text-bold">
                                 {{ $billingDoctor->getDoctorFullNameWithSpecialty() }}
                             </div>
                             <div class="col-xs-3 print-row">
@@ -213,7 +213,7 @@ if (isset($patient) && ! empty($patient)) {
                             <div class="col-xs-3 print-row">
                             </div>
                         @endif
-                        <div class="col-xs-4 print-row text-bold text-right">{{$patient->getPreferredLocationName()}}</div>
+                        <div class="col-xs-6 print-row text-bold text-right">{{$patient->getPreferredLocationName()}}</div>
                     </div>
 
 

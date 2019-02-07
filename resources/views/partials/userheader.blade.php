@@ -1,6 +1,6 @@
 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12" style="padding-bottom:9px">
     <div class="row">
-        <div class="col-sm-12">
+        <div class="col-sm-12 col-xs-12">
             <div class="col-sm-8" style="line-height: 22px;">
                 <span style="font-size: 30px;"> <a
                             href="{{ route('patient.summary', array('patient' => $patient->id)) }}">
@@ -9,7 +9,7 @@
                 @if($ccm_complex)
                     <span id="complex_tag"
                           style="background-color: #ec683e;font-size: 15px; position: relative; top: -7px;"
-                          class="label label-warning"> Complex CCM</span>
+                          class="label label-warning">Complex CCM</span>
                     @push('scripts')
                         <script>
                             (function () {
