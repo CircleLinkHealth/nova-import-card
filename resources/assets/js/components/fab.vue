@@ -17,7 +17,7 @@
                     <p class="text">Add Observation</p>
                 </div>
 
-                <div v-if="theCurrentUser.role.name === 'administrator'" class="mini-action-button">
+                <div v-if="this.canAddOfflineActivity" class="mini-action-button">
                     <a :href="createActivityUrl">
                         <i class="icon material-icons">local_hospital</i>
                     </a>
@@ -79,6 +79,12 @@
             }
         },
 
+        props: {
+            canAddOfflineActivity: {
+                type: Boolean,
+                required: true
+            }
+        },
         computed: Object.assign(
             mapGetters({
                 theCurrentUser: 'currentUser'
