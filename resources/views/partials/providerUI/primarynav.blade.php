@@ -25,7 +25,7 @@ if (isset($patient)) {
 <nav class="navbar primary-navbar">
     <div class="row container-fluid full-width margin-0">
 
-        <div class="navbar-header col-lg-1 col-sm-2 col-xs-2">
+        <div class="navbar-header col-lg-1 col-sm-2 col-xs-4">
             <a href="{{ url('/') }}" style="border: none" class="navbar-brand"><img
                         src="{{mix('/img/ui/clh_logo_lt.png')}}"
                         alt="Care Plan Manager"
@@ -36,14 +36,14 @@ if (isset($patient)) {
 
         </div>
 
-        <div class="col-lg-4 col-sm-10 col-xs-10" id="search-bar-container">
+        <div class="col-lg-4 col-lg-push-0 col-sm-10 col-xs-8 col-xs-push-1" id="search-bar-container">
             @include('partials.search')
         </div>
 
-        <div class="hidden-xs col-lg-7 col-sm-12">
+        <div class="{{--hidden-xs --}}col-lg-7 col-sm-12 col-xs-12">
             <ul class="nav navbar-nav navbar-right">
                 @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && auth()->user()->hasRole('care-center') && isset($patient) && optional($patient)->id && (!isset($noLiveCountTimeTracking)))
-                    <li>
+                    <li class=" col-lg-3 col-xs-4">
                         <time-tracker-call-mode ref="timeTrackerCallMode"
                                                 :twilio-enabled="@json(config('services.twilio.enabled') && ($patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : false))"
                                                 :patient-id="{{ $patient->id }}"></time-tracker-call-mode>
@@ -89,14 +89,14 @@ if (isset($patient)) {
                                       :override-timeout="{{config('services.time-tracker.override-timeout')}}"></time-tracker>
                     </li>
                 @endif
-                <li>
+                <li class="hidden-xs">
                     <a href="{{ route('patients.dashboard') }}"><i class="icon--home--white"></i> Home</a>
                 </li>
-                <li>
+                <li class="hidden-xs">
                     <a href="{{ route('patients.listing') }}"><i class="icon--patients"></i> Patient List</a>
                 </li>
 
-                <li class="dropdown">
+                <li class="dropdown hidden-xs">
                     <div class="dropdown-toggle" data-toggle="dropdown" role="button"
                          aria-expanded="false"
                          style="background: none !important;padding: 15px;line-height: 20px;cursor: pointer;">
@@ -119,7 +119,7 @@ if (isset($patient)) {
                     </ul>
                 </li>
 
-                <li class="dropdown">
+                <li class="dropdown col-lg-push-0 col-xs-8 col-xs-push-1">
                     <div class="dropdown-toggle" data-toggle="dropdown" role="button"
                          aria-expanded="false"
                          style="background: none !important;padding: 15px;line-height: 20px;cursor: pointer;">
@@ -136,13 +136,13 @@ if (isset($patient)) {
                         @endImpersonating
 
                         @if(auth()->user()->hasRole(['care-center']) && auth()->user()->isNotSaas())
-                            <li>
+                            <li class="hidden-xs">
                                 <a href="{{ route('offline-activity-time-requests.index') }}"
                                    id="offline-activity-time-requests-index-link">
                                     Offline Activity Time Requests
                                 </a>
                             </li>
-                            <li>
+                            <li class="hidden-xs">
                                 <a href="{{ route('care.center.work.schedule.index') }}" id="work-schedule-link">
                                     Work Schedule
                                 </a>

@@ -21,15 +21,20 @@
                 </div>
                 @include('partials.userheader')
 
-                {!! Form::open(array('url' => route('patient.activity.providerUIIndex', ['patientId' => $patient]), 'method' => 'GET', 'class' => 'form-horizontal', 'style' => 'margin-right: 10px')) !!}
-                <div class="col-sm-3" style="top: 16px">
+                {!! Form::open(array('url' => route('patient.activity.providerUIIndex',
+                ['patientId' => $patient]),
+                'method' => 'GET',
+                'class' => 'form-horizontal',
+                'style' => 'margin-right: 10px'
+                )) !!}
+                <div class="col-sm-3 col-xs-3" style="top: 20px">
                     <button type="submit"
                             href="{{route('patient.activity.providerUIIndex', ['patientId' => $patient])}}"
                             value="audit" name="audit" id="audit" class="btn btn-primary">Audit Report
                     </button>
                 </div>
-                <div class="form-group  pull-right" style="margin-top:10px; ">
-                    <i class="icon icon--date-time"></i>
+                <div class="form-group pull-right col-xs-7" style="margin-top:10px; ">
+                    <i class="icon icon--date-time hidden-xs"></i>
                     <div class="inline-block">
                         <label for="selectMonth" class="sr-only">Select Month:</label>
                         <select name="selectMonth" id="selectMonth" class="selectpicker" data-width="200px"
@@ -58,7 +63,7 @@
                 </div>
                 {!! Form::close() !!}
 
-                <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12"
+                <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12 col-xs-12"
                      style="border-top: 3px solid #50b2e2">
                     @if($data)
                         <div id="obs_alerts_container" class=""></div><br/>
