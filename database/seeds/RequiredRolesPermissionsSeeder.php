@@ -211,6 +211,8 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'addendum.update',
                     'addendum.delete',
                     'addendum.read',
+                    'role.read',
+                    'offlineActivity.create'
                 ],
             ],
             [
@@ -549,6 +551,8 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'addendum.update',
                     'addendum.delete',
                     'addendum.read',
+                    'role.read',
+                    'offlineActivity.create'
                 ],
             ],
             [
@@ -583,6 +587,9 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'patientSummary.read',
                     'appointment.read',
                     'careplan-pdf.create',
+                    'user.read',
+                    'role.read',
+                    'offlineActivity.create'
                 ],
             ],
             [
@@ -738,6 +745,8 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'addendum.update',
                     'addendum.delete',
                     'addendum.read',
+                    'role.read',
+                    'offlineActivity.create'
                 ],
             ],
             [
@@ -752,6 +761,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'care-plan-approve',
                     'users-view-all',
                     'users-view-self',
+                    'user.read',
                     'user.create',
                     'user.update',
                     'call.create',
@@ -854,6 +864,8 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'addendum.delete',
                     'addendum.read',
                     'note.send',
+                    'role.read',
+                    'offlineActivity.create'
                 ],
             ],
             [
