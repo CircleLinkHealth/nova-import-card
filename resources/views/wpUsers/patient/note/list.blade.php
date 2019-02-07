@@ -74,22 +74,31 @@
                         </select>
                         <button type="submit" id="find" class="btn btn-primary">Go</button>
                         <br>
-                        <select name="provider" id="provider" class="provider-select" data-width="200px"
-                                data-size="10" style="display: none;" @if(auth()->user()->isAdmin() == false  &&
+                        <div style="padding-top: 10px">
+                            <select name="getNotesFor[]" id="getNotesFor" data-placeholder="Select Practice or Provider" multiple="" class="provider-select" data-width="200px"
+                                    data-size="10" style="display: none;" @if(auth()->user()->isAdmin() == false  &&
                                                           auth()->user()->hasRole('care-center') == false)
-                                required
-                                @endif>
-                            <option value="" {{auth()->user()->isAdmin() ? 'selected' : ''}}>Select Provider</option>
-                            @foreach($providers_for_blog as $key => $value)
-                                @if(isset($selected_provider) && $selected_provider->id == $key)
-                                    <?php $selected = $selected_provider->display_name; ?>
-                                    <option value="{{$selected_provider->id}}"
-                                            selected>{{$selected_provider->display_name}}</option>
-                                @else
-                                    <option value={{$key}}>{{$value}}</option>
-                                @endif
-                            @endforeach
-                        </select>
+                                    required
+                                    @endif>
+                                {{--<option value="" {{auth()->user()->isAdmin() ? 'selected' : ''}}>Select Practice or Provider</option>--}}
+                                <optgroup label="All Providers at Practice">
+                                    @foreach($select_groups['practices'] as $key => $value)
+
+                                        <option value="practice:{{$key}}" @if(isset($selected) && array_key_exists('practices', $selected) && in_array($key, $selected['practices']))
+                                        selected  @endif>{{$value}}</option>
+
+                                    @endforeach
+                                </optgroup>
+                                <optgroup label="Provider">
+                                    @foreach($select_groups['providers'] as $key => $value)
+                                            <option value="provider:{{$key}}"  @if(isset($selected) && array_key_exists('providers', $selected) && in_array($key, $selected['providers']))
+                                                    selected @endif>{{$value}}</option>
+
+                                    @endforeach
+                                </optgroup>
+
+                            </select>
+                        </div>
                     </div>
                 </div>
                 @push('scripts')
