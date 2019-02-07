@@ -2,11 +2,11 @@
 
 # Enable at will
 # composer dumpautoload
-COMPOSER_DUMP_AUTOLOAD_EC=$?
+#COMPOSER_DUMP_AUTOLOAD_EC=$?
 
-if [ $COMPOSER_DUMP_AUTOLOAD_EC -eq "0" ]
-then
-    echo "all good 😍"
-else
-    echo "post-checkout failed 😭"
-fi
+#if [ $COMPOSER_DUMP_AUTOLOAD_EC -eq "0" ]
+#then
+#    echo "all good 😍"
+#else
+#    echo "post-checkout failed 😭"
+#fi

@@ -141,8 +141,8 @@
 <template>
     <div class="col-md-12" style="padding-top: 2%;" v-cloak>
         <div class="row">
-            <div class="col-md-3">
-                
+            <div class="col-md-3 text-left">
+                <slot name="careplanViewOptions"></slot>
             </div>
             <div class="col-md-9 text-right">
                 <slot name="buttons"></slot>
