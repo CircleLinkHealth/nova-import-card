@@ -76,22 +76,22 @@
                         <br>
                         <div style="padding-top: 10px">
                             <select name="getNotesFor[]" id="getNotesFor" data-placeholder="Select Practice or Provider" multiple="" class="provider-select" data-width="200px"
-                                    data-size="10" style="display: none;" @if(auth()->user()->isAdmin() == false  &&
-                                                          auth()->user()->hasRole('care-center') == false)
+                                    data-size="10" style="display: none;" @if(! auth()->user()->isAdmin()  &&
+                                                          ! auth()->user()->hasRole('care-center'))
                                     required
                                     @endif>
                                 {{--<option value="" {{auth()->user()->isAdmin() ? 'selected' : ''}}>Select Practice or Provider</option>--}}
                                 <optgroup label="All Providers at Practice">
-                                    @foreach($select_groups['practices'] as $key => $value)
+                                    @foreach($practices as $key => $value)
 
-                                        <option value="practice:{{$key}}" @if(isset($selected) && array_key_exists('practices', $selected) && in_array($key, $selected['practices']))
+                                        <option name="something" value="practice:{{$key}}" @if(isset($input['getNotesFor']) && in_array("practice:{$key}", $input['getNotesFor']))
                                         selected  @endif>{{$value}}</option>
 
                                     @endforeach
                                 </optgroup>
                                 <optgroup label="Provider">
-                                    @foreach($select_groups['providers'] as $key => $value)
-                                            <option value="provider:{{$key}}"  @if(isset($selected) && array_key_exists('providers', $selected) && in_array($key, $selected['providers']))
+                                    @foreach($providers as $key => $value)
+                                            <option value="provider:{{$key}}"  @if(isset($input['getNotesFor']) && in_array("provider:{$key}", $input['getNotesFor']))
                                                     selected @endif>{{$value}}</option>
 
                                     @endforeach
@@ -300,9 +300,7 @@
                                         </div>
                                         Forward Seen By Provider
                                     </li>
-
                                 </div>
-
                                 <div class="col-sm-6">
                                     @if(auth()->user()->hasRole(['administrator', 'med_assistant', 'provider']))
                                         <input type="button" value="Export as Excel" class="btn btn-primary"
@@ -319,8 +317,6 @@
                                                        'date':             { header:'Performed',    width:200, sort:'string', template: webix.template('#date#')},
 
                                                        }});">
-
-
                                         <input type="button" value="Export as PDF" class="btn btn-primary"
                                                style='margin:15px;'
                                                onclick="webix.toPDF($$(obs_alerts_dtable), {
@@ -349,7 +345,7 @@
                 </div>
                 @else
                     <div style="text-align:center;margin:50px;">There are no patients notes
-                        for {{$selected_provider->display_name}} in input range.
+                        for your selection in input range.
                     </div>
                 @endif
                 @else

@@ -210,24 +210,14 @@ class NotesController extends Controller
     {
         $session_user = auth()->user();
 
-        $selected = [];
         if ($request->has('getNotesFor')) {
-            $providers = collect($request->getNotesFor)->map(function ($for) use (&$selected) {
-                $data = explode(':', $for);
-                if ($data[0] == 'practice') {
-                    $selected['practices'][] = $data[1];
-
-                    return Practice::getProviders($data[1])->pluck('id')->all();
-                } else {
-                    $selected['providers'][] = $data[1];
-
-                    return User::find($data[1])->id;
-                }
-            }
-            )->flatten()->all();
+            $providers = $this->getProviders($request->getNotesFor);
         }
 
-        $dropdownSelectGroups = $this->getDropdownSelectGroups($session_user);
+        $providersForDropdown = User::whereIn('id', $session_user->viewableProviderIds())
+                                    ->pluck('display_name', 'id')->sort();
+        $practicesForDropdown = Practice::whereIn('id', $session_user->viewableProgramIds())
+                                        ->pluck('display_name', 'id')->sort();
 
         $months = $request->has('range')
             ? $request->range
@@ -246,7 +236,6 @@ class NotesController extends Controller
             } else {
                 $notes = $this->service->getNotesWithRangeForProvider($providers, $start, $end);
             }
-
             if ( ! empty($notes)) {
                 $notes = $this->formatter->formatDataForNotesListingReport($notes, $request);
             }
@@ -255,9 +244,9 @@ class NotesController extends Controller
                 'notes'              => $notes,
                 'dateFilter'         => $months,
                 'results'            => $notes,
-                'select_groups'      => $dropdownSelectGroups,
+                'providers'          => $providersForDropdown,
+                'practices'          => $practicesForDropdown,
                 'isProviderSelected' => true,
-                'selected'           => $selected,
                 'only_mailed_notes'  => $only_mailed_notes,
                 'admin_filter'       => $admin_filter,
             ];
@@ -268,7 +257,6 @@ class NotesController extends Controller
                 //same program as the provider selected.
 
                 $notes = $this->service->getAllForwardedNotesWithRange(Carbon::parse($start), Carbon::parse($end));
-
                 if ( ! empty($notes)) {
                     $notes = $this->formatter->formatDataForNotesListingReport($notes, $request);
                 }
@@ -277,17 +265,17 @@ class NotesController extends Controller
                     'notes'              => $notes,
                     'dateFilter'         => $months,
                     'results'            => $notes,
-                    'select_groups'      => $dropdownSelectGroups,
+                    'providers'          => $providersForDropdown,
+                    'practices'          => $practicesForDropdown,
                     'isProviderSelected' => true,
-                    'selected'           => $selected,
                     'only_mailed_notes'  => $only_mailed_notes,
                     'admin_filter'       => $admin_filter,
                 ];
             } else { // Not enough data for a report, return only the essentials
                 $data = [
-                    'title'              => 'No Provider Selected',
                     'notes'              => false,
-                    'select_groups'      => $dropdownSelectGroups,
+                    'providers'          => $providersForDropdown,
+                    'practices'          => $practicesForDropdown,
                     'isProviderSelected' => false,
                     'only_mailed_notes'  => false,
                     'dateFilter'         => $months,
@@ -295,7 +283,7 @@ class NotesController extends Controller
             }
         }
 
-        return view('wpUsers.patient.note.list', $data);
+        return view('wpUsers.patient.note.list', $data)->with('input', $request->input());
     }
 
     public function send(
@@ -642,14 +630,18 @@ class NotesController extends Controller
                        ->exists();
     }
 
-    private function getDropdownSelectGroups($user){
-
-        $selectGroups['practices'] = Practice::whereIn('id', $user->viewableProgramIds())
-                                             ->pluck('display_name', 'id')->sort();
-        $selectGroups['providers'] = User::whereIn('id', $user->viewableProviderIds())
-                                         ->pluck('display_name', 'id')->sort();
-
-        return $selectGroups;
+    private function getProviders($getNotesFor)
+    {
+        return collect($getNotesFor)->map(function ($for) {
+            $data = explode(':', $for);
+            if ($data[0] == 'practice') {
+                return Practice::getProviders($data[1])->pluck('id')->all();
+            } else {
+                return User::find($data[1])->id;
+            }
+        })
+                                    ->flatten()
+                                    ->all();
     }
 
 }
