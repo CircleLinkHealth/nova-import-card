@@ -11,8 +11,8 @@
     //Other users cannot see this. The regulation happens partly in NotesController@lisiting, which supplies
     //this view.
 
-    if (isset($results)) {
-        $webix = 'data:' . json_encode(array_values($results)) . '';
+    if ($notes && ! empty($notes)) {
+        $webix = 'data:' . json_encode(array_values($notes)) . '';
     }
 
     ?>
@@ -37,13 +37,13 @@
                 <div style="clear:both"></div>
                 <ul class="person-conditions-list inline-block pull-left">
                     <li class="inline-block"><input type="checkbox" id="mail_filter" name="mail_filter" value="true"
-                        @if(isset($only_mailed_notes) && $only_mailed_notes == true)
+                        @if(isset($input['mail_filter']))
                             {{'checked'}}
                                 @endif>
                         <label for="mail_filter"><span> </span>Only Forwarded Notes <br/></label>
                     </li>
                     <li class=""><input type="checkbox" id="admin_filter" name="admin_filter" value="true"
-                        @if(isset($admin_filter) && $admin_filter == true)
+                        @if(isset($input['admin_filter']))
                             {{'checked'}}
                                 @endif>
                         @if(auth()->user()->isAdmin() || auth()->user()->hasRole('care-center') )
@@ -66,7 +66,7 @@
                             <option value="">Select Range</option>
                             @for($i = 0; $i < 4; $i++)
                                 <option value={{$i}}
-                                @if(isset($dateFilter) && $dateFilter == $i)
+                                @if(isset($input['range']) && $input['range'] == $i)
                                     {{'selected'}}
                                         @endif
                                 >Since {{\Carbon\Carbon::now()->startOfMonth()->subMonth($i)->format('F, Y')}}</option>
@@ -80,11 +80,10 @@
                                                           ! auth()->user()->hasRole('care-center'))
                                     required
                                     @endif>
-                                {{--<option value="" {{auth()->user()->isAdmin() ? 'selected' : ''}}>Select Practice or Provider</option>--}}
                                 <optgroup label="All Providers at Practice">
                                     @foreach($practices as $key => $value)
 
-                                        <option name="something" value="practice:{{$key}}" @if(isset($input['getNotesFor']) && in_array("practice:{$key}", $input['getNotesFor']))
+                                        <option value="practice:{{$key}}" @if(isset($input['getNotesFor']) && in_array("practice:{$key}", $input['getNotesFor']))
                                         selected  @endif>{{$value}}</option>
 
                                     @endforeach
@@ -306,7 +305,7 @@
                                         <input type="button" value="Export as Excel" class="btn btn-primary"
                                                style='margin:15px;'
                                                onclick="webix.toExcel($$(obs_alerts_dtable), {
-                                                       header:'CarePlanManager.com - All Patient Notes @if(isset($selected_provider)) for {{$selected_provider->getFullName()}} @endif since <?=\Carbon\Carbon::now()->subMonth($dateFilter ?? 0)->format('F, Y'); ?>',
+                                                       header:'CarePlanManager.com - All Patient Notes since <?=\Carbon\Carbon::now()->subMonth($input['range'] ?? 0)->format('F, Y'); ?>',
                                                        orientation:'landscape',
                                                        autowidth:true,
                                                        columns:{
@@ -320,7 +319,7 @@
                                         <input type="button" value="Export as PDF" class="btn btn-primary"
                                                style='margin:15px;'
                                                onclick="webix.toPDF($$(obs_alerts_dtable), {
-                                                       header:'CarePlanManager.com - All Patient Notes @if(isset($selected_provider)) for {{$selected_provider->getFullName()}} @endif @if(isset($dateFilter)) since <?=\Carbon\Carbon::now()->subMonth($dateFilter)->format('F, Y'); ?> @endif',
+                                                       header:'CarePlanManager.com - All Patient Notes @if(isset($input['range'])) since <?=\Carbon\Carbon::now()->subMonth($input['range'])->format('F, Y'); ?> @endif',
                                                        orientation:'landscape',
                                                        autowidth:true,
                                                        columns:{

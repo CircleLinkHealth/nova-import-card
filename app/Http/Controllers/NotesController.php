@@ -214,24 +214,18 @@ class NotesController extends Controller
             $providers = $this->getProviders($request->getNotesFor);
         }
 
-        $providersForDropdown = User::whereIn('id', $session_user->viewableProviderIds())
+        $data['providers'] = User::whereIn('id', $session_user->viewableProviderIds())
                                     ->pluck('display_name', 'id')->sort();
-        $practicesForDropdown = Practice::whereIn('id', $session_user->viewableProgramIds())
-                                        ->pluck('display_name', 'id')->sort();
+        $data['practices']  = Practice::whereIn('id', $session_user->viewableProgramIds())
+                                      ->pluck('display_name', 'id')->sort();
 
-        $months = $request->has('range')
-            ? $request->range
-            : 0;
-        $start  = Carbon::now()->startOfMonth()->subMonth($months)->format('Y-m-d');
+        $start  = Carbon::now()->startOfMonth()->subMonth($request->has('range') ? $request->range : 0)->format('Y-m-d');
         $end    = Carbon::now()->endOfMonth()->format('Y-m-d');
 
-        $only_mailed_notes = $request->has('mail_filter');
-        $admin_filter      = $request->has('admin_filter');
-
-        //Check to see whether a provider was selected.
+        //Check to see whether there are providers to fetch notes for.
         if (isset($providers) && ! empty($providers)) {
 
-            if ($only_mailed_notes) {
+            if ($request->has('mail_filter')) {
                 $notes = $this->service->getForwardedNotesWithRangeForProvider($providers, $start, $end);
             } else {
                 $notes = $this->service->getNotesWithRangeForProvider($providers, $start, $end);
@@ -239,47 +233,23 @@ class NotesController extends Controller
             if ( ! empty($notes)) {
                 $notes = $this->formatter->formatDataForNotesListingReport($notes, $request);
             }
-
-            $data = [
-                'notes'              => $notes,
-                'dateFilter'         => $months,
-                'results'            => $notes,
-                'providers'          => $providersForDropdown,
-                'practices'          => $practicesForDropdown,
-                'isProviderSelected' => true,
-                'only_mailed_notes'  => $only_mailed_notes,
-                'admin_filter'       => $admin_filter,
-            ];
+            $data['notes'] = $notes;
+            $data['isProviderSelected'] = true;
         } else {
-            if ($session_user->hasRole(['administrator', 'care-center']) && $admin_filter) {
+            if ($session_user->hasRole(['administrator', 'care-center']) && $request->has('admin_filter')) {
                 //If an admin is viewing this, we show them all
                 //notes from all providers who are in the
                 //same program as the provider selected.
-
                 $notes = $this->service->getAllForwardedNotesWithRange(Carbon::parse($start), Carbon::parse($end));
                 if ( ! empty($notes)) {
                     $notes = $this->formatter->formatDataForNotesListingReport($notes, $request);
                 }
-
-                $data = [
-                    'notes'              => $notes,
-                    'dateFilter'         => $months,
-                    'results'            => $notes,
-                    'providers'          => $providersForDropdown,
-                    'practices'          => $practicesForDropdown,
-                    'isProviderSelected' => true,
-                    'only_mailed_notes'  => $only_mailed_notes,
-                    'admin_filter'       => $admin_filter,
-                ];
-            } else { // Not enough data for a report, return only the essentials
-                $data = [
-                    'notes'              => false,
-                    'providers'          => $providersForDropdown,
-                    'practices'          => $practicesForDropdown,
-                    'isProviderSelected' => false,
-                    'only_mailed_notes'  => false,
-                    'dateFilter'         => $months,
-                ];
+                $data['notes'] = $notes;
+                $data['isProviderSelected'] = true;
+            } else {
+                // Not enough data for a report, return only the essentials
+                $data['notes'] = false;
+                $data['isProviderSelected'] = false;
             }
         }
 
