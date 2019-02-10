@@ -7,7 +7,7 @@
 @section('content')
     <div class="container container--menu">
         <div class="row row-centered">
-            <div class="col-sm-12 ">
+            <div class="col-sm-12">
                 <ul class="" style="margin:0;padding:0;">
 
                     {{--<li class="menu-item">--}}

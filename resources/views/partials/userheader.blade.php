@@ -31,8 +31,7 @@
                         <li class="inline-block">{{$patient->getBirthDate() ?? 'N/A'}} <span
                                     style="color: #4390b5">•</span>
                         </li>
-                        <li class="inline-block">{{$patient->getGender() ?? 'N/A'}} <span
-                             li       style="color: #4390b5">•</span>
+                        <li class="inline-block">{{$patient->getGender() ?? 'N/A'}} <span style="color: #4390b5">•</span>
                         </li>
                         <li class="inline-block">{{$patient->getAge() ?? 'N/A'}} yrs <span
                                     style="color: #4390b5">•</span>
