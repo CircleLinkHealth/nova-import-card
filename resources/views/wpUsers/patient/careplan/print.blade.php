@@ -191,7 +191,7 @@ if (isset($patient) && ! empty($patient)) {
                     <br>
 
                     <div class="row gutter">
-                        <div class="col-xs-8 col-xs-offset-3 print-row text-bold">{{$patient->getFullName()}}
+                        <div class="col-lg-offset-0 col-xs-8 col-xs-offset-3 print-row text-bold">{{$patient->getFullName()}}
                             (DOB: {{$patient->patientInfo->dob()}})
                         </div>
                         <div class="col-xs-6 print-row">{{$patient->getPhone()}}</div>

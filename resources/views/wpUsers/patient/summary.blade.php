@@ -171,8 +171,8 @@
                                         header: ["Date" <?= $filter; ?>],
                                         css: {"text-align": "left"},
                                         sort: 'string',
-                                        fillspace: true,
-                                        adjust: true
+                                        fillspace: false,
+                                        adjust: true,
                                     }
                                 ],
                                 ready: function () {

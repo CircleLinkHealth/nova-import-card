@@ -23,8 +23,7 @@
                         </script>
                     @endpush
                 @endif
-                <a
-                        href="{{ route('patient.demographics.show', array('patient' => $patient->id)) }}"><span
+                <a href="{{ route('patient.demographics.show', array('patient' => $patient->id)) }}"><span
                             class="glyphicon glyphicon-pencil" style="margin-right:3px;"></span></a><br/>
 
                 <ul class="inline-block" style="margin-left: -40px; font-size: 16px">
@@ -33,7 +32,7 @@
                                     style="color: #4390b5">•</span>
                         </li>
                         <li class="inline-block">{{$patient->getGender() ?? 'N/A'}} <span
-                                    style="color: #4390b5">•</span>
+                             li       style="color: #4390b5">•</span>
                         </li>
                         <li class="inline-block">{{$patient->getAge() ?? 'N/A'}} yrs <span
                                     style="color: #4390b5">•</span>
