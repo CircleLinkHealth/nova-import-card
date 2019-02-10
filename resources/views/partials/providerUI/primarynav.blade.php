@@ -47,7 +47,7 @@ if (isset($patient)) {
                     style="position:relative;top:-15px"
                     width="50px"/></a>
 
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+        <button type="button" class="navbar-toggle collapsed" style="background-color:white" data-toggle="collapse"
                 data-target="#navbar-collapse" aria-expanded="false">
             <span class="sr-only">Toggle navigation</span>
             <span class="icon-bar"></span>

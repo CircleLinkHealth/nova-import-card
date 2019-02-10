@@ -35,7 +35,7 @@
 </head>
 <body>
 
-    <nav class="navbar primary-navbar col-sm-4 col-sm-offset-4 col-lg-12 col-lg-offset-0">
+    <nav class="navbar primary-navbar col-lg-12 col-lg-offset-0 col-sm-4 col-sm-offset-4">
         <div class="container-fluid">
             <div class="navbar-header">
                 <a href="{{ url('/') }}" class="navbar-brand"><img src="{{ mix('/img/clh_logo_lt.png') }}"
