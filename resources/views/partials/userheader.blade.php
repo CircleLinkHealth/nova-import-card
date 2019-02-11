@@ -31,7 +31,8 @@
                         <li class="inline-block">{{$patient->getBirthDate() ?? 'N/A'}} <span
                                     style="color: #4390b5">•</span>
                         </li>
-                        <li class="inline-block">{{$patient->getGender() ?? 'N/A'}} <span style="color: #4390b5">•</span>
+                        <li class="inline-block">{{$patient->getGender() ?? 'N/A'}} <span
+                                    style="color: #4390b5">•</span>
                         </li>
                         <li class="inline-block">{{$patient->getAge() ?? 'N/A'}} yrs <span
                                     style="color: #4390b5">•</span>
@@ -59,7 +60,7 @@
                 </ul>
 
             </div>
-            <div class="col-sm-4" style="line-height: 22px; text-align: right">
+            <div class="col-lg-push-0 col-sm-4 col-xs-4 col-xs-push-3" style="line-height: 22px; text-align: right">
 
                 <span style="font-size: 27px;{{$ccm_above ? 'color: #47beab;' : ''}}">
                     <span data-monthly-time="{{$monthlyTime}}" style="color: inherit">
@@ -107,35 +108,37 @@
                     </span>
                 </span>
 
-                <span style="font-size:15px"></span><br/>
+                <span class="sometimes-hidden" style="font-size:15px"></span>
 
-                @if(Route::is('patient.note.create'))
-                    <li class="inline-block">
-                        <select id="status" name="status" class="selectpickerX dropdownValid form-control" data-size="2"
-                                style="width: 135px">
-                            <option style="color: #47beab"
-                                    value="enrolled" {{$patient->getCcmStatus() == 'enrolled' ? 'selected' : ''}}>
-                                Enrolled
-                            </option>
-                            <option class="withdrawn"
-                                    value="withdrawn" {{$patient->getCcmStatus() == 'withdrawn' ? 'selected' : ''}}>
-                                Withdrawn
-                            </option>
-                            <option class="paused"
-                                    value="paused" {{$patient->getCcmStatus() == 'paused' ? 'selected' : ''}}> Paused
-                            </option>
-                        </select>
-                    </li>
-                @else
-                    <li style="font-size: 18px" id="status"
-                        class="inline-block {{$patient->getCcmStatus()}}"><?= (empty($patient->getCcmStatus()))
-                            ? 'N/A'
-                            : ucwords($patient->getCcmStatus()); ?></li>
-                @endif
-                <br/>
-                @if(auth()->user()->hasRole(['administrator']))
-                    @include('partials.viewCcdaButton')
-                @endif
+                <div class="ccm-status col-xs-offset-3">
+                    @if(Route::is('patient.note.create'))
+                        <li class="inline-block">
+                            <select id="status" name="status" class="selectpickerX dropdownValid form-control" data-size="2"
+                                    style="width: 135px">
+                                <option style="color: #47beab"
+                                        value="enrolled" {{$patient->getCcmStatus() == 'enrolled' ? 'selected' : ''}}>
+                                    Enrolled
+                                </option>
+                                <option class="withdrawn"
+                                        value="withdrawn" {{$patient->getCcmStatus() == 'withdrawn' ? 'selected' : ''}}>
+                                    Withdrawn
+                                </option>
+                                <option class="paused"
+                                        value="paused" {{$patient->getCcmStatus() == 'paused' ? 'selected' : ''}}> Paused
+                                </option>
+                            </select>
+                        </li>
+                    @else
+                        <li style="font-size: 18px" id="status"
+                            class="inline-block col-xs-pull-1 {{$patient->getCcmStatus()}}"><?= (empty($patient->getCcmStatus()))
+                                ? 'N/A'
+                                : ucwords($patient->getCcmStatus()); ?></li>
+                    @endif
+                    <br/>
+                    @if(auth()->user()->hasRole(['administrator']))
+                        @include('partials.viewCcdaButton')
+                    @endif
+                </div>
 
             </div>
 

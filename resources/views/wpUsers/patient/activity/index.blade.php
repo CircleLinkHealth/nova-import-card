@@ -159,8 +159,6 @@
                                 resizeColumn: true,
                                 footer: true,
                                 columns: [
-
-
                                     {
                                         id: "performed_at",
                                         header: ["Date", {content: "textFilter", placeholder: "Filter"}],
