@@ -28,18 +28,19 @@ class UpdatePracticeLocation extends FormRequest
     public function rules()
     {
         return [
-            'practice_id'            => 'required|exists:practices,id',
-            'name'                   => 'required',
-            'phone'                  => 'required|phone:US',
-            'fax'                    => 'phone:US',
-            'address_line_1'         => 'required',
-            'address_line_2'         => '',
-            'city'                   => 'required',
-            'state'                  => 'required',
-            'timezone'               => 'required',
-            'postal_code'            => 'required|digits:5',
-            'emr_direct_address'     => 'nullable|email',
-            'clinical_contact.email' => 'nullable|email',
+            'practice_id'               => 'required|exists:practices,id',
+            'name'                      => 'required',
+            'phone'                     => 'required|phone:US',
+            'clinical_escalation_phone' => 'required|phone:US',
+            'fax'                       => 'phone:US',
+            'address_line_1'            => 'required',
+            'address_line_2'            => '',
+            'city'                      => 'required',
+            'state'                     => 'required',
+            'timezone'                  => 'required',
+            'postal_code'               => 'required|digits:5',
+            'emr_direct_address'        => 'nullable|email',
+            'clinical_contact.email'    => 'nullable|email',
         ];
     }
 }

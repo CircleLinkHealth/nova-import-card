@@ -106,6 +106,8 @@ class PatientController extends Controller
     public function showCallPatientPage(Request $request, $patientId)
     {
         $user = User::with('phoneNumbers')
+                    ->with('primaryPractice')
+                    ->with('primaryPractice.locations')
                     ->where('id', $patientId)
                     ->firstOrFail();
 
@@ -117,15 +119,47 @@ class PatientController extends Controller
                 return [$p->type => $p->number];
             });
 
-        $otherNumbers = collect();
-        if ($user->primaryPractice && $user->primaryPractice->outgoing_phone_number) {
-            $otherNumbers->put('Practice', formatPhoneNumberE164($user->primaryPractice->outgoing_phone_number));
+        $clinicalEscalationNumber = null;
+        if ($user->primaryPractice) {
+            //get preferred contact location of patient
+            //use it to find the clinical escalation number for that location
+            //if not found, get the clinical escalation number for the primary location of that practice
+            $locationName = $user->getPreferredContactLocation();
+            if ($locationName) {
+                $escaped          = $this->escapeLike($locationName);
+                $practiceLocation = $user->primaryPractice->locations->where('name', 'like', "%${escaped}%")->first();
+                if ($practiceLocation) {
+                    $clinicalEscalationNumber = $practiceLocation->clinical_escalation_phone;
+                } else {
+                    $practicePrimaryLocation = $user->primaryPractice->primaryLocation();
+                    if ($practicePrimaryLocation) {
+                        $clinicalEscalationNumber = $practicePrimaryLocation->clinical_escalation_phone;
+                    }
+                }
+            }
         }
 
         return view('wpUsers.patient.calls.index')
             ->with('patient', $user)
             ->with('phoneNumbers', $phoneNumbers)
-            ->with('otherNumbers', $otherNumbers);
+            ->with('clinicalEscalationNumber', $clinicalEscalationNumber);
+    }
+
+    /**
+     * Escape special characters for a LIKE query.
+     *
+     * @param string $value
+     * @param string $char
+     *
+     * @return string
+     */
+    private function escapeLike(string $value, string $char = '\\'): string
+    {
+        return str_replace(
+            [$char, '%', '_'],
+            [$char . $char, $char . '%', $char . '_'],
+            $value
+        );
     }
 
     /**
