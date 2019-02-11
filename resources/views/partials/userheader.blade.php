@@ -60,7 +60,7 @@
                 </ul>
 
             </div>
-            <div class="col-lg-push-0 col-sm-4 col-xs-4 col-xs-push-3" style="line-height: 22px; text-align: right">
+            <div class="col-lg-push-0 col-sm-4 col-sm-push-0 col-xs-4 col-xs-push-3" style="line-height: 22px; text-align: right">
 
                 <span style="font-size: 27px;{{$ccm_above ? 'color: #47beab;' : ''}}">
                     <span data-monthly-time="{{$monthlyTime}}" style="color: inherit">

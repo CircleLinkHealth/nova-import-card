@@ -18,14 +18,14 @@ if (isset($patient)) {
         }
 
         .margin-0 {
-            margin-right: 0px;
-            margin-left: 0px;
+            margin-right: 0;
+            margin-left: 0;
         }
         .navbar-default {
             background: #4fb2e2;
             background: linear-gradient(to right, #4fb2e2 0%, #0170b5 100%);
             color: white;
-            border-radius: 0px;
+            border-radius: 0;
         }
         .navbar-default a:hover {
             color: white;

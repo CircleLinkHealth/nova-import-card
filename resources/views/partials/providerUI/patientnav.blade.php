@@ -1,5 +1,5 @@
 <nav class="navbar secondary-navbar {{--hidden-xs--}}">
-    <div class="patient__actions text-center col-lg-12 col-lg-offset-0 col-sm-4 col-sm-offset-4">
+    <div class="patient__actions text-center col-lg-12 col-lg-offset-0 col-sm-4 col-sm-offset-4 col-xs-12 col-xs-offset-0">
         <ul class="navbar-nav nav">
 
             <li class="inline-block">
