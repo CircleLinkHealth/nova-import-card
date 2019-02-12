@@ -124,10 +124,9 @@ class PatientController extends Controller
             //get preferred contact location of patient
             //use it to find the clinical escalation number for that location
             //if not found, get the clinical escalation number for the primary location of that practice
-            $locationName = $user->getPreferredContactLocation();
-            if ($locationName) {
-                $escaped          = $this->escapeLike($locationName);
-                $practiceLocation = $user->primaryPractice->locations->where('name', 'like', "%${escaped}%")->first();
+            $locationId = $user->getPreferredContactLocation();
+            if ($locationId) {
+                $practiceLocation = $user->primaryPractice->locations->find($locationId);
                 if ($practiceLocation) {
                     $clinicalEscalationNumber = $practiceLocation->clinical_escalation_phone;
                 } else {
@@ -143,23 +142,6 @@ class PatientController extends Controller
             ->with('patient', $user)
             ->with('phoneNumbers', $phoneNumbers)
             ->with('clinicalEscalationNumber', $clinicalEscalationNumber);
-    }
-
-    /**
-     * Escape special characters for a LIKE query.
-     *
-     * @param string $value
-     * @param string $char
-     *
-     * @return string
-     */
-    private function escapeLike(string $value, string $char = '\\'): string
-    {
-        return str_replace(
-            [$char, '%', '_'],
-            [$char . $char, $char . '%', $char . '_'],
-            $value
-        );
     }
 
     /**
