@@ -2547,6 +2547,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         if ($numberOfCareplans < 1) {
             return false;
         }
+        
+        $this->loadMissing(['primaryPractice.settings']);
 
         $this->notify(new CarePlanApprovalReminder($numberOfCareplans));
 
