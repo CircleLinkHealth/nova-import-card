@@ -23,8 +23,6 @@ class CarePlanApprovalReminder extends Notification
      */
     protected $numberOfCareplans;
     
-    public $channels = ['database'];
-    
     public function __construct($numberOfCareplans)
     {
         $this->numberOfCareplans = $numberOfCareplans;
@@ -40,7 +38,7 @@ class CarePlanApprovalReminder extends Notification
     public function toArray($notifiable)
     {
         return [
-            'channels'          => $this->channels,
+            'channels'          => $this->via($notifiable),
             'numberOfCareplans' => $this->numberOfCareplans,
         ];
     }
@@ -101,22 +99,17 @@ class CarePlanApprovalReminder extends Notification
      */
     public function via($notifiable)
     {
-        $channels = collect([]);
-        
+        $channels = ['database'];
         $settings = $notifiable->practiceSettings();
         
         if ($settings->email_careplan_approval_reminders) {
-            $channels->push(MailChannel::class);
+            $channels[] = MailChannel::class;
         }
+        
         if ($settings->dm_careplan_approval_reminders) {
-            $channels->push(DirectMailChannel::class);
+            $channels[] = DirectMailChannel::class;
         }
         
-        $this->channels = array_merge(
-            $this->channels,
-            $channels->toArray()
-        );
-        
-        return $this->channels;
+        return $channels;
     }
 }
