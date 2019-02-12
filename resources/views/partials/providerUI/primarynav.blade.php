@@ -21,25 +21,10 @@ if (isset($patient)) {
             margin-right: 0;
             margin-left: 0;
         }
-        .navbar-default {
-            background: #4fb2e2;
-            background: linear-gradient(to right, #4fb2e2 0%, #0170b5 100%);
-            color: white;
-            border-radius: 0;
-        }
-        .navbar-default a:hover {
-            color: white;
-            text-decoration: none;
-        }
-        .navbar-default .nav li a:hover,
-        .navbar-default .nav li a:focus {
-            background: rgba(0, 0, 0, 0.3);
-            color: white;
-        }
     </style>
 @endpush
 
-<nav class="navbar navbar-default">
+<nav class="navbar primary-navbar">
     <div class="container-fluid full-width margin-0">
         <a class="navbar-brand" href="{{ url('/') }}" style="border: none"><img
                     src="{{mix('/img/ui/clh_logo_lt.png')}}"
@@ -47,12 +32,12 @@ if (isset($patient)) {
                     style="position:relative;top:-15px"
                     width="50px"/></a>
 
-        <button type="button" class="navbar-toggle collapsed" style="background-color:white" data-toggle="collapse"
+        <button type="button" class="navbar-toggle collapsed" style="border-color:white" data-toggle="collapse"
                 data-target="#navbar-collapse" aria-expanded="false">
             <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
+            <span class="icon-bar" style="background-color:white"></span>
+            <span class="icon-bar" style="background-color:white"></span>
+            <span class="icon-bar" style="background-color:white"></span>
         </button>
 
         <div class="col-lg-4 col-sm-10 col-xs-7" id="search-bar-container">

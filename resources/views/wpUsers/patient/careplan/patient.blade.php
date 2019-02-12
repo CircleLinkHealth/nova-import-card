@@ -177,7 +177,7 @@ $user_info = [];
                                                        value="{{ (old('city') ? old('city') : ($patient->city ? $patient->city : '')) }}">
                                                 <span class="help-block">{{ $errors->first('city') }}</span>
                                             </div>
-                                            <div class="form-group form-item form-item-spacing col-sm-2 state-selector {{ $errors->first('state') ? 'has-error' : '' }}">
+                                            <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('state') ? 'has-error' : '' }}">
                                                 {!! Form::select('state', $states, (old('state') ? old('state') : $patient->state ? $patient->state : ''), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
                                                 <span class="help-block">{{ $errors->first('state') }}</span>
                                             </div>
