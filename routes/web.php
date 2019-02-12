@@ -614,12 +614,12 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('care-docs/{patient_id}/{show_past?}', [
         'uses' => 'API\PatientCareDocumentsController@getCareDocuments',
-        'as'    => 'get.care-docs'
+        'as'   => 'get.care-docs',
     ]);
 
     Route::get('download-care-document/{patient_id}/{doc_id}', [
         'uses' => 'API\PatientCareDocumentsController@downloadCareDocument',
-        'as'    => 'download.care-doc'
+        'as'   => 'download.care-doc',
     ]);
 
     Route::patch(
@@ -945,8 +945,6 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'ReportsController@viewCareDocumentsPage',
             'as'   => 'patient.care-docs',
         ]);
-
-
 
         Route::post('input/observation/create', [
             'uses' => 'ObservationController@store',

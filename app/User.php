@@ -2538,15 +2538,17 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      *
      * @return bool
      */
-    public function sendCarePlanApprovalReminderEmail($numberOfCareplans, $force = false)
+    public function sendCarePlanApprovalReminder($numberOfCareplans, $force = false)
     {
-        if ( ! $this->shouldSendCarePlanApprovalReminderEmail() && ! $force) {
+        if ( ! $this->shouldSendCarePlanApprovalReminder() && ! $force) {
             return false;
         }
 
         if ($numberOfCareplans < 1) {
             return false;
         }
+        
+        $this->loadMissing(['primaryPractice.settings']);
 
         $this->notify(new CarePlanApprovalReminder($numberOfCareplans));
 
@@ -3147,7 +3149,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     /**
      * @return bool
      */
-    public function shouldSendCarePlanApprovalReminderEmail()
+    public function shouldSendCarePlanApprovalReminder()
     {
         $settings = $this->emailSettings()->firstOrNew([]);
 
