@@ -2512,5 +2512,3 @@ Route::get(
         'as'   => 'process.eligibility.local.zip',
     ]
 )->middleware(['auth', 'role:administrator']);
-
-App\User::find(2430)->sendCarePlanApprovalReminder(1);
