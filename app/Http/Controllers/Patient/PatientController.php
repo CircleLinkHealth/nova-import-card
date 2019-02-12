@@ -129,13 +129,16 @@ class PatientController extends Controller
                 $practiceLocation = $user->primaryPractice->locations->find($locationId);
                 if ($practiceLocation) {
                     $clinicalEscalationNumber = $practiceLocation->clinical_escalation_phone;
-                } else {
-                    $practicePrimaryLocation = $user->primaryPractice->primaryLocation();
-                    if ($practicePrimaryLocation) {
-                        $clinicalEscalationNumber = $practicePrimaryLocation->clinical_escalation_phone;
-                    }
                 }
             }
+
+            if ( ! $clinicalEscalationNumber) {
+                $practicePrimaryLocation = $user->primaryPractice->primaryLocation();
+                if ($practicePrimaryLocation) {
+                    $clinicalEscalationNumber = $practicePrimaryLocation->clinical_escalation_phone;
+                }
+            }
+
         }
 
         return view('wpUsers.patient.calls.index')
