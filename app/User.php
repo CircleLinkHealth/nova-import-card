@@ -2553,6 +2553,15 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return true;
     }
 
+    public function practiceSettings(){
+
+        if ( ! $this->primaryPractice) {
+            return null;
+        }
+
+        return $this->primaryPractice->cpmSettings();
+    }
+
     /**
      * Send the password reset notification.
      *
