@@ -19,7 +19,7 @@ class NursesWeeklyRepController extends Controller
     public function index(Request $request)
     {
         $yesterdayDate = Carbon::yesterday()->startOfDay();
-        $limitDate     = Carbon::parse(NursesWeeklyRepController:: NO_DATA_ON_S3_BEFORE);
+        $limitDate     = Carbon::parse(NursesWeeklyRepController::NO_DATA_ON_S3_BEFORE);
 
         if ($request->has('date')) {
             $requestDate = new Carbon($request['date']);
