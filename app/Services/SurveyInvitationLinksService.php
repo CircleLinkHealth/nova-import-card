@@ -11,7 +11,6 @@ class SurveyInvitationLinksService
 {
     public function createAndSaveUrl($userId)
     {
-        $this->getPatientPhoneNumberById($userId);
         $this->expireAllPastUrls($userId);
 
         $surveyId = rand();

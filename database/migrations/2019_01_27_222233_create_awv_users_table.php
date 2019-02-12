@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAwvPatientsTable extends Migration
+class CreateAwvUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateAwvPatientsTable extends Migration
      */
     public function up()
     {
-        Schema::create('awv_patients', function (Blueprint $table) {
+        Schema::create('awv_users', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('cpm_user_id');
             $table->date('birth_date');

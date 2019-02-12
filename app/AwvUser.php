@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class AwvPatients extends Model
+class AwvUser extends Model
 {
     protected $fillable = [
         'cpm_user_id',

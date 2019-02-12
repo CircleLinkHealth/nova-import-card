@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\AwvPatients;
+use App\AwvUser;
 use App\InvitationLink;
 use App\Services\SurveyInvitationLinksService;
 use App\User;
@@ -40,7 +41,7 @@ class InvitationLinksController extends Controller
 
         $userId = $request->get('id');
         $url    = $this->service->createAndSaveUrl($userId);
-
+        $phoneNumber = $this->service->getPatientPhoneNumberById($userId);
         //@todo:HERE - send SMS using Twilio with $url and then return feedback
 
         return 'Invitation has been sent';
@@ -69,7 +70,7 @@ class InvitationLinksController extends Controller
         if ( ! User::where('name', $name)->first()) {
             return 'Name does not exists in our DB';
         }
-        if ( ! AwvPatients::where('birth_date', $birthDate)->first()) {
+        if ( ! AwvUser::where('birth_date', $birthDate)->first()) {
             return 'Date Of Birth is Wrong';
         }
 
