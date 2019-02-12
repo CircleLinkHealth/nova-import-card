@@ -72,7 +72,7 @@ class CarePlanApprovalReminderTest extends TestCase
         $numberOfCareplans = 10;
 
         //send notification
-        $this->provider->sendCarePlanApprovalReminderEmail($numberOfCareplans);
+        $this->provider->sendCarePlanApprovalReminder($numberOfCareplans);
 
         //assert set
         Notification::assertSentTo(

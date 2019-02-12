@@ -43,7 +43,7 @@ class SendCarePlanApprovalReminderTestEmail extends Command
 
         $user = User::findOrFail($tester);
 
-        $user->sendCarePlanApprovalReminderEmail(10, true);
+        $user->sendCarePlanApprovalReminder(10, true);
 
         $this->output->success('Email sent!');
     }

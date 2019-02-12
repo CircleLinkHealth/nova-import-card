@@ -10,7 +10,7 @@ use App\CarePlan;
 use App\User;
 use Illuminate\Console\Command;
 
-class EmailsProvidersToApproveCareplans extends Command
+class SendCarePlanApprovalReminders extends Command
 {
     /**
      * The console command description.
@@ -23,7 +23,7 @@ class EmailsProvidersToApproveCareplans extends Command
      *
      * @var string
      */
-    protected $signature = 'emailapprovalreminder:providers {--pretend}';
+    protected $signature = 'sendapprovalreminder:providers {--pretend}';
 
     /**
      * Execute the console command.
@@ -115,7 +115,7 @@ class EmailsProvidersToApproveCareplans extends Command
     {
         if ( ! $pretend) {
             if ($recipient->email) {
-                $recipient->sendCarePlanApprovalReminderEmail($numberOfCareplans);
+                $recipient->sendCarePlanApprovalReminder($numberOfCareplans);
             }
         }
     }
