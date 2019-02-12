@@ -107,9 +107,9 @@
                 selectedEnrolleeIds: [],
                 hideStatus: ['ineligible', 'consented'],
                 hideAssigned: true,
-                columns: ['select', 'edit', 'id', 'user_id', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'status', 'eligibility_job_id', 'medical_record_id', 'practice_name', 'provider_name', 'total_time_spent',
-                    'last_call_outcome', 'last_call_outcome_reason', 'address', 'address_2', 'city', 'state', 'zip', 'primary_phone', 'other_phone', 'home_phone', 'cell_phone', 'dob', 'preferred_days', 'preferred_window',
-                    'primary_insurance', 'secondary_insurance', 'tertiary_insurance', 'has_copay', 'email', 'cpm_problem_1', 'cpm_problem_2', 'soft_rejected_callback', 'created_at'],
+                columns: ['select', 'edit', 'id', 'user_id', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'status', 'eligibility_job_id', 'medical_record_id', 'practice_name', 'provider_name', 'total_time_spent', 'attempt_count', 'last_attempt_at',
+                    'last_call_outcome', 'last_call_outcome_reason', 'soft_rejected_callback', 'address', 'address_2', 'city', 'state', 'zip', 'primary_phone', 'other_phone', 'home_phone', 'cell_phone', 'dob', 'preferred_days', 'preferred_window',
+                    'primary_insurance', 'secondary_insurance', 'tertiary_insurance', 'has_copay', 'email', 'cpm_problem_1', 'cpm_problem_2', 'created_at'],
                 options: {
                     requestAdapter(data) {
                         if (typeof (self) !== 'undefined') {
@@ -123,11 +123,11 @@
                         'Type': 'padding-2'
                     },
                     perPage: 100,
-                    perPageValues: [10, 25, 50, 100],
+                    perPageValues: [10, 25, 50, 100, 200],
                     skin: "table-striped table-bordered table-hover",
                     filterByColumn: true,
-                    filterable: ['hideStatus', 'hideAssigned', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'status', 'eligibility_job_id', 'medical_record_id', 'practice_name', 'provider_name', 'primary_insurance', 'secondary_insurance', 'tertiary_insurance'],
-                    sortable: ['first_name', 'last_name', 'practice_name', 'provider_name', 'primary_insurance', 'status', 'created_at', 'state', 'city', 'care_ambassador_name'],
+                    filterable: ['hideStatus', 'hideAssigned', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'status', 'eligibility_job_id', 'medical_record_id', 'practice_name', 'provider_name', 'primary_insurance', 'secondary_insurance', 'tertiary_insurance', 'attempt_count'],
+                    sortable: ['first_name', 'last_name', 'practice_name', 'provider_name', 'primary_insurance', 'status', 'created_at', 'state', 'city', 'care_ambassador_name', 'attempt_count', 'soft_rejected_callback'],
                 },
             }
 

@@ -10,7 +10,7 @@
 </p>
 
 <p>
-    <b>Performance:</b> {{ $performance }}% of today's time was CCM eligible care time.
+    <b>%CCM Time<span style="color: red;">* </span>:</b> {{ $performance }}% of today's time was CCM eligible care time.
 </p>
 
 <p>
@@ -32,6 +32,7 @@
             <br>(Remember to provide 3 week’s notice if you need to cut your hours, thanks!)</b>
     </p>
 @endif
+
 <p>
 
 </p>
@@ -49,4 +50,6 @@
 <p>
     CircleLink Team
 </p>
+<p></p>
+<p><span style="color: red;">*</span> Please note %CCM time is a reference metric. If curious, you can review how our variable pay rate works <a href="https://docs.google.com/document/d/1rW4W1vbtK3Kn0SVsp9Oi34qFzfgiE7Ac9DfsbcffCUE/edit?usp=sharing">here</a>.</p>
 </body>

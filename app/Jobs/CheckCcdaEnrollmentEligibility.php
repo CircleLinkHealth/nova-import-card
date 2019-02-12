@@ -7,6 +7,7 @@
 namespace App\Jobs;
 
 use App\EligibilityBatch;
+use App\EligibilityJob;
 use App\Importer\Loggers\Ccda\CcdToLogTranformer;
 use App\Models\MedicalRecords\Ccda;
 use App\Practice;
@@ -115,6 +116,8 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
         $patient = $patient->put('problems', $problems);
 
         $patient = $this->handleInsurance($patient, $insurance);
+        
+        $job = $this->createEligibilityJob($patient);
 
         $list = (new WelcomeCallListGenerator(
             collect([$patient]),
@@ -125,7 +128,8 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
             $this->practice,
             Ccda::class,
             $this->ccda->id,
-            $this->batch
+            $this->batch,
+            $job
         ));
 
         $this->ccda->status = Ccda::ELIGIBLE;
@@ -138,6 +142,19 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
         $this->ccda->save();
 
         return $this->ccda->status;
+    }
+    
+    private function createEligibilityJob($patient)
+    {
+        $mrn = $patient['mrn_number'] ?? $patient['mrn'] ?? '';
+        
+        $hash = $this->practice->name.$patient['first_name'].$patient['last_name'].$mrn.$patient['city'].$patient['state'].$patient['zip'];
+        
+        return EligibilityJob::create([
+                                          'batch_id' => $this->batch->id,
+                                          'hash'     => $hash,
+                                          'data'     => $patient,
+                                      ]);
     }
 
     private function handleInsurance($patient, Collection $insurance)

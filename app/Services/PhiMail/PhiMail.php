@@ -137,11 +137,14 @@ class PhiMail implements DirectMail
      */
     public function send(
         $outboundRecipient,
-        $binaryAttachmentFilePath,
-        $binaryAttachmentFileName,
+        $binaryAttachmentFilePath = null,
+        $binaryAttachmentFileName = null,
         $ccdaAttachmentPath = null,
-        User $patient = null
+        User $patient = null,
+        $body = null,
+        $subject = null
     ) {
+        //add case when everything is null
         $this->initPhiMailConnection();
 
         if ( ! is_a($this->connector, PhiMailConnector::class)) {
@@ -160,10 +163,22 @@ class PhiMail implements DirectMail
             if ($patient) {
                 // Optionally, set the Subject of the outgoing message.
                 // This will override the default message Subject set by the server.
-                $this->connector->setSubject('Message from '.$patient->saasAccountName());
+                if (!$subject){
+                    $this->connector->setSubject('Message from '.$patient->saasAccountName());
+                }
 
                 // Add the main body of the message.
-                $this->connector->addText("This is message regarding patient {$patient->getFullName()}.");
+                if (!$body){
+                    $this->connector->addText("This is message regarding patient {$patient->getFullName()}.");
+                }
+
+            }
+
+            if ($body){
+                $this->connector->addText($body);
+            }
+            if ($subject){
+                $this->connector->setSubject($subject);
             }
 
             if ($ccdaAttachmentPath) {

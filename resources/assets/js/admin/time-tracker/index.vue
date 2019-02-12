@@ -1,5 +1,9 @@
 <template>
     <div>
+        <div id="notifications-wrapper">
+            <notifications name="connection-error"></notifications>
+        </div>
+
         <div v-if="showLoader || !visible" :class="{ 'hide-tracker': hideTracker }">
             <div class="loader-filler"></div>
             <div class="loader-container">
@@ -7,7 +11,24 @@
             </div>
         </div>
         <span v-if="visible" class="time-tracker">
-            <div v-if="noLiveCount" :class="{ hidden: showLoader }">{{info.monthlyTime}}</div>
+            <div v-if="noLiveCount" class="no-live-count" :class="{ hidden: showLoader }">
+                <div v-if="shouldShowCcmTime()" :class="[ hasBhiTime() ? 'col-md-6' : '' ]">
+                    <div>
+                        <small>CCM</small>
+                    </div>
+                    <div>
+                        {{info.monthlyTime}}
+                    </div>
+                </div>
+                <div v-if="hasBhiTime()" class="col-md-6">
+                    <div>
+                        <small>BHI</small>
+                    </div>
+                    <div>
+                        {{info.monthlyBhiTime}}
+                    </div>
+                </div>
+            </div>
             <bhi-switch ref="bhiSwitch" :is-manual-behavioral="info.isManualBehavioral"
                         :user-id="info.providerId" :is-bhi="info.isBehavioral" :is-ccm="info.isCcm"
                         v-if="!info.noBhiSwitch && (info.isCcm || info.isBehavioral)"></bhi-switch>
@@ -34,7 +55,7 @@
     import LoaderComponent from '../../components/loader'
     import AwayComponent from './comps/away'
     import BhiComponent from './comps/bhi-switch'
-    import stor from '../../stor'
+    import Notifications from '../../components/notifications';
 
     export default {
         name: 'time-tracker',
@@ -51,7 +72,7 @@
                  * }
                  */
             },
-            'no-live-count': Number,
+            'no-live-count': Boolean,
             'class-name': String,
             'hide-tracker': Boolean,
             'override-timeout': Boolean
@@ -64,7 +85,7 @@
                 startCount: 0,
                 showTimer: true,
                 showLoader: true,
-                callMode: false
+                callMode: false,
             }
         },
         components: {
@@ -72,7 +93,8 @@
             'time-display': TimeDisplay,
             'loader': LoaderComponent,
             'away': AwayComponent,
-            'bhi-switch': BhiComponent
+            'bhi-switch': BhiComponent,
+            'notifications': Notifications
         },
         computed: {
             totalTime() {
@@ -80,6 +102,14 @@
             }
         },
         methods: {
+            shouldShowCcmTime() {
+                //we show ccm time, even if zero time. we do not show when empty string
+                return this.info.monthlyBhiTime && this.info.monthlyBhiTime.length > 0;
+            },
+            hasBhiTime() {
+                const zeroTime = "00:00:00";
+                return this.info.monthlyBhiTime && this.info.monthlyBhiTime.length > 0 && this.info.monthlyBhiTime !== zeroTime;
+            },
             updateTime() {
                 if (this.info.initSeconds == 0) this.info.initSeconds = Math.ceil(startupTime() / 1000)
                 else this.info.initSeconds = -1
@@ -117,7 +147,7 @@
                                 if (data.message === 'server:sync') {
                                     self.seconds = self.info.isManualBehavioral ? data.bhiSeconds : data.ccmSeconds
                                     self.visible = true //display the component when the previousSeconds value has been received from the server to keep the display up-to-date
-                                    self.showLoader = false
+                                    self.showLoader = false;
                                 }
                                 else if (data.message === 'server:modal') {
                                     EventBus.$emit('away:trigger-modal')
@@ -147,6 +177,9 @@
                         }
 
                         socket.onopen = (ev) => {
+
+                            Event.$emit('notifications-connection-error:dismissAll');
+
                             if (EventBus.isInFocus) {
                                 self.updateTime()
                                 self.callMode = false
@@ -170,8 +203,16 @@
                         }
 
                         socket.onerror = (err) => {
+
+                            Event.$emit('notifications-connection-error:create', {
+                                text: `Cannot connect to time tracker. If this note does not go away soon, please contact CLH support.`,
+                                type: 'error',
+                                noTimeout: true,
+                                overwrite: true
+                            });
+
                             console.error('socket-error:', err)
-                        }
+                        };
 
                         return socket;
                     })()
@@ -182,6 +223,7 @@
             }
         },
         mounted() {
+
             this.previousSeconds = this.info.totalTime || 0;
             this.info.initSeconds = 0
             this.info.isManualBehavioral = (this.info.isBehavioral && !this.info.isCcm) || false
@@ -190,7 +232,9 @@
                 this.visible = false;
             }
             else {
-                EventBus.isInFocus = true;
+
+                EventBus.isInFocus = !document.hidden;
+                console.log('document is ', EventBus.isInFocus ? 'focused' : 'not focused');
 
                 EventBus.$on('tracker:tick', () => {
                     this.seconds++;
@@ -213,11 +257,6 @@
 
                 EventBus.$on('tracker:start', () => {
 
-                    //start inactivity tracker only if not on call mode and not on twilio
-                    if (!(this.callMode && this.twilioEnabled)) {
-                        EventBus.$emit('inactivity:start');
-                    }
-
                     if (this.state !== STATE.SHOW_INACTIVE_MODAL) {
                         if (this.socket && this.socket.readyState === WebSocket.OPEN) {
                             if (this.startCount === 0) this.updateTime();
@@ -231,18 +270,15 @@
 
                     EventBus.$emit("inactivity:stop");
 
-                    //do not stop tracker if we are on twilio calls
-                    if (this.callMode && this.twilioEnabled) {
-                        return;
-                    }
-
                     if (this.state !== STATE.SHOW_INACTIVE_MODAL) {
-                        if (this.socket) {
-                            this.showTimer = false
-                            this.state = STATE.LEAVE;
+                        this.showTimer = false;
+                        this.state = STATE.LEAVE;
+
+                        if (this.socket && this.socket.readyState === WebSocket.OPEN) {
                             this.socket.send(JSON.stringify({message: STATE.LEAVE, info: this.info}))
                         }
-                        this.showLoader = true
+
+                        // this.showLoader = true
                     }
                 })
 
@@ -261,7 +297,7 @@
                         this.state = STATE.SHOW_INACTIVE_MODAL;
                         this.socket.send(JSON.stringify({message: STATE.SHOW_INACTIVE_MODAL, info: this.info}))
                     }
-                    this.showLoader = true
+                    // this.showLoader = true
                 })
 
                 EventBus.$on('tracker:modal:reply', (response) => {
@@ -337,7 +373,7 @@
                 this.createSocket()
 
                 setInterval(() => {
-                    if (this.socket.readyState === this.socket.OPEN) {
+                    if (this.socket && this.socket.readyState === this.socket.OPEN) {
                         this.socket.send(JSON.stringify({message: 'PING'}))
                     }
                 }, 5000)
@@ -369,4 +405,23 @@
     .top-20 {
         margin-top: 20px;
     }
+
+    #notifications-wrapper {
+        position: fixed;
+        top: 65px;
+        right: 15px;
+        width: 300px;
+        font-size: small;
+        text-align: left;
+    }
+
+    .notifications-connection-error {
+        position: absolute;
+    }
+
+    .no-live-count {
+        max-width: 350px;
+        margin: auto;
+    }
+
 </style>

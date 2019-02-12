@@ -1,17 +1,29 @@
 <template>
     <div>
         <loader v-if="waiting"></loader>
+        <div class="window-close-banner">
+            <strong>
+                When the call is ended, this window will close after {{endCallWindowCloseDelay}} seconds.
+            </strong>
+            <br/>
+            <strong>
+                If you would like to make another call, please click on 'Open Calls Page' again.
+            </strong>
+        </div>
         <div>{{log}}</div>
+        <div v-show="closeCountdown > 0">This window will close in <span
+                class="countdown-seconds">{{closeCountdown}}</span> seconds.
+        </div>
         <template v-if="!waiting">
             <div class="row">
-                <div class="col-sm-12">
+                <div class="col-xs-12">
                     <select2 class="form-control" v-model="dropdownNumber" :disabled="onPhone[selectedPatientNumber]">
                         <option v-for="(number, key) in patientNumbers" :key="key" :value="number">{{number}}</option>
                         <option value="patientUnlisted">Other</option>
                     </select2>
                 </div>
 
-                <div v-if="dropdownNumber === 'patientUnlisted'" class="col-sm-12" style="margin-top: 5px">
+                <div v-if="dropdownNumber === 'patientUnlisted'" class="col-xs-12" style="margin-top: 5px">
                     <label>Please input a 10 digit US Phone Number</label>
                     <div class="input-group">
                         <span class="input-group-addon">+1</span>
@@ -34,9 +46,9 @@
                     </div>
                 </div>
 
-                <div class="col-sm-12" style="margin-top: 5px">
+                <div class="col-xs-12" style="margin-top: 5px">
                     <button class="btn btn-circle" @click="togglePatientCallMessage(selectedPatientNumber)"
-                            :disabled="invalidPatientUnlistedNumber"
+                            :disabled="invalidPatientUnlistedNumber || closeCountdown > 0"
                             :class="onPhone[selectedPatientNumber] ? 'btn-danger': 'btn-success'">
                         <i class="fa fa-fw fa-phone"
                            :class="onPhone[selectedPatientNumber] ? 'fa-close': 'fa-phone'"></i>
@@ -53,11 +65,11 @@
 
             <div class="row" v-if="allowConference" v-show="isCurrentlyOnPhone">
 
-                <div class="col-sm-12">
+                <div class="col-xs-12">
                     <loader v-if="waitingForConference"></loader>
                 </div>
 
-                <div class="col-sm-12" v-for="(value, key) in otherNumbers" :key="key" style="margin-top: 5px">
+                <div class="col-xs-12" v-for="(value, key) in otherNumbers" :key="key" style="margin-top: 5px">
                     <span>{{key}} [{{value}}]</span>
                     <button class="btn btn-circle" @click="toggleOtherCallMessage(value)"
                             :disabled="!onPhone[value] && isCurrentlyOnConference"
@@ -71,8 +83,8 @@
                     </button>
                 </div>
 
-                <div class="col-sm-12" style="margin-top: 5px">
-                    <div class="col-sm-9 no-padding">
+                <div class="col-xs-12" style="margin-top: 5px">
+                    <div class="col-xs-9 no-padding">
                         <div class="input-group">
                             <span class="input-group-addon">+1</span>
 
@@ -94,7 +106,7 @@
 
                         </div>
                     </div>
-                    <div class="col-sm-3 no-padding" style="margin-top: 4px; padding-left: 2px">
+                    <div class="col-xs-3 no-padding" style="margin-top: 4px; padding-left: 2px">
                         <button class="btn btn-circle" @click="toggleOtherCallMessage(otherUnlistedNumber)"
                                 :disabled="invalidOtherUnlistedNumber || (!onPhone[otherUnlistedNumber] && isCurrentlyOnConference)"
                                 :class="onPhone[otherUnlistedNumber] ? 'btn-danger': 'btn-success'">
@@ -103,6 +115,18 @@
                         </button>
                     </div>
                 </div>
+            </div>
+
+            <br/>
+
+            <div class="row" v-show="isCurrentlyOnPhone">
+                <input class="form-control" type="text" placeholder="Numeric Keypad" @focus="numpadShow"/>
+                <vue-touch-keyboard v-if="numpadVisible"
+                                    :layout="numpadCustomLayout"
+                                    :change="numpadChanged"
+                                    :cancel="numpadHide"
+                                    :accept="numpadDone"
+                                    :input="numpadInputElement"/>
             </div>
 
         </template>
@@ -116,6 +140,10 @@
     import {registerHandler, sendRequest} from "./bc-job-manager";
 
     import Twilio from 'twilio-client';
+    import VueTouchKeyboard from "vue-touch-keyboard";
+    import style from "vue-touch-keyboard/dist/vue-touch-keyboard.css"; // load default style
+
+    window.Vue.use(VueTouchKeyboard);
 
     let self;
 
@@ -149,6 +177,24 @@
         },
         data() {
             return {
+                numpadRegex: new RegExp('[0-9]|[*]|#'),
+                numpadVisible: false,
+                numpadInputElement: null,
+                numpadCustomLayout: {
+
+                    _meta: {
+                        "backspace": {func: "backspace", classes: "control"},
+                        "accept": {func: "accept", text: "Hide", classes: "control featured"},
+                        "zero": {key: "0", width: 130}
+                    },
+
+                    default: [
+                        "1 2 3",
+                        "4 5 6",
+                        "7 8 9",
+                        "* {zero} # {backspace} {accept}"
+                    ]
+                },
                 waiting: false,
                 waitingForConference: false,
                 queuedNumbersForConference: [],
@@ -156,6 +202,9 @@
                 muted: {},
                 onPhone: {},
                 log: 'Initializing',
+                endCallWindowCloseDelay: 5,
+                closeCountdown: 0,
+                closeCountdownInterval: null,
                 connection: null,
                 //twilio device
                 device: null,
@@ -197,6 +246,30 @@
             }
         },
         methods: {
+
+            numpadChanged: function (allInput, lastInput) {
+
+                if (!lastInput || lastInput.length > 1 || !this.numpadRegex.test(lastInput)) {
+                    return;
+                }
+                if (this.connection) {
+                    console.debug('Sending digits to twilio', lastInput.toString());
+                    this.connection.sendDigits(lastInput.toString());
+                }
+            },
+
+            numpadDone: function (val) {
+                this.numpadHide();
+            },
+
+            numpadShow: function (e) {
+                this.numpadInputElement = e.target;
+                this.numpadVisible = true;
+            },
+
+            numpadHide: function () {
+                this.numpadVisible = false;
+            },
 
             toggleMuteMessage: function (number) {
                 const action = this.muted[number] ? "call_unmuted" : "call_muted";
@@ -533,6 +606,33 @@
                 self.queuedNumbersForConference = [];
                 self.addedNumbersInConference = [];
             },
+            closeWindow: function (delayInSeconds, force) {
+
+                //we are already closing the window
+                if (self.closeCountdownInterval) {
+                    return;
+                }
+
+                if (force) {
+                    window.close();
+                }
+
+                if (!delayInSeconds) {
+                    delayInSeconds = 0;
+                }
+
+                self.closeCountdown = delayInSeconds;
+                self.closeCountdownInterval = setInterval(() => {
+
+                    if (self.closeCountdown === 0) {
+                        window.close();
+                    }
+                    else {
+                        self.closeCountdown = self.closeCountdown - 1;
+                    }
+
+                }, 1000);
+            },
             twilioOffline: function () {
                 self.waiting = true;
             },
@@ -558,12 +658,15 @@
                             self.connection = null;
                             self.log = 'Call ended.';
 
+                            self.closeWindow(self.endCallWindowCloseDelay, false);
+
                             //make sure UI on the other page is up to date
                             sendRequest('call_ended', {number: {value: '', muted: false}})
                                 .then(() => {
 
                                 })
                                 .catch(err => console.error(err));
+
                         });
 
                         self.device.on('offline', () => {
@@ -575,7 +678,7 @@
                         });
 
                         self.device.on('error', (err) => {
-                            console.log('twilio device: error');
+                            console.log('twilio device: error', err);
                             self.resetPhoneState();
                             self.log = err.message;
                         });
@@ -626,7 +729,7 @@
                     //resolve the promise but also close the window
                     return new Promise((resolve, reject) => {
                         resolve({});
-                        window.close();
+                        self.closeWindow(0, true);
                     });
 
                 }
@@ -686,5 +789,18 @@
     .no-padding {
         padding-left: 0;
         padding-right: 0;
+    }
+
+    .window-close-banner {
+        margin: 10px 0;
+    }
+
+    .countdown-seconds {
+        font-weight: bold;
+        color: red;
+    }
+
+    .vue-touch-keyboard {
+        margin-top: 3px;
     }
 </style>

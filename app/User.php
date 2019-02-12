@@ -1066,6 +1066,20 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             : '';
     }
 
+    /**
+     * Get billing provider's phone.
+     *
+     * @return string
+     */
+    public function getBillingProviderPhone()
+    {
+        $billingProvider = $this->billingProviderUser();
+
+        return $billingProvider
+            ? $billingProvider->getPhone()
+            : '';
+    }
+
     public function getBirthDate()
     {
         if ( ! $this->patientInfo) {
@@ -1761,6 +1775,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                    ->exists();
     }
 
+
+
     /**
      * Calls made from CLH to the User.
      *
@@ -1962,6 +1978,20 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                           ->orWhere('type', '=', 'call');
                     });
     }
+    /*public function hasScheduledCallThisWeek()
+    {
+        $weekStart = Carbon::now()->startOfWeek()->toDateString();
+        $weekEnd = Carbon::now()->endOfWeek()->toDateString();
+
+        return Call::where(function ($q) {
+            $q->whereNull('type')
+              ->orWhere('type', '=', 'call');
+        })
+                   ->where('outbound_cpm_id', $this->id)
+                   ->where('status', 'scheduled')
+                   ->whereBetween('scheduled_date', [$weekStart, $weekEnd])
+                   ->exists();
+    }*/
 
     public function outboundMessages()
     {
@@ -1985,7 +2015,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         return $this->hasMany(Activity::class, 'patient_id', 'id');
     }
-
     public function patientDemographics()
     {
         return $this->hasMany(DemographicsImport::class, 'provider_id');
@@ -2509,19 +2538,30 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      *
      * @return bool
      */
-    public function sendCarePlanApprovalReminderEmail($numberOfCareplans, $force = false)
+    public function sendCarePlanApprovalReminder($numberOfCareplans, $force = false)
     {
-        if ( ! $this->shouldSendCarePlanApprovalReminderEmail() && ! $force) {
+        if ( ! $this->shouldSendCarePlanApprovalReminder() && ! $force) {
             return false;
         }
 
         if ($numberOfCareplans < 1) {
             return false;
         }
+        
+        $this->loadMissing(['primaryPractice.settings']);
 
         $this->notify(new CarePlanApprovalReminder($numberOfCareplans));
 
         return true;
+    }
+
+    public function practiceSettings(){
+
+        if ( ! $this->primaryPractice) {
+            return null;
+        }
+
+        return $this->primaryPractice->cpmSettings();
     }
 
     /**
@@ -3109,7 +3149,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     /**
      * @return bool
      */
-    public function shouldSendCarePlanApprovalReminderEmail()
+    public function shouldSendCarePlanApprovalReminder()
     {
         $settings = $this->emailSettings()->firstOrNew([]);
 

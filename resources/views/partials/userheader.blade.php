@@ -83,15 +83,39 @@
                             ?>
                             @if ($noLiveCountTimeTracking)
                                 <div class="color-grey">
-                                    <a href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patient' => $patient->id]) }}">
-                                        {{$monthlyTime}}
-                                    </a>
+                                    <div>
+                                        <div class="{{$monthlyBhiTime === '00:00:00' ? '' : 'col-md-6'}}">
+                                            <div>
+                                                <small>CCM</small>
+                                            </div>
+                                            <div>
+                                                 <a id="monthly-time-static"
+                                                    href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patient' => $patient->id]) }}">
+                                                    {{$monthlyTime}}
+                                                </a>
+                                            </div>
+                                        </div>
+                                        @if ($monthlyBhiTime !== '00:00:00')
+                                            <div class="col-md-6">
+                                                <div>
+                                                    <small>BHI</small>
+                                                </div>
+                                                <div>
+                                                     <a id="monthly-bhi-time-static"
+                                                        href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patient' => $patient->id]) }}">
+                                                        {{$monthlyBhiTime}}
+                                                     </a>
+                                                </div>
+                                        </div>
+                                        @endif
+                                    </div>
+
                                     <span style="display:none">
                                         <time-tracker ref="TimeTrackerApp"
                                                       :twilio-enabled="@json(config('services.twilio.enabled') && (isset($patient) && $patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : true))"
                                                       class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
                                                       :info="timeTrackerInfo"
-                                                      :no-live-count="{{($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? 1 : 0}}"
+                                                      :no-live-count="@json(($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? true : false)"
                                                       :override-timeout="{{config('services.time-tracker.override-timeout')}}"></time-tracker>
                                     </span>
                                 </div>
@@ -100,7 +124,7 @@
                                               class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
                                               :twilio-enabled="@json(config('services.twilio.enabled') && (isset($patient) && $patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : true))"
                                               :info="timeTrackerInfo"
-                                              :no-live-count="{{($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? 1 : 0}}"
+                                              :no-live-count="@json(($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? true : false)"
                                               :override-timeout="{{config('services.time-tracker.override-timeout')}}">
                                         @include('partials.tt-loader')
                                 </time-tracker>

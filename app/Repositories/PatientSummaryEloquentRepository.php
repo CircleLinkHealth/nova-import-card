@@ -111,7 +111,9 @@ class PatientSummaryEloquentRepository
             $summary = $this->TO_DEPRECATE_fillProblems(
                 $patient,
                 $summary,
-                $patient->ccdProblems->where('billable', '=', true)->values()
+                $patient->ccdProblems->where('billable', '=', true)->sortByDesc(function ($ccdProblem) {
+                    return optional($ccdProblem->cpmProblem)->weight;
+                })->values()
             );
 
             $summary = $this->fillBillableProblemsNameAndCode($summary);
@@ -324,7 +326,9 @@ class PatientSummaryEloquentRepository
                 return ! $problem->icd10Code();
             })
             ->unique('cpm_problem_id')
-            ->sortByDesc('cpm_problem_id')
+            ->sortByDesc(function ($ccdProblem) {
+                return optional($ccdProblem->cpmProblem)->weight;
+            })
             ->values();
     }
 
@@ -502,6 +506,9 @@ class PatientSummaryEloquentRepository
                 return $problem && ! validProblemName($problem->name);
             })
             ->unique('cpm_problem_id')
+            ->sortByDesc(function ($ccdProblem) {
+                return optional($ccdProblem->cpmProblem)->weight;
+            })
             ->values()
             ->each(function ($problem) use ($summary) {
                 $summary->attachBillableProblem($problem->id, $problem->name, $problem->icd10Code(), 'bhi');

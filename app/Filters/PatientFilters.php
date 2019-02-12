@@ -189,6 +189,26 @@ class PatientFilters extends QueryFilters
             ->groupBy('users.id');
     }
 
+    public function sort_bhi($type = null)
+    {
+        $joinTable = (new PatientMonthlySummary())->getTable();
+        $date      = Carbon::now()->startOfMonth();
+
+        return $this->builder
+            ->select('users.*')
+            ->with([
+                'patientSummaries' => function ($q) use ($date) {
+                    return $q->where('month_year', '=', $date);
+                },
+            ])
+            ->leftJoin($joinTable, function ($join) use ($joinTable, $date) {
+                $join->on('users.id', '=', "${joinTable}.patient_id")
+                     ->where("${joinTable}.month_year", '=', $date);
+            })
+            ->orderBy("${joinTable}.bhi_time", $type)
+            ->groupBy('users.id');
+    }
+
     public function sort_ccmStatus($type = null)
     {
         $patientTable = (new Patient())->getTable();

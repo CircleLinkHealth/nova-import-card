@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0b2b477d1b5c0c86154efe2c6f446d87",
+    "content-hash": "0867c29b4bd71d1526d094522a6d266a",
     "packages": [
         {
             "name": "amnuts/opcache-gui",
@@ -2075,6 +2075,70 @@
                 "slack"
             ],
             "time": "2017-09-02T09:49:29+00:00"
+        },
+        {
+            "name": "jorijn/laravel-security-checker",
+            "version": "v0.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Jorijn/laravel-security-checker.git",
+                "reference": "a83b86f2c7dc9ed84ac388c6ecf242e57ebf752f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Jorijn/laravel-security-checker/zipball/a83b86f2c7dc9ed84ac388c6ecf242e57ebf752f",
+                "reference": "a83b86f2c7dc9ed84ac388c6ecf242e57ebf752f",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.3",
+                "illuminate/console": "5.5.x|5.6.x|5.7.x",
+                "illuminate/mail": "5.5.x|5.6.x|5.7.x",
+                "illuminate/support": "5.5.x|5.6.x|5.7.x",
+                "laravel/framework": "5.5.x|5.6.x|5.7.x",
+                "php": ">=7.0",
+                "sensiolabs/security-checker": "^4.0.0"
+            },
+            "require-dev": {
+                "illuminate/config": "5.5.x|5.6.x|5.7.x",
+                "illuminate/view": "5.5.x|5.6.x|5.7.x",
+                "mockery/mockery": "^0.9.9",
+                "orchestra/testbench": "~3.4",
+                "phpunit/phpunit": "~6.0",
+                "scrutinizer/ocular": "~1.1",
+                "squizlabs/php_codesniffer": "~2.3"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Jorijn\\LaravelSecurityChecker\\ServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Jorijn\\LaravelSecurityChecker\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jorijn Schrijvershof",
+                    "email": "jorijn@jorijn.com"
+                }
+            ],
+            "description": "Added Laravel functionality to SensioLabs Security Checker. Adds a command to check for, and optionally emails you, vulnerabilities when they affect you.",
+            "keywords": [
+                "composer",
+                "dependencies",
+                "laravel",
+                "security"
+            ],
+            "time": "2018-09-03T09:48:16+00:00"
         },
         {
             "name": "julien-c/iso3166",
@@ -5234,6 +5298,51 @@
                 "validator"
             ],
             "time": "2018-01-24T12:46:19+00:00"
+        },
+        {
+            "name": "sensiolabs/security-checker",
+            "version": "v4.1.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sensiolabs/security-checker.git",
+                "reference": "dc270d5fec418cc6ac983671dba5d80ffaffb142"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sensiolabs/security-checker/zipball/dc270d5fec418cc6ac983671dba5d80ffaffb142",
+                "reference": "dc270d5fec418cc6ac983671dba5d80ffaffb142",
+                "shasum": ""
+            },
+            "require": {
+                "composer/ca-bundle": "^1.0",
+                "symfony/console": "~2.7|~3.0|~4.0"
+            },
+            "bin": [
+                "security-checker"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "SensioLabs\\Security": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien.potencier@gmail.com"
+                }
+            ],
+            "description": "A security checker for your composer.lock",
+            "time": "2018-02-28T22:10:01+00:00"
         },
         {
             "name": "spatie/db-dumper",

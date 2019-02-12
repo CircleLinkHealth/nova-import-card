@@ -7,24 +7,27 @@
 namespace App\Notifications;
 
 use App\Mail\CarePlanApprovalReminder as CarePlanApprovalReminderMailable;
+use App\Notifications\Channels\DirectMailChannel;
 use App\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Channels\MailChannel;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\View;
 
 class CarePlanApprovalReminder extends Notification
 {
     use Queueable;
-
+    
     /**
      * Create a new notification instance.
      */
     protected $numberOfCareplans;
-
+    
     public function __construct($numberOfCareplans)
     {
         $this->numberOfCareplans = $numberOfCareplans;
     }
-
+    
     /**
      * Get the array representation of the notification.
      *
@@ -35,16 +38,11 @@ class CarePlanApprovalReminder extends Notification
     public function toArray($notifiable)
     {
         return [
-        ];
-    }
-
-    public function toDatabase($notifiable)
-    {
-        return [
+            'channels'          => $this->via($notifiable),
             'numberOfCareplans' => $this->numberOfCareplans,
         ];
     }
-
+    
     /**
      * Get the mail representation of the notification.
      *
@@ -56,9 +54,44 @@ class CarePlanApprovalReminder extends Notification
     {
         return new CarePlanApprovalReminderMailable($notifiable, $this->numberOfCareplans);
     }
-
+    
+    /**
+     * @param User $notifiable
+     *
+     * @return array|bool
+     * @throws \Exception
+     */
+    public function toDirectMail(User $notifiable)
+    {
+        if ( ! $notifiable || ! $notifiable->emr_direct_address) {
+            return false;
+        }
+        
+        return [
+            'body'    => $this->directMailBody($notifiable),
+            'subject' => "{$this->numberOfCareplans} CircleLink Care Plan(s) for your Approval!",
+        ];
+    }
+    
+    /**
+     * @return string
+     * @throws \Exception
+     */
+    private function directMailBody(User $notifiable)
+    {
+        return View::make(
+            'emails.DmCareplanApprovalReminder',
+            [
+                'notifiable'        => $notifiable,
+                'numberOfCareplans' => $this->numberOfCareplans,
+            ]
+        );
+    }
+    
+    
     /**
      * Get the notification's delivery channels.
+     *
      *
      * @param mixed $notifiable
      *
@@ -66,9 +99,17 @@ class CarePlanApprovalReminder extends Notification
      */
     public function via($notifiable)
     {
-        return [
-            'mail',
-            'database',
-        ];
+        $channels = ['database'];
+        $settings = $notifiable->practiceSettings();
+        
+        if ($settings->email_careplan_approval_reminders) {
+            $channels[] = MailChannel::class;
+        }
+        
+        if ($settings->dm_careplan_approval_reminders) {
+            $channels[] = DirectMailChannel::class;
+        }
+        
+        return $channels;
     }
 }

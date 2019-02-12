@@ -18,7 +18,7 @@ class PatientReadRepository
     public function __construct(User $user)
     {
         $this->user = $user::ofType('participant')
-            ->with('patientInfo');
+                           ->with('patientInfo');
     }
 
     public function fetch($resetQuery = true)
@@ -27,7 +27,7 @@ class PatientReadRepository
 
         if ($resetQuery) {
             $this->user = User::ofType('participant')
-                ->with('patientInfo');
+                              ->with('patientInfo');
         }
 
         return $result;
@@ -41,32 +41,39 @@ class PatientReadRepository
     public function patients(PatientFilters $filters)
     {
         $users = $this->model()
-            ->with([
-                'carePlan',
-                'phoneNumbers',
-                'patientInfo',
-                'primaryPractice',
-                'providerInfo',
-                'observations' => function ($q) {
-                    $q
-                        ->latest();
-                },
-            ])
-            ->whereHas('patientInfo')
-            ->intersectPracticesWith(auth()->user())
-            ->filter($filters);
-        if ( ! $filters->isExcel()) { //check that an excel file is not requested]
-            if (isset($filters->filters()['rows']) && 'all' == $filters->filters()['rows']) {
-                $users = $users->paginate($users->count());
-            } else {
-                $users = $users->paginate($filters->filters()['rows'] ?? 15);
-            }
+                      ->with([
+                          'carePlan',
+                          'phoneNumbers',
+                          'patientInfo',
+                          'primaryPractice',
+                          'providerInfo',
+                          'observations' => function ($q) {
+                              $q
+                                  ->latest();
+                          },
+                      ])
+                      ->whereHas('patientInfo')
+                      ->intersectPracticesWith(auth()->user())
+                      ->filter($filters);
+
+        $shouldSetDefaultRows = false;
+        $filtersInput = $filters->filters();
+
+        if ( ! isset($filtersInput['rows'])) {
+            $shouldSetDefaultRows = true;
+        }
+        else if ($filtersInput['rows'] !== 'all' && ! is_numeric($filtersInput['rows'])) {
+            $shouldSetDefaultRows = true;
+        }
+
+        if ($shouldSetDefaultRows) {
+            $filtersInput['rows'] = 15;
+        }
+
+        if ('all' == $filtersInput['rows']) {
+            $users = $users->paginate($users->count());
         } else {
-            if (isset($filters->filters()['rows']) && is_integer((int) $filters->filters()['rows'])) {
-                $users = $users->paginate($filters->filters()['rows']);
-            } else {
-                $users = $users->paginate($users->count());
-            }
+            $users = $users->paginate($filtersInput['rows']);
         }
 
         return $users;

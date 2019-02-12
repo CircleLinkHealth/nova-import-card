@@ -7,6 +7,16 @@
 
     @include('partials.confirm-modal')
 
+    <div class="col-lg-8 col-lg-offset-2">
+        <div>
+            @include('errors.messages')
+        </div>
+        <div>
+            @include('errors.errors')
+        </div>
+    </div>
+
+
     <div class="row main-form-block" style="margin-top:30px;">
         <div class="main-form-container col-lg-8 col-lg-offset-2">
             <div class="row">
@@ -43,7 +53,7 @@
                         @push('scripts')
                             <script>
 
-                                const activityStr = @json($activity_json) + "";
+                                const activityStr = @json($activity_json) +"";
                                 const activityJson = JSON.parse(activityStr);
 
                                 function startCompare(value, filter) {
@@ -178,17 +188,17 @@
                                         animate: true,
                                         container: "paging_container",// the container where the pager controls will be placed into
                                         template: "{common.first()} {common.prev()} {common.pages()} {common.next()} {common.last()}@if(is_null($showAll)) <p></p>\n" +
-                                        "@elseif($showAll == true)\n" +
-                                        "<a\n" +
-                                        "href=\"{{ route('patient.note.index', array('patient' => $patient->id, 'showAll' => false)) }}\"\n" +
-                                        "class=\"btn btn-primary btn-sm\"\n" +
-                                        "role=\"button\">Show Last 2 Months</a>\n" +
-                                        "@else\n" +
-                                        "<a\n" +
-                                        "href=\"{{ route('patient.note.index', array('patient' => $patient->id, 'showAll' => true)) }}\"\n" +
-                                        "class=\"btn btn-primary btn-sm\" role=\"button\">Show\n" +
-                                        "All</a>\n" +
-                                        "@endif",
+                                            "@elseif($showAll == true)\n" +
+                                            "<a\n" +
+                                            "href=\"{{ route('patient.note.index', array('patient' => $patient->id, 'showAll' => false)) }}\"\n" +
+                                            "class=\"btn btn-primary btn-sm\"\n" +
+                                            "role=\"button\">Show Last 2 Months</a>\n" +
+                                            "@else\n" +
+                                            "<a\n" +
+                                            "href=\"{{ route('patient.note.index', array('patient' => $patient->id, 'showAll' => true)) }}\"\n" +
+                                            "class=\"btn btn-primary btn-sm\" role=\"button\">Show\n" +
+                                            "All</a>\n" +
+                                            "@endif",
                                         size: 10, // the number of records per a page
                                         group: 5   // the number of pages in the pager
                                     },
