@@ -8085,7 +8085,14 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-migrations.git",
-                "reference": "c93d561468b50ac8c7306fcdecdb7f78c927a0c8"
+                "reference": "7b32a03dbd902abe01966901a2031e70f7071328"
+            },
+            "require-dev": {
+                "illuminate/console": "^5.7",
+                "illuminate/database": "^5.7",
+                "illuminate/events": "^5.7",
+                "illuminate/filesystem": "^5.7",
+                "symfony/process": "^4.2"
             },
             "type": "library",
             "extra": {
@@ -8107,7 +8114,7 @@
                     "email": "mantoniou@circlelinkhealth.com"
                 }
             ],
-            "time": "2019-02-13T09:24:47+00:00"
+            "time": "2019-02-13T15:55:37+00:00"
         },
         {
             "name": "composer/composer",
