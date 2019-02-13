@@ -39,9 +39,10 @@ class InvitationLinksController extends Controller
                 ->withInput();
         }
 
-        $userId = $request->get('id');
-        $url    = $this->service->createAndSaveUrl($userId);
+        $userId      = $request->get('id');
+        $url         = $this->service->createAndSaveUrl($userId);
         $phoneNumber = $this->service->getPatientPhoneNumberById($userId);
+
         //@todo:HERE - send SMS using Twilio with $url and then return feedback
 
         return 'Invitation has been sent';
@@ -85,12 +86,11 @@ class InvitationLinksController extends Controller
         $today        = now();
         $expireRange  = InvitationLinksController::LINK_EXPIRES_IN_DAYS;
 
-        if ( ! $urlUpdatedAt->diffInDays($today) < $expireRange || ! $isExpiredUrl == false) {
+        if ($isExpiredUrl || $urlUpdatedAt->diffInDays($today) > $expireRange) {
             $invitationLink->where('is_manually_expired', '=', 0)->update(['is_manually_expired' => true]);
 
             return view('surveyUrlAuth.resendUrl', compact('userId'));
         }
-
         return view('surveyQuestionaire.survey');
     }
 
