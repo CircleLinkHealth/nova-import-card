@@ -91,6 +91,7 @@ class InvitationLinksController extends Controller
 
             return view('surveyUrlAuth.resendUrl', compact('userId'));
         }
+
         return view('surveyQuestionaire.survey');
     }
 
