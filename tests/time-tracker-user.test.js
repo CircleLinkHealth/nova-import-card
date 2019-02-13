@@ -291,12 +291,12 @@ describe('TimeTrackerUser', () => {
             assert.equal(user.LOGOUT_TIMEOUT, 600)
         })
 
-        it('should have ALERT_TIMEOUT_CALL_MODE as 900', () => {
-            assert.equal(user.ALERT_TIMEOUT_CALL_MODE, 900)
+        it('should have ALERT_TIMEOUT_CALL_MODE as 1800', () => {
+            assert.equal(user.ALERT_TIMEOUT_CALL_MODE, 1800)
         })
 
-        it('should have LOGOUT_TIMEOUT_CALL_MODE as 1200', () => {
-            assert.equal(user.LOGOUT_TIMEOUT_CALL_MODE, 1200)
+        it('should have LOGOUT_TIMEOUT_CALL_MODE as 3600', () => {
+            assert.equal(user.LOGOUT_TIMEOUT_CALL_MODE, 3600)
         })
     })
 
