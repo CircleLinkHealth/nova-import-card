@@ -33,6 +33,10 @@
       "url": "git@github.com:CircleLinkHealth/laravel-cerberus.git"
     },
     {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/module-migrations.git"
+    },
+    {
       "type": "composer",
       "url": "https://packagist.org"
     },
