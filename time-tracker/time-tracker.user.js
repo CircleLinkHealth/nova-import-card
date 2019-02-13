@@ -97,8 +97,8 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         MINIMUM_DURATION_AFTER_INACTIVITY_SECONDS: 30,
         ALERT_TIMEOUT: 120,
         LOGOUT_TIMEOUT: 600,
-        ALERT_TIMEOUT_CALL_MODE: 900,
-        LOGOUT_TIMEOUT_CALL_MODE: 1200,
+        ALERT_TIMEOUT_CALL_MODE: 1800, //30 minutes
+        LOGOUT_TIMEOUT_CALL_MODE: 3600, //60 minutes
         overrideTimeouts (options = {}) {
             this.ALERT_TIMEOUT = Math.ceil(options.alertTimeout) || this.ALERT_TIMEOUT;
             this.LOGOUT_TIMEOUT = Math.ceil(options.logoutTimeout) || this.LOGOUT_TIMEOUT;
