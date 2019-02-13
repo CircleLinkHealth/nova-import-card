@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "35614d24a791737ab629b0717b4a70ac",
+    "content-hash": "917c8c387e3ef8ab4b044ea682104a14",
     "packages": [
         {
             "name": "amnuts/opcache-gui",
@@ -590,36 +590,6 @@
                 "time"
             ],
             "time": "2019-02-11T02:08:31+00:00"
-        },
-        {
-            "name": "circlelinkhealth/migrations",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:CircleLinkHealth/module-migrations.git",
-                "reference": "c93d561468b50ac8c7306fcdecdb7f78c927a0c8"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Modules\\Migrations\\Providers\\MigrationsServiceProvider"
-                    ],
-                    "aliases": []
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Modules\\Migrations\\": ""
-                }
-            },
-            "authors": [
-                {
-                    "name": "Michalis Antoniou",
-                    "email": "mantoniou@circlelinkhealth.com"
-                }
-            ],
-            "time": "2019-02-13T09:24:47+00:00"
         },
         {
             "name": "composer/ca-bundle",
@@ -8110,6 +8080,36 @@
             "time": "2018-01-18T12:09:16+00:00"
         },
         {
+            "name": "circlelinkhealth/migrations",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/module-migrations.git",
+                "reference": "c93d561468b50ac8c7306fcdecdb7f78c927a0c8"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Modules\\Migrations\\Providers\\MigrationsServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Modules\\Migrations\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@circlelinkhealth.com"
+                }
+            ],
+            "time": "2019-02-13T09:24:47+00:00"
+        },
+        {
             "name": "composer/composer",
             "version": "1.8.4",
             "source": {
@@ -11379,12 +11379,12 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/migrations": 20,
         "lynx39/lara-pdf-merger": 20,
         "michalisantoniou6/laravel-cerberus": 20,
         "prettus/l5-repository": 20,
         "venturecraft/revisionable": 20,
         "waavi/url-shortener": 20,
+        "circlelinkhealth/migrations": 20,
         "orangehill/iseed": 20,
         "xethron/migrations-generator": 20
     },
