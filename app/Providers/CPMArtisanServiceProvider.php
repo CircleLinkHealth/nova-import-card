@@ -18,22 +18,8 @@ class CPMArtisanServiceProvider extends ArtisanServiceProvider
      */
     private function disableCoreArtisanCommands()
     {
-        //remove migration commands from devCommands
-        $devCommands = [];
-        foreach ($this->devCommands as $key => $value) {
-            if ( ! str_contains($key, ['Migrate'])) {
-                $devCommands[$key] = $value;
-            }
-        }
-        $this->devCommands = $devCommands;
-        
-        //remove migration commands from commands
-        $commands = [];
-        foreach ($this->commands as $key => $value) {
-            if ( ! str_contains($key, ['Migrate'])) {
-                $commands[$key] = $value;
-            }
-        }
-        $this->commands = $commands;
+        //Remove the ability to create migrations, in favor of having migrations in a separate repository
+        //https://github.com/CircleLinkHealth/module-migrations
+        unset($this->devCommands['MigrateMake']);
     }
 }

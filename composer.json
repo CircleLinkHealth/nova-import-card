@@ -9,35 +9,11 @@
   "type": "project",
   "repositories": [
     {
-      "type": "git",
-      "url": "git@github.com:jamisonvalenta/Laravel-4-Generators.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:michalisantoniou6/url-shortener.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:michalisantoniou6/revisionable.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/opcache-gui.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:ishansiddiqui/lara-pdf-merger.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/laravel-cerberus.git"
-    },
-    {
       "type": "composer",
-      "url": "https://packagist.org"
+      "url": "https://repo.packagist.com/circlelinkhealth/careplan-manager/"
     },
     {
-      "packagist": false
+      "packagist.org": false
     }
   ],
   "require": {
@@ -53,6 +29,7 @@
     "barryvdh/laravel-debugbar": "*",
     "barryvdh/laravel-snappy": "0.4.1",
     "blackfire/php-sdk": "^1.17",
+    "circlelinkhealth/migrations": "dev-master",
     "fideloper/proxy": "~3.3",
     "genealabs/laravel-caffeine": "^0.5.0",
     "guzzlehttp/guzzle": "~5.3|~6.0",
