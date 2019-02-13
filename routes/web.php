@@ -23,3 +23,4 @@ Route::post('send-invitation-link', 'InvitationLinksController@sendInvitationLin
 Route::get('login-survey/{user}/{survey}', 'InvitationLinksController@surveyFormAuth')->name('loginSurvey');
 Route::post('survey-auth/{user}', 'InvitationLinksController@authSurveyLogin')->name('surveyAuth');
 Route::post('resend-link/{user}', 'InvitationLinksController@resendUrl')->name('resendUrl');
+Route::post('save-awv-survey-answer', 'AwvSurveyConroller@saveAnswer')->name('save.awv.survey.answer');
