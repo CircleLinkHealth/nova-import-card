@@ -9,11 +9,35 @@
   "type": "project",
   "repositories": [
     {
-      "type": "composer",
-      "url": "https://repo.packagist.com/circlelinkhealth/careplan-manager/"
+      "type": "git",
+      "url": "git@github.com:jamisonvalenta/Laravel-4-Generators.git"
     },
     {
-      "packagist.org": false
+      "type": "git",
+      "url": "git@github.com:michalisantoniou6/url-shortener.git"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:michalisantoniou6/revisionable.git"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/opcache-gui.git"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:ishansiddiqui/lara-pdf-merger.git"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/laravel-cerberus.git"
+    },
+    {
+      "type": "composer",
+      "url": "https://packagist.org"
+    },
+    {
+      "packagist": false
     }
   ],
   "require": {
