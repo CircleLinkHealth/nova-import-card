@@ -6,6 +6,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Auth\LoginController;
+
 class WelcomeController extends Controller
 {
     /*
@@ -36,11 +38,11 @@ class WelcomeController extends Controller
      */
     public function index()
     {
-        $user = auth()->user();
-
-        if ( ! $user) {
-            return redirect()->route('login', []);
+        if ( ! auth()->check()) {
+            return app(LoginController::class)->showLoginForm();
         }
+    
+        $user = auth()->user();
 
         if ($user->roles->isEmpty()) {
             auth()->logout();
