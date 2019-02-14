@@ -14,21 +14,25 @@ class Question extends Model
      */
     protected $fillable = [
         'survey_id',
-        'body'
+        'body',
     ];
 
 
-    public function surveyInstance(){
-        return $this->belongsToMany(SurveyInstance::class, 'survey_questions', 'question_id','survey_instance_id' )->withPivot([
-            'order'
+    public function surveyInstance()
+    {
+        return $this->belongsToMany(SurveyInstance::class, 'survey_questions', 'question_id',
+            'survey_instance_id')->withPivot([
+            'order',
         ]);
     }
 
-    public function survey(){
+    public function survey()
+    {
         return $this->belongsTo(Survey::class, 'survey_id');
     }
 
-    public function type(){
+    public function type()
+    {
         return $this->hasOne(QuestionType::class, 'question_id', 'id');
     }
 }

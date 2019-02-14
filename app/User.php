@@ -33,11 +33,15 @@ class User extends Authenticatable
 
     public function surveys()
     {
-
         return $this->belongsToMany(Survey::class, 'users_surveys', 'user_id', 'survey_id')
                     ->withPivot([
                         'survey_instance_id',
                         'status',
                     ]);
+    }
+
+    public function answers()
+    {
+        return $this->hasMany(Answer::class, 'user_id');
     }
 }

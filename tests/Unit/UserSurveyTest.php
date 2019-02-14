@@ -18,18 +18,19 @@ class UserSurveyTest extends TestCase
     use DatabaseTransactions;
 
     /**
-     * A user can have multiple surveys, and each survey can have multiple instances, with variable statuses of completion
-     * for that user
+     * A user can have multiple surveys, and each survey can have multiple instances, with variable statuses of
+     * completion for that user. These relationships exist in the intermediary table 'users_survey', with pivot value
+     * 'status'.
      *
      *
      * @return void
      */
     public function test_user_has_surveys()
     {
-       $this->attachSurveyToUser();
+        $this->attachSurveyToUser();
 
         //assert user can have many surveys
-        $secondSurvey         = Survey::create([
+        $secondSurvey = Survey::create([
             'name'        => Survey::VITALS,
             'description' => 'This is the second test description',
         ]);
@@ -49,7 +50,8 @@ class UserSurveyTest extends TestCase
             ]);
 
         $this->assertEquals($this->user->surveys()->count(), 2);
-        $this->assertEquals($this->user->surveys()->orderByDesc('id')->first()->pivot->status, SurveyInstance::COMPLETED );
+        $this->assertEquals($this->user->surveys()->orderByDesc('id')->first()->pivot->status,
+            SurveyInstance::COMPLETED);
 
 
     }
@@ -58,7 +60,8 @@ class UserSurveyTest extends TestCase
      * A survey can have multiple instances
      *
      */
-    public function test_survey_has_survey_instances(){
+    public function test_survey_has_survey_instances()
+    {
 
         $instance = $this->survey->instances()->first();
 
@@ -79,11 +82,12 @@ class UserSurveyTest extends TestCase
     /**
      *Testing inverse of relationship on survey instance
      */
-    public function test_survey_instance_belongs_to_surveys_and_users(){
+    public function test_survey_instance_belongs_to_surveys_and_users()
+    {
 
         $this->attachSurveyToUser();
 
-        $user = $this->surveyInstance->users()->first();
+        $user   = $this->surveyInstance->users()->first();
         $survey = $this->surveyInstance->survey;
 
         $this->assertEquals($survey->id, $this->survey->id);
@@ -92,7 +96,8 @@ class UserSurveyTest extends TestCase
 
     }
 
-    public function test_user_survey_instance_status_can_be_updated(){
+    public function test_user_survey_instance_status_can_be_updated()
+    {
 
         $this->attachSurveyToUser();
 
@@ -103,7 +108,8 @@ class UserSurveyTest extends TestCase
         $this->assertEquals($survey->pivot->status, SurveyInstance::COMPLETED);
     }
 
-    public function attachSurveyToUser(){
+    public function attachSurveyToUser()
+    {
 
         $this->user->surveys()->attach(
             $this->survey->id,
@@ -120,8 +126,6 @@ class UserSurveyTest extends TestCase
     }
 
 
-
-
     public function setUp()
     {
         parent::setUp();
@@ -132,8 +136,8 @@ class UserSurveyTest extends TestCase
             'password' => bcrypt('test'),
         ]);
 
-        $this->survey         = Survey::create([
-            'name'        =>  Survey::HRA,
+        $this->survey = Survey::create([
+            'name'        => Survey::HRA,
             'description' => 'This is a test description',
         ]);
 

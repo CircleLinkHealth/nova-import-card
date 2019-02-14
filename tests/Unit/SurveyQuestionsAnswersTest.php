@@ -19,6 +19,10 @@ class SurveyQuestionsAnswersTest extends TestCase
     use DatabaseTransactions;
 
 
+    /**
+     * Questions belong to a survey, but will be included in the survey depending on the survey instance,
+     * in survey_questions table
+     */
     public function test_questions_belongs_to_a_survey()
     {
 
@@ -35,7 +39,8 @@ class SurveyQuestionsAnswersTest extends TestCase
 
 
     /**
-     * Each survey instance will hold all the questions in the intermediary table survey_questions
+     * Each survey instance will hold all the questions in the intermediary table survey_questions,
+     * along with the order of the question in the survey
      *
      * @return void
      */
@@ -50,6 +55,9 @@ class SurveyQuestionsAnswersTest extends TestCase
         $this->assertEquals($questions->first()->pivot->order, 1);
     }
 
+    /**
+     * Question has one type, checkbox, text, radio, range etc
+     */
     public function test_question_has_type()
     {
         $question = $this->createAndAttachQuestionToSurvey();
@@ -67,6 +75,13 @@ class SurveyQuestionsAnswersTest extends TestCase
 
     }
 
+    /**
+     * In the case a Question is checkbox, radio buttons etc, we store possible answers in question_types_answers
+     * table. (optional) Any specific characteristics of that possible answer are stored in 'options'. In this case
+     * 'allow_custom_input' could mean that in case that specific option checkbox is selected, the user will be able to
+     * also input extra text.
+     *
+     */
     public function test_question_has_possible_answers()
     {
 
@@ -76,25 +91,58 @@ class SurveyQuestionsAnswersTest extends TestCase
             'answer_type' => QuestionType::CHECKBOX,
         ]);
 
-        $possibleAnswer = $type->possibleAnswers()->create([
+        $possibleAnswer = $type->questionTypeAnswers()->create([
             'value'   => 'Test answer',
             'options' => [
-                'allow_custom_input' => true
-            ]
+                'allow_custom_input' => true,
+            ],
         ]);
 
         $this->assertNotNull($possibleAnswer);
-        $this->assertTrue(array_key_exists('allow_custom_input',$possibleAnswer->options));
+        $this->assertTrue(array_key_exists('allow_custom_input', $possibleAnswer->options));
 
     }
 
-    public function test_user_can_have_answers(){
+    /**
+     * Users can have many answers.
+     * Answers are related to: Users, Survey Instances, Questions, Question Type Answers (optional/nullable)
+     * Value_1 is required.
+     * Value_2 exists in the cases of e.g. a selected possible answer + extra custom input (nullable)
+     */
+    public function test_user_can_have_answers()
+    {
+
+        $question = $this->createAndAttachQuestionToSurvey();
+
+        $type = $question->type()->create([
+            'answer_type' => QuestionType::CHECKBOX,
+        ]);
+
+        $possibleAnswer = $type->questionTypeAnswers()->create([
+            'value'   => 'Test answer',
+            'options' => [
+                'allow_custom_input' => true,
+            ],
+        ]);
+
+        $answer = $this->user->answers()->create([
+            'survey_instance_id'      => $this->surveyInstance->id,
+            'question_id'             => $question->id,
+            'question_type_answer_id' => $possibleAnswer->id,
+            'value_1'                 => 'Test answer',
+            'value_2'                 => 'Test answer from the custom input',
+        ]);
+
+        $this->assertNotNull($answer);
+        $this->assertNotNull($answer->user);
+        $this->assertNotNull($answer->surveyInstance);
+        $this->assertNotNull($answer->question);
+        $this->assertNotNull($answer->questionTypesAnswer);
 
     }
 
     public function createAndAttachQuestionToSurvey()
     {
-
         $question = Question::create([
             'survey_id' => $this->survey->id,
             'body'      => 'Test Question?',
@@ -102,6 +150,8 @@ class SurveyQuestionsAnswersTest extends TestCase
         $this->surveyInstance->questions()->attach($question->id, [
             'order' => 1,
         ]);
+
+        $this->assertNotNull($question);
 
         return $question;
     }

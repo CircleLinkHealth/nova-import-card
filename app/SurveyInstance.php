@@ -35,9 +35,11 @@ class SurveyInstance extends Model
         ]);
     }
 
-    public function questions(){
-        return $this->belongsToMany( Question::class, 'survey_questions', 'survey_instance_id', 'question_id')->withPivot([
-            'order'
+    public function questions()
+    {
+        return $this->belongsToMany(Question::class, 'survey_questions', 'survey_instance_id',
+            'question_id')->withPivot([
+            'order',
         ]);
     }
 
