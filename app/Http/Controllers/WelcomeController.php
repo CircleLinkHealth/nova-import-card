@@ -6,7 +6,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Enrollment\EnrollmentCenterController;
+use App\Http\Controllers\Patient\PatientController;
+use App\Http\Requests\Request;
 
 class WelcomeController extends Controller
 {
@@ -36,12 +40,12 @@ class WelcomeController extends Controller
      *
      * @return Response
      */
-    public function index()
+    public function index(Request $request)
     {
         if ( ! auth()->check()) {
             return app(LoginController::class)->showLoginForm();
         }
-    
+
         $user = auth()->user();
 
         if ($user->roles->isEmpty()) {
@@ -51,25 +55,25 @@ class WelcomeController extends Controller
         }
 
         if ($user->isAdmin()) {
-            return redirect()->route('admin.dashboard', []);
+            return app(DashboardController::class)->index();
         }
 
         if ($user->hasRole('saas-admin')) {
-            return redirect()->route('saas-admin.home', []);
+            return app(PatientController::class)->showDashboard();
         }
 
         if ($user->hasRole('care-ambassador') || $user->hasRole('care-ambassador-view-only')) {
-            return redirect()->route('enrollment-center.dashboard');
+            return app(EnrollmentCenterController::class)->dashboard();
         }
 
         if ($user->hasRole('ehr-report-writer')) {
             if ( ! app()->environment('production')) {
-                return redirect()->route('report-writer.dashboard');
+                return app(EhrReportWriterController::class)->index();
             }
 
             return redirect()->route('login')->with(['messages' => ['message' => 'Ehr Report Writers can only login in the Worker. Please visit: https://circlelink-worker.medstack.net']]);
         }
 
-        return redirect()->route('patients.dashboard', []);
+        return app(PatientController::class)->showDashboard();
     }
 }

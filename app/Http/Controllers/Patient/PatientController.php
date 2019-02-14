@@ -133,26 +133,23 @@ class PatientController extends Controller
      *
      * @return Response
      */
-    public function showDashboard(Request $request)
+    public function showDashboard()
     {
         $pendingApprovals = 0;
 
         $nurse                          = null;
         $patientsPendingApproval        = [];
         $showPatientsPendingApprovalBox = false;
+        
+        $user = auth()->user();
 
-        if (auth()->user()->nurseInfo && auth()->user()->hasRole(['care-center'])) {
-            $nurse = auth()->user()->nurseInfo;
-            $nurse->workhourables()->firstOrCreate([]);
+        if ($user->isCareCoach() && $user->nurseInfo) {
+            $nurse = $user->nurseInfo;
         }
 
-        if (auth()->user()->canApproveCarePlans()) {
+        if ($user->canApproveCarePlans()) {
             $showPatientsPendingApprovalBox = true;
-            $patients                       = auth()->user()->patientsPendingApproval()->get()->filter(function (
-                $user
-            ) {
-                return CarePlan::QA_APPROVED == $user->getCarePlanStatus();
-            });
+            $patients                       = $user->patientsPendingApproval()->get();
             $patientsPendingApproval        = $this->formatter->patientListing($patients);
             $pendingApprovals               = $patients->count();
         }
