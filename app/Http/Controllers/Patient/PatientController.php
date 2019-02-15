@@ -106,6 +106,8 @@ class PatientController extends Controller
     public function showCallPatientPage(Request $request, $patientId)
     {
         $user = User::with('phoneNumbers')
+                    ->with('patientInfo.location')
+                    ->with('primaryPractice.locations')
                     ->where('id', $patientId)
                     ->firstOrFail();
 
@@ -117,15 +119,22 @@ class PatientController extends Controller
                 return [$p->type => $p->number];
             });
 
-        $otherNumbers = collect();
-        if ($user->primaryPractice && $user->primaryPractice->outgoing_phone_number) {
-            $otherNumbers->put('Practice', formatPhoneNumberE164($user->primaryPractice->outgoing_phone_number));
+        $clinicalEscalationNumber = null;
+        if (optional($user->patientInfo->location)->clinical_escalation_phone) {
+            $clinicalEscalationNumber = $user->patientInfo->location->clinical_escalation_phone;
+        }
+
+        if ( ! $clinicalEscalationNumber && $user->primaryPractice) {
+            $practicePrimaryLocation = $user->primaryPractice->primaryLocation();
+            if ($practicePrimaryLocation) {
+                $clinicalEscalationNumber = $practicePrimaryLocation->clinical_escalation_phone;
+            }
         }
 
         return view('wpUsers.patient.calls.index')
             ->with('patient', $user)
             ->with('phoneNumbers', $phoneNumbers)
-            ->with('otherNumbers', $otherNumbers);
+            ->with('clinicalEscalationNumber', $clinicalEscalationNumber);
     }
 
     /**
