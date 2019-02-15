@@ -9,6 +9,7 @@ namespace App\Http\Controllers;
 use App\Activity;
 use App\Call;
 use App\Contracts\ReportFormatter;
+use App\Http\Requests\NotesReport;
 use App\Note;
 use App\PatientContactWindow;
 use App\Practice;
@@ -205,129 +206,54 @@ class NotesController extends Controller
         );
     }
 
-    public function listing(Request $request)
+    public function listing(NotesReport $request)
     {
-        $input = $request->all();
-
-        $validation = \Validator::make($input, [
-            'range'        => 'sometimes|integer|between:0,4',
-            'provider'     => 'sometimes|integer',
-            'mail_filter'  => 'sometimes',
-            'admin_filter' => 'sometimes',
-        ], [
-            'between' => 'Something went wrong with the date you have submitted. Please select one of the options in the dropdown.'
-        ]);
-
-        if ($validation->fails()) {
-            return redirect()
-                ->back()
-                ->withErrors($validation->errors())
-                ->withInput();
-        }
-
         $session_user = auth()->user();
 
-        $providers_for_blog = User::whereIn('id', $session_user->viewableProviderIds())
-                                  ->pluck('display_name', 'id')->sort();
-
-        //TIME FILTERS
-
-        //if month and year are selected
-        if (isset($input['range'])) {
-            //Sub no of months by input
-            $months = $input['range'];
-            $start  = Carbon::now()->startOfMonth()->subMonth($months)->format('Y-m-d');
-            $end    = Carbon::now()->endOfMonth()->format('Y-m-d');
-        } //if user resets time
-        else {
-            $months = 0;
-            $start  = Carbon::now()->startOfMonth()->format('Y-m-d');
-            $end    = Carbon::now()->endOfMonth()->format('Y-m-d');
+        if ($request->has('getNotesFor')) {
+            $providers = $this->getProviders($request->getNotesFor);
         }
 
-        $only_mailed_notes = (isset($input['mail_filter']))
-            ? true
-            : false;
+        $data['providers'] = User::whereIn('id', $session_user->viewableProviderIds())
+                                    ->pluck('display_name', 'id')->sort();
+        $data['practices']  = Practice::whereIn('id', $session_user->viewableProgramIds())
+                                      ->pluck('display_name', 'id')->sort();
 
-        $admin_filter = (isset($input['admin_filter']))
-            ? true
-            : false;
+        $start  = Carbon::now()->startOfMonth()->subMonth($request->has('range') ? $request->range : 0)->format('Y-m-d');
+        $end    = Carbon::now()->endOfMonth()->format('Y-m-d');
 
-        //Check to see whether a provider was selected.
-        if (isset($input['provider']) && '' != $input['provider']) {
-            $provider = User::find($input['provider']);
+        //Check to see whether there are providers to fetch notes for.
+        if (isset($providers) && ! empty($providers)) {
 
-            if ( ! $provider) {
-                return redirect()
-                    ->back()
-                    ->withErrors(["Invalid provider id."])
-                    ->withInput();
-            }
-
-            if ($only_mailed_notes) {
-                $notes = $this->service->getForwardedNotesWithRangeForProvider($provider->id, $start, $end);
+            if ($request->has('mail_filter')) {
+                $notes = $this->service->getForwardedNotesWithRangeForProvider($providers, $start, $end);
             } else {
-                $notes = $this->service->getNotesWithRangeForProvider($provider->id, $start, $end);
+                $notes = $this->service->getNotesWithRangeForProvider($providers, $start, $end);
             }
-
-            $title = $provider->display_name;
-
             if ( ! empty($notes)) {
                 $notes = $this->formatter->formatDataForNotesListingReport($notes, $request);
             }
-
-            $data = [
-                'filter'             => $input['provider'],
-                'notes'              => $notes,
-                'title'              => $title,
-                'dateFilter'         => $months,
-                'results'            => $notes,
-                'providers_for_blog' => $providers_for_blog,
-                'isProviderSelected' => true,
-                'selected_provider'  => $provider,
-                'only_mailed_notes'  => $only_mailed_notes,
-                'admin_filter'       => $admin_filter,
-            ];
+            $data['notes'] = $notes;
+            $data['isProviderSelected'] = true;
         } else {
-            if ((auth()->user()->isAdmin() || auth()->user()->hasRole('care-center')) && $admin_filter) {
+            if ($session_user->hasRole(['administrator', 'care-center']) && $request->has('admin_filter')) {
                 //If an admin is viewing this, we show them all
                 //notes from all providers who are in the
                 //same program as the provider selected.
-
                 $notes = $this->service->getAllForwardedNotesWithRange(Carbon::parse($start), Carbon::parse($end));
-
-                $title = 'All Forwarded Notes';
-
                 if ( ! empty($notes)) {
                     $notes = $this->formatter->formatDataForNotesListingReport($notes, $request);
                 }
-
-                $data = [
-                    'filter'             => 0,
-                    'notes'              => $notes,
-                    'title'              => $title,
-                    'dateFilter'         => $months,
-                    'results'            => $notes,
-                    'providers_for_blog' => $providers_for_blog,
-                    'isProviderSelected' => true,
-                    'selected_provider'  => auth()->user(),
-                    'only_mailed_notes'  => $only_mailed_notes,
-                    'admin_filter'       => $admin_filter,
-                ];
-            } else { // Not enough data for a report, return only the essentials
-                $data = [
-                    'filter'             => 0,
-                    'title'              => 'No Provider Selected',
-                    'notes'              => false,
-                    'providers_for_blog' => $providers_for_blog,
-                    'isProviderSelected' => false,
-                    'only_mailed_notes'  => false,
-                    'dateFilter'         => $months,
-                ];
+                $data['notes'] = $notes;
+                $data['isProviderSelected'] = true;
+            } else {
+                // Not enough data for a report, return only the essentials
+                $data['notes'] = false;
+                $data['isProviderSelected'] = false;
             }
         }
 
-        return view('wpUsers.patient.note.list', $data);
+        return view('wpUsers.patient.note.list', $data)->with('input', $request->input());
     }
 
     public function send(
@@ -673,4 +599,19 @@ class NotesController extends Controller
                        })
                        ->exists();
     }
+
+    private function getProviders($getNotesFor)
+    {
+        return collect($getNotesFor)->map(function ($for) {
+            $data = explode(':', $for);
+            if ($data[0] == 'practice') {
+                return Practice::getProviders($data[1])->pluck('id')->all();
+            } else {
+                return User::find($data[1])->id;
+            }
+        })
+                                    ->flatten()
+                                    ->all();
+    }
+
 }
