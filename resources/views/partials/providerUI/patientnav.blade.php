@@ -33,17 +33,16 @@
                                 Report</a>
                         </li>
                     @endif
+                    <li class="inline-block">
+                        <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.care-docs', array('patient' => $patient->id)) }}"
+                           role="button">Wellness Visit Docs</a>
+                    </li>
                 </ul>
             </li>
 
             <li class="inline-block">
                 <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.careplan.print', array('patient' => $patient->id)) }}"
                    role="button">View Care Plan</a>
-            </li>
-
-            <li class="inline-block">
-                <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.care-docs', array('patient' => $patient->id)) }}"
-                   role="button">Wellness Visit Docs</a>
             </li>
         </ul>
     </div>

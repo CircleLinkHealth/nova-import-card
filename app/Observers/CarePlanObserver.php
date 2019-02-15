@@ -15,7 +15,7 @@ class CarePlanObserver
 {
     public function addCarePlanPrintedNote(CarePlan $carePlan)
     {
-        $date = $carePlan->first_printed->format('m/d/Y');
+        $date = $carePlan->first_printed->setTimezone($carePlan->patient->timezone ?? 'America/New_York')->format('m/d/Y');
         $time = $carePlan->first_printed->setTimezone($carePlan->patient->timezone ?? 'America/New_York')->format('g:i A T');
 
         $note = $carePlan->patient->notes()->create([

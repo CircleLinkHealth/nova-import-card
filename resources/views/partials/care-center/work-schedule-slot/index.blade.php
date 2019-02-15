@@ -14,7 +14,7 @@
 
                             <br>
 
-                            @if($nurse->workhourables->first() && $nurse->workhourables->first()->{strtolower($day)})
+                            @if(optional($nurse->workhourables)->isNotEmpty() && $nurse->workhourables->first() && $nurse->workhourables->first()->{strtolower($day)})
                                 {{ $nurse->workhourables->first()->{strtolower($day)} }} hrs
                             @endif
 
