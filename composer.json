@@ -96,7 +96,7 @@
     "yajra/laravel-datatables-oracle": "~8.0"
   },
   "require-dev": {
-    "Xethron/Laravel-4-Generators": "*",
+    "xethron/laravel-4-generators": "*",
     "barryvdh/laravel-ide-helper": "^2.4",
     "brianium/paratest": "*",
     "darkaonline/l5-swagger": "^5.5",
