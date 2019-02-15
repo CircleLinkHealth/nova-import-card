@@ -50,7 +50,6 @@
     "appstract/laravel-opcache": "^2.0",
     "arcturial/clickatell": "*",
     "authy/php": "^3.0",
-    "barryvdh/laravel-debugbar": "*",
     "barryvdh/laravel-snappy": "0.4.1",
     "blackfire/php-sdk": "^1.17",
     "fideloper/proxy": "~3.3",
@@ -96,6 +95,7 @@
     "yajra/laravel-datatables-oracle": "~8.0"
   },
   "require-dev": {
+    "barryvdh/laravel-debugbar": "*",
     "friendsofphp/php-cs-fixer": "^2.13",
     "Xethron/Laravel-4-Generators": "*",
     "barryvdh/laravel-ide-helper": "^2.4",
