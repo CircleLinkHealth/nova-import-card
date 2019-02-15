@@ -57,6 +57,7 @@
     "barryvdh/laravel-debugbar": "*",
     "barryvdh/laravel-snappy": "0.4.1",
     "blackfire/php-sdk": "^1.17",
+    "circlelinkhealth/migrations": "dev-master",
     "fideloper/proxy": "~3.3",
     "genealabs/laravel-caffeine": "^0.5.0",
     "guzzlehttp/guzzle": "~5.3|~6.0",
@@ -100,7 +101,6 @@
     "yajra/laravel-datatables-oracle": "~8.0"
   },
   "require-dev": {
-    "circlelinkhealth/migrations": "dev-master",
     "friendsofphp/php-cs-fixer": "^2.13",
     "Xethron/Laravel-4-Generators": "*",
     "barryvdh/laravel-ide-helper": "^2.4",
