@@ -63,7 +63,7 @@
                 self.buttonText = `Close Calls Page`;
                 self.callMode = true;
 
-                const strWindowFeatures = "location=yes,height=500,width=520,scrollbars=yes,status=yes";
+                const strWindowFeatures = "location=yes,height=700,width=520,scrollbars=yes,status=yes";
                 const URL = rootUrl(`manage-patients/${this.patientId}/call`);
                 window.open(URL, "_blank", strWindowFeatures);
             },

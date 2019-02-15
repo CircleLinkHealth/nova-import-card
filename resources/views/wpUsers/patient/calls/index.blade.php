@@ -7,7 +7,7 @@
 
     <div class="container">
         <div class="row">
-            <div class="main-form-container col-lg-4 col-lg-offset-4">
+            <div class="main-form-container col-lg-6 col-lg-offset-3">
                 <div class="row">
                     <div class="main-form-title col-lg-12">
                         Patient Call Page
@@ -57,7 +57,7 @@
                                               :twilio-enabled="true"
                                               class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
                                               :info="timeTrackerInfo"
-                                              :no-live-count="{{($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? 1 : 0}}"
+                                              :no-live-count="@json(($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? true : false)"
                                               :override-timeout="{{config('services.time-tracker.override-timeout')}}"></time-tracker>
 
                             </div>
@@ -69,8 +69,8 @@
                                         :allow-conference="@json(config('services.twilio.allow-conference'))"
                                         inbound-user-id="{{$patient->id}}"
                                         outbound-user-id="{{auth()->id()}}"
-                                        :other-numbers="{{$otherNumbers}}"
-                                        :patient-numbers="{{$phoneNumbers}}">
+                                        :patient-numbers="{{$phoneNumbers}}"
+                                        clinical-escalation-number="{{$clinicalEscalationNumber}}">
                                 </call-number>
                             </div>
                         </div>

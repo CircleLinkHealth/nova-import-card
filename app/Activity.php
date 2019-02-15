@@ -160,7 +160,7 @@ class Activity extends BaseModel implements Transformable
 
     public function getCommentForActivity()
     {
-        return $this->meta->where('meta_key', 'comment')->first()->meta_value;
+        return optional($this->meta->where('meta_key', 'comment')->first())->meta_value;
     }
 
     public function getPerformedAtYearMonthAttribute()

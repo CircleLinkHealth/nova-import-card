@@ -28,9 +28,12 @@ class NurseDailyReport extends Mailable
      * @var User
      */
     protected $nurse;
-
+    
     /**
      * Create a new message instance.
+     *
+     * @param User $nurse
+     * @param array $data
      */
     public function __construct(User $nurse, array $data)
     {

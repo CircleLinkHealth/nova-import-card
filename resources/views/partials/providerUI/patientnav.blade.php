@@ -33,6 +33,10 @@
                                 Report</a>
                         </li>
                     @endif
+                    <li class="inline-block">
+                        <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.care-docs', array('patient' => $patient->id)) }}"
+                           role="button">Wellness Visit Docs</a>
+                    </li>
                 </ul>
             </li>
 

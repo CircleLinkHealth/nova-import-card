@@ -147,6 +147,11 @@ class Enrollee extends BaseModel
     const INELIGIBLE = 'ineligible';
 
     /**
+     * status = utc.
+     */
+    const UNREACHABLE = 'utc';
+
+    /**
      * status = rejected.
      */
     const REJECTED = 'rejected';
@@ -155,6 +160,16 @@ class Enrollee extends BaseModel
      * status = rejected.
      */
     const SOFT_REJECTED = 'soft_rejected';
+
+    /**
+     * status = consented.
+     */
+    const CONSENTED = 'consented';
+
+    /**
+     * status = enrolled.
+     */
+    const ENROLLED = 'enrolled';
 
     protected $dates = [
         'consented_at',
@@ -196,7 +211,7 @@ class Enrollee extends BaseModel
         'user_id',
         'provider_id',
         'practice_id',
-        'care_ambassador_id',
+        'care_ambassador_user_id',
         'total_time_spent',
         
         'invite_sent_at',
@@ -250,7 +265,7 @@ class Enrollee extends BaseModel
     
     public function careAmbassador()
     {
-        return $this->belongsTo(CareAmbassador::class, 'care_ambassador_id');
+        return $this->belongsTo(User::class, 'care_ambassador_user_id');
     }
     
     public function eligibilityJob()

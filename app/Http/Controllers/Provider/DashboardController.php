@@ -143,7 +143,8 @@ class DashboardController extends Controller
 
         $practiceSlug = $this->practiceSlug;
 
-        return view('provider.user.create-staff', compact('invite', 'practiceSlug', 'practice'));
+        //removed variable invite
+        return view('provider.user.create-staff', compact('practiceSlug', 'practice'));
     }
 
     public function getIndex()
@@ -220,6 +221,20 @@ class DashboardController extends Controller
         $settingsInput = $request->input('settings');
         $errors        = collect();
 
+
+        if (isset($settingsInput['dm_careplan_approval_reminders'])){
+            $providers = $this->primaryPractice->getProviders($this->primaryPractice->id)->filter(function ($p){
+                return !!! $p->emr_direct_address;
+            });
+            $route = route('provider.dashboard.manage.staff', ['practiceSlug' => $this->primaryPractice->name]);
+
+            if ($providers->count() > 0){
+                $errors->push("You have selected the option to send Care Plan Approval Reminders via DIRECT. 
+<br><br>The following Providers at {$this->primaryPractice->display_name} do not have DIRECT addresses on file: <br>{$providers->implode('display_name', ", <br>")}<br><br>
+Please update their profiles <a href='{$route}'>here</a>.");
+            }
+
+        }
         if (isset($settingsInput['dm_audit_reports'])) {
             $locationsWithoutDM = collect();
 
@@ -267,6 +282,8 @@ class DashboardController extends Controller
         if (empty($settingsInput['note_font_size'])) {
             unset($settingsInput['note_font_size']);
         }
+
+
 
         $this->primaryPractice->syncSettings(new Settings($settingsInput ?? []));
 
