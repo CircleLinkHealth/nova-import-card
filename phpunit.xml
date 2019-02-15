@@ -9,12 +9,11 @@
          processIsolation="false"
          stopOnFailure="false">
     <testsuites>
-        <testsuite name="Feature">
-            <directory suffix="Test.php">./tests/Feature</directory>
-        </testsuite>
-
         <testsuite name="Unit">
             <directory suffix="Test.php">./tests/Unit</directory>
+        </testsuite>
+        <testsuite name="Feature">
+            <directory suffix="Test.php">./tests/Feature</directory>
         </testsuite>
         <testsuite name="Deployment">
             <directory suffix="Test.php">./tests/integration/</directory>
@@ -49,7 +48,7 @@
         <env name="CACHE_DRIVER" value="array"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="QUEUE_DRIVER" value="sync"/>
-
+        <env name="BCRYPT_ROUNDS" value="4"/>
         <!--You may use this for running the test suite locally using mysql-->
         <!--<env name="DB_CONNECTION" value="test_suite"/>-->
 

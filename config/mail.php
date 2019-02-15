@@ -85,8 +85,8 @@ return [
     | connection. You may also set the "password" value below this one.
     |
     */
-    'username' => env('MAIL_USERNAME'),
-    'password' => env('MAIL_PASSWORD'),
+    'username'   => env('MAIL_USERNAME'),
+    'password'   => env('MAIL_PASSWORD'),
 
     /*
     |--------------------------------------------------------------------------
@@ -98,7 +98,7 @@ return [
     | been provided here, which will work well on most of your systems.
     |
     */
-    'sendmail' => '/usr/sbin/sendmail -bs',
+    'sendmail'   => '/usr/sbin/sendmail -bs',
 
     /*
     |--------------------------------------------------------------------------
@@ -110,10 +110,23 @@ return [
     | of the emails. Or, you may simply stick with the Laravel defaults!
     |
     */
-    'markdown' => [
+    'markdown'   => [
         'theme' => 'default',
         'paths' => [
             resource_path('views/vendor/mail'),
         ],
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Log Channel
+    |--------------------------------------------------------------------------
+    |
+    | If you are using the "log" driver, you may specify the logging channel
+    | if you prefer to keep mail messages separate from other log entries
+    | for simpler reading. Otherwise, the default channel will be used.
+    |
+    */
+
+    'log_channel' => env('MAIL_LOG_CHANNEL'),
 ];

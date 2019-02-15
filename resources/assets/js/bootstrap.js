@@ -1,5 +1,5 @@
-
 window._ = require('lodash');
+window.Popper = require('popper.js').default;
 
 /**
  * We'll load jQuery and the Bootstrap jQuery plugin which provides support
@@ -9,9 +9,12 @@ window._ = require('lodash');
 
 try {
     window.$ = window.jQuery = require('jquery');
-} catch (e) {}
 
-require('./bootstrap-axios')
+    require('bootstrap');
+} catch (e) {
+}
+
+require('./bootstrap-axios');
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting
@@ -24,5 +27,7 @@ require('./bootstrap-axios')
 
 // window.Echo = new Echo({
 //     broadcaster: 'pusher',
-//     key: 'your-pusher-key'
+//     key: 'your-pusher-key',
+//     cluster: 'mt1',
+//     encrypted: true
 // });

@@ -73,7 +73,7 @@ return [
     |
     */
 
-    'connection' => null,
+    'connection' => env('SESSION_CONNECTION', null),
 
     /*
     |--------------------------------------------------------------------------
@@ -99,7 +99,7 @@ return [
     |
     */
 
-    'store' => null,
+    'store' => env('SESSION_STORE', null),
 
     /*
     |--------------------------------------------------------------------------
@@ -127,7 +127,7 @@ return [
 
     'cookie' => env(
         'SESSION_COOKIE',
-        'cpm_'.env('APP_ENV').'_laravel_session'
+        'cpm_' . env('APP_ENV') . '_laravel_session'
     ),
 
     /*

@@ -40,6 +40,7 @@ return [
     | may even configure multiple disks of the same driver. Defaults have
     | been setup for each driver as an example of the required options.
     |
+    | Supported Drivers: "local", "ftp", "sftp", "s3", "rackspace"
     */
 
     'disks' => [
@@ -52,7 +53,7 @@ return [
         ],
 
         //The directory where Practices deposit CCDAs on the Worker environment
-        'ccdas' => [
+        'ccdas'  => [
             'driver' => 'local',
             'root'   => env('CCDA_DROPBOX_PATH') ?? null,
         ],
@@ -78,7 +79,7 @@ return [
         'public' => [
             'driver'     => 'local',
             'root'       => storage_path('app/public'),
-            'url'        => env('OPCACHE_URL').'/storage',
+            'url'        => env('OPCACHE_URL') . '/storage',
             'visibility' => 'public',
         ],
 
@@ -88,6 +89,7 @@ return [
             'secret' => env('AWS_SECRET'),
             'region' => env('AWS_REGION'),
             'bucket' => env('AWS_BUCKET'),
+            'url'    => env('AWS_URL'),
         ],
 
         'rackspace' => [
