@@ -49,7 +49,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-
         //need to set trusted hosts before request is passed on to our routers
         Request::setTrustedHosts(config('trustedhosts.hosts'));
 
@@ -74,6 +73,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->app->register(CPMArtisanServiceProvider::class);
+
         //Bind database notification classes to local
         $this->app->bind(DatabaseChannel::class, \App\Notifications\Channels\DatabaseChannel::class);
         $this->app->bind(DatabaseNotification::class, \App\DatabaseNotification::class);

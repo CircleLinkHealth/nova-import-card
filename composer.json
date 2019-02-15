@@ -33,6 +33,10 @@
       "url": "git@github.com:CircleLinkHealth/laravel-cerberus.git"
     },
     {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/module-migrations.git"
+    },
+    {
       "type": "composer",
       "url": "https://packagist.org"
     },
@@ -52,6 +56,7 @@
     "authy/php": "^3.0",
     "barryvdh/laravel-snappy": "0.4.1",
     "blackfire/php-sdk": "^1.17",
+    "circlelinkhealth/migrations": "dev-master",
     "fideloper/proxy": "~3.3",
     "genealabs/laravel-caffeine": "^0.5.0",
     "guzzlehttp/guzzle": "~5.3|~6.0",
