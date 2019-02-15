@@ -106,7 +106,7 @@ class PatientController extends Controller
     public function showCallPatientPage(Request $request, $patientId)
     {
         $user = User::with('phoneNumbers')
-                    ->with('primaryPractice')
+                    ->with('patientInfo.location')
                     ->with('primaryPractice.locations')
                     ->where('id', $patientId)
                     ->firstOrFail();
@@ -120,25 +120,15 @@ class PatientController extends Controller
             });
 
         $clinicalEscalationNumber = null;
-        if ($user->primaryPractice) {
-            //get preferred contact location of patient
-            //use it to find the clinical escalation number for that location
-            //if not found, get the clinical escalation number for the primary location of that practice
-            $locationId = $user->getPreferredContactLocation();
-            if ($locationId) {
-                $practiceLocation = $user->primaryPractice->locations->find($locationId);
-                if ($practiceLocation) {
-                    $clinicalEscalationNumber = $practiceLocation->clinical_escalation_phone;
-                }
-            }
+        if (optional($user->patientInfo->location)->clinical_escalation_phone) {
+            $clinicalEscalationNumber = $user->patientInfo->location->clinical_escalation_phone;
+        }
 
-            if ( ! $clinicalEscalationNumber) {
-                $practicePrimaryLocation = $user->primaryPractice->primaryLocation();
-                if ($practicePrimaryLocation) {
-                    $clinicalEscalationNumber = $practicePrimaryLocation->clinical_escalation_phone;
-                }
+        if ( ! $clinicalEscalationNumber && $user->primaryPractice) {
+            $practicePrimaryLocation = $user->primaryPractice->primaryLocation();
+            if ($practicePrimaryLocation) {
+                $clinicalEscalationNumber = $practicePrimaryLocation->clinical_escalation_phone;
             }
-
         }
 
         return view('wpUsers.patient.calls.index')
