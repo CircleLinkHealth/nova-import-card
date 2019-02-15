@@ -22,11 +22,13 @@ use App\Importer\Section\Importers\Demographics;
 use App\Importer\Section\Importers\Insurance;
 use App\Importer\Section\Importers\Medications;
 use App\Importer\Section\Importers\Problems;
+use App\Jobs\CheckCcdaEnrollmentEligibility;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Patient;
 use App\Practice;
 use App\Traits\Relationships\MedicalRecordItemLoggerRelationships;
 use App\User;
+use Illuminate\Support\Collection;
 
 abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRecord
 {
@@ -36,6 +38,13 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
      * @var integer;
      */
     protected $billingProviderIdPrediction;
+
+    /**
+     * A collection.
+     *
+     * @var Collection
+     */
+    protected $insurances;
 
     /**
      * @var int
@@ -48,17 +57,26 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
     protected $practiceIdPrediction;
 
     /**
+     * A collection of the patient's problems () separated in groups (monitored, not_monitored, do_not_import).
+     *
+     * @var Collection
+     */
+    protected $problemsInGroups;
+
+    /**
      * @return MedicalRecord
      */
     public function createImportedMedicalRecord(): MedicalRecord
     {
-        $this->importedMedicalRecord = ImportedMedicalRecord::create([
-            'medical_record_type' => get_class($this),
-            'medical_record_id'   => $this->id,
-            'billing_provider_id' => $this->getBillingProviderIdPrediction(),
-            'location_id'         => $this->getLocationIdPrediction(),
-            'practice_id'         => $this->getPracticeIdPrediction(),
-        ]);
+        $this->importedMedicalRecord = ImportedMedicalRecord::create(
+            [
+                'medical_record_type' => get_class($this),
+                'medical_record_id'   => $this->id,
+                'billing_provider_id' => $this->getBillingProviderIdPrediction(),
+                'location_id'         => $this->getLocationIdPrediction(),
+                'practice_id'         => $this->getPracticeIdPrediction(),
+            ]
+        );
 
         return $this;
     }
@@ -171,8 +189,8 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
      */
     public function importInsurance(): MedicalRecord
     {
-        $importer = new Insurance();
-        $importer->import($this->id, get_class($this), $this->importedMedicalRecord);
+        $importer         = new Insurance();
+        $this->insurances = $importer->import($this->id, get_class($this), $this->importedMedicalRecord);
 
         return $this;
     }
@@ -197,8 +215,8 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
      */
     public function importProblems(): MedicalRecord
     {
-        $importer = new Problems();
-        $importer->import($this->id, get_class($this), $this->importedMedicalRecord);
+        $importer               = new Problems();
+        $this->problemsInGroups = $importer->import($this->id, get_class($this), $this->importedMedicalRecord);
 
         return $this;
     }
@@ -315,40 +333,7 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
 
     public function raiseConcerns()
     {
-        $demos = $this->demographics()->first();
-
-        if ($demos) {
-            $practiceId = optional($demos->ccda)->practice_id;
-
-            $query = User::whereFirstName($demos->first_name)
-                ->whereLastName($demos->last_name)
-                ->whereHas('patientInfo', function ($q) use ($demos) {
-                    $q->whereBirthDate($demos->dob);
-                });
-            if ($practiceId) {
-                $query = $query->where('program_id', $practiceId);
-            }
-
-            $user = $query->first();
-
-            if ($user) {
-                $this->importedMedicalRecord->duplicate_id = $user->id;
-                $this->importedMedicalRecord->save();
-
-                return true;
-            }
-
-            $patient = Patient::whereHas('user', function ($q) use ($practiceId) {
-                $q->where('program_id', $practiceId);
-            })->whereMrnNumber($demos->mrn_number)->first();
-
-            if ($patient) {
-                $this->importedMedicalRecord->duplicate_id = $patient->user_id;
-                $this->importedMedicalRecord->save();
-
-                return true;
-            }
-        }
+        $isDuplicate = $this->isDuplicate();
     }
 
     /**
@@ -385,5 +370,58 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
         $this->practiceIdPrediction = $practiceId;
 
         return $this;
+    }
+
+    /**
+     * Checks whether the patient we have just imported exists in the system.
+     *
+     * @return bool|null
+     */
+    private function isDuplicate()
+    {
+        $demos = $this->demographics()->first();
+
+        if ( ! $demos) {
+            return null;
+        }
+
+        $practiceId = optional($demos->ccda)->practice_id;
+
+        $query = User::whereFirstName($demos->first_name)
+            ->whereLastName($demos->last_name)
+            ->whereHas(
+                         'patientInfo',
+                         function ($q) use ($demos) {
+                             $q->whereBirthDate($demos->dob);
+                         }
+                     );
+        if ($practiceId) {
+            $query = $query->where('program_id', $practiceId);
+        }
+
+        $user = $query->first();
+
+        if ($user) {
+            $this->importedMedicalRecord->duplicate_id = $user->id;
+            $this->importedMedicalRecord->save();
+
+            return true;
+        }
+
+        $patient = Patient::whereHas(
+            'user',
+            function ($q) use ($practiceId) {
+                $q->where('program_id', $practiceId);
+            }
+        )->whereMrnNumber($demos->mrn_number)->first();
+
+        if ($patient) {
+            $this->importedMedicalRecord->duplicate_id = $patient->user_id;
+            $this->importedMedicalRecord->save();
+
+            return true;
+        }
+
+        return false;
     }
 }

@@ -11,13 +11,30 @@
             </div>
         </div>
         <span v-if="visible" class="time-tracker">
-            <div v-if="noLiveCount" :class="{ hidden: showLoader }">{{info.monthlyTime}}</div>
+            <div v-if="noLiveCount" class="no-live-count" :class="{ hidden: showLoader }">
+                <div v-if="shouldShowCcmTime()" :class="[ hasBhiTime() ? 'col-md-6' : '' ]">
+                    <div>
+                        <small>CCM</small>
+                    </div>
+                    <div>
+                        {{info.monthlyTime}}
+                    </div>
+                </div>
+                <div v-if="hasBhiTime()" class="col-md-6">
+                    <div>
+                        <small>BHI</small>
+                    </div>
+                    <div>
+                        {{info.monthlyBhiTime}}
+                    </div>
+                </div>
+            </div>
             <bhi-switch ref="bhiSwitch" :is-manual-behavioral="info.isManualBehavioral"
                         :user-id="info.providerId" :is-bhi="info.isBehavioral" :is-ccm="info.isCcm"
                         v-if="!info.noBhiSwitch && (info.isCcm || info.isBehavioral)"></bhi-switch>
 
             <br><br>
-            <span :class="{ hidden: showLoader, 'hide-tracker': hideTracker, inactive: !active }">
+            <span :class="{ hidden: showLoader, 'hide-tracker': hideTracker }">
                 <time-display v-if="!noLiveCount" ref="timeDisplay" :seconds="totalTime" :no-live-count="!!noLiveCount"
                               :redirect-url="'manage-patients/' + info.patientId + '/activities'"/>
             </span>
@@ -55,7 +72,7 @@
                  * }
                  */
             },
-            'no-live-count': Number,
+            'no-live-count': Boolean,
             'class-name': String,
             'hide-tracker': Boolean,
             'override-timeout': Boolean
@@ -69,7 +86,6 @@
                 showTimer: true,
                 showLoader: true,
                 callMode: false,
-                active: false
             }
         },
         components: {
@@ -86,6 +102,14 @@
             }
         },
         methods: {
+            shouldShowCcmTime() {
+                //we show ccm time, even if zero time. we do not show when empty string
+                return this.info.monthlyBhiTime && this.info.monthlyBhiTime.length > 0;
+            },
+            hasBhiTime() {
+                const zeroTime = "00:00:00";
+                return this.info.monthlyBhiTime && this.info.monthlyBhiTime.length > 0 && this.info.monthlyBhiTime !== zeroTime;
+            },
             updateTime() {
                 if (this.info.initSeconds == 0) this.info.initSeconds = Math.ceil(startupTime() / 1000)
                 else this.info.initSeconds = -1
@@ -124,7 +148,6 @@
                                     self.seconds = self.info.isManualBehavioral ? data.bhiSeconds : data.ccmSeconds
                                     self.visible = true //display the component when the previousSeconds value has been received from the server to keep the display up-to-date
                                     self.showLoader = false;
-                                    self.active = true;
                                 }
                                 else if (data.message === 'server:modal') {
                                     EventBus.$emit('away:trigger-modal')
@@ -197,19 +220,9 @@
                 catch (ex) {
                     console.error(ex);
                 }
-            },
-            positionNotificationsBox() {
-
-                $('#notifications-wrapper').offset({
-                    top: 20,
-                    left: $(document).width() - 330
-                });
-
             }
         },
         mounted() {
-
-            this.positionNotificationsBox();
 
             this.previousSeconds = this.info.totalTime || 0;
             this.info.initSeconds = 0
@@ -244,11 +257,6 @@
 
                 EventBus.$on('tracker:start', () => {
 
-                    //start inactivity tracker only if not on call mode and not on twilio
-                    if (!(this.callMode && this.twilioEnabled)) {
-                        EventBus.$emit('inactivity:start');
-                    }
-
                     if (this.state !== STATE.SHOW_INACTIVE_MODAL) {
                         if (this.socket && this.socket.readyState === WebSocket.OPEN) {
                             if (this.startCount === 0) this.updateTime();
@@ -262,11 +270,6 @@
 
                     EventBus.$emit("inactivity:stop");
 
-                    //do not stop tracker if we are on twilio calls
-                    if (this.callMode && this.twilioEnabled) {
-                        return;
-                    }
-
                     if (this.state !== STATE.SHOW_INACTIVE_MODAL) {
                         this.showTimer = false;
                         this.state = STATE.LEAVE;
@@ -275,7 +278,6 @@
                             this.socket.send(JSON.stringify({message: STATE.LEAVE, info: this.info}))
                         }
 
-                        this.active = false;
                         // this.showLoader = true
                     }
                 })
@@ -295,7 +297,6 @@
                         this.state = STATE.SHOW_INACTIVE_MODAL;
                         this.socket.send(JSON.stringify({message: STATE.SHOW_INACTIVE_MODAL, info: this.info}))
                     }
-                    this.active = false;
                     // this.showLoader = true
                 })
 
@@ -405,11 +406,10 @@
         margin-top: 20px;
     }
 
-    .inactive {
-        color: red;
-    }
-
     #notifications-wrapper {
+        position: fixed;
+        top: 65px;
+        right: 15px;
         width: 300px;
         font-size: small;
         text-align: left;
@@ -417,6 +417,11 @@
 
     .notifications-connection-error {
         position: absolute;
+    }
+
+    .no-live-count {
+        max-width: 350px;
+        margin: auto;
     }
 
 </style>

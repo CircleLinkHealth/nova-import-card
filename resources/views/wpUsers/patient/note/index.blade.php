@@ -7,6 +7,16 @@
 
     @include('partials.confirm-modal')
 
+    <div class="col-lg-8 col-lg-offset-2">
+        <div>
+            @include('errors.messages')
+        </div>
+        <div>
+            @include('errors.errors')
+        </div>
+    </div>
+
+
     <div class="row main-form-block" style="margin-top:30px;">
         <div class="main-form-container col-lg-8 col-lg-offset-2 col-xs-12">
             <div class="row">

@@ -39,13 +39,14 @@ class UserCsvResource extends Resource
                '"'.$this->getBillingProviderName().'",'.
                '"'.$practice->display_name.'",'.
                '"'.$patient->ccm_status.'",'.
-               '"'.$careplan->status.'",'.
+               '"'.optional($careplan)->status.'",'.
                '"'.$patient->birth_date.'",'.
                '"'.$this->getPhone().'",'.
                '"'.($patient->birth_date
                 ? Carbon::parse($patient->birth_date)->age
                 : 0).'",'.
                '"'.$this->created_at.'",'.
+               '"'.$this->getTimeInDecimals($this->getBhiTime()).'",'.
                '"'.$this->getTimeInDecimals($this->getCcmTime()).'",'.
                '"'.$ccmStatusDate.'"';
     }

@@ -26,8 +26,10 @@ class EmailRNDailyReport extends Command
      *
      * @var string
      */
-    protected $signature = 'nurses:emailDailyReport';
-
+    protected $signature = 'nurses:emailDailyReport {nurseUserIds? : Comma separated user IDs of nurses to email report to.}
+                                                    {date? : Date to generate report for in YYYY-MM-DD.}
+                                                    ';
+    
     /**
      * Create a new command instance.
      */
@@ -35,7 +37,7 @@ class EmailRNDailyReport extends Command
     {
         parent::__construct();
     }
-
+    
     /**
      * Execute the console command.
      *
@@ -43,93 +45,122 @@ class EmailRNDailyReport extends Command
      */
     public function handle()
     {
-        $nurses = User::ofType('care-center')->get();
-
+        $userIds = $this->argument('nurseUserIds') ?? null;
+        $date    = $this->argument('date') ?? Carbon::today();
+        
+        if ( ! is_a($date, Carbon::class)) {
+            $date = Carbon::parse($date);
+        }
+        
         $counter    = 0;
         $emailsSent = [];
-
-        foreach ($nurses as $nurse) {
-            if ( ! $nurse->nurseInfo) {
-                continue;
-            }
-            $activityTime = Activity::createdBy($nurse)
-                ->createdToday()
-                ->sum('duration');
-
-            $systemTime = PageTimer::where('provider_id', $nurse->id)
-                ->createdToday()
-                ->sum('billable_duration');
-
-            $totalMonthSystemTimeSeconds = PageTimer::where('provider_id', $nurse->id)
-                ->createdThisMonth()
-                ->sum('billable_duration');
-
-            if (0 == $systemTime) {
-                continue;
-            }
-
-            if ($nurse->nurseInfo->hourly_rate < 1
-                && 'active' != $nurse->nurseInfo
-            ) {
-                continue;
-            }
-
-            $performance = round((float) ($activityTime / $systemTime) * 100);
-
-            $totalTimeInSystemToday = secondsToHMS($systemTime);
-
-            $totalTimeInSystemThisMonth = secondsToHMS($totalMonthSystemTimeSeconds);
-
-            $totalEarningsThisMonth = round(
-                (float) ($totalMonthSystemTimeSeconds * $nurse->nurseInfo->hourly_rate / 60 / 60),
-                2
+        
+        User::ofType('care-center')
+            ->when(
+                null != $userIds,
+                function ($q) use ($userIds) {
+                    $userIds = explode(',', $userIds);
+                    $q->whereIn('id', $userIds);
+                }
+            )
+            ->chunk(
+                20,
+                function ($nurses) use (&$counter, &$emailsSent, $date) {
+                    foreach ($nurses as $nurse) {
+                        if ( ! $nurse->nurseInfo) {
+                            continue;
+                        }
+                        $activityTime = Activity::createdBy($nurse)
+                                                ->createdOn($date,'performed_at')
+                                                ->sum('duration');
+                    
+                        $systemTime = PageTimer::where('provider_id', $nurse->id)
+                                               ->createdOn($date,'start_time')
+                                               ->sum('billable_duration');
+                    
+                        $totalMonthSystemTimeSeconds = PageTimer::where('provider_id', $nurse->id)
+                                                                ->createdInMonth($date, 'start_time')
+                                                                ->sum('billable_duration');
+                    
+                        if (0 == $systemTime) {
+                            continue;
+                        }
+                    
+                        if ($nurse->nurseInfo->hourly_rate < 1
+                            && 'active' != $nurse->nurseInfo
+                        ) {
+                            continue;
+                        }
+                    
+                        $performance = round((float) ($activityTime / $systemTime) * 100);
+                    
+                        $totalTimeInSystemToday = secondsToHMS($systemTime);
+                    
+                        $totalTimeInSystemThisMonth = secondsToHMS($totalMonthSystemTimeSeconds);
+                    
+                        $totalEarningsThisMonth = round(
+                            (float) ($totalMonthSystemTimeSeconds * $nurse->nurseInfo->hourly_rate / 60 / 60),
+                            2
+                        );
+                    
+                        $nextUpcomingWindow = $nurse->nurseInfo->firstWindowAfter(Carbon::now());
+                    
+                        if ($nextUpcomingWindow) {
+                            $carbonDate              = Carbon::parse($nextUpcomingWindow->date);
+                            $nextUpcomingWindowLabel = clhDayOfWeekToDayName(
+                                                           $nextUpcomingWindow->day_of_week
+                                                       )." {$carbonDate->format('m/d/Y')}";
+                        }
+                    
+                        $hours = $nurse->nurseInfo->workhourables
+                            ? $nurse->nurseInfo->workhourables->first()
+                            : null;
+                    
+                        $totalHours = $hours && $nextUpcomingWindow
+                            ? (string) $hours->{strtolower(
+                                clhDayOfWeekToDayName($nextUpcomingWindow->day_of_week)
+                            )}
+                            : null;
+                    
+                        $data = [
+                            'name'                       => $nurse->getFullName(),
+                            'performance'                => $performance,
+                            'totalEarningsThisMonth'     => $totalEarningsThisMonth,
+                            'totalTimeInSystemToday'     => $totalTimeInSystemToday,
+                            'totalTimeInSystemThisMonth' => $totalTimeInSystemThisMonth,
+                            'nextUpcomingWindow'         => $nextUpcomingWindow,
+                            'nextWindowCarbonDate'       => $carbonDate ?? null,
+                            'hours'                      => $hours,
+                            'nextUpcomingWindowLabel'    => $nextUpcomingWindowLabel ?? null,
+                            'totalHours'                 => $totalHours,
+                            'windowStart'                => $nextUpcomingWindow
+                                ? Carbon::parse($nextUpcomingWindow->window_time_start)->format('g:i A T')
+                                : null,
+                            'windowEnd'                  => $nextUpcomingWindow
+                                ? Carbon::parse($nextUpcomingWindow->window_time_end)->format('g:i A T')
+                                : null,
+                        ];
+                    
+                        $nurse->notify(new NurseDailyReport($data));
+                    
+                        $emailsSent[] = [
+                            'nurse' => $nurse->getFullName(),
+                            'email' => $nurse->email,
+                        ];
+                    
+                        ++$counter;
+                    }
+                }
             );
-
-            $nextUpcomingWindow = $nurse->nurseInfo->firstWindowAfter(Carbon::now());
-
-            if ($nextUpcomingWindow) {
-                $carbonDate              = Carbon::parse($nextUpcomingWindow->date);
-                $nextUpcomingWindowLabel = clhDayOfWeekToDayName($nextUpcomingWindow->day_of_week)." {$carbonDate->format('m/d/Y')}";
-            }
-
-            $hours = $nurse->nurseInfo->workhourables
-                ? $nurse->nurseInfo->workhourables->first()
-                : null;
-
-            $totalHours = $hours && $nextUpcomingWindow
-                ? (string) $hours->{strtolower(clhDayOfWeekToDayName($nextUpcomingWindow->day_of_week))}
-                : null;
-
-            $data = [
-                'name'                       => $nurse->getFullName(),
-                'performance'                => $performance,
-                'totalEarningsThisMonth'     => $totalEarningsThisMonth,
-                'totalTimeInSystemToday'     => $totalTimeInSystemToday,
-                'totalTimeInSystemThisMonth' => $totalTimeInSystemThisMonth,
-                'nextUpcomingWindow'         => $nextUpcomingWindow,
-                'nextWindowCarbonDate'       => $carbonDate ?? null,
-                'hours'                      => $hours,
-                'nextUpcomingWindowLabel'    => $nextUpcomingWindowLabel ?? null,
-                'totalHours'                 => $totalHours,
-                'windowStart'                => $nextUpcomingWindow ? Carbon::parse($nextUpcomingWindow->window_time_start)->format('g:i A T') : null,
-                'windowEnd'                  => $nextUpcomingWindow ? Carbon::parse($nextUpcomingWindow->window_time_end)->format('g:i A T') : null,
-            ];
-
-            $nurse->notify(new NurseDailyReport($data));
-
-            $emailsSent[] = [
-                'nurse' => $nurse->getFullName(),
-                'email' => $nurse->email,
-            ];
-
-            ++$counter;
-        }
-
-        $this->table([
-            'nurse',
-            'email',
-        ], $emailsSent);
-
+        
+        $this->table(
+            [
+                'nurse',
+                'email',
+            ],
+            $emailsSent
+        );
+        
         $this->info("${counter} email(s) sent.");
     }
 }

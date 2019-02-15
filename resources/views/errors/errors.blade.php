@@ -50,8 +50,11 @@
             </ul>
         </div>
 
-        <div class="row" style="margin-bottom: 5%;">
-            @include('errors.incompatibleBrowser')
-        </div>
+        <!-- added the if here because the margin-bottom 5% was always applied, even if div was empty -->
+        @if($errors->has('invalid-browser') || $errors->has('invalid-browser-force-switch'))
+            <div class="row" style="margin-bottom: 5%;">
+                @include('errors.incompatibleBrowser')
+            </div>
+        @endif
     @endif
 @endif

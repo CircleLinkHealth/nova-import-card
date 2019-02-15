@@ -12,7 +12,7 @@
                 font-weight: bold;
             }
         </style>
-        @endpush
+    @endpush
     <div class="row" style="margin-top:60px;">
         <div class="main-form-container col-lg-8 col-lg-offset-2 col-xs-10 col-xs-offset-1">
             <div class="row">
@@ -32,6 +32,17 @@
                             href="{{route('patient.activity.providerUIIndex', ['patientId' => $patient])}}"
                             value="audit" name="audit" id="audit" class="btn btn-primary">Audit Report
                     </button>
+
+                    @if ($data && $month_selected_text === \Carbon\Carbon::now()->format('F'))
+                        <button id="refresh-activity" type="button" class="btn btn-primary">
+                            Reload Table
+                        </button>
+
+                        <div style="left: 250px; right: 0px;" class="loader-container">
+                            <div id="refresh-activity-loader" class="loader" style="display: none"></div>
+                        </div>
+                    @endif
+
                 </div>
                 <div class="form-group pull-right col-xs-7" style="margin-top:10px; ">
                     <i class="icon icon--date-time hidden-xs"></i>
@@ -69,84 +80,92 @@
                         <div id="obs_alerts_container" class=""></div><br/>
                         <div id="paging_container"></div><br/>
                         @push('styles')
-                        <style>
-                            .webix_hcell {
-                                background-color: #d2e3ef;
-                            }
-                        </style>
+                            <style>
+                                .webix_hcell {
+                                    background-color: #d2e3ef;
+                                }
+                            </style>
                         @endpush
                         @push('scripts')
 
-                        <script>
-                            function startCompare(value, filter) {
-                                value = value.toString().toLowerCase();
-                                filter = '<' + filter.toString().toLowerCase();
-                                return value.indexOf(filter) === 0;
-                            }
-                            function durationType(obj){
-                                return obj.is_behavioral ? 'BHI' : 'CCM';
-                            }
-                            function durationSumm(master, type){
-                                var seconds = 0;
-                                master.data.each(function (obj) {
-                                    if (durationType(obj) == type){
-                                        seconds = seconds + parseInt(obj.duration);
-                                    }
-                                });
-                                var date = new Date(seconds * 1000);
-                                var hh = Math.floor(seconds / 3600);
-                                var mm = Math.floor(seconds / 60) % 60;
-                                var ss = date.getSeconds();
-                                function pad (num, count) {
-                                    count = count || 0;
-                                    const $num = num + '';
-                                    return '0'.repeat(Math.max(count - $num.length, 0)) + $num;
+                            <script>
+                                function startCompare(value, filter) {
+                                    value = value.toString().toLowerCase();
+                                    filter = '<' + filter.toString().toLowerCase();
+                                    return value.indexOf(filter) === 0;
                                 }
-                                ss = pad(ss, 2)
-                                mm = pad(mm, 2)
-                                hh = pad(hh, 2)
-                                var time = hh + ':' + mm + ":" + ss;
-                                return time;
-                            }
-                            function durationData(obj, type){
-                                if (durationType(obj) === type){
-                                    var seconds = obj.duration;
+
+                                function durationType(obj) {
+                                    return obj.is_behavioral ? 'BHI' : 'CCM';
+                                }
+
+                                function durationSumm(master, type) {
+                                    var seconds = 0;
+                                    master.data.each(function (obj) {
+                                        if (durationType(obj) == type) {
+                                            seconds = seconds + parseInt(obj.duration);
+                                        }
+                                    });
                                     var date = new Date(seconds * 1000);
                                     var hh = Math.floor(seconds / 3600);
                                     var mm = Math.floor(seconds / 60) % 60;
                                     var ss = date.getSeconds();
-                                    function pad (num, count) {
+
+                                    function pad(num, count) {
                                         count = count || 0;
                                         const $num = num + '';
                                         return '0'.repeat(Math.max(count - $num.length, 0)) + $num;
                                     }
+
                                     ss = pad(ss, 2)
                                     mm = pad(mm, 2)
                                     hh = pad(hh, 2)
-
                                     var time = hh + ':' + mm + ":" + ss;
-
                                     return time;
-                                }else{
-                                    return "--";
                                 }
-                            }
-                            webix.locale.pager = {
-                                first: "<<",// the first button
-                                last: ">>",// the last button
-                                next: ">",// the next button
-                                prev: "<"// the previous button
-                            };
-                            webix.ui.datafilter.mySummColumnCCM = webix.extend({
-                                refresh: function (master, node, value) {
-                                    node.firstChild.innerHTML = durationSumm(master, 'CCM');
+
+                                function durationData(obj, type) {
+                                    if (durationType(obj) === type) {
+                                        var seconds = obj.duration;
+                                        var date = new Date(seconds * 1000);
+                                        var hh = Math.floor(seconds / 3600);
+                                        var mm = Math.floor(seconds / 60) % 60;
+                                        var ss = date.getSeconds();
+
+                                        function pad(num, count) {
+                                            count = count || 0;
+                                            const $num = num + '';
+                                            return '0'.repeat(Math.max(count - $num.length, 0)) + $num;
+                                        }
+
+                                        ss = pad(ss, 2)
+                                        mm = pad(mm, 2)
+                                        hh = pad(hh, 2)
+
+                                        var time = hh + ':' + mm + ":" + ss;
+
+                                        return time;
+                                    } else {
+                                        return "--";
+                                    }
                                 }
-                            }, webix.ui.datafilter.summColumn);
-                            webix.ui.datafilter.mySummColumnBHI = webix.extend({
-                                refresh: function (master, node, value) {
-                                    node.firstChild.innerHTML = durationSumm(master, 'BHI');
-                                }
-                            }, webix.ui.datafilter.summColumn);
+
+                                webix.locale.pager = {
+                                    first: "<<",// the first button
+                                    last: ">>",// the last button
+                                    next: ">",// the next button
+                                    prev: "<"// the previous button
+                                };
+                                webix.ui.datafilter.mySummColumnCCM = webix.extend({
+                                    refresh: function (master, node, value) {
+                                        node.firstChild.innerHTML = durationSumm(master, 'CCM');
+                                    }
+                                }, webix.ui.datafilter.summColumn);
+                                webix.ui.datafilter.mySummColumnBHI = webix.extend({
+                                    refresh: function (master, node, value) {
+                                        node.firstChild.innerHTML = durationSumm(master, 'BHI');
+                                    }
+                                }, webix.ui.datafilter.summColumn);
 
                             obs_alerts_dtable = new webix.ui({
                                 container: "obs_alerts_container",
@@ -170,70 +189,101 @@
                                         id: "type",
                                         header: ["Activity", {content: "textFilter", placeholder: "Filter"}],
 
-                                        template: function (obj) {
-                                            if (obj.logged_from == "manual_input" || obj.logged_from == "activity")
-                                                return "<a href='<?php echo route('patient.activity.view', [
-                                                    'patientId' => $patient->id,
-                                                    'atcId'     => '',
-                                                ]); ?>/" + obj.id + "'>" + obj.type + "</a>";
-                                            else
-                                                return obj.type;
+                                            template: function (obj) {
+                                                if (obj.logged_from == "manual_input" || obj.logged_from == "activity")
+                                                    return "<a href='<?php echo route('patient.activity.view', [
+                                                        'patientId' => $patient->id,
+                                                        'atcId'     => '',
+                                                    ]); ?>/" + obj.id + "'>" + obj.type + "</a>";
+                                                else
+                                                    return obj.type;
+                                            },
+
+                                            fillspace: true,
+                                            width: 200,
+                                            sort: 'string',
+                                            css: {"color": "black", "text-align": "left"}
                                         },
 
-                                        fillspace: true,
-                                        width: 200,
-                                        sort: 'string',
-                                        css: {"color": "black", "text-align": "left"}
+                                        {
+                                            id: "provider_name",
+                                            header: ["Provider", {content: "textFilter", placeholder: "Filter"}],
+                                            width: 200,
+                                            sort: 'string',
+                                            css: {"color": "black", "text-align": "right"}
+                                        },
+                                        {
+                                            id: "durationCCM",
+                                            header: ["Total CCM", "(HH:MM:SS)"],
+                                            width: 100,
+                                            sort: 'string',
+                                            css: {"color": "black", "text-align": "right"},
+                                            footer: {content: "mySummColumnCCM", css: "duration-footer"},
+                                            template: function (obj) {
+                                                return durationData(obj, 'CCM');
+                                            }
+                                        },
+                                        {
+                                            id: "durationBHI",
+                                            header: ["Total BHI", "(HH:MM:SS)"],
+                                            width: 100,
+                                            sort: 'string',
+                                            css: {"color": "black", "text-align": "right"},
+                                            footer: {content: "mySummColumnBHI", css: "duration-footer"},
+                                            template: function (obj) {
+                                                return durationData(obj, 'BHI');
+                                            }
+                                        }
+                                    ],
+                                    ready: function () {
+                                        this.adjustRowHeight("obs_key");
                                     },
+                                    /*ready:function(){
+                                     this.adjustRowHeight("obs_value");
+                                     },*/
+                                    pager: {
+                                        animate: true,
+                                        container: "paging_container",// the container where the pager controls will be placed into
+                                        template: "{common.first()} {common.prev()} {common.pages()} {common.next()} {common.last()}",
+                                        size: 10, // the number of records per a page
+                                        group: 5   // the number of pages in the pager
+                                    },
+                                    {!! $activity_json !!}                         });
+                                webix.event(window, "resize", function () {
+                                    obs_alerts_dtable.adjust();
+                                })
 
-                                    {
-                                        id: "provider_name",
-                                        header: ["Provider", {content: "textFilter", placeholder: "Filter"}],
-                                        width: 200,
-                                        sort: 'string',
-                                        css: {"color": "black", "text-align": "right"}
-                                    },
-                                    {
-                                        id: "durationCCM",
-                                        header: ["Total CCM", "(HH:MM:SS)"],
-                                        width: 100,
-                                        sort: 'string',
-                                        css: {"color": "black", "text-align": "right"},
-                                        footer: {content: "mySummColumnCCM", css: "duration-footer"},
-                                        template: function (obj) {
-                                            return durationData(obj, 'CCM');
+                                $('#refresh-activity').click(function () {
+
+                                    $('#refresh-activity').prop('disabled', true);
+                                    $('#refresh-activity-loader').show();
+
+                                    const url = '{!! route('patient.activity.get.current.for.patient', ['patientId' => $patient]) !!}';
+
+                                    $.ajax({
+                                        type: "GET",
+                                        url: url,
+                                        headers: {
+                                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                        },
+                                        data: {},
+                                        success: function (data) {
+                                            $('#monthly-time-static').html(data.monthlyTime);
+                                            $('#monthly-bhi-time-static').html(data.monthlyBhiTime);
+                                            obs_alerts_dtable.clearAll();
+                                            obs_alerts_dtable.parse(data.table);
+                                        },
+                                        complete: function () {
+                                            $('#refresh-activity').prop('disabled', false);
+                                            $('#refresh-activity-loader').hide();
                                         }
-                                    },
-                                    {
-                                        id: "durationBHI",
-                                        header: ["Total BHI", "(HH:MM:SS)"],
-                                        width: 100,
-                                        sort: 'string',
-                                        css: {"color": "black", "text-align": "right"},
-                                        footer: {content: "mySummColumnBHI", css: "duration-footer"},
-                                        template: function (obj) {
-                                            return durationData(obj, 'BHI');
-                                        }
-                                    }
-                                ],
-                                ready: function () {
-                                    this.adjustRowHeight("obs_key");
-                                },
-                                /*ready:function(){
-                                 this.adjustRowHeight("obs_value");
-                                 },*/
-                                pager: {
-                                    animate: true,
-                                    container: "paging_container",// the container where the pager controls will be placed into
-                                    template: "{common.first()} {common.prev()} {common.pages()} {common.next()} {common.last()}",
-                                    size: 10, // the number of records per a page
-                                    group: 5   // the number of pages in the pager
-                                },
-                                {!! $activity_json !!}                         });
-                            webix.event(window, "resize", function () {
-                                obs_alerts_dtable.adjust();
-                            })
-                        </script>
+
+                                    });
+
+                                    return false;
+                                });
+
+                            </script>
                         @endpush
                         @if(auth()->user()->hasRole(['administrator', 'med_assistant', 'provider']))
                             <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
@@ -257,7 +307,7 @@
                                            var time = mm+':'+ss;
                                            return mm+':'+ss;
                                            }else {
-                                               return '--';
+                                           return '--';
                                            }
                                            }
                                            },
@@ -296,33 +346,38 @@
     <div></div>
 
     @push('scripts')
-    <script>
+        <script>
 
-        $("#audit").on('click', function () {
+            @if ($data && $month_selected_text === \Carbon\Carbon::now()->format('F'))
+                setInterval(function () {
+                    $('#refresh-activity').click();
+                }, 5000);
+            @endif
 
-            var url = '{!! route('patient.activity.providerUIIndex', ['patientId' => $patient]) !!}';
+            $("#audit").on('click', function () {
 
-            $.ajax({
-                type: "GET",
-                url: url,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: {
-                    selectMonth: $('#selectMonth').val(),
-                    selectYear: $('#selectYear').val()
-                },
-                success: function (data) {
-                    console.log(data);
-                    var a = document.getElementById('downloadAudit');
-                    a.href = "{{url('/download/')}}" + data;
-                    a.click();
-                }
+                var url = '{!! route('patient.activity.providerUIIndex', ['patientId' => $patient]) !!}';
+
+                $.ajax({
+                    type: "GET",
+                    url: url,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: {
+                        selectMonth: $('#selectMonth').val(),
+                        selectYear: $('#selectYear').val()
+                    },
+                    success: function (data) {
+                        console.log(data);
+                        var a = document.getElementById('downloadAudit');
+                        a.href = "{{url('/download/')}}" + data;
+                        a.click();
+                    }
+                });
+
+                return false;
             });
-
-            return false;
-        });
-
-    </script>
+        </script>
     @endpush
 @stop
