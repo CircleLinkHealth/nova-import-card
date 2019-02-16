@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "33e6c3f9e1f3b348eb56ce7952b9f6e5",
+    "content-hash": "f519fde1e7dcad2594f61514174980dc",
     "packages": [
         {
             "name": "amnuts/opcache-gui",
@@ -3204,17 +3204,17 @@
         },
         {
             "name": "lynx39/lara-pdf-merger",
-            "version": "dev-php7.2-adjustments",
+            "version": "v1.0.0",
             "source": {
                 "type": "git",
-                "url": "git@github.com:ishansiddiqui/lara-pdf-merger.git",
-                "reference": "93b707eed4be08d95e6a13864f0e5bde77c5604c"
+                "url": "https://github.com/deltaaskii/lara-pdf-merger.git",
+                "reference": "fcff464d5fc0a0c3a42c552654959680c911e4fc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://repo.packagist.com/circlelinkhealth/careplan-manager/dists/lynx39/lara-pdf-merger/dev-php7.2-adjustments/93b707eed4be08d95e6a13864f0e5bde77c5604c.zip",
-                "reference": "93b707eed4be08d95e6a13864f0e5bde77c5604c",
-                "shasum": null
+                "url": "https://api.github.com/repos/deltaaskii/lara-pdf-merger/zipball/fcff464d5fc0a0c3a42c552654959680c911e4fc",
+                "reference": "fcff464d5fc0a0c3a42c552654959680c911e4fc",
+                "shasum": ""
             },
             "require": {
                 "php": ">=5.4"
@@ -3225,7 +3225,7 @@
                     "LynX39\\LaraPdfMerger": "src/"
                 }
             },
-            "notification-url": "https://repo.packagist.com/circlelinkhealth/careplan-manager/downloads/",
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -3245,7 +3245,7 @@
                 "paginate",
                 "pdf"
             ],
-            "time": "2018-10-26T15:46:28+00:00"
+            "time": "2017-11-17T14:13:58+00:00"
         },
         {
             "name": "maatwebsite/excel",
@@ -11387,7 +11387,6 @@
     "stability-flags": {
         "amnuts/opcache-gui": 20,
         "circlelinkhealth/migrations": 20,
-        "lynx39/lara-pdf-merger": 20,
         "michalisantoniou6/laravel-cerberus": 20,
         "prettus/l5-repository": 20,
         "venturecraft/revisionable": 20,
