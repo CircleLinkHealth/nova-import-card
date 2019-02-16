@@ -1,6 +1,13 @@
 <template>
     <div>
         <loader v-if="waiting"></loader>
+        <div v-if="debug">
+            <button class="btn btn-circle" @click="togglePatientCallMessage('debug', true)"
+                    :class="isCurrentlyOnPhone ? 'btn-danger': 'btn-success'">
+                <span v-if="isCurrentlyOnPhone">End Call Mode</span>
+                <span v-else>Start Call Mode</span>
+            </button>
+        </div>
         <div class="window-close-banner">
             <strong>
                 When the call is ended, this window will close after {{endCallWindowCloseDelay}} seconds.
@@ -289,7 +296,7 @@
                 }
             },
 
-            togglePatientCallMessage: function (number) {
+            togglePatientCallMessage: function (number, isDebug) {
                 const isUnlisted = this.dropdownNumber === 'patientUnlisted';
                 let makeTheCall = true;
 
@@ -298,7 +305,7 @@
                 }
 
                 if (makeTheCall) {
-                    this.toggleCallMessage(number, isUnlisted, true);
+                    this.toggleCallMessage(number, isUnlisted, true, isDebug);
                 }
             },
 
@@ -316,9 +323,9 @@
                 }
             },
 
-            toggleCallMessage: function (number, isUnlisted, isCallToPatient) {
+            toggleCallMessage: function (number, isUnlisted, isCallToPatient, isDebug) {
                 const action = this.onPhone[number] ? "call_ended" : "call_started";
-                this.toggleCall(number, isUnlisted, isCallToPatient);
+                this.toggleCall(number, isUnlisted, isCallToPatient, isDebug);
 
                 //inform other pages only about patient calls
                 if (isCallToPatient) {
@@ -332,7 +339,7 @@
 
             // Make an outbound call with the current number,
             // or hang up the current call
-            toggleCall: function (number, isUnlisted, isCallToPatient) {
+            toggleCall: function (number, isUnlisted, isCallToPatient, isDebug) {
 
                 //important - need to get a copy of the variable here
                 //otherwise the computed value changes and our logic does not work
@@ -344,15 +351,19 @@
                     this.$set(this.muted, number, false);
                     this.$set(this.onPhone, number, true);
 
-                    if (isCurrentlyOnPhone) {
-                        this.log = 'Adding to call: ' + number;
-                        this.queuedNumbersForConference.push({number, isUnlisted, isCallToPatient});
-                        this.createConference();
+                    if (!isDebug) {
+                        if (isCurrentlyOnPhone) {
+                            this.log = 'Adding to call: ' + number;
+                            this.queuedNumbersForConference.push({number, isUnlisted, isCallToPatient});
+                            this.createConference();
+                        }
+                        else {
+                            this.log = 'Calling ' + number;
+                            this.connection = this.device.connect(this.getTwimlAppRequest(number, isUnlisted, isCallToPatient));
+                        }
                     }
-                    else {
-                        this.log = 'Calling ' + number;
-                        this.connection = this.device.connect(this.getTwimlAppRequest(number, isUnlisted, isCallToPatient));
-                    }
+
+
                     EventBus.$emit('tracker:call-mode:enter');
 
                 } else {
@@ -368,29 +379,33 @@
                     this.$set(this.muted, number, false);
                     this.$set(this.onPhone, number, false);
 
-                    if (isCurrentlyOnConference) {
-                        this.log = `Hanging up call to ${number}`;
-                        this.axios
-                            .post(rootUrl('twilio/call/end'), {
-                                CallSid: this.callSids[number],
-                                InboundUserId: this.inboundUserId,
-                                OutboundUserId: this.outboundUserId,
-                            })
-                            .then(resp => {
+                    if (!isDebug) {
+                        if (isCurrentlyOnConference) {
+                            this.log = `Hanging up call to ${number}`;
+                            this.axios
+                                .post(rootUrl('twilio/call/end'), {
+                                    CallSid: this.callSids[number],
+                                    InboundUserId: this.inboundUserId,
+                                    OutboundUserId: this.outboundUserId,
+                                })
+                                .then(resp => {
 
-                            })
-                            .catch(err => {
-                                self.log = err.message;
-                                this.$set(this.muted, number, false);
-                                this.$set(this.onPhone, number, false);
-                            });
-                    }
-                    else {
-                        this.log = 'Ending call';
-                        if (this.connection) {
-                            this.connection.disconnect();
+                                })
+                                .catch(err => {
+                                    self.log = err.message;
+                                    this.$set(this.muted, number, false);
+                                    this.$set(this.onPhone, number, false);
+                                });
+                        }
+                        else {
+                            this.log = 'Ending call';
+                            if (this.connection) {
+                                this.connection.disconnect();
+                            }
                         }
                     }
+
+                    EventBus.$emit('tracker:call-mode:exit');
 
                 }
             },
@@ -707,6 +722,11 @@
                         status = self.device.status();
                         if ((status === "ready" || status === "busy") && self.isCurrentlyOnPhone) {
                             number = self.selectedPatientNumber;
+
+                            //will only happen in debug mode
+                            if (!self.onPhone[number]) {
+                                number = "debug";
+                            }
                         }
                     }
                     return Promise.resolve({

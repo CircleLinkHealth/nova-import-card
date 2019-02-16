@@ -268,8 +268,10 @@
                                         success: function (data) {
                                             $('#monthly-time-static').html(data.monthlyTime);
                                             $('#monthly-bhi-time-static').html(data.monthlyBhiTime);
+                                            const scrollPosition = $(document).scrollTop();
                                             obs_alerts_dtable.clearAll();
                                             obs_alerts_dtable.parse(data.table);
+                                            $(document).scrollTop(scrollPosition);
                                         },
                                         complete: function () {
                                             $('#refresh-activity').prop('disabled', false);
