@@ -18,13 +18,13 @@ use App\Notifications\WeeklyProviderReport;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Notification;
 use Tests\Helpers\CarePlanHelpers;
-use Tests\Helpers\SetupTestCustomer;
+use Tests\Helpers\SetupTestCustomerTrait;
 use Tests\TestCase;
 
 class NotificationsTest extends TestCase
 {
     use CarePlanHelpers,
-        SetupTestCustomer;
+        SetupTestCustomerTrait;
 
     protected $channels;
 
