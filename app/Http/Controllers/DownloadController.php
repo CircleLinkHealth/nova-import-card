@@ -6,8 +6,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Request;
 use App\Practice;
+use Illuminate\Http\Request;
 use Spatie\MediaLibrary\Models\Media;
 
 class DownloadController extends Controller
