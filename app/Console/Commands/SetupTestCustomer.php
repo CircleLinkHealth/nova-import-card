@@ -7,7 +7,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Tests\Helpers\SetupTestCustomer as SetupTestCustomerTrait;
+use Tests\Helpers\SetupTestCustomerTrait;
 
 class SetupTestCustomer extends Command
 {
