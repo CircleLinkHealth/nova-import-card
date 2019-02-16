@@ -14,12 +14,6 @@
                 "url": "git@github.com:CircleLinkHealth/opcache-gui.git",
                 "reference": "dd5e151dc51eca7e6426c78991f9a64c5d53fb8f"
             },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/CircleLinkHealth/opcache-gui/zipball/dd5e151dc51eca7e6426c78991f9a64c5d53fb8f",
-                "reference": "dd5e151dc51eca7e6426c78991f9a64c5d53fb8f",
-                "shasum": ""
-            },
             "require": {
                 "php": ">=5.4"
             },
@@ -29,7 +23,6 @@
                     "OpcacheGui\\": "/"
                 }
             },
-            "notification-url": "https://repo.packagist.com/circlelinkhealth/careplan-manager/downloads/",
             "license": [
                 "MIT"
             ],
@@ -55,8 +48,7 @@
             ],
             "support": {
                 "email": "andy@amnuts.com",
-                "issues": "https://github.com/amnuts/opcache-gui/issues",
-                "source": "https://github.com/CircleLinkHealth/opcache-gui/tree/master"
+                "issues": "https://github.com/amnuts/opcache-gui/issues"
             },
             "time": "2018-08-07T23:43:00+00:00"
         },
@@ -1262,16 +1254,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.83",
+            "version": "v0.85",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "f443f4107d9ba001dad60d18cf1ec0cf0e7234f9"
+                "reference": "66bf538d26b40fec0ae3cda79eea64fe2b0cc6de"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/f443f4107d9ba001dad60d18cf1ec0cf0e7234f9",
-                "reference": "f443f4107d9ba001dad60d18cf1ec0cf0e7234f9",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/66bf538d26b40fec0ae3cda79eea64fe2b0cc6de",
+                "reference": "66bf538d26b40fec0ae3cda79eea64fe2b0cc6de",
                 "shasum": ""
             },
             "require": {
@@ -1295,7 +1287,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2019-01-30T22:06:40+00:00"
+            "time": "2019-02-07T00:23:12+00:00"
         },
         {
             "name": "google/auth",
@@ -3385,12 +3377,6 @@
                 "url": "git@github.com:CircleLinkHealth/laravel-cerberus.git",
                 "reference": "89179535b8247c446829db94fefc7167f85126fe"
             },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/CircleLinkHealth/laravel-cerberus/zipball/89179535b8247c446829db94fefc7167f85126fe",
-                "reference": "89179535b8247c446829db94fefc7167f85126fe",
-                "shasum": ""
-            },
             "require": {
                 "illuminate/cache": "~5.0",
                 "illuminate/console": "~5.0",
@@ -3427,7 +3413,6 @@
                     "tests/Middleware/MiddlewareTest.php"
                 ]
             },
-            "notification-url": "https://repo.packagist.com/circlelinkhealth/careplan-manager/downloads/",
             "license": [
                 "MIT"
             ],
@@ -3463,9 +3448,6 @@
                 "permission",
                 "roles"
             ],
-            "support": {
-                "source": "https://github.com/CircleLinkHealth/laravel-cerberus/tree/master"
-            },
             "time": "2018-08-28T19:00:58+00:00"
         },
         {
@@ -3628,7 +3610,7 @@
                     "Mremi\\UrlShortener\\": "src/Mremi/UrlShortener"
                 }
             },
-            "notification-url": "https://repo.packagist.com/circlelinkhealth/careplan-manager/downloads/",
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -4010,24 +3992,23 @@
         },
         {
             "name": "paragonie/random_compat",
-            "version": "v2.99.99",
+            "version": "v2.0.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paragonie/random_compat.git",
-                "reference": "35469243ebbb9be5086cff57538cac6da2c36852"
+                "reference": "0a58ef6e3146256cc3dc7cc393927bcc7d1b72db"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/35469243ebbb9be5086cff57538cac6da2c36852",
-                "reference": "35469243ebbb9be5086cff57538cac6da2c36852",
+                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/0a58ef6e3146256cc3dc7cc393927bcc7d1b72db",
+                "reference": "0a58ef6e3146256cc3dc7cc393927bcc7d1b72db",
                 "shasum": ""
             },
             "require": {
-                "php": "^7"
+                "php": ">=5.2.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "4.*|5.*",
-                "vimeo/psalm": "^1"
+                "phpunit/phpunit": "4.*|5.*"
             },
             "suggest": {
                 "ext-libsodium": "Provides a modern crypto API that can be used to generate random bytes."
@@ -4056,7 +4037,7 @@
                 "pseudorandom",
                 "random"
             ],
-            "time": "2018-06-06T05:12:00+00:00"
+            "time": "2019-01-03T20:59:08+00:00"
         },
         {
             "name": "phaxio/phaxio",
@@ -7466,12 +7447,6 @@
                 "url": "git@github.com:michalisantoniou6/revisionable.git",
                 "reference": "2f4340355b7ec02e8d9c07102c25edf7477c1188"
             },
-            "dist": {
-                "type": "zip",
-                "url": "https://repo.packagist.com/circlelinkhealth/careplan-manager/dists/venturecraft/revisionable/9999999-dev/2f4340355b7ec02e8d9c07102c25edf7477c1188.zip",
-                "reference": "2f4340355b7ec02e8d9c07102c25edf7477c1188",
-                "shasum": null
-            },
             "require": {
                 "illuminate/support": "~4.0|~5.0|~5.1",
                 "php": ">=5.3.0"
@@ -7485,7 +7460,6 @@
                     "Venturecraft\\Revisionable": "src/"
                 }
             },
-            "notification-url": "https://repo.packagist.com/circlelinkhealth/careplan-manager/downloads/",
             "license": [
                 "MIT"
             ],
@@ -7570,12 +7544,6 @@
                 "url": "git@github.com:michalisantoniou6/url-shortener.git",
                 "reference": "6c5717a4dd2e2b974f01bd9af0abbf96f28d5dd0"
             },
-            "dist": {
-                "type": "zip",
-                "url": "https://repo.packagist.com/circlelinkhealth/careplan-manager/dists/waavi/url-shortener/9999999-dev/6c5717a4dd2e2b974f01bd9af0abbf96f28d5dd0.zip",
-                "reference": "6c5717a4dd2e2b974f01bd9af0abbf96f28d5dd0",
-                "shasum": null
-            },
             "require": {
                 "illuminate/config": "5.1.x|5.2.x|5.3.*|5.4.*|5.5.*",
                 "illuminate/support": "5.1.x|5.2.x|5.3.*|5.4.*|5.5.*",
@@ -7597,7 +7565,6 @@
                     "Waavi\\UrlShortener\\Test\\": "tests"
                 }
             },
-            "notification-url": "https://repo.packagist.com/circlelinkhealth/careplan-manager/downloads/",
             "scripts": {
                 "test": [
                     "vendor/bin/phpunit"
