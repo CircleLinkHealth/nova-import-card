@@ -217,7 +217,6 @@ return [
         Yajra\DataTables\DataTablesServiceProvider::class,
         Spatie\GoogleCalendar\GoogleCalendarServiceProvider::class,
         ObserversServiceProvider::class,
-        Barryvdh\Debugbar\ServiceProvider::class,
         Tylercd100\LERN\LERNServiceProvider::class,
         ViewComposerServiceProvider::class,
         ProviderUITimerComposer::class,
