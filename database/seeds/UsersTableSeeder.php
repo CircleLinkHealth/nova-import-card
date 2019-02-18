@@ -12,7 +12,7 @@ class UsersTableSeeder extends Seeder
      * @return void
      */
     public function run()
-    {//use awvUsersSeeder - it will create users also
-        factory(User::class, 49)->create();
+    {//use PatientsTableSeeder - it will create users also
+        factory(User::class, 40)->create();
     }
 }

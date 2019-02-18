@@ -10,7 +10,7 @@
     </div>
 @endif
 
-<form method="POST" action="{{route('sendInvitationLink')}}">
+<form method="POST" action="{{route('createSendInvitationUrl')}}">
     {{csrf_field()}}
     {{--Probably will be able to input the name and/or phone also--}}
     Patient's Id: <input type="text" name="id" required><br>
