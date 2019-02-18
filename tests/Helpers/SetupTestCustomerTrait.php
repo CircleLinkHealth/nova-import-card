@@ -16,7 +16,7 @@ use App\SaasAccount;
 use Carbon\Carbon;
 use Faker\Factory;
 
-trait SetupTestCustomer
+trait SetupTestCustomerTrait
 {
     use UserHelpers;
 

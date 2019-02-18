@@ -13,6 +13,7 @@ use App\Providers\ObserversServiceProvider;
 use App\Providers\TwilioClientServiceProvider;
 use App\Providers\ViewComposerServiceProvider;
 use App\View\Composers\ProviderUITimerComposer;
+use App\View\Composers\FabComposer;
 use App\View\Composers\SAAS\Admin\ManageInternalUser;
 use Carbon\Carbon;
 
@@ -194,7 +195,6 @@ return [
 
         // Application Service Providers...
         Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class,
-        Barryvdh\Debugbar\ServiceProvider::class,
         Barryvdh\Snappy\ServiceProvider::class,
 
         App\Providers\AppServiceProvider::class,
@@ -217,7 +217,6 @@ return [
         Yajra\DataTables\DataTablesServiceProvider::class,
         Spatie\GoogleCalendar\GoogleCalendarServiceProvider::class,
         ObserversServiceProvider::class,
-        Barryvdh\Debugbar\ServiceProvider::class,
         Tylercd100\LERN\LERNServiceProvider::class,
         ViewComposerServiceProvider::class,
         ProviderUITimerComposer::class,
@@ -228,6 +227,7 @@ return [
         Waavi\UrlShortener\UrlShortenerServiceProvider::class,
         GoogleDriveServiceProvider::class,
         ManageInternalUser::class,
+        FabComposer::class,
         LynX39\LaraPdfMerger\PdfMergerServiceProvider::class,
         AuthyServiceProvider::class,
         PragmaRX\Health\ServiceProvider::class,
@@ -284,7 +284,6 @@ return [
         'Inspiring' => Illuminate\Foundation\Inspiring::class,
 
         'DataTables'     => Yajra\DataTables\Facades\DataTables::class,
-        'Debugbar'       => Barryvdh\Debugbar\Facade::class,
         'Excel'          => \Maatwebsite\Excel\Facades\Excel::class,
         'Form'           => \Collective\Html\FormFacade::class,
         'Html'           => \Collective\Html\HtmlFacade::class,

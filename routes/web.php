@@ -4,51 +4,51 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-Route::group(['middleware' => 'disable-debugbar'], function () {
-    Route::post('send-sample-fax', 'DemoController@sendSampleEfaxNote');
 
-    Route::post('/send-sample-direct-mail', 'DemoController@sendSampleEMRNote');
+Route::post('send-sample-fax', 'DemoController@sendSampleEfaxNote');
 
-    //Patient Landing Pages
-    Route::resource('sign-up', 'PatientSignupController');
-    Route::get('talk-to-us', 'PatientSignupController@talkToUs');
+Route::post('/send-sample-direct-mail', 'DemoController@sendSampleEMRNote');
 
-    Route::get('care/enroll/{enrollUserId}', 'CareController@enroll');
-    Route::post('care/enroll/{enrollUserId}', 'CareController@store');
+//Patient Landing Pages
+Route::resource('sign-up', 'PatientSignupController');
+Route::get('talk-to-us', 'PatientSignupController@talkToUs');
 
-    //Algo test routes.
+Route::get('care/enroll/{enrollUserId}', 'CareController@enroll');
+Route::post('care/enroll/{enrollUserId}', 'CareController@store');
 
-    Route::group(['prefix' => 'algo'], function () {
-        Route::get('family', 'AlgoTestController@algoFamily');
+//Algo test routes.
 
-        Route::get('cleaner', 'AlgoTestController@algoCleaner');
+Route::group(['prefix' => 'algo'], function () {
+    Route::get('family', 'AlgoTestController@algoFamily');
 
-        Route::get('tuner', 'AlgoTestController@algoTuner');
+    Route::get('cleaner', 'AlgoTestController@algoCleaner');
 
-        Route::get('rescheduler', 'AlgoTestController@algoRescheduler');
-    });
+    Route::get('tuner', 'AlgoTestController@algoTuner');
 
-    Route::get('ajax/patients', 'UserController@getPatients');
+    Route::get('rescheduler', 'AlgoTestController@algoRescheduler');
+});
 
-    Route::post('account/login', 'Patient\PatientController@patientAjaxSearch');
+Route::get('ajax/patients', 'UserController@getPatients');
 
-    Route::get('/', 'WelcomeController@index', [
-        'as' => 'index',
-    ]);
-    Route::get('home', 'WelcomeController@index', [
-        'as' => 'home',
-    ]);
+Route::post('account/login', 'Patient\PatientController@patientAjaxSearch');
 
-    Route::get('login', 'Auth\LoginController@showLoginForm');
-    Route::post('browser-check', [
-        'uses' => 'Auth\LoginController@storeBrowserCompatibilityCheckPreference',
-        'as'   => 'store.browser.compatibility.check.preference',
-    ]);
+Route::get('/', 'WelcomeController@index', [
+    'as' => 'index',
+]);
+Route::get('home', 'WelcomeController@index', [
+    'as' => 'home',
+]);
 
-    Route::group([
-        'prefix'     => 'auth',
-        'middleware' => 'web',
-    ], function () {
+Route::get('login', 'Auth\LoginController@showLoginForm');
+Route::post('browser-check', [
+    'uses' => 'Auth\LoginController@storeBrowserCompatibilityCheckPreference',
+    'as'   => 'store.browser.compatibility.check.preference',
+]);
+
+Route::group([
+    'prefix'     => 'auth',
+    'middleware' => 'web',
+], function () {
         Auth::routes();
 
         Route::get('logout', [
@@ -60,7 +60,7 @@ Route::group(['middleware' => 'disable-debugbar'], function () {
             'as'   => 'user.inactivity-logout',
         ]);
     });
-});
+
 
 //
 //
@@ -614,12 +614,12 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('care-docs/{patient_id}/{show_past?}', [
         'uses' => 'API\PatientCareDocumentsController@getCareDocuments',
-        'as'    => 'get.care-docs'
+        'as'   => 'get.care-docs',
     ]);
 
     Route::get('download-care-document/{patient_id}/{doc_id}', [
         'uses' => 'API\PatientCareDocumentsController@downloadCareDocument',
-        'as'    => 'download.care-doc'
+        'as'   => 'download.care-doc',
     ]);
 
     Route::patch(
@@ -946,8 +946,6 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'patient.care-docs',
         ]);
 
-
-
         Route::post('input/observation/create', [
             'uses' => 'ObservationController@store',
             'as'   => 'patient.observation.store',
@@ -1107,8 +1105,6 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'admin.offline-activity-time-requests.respond',
             ])->middleware('permission:patient.read,offlineActivityRequest.read');
         });
-
-        Route::get('pokit', 'PokitDokController@thisIsJustToTryThingsOut');
 
         Route::group(['prefix' => 'direct-mail'], function () {
             Route::get('{directMailId}', [

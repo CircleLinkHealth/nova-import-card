@@ -41,6 +41,11 @@ class Kernel extends ConsoleKernel
     protected function commands()
     {
         $this->load(__DIR__.'/Commands');
+        
+        if ($this->app->environment() == 'local') {
+            $this->load(__DIR__.'/DevCommands');
+        }
+        
         require base_path('routes/console.php');
     }
     
@@ -81,7 +86,7 @@ class Kernel extends ConsoleKernel
         $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
                  ->weeklyOn(1, '10:00');
         
-        $schedule->command('emailapprovalreminder:providers')
+        $schedule->command('sendapprovalreminder:providers')
                  ->weekdays()
                  ->at('08:00');
         

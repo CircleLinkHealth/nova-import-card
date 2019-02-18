@@ -10,13 +10,13 @@ use App\CarePerson;
 use App\User;
 use Faker\Factory;
 use Tests\Helpers\CarePlanHelpers;
-use Tests\Helpers\SetupTestCustomer;
+use Tests\Helpers\SetupTestCustomerTrait;
 use Tests\TestCase;
 
 class CareTeamReceivesAlertsTest extends TestCase
 {
     use CarePlanHelpers,
-        SetupTestCustomer;
+        SetupTestCustomerTrait;
     /**
      * @var Faker\Factory
      */

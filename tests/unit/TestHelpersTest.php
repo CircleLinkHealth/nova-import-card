@@ -8,12 +8,12 @@ namespace Tests\Unit;
 
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Tests\Helpers\SetupTestCustomer;
+use Tests\Helpers\SetupTestCustomerTrait;
 use Tests\TestCase;
 
 class TestHelpersTest extends TestCase
 {
-    use SetupTestCustomer,
+    use SetupTestCustomerTrait,
         DatabaseTransactions;
     private $location;
     private $patient;
@@ -28,7 +28,7 @@ class TestHelpersTest extends TestCase
 
         $this->date = Carbon::today();
 
-        //to test SetupTestCustomer Trait
+        //to test SetupTestCustomerTrait Trait
         $this->practice = $this->createPractice();
         $this->location = $this->createLocation($this->practice);
         $this->provider = $this->createProvider($this->practice);

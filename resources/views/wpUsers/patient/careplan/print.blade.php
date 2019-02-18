@@ -128,6 +128,18 @@ if (isset($patient) && ! empty($patient)) {
                                         @endpush
                                     @else
                                         <pdf-careplans v-cloak>
+                                            <template slot="careplanViewOptions">
+                                                @if(auth()->user()->providerInfo && auth()->user()->hasRole('provider'))
+                                                    <form class="inline-block" style="text-align: left"
+                                                          action="{{route('provider.update-approve-own')}}"
+                                                          method="POST">
+                                                        {{csrf_field()}}
+                                                        <input class="btn btn-sm btn-info" aria-label="..."
+                                                               type="submit"
+                                                               value="@if(auth()->user()->providerInfo->approve_own_care_plans)View all Practice Care Plans @else View Assigned Care Plans Only @endif">
+                                                    </form>
+                                                @endif
+                                            </template>
                                             <template slot="buttons">
                                                 <?php
                                                 $patientCarePlan = isset($patient)
@@ -140,16 +152,7 @@ if (isset($patient) && ! empty($patient)) {
                                                     ? $patientCarePlanPdfs->count() > 0
                                                     : false;
                                                 ?>
-                                                @if(auth()->user()->providerInfo && auth()->user()->hasRole('provider'))
-                                                    <form class="inline-block"
-                                                          action="{{route('provider.update-approve-own')}}"
-                                                          method="POST">
-                                                        {{csrf_field()}}
-                                                        <input class="btn btn-sm btn-default" aria-label="..."
-                                                               type="submit"
-                                                               value="@if(auth()->user()->providerInfo->approve_own_care_plans)View all Practice Care Plans @else View Assigned Care Plans Only @endif">
-                                                    </form>
-                                                @endif
+
                                                 @if ($patientCarePlanPdfsHasItems)
                                                 <!--href="{{route('patient.pdf.careplan.print', ['patientId' => $patient->id])}}"-->
                                                     <a href="{{route('switch.to.pdf.careplan', ['carePlanId' => optional($patientCarePlan)->id])}}"

@@ -1,6 +1,13 @@
 <template>
     <div>
         <loader v-if="waiting"></loader>
+        <div v-if="debug">
+            <button class="btn btn-circle" @click="togglePatientCallMessage('debug', true)"
+                    :class="isCurrentlyOnPhone ? 'btn-danger': 'btn-success'">
+                <span v-if="isCurrentlyOnPhone">End Call Mode</span>
+                <span v-else>Start Call Mode</span>
+            </button>
+        </div>
         <div class="window-close-banner">
             <strong>
                 When the call is ended, this window will close after {{endCallWindowCloseDelay}} seconds.
@@ -17,73 +24,113 @@
         <template v-if="!waiting">
             <div class="row">
                 <div class="col-xs-12">
-                    <select2 class="form-control" v-model="dropdownNumber" :disabled="onPhone[selectedPatientNumber]">
-                        <option v-for="(number, key) in patientNumbers" :key="key" :value="number">{{number}}</option>
-                        <option value="patientUnlisted">Other</option>
-                    </select2>
-                </div>
-
-                <div v-if="dropdownNumber === 'patientUnlisted'" class="col-xs-12" style="margin-top: 5px">
-                    <label>Please input a 10 digit US Phone Number</label>
-                    <div class="input-group">
-                        <span class="input-group-addon">+1</span>
-
-                        <template v-if="debug">
-                            <input name="patient-unlisted-number"
-                                   class="form-control" type="tel"
-                                   title="10-digit US Phone Number" placeholder="1234567890"
-                                   v-model="patientUnlistedNumber" :disabled="onPhone[patientUnlistedNumber]"/>
-                        </template>
-                        <template v-else>
-                            <input name="patient-unlisted-number"
-                                   maxlength="10" minlength="10"
-                                   class="form-control" type="tel"
-                                   title="10-digit US Phone Number" placeholder="1234567890"
-                                   v-model="patientUnlistedNumber" :disabled="onPhone[patientUnlistedNumber]"/>
-                        </template>
-
-
+                    <div class="col-xs-9 no-padding">
+                        <select2 class="form-control" v-model="dropdownNumber"
+                                 :disabled="onPhone[selectedPatientNumber]">
+                            <option v-for="(number, key) in patientNumbers" :key="key" :value="number">{{number}}
+                            </option>
+                            <option value="patientUnlisted">Other</option>
+                        </select2>
+                    </div>
+                    <div class="col-xs-3 no-padding" style="padding-left: 2px; padding-right: 2px"
+                         v-if="dropdownNumber !== 'patientUnlisted'">
+                        <button class="btn btn-circle" @click="togglePatientCallMessage(selectedPatientNumber)"
+                                :disabled="invalidPatientUnlistedNumber || closeCountdown > 0 || (!onPhone[selectedPatientNumber] && isCurrentlyOnPhone)"
+                                :class="onPhone[selectedPatientNumber] ? 'btn-danger': 'btn-success'">
+                            <i class="fa fa-fw fa-phone"
+                               :class="onPhone[selectedPatientNumber] ? 'fa-close': 'fa-phone'"></i>
+                        </button>
+                        <button class="btn btn-circle btn-default" v-if="onPhone[selectedPatientNumber]"
+                                @click="toggleMuteMessage(selectedPatientNumber)">
+                            <i class="fa fa-fw"
+                               :class="muted[selectedPatientNumber] ? 'fa-microphone-slash': 'fa-microphone'"></i>
+                        </button>
                     </div>
                 </div>
+            </div>
+            <div class="row" v-if="dropdownNumber === 'patientUnlisted'" style="margin-top: 5px">
+                <div class="col-xs-12">
+                    <label>Please input a 10 digit US Phone Number</label>
+                    <div class="col-xs-9 no-padding">
+                        <div class="input-group">
+                            <span class="input-group-addon">+1</span>
 
-                <div class="col-xs-12" style="margin-top: 5px">
-                    <button class="btn btn-circle" @click="togglePatientCallMessage(selectedPatientNumber)"
-                            :disabled="invalidPatientUnlistedNumber || closeCountdown > 0"
-                            :class="onPhone[selectedPatientNumber] ? 'btn-danger': 'btn-success'">
-                        <i class="fa fa-fw fa-phone"
-                           :class="onPhone[selectedPatientNumber] ? 'fa-close': 'fa-phone'"></i>
-                    </button>
-                    <button class="btn btn-circle btn-default" v-if="onPhone[selectedPatientNumber]"
-                            @click="toggleMuteMessage(selectedPatientNumber)">
-                        <i class="fa fa-fw"
-                           :class="muted[selectedPatientNumber] ? 'fa-microphone-slash': 'fa-microphone'"></i>
-                    </button>
+                            <template v-if="debug">
+                                <input name="patient-unlisted-number"
+                                       class="form-control" type="tel"
+                                       title="10-digit US Phone Number" placeholder="1234567890"
+                                       v-model="patientUnlistedNumber" :disabled="onPhone[patientUnlistedNumber]"/>
+                            </template>
+                            <template v-else>
+                                <input name="patient-unlisted-number"
+                                       maxlength="10" minlength="10"
+                                       class="form-control" type="tel"
+                                       title="10-digit US Phone Number" placeholder="1234567890"
+                                       v-model="patientUnlistedNumber" :disabled="onPhone[patientUnlistedNumber]"/>
+                            </template>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-3 no-padding" style="margin-top: 4px; padding-left: 2px; padding-right: 2px">
+                        <button class="btn btn-circle" @click="togglePatientCallMessage(selectedPatientNumber)"
+                                :disabled="invalidPatientUnlistedNumber || closeCountdown > 0 || (!onPhone[selectedPatientNumber] && isCurrentlyOnPhone)"
+                                :class="onPhone[selectedPatientNumber] ? 'btn-danger': 'btn-success'">
+                            <i class="fa fa-fw fa-phone"
+                               :class="onPhone[selectedPatientNumber] ? 'fa-close': 'fa-phone'"></i>
+                        </button>
+                        <button class="btn btn-circle btn-default" v-if="onPhone[selectedPatientNumber]"
+                                @click="toggleMuteMessage(selectedPatientNumber)">
+                            <i class="fa fa-fw"
+                               :class="muted[selectedPatientNumber] ? 'fa-microphone-slash': 'fa-microphone'"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <br/>
 
-            <div class="row" v-if="allowConference" v-show="isCurrentlyOnPhone">
+            <div class="row" style="margin-top: 5px">
+
+                <div class="col-xs-12">
+                    <label>Clinical Escalation Phone Number</label>
+                </div>
+
+                <div class="col-xs-12">
+
+                    <div class="col-xs-9 no-padding">
+                        <input name="clinical-escalation-number"
+                               class="form-control"
+                               :value="clinicalEscalationNumber && clinicalEscalationNumber.length > 0 ? clinicalEscalationNumber : 'Not found'"
+                               disabled/>
+                    </div>
+                    <div class="col-xs-3 no-padding" style="margin-top: 4px; padding-left: 2px; padding-right: 2px">
+                        <button class="btn btn-circle" @click="toggleOtherCallMessage(clinicalEscalationNumber)"
+                                :disabled="!clinicalEscalationNumber || clinicalEscalationNumber.length === 0
+                                                                     || (!allowConference && !onPhone[clinicalEscalationNumber] && isCurrentlyOnPhone)
+                                                                     || (allowConference && !onPhone[clinicalEscalationNumber] && isCurrentlyOnConference)
+                                                                     || closeCountdown > 0"
+                                :class="onPhone[clinicalEscalationNumber] ? 'btn-danger': 'btn-success'">
+                            <i class="fa fa-fw fa-phone"
+                               :class="onPhone[clinicalEscalationNumber] ? 'fa-close': 'fa-phone'"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <br/>
+
+            <div class="row" style="margin-top: 5px" v-if="allowConference" v-show="isCurrentlyOnPhone">
 
                 <div class="col-xs-12">
                     <loader v-if="waitingForConference"></loader>
                 </div>
 
-                <div class="col-xs-12" v-for="(value, key) in otherNumbers" :key="key" style="margin-top: 5px">
-                    <span>{{key}} [{{value}}]</span>
-                    <button class="btn btn-circle" @click="toggleOtherCallMessage(value)"
-                            :disabled="!onPhone[value] && isCurrentlyOnConference"
-                            :class="onPhone[value] ? 'btn-danger': 'btn-success'">
-                        <i class="fa fa-fw fa-phone" :class="onPhone[value] ? 'fa-close': 'fa-phone'"></i>
-                    </button>
-                    <button class="btn btn-circle btn-default" v-if="onPhone[value]"
-                            @click="toggleMuteMessage(value)">
-                        <i class="fa fa-fw"
-                           :class="muted[value] ? 'fa-microphone-slash': 'fa-microphone'"></i>
-                    </button>
+                <div class="col-xs-12">
+                    <label>Add number to call</label>
                 </div>
 
-                <div class="col-xs-12" style="margin-top: 5px">
+                <div class="col-xs-12">
                     <div class="col-xs-9 no-padding">
                         <div class="input-group">
                             <span class="input-group-addon">+1</span>
@@ -106,9 +153,9 @@
 
                         </div>
                     </div>
-                    <div class="col-xs-3 no-padding" style="margin-top: 4px; padding-left: 2px">
+                    <div class="col-xs-3 no-padding" style="margin-top: 4px; padding-left: 2px; padding-right: 2px">
                         <button class="btn btn-circle" @click="toggleOtherCallMessage(otherUnlistedNumber)"
-                                :disabled="invalidOtherUnlistedNumber || (!onPhone[otherUnlistedNumber] && isCurrentlyOnConference)"
+                                :disabled="invalidOtherUnlistedNumber || (!onPhone[otherUnlistedNumber] && isCurrentlyOnConference) || closeCountdown > 0"
                                 :class="onPhone[otherUnlistedNumber] ? 'btn-danger': 'btn-success'">
                             <i class="fa fa-fw fa-phone"
                                :class="onPhone[otherUnlistedNumber] ? 'fa-close': 'fa-phone'"></i>
@@ -170,9 +217,9 @@
                 type: Object,
                 default: {}
             },
-            otherNumbers: {
-                type: Object,
-                default: {}
+            clinicalEscalationNumber: {
+                type: String,
+                default: null
             }
         },
         data() {
@@ -289,7 +336,7 @@
                 }
             },
 
-            togglePatientCallMessage: function (number) {
+            togglePatientCallMessage: function (number, isDebug) {
                 const isUnlisted = this.dropdownNumber === 'patientUnlisted';
                 let makeTheCall = true;
 
@@ -298,13 +345,13 @@
                 }
 
                 if (makeTheCall) {
-                    this.toggleCallMessage(number, isUnlisted, true);
+                    this.toggleCallMessage(number, isUnlisted, true, isDebug);
                 }
             },
 
             toggleOtherCallMessage: function (number) {
-                //if not found in otherNumbers, its unlisted
-                const isUnlisted = !Object.values(this.otherNumbers).some(x => x === number);
+                //if not clinicalEscalationNumber, its unlisted
+                const isUnlisted = this.clinicalEscalationNumber !== number;
                 let makeTheCall = true;
 
                 if (!this.onPhone[number] && isUnlisted && !confirm('This is a new number. Please confirm this is a patient-related call.')) {
@@ -316,9 +363,9 @@
                 }
             },
 
-            toggleCallMessage: function (number, isUnlisted, isCallToPatient) {
+            toggleCallMessage: function (number, isUnlisted, isCallToPatient, isDebug) {
                 const action = this.onPhone[number] ? "call_ended" : "call_started";
-                this.toggleCall(number, isUnlisted, isCallToPatient);
+                this.toggleCall(number, isUnlisted, isCallToPatient, isDebug);
 
                 //inform other pages only about patient calls
                 if (isCallToPatient) {
@@ -332,7 +379,7 @@
 
             // Make an outbound call with the current number,
             // or hang up the current call
-            toggleCall: function (number, isUnlisted, isCallToPatient) {
+            toggleCall: function (number, isUnlisted, isCallToPatient, isDebug) {
 
                 //important - need to get a copy of the variable here
                 //otherwise the computed value changes and our logic does not work
@@ -344,15 +391,19 @@
                     this.$set(this.muted, number, false);
                     this.$set(this.onPhone, number, true);
 
-                    if (isCurrentlyOnPhone) {
-                        this.log = 'Adding to call: ' + number;
-                        this.queuedNumbersForConference.push({number, isUnlisted, isCallToPatient});
-                        this.createConference();
+                    if (!isDebug) {
+                        if (isCurrentlyOnPhone) {
+                            this.log = 'Adding to call: ' + number;
+                            this.queuedNumbersForConference.push({number, isUnlisted, isCallToPatient});
+                            this.createConference();
+                        }
+                        else {
+                            this.log = 'Calling ' + number;
+                            this.connection = this.device.connect(this.getTwimlAppRequest(number, isUnlisted, isCallToPatient));
+                        }
                     }
-                    else {
-                        this.log = 'Calling ' + number;
-                        this.connection = this.device.connect(this.getTwimlAppRequest(number, isUnlisted, isCallToPatient));
-                    }
+
+
                     EventBus.$emit('tracker:call-mode:enter');
 
                 } else {
@@ -368,29 +419,33 @@
                     this.$set(this.muted, number, false);
                     this.$set(this.onPhone, number, false);
 
-                    if (isCurrentlyOnConference) {
-                        this.log = `Hanging up call to ${number}`;
-                        this.axios
-                            .post(rootUrl('twilio/call/end'), {
-                                CallSid: this.callSids[number],
-                                InboundUserId: this.inboundUserId,
-                                OutboundUserId: this.outboundUserId,
-                            })
-                            .then(resp => {
+                    if (!isDebug) {
+                        if (isCurrentlyOnConference) {
+                            this.log = `Hanging up call to ${number}`;
+                            this.axios
+                                .post(rootUrl('twilio/call/end'), {
+                                    CallSid: this.callSids[number],
+                                    InboundUserId: this.inboundUserId,
+                                    OutboundUserId: this.outboundUserId,
+                                })
+                                .then(resp => {
 
-                            })
-                            .catch(err => {
-                                self.log = err.message;
-                                this.$set(this.muted, number, false);
-                                this.$set(this.onPhone, number, false);
-                            });
-                    }
-                    else {
-                        this.log = 'Ending call';
-                        if (this.connection) {
-                            this.connection.disconnect();
+                                })
+                                .catch(err => {
+                                    self.log = err.message;
+                                    this.$set(this.muted, number, false);
+                                    this.$set(this.onPhone, number, false);
+                                });
+                        }
+                        else {
+                            this.log = 'Ending call';
+                            if (this.connection) {
+                                this.connection.disconnect();
+                            }
                         }
                     }
+
+                    EventBus.$emit('tracker:call-mode:exit');
 
                 }
             },
@@ -707,6 +762,11 @@
                         status = self.device.status();
                         if ((status === "ready" || status === "busy") && self.isCurrentlyOnPhone) {
                             number = self.selectedPatientNumber;
+
+                            //will only happen in debug mode
+                            if (!self.onPhone[number]) {
+                                number = "debug";
+                            }
                         }
                     }
                     return Promise.resolve({

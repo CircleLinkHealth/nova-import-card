@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Console\Commands;
+namespace App\Console\DevCommands;
 
 use Illuminate\Console\Command;
 use PDO;
