@@ -4,6 +4,7 @@
 namespace App\Services;
 
 use App\InvitationLink;
+use App\Patient;
 use App\User;
 use Illuminate\Support\Facades\URL;
 
@@ -11,45 +12,33 @@ class SurveyInvitationLinksService
 {
     public function createAndSaveUrl($userId)
     {
-        $this->expireAllPastUrls($userId);
+        $patient       = Patient::where('user_id', $userId)->select('id')->firstOrFail();
+        $patientInfoId = $patient->id;
+
+        $this->expireAllPastUrls($patientInfoId);
 
         $surveyId = rand();
         $url      = URL::signedRoute('loginSurvey',
             [
-                'patient'   => $userId,
+                'user_id'   => $userId,
                 'survey_id' => $surveyId,
             ]);
 
         $urlToken = $this->parseUrl($url);
 
         InvitationLink::create([
-            'awv_user_id'         => $userId,
+            'patient_info_id'     => $patientInfoId,
             'survey_id'           => $surveyId,
             'link_token'          => $urlToken,
             'is_manually_expired' => false,
         ]);
-        dd($url);
+
         return $url;
     }
 
-    public function getPatientPhoneNumberById($userId)
-    {//im using User model cause eventually this method will accept user-names also.
-        $patient = User::with([
-            'patient' => function ($q) use ($userId) {
-                $q->where('cpm_user_id', $userId);
-            },
-        ])
-                       ->where('id', $userId)
-                       ->firstOrFail();
-
-        $phoneNumber = $patient->patient->number;
-
-        return $phoneNumber;
-    }
-
-    public function expireAllPastUrls($userId)
+    public function expireAllPastUrls($patientInfoId)
     {
-        InvitationLink::where('awv_user_id', $userId)
+        InvitationLink::where('patient_info_id', $patientInfoId)
                       ->where('is_manually_expired', '=', 0)
                       ->update(['is_manually_expired' => true]);
     }
@@ -67,5 +56,20 @@ class SurveyInvitationLinksService
         $urlToken = $output['signature'];
 
         return $urlToken;
+    }
+
+    public function getPatientPhoneNumberById($userId)
+    {//im using User model cause eventually this method will accept user-names also.
+        $user = User::with([
+            'phoneNumber' => function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            },
+        ])
+                    ->where('id', $userId)
+                    ->firstOrFail();
+
+        $phoneNumber = $user->phoneNumber->number;
+
+        return $phoneNumber;
     }
 }

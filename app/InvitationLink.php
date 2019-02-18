@@ -5,10 +5,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class InvitationLink extends Model
 {
-  //  use SoftDeletes;
-
     protected $fillable = [
-        'awv_user_id',
+        'patient_info_id',
         'survey_id',
         'link_token',
         'is_manually_expired'
@@ -18,9 +16,8 @@ class InvitationLink extends Model
         'is_manually_expired' => 'boolean'
     ];
 
-
-    public function patient()
+    public function patientInfo()
     {
-        return $this->belongsTo(AwvPatients::class);
+        return $this->belongsTo(Patient::class, 'patient_info_id');
     }
 }

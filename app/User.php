@@ -15,7 +15,9 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
+        'display_name',
         'email',
         'password',
     ];
@@ -30,11 +32,20 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    public function patient()
+    public function patientInfo()
     {
-        return $this->belongsTo(AwvUser::class, 'id');
+        return $this->hasOne(Patient::class, 'id');
     }
 
+    public function phoneNumber()
+    {
+        return $this->hasOne(PhoneNumber::class);
+    }
+
+    public function url()
+    {
+        return $this->hasOne(InvitationLink::class);
+    }
 
     public function surveys()
     {
