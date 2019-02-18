@@ -18,9 +18,9 @@ Route::get('/', function () {
 });
 
 Route::get('enter-patient-form', 'InvitationLinksController@enterPatientForm')->name('enterPatientForm');
-Route::post('send-invitation-link', 'InvitationLinksController@sendInvitationLink')->name('sendInvitationLink');
+Route::post('send-invitation-link', 'InvitationLinksController@createSendInvitationUrl')->name('createSendInvitationUrl');
 //this is a signed route
 Route::get('login-survey/{user}/{survey}', 'InvitationLinksController@surveyFormAuth')->name('loginSurvey');
-Route::post('survey-auth/{user}', 'InvitationLinksController@authSurveyLogin')->name('surveyAuth');
+Route::post('survey-auth', 'InvitationLinksController@surveyAuthBeforeRedirect')->name('surveyAuth');
 Route::post('resend-link/{user}', 'InvitationLinksController@resendUrl')->name('resendUrl');
-Route::post('save-awv-survey-answer', 'AwvSurveyConroller@saveAnswer')->name('save.awv.survey.answer');
+Route::post('save-survey-answer', 'SurveyController@saveAnswer')->name('saveSurveyAnswer');
