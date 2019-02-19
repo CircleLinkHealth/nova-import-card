@@ -14,3 +14,15 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::group([
+    'middleware' => [
+        'auth',
+    ],
+    'prefix' => 'survey',
+], function () {
+    Route::post('answer', [
+        'uses' => 'SurveyController@storeAnswer',
+        'as'   => 'survey.answer-store',
+    ]);
+});

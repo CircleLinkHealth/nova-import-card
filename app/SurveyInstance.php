@@ -29,10 +29,12 @@ class SurveyInstance extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'users_surveys', 'survey_instance_id', 'user_id')->withPivot([
-            'survey_id',
-            'status',
-        ]);
+        return $this->belongsToMany(User::class, 'users_surveys', 'survey_instance_id', 'user_id')
+                    ->withPivot([
+                        'survey_id',
+                        'status',
+                    ])
+                    ->withTimestamps();
     }
 
     public function questions()
