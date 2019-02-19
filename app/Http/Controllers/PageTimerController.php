@@ -8,6 +8,7 @@ namespace App\Http\Controllers;
 
 use App\Activity;
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
+use App\Jobs\StoreTimeTracking;
 use App\Nurse;
 use App\PageTimer;
 use App\PatientMonthlySummary;
@@ -169,54 +170,7 @@ class PageTimerController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->input();
-
-        $patientId  = $request->input('patientId');
-        $providerId = $data['providerId'] ?? null;
-
-        foreach ($data['activities'] as $activity) {
-            $duration = $activity['duration'];
-
-            $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $activity['start_time']);
-            $endTime   = $startTime->copy()->addSeconds($duration);
-
-            $redirectTo = $data['redirectLocation'] ?? null;
-
-            $isBhi = User::isBhiChargeable()
-                         ->where('id', $patientId)
-                         ->exists();
-
-            $newActivity                    = new PageTimer();
-            $newActivity->redirect_to       = $redirectTo;
-            $newActivity->billable_duration = $duration;
-            $newActivity->duration          = $duration;
-            $newActivity->duration_unit     = 'seconds';
-            $newActivity->patient_id        = $patientId;
-            $newActivity->provider_id       = $providerId;
-            $newActivity->start_time        = $startTime->toDateTimeString();
-            $newActivity->end_time          = $endTime->toDateTimeString();
-            $is_behavioral                  = isset($activity['is_behavioral'])
-                ? (bool)$activity['is_behavioral'] && $isBhi
-                : $isBhi;
-            $newActivity->url_full          = $activity['url'];
-            $newActivity->url_short         = $activity['url_short'];
-            $newActivity->program_id        = $data['programId'];
-            $newActivity->ip_addr           = $data['ipAddr'];
-            $newActivity->activity_type     = $activity['name'];
-            $newActivity->title             = $activity['title'];
-            $newActivity->user_agent        = $request->userAgent();
-            $newActivity->save();
-
-            $activityId = null;
-
-            if ($newActivity->billable_duration > 0) {
-                $activityId = $this->addPageTimerActivities($newActivity, $is_behavioral);
-            }
-
-            if ($activityId) {
-                $this->handleNurseLogs($activityId);
-            }
-        }
+        StoreTimeTracking::dispatch($request)->onQueue('high');
 
         return response('PageTimer activities logged.', 201);
     }
