@@ -133,6 +133,17 @@
             </div>
 
             <div class="row">
+                <validate auto-label>
+                    <div class="input-field col s4">
+                        <v-input type="text" label="Clinical Escalation Phone Number" v-model="formData.clinical_escalation_phone" name="clinical_escalation_phone"></v-input>
+
+                        <field-messages name="clinical_escalation_phone" show="$untouched || $touched || $submitted">
+                        </field-messages>
+                    </div>
+                </validate>
+            </div>
+
+            <div class="row">
                 <h6 class="col s12">
                     Please provide login information for your EHR system.
                 </h6>
@@ -338,6 +349,7 @@
                     isComplete: false,
                     name: '',
                     phone: '',
+                    clinical_escalation_phone: '',
                     fax: '',
                     emr_direct_address: '',
                     postal_code: '',

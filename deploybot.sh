@@ -18,8 +18,7 @@ rm -rf storage
 ln -s $SHARED/storage $RELEASE/storage
 
 # Install application dependencies
-composer install
-composer dumpautoload -a
+composer install --no-dev --classmap-authoritative
 
 # Disable lada-cache before migrations
 php artisan lada-cache:disable

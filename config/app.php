@@ -195,7 +195,6 @@ return [
 
         // Application Service Providers...
         Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class,
-        Barryvdh\Debugbar\ServiceProvider::class,
         Barryvdh\Snappy\ServiceProvider::class,
 
         App\Providers\AppServiceProvider::class,
@@ -218,7 +217,6 @@ return [
         Yajra\DataTables\DataTablesServiceProvider::class,
         Spatie\GoogleCalendar\GoogleCalendarServiceProvider::class,
         ObserversServiceProvider::class,
-        Barryvdh\Debugbar\ServiceProvider::class,
         Tylercd100\LERN\LERNServiceProvider::class,
         ViewComposerServiceProvider::class,
         ProviderUITimerComposer::class,
@@ -286,7 +284,6 @@ return [
         'Inspiring' => Illuminate\Foundation\Inspiring::class,
 
         'DataTables'     => Yajra\DataTables\Facades\DataTables::class,
-        'Debugbar'       => Barryvdh\Debugbar\Facade::class,
         'Excel'          => \Maatwebsite\Excel\Facades\Excel::class,
         'Form'           => \Collective\Html\FormFacade::class,
         'Html'           => \Collective\Html\HtmlFacade::class,

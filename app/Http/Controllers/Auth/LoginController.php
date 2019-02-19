@@ -127,6 +127,10 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
+        if (auth()->check()) {
+            return redirect('/');
+        }
+        
         $agent = new Agent();
 
         if ( ! $this->validateBrowserVersion($agent) && ! optional(session('errors'))->has('invalid-browser-force-switch')) {

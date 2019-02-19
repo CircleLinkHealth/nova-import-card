@@ -28,6 +28,7 @@ use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
 use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
+use App\Console\Commands\SendCarePlanApprovalReminders;
 use App\Console\Commands\TuneScheduledCalls;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -41,6 +42,11 @@ class Kernel extends ConsoleKernel
     protected function commands()
     {
         $this->load(__DIR__.'/Commands');
+        
+        if ($this->app->environment() == 'local') {
+            $this->load(__DIR__.'/DevCommands');
+        }
+        
         require base_path('routes/console.php');
     }
     
@@ -81,7 +87,7 @@ class Kernel extends ConsoleKernel
         $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
                  ->weeklyOn(1, '10:00');
         
-        $schedule->command('sendapprovalreminder:providers')
+        $schedule->command(SendCarePlanApprovalReminders::class)
                  ->weekdays()
                  ->at('08:00');
         
@@ -127,7 +133,7 @@ class Kernel extends ConsoleKernel
                  ->withoutOverlapping();
         
         $schedule->command(CareplanEnrollmentAdminNotification::class)
-                 ->dailyAt('09:00')
+                 ->dailyAt('07:00')
                  ->withoutOverlapping();
 
 //        $schedule->command('ccda:determineEligibility')
