@@ -76,6 +76,7 @@ class User extends Authenticatable
     }
 
     public function getSurveyInstancesBySurveyId($surveyId){
+        //todo:might not need callback, can access intermediary table directly for survey id
         return $this->surveyInstances()->whereHas('survey', function ($survey) use ($surveyId){
             $survey->where('id', $surveyId);
         })->get();

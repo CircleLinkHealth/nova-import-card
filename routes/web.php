@@ -25,4 +25,9 @@ Route::group([
         'uses' => 'SurveyController@storeAnswer',
         'as'   => 'survey.answer-store',
     ]);
+
+    Route::get('', [
+        'uses' => 'SurveyController@getSurvey',
+        'as'   => 'survey.get',
+    ]);
 });
