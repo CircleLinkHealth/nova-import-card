@@ -99,7 +99,7 @@
   "require-dev": {
     "barryvdh/laravel-debugbar": "*",
     "friendsofphp/php-cs-fixer": "^2.13",
-    "Xethron/Laravel-4-Generators": "*",
+    "xethron/laravel-4-generators": "*",
     "barryvdh/laravel-ide-helper": "^2.4",
     "darkaonline/l5-swagger": "^5.5",
     "filp/whoops": "~2.0",
