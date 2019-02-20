@@ -17,7 +17,7 @@ class SurveyController extends Controller
 
     public function getSurvey(Request $request)
     {
-        if (! $request->has('survey_id')){
+        if ( ! $request->has('survey_id')) {
             return response()->json(['errors' => 'Request needs survey id'], 400);
         }
         //change auth user id
@@ -35,14 +35,13 @@ class SurveyController extends Controller
 
     public function storeAnswer(StoreAnswer $request)
     {
-
-        $answer = $this->service->storeAnswer($request->input());
+        $answer = $this->service->updateOrCreateAnswer($request->input());
 
         if ( ! $answer) {
             return response()->json(['errors' => 'Answer was not created'], 400);
         }
 
-        return response()->json(['created' => true], 200);
+        return response()->json($answer, 200);
 
     }
 }

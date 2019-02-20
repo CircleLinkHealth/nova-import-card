@@ -45,4 +45,8 @@ class Question extends Model
     {
         return $this->hasOne(QuestionType::class, 'question_id', 'id');
     }
+
+    public function scopeNotOptional($query){
+        $query->where('optional', false);
+    }
 }

@@ -35,30 +35,69 @@ class SurveyService
 
     }
 
-    public function storeAnswer($input)
+    public function updateOrCreateAnswer($input)
     {
-        $user = User::findOrFail($input['user_id']);
 
-        $answer = Answer::create($input);
+        //update or create the answer
+        $answer = Answer::updateOrCreate([
+            'user_id'            => $input['user_id'],
+            'survey_instance_id' => $input['survey_instance_id'],
+            'question_id'        => $input['question_id'],
+        ], [
+            'question_type_answer_id' => array_key_exists('question_type_answer_id', $input)
+                ? $input['question_type_answer_id']
+                : null,
+            'value_1'                 => $input['value_1'],
+            'value_2'                 => array_key_exists('value_2', $input)
+                ? $input['value_2']
+                : null,
+        ]);
 
-        if ($answer) {
-            $instance = $user->surveyInstances()->where('survey_instance_id', $input['survey_instance_id'])->first();
-
-            if ($instance->pivot->status === SurveyInstance::PENDING ){
-                //todo:add logic for complete, taking into account optional questions
-                //count non optional questions for survey instance
-                //find a way to see if user has answers for all of them. Where in?
-                //maybe observer on answer model and from here send the survey instance status back ->use withCount
-                $instance->pivot->status = SurveyInstance::IN_PROGRESS;
-            }
-            $instance->pivot->last_question_answered_id = $input['question_id'];
-            $instance->save();
-
+        if ( ! $answer) {
+            return false;
         }
 
+        return $info = [
+            'created'       => true,
+            'survey_status' => $this->updateSurveyInstanceStatus($input),
+        ];
 
-        return $answer;
+    }
 
+    private function updateSurveyInstanceStatus($input)
+    {
+        $user = User::with([
+            'surveyInstances' => function ($instance) use ($input) {
+                $instance
+                    ->where('survey_instances.id', $input['survey_instance_id'])
+                    ->withCount([
+                        'questions' => function ($q) {
+                            $q->notOptional();
+                        },
+                    ]);
+            },
+        ])
+                    ->withCount([
+                        'answers' => function ($a) {
+                            $a->whereHas('question', function ($q) {
+                                $q->notOptional();
+                            });
+                        },
+                    ])
+                    ->where('id', $input['user_id'])
+                    ->firstOrFail();
+
+        $instance = $user->surveyInstances->first();
+
+        if ($instance->questions_count === $user->answers_count) {
+            $instance->pivot->status = SurveyInstance::COMPLETED;
+        }else{
+            $instance->pivot->status = SurveyInstance::IN_PROGRESS;
+        }
+        $instance->pivot->last_question_answered_id = $input['question_id'];
+        $instance->save();
+
+        return $instance->pivot->status;
     }
 
 
