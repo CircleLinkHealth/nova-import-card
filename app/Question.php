@@ -15,8 +15,18 @@ class Question extends Model
     protected $fillable = [
         'survey_id',
         'body',
+        'optional',
+        'conditions'
     ];
 
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'conditions' => 'array',
+    ];
 
     public function surveyInstance()
     {

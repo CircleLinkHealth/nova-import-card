@@ -46,6 +46,7 @@ class User extends Authenticatable
         return $this->belongsToMany(SurveyInstance::class, 'users_surveys', 'user_id', 'survey_instance_id')
                     ->withPivot([
                         'survey_id',
+                        'last_question_answered_id',
                         'status',
                     ])
                     ->withTimestamps();
@@ -59,7 +60,6 @@ class User extends Authenticatable
 
     public function getSurveys()
     {
-        //todo:forget pivot?
         return $this->surveys->unique('id');
     }
 
@@ -76,9 +76,6 @@ class User extends Authenticatable
     }
 
     public function getSurveyInstancesBySurveyId($surveyId){
-        //todo:might not need callback, can access intermediary table directly for survey id
-        return $this->surveyInstances()->whereHas('survey', function ($survey) use ($surveyId){
-            $survey->where('id', $surveyId);
-        })->get();
+        return $this->surveyInstances()->where('users_surveys.survey_id', $surveyId)->get();
     }
 }

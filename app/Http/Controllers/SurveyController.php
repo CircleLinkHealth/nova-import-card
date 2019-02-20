@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreAnswer;
 use App\Services\SurveyService;
 use Illuminate\Http\Request;
 
@@ -32,7 +33,7 @@ class SurveyController extends Controller
         ], 200);
     }
 
-    public function storeAnswer(Request $request)
+    public function storeAnswer(StoreAnswer $request)
     {
 
         $answer = $this->service->storeAnswer($request->input());

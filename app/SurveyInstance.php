@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class SurveyInstance extends Model
@@ -32,6 +33,7 @@ class SurveyInstance extends Model
         return $this->belongsToMany(User::class, 'users_surveys', 'survey_instance_id', 'user_id')
                     ->withPivot([
                         'survey_id',
+                        'last_question_answered_id',
                         'status',
                     ])
                     ->withTimestamps();
@@ -43,6 +45,12 @@ class SurveyInstance extends Model
             'question_id')->withPivot([
             'order',
         ]);
+    }
+
+    public function scopeCurrent($query)
+    {
+        $query->where('start_date', '<=', Carbon::now())
+              ->where('end_date', '>=', Carbon::now());
     }
 
 

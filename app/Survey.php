@@ -27,6 +27,7 @@ class Survey extends Model
         return $this->belongsToMany(User::class, 'users_surveys', 'survey_id', 'user_id')
                     ->withPivot([
                         'survey_instance_id',
+                        'last_question_answered_id',
                         'status',
                     ])
                     ->withTimestamps();
