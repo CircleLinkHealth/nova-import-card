@@ -69,11 +69,11 @@ class InvitationLinksController extends Controller
         }
 
 
-    public function surveyFormAuth(Request $request, $userId)
+    public function surveyLoginForm(Request $request, $userId)
     {
         $urlWithToken = $request->getRequestUri();
 
-        return view('surveyUrlAuth.surveyFormAuth', compact('userId', 'urlWithToken'));
+        return view('surveyUrlAuth.surveyLoginForm', compact('userId', 'urlWithToken'));
     }
 
     public function resendUrl($userId)
@@ -108,7 +108,7 @@ class InvitationLinksController extends Controller
             return view('surveyUrlAuth.resendUrl', compact('userId'));
         }
 
-        return view('surveyQuestionnaire.survey', compact('urlToken'));
+        return view('surveyQuestionnaire.surveyWelcome', compact('urlToken'));
     }
 
 }
