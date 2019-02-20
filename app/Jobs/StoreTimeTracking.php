@@ -45,7 +45,7 @@ class StoreTimeTracking implements ShouldQueue
         $patientId  = $this->params->get('patientId');
         $providerId = $this->params->get('providerId', null);
     
-        foreach ($this->params->get('activities') as $activity) {
+        foreach ($this->params->get('activities', []) as $activity) {
             $duration = $activity['duration'];
         
             $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $activity['start_time']);
