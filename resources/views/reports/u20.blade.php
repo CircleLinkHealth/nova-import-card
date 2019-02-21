@@ -43,6 +43,7 @@
                     {!! Form::close() !!}
                 </div>
                 <div class="main-form-horizontal main-form-primary-horizontal col-md-12">
+                    @include('errors.errors')
                     @if($data)
                         <div id="obs_alerts_container" class=""></div><br/>
                         <div id="paging_container"></div><br/>
