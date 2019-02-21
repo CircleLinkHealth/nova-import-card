@@ -52,6 +52,7 @@
     "authy/php": "^3.0",
     "barryvdh/laravel-snappy": "0.4.1",
     "blackfire/php-sdk": "^1.17",
+    "bugsnag/bugsnag-laravel": "^2.15",
     "circlelinkhealth/migrations": "dev-main-master",
     "doctrine/dbal": "~2.3",
     "fideloper/proxy": "~3.3",
