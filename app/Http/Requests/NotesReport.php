@@ -26,7 +26,18 @@ class NotesReport extends FormRequest
     {
         return [
             'range'        => 'sometimes|integer|between:0,4',
-            'getNotesFor'  => 'sometimes|array',
+            'getNotesFor'  => [
+                'sometimes',
+                'array',
+                function ($attribute, $value, $fail) {
+                    foreach ($value as $selection) {
+                        $data = explode(':', $selection);
+                        if (count($data) !== 2) {
+                            return $fail('The value submitted for Practices/Providers select dropdown is invalid.');
+                        }
+                    }
+                },
+            ],
             'mail_filter'  => 'sometimes',
             'admin_filter' => 'sometimes',
         ];
