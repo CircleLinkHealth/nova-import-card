@@ -2349,7 +2349,19 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             }
         });
     }
-
+    
+    /**
+     * Scope the query to practices for which the user has at least one of the given roles
+     *
+     * @param $query
+     * @param $roleIds
+     */
+    public function scopePracticesWhereHasRoles($query, $roleIds) {
+        $query->whereHas('practices', function ($q) use ($roleIds) {
+            $q->whereIn('practice_role_user.role_id', $roleIds);
+        });
+    }
+    
     public function scopeHasBillingProvider(
         $query,
         $billing_provider_id
