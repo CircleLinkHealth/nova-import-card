@@ -67,7 +67,7 @@ class NursesAndStatesDailyReportService
                             ];
                         }
                     }
-//@todo:think a better name for $totalsPerDay..
+
                     $totalsPerDay[$dayOfWeek] = collect(
                         [
                             'scheduledCallsSum'    => $reportPerDay->sum('scheduledCalls'),
