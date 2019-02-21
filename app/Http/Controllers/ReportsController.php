@@ -922,6 +922,11 @@ class ReportsController extends Controller
         Request $request,
         $patientId = false
     ) {
+        $request->validate([
+            'selectYear' => 'sometimes|integer|digits:4',
+            'selectMonth' => 'sometimes|integer|max:12',
+        ]);
+
         $input = $request->all();
 
         if (isset($input['selectMonth'])) {
