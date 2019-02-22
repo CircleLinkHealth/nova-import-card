@@ -30,3 +30,4 @@ format:
     version: '{$major}.{$minor}.{$patch} (build {$build})'
     full: 'version {$major}.{$minor}.{$patch} (build {$build})'
     compact: 'v{$major}.{$minor}.{$patch}-{$build}'
+    compact_no_build: 'v{$major}.{$minor}.{$patch}'
