@@ -91,7 +91,6 @@
     "spiritix/lada-cache": "^2.1",
     "squizlabs/php_codesniffer": "*",
     "twilio/sdk": "5.7",
-    "tylercd100/lern": "^3.8",
     "tymon/jwt-auth": "0.5.*",
     "venturecraft/revisionable": "dev-master",
     "waavi/url-shortener": "dev-master",
