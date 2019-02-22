@@ -216,6 +216,7 @@ if (isset($patient) && ! empty($patient)) {
                             <h1 class="patient-summary__title patient-summary__title_9 patient-summary--careplan">Care
                                 Plan</h1>
                         </div>
+
                         @include('partials.carePlans.approval-box')
                     </div>
 
@@ -231,10 +232,10 @@ if (isset($patient) && ! empty($patient)) {
 
                     <div class="row gutter">
                         @if($billingDoctor)
-                            <div class="col-xs-6 print-row text-bold">
+                            <div class="col-xs-5 print-row text-bold">
                                 {{ $billingDoctor->getDoctorFullNameWithSpecialty() }}
                             </div>
-                            <div class="col-xs-3 print-row">
+                            <div class="col-xs-7 print-row">
                                 {{$billingDoctor->getPhone()}}
                             </div>
                         @else
@@ -244,7 +245,7 @@ if (isset($patient) && ! empty($patient)) {
                             <div class="col-xs-3 print-row">
                             </div>
                         @endif
-                        <div class="col-xs-6 print-row text-bold text-right">{{$patient->getPreferredLocationName()}}</div>
+                        <div class="col-lg-12 col-xs-12 print-row text-bold text-right">{{$patient->getPreferredLocationName()}}</div>
                     </div>
 
 
