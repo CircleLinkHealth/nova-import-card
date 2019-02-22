@@ -216,18 +216,17 @@ if (isset($patient) && ! empty($patient)) {
                             <h1 class="patient-summary__title patient-summary__title_9 patient-summary--careplan">Care
                                 Plan</h1>
                         </div>
-
                         @include('partials.carePlans.approval-box')
                     </div>
 
                     <br>
 
                     <div class="row gutter">
-                        <div class="col-lg-offset-0 col-xs-8 col-xs-offset-3 print-row text-bold">{{$patient->getFullName()}}
+                        <div class="col-lg-5 col-xs-6 print-row text-bold">{{$patient->getFullName()}}
                             (DOB: {{$patient->patientInfo->dob()}})
                         </div>
-                        <div class="col-xs-6 print-row">{{$patient->getPhone()}}</div>
-                        <div class="col-xs-6 print-row text-right">{{$today}}</div>
+                        <div class="col-lg-4 col-xs-4 print-row">{{$patient->getPhone()}}</div>
+                        <div class="col-lg-3 col-xs-6 print-row text-right">{{$today}}</div>
                     </div>
 
                     <div class="row gutter">

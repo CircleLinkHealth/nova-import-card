@@ -48,7 +48,7 @@
                     <i class="icon icon--date-time hidden-xs"></i>
                     <div class="inline-block">
                         <label for="selectMonth" class="sr-only">Select Month:</label>
-                        <select name="selectMonth" id="selectMonth" class="selectpicker" data-width="200px"
+                        <select name="selectMonth" id="selectMonth" class="selectpicker" data-width="160px"
                                 data-size="10" style="display: none;">
                             <option value="">Select Month</option>
                             @for($i = 0; $i < count($months); $i++)
@@ -174,7 +174,7 @@
                                 autoheight: true,
                                 fixedRowHeight: false, rowLineHeight: 25, rowHeight: 25,
                                 // leftSplit:2,
-                                scrollX: false,
+                                scrollX: true,
                                 resizeColumn: true,
                                 footer: true,
                                 columns: [
@@ -199,8 +199,8 @@
                                                     return obj.type;
                                             },
 
-                                            fillspace: true,
-                                            width: 200,
+                                            fillspace: false,
+                                            width: 202,
                                             sort: 'string',
                                             css: {"color": "black", "text-align": "left"}
                                         },
@@ -208,14 +208,14 @@
                                         {
                                             id: "provider_name",
                                             header: ["Provider", {content: "textFilter", placeholder: "Filter"}],
-                                            width: 200,
+                                            width: 220,
                                             sort: 'string',
                                             css: {"color": "black", "text-align": "right"}
                                         },
                                         {
                                             id: "durationCCM",
                                             header: ["Total CCM", "(HH:MM:SS)"],
-                                            width: 100,
+                                            width: 150,
                                             sort: 'string',
                                             css: {"color": "black", "text-align": "right"},
                                             footer: {content: "mySummColumnCCM", css: "duration-footer"},
@@ -226,7 +226,8 @@
                                         {
                                             id: "durationBHI",
                                             header: ["Total BHI", "(HH:MM:SS)"],
-                                            width: 100,
+                                            width: 150,
+                                            fillspace: false,
                                             sort: 'string',
                                             css: {"color": "black", "text-align": "right"},
                                             footer: {content: "mySummColumnBHI", css: "duration-footer"},

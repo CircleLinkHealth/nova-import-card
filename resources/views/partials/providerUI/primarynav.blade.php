@@ -40,7 +40,7 @@ if (isset($patient)) {
             <span class="icon-bar" style="background-color:white"></span>
         </button>
 
-        <div class="col-lg-4 col-sm-10 col-xs-7" id="search-bar-container">
+        <div class="{{--col-lg-4 col-sm-10 col-xs-7--}}" id="search-bar-container">
             @include('partials.search')
         </div>
 

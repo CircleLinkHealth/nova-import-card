@@ -219,7 +219,7 @@
                                                 width: 250,
                                                 sort: 'string',
                                                 tooltip: ['#comment#'],
-                                                fillspace: true,
+                                                fillspace: false,
                                                 template: "<a href='<?php echo route('patient.note.view', [
                                                     'patient' => '#patient_id#',
                                                     'noteId'  => '#id#',
