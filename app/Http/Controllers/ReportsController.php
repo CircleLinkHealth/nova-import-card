@@ -9,7 +9,7 @@ namespace App\Http\Controllers;
 use App\CareItem;
 use App\CarePlan;
 use App\Contracts\ReportFormatter;
-use App\Http\Requests\u20Report;
+use App\Http\Requests\GetUnder20MinutesReport;
 use App\Location;
 use App\Models\CPM\CpmProblem;
 use App\PageTimer;
@@ -920,7 +920,7 @@ class ReportsController extends Controller
     }
 
     public function u20(
-        u20Report $request,
+        GetUnder20MinutesReport $request,
         $patientId = false
     ) {
         $input = $request->all();
