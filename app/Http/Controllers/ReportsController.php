@@ -9,6 +9,7 @@ namespace App\Http\Controllers;
 use App\CareItem;
 use App\CarePlan;
 use App\Contracts\ReportFormatter;
+use App\Http\Requests\u20Report;
 use App\Location;
 use App\Models\CPM\CpmProblem;
 use App\PageTimer;
@@ -919,14 +920,9 @@ class ReportsController extends Controller
     }
 
     public function u20(
-        Request $request,
+        u20Report $request,
         $patientId = false
     ) {
-        $request->validate([
-            'selectYear' => 'sometimes|integer|digits:4',
-            'selectMonth' => 'sometimes|integer|max:12',
-        ]);
-
         $input = $request->all();
 
         if (isset($input['selectMonth'])) {
