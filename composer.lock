@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fafaf79e3048b4390f44f1f7136f7b4a",
+    "content-hash": "78c84566e177062902f151f900865029",
     "packages": [
         {
             "name": "amnuts/opcache-gui",
@@ -4812,6 +4812,67 @@
                 "server"
             ],
             "time": "2018-10-08T16:42:42+00:00"
+        },
+        {
+            "name": "pragmarx/version",
+            "version": "v0.2.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/antonioribeiro/version.git",
+                "reference": "1d678d1b70a97eb6ceb49224159cf203a7493e46"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/antonioribeiro/version/zipball/1d678d1b70a97eb6ceb49224159cf203a7493e46",
+                "reference": "1d678d1b70a97eb6ceb49224159cf203a7493e46",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": ">=5.5.33",
+                "php": "^7.0",
+                "pragmarx/yaml": "^0.1",
+                "symfony/process": "^3.3|^4.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^3.5|^3.6",
+                "phpunit/phpunit": "^6.4|^7.0"
+            },
+            "type": "library",
+            "extra": {
+                "component": "package",
+                "laravel": {
+                    "providers": [
+                        "PragmaRX\\Version\\Package\\ServiceProvider"
+                    ],
+                    "aliases": {
+                        "Version": "PragmaRX\\Version\\Package\\Facade"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "PragmaRX\\Version\\Package\\": "src/package",
+                    "PragmaRX\\Version\\Tests\\": "tests/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Antonio Carlos Ribeiro",
+                    "email": "acr@antoniocarlosribeiro.com",
+                    "role": "Creator & Designer"
+                }
+            ],
+            "description": "Take control over your Laravel app version",
+            "keywords": [
+                "laravel",
+                "version",
+                "versioning"
+            ],
+            "time": "2018-07-20T03:00:43+00:00"
         },
         {
             "name": "pragmarx/yaml",
