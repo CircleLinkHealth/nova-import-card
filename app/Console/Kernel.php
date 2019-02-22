@@ -28,6 +28,7 @@ use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
 use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
+use App\Console\Commands\SendCarePlanApprovalReminders;
 use App\Console\Commands\TuneScheduledCalls;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -36,14 +37,26 @@ use Jorijn\LaravelSecurityChecker\Console\SecurityMailCommand;
 class Kernel extends ConsoleKernel
 {
     /**
+     * @var array
+     */
+    protected $commands = [
+        \Bugsnag\BugsnagLaravel\Commands\DeployCommand::class,
+    ];
+
+    /**
      * Register the Closure based commands for the application.
      */
     protected function commands()
     {
         $this->load(__DIR__.'/Commands');
+
+        if ('local' == $this->app->environment()) {
+            $this->load(__DIR__.'/DevCommands');
+        }
+
         require base_path('routes/console.php');
     }
-    
+
     /**
      * Define the application's command schedule.
      *
@@ -52,83 +65,83 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('horizon:snapshot')->everyFiveMinutes();
-        
+
         $schedule->command(DetermineTargetPatientEligibility::class)
-                 ->everyTenMinutes();
-        
+            ->everyTenMinutes();
+
         $schedule->command(QueueEligibilityBatchForProcessing::class)
-                 ->everyMinute()
-                 ->withoutOverlapping();
-        
+            ->everyMinute()
+            ->withoutOverlapping();
+
         $schedule->command(AutoPullEnrolleesFromAthena::class)
-                 ->monthlyOn(1);
-        
+            ->monthlyOn(1);
+
         $schedule->command(RescheduleMissedCalls::class)->dailyAt('00:01');
-        
+
         $schedule->command(TuneScheduledCalls::class)->dailyAt('00:05');
 
 //        $schedule->call(function () {
 //            (new EnrollmentSMSSender())->exec();
 //        })->dailyAt('13:00');
-        
+
         //family calls will be scheduled in RescheduleMissedCalls
         //$schedule->command(SyncFamilialCalls::class)->dailyAt('00:30');
-        
+
         //Removes All Scheduled Calls for patients that are withdrawn
         $schedule->command(RemoveScheduledCallsForWithdrawnAndPausedPatients::class)->everyFiveMinutes(
         )->withoutOverlapping();
-        
+
         $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
-                 ->weeklyOn(1, '10:00');
-        
-        $schedule->command('sendapprovalreminder:providers')
-                 ->weekdays()
-                 ->at('08:00');
-        
+            ->weeklyOn(1, '10:00');
+
+        $schedule->command(SendCarePlanApprovalReminders::class)
+            ->weekdays()
+            ->at('08:00');
+
         //commenting out due to isues with google calendar
 //        $schedule->command('nurseSchedule:export')
 //                 ->hourly();
-        
+
         $schedule->command(GetAppointments::class)
-                 ->dailyAt('22:30');
-        
+            ->dailyAt('22:30');
+
         $schedule->command(QueueResetAssignedCareAmbassadorsFromEnrollees::class)
-                 ->dailyAt('00:30');
-        
+            ->dailyAt('00:30');
+
         $schedule->command(GetCcds::class)
-                 ->everyThirtyMinutes();
-        
+            ->everyThirtyMinutes();
+
         $schedule->command(EmailRNDailyReport::class)
-                 ->dailyAt('21:00');
-        
+            ->dailyAt('21:00');
+
         $schedule->command(QueueSendApprovedCareplanSlackNotification::class)
-                 ->dailyAt('23:40');
-        
+            ->dailyAt('23:40');
+
         $schedule->command(QueueGenerateOpsDailyReport::class)
-                 ->dailyAt('23:30');
-        
+            ->dailyAt('23:30');
+
         //Run at 12:01am every 1st of month
         $schedule->command(ResetPatients::class)
-                 ->cron('1 0 1 * *');
-        
+            ->cron('1 0 1 * *');
+
         //Run at 12:30am every 1st of month
         $schedule->command(AttachBillableProblemsToLastMonthSummary::class)
-                 ->cron('30 0 1 * *');
+            ->cron('30 0 1 * *');
 
 //        $schedule->command('lgh:importInsurance')
 //            ->dailyAt('05:00');
-        
+
         $schedule->command(QueueGenerateNurseInvoices::class)
-                 ->dailyAt('23:40')
-                 ->withoutOverlapping();
-        
+            ->dailyAt('23:40')
+            ->withoutOverlapping();
+
         $schedule->command(QueueGenerateNurseDailyReport::class)
-                 ->dailyAt('23:45')
-                 ->withoutOverlapping();
-        
+            ->dailyAt('23:45')
+            ->withoutOverlapping();
+
         $schedule->command(CareplanEnrollmentAdminNotification::class)
-                 ->dailyAt('09:00')
-                 ->withoutOverlapping();
+            ->dailyAt('07:00')
+            ->withoutOverlapping();
 
 //        $schedule->command('ccda:determineEligibility')
 //                 ->everyFiveMinutes()
@@ -141,22 +154,22 @@ class Kernel extends ConsoleKernel
 //        $schedule->command('ccda:process')
 //            ->everyMinute()
 //            ->withoutOverlapping();
-        
+
         //every 2 hours
 //        $schedule->command('ccdas:split-merged')
 //            ->cron('0 */2 * * *');
-        
+
         $schedule->command(QueueSendAuditReports::class)
-                 ->monthlyOn(1, '02:00');
-        
+            ->monthlyOn(1, '02:00');
+
         $schedule->command(CheckEmrDirectInbox::class)
-                 ->everyFiveMinutes()
-                 ->withoutOverlapping();
-        
+            ->everyFiveMinutes()
+            ->withoutOverlapping();
+
         $schedule->command(DeleteProcessedFiles::class)
-                 ->everyThirtyMinutes()
-                 ->withoutOverlapping();
-        
+            ->everyThirtyMinutes()
+            ->withoutOverlapping();
+
         //uncomment when ready
 //        $schedule->command(DownloadTwilioRecordings::class)
 //                 ->everyThirtyMinutes()
@@ -167,9 +180,9 @@ class Kernel extends ConsoleKernel
 //            $schedule->command(CleanupCommand::class)->daily()->at('01:00');
 //            $schedule->command(BackupCommand::class)->daily()->at('02:00');
 //        }
-        
+
         $schedule->command(SecurityMailCommand::class)
-                 ->weekly();
+            ->weekly();
         $schedule->command(NursesAndStatesDailyReport::class)->dailyAt('00:05');
     }
 }

@@ -68,7 +68,7 @@ class NursesAndStatesDailyReportService
                         }
                     }
 
-                    $totalsPerDay[$dayOfWeek] =collect(
+                    $totalsPerDay[$dayOfWeek] = collect(
                         [
                             'scheduledCallsSum'    => $reportPerDay->sum('scheduledCalls'),
                             'actualCallsSum'       => $reportPerDay->sum('actualCalls'),
@@ -76,7 +76,7 @@ class NursesAndStatesDailyReportService
                             'unsuccessfulCallsSum' => $reportPerDay->sum('unsuccessful'),
                             'actualHoursSum'       => $reportPerDay->sum('actualHours'),
                             'committedHoursSum'    => $reportPerDay->sum('committedHours'),
-                            'efficiency'           => $reportPerDay->sum('efficiency'),
+                            'efficiency'           => number_format($reportPerDay->avg('efficiency'), '2'),
                         ]);
                 }
 

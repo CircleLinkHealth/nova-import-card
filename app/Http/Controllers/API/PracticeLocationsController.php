@@ -19,7 +19,7 @@ class PracticeLocationsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param int   $id
+     * @param int $id
      * @param mixed $practiceId
      * @param mixed $locationId
      *
@@ -94,8 +94,8 @@ class PracticeLocationsController extends Controller
         $contactUser = $loc->clinicalEmergencyContact->first() ?? null;
 
         return [
-            'id'               => $loc->id,
-            'clinical_contact' => [
+            'id'                        => $loc->id,
+            'clinical_contact'          => [
                 'email'      => optional($contactUser)->email ?? null,
                 'first_name' => optional($contactUser)->getFirstName() ?? null,
                 'last_name'  => optional($contactUser)->getLastName() ?? null,
@@ -112,6 +112,7 @@ class PracticeLocationsController extends Controller
             'state'                     => $loc->state,
             'validated'                 => true,
             'phone'                     => StringManipulation::formatPhoneNumber($loc->phone),
+            'clinical_escalation_phone' => StringManipulation::formatPhoneNumber($loc->clinical_escalation_phone),
             'fax'                       => StringManipulation::formatPhoneNumber($loc->fax),
             'emr_direct_address'        => $loc->emr_direct_address,
             'sameClinicalIssuesContact' => $primaryPractice->same_clinical_contact,
@@ -125,9 +126,9 @@ class PracticeLocationsController extends Controller
      * Update the specified resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @param int                      $id
-     * @param mixed                    $primaryPracticeId
-     * @param mixed                    $locationId
+     * @param int $id
+     * @param mixed $primaryPracticeId
+     * @param mixed $locationId
      *
      * @return \Illuminate\Http\Response
      */
@@ -143,18 +144,19 @@ class PracticeLocationsController extends Controller
         $location = Location::updateOrCreate([
             'id' => $formData['id'],
         ], [
-            'practice_id'    => $primaryPractice['id'],
-            'name'           => $formData['name'],
-            'phone'          => StringManipulation::formatPhoneNumberE164($formData['phone']),
-            'fax'            => StringManipulation::formatPhoneNumberE164($formData['fax']),
-            'address_line_1' => $formData['address_line_1'],
-            'address_line_2' => $formData['address_line_2'] ?? null,
-            'city'           => $formData['city'],
-            'state'          => $formData['state'],
-            'timezone'       => $formData['timezone'],
-            'postal_code'    => $formData['postal_code'],
-            'ehr_login'      => $formData['ehr_login'] ?? null,
-            'ehr_password'   => $formData['ehr_password'] ?? null,
+            'practice_id'               => $primaryPractice['id'],
+            'name'                      => $formData['name'],
+            'phone'                     => StringManipulation::formatPhoneNumberE164($formData['phone']),
+            'clinical_escalation_phone' => StringManipulation::formatPhoneNumberE164($formData['clinical_escalation_phone']),
+            'fax'                       => StringManipulation::formatPhoneNumberE164($formData['fax']),
+            'address_line_1'            => $formData['address_line_1'],
+            'address_line_2'            => $formData['address_line_2'] ?? null,
+            'city'                      => $formData['city'],
+            'state'                     => $formData['state'],
+            'timezone'                  => $formData['timezone'],
+            'postal_code'               => $formData['postal_code'],
+            'ehr_login'                 => $formData['ehr_login'] ?? null,
+            'ehr_password'              => $formData['ehr_password'] ?? null,
         ]);
 
         if (1 == Location::where('practice_id', $primaryPractice->id)->count()) {
@@ -171,7 +173,7 @@ class PracticeLocationsController extends Controller
             $primaryPractice->same_ehr_login = true;
 
             $primaryPractice->locations->map(function ($loc) use ($formData) {
-                $loc->ehr_login = $formData['ehr_login'] ?? null;
+                $loc->ehr_login    = $formData['ehr_login'] ?? null;
                 $loc->ehr_password = $formData['ehr_password'] ?? null;
                 $loc->save();
             });

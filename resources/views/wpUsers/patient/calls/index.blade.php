@@ -7,7 +7,7 @@
 
     <div class="container">
         <div class="row">
-            <div class="main-form-container col-lg-4 col-lg-offset-4">
+            <div class="main-form-container col-lg-6 col-lg-offset-3">
                 <div class="row">
                     <div class="main-form-title col-lg-12">
                         Patient Call Page
@@ -69,8 +69,8 @@
                                         :allow-conference="@json(config('services.twilio.allow-conference'))"
                                         inbound-user-id="{{$patient->id}}"
                                         outbound-user-id="{{auth()->id()}}"
-                                        :other-numbers="{{$otherNumbers}}"
-                                        :patient-numbers="{{$phoneNumbers}}">
+                                        :patient-numbers="{{$phoneNumbers}}"
+                                        clinical-escalation-number="{{$clinicalEscalationNumber}}">
                                 </call-number>
                             </div>
                         </div>
