@@ -194,7 +194,6 @@ return [
         Illuminate\View\ViewServiceProvider::class,
         
         // Application Service Providers...
-        Bugsnag\BugsnagLaravel\BugsnagServiceProvider::class,
         Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class,
         Barryvdh\Snappy\ServiceProvider::class,
         
@@ -283,7 +282,6 @@ return [
         'Input'     => Illuminate\Support\Facades\Input::class,
         'Inspiring' => Illuminate\Foundation\Inspiring::class,
         
-        'Bugsnag'        => Bugsnag\BugsnagLaravel\Facades\Bugsnag::class,
         'DataTables'     => Yajra\DataTables\Facades\DataTables::class,
         'Excel'          => \Maatwebsite\Excel\Facades\Excel::class,
         'Form'           => \Collective\Html\FormFacade::class,

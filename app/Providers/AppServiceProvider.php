@@ -28,6 +28,7 @@ use App\Repositories\LocationRepositoryEloquent;
 use App\Repositories\PracticeRepositoryEloquent;
 use App\Repositories\PrettusUserRepositoryEloquent;
 use App\Services\SnappyPdfWrapper;
+use Bugsnag\BugsnagLaravel\BugsnagServiceProvider;
 use Bugsnag\BugsnagLaravel\Facades\Bugsnag;
 use DB;
 use Illuminate\Notifications\Channels\DatabaseChannel;
@@ -79,9 +80,13 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         if ( ! $this->app->environment('local')) {
+            $this->app->register(BugsnagServiceProvider::class);
+    
+            $loader = \Illuminate\Foundation\AliasLoader::getInstance();
+            $loader->alias('Bugsnag', Bugsnag::class);
+            
             $this->app->alias('bugsnag.logger', \Illuminate\Contracts\Logging\Log::class);
             $this->app->alias('bugsnag.logger', \Psr\Log\LoggerInterface::class);
-            Bugsnag::setAutoCaptureSessions(true);
         }
         
         $this->app->register(CPMArtisanServiceProvider::class);
