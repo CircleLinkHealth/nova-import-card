@@ -406,9 +406,9 @@ class WebixFormatter implements ReportFormatter
                 //format super specific phone number requirements
                 if ($provider->getPrimaryPhone()) {
                     $phone = 'P: '.preg_replace(
-                            '~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~',
-                            '$1-$2-$3',
-                            $provider->getPrimaryPhone()
+                        '~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~',
+                        '$1-$2-$3',
+                        $provider->getPrimaryPhone()
                         );
                 }
             }
@@ -450,9 +450,9 @@ class WebixFormatter implements ReportFormatter
             //format super specific phone number requirements
             if ($provider->getPrimaryPhone()) {
                 $phone = 'P: '.preg_replace(
-                        '~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~',
-                        '$1-$2-$3',
-                        $provider->getPrimaryPhone()
+                    '~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~',
+                    '$1-$2-$3',
+                    $provider->getPrimaryPhone()
                     );
             } else {
                 $phone = null;
@@ -486,7 +486,7 @@ class WebixFormatter implements ReportFormatter
         $auth                  = \Auth::user();
         $canApproveCarePlans   = $auth->canApproveCareplans();
         $canQAApproveCarePlans = $auth->canQAApproveCarePlans();
-        $isCareCenter          = $auth->hasRole('care-center');
+        $isCareCenter          = $auth->isCareCoach();
         $isAdmin               = $auth->isAdmin();
         $isProvider            = $auth->hasRole('provider');
         $isPracticeStaff       = $auth->hasRole(['office_admin', 'med_assistant']);
@@ -515,7 +515,7 @@ class WebixFormatter implements ReportFormatter
 
         $canApproveCarePlans   = $auth->canApproveCareplans();
         $canQAApproveCarePlans = $auth->canQAApproveCarePlans();
-        $isCareCenter          = $auth->hasRole('care-center');
+        $isCareCenter          = $auth->isCareCoach();
         $isAdmin               = $auth->isAdmin();
         $isProvider            = $auth->hasRole('provider');
         $isPracticeStaff       = $auth->hasRole(['office_admin', 'med_assistant']);
@@ -548,8 +548,8 @@ class WebixFormatter implements ReportFormatter
                     $careplanStatusLink = 'Approve Now';
                     if ($canApproveCarePlans) {
                         $careplanStatusLink = '<a style="text-decoration:underline;" href="'.route(
-                                'patient.careplan.print',
-                                ['patient' => $patient->id]
+                            'patient.careplan.print',
+                            ['patient' => $patient->id]
                             ).'"><strong>Approve Now</strong></a>';
                     }
                 } else {
@@ -559,8 +559,8 @@ class WebixFormatter implements ReportFormatter
                         $careplanStatusLink = 'CLH Approve';
                         if ($canQAApproveCarePlans) {
                             $careplanStatusLink = '<a style="text-decoration:underline;" href="'.route(
-                                    'patient.demographics.show',
-                                    ['patient' => $patient->id]
+                                'patient.demographics.show',
+                                ['patient' => $patient->id]
                                 ).'"><strong>CLH Approve</strong></a>';
                         }
                     }

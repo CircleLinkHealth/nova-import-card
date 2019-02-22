@@ -4,7 +4,6 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-
 Route::post('send-sample-fax', 'DemoController@sendSampleEfaxNote');
 
 Route::post('/send-sample-direct-mail', 'DemoController@sendSampleEMRNote');
@@ -49,18 +48,17 @@ Route::group([
     'prefix'     => 'auth',
     'middleware' => 'web',
 ], function () {
-        Auth::routes();
+    Auth::routes();
 
-        Route::get('logout', [
-            'uses' => 'Auth\LoginController@logout',
-            'as'   => 'user.logout',
-        ]);
-        Route::get('inactivity-logout', [
-            'uses' => 'Auth\LoginController@inactivityLogout',
-            'as'   => 'user.inactivity-logout',
-        ]);
-    });
-
+    Route::get('logout', [
+        'uses' => 'Auth\LoginController@logout',
+        'as'   => 'user.logout',
+    ]);
+    Route::get('inactivity-logout', [
+        'uses' => 'Auth\LoginController@inactivityLogout',
+        'as'   => 'user.inactivity-logout',
+    ]);
+});
 
 //
 //
@@ -1088,6 +1086,33 @@ Route::group(['middleware' => 'auth'], function () {
     //
     // ADMIN (/admin)
     //
+
+    Route::group([
+        'middleware' => [
+            'auth',
+            'permission:admin-access,practice-admin',
+        ],
+        'prefix' => 'admin',
+    ], function () {
+        Route::get('calls-v2', [
+            'uses' => 'Admin\PatientCallManagementController@remixV2',
+            'as'   => 'admin.patientCallManagement.v2.index',
+        ]);
+
+        Route::group([
+            'prefix' => 'reports',
+        ], function () {
+            Route::group([
+                'prefix' => 'monthly-billing/v2',
+            ], function () {
+                Route::get('/make', [
+                    'uses' => 'Billing\PracticeInvoiceController@make',
+                    'as'   => 'monthly.billing.make',
+                ])->middleware('permission:patientSummary.read,patientProblem.read,chargeableService.read,practice.read');
+            });
+        });
+    });
+
     Route::group([
         'middleware' => [
             'auth',
@@ -1416,10 +1441,10 @@ Route::group(['middleware' => 'auth'], function () {
             Route::group([
                 'prefix' => 'monthly-billing/v2',
             ], function () {
-                Route::get('/make', [
-                    'uses' => 'Billing\PracticeInvoiceController@make',
-                    'as'   => 'monthly.billing.make',
-                ])->middleware('permission:patientSummary.read,patientProblem.read,chargeableService.read,practice.read');
+                /*
+                 * '/make'
+                 * Search for it above in a different tree of permissions
+                 */
 
                 Route::post('/data', [
                     'uses' => 'Billing\PracticeInvoiceController@data',
@@ -1809,11 +1834,6 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('users/{id}/msgcenter', [
                 'uses' => 'UserController@showMsgCenter',
                 'as'   => 'admin.users.msgCenterUpdate',
-            ]);
-
-            Route::get('calls-v2', [
-                'uses' => 'Admin\PatientCallManagementController@remixV2',
-                'as'   => 'admin.patientCallManagement.v2.index',
             ]);
 
             Route::get('calls', [

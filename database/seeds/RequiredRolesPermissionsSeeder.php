@@ -18,13 +18,13 @@ class RequiredRolesPermissionsSeeder extends Seeder
     public function grantSuperAdminPermissionsToRole($roleName)
     {
         $adminRole = Role::whereName($roleName)->first();
-        
+
         $permissions = Permission::whereNotIn('name', $this->doNotGrantThesePermissionsToSuperAdmins())
-                                 ->get();
-        
+            ->get();
+
         $adminRole->perms()->sync($permissions->pluck('id')->all());
     }
-    
+
     public function roles()
     {
         return [
@@ -212,7 +212,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'addendum.delete',
                     'addendum.read',
                     'role.read',
-                    'offlineActivity.create'
+                    'offlineActivity.create',
                 ],
             ],
             [
@@ -552,7 +552,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'addendum.delete',
                     'addendum.read',
                     'role.read',
-                    'offlineActivity.create'
+                    'offlineActivity.create',
                 ],
             ],
             [
@@ -589,7 +589,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'careplan-pdf.create',
                     'user.read',
                     'role.read',
-                    'offlineActivity.create'
+                    'offlineActivity.create',
                 ],
             ],
             [
@@ -746,7 +746,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'addendum.delete',
                     'addendum.read',
                     'role.read',
-                    'offlineActivity.create'
+                    'offlineActivity.create',
                 ],
             ],
             [
@@ -865,13 +865,132 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'addendum.read',
                     'note.send',
                     'role.read',
-                    'offlineActivity.create'
+                    'offlineActivity.create',
                 ],
             ],
             [
                 'name'         => 'care-center',
+                'display_name' => 'CLH Care Coach',
+                'description'  => 'Care Coaches (Nurses) who work for CLH. They place calls to patients (participants) regularly. CCM/BHI countable.',
+                'permissions'  => [
+                    'legacy-bhi-consent-decision.create',
+                    'allergy.create',
+                    'allergy.read',
+                    'allergy.update',
+                    'allergy.delete',
+                    'care-plan-qa-approve',
+                    'users-view-all',
+                    'users-view-self',
+                    'patient.create',
+                    'patient.read',
+                    'patient.update',
+                    'user.create',
+                    'user.read',
+                    'user.update',
+                    'careplan.read',
+                    'careplan.update',
+                    'biometric.create',
+                    'biometric.read',
+                    'biometric.update',
+                    'patientProblem.read',
+                    'patientProblem.update',
+                    'patientProblem.create',
+                    'patientProblem.delete',
+                    'patientSummary.read',
+                    'patientSummary.update',
+                    'misc.read',
+                    'misc.create',
+                    'misc.update',
+                    'misc.delete',
+                    'medication.create',
+                    'medication.read',
+                    'medication.update',
+                    'medication.delete',
+                    'activity.create',
+                    'activity.read',
+                    'activity.update',
+                    'appointment.create',
+                    'appointment.read',
+                    'appointment.update',
+                    'appointment.delete',
+                    'provider.read',
+                    'practice.read',
+                    'note.create',
+                    'note.read',
+                    'note.update',
+                    'note.delete',
+                    'call.create',
+                    'call.read',
+                    'call.update',
+                    'call.delete',
+                    'ccd-import',
+                    'location.read',
+                    'observation.create',
+                    'observation.read',
+                    'observation.update',
+                    'observation.delete',
+                    'instruction.create',
+                    'instruction.read',
+                    'instruction.update',
+                    'instruction.delete',
+                    'role.read',
+                    'permission.read',
+                    'nurseContactWindow.create',
+                    'nurseContactWindow.read',
+                    'nurseContactWindow.update',
+                    'nurseContactWindow.delete',
+                    'nurseHoliday.create',
+                    'nurseHoliday.read',
+                    'nurseHoliday.update',
+                    'nurseHoliday.delete',
+                    'careplan-pdf.create',
+                    'careplan-pdf.read',
+                    'careplan-pdf.update',
+                    'carePerson.read',
+                    'carePerson.create',
+                    'carePerson.update',
+                    'carePerson.delete',
+                    'symptom.create',
+                    'symptom.read',
+                    'symptom.update',
+                    'symptom.delete',
+                    'medicationGroup.create',
+                    'medicationGroup.read',
+                    'medicationGroup.update',
+                    'medicationGroup.delete',
+                    'lifestyle.create',
+                    'lifestyle.read',
+                    'lifestyle.update',
+                    'lifestyle.delete',
+                    'comment.create',
+                    'comment.read',
+                    'comment.update',
+                    'careplanAssessment.read',
+                    'careplanAssessment.create',
+                    'careplanAssessment.update',
+                    'careplanAssessment.delete',
+                    'nurse.read',
+                    'emailSettings.create',
+                    'emailSettings.read',
+                    'emailSettings.update',
+                    'emailSettings.delete',
+                    'addendum.create',
+                    'addendum.update',
+                    'addendum.delete',
+                    'addendum.read',
+                    'workHours.create',
+                    'workHours.update',
+                    'workHours.delete',
+                    'workHours.read',
+                    'note.send',
+                    'offlineActivityRequest.create',
+                    'offlineActivityRequest.read',
+                ],
+            ],
+            [
+                'name'         => 'care-center-external',
                 'display_name' => 'Care Coach',
-                'description'  => 'Care Coaches (Nurses) who work for CLH. They place calls to patients (participants) regularly. CCM countable.',
+                'description'  => 'Care Coaches (Nurses) not employed by CLH. They place calls to patients (participants) regularly. CCM/BHI countable.',
                 'permissions'  => [
                     'legacy-bhi-consent-decision.create',
                     'allergy.create',
@@ -1108,9 +1227,17 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'nurseReport.read',
                 ],
             ],
+            [
+                'name'         => 'software-only',
+                'display_name' => 'Software Only',
+                'description'  => 'Uses only the software solution of CLH (CPM)',
+                'permissions'  => [
+                    'practice-admin',
+                ],
+            ],
         ];
     }
-    
+
     /**
      * Run the database seeds.
      *
@@ -1119,29 +1246,29 @@ class RequiredRolesPermissionsSeeder extends Seeder
     public function run()
     {
         $this->call(RequiredPermissionsTableSeeder::class);
-        
+
         foreach ($this->roles() as $role) {
             $permissionsArr = $role['permissions'];
-            
+
             unset($role['permissions']);
-            
+
             $role = Role::updateOrCreate(['name' => $role['name']], $role);
-            
+
             $permissionIds = Permission::whereIn('name', $permissionsArr)
-                                       ->pluck('id')->all();
-            
+                ->pluck('id')->all();
+
             $role->perms()->sync($permissionIds);
-            
+
             $name = $role['name'];
             $this->command->info("role ${name} created");
         }
-        
+
         $this->grantSuperAdminPermissionsToRole('administrator');
         $this->grantSuperAdminPermissionsToRole('saas-admin');
-        
+
         $this->command->info('all roles and permissions created');
     }
-    
+
     /**
      * These are the only permissions tha will not be granted to Users with Role `administrator` (CLH Super Admin).
      *

@@ -11,14 +11,14 @@ use Michalisantoniou6\Cerberus\CerberusRole;
 /**
  * App\Role.
  *
- * @property int $id
- * @property string $name
- * @property string|null $display_name
- * @property string|null $description
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property int                                                        $id
+ * @property string                                                     $name
+ * @property string|null                                                $display_name
+ * @property string|null                                                $description
+ * @property \Carbon\Carbon                                             $created_at
+ * @property \Carbon\Carbon                                             $updated_at
  * @property \App\Permission[]|\Illuminate\Database\Eloquent\Collection $perms
- * @property \App\User[]|\Illuminate\Database\Eloquent\Collection $users
+ * @property \App\User[]|\Illuminate\Database\Eloquent\Collection       $users
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereDescription($value)
@@ -32,19 +32,20 @@ class Role extends CerberusRole
 {
     const CCM_TIME_ROLES = [
         'care-center',
+        'care-center-external',
         'med_assistant',
         'provider',
     ];
-    
+
     /**
      * The database table used by the model.
      *
      * @var string
      */
     protected $table = 'lv_roles';
-    
+
     /**
-     * Get the IDs of Roles from names
+     * Get the IDs of Roles from names.
      *
      * @param array $roleNames
      *
@@ -58,7 +59,7 @@ class Role extends CerberusRole
                 return Role::all();
             }
         )->whereIn('name', $roleNames)
-                     ->pluck('id')
-                     ->all();
+            ->pluck('id')
+            ->all();
     }
 }

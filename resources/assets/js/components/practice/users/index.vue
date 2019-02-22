@@ -99,7 +99,7 @@
                         full_name: {
                             name: 'Name'
                         },
-                        role_display_name: {
+                        role_display_names: {
                             name: 'Role'
                         },
                         phone_number: {

@@ -121,7 +121,7 @@ class Call extends BaseModel
             return false;
         }
 
-        return $this->schedulerUser->hasRole('care-center');
+        return $this->schedulerUser->isCareCoach();
     }
 
     public function inboundUser()

@@ -63,7 +63,7 @@
                 <template slot="Patient ID" slot-scope="props">
                     <a :href="props.row.notesLink">{{ props.row['Patient ID'] }}</a>
                 </template>
-                <template slot="Nurse" slot-scope="props">
+                <template slot="Care Coach" slot-scope="props">
                     <select-editable v-model="props.row.NurseId" :display-text="props.row.Nurse"
                                      :values="props.row.nurses()" :class-name="'blue'"
                                      :on-change="props.row.onNurseUpdate.bind(props.row)"></select-editable>
@@ -161,6 +161,9 @@
     export default {
         name: 'CallMgmtAppV2',
         mixins: [VueCache],
+        props: [
+            'isAdmin'
+        ],
         components: {
             'text-editable': TextEditable,
             'date-editable': DateEditable,
@@ -178,7 +181,7 @@
             return {
                 pagination: null,
                 selected: false,
-                columns: ['selected', 'Type', 'Nurse', 'Patient ID', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Successful Calls', 'Practice', 'Activity Start', 'Activity End', 'Preferred Call Days', 'Billing Provider', 'Scheduler'],
+                columns: ['selected', 'Type', 'Care Coach', 'Patient ID', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Successful Calls', 'Practice', 'Activity Start', 'Activity End', 'Preferred Call Days', 'Billing Provider', 'Scheduler'],
                 tableData: [],
                 nurses: [],
                 loaders: {
@@ -222,7 +225,7 @@
                         'Type': 'padding-2'
                     },
                     sortable: ['Nurse', 'Patient ID', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Practice', 'Scheduler'],
-                    filterable: ['Type', 'Nurse', 'Patient ID', 'Activity Day', 'Last Call', 'Practice', 'Billing Provider'],
+                    filterable: ['Type', 'Care Coach', 'Patient ID', 'Activity Day', 'Last Call', 'Practice', 'Billing Provider'],
                     filterByColumn: true,
                     texts: {
                         count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
@@ -233,7 +236,7 @@
                     ],
                     customSorting: {
                         Type: (ascending) => (a, b) => 0,
-                        Nurse: (ascending) => (a, b) => 0,
+                        'Care Coach': (ascending) => (a, b) => 0,
                         'Patient ID': (ascending) => (a, b) => 0,
                         'Activity Day': (ascending) => (a, b) => 0,
                         'Last Call': (ascending) => (a, b) => 0,
@@ -263,7 +266,7 @@
             columnMapping(name) {
                 const columns = {
                     'Type': 'type',
-                    'Nurse': 'nurse',
+                    'Care Coach': 'nurse',
                     'Patient': 'patient',
                     'Patient ID': 'patient_id',
                     'Activity Day': 'scheduled_date',
@@ -415,10 +418,20 @@
                 return this.axios.get(rootUrl('api/nurses?compressed')).then(response => {
                     const pagination = (response || {}).data
                     this.nurses = ((pagination || {}).data || []).filter(nurse => nurse.practices).map(nurse => {
+
+                        const roles = nurse.user.roles.map(r => r.name);
+                        const rolesSet = Array.from(new Set(roles));
+
+                        let displayName = (nurse.user || {}).display_name || '';
+                        if (!roles.includes('care-center-external')) {
+                            displayName = displayName + ' (in-house)';
+                        }
+
                         return {
                             id: nurse.user_id,
                             nurseId: nurse.id,
-                            display_name: ((nurse.user || {}).display_name || ''),
+                            roles: rolesSet,
+                            display_name: displayName,
                             states: nurse.states,
                             practiceId: (nurse.user || {}).program_id,
                             practices: (nurse.practices || [])
@@ -700,5 +713,9 @@
 
     .disabled {
         color: #cacaca;
+    }
+
+    input[type="checkbox"] {
+        display: inherit;
     }
 </style>

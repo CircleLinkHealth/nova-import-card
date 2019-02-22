@@ -36,7 +36,7 @@ class UpdatePracticeStaff extends FormRequest
             'phone_type'         => 'required_with:phone_number',
             'phone_extension'    => 'nullable',
             'emr_direct_address' => 'nullable|email',
-            'role_name'          => 'required',
+            'role_names'         => 'required',
         ];
     }
 }

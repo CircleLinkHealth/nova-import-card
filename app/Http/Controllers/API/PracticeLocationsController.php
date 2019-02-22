@@ -19,7 +19,7 @@ class PracticeLocationsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param int $id
+     * @param int   $id
      * @param mixed $practiceId
      * @param mixed $locationId
      *
@@ -57,7 +57,7 @@ class PracticeLocationsController extends Controller
             ]);
         }
 
-        $clinicalContactUser->attachPractice($primaryPractice);
+        $clinicalContactUser->attachPractice($primaryPractice, []);
         $clinicalContactUser->attachLocation($location);
 
         //clean up other contacts before adding the new one
@@ -94,8 +94,8 @@ class PracticeLocationsController extends Controller
         $contactUser = $loc->clinicalEmergencyContact->first() ?? null;
 
         return [
-            'id'                        => $loc->id,
-            'clinical_contact'          => [
+            'id'               => $loc->id,
+            'clinical_contact' => [
                 'email'      => optional($contactUser)->email ?? null,
                 'first_name' => optional($contactUser)->getFirstName() ?? null,
                 'last_name'  => optional($contactUser)->getLastName() ?? null,
@@ -126,9 +126,9 @@ class PracticeLocationsController extends Controller
      * Update the specified resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @param int $id
-     * @param mixed $primaryPracticeId
-     * @param mixed $locationId
+     * @param int                      $id
+     * @param mixed                    $primaryPracticeId
+     * @param mixed                    $locationId
      *
      * @return \Illuminate\Http\Response
      */
@@ -173,7 +173,7 @@ class PracticeLocationsController extends Controller
             $primaryPractice->same_ehr_login = true;
 
             $primaryPractice->locations->map(function ($loc) use ($formData) {
-                $loc->ehr_login    = $formData['ehr_login'] ?? null;
+                $loc->ehr_login = $formData['ehr_login'] ?? null;
                 $loc->ehr_password = $formData['ehr_password'] ?? null;
                 $loc->save();
             });

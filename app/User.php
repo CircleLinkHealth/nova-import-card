@@ -445,58 +445,38 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         }
     }
 
-    public function attachPractice(
-        $practice,
-        bool $grantAdminRights = null,
-        bool $subscribeToBillingReports = null,
-        $roleId = null
-    ) {
-        if (is_array($practice)) {
-            foreach ($practice as $key => $pract) {
-                $this->attachPractice($pract, $grantAdminRights, $subscribeToBillingReports, $roleId);
-                unset($key);
-            }
+    public function attachPractice($practice, $roleIds, $sendBillingReports = null)
+    {
+        if (empty($roleIds)) {
+            PracticeRoleUser::updateOrCreate(
+                [
+                    'user_id'    => $this->id,
+                    'program_id' => $practice->id,
+                ],
+                null != $sendBillingReports
+                    ? [
+                        'send_billing_reports' => $sendBillingReports,
+                    ]
+                    : []
+            );
+
+            return;
         }
 
-        $practice = is_object($practice)
-            ? $practice
-            : Practice::find($practice);
-
-        $roleId = is_object($roleId)
-            ? $roleId->id
-            : $roleId;
-
-        try {
-            $exists = $this->practice($practice);
-
-            if ($exists) {
-                $this->practices()->detach($practice);
-            }
-
-            $update = [];
-
-            if ( ! is_null($grantAdminRights)) {
-                $update['has_admin_rights'] = $grantAdminRights;
-            }
-
-            if ( ! is_null($subscribeToBillingReports)) {
-                $update['send_billing_reports'] = $subscribeToBillingReports;
-            }
-
-            if ( ! is_null($roleId)) {
-                $update['role_id'] = $roleId;
-            }
-
-            $attachPractice = $this->practices()->save($practice, $update);
-        } catch (\Exception $e) {
-            //check if this is a mysql exception for unique key constraint
-            if ($e instanceof \Illuminate\Database\QueryException) {
-                $errorCode = $e->errorInfo[1];
-                \Log::alert($e);
-            }
+        foreach ($roleIds as $r) {
+            PracticeRoleUser::updateOrCreate(
+                [
+                    'user_id'    => $this->id,
+                    'program_id' => $practice->id,
+                    'role_id'    => $r,
+                ],
+                null != $sendBillingReports
+                    ? [
+                        'send_billing_reports' => $sendBillingReports,
+                    ]
+                    : []
+            );
         }
-
-        return true;
     }
 
     public function authyUser()
@@ -1829,12 +1809,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     /**
      * Returns whether the user is a Care Coach (AKA Care Center).
+     * A Care Coach can be employed from CLH ['care-center']
+     * or not ['care-center-external'].
      *
      * @return bool
      */
     public function isCareCoach()
     {
-        return $this->hasRole('care-center');
+        return $this->hasRole(['care-center', 'care-center-external']);
     }
 
     public function isCcm()
@@ -2165,10 +2147,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->roles->first();
     }
 
-    public function practices(bool $onlyActive = false, bool $onlyEnrolledPatients = false)
-    {
+    public function practices(
+        bool $onlyActive = false,
+        bool $onlyEnrolledPatients = false
+    ) {
         return $this->belongsToMany(Practice::class, 'practice_role_user', 'user_id', 'program_id')
-            ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports')
+            ->withPivot('role_id')
             ->when($onlyActive, function ($query) use ($onlyActive) {
                         return $query->where('active', '=', 1);
                     })
@@ -2272,6 +2256,13 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             : $this->regularDoctor->first()->user;
     }
 
+    public function rolesInPractice($practiceId)
+    {
+        return $this->roles()
+            ->wherePivot('program_id', '=', $practiceId)
+            ->get();
+    }
+
     public function routeNotificationForTwilio()
     {
         return $this->getPrimaryPhone();
@@ -2349,19 +2340,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             }
         });
     }
-    
-    /**
-     * Scope the query to practices for which the user has at least one of the given roles.
-     *
-     * @param $query
-     * @param array $roleIds
-     */
-    public function scopePracticesWhereHasRoles($query, array $roleIds) {
-        $query->whereHas('practices', function ($q) use ($roleIds) {
-            $q->whereIn('practice_role_user.role_id', $roleIds);
-        });
-    }
-    
+
     public function scopeHasBillingProvider(
         $query,
         $billing_provider_id
@@ -2509,6 +2488,19 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             } else {
                 $q->where('name', '=', $type);
             }
+        });
+    }
+
+    /**
+     * Scope the query to practices for which the user has at least one of the given roles.
+     *
+     * @param $query
+     * @param array $roleIds
+     */
+    public function scopePracticesWhereHasRoles($query, array $roleIds)
+    {
+        $query->whereHas('practices', function ($q) use ($roleIds) {
+            $q->whereIn('practice_role_user.role_id', $roleIds);
         });
     }
 

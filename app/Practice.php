@@ -117,12 +117,6 @@ class Practice extends BaseModel implements HasMedia
         return $this->belongsToMany(CareAmbassadorLog::class);
     }
 
-    public function enrolleeCustomFilters(){
-
-        return $this->belongsToMany(EnrolleeCustomFilter::class, 'practice_enrollee_filters', 'practice_id', 'filter_id');
-
-    }
-
     public function careplan()
     {
         return $this->hasMany('App\CarePlanTemplate', 'patient_id');
@@ -138,6 +132,11 @@ class Practice extends BaseModel implements HasMedia
     public function ehr()
     {
         return $this->belongsTo(Ehr::class);
+    }
+
+    public function enrolleeCustomFilters()
+    {
+        return $this->belongsToMany(EnrolleeCustomFilter::class, 'practice_enrollee_filters', 'practice_id', 'filter_id');
     }
 
     public function enrollmentByProgram(
@@ -276,12 +275,6 @@ class Practice extends BaseModel implements HasMedia
         return array_map('trim', explode(',', $this->weekly_report_recipients));
     }
 
-    public function setDirectMailCareplanApprovalReminders($bool){
-        $this->cpmSettings->dm_careplan_approval_reminders = $bool;
-        $this->cpmSettings->save();
-
-    }
-
     public function isTwilioEnabled()
     {
         $settings = $this->cpmSettings();
@@ -371,10 +364,16 @@ class Practice extends BaseModel implements HasMedia
         ]);
     }
 
+    public function setDirectMailCareplanApprovalReminders($bool)
+    {
+        $this->cpmSettings->dm_careplan_approval_reminders = $bool;
+        $this->cpmSettings->save();
+    }
+
     public function users()
     {
         return $this->belongsToMany(User::class, 'practice_role_user', 'program_id', 'user_id')
-            ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports')
+            ->withPivot('role_id', 'send_billing_reports')
             ->withTimestamps();
     }
 }

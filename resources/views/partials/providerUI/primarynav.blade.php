@@ -10,6 +10,7 @@ if (isset($patient)) {
 } else {
     $monthlyTime = '';
 }
+$user = auth()->user();
 ?>
 @push('styles')
     <style>
@@ -43,14 +44,14 @@ if (isset($patient)) {
 
         <div class="hidden-xs col-lg-7 col-sm-12">
             <ul class="nav navbar-nav navbar-right">
-                @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && auth()->user()->hasRole('care-center') && isset($patient) && optional($patient)->id && !$noLiveCountTimeTracking)
+                @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && $user->isCareCoach() && isset($patient) && optional($patient)->id && !$noLiveCountTimeTracking)
                     <li>
                         <time-tracker-call-mode ref="timeTrackerCallMode"
                                                 :twilio-enabled="@json(config('services.twilio.enabled') && ($patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : false))"
                                                 :patient-id="{{ $patient->id }}"></time-tracker-call-mode>
                     </li>
                 @endif
-                @if(auth()->user()->hasRole('saas-admin') || auth()->user()->isAdmin() || auth()->user()->hasRole('saas-admin-view-only'))
+                @if($user->isAdmin() || $user->hasRole(['saas-admin','saas-admin-view-only']))
                     <li class="dropdown-toggle">
                         <div class="dropdown-toggle" data-toggle="dropdown" role="button"
                              aria-expanded="false"
@@ -81,6 +82,31 @@ if (isset($patient)) {
                     </li>
                 @endif
 
+                @if ( ! auth()->guest()
+                        && $user->isNotSaas()
+                        && $user->hasRole('software-only'))
+                    <li class="dropdown">
+                        <div class="dropdown-toggle" data-toggle="dropdown" role="button"
+                             aria-expanded="false"
+                             style="background: none !important;padding: 15px;line-height: 20px;cursor: pointer;">
+                            Admin
+                            <span class="caret" style="color: #fff"></span>
+                        </div>
+                        <ul class="dropdown-menu" role="menu" style="background: white !important;">
+                            <li>
+                                <a href="{{ route('admin.patientCallManagement.v2.index') }}">
+                                    Patient Activity Management
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('monthly.billing.make', []) }}">
+                                    Approve Billable Patients
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                @endif
+
                 @if (!isset($patient))
                     <li data-monthly-time="{{$monthlyTime}}"
                         style="line-height: 20px;">
@@ -91,10 +117,16 @@ if (isset($patient)) {
                     </li>
                 @endif
                 <li>
-                    <a href="{{ route('patients.dashboard') }}"><i class="icon--home--white"></i> Home</a>
+                    <a href="{{ route('patients.dashboard') }}" style="color:white">
+                        <i class="icon--home--white"></i>
+                        Home
+                    </a>
                 </li>
                 <li>
-                    <a href="{{ route('patients.listing') }}"><i class="icon--patients"></i> Patient List</a>
+                    <a href="{{ route('patients.listing') }}" style="color:white">
+                        <i class="icon--patients"></i>
+                        Patient List
+                    </a>
                 </li>
 
                 <li class="dropdown">
@@ -125,7 +157,7 @@ if (isset($patient)) {
                          aria-expanded="false"
                          style="background: none !important;padding: 15px;line-height: 20px;cursor: pointer;">
                         <i class="glyphicon glyphicon glyphicon-cog"></i>
-                        {{auth()->user()->getFullName()}}
+                        {{$user->getFullName()}}
                         <span class="caret" style="color: #fff"></span>
                     </div>
                     <ul class="dropdown-menu" role="menu" style="background: white !important;">
@@ -136,7 +168,7 @@ if (isset($patient)) {
                         </li>
                         @endImpersonating
 
-                        @if(auth()->user()->hasRole(['care-center']) && auth()->user()->isNotSaas())
+                        @if($user->isCareCoach() && $user->isNotSaas())
                             <li>
                                 <a href="{{ route('offline-activity-time-requests.index') }}"
                                    id="offline-activity-time-requests-index-link">
@@ -150,7 +182,7 @@ if (isset($patient)) {
                             </li>
                         @endif
 
-                        @if ( ! auth()->guest() && auth()->user()->hasRole(['administrator', 'administrator-view-only']) && auth()->user()->isNotSaas())
+                        @if ( ! auth()->guest() && $user->hasRole(['administrator', 'administrator-view-only']) && $user->isNotSaas())
                             <li><a style="color: #47beab"
                                    href="{{ empty($patient->id) ? route('admin.dashboard') : route('admin.users.edit', array('patient' => $patient->id)) }}">
                                     Admin Panel
