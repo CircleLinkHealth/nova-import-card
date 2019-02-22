@@ -52,6 +52,7 @@
     "authy/php": "^3.0",
     "barryvdh/laravel-snappy": "0.4.1",
     "blackfire/php-sdk": "^1.17",
+    "bugsnag/bugsnag-laravel": "^2.15",
     "circlelinkhealth/migrations": "dev-main-master",
     "doctrine/dbal": "~2.3",
     "fideloper/proxy": "~3.3",
@@ -78,6 +79,7 @@
     "phaxio/phaxio": "^1.0",
     "pokitdok/pokitdok-php": "^1.1",
     "pragmarx/health": "^0.9.16",
+    "pragmarx/version": "^0.2.8",
     "predis/predis": "^1.1",
     "prettus/l5-repository": "dev-master",
     "prettus/laravel-validation": "*",
@@ -90,7 +92,6 @@
     "spiritix/lada-cache": "^2.1",
     "squizlabs/php_codesniffer": "*",
     "twilio/sdk": "5.7",
-    "tylercd100/lern": "^3.8",
     "tymon/jwt-auth": "0.5.*",
     "venturecraft/revisionable": "dev-master",
     "waavi/url-shortener": "dev-master",
@@ -146,7 +147,8 @@
     ],
     "post-autoload-dump": [
       "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-      "@php artisan package:discover"
+      "@php artisan package:discover",
+      "@php artisan version:refresh"
     ],
     "post-update-cmd": [
       "Illuminate\\Foundation\\ComposerScripts::postUpdate"
