@@ -35,4 +35,8 @@ fi
 # Enable lada-cache after migrations
 # php artisan lada-cache:enable
 
+# Perform post depoyment tasks
 php artisan deploy:post
+
+# Notify Bugsnag of release
+php artisan bugsnag:deploy
