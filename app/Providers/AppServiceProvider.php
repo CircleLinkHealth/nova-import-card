@@ -81,7 +81,6 @@ class AppServiceProvider extends ServiceProvider
         if ( ! $this->app->environment('local')) {
             $this->app->alias('bugsnag.logger', \Illuminate\Contracts\Logging\Log::class);
             $this->app->alias('bugsnag.logger', \Psr\Log\LoggerInterface::class);
-            Bugsnag::setAutoCaptureSessions(true);
         }
         
         $this->app->register(CPMArtisanServiceProvider::class);
