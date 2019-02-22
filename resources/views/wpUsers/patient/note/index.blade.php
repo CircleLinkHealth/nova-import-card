@@ -30,7 +30,7 @@
                         + NEW NOTE
                     </a>
                 </div>
-                <div class="col-sm-6 pull-right"
+                <div class="col-sm-6 col-xs-7 pull-right"
                      style="text-align: right;top: 1px;font-size: 22px;color: #ec683e;">
                     @include('partials.complex-ccm-badge')
                 </div>

@@ -179,7 +179,7 @@
         ?>
         @if(!empty($ccdMonitoredProblems))
             <div style="clear:both"></div>
-            <ul id="user-header-problems-checkboxes" class="person-conditions-list inline-block text-medium"
+            <ul id="user-header-problems-checkboxes" class="person-conditions-list inline-block text-medium col-lg-12 col-md-10 col-xs-8"
                 style="margin-top: -10px">
                 @foreach($ccdMonitoredProblems as $problem)
                     @if($problem['name'] != 'Diabetes')
