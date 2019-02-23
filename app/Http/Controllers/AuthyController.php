@@ -35,7 +35,7 @@ class AuthyController extends Controller
             $response = $this->service->checkOneTouchRequestStatus($uuid);
         }
 
-        if ( ! isset($reponse)) {
+        if ( ! isset($response)) {
             return $this->ok([
                 'approval_request_status' => null,
             ]);
