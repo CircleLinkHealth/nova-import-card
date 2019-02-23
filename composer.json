@@ -72,7 +72,7 @@
     "laravelcollective/html": "5.5.*",
     "league/flysystem-aws-s3-v3": "~1.0",
     "league/fractal": "0.12.*",
-    "lynx39/lara-pdf-merger": "^1.0",
+    "lynx39/lara-pdf-merger": "dev-master",
     "maatwebsite/excel": "^2.1",
     "michalisantoniou6/laravel-cerberus": "dev-master",
     "nao-pon/flysystem-google-drive": "~1.1",
