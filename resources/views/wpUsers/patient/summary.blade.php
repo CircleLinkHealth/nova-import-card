@@ -172,7 +172,8 @@
                                         css: {"text-align": "left"},
                                         sort: 'string',
                                         fillspace: false,
-                                        adjust: true,
+                                        width: 275,
+                                        adjust: false,
                                     }
                                 ],
                                 ready: function () {
