@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2aa0f7c7220e96c59f07846794256cad",
+    "content-hash": "fda10bd54cbd688cb863926d127b3d66",
     "packages": [
         {
             "name": "amnuts/opcache-gui",
@@ -262,16 +262,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.87.16",
+            "version": "3.87.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "b6954b03e1c212b849ecf103e5f593b15b06b058"
+                "reference": "2f38294b8c0ce62278e53b060f488516eb4e9163"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/b6954b03e1c212b849ecf103e5f593b15b06b058",
-                "reference": "b6954b03e1c212b849ecf103e5f593b15b06b058",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/2f38294b8c0ce62278e53b060f488516eb4e9163",
+                "reference": "2f38294b8c0ce62278e53b060f488516eb4e9163",
                 "shasum": ""
             },
             "require": {
@@ -340,7 +340,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2019-02-21T19:16:06+00:00"
+            "time": "2019-02-22T19:34:32+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -691,6 +691,39 @@
                 "time"
             ],
             "time": "2019-02-11T02:08:31+00:00"
+        },
+        {
+            "name": "circlelinkhealth/bugsnag",
+            "version": "dev-main-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/module-bugsnag.git",
+                "reference": "5b0c98f1c2704d36e60accf52b0a17a9323c1807"
+            },
+            "require": {
+                "bugsnag/bugsnag-laravel": "^2.15"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Modules\\Bugsnag\\Providers\\BugsnagServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Modules\\Bugsnag\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "michalis@circlelinkhealth.com"
+                }
+            ],
+            "time": "2019-02-23T12:29:31+00:00"
         },
         {
             "name": "circlelinkhealth/migrations",
@@ -4397,6 +4430,76 @@
                 "php"
             ],
             "time": "2019-02-16T20:54:15+00:00"
+        },
+        {
+            "name": "nwidart/laravel-modules",
+            "version": "4.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nWidart/laravel-modules.git",
+                "reference": "d487d9be3bfd6b7365678fd805d9ba5f0dd8295c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/d487d9be3bfd6b7365678fd805d9ba5f0dd8295c",
+                "reference": "d487d9be3bfd6b7365678fd805d9ba5f0dd8295c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.7",
+                "laravel/framework": "5.7.*",
+                "mockery/mockery": "~1.0",
+                "orchestra/testbench": "^3.7",
+                "phpstan/phpstan": "^0.9.2",
+                "phpunit/phpunit": "~7.3",
+                "spatie/phpunit-snapshot-assertions": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Nwidart\\Modules\\LaravelModulesServiceProvider"
+                    ],
+                    "aliases": {
+                        "Module": "Nwidart\\Modules\\Facades\\Module"
+                    }
+                },
+                "branch-alias": {
+                    "dev-master": "4.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Nwidart\\Modules\\": "src"
+                },
+                "files": [
+                    "src/helpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Widart",
+                    "email": "n.widart@gmail.com",
+                    "homepage": "https://nicolaswidart.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Laravel Module management",
+            "keywords": [
+                "laravel",
+                "module",
+                "modules",
+                "nwidart",
+                "rad"
+            ],
+            "time": "2018-09-30T10:02:46+00:00"
         },
         {
             "name": "paragonie/random_compat",
@@ -11383,6 +11486,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/bugsnag": 20,
         "circlelinkhealth/migrations": 20,
         "lynx39/lara-pdf-merger": 20,
         "michalisantoniou6/laravel-cerberus": 20,
