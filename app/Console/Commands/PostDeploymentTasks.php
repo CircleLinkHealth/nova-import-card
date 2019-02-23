@@ -42,8 +42,8 @@ class PostDeploymentTasks extends Command
             'view:clear',
             'route:cache',
             'config:cache',
-            'php artisan opcache:clear',
-            'php artisan opcache:optimize',
+            'opcache:clear',
+            'opcache:optimize',
             'horizon:terminate',
             'queue:restart',
         ])->each(function ($command) {
