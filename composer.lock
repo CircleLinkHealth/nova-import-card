@@ -698,7 +698,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-bugsnag.git",
-                "reference": "5b0c98f1c2704d36e60accf52b0a17a9323c1807"
+                "reference": "02067bbcdb3d8244edcdd91ad71df5ef0ce0d6b7"
             },
             "require": {
                 "bugsnag/bugsnag-laravel": "^2.15"
@@ -707,14 +707,14 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Modules\\Bugsnag\\Providers\\BugsnagServiceProvider"
+                        "CircleLinkHealth\\Bugsnag\\Providers\\BugsnagServiceProvider"
                     ],
                     "aliases": []
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Modules\\Bugsnag\\": ""
+                    "CircleLinkHealth\\Bugsnag\\": ""
                 }
             },
             "authors": [
@@ -723,7 +723,7 @@
                     "email": "michalis@circlelinkhealth.com"
                 }
             ],
-            "time": "2019-02-23T12:29:31+00:00"
+            "time": "2019-02-23T13:15:41+00:00"
         },
         {
             "name": "circlelinkhealth/migrations",
