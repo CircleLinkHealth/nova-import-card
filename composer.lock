@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "78c84566e177062902f151f900865029",
+    "content-hash": "2aa0f7c7220e96c59f07846794256cad",
     "packages": [
         {
             "name": "amnuts/opcache-gui",
@@ -3604,16 +3604,16 @@
         },
         {
             "name": "lynx39/lara-pdf-merger",
-            "version": "v1.0.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/deltaaskii/lara-pdf-merger.git",
-                "reference": "fcff464d5fc0a0c3a42c552654959680c911e4fc"
+                "reference": "8cede29130ba6b60d33481b4067a8cba24c21753"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/deltaaskii/lara-pdf-merger/zipball/fcff464d5fc0a0c3a42c552654959680c911e4fc",
-                "reference": "fcff464d5fc0a0c3a42c552654959680c911e4fc",
+                "url": "https://api.github.com/repos/deltaaskii/lara-pdf-merger/zipball/8cede29130ba6b60d33481b4067a8cba24c21753",
+                "reference": "8cede29130ba6b60d33481b4067a8cba24c21753",
                 "shasum": ""
             },
             "require": {
@@ -3645,7 +3645,7 @@
                 "paginate",
                 "pdf"
             ],
-            "time": "2017-11-17T14:13:58+00:00"
+            "time": "2018-12-03T15:41:57+00:00"
         },
         {
             "name": "maatwebsite/excel",
@@ -11384,6 +11384,7 @@
     "stability-flags": {
         "amnuts/opcache-gui": 20,
         "circlelinkhealth/migrations": 20,
+        "lynx39/lara-pdf-merger": 20,
         "michalisantoniou6/laravel-cerberus": 20,
         "prettus/l5-repository": 20,
         "venturecraft/revisionable": 20,
