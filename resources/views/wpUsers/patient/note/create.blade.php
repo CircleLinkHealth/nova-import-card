@@ -63,7 +63,7 @@
     <form id="newNote" method="post" action="{{route('patient.note.store', ['patientId' => $patient->id])}}"
           class="form-horizontal">
         <div class="row" style="margin-top:30px;">
-            <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1"
+            <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1 col-xs-10 col-xs-offset-1"
                  style="border-bottom: 3px solid #50b2e2;">
                 <div class="row">
                     <div class="main-form-title col-lg-12"> Record New Note</div>
@@ -73,25 +73,25 @@
 
                     @include('partials.userheader')
 
-                    <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12"
+                    <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12 col-xs-12"
                          style=" border-bottom:3px solid #50b2e2;padding: 8px 0px;">
 
                         <div class="col-xs-12" style="">
-                            <div class="col-xs-8"><input type="text" class="form-control" name="general_comment"
+                            <div class="col-lg-8 col-xs-4"><input type="text" class="form-control" name="general_comment"
                                                          id="general_comment"
                                                          value="{{$patient->patientInfo->general_comment}}"
                                                          placeholder="{{$patient->patientInfo->general_comment == '' ? 'Enter General Comment...' : $patient->patientInfo->general_comment}}"
                                                          aria-describedby="sizing-addon2"
                                                          style="margin: 0 auto; text-align: left; color: #333;">
                             </div>
-                            <div class="col-sm-4 pull-right"
+                            <div class="col-sm-4 col-xs-8 pull-right"
                                  style="text-align: right;top: 9px;font-size: 22px;color: #ec683e;">
                                 @include('partials.complex-ccm-badge')
                             </div>
                         </div>
                     </div>
 
-                    <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12"
+                    <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12 col-xs-12"
                          style=" border:0px solid #50b2e2;padding: 10px 35px;">
 
                         <div class="col-md-6">

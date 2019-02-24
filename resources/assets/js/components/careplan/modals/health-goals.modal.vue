@@ -183,6 +183,12 @@
     .modal-health-goals .modal-container {
         width: 700px;
     }
+    @media only screen and (max-width: 768px) {
+        /* For mobile phones: */
+        .modal-health-goals .modal-container {
+            width: 95%;
+        }
+    }
 
     .btn.btn-submit {
         margin-top: 35px;

@@ -170,7 +170,12 @@
         max-height: 100%;
         overflow-y: auto;
     }
-
+    @media only screen and (max-width: 768px) {
+        /* For mobile phones: */
+        .modal-medications .modal-container {
+            width: 95%;
+        }
+    }
     .medication-container {
         overflow-x: scroll;
     }
