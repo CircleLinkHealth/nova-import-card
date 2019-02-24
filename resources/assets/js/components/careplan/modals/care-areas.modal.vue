@@ -220,7 +220,7 @@
                         is_snomed: true,
                     })) : [])])
                 }, []).distinct(p => p.name)
-                .sort((a, b) => (+b.is_snomed) - (+a.is_snomed) || b.name.localeCompare(a.name));
+                    .sort((a, b) => (+b.is_snomed) - (+a.is_snomed) || b.name.localeCompare(a.name));
             },
             codeHasBeenSelectedBefore() {
                 return !!this.selectedProblem.codes.find(code => !!code.id && code.problem_code_system_id === (this.selectedProblem.newCode.selectedCode || {}).value)
@@ -403,9 +403,15 @@
 </script>
 
 <style>
+
+    .v-complete > ul {
+        overflow-y: scroll;
+    }
+
     .modal-care-areas .modal-container {
         width: 900px;
     }
+
     @media only screen and (max-width: 768px) {
         /* For mobile phones: */
         .modal-care-areas .modal-container {
