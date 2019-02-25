@@ -607,7 +607,7 @@ class NotesController extends Controller
             if ($data[0] == 'practice') {
                 return Practice::getProviders($data[1])->pluck('id')->all();
             } else {
-                return User::find($data[1])->id;
+                return optional(User::find($data[1]))->id;
             }
         })
                                     ->flatten()
