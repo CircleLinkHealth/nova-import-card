@@ -113,6 +113,8 @@ trait SetupTestSurveyData
                 $group = QuestionGroup::create([
                     'body' => $this->faker->text,
                 ]);
+                $this->assertNotNull($group);
+
                 //attach group for some questions
                 if ($i >= 5 && $i <= 8){
                     $belongsToGroup = true;
@@ -125,6 +127,15 @@ trait SetupTestSurveyData
                     'body'      => $this->faker->text,
                     'question_group_id' =>  $belongsToGroup ? $group->id : null
                 ]);
+
+                $this->assertNotNull($question);
+                if ($belongsToGroup){
+                    $this->assertNotNull($question->questionGroup);
+                    $this->assertEquals($question->questionGroup->id, $group->id);
+                }else{
+                    $this->assertNull($question->questionGroup);
+                }
+
                 $type         = $questionTypes->random();
                 $questionType = $question->type()->create([
                     'answer_type' => $type,
@@ -170,6 +181,7 @@ trait SetupTestSurveyData
                     }
 
                 }
+                $this->assertEquals($instance->questions()->whereNotNull('sub_order')->count(), 4);
             }
         }
     }

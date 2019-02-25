@@ -53,8 +53,7 @@ class SurveyQuestionsAnswersTest extends TestCase
             ]);
 
         $this->assertTrue(true);
-        //todo:test data structure
-        //todo:test redirect if user is not logged in
+
     }
 
     public function setUp()

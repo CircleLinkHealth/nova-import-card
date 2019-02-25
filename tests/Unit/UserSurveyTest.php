@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Question;
+use App\QuestionGroup;
 use App\QuestionType;
 use App\Survey;
 use App\SurveyInstance;
@@ -99,26 +100,49 @@ class UserSurveyTest extends TestCase
      */
     public function test_questions_can_be_created_for_each_survey()
     {
-
         $questionTypes = collect([
             QuestionType::CHECKBOX,
-            QuestionType::TEXT
+            QuestionType::TEXT,
         ]);
 
         foreach ($this->surveys as $survey) {
             $questions = [];
-            $order     = [];
-            for ($i = 1; $i < 11; $i++) {
-                $question = Question::create([
+
+            for ($i = 0; $i < 10; $i++) {
+
+                $group = QuestionGroup::create([
+                    'body' => $this->faker->text,
+                ]);
+                $this->assertNotNull($group);
+
+                //attach group for some questions
+                if ($i >= 5 && $i <= 8){
+                    $belongsToGroup = true;
+                }else{
+                    $belongsToGroup = false;
+                }
+
+                $question     = Question::create([
                     'survey_id' => $survey->id,
                     'body'      => $this->faker->text,
+                    'question_group_id' =>  $belongsToGroup ? $group->id : null
                 ]);
-                $type = $questionTypes->random();
+
+                $this->assertNotNull($question);
+                if ($belongsToGroup){
+                    $this->assertNotNull($question->questionGroup);
+                    $this->assertEquals($question->questionGroup->id, $group->id);
+                }else{
+                    $this->assertNull($question->questionGroup);
+                }
+
+                $type         = $questionTypes->random();
                 $questionType = $question->type()->create([
                     'answer_type' => $type,
                 ]);
-                if($type = QuestionType::CHECKBOX){
-                    for ($a = 0; $a < 5; $a++){
+
+                if ($type = QuestionType::CHECKBOX) {
+                    for ($a = 0; $a < 5; $a++) {
                         $questionType->questionTypeAnswers()->create([
                             'value'   => $this->faker->text,
                             'options' => [
@@ -128,25 +152,37 @@ class UserSurveyTest extends TestCase
                     }
                 }
                 $questions[] = $question;
-                $order[] = $i;
             }
             $this->assertEquals(10, count($questions));
             foreach ($survey->instances as $instance) {
-                $instanceOrder = collect($order);
+                $order = 1;
+                $subOrder = 1;
                 foreach ($questions as $question) {
-                    if ($this->faker->boolean(80)) {
+                    if (! is_null($question->questionGroup)){
                         $instance->questions()->attach(
                             $question->id,
                             [
-                                'order'   => $instanceOrder->shift(),
+                                'order' => $order,
+                                'sub_order' =>$subOrder
                             ]
                         );
+                        $subOrder += 1;
+                        if ($subOrder = 4){
+                            $order +=1;
+                        }
+                    }else{
+                        $instance->questions()->attach(
+                            $question->id,
+                            [
+                                'order' => $order,
+                            ]
+                        );
+                        $order += 1;
                     }
+
                 }
+                $this->assertEquals($instance->questions()->whereNotNull('sub_order')->count(), 4);
             }
-            //todo: test question order is unique
-            //test each instance has a good number of questions
-            //copy to trait
         }
 
     }
