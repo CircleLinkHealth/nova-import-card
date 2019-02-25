@@ -15,7 +15,13 @@ class SurveyService
             'surveyInstances' => function ($instance) use ($surveyId) {
                 $instance->current()
                          ->wherePivot('survey_id', $surveyId)
-                         ->with(['survey', 'questions.type.questionTypeAnswers']);
+                         ->with([
+                             'survey',
+                             'questions' => function ($question) {
+                                 $question->with(['questionGroup', 'type.questionTypeAnswers']);
+                             },
+                         ]);
+
             },
             'answers',
         ])
@@ -57,10 +63,7 @@ class SurveyService
             return false;
         }
 
-        return $info = [
-            'created'       => true,
-            'survey_status' => $this->updateSurveyInstanceStatus($input),
-        ];
+        return $this->updateSurveyInstanceStatus($input);
 
     }
 
@@ -91,7 +94,7 @@ class SurveyService
 
         if ($instance->questions_count === $user->answers_count) {
             $instance->pivot->status = SurveyInstance::COMPLETED;
-        }else{
+        } else {
             $instance->pivot->status = SurveyInstance::IN_PROGRESS;
         }
         $instance->pivot->last_question_answered_id = $input['question_id'];

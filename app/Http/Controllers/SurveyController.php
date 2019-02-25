@@ -41,7 +41,10 @@ class SurveyController extends Controller
             return response()->json(['errors' => 'Answer was not created'], 400);
         }
 
-        return response()->json($answer, 200);
+        return response()->json([
+            'created'       => true,
+            'survey_status' => $answer,
+        ], 200);
 
     }
 }

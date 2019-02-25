@@ -16,7 +16,8 @@ class Question extends Model
         'survey_id',
         'body',
         'optional',
-        'conditions'
+        'conditions',
+        'question_group_id'
     ];
 
     /**
@@ -33,6 +34,7 @@ class Question extends Model
         return $this->belongsToMany(SurveyInstance::class, 'survey_questions', 'question_id',
             'survey_instance_id')->withPivot([
             'order',
+            'sub_order'
         ]);
     }
 
@@ -46,6 +48,9 @@ class Question extends Model
         return $this->hasOne(QuestionType::class, 'question_id', 'id');
     }
 
+    public function questionGroup(){
+        return $this->belongsTo(QuestionGroup::class, 'question_group_id');
+    }
     public function scopeNotOptional($query){
         $query->where('optional', false);
     }
