@@ -309,7 +309,7 @@
                 this.actions[actionIndex].nursesForSelect = [
                     UNASSIGNED_VALUE,
                     ...this.actions[actionIndex].nurses.map(nurse => ({
-                        label: nurse.full_name,
+                        label: nurse.full_name + (!nurse.roles.includes('care-center-external') ? ' (in-house)' : ''),
                         value: nurse.id
                     }))]
             },

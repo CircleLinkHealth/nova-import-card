@@ -54,11 +54,13 @@
                         <label for="role_names">Role</label>
                     </div>
 
-                    <div class="input-field col s3">
+                    <!-- deprecated -->
+                    <div class="input-field col s3" style="display: none">
                         <input type="checkbox" class="filled-in" id="sendBillingReports"
                                v-model="formData.sendBillingReports" :checked="formData.sendBillingReports"/>
                         <label for="sendBillingReports">Send Billing Reports</label>
                     </div>
+
                     <div class="input-field col s6"></div>
                     <div class="input-field col s6">
                         <input type="checkbox" class="filled-in" id="canApproveAllCareplans"

@@ -10,6 +10,7 @@ use App\Filters\UserFilters;
 use App\Http\Controllers\Controller;
 use App\Location;
 use App\Practice;
+use App\Role;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -19,14 +20,14 @@ class PracticeController extends Controller
     public function allPracticesWithLocationsAndStaff()
     {
         $practicesCollection = Practice::with('locations.providers')
-            ->get([
-                'id',
-                'display_name',
-            ]);
+                                       ->get([
+                                           'id',
+                                           'display_name',
+                                       ]);
 
         //fixing up the data for vue. basically keying locations and providers by id
         $practices = $practicesCollection->keyBy('id')
-            ->map(function ($practice) {
+                                         ->map(function ($practice) {
                                              return [
                                                  'id'           => $practice->id,
                                                  'display_name' => $practice->display_name,
@@ -60,7 +61,7 @@ class PracticeController extends Controller
                     ];
                 })->toArray();
         });
-        $providers = $providersCollection->toArray();
+        $providers           = $providersCollection->toArray();
         if (isset($providers) && sizeof($providers) > 0) {
             return response()->json($providers[0]);
         }
@@ -71,25 +72,25 @@ class PracticeController extends Controller
     public function getNurses($practiceId)
     {
         $nurses = User::ofType(['care-center', 'care-center-external'])
-            ->whereHas('nurseInfo', function ($q) {
+                      ->whereHas('nurseInfo', function ($q) {
                           $q->where([
                               'status' => 'active',
                           ]);
                       })
-            ->ofPractice($practiceId)
-            ->with('nurseInfo.states')
-            ->get([
-                'id',
-                'first_name',
-                'last_name',
-                'suffix',
-                'city',
-                'state',
-            ])
-            ->map(function ($nurse) {
-                          $info = $nurse->nurseInfo;
+                      ->ofPractice($practiceId)
+                      ->with(['nurseInfo.states', 'roles'])
+                      ->get([
+                          'id',
+                          'first_name',
+                          'last_name',
+                          'suffix',
+                          'city',
+                          'state',
+                      ])
+                      ->map(function ($nurse) use ($practiceId) {
+                          $info   = $nurse->nurseInfo;
                           $states = (
-                              $info
+                          $info
                               ? $info->states
                               : new Collection()
                           )
@@ -103,7 +104,10 @@ class PracticeController extends Controller
 
                           return [
                               'id'         => $nurse->id,
-                              'roles'      => $nurse->roles(),
+                              'roles'      => $nurse->rolesInPractice($practiceId)
+                                                    ->map(function ($r) {
+                                                        return $r->name;
+                                                    }),
                               'first_name' => $nurse->getFirstName(),
                               'last_name'  => $nurse->getLastName(),
                               'suffix'     => $nurse->getSuffix(),
@@ -113,7 +117,7 @@ class PracticeController extends Controller
                               'states'     => $states,
                           ];
                       })
-            ->toArray();
+                      ->toArray();
 
         return response()->json($nurses);
     }
@@ -191,13 +195,17 @@ class PracticeController extends Controller
      */
     public function getPractices()
     {
+        $user                = auth()->user();
+        $roleIds             = $user->isAdmin()
+            ? null
+            : Role::getIdsFromNames(['software-only']);
         $practicesCollection = auth()->user()
-            ->practices(true, false, true)
-            ->with('locations')
-            ->get([
-                'id',
-                'display_name',
-            ]);
+                                     ->practices(true, false, $roleIds)
+                                     ->with('locations')
+                                     ->get([
+                                         'id',
+                                         'display_name',
+                                     ]);
 
         $practices = $practicesCollection
             ->map(function ($practice) {

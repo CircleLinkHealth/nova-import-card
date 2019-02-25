@@ -1451,10 +1451,6 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'monthly.billing.data',
                 ])->middleware('permission:patientSummary.read,patientSummary.update,patientSummary.create');
 
-                Route::get('/data', [
-                    'uses' => 'Billing\PracticeInvoiceController@data',
-                ])->middleware('permission:patientSummary.read,patientSummary.update,patientSummary.create');
-
                 Route::get('/services', [
                     'uses' => 'Billing\PracticeInvoiceController@getChargeableServices',
                     'as'   => 'monthly.billing.services',
