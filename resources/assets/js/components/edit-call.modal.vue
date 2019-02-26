@@ -1,98 +1,99 @@
 <!--
 The 'edit call' modal can be used from nurses, as opposed to 'add call' which is only used from admins.
 -->
-
 <template>
     <modal name="edit-call" ok-text="Save" :info="editCallModalInfo" :no-footer="true" class-name="modal-edit-call">
-        <template slot="title">
-            <div class="row">
-                <h3 class="col-sm-12">
-                    Schedule / Reschedule call
-                </h3>
-            </div>
-        </template>
-        <template slot-scope="props">
-            <div class="preferences row">
+            <template slot="title">
                 <div class="row">
-                    <div class="col-sm-4">
-                        Preferred days
-                    </div>
-                    <div class="col-sm-8">
-                        {{preferredContactDays}}
-                    </div>
+                    <h3 class="col-sm-12">
+                        Schedule / Reschedule call
+                    </h3>
                 </div>
-                <div class="row">
-                    <div class="col-sm-4">
-                        Preferred time
-                    </div>
-                    <div class="col-sm-8">
-                        {{preferredContactTime}} {{preferredContactTimezone}}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-4">
-                        Frequency
-                    </div>
-                    <div class="col-sm-8">
-                        {{patientPreferences.calls_per_month}}x monthly
-                    </div>
-                </div>
-            </div>
-            <br/>
-            <form action="" @submit="submitForm">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="row form-group">
-                            <div class="col-sm-3">
-                                Date <span class="required">*</span>
-                            </div>
-                            <div class="col-sm-9">
-                                <input class="form-control" type="date" name="scheduled_date"
-                                       v-model="formData.scheduled_date"
-                                       required/>
-                            </div>
+            </template>
+            <template slot-scope="props">
+                <div class="preferences row">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            Preferred days
                         </div>
-                        <div class="row form-group">
-                            <div class="col-sm-3">
-                                Time <span class="required">*</span>
-                            </div>
-                            <div class="col-sm-3">
-                                <input class="form-control" type="time" name="window_start"
-                                       v-model="formData.window_start"
-                                       required/>
-                            </div>
-                            <div class="col-sm-1 form-text-middle">
-                                -
-                            </div>
-                            <div class="col-sm-3">
-                                <input class="form-control" type="time" name="window_end" v-model="formData.window_end"
-                                       required/>
-                            </div>
-                            <div class="col-sm-2 form-text-middle bold">
-                                {{preferredContactTimezone}}
-                            </div>
+                        <div class="col-sm-8">
+                            {{preferredContactDays}}
                         </div>
-                        <div class="row form-group">
-                            <div class="col-sm-3">
-                                Popup note
-                            </div>
-                            <div class="col-sm-9">
-                                <textarea class="form-control" name="attempt_note" v-model="formData.attempt_note"></textarea>
-                                <button class="submit hidden"></button>
-                            </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            Preferred time
                         </div>
-                        <div class="row form-group">
-                            <div class="col-sm-12">
-                                <notifications ref="notificationsComponent" name="edit-call-modal"></notifications>
-                                <center>
-                                    <loader v-if="loaders.submit"></loader>
-                                </center>
-                            </div>
+                        <div class="col-sm-8">
+                            {{preferredContactTime}} {{preferredContactTimezone}}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            Frequency
+                        </div>
+                        <div class="col-sm-8">
+                            {{patientPreferences.calls_per_month}}x monthly
                         </div>
                     </div>
                 </div>
-            </form>
-        </template>
+                <br/>
+                <form action="" @submit="submitForm">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="row form-group">
+                                <div class="col-sm-3">
+                                    Date <span class="required">*</span>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input class="form-control" type="date" name="scheduled_date"
+                                           v-model="formData.scheduled_date"
+                                           required/>
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col-sm-3">
+                                    Time <span class="required">*</span>
+                                </div>
+                                <div class="col-sm-3">
+                                    <input class="form-control" type="time" name="window_start"
+                                           v-model="formData.window_start"
+                                           required/>
+                                </div>
+                                <div class="col-sm-1 form-text-middle">
+                                    -
+                                </div>
+                                <div class="col-sm-3">
+                                    <input class="form-control" type="time" name="window_end"
+                                           v-model="formData.window_end"
+                                           required/>
+                                </div>
+                                <div class="col-sm-2 form-text-middle bold">
+                                    {{preferredContactTimezone}}
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col-sm-3">
+                                    Popup note
+                                </div>
+                                <div class="col-sm-9">
+                                    <textarea class="form-control" name="attempt_note"
+                                              v-model="formData.attempt_note"></textarea>
+                                    <button class="submit hidden"></button>
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col-sm-12">
+                                    <notifications ref="notificationsComponent" name="edit-call-modal"></notifications>
+                                    <center>
+                                        <loader v-if="loaders.submit"></loader>
+                                    </center>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </template>
     </modal>
 </template>
 
@@ -171,7 +172,7 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
                     return '-';
                 }
 
-                return this.patientPreferences.contact_window.map(x=> weekDays[x.day_of_week]).join(', ');
+                return this.patientPreferences.contact_window.map(x => weekDays[x.day_of_week]).join(', ');
             },
             preferredContactTime() {
                 if (!this.patientPreferences ||
@@ -254,7 +255,7 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
                         if (err.response && err.response.data && err.response.data.errors) {
                             // {is_manual: ['error message']}
                             const errors = err.response.data.errors;
-                            const errorsMessages = Object.values(errors).map(x=>x[0]).join(', ');
+                            const errorsMessages = Object.values(errors).map(x => x[0]).join(', ');
                             msg += `: ${errorsMessages}`;
                         }
 
@@ -275,7 +276,7 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
 <style>
 
     .bold {
-        font-weight:600;
+        font-weight: 600;
     }
 
     .form-text-middle {
@@ -284,6 +285,13 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
 
     .modal-edit-call .modal-container {
         width: 700px;
+    }
+
+    @media only screen and (max-width: 768px) {
+        /* For mobile phones: */
+        .modal-edit-call .modal-container {
+            width: 95%;
+        }
     }
 
     .preferences {

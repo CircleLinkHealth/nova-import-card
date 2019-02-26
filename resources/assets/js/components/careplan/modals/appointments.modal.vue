@@ -216,6 +216,12 @@
     .modal-appointments .modal-container {
         width: 1000px;
     }
+    @media only screen and (max-width: 768px) {
+        /* For mobile phones: */
+        .modal-appointments .modal-container {
+            width: 95%;
+        }
+    }
 
     .appointment-container {
         overflow-x: scroll;

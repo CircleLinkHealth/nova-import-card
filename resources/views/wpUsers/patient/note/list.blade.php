@@ -28,21 +28,21 @@
     @endpush
 
     <div class="row main-form-block" style="margin-top:30px;">
-        <div class="main-form-container col-lg-8 col-lg-offset-2">
-            <div class="row ">
+        <div class="main-form-container col-lg-8 col-lg-offset-2 col-xs-12 col-xs-offset-0">
+            <div class="row">
                 <div class="main-form-title col-lg-12">
                     All Patient Notes
                 </div>
                 {!! Form::open(array('url' => route('patient.note.listing'), 'method' => 'GET', 'class' => 'form-horizontal', 'style' => 'margin-right: 10px')) !!}
                 <div style="clear:both"></div>
                 <ul class="person-conditions-list inline-block pull-left">
-                    <li class="inline-block"><input type="checkbox" id="mail_filter" name="mail_filter" value="true"
+                    <li class="inline-block col-lg-push-0 col-xs-push-3"><input type="checkbox" id="mail_filter" name="mail_filter" value="true"
                         @if(isset($input['mail_filter']))
                             {{'checked'}}
                                 @endif>
                         <label for="mail_filter"><span> </span>Only Forwarded Notes <br/></label>
                     </li>
-                    <li class=""><input type="checkbox" id="admin_filter" name="admin_filter" value="true"
+                    <li class="inline-block"><input type="checkbox" id="admin_filter" name="admin_filter" value="true"
                         @if(isset($input['admin_filter']))
                             {{'checked'}}
                                 @endif>
@@ -51,7 +51,7 @@
                         @endif
                     </li>
                 </ul>
-                <div class="form-group pull-right" style="margin-top:10px; ">
+                <div class="form-group pull-right" style="margin-top:0px; ">
 
                     <!--<span class="glyphicon glyphicon-user" aria-hidden="true"
                           style="color: #63bbe8; font-size: 28px; top: 0.4em;"></span>
@@ -60,7 +60,7 @@
 
                     -->
 
-                    <div class="inline-block">
+                    <div class="inline-block col-xs-12">
                         <label for="year" class="sr-only">Date Range:</label>
                         <select name="range" id="range" class="range-select" data-width="250px">
                             <option value="">Select Range</option>
@@ -112,7 +112,7 @@
                 {!! Form::close() !!}
 
 
-                <div class="main-form-horizontal main-form-primary-horizontal col-md-12"
+                <div class="main-form-horizontal main-form-primary-horizontal col-md-12 col-xs-12"
                      style="border-top: 3px solid #50b2e2">
 
                     <div style="margin-top:2px">
@@ -219,7 +219,7 @@
                                                 width: 250,
                                                 sort: 'string',
                                                 tooltip: ['#comment#'],
-                                                fillspace: true,
+                                                fillspace: false,
                                                 template: "<a href='<?php echo route('patient.note.view', [
                                                     'patient' => '#patient_id#',
                                                     'noteId'  => '#id#',
