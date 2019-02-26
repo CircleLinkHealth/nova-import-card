@@ -57,7 +57,7 @@ class Problems extends BaseImporter
                     return ['do_not_import' => $itemLog->id];
                 }
 
-                $cpmProblemId = $this->getCpmProblemId($itemLog, $problemCodes->cons_name);
+                $cpmProblemId = optional($this->getCpmProblemId($itemLog, $problemCodes->cons_name));
 
                 //if problem is Diabetes and string contains 2, it's probably diabetes type 2
                 if (1 == $cpmProblemId && str_contains($problemCodes->cons_name, ['2'])) {
