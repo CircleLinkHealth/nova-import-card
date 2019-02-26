@@ -206,23 +206,28 @@
                 return !!this.tableData.find(row => !!row.selected)
             },
             selectedPatients() {
-                return this.tableData.filter(row => row.selected && row.Patient).map(row => ({
-                    id: row['Patient ID'],
-                    callId: row.id,
-                    name: row.Patient,
-                    nurse: {
-                        id: row.NurseId,
-                        name: row.Nurse
-                    },
-                    nextCall: row['Activity Day'],
-                    callTimeStart: row['Activity Start'],
-                    callTimeEnd: row['Activity End'],
-                    loaders: row.loaders
-                }))
+                return this.tableData.filter(row => row.selected && row.Patient).map(row => {
+
+                    const nurse = this.nurses.find(n => n.id === row.NurseId);
+                    return {
+                        id: row['Patient ID'],
+                        callId: row.id,
+                        name: row.Patient,
+                        nurse: {
+                            id: row.NurseId,
+                            name: nurse.display_name
+                        },
+                        nextCall: row['Activity Day'],
+                        callTimeStart: row['Activity Start'],
+                        callTimeEnd: row['Activity End'],
+                        loaders: row.loaders
+                    };
+                });
             },
             selectedPatientsNew() {
                 return this.tableData.filter(row => row.selected && row.Patient);
-            },
+            }
+            ,
             options() {
                 return {
                     columnsClasses: {
@@ -251,7 +256,8 @@
                         Scheduler: (ascending) => (a, b) => 0
                     }
                 }
-            },
+            }
+            ,
             nursesForSelect() {
                 return this.nurses.filter(n => !!n.display_name).map(nurse => ({
                     text: nurse.display_name,
