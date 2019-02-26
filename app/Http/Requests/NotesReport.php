@@ -35,13 +35,16 @@ class NotesReport extends FormRequest
                         if (count($data) !== 2) {
                             return $fail('The value submitted for Practices/Providers select dropdown is invalid.');
                         }
-                        if ($data[0] !== 'provider' && $data[0] !== 'practice'){
+
+                        $selectKey            = $data[0];
+                        $practiceOrProviderId = $data[1];
+
+                        if ($selectKey !== 'provider' && $selectKey !== 'practice') {
                             return $fail('The value submitted for Practices/Providers select dropdown is invalid.');
                         }
                         //This check is not necessary in that the system does not break, but instead fetches 0 results.
-                        //The variable in check is the id of either the practice or the provider.
                         //(int)'string without number' returns 0. This check still does not successfully catch faulty input e.g. '8test'
-                        if ((int)$data[1] === 0){
+                        if ((int)$practiceOrProviderId === 0) {
                             return $fail('The value submitted for Practices/Providers select dropdown is invalid.');
                         }
                     }

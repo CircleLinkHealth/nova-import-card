@@ -215,12 +215,14 @@ class NotesController extends Controller
         }
 
         $data['providers'] = User::whereIn('id', $session_user->viewableProviderIds())
-                                    ->pluck('display_name', 'id')->sort();
-        $data['practices']  = Practice::whereIn('id', $session_user->viewableProgramIds())
-                                      ->pluck('display_name', 'id')->sort();
+                                 ->pluck('display_name', 'id')->sort();
+        $data['practices'] = Practice::whereIn('id', $session_user->viewableProgramIds())
+                                     ->pluck('display_name', 'id')->sort();
 
-        $start  = Carbon::now()->startOfMonth()->subMonth($request->has('range') ? $request->range : 0)->format('Y-m-d');
-        $end    = Carbon::now()->endOfMonth()->format('Y-m-d');
+        $start = Carbon::now()->startOfMonth()->subMonth($request->has('range')
+            ? $request->range
+            : 0)->format('Y-m-d');
+        $end   = Carbon::now()->endOfMonth()->format('Y-m-d');
 
         //Check to see whether there are providers to fetch notes for.
         if (isset($providers) && ! empty($providers)) {
@@ -233,7 +235,7 @@ class NotesController extends Controller
             if ( ! empty($notes)) {
                 $notes = $this->formatter->formatDataForNotesListingReport($notes, $request);
             }
-            $data['notes'] = $notes;
+            $data['notes']              = $notes;
             $data['isProviderSelected'] = true;
         } else {
             if ($session_user->hasRole(['administrator', 'care-center']) && $request->has('admin_filter')) {
@@ -244,11 +246,11 @@ class NotesController extends Controller
                 if ( ! empty($notes)) {
                     $notes = $this->formatter->formatDataForNotesListingReport($notes, $request);
                 }
-                $data['notes'] = $notes;
+                $data['notes']              = $notes;
                 $data['isProviderSelected'] = true;
             } else {
                 // Not enough data for a report, return only the essentials
-                $data['notes'] = false;
+                $data['notes']              = false;
                 $data['isProviderSelected'] = false;
             }
         }
@@ -603,11 +605,15 @@ class NotesController extends Controller
     private function getProviders($getNotesFor)
     {
         return collect($getNotesFor)->map(function ($for) {
-            $data = explode(':', $for);
-            if ($data[0] == 'practice') {
-                return Practice::getProviders($data[1])->pluck('id')->all();
+
+            $data                 = explode(':', $for);
+            $selectKey            = $data[0];
+            $practiceOrProviderId = $data[1];
+
+            if ($selectKey == 'practice') {
+                return Practice::getProviders($practiceOrProviderId)->pluck('id')->all();
             } else {
-                return optional(User::find($data[1]))->id;
+                return optional(User::find($practiceOrProviderId))->id;
             }
         })
                                     ->flatten()
