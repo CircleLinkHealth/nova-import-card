@@ -48,12 +48,7 @@ trait DateScopesTrait
         $builder,
         $field = 'created_at'
     ) {
-        $builder->where(function ($q) use (
-            $field
-        ) {
-            $q->where($field, '>=', Carbon::now()->startOfMonth()->toDateTimeString())
-                ->where($field, '<=', Carbon::now()->endOfMonth()->toDateTimeString());
-        });
+        $builder->createdInMonth(Carbon::now(), $field);
     }
     
     /**
