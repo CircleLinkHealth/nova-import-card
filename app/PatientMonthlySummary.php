@@ -295,7 +295,7 @@ class PatientMonthlySummary extends BaseModel
      *
      * @return int
      */
-    public function timeFromClhCareCoaches()
+    public function timeFromClhCareCoaches() : int
     {
         return (int) Activity::createdInMonth($this->month_year, 'performed_at')
                        ->where('patient_id', $this->patient_id)
