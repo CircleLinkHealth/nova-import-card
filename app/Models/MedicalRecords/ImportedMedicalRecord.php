@@ -67,6 +67,10 @@ class ImportedMedicalRecord extends \App\BaseModel implements ImportedMedicalRec
     use MedicalRecordIdAndTypeTrait,
         SoftDeletes;
 
+    protected $casts = [
+        'validation_checks' => 'array',
+    ];
+
     protected $fillable = [
         'patient_id',
         'medical_record_type',
@@ -75,6 +79,7 @@ class ImportedMedicalRecord extends \App\BaseModel implements ImportedMedicalRec
         'location_id',
         'practice_id',
         'duplicate_id',
+        'validation_checks',
     ];
 
     public function allergies()
