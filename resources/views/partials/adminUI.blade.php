@@ -55,6 +55,7 @@
         }
     </style>
     @stack('styles')
+    @include('partials.raygun-tracking')
 </head>
 <body>
 <div id="app">
