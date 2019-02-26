@@ -62,6 +62,11 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
      */
     protected $problemsInGroups;
     
+    /**
+     * @var ImportedMedicalRecord
+     */
+    protected $importedMedicalRecord;
+    
     public function createImportedMedicalRecord(): MedicalRecord
     {
         $this->importedMedicalRecord = ImportedMedicalRecord::create(
@@ -378,7 +383,10 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
 
         return $this;
     }
-
+    
+    /**
+     * @return bool
+     */
     private function hasAtLeast1BhiCondition()
     {
         return $this->problemsInGroups->get('monitored', collect())
@@ -390,7 +398,10 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
             ->where('is_behavioral', true)
             ->count() >= 1;
     }
-
+    
+    /**
+     * @return bool
+     */
     private function hasAtLeast2CcmConditions()
     {
         return $this->problemsInGroups->get('monitored', collect())
@@ -401,7 +412,10 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
                                       )
             ->count() >= 2;
     }
-
+    
+    /**
+     * @return bool
+     */
     private function hasMedicare()
     {
         return $this->insurances->reject(

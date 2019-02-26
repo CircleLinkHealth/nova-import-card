@@ -1,6 +1,6 @@
 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12" style="padding-bottom:9px">
     <div class="row">
-        <div class="col-sm-12">
+        <div class="col-sm-12 col-xs-12">
             <div class="col-sm-8" style="line-height: 22px;">
                 <span style="font-size: 30px;"> <a
                             href="{{ route('patient.summary', array('patient' => $patient->id)) }}">
@@ -9,7 +9,7 @@
                 @if($ccm_complex)
                     <span id="complex_tag"
                           style="background-color: #ec683e;font-size: 15px; position: relative; top: -7px;"
-                          class="label label-warning"> Complex CCM</span>
+                          class="label label-warning">Complex CCM</span>
                     @push('scripts')
                         <script>
                             (function () {
@@ -23,8 +23,7 @@
                         </script>
                     @endpush
                 @endif
-                <a
-                        href="{{ route('patient.demographics.show', array('patient' => $patient->id)) }}"><span
+                <a href="{{ route('patient.demographics.show', array('patient' => $patient->id)) }}"><span
                             class="glyphicon glyphicon-pencil" style="margin-right:3px;"></span></a><br/>
 
                 <ul class="inline-block" style="margin-left: -40px; font-size: 16px">
@@ -61,7 +60,7 @@
                 </ul>
 
             </div>
-            <div class="col-sm-4" style="line-height: 22px; text-align: right">
+            <div class="col-lg-push-0 col-sm-4 col-sm-push-0 col-xs-4 col-xs-push-3" style="line-height: 22px; text-align: right">
 
                 <span style="font-size: 27px;{{$ccm_above ? 'color: #47beab;' : ''}}">
                     <span data-monthly-time="{{$monthlyTime}}" style="color: inherit">
@@ -133,35 +132,37 @@
                     </span>
                 </span>
 
-                <span style="font-size:15px"></span><br/>
+                <span class="sometimes-hidden" style="font-size:15px"></span>
 
-                @if(Route::is('patient.note.create'))
-                    <li class="inline-block">
-                        <select id="status" name="status" class="selectpickerX dropdownValid form-control" data-size="2"
-                                style="width: 135px">
-                            <option style="color: #47beab"
-                                    value="enrolled" {{$patient->getCcmStatus() == 'enrolled' ? 'selected' : ''}}>
-                                Enrolled
-                            </option>
-                            <option class="withdrawn"
-                                    value="withdrawn" {{$patient->getCcmStatus() == 'withdrawn' ? 'selected' : ''}}>
-                                Withdrawn
-                            </option>
-                            <option class="paused"
-                                    value="paused" {{$patient->getCcmStatus() == 'paused' ? 'selected' : ''}}> Paused
-                            </option>
-                        </select>
-                    </li>
-                @else
-                    <li style="font-size: 18px" id="status"
-                        class="inline-block {{$patient->getCcmStatus()}}"><?= (empty($patient->getCcmStatus()))
-                            ? 'N/A'
-                            : ucwords($patient->getCcmStatus()); ?></li>
-                @endif
-                <br/>
-                @if(auth()->user()->hasRole(['administrator']))
-                    @include('partials.viewCcdaButton')
-                @endif
+                <div class="ccm-status col-xs-offset-3">
+                    @if(Route::is('patient.note.create'))
+                        <li class="inline-block">
+                            <select id="status" name="status" class="selectpickerX dropdownValid form-control" data-size="2"
+                                    style="width: 135px">
+                                <option style="color: #47beab"
+                                        value="enrolled" {{$patient->getCcmStatus() == 'enrolled' ? 'selected' : ''}}>
+                                    Enrolled
+                                </option>
+                                <option class="withdrawn"
+                                        value="withdrawn" {{$patient->getCcmStatus() == 'withdrawn' ? 'selected' : ''}}>
+                                    Withdrawn
+                                </option>
+                                <option class="paused"
+                                        value="paused" {{$patient->getCcmStatus() == 'paused' ? 'selected' : ''}}> Paused
+                                </option>
+                            </select>
+                        </li>
+                    @else
+                        <li style="font-size: 18px" id="status"
+                            class="inline-block col-xs-pull-1 {{$patient->getCcmStatus()}}"><?= (empty($patient->getCcmStatus()))
+                                ? 'N/A'
+                                : ucwords($patient->getCcmStatus()); ?></li>
+                    @endif
+                    <br/>
+                    @if(auth()->user()->hasRole(['administrator']))
+                        @include('partials.viewCcdaButton')
+                    @endif
+                </div>
 
             </div>
 
@@ -178,7 +179,7 @@
         ?>
         @if(!empty($ccdMonitoredProblems))
             <div style="clear:both"></div>
-            <ul id="user-header-problems-checkboxes" class="person-conditions-list inline-block text-medium"
+            <ul id="user-header-problems-checkboxes" class="person-conditions-list inline-block text-medium col-lg-12 col-md-10 col-xs-8"
                 style="margin-top: -10px">
                 @foreach($ccdMonitoredProblems as $problem)
                     @if($problem['name'] != 'Diabetes')
