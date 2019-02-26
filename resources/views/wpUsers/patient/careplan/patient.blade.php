@@ -11,7 +11,7 @@ $user_info = [];
 @section('content')
     {!! Form::open(['url' => optional($patient)->id ? route('patient.demographics.update', [$patient->id]) : route('patient.demographics.store'), 'method' => optional($patient)->id ? 'patch' : 'post', 'class' => 'form-horizontal', 'id' => 'ucpForm']) !!}
     <div class="row" style="margin-top:20px;margin-bottom:20px;">
-        <div class="col-lg-10 col-lg-offset-1">
+        <div class="col-lg-10 col-lg-offset-1 col-xs-12 col-xs-offset-0">
             <div class="main-form-container-last col-lg-8 col-lg-offset-2" style="margin-top:20px;margin-bottom:20px;">
                 <div class="row"><!-- no-overflow-->
                     @if(isset($patient->id) )
@@ -177,7 +177,7 @@ $user_info = [];
                                                        value="{{ (old('city') ? old('city') : ($patient->city ? $patient->city : '')) }}">
                                                 <span class="help-block">{{ $errors->first('city') }}</span>
                                             </div>
-                                            <div class="form-group form-item form-item-spacing col-sm-2 state-selector {{ $errors->first('state') ? 'has-error' : '' }}">
+                                            <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('state') ? 'has-error' : '' }}">
                                                 {!! Form::select('state', $states, (old('state') ? old('state') : $patient->state ? $patient->state : ''), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
                                                 <span class="help-block">{{ $errors->first('state') }}</span>
                                             </div>
@@ -307,10 +307,10 @@ $user_info = [];
                                                     </div>
                                                 @endif
                                                 <input type=hidden name=program_id value="{{ $programId }}">
-                                                <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program') ? 'has-error' : '' }}">
+                                                <div class="form-group form-item form-item-spacing col-lg-12 col-sm-12 col-xs-12 {{ $errors->first('program') ? 'has-error' : '' }}">
                                                     {!! Form::label('preferred_contact_location', 'Preferred Office Location  *:
         :') !!}
-                                                    {!! Form::select('preferred_contact_location', $locations, $patient->getPreferredContactLocation(), ['class' => 'form-control select-picker', 'style' => 'width:90;']) !!}
+                                                    {!! Form::select('preferred_contact_location', $locations, $patient->getPreferredContactLocation(), ['class' => 'form-control select-picker'/*, 'style' => 'width:90;'*/]) !!}
                                                 </div>
                                             @else
                                                 <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program_id') ? 'has-error' : '' }}">

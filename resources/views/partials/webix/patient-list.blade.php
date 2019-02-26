@@ -233,7 +233,7 @@
     @endif
     @push('scripts')
         <script type="text/javascript">
-            window.onload = function () { 
+            window.onload = function () {
                 filterText('');
             }
             // obs_alerts_dtable.hideColumn("ccm_status");

@@ -39,7 +39,7 @@
         <label for="frequency">Frequency</label>
         <select id="frequency" name="frequency"
                 class="selectpickerX dropdown Valid form-control" data-size="2"
-                style="width: 90px">
+                {{--style="width: 110px"--}}>
             @if(!$patient->patientInfo)
                 <option value="1"> 1x Monthly</option>
                 <option value="2" selected> 2x Monthly</option>

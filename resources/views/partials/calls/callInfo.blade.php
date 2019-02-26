@@ -91,7 +91,7 @@
                                     <b>{{Carbon\Carbon::now()->format('F')}} Call Statistics:</b>
                                 </label>
                             </div>
-                            <div class="col-sm-12" style="width: 135%;">
+                            <div class="col-sm-12" style="width: 120%;">
                                 <ul class="list-group">
                                     <li class="list-group-item">
                                         <b> Successful Calls:</b> <span
