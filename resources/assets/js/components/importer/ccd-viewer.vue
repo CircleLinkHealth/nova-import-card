@@ -48,11 +48,11 @@
                     <loader></loader>
                 </div>
             </template>
-            <template slot="2+ Cond" slot-scope="props">
-                <input class="row-select" v-model="props.row['2+ Cond']" type="checkbox" disabled/>
+            <template slot="2+ CCM Cond" slot-scope="props">
+                <input class="row-select" v-model="props.row['2+ CCM Cond']" type="checkbox" disabled/>
             </template>
-            <template slot="BHI Condition" slot-scope="props">
-                <input class="row-select" v-model="props.row['BHI Condition']" type="checkbox" disabled/>
+            <template slot="1+ BHI Cond" slot-scope="props">
+                <input class="row-select" v-model="props.row['1+ BHI Cond']" type="checkbox" disabled/>
             </template>
             <template slot="Medicare" slot-scope="props">
                 <input class="row-select" v-model="props.row.Medicare" type="checkbox" disabled/>
@@ -110,7 +110,7 @@
             return {
                 url: rootUrl('api/ccd-importer/imported-medical-records'),
                 selected: false,
-                columns: ['selected', 'Name', 'DOB', 'Practice', 'Location', 'Billing Provider', 'duplicate', '2+ Cond', 'BHI Condition', 'Medicare', 'Submit', 'Remove'],
+                columns: ['selected', 'Name', 'DOB', 'Practice', 'Location', 'Billing Provider', 'duplicate', '2+ CCM Cond', '1+ BHI Cond', 'Medicare', 'Submit', 'Remove'],
                 tableData: [],
                 options: {
                     sortable: ['Name', 'DOB']
@@ -152,8 +152,8 @@
                     Location: ((record.location || {}).id || null),
                     location_name: ((record.location || {}).display_name || null),
                     'Billing Provider': record.billing_provider_id,
-                    '2+ Cond': (record.validation_checks || {}).has_at_least_2_ccm_conditions,
-                    'BHI Condition': (record.validation_checks || {}).has_at_least_1_bhi_condition,
+                    '2+ CCM Cond': (record.validation_checks || {}).has_at_least_2_ccm_conditions,
+                    '1+ BHI Cond': (record.validation_checks || {}).has_at_least_1_bhi_condition,
                     Medicare: (record.validation_checks || {}).has_medicare,
                     duplicate_id: record.duplicate_id,
                     errors: {
