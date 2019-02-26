@@ -338,7 +338,7 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
         $hasMedicare              = $this->hasMedicare();
 
         $this->importedMedicalRecord->validation_checks = [
-            'has_at_least_2_ccm_condtitions' => $hasAtLeast2CcmConditions,
+            'has_at_least_2_ccm_conditions' => $hasAtLeast2CcmConditions,
             'has_at_least_1_bhi_condition'   => $hasAtLeast1BhiCondition,
             'has_medicare'                   => $hasMedicare,
         ];
