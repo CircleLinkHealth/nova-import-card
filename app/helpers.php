@@ -1277,7 +1277,7 @@ if ( ! function_exists('getSampleNotePdfPath')) {
 if ( ! function_exists('getSampleCcdaPath')) {
     function getSampleCcdaPath()
     {
-        $path = public_path('demo.xml');
+        $path = storage_path('ccdas/Samples/demo.xml');
 
         if ( ! file_exists($path)) {
             throw new \App\Exceptions\FileNotFoundException();
