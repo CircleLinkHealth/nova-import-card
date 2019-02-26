@@ -22,7 +22,6 @@ use App\Importer\Section\Importers\Demographics;
 use App\Importer\Section\Importers\Insurance;
 use App\Importer\Section\Importers\Medications;
 use App\Importer\Section\Importers\Problems;
-use App\Jobs\CheckCcdaEnrollmentEligibility;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Patient;
 use App\Practice;
@@ -333,7 +332,18 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
 
     public function raiseConcerns()
     {
-        $isDuplicate = $this->isDuplicate();
+        $isDuplicate              = $this->isDuplicate();
+        $hasAtLeast2CcmConditions = $this->hasAtLeast2CcmConditions();
+        $hasAtLeast1BhiCondition  = $this->hasAtLeast1BhiCondition();
+        $hasMedicare              = $this->hasMedicare();
+
+        $this->importedMedicalRecord->validation_checks = [
+            'has_at_least_2_ccm_condtitions' => $hasAtLeast2CcmConditions,
+            'has_at_least_1_bhi_condition'   => $hasAtLeast1BhiCondition,
+            'has_medicare'                   => $hasMedicare,
+        ];
+
+        $this->importedMedicalRecord->save();
     }
 
     /**
@@ -372,6 +382,39 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
         return $this;
     }
 
+    private function hasAtLeast1BhiCondition()
+    {
+        return $this->problemsInGroups->get('monitored', collect())
+            ->unique(
+                function ($p) {
+                    return $p['attributes']['cpm_problem_id'];
+                }
+                                      )
+            ->where('is_behavioral', true)
+            ->count() >= 1;
+    }
+
+    private function hasAtLeast2CcmConditions()
+    {
+        return $this->problemsInGroups->get('monitored', collect())
+            ->unique(
+                function ($p) {
+                    return $p['attributes']['cpm_problem_id'];
+                }
+                                      )
+            ->count() >= 2;
+    }
+
+    private function hasMedicare()
+    {
+        return $this->insurances->reject(
+            function ($i) {
+                return ! str_contains(strtolower($i->name.$i->type), 'medicare');
+            }
+            )
+            ->count() >= 1;
+    }
+
     /**
      * Checks whether the patient we have just imported exists in the system.
      *
@@ -390,10 +433,10 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
         $query = User::whereFirstName($demos->first_name)
             ->whereLastName($demos->last_name)
             ->whereHas(
-                         'patientInfo',
-                         function ($q) use ($demos) {
-                             $q->whereBirthDate($demos->dob);
-                         }
+                'patientInfo',
+                function ($q) use ($demos) {
+                    $q->whereBirthDate($demos->dob);
+                }
                      );
         if ($practiceId) {
             $query = $query->where('program_id', $practiceId);
