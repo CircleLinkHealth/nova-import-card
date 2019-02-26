@@ -61,10 +61,7 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
      * @var Collection
      */
     protected $problemsInGroups;
-
-    /**
-     * @return MedicalRecord
-     */
+    
     public function createImportedMedicalRecord(): MedicalRecord
     {
         $this->importedMedicalRecord = ImportedMedicalRecord::create(
@@ -338,9 +335,9 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
         $hasMedicare              = $this->hasMedicare();
 
         $this->importedMedicalRecord->validation_checks = [
-            'has_at_least_2_ccm_conditions' => $hasAtLeast2CcmConditions,
-            'has_at_least_1_bhi_condition'   => $hasAtLeast1BhiCondition,
-            'has_medicare'                   => $hasMedicare,
+            ImportedMedicalRecord::CHECK_HAS_AT_LEAST_2_CCM_CONDITIONS => $hasAtLeast2CcmConditions,
+            ImportedMedicalRecord::CHECK_HAS_AT_LEAST_1_BHI_CONDITION  => $hasAtLeast1BhiCondition,
+            ImportedMedicalRecord::CHECK_HAS_MEDICARE                  => $hasMedicare,
         ];
 
         $this->importedMedicalRecord->save();
