@@ -308,6 +308,9 @@
                     }, {
                         text: 'Software Only',
                         id: 'software-only'
+                    }, {
+                        text: 'Care Coach',
+                        id: 'care-center-external'
                     }
                 ],
                 phoneTypes: [

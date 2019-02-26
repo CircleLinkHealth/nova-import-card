@@ -41,7 +41,7 @@ class CallViewFilters extends QueryFilters
 
     public function globalFilters(): array
     {
-        return ['software_only_user' => auth()->user()->isAdmin()];
+        return ['software_only_user' => !auth()->user()->isAdmin()];
     }
 
     public function last_call($lastCall)

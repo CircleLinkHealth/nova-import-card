@@ -64,9 +64,12 @@
                     <a :href="props.row.notesLink">{{ props.row['Patient ID'] }}</a>
                 </template>
                 <template slot="Care Coach" slot-scope="props">
-                    <select-editable v-model="props.row.NurseId" :display-text="props.row.Nurse"
-                                     :values="props.row.nurses()" :class-name="'blue'"
-                                     :on-change="props.row.onNurseUpdate.bind(props.row)"></select-editable>
+                    <div>
+                        <select-editable v-model="props.row.NurseId" :display-text="props.row.Nurse"
+                                         :values="props.row.nurses()" :class-name="'blue'"
+                                         :on-change="props.row.onNurseUpdate.bind(props.row)"></select-editable>
+                        <loader class="relative" v-if="props.row.loaders.nurse"></loader>
+                    </div>
                 </template>
                 <template slot="Activity Day" slot-scope="props">
                     <div>
@@ -157,6 +160,8 @@
 
     const CALL_MUST_OVERRIDE_STATUS_CODE = 418;
     const CALL_MUST_OVERRIDE_WARNING = "The family members of this patient have a call scheduled at different time. Please confirm you still want to schedule this call.";
+
+    const CALL_CANNOT_CHANGE_CARE_COACH = 421;
 
     export default {
         name: 'CallMgmtAppV2',
@@ -475,6 +480,15 @@
                 }
             },
 
+            showCallUpdateAlertIfNeeded: (err) => {
+                if (err && err.response
+                    && err.response.status
+                    && err.response.status === CALL_CANNOT_CHANGE_CARE_COACH
+                ) {
+                    alert('Cannot change in-house care coach.');
+                }
+            },
+
             setupCallNew(call) {
                 const $vm = this;
 
@@ -503,13 +517,17 @@
                     'Activity End': call.call_time_end,
                     practiceId: call.practice_id,
                     nurses() {
-                        return [...$vm.nurses.filter(Boolean)
-                            .filter(nurse => nurse.practices.includes(call.practice_id))
-                            .filter(n => !!n.display_name)
-                            .map(nurse => ({text: nurse.display_name, value: nurse.id, nurse})), {
-                            text: 'unassigned',
-                            value: null
-                        }]
+                        return [
+                            ...$vm.nurses
+                                .filter(Boolean)
+                                .filter(nurse => nurse.practices.includes(call.practice_id))
+                                .filter(n => !!n.display_name)
+                                .map(nurse => ({text: nurse.display_name, value: nurse.id, nurse})),
+                            {
+                                text: 'unassigned',
+                                value: null
+                            }
+                        ]
                     },
                     loaders: {
                         nextCall: false,
@@ -528,12 +546,13 @@
                     },
                     onNurseUpdate: function (nurseId, old, revertCallback) {
                         callUpdateFunctions.onNurseUpdate(this, nurseId, false, old, revertCallback)
-                            .catch(err =>
+                            .catch(err => {
+                                $vm.showCallUpdateAlertIfNeeded(err);
                                 $vm.showOverrideConfirmationIfNeeded(
                                     err,
                                     () => callUpdateFunctions.onNurseUpdate(this, nurseId, true, old, revertCallback)
-                                )
-                            );
+                                );
+                            });
                     },
                     onCallTimeStartUpdate: function (time, old, revertCallback) {
                         callUpdateFunctions.onCallTimeStartUpdate(this, time, false, old, revertCallback)

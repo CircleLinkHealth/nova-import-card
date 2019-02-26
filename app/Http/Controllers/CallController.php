@@ -64,10 +64,10 @@ class CallController extends Controller
 
             $failed = $this->scheduler->importCallsFromCsv($csv);
 
-            echo 'Failed to schedule a call for these patients:'.PHP_EOL;
+            echo 'Failed to schedule a call for these patients:' . PHP_EOL;
 
             foreach ($failed as $fail) {
-                echo "Name: ${fail}".PHP_EOL;
+                echo "Name: ${fail}" . PHP_EOL;
             }
         }
     }
@@ -76,7 +76,7 @@ class CallController extends Controller
     {
         $calls = Call::where(function ($q) {
             $q->whereNull('type')
-                ->orWhere('type', '=', 'call');
+              ->orWhere('type', '=', 'call');
         })->where('status', 'scheduled')->get();
 
         return $calls;
@@ -111,7 +111,7 @@ class CallController extends Controller
         if ( ! empty($input['id'])) {
             $previousCall = Call::find($input['id']);
             if ( ! $previousCall) {
-                return response('could not locate call '.$input['id'], 401);
+                return response('could not locate call ' . $input['id'], 401);
             }
 
             $previousCall->status = 'rescheduled/cancelled';
@@ -183,7 +183,7 @@ class CallController extends Controller
         return redirect()->route('patient.note.index', [
             'patientId' => $patientId,
         ])
-            ->with('messages', ['Successfully Created Note']);
+                         ->with('messages', ['Successfully Created Note']);
     }
 
     public function show($id)
@@ -194,7 +194,7 @@ class CallController extends Controller
     {
         $calls = Call::where(function ($q) {
             $q->whereNull('type')
-                ->orWhere('type', '=', 'call');
+              ->orWhere('type', '=', 'call');
         })->where('inbound_cpm_id', $patientId)->paginate();
 
         return view('admin.calls.index', ['calls' => $calls, 'patient' => User::find($patientId)]);
@@ -223,11 +223,22 @@ class CallController extends Controller
         // find call
         $call = Call::find($data['callId']);
         if ( ! $call) {
-            return response('could not locate call '.$data['callId'], 401);
+            return response('could not locate call ' . $data['callId'], 401);
         }
 
         $col   = $data['columnName'];
         $value = $data['value'];
+
+        //software-only check - CPM-660 - practice admin cannot change in-house nurse to external
+        if ('outbound_cpm_id' == $col) {
+            $canUpdateCareCoach = $this->canAssignCareCoachToActivity($call, $value);
+            if ( ! $canUpdateCareCoach) {
+                return response(
+                    'cannot update change care-coach',
+                    421
+                );
+            }
+        }
 
         if (in_array($col, $columnsToCheckForOverride)
             && ! $isFamilyOverride
@@ -300,7 +311,7 @@ class CallController extends Controller
         $call->save();
 
         return response(
-            'successfully updated call '.$data['columnName'].'='.$data['value'].' - CallId='.$data['callId'],
+            'successfully updated call ' . $data['columnName'] . '=' . $data['value'] . ' - CallId=' . $data['callId'],
             201
         );
     }
@@ -352,13 +363,13 @@ class CallController extends Controller
 
         if ('call' === $input['type'] && $patient->inboundCalls) {
             $scheduledCall = $patient->inboundCalls()
-                ->where(function ($q) {
+                                     ->where(function ($q) {
                                          $q->whereNull('type')
-                                             ->orWhere('type', '=', 'call');
+                                           ->orWhere('type', '=', 'call');
                                      })
-                ->where('status', '=', 'scheduled')
-                ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'))
-                ->first();
+                                     ->where('status', '=', 'scheduled')
+                                     ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'))
+                                     ->first();
             if ($scheduledCall) {
                 return [
                     'errors' => ['patient already has a scheduled call'],
@@ -370,10 +381,10 @@ class CallController extends Controller
         $isFamilyOverride = ! empty($input['family_override']);
         if ( ! $isFamilyOverride
              && $this->hasAlreadyFamilyCallAtDifferentTime(
-                 $patient->patientInfo,
-                 $input['scheduled_date'],
-                 $input['window_start'],
-                 $input['window_end']
+                $patient->patientInfo,
+                $input['scheduled_date'],
+                $input['window_start'],
+                $input['window_end']
             )) {
             return [
                 'errors' => ['patient belongs to family and the family has a call at different time'],
@@ -421,6 +432,45 @@ class CallController extends Controller
     }
 
     /**
+     * Software-Only role cannot change in-house nurse to external
+     * CPM-660
+     *
+     * @param Call $call
+     * @param $newCareCoachUserId
+     *
+     * @return bool
+     */
+    private function canAssignCareCoachToActivity(Call $call, $newCareCoachUserId)
+    {
+        $user = auth()->user();
+
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        //get practice of patient
+        $patientPrimaryPractice = $call->inboundUser->primaryPractice->id;
+
+        //check if user has software-only role for practice of patient
+        if (!$user->hasRoleForSite('software-only', $patientPrimaryPractice)) {
+            return false;
+        }
+
+        //check role of current care coach
+        $currentIsClhCareCoach = $call->outboundUser->hasRoleForSite('care-center', $patientPrimaryPractice);
+        $newIsClhCareCoach = User::find($newCareCoachUserId)->hasRoleForSite('care-center', $patientPrimaryPractice);
+
+        if ($currentIsClhCareCoach && !$newIsClhCareCoach) {
+            return false;
+        }
+
+        //current care-coach is clh and new is also clh care-coach
+        //current care-coach is not clh and new is not clh care-coach
+        //current care-coach is not clh and new is clh care-coach
+        return true;
+    }
+
+    /**
      * @param User $user
      * @param $input
      *
@@ -446,9 +496,9 @@ class CallController extends Controller
 
         $isFamilyOverride = ! empty($input['family_override']);
 
-        $call           = new Call();
-        $call->type     = $input['type'];
-        $call->sub_type = isset($input['sub_type'])
+        $call                 = new Call();
+        $call->type           = $input['type'];
+        $call->sub_type       = isset($input['sub_type'])
             ? $input['sub_type']
             : null;
         $call->inbound_cpm_id = $user->id;
