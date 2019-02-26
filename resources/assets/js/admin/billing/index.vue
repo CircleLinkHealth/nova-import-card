@@ -47,7 +47,7 @@
                             </div>
                         </div>
                         <div class="col-sm-6">
-                            <form>
+                            <form v-if="!isSoftwareOnly">
                                 <div class="row">
                                     <div class="col-sm-8">
                                         <div>
@@ -210,6 +210,7 @@
         data() {
             return {
                 //from server side
+                isSoftwareOnly: !!isSoftwareOnly,
                 months: dates,
                 practices: practices,
                 chargeableServicesPerPractice: practices.reduce((map, x) => {

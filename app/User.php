@@ -1793,6 +1793,16 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     }
 
     /**
+     * Returns whether the user is an administrator.
+     *
+     * @return bool
+     */
+    public function isSoftwareOnly()
+    {
+        return $this->hasRole('software-only');
+    }
+
+    /**
      * Determine whether the User is BHI chargeable (ie. eligible and enrolled).
      *
      * @return bool

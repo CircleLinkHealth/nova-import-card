@@ -1086,6 +1086,8 @@ Route::group(['middleware' => 'auth'], function () {
     //
     // ADMIN (/admin)
     //
+    // NOTE: in two route groups. One for software-only and one for super admins
+    //
 
     Route::group([
         'middleware' => [
