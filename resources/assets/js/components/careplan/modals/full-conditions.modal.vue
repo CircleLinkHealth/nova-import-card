@@ -8,7 +8,7 @@
                 </div>
                 <div class="col-sm-12" :class="{ 'problem-container': problems.length > 20 }">
                     <div class="btn-group" :class="{ 'problem-buttons': problems.length > 20 }" role="group" aria-label="Full Conditions">
-                        <div class="btn btn-secondary problem-button" :class="{ selected: selectedProblem && (selectedProblem.id === problem.id) }" 
+                        <div class="btn btn-secondary problem-button" :class="{ selected: selectedProblem && (selectedProblem.id === problem.id) }"
                                 v-for="(problem, index) in problems" :key="index" @click="select(index)">
                             {{problem.name}}
                             <span class="delete" title="remove this cpm problem" @click="removeProblem">x</span>
@@ -28,7 +28,7 @@
                             </div>
                             <div class="col-sm-12 text-right top-20">
                                 <loader class="absolute" v-if="loaders.addProblem"></loader>
-                                <input type="submit" class="btn btn-secondary margin-0 instruction-add selected" value="+" 
+                                <input type="submit" class="btn btn-secondary margin-0 instruction-add selected" value="+"
                                     title="add this problem" :disabled="newProblem.name.length === 0" />
                             </div>
                         </form>
@@ -43,12 +43,12 @@
                                             <input class="form-control" v-model="selectedProblem.name" placeholder="Problem Name" required />
                                         </div>
                                         <div class="col-sm-5">
-                                            <v-select class="form-control" v-model="selectedProblem.cpm" :value="selectedProblem.cpm_id" 
+                                            <v-select class="form-control" v-model="selectedProblem.cpm" :value="selectedProblem.cpm_id"
                                                 :options="cpmProblemsForSelect" required></v-select>
                                         </div>
                                         <div class="col-sm-2 text-right">
                                             <loader class="absolute" v-if="loaders.editProblem"></loader>
-                                            <input type="submit" class="btn btn-secondary margin-0 instruction-add selected" value="Edit" 
+                                            <input type="submit" class="btn btn-secondary margin-0 instruction-add selected" value="Edit"
                                                 title="Edit this problem" :disabled="selectedProblem.name.length === 0 || !(selectedProblem.cpm || {}).value" />
                                         </div>
                                     </div>
@@ -82,7 +82,7 @@
                                 <div class="row">
                                     <form @submit="addCode">
                                         <div class="col-sm-5">
-                                            <v-select class="form-control" v-model="selectedProblem.newCode.selectedCode" 
+                                            <v-select class="form-control" v-model="selectedProblem.newCode.selectedCode"
                                                 :options="codesForSelect" :class="{ error: codeHasBeenSelectedBefore }" required></v-select>
                                         </div>
                                         <div class="col-sm-5">
@@ -90,12 +90,12 @@
                                         </div>
                                         <div class="col-sm-2 text-right">
                                             <loader class="absolute" v-if="loaders.addCode"></loader>
-                                            <input type="submit" class="btn btn-secondary selected margin-0" value="Add" 
+                                            <input type="submit" class="btn btn-secondary selected margin-0" value="Add"
                                                 :disabled="!selectedProblem.newCode.code || !(selectedProblem.newCode.selectedCode || {}).value || codeHasBeenSelectedBefore" />
                                         </div>
                                     </form>
                                 </div>
-                                
+
                             </div>
                     </div>
                 </div>
@@ -209,10 +209,10 @@
             addCode(e) {
                 e.preventDefault()
                 this.loaders.addCode = true
-                return this.axios.post(rootUrl(`api/problems/codes`), { 
-                                problem_id: this.selectedProblem.id, 
+                return this.axios.post(rootUrl(`api/problems/codes`), {
+                                problem_id: this.selectedProblem.id,
                                 problem_code_system_id: this.selectedProblem.newCode.selectedCode.value,
-                                code: this.selectedProblem.newCode.code 
+                                code: this.selectedProblem.newCode.code
                             }).then(response => {
                     console.log('full-conditions:add-code', response.data)
                     this.loaders.addCode = false
@@ -257,7 +257,7 @@
     .btn.btn-secondary {
         background-color: #ddd;
         padding: 10 20 10 20;
-        margin-right: 15px; 
+        margin-right: 15px;
         margin-bottom: 5px;
     }
 

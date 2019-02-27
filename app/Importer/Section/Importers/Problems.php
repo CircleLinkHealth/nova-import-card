@@ -56,26 +56,26 @@ class Problems extends BaseImporter
                 if ( ! validProblemName($problemCodes->cons_name)) {
                     return ['do_not_import' => $itemLog->id];
                 }
-
-                $cpmProblemId = $this->getCpmProblemId($itemLog, $problemCodes->cons_name);
+    
+                $cpmProblem = optional($this->getCpmProblem($itemLog, $problemCodes->cons_name));
 
                 //if problem is Diabetes and string contains 2, it's probably diabetes type 2
-                if (1 == $cpmProblemId && str_contains($problemCodes->cons_name, ['2'])) {
-                    $cpmProblemId = $this->cpmProblems->firstWhere(
-                                                'name',
-                                                'Diabetes Type 2'
-                                            )->id;
+                if (1 == $cpmProblem->id && str_contains($problemCodes->cons_name, ['2'])) {
+                    $cpmProblem = $this->cpmProblems->firstWhere(
+                        'name',
+                        'Diabetes Type 2'
+                                            );
                 }
                 //if problem is Diabetes and string contains 1, it's probably diabetes type 1
-                elseif (1 == $cpmProblemId && str_contains(
-                                            $problemCodes->cons_name,
-                                                ['1']
+                elseif (1 == $cpmProblem->id && str_contains(
+                    $problemCodes->cons_name,
+                    ['1']
                                         )) {
-                    $cpmProblemId = $this->cpmProblems->firstWhere(
-                                                'name',
-                                                'Diabetes Type 1'
-                                            )->id;
-                } elseif (1 == $cpmProblemId) {
+                    $cpmProblem = $this->cpmProblems->firstWhere(
+                        'name',
+                        'Diabetes Type 1'
+                                            );
+                } elseif (1 == $cpmProblem->id) {
                     return ['do_not_import' => $itemLog->id];
                 }
 
@@ -86,12 +86,13 @@ class Problems extends BaseImporter
                         'imported_medical_record_id' => $importedMedicalRecord->id,
                         'ccd_problem_log_id'         => $itemLog->id,
                         'name'                       => $problemCodes->cons_name,
-                        'cpm_problem_id'             => $cpmProblemId,
+                        'cpm_problem_id'             => $cpmProblem->id,
                     ],
-                    'itemLog' => $itemLog,
+                    'is_behavioral' => $cpmProblem->is_behavioral,
+                    'itemLog'       => $itemLog,
                 ];
 
-                if ($cpmProblemId) {
+                if ($cpmProblem) {
                     return ['monitored' => $problem];
                 }
 
@@ -125,7 +126,15 @@ class Problems extends BaseImporter
         return $problemsGroups;
     }
 
-    private function getCpmProblemId(ProblemLog $itemLog, $problemName)
+    /**
+     * Get the CpmProblem for a ProblemLog.
+     *
+     * @param ProblemLog $itemLog
+     * @param $problemName
+     *
+     * @return CpmProblem|null
+     */
+    private function getCpmProblem(ProblemLog $itemLog, $problemName)
     {
         if ( ! validProblemName($problemName)) {
             return null;
@@ -135,11 +144,13 @@ class Problems extends BaseImporter
             ->codeMap();
 
         foreach ($map as $codeSystemName => $code) {
-            $problemMap = SnomedToCpmIcdMap::where($codeSystemName, '=', $code)
+            $problemMap = SnomedToCpmIcdMap::with('cpmProblem')
+                ->whereHas('cpmProblem')
+                ->where($codeSystemName, '=', $code)
                 ->first();
 
             if ($problemMap) {
-                return $problemMap->cpm_problem_id;
+                return $problemMap->cpmProblem;
             }
         }
 
@@ -162,9 +173,9 @@ class Problems extends BaseImporter
 
                 if (str_contains(strtolower($problemName), strtolower($keyword)) || str_contains(
                     strtolower($keyword),
-                        strtolower($problemName)
+                    strtolower($problemName)
                 )) {
-                    return $cpmProblem->id;
+                    return $cpmProblem;
                 }
             }
         }
