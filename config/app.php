@@ -16,6 +16,8 @@ use App\View\Composers\ProviderUITimerComposer;
 use App\View\Composers\FabComposer;
 use App\View\Composers\SAAS\Admin\ManageInternalUser;
 use Carbon\Carbon;
+use Davibennun\LaravelRaygun\Facades\Raygun;
+use Davibennun\LaravelRaygun\LaravelRaygunServiceProvider;
 
 return [
     /*
@@ -194,6 +196,7 @@ return [
         Illuminate\View\ViewServiceProvider::class,
         
         // Application Service Providers...
+        LaravelRaygunServiceProvider::class,
         Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class,
         Barryvdh\Snappy\ServiceProvider::class,
         
@@ -295,5 +298,6 @@ return [
         'GoogleCalendar' => Spatie\GoogleCalendar\GoogleCalendarFacade::class,
         'Swagger'        => L5Swagger\L5SwaggerServiceProvider::class,
         'UrlShortener'   => Waavi\UrlShortener\Facades\UrlShortener::class,
+        'Raygun'         => Raygun::class,
     ],
 ];
