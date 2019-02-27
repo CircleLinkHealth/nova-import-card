@@ -95,6 +95,10 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $e)
     {
+        if (config('session.enable_raygun_crash_reporting')) {
+            \Raygun::SendException($e);
+        }
+        
         parent::report($e);
 
         if ( ! $this->shouldReport($e)) {
