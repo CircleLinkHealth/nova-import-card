@@ -1111,6 +1111,15 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses' => 'Billing\PracticeInvoiceController@make',
                     'as'   => 'monthly.billing.make',
                 ])->middleware('permission:patientSummary.read,patientProblem.read,chargeableService.read,practice.read');
+
+                Route::post('/data', [
+                    'uses' => 'Billing\PracticeInvoiceController@data',
+                    'as'   => 'monthly.billing.data',
+                ])->middleware('permission:patientSummary.read,patientSummary.update,patientSummary.create');
+
+                Route::get('/counts', [
+                    'uses' => 'Billing\PracticeInvoiceController@counts',
+                ])->middleware('permission:patientSummary.read');
             });
         });
     });
@@ -1445,13 +1454,9 @@ Route::group(['middleware' => 'auth'], function () {
             ], function () {
                 /*
                  * '/make'
+                 * '/data'
                  * Search for it above in a different tree of permissions
                  */
-
-                Route::post('/data', [
-                    'uses' => 'Billing\PracticeInvoiceController@data',
-                    'as'   => 'monthly.billing.data',
-                ])->middleware('permission:patientSummary.read,patientSummary.update,patientSummary.create');
 
                 Route::get('/services', [
                     'uses' => 'Billing\PracticeInvoiceController@getChargeableServices',
@@ -1486,10 +1491,6 @@ Route::group(['middleware' => 'auth'], function () {
                 Route::post('/counts', [
                     'uses' => 'Billing\PracticeInvoiceController@counts',
                     'as'   => 'monthly.billing.count',
-                ])->middleware('permission:patientSummary.read');
-
-                Route::get('/counts', [
-                    'uses' => 'Billing\PracticeInvoiceController@counts',
                 ])->middleware('permission:patientSummary.read');
 
                 Route::post('/storeProblem', [

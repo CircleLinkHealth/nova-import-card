@@ -14,7 +14,7 @@
             <div class="row">
                 <div class="col-sm-12">
                     <div class="row">
-                        <div class="col-sm-6">
+                        <div class="col-sm-7">
                             <div class="row">
                                 <div class="col-sm-4">
                                     <div>
@@ -46,48 +46,59 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-6">
-                            <form v-if="!isSoftwareOnly">
-                                <div class="row">
-                                    <div class="col-sm-8">
-                                        <div>
-                                            <label v-if="typeof practice !== 'undefined'">
-                                                Set <a target="_blank"
-                                                       :href="`/practices/${practice.name}/chargeable-services`">Chargeable Services</a>
-                                            </label>
+                        <div class="col-sm-5">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <form v-if="!isSoftwareOnly">
+                                        <div class="row">
+                                            <div class="col-sm-8">
+                                                <div>
+                                                    <label v-if="typeof practice !== 'undefined'">
+                                                        Set <a target="_blank"
+                                                               :href="`/practices/${practice.name}/chargeable-services`">Chargeable
+                                                        Services</a>
+                                                    </label>
+                                                </div>
+                                                <select2 class="form-control" v-model="selectedService"
+                                                         :disabled="isClosed">
+                                                    <option :value="null">Set Default Code</option>
+                                                    <option v-for="(service, index) in selectedPracticeChargeableServices"
+                                                            :key="index"
+                                                            :value="service.id">{{service.code}}
+                                                    </option>
+                                                </select2>
+                                            </div>
+                                            <div class="col-sm-4 text-right">
+                                                <div>&nbsp;</div>
+                                                <div>
+                                                    <button class="btn btn-info" @click="attachChargeableService"
+                                                            :disabled="loaders.chargeableServices || isClosed">Attach
+                                                    </button>
+                                                    <button class="btn btn-danger" @click="detachChargeableService"
+                                                            :disabled="loaders.chargeableServices || isClosed">Detach
+                                                    </button>
+                                                    <loader class="inline-block absolute"
+                                                            v-if="loaders.chargeableServices"></loader>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <select2 class="form-control" v-model="selectedService" :disabled="isClosed">
-                                            <option :value="null">Set Default Code</option>
-                                            <option v-for="(service, index) in selectedPracticeChargeableServices"
-                                                    :key="index"
-                                                    :value="service.id">{{service.code}}
-                                            </option>
-                                        </select2>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div>&nbsp;</div>
-                                        <div>
-                                            <button class="btn btn-info" @click="attachChargeableService"
-                                                    :disabled="loaders.chargeableServices || isClosed">Attach
-                                            </button>
-                                            <button class="btn btn-danger" @click="detachChargeableService"
-                                                    :disabled="loaders.chargeableServices || isClosed">Detach
-                                            </button>
-                                            <loader class="inline-block absolute"
-                                                    v-if="loaders.chargeableServices"></loader>
-                                        </div>
-                                    </div>
+                                    </form>
                                 </div>
-                            </form>
+                                <div class="col-sm-12 text-right" v-if="tableData.length > 0">
+                                    <div>&nbsp;</div>
+                                    <button class="btn btn-danger" v-if="!isClosed" @click="closeMonth">Save and Lock
+                                        Month
+                                    </button>
+                                    <loader v-if="loaders.closeMonth"></loader>
+                                    <button class="btn btn-success" v-if="isClosed" @click="openMonth">Unlock / Edit
+                                        Month
+                                    </button>
+                                    <loader v-if="loaders.openMonth"></loader>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-sm-12 text-right" v-if="tableData.length > 0">
-                <button class="btn btn-danger" v-if="!isClosed" @click="closeMonth">Save and Lock Month</button>
-                <loader v-if="loaders.closeMonth"></loader>
-                <button class="btn btn-success" v-if="isClosed" @click="openMonth">Unlock / Edit Month</button>
-                <loader v-if="loaders.openMonth"></loader>
             </div>
             <div class="col-sm-12 text-center line-50 row">
                 <div class="col-sm-4">
@@ -166,7 +177,7 @@
                     </div>
                 </template>
             </v-client-table>
-            <div class="col-sm-12 text-right" v-if="tableData.length > 0">
+            <div class="text-right" v-if="tableData.length > 0">
                 <button class="btn btn-danger" v-if="!isClosed" @click="closeMonth">Save and Lock Month</button>
                 <loader v-if="loaders.closeMonth"></loader>
                 <button class="btn btn-success" v-if="isClosed" @click="openMonth">Unlock / Edit Month</button>
