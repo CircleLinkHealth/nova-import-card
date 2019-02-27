@@ -8,7 +8,6 @@ namespace App\Services\AthenaAPI;
 
 use App\Contracts\Repositories\CcdaRepository;
 use App\Contracts\Repositories\CcdaRequestRepository;
-use App\Models\CCD\CcdVendor;
 use App\Models\MedicalRecords\Ccda;
 use Carbon\Carbon;
 
@@ -64,16 +63,9 @@ class CreateAndPostPdfCareplan
                 return false;
             }
 
-            $vendor = CcdVendor::wherePracticeId($ccdaRequest->practice_id)->first();
-
-            if ( ! $vendor) {
-                return false;
-            }
-
             $ccda = $this->ccdas->create([
-                'xml'       => $xmlCcda[0]['ccda'],
-                'vendor_id' => $vendor->id,
-                'source'    => Ccda::ATHENA_API,
+                'xml'    => $xmlCcda[0]['ccda'],
+                'source' => Ccda::ATHENA_API,
             ]);
 
             $ccdaRequest->ccda_id = $ccda->id;
