@@ -76,7 +76,8 @@ if (isset($patient) && ! empty($patient)) {
                                 </div>
                                 @if(! empty(optional($errors)->messages()))
                                     <div>
-                                        <div class="alert alert-danger text-left" style="line-height: 2">
+                                        <div class="col-sm-12 alert alert-danger text-left"
+                                             style="line-height: 2; margin-top: 3px">
                                             <h4>CarePlan cannot be approved because:</h4>
                                             <ul class="list-group">
                                                 @foreach ($errors->all() as $error)
@@ -93,7 +94,8 @@ if (isset($patient) && ! empty($patient)) {
                                 @endif
 
                                 @if($showInsuranceReviewFlag)
-                                    <div class="alert alert-danger text-left" role="alert">
+                                    <div class="col-sm-12 alert alert-danger text-left" role="alert"
+                                         style="margin-top: 3px">
                                         <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                                         <span class="sr-only">Error:</span>
                                         Insurance plans in record may be expired.
@@ -141,19 +143,19 @@ if (isset($patient) && ! empty($patient)) {
                                                 @endif
                                             </template>
                                             <template slot="buttons">
-                                                <?php
-                                                $patientCarePlan = isset($patient)
-                                                    ? $patient->carePlan
-                                                    : null;
-                                                $patientCarePlanPdfs = isset($patientCarePlan)
-                                                    ? $patientCarePlan->pdfs
-                                                    : null;
-                                                $patientCarePlanPdfsHasItems = isset($patientCarePlanPdfs)
-                                                    ? $patientCarePlanPdfs->count() > 0
-                                                    : false;
-                                                ?>
+                                            <?php
+                                            $patientCarePlan = isset($patient)
+                                                ? $patient->carePlan
+                                                : null;
+                                            $patientCarePlanPdfs = isset($patientCarePlan)
+                                                ? $patientCarePlan->pdfs
+                                                : null;
+                                            $patientCarePlanPdfsHasItems = isset($patientCarePlanPdfs)
+                                                ? $patientCarePlanPdfs->count() > 0
+                                                : false;
+                                            ?>
 
-                                                @if ($patientCarePlanPdfsHasItems)
+                                            @if ($patientCarePlanPdfsHasItems)
                                                 <!--href="{{route('patient.pdf.careplan.print', ['patientId' => $patient->id])}}"-->
                                                     <a href="{{route('switch.to.pdf.careplan', ['carePlanId' => optional($patientCarePlan)->id])}}"
                                                        class="btn btn-info btn-sm inline-block">PDF CarePlans</a>
