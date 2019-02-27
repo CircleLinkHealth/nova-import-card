@@ -1,5 +1,5 @@
 <template>
-    <modal name="select-nurse" :no-title="true" :no-footer="true" :info="selectNursesModalInfo">
+    <modal name="select-nurse" :no-title="true" :no-footer="true" :info="selectNursesModalInfo" class-name="modal-select-nurse">
         <template slot-scope="props">
             <div class="row">
                 <div class="col-sm-12 text-right">
@@ -211,12 +211,11 @@
 </script>
 
 <style>
-    div.modal-container {
-        width: 600px !important;
-    }
-</style>
 
-<style>
+    .modal-select-nurse .modal-container {
+        width: 600px;
+    }
+
     .loader {
         border: 2px solid #f3f3f3;
         border-top: 2px solid #3498db;
