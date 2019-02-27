@@ -11,7 +11,7 @@
                         {{csrf_field()}}
                         <input class="btn btn-sm btn-default" aria-label="..."
                                type="submit"
-                               value="@if(auth()->user()->providerInfo->approve_own_care_plans)Approve all practice patients @else Approve my patients only @endif">
+                               value="@if(auth()->user()->providerInfo->approve_own_care_plans)View all Practice Care Plans @else View Assigned Care Plans Only @endif">
                     </form>
                 @endif
 

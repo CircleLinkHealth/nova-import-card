@@ -73,6 +73,13 @@ class NurseContactWindow extends \App\BaseModel
             ->get();
     }
 
+    public function numberOfHoursCommitted() {
+        $start = $this->date->copy()->setTimeFromTimeString($this->window_time_start);
+        $end = $this->date->copy()->setTimeFromTimeString($this->window_time_end);
+
+        return $start->diffInHours($end);
+    }
+
     // END RELATIONSHIPS
 
     public function nurse()

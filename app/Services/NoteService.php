@@ -180,14 +180,14 @@ class NoteService
     }
 
     public function getForwardedNotesWithRangeForProvider(
-        $provider,
+        $providers,
         $start,
         $end
     ) {
         $patients = User::whereHas('careTeamMembers', function ($q) use (
-            $provider
+            $providers
         ) {
-            $q->where('member_user_id', $provider)
+            $q->whereIn('member_user_id', $providers)
                 ->where('type', 'billing_provider');
         })->pluck('id');
 
@@ -251,16 +251,16 @@ class NoteService
     //Get all notes that have been sent to anyone for a given provider with specified date range
 
     public function getNotesWithRangeForProvider(
-        $provider,
+        $providers,
         $start,
         $end
     ) {
         $patients = User::whereHas(
             'careTeamMembers',
             function ($q) use (
-                $provider
+                $providers
             ) {
-                $q->where('member_user_id', $provider)
+                $q->whereIn('member_user_id', $providers)
                     ->where('type', 'billing_provider');
             }
         )->pluck('id');

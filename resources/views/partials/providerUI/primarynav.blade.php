@@ -1,4 +1,5 @@
 <?php
+$noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
 if (isset($patient)) {
     //$patient can be a User or Patient model.
     $seconds     = $patient->getCcmTime();
@@ -42,7 +43,7 @@ if (isset($patient)) {
 
         <div class="hidden-xs col-lg-7 col-sm-12">
             <ul class="nav navbar-nav navbar-right">
-                @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && auth()->user()->hasRole('care-center') && isset($patient) && optional($patient)->id && (!isset($noLiveCountTimeTracking)))
+                @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && auth()->user()->hasRole('care-center') && isset($patient) && optional($patient)->id && !$noLiveCountTimeTracking)
                     <li>
                         <time-tracker-call-mode ref="timeTrackerCallMode"
                                                 :twilio-enabled="@json(config('services.twilio.enabled') && ($patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : false))"
@@ -85,7 +86,7 @@ if (isset($patient)) {
                         style="line-height: 20px;">
                         <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo" :hide-tracker="true"
                                       :twilio-enabled="@json(config('services.twilio.enabled'))"
-                                      :no-live-count="{{$noLiveCountTimeTracking ?? true}}"
+                                      :no-live-count="@json($noLiveCountTimeTracking)"
                                       :override-timeout="{{config('services.time-tracker.override-timeout')}}"></time-tracker>
                     </li>
                 @endif

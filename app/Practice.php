@@ -276,6 +276,12 @@ class Practice extends BaseModel implements HasMedia
         return array_map('trim', explode(',', $this->weekly_report_recipients));
     }
 
+    public function setDirectMailCareplanApprovalReminders($bool){
+        $this->cpmSettings->dm_careplan_approval_reminders = $bool;
+        $this->cpmSettings->save();
+
+    }
+
     public function isTwilioEnabled()
     {
         $settings = $this->cpmSettings();

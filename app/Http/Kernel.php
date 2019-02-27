@@ -13,7 +13,6 @@ use App\Http\Middleware\CheckCarePlanMode;
 use App\Http\Middleware\CheckOnboardingInvite;
 use App\Http\Middleware\CheckWebSocketServer;
 use App\Http\Middleware\DisableDebugbar;
-use App\Http\Middleware\DisableHttpOptions;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\LogoutIfAccessDisabled;
 use App\Http\Middleware\PatientProgramSecurity;
@@ -44,7 +43,6 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middleware = [
-        DisableHttpOptions::class,
         CheckForMaintenanceMode::class,
         TrustProxies::class,
         FrameGuard::class,
@@ -93,7 +91,6 @@ class Kernel extends HttpKernel
         //CLH Middleware
         'ability'                    => CerberusAbility::class,
         'aprima.ccdapi.auth.adapter' => AprimaCcdApiAuthAdapter::class,
-        'disable-debugbar'           => DisableDebugbar::class,
         'permission'                 => CerberusPermission::class,
         'patientProgramSecurity'     => PatientProgramSecurity::class,
         'checkWebSocketServer'       => CheckWebSocketServer::class,

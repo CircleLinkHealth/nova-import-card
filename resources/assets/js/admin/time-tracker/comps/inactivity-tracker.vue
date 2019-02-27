@@ -25,8 +25,8 @@
                 isModalShown: false,
                 ALERT_TIMEOUT: 120,
                 LOGOUT_TIMEOUT: 600,
-                ALERT_TIMEOUT_CALL_MODE: 900,
-                LOGOUT_TIMEOUT_CALL_MODE: 1200
+                ALERT_TIMEOUT_CALL_MODE: 1800,
+                LOGOUT_TIMEOUT_CALL_MODE: 3600
             };
         },
         components: {

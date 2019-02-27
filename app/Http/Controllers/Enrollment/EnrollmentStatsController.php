@@ -244,11 +244,11 @@ class EnrollmentStatsController extends Controller
 
             $data[$practice->id]['labor_hours'] = secondsToHHMM($total_time);
 
-            $enrollers = Enrollee::select(DB::raw('care_ambassador_id, sum(total_time_spent) as total'))
+            $enrollers = Enrollee::select(DB::raw('care_ambassador_user_id, sum(total_time_spent) as total'))
                 ->where('practice_id', $practice->id)
                 ->where('last_attempt_at', '>=', $start)
                 ->where('last_attempt_at', '<=', $end)
-                ->groupBy('care_ambassador_id')->pluck('total', 'care_ambassador_id');
+                ->groupBy('care_ambassador_user_id')->pluck('total', 'care_ambassador_user_id');
 
             $data[$practice->id]['total_cost'] = 0;
 

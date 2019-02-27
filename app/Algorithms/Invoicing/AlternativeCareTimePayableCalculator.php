@@ -83,7 +83,7 @@ class AlternativeCareTimePayableCalculator
         $ccm_after_under_120  = $ccm_after_activity < 7200;
         $ccm_after_over_120   = $ccm_after_activity >= 7200;
 
-        debug(['before' => $ccm_before_activity, 'after' => $ccm_after_activity]);
+//        debug(['before' => $ccm_before_activity, 'after' => $ccm_after_activity]);
 
         if ($isComplex) {
 //            dd($ccm_after_activity, $ccm_before_activity);

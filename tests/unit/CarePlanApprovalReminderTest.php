@@ -10,6 +10,8 @@ use App\CarePlan;
 use App\Notifications\CarePlanApprovalReminder;
 use App\Patient;
 use App\Practice;
+use App\Services\PhiMail\IncomingMessageHandler;
+use App\Services\PhiMail\PhiMail;
 use Illuminate\Support\Facades\Notification;
 use Tests\Helpers\CarePlanHelpers;
 use Tests\Helpers\UserHelpers;
@@ -18,6 +20,8 @@ use Tests\TestCase;
 class CarePlanApprovalReminderTest extends TestCase
 {
     use CarePlanHelpers, UserHelpers;
+
+    private $directMail;
     private $patient;
     private $practice;
 
@@ -26,6 +30,10 @@ class CarePlanApprovalReminderTest extends TestCase
     protected function setUp()
     {
         parent::setUp();
+
+        $this->directMail = new PhiMail(
+            app()->make(IncomingMessageHandler::class)
+        );
 
         $this->practice = factory(Practice::class)->create();
 
@@ -48,6 +56,31 @@ class CarePlanApprovalReminderTest extends TestCase
         $this->assertArrayHasKey('numberOfCareplans', $databaseData);
     }
 
+    public function checkToDirectMail($notification, $recipient)
+    {
+        $data = $notification->toDirectMail($recipient);
+
+        $this->assertArrayHasKey('body', $data);
+        $this->assertArrayHasKey('subject', $data);
+
+        //replicate DirectMailChannel
+        $result = $this->directMail->send(
+            $recipient->emr_direct_address,
+            null,
+            null,
+            null,
+            null,
+            $data['body'],
+            $data['subject']
+        );
+
+        foreach ($result as $sent) {
+            $this->assertTrue($sent->succeeded);
+            $this->assertEquals('circlelinkhealth@test.directproject.net', $sent->recipient);
+            $this->assertNull($sent->errorText);
+        }
+    }
+
     public function checkToMail($notification, $recipient, $numberOfCareplans)
     {
         $mailData = $notification->toMail($recipient)->build();
@@ -57,6 +90,37 @@ class CarePlanApprovalReminderTest extends TestCase
         $this->assertEquals("$numberOfCareplans CircleLink Care Plan(s) for your Approval!", $mailData->subject);
         $this->assertEquals($expectedTo, $mailData->to);
         $this->assertEquals('emails.careplansPendingApproval', $mailData->view);
+    }
+
+    /**
+     * This test is needed because the CarePlanApprovalReminder Notification checks for practice->cpmSettings->dm_careplan_approval_reminders,
+     * to determine if the notification will be sent via Mail or via DirectMail.
+     */
+    public function test_direct_mail_notification_was_sent()
+    {
+        //Set
+        Notification::fake();
+
+        $this->patient->setCarePlanStatus(CarePlan::QA_APPROVED);
+        $numberOfCareplans                  = 10;
+        $this->provider->emr_direct_address = 'circlelinkhealth@test.directproject.net';
+        $this->provider->save();
+
+        $this->provider->primaryPractice->setDirectMailCareplanApprovalReminders(1);
+
+        //send notification
+        $this->provider->sendCarePlanApprovalReminder($numberOfCareplans);
+
+        //assert set
+        Notification::assertSentTo(
+            $this->provider,
+            CarePlanApprovalReminder::class,
+            function ($notification) use ($numberOfCareplans) {
+                $this->checkToDirectMail($notification, $this->provider);
+
+                return true;
+            }
+        );
     }
 
     /**
@@ -72,7 +136,7 @@ class CarePlanApprovalReminderTest extends TestCase
         $numberOfCareplans = 10;
 
         //send notification
-        $this->provider->sendCarePlanApprovalReminderEmail($numberOfCareplans);
+        $this->provider->sendCarePlanApprovalReminder($numberOfCareplans);
 
         //assert set
         Notification::assertSentTo(

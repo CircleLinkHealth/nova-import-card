@@ -21,15 +21,50 @@ class DirectMailChannel
     /**
      * Send the given notification.
      *
-     * @param mixed                                  $notifiable
+     * @param mixed $notifiable
      * @param \Illuminate\Notifications\Notification $notification
      */
     public function send($notifiable, Notification $notification)
     {
         if ($notifiable->emr_direct_address) {
-            $filePath = $notification->toDirectMail($notifiable);
-            $fileName = str_substr_after($filePath, '/');
-            $this->dm->send($notifiable->emr_direct_address, $filePath, $fileName);
+            $data = $this->getParams($notifiable, $notification);
+
+            $this->dm->send(
+                $notifiable->emr_direct_address,
+                $data['filePath'],
+                $data['fileName'],
+                $data['ccdaAttachmentPath'],
+                $data['patient'],
+                $data['body'],
+                $data['subject']);
         }
+    }
+
+    private function getParams($notifiable, Notification $notification): array
+    {
+        $data = $notification->toDirectMail($notifiable);
+
+        $filePath = array_key_exists('filePath', $data)
+            ? $data['filePath']
+            : null;
+
+        return [
+            'filePath'           => $filePath,
+            'fileName'           => str_substr_after($filePath, '/'),
+            'ccdaAttachmentPath' => array_key_exists('ccdaAttachmentPath', $data)
+                ? $data['ccdaAttachmentPath']
+                : null,
+            'patient'            => array_key_exists('patient', $data)
+                ? $data['patient']
+                : null,
+            'body'               => array_key_exists('body', $data)
+                ? $data['body']
+                : null,
+            'subject'            => array_key_exists('subject', $data)
+                ? $data['subject']
+                : null,
+        ];
+
+
     }
 }

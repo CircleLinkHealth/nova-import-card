@@ -44,7 +44,7 @@ class EnrollmentConsentController extends Controller
             $status = '';
 
             //if the patient has a ca_id, then it's a phone call
-            if (null != $enrollee->care_ambassador_id) {
+            if (null != $enrollee->care_ambassador_user_id) {
                 //if the patient wasn't reached, show how many attempts were made
                 if ('utc' == $enrollee->status) {
                     $status = 'Call:'.$enrollee->attempt_count.'x';

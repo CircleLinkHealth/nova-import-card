@@ -17,6 +17,7 @@ use App\Jobs\ProcessCcda;
 use App\Jobs\ProcessEligibilityFromGoogleDrive;
 use App\Models\MedicalRecords\Ccda;
 use App\Practice;
+use App\Services\Eligibility\Csv\CsvPatientList;
 use App\Services\GoogleDrive;
 use App\Traits\ValidatesEligibility;
 use Carbon\Carbon;
@@ -31,7 +32,7 @@ class ProcessEligibilityService
      * @param int   $practiceId
      * @param array $options
      *
-     * @return $this|\Illuminate\Database\Eloquent\Model
+     * @return EligibilityBatch
      */
     public function createBatch($type, int $practiceId, $options = [])
     {
@@ -116,25 +117,24 @@ class ProcessEligibilityService
             ]
         );
     }
-
+    
     /**
-     * @param $patientList
      * @param int $practiceId
      * @param $filterLastEncounter
      * @param $filterInsurance
      * @param $filterProblems
      *
-     * @return \Illuminate\Database\Eloquent\Model|ProcessEligibilityService
+     * @return EligibilityBatch
      */
     public function createSingleCSVBatch(
-        $patientList,
         int $practiceId,
         $filterLastEncounter,
         $filterInsurance,
         $filterProblems
     ) {
         return $this->createBatch(EligibilityBatch::TYPE_ONE_CSV, $practiceId, [
-            'patientList'         => $patientList,
+            //SAVING patientList has been DEPRECATED on Jan 11 2019
+            'patientList'         => [],
             'filterLastEncounter' => (bool) $filterLastEncounter,
             'filterInsurance'     => (bool) $filterInsurance,
             'filterProblems'      => (bool) $filterProblems,
@@ -538,20 +538,7 @@ class ProcessEligibilityService
 
             $patientList[] = $patient;
 
-            $patient = $this->transformCsvRow($patient);
-
-            $validator = $this->validateRow($patient);
-
-            $hash = $batch->practice->name.$patient['first_name'].$patient['last_name'].$patient['mrn'];
-
-            $job = EligibilityJob::create([
-                'batch_id' => $batch->id,
-                'hash'     => $hash,
-                'data'     => $patient,
-                'errors'   => $validator->fails()
-                    ? $validator->errors()
-                    : null,
-            ]);
+            $job = $this->createEligibilityJobFromCsvRow($patient, $batch);
 
             $patient['eligibility_job_id'] = $job->id;
         }
@@ -726,5 +713,59 @@ class ProcessEligibilityService
         }
 
         return $patient;
+    }
+    
+    /**
+     *
+     *
+     * @param array $patient
+     * @param EligibilityBatch $batch
+     *
+     * @return EligibilityJob|\Illuminate\Database\Eloquent\Model
+     */
+    public function createEligibilityJobFromCsvRow(array $patient, EligibilityBatch $batch)
+    {
+        $patient = $this->transformCsvRow($patient);
+    
+        $validator = $this->validateRow($patient);
+    
+        $hash = $batch->practice->name.$patient['first_name'].$patient['last_name'].$patient['mrn'];
+    
+        $job = EligibilityJob::create([
+                                          'batch_id' => $batch->id,
+                                          'hash'     => $hash,
+                                          'data'     => $patient,
+                                          'errors'   => $validator->fails()
+                                              ? $validator->errors()
+                                              : null,
+                                      ]);
+        
+        return $job;
+    }
+    
+    /**
+     * @param EligibilityBatch $batch
+     * @param $patientListCsvFilePath
+     *
+     * @return array
+     * @throws \Exception
+     */
+    public function createEligibilityJobFromCsvBatch(EligibilityBatch $batch, $patientListCsvFilePath)
+    {
+        return iterateCsv(
+            $patientListCsvFilePath,
+            function ($row) use ($batch) {
+                $csvPatientList = new CsvPatientList(collect([$row]));
+                $isValid        = $csvPatientList->guessValidator();
+            
+                if ( ! $isValid) {
+                    return [
+                        'error' => 'This csv does not match any of the supported templates. you can see supported templates here https://drive.google.com/drive/folders/1zpiBkegqjTioZGzdoPqZQAqWvXkaKEgB',
+                    ];
+                }
+            
+                return $this->createEligibilityJobFromCsvRow($row, $batch);
+            }
+        );
     }
 }

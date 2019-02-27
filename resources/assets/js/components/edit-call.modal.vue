@@ -216,6 +216,8 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
                 formData['type'] = 'call';
                 formData['family_override'] = 1;
 
+                Event.$emit('notifications-edit-call-modal:dismissAll');
+
                 this.loaders.submit = true;
                 return this.axios.post(rootUrl(`manage-patients/${formData.inbound_cpm_id}/calls/reschedule`), formData)
                     .then((response, status) => {

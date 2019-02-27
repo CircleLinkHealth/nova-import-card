@@ -30,6 +30,8 @@ class TwilioController extends Controller
     const CONFERENCE_PARTICIPANT_JOIN = 'participant-join';
     const CONFERENCE_PARTICIPANT_LEAVE = 'participant-leave';
 
+    const DIAL_TIMEOUT_SECONDS = 90;
+
     private $client;
     private $token;
 
@@ -356,6 +358,7 @@ class TwilioController extends Controller
             ->participants
             ->create($input['From'], $input['To'], [
                 'endConferenceOnExit' => false,
+                'timeout'             => TwilioController::DIAL_TIMEOUT_SECONDS,
             ]);
 
         return response()->json(['call_sid' => $participant->callSid]);
@@ -480,8 +483,8 @@ class TwilioController extends Controller
                     ? Rule::phone()->detect()->country('US')
                     : '',
             ],
-            'InboundUserId'    => 'required',
-            'OutboundUserId'   => 'required',
+            'InboundUserId'    => '',
+            'OutboundUserId'   => '',
             'IsUnlistedNumber' => 'nullable|boolean',
             'IsCallToPatient'  => 'nullable|boolean',
         ]);
@@ -507,6 +510,7 @@ class TwilioController extends Controller
             'recordingStatusCallback'       => route('twilio.call.recording.status'),
             'recordingStatusCallbackMethod' => 'POST',
             'recordingStatusCallbackEvent'  => 'completed',
+            'timeout'                       => TwilioController::DIAL_TIMEOUT_SECONDS,
         ]);
         $dial->number($input['To'], [
             'statusCallback'      => route('twilio.call.number.status'),

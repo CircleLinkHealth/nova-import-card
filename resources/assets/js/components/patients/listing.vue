@@ -8,9 +8,11 @@
         <div class="top-10">
             <loader v-if="loaders.next || loaders.practices || loaders.providers"></loader>
         </div>
-        <v-client-table ref="tblPatientList" :data="tableData" :columns="columns" :options="options" id="patient-list-table">
+        <v-client-table ref="tblPatientList" :data="tableData" :columns="columns" :options="options"
+                        id="patient-list-table">
             <template slot="name" slot-scope="props">
-                <div><a :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')">{{props.row.name}}</a></div>
+                <div><a :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')">{{props.row.name}}</a>
+                </div>
             </template>
             <template slot="provider" slot-scope="props">
                 <div>{{ props.row.provider_name }}</div>
@@ -20,36 +22,39 @@
             </template>
             <template slot="ccmStatus" slot-scope="props">
                 <div>
-                    {{ 
-                        (({ 
-                            enrolled: 'Enrolled',
-                            to_enroll: 'To Enroll',
-                            patient_rejected: 'Patient Declined',
-                            withdrawn: 'Withdrawn',
-                            paused: 'Paused',
-                            unreachable: 'Unreachable',
-                        })[props.row.ccmStatus] || props.row.ccmStatus) 
+                    {{
+                    (({
+                    enrolled: 'Enrolled',
+                    to_enroll: 'To Enroll',
+                    patient_rejected: 'Patient Declined',
+                    withdrawn: 'Withdrawn',
+                    paused: 'Paused',
+                    unreachable: 'Unreachable',
+                    })[props.row.ccmStatus] || props.row.ccmStatus)
                     }}
                 </div>
             </template>
             <template slot="h__ccmStatusDate" slot-scope="props">
-                CCM Status Date
+                CCM Status Change
             </template>
             <template slot="careplanStatus" slot-scope="props">
                 <a :href="props.row.careplanStatus === 'qa_approved' ? rootUrl('manage-patients/' + props.row.id + '/view-careplan') : null">
-                    {{ 
-                        (({ 
-                            qa_approved: 'Approve Now', 
-                            to_enroll: 'To Enroll', 
-                            provider_approved: 'Provider Approved', 
-                            none: 'None', 
-                            draft: 'Draft', 
-                            g0506: 'G0506' 
-                        })[props.row.careplanStatus] || props.row.careplanStatus) 
+                    {{
+                    (({
+                    qa_approved: 'Approve Now',
+                    to_enroll: 'To Enroll',
+                    provider_approved: 'Provider Approved',
+                    none: 'None',
+                    draft: 'Draft',
+                    g0506: 'G0506'
+                    })[props.row.careplanStatus] || props.row.careplanStatus)
                     }}
                 </a>
             </template>
             <template slot="filter__ccm">
+                <div>(HH:MM:SS)</div>
+            </template>
+            <template slot="filter__bhi">
                 <div>(HH:MM:SS)</div>
             </template>
             <template slot="h__ccmStatus" slot-scope="props">
@@ -64,8 +69,8 @@
             <template slot="h__registeredOn" slot-scope="props">
                 Registered On
             </template>
-            <template slot="h__lastReading" slot-scope="props">
-                Last Reading
+            <template slot="h__bhi" slot-scope="props">
+                BHI
             </template>
             <template slot="h__ccm" slot-scope="props">
                 CCM
@@ -73,29 +78,31 @@
         </v-client-table>
         <div class="row">
             <div class="col-sm-8">
-                <input type="button" class="btn btn-success" 
-                            :value="'Show by ' + (nameDisplayType ? 'First' : 'Last') + ' Name'" @click="changeNameDisplayType" >
+                <input type="button" class="btn btn-success"
+                       :value="'Show by ' + (nameDisplayType ? 'First' : 'Last') + ' Name'"
+                       @click="changeNameDisplayType">
                 <span class="pad-10"></span>
 
                 <a class="btn btn-success" :class="{ disabled: loaders.pdf }" @click="exportPdf"
-                    :href="rootUrl('manage-patients/listing/pdf')" download="patient-list.pdf">Export as PDF</a>
+                   :href="rootUrl('manage-patients/listing/pdf')" download="patient-list.pdf">Export as PDF</a>
                 <span class="pad-10"></span>
 
                 <input type="button" class="btn btn-success" :class="{ disabled: loaders.excel }"
-                            :value="exportCSVText" @click="exportCSV" >
+                       :value="exportCSVText" @click="exportCSV">
                 <span class="pad-10"></span>
 
-                <input type="button" class="btn btn-success" 
-                            :value="(columns.includes('program') ? 'Hide' : 'Show') + ' Program'" @click="toggleProgramColumn" >
+                <input type="button" class="btn btn-success"
+                       :value="(columns.includes('program') ? 'Hide' : 'Show') + ' Program'"
+                       @click="toggleProgramColumn">
             </div>
         </div>
     </div>
 </template>
 
 <script>
-    import { rootUrl } from '../../app.config.js'
-    import { Event } from 'vue-tables-2'
-    import { CancelToken } from 'axios'
+    import {rootUrl} from '../../app.config.js'
+    import {Event} from 'vue-tables-2'
+    import {CancelToken} from 'axios'
     import moment from 'moment'
     import loader from '../loader'
 
@@ -124,7 +131,7 @@
                 practices: [],
                 providersForSelect: [],
                 nameDisplayType: NameDisplayType.FirstName,
-                columns: ['name', 'provider', 'ccmStatus', 'ccmStatusDate','careplanStatus', 'dob', 'phone', 'age', 'registeredOn', 'lastReading', 'ccm'],
+                columns: ['name', 'provider', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'dob', 'phone', 'age', 'registeredOn', 'bhi', 'ccm'],
                 loaders: {
                     next: false,
                     practices: null,
@@ -142,26 +149,29 @@
             options() {
                 return {
                     filterByColumn: true,
-                    sortable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'dob', 'age', 'registeredOn', 'ccm'],
-                    filterable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'dob', 'phone', 'age', 'registeredOn', 'lastReading'],
+                    sortable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'dob', 'age', 'registeredOn', 'bhi', 'ccm'],
+                    filterable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'dob', 'phone', 'age', 'registeredOn'],
                     listColumns: {
                         provider: this.providersForSelect,
-                        ccmStatus: [ 
-                                        { id: 'enrolled', text: 'enrolled' }, 
-                                        { id: 'paused', text: 'paused' }, 
-                                        { id: 'withdrawn', text: 'withdrawn' },
-                                        { id: 'to_enroll', text: 'to_enroll'},
-                                        { id: 'unreachable', text: 'unreachable'},
-                                        { id: 'patient_rejected', text: 'patient_rejected'}
-                                    ],
+                        ccmStatus: [
+                            {id: 'enrolled', text: 'enrolled'},
+                            {id: 'paused', text: 'paused'},
+                            {id: 'withdrawn', text: 'withdrawn'},
+                            {id: 'to_enroll', text: 'to_enroll'},
+                            {id: 'unreachable', text: 'unreachable'},
+                            {id: 'patient_rejected', text: 'patient_rejected'}
+                        ],
                         careplanStatus: [
-                                            { id: '', text: 'none' },
-                                            { id: 'qa_approved', text: 'qa_approved' }, 
-                                            { id: 'provider_approved', text: 'provider_approved' }, 
-                                            { id: 'g0506', text: 'g0506' },
-                                            { id: 'draft', text: 'draft' }
-                                        ],
-                        program: this.practices.map(practice => ({ id: practice.id, text: practice.display_name })).sort((p1, p2) => p1.id > p2.id ? 1 : -1).distinct(practice => practice.id)
+                            {id: '', text: 'none'},
+                            {id: 'qa_approved', text: 'qa_approved'},
+                            {id: 'provider_approved', text: 'provider_approved'},
+                            {id: 'g0506', text: 'g0506'},
+                            {id: 'draft', text: 'draft'}
+                        ],
+                        program: this.practices.map(practice => ({
+                            id: practice.id,
+                            text: practice.display_name
+                        })).sort((p1, p2) => p1.id > p2.id ? 1 : -1).distinct(practice => practice.id)
                     },
                     texts: {
                         count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
@@ -177,7 +187,7 @@
                         phone: (ascending) => iSort,
                         age: (ascending) => iSort,
                         registeredOn: (ascending) => iSort,
-                        lastReading: (ascending) => iSort,
+                        bhi: (ascending) => iSort,
                         ccm: (ascending) => iSort,
                         program: (ascending) => iSort
                     }
@@ -186,20 +196,23 @@
         },
         methods: {
             rootUrl,
-            isFilterActive () {
+            isFilterActive() {
                 return this.$refs.tblPatientList ? !!Object.values(this.$refs.tblPatientList.query).reduce((a, b) => a || b) : false
             },
-            columnMapping (name) {
+            columnMapping(name) {
                 const columns = {
                     program: 'practice'
                 }
                 return columns[name] ? columns[name] : (name || '').replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) => (index == 0 ? letter.toLowerCase() : letter.toUpperCase())).replace(/\s+/g, '')
             },
-            nextPageUrl () {
+            nextPageUrl() {
                 const $table = this.$refs.tblPatientList
                 const query = $table.$data.query
-                
-                const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${encodeURIComponent(item.value)}`).join('')
+
+                const filters = Object.keys(query).map(key => ({
+                    key,
+                    value: query[key]
+                })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${encodeURIComponent(item.value)}`).join('')
                 const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
                 if (this.pagination) {
                     return rootUrl(`api/patients?page=${this.$refs.tblPatientList.page}&rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}`)
@@ -208,17 +221,20 @@
                     return rootUrl(`api/patients?rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}`)
                 }
             },
-            filterData () {
+            filterData() {
                 const $table = this.$refs.tblPatientList
                 const query = $table.$data.query
-                const activeFilters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value)
+                const activeFilters = Object.keys(query).map(key => ({
+                    key,
+                    value: query[key]
+                })).filter(item => item.value)
 
                 return activeFilters.reduce((a, filter) => {
                     a[filter.key] = filter.value
                     return a
                 }, {})
             },
-            toggleProgramColumn () {
+            toggleProgramColumn() {
                 if (this.columns.indexOf('program') >= 0) {
                     this.columns.splice(this.columns.indexOf('program'), 1)
                 }
@@ -226,14 +242,14 @@
                     this.columns.splice(2, 0, 'program')
                 }
             },
-            activateFilters () {
+            activateFilters() {
                 this.pagination = null
                 this.tableData = []
                 this.$refs.tblPatientList.setPage(1)
                 this.getPatients()
                 this.nameDisplayType = NameDisplayType.FirstName
             },
-            changeNameDisplayType () {
+            changeNameDisplayType() {
                 if (this.nameDisplayType !== NameDisplayType.FirstName) {
                     this.tableData.forEach(patient => {
                         if (patient.lastName && patient.firstName) patient.name = patient.firstName + ' ' + patient.lastName
@@ -261,7 +277,10 @@
                 this.loaders.providers = true
                 return this.axios.get(rootUrl('api/providers/list')).then(response => {
                     console.log('patient-list:providers', response.data)
-                    this.providersForSelect = (response.data || []).map(provider => ({ id: provider.id, text: provider.name })).filter(provider => !!provider.text).sort((a, b) => a.text < b.text ? -1 : 1)
+                    this.providersForSelect = (response.data || []).map(provider => ({
+                        id: provider.id,
+                        text: provider.name
+                    })).filter(provider => !!provider.text).sort((a, b) => a.text < b.text ? -1 : 1)
                     this.loaders.providers = false
                     return this.providersForSelect
                 }).catch(err => {
@@ -270,14 +289,17 @@
                 })
             },
             getStatusDate(patient) {
-                if (patient.patient_info.ccm_status === 'paused'){
-                    return moment(patient.patient_info.date_paused).format('YYYY-MM-DD')}
-                if (patient.patient_info.ccm_status === 'withdrawn'){
-                    return moment(patient.patient_info.date_withdrawn).format('YYYY-MM-DD')}
+                if (patient.patient_info.ccm_status === 'paused') {
+                    return moment(patient.patient_info.date_paused).format('YYYY-MM-DD')
+                }
+                if (patient.patient_info.ccm_status === 'withdrawn') {
+                    return moment(patient.patient_info.date_withdrawn).format('YYYY-MM-DD')
+                }
                 if (patient.patient_info.ccm_status === 'unreachable') {
-                    return moment(patient.patient_info.date_unreachable).format('YYYY-MM-DD')}
+                    return moment(patient.patient_info.date_unreachable).format('YYYY-MM-DD')
+                }
             },
-            getPatients () {
+            getPatients() {
                 const self = this
                 this.loaders.next = true
                 return this.axios.get(this.nextPageUrl(), {
@@ -331,12 +353,15 @@
                         patient.ccmStatusDate = (this.getStatusDate(patient) || '')
                         patient.sort_registeredOn = new Date(patient.created_at)
                         patient.sort_ccmStatusDate = new Date(patient.ccmStatusDate)
-                        patient.lastReading = (patient.last_read || '').split(' ')[0] || 'No Readings'
 
                         const pad = (num, count = 2) => '0'.repeat(count - num.toString().length) + num
                         const seconds = patient.ccm_time || 0
                         patient.ccm = pad(Math.floor(seconds / 3600), 2) + ':' + pad(Math.floor(seconds / 60) % 60, 2) + ':' + pad(seconds % 60, 2);
                         patient.sort_ccm = seconds;
+
+                        const bhiSeconds = patient.bhi_time || 0
+                        patient.bhi = pad(Math.floor(bhiSeconds / 3600), 2) + ':' + pad(Math.floor(bhiSeconds / 60) % 60, 2) + ':' + pad(bhiSeconds % 60, 2);
+                        patient.sort_bhi = bhiSeconds;
                         return patient
                     }).map(patient => {
                         const loadColumnList = (list = [], item = null) => {
@@ -357,9 +382,12 @@
                     const filterData = this.filterData()
 
                     if (!this.tableData.length) {
-                        const arr = patients.map((patient, i) => Object.assign({}, patient, { i: (i + 1) }))
+                        const arr = patients.map((patient, i) => Object.assign({}, patient, {i: (i + 1)}))
                         const total = ((this.pagination || {}).total || 0)
-                        this.tableData = [ ...arr, ...'0'.repeat(total - arr.length).split('').map((item, index) => Object.assign({ i: arr.length + index + 1, id: arr.length + index }, filterData)) ]
+                        this.tableData = [...arr, ...'0'.repeat(total - arr.length).split('').map((item, index) => Object.assign({
+                            i: arr.length + index + 1,
+                            id: arr.length + index
+                        }, filterData))]
                     }
                     else {
                         const from = ((this.pagination || {}).from || 0)
@@ -391,7 +419,7 @@
                     this.loaders.next = false
                 })
             },
-            exportCSV () {
+            exportCSV() {
                 let patients = []
                 this.loaders.excel = true
                 const download = (page = 1) => {
@@ -406,22 +434,25 @@
                     })
                 }
                 return download().then(res => {
-                    const link = document.createElement('a')
-                    link.href = 'data:attachment/text,' + 
-                    encodeURI('name,provider,program,ccm status, careplan status,dob,phone,age,registered on,ccm, ccm status date\n'
-                                + patients.join('\n'))
-                    link.download = `patient-list-${Date.now()}.csv`
-                    link.click()
-                    this.exportCSVText = 'Export as CSV'
+
+                    const str = 'name,provider,program,ccm status,careplan status,dob,phone,age,registered on,bhi,ccm,ccm status change\n'
+                        + patients.join('\n');
+                    const csvData = new Blob([str], {type: 'text/csv'});
+                    const csvUrl = URL.createObjectURL(csvData);
+                    const link = document.createElement('a');
+                    link.download = `patient-list-${Date.now()}.csv`;
+                    link.href = csvUrl;
+                    link.click();
+                    this.exportCSVText = 'Export as CSV';
                     this.loaders.excel = false
                 })
             },
-            exportPdf () {
+            exportPdf() {
                 if (!this.loaders.pdf) {
                     this.loaders.pdf = true
                 }
             },
-            createHumanReadableFilterNames () {
+            createHumanReadableFilterNames() {
                 /**
                  * make sure the filter input placeholders have human readable text like "CCM Status" instead of "ccmStatus"
                  */
@@ -432,7 +463,7 @@
 
                 window.ccmStatusSelect = ccmStatusSelect;
 
-                ([ ...(ccmStatusSelect.querySelectorAll('option') || []) ]).forEach(option => {
+                ([...(ccmStatusSelect.querySelectorAll('option') || [])]).forEach(option => {
                     option.innerText = ({
                         enrolled: 'Enrolled',
                         to_enroll: 'To Enroll',
@@ -445,7 +476,7 @@
 
                 const careplanStatusSelect = patientListElem.querySelector('select[name="vf__careplanStatus"]');
 
-                ([ ...(careplanStatusSelect.querySelectorAll('option') || []) ]).forEach(option => {
+                ([...(careplanStatusSelect.querySelectorAll('option') || [])]).forEach(option => {
                     option.innerText = ({
                         qa_approved: 'Approve Now',
                         to_enroll: 'To Enroll',
@@ -466,9 +497,6 @@
 
                 const ccmStatusDateInput = patientListElem.querySelector('input[name="vf__ccmStatusDate"]')
                 ccmStatusDateInput.setAttribute('placeholder', 'Filter by CCM Status Date')
-
-                const lastReadingInput = patientListElem.querySelector('input[name="vf__lastReading"]')
-                lastReadingInput.setAttribute('placeholder', 'Filter by Last Reading')
             },
             clearFilters() {
                 Object.keys(this.$refs.tblPatientList.query).forEach((key) => {
@@ -520,8 +548,6 @@
 
             Event.$on('vue-tables.filter::ccmStatusDate', this.activateFilters)
 
-            Event.$on('vue-tables.filter::lastReading', this.activateFilters)
-    
             Event.$on('vue-tables.sorted', this.activateFilters)
 
             Event.$on('vue-tables.limit', this.activateFilters)
@@ -532,13 +558,13 @@
 </script>
 
 <style>
-.pad-10 {
-    padding: 10px;
-}
+    .pad-10 {
+        padding: 10px;
+    }
 
-.table-bordered>tbody>tr>td {
-    white-space: nowrap;
-}
+    .table-bordered > tbody > tr > td {
+        white-space: nowrap;
+    }
 
 </style>
 

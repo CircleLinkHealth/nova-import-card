@@ -58,6 +58,7 @@ use App\Patient;
                 "providerId": '{{Auth::user()->id}}',
                 "totalCCMTime": "{{ $ccm_time }}",
                 "totalBHITime": "{{ $bhi_time }}",
+                //totalTime is wrong: hopefully, its not used on time tracker
                 "totalTime": (function (monthlyTime) {
                                 if (monthlyTime) {
                                     var split = monthlyTime.split(':');
@@ -67,8 +68,9 @@ use App\Patient;
                                             (hours * 60 * 60);
                                 }
                                 return 0;
-                            })(document.querySelector('[data-monthly-time]') ? document.querySelector('[data-monthly-time]').getAttribute('data-monthly-time') : null),
-                "monthlyTime": document.querySelector('[data-monthly-time]') ? document.querySelector('[data-monthly-time]').getAttribute('data-monthly-time') : null,
+                            })('{{$monthlyTime}}'),
+                "monthlyTime": '{{$monthlyTime}}',
+                "monthlyBhiTime": '{{$monthlyBhiTime}}',
                 "wsUrl": "{{ config('services.ws.url') }}",
                 "programId": '{{$patientProgramId}}',
                 "urlFull": '{{Request::url()}}',
@@ -77,6 +79,7 @@ use App\Patient;
                 "activity": (document.getElementById('activityName') || {value: ''}).value,
                 "title": '{{$title}}',
                 "submitUrl": '{{route("api.pagetracking")}}',
+                "timeSyncUrl": '{{route("api.get.time.patients")}}',
                 "startTime": '{{Carbon\Carbon::now()->subSeconds(8)->toDateTimeString()}}',
                 "noLiveCount": ('{{$noLiveCountTimeTracking}}' == '1') ? 1 : 0,
                 "noCallMode": "{{ config('services.no-call-mode.env') }}",

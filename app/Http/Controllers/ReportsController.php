@@ -9,6 +9,7 @@ namespace App\Http\Controllers;
 use App\CareItem;
 use App\CarePlan;
 use App\Contracts\ReportFormatter;
+use App\Http\Requests\GetUnder20MinutesReport;
 use App\Location;
 use App\Models\CPM\CpmProblem;
 use App\PageTimer;
@@ -75,15 +76,15 @@ class ReportsController extends Controller
         }
 
         $patients = User::intersectPracticesWith(auth()->user())
-            ->ofType('participant')
-            ->with('primaryPractice')
-            ->get();
+                        ->ofType('participant')
+                        ->with('primaryPractice')
+                        ->get();
 
         $u20_patients      = [];
         $billable_patients = [];
 
         // ROLLUP CATEGORIES
-        $CarePlan = [
+        $CarePlan  = [
             'Edit/Modify Care Plan',
             'Initial Care Plan Setup',
             'Care Plan View/Print',
@@ -91,11 +92,11 @@ class ReportsController extends Controller
             'Patient Item Detail Review',
             'Review Care Plan (offline)',
         ];
-        $Progress = [
+        $Progress  = [
             'Review Patient Progress (offline)',
             'Progress Report Review/Print',
         ];
-        $RPM = [
+        $RPM       = [
             'Patient Alerts Review',
             'Patient Overview Review',
             'Biometrics Data Review',
@@ -105,13 +106,13 @@ class ReportsController extends Controller
             'Medications Data Review',
             'Input Observation',
         ];
-        $TCM = [
+        $TCM       = [
             'Test (Scheduling, Communications, etc)',
             'Transitional Care Management Activities',
             'Call to Other Care Team Member',
             'Appointments',
         ];
-        $Other = [
+        $Other     = [
             'other',
             'Medication Reconciliation',
         ];
@@ -137,16 +138,16 @@ class ReportsController extends Controller
             }
             $u20_patients[$act_count]['patient_id'] = $patient->id;
             $acts                                   = DB::table('lv_activities')
-                ->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration'))
-                ->where('patient_id', $patient->id)
-                ->whereBetween('performed_at', [
-                    $start,
-                    $end,
-                ])
-                ->where('duration', '>', 1200)
-                ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
-                ->orderBy('performed_at', 'desc')
-                ->get();
+                                                        ->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration'))
+                                                        ->where('patient_id', $patient->id)
+                                                        ->whereBetween('performed_at', [
+                                                            $start,
+                                                            $end,
+                                                        ])
+                                                        ->where('duration', '>', 1200)
+                                                        ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+                                                        ->orderBy('performed_at', 'desc')
+                                                        ->get();
 
             foreach ($acts as $activity) {
                 if (in_array($activity->type, $CarePlan)) {
@@ -176,14 +177,14 @@ class ReportsController extends Controller
             ++$act_count;
         }
 
-        $reportData = 'data:'.json_encode(array_values($u20_patients)).'';
+        $reportData = 'data:' . json_encode(array_values($u20_patients)) . '';
 
         $years = [];
         for ($i = 0; $i < 3; ++$i) {
             $years[] = Carbon::now()->subYear($i)->year;
         }
 
-        $months = [
+        $months   = [
             'Jan',
             'Feb',
             'Mar',
@@ -221,7 +222,7 @@ class ReportsController extends Controller
     ) {
         $patient = User::find($patientId);
 
-        $biometrics = [
+        $biometrics       = [
             'Weight',
             'Blood_Sugar',
             'Blood_Pressure',
@@ -239,7 +240,7 @@ class ReportsController extends Controller
             $biometrics_array[$bio_name]['data'] = '';
             if ($value) {
                 foreach ($value as $key => $value) {
-                    $biometrics_array[$bio_name]['data'] .= '{ id:'.$count.', Week:\''.$value->day.'\', Reading:'.intval($value->Avg).'} ,';
+                    $biometrics_array[$bio_name]['data'] .= '{ id:' . $count . ', Week:\'' . $value->day . '\', Reading:' . intval($value->Avg) . '} ,';
                     ++$count;
                 }
             } else {
@@ -277,7 +278,7 @@ class ReportsController extends Controller
         $date  = date('Y-m-d H:i:s');
         $users = User::all();
 
-        Excel::create('CLH-Report-'.$date, function ($excel) use (
+        Excel::create('CLH-Report-' . $date, function ($excel) use (
             $date,
             $users,
             $usersCondition
@@ -287,7 +288,7 @@ class ReportsController extends Controller
 
             // Chain the setters
             $excel->setCreator('CLH System')
-                ->setCompany('CircleLink Health');
+                  ->setCompany('CircleLink Health');
 
             // Call them separately
             $excel->setDescription('CLH Report T1');
@@ -318,7 +319,7 @@ class ReportsController extends Controller
                         $condition = $usersCondition[$user->id];
                     }
                     $programName = 'N/A';
-                    $program = Practice::find($user->program_id);
+                    $program     = Practice::find($user->program_id);
                     if ($program) {
                         $programName = $program->display_name;
                     }
@@ -347,7 +348,7 @@ class ReportsController extends Controller
 
         $date = date('Y-m-d H:i:s');
 
-        Excel::create('CLH-Report-'.$date, function ($excel) use (
+        Excel::create('CLH-Report-' . $date, function ($excel) use (
             $date,
             $users
         ) {
@@ -356,7 +357,7 @@ class ReportsController extends Controller
 
             // Chain the setters
             $excel->setCreator('CLH System')
-                ->setCompany('CircleLink Health');
+                  ->setCompany('CircleLink Health');
 
             // Call them separately
             $excel->setDescription('CLH Report T2');
@@ -406,28 +407,28 @@ class ReportsController extends Controller
                     $billingProvider = User::find($user->getBillingProviderId());
                     //is billingProviderPhone to be used anywhere?
                     if ( ! $billingProvider) {
-                        $billingProviderName = '';
+                        $billingProviderName  = '';
                         $billingProviderPhone = '';
                     } else {
-                        $billingProviderName = $billingProvider->display_name;
+                        $billingProviderName  = $billingProvider->display_name;
                         $billingProviderPhone = $billingProvider->getPhone();
                     }
 
                     $location = Location::find($user->getPreferredContactLocation());
                     if ( ! $location) {
-                        $locationName = '';
-                        $locationPhone = '';
+                        $locationName    = '';
+                        $locationPhone   = '';
                         $locationAddress = '';
-                        $locationCity = '';
-                        $locationState = '';
-                        $locationZip = '';
+                        $locationCity    = '';
+                        $locationState   = '';
+                        $locationZip     = '';
                     } else {
-                        $locationName = $location->name;
-                        $locationPhone = $location->phone;
+                        $locationName    = $location->name;
+                        $locationPhone   = $location->phone;
                         $locationAddress = $location->address_line_1;
-                        $locationCity = $location->city;
-                        $locationState = $location->state;
-                        $locationZip = $location->postal_code;
+                        $locationCity    = $location->city;
+                        $locationState   = $location->state;
+                        $locationZip     = $location->postal_code;
                     }
 
                     $sheet->appendRow([
@@ -476,18 +477,18 @@ class ReportsController extends Controller
     {
         // get all users with paused ccm_status
         $users = User::with('meta')
-            ->with('roles')
-            ->whereHas('roles', function ($q) {
-                $q->where(function ($query) {
-                    $query->orWhere('name', 'care-center');
-                    $query->orWhere('name', 'no-ccm-care-center');
-                });
-            })
-            ->get();
+                     ->with('roles')
+                     ->whereHas('roles', function ($q) {
+                         $q->where(function ($query) {
+                             $query->orWhere('name', 'care-center');
+                             $query->orWhere('name', 'no-ccm-care-center');
+                         });
+                     })
+                     ->get();
 
         $date = date('Y-m-d H:i:s');
 
-        Excel::create('CLH-Report-'.$date, function ($excel) use (
+        Excel::create('CLH-Report-' . $date, function ($excel) use (
             $date,
             $users
         ) {
@@ -496,7 +497,7 @@ class ReportsController extends Controller
 
             // Chain the setters
             $excel->setCreator('CLH System')
-                ->setCompany('CircleLink Health');
+                  ->setCompany('CircleLink Health');
 
             // Call them separately
             $excel->setDescription('CLH Report T3');
@@ -534,14 +535,14 @@ class ReportsController extends Controller
                     foreach ($users as $user) {
                         // get total activity time
                         $pageTime = PageTimer::whereBetween('start_time', [
-                            $dt->format('Y-m-d').' 00:00:01',
-                            $dt->format('Y-m-d').' 23:59:59',
+                            $dt->format('Y-m-d') . ' 00:00:01',
+                            $dt->format('Y-m-d') . ' 23:59:59',
                         ])
-                            ->where('provider_id', $user->id)
-                            ->where('activity_type', '!=', '')
-                            ->sum('duration');
+                                             ->where('provider_id', $user->id)
+                                             ->where('activity_type', '!=', '')
+                                             ->sum('duration');
 
-                        $rowUserValues[] = number_format((float) ($pageTime / 60), 2, '.', '');
+                        $rowUserValues[] = number_format((float)($pageTime / 60), 2, '.', '');
                     }
 
                     $sheetRows[] = $rowUserValues;
@@ -570,14 +571,14 @@ class ReportsController extends Controller
     {
         // get all patients
         $users = User::with('roles')
-            ->whereHas('roles', function ($q) {
-                $q->where('name', 'participant');
-            })
-            ->get();
+                     ->whereHas('roles', function ($q) {
+                         $q->where('name', 'participant');
+                     })
+                     ->get();
 
         $date = date('Y-m-d H:i:s');
 
-        Excel::create('CLH-Report-'.$date, function ($excel) use (
+        Excel::create('CLH-Report-' . $date, function ($excel) use (
             $date,
             $users
         ) {
@@ -586,7 +587,7 @@ class ReportsController extends Controller
 
             // Chain the setters
             $excel->setCreator('CLH System')
-                ->setCompany('CircleLink Health');
+                  ->setCompany('CircleLink Health');
 
             // Call them separately
             $excel->setDescription('CLH Report T4');
@@ -624,7 +625,7 @@ class ReportsController extends Controller
                     }
 
                     // provider
-                    $billingProvider = User::find($user->billingProviderID);
+                    $billingProvider     = User::find($user->billingProviderID);
                     $billingProviderName = '';
                     if ($billingProvider) {
                         $billingProviderName = $billingProvider->display_name;
@@ -632,7 +633,7 @@ class ReportsController extends Controller
 
                     // program
                     $programName = 'N/A';
-                    $program = Practice::find($user->program_id);
+                    $program     = Practice::find($user->program_id);
                     if ($program) {
                         $programName = $program->display_name;
                     }
@@ -642,47 +643,47 @@ class ReportsController extends Controller
                     if ($seconds < 600) {
                         //continue 1;
                     }
-                    $H = floor($seconds / 3600);
-                    $i = ($seconds / 60) % 60;
-                    $s = $seconds % 60;
+                    $H           = floor($seconds / 3600);
+                    $i           = ($seconds / 60) % 60;
+                    $s           = $seconds % 60;
                     $monthlyTime = sprintf('%03d:%02d', $i, $s);
 
                     $activity1comment = '';
-                    $activity1status = '';
-                    $activity1date = '';
+                    $activity1status  = '';
+                    $activity1date    = '';
                     $activity2comment = '';
-                    $activity2status = '';
-                    $activity2date = '';
+                    $activity2status  = '';
+                    $activity2date    = '';
                     $activity3comment = '';
-                    $activity3status = '';
-                    $activity3date = '';
-                    $activities = $user->notes()
-                        ->orderBy('performed_at', 'DESC')
-                        ->limit(3)
-                        ->get();
+                    $activity3status  = '';
+                    $activity3date    = '';
+                    $activities       = $user->notes()
+                                             ->orderBy('performed_at', 'DESC')
+                                             ->limit(3)
+                                             ->get();
                     if ($activities->count() > 0) {
                         $a = 0;
                         foreach ($activities as $activity) {
-                            $comment = $activity->body;
+                            $comment    = $activity->body;
                             $callStatus = '';
-                            $call = $activity->call()->first();
+                            $call       = $activity->call()->first();
                             if ($call) {
                                 $callStatus = $call->status;
                             }
                             if (0 == $a) {
-                                $activity1comment = $activity->id.' '.$comment;
-                                $activity1status = $callStatus;
-                                $activity1date = $activity->performed_at;
+                                $activity1comment = $activity->id . ' ' . $comment;
+                                $activity1status  = $callStatus;
+                                $activity1date    = $activity->performed_at;
                             }
                             if (1 == $a) {
-                                $activity2comment = $activity->id.' '.$comment;
-                                $activity2status = $callStatus;
-                                $activity2date = $activity->performed_at;
+                                $activity2comment = $activity->id . ' ' . $comment;
+                                $activity2status  = $callStatus;
+                                $activity2date    = $activity->performed_at;
                             }
                             if (2 == $a) {
-                                $activity3comment = $activity->id.' '.$comment;
-                                $activity3status = $callStatus;
-                                $activity3date = $activity->performed_at;
+                                $activity3comment = $activity->id . ' ' . $comment;
+                                $activity3status  = $callStatus;
+                                $activity3date    = $activity->performed_at;
                             }
                             ++$a;
                         }
@@ -769,12 +770,12 @@ class ReportsController extends Controller
             //$first = reset($array);
             if ($value) {
                 foreach ($value as $key => $value) {
-                    $biometrics_array[$bio_name]['unit'] = $this->service->biometricsUnitMapping(str_replace(
+                    $biometrics_array[$bio_name]['unit']    = $this->service->biometricsUnitMapping(str_replace(
                         '_',
                         ' ',
                         $bio_name
                     ));
-                    $biometrics_array[$bio_name]['target'] = $this->service->getTargetValueForBiometric(
+                    $biometrics_array[$bio_name]['target']  = $this->service->getTargetValueForBiometric(
                         $bio_name,
                         $user,
                         false
@@ -783,7 +784,7 @@ class ReportsController extends Controller
                     if (intval($value->Avg) > $biometrics_array[$bio_name]['max']) {
                         $biometrics_array[$bio_name]['max'] = intval($value->Avg);
                     }
-                    $biometrics_array[$bio_name]['data'] .= '{ id:'.$count.', Week:\''.$value->day.'\', Reading:'.intval($value->Avg).'} ,';
+                    $biometrics_array[$bio_name]['data'] .= '{ id:' . $count . ', Week:\'' . $value->day . '\', Reading:' . intval($value->Avg) . '} ,';
                     ++$count;
                 }
             } else {
@@ -799,12 +800,13 @@ class ReportsController extends Controller
         $medications = $this->service->getMedicationStatus($user, false);
 
         $data = [
-            'treating'            => $treating,
-            'patientId'           => $patientId,
-            'patient'             => $user,
-            'provider'            => $provider,
-            'medications'         => $medications,
-            'tracking_biometrics' => $biometrics_array,
+            'treating'                => $treating,
+            'patientId'               => $patientId,
+            'patient'                 => $user,
+            'provider'                => $provider,
+            'medications'             => $medications,
+            'tracking_biometrics'     => $biometrics_array,
+            'noLiveCountTimeTracking' => true,
         ];
 
         return view('wpUsers.patient.progress', $data);
@@ -888,7 +890,7 @@ class ReportsController extends Controller
             $patients = $pausedPatients->toJson();
         }
 
-        $url = route('get.paused.letters.file').'?patientUserIds=';
+        $url = route('get.paused.letters.file') . '?patientUserIds=';
 
         return view('patient.printPausedPatientsLetters', compact(['patients', 'url']));
     }
@@ -918,7 +920,7 @@ class ReportsController extends Controller
     }
 
     public function u20(
-        Request $request,
+        GetUnder20MinutesReport $request,
         $patientId = false
     ) {
         $input = $request->all();
@@ -940,24 +942,24 @@ class ReportsController extends Controller
         }
 
         $patients = User::intersectPracticesWith(auth()->user())
-            ->ofType('participant')
-            ->with([
-                'primaryPractice',
-                'activities' => function ($q) use ($start, $end) {
-                    $q->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration'))
-                        ->whereBetween('performed_at', [
-                            $start,
-                            $end,
+                        ->ofType('participant')
+                        ->with([
+                            'primaryPractice',
+                            'activities' => function ($q) use ($start, $end) {
+                                $q->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration'))
+                                  ->whereBetween('performed_at', [
+                                      $start,
+                                      $end,
+                                  ])
+                                  ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+                                  ->orderBy('performed_at', 'desc');
+                            },
                         ])
-                        ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
-                        ->orderBy('performed_at', 'desc');
-                },
-            ])
-            ->whereHas('patientSummaries', function ($q) use ($time) {
-                $q->where('month_year', $time->copy()->startOfMonth()->toDateString())
-                    ->where('total_time', '<', 1200);
-            })
-            ->get();
+                        ->whereHas('patientSummaries', function ($q) use ($time) {
+                            $q->where('month_year', $time->copy()->startOfMonth()->toDateString())
+                              ->where('total_time', '<', 1200);
+                        })
+                        ->get();
 
         $u20_patients = [];
 
@@ -974,7 +976,7 @@ class ReportsController extends Controller
             'Review Patient Progress (offline)',
             'Progress Report Review/Print',
         ];
-        $RPM = [
+        $RPM      = [
             'Patient Alerts Review',
             'Patient Overview Review',
             'Biometrics Data Review',
@@ -984,13 +986,13 @@ class ReportsController extends Controller
             'Medications Data Review',
             'Input Observation',
         ];
-        $TCM = [
+        $TCM      = [
             'Test (Scheduling, Communications, etc)',
             'Transitional Care Management Activities',
             'Call to Other Care Team Member',
             'Appointments',
         ];
-        $Other = [
+        $Other    = [
             'other',
             'Medication Reconciliation',
         ];
@@ -1039,14 +1041,14 @@ class ReportsController extends Controller
             }
             ++$patient_counter;
         }
-        $reportData = 'data:'.json_encode(array_values($u20_patients)).'';
+        $reportData = 'data:' . json_encode(array_values($u20_patients)) . '';
 
         $years = [];
         for ($i = 0; $i < 3; ++$i) {
             $years[] = Carbon::now()->subYear($i)->year;
         }
 
-        $months = [
+        $months   = [
             'Jan',
             'Feb',
             'Mar',
@@ -1140,5 +1142,19 @@ class ReportsController extends Controller
                 'careplan'                => $careplanService->careplan($patientId),
             ]
         );
+    }
+
+    public function viewCareDocumentsPage(
+        Request $request,
+        $patientId = false
+    ) {
+        if ( ! $patientId) {
+            return 'Patient Not Found..';
+        }
+
+        $patient = User::find($patientId);
+
+        return view('patient.care-docs.index', compact(['patient']));
+
     }
 }

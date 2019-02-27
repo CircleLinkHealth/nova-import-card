@@ -7,6 +7,7 @@
 use App\AppConfig;
 use App\CarePlanTemplate;
 use App\Constants;
+use App\Exceptions\CsvFieldNotFoundException;
 use App\Jobs\SendSlackMessage;
 use App\User;
 use Carbon\Carbon;
@@ -212,42 +213,131 @@ if ( ! function_exists('parseCsvToArray')) {
      * @param int  $length
      * @param null $delimiter
      *
+     * @throws CsvFieldNotFoundException
+     *
      * @return array
      */
     function parseCsvToArray($file, $length = 0, $delimiter = null)
     {
-        $csvArray  = $fields  = [];
-        $i         = 0;
-        $handle    = @fopen($file, 'r');
-        $delimiter = $delimiter ?? detectDelimiter($handle);
+        $csvArray = $fields = [];
+        $i        = 0;
+        $handle   = @fopen($file, 'r');
 
-        if ($handle) {
-            while (false !== ($row = fgetcsv($handle, $length, $delimiter))) {
-                if (empty($fields)) {
-                    $row = array_map('strtolower', $row);
-
-                    $row = array_map(
-                        function ($string) {
-                            return str_replace(' ', '_', $string);
-                        },
-                        $row
-                    );
-
-                    $fields = array_map('trim', $row);
-                    continue;
-                }
-                foreach ($row as $k => $value) {
-                    $csvArray[$i][$fields[$k]] = trim($value);
-                }
-                ++$i;
-            }
-            if ( ! feof($handle)) {
-                echo "Error: unexpected fgets() fail\n";
-            }
-            fclose($handle);
+        if ( ! $handle) {
+            throw new \Exception('Could not read CSV file.');
         }
 
+        $delimiter = $delimiter ?? detectDelimiter($handle);
+
+        while (false !== ($row = fgetcsv($handle, $length, $delimiter))) {
+            if (empty($fields)) {
+                $row = array_map('strtolower', $row);
+
+                $row = array_map(
+                    function ($string) {
+                        return str_replace(' ', '_', $string);
+                    },
+                    $row
+                );
+
+                $fields = array_map('trim', $row);
+                continue;
+            }
+            foreach ($row as $k => $value) {
+                if ( ! array_key_exists($k, $fields)) {
+                    throw new CsvFieldNotFoundException(
+                        "Could not find CSV Field with index $k. Check row number $i for bad data."
+                    );
+                }
+                $csvArray[$i][$fields[$k]] = trim($value);
+            }
+            ++$i;
+        }
+        if ( ! feof($handle)) {
+            throw new \Exception('Error: unexpected fgets() fail.');
+        }
+        fclose($handle);
+
         return $csvArray;
+    }
+}
+
+if ( ! function_exists('iterateCsv')) {
+    /**
+     * Parses a CSV file into an array.
+     *
+     * @param $file
+     * @param int   $length
+     * @param null  $delimiter
+     * @param null  $callback
+     * @param bool  $firstRowContainsColumnHeaders
+     * @param mixed $logAndReturnAllActivity
+     *
+     * @return array
+     */
+    function iterateCsv($file, $callback = null, $logAndReturnAllActivity = false, $length = 0, $delimiter = null)
+    {
+        $results = $fields = $errors = [];
+        $i       = 0;
+        $handle  = @fopen($file, 'r');
+
+        if ( ! $handle) {
+            throw new \Exception('Could not read CSV file.');
+        }
+
+        $delimiter = $delimiter ?? detectDelimiter($handle);
+
+        while (false !== ($row = fgetcsv($handle, $length, $delimiter))) {
+            $csvRowArray = [];
+
+            if (empty($fields)) {
+                $row = array_map('strtolower', $row);
+
+                $row = array_map(
+                    function ($string) {
+                        return str_replace(' ', '_', $string);
+                    },
+                    $row
+                );
+
+                $fields = array_map('trim', $row);
+                continue;
+            }
+            foreach ($row as $k => $value) {
+                if ( ! array_key_exists($k, $fields)) {
+                    $errors[] = [
+                        'row_number' => $i,
+                        'message'    => "Could not find CSV Field with index $k. Check row number $i for bad data.",
+                    ];
+
+                    continue 2;
+                }
+                $csvRowArray[$fields[$k]] = trim($value);
+            }
+
+            if (isset($callback)) {
+                $cb = call_user_func($callback, $csvRowArray);
+
+                if ($logAndReturnAllActivity) {
+                    $results[] = $cb;
+                }
+
+                if (array_key_exists('error', $cb)) {
+                    $errors[] = $cb['error'];
+                }
+            }
+
+            ++$i;
+        }
+        if ( ! feof($handle)) {
+            throw new \Exception('Error: unexpected fgets() fail.');
+        }
+        fclose($handle);
+
+        return [
+            'results' => $results,
+            'errors'  => $errors,
+        ];
     }
 }
 
@@ -874,33 +964,38 @@ if ( ! function_exists('validProblemName')) {
     {
         return ! str_contains(
                 strtolower($name),
-            ['screening',
-                'history',
-                'scan',
-                'immunization',
-                'immunisation',
-                'injection',
-                'vaccine',
-                'vaccination',
-                'vaccin',
-                'screen',
-                'follow up',
-                'followup',
-                'labs',
-                'f/u',
-                'mo fu',
-                'fu on',
-                'fu from',
-                'm fu',
-                'counsel',
-                'adverse effect drug',
-                'counseling',
-                'new pt', ]
-        ) && ! in_array(
+                [
+                    'screening',
+                    'history',
+                    'scan',
+                    'immunization',
+                    'immunisation',
+                    'injection',
+                    'vaccine',
+                    'vaccination',
+                    'vaccin',
+                    'screen',
+                    'follow up',
+                    'followup',
+                    'labs',
+                    'f/u',
+                    'mo fu',
+                    'fu on',
+                    'fu from',
+                    'm fu',
+                    'counsel',
+                    'adverse effect drug',
+                    'counseling',
+                    'new pt',
+                    'hx',
+                    'prediabetes',
+                ]
+            ) && ! in_array(
                 strtolower($name),
-            ['fu',
-            ]
-        );
+                [
+                    'fu',
+                ]
+            );
     }
 }
 
@@ -1077,7 +1172,7 @@ if ( ! function_exists('getEhrReportWritersFolderUrl')) {
 
         //this is to make local environments faster for devs
         //comment out this if section to use the feature
-        if (app()->environment('local')){
+        if (app()->environment('local')) {
             return null;
         }
 

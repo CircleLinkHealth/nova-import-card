@@ -28,6 +28,8 @@ use App\Repositories\LocationRepositoryEloquent;
 use App\Repositories\PracticeRepositoryEloquent;
 use App\Repositories\PrettusUserRepositoryEloquent;
 use App\Services\SnappyPdfWrapper;
+use Bugsnag\BugsnagLaravel\BugsnagServiceProvider;
+use Bugsnag\BugsnagLaravel\Facades\Bugsnag;
 use DB;
 use Illuminate\Notifications\Channels\DatabaseChannel;
 use Illuminate\Notifications\DatabaseNotification;
@@ -49,22 +51,25 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-
         //need to set trusted hosts before request is passed on to our routers
         Request::setTrustedHosts(config('trustedhosts.hosts'));
-
-        Horizon::auth(function ($request) {
-            return optional(auth()->user())->isAdmin();
-        });
-
-        Queue::looping(function () {
-            //Rollback any transactions that were left open by a previously failed job
-            while (DB::transactionLevel() > 0) {
-                DB::rollBack();
+        
+        Horizon::auth(
+            function ($request) {
+                return optional(auth()->user())->isAdmin();
             }
-        });
+        );
+        
+        Queue::looping(
+            function () {
+                //Rollback any transactions that were left open by a previously failed job
+                while (DB::transactionLevel() > 0) {
+                    DB::rollBack();
+                }
+            }
+        );
     }
-
+    
     /**
      * Register any application services.
      *
@@ -74,70 +79,85 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        if ( ! $this->app->environment('local')) {
+            $this->app->register(BugsnagServiceProvider::class);
+    
+            $loader = \Illuminate\Foundation\AliasLoader::getInstance();
+            $loader->alias('Bugsnag', Bugsnag::class);
+            
+            $this->app->alias('bugsnag.logger', \Illuminate\Contracts\Logging\Log::class);
+            $this->app->alias('bugsnag.logger', \Psr\Log\LoggerInterface::class);
+        }
+        
+        $this->app->register(CPMArtisanServiceProvider::class);
+        
         //Bind database notification classes to local
         $this->app->bind(DatabaseChannel::class, \App\Notifications\Channels\DatabaseChannel::class);
         $this->app->bind(DatabaseNotification::class, \App\DatabaseNotification::class);
         $this->app->bind(HasDatabaseNotifications::class, \App\Notifications\HasDatabaseNotifications::class);
         $this->app->bind(Notifiable::class, \App\Notifications\Notifiable::class);
-        $this->app->bind(HtmlToPdfService::class, function () {
-            return $this->app->make(SnappyPdfWrapper::class);
-        });
-
+        $this->app->bind(
+            HtmlToPdfService::class,
+            function () {
+                return $this->app->make(SnappyPdfWrapper::class);
+            }
+        );
+        
         $this->app->bind(
             ActivityRepository::class,
             ActivityRepositoryEloquent::class
         );
-
+        
         $this->app->bind(
             CcdaRepository::class,
             CcdaRepositoryEloquent::class
         );
-
+        
         $this->app->bind(
             CcdaRequestRepository::class,
             CcdaRequestRepositoryEloquent::class
         );
-
+        
         $this->app->bind(
             CcmTimeApiLogRepository::class,
             CcmTimeApiLogRepositoryEloquent::class
         );
-
+        
         $this->app->bind(
             AprimaCcdApiRepository::class,
             AprimaCcdApiRepositoryEloquent::class
         );
-
+        
         $this->app->bind(
             InviteRepository::class,
             InviteRepositoryEloquent::class
         );
-
+        
         $this->app->bind(
             LocationRepository::class,
             LocationRepositoryEloquent::class
         );
-
+        
         $this->app->bind(
             PracticeRepository::class,
             PracticeRepositoryEloquent::class
         );
-
+        
         $this->app->bind(
             \App\CLH\Contracts\Repositories\UserRepository::class,
             \App\CLH\Repositories\UserRepository::class
         );
-
+        
         $this->app->bind(
             UserRepository::class,
             PrettusUserRepositoryEloquent::class
         );
-
+        
         $this->app->bind(
             ReportFormatter::class,
             WebixFormatter::class
         );
-
+        
         if ($this->app->environment('local')) {
             $this->app->register(IseedServiceProvider::class);
             $this->app->register(GeneratorsServiceProvider::class);
