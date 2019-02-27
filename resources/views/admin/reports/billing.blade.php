@@ -102,7 +102,7 @@
 
                                 const dates = JSON.parse("{{json_encode($dates)}}".replace(/\r\n/g, '').replace(/\&quot;/g, '"'));
 
-                                const isSoftwareOnly = JSON.parse({{auth()->user()->isSoftwareOnly()}})
+                                const isSoftwareOnly = @json(auth()->user()->isSoftwareOnly());
                             </script>
                         @endpush
                         <billing-report ref="billingReport"></billing-report>
