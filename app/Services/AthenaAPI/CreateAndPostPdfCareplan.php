@@ -6,8 +6,8 @@
 
 namespace App\Services\AthenaAPI;
 
-use App\Contracts\Repositories\CcdaRepository;
 use App\Contracts\Repositories\CcdaRequestRepository;
+use App\Jobs\ImportCcda;
 use App\Models\MedicalRecords\Ccda;
 use Carbon\Carbon;
 
@@ -17,11 +17,10 @@ class CreateAndPostPdfCareplan
     protected $ccdaRequests;
     protected $ccdas;
 
-    public function __construct(CcdaRequestRepository $ccdaRequests, CcdaRepository $ccdas, Calls $api)
+    public function __construct(CcdaRequestRepository $ccdaRequests, Calls $api)
     {
         $this->api          = $api;
         $this->ccdaRequests = $ccdaRequests;
-        $this->ccdas        = $ccdas;
     }
 
     public function getAppointments(
@@ -46,13 +45,12 @@ class CreateAndPostPdfCareplan
 
     public function getCcdsFromRequestQueue($number = 5)
     {
-        $ccdaRequests = $this->ccdaRequests
+        $imported = $this->ccdaRequests
             ->skipPresenter()
             ->findWhere([
                 'successful_call' => null,
-            ])->take($number);
-
-        $imported = $ccdaRequests->map(function ($ccdaRequest) {
+            ])->take($number)
+              ->map(function ($ccdaRequest) {
             $xmlCcda = $this->api->getCcd(
                 $ccdaRequest->patient_id,
                 $ccdaRequest->practice_id,
@@ -62,18 +60,18 @@ class CreateAndPostPdfCareplan
             if ( ! isset($xmlCcda[0]['ccda'])) {
                 return false;
             }
-
-            $ccda = $this->ccdas->create([
-                'xml'    => $xmlCcda[0]['ccda'],
-                'source' => Ccda::ATHENA_API,
-            ]);
-
+    
+            $ccda = Ccda::create([
+                                    'xml'       => $xmlCcda[0]['ccda'],
+                                    'source'    => Ccda::ATHENA_API,
+                                ]);
+            
             $ccdaRequest->ccda_id = $ccda->id;
             $ccdaRequest->successful_call = true;
             $ccdaRequest->save();
-
-            $ccda->import();
-
+    
+            ImportCcda::dispatch($ccda)->onQueue('low');
+    
             if (app()->environment('worker')) {
                 $link = route('import.ccd.remix');
 
