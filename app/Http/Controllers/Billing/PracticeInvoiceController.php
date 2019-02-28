@@ -54,6 +54,12 @@ class PracticeInvoiceController extends Controller
         $date        = $request->input('date');
         $user        = auth()->user();
 
+        //since this route is also accessible from software-only,
+        //we should make sure that software-only role is applied on this practice
+        if ( ! $user->isAdmin() && ! $user->hasRoleForSite('software-only', $practice_id)) {
+            abort(403);
+        }
+
         if ($date) {
             $date = Carbon::createFromFormat('M, Y', $date);
         }

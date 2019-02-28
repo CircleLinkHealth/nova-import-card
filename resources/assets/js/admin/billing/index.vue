@@ -167,7 +167,7 @@
                     </div>
                 </template>
                 <template slot="chargeable_services" slot-scope="props">
-                    <div class="blue pointer" @click="showChargeableServicesModal(props.row)">
+                    <div class="blue" :class="isSoftwareOnly ? '' : 'pointer'" @click="showChargeableServicesModal(props.row)">
                         <div v-if="props.row.chargeable_services.length">
                             <label class="label label-info margin-5 inline-block"
                                    v-for="service in props.row.chargeables()" :key="service.id">{{service.code}}</label>
@@ -486,6 +486,11 @@
             },
 
             showChargeableServicesModal(row) {
+
+                if (this.isSoftwareOnly) {
+                    return;
+                }
+
                 const self = this
                 Event.$emit('modal-chargeable-services:show', {
                     title: 'Select Chargeable Services for ' + row.Patient,
