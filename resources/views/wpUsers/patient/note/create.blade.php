@@ -740,18 +740,14 @@
 
                     submitted = true;
 
-                    //what is this?
-                    $.get('/api/test').always(function (response) {
-                        if (response.status == 200 || response.message == 'clh') {
-                            var key = 'notes:{{$patient->id}}:add'
-                            window.sessionStorage.removeItem(key)
-                        }
-                        //when we associate a note with task, we disable the note topic
-                        //we have to enable it back before posting to server,
-                        //otherwise its value will not reach the server
-                        $('#activityKey').prop("disabled", false);
-                        form.submit();
-                    });
+                    var key = 'notes:{{$patient->id}}:add'
+                    window.sessionStorage.removeItem(key)
+
+                    //when we associate a note with task, we disable the note topic
+                    //we have to enable it back before posting to server,
+                    //otherwise its value will not reach the server
+                    $('#activityKey').prop("disabled", false);
+                    form.submit();
                 }
 
                 function showTaskCompletedModal() {
