@@ -14,16 +14,20 @@
         </style>
     @endpush
     <div class="row" style="margin-top:60px;">
-        <div class="main-form-container col-lg-8 col-lg-offset-2">
+        <div class="main-form-container col-lg-8 col-lg-offset-2 col-xs-10 col-xs-offset-1">
             <div class="row">
                 <div class="main-form-title">
                     Patient Activity Report
                 </div>
                 @include('partials.userheader')
 
-                {!! Form::open(array('url' => route('patient.activity.providerUIIndex', ['patientId' => $patient]), 'method' => 'GET', 'class' => 'form-horizontal', 'style' => 'margin-right: 10px')) !!}
-                <div class="col-sm-6" style="top: 16px">
-
+                {!! Form::open(array('url' => route('patient.activity.providerUIIndex',
+                ['patientId' => $patient]),
+                'method' => 'GET',
+                'class' => 'form-horizontal',
+                'style' => 'margin-right: 10px'
+                )) !!}
+                <div class="col-sm-3 col-xs-3" style="top: 20px">
                     <button type="submit"
                             href="{{route('patient.activity.providerUIIndex', ['patientId' => $patient])}}"
                             value="audit" name="audit" id="audit" class="btn btn-primary">Audit Report
@@ -40,11 +44,11 @@
                     @endif
 
                 </div>
-                <div class="form-group  pull-right" style="margin-top:10px; ">
-                    <i class="icon icon--date-time"></i>
+                <div class="form-group pull-right col-xs-7" style="margin-top:10px; ">
+                    <i class="icon icon--date-time hidden-xs"></i>
                     <div class="inline-block">
                         <label for="selectMonth" class="sr-only">Select Month:</label>
-                        <select name="selectMonth" id="selectMonth" class="selectpicker" data-width="200px"
+                        <select name="selectMonth" id="selectMonth" class="selectpicker" data-width="160px"
                                 data-size="10" style="display: none;">
                             <option value="">Select Month</option>
                             @for($i = 0; $i < count($months); $i++)
@@ -70,7 +74,7 @@
                 </div>
                 {!! Form::close() !!}
 
-                <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12"
+                <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12 col-xs-12"
                      style="border-top: 3px solid #50b2e2">
                     @if($data)
                         <div id="obs_alerts_container" class=""></div><br/>
@@ -163,29 +167,27 @@
                                     }
                                 }, webix.ui.datafilter.summColumn);
 
-                                obs_alerts_dtable = new webix.ui({
-                                    container: "obs_alerts_container",
-                                    view: "datatable",
-                                    //css:"webix_clh_cf_style",
-                                    autoheight: true,
-                                    fixedRowHeight: false, rowLineHeight: 25, rowHeight: 25,
-                                    // leftSplit:2,
-                                    scrollX: false,
-                                    resizeColumn: true,
-                                    footer: true,
-                                    columns: [
-
-
-                                        {
-                                            id: "performed_at",
-                                            header: ["Date", {content: "textFilter", placeholder: "Filter"}],
-                                            footer: {text: "Total Time for the Month (Min:Sec):", colspan: 3},
-                                            width: 180,
-                                            sort: 'string'
-                                        },
-                                        {
-                                            id: "type",
-                                            header: ["Activity", {content: "textFilter", placeholder: "Filter"}],
+                            obs_alerts_dtable = new webix.ui({
+                                container: "obs_alerts_container",
+                                view: "datatable",
+                                //css:"webix_clh_cf_style",
+                                autoheight: true,
+                                fixedRowHeight: false, rowLineHeight: 25, rowHeight: 25,
+                                // leftSplit:2,
+                                scrollX: true,
+                                resizeColumn: true,
+                                footer: true,
+                                columns: [
+                                    {
+                                        id: "performed_at",
+                                        header: ["Date", {content: "textFilter", placeholder: "Filter"}],
+                                        footer: {text: "Total Time for the Month (Min:Sec):", colspan: 3},
+                                        width: 180,
+                                        sort: 'string'
+                                    },
+                                    {
+                                        id: "type",
+                                        header: ["Activity", {content: "textFilter", placeholder: "Filter"}],
 
                                             template: function (obj) {
                                                 if (obj.logged_from == "manual_input" || obj.logged_from == "activity")
@@ -197,8 +199,8 @@
                                                     return obj.type;
                                             },
 
-                                            fillspace: true,
-                                            width: 200,
+                                            fillspace: false,
+                                            width: 202,
                                             sort: 'string',
                                             css: {"color": "black", "text-align": "left"}
                                         },
@@ -206,14 +208,14 @@
                                         {
                                             id: "provider_name",
                                             header: ["Provider", {content: "textFilter", placeholder: "Filter"}],
-                                            width: 200,
+                                            width: 220,
                                             sort: 'string',
                                             css: {"color": "black", "text-align": "right"}
                                         },
                                         {
                                             id: "durationCCM",
                                             header: ["Total CCM", "(HH:MM:SS)"],
-                                            width: 100,
+                                            width: 150,
                                             sort: 'string',
                                             css: {"color": "black", "text-align": "right"},
                                             footer: {content: "mySummColumnCCM", css: "duration-footer"},
@@ -224,7 +226,8 @@
                                         {
                                             id: "durationBHI",
                                             header: ["Total BHI", "(HH:MM:SS)"],
-                                            width: 100,
+                                            width: 150,
+                                            fillspace: false,
                                             sort: 'string',
                                             css: {"color": "black", "text-align": "right"},
                                             footer: {content: "mySummColumnBHI", css: "duration-footer"},
@@ -268,8 +271,10 @@
                                         success: function (data) {
                                             $('#monthly-time-static').html(data.monthlyTime);
                                             $('#monthly-bhi-time-static').html(data.monthlyBhiTime);
+                                            const scrollPosition = $(document).scrollTop();
                                             obs_alerts_dtable.clearAll();
                                             obs_alerts_dtable.parse(data.table);
+                                            $(document).scrollTop(scrollPosition);
                                         },
                                         complete: function () {
                                             $('#refresh-activity').prop('disabled', false);

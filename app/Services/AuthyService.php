@@ -119,7 +119,7 @@ class AuthyService
             ->verifyToken($authyId, $token);
 
         if ($response->ok()) {
-            $this->on2FASuccess();
+            $this->on2FASuccess('approved');
         }
 
         return $response;

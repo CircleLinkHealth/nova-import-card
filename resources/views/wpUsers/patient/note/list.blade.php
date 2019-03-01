@@ -11,8 +11,8 @@
     //Other users cannot see this. The regulation happens partly in NotesController@lisiting, which supplies
     //this view.
 
-    if (isset($results)) {
-        $webix = 'data:' . json_encode(array_values($results)) . '';
+    if ($notes && ! empty($notes)) {
+        $webix = 'data:' . json_encode(array_values($notes)) . '';
     }
 
     ?>
@@ -28,22 +28,22 @@
     @endpush
 
     <div class="row main-form-block" style="margin-top:30px;">
-        <div class="main-form-container col-lg-8 col-lg-offset-2">
-            <div class="row ">
+        <div class="main-form-container col-lg-8 col-lg-offset-2 col-xs-12 col-xs-offset-0">
+            <div class="row">
                 <div class="main-form-title col-lg-12">
                     All Patient Notes
                 </div>
                 {!! Form::open(array('url' => route('patient.note.listing'), 'method' => 'GET', 'class' => 'form-horizontal', 'style' => 'margin-right: 10px')) !!}
                 <div style="clear:both"></div>
                 <ul class="person-conditions-list inline-block pull-left">
-                    <li class="inline-block"><input type="checkbox" id="mail_filter" name="mail_filter" value="true"
-                        @if(isset($only_mailed_notes) && $only_mailed_notes == true)
+                    <li class="inline-block col-lg-push-0 col-xs-push-3"><input type="checkbox" id="mail_filter" name="mail_filter" value="true"
+                        @if(isset($input['mail_filter']))
                             {{'checked'}}
                                 @endif>
                         <label for="mail_filter"><span> </span>Only Forwarded Notes <br/></label>
                     </li>
-                    <li class=""><input type="checkbox" id="admin_filter" name="admin_filter" value="true"
-                        @if(isset($admin_filter) && $admin_filter == true)
+                    <li class="inline-block"><input type="checkbox" id="admin_filter" name="admin_filter" value="true"
+                        @if(isset($input['admin_filter']))
                             {{'checked'}}
                                 @endif>
                         @if(auth()->user()->isAdmin() || auth()->user()->hasRole('care-center') )
@@ -51,7 +51,7 @@
                         @endif
                     </li>
                 </ul>
-                <div class="form-group pull-right" style="margin-top:10px; ">
+                <div class="form-group pull-right" style="margin-top:0px; ">
 
                     <!--<span class="glyphicon glyphicon-user" aria-hidden="true"
                           style="color: #63bbe8; font-size: 28px; top: 0.4em;"></span>
@@ -60,13 +60,13 @@
 
                     -->
 
-                    <div class="inline-block">
+                    <div class="inline-block col-xs-12">
                         <label for="year" class="sr-only">Date Range:</label>
                         <select name="range" id="range" class="range-select" data-width="250px">
                             <option value="">Select Range</option>
                             @for($i = 0; $i < 4; $i++)
                                 <option value={{$i}}
-                                @if(isset($dateFilter) && $dateFilter == $i)
+                                @if(isset($input['range']) && $input['range'] == $i)
                                     {{'selected'}}
                                         @endif
                                 >Since {{\Carbon\Carbon::now()->startOfMonth()->subMonth($i)->format('F, Y')}}</option>
@@ -74,22 +74,30 @@
                         </select>
                         <button type="submit" id="find" class="btn btn-primary">Go</button>
                         <br>
-                        <select name="provider" id="provider" class="provider-select" data-width="200px"
-                                data-size="10" style="display: none;" @if(auth()->user()->isAdmin() == false  &&
-                                                          auth()->user()->hasRole('care-center') == false)
-                                required
-                                @endif>
-                            <option value="" {{auth()->user()->isAdmin() ? 'selected' : ''}}>Select Provider</option>
-                            @foreach($providers_for_blog as $key => $value)
-                                @if(isset($selected_provider) && $selected_provider->id == $key)
-                                    <?php $selected = $selected_provider->display_name; ?>
-                                    <option value="{{$selected_provider->id}}"
-                                            selected>{{$selected_provider->display_name}}</option>
-                                @else
-                                    <option value={{$key}}>{{$value}}</option>
-                                @endif
-                            @endforeach
-                        </select>
+                        <div style="padding-top: 10px">
+                            <select name="getNotesFor[]" id="getNotesFor" data-placeholder="Select Practice or Provider" multiple="" class="provider-select" data-width="200px"
+                                    data-size="10" style="display: none;" @if(! auth()->user()->isAdmin()  &&
+                                                          ! auth()->user()->hasRole('care-center'))
+                                    required
+                                    @endif>
+                                <optgroup label="All Providers at Practice">
+                                    @foreach($practices as $key => $value)
+
+                                        <option value="practice:{{$key}}" @if(isset($input['getNotesFor']) && in_array("practice:{$key}", $input['getNotesFor']))
+                                        selected  @endif>{{$value}}</option>
+
+                                    @endforeach
+                                </optgroup>
+                                <optgroup label="Provider">
+                                    @foreach($providers as $key => $value)
+                                            <option value="provider:{{$key}}"  @if(isset($input['getNotesFor']) && in_array("provider:{$key}", $input['getNotesFor']))
+                                                    selected @endif>{{$value}}</option>
+
+                                    @endforeach
+                                </optgroup>
+
+                            </select>
+                        </div>
                     </div>
                 </div>
                 @push('scripts')
@@ -104,7 +112,7 @@
                 {!! Form::close() !!}
 
 
-                <div class="main-form-horizontal main-form-primary-horizontal col-md-12"
+                <div class="main-form-horizontal main-form-primary-horizontal col-md-12 col-xs-12"
                      style="border-top: 3px solid #50b2e2">
 
                     <div style="margin-top:2px">
@@ -211,7 +219,7 @@
                                                 width: 250,
                                                 sort: 'string',
                                                 tooltip: ['#comment#'],
-                                                fillspace: true,
+                                                fillspace: false,
                                                 template: "<a href='<?php echo route('patient.note.view', [
                                                     'patient' => '#patient_id#',
                                                     'noteId'  => '#id#',
@@ -291,15 +299,13 @@
                                         </div>
                                         Forward Seen By Provider
                                     </li>
-
                                 </div>
-
                                 <div class="col-sm-6">
                                     @if(auth()->user()->hasRole(['administrator', 'med_assistant', 'provider']))
                                         <input type="button" value="Export as Excel" class="btn btn-primary"
                                                style='margin:15px;'
                                                onclick="webix.toExcel($$(obs_alerts_dtable), {
-                                                       header:'CarePlanManager.com - All Patient Notes @if(isset($selected_provider)) for {{$selected_provider->getFullName()}} @endif since <?=\Carbon\Carbon::now()->subMonth($dateFilter ?? 0)->format('F, Y'); ?>',
+                                                       header:'CarePlanManager.com - All Patient Notes since <?=\Carbon\Carbon::now()->subMonth($input['range'] ?? 0)->format('F, Y'); ?>',
                                                        orientation:'landscape',
                                                        autowidth:true,
                                                        columns:{
@@ -310,12 +316,10 @@
                                                        'date':             { header:'Performed',    width:200, sort:'string', template: webix.template('#date#')},
 
                                                        }});">
-
-
                                         <input type="button" value="Export as PDF" class="btn btn-primary"
                                                style='margin:15px;'
                                                onclick="webix.toPDF($$(obs_alerts_dtable), {
-                                                       header:'CarePlanManager.com - All Patient Notes @if(isset($selected_provider)) for {{$selected_provider->getFullName()}} @endif @if(isset($dateFilter)) since <?=\Carbon\Carbon::now()->subMonth($dateFilter)->format('F, Y'); ?> @endif',
+                                                       header:'CarePlanManager.com - All Patient Notes @if(isset($input['range'])) since <?=\Carbon\Carbon::now()->subMonth($input['range'])->format('F, Y'); ?> @endif',
                                                        orientation:'landscape',
                                                        autowidth:true,
                                                        columns:{
@@ -340,7 +344,7 @@
                 </div>
                 @else
                     <div style="text-align:center;margin:50px;">There are no patients notes
-                        for {{$selected_provider->display_name}} in input range.
+                        for your selection in input range.
                     </div>
                 @endif
                 @else

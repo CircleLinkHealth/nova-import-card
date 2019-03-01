@@ -89,7 +89,7 @@ return [
     |
     */
 
-    'prefix' => 'laravel',
+    'prefix' => 'cpm_',
 
     //entrust needs this
     'ttl' => 30,

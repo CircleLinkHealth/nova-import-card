@@ -91,7 +91,6 @@ class Kernel extends HttpKernel
         //CLH Middleware
         'ability'                    => CerberusAbility::class,
         'aprima.ccdapi.auth.adapter' => AprimaCcdApiAuthAdapter::class,
-        'disable-debugbar'           => DisableDebugbar::class,
         'permission'                 => CerberusPermission::class,
         'patientProgramSecurity'     => PatientProgramSecurity::class,
         'checkWebSocketServer'       => CheckWebSocketServer::class,

@@ -13,32 +13,33 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * App\Location.
  *
- * @property int                                                              $id
- * @property int                                                              $practice_id
- * @property int                                                              $is_primary
- * @property string|null                                                      $external_department_id
- * @property string                                                           $name
- * @property string                                                           $phone
- * @property string|null                                                      $fax
- * @property string                                                           $address_line_1
- * @property string|null                                                      $address_line_2
- * @property string                                                           $city
- * @property string                                                           $state
- * @property string|null                                                      $timezone
- * @property string                                                           $postal_code
- * @property string|null                                                      $ehr_login
- * @property string|null                                                      $ehr_password
- * @property \Carbon\Carbon                                                   $created_at
- * @property \Carbon\Carbon                                                   $updated_at
- * @property string|null                                                      $deleted_at
- * @property \App\User[]|\Illuminate\Database\Eloquent\Collection             $clinicalEmergencyContact
+ * @property int $id
+ * @property int $practice_id
+ * @property int $is_primary
+ * @property string|null $external_department_id
+ * @property string $name
+ * @property string $phone
+ * @property string|null $clinical_escalation_phone
+ * @property string|null $fax
+ * @property string $address_line_1
+ * @property string|null $address_line_2
+ * @property string $city
+ * @property string $state
+ * @property string|null $timezone
+ * @property string $postal_code
+ * @property string|null $ehr_login
+ * @property string|null $ehr_password
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property string|null $deleted_at
+ * @property \App\User[]|\Illuminate\Database\Eloquent\Collection $clinicalEmergencyContact
  * @property \App\EmrDirectAddress[]|\Illuminate\Database\Eloquent\Collection $emrDirect
- * @property mixed                                                            $emr_direct_address
- * @property \App\Location                                                    $parent
- * @property \App\Practice                                                    $practice
- * @property \App\Practice                                                    $program
- * @property \App\User[]|\Illuminate\Database\Eloquent\Collection             $providers
- * @property \App\User[]|\Illuminate\Database\Eloquent\Collection             $user
+ * @property mixed $emr_direct_address
+ * @property \App\Location $parent
+ * @property \App\Practice $practice
+ * @property \App\Practice $program
+ * @property \App\User[]|\Illuminate\Database\Eloquent\Collection $providers
+ * @property \App\User[]|\Illuminate\Database\Eloquent\Collection $user
  *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\Location onlyTrashed()
@@ -84,6 +85,7 @@ class Location extends \App\BaseModel
         'is_primary',
         'name',
         'phone',
+        'clinical_escalation_phone',
         'fax',
         'address_line_1',
         'address_line_2',
@@ -98,8 +100,8 @@ class Location extends \App\BaseModel
     public function clinicalEmergencyContact()
     {
         return $this->morphToMany(User::class, 'contactable', 'contacts')
-            ->withPivot('name')
-            ->withTimestamps();
+                    ->withPivot('name')
+                    ->withTimestamps();
     }
 
     public static function getAllNodes()
@@ -182,7 +184,7 @@ class Location extends \App\BaseModel
     public function providers()
     {
         return $this->belongsToMany(User::class)
-            ->ofType('provider');
+                    ->ofType('provider');
     }
 
     public function routeNotificationForMail()

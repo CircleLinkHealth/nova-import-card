@@ -58,7 +58,7 @@ do
         php_errors_found=true
     else
         echo -e "git add ${path}"
-        git add ${path}
+        # git add ${path}
     fi
 done;
 

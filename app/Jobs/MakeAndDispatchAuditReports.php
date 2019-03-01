@@ -27,11 +27,6 @@ class MakeAndDispatchAuditReports implements ShouldQueue
     protected $date;
 
     /**
-     * @var Carbon
-     */
-    protected $date;
-
-    /**
      * @var DirectMail
      */
     protected $directMail;
@@ -40,12 +35,7 @@ class MakeAndDispatchAuditReports implements ShouldQueue
      * @var Efax
      */
     protected $eFax;
-
-    /**
-     * @var Efax
-     */
-    protected $eFax;
-
+    
     /**
      * The Patient we are preparing a report for.
      *

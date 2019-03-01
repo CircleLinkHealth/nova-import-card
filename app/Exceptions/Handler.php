@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\ModelNotFoundException as ModelNotFoundExceptio
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Session\TokenMismatchException;
 use Illuminate\Validation\ValidationException;
-use LERN;
 use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -82,24 +81,27 @@ class Handler extends ExceptionHandler
 
         return parent::render($request, $e);
     }
-    
+
     /**
      * Report or log an exception.
      *
      * @param \Exception $e
      *
-     * @return mixed|void
      * @throws Exception
+     *
+     * @return mixed|void
      */
     public function report(Exception $e)
     {
-        parent::report($e);
+        if (config('session.enable_raygun_crash_reporting')) {
+            \Raygun::SendException($e);
+        }
         
+        parent::report($e);
+
         if ( ! $this->shouldReport($e)) {
             return;
         }
-
-        $this->addSlackHandler();
 
         if ($e instanceof \Illuminate\Database\QueryException) {
             $errorCode = $e->errorInfo[1];
@@ -109,16 +111,6 @@ class Handler extends ExceptionHandler
                 //we just don't wanna add the row again
                 return;
             }
-        }
-
-        if (app()->bound('lern')) {
-            if ($this->shouldRecordOnly($e)) {
-                app()->make('lern')->record($e);
-
-                return;
-            }
-
-            app()->make('lern')->handle($e);
         }
     }
 
@@ -139,38 +131,5 @@ class Handler extends ExceptionHandler
         }
 
         return redirect()->guest('login');
-    }
-
-    /**
-     * Add Slack Handler if this is a a production environment.
-     */
-    private function addSlackHandler()
-    {
-        if (app()->bound('lern') && in_array(
-                config('app.env'),
-                [
-                    'production',
-                    'worker',
-                    'staging',
-                    'test',
-                ]
-            )
-        ) {
-            LERN::pushHandler(
-                new \Monolog\Handler\SlackWebhookHandler(
-                    config('lern.notify.slack.webhook'),
-                    config('lern.notify.slack.channel'),
-                    config('lern.notify.slack.username'),
-                    true,
-                    null,
-                    false
-                )
-            );
-        }
-    }
-
-    private function shouldRecordOnly($e)
-    {
-        return in_array(get_class($e), $this->recordButNotNotify);
     }
 }

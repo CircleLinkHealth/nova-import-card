@@ -26,11 +26,15 @@
     },
     {
       "type": "git",
-      "url": "git@github.com:ishansiddiqui/lara-pdf-merger.git"
+      "url": "git@github.com:CircleLinkHealth/laravel-cerberus.git"
     },
     {
       "type": "git",
-      "url": "git@github.com:CircleLinkHealth/laravel-cerberus.git"
+      "url": "git@github.com:CircleLinkHealth/module-bugsnag.git"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/module-migrations.git"
     },
     {
       "type": "composer",
@@ -55,6 +59,11 @@
     "blackfire/php-sdk": "^1.17",
     "fideloper/proxy": "^4.0",
     "genealabs/laravel-caffeine": "^0.7.1",
+    "circlelinkhealth/bugsnag": "dev-main-master",
+    "circlelinkhealth/migrations": "dev-main-master",
+    "davibennun/laravel-raygun": "dev-laravel5",
+    "doctrine/dbal": "~2.3",
+    "genealabs/laravel-caffeine": "^0.5.0",
     "guzzlehttp/guzzle": "~5.3|~6.0",
     "h4cc/wkhtmltoimage-amd64": "*",
     "h4cc/wkhtmltopdf-amd64": "*",
@@ -70,13 +79,15 @@
     "laravelcollective/html": "5.7.*",
     "league/flysystem-aws-s3-v3": "~1.0",
     "league/fractal": "0.12.*",
-    "lynx39/lara-pdf-merger": "dev-php7.2-adjustments",
+    "lynx39/lara-pdf-merger": "dev-master",
     "maatwebsite/excel": "^2.1",
     "michalisantoniou6/laravel-cerberus": "dev-master",
     "nao-pon/flysystem-google-drive": "~1.1",
+    "nwidart/laravel-modules": "^4.0",
     "phaxio/phaxio": "^1.0",
     "pokitdok/pokitdok-php": "^1.1",
     "pragmarx/health": "^0.9.16",
+    "pragmarx/version": "^0.2.8",
     "predis/predis": "^1.1",
     "prettus/l5-repository": "dev-master",
     "prettus/laravel-validation": "*",
@@ -89,7 +100,6 @@
     "spiritix/lada-cache": "^2.1",
     "squizlabs/php_codesniffer": "*",
     "twilio/sdk": "5.7",
-    "tylercd100/lern": "^3.8",
     "tymon/jwt-auth": "0.5.*",
     "venturecraft/revisionable": "dev-master",
     "waavi/url-shortener": "dev-master",
@@ -97,10 +107,11 @@
   },
   "require-dev": {
     "xethron/laravel-4-generators": "*",
+    "barryvdh/laravel-debugbar": "*",
+    "friendsofphp/php-cs-fixer": "^2.13",
     "barryvdh/laravel-ide-helper": "^2.4",
     "brianium/paratest": "*",
     "darkaonline/l5-swagger": "^5.5",
-    "doctrine/dbal": "~2.3",
     "filp/whoops": "~2.0",
     "friendsofphp/php-cs-fixer": "^2.13",
     "fzaninotto/faker": "~1.4",
@@ -144,7 +155,8 @@
     ],
     "post-autoload-dump": [
       "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-      "@php artisan package:discover"
+      "@php artisan package:discover",
+      "@php artisan version:refresh"
     ],
     "post-update-cmd": [
       "Illuminate\\Foundation\\ComposerScripts::postUpdate"
@@ -176,8 +188,7 @@
     "optimize-autoloader": true,
     "github-oauth": {
       "github.com": "e0e31db02693e426dc2be482ecbee4daeafd8196"
-    },
-    "process-timeout": 0
+    }
   },
   "extra": {
     "laravel": {

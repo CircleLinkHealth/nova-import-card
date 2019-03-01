@@ -42,7 +42,7 @@
     </div>
 
     <div class="row" style="margin-top:60px;" xmlns="http://www.w3.org/1999/html">
-        <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1"
+        <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1 col-xs-10 col-xs-offset-1"
              style="border-bottom:3px solid #50b2e2">
             <div class="row" style="border-bottom:3px solid #50b2e2">
                 <div class="main-form-title col-lg-12">
@@ -60,15 +60,15 @@
                     <div class="row">
                         <div class="new-note-item">
                             <div class="form-group">
-                                <div class="col-sm-12">
+                                <div class="col-sm-12 col-xs-offset-1">
                                     <label for="date" style="font-weight: 500 !important;">
                                         Predicted Next Contact Date
                                     </label>
                                 </div>
-                                <div class="col-sm-12">
+                                <div class="col-sm-12 col-xs-10 col-xs-offset-1">
                                     <div class="form-group">
-                                        <v-datepicker name="date" class="selectpickerX form-control" format="yyyy-MM-dd" 
-                                            placeholder="YYYY-MM-DD" 
+                                        <v-datepicker name="date" class="selectpickerX form-control" format="yyyy-MM-dd"
+                                            placeholder="YYYY-MM-DD"
                                             value="{{ auth()->user()->resolveTimezoneToGMT(Carbon::parse($date)) }}" required></v-datepicker>
                                     </div>
                                 </div>
@@ -85,12 +85,12 @@
                     <div class="row form-inline">
                         <div class="new-note-item">
                             <div class="form-group">
-                                <div class="col-sm-12">
+                                <div class="col-sm-12 col-xs-offset-1">
                                     <label for="window_start" style="font-weight: 500 !important;">
                                         Next Call Window
                                     </label>
                                 </div>
-                                <div class="col-sm-12">
+                                <div class="col-sm-12 col-xs-10 col-xs-offset-1">
                                     <div class="form-group">
                                         <input class="form-control" name="window_start" type="time"
                                                value="{{$window_start}}"
@@ -101,6 +101,7 @@
                                         <label for="window_end">
                                             to
                                         </label>
+
                                         <input class="form-control" name="window_end" type="time"
                                                value="{{$window_end}}"
                                                id="window_end" placeholder="time">

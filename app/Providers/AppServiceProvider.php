@@ -49,20 +49,23 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-
         //need to set trusted hosts before request is passed on to our routers
         Request::setTrustedHosts(config('trustedhosts.hosts'));
 
-        Horizon::auth(function ($request) {
-            return optional(auth()->user())->isAdmin();
-        });
-
-        Queue::looping(function () {
-            //Rollback any transactions that were left open by a previously failed job
-            while (DB::transactionLevel() > 0) {
-                DB::rollBack();
+        Horizon::auth(
+            function ($request) {
+                return optional(auth()->user())->isAdmin();
             }
-        });
+        );
+
+        Queue::looping(
+            function () {
+                //Rollback any transactions that were left open by a previously failed job
+                while (DB::transactionLevel() > 0) {
+                    DB::rollBack();
+                }
+            }
+        );
     }
 
     /**
@@ -74,14 +77,19 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->app->register(CPMArtisanServiceProvider::class);
+
         //Bind database notification classes to local
         $this->app->bind(DatabaseChannel::class, \App\Notifications\Channels\DatabaseChannel::class);
         $this->app->bind(DatabaseNotification::class, \App\DatabaseNotification::class);
         $this->app->bind(HasDatabaseNotifications::class, \App\Notifications\HasDatabaseNotifications::class);
         $this->app->bind(Notifiable::class, \App\Notifications\Notifiable::class);
-        $this->app->bind(HtmlToPdfService::class, function () {
-            return $this->app->make(SnappyPdfWrapper::class);
-        });
+        $this->app->bind(
+            HtmlToPdfService::class,
+            function () {
+                return $this->app->make(SnappyPdfWrapper::class);
+            }
+        );
 
         $this->app->bind(
             ActivityRepository::class,

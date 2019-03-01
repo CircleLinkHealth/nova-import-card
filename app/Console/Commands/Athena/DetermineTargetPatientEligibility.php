@@ -51,20 +51,20 @@ class DetermineTargetPatientEligibility extends Command
      */
     public function handle()
     {
-        $patients = TargetPatient::where('status', '=', 'to_process')
+        TargetPatient::where('status', '=', 'to_process')
             ->get()
-            ->map(function ($patient) {
+            ->each(function ($patient) {
                 $patientInfo = $this->service->getPatientProblemsAndInsurances(
-                                         $patient->ehr_patient_id,
-                                         $patient->ehr_practice_id,
-                                         $patient->ehr_department_id
+                    $patient->ehr_patient_id,
+                    $patient->ehr_practice_id,
+                    $patient->ehr_department_id
                                      );
 
                 $batch = EligibilityBatch::find($this->argument('batchId'));
                 $adapter = new AthenaAPIAdapter(
-                                         $patientInfo,
-                                         new EligibilityJob(['batch_id' => $batch->id]),
-                                         $batch
+                    $patientInfo,
+                    new EligibilityJob(['batch_id' => $batch->id]),
+                    $batch
                                      );
                 $isEligible = $adapter->isEligible();
 
@@ -79,8 +79,8 @@ class DetermineTargetPatientEligibility extends Command
                 }
 
                 $demos = $this->service->getDemographics(
-                                         $patient->ehr_patient_id,
-                                         $patient->ehr_practice_id
+                    $patient->ehr_patient_id,
+                    $patient->ehr_practice_id
                                      );
 
                 try {
@@ -97,15 +97,15 @@ class DetermineTargetPatientEligibility extends Command
                 }
 
                 $practice = Practice::where(
-                                         'external_id',
-                                         '=',
-                                         $patient->ehr_practice_id
+                    'external_id',
+                    '=',
+                    $patient->ehr_practice_id
                                      )->first();
 
                 if ( ! $practice) {
                     throw new \Exception(
-                                             "Practice with AthenaId {$patient->ehr_practice_id} was not found.",
-                                             500
+                        "Practice with AthenaId {$patient->ehr_practice_id} was not found.",
+                        500
                                          );
                 }
 
@@ -121,7 +121,7 @@ class DetermineTargetPatientEligibility extends Command
                         'practice_id' => $practice->id,
                         'batch_id'    => $this->argument('batchId') ?? null,
 
-                        'status'      => Enrollee::TO_CALL,
+                        'status' => Enrollee::TO_CALL,
 
                         //notRequired
                         'address'   => $demos['address1'] ?? null,
