@@ -80,7 +80,7 @@
                                 <v-select :disabled="action.disabled"
                                           max-height="200px" class="form-control" v-model="action.selectedSubTypeData"
                                           :options="subTypesForSelect"
-                                          @input="function (type) {changeSubType(index, type)}" required>
+                                          @input="function (type) {changeSubType(index, type)}"required>
                                 </v-select>
                             </td>
                             <td>
@@ -105,7 +105,6 @@
                                            type="checkbox" v-model="action.filters.showUnscheduledPatients"
                                            @change="function (e) { changeUnscheduledPatients(index, e); }"/>
                                 </div>
-
                             </td>
                             <td>
                                 <v-select :disabled="action.disabled"
@@ -127,14 +126,12 @@
                                        :disabled="action.disabled" required/>
                             </td>
                             <td>
-                                <div class="width-83">
-                                    <input class="form-control" type="time" name="window_end"
+                                <input class="form-control" type="time" name="window_end"
                                            v-model="action.data.endTime"
                                            :disabled="action.disabled" required/>
-                                </div>
                             </td>
                             <td>
-                                <div class="width-17 padding-left-5 padding-top-7">
+                                <div class="width-18 padding-left-5 padding-top-7">
                                     <input type="checkbox" id="is_manual"
                                            name="is_manual" v-model="action.data.isManual"
                                            :disabled="action.disabled"/>
@@ -145,15 +142,15 @@
                                        :disabled="action.disabled"/>
                             </td>
                             <td>
-                                       <span class="btn btn-xs" @click="removeAction(index)"
-                                             v-show="actions.length > 1">
-                                           <i class="glyphicon glyphicon-remove"></i>
-                                       </span>
+                                <span class="btn btn-xs" @click="removeAction(index)" v-show="actions.length > 1">
+                                    <i class="glyphicon glyphicon-remove"></i>
+                                </span>
                             </td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
+
                 <div>
                     <div class="alert alert-danger" v-if="hasNotAvailableNurses">
                         No available nurses for selected patient
@@ -483,29 +480,6 @@
                         })
                 }
                 return Promise.resolve([])
-            },
-            getAllPatients() {
-                //this is wrong.
-                //need to revise
-                /*
-                this.loaders.patients = true
-                return this.cache()
-                    .get(rootUrl(`api/patients?rows=all&autocomplete`))
-                    .then(response => {
-                        this.loaders.patients = false
-                        console.log('add-action:patients:all', response.data)
-                        return response.data;
-                    })
-                    .then((patients = []) => {
-                        return this.patients = patients.sort((a, b) => {
-                            return a.name > b.name ? 1 : -1;
-                        }).distinct(patient => patient.id)
-                    }).catch(err => {
-                        this.loaders.patients = false
-                        this.errors.patients = err.message
-                        console.error('add-action:patients:all', err)
-                    })
-                    */
             },
             getNurses(actionIndex) {
                 if (this.actions[actionIndex].data.practiceId) {
@@ -877,10 +851,6 @@
     .v-select .dropdown-toggle {
         height: 34px;
         overflow: initial;
-    }
-
-    .v-select .dropdown-toggle .clear {
-
     }
 
     .modal-add-action .modal-body {
