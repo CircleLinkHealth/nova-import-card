@@ -23,6 +23,7 @@
                             </th>
                             <th class="sub-type">
                                 Type
+                                <span class="required">*</span>
                             </th>
                             <th class="practices">
                                 Practice
@@ -79,7 +80,7 @@
                                 <v-select :disabled="action.disabled"
                                           max-height="200px" class="form-control" v-model="action.selectedSubTypeData"
                                           :options="subTypesForSelect"
-                                          @input="function (type) {changeSubType(index, type)}">
+                                          @input="function (type) {changeSubType(index, type)}" required>
                                 </v-select>
                             </td>
                             <td>
@@ -875,10 +876,11 @@
 
     .v-select .dropdown-toggle {
         height: 34px;
+        overflow: initial;
     }
 
     .v-select .dropdown-toggle .clear {
-        visibility: hidden;
+
     }
 
     .modal-add-action .modal-body {
