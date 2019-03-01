@@ -1125,6 +1125,11 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses' => 'Billing\PracticeInvoiceController@closeMonthlySummaryStatus',
                     'as'   => 'monthly.billing.close.month',
                 ])->middleware('permission:patientSummary.update');
+
+                Route::post('/open', [
+                    'uses' => 'Billing\PracticeInvoiceController@openMonthlySummaryStatus',
+                    'as'   => 'monthly.billing.open.month',
+                ])->middleware('permission:patientSummary.update');
             });
         });
     });
@@ -1477,11 +1482,6 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses' => 'Billing\PracticeInvoiceController@updateSummaryChargeableServices',
                     'as'   => 'monthly.billing.summary.services',
                 ])->middleware('permission:patientSummary.read,patientSummary.update,patientSummary.create');
-
-                Route::post('/open', [
-                    'uses' => 'Billing\PracticeInvoiceController@openMonthlySummaryStatus',
-                    'as'   => 'monthly.billing.open.month',
-                ])->middleware('permission:patientSummary.update');
 
                 Route::post('/status/update', [
                     'uses' => 'Billing\PracticeInvoiceController@updateStatus',
