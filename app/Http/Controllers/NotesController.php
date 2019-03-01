@@ -102,19 +102,19 @@ class NotesController extends Controller
             asort($careteam_info);
 
             $nurse_patient_tasks = Call::where('status', '=', 'scheduled')
-                ->where('type', '=', 'task')
-                ->where('inbound_cpm_id', '=', $patientId)
-                ->where('outbound_cpm_id', '=', $author_id)
-                ->select([
-                    'id',
-                    'type',
-                    'sub_type',
-                    'attempt_note',
-                    'scheduled_date',
-                    'window_start',
-                    'window_end',
-                ])
-                ->get();
+                                       ->where('type', '=', 'task')
+                                       ->where('inbound_cpm_id', '=', $patientId)
+                                       ->where('outbound_cpm_id', '=', $author_id)
+                                       ->select([
+                                           'id',
+                                           'type',
+                                           'sub_type',
+                                           'attempt_note',
+                                           'scheduled_date',
+                                           'window_start',
+                                           'window_end',
+                                       ])
+                                       ->get();
 
             $isCareCoach = Auth::user()->isCareCoach();
             $meds        = [];
@@ -333,7 +333,7 @@ class NotesController extends Controller
      * Also: in some conditions call will be stored for other roles as well.
      * They are never redirected to Schedule Next Calll page.
      *
-     * @param SafeRequest      $request
+     * @param SafeRequest $request
      * @param SchedulerService $schedulerService
      * @param $patientId
      *
@@ -587,9 +587,9 @@ class NotesController extends Controller
         ]);
 
         return redirect()->to(route(
-            'patient.note.view',
-            ['patientId' => $patientId, 'noteId' => $noteId]
-                              ).'#create-addendum');
+                                  'patient.note.view',
+                                  ['patientId' => $patientId, 'noteId' => $noteId]
+                              ) . '#create-addendum');
     }
 
     private function getProviders($getNotesFor)
@@ -606,17 +606,17 @@ class NotesController extends Controller
                 return optional(User::find($practiceOrProviderId))->id;
             }
         })
-            ->flatten()
-            ->all();
+                                    ->flatten()
+                                    ->all();
     }
 
     private function shouldPrePopulateWithMedications(User $patient)
     {
         return Practice::whereId($patient->program_id)
-            ->where(function ($q) {
+                       ->where(function ($q) {
                            $q->where('name', '=', 'phoenix-heart')
-                               ->orWhere('name', '=', 'demo');
+                             ->orWhere('name', '=', 'demo');
                        })
-            ->exists();
+                       ->exists();
     }
 }
