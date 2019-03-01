@@ -157,25 +157,25 @@ class NotesController extends Controller
         }
 
         $patient = User::with([
-            'activities' => function ($q) use ($date) {
+            'activities'   => function ($q) use ($date) {
                 $q->where('logged_from', '=', 'manual_input')
-                    ->where('performed_at', '>=', $date)
-                    ->with('meta')
-                    ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
-                    ->orderBy('performed_at', 'desc');
+                  ->where('performed_at', '>=', $date)
+                  ->with('meta')
+                  ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+                  ->orderBy('performed_at', 'desc');
             },
             'appointments' => function ($q) use ($date) {
                 $q->where('date', '>=', $date);
             },
             'billingProvider',
             'primaryPractice',
-            'notes' => function ($q) use ($date) {
+            'notes'        => function ($q) use ($date) {
                 $q->where('performed_at', '>=', $date)
-                    ->with(['author', 'call', 'notifications']);
+                  ->with(['author', 'call', 'notifications']);
             },
             'patientInfo',
         ])
-            ->findOrFail($patientId);
+                       ->findOrFail($patientId);
 
         //if a patient has no notes for the past 2 months, we load all the results and DON'T display 'show all notes button'
         if ($patient->notes->isEmpty() and false == $showAll) {
@@ -215,15 +215,18 @@ class NotesController extends Controller
         }
 
         $data['providers'] = User::whereIn('id', $session_user->viewableProviderIds())
-            ->pluck('display_name', 'id')->sort();
+                                 ->pluck('display_name', 'id')->sort();
         $data['practices'] = Practice::whereIn('id', $session_user->viewableProgramIds())
-            ->pluck('display_name', 'id')->sort();
+                                     ->pluck('display_name', 'id')->sort();
 
-        $start = Carbon::now()->startOfMonth()->subMonth($request->has('range') ? $request->range : 0)->format('Y-m-d');
+        $start = Carbon::now()->startOfMonth()->subMonth($request->has('range')
+            ? $request->range
+            : 0)->format('Y-m-d');
         $end   = Carbon::now()->endOfMonth()->format('Y-m-d');
 
         //Check to see whether there are providers to fetch notes for.
         if (isset($providers) && ! empty($providers)) {
+
             if ($request->has('mail_filter')) {
                 $notes = $this->service->getForwardedNotesWithRangeForProvider($providers, $start, $end);
             } else {
@@ -273,8 +276,8 @@ class NotesController extends Controller
     ) {
         $patient = User::findOrFail($patientId);
         $note    = Note::where('id', $noteId)
-            ->with(['call', 'notifications'])
-            ->firstOrFail();
+                       ->with(['call', 'notifications'])
+                       ->firstOrFail();
 
         $this->service->markNoteAsRead(auth()->user(), $note);
 
@@ -592,12 +595,16 @@ class NotesController extends Controller
     private function getProviders($getNotesFor)
     {
         return collect($getNotesFor)->map(function ($for) {
-            $data = explode(':', $for);
-            if ('practice' == $data[0]) {
-                return Practice::getProviders($data[1])->pluck('id')->all();
-            }
 
-            return User::find($data[1])->id;
+            $data                 = explode(':', $for);
+            $selectKey            = $data[0];
+            $practiceOrProviderId = $data[1];
+
+            if ($selectKey == 'practice') {
+                return Practice::getProviders($practiceOrProviderId)->pluck('id')->all();
+            } else {
+                return optional(User::find($practiceOrProviderId))->id;
+            }
         })
             ->flatten()
             ->all();

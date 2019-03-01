@@ -55,5 +55,12 @@ class ChargeableServiceSeeder extends Seeder
             'description' => 'FQHC / RHC General Care Management (1 month)',
             'amount'      => null,
         ]);
+    
+        ChargeableService::updateOrCreate([
+            'code' => 'Software-Only',
+        ], [
+            'description' => 'Customer uses their own Care Center.',
+            'amount'      => null,
+        ]);
     }
 }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ec47326a2b301cc7aa53d3b77c75ab1e",
+    "content-hash": "fda10bd54cbd688cb863926d127b3d66",
     "packages": [
         {
             "name": "amnuts/opcache-gui",
@@ -262,16 +262,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.87.14",
+            "version": "3.87.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "1d442bd93d3648e403ab895b5e1f464b4aa1b376"
+                "reference": "fbb29745f8f67be4ba6505c83c0be2c3760fad75"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/1d442bd93d3648e403ab895b5e1f464b4aa1b376",
-                "reference": "1d442bd93d3648e403ab895b5e1f464b4aa1b376",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/fbb29745f8f67be4ba6505c83c0be2c3760fad75",
+                "reference": "fbb29745f8f67be4ba6505c83c0be2c3760fad75",
                 "shasum": ""
             },
             "require": {
@@ -340,7 +340,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2019-02-19T19:08:06+00:00"
+            "time": "2019-02-25T19:10:35+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -693,12 +693,45 @@
             "time": "2019-02-11T02:08:31+00:00"
         },
         {
+            "name": "circlelinkhealth/bugsnag",
+            "version": "dev-main-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/module-bugsnag.git",
+                "reference": "02067bbcdb3d8244edcdd91ad71df5ef0ce0d6b7"
+            },
+            "require": {
+                "bugsnag/bugsnag-laravel": "^2.15"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\Bugsnag\\Providers\\BugsnagServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\Bugsnag\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "michalis@circlelinkhealth.com"
+                }
+            ],
+            "time": "2019-02-23T13:15:41+00:00"
+        },
+        {
             "name": "circlelinkhealth/migrations",
             "version": "dev-main-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-migrations.git",
-                "reference": "39baf9f1e41b749453693199460208a01fbe8d3a"
+                "reference": "f4e463e4916d4f967c0a6fe08fc0abb32ff54f32"
             },
             "require-dev": {
                 "illuminate/console": "^5.7",
@@ -727,7 +760,7 @@
                     "email": "mantoniou@circlelinkhealth.com"
                 }
             ],
-            "time": "2019-02-19T21:00:36+00:00"
+            "time": "2019-02-26T14:55:07+00:00"
         },
         {
             "name": "composer/ca-bundle",
@@ -1486,16 +1519,16 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "8.10.5",
+            "version": "8.10.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "667a1fe292561b7c64c4fc457a9f1ecc41d67185"
+                "reference": "75fa86dec0a79632fe492fa121b2a067ec100bf1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/667a1fe292561b7c64c4fc457a9f1ecc41d67185",
-                "reference": "667a1fe292561b7c64c4fc457a9f1ecc41d67185",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/75fa86dec0a79632fe492fa121b2a067ec100bf1",
+                "reference": "75fa86dec0a79632fe492fa121b2a067ec100bf1",
                 "shasum": ""
             },
             "require": {
@@ -1550,7 +1583,7 @@
                 "phonenumber",
                 "validation"
             ],
-            "time": "2019-02-08T08:31:08+00:00"
+            "time": "2019-02-21T11:30:36+00:00"
         },
         {
             "name": "giggsey/locale",
@@ -1662,16 +1695,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.85",
+            "version": "v0.87",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "66bf538d26b40fec0ae3cda79eea64fe2b0cc6de"
+                "reference": "26e0bf604e0b6e253f5217ef7e7fe39d976a69f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/66bf538d26b40fec0ae3cda79eea64fe2b0cc6de",
-                "reference": "66bf538d26b40fec0ae3cda79eea64fe2b0cc6de",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/26e0bf604e0b6e253f5217ef7e7fe39d976a69f7",
+                "reference": "26e0bf604e0b6e253f5217ef7e7fe39d976a69f7",
                 "shasum": ""
             },
             "require": {
@@ -1695,7 +1728,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2019-02-07T00:23:12+00:00"
+            "time": "2019-02-25T00:22:55+00:00"
         },
         {
             "name": "google/auth",
@@ -3604,16 +3637,16 @@
         },
         {
             "name": "lynx39/lara-pdf-merger",
-            "version": "v1.0.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/deltaaskii/lara-pdf-merger.git",
-                "reference": "fcff464d5fc0a0c3a42c552654959680c911e4fc"
+                "reference": "8cede29130ba6b60d33481b4067a8cba24c21753"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/deltaaskii/lara-pdf-merger/zipball/fcff464d5fc0a0c3a42c552654959680c911e4fc",
-                "reference": "fcff464d5fc0a0c3a42c552654959680c911e4fc",
+                "url": "https://api.github.com/repos/deltaaskii/lara-pdf-merger/zipball/8cede29130ba6b60d33481b4067a8cba24c21753",
+                "reference": "8cede29130ba6b60d33481b4067a8cba24c21753",
                 "shasum": ""
             },
             "require": {
@@ -3645,7 +3678,7 @@
                 "paginate",
                 "pdf"
             ],
-            "time": "2017-11-17T14:13:58+00:00"
+            "time": "2018-12-03T15:41:57+00:00"
         },
         {
             "name": "maatwebsite/excel",
@@ -4399,6 +4432,76 @@
             "time": "2019-02-16T20:54:15+00:00"
         },
         {
+            "name": "nwidart/laravel-modules",
+            "version": "4.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nWidart/laravel-modules.git",
+                "reference": "d487d9be3bfd6b7365678fd805d9ba5f0dd8295c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/d487d9be3bfd6b7365678fd805d9ba5f0dd8295c",
+                "reference": "d487d9be3bfd6b7365678fd805d9ba5f0dd8295c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.7",
+                "laravel/framework": "5.7.*",
+                "mockery/mockery": "~1.0",
+                "orchestra/testbench": "^3.7",
+                "phpstan/phpstan": "^0.9.2",
+                "phpunit/phpunit": "~7.3",
+                "spatie/phpunit-snapshot-assertions": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Nwidart\\Modules\\LaravelModulesServiceProvider"
+                    ],
+                    "aliases": {
+                        "Module": "Nwidart\\Modules\\Facades\\Module"
+                    }
+                },
+                "branch-alias": {
+                    "dev-master": "4.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Nwidart\\Modules\\": "src"
+                },
+                "files": [
+                    "src/helpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Widart",
+                    "email": "n.widart@gmail.com",
+                    "homepage": "https://nicolaswidart.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Laravel Module management",
+            "keywords": [
+                "laravel",
+                "module",
+                "modules",
+                "nwidart",
+                "rad"
+            ],
+            "time": "2018-09-30T10:02:46+00:00"
+        },
+        {
             "name": "paragonie/random_compat",
             "version": "v2.0.18",
             "source": {
@@ -4812,6 +4915,67 @@
                 "server"
             ],
             "time": "2018-10-08T16:42:42+00:00"
+        },
+        {
+            "name": "pragmarx/version",
+            "version": "v0.2.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/antonioribeiro/version.git",
+                "reference": "1d678d1b70a97eb6ceb49224159cf203a7493e46"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/antonioribeiro/version/zipball/1d678d1b70a97eb6ceb49224159cf203a7493e46",
+                "reference": "1d678d1b70a97eb6ceb49224159cf203a7493e46",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": ">=5.5.33",
+                "php": "^7.0",
+                "pragmarx/yaml": "^0.1",
+                "symfony/process": "^3.3|^4.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^3.5|^3.6",
+                "phpunit/phpunit": "^6.4|^7.0"
+            },
+            "type": "library",
+            "extra": {
+                "component": "package",
+                "laravel": {
+                    "providers": [
+                        "PragmaRX\\Version\\Package\\ServiceProvider"
+                    ],
+                    "aliases": {
+                        "Version": "PragmaRX\\Version\\Package\\Facade"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "PragmaRX\\Version\\Package\\": "src/package",
+                    "PragmaRX\\Version\\Tests\\": "tests/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Antonio Carlos Ribeiro",
+                    "email": "acr@antoniocarlosribeiro.com",
+                    "role": "Creator & Designer"
+                }
+            ],
+            "description": "Take control over your Laravel app version",
+            "keywords": [
+                "laravel",
+                "version",
+                "versioning"
+            ],
+            "time": "2018-07-20T03:00:43+00:00"
         },
         {
             "name": "pragmarx/yaml",
@@ -7577,212 +7741,6 @@
                 "twilio"
             ],
             "time": "2017-03-13T22:00:13+00:00"
-        },
-        {
-            "name": "tylercd100/laravel-notify",
-            "version": "1.8.5",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/tylercd100/laravel-notify.git",
-                "reference": "2fe76fc4957a4cb4b4ab359f2f7b7f9a358a02d7"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/tylercd100/laravel-notify/zipball/2fe76fc4957a4cb4b4ab359f2f7b7f9a358a02d7",
-                "reference": "2fe76fc4957a4cb4b4ab359f2f7b7f9a358a02d7",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/support": "^5.0",
-                "monolog/monolog": "^1.11",
-                "php": "^5.5.9|^7.0",
-                "psr/log": "^1.0",
-                "tylercd100/monolog-mailgun": "^2.0",
-                "tylercd100/monolog-sms": "^1.2"
-            },
-            "require-dev": {
-                "orchestra/testbench": "^3.1.0",
-                "phpunit/phpunit": "^4.8|^5.0",
-                "raven/raven": "~0.11"
-            },
-            "suggest": {
-                "raven/raven": "Required to use the Raven driver for Sentry (~0.11)."
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Tylercd100\\Notify\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Tyler Arbon",
-                    "email": "tylercd100@gmail.com"
-                }
-            ],
-            "homepage": "https://github.com/tylercd100/laravel-notify",
-            "keywords": [
-                "laravel",
-                "monolog",
-                "notifications",
-                "tylercd100"
-            ],
-            "time": "2016-11-28T23:09:48+00:00"
-        },
-        {
-            "name": "tylercd100/lern",
-            "version": "3.8.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/tylercd100/lern.git",
-                "reference": "d70adb1640a022ada236b17ffaaa0e9a0ad98cfe"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/tylercd100/lern/zipball/d70adb1640a022ada236b17ffaaa0e9a0ad98cfe",
-                "reference": "d70adb1640a022ada236b17ffaaa0e9a0ad98cfe",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/support": "^5.1",
-                "monolog/monolog": "^1.22",
-                "php": "^5.5.9|^7.0",
-                "tylercd100/laravel-notify": "^1.8.5"
-            },
-            "require-dev": {
-                "doctrine/dbal": "~2.3",
-                "orchestra/testbench": "^3.1.0",
-                "phpunit/phpunit": "^4.8 || ^5.6"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Tylercd100\\LERN\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Tyler Arbon",
-                    "email": "tylercd100@gmail.com"
-                }
-            ],
-            "description": "LERN (Laravel Exception Recorder and Notifier) is a Laravel 5 package that will record exceptions into a database and will notify you via Email, Pushover or Slack.",
-            "homepage": "https://github.com/tylercd100/lern",
-            "keywords": [
-                "exceptions",
-                "laravel",
-                "lern",
-                "monolog",
-                "pushover",
-                "slack",
-                "tylercd100"
-            ],
-            "time": "2017-06-01T15:45:01+00:00"
-        },
-        {
-            "name": "tylercd100/monolog-mailgun",
-            "version": "2.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/tylercd100/monolog-mailgun.git",
-                "reference": "3f64ecaf66ac128092592dbf8d5ab3d9361417cc"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/tylercd100/monolog-mailgun/zipball/3f64ecaf66ac128092592dbf8d5ab3d9361417cc",
-                "reference": "3f64ecaf66ac128092592dbf8d5ab3d9361417cc",
-                "shasum": ""
-            },
-            "require": {
-                "monolog/monolog": "^1.11",
-                "php": "^5.4|^7.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^4.0|^5.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Tylercd100\\Monolog\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Tyler Arbon",
-                    "email": "tylercd100@gmail.com"
-                }
-            ],
-            "description": "A Monolog Handler for SMS messaging services such as Plivo and Twilio.",
-            "homepage": "https://github.com/tylercd100/monolog-mailgun",
-            "keywords": [
-                "mailgun",
-                "monolog",
-                "monolog handler",
-                "tylercd100"
-            ],
-            "time": "2016-04-27T01:44:54+00:00"
-        },
-        {
-            "name": "tylercd100/monolog-sms",
-            "version": "1.3.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/tylercd100/monolog-sms.git",
-                "reference": "66d2592b1ab795a7fe938ebe004c90fcfd31343a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/tylercd100/monolog-sms/zipball/66d2592b1ab795a7fe938ebe004c90fcfd31343a",
-                "reference": "66d2592b1ab795a7fe938ebe004c90fcfd31343a",
-                "shasum": ""
-            },
-            "require": {
-                "monolog/monolog": "^1.11",
-                "php": "^5.4|^7.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^4.0|^5.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Tylercd100\\Monolog\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Tyler Arbon",
-                    "email": "tylercd100@gmail.com"
-                }
-            ],
-            "description": "A Monolog Handler for SMS messaging services such as Twilio, Clickatell and Plivo.",
-            "homepage": "https://github.com/tylercd100/monolog-sms",
-            "keywords": [
-                "clickatell",
-                "composer",
-                "handler",
-                "monolog",
-                "plivo",
-                "twilio",
-                "tylercd100"
-            ],
-            "time": "2017-05-01T17:52:48+00:00"
         },
         {
             "name": "tymon/jwt-auth",
@@ -10951,16 +10909,16 @@
         },
         {
             "name": "swagger-api/swagger-ui",
-            "version": "v3.20.7",
+            "version": "v3.20.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swagger-api/swagger-ui.git",
-                "reference": "67c1e00d96b915737da66efdbb0ea559b2d465f9"
+                "reference": "85d82fc0a82cb0325ace31780ae5f174cb8bcdf3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/67c1e00d96b915737da66efdbb0ea559b2d465f9",
-                "reference": "67c1e00d96b915737da66efdbb0ea559b2d465f9",
+                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/85d82fc0a82cb0325ace31780ae5f174cb8bcdf3",
+                "reference": "85d82fc0a82cb0325ace31780ae5f174cb8bcdf3",
                 "shasum": ""
             },
             "type": "library",
@@ -11004,7 +10962,7 @@
                 "swagger",
                 "ui"
             ],
-            "time": "2019-02-08T23:27:33+00:00"
+            "time": "2019-02-16T02:50:26+00:00"
         },
         {
             "name": "symfony/dom-crawler",
@@ -11528,7 +11486,9 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/bugsnag": 20,
         "circlelinkhealth/migrations": 20,
+        "lynx39/lara-pdf-merger": 20,
         "michalisantoniou6/laravel-cerberus": 20,
         "prettus/l5-repository": 20,
         "venturecraft/revisionable": 20,

@@ -35,4 +35,14 @@ fi
 # Enable lada-cache after migrations
 # php artisan lada-cache:enable
 
+# Add new line at the end of .env file
+echo "" >> .env
+
+# Append version to .env
+php artisan version:show --format=compact_no_build --suppress-app-name | cat <(echo -n "BUGSNAG_APP_VERSION=") - >> .env
+
+# Perform post depoyment tasks
 php artisan deploy:post
+
+# Notify Bugsnag of release
+php artisan bugsnag:deploy

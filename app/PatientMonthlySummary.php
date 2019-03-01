@@ -288,4 +288,19 @@ class PatientMonthlySummary extends BaseModel
         $this->billable_problem2      = null;
         $this->billable_problem2_code = null;
     }
+    
+    
+    /**
+     * Get how much time (in seconds) was contributed towards this patient's billable time by CLH Care Coaches.
+     *
+     * @return int
+     */
+    public function timeFromClhCareCoaches() : int
+    {
+        return (int) Activity::createdInMonth($this->month_year, 'performed_at')
+                       ->where('patient_id', $this->patient_id)
+                       ->whereHas('provider', function ($q) {
+                           $q->ofType('care-center');
+                       })->sum();
+    }
 }
