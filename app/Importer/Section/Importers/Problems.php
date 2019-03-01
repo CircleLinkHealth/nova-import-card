@@ -7,6 +7,7 @@
 namespace App\Importer\Section\Importers;
 
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
+use App\Constants;
 use App\Contracts\Importer\ImportedMedicalRecord\ImportedMedicalRecord;
 use App\Importer\Models\ImportedItems\ProblemImport;
 use App\Importer\Models\ItemLogs\ProblemLog;
@@ -56,7 +57,7 @@ class Problems extends BaseImporter
                 if ( ! validProblemName($problemCodes->cons_name)) {
                     return ['do_not_import' => $itemLog->id];
                 }
-    
+
                 $cpmProblem = optional($this->getCpmProblem($itemLog, $problemCodes->cons_name));
 
                 //if problem is Diabetes and string contains 2, it's probably diabetes type 2
@@ -140,18 +141,32 @@ class Problems extends BaseImporter
             return null;
         }
 
-        $map = $itemLog
-            ->codeMap();
+        $codes = $itemLog
+            ->codes()
+            ->pluck('code')
+            ->all();
 
-        foreach ($map as $codeSystemName => $code) {
-            $problemMap = SnomedToCpmIcdMap::with('cpmProblem')
-                ->whereHas('cpmProblem')
-                ->where($codeSystemName, '=', $code)
-                ->first();
+        $problemMap = SnomedToCpmIcdMap::with('cpmProblem')
+            ->has('cpmProblem')
+            ->where(function ($q) use ($codes) {
+                $q->whereIn(Constants::ICD9, $codes)
+                    ->where(Constants::ICD9, '!=', '')
+                    ->whereNotNull(Constants::ICD9);
+            })
+            ->orWhere(function ($q) use ($codes) {
+                $q->whereIn(Constants::ICD10, $codes)
+                    ->where(Constants::ICD10, '!=', '')
+                    ->whereNotNull(Constants::ICD10);
+            })
+            ->orWhere(function ($q) use ($codes) {
+                $q->whereIn(Constants::SNOMED, $codes)
+                    ->where(Constants::SNOMED, '!=', '')
+                    ->whereNotNull(Constants::SNOMED);
+            })
+            ->first();
 
-            if ($problemMap) {
-                return $problemMap->cpmProblem;
-            }
+        if ($problemMap) {
+            return $problemMap->cpmProblem;
         }
 
         // Try to match keywords
