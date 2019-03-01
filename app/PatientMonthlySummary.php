@@ -301,6 +301,6 @@ class PatientMonthlySummary extends BaseModel
                        ->where('patient_id', $this->patient_id)
                        ->whereHas('provider', function ($q) {
                            $q->ofType('care-center');
-                       })->sum();
+                       })->sum('duration');
     }
 }
