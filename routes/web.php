@@ -528,7 +528,7 @@ Route::group(['middleware' => 'auth'], function () {
             'middleware' => [
                 'permission:ccd-import',
             ],
-            'prefix'     => 'ccd-importer',
+            'prefix' => 'ccd-importer',
         ], function () {
             Route::get('imported-medical-records', [
                 'uses' => 'ImporterController@records',
@@ -733,7 +733,7 @@ Route::group(['middleware' => 'auth'], function () {
         'middleware' => [
             'permission:ccd-import',
         ],
-        'prefix'     => 'ccd-importer',
+        'prefix' => 'ccd-importer',
     ], function () {
         Route::get('create', [
             'uses' => 'ImporterController@create',
@@ -1094,7 +1094,7 @@ Route::group(['middleware' => 'auth'], function () {
             'auth',
             'permission:admin-access,practice-admin',
         ],
-        'prefix'     => 'admin',
+        'prefix' => 'admin',
     ], function () {
         Route::get('calls-v2', [
             'uses' => 'Admin\PatientCallManagementController@remixV2',
@@ -1117,9 +1117,8 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'monthly.billing.data',
                 ])->middleware('permission:patientSummary.read,patientSummary.update,patientSummary.create');
 
-                Route::post('/counts', [
+                Route::get('/counts', [
                     'uses' => 'Billing\PracticeInvoiceController@counts',
-                    'as'   => 'monthly.billing.count',
                 ])->middleware('permission:patientSummary.read');
 
                 Route::post('/storeProblem', [
@@ -1145,7 +1144,7 @@ Route::group(['middleware' => 'auth'], function () {
             'auth',
             'permission:admin-access',
         ],
-        'prefix'     => 'admin',
+        'prefix' => 'admin',
     ], function () {
         Route::group(['prefix' => 'offline-activity-time-requests'], function () {
             Route::get('', [
@@ -2136,7 +2135,7 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix'     => 'care-center',
     ], function () {
         Route::resource('work-schedule', 'CareCenter\WorkScheduleController', [
-            'only'  => [
+            'only' => [
                 'index',
                 'store',
             ],
