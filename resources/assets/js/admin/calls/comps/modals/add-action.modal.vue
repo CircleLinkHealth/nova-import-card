@@ -51,6 +51,8 @@
                             <th class="end-time">
                                 End Time
                                 <span class="required">*</span>
+                            </th>
+                            <th>
                                 <a class='my-tool-tip' data-toggle="tooltip" data-placement="top"
                                    title="Tick if patient requested call time">
                                     <i class='glyphicon glyphicon-info-sign'></i>
@@ -124,12 +126,14 @@
                                        :disabled="action.disabled" required/>
                             </td>
                             <td>
-                                <div class="width-82">
+                                <div class="width-83">
                                     <input class="form-control" type="time" name="window_end"
                                            v-model="action.data.endTime"
                                            :disabled="action.disabled" required/>
                                 </div>
-                                <div class="width-18 padding-left-5 padding-top-7">
+                            </td>
+                            <td>
+                                <div class="width-17 padding-left-5 padding-top-7">
                                     <input type="checkbox" id="is_manual"
                                            name="is_manual" v-model="action.data.isManual"
                                            :disabled="action.disabled"/>
@@ -140,15 +144,15 @@
                                        :disabled="action.disabled"/>
                             </td>
                             <td>
-                                <span class="btn btn-xs" @click="removeAction(index)" v-show="actions.length > 1">
-                                    <i class="glyphicon glyphicon-remove"></i>
-                                </span>
+                                       <span class="btn btn-xs" @click="removeAction(index)"
+                                             v-show="actions.length > 1">
+                                           <i class="glyphicon glyphicon-remove"></i>
+                                       </span>
                             </td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
-
                 <div>
                     <div class="alert alert-danger" v-if="hasNotAvailableNurses">
                         No available nurses for selected patient
@@ -299,7 +303,6 @@
             }
         },
         methods: {
-
             setNursesForSelect(actionIndex) {
                 this.actions[actionIndex].nursesForSelect = [
                     UNASSIGNED_VALUE,
@@ -872,7 +875,10 @@
 
     .v-select .dropdown-toggle {
         height: 34px;
-        overflow: hidden;
+    }
+
+    .v-select .dropdown-toggle .clear {
+        visibility: hidden;
     }
 
     .modal-add-action .modal-body {
