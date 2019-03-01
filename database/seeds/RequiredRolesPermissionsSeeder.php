@@ -20,7 +20,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
         $adminRole = Role::whereName($roleName)->first();
 
         $permissions = Permission::whereNotIn('name', $this->doNotGrantThesePermissionsToSuperAdmins())
-            ->get();
+                                 ->get();
 
         $adminRole->perms()->sync($permissions->pluck('id')->all());
     }
@@ -1233,6 +1233,12 @@ class RequiredRolesPermissionsSeeder extends Seeder
                 'description'  => 'Uses only the software solution of CLH (CPM)',
                 'permissions'  => [
                     'practice-admin',
+                    'patientSummary.read',
+                    'patientSummary.create',
+                    'patientSummary.update',
+                    'patientProblem.read',
+                    'chargeableService.read',
+                    'practice.read',
                 ],
             ],
         ];
@@ -1255,7 +1261,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
             $role = Role::updateOrCreate(['name' => $role['name']], $role);
 
             $permissionIds = Permission::whereIn('name', $permissionsArr)
-                ->pluck('id')->all();
+                                       ->pluck('id')->all();
 
             $role->perms()->sync($permissionIds);
 

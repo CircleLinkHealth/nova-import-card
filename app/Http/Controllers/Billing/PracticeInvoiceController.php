@@ -357,6 +357,16 @@ class PracticeInvoiceController extends Controller
         try {
             $summary = PatientMonthlySummary::find($request['report_id']);
 
+            //since this route is also accessible from software-only,
+            //we should make sure that software-only role is applied on this practice
+            $user = auth()->user();
+            if ( ! $user->isAdmin()) {
+                $patientPracticeId = User::find($summary->patient_id, ['program_id'])->program_id;
+                if ( ! $user->isAdmin() && ! $user->hasRoleForSite('software-only', $patientPracticeId)) {
+                    abort(403);
+                }
+            }
+
             $key = $request['problem_no'];
 
             $problemId = $request['id'];
