@@ -56,7 +56,7 @@
                     <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
 
                         <form class="form-horizontal" role="form" method="POST"
-                              action="{{ url('auth/password/reset') }}">
+                              action="{{ url('auth/password/reset') }}" autocomplete="off">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
                             <input type="hidden" name="token" value="{{ $token }}">
 
@@ -70,14 +70,14 @@
                             <div class="form-group">
                                 <label class="col-md-4 control-label">Password</label>
                                 <div class="col-md-8">
-                                    <input type="password" class="form-control" name="password" style="text-align: left;">
+                                    <input type="password" class="form-control" name="password" style="text-align: left;" autocomplete="off">
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="col-md-4 control-label">Confirm Password</label>
                                 <div class="col-md-8">
-                                    <input type="password" class="form-control" name="password_confirmation" style="text-align: left;">
+                                    <input type="password" class="form-control" name="password_confirmation" style="text-align: left;" autocomplete="off">
                                 </div>
                             </div>
 

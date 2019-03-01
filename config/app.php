@@ -194,7 +194,6 @@ return [
         Illuminate\View\ViewServiceProvider::class,
         
         // Application Service Providers...
-        Bugsnag\BugsnagLaravel\BugsnagServiceProvider::class,
         Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class,
         Barryvdh\Snappy\ServiceProvider::class,
         
@@ -218,7 +217,6 @@ return [
         Yajra\DataTables\DataTablesServiceProvider::class,
         Spatie\GoogleCalendar\GoogleCalendarServiceProvider::class,
         ObserversServiceProvider::class,
-        Tylercd100\LERN\LERNServiceProvider::class,
         ViewComposerServiceProvider::class,
         ProviderUITimerComposer::class,
         jeremykenedy\Slack\Laravel\ServiceProvider::class,
@@ -284,7 +282,6 @@ return [
         'Input'     => Illuminate\Support\Facades\Input::class,
         'Inspiring' => Illuminate\Foundation\Inspiring::class,
         
-        'Bugsnag'        => Bugsnag\BugsnagLaravel\Facades\Bugsnag::class,
         'DataTables'     => Yajra\DataTables\Facades\DataTables::class,
         'Excel'          => \Maatwebsite\Excel\Facades\Excel::class,
         'Form'           => \Collective\Html\FormFacade::class,
@@ -292,7 +289,6 @@ return [
         'Image'          => \Barryvdh\Snappy\Facades\SnappyImage::class,
         'JWTAuth'        => \Tymon\JWTAuth\Facades\JWTAuth::class,
         'JWTFactory'     => \Tymon\JWTAuth\Facades\JWTFactory::class,
-        'LERN'           => Tylercd100\LERN\Facades\LERN::class,
         'PDF'            => \Barryvdh\Snappy\Facades\SnappyPdf::class,
         'PdfMerger'      => LynX39\LaraPdfMerger\Facades\PdfMerger::class,
         'Slack'          => jeremykenedy\Slack\Laravel\Facade::class,

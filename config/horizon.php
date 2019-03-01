@@ -4,17 +4,6 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-$supervisor = [
-    'supervisor-1' => [
-        'connection' => 'redis',
-        'queue'      => ['high', 'default', 'low'],
-        'balance'    => 'auto',
-        'processes'  => 8,
-        'tries'      => 1,
-        'timeout'    => 300,
-    ],
-];
-
 return [
     /*
     |--------------------------------------------------------------------------
@@ -26,9 +15,9 @@ return [
     | of supervisors, failed jobs, job metrics, and other information.
     |
     */
-
+    
     'use' => 'default',
-
+    
     /*
     |--------------------------------------------------------------------------
     | Horizon Redis Prefix
@@ -39,9 +28,9 @@ return [
     | of Horizon on the same server so that they don't have problems.
     |
     */
-
+    
     'prefix' => env('HORIZON_PREFIX', 'horizon:'),
-
+    
     /*
     |--------------------------------------------------------------------------
     | Queue Wait Time Thresholds
@@ -52,11 +41,11 @@ return [
     | own, unique threshold (in seconds) before this event is fired.
     |
     */
-
+    
     'waits' => [
         'redis:default' => 60,
     ],
-
+    
     /*
     |--------------------------------------------------------------------------
     | Job Trimming Times
@@ -67,12 +56,12 @@ return [
     | for one hour while all failed jobs are stored for an entire week.
     |
     */
-
+    
     'trim' => [
         'recent' => 1440,
         'failed' => 10080,
     ],
-
+    
     /*
     |--------------------------------------------------------------------------
     | Queue Worker Configuration
@@ -83,11 +72,67 @@ return [
     | queued jobs and will be provisioned by Horizon during deployment.
     |
     */
-
+    
     'environments' => [
-        'local'      => $supervisor,
-        'production' => $supervisor,
-        'staging'    => $supervisor,
-        'worker'     => $supervisor,
+        'local'      => [
+            'supervisor-1' => [
+                'connection' => 'redis',
+                'queue'      => ['high', 'default', 'low'],
+                'balance'    => 'auto',
+                'processes'  => 8,
+                'tries'      => 1,
+                'timeout'    => 300,
+            ],
+        ],
+        'production' => [
+            'supervisor-1' => [
+                'connection'    => 'redis',
+                'queue'         => ['default', 'low'],
+                'balance'       => 'auto',
+                'min-processes' => 0,
+                'max-processes' => 5,
+                'tries'         => 1,
+                'timeout'       => 60,
+            ],
+            'supervisor-2' => [
+                'connection'    => 'redis',
+                'queue'         => ['high'],
+                'balance'       => 'auto',
+                'min-processes' => 5,
+                'max-processes' => 15,
+                'tries'         => 3,
+                'timeout'       => 30,
+            ],
+        ],
+        'staging'    => [
+            'supervisor-1' => [
+                'connection' => 'redis',
+                'queue'      => ['high', 'default', 'low'],
+                'balance'    => 'auto',
+                'processes'  => 8,
+                'tries'      => 1,
+                'timeout'    => 300,
+            ],
+        ],
+        'worker'     => [
+            'supervisor-1' => [
+                'connection'    => 'redis',
+                'queue'         => ['default', 'low'],
+                'balance'       => 'auto',
+                'min-processes' => 0,
+                'max-processes' => 10,
+                'tries'         => 1,
+                'timeout'       => 300,
+            ],
+            'supervisor-2' => [
+                'connection'    => 'redis',
+                'queue'         => ['high'],
+                'balance'       => 'auto',
+                'min-processes' => 3,
+                'max-processes' => 8,
+                'tries'         => 1,
+                'timeout'       => 300,
+            ],
+        ],
     ],
 ];

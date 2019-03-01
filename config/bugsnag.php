@@ -51,7 +51,7 @@ return [
     |
     */
 
-    'batch_sending' => env('BUGSNAG_BATCH_SENDING'),
+    'batch_sending' => env('BUGSNAG_BATCH_SENDING', true),
 
     /*
     |--------------------------------------------------------------------------
@@ -77,7 +77,7 @@ return [
     |
     */
 
-    'filters' => empty(env('BUGSNAG_FILTERS')) ? ['password'] : explode(',', str_replace(' ', '', env('BUGSNAG_FILTERS'))),
+    'filters' => empty(env('BUGSNAG_FILTERS')) ? ['password', 'mrn'] : explode(',', str_replace(' ', '', env('BUGSNAG_FILTERS'))),
 
     /*
     |--------------------------------------------------------------------------
@@ -157,7 +157,7 @@ return [
     |
     */
 
-    'bindings' => env('BUGSNAG_QUERY_BINDINGS', false),
+    'bindings' => env('BUGSNAG_QUERY_BINDINGS', true),
 
     /*
     |--------------------------------------------------------------------------
@@ -251,7 +251,7 @@ return [
     |
     */
 
-    'auto_capture_sessions' => env('BUGSNAG_CAPTURE_SESSIONS', false),
+    'auto_capture_sessions' => env('BUGSNAG_CAPTURE_SESSIONS', true),
 
     /*
     |--------------------------------------------------------------------------
