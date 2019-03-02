@@ -857,6 +857,7 @@
 
     .v-select .dropdown-toggle {
         height: 34px;
+        white-space: unset;
     }
 
     .modal-add-action .modal-body {
@@ -864,8 +865,7 @@
     }
 
      .selected-tag {
-          width: auto;
-          max-width: 80%;
+         max-width: 80%;
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow: hidden;
