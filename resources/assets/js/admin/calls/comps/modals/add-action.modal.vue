@@ -72,20 +72,23 @@
                             <td>
                                 <div v-show="action.showFamilyOverride">
                                     <input type="checkbox" id="family_override"
-                                           name="family_override" v-model="action.data.familyOverride"
+                                           name="family_override"
+                                           v-model="action.data.familyOverride"
                                            :disabled="action.disabled"/>
                                 </div>
                             </td>
                             <td>
                                 <v-select :disabled="action.disabled"
-                                          max-height="200px" class="form-control" v-model="action.selectedSubTypeData"
+                                          max-height="200px" class="form-control"
+                                          v-model="action.selectedSubTypeData"
                                           :options="subTypesForSelect"
-                                          @input="function (type) {changeSubType(index, type)}"required>
+                                          @input="function (type) {changeSubType(index, type)}">
                                 </v-select>
                             </td>
                             <td>
                                 <v-select :disabled="action.disabled"
-                                          max-height="200px" class="form-control" v-model="action.selectedPracticeData"
+                                          max-height="200px" class="form-control"
+                                          v-model="action.selectedPracticeData"
                                           :options="practicesForSelect"
                                           @input="function (practice) {changePractice(index, practice)}">
                                 </v-select>
@@ -93,7 +96,8 @@
                             <td>
                                 <div class="width-90">
                                     <v-select :disabled="action.disabled"
-                                              max-height="200px" class="form-control" name="inbound_cpm_id"
+                                              max-height="200px" class="form-control"
+                                              name="inbound_cpm_id"
                                               v-model="action.selectedPatientData"
                                               :options="action.patientsForSelect"
                                               @input="function (patient) {changePatient(index, patient)}"
@@ -117,7 +121,8 @@
                                 </v-select>
                             </td>
                             <td>
-                                <input class="form-control" type="date" name="scheduled_date" v-model="action.data.date"
+                                <input class="form-control" type="date" name="scheduled_date"
+                                       v-model="action.data.date"
                                        :disabled="action.disabled" required/>
                             </td>
                             <td>
@@ -127,8 +132,8 @@
                             </td>
                             <td>
                                 <input class="form-control" type="time" name="window_end"
-                                           v-model="action.data.endTime"
-                                           :disabled="action.disabled" required/>
+                                       v-model="action.data.endTime"
+                                       :disabled="action.disabled" required/>
                             </td>
                             <td>
                                 <div class="width-18 padding-left-5 padding-top-7">
@@ -274,6 +279,7 @@
                 },
 
                 subTypesForSelect: [
+                    UNASSIGNED_VALUE,
                     {label: 'Call', value: 'call'},
                     {label: 'Call back', value: 'Call Back'},
                     {label: 'Refill', value: 'Refill'},
@@ -750,6 +756,7 @@
 
     .modal-add-action table.add-actions th.sub-type {
         width: 5%;
+        min-width: 140px;
     }
 
     .modal-add-action table.add-actions th.practices {
@@ -850,19 +857,19 @@
 
     .v-select .dropdown-toggle {
         height: 34px;
-        overflow: initial;
     }
 
     .modal-add-action .modal-body {
         min-height: 300px;
     }
 
-    .selected-tag {
-        width: 80%;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
-    }
+     .selected-tag {
+          width: auto;
+          max-width: 80%;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+      }
 
     a.my-tool-tip {
         float: right;
