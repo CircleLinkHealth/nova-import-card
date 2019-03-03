@@ -167,7 +167,7 @@
 
                 <br/>
                 <div class="row">
-                    <div class="btn btn-primary btn-xs" @click="addNewAction">
+                    <div class="btn btn-primary btn-xs add-activity" @click="addNewAction">
                         Add New Activity
                     </div>
                 </div>
@@ -357,8 +357,7 @@
                                 value: practice.id
                             }
                         }
-                    }
-                    else {
+                    } else {
                         this.actions[actionIndex].selectedPracticeData = UNASSIGNED_VALUE;
                     }
                 }
@@ -368,8 +367,7 @@
                     if (type.value === "call") {
                         this.actions[actionIndex].data.type = 'call';
                         this.actions[actionIndex].data.subType = null;
-                    }
-                    else {
+                    } else {
                         this.actions[actionIndex].data.type = 'task';
                         this.actions[actionIndex].data.subType = type.value;
                     }
@@ -487,6 +485,29 @@
                 }
                 return Promise.resolve([])
             },
+            getAllPatients() {
+                //this is wrong.
+                //need to revise
+                /*
+                this.loaders.patients = true
+                return this.cache()
+                    .get(rootUrl(`api/patients?rows=all&autocomplete`))
+                    .then(response => {
+                        this.loaders.patients = false
+                        console.log('add-action:patients:all', response.data)
+                        return response.data;
+                    })
+                    .then((patients = []) => {
+                        return this.patients = patients.sort((a, b) => {
+                            return a.name > b.name ? 1 : -1;
+                        }).distinct(patient => patient.id)
+                    }).catch(err => {
+                        this.loaders.patients = false
+                        this.errors.patients = err.message
+                        console.error('add-action:patients:all', err)
+                    })
+                    */
+            },
             getNurses(actionIndex) {
                 if (this.actions[actionIndex].data.practiceId) {
                     this.loaders.nurses = true;
@@ -597,11 +618,9 @@
 
                                         if (familyOverrideError) {
                                             msg += CALL_MUST_OVERRIDE_WARNING;
-                                        }
-                                        else if (Array.isArray(action.errors)) {
+                                        } else if (Array.isArray(action.errors)) {
                                             msg += action.errors.join(', ');
-                                        }
-                                        else {
+                                        } else {
                                             const errorsMessages = Object.values(action.errors).map(x => x[0]).join(', ');
                                             msg += errorsMessages;
                                         }
@@ -611,8 +630,7 @@
                                             type: 'error',
                                             noTimeout: true
                                         });
-                                    }
-                                    else {
+                                    } else {
                                         Event.$emit('notifications-add-action-modal:create', {
                                             text: `Action[${index + 1}]: Created successfully`,
                                             noTimeout: true
@@ -622,8 +640,7 @@
 
                                 });
 
-                            }
-                            else {
+                            } else {
                                 this.resetForm();
                                 Event.$emit("modal-add-action:hide");
                                 actions.forEach(action => {
@@ -633,8 +650,7 @@
                                 console.log('actions:add', actions);
                             }
 
-                        }
-                        else {
+                        } else {
                             throw new Error('Could not create call. Patient already has a scheduled call')
                         }
                     }).catch(err => {
@@ -657,13 +673,11 @@
                                 const errors = err.response.data.errors;
                                 if (Array.isArray(errors)) {
                                     msg += `: ${errors.join(', ')}`;
-                                }
-                                else {
+                                } else {
                                     const errorsMessages = Object.values(errors).map(x => x[0]).join(', ');
                                     msg += `: ${errorsMessages}`;
                                 }
-                            }
-                            else if (err.response.data.message) {
+                            } else if (err.response.data.message) {
                                 msg += `: ${err.response.data.message}`;
                             }
 
@@ -858,23 +872,24 @@
     }
 
     .v-select .dropdown-toggle {
-        height: 34px;
+        height: 36px;
+        overflow: hidden;
     }
 
     .modal-add-action .modal-body {
         min-height: 300px;
     }
 
-     .selected-tag {
-         max-width: 80%;
-          text-overflow: ellipsis;
-          white-space: initial;
-          overflow: hidden;
-      }
+    .selected-tag {
+        max-width: 80%;
+        text-overflow: ellipsis;
+        white-space: initial;
+        overflow: hidden;
+    }
 
-     .btn btn-primary btn-xs{
-         margin-left: -7px;
-     }
+    .add-activity {
+        margin-left: -6px;
+    }
 
     a.my-tool-tip {
         float: right;
