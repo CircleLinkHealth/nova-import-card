@@ -136,7 +136,7 @@
                                        :disabled="action.disabled" required/>
                             </td>
                             <td>
-                                <div class="width-18 padding-left-5 padding-top-7">
+                                <div class="width-18 padding-top-7">
                                     <input type="checkbox" id="is_manual"
                                            name="is_manual" v-model="action.data.isManual"
                                            :disabled="action.disabled"/>
@@ -752,6 +752,7 @@
 
     .modal-add-action table.add-actions {
         table-layout: fixed;
+        margin-left: -25px;
     }
 
     .modal-add-action table.add-actions th.sub-type {
@@ -827,8 +828,9 @@
     }
 
     .width-10 {
-        float: left;
-        width: 10%;
+        float: right;
+        margin-right: 5px;
+        width: 5%;
     }
 
     .padding-left-5 {
@@ -857,7 +859,6 @@
 
     .v-select .dropdown-toggle {
         height: 34px;
-        white-space: unset;
     }
 
     .modal-add-action .modal-body {
@@ -867,13 +868,17 @@
      .selected-tag {
          max-width: 80%;
           text-overflow: ellipsis;
-          white-space: nowrap;
+          white-space: initial;
           overflow: hidden;
       }
 
+     .btn btn-primary btn-xs{
+         margin-left: -7px;
+     }
+
     a.my-tool-tip {
         float: right;
-        margin-right: 4px;
+        margin-right: -4px;
     }
 
 
