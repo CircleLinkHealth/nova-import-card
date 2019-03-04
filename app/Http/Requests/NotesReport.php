@@ -25,7 +25,7 @@ class NotesReport extends FormRequest
     public function rules()
     {
         return [
-            'range'        => 'sometimes|integer|between:0,4',
+            'range'        => 'sometimes|filled|integer|between:0,4',
             'getNotesFor'  => [
                 'sometimes',
                 'array',
@@ -33,6 +33,18 @@ class NotesReport extends FormRequest
                     foreach ($value as $selection) {
                         $data = explode(':', $selection);
                         if (count($data) !== 2) {
+                            return $fail('The value submitted for Practices/Providers select dropdown is invalid.');
+                        }
+
+                        $selectKey            = $data[0];
+                        $practiceOrProviderId = $data[1];
+
+                        if ($selectKey !== 'provider' && $selectKey !== 'practice') {
+                            return $fail('The value submitted for Practices/Providers select dropdown is invalid.');
+                        }
+                        //This check is not necessary in that the system does not break, but instead fetches 0 results.
+                        //(int)'string without number' returns 0. This check still does not successfully catch faulty input e.g. '8test'
+                        if ((int)$practiceOrProviderId === 0) {
                             return $fail('The value submitted for Practices/Providers select dropdown is invalid.');
                         }
                     }

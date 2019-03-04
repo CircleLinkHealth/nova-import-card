@@ -45,7 +45,7 @@ class ImporterController extends Controller
             ->with('location')
             ->with('billingProvider')
             ->get()
-            ->map(function ($summary) {
+            ->transform(function ($summary) {
                 $summary['flag'] = false;
 
                 $mr = $summary->medicalRecord();

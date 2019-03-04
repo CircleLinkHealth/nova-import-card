@@ -83,8 +83,6 @@ class Connection
             'openpreview1' => 'ouathopenpreview/token',
         ];
         $this->authurl = 'https://api.athenahealth.com/'.$auth_prefixes[$this->version];
-
-        $this->authenticate();
     }
 
     /**

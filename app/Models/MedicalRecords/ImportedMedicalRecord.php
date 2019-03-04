@@ -64,8 +64,27 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class ImportedMedicalRecord extends \App\BaseModel implements ImportedMedicalRecordInterface
 {
+    /**
+     * An option in validation_checks
+     */
+    const CHECK_HAS_AT_LEAST_2_CCM_CONDITIONS = 'has_at_least_2_ccm_conditions';
+    
+    /**
+     * An option in validation_checks
+     */
+    const CHECK_HAS_AT_LEAST_1_BHI_CONDITION = 'has_at_least_1_bhi_condition';
+    
+    /**
+     * An option in validation_checks
+     */
+    const CHECK_HAS_MEDICARE = 'has_medicare';
+    
     use MedicalRecordIdAndTypeTrait,
         SoftDeletes;
+
+    protected $casts = [
+        'validation_checks' => 'array',
+    ];
 
     protected $fillable = [
         'patient_id',
@@ -75,6 +94,7 @@ class ImportedMedicalRecord extends \App\BaseModel implements ImportedMedicalRec
         'location_id',
         'practice_id',
         'duplicate_id',
+        'validation_checks',
     ];
 
     public function allergies()

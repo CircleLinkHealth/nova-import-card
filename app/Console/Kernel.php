@@ -67,7 +67,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('horizon:snapshot')->everyFiveMinutes();
 
         $schedule->command(DetermineTargetPatientEligibility::class)
-            ->everyTenMinutes();
+            ->dailyAt('04:00');
 
         $schedule->command(QueueEligibilityBatchForProcessing::class)
             ->everyMinute()
@@ -109,7 +109,7 @@ class Kernel extends ConsoleKernel
             ->dailyAt('00:30');
 
         $schedule->command(GetCcds::class)
-            ->everyThirtyMinutes();
+            ->dailyAt('03:00');
 
         $schedule->command(EmailRNDailyReport::class)
             ->dailyAt('21:00');

@@ -85,24 +85,7 @@ return [
             ],
         ],
         'production' => [
-            'supervisor-1' => [
-                'connection'    => 'redis',
-                'queue'         => ['default', 'low'],
-                'balance'       => 'auto',
-                'min-processes' => 0,
-                'max-processes' => 5,
-                'tries'         => 1,
-                'timeout'       => 60,
-            ],
-            'supervisor-2' => [
-                'connection'    => 'redis',
-                'queue'         => ['high'],
-                'balance'       => 'auto',
-                'min-processes' => 5,
-                'max-processes' => 15,
-                'tries'         => 3,
-                'timeout'       => 30,
-            ],
+        
         ],
         'staging'    => [
             'supervisor-1' => [
@@ -120,7 +103,7 @@ return [
                 'queue'         => ['default', 'low'],
                 'balance'       => 'auto',
                 'min-processes' => 0,
-                'max-processes' => 10,
+                'max-processes' => 3,
                 'tries'         => 1,
                 'timeout'       => 300,
             ],
@@ -128,10 +111,10 @@ return [
                 'connection'    => 'redis',
                 'queue'         => ['high'],
                 'balance'       => 'auto',
-                'min-processes' => 3,
-                'max-processes' => 8,
+                'min-processes' => 2,
+                'max-processes' => 10,
                 'tries'         => 1,
-                'timeout'       => 300,
+                'timeout'       => 30,
             ],
         ],
     ],

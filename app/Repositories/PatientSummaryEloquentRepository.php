@@ -529,9 +529,10 @@ class PatientSummaryEloquentRepository
      */
     private function shouldAttachChargeableService(ChargeableService $service, PatientMonthlySummary $summary)
     {
-        return 'CPT 99484'    == $service->code && $summary->bhi_time >= 1200
-               || 'CPT 99490' == $service->code && $summary->ccm_time >= 1200
-               || 'G0511'     == $service->code && $summary->ccm_time >= 1200;
+        return 'CPT 99484'        == $service->code && $summary->bhi_time >= 1200
+               || 'CPT 99490'     == $service->code && $summary->ccm_time >= 1200
+               || 'G0511'         == $service->code && $summary->ccm_time >= 1200
+               || 'Software-Only' == $service->code && $summary->patient->primaryPractice->hasServiceCode('Software-Only') && 0 == $summary->timeFromClhCareCoaches();
     }
 
     /**

@@ -20,38 +20,38 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 /**
  * App\Practice.
  *
- * @property int                                                              $id
- * @property int|null                                                         $ehr_id
- * @property int|null                                                         $user_id
- * @property string                                                           $name
- * @property string|null                                                      $display_name
- * @property int                                                              $active
- * @property float                                                            $clh_pppm
- * @property int                                                              $term_days
- * @property string|null                                                      $federal_tax_id
- * @property int|null                                                         $same_ehr_login
- * @property int|null                                                         $same_clinical_contact
- * @property int                                                              $auto_approve_careplans
- * @property int                                                              $send_alerts
- * @property string|null                                                      $weekly_report_recipients
- * @property string                                                           $invoice_recipients
- * @property string                                                           $bill_to_name
- * @property string|null                                                      $external_id
- * @property string                                                           $outgoing_phone_number
- * @property \Carbon\Carbon                                                   $created_at
- * @property \Carbon\Carbon                                                   $updated_at
- * @property string|null                                                      $deleted_at
- * @property string|null                                                      $sms_marketing_number
+ * @property int $id
+ * @property int|null $ehr_id
+ * @property int|null $user_id
+ * @property string $name
+ * @property string|null $display_name
+ * @property int $active
+ * @property float $clh_pppm
+ * @property int $term_days
+ * @property string|null $federal_tax_id
+ * @property int|null $same_ehr_login
+ * @property int|null $same_clinical_contact
+ * @property int $auto_approve_careplans
+ * @property int $send_alerts
+ * @property string|null $weekly_report_recipients
+ * @property string $invoice_recipients
+ * @property string $bill_to_name
+ * @property string|null $external_id
+ * @property string $outgoing_phone_number
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property string|null $deleted_at
+ * @property string|null $sms_marketing_number
  * @property \App\CarePlanTemplate[]|\Illuminate\Database\Eloquent\Collection $careplan
- * @property \App\Models\Ehr|null                                             $ehr
- * @property mixed                                                            $formatted_name
- * @property mixed                                                            $primary_location_id
- * @property mixed                                                            $subdomain
- * @property \App\User|null                                                   $lead
- * @property \App\Location[]|\Illuminate\Database\Eloquent\Collection         $locations
- * @property \App\CPRulesPCP[]|\Illuminate\Database\Eloquent\Collection       $pcp
- * @property \App\Settings[]|\Illuminate\Database\Eloquent\Collection         $settings
- * @property \App\User[]|\Illuminate\Database\Eloquent\Collection             $users
+ * @property \App\Models\Ehr|null $ehr
+ * @property mixed $formatted_name
+ * @property mixed $primary_location_id
+ * @property mixed $subdomain
+ * @property \App\User|null $lead
+ * @property \App\Location[]|\Illuminate\Database\Eloquent\Collection $locations
+ * @property \App\CPRulesPCP[]|\Illuminate\Database\Eloquent\Collection $pcp
+ * @property \App\Settings[]|\Illuminate\Database\Eloquent\Collection $settings
+ * @property \App\User[]|\Illuminate\Database\Eloquent\Collection $users
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice active()
  * @method static bool|null forceDelete()
@@ -117,12 +117,6 @@ class Practice extends BaseModel implements HasMedia
         return $this->belongsToMany(CareAmbassadorLog::class);
     }
 
-    public function enrolleeCustomFilters(){
-
-        return $this->belongsToMany(EnrolleeCustomFilter::class, 'practice_enrollee_filters', 'practice_id', 'filter_id');
-
-    }
-
     public function careplan()
     {
         return $this->hasMany('App\CarePlanTemplate', 'patient_id');
@@ -140,6 +134,12 @@ class Practice extends BaseModel implements HasMedia
         return $this->belongsTo(Ehr::class);
     }
 
+    public function enrolleeCustomFilters()
+    {
+        return $this->belongsToMany(EnrolleeCustomFilter::class, 'practice_enrollee_filters', 'practice_id',
+            'filter_id');
+    }
+
     public function enrollmentByProgram(
         Carbon $start,
         Carbon $end
@@ -147,8 +147,8 @@ class Practice extends BaseModel implements HasMedia
         $patients = Patient::whereHas('user', function ($q) {
             $q->where('program_id', $this->id);
         })
-            ->whereNotNull('ccm_status')
-            ->get();
+                           ->whereNotNull('ccm_status')
+                           ->get();
 
         $data = [
             'withdrawn' => 0,
@@ -199,8 +199,8 @@ class Practice extends BaseModel implements HasMedia
         }
 
         return [
-            'line1' => $primary->address_line_1.' '.$primary->address_line_2,
-            'line2' => $primary->city.', '.$primary->state.' '.$primary->postal_code,
+            'line1' => $primary->address_line_1 . ' ' . $primary->address_line_2,
+            'line2' => $primary->city . ', ' . $primary->state . ' ' . $primary->postal_code,
         ];
     }
 
@@ -210,13 +210,13 @@ class Practice extends BaseModel implements HasMedia
 
         return User
             ::where('user_status', 1)
-                ->whereProgramId($this->id)
-                ->whereHas('roles', function ($q) use (
+            ->whereProgramId($this->id)
+            ->whereHas('roles', function ($q) use (
                 $role
             ) {
-                    $q->whereName($role);
-                })
-                ->count();
+                $q->whereName($role);
+            })
+            ->count();
     }
 
     public function getFormattedNameAttribute()
@@ -274,12 +274,6 @@ class Practice extends BaseModel implements HasMedia
     public function getWeeklyReportRecipientsArray()
     {
         return array_map('trim', explode(',', $this->weekly_report_recipients));
-    }
-
-    public function setDirectMailCareplanApprovalReminders($bool){
-        $this->cpmSettings->dm_careplan_approval_reminders = $bool;
-        $this->cpmSettings->save();
-
     }
 
     public function isTwilioEnabled()
@@ -343,12 +337,20 @@ class Practice extends BaseModel implements HasMedia
         }
 
         return $q->whereActive(1)
-            ->whereNotIn('name', ['demo', 'testdrive', 'mdally-demo']);
+                 ->whereNotIn('name', ['demo', 'testdrive', 'mdally-demo']);
     }
 
-    public function scopeAuthUserCanAccess($q)
+    public function scopeAuthUserCanAccess($q, $softwareOnly = false)
     {
-        return $q->whereIn('id', auth()->user()->practices->pluck('id')->all());
+        $user = auth()->user();
+        if ($softwareOnly) {
+            $roleIds = Role::getIdsFromNames(['software-only']);
+            $softwareOnlyPractices = $user->practices(true, true, $roleIds)->pluck('id')->all();
+            return $q->whereIn('id', $softwareOnlyPractices);
+        } else {
+            return $q->whereIn('id', $user->practices->pluck('id')->all());
+        }
+
     }
 
     public function scopeAuthUserCannotAccess($q)
@@ -364,17 +366,23 @@ class Practice extends BaseModel implements HasMedia
                     'patientInfo',
                     'activities',
                 ])
-                    ->whereHas('patientInfo', function ($patient) {
-                        $patient->where('ccm_status', Patient::ENROLLED);
-                    });
+                  ->whereHas('patientInfo', function ($patient) {
+                      $patient->where('ccm_status', Patient::ENROLLED);
+                  });
             },
         ]);
+    }
+
+    public function setDirectMailCareplanApprovalReminders($bool)
+    {
+        $this->cpmSettings->dm_careplan_approval_reminders = $bool;
+        $this->cpmSettings->save();
     }
 
     public function users()
     {
         return $this->belongsToMany(User::class, 'practice_role_user', 'program_id', 'user_id')
-            ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports')
-            ->withTimestamps();
+                    ->withPivot('role_id', 'send_billing_reports')
+                    ->withTimestamps();
     }
 }

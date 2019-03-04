@@ -6,8 +6,6 @@
 
 namespace App\Console\Commands\Athena;
 
-use App\ForeignId;
-use App\Models\CCD\CcdVendor;
 use App\Services\AthenaAPI\CreateAndPostPdfCareplan;
 use Illuminate\Console\Command;
 
@@ -45,10 +43,6 @@ class GetCcds extends Command
      */
     public function handle()
     {
-        $vendors = CcdVendor::whereEhrName(ForeignId::ATHENA)->get();
-
-        foreach ($vendors as $vendor) {
-            $this->service->getCcdsFromRequestQueue(5);
-        }
+        $this->service->getCcdsFromRequestQueue(5);
     }
 }
