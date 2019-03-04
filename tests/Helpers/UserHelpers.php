@@ -87,7 +87,7 @@ trait UserHelpers
         //check that the roles were created
         foreach ($roles as $role) {
             $is_admin = 1 == $role;
-            $user->attachPractice($practiceId, $is_admin, $is_admin, $role);
+            $user->attachPractice($practiceId, [$role], $is_admin);
             $this->assertDatabaseHas('practice_role_user', [
                 'user_id'    => $user->id,
                 'role_id'    => $role,

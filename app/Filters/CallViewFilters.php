@@ -6,6 +6,7 @@
 
 namespace App\Filters;
 
+use App\Role;
 use Illuminate\Http\Request;
 
 class CallViewFilters extends QueryFilters
@@ -40,7 +41,7 @@ class CallViewFilters extends QueryFilters
 
     public function globalFilters(): array
     {
-        return [];
+        return ['software_only_user' => !auth()->user()->isAdmin()];
     }
 
     public function last_call($lastCall)
@@ -71,6 +72,20 @@ class CallViewFilters extends QueryFilters
     public function scheduled_date($date)
     {
         return $this->builder->where('scheduled_date', 'like', '%'.$date.'%');
+    }
+
+    public function software_only_user($value)
+    {
+        if ( ! $value) {
+            return $this->builder;
+        }
+        $roleIds = Role::getIdsFromNames(['software-only']);
+        $user    = auth()->user();
+
+        return $this->builder->whereRaw(
+            'practice_id IN (SELECT program_id FROM practice_role_user WHERE role_id IN (?) AND user_id = ?)',
+            [implode(',', $roleIds), $user->id]
+        );
     }
 
     public function sort_bhi_time($term)

@@ -132,7 +132,7 @@
                                                             class="glyphicon glyphicon-eye-open"></i> View</a>
                                             @endif
 
-                                            @if($wpUser->hasRole(['care-center', 'saas-admin']))
+                                            @if($wpUser->isCareCoach() || $wpUser->hasRole('saas-admin'))
                                                 <a href="{{ route('saas-admin.users.edit', ['userId' => $wpUser->id]) }}"
                                                    class="btn btn-primary btn-xs"><i
                                                             class="glyphicon glyphicon-edit"></i> Edit</a>

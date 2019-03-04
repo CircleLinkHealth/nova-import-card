@@ -96,12 +96,12 @@ class UserRepository
         }
 
         // nurse info
-        if ($user->hasRole('care-center')) {
+        if ($user->isCareCoach()) {
             $this->saveOrUpdateNurseInfo($user, $params);
         }
 
         // care ambassador info
-        if ($user->hasRole('care-ambassador') || $user->hasRole('care-ambassador-view-only')) {
+        if ($user->hasRole(['care-ambassador', 'care-ambassador-view-only'])) {
             $this->saveOrUpdateCareAmbassadorInfo($user, $params);
         }
 
@@ -153,7 +153,7 @@ class UserRepository
         }
 
         // nurse info
-        if ($user->hasRole('care-center')) {
+        if ($user->isCareCoach()) {
             $this->saveOrUpdateNurseInfo($user, $params);
         }
 
@@ -199,9 +199,9 @@ class UserRepository
 
         if (app()->environment(['staging', 'local'])) {
             //this returns directory details and not contents
-            $ehrDir = collect(getGoogleDirectoryByName('ehr-data-from-report-writers'));
+            $ehrDir  = collect(getGoogleDirectoryByName('ehr-data-from-report-writers'));
             $ehrPath = $ehrDir->get('path');
-            $ehr = $googleDrive->getContents($ehrPath);
+            $ehr     = $googleDrive->getContents($ehrPath);
             if ( ! $ehr) {
                 $cloudDisk->makeDirectory('ehr-data-from-report-writers');
 
@@ -228,14 +228,22 @@ class UserRepository
         $permission->setType('user');
         $permission->setEmailAddress($user->email);
 
-        $service->permissions->create($writerFolder['basename'], $permission, ['emailMessage' => 'CircleLink Health has shared this folder so you can upload CSV or JSON files that can be later submitted for eligibility through CarePlan manager.']);
+        $service->permissions->create(
+            $writerFolder['basename'],
+            $permission,
+            ['emailMessage' => 'CircleLink Health has shared this folder so you can upload CSV or JSON files that can be later submitted for eligibility through CarePlan manager.']
+        );
 
         $permission = new \Google_Service_Drive_Permission();
         $permission->setRole('writer');
         $permission->setType('user');
         $permission->setEmailAddress('joe@circlelinkhealth.com');
 
-        $service->permissions->create($writerFolder['basename'], $permission, ['emailMessage' => 'You have been granted permission to this EHR Report Writer folder.']);
+        $service->permissions->create(
+            $writerFolder['basename'],
+            $permission,
+            ['emailMessage' => 'You have been granted permission to this EHR Report Writer folder.']
+        );
 
         if (app()->environment('staging')) {
             //only staging, so we can have the ability to test, but not get access to PHI
@@ -253,7 +261,11 @@ class UserRepository
                 $permission->setRole('writer');
                 $permission->setType('user');
                 $permission->setEmailAddress($email);
-                $service->permissions->create($writerFolder['basename'], $permission, ['emailMessage' => 'You have been granted permission to this EHR Report Writer folder.']);
+                $service->permissions->create(
+                    $writerFolder['basename'],
+                    $permission,
+                    ['emailMessage' => 'You have been granted permission to this EHR Report Writer folder.']
+                );
             }
         }
 
@@ -497,7 +509,7 @@ class UserRepository
         }
 
         // add nurse info
-        if ($user->hasRole('care-center') && ! $user->nurseInfo) {
+        if ($user->isCareCoach() && ! $user->nurseInfo) {
             $nurseInfo          = new Nurse();
             $nurseInfo->status  = 'active';
             $nurseInfo->user_id = $user->id;

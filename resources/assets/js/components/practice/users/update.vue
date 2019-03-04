@@ -45,24 +45,22 @@
 
                 <div class="row">
                     <div class="input-field col s6">
-                        <material-select v-model="formData.role_name" name="role_name" id="role_name"
-                                         :class="isValid(formData.role_name)" :items="roleOptions">
+                        <material-select v-model="formData.role_names" name="role_names" id="role_names"
+                                         :multiple="true"
+                                         select-text="Select all that apply"
+                                         :items="roleOptions">
                         </material-select>
 
-                        <label for="role_name">Role</label>
+                        <label for="role_names">Role</label>
                     </div>
 
-                    <div class="input-field col s3">
-                        <input type="checkbox" class="filled-in" id="grantAdminRights"
-                               v-model="formData.grantAdminRights" :checked="formData.grantAdminRights"/>
-                        <label for="grantAdminRights">Grant Admin Rights</label>
-                    </div>
-
-                    <div class="input-field col s3">
+                    <!-- deprecated -->
+                    <div class="input-field col s3" style="display: none">
                         <input type="checkbox" class="filled-in" id="sendBillingReports"
                                v-model="formData.sendBillingReports" :checked="formData.sendBillingReports"/>
                         <label for="sendBillingReports">Send Billing Reports</label>
                     </div>
+
                     <div class="input-field col s6"></div>
                     <div class="input-field col s6">
                         <input type="checkbox" class="filled-in" id="canApproveAllCareplans"
@@ -121,7 +119,7 @@
                     </div>
                 </div>
 
-                <div v-if="formData.role_name == 'provider' && practiceSettings.email_careplan_approval_reminders == 1"
+                <div v-if="formData.role_names.includes('provider') && practiceSettings.email_careplan_approval_reminders == 1"
                      class="row">
                     <h6 class="col s12">
                         Whom should we notify for approval of care plans regarding provider’s patients?
@@ -275,11 +273,10 @@
                     'phone_number': '',
                     'phone_extension': '',
                     'phone_type': 1,
-                    'grantAdminRights': '',
                     'sendBillingReports': '',
                     'canApproveAllCareplans': '',
                     'role': {},
-                    'role_name': 'med_assistant',
+                    'role_names': ['med_assistant'],
                     'locations': [],
                     'emr_direct_address': '',
                     'forward_alerts_to': {
@@ -292,22 +289,30 @@
                     },
                 },
                 formState: {},
-                roleOptions: [{
-                    text: 'Medical Assistant',
-                    id: 'med_assistant'
-                }, {
-                    text: 'Office Admin',
-                    id: 'office_admin'
-                }, {
-                    text: 'Provider',
-                    id: 'provider'
-                }, {
-                    text: 'Registered Nurse',
-                    id: 'registered-nurse'
-                }, {
-                    text: 'Specialist',
-                    id: 'specialist'
-                }],
+                roleOptions: [
+                    {
+                        text: 'Medical Assistant',
+                        id: 'med_assistant'
+                    }, {
+                        text: 'Office Admin',
+                        id: 'office_admin'
+                    }, {
+                        text: 'Provider',
+                        id: 'provider'
+                    }, {
+                        text: 'Registered Nurse',
+                        id: 'registered-nurse'
+                    }, {
+                        text: 'Specialist',
+                        id: 'specialist'
+                    }, {
+                        text: 'Software Only',
+                        id: 'software-only'
+                    }, {
+                        text: 'Care Coach',
+                        id: 'care-center-external'
+                    }
+                ],
                 phoneTypes: [
                     {
                         name: 'Home',

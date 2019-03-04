@@ -3,7 +3,7 @@
         <template slot="title">
             <div class="row">
                 <div class="col-sm-6">
-                    Add New Activity(ies)
+                    Add Activity(ies)
                 </div>
             </div>
         </template>
@@ -14,21 +14,23 @@
                     <table class="add-actions">
                         <thead>
                         <tr>
-                            <th class="family-override">
+                            <th class="family-override" :class="showPracticeColumn ? 'with-practice-column' : ''">
                                 <a v-show="hasToConfirmFamilyOverrides" class='my-tool-tip' data-toggle="tooltip"
                                    data-placement="top"
                                    title="Tick to confirm family call override">
                                     <i class='glyphicon glyphicon-info-sign'></i>
                                 </a>
                             </th>
-                            <th class="sub-type">
+                            <th class="sub-type" :class="showPracticeColumn ? 'with-practice-column' : ''">
                                 Type
+                                <span class="required">*</span>
                             </th>
-                            <th class="practices">
+                            <th class="practices" v-if="showPracticeColumn">
                                 Practice
+                                <span class="required">*</span>
                                 <loader v-show="loaders.practices"></loader>
                             </th>
-                            <th class="patients">
+                            <th class="patients" :class="showPracticeColumn ? 'with-practice-column' : ''">
                                 Patient
                                 <span class="required">*</span>
                                 <a class='my-tool-tip' data-toggle="tooltip" data-placement="top"
@@ -37,18 +39,18 @@
                                 </a>
                                 <loader v-show="loaders.patients"></loader>
                             </th>
-                            <th class="nurses">
-                                Nurse
+                            <th class="nurses" :class="showPracticeColumn ? 'with-practice-column' : ''">
+                                Care Coach
                                 <loader v-show="loaders.nurses"></loader>
                             </th>
-                            <th class="date">
+                            <th class="date" :class="showPracticeColumn ? 'with-practice-column' : ''">
                                 Date
                                 <span class="required">*</span>
                             </th>
-                            <th class="start-time">
+                            <th class="start-time" :class="showPracticeColumn ? 'with-practice-column' : ''">
                                 Start Time <span class="required">*</span>
                             </th>
-                            <th class="end-time">
+                            <th class="end-time" :class="showPracticeColumn ? 'with-practice-column' : ''">
                                 End Time
                                 <span class="required">*</span>
                                 <a class='my-tool-tip' data-toggle="tooltip" data-placement="top"
@@ -56,10 +58,10 @@
                                     <i class='glyphicon glyphicon-info-sign'></i>
                                 </a>
                             </th>
-                            <th class="notes">
+                            <th class="notes" :class="showPracticeColumn ? 'with-practice-column' : ''">
                                 Activity Note
                             </th>
-                            <th class="remove">
+                            <th class="remove" :class="showPracticeColumn ? 'with-practice-column' : ''">
                                 &nbsp;
                             </th>
                         </tr>
@@ -80,7 +82,7 @@
                                           @input="function (type) {changeSubType(index, type)}">
                                 </v-select>
                             </td>
-                            <td>
+                            <td v-if="showPracticeColumn">
                                 <v-select :disabled="action.disabled"
                                           max-height="200px" class="form-control" v-model="action.selectedPracticeData"
                                           :options="practicesForSelect"
@@ -284,7 +286,7 @@
                 practices: [],
                 practicesForSelect: [],
 
-                actions: [getNewAction()]
+                actions: []
             }
         },
         computed: {
@@ -296,6 +298,9 @@
             },
             hasToConfirmFamilyOverrides() {
                 return this.actions.filter(x => x.showFamilyOverride).length > 0;
+            },
+            showPracticeColumn() {
+                return this.practices.length > 1;
             }
         },
         methods: {
@@ -304,7 +309,7 @@
                 this.actions[actionIndex].nursesForSelect = [
                     UNASSIGNED_VALUE,
                     ...this.actions[actionIndex].nurses.map(nurse => ({
-                        label: nurse.full_name,
+                        label: nurse.full_name + (!nurse.roles.includes('care-center-external') ? ' (in-house)' : ''),
                         value: nurse.id
                     }))]
             },
@@ -418,6 +423,12 @@
                             })
                             .distinct(patient => patient.id);
                         this.setPracticesForSelect();
+
+                        if (!this.showPracticeColumn) {
+                            //0 is UNDEFINED option, so this.practicesForSelect[1]
+                            this.changePractice(actionIndex, this.practicesForSelect[1]);
+                        }
+
                     }).catch(err => {
                         this.loaders.practices = false;
                         this.errors.practices = err.message;
@@ -540,6 +551,7 @@
                         }
 
                         const data = action.data;
+
                         //CPM-291 - allow unassigned nurse
                         //if (call.patientId === null || call.nurseId === null || call.practiceId === null) {
                         if (data.patientId === null || data.practiceId === null) {
@@ -690,7 +702,9 @@
             }
         },
         created() {
-            return Promise.all([this.getPractices(0), this.getPatients(0)])
+            this.addNewAction();
+            this.getPatients(0);
+            this.getPractices(0);
         },
         mounted() {
 
@@ -770,7 +784,7 @@
         table-layout: fixed;
     }
 
-    .modal-add-action table.add-actions th.sub-type {
+    .modal-add-action table.add-actions th.sub-type.with-practice-column {
         width: 5%;
     }
 
@@ -778,36 +792,72 @@
         width: 16%;
     }
 
-    .modal-add-action table.add-actions th.patients {
+    .modal-add-action table.add-actions th.patients.with-practice-column {
         width: 16%;
     }
 
-    .modal-add-action table.add-actions th.nurses {
+    .modal-add-action table.add-actions th.nurses.with-practice-column {
         width: 15%;
     }
 
-    .modal-add-action table.add-actions th.date {
+    .modal-add-action table.add-actions th.date.with-practice-column {
         width: 10%;
     }
 
-    .modal-add-action table.add-actions th.start-time {
+    .modal-add-action table.add-actions th.start-time.with-practice-column {
         width: 8%;
     }
 
-    .modal-add-action table.add-actions th.end-time {
+    .modal-add-action table.add-actions th.end-time.with-practice-column {
         width: 11%;
     }
 
-    .modal-add-action table.add-actions th.notes {
+    .modal-add-action table.add-actions th.notes.with-practice-column {
         width: 16%;
     }
 
-    .modal-add-action table.add-actions th.remove {
+    .modal-add-action table.add-actions th.remove.with-practice-column {
         width: 3%;
     }
 
-    .modal-add-call table.add-calls th.family-override {
+    .modal-add-call table.add-calls th.family-override.with-practice-column {
         width: 2%;
+    }
+
+    .modal-add-action table.add-actions th.sub-type {
+        width: 8%;
+    }
+
+    .modal-add-action table.add-actions th.patients {
+        width: 17%;
+    }
+
+    .modal-add-action table.add-actions th.nurses {
+        width: 17%;
+    }
+
+    .modal-add-action table.add-actions th.date {
+        width: 12%;
+    }
+
+    .modal-add-action table.add-actions th.start-time {
+        width: 10%;
+    }
+
+    .modal-add-action table.add-actions th.end-time {
+        width: 13%;
+    }
+
+    .modal-add-action table.add-actions th.notes {
+        width: 17%;
+    }
+
+    .modal-add-action table.add-actions th.remove {
+        width: 5%;
+    }
+
+    .modal-add-call table.add-calls th.family-override {
+        width: 4%;
     }
 
     .modal-add-action .loader {

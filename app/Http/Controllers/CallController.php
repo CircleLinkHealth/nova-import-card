@@ -101,7 +101,7 @@ class CallController extends Controller
         //and we are just creating a new one.
         if (empty($input['outbound_cpm_id'])) {
             $user = Auth::user();
-            if ($user->hasRole('care-center')) {
+            if ($user->isCareCoach()) {
                 $request->merge(['outbound_cpm_id' => auth()->user()->id]);
             } else {
                 return response('missing outbound_cpm_id', 402);
@@ -229,6 +229,17 @@ class CallController extends Controller
         $col   = $data['columnName'];
         $value = $data['value'];
 
+        //software-only check - CPM-660 - practice admin cannot change in-house nurse to external
+        if ('outbound_cpm_id' == $col) {
+            $canUpdateCareCoach = $this->canAssignCareCoachToActivity($call, $value);
+            if ( ! $canUpdateCareCoach) {
+                return response(
+                    'cannot update change care-coach',
+                    421
+                );
+            }
+        }
+
         if (in_array($col, $columnsToCheckForOverride)
             && ! $isFamilyOverride
             && $call->inboundUser
@@ -319,7 +330,7 @@ class CallController extends Controller
             'sub_type'        => '',
             'inbound_cpm_id'  => 'required',
             'outbound_cpm_id' => '',
-            'scheduled_date'  => ["required", "after_or_equal:today", new DateBeforeUsingCarbon()],
+            'scheduled_date'  => ['required', 'after_or_equal:today', new DateBeforeUsingCarbon()],
             'window_start'    => 'required|date_format:H:i',
             'window_end'      => 'required|date_format:H:i',
             'attempt_note'    => '',
@@ -421,6 +432,45 @@ class CallController extends Controller
     }
 
     /**
+     * Software-Only role cannot change in-house nurse to external
+     * CPM-660
+     *
+     * @param Call $call
+     * @param $newCareCoachUserId
+     *
+     * @return bool
+     */
+    private function canAssignCareCoachToActivity(Call $call, $newCareCoachUserId)
+    {
+        $user = auth()->user();
+
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        //get practice of patient
+        $patientPrimaryPractice = $call->inboundUser->primaryPractice->id;
+
+        //check if user has software-only role for practice of patient
+        if (!$user->hasRoleForSite('software-only', $patientPrimaryPractice)) {
+            return false;
+        }
+
+        //check role of current care coach
+        $currentIsClhCareCoach = $call->outboundUser->hasRoleForSite('care-center', $patientPrimaryPractice);
+        $newIsClhCareCoach = User::find($newCareCoachUserId)->hasRoleForSite('care-center', $patientPrimaryPractice);
+
+        if ($currentIsClhCareCoach && !$newIsClhCareCoach) {
+            return false;
+        }
+
+        //current care-coach is clh and new is also clh care-coach
+        //current care-coach is not clh and new is not clh care-coach
+        //current care-coach is not clh and new is clh care-coach
+        return true;
+    }
+
+    /**
      * @param User $user
      * @param $input
      *
@@ -428,36 +478,35 @@ class CallController extends Controller
      */
     private function storeNewCall(User $user, $input)
     {
-
         $scheduledDate = $input['scheduled_date'];
-        $windowStart = $input['window_start'];
-        $windowEnd = $input['window_end'];
+        $windowStart   = $input['window_start'];
+        $windowEnd     = $input['window_end'];
 
-        if (!($scheduledDate instanceof Carbon)) {
+        if ( ! ($scheduledDate instanceof Carbon)) {
             $scheduledDate = Carbon::parse($scheduledDate);
         }
 
-        if (!($windowStart instanceof Carbon)) {
+        if ( ! ($windowStart instanceof Carbon)) {
             $windowStart = Carbon::parse($windowStart);
         }
 
-        if (!($windowEnd instanceof Carbon)) {
+        if ( ! ($windowEnd instanceof Carbon)) {
             $windowEnd = Carbon::parse($windowEnd);
         }
 
         $isFamilyOverride = ! empty($input['family_override']);
 
-        $call                  = new Call();
-        $call->type            = $input['type'];
-        $call->sub_type        = isset($input['sub_type'])
+        $call                 = new Call();
+        $call->type           = $input['type'];
+        $call->sub_type       = isset($input['sub_type'])
             ? $input['sub_type']
             : null;
-        $call->inbound_cpm_id  = $user->id;
+        $call->inbound_cpm_id = $user->id;
 
         //make sure we are sending the dates correctly formatted
-        $call->scheduled_date  = $scheduledDate->format('Y-m-d');
-        $call->window_start    = $windowStart->format('H:i');
-        $call->window_end      = $windowEnd->format('H:i');
+        $call->scheduled_date = $scheduledDate->format('Y-m-d');
+        $call->window_start   = $windowStart->format('H:i');
+        $call->window_end     = $windowEnd->format('H:i');
 
         $call->attempt_note    = $input['attempt_note'];
         $call->note_id         = null;

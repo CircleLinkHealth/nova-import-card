@@ -50,7 +50,7 @@ class ProviderUITimerComposer extends ServiceProvider
             }
 
             // do NOT show BHI switch if user does not have care-center role
-            $noBhiSwitch = ! auth()->user()->hasRole('care-center');
+            $noBhiSwitch = ! auth()->user()->isCareCoach();
 
             $patient = $view->patient;
             $patientId = '';
@@ -75,8 +75,7 @@ class ProviderUITimerComposer extends ServiceProvider
                 $monthlyBhiTime = $patient->user->formattedTime($bhi_time);
                 //also, do NOT show BHI switch if user's primary practice is not being charged for CPT 99484
                 $noBhiSwitch = $noBhiSwitch || ! optional($patient->user->primaryPractice()->first())->hasServiceCode('CPT 99484');
-            }
-            else {
+            } else {
                 $monthlyTime = '';
                 $monthlyBhiTime = '';
             }

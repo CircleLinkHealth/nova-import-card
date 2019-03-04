@@ -138,8 +138,8 @@ class OnboardingService
             ->whereHas('practices', function ($q) use (
                                  $primaryPractice
                              ) {
-                $q->where('id', '=', $primaryPractice->id);
-            })
+                                 $q->where('id', '=', $primaryPractice->id);
+                             })
             ->get()
             ->sortBy('first_name')
             ->values();
@@ -190,12 +190,11 @@ class OnboardingService
                 'phone_number'    => $phone->number ?? '',
                 'phone_extension' => $phone->extension ?? '',
                 'phone_type'      => array_search(
-                                                             $phone->type ?? '',
-                                                             PhoneNumber::getTypes()
+                    $phone->type ?? '',
+                    PhoneNumber::getTypes()
                                                          ) ?? '',
                 'isComplete'         => false,
                 'validated'          => false,
-                'grantAdminRights'   => $permissions->pivot->has_admin_rights ?? false,
                 'sendBillingReports' => $permissions->pivot->send_billing_reports ?? false,
                 'errorCount'         => 0,
                 'role_id'            => $roleId,
@@ -374,7 +373,7 @@ class OnboardingService
                             'password'   => 'password_not_set',
                         ]);
 
-                        $clinicalContactUser->attachPractice($primaryPractice);
+                        $clinicalContactUser->attachPractice($primaryPractice, []);
                         $clinicalContactUser->attachLocation($location);
 
                         //clean up other contacts before adding the new one
@@ -461,25 +460,15 @@ class OnboardingService
 
                 $user->emr_direct_address = $newUser['emr_direct_address'];
 
-                $grantAdminRights = false;
-                if ($newUser['grantAdminRights']) {
-                    $grantAdminRights = true;
-                }
+                //Attach the locations
+                $user->attachLocation($newUser['locations']);
 
                 $sendBillingReports = false;
                 if ($newUser['sendBillingReports']) {
                     $sendBillingReports = true;
                 }
 
-                //Attach the locations
-                $user->attachLocation($newUser['locations']);
-
-                $attachPractice = $user->attachPractice(
-                    $primaryPractice,
-                    $grantAdminRights,
-                    $sendBillingReports,
-                    $newUser['role_id']
-                );
+                $user->attachPractice($primaryPractice, [$newUser['role_id']], $sendBillingReports);
 
                 //attach phone
                 $phone = $user->clearAllPhonesAndAddNewPrimary(

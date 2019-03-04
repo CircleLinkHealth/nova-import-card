@@ -33,9 +33,9 @@ class PracticeInvoiceController extends Controller
     /**
      * PracticeInvoiceController constructor.
      *
-     * @param ApproveBillablePatientsService   $service
+     * @param ApproveBillablePatientsService $service
      * @param PatientSummaryEloquentRepository $patientSummaryDBRepository
-     * @param PracticeReportsService           $practiceReportsService
+     * @param PracticeReportsService $practiceReportsService
      */
     public function __construct(
         ApproveBillablePatientsService $service,
@@ -54,12 +54,18 @@ class PracticeInvoiceController extends Controller
         $date        = $request->input('date');
         $user        = auth()->user();
 
+        //since this route is also accessible from software-only,
+        //we should make sure that software-only role is applied on this practice
+        if ( ! $user->isAdmin() && ! $user->hasRoleForSite('software-only', $practice_id)) {
+            abort(403);
+        }
+
         if ($date) {
             $date = Carbon::createFromFormat('M, Y', $date);
         }
 
         $summaries = $this->getCurrentMonthSummariesQuery($practice_id, $date)
-            ->get();
+                          ->get();
 
         foreach ($summaries as $summary) {
             $summary->actor_id = $user->id;
@@ -77,9 +83,18 @@ class PracticeInvoiceController extends Controller
 
     public function counts(Request $request)
     {
+        $practice_id = $request['practice_id'];
+
+        //since this route is also accessible from software-only,
+        //we should make sure that software-only role is applied on this practice
+        $user = auth()->user();
+        if ( ! $user->isAdmin() && ! $user->hasRoleForSite('software-only', $practice_id)) {
+            abort(403);
+        }
+
         $date = Carbon::createFromFormat('M, Y', $request->input('date'));
 
-        $counts = $this->service->counts($request['practice_id'], $date->firstOfMonth());
+        $counts = $this->service->counts($practice_id, $date->firstOfMonth());
 
         return response()->json($counts);
     }
@@ -101,10 +116,10 @@ class PracticeInvoiceController extends Controller
         }
 
         $readyToBill = Practice::active()
-            ->authUserCanAccess()
-            ->get();
-        $needsQA    = [];
-        $invoice_no = AppConfig::where('config_key', 'billing_invoice_count')->first()['config_value'];
+                               ->authUserCanAccess()
+                               ->get();
+        $needsQA     = [];
+        $invoice_no  = AppConfig::where('config_key', 'billing_invoice_count')->first()['config_value'];
 
         return view('billing.practice.create', compact(
             [
@@ -128,6 +143,13 @@ class PracticeInvoiceController extends Controller
         $practice_id = $request->input('practice_id');
         $date        = $request->input('date');
 
+        //since this route is also accessible from software-only,
+        //we should make sure that software-only role is applied on this practice
+        $user = auth()->user();
+        if ( ! $user->isAdmin() && ! $user->hasRoleForSite('software-only', $practice_id)) {
+            abort(403);
+        }
+
         if ($date) {
             $date = Carbon::createFromFormat('M, Y', $date);
         } else {
@@ -136,7 +158,7 @@ class PracticeInvoiceController extends Controller
 
         $month = $this->service->getBillablePatientsForMonth($practice_id, $date);
 
-        return response($month['summaries'])->header('is-closed', (int) $month['is_closed']);
+        return response($month['summaries'])->header('is-closed', (int)$month['is_closed']);
     }
 
     /**
@@ -151,12 +173,12 @@ class PracticeInvoiceController extends Controller
         $practice,
         $name
     ) {
-        if ( ! auth()->user()->practice((int) $practice) && ! auth()->user()->isAdmin()) {
+        if ( ! auth()->user()->practice((int)$practice) && ! auth()->user()->isAdmin()) {
             return abort(403, 'Unauthorized action.');
         }
 
-        return response()->download(storage_path('/download/'.$name), $name, [
-            'Content-Length: '.filesize(storage_path('/download/'.$name)),
+        return response()->download(storage_path('/download/' . $name), $name, [
+            'Content-Length: ' . filesize(storage_path('/download/' . $name)),
         ]);
     }
 
@@ -182,22 +204,22 @@ class PracticeInvoiceController extends Controller
     public function make()
     {
         $practices = Practice::orderBy('display_name')
-            ->select(['name', 'id', 'display_name'])
-            ->with('chargeableServices')
-            ->authUserCanAccess()
-            ->active()
-            ->get();
+                             ->select(['name', 'id', 'display_name'])
+                             ->with('chargeableServices')
+                             ->authUserCanAccess(auth()->user()->isSoftwareOnly())
+                             ->active()
+                             ->get();
 
         $cpmProblems = CpmProblem::where('name', '!=', 'Diabetes')
-            ->get()
-            ->map(function ($p) {
-                return [
-                    'id'            => $p->id,
-                    'name'          => $p->name,
-                    'code'          => $p->default_icd_10_code,
-                    'is_behavioral' => $p->is_behavioral,
-                ];
-            });
+                                 ->get()
+                                 ->map(function ($p) {
+                                     return [
+                                         'id'            => $p->id,
+                                         'name'          => $p->name,
+                                         'code'          => $p->default_icd_10_code,
+                                         'is_behavioral' => $p->is_behavioral,
+                                     ];
+                                 });
 
         $currentMonth = Carbon::now()->startOfMonth();
 
@@ -263,6 +285,12 @@ class PracticeInvoiceController extends Controller
         $date        = $request->input('date');
         $user        = auth()->user();
 
+        //since this route is also accessible from software-only,
+        //we should make sure that software-only role is applied on this practice
+        if ( ! $user->isAdmin() && ! $user->hasRoleForSite('software-only', $practice_id)) {
+            abort(403);
+        }
+
         if ($date) {
             $date = Carbon::createFromFormat('M, Y', $date);
         }
@@ -281,14 +309,14 @@ class PracticeInvoiceController extends Controller
 
     public function send(Request $request)
     {
-        $invoices = (array) json_decode($request->input('links'));
+        $invoices = (array)json_decode($request->input('links'));
 
         $logger = '';
 
         foreach ($invoices as $key => $value) {
             $practice = Practice::whereDisplayName($key)->first();
 
-            $data = (array) $value;
+            $data = (array)$value;
 
             $patientReportUrl = $data['patient_report_url'];
             $invoiceURL       = $data['invoice_url'];
@@ -311,7 +339,7 @@ class PracticeInvoiceController extends Controller
                         $user->notify($notification);
                     } else {
                         Notification::route('mail', $recipient)
-                            ->notify($notification);
+                                    ->notify($notification);
                     }
 
                     $logger .= "Sent report for {$practice->name} to ${recipient} <br />";
@@ -328,6 +356,16 @@ class PracticeInvoiceController extends Controller
     {
         try {
             $summary = PatientMonthlySummary::find($request['report_id']);
+
+            //since this route is also accessible from software-only,
+            //we should make sure that software-only role is applied on this practice
+            $user = auth()->user();
+            if ( ! $user->isAdmin()) {
+                $patientPracticeId = User::find($summary->patient_id, ['program_id'])->program_id;
+                if ( ! $user->isAdmin() && ! $user->hasRoleForSite('software-only', $patientPracticeId)) {
+                    abort(403);
+                }
+            }
 
             $key = $request['problem_no'];
 
@@ -352,25 +390,25 @@ class PracticeInvoiceController extends Controller
 
                 if ($existingProblemId) {
                     Problem::where('id', $existingProblemId)
-                        ->update([
-                            'billable' => false,
-                        ]);
+                           ->update([
+                               'billable' => false,
+                           ]);
                 }
 
                 Problem::where('id', $problemId)
-                    ->update([
-                        'billable'     => true,
-                        'name'         => $request['name'],
-                        'is_monitored' => true,
-                    ]);
+                       ->update([
+                           'billable'     => true,
+                           'name'         => $request['name'],
+                           'is_monitored' => true,
+                       ]);
 
                 $updated = ProblemCode::where('problem_id', $problemId)
-                    ->where('code_system_name', 'like', '%10%')
-                    ->update([
-                        'code'             => $request['code'],
-                        'code_system_name' => 'ICD-10',
-                        'code_system_oid'  => '2.16.840.1.113883.6.3',
-                    ]);
+                                      ->where('code_system_name', 'like', '%10%')
+                                      ->update([
+                                          'code'             => $request['code'],
+                                          'code_system_name' => 'ICD-10',
+                                          'code_system_oid'  => '2.16.840.1.113883.6.3',
+                                      ]);
 
                 if ( ! $updated && $request['code']) {
                     ProblemCode::create([
@@ -396,7 +434,7 @@ class PracticeInvoiceController extends Controller
                     }
                 }
 
-                if ($summary->billableProblems()->where((new Problem())->getTable().'.id', $problemId)->exists()) {
+                if ($summary->billableProblems()->where((new Problem())->getTable() . '.id', $problemId)->exists()) {
                     $summary->billableProblems()->updateExistingPivot($problemId, [
                         'name'        => $request['name'],
                         'icd_10_code' => $request['code'],
@@ -414,7 +452,7 @@ class PracticeInvoiceController extends Controller
 
             $problemNumber = extractNumbers($key);
 
-            if ((int) $problemNumber > 0 && (int) $problemNumber < 3) {
+            if ((int)$problemNumber > 0 && (int)$problemNumber < 3) {
                 $summary->{"billable_problem${problemNumber}"}      = $request['name'];
                 $summary->{"billable_problem{$problemNumber}_code"} = $request['code'];
             }
@@ -510,7 +548,7 @@ class PracticeInvoiceController extends Controller
                 'approved' => $summary->approved,
                 'rejected' => $summary->rejected,
             ],
-            'actor_id' => $summary->actor_id,
+            'actor_id'  => $summary->actor_id,
         ]);
     }
 
@@ -556,9 +594,9 @@ class PracticeInvoiceController extends Controller
     private function getCurrentMonthSummariesQuery($practice_id, Carbon $date)
     {
         return PatientMonthlySummary::with('patient.patientInfo')
-            ->whereHas('patient', function ($q) use ($practice_id) {
-                $q->ofPractice($practice_id);
-            })
-            ->where('month_year', $date->startOfMonth());
+                                    ->whereHas('patient', function ($q) use ($practice_id) {
+                                        $q->ofPractice($practice_id);
+                                    })
+                                    ->where('month_year', $date->startOfMonth());
     }
 }
