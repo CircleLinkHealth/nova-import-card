@@ -19,7 +19,7 @@
             </div>
             <div class="col-sm-6 text-right" v-if="itemsAreSelected">
                 <button class="btn btn-primary btn-xs" @click="assignSelectedToNurse">Assign To Nurse</button>
-                <button class="btn btn-success btn-xs" @click="assignTimesForSelected">Assign Activity times</button>
+                <button class="btn btn-success btn-xs" @click="assignTimesForSelected">Assign Activity Date</button>
                 <button class="btn btn-danger btn-xs" @click="deleteSelected">Delete</button>
                 <button class="btn btn-info btn-xs" @click="clearSelected">Clear Selection</button>
             </div>
