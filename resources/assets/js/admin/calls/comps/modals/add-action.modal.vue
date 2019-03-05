@@ -638,7 +638,7 @@
                                             text: `Action[${index + 1}]: Created successfully`,
                                             noTimeout: true
                                         });
-                                        Event.$emit('actions:add', call);
+                                        Event.$emit('actions:add', action);
                                     }
 
                                 });
