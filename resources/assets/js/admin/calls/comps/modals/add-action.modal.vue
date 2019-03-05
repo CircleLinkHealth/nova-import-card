@@ -955,8 +955,6 @@
 
     .v-select .open-indicator {
         visibility: visible;
-        padding-top: 9%;
-        position: absolute;
     }
 
     .v-select .dropdown-toggle .clear {
