@@ -789,7 +789,7 @@
 
     /* Table with a Practices column */
     .modal-add-action table.add-actions th.sub-type.with-practice-column {
-        width: 10%;
+        width: 12%;
     }
 
     .modal-add-action table.add-actions th.practices {
@@ -809,15 +809,15 @@
     }
 
     .modal-add-action table.add-actions th.date.with-practice-column {
-        width: 12%;
+        width: 14%;
     }
 
     .modal-add-action table.add-actions th.start-time.with-practice-column {
-        width: 10%;
+        width: 11%;
     }
 
     .modal-add-action table.add-actions th.end-time.with-practice-column {
-        width: 10%;
+        width: 11%;
     }
 
     .modal-add-action table.add-actions th.end-time-tooltip.with-practice-column {
@@ -825,7 +825,7 @@
     }
 
     .modal-add-action table.add-actions th.notes.with-practice-column {
-        width: 12%;
+        width: 10%;
     }
 
     .modal-add-action table.add-actions th.remove.with-practice-column {
@@ -950,6 +950,14 @@
         margin-top: 0;
         margin-left: -2px;
         color: #000;
+    }
+
+    .v-select .open-indicator {
+        visibility: hidden;
+    }
+
+    .v-select .dropdown-toggle .clear {
+        visibility: hidden;
     }
 
 </style>
