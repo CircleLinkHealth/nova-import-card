@@ -24,7 +24,8 @@ class VariablePay extends NurseInvoice
     public function __construct(
         Nurse $nurse,
         Carbon $start,
-        Carbon $end
+        Carbon $end,
+        $summary
     ) {
         parent::__construct($nurse, $start, $end);
 
@@ -33,7 +34,7 @@ class VariablePay extends NurseInvoice
 
         $day_start = Carbon::parse($this->start->firstOfMonth()->format('Y-m-d'));
 
-        $this->report = $nurse->summary->first();
+        $this->report = $summary;
 
         if (null != $this->report) {
             $this->ccm_over_duration  = round($this->report->accrued_after_ccm / 3600, 1);

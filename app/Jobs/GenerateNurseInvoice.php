@@ -77,7 +77,8 @@ class GenerateNurseInvoice implements ShouldQueue
                 $this->endDate,
                 $this->variablePay,
                 $this->addTime,
-                $this->addNotes
+                $this->addNotes,
+                $nurse->summary->first()
             ))
                 ->handle();
 

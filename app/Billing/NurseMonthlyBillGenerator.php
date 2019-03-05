@@ -10,6 +10,7 @@ use App\Activity;
 use App\Billing\NurseInvoices\VariablePay;
 use App\Call;
 use App\Nurse;
+use App\NurseMonthlySummary;
 use App\PageTimer;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Carbon\Carbon;
@@ -48,6 +49,7 @@ class NurseMonthlyBillGenerator
     protected $startDate;
     protected $pageTimerData;
     protected $activityData;
+    protected $summary;
 
     //total time in system
     protected $systemTime;
@@ -61,7 +63,8 @@ class NurseMonthlyBillGenerator
         Carbon $billingDateEnd,
         $withVariablePaymentSystem,
         $manualTimeAdd = 0,
-        $notes = ''
+        $notes = '',
+        $summary
     ) {
         $this->nurse                     = $newNurse;
         $this->nurseName                 = $newNurse->user->getFullName();
@@ -70,6 +73,7 @@ class NurseMonthlyBillGenerator
         $this->addDuration               = $manualTimeAdd;
         $this->addNotes                  = $notes;
         $this->withVariablePaymentSystem = $withVariablePaymentSystem;
+        $this->summary                   = $summary;
 
         $this->pageTimerData = PageTimer::where('provider_id', $this->nurse->user_id)
                                         ->select(['id', 'duration', 'created_at'])
@@ -102,7 +106,8 @@ class NurseMonthlyBillGenerator
             $variable               = (new VariablePay(
                 $this->nurse,
                 $this->startDate,
-                $this->endDate
+                $this->endDate,
+                $this->summary
             ))->getItemizedActivities();
             $this->total['after']   = $variable['total']['after'];
             $this->total['towards'] = $variable['total']['towards'];
