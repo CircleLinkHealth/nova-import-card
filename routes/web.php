@@ -1135,6 +1135,11 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses' => 'Billing\PracticeInvoiceController@openMonthlySummaryStatus',
                     'as'   => 'monthly.billing.open.month',
                 ])->middleware('permission:patientSummary.update');
+
+                Route::post('/status/update', [
+                    'uses' => 'Billing\PracticeInvoiceController@updateStatus',
+                    'as'   => 'monthly.billing.status.update',
+                ])->middleware('permission:patientSummary.update');
             });
         });
     });
@@ -1472,6 +1477,7 @@ Route::group(['middleware' => 'auth'], function () {
                  * '/data'
                  * '/counts'
                  * '/storeProblem'
+                 * '/status/update'
                  * Search for it above in a different tree of permissions
                  */
 
@@ -1489,11 +1495,6 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses' => 'Billing\PracticeInvoiceController@updateSummaryChargeableServices',
                     'as'   => 'monthly.billing.summary.services',
                 ])->middleware('permission:patientSummary.read,patientSummary.update,patientSummary.create');
-
-                Route::post('/status/update', [
-                    'uses' => 'Billing\PracticeInvoiceController@updateStatus',
-                    'as'   => 'monthly.billing.status.update',
-                ])->middleware('permission:patientSummary.update');
 
                 Route::post('/getBillingCount', [
                     'uses' => 'Billing\PracticeInvoiceController@getCounts',
