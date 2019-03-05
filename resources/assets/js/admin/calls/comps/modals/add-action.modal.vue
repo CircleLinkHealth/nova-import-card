@@ -340,7 +340,13 @@
             },
 
             addNewAction() {
+
+                const newActionIndex = this.actions.length;
                 this.actions.push(getNewAction());
+
+                this.getPatients(newActionIndex);
+                this.getPractices(newActionIndex);
+
             },
             removeAction(id) {
                 this.$delete(this.actions, id);
@@ -438,12 +444,14 @@
                     })
             },
             getPatients(actionIndex) {
-                return !this.actions[actionIndex].data.practiceId ?
-                    this.getAllPatients(actionIndex) :
-                    (this.actions[actionIndex].filters.showUnscheduledPatients ?
-                            this.getUnscheduledPatients(actionIndex) :
-                            this.getPracticePatients(actionIndex)
-                    );
+
+                if (!this.actions[actionIndex].data.practiceId) {
+                    return Promise.resolve(null);
+                }
+
+                return this.actions[actionIndex].filters.showUnscheduledPatients ?
+                    this.getUnscheduledPatients(actionIndex) :
+                    this.getPracticePatients(actionIndex);
             },
             getUnscheduledPatients(actionIndex) {
                 this.loaders.patients = true
@@ -698,8 +706,6 @@
         },
         created() {
             this.addNewAction();
-            this.getPatients(0);
-            this.getPractices(0);
         },
         mounted() {
 
