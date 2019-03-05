@@ -299,7 +299,7 @@
         },
         computed: {
             hasNotAvailableNurses() {
-                return this.actions.filter(x => x.data.practiceId && x.nursesForSelect.length === 0).length > 0;
+                return this.actions.filter(x => x.data.practiceId && x.nursesForSelect.length === 0).length > 0 && !this.loaders.nurses;
             },
             hasPatientInDraftMode() {
                 return this.actions.filter(x => x.selectedPatientIsInDraftMode).length > 0;
