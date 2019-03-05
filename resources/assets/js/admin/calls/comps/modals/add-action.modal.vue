@@ -3,7 +3,11 @@
         <template slot="title">
             <div class="row">
                 <div class="col-sm-6">
+<<<<<<< HEAD
                     Add Activity(ies)
+=======
+                    <h3>Add New Activity(ies)</h3>
+>>>>>>> CPM-665
                 </div>
             </div>
         </template>
@@ -33,6 +37,8 @@
                             <th class="patients" :class="showPracticeColumn ? 'with-practice-column' : ''">
                                 Patient
                                 <span class="required">*</span>
+                            </th>
+                            <th>
                                 <a class='my-tool-tip' data-toggle="tooltip" data-placement="top"
                                    title="Tick to show only unscheduled">
                                     <i class='glyphicon glyphicon-info-sign'></i>
@@ -53,6 +59,8 @@
                             <th class="end-time" :class="showPracticeColumn ? 'with-practice-column' : ''">
                                 End Time
                                 <span class="required">*</span>
+                            </th>
+                            <th>
                                 <a class='my-tool-tip' data-toggle="tooltip" data-placement="top"
                                    title="Tick if patient requested call time">
                                     <i class='glyphicon glyphicon-info-sign'></i>
@@ -71,40 +79,42 @@
                             <td>
                                 <div v-show="action.showFamilyOverride">
                                     <input type="checkbox" id="family_override"
-                                           name="family_override" v-model="action.data.familyOverride"
+                                           name="family_override"
+                                           v-model="action.data.familyOverride"
                                            :disabled="action.disabled"/>
                                 </div>
                             </td>
                             <td>
                                 <v-select :disabled="action.disabled"
-                                          max-height="200px" class="form-control" v-model="action.selectedSubTypeData"
+                                          max-height="200px" class="form-control"
+                                          v-model="action.selectedSubTypeData"
                                           :options="subTypesForSelect"
                                           @input="function (type) {changeSubType(index, type)}">
                                 </v-select>
                             </td>
                             <td v-if="showPracticeColumn">
                                 <v-select :disabled="action.disabled"
-                                          max-height="200px" class="form-control" v-model="action.selectedPracticeData"
+                                          max-height="200px" class="form-control"
+                                          v-model="action.selectedPracticeData"
                                           :options="practicesForSelect"
                                           @input="function (practice) {changePractice(index, practice)}">
                                 </v-select>
                             </td>
                             <td>
-                                <div class="width-90">
                                     <v-select :disabled="action.disabled"
-                                              max-height="200px" class="form-control" name="inbound_cpm_id"
+                                              max-height="200px" class="form-control"
+                                              name="inbound_cpm_id"
                                               v-model="action.selectedPatientData"
                                               :options="action.patientsForSelect"
-                                              @input="function (patient) {changePatient(index, patient)}"
-                                              required>
+                                              @input="function (patient) {changePatient(index, patient)}" required>
                                     </v-select>
-                                </div>
-                                <div class="width-10 padding-left-5 padding-top-7">
+                            </td>
+                            <td>
+                                <div class="width-10 padding-top-7">
                                     <input :disabled="action.disabled"
                                            type="checkbox" v-model="action.filters.showUnscheduledPatients"
                                            @change="function (e) { changeUnscheduledPatients(index, e); }"/>
                                 </div>
-
                             </td>
                             <td>
                                 <v-select :disabled="action.disabled"
@@ -117,28 +127,29 @@
                                 </v-select>
                             </td>
                             <td>
-                                <input class="form-control" type="date" name="scheduled_date" v-model="action.data.date"
+                                <input class="form-control height-40" type="date" name="scheduled_date"
+                                       v-model="action.data.date"
                                        :disabled="action.disabled" required/>
                             </td>
                             <td>
-                                <input class="form-control" type="time" name="window_start"
+                                <input class="form-control height-40" type="time" name="window_start"
                                        v-model="action.data.startTime"
                                        :disabled="action.disabled" required/>
                             </td>
                             <td>
-                                <div class="width-82">
-                                    <input class="form-control" type="time" name="window_end"
-                                           v-model="action.data.endTime"
-                                           :disabled="action.disabled" required/>
-                                </div>
-                                <div class="width-18 padding-left-5 padding-top-7">
+                                <input class="form-control height-40" type="time" name="window_end"
+                                       v-model="action.data.endTime"
+                                       :disabled="action.disabled" required/>
+                            </td>
+                            <td>
+                                <div class="width-18 padding-top-7">
                                     <input type="checkbox" id="is_manual"
                                            name="is_manual" v-model="action.data.isManual"
                                            :disabled="action.disabled"/>
                                 </div>
                             </td>
                             <td>
-                                <input class="form-control" type="text" name="text" v-model="action.data.text"
+                                <input class="form-control height-40" type="text" name="text" v-model="action.data.text"
                                        :disabled="action.disabled"/>
                             </td>
                             <td>
@@ -152,7 +163,7 @@
                 </div>
 
                 <div>
-                    <div class="alert alert-danger" v-if="hasNotAvailableNurses">
+                    <div class="alert alert-danger hasNot" v-if="hasNotAvailableNurses">
                         No available nurses for selected patient
                     </div>
                     <div class="alert alert-warning" v-if="hasPatientInDraftMode">
@@ -162,7 +173,7 @@
 
                 <br/>
                 <div class="row">
-                    <div class="btn btn-primary btn-xs" @click="addNewAction">
+                    <div class="btn btn-primary btn-xs add-activity" @click="addNewAction">
                         Add New Activity
                     </div>
                 </div>
@@ -274,6 +285,7 @@
                 },
 
                 subTypesForSelect: [
+                    UNASSIGNED_VALUE,
                     {label: 'Call', value: 'call'},
                     {label: 'Call back', value: 'Call Back'},
                     {label: 'Refill', value: 'Refill'},
@@ -291,7 +303,7 @@
         },
         computed: {
             hasNotAvailableNurses() {
-                return this.actions.filter(x => x.data.practiceId && x.nursesForSelect.length === 0).length > 0;
+                return this.actions.filter(x => x.data.practiceId && x.nursesForSelect.length === 0).length > 0 && !this.loaders.nurses;
             },
             hasPatientInDraftMode() {
                 return this.actions.filter(x => x.selectedPatientIsInDraftMode).length > 0;
@@ -303,8 +315,8 @@
                 return this.practices.length > 1;
             }
         },
-        methods: {
 
+        methods: {
             setNursesForSelect(actionIndex) {
                 this.actions[actionIndex].nursesForSelect = [
                     UNASSIGNED_VALUE,
@@ -355,8 +367,7 @@
                                 value: practice.id
                             }
                         }
-                    }
-                    else {
+                    } else {
                         this.actions[actionIndex].selectedPracticeData = UNASSIGNED_VALUE;
                     }
                 }
@@ -366,8 +377,7 @@
                     if (type.value === "call") {
                         this.actions[actionIndex].data.type = 'call';
                         this.actions[actionIndex].data.subType = null;
-                    }
-                    else {
+                    } else {
                         this.actions[actionIndex].data.type = 'task';
                         this.actions[actionIndex].data.subType = type.value;
                     }
@@ -625,11 +635,9 @@
 
                                         if (familyOverrideError) {
                                             msg += CALL_MUST_OVERRIDE_WARNING;
-                                        }
-                                        else if (Array.isArray(action.errors)) {
+                                        } else if (Array.isArray(action.errors)) {
                                             msg += action.errors.join(', ');
-                                        }
-                                        else {
+                                        } else {
                                             const errorsMessages = Object.values(action.errors).map(x => x[0]).join(', ');
                                             msg += errorsMessages;
                                         }
@@ -639,19 +647,17 @@
                                             type: 'error',
                                             noTimeout: true
                                         });
-                                    }
-                                    else {
+                                    } else {
                                         Event.$emit('notifications-add-action-modal:create', {
                                             text: `Action[${index + 1}]: Created successfully`,
                                             noTimeout: true
                                         });
-                                        Event.$emit('actions:add', call);
+                                        Event.$emit('actions:add', action);
                                     }
 
                                 });
 
-                            }
-                            else {
+                            } else {
                                 this.resetForm();
                                 Event.$emit("modal-add-action:hide");
                                 actions.forEach(action => {
@@ -661,8 +667,7 @@
                                 console.log('actions:add', actions);
                             }
 
-                        }
-                        else {
+                        } else {
                             throw new Error('Could not create call. Patient already has a scheduled call')
                         }
                     }).catch(err => {
@@ -685,13 +690,11 @@
                                 const errors = err.response.data.errors;
                                 if (Array.isArray(errors)) {
                                     msg += `: ${errors.join(', ')}`;
-                                }
-                                else {
+                                } else {
                                     const errorsMessages = Object.values(errors).map(x => x[0]).join(', ');
                                     msg += `: ${errorsMessages}`;
                                 }
-                            }
-                            else if (err.response.data.message) {
+                            } else if (err.response.data.message) {
                                 msg += `: ${err.response.data.message}`;
                             }
 
@@ -782,10 +785,12 @@
 
     .modal-add-action table.add-actions {
         table-layout: fixed;
+        margin-left: -25px;
     }
 
     .modal-add-action table.add-actions th.sub-type.with-practice-column {
         width: 5%;
+        min-width: 140px;
     }
 
     .modal-add-action table.add-actions th.practices {
@@ -812,12 +817,21 @@
         width: 11%;
     }
 
+<<<<<<< HEAD
     .modal-add-action table.add-actions th.notes.with-practice-column {
         width: 16%;
     }
 
     .modal-add-action table.add-actions th.remove.with-practice-column {
         width: 3%;
+=======
+    .modal-add-action table.add-actions th.notes {
+        width: 20%;
+    }
+
+    .modal-add-action table.add-actions th.remove {
+        width: 2%;
+>>>>>>> CPM-665
     }
 
     .modal-add-call table.add-calls th.family-override.with-practice-column {
@@ -862,8 +876,8 @@
 
     .modal-add-action .loader {
         position: absolute;
-        right: 5px;
-        top: 5px;
+        right: 3px;
+        top: 7px;
         width: 20px;
         height: 20px;
     }
@@ -892,8 +906,11 @@
     }
 
     .width-10 {
-        float: left;
-        width: 10%;
+        float: right;
+    }
+
+    .height-40 {
+        height: 40px;
     }
 
     .padding-left-5 {
@@ -921,25 +938,35 @@
     }
 
     .v-select .dropdown-toggle {
-        height: 34px;
+        height: 40px;
         overflow: hidden;
     }
 
     .modal-add-action .modal-body {
         min-height: 300px;
+        margin-left: 20px;
+        margin-top: 1px;
     }
 
     .selected-tag {
-        width: 80%;
+        height: 100%;
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
     }
 
-    a.my-tool-tip {
-        float: right;
-        margin-right: 4px;
+    .add-activity {
+        margin-left: -6px;
     }
 
+    a.my-tool-tip {
+        float: right;
+    }
+
+    .modal-header h3 {
+        margin-top: 0;
+        margin-left: -2px;
+        color: #000;
+    }
 
 </style>
