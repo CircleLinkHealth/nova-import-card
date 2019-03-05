@@ -395,7 +395,7 @@
 
                     //reset selected patient only if practice is different
                     if (this.actions[actionIndex].data.practiceId !== practice.value) {
-                        this.selectedPatientData = UNASSIGNED_VALUE;
+                        this.actions[actionIndex].selectedPatientData = UNASSIGNED_VALUE;
                     }
                     //always reset selected nurse
                     this.actions[actionIndex].selectedNurseData = UNASSIGNED_VALUE;
@@ -952,12 +952,8 @@
         color: #000;
     }
 
-    .v-select .open-indicator {
-        visibility: hidden;
-    }
-
-    .v-select .dropdown-toggle .clear {
-        visibility: hidden;
+    .modal-add-action .v-select .dropdown-toggle .clear {
+        display: none;
     }
 
 </style>
