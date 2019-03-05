@@ -926,6 +926,7 @@
 
     .v-select .dropdown-toggle {
         height: 40px;
+        position: relative;
         overflow: hidden;
     }
 
@@ -952,8 +953,16 @@
         color: #000;
     }
 
-    .modal-add-action .v-select .dropdown-toggle .clear {
-        display: none;
+    .v-select .open-indicator {
+        visibility: visible;
+        padding-top: 9%;
+        position: absolute;
     }
 
+    .v-select .dropdown-toggle .clear {
+        display: none;
+    }
+    .v-select .vs__selected-options {
+        max-width: 86%;
+    }
 </style>
