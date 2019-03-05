@@ -49,7 +49,10 @@ class GenerateNurseInvoice implements ShouldQueue
                                 int $addTime = 0,
                                 string $addNotes = ''
     ) {
-        $this->nurses      = Nurse::whereIn('user_id', $nurseUserIds)->with('user')->get();
+        $this->nurses      = Nurse::whereIn('user_id', $nurseUserIds)->with(['user',
+            'summary' => function($s) use ($startDate){
+            $s->where('month_year', $startDate->copy()->startOfMonth()->format('Y-m-d'));
+            }])->get();
         $this->startDate   = $startDate;
         $this->endDate     = $endDate;
         $this->variablePay = $variablePay;
