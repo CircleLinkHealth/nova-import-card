@@ -13,6 +13,7 @@ use App\Http\Controllers\API\ApiController;
 use App\Http\Resources\Call as CallResource;
 use App\Http\Resources\User as UserResource;
 use App\Patient;
+use App\Role;
 use App\Services\Calls\ManagementService;
 use App\Services\CallService;
 use App\Services\NoteService;
@@ -83,6 +84,24 @@ class CallsController extends ApiController
 
     public function patientsWithoutScheduledCalls(PatientFilters $filters, $practiceId = null)
     {
+        $user = auth()->user();
+
+        if (!$user->isAdmin()) {
+
+            //if we have $practiceId, make sure that user has access to it
+            if ($practiceId) {
+                if (!$user->hasRoleForSite('software-only', $practiceId)) {
+                    abort(403);
+                }
+            }
+            else {
+                //if no $practiceId, get all practice ids where user is software-only / practice admin
+                $roleIds = Role::getIdsFromNames(['software-only']);
+                $practiceId = $user->practices(true, false, $roleIds)->pluck('id');
+            }
+
+        }
+
         $patients = $this->service->getPatientsWithoutScheduledCalls($practiceId, Carbon::now())
             ->filter($filters)->get();
 
