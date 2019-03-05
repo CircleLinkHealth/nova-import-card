@@ -920,6 +920,7 @@
 
     .v-select .dropdown-toggle {
         height: 40px;
+        position: relative;
         overflow: hidden;
     }
 
@@ -947,11 +948,15 @@
     }
 
     .v-select .open-indicator {
-        visibility: hidden;
+        visibility: visible;
+        padding-top: 9%;
+        position: absolute;
     }
 
     .v-select .dropdown-toggle .clear {
-        visibility: hidden;
+        display: none;
     }
-
+    .v-select .vs__selected-options {
+        max-width: 86%;
+    }
 </style>
