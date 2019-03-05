@@ -306,7 +306,7 @@
                         text: 'Specialist',
                         id: 'specialist'
                     }, {
-                        text: 'Software Only',
+                        text: 'CCM Admin',
                         id: 'software-only'
                     }, {
                         text: 'Care Coach',

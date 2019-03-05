@@ -1229,7 +1229,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
             ],
             [
                 'name'         => 'software-only',
-                'display_name' => 'Software Only',
+                'display_name' => 'CCM Admin',
                 'description'  => 'Uses only the software solution of CLH (CPM)',
                 'permissions'  => [
                     'practice-admin',
