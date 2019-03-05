@@ -34,7 +34,7 @@ export const onNurseUpdate = function (call, nurseId, familyOverride, oldValue, 
     }).then(response => {
         const nurse = (call.nurses().find(nurse => nurse.value == nurseId) || {})
         call.NurseId = nurse.value
-        call.Nurse = (nurse.text || 'unassigned')
+        call['Care Coach'] = (nurse.text || 'unassigned')
         call.loaders.nurse = false
         if (response) console.log('calls:row:update', nurse)
         if (nurseId) Event.$emit('select-nurse:update', {nurseId: call.NurseId, callId: call.id})
@@ -44,7 +44,7 @@ export const onNurseUpdate = function (call, nurseId, familyOverride, oldValue, 
         revertCallback();
         const nurse = (call.nurses().find(nurse => nurse.value == oldValue) || {})
         call.NurseId = nurse.value
-        call.Nurse = (nurse.text || 'unassigned')
+        call['Care Coach']= (nurse.text || 'unassigned')
         call.loaders.nurse = false;
         throw err;
     });

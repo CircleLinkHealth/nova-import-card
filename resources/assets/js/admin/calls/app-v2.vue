@@ -18,7 +18,7 @@
                 <loader class="absolute" v-if="loaders.calls"></loader>
             </div>
             <div class="col-sm-6 text-right" v-if="itemsAreSelected">
-                <button class="btn btn-primary btn-xs" @click="assignSelectedToNurse">Assign To Nurse</button>
+                <button class="btn btn-primary btn-xs" @click="assignSelectedToNurse">Assign To Care Coach</button>
                 <button class="btn btn-success btn-xs" @click="assignTimesForSelected">Assign Activity Date</button>
                 <button class="btn btn-danger btn-xs" @click="deleteSelected">Delete</button>
                 <button class="btn btn-info btn-xs" @click="clearSelected">Clear Selection</button>
@@ -65,7 +65,7 @@
                 </template>
                 <template slot="Care Coach" slot-scope="props">
                     <div>
-                        <select-editable v-model="props.row.NurseId" :display-text="props.row.Nurse"
+                        <select-editable v-model="props.row.NurseId" :display-text="props.row['Care Coach']"
                                          :values="props.row.nurses()" :class-name="'blue'"
                                          :on-change="props.row.onNurseUpdate.bind(props.row)"></select-editable>
                         <loader class="relative" v-if="props.row.loaders.nurse"></loader>
@@ -234,7 +234,7 @@
                         'selected': 'blank',
                         'Type': 'padding-2'
                     },
-                    sortable: ['Nurse', 'Patient ID', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Practice', 'Scheduler'],
+                    sortable: ['Care Coach', 'Patient ID', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Practice', 'Scheduler'],
                     filterable: ['Type', 'Care Coach', 'Patient ID', 'Activity Day', 'Last Call', 'Practice', 'Billing Provider'],
                     filterByColumn: true,
                     texts: {
@@ -505,7 +505,7 @@
                     isCcmEligible: call.is_ccm,
                     Type: call.type,
                     Manual: call.is_manual,
-                    Nurse: call.nurse,
+                    'Care Coach': call.nurse,
                     NurseId: call.nurse_id,
                     Patient: call.patient,
                     Practice: call.practice,
