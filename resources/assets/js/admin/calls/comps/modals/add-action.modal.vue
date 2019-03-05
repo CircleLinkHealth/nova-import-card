@@ -3,11 +3,7 @@
         <template slot="title">
             <div class="row">
                 <div class="col-sm-6">
-<<<<<<< HEAD
-                    Add Activity(ies)
-=======
-                    <h3>Add New Activity(ies)</h3>
->>>>>>> CPM-665
+                    <h3>Add Activity(ies)</h3>
                 </div>
             </div>
         </template>
@@ -18,13 +14,6 @@
                     <table class="add-actions">
                         <thead>
                         <tr>
-                            <th class="family-override" :class="showPracticeColumn ? 'with-practice-column' : ''">
-                                <a v-show="hasToConfirmFamilyOverrides" class='my-tool-tip' data-toggle="tooltip"
-                                   data-placement="top"
-                                   title="Tick to confirm family call override">
-                                    <i class='glyphicon glyphicon-info-sign'></i>
-                                </a>
-                            </th>
                             <th class="sub-type" :class="showPracticeColumn ? 'with-practice-column' : ''">
                                 Type
                                 <span class="required">*</span>
@@ -38,7 +27,7 @@
                                 Patient
                                 <span class="required">*</span>
                             </th>
-                            <th>
+                            <th class="patients-tool-tip">
                                 <a class='my-tool-tip' data-toggle="tooltip" data-placement="top"
                                    title="Tick to show only unscheduled">
                                     <i class='glyphicon glyphicon-info-sign'></i>
@@ -60,7 +49,7 @@
                                 End Time
                                 <span class="required">*</span>
                             </th>
-                            <th>
+                            <th class="end-time-tooltip">
                                 <a class='my-tool-tip' data-toggle="tooltip" data-placement="top"
                                    title="Tick if patient requested call time">
                                     <i class='glyphicon glyphicon-info-sign'></i>
@@ -69,6 +58,13 @@
                             <th class="notes" :class="showPracticeColumn ? 'with-practice-column' : ''">
                                 Activity Note
                             </th>
+                            <th class="family-override" :class="showPracticeColumn ? 'with-practice-column' : ''">
+                                <a v-show="hasToConfirmFamilyOverrides" class='my-tool-tip' data-toggle="tooltip"
+                                   data-placement="top"
+                                   title="Tick to confirm family call override">
+                                    <i class='glyphicon glyphicon-info-sign'></i>
+                                </a>
+                            </th>
                             <th class="remove" :class="showPracticeColumn ? 'with-practice-column' : ''">
                                 &nbsp;
                             </th>
@@ -76,14 +72,6 @@
                         </thead>
                         <tbody>
                         <tr v-for="(action, index) in actions">
-                            <td>
-                                <div v-show="action.showFamilyOverride">
-                                    <input type="checkbox" id="family_override"
-                                           name="family_override"
-                                           v-model="action.data.familyOverride"
-                                           :disabled="action.disabled"/>
-                                </div>
-                            </td>
                             <td>
                                 <v-select :disabled="action.disabled"
                                           max-height="200px" class="form-control"
@@ -101,20 +89,18 @@
                                 </v-select>
                             </td>
                             <td>
-                                    <v-select :disabled="action.disabled"
-                                              max-height="200px" class="form-control"
-                                              name="inbound_cpm_id"
-                                              v-model="action.selectedPatientData"
-                                              :options="action.patientsForSelect"
-                                              @input="function (patient) {changePatient(index, patient)}" required>
-                                    </v-select>
+                                <v-select :disabled="action.disabled"
+                                          max-height="200px" class="form-control"
+                                          name="inbound_cpm_id"
+                                          v-model="action.selectedPatientData"
+                                          :options="action.patientsForSelect"
+                                          @input="function (patient) {changePatient(index, patient)}" required>
+                                </v-select>
                             </td>
                             <td>
-                                <div class="width-10 padding-top-7">
-                                    <input :disabled="action.disabled"
-                                           type="checkbox" v-model="action.filters.showUnscheduledPatients"
-                                           @change="function (e) { changeUnscheduledPatients(index, e); }"/>
-                                </div>
+                                <input :disabled="action.disabled"
+                                       type="checkbox" v-model="action.filters.showUnscheduledPatients"
+                                       @change="function (e) { changeUnscheduledPatients(index, e); }"/>
                             </td>
                             <td>
                                 <v-select :disabled="action.disabled"
@@ -142,15 +128,21 @@
                                        :disabled="action.disabled" required/>
                             </td>
                             <td>
-                                <div class="width-18 padding-top-7">
-                                    <input type="checkbox" id="is_manual"
-                                           name="is_manual" v-model="action.data.isManual"
-                                           :disabled="action.disabled"/>
-                                </div>
+                                <input type="checkbox" id="is_manual"
+                                       name="is_manual" v-model="action.data.isManual"
+                                       :disabled="action.disabled"/>
                             </td>
                             <td>
                                 <input class="form-control height-40" type="text" name="text" v-model="action.data.text"
                                        :disabled="action.disabled"/>
+                            </td>
+                            <td>
+                                <div v-show="action.showFamilyOverride">
+                                    <input type="checkbox" id="family_override"
+                                           name="family_override"
+                                           v-model="action.data.familyOverride"
+                                           :disabled="action.disabled"/>
+                                </div>
                             </td>
                             <td>
                                 <span class="btn btn-xs" @click="removeAction(index)" v-show="actions.length > 1">
@@ -784,70 +776,74 @@
     }
 
     .modal-add-action table.add-actions {
+        width: 100%;
         table-layout: fixed;
-        margin-left: -25px;
+        margin-left: -10px;
     }
 
+    /* Table with a Practices column */
     .modal-add-action table.add-actions th.sub-type.with-practice-column {
-        width: 5%;
-        min-width: 140px;
-    }
-
-    .modal-add-action table.add-actions th.practices {
-        width: 16%;
-    }
-
-    .modal-add-action table.add-actions th.patients.with-practice-column {
-        width: 16%;
-    }
-
-    .modal-add-action table.add-actions th.nurses.with-practice-column {
-        width: 15%;
-    }
-
-    .modal-add-action table.add-actions th.date.with-practice-column {
         width: 10%;
     }
 
-    .modal-add-action table.add-actions th.start-time.with-practice-column {
-        width: 8%;
-    }
-
-    .modal-add-action table.add-actions th.end-time.with-practice-column {
+    .modal-add-action table.add-actions th.practices {
         width: 11%;
     }
 
-<<<<<<< HEAD
+    .modal-add-action table.add-actions th.patients.with-practice-column {
+        width: 14%;
+    }
+
+    .modal-add-action table.add-actions th.patients-tool-tip.with-practice-column {
+        width: 2%;
+    }
+
+    .modal-add-action table.add-actions th.nurses.with-practice-column {
+        width: 12%;
+    }
+
+    .modal-add-action table.add-actions th.date.with-practice-column {
+        width: 12%;
+    }
+
+    .modal-add-action table.add-actions th.start-time.with-practice-column {
+        width: 10%;
+    }
+
+    .modal-add-action table.add-actions th.end-time.with-practice-column {
+        width: 10%;
+    }
+
+    .modal-add-action table.add-actions th.end-time-tooltip.with-practice-column {
+        width: 2%;
+    }
+
     .modal-add-action table.add-actions th.notes.with-practice-column {
-        width: 16%;
+        width: 12%;
     }
 
     .modal-add-action table.add-actions th.remove.with-practice-column {
         width: 3%;
-=======
-    .modal-add-action table.add-actions th.notes {
-        width: 20%;
     }
 
-    .modal-add-action table.add-actions th.remove {
-        width: 2%;
->>>>>>> CPM-665
-    }
-
-    .modal-add-call table.add-calls th.family-override.with-practice-column {
+    .modal-add-action table.add-actions th.family-override.with-practice-column {
         width: 2%;
     }
 
     .modal-add-action table.add-actions th.sub-type {
-        width: 8%;
+        width: 10%;
     }
 
     .modal-add-action table.add-actions th.patients {
-        width: 17%;
+        width: 15%;
+    }
+
+    .modal-add-action table.add-actions th.patients-tool-tip {
+        width: 2%;
     }
 
     .modal-add-action table.add-actions th.nurses {
-        width: 17%;
+        width: 16%;
     }
 
     .modal-add-action table.add-actions th.date {
@@ -859,7 +855,11 @@
     }
 
     .modal-add-action table.add-actions th.end-time {
-        width: 13%;
+        width: 10%;
+    }
+
+    .modal-add-action table.add-actions th.end-time-tooltip {
+        width: 2%;
     }
 
     .modal-add-action table.add-actions th.notes {
@@ -867,11 +867,11 @@
     }
 
     .modal-add-action table.add-actions th.remove {
-        width: 5%;
+        width: 3%;
     }
 
-    .modal-add-call table.add-calls th.family-override {
-        width: 4%;
+    .modal-add-action table.add-actions th.family-override {
+        width: 3%;
     }
 
     .modal-add-action .loader {
@@ -888,25 +888,6 @@
         color: #d44a4a;
         vertical-align: middle;
         font-size: 20px;
-    }
-
-    .width-90 {
-        float: left;
-        width: 90%;
-    }
-
-    .width-82 {
-        float: left;
-        width: 82%;
-    }
-
-    .width-18 {
-        float: left;
-        width: 18%;
-    }
-
-    .width-10 {
-        float: right;
     }
 
     .height-40 {
@@ -957,10 +938,6 @@
 
     .add-activity {
         margin-left: -6px;
-    }
-
-    a.my-tool-tip {
-        float: right;
     }
 
     .modal-header h3 {
