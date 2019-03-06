@@ -53,12 +53,22 @@ class ActivityController extends Controller
             $userTimeZone = 'America/New_York';
         }
 
-        $provider_info = User::ofType(['care-center', 'provider'])
+        //uncomment if (in-house) should be added for care-center-external nurses
+        $provider_info = User::ofType(['care-center', 'care-center-external', 'provider'])
                              ->intersectPracticesWith($patient)
+                             //->with('roles')
                              ->orderBy('first_name')
                              ->get()
-                             ->mapWithKeys(function ($user) {
-                                 return [$user->id => $user->getFullName()];
+                             ->mapWithKeys(function ($user) use ($patient) {
+                                 return [
+                                     $user->id => $user->getFullName()
+                                 /*
+                                     $user->id => $user->getFullName() . ($user->hasRoleForSite('care-center-external',
+                                             $patient->primaryProgramId())
+                                             ? ' (in-house)'
+                                             : ''),
+                                 */
+                                 ];
                              })
                              ->all();
 
@@ -173,9 +183,9 @@ class ActivityController extends Controller
         $patient = User::find($patientId);
 
         return response()->json([
-            'monthlyTime' => $patient->formattedCcmTime(),
+            'monthlyTime'    => $patient->formattedCcmTime(),
             'monthlyBhiTime' => $patient->formattedBhiTime(),
-            'table'       => $acts,
+            'table'          => $acts,
         ]);
     }
 
@@ -215,7 +225,8 @@ class ActivityController extends Controller
         return $acts;
     }
 
-    private function getFullName($firstName, $lastName, $suffix) {
+    private function getFullName($firstName, $lastName, $suffix)
+    {
 
         $firstName = ucwords(strtolower($firstName));
         $lastName  = ucwords(strtolower($lastName));
