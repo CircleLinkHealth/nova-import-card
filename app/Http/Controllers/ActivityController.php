@@ -314,6 +314,7 @@ class ActivityController extends Controller
                         : false;
                     $input['is_behavioral'] = $is_bhi;
                 } else {
+                    $is_bhi                 = $isBehavioral;
                     $input['is_behavioral'] = $isBehavioral;
                 }
             } else {
