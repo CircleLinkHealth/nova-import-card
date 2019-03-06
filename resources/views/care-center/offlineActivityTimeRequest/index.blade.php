@@ -36,7 +36,11 @@
                                     <th scope="row">{{$r->id}}</th>
                                     <td>{{$r->durationInMinutes()}}</td>
                                     <td>
-                                        <a href="{{route('patient.careplan.print', [$r->patient->id])}}">{{$r->patient->getFullName()}}</a>
+                                        @if($r->patient)
+                                            <a href="{{route('patient.careplan.print', [$r->patient->id])}}">{{$r->patient->getFullName()}}</a>
+                                        @else
+                                            Deleted patient [{{$r->patient_id}}]
+                                        @endif
                                     </td>
                                     <td>{{$r->performed_at}}</td>
                                     <td>{{$r->comment}}</td>
