@@ -187,6 +187,10 @@ class PatientCareplanController extends Controller
         foreach ($users as $user_id) {
             $user = User::with(['careTeamMembers', 'carePlan.pdfs'])->find($user_id);
 
+            if(! $user->billingProviderUser()){
+                return response()->json("User with id: {$user->id}, does not have a billing provider");
+            }
+
             $careplan = $this->formatter->formatDataForViewPrintCareplanReport([$user]);
             $careplan = $careplan[$user_id];
             if (empty($careplan)) {
