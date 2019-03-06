@@ -53,21 +53,17 @@ class ActivityController extends Controller
             $userTimeZone = 'America/New_York';
         }
 
-        //uncomment if (in-house) should be added for care-center-external nurses
         $provider_info = User::ofType(['care-center', 'care-center-external', 'provider'])
                              ->intersectPracticesWith($patient)
-                             //->with('roles')
+                             ->with('roles')
                              ->orderBy('first_name')
                              ->get()
                              ->mapWithKeys(function ($user) use ($patient) {
                                  return [
-                                     $user->id => $user->getFullName()
-                                 /*
                                      $user->id => $user->getFullName() . ($user->hasRoleForSite('care-center-external',
                                              $patient->primaryProgramId())
                                              ? ' (in-house)'
                                              : ''),
-                                 */
                                  ];
                              })
                              ->all();
