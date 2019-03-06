@@ -149,7 +149,7 @@
                             const roles = nurse.user.roles.map(r => r.name);
 
                             let displayName = nurse.user.display_name || '';
-                            if (!roles.includes('care-center-external')) {
+                            if (roles.includes('care-center-external')) {
                                 displayName = displayName + ' (in-house)';
                             }
 

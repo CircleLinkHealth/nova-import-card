@@ -229,7 +229,7 @@ class CallController extends Controller
         $col   = $data['columnName'];
         $value = $data['value'];
 
-        //software-only check - CPM-660 - practice admin cannot change in-house nurse to external
+        //software-only check - CPM-660 - practice admin cannot change clh nurse to in-house nurse
         if ('outbound_cpm_id' == $col) {
             $canUpdateCareCoach = $this->canAssignCareCoachToActivity($call, $value);
             if ( ! $canUpdateCareCoach) {
@@ -432,7 +432,7 @@ class CallController extends Controller
     }
 
     /**
-     * Software-Only role cannot change in-house nurse to external
+     * Software-Only role cannot change clh nurse to in-house nurse
      * CPM-660
      *
      * @param Call $call
