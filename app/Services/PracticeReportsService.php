@@ -62,7 +62,7 @@ class PracticeReportsService
         foreach ($practices as $practiceId) {
             $practice = Practice::find($practiceId);
 
-            if ('practice' == $practice->cpmSettings()->bill_to) {
+            if ('practice' == $practice->cpmSettings()->bill_to || empty($practice->cpmSettings()->bill_to )) {
                 $chargeableServices = $this->getChargeableServices($practice);
 
                 foreach ($chargeableServices as $service) {
