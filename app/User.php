@@ -1331,7 +1331,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 : "\n {$this->getSpecialty()}";
         }
 
-        return "Dr. " . $this->getFullName() . $specialty;
+        $fullName = $this->getFullName();
+        $doctor = starts_with(strtolower($fullName), 'dr.') ? '' : 'Dr. ';
+        return $doctor . $fullName . $specialty;
     }
 
     public function getEmailForPasswordReset()
