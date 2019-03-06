@@ -445,8 +445,28 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         }
     }
 
-    public function attachPractice($practice, $roleIds, $sendBillingReports = null)
+    public function attachPractice($practice, array $roleIds, $sendBillingReports = null)
     {
+        $rolesForPractice = PracticeRoleUser::where('user_id', '=', $this->id)
+                                            ->where('program_id', '=', $practice->id)
+                                            ->get();
+
+        //remove any roles not in $roleIds array
+        foreach ($rolesForPractice as $roleForPractice) {
+
+            //sometimes role_id is null
+            if ( ! $roleForPractice->role_id) {
+                continue;
+            }
+
+            if ( ! in_array($roleForPractice->role_id, $roleIds)) {
+                //table does not have primary key, so need raw query
+                $tableName = (new PracticeRoleUser)->getTable();
+                $q         = "DELETE FROM $tableName where user_id = ? and program_id = ? and role_id = ?";
+                \DB::delete($q, [$roleForPractice->user_id, $roleForPractice->program_id, $roleForPractice->role_id]);
+            }
+        }
+
         if (empty($roleIds)) {
             PracticeRoleUser::updateOrCreate(
                 [
@@ -459,24 +479,23 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 ]
                     : []
             );
-
-            return;
+        } else {
+            foreach ($roleIds as $r) {
+                PracticeRoleUser::updateOrCreate(
+                    [
+                        'user_id'    => $this->id,
+                        'program_id' => $practice->id,
+                        'role_id'    => $r,
+                    ],
+                    null != $sendBillingReports
+                        ? [
+                        'send_billing_reports' => $sendBillingReports,
+                    ]
+                        : []
+                );
+            }
         }
 
-        foreach ($roleIds as $r) {
-            PracticeRoleUser::updateOrCreate(
-                [
-                    'user_id'    => $this->id,
-                    'program_id' => $practice->id,
-                    'role_id'    => $r,
-                ],
-                null != $sendBillingReports
-                    ? [
-                    'send_billing_reports' => $sendBillingReports,
-                ]
-                    : []
-            );
-        }
     }
 
     public function authyUser()

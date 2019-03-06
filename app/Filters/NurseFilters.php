@@ -191,7 +191,7 @@ class NurseFilters extends QueryFilters
                                  ]);
         }
 
-        //we need to send roles down to client to differentiate in-house nurses from external
+        //we need to send roles down to client to differentiate in-house nurses from clh nurses
         if ($this->request->has('canCallPatient')) {
             $practiceId = User::find($this->request->get('canCallPatient'))->primaryPractice->id;
 

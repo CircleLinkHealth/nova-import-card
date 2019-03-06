@@ -434,7 +434,7 @@
                         const rolesSet = Array.from(new Set(roles));
 
                         let displayName = (nurse.user || {}).display_name || '';
-                        if (!roles.includes('care-center-external')) {
+                        if (roles.includes('care-center-external')) {
                             displayName = displayName + ' (in-house)';
                         }
 
@@ -491,7 +491,7 @@
                     && err.response.status
                     && err.response.status === CALL_CANNOT_CHANGE_CARE_COACH
                 ) {
-                    alert('Cannot change in-house care coach.');
+                    alert('Cannot change CLH care coach.');
                 }
             },
 

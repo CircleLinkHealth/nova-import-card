@@ -6,6 +6,14 @@
 
 namespace App;
 
+/**
+ * Class PracticeRoleUser
+ * @package App
+ *
+ * @property integer $program_id
+ * @property integer $user_id
+ * @property integer $role_id
+ */
 class PracticeRoleUser extends BaseModel
 {
     protected $fillable = [

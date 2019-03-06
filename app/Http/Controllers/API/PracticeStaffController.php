@@ -8,6 +8,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdatePracticeStaff;
+use App\Nurse;
 use App\Permission;
 use App\PhoneNumber;
 use App\Practice;
@@ -21,7 +22,7 @@ class PracticeStaffController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param int   $id
+     * @param int $id
      * @param mixed $practiceId
      * @param mixed $userId
      *
@@ -67,21 +68,21 @@ class PracticeStaffController extends Controller
         ];
 
         $practiceUsers = User::ofType(array_merge($relevantRoles, ['practice-lead']))
-            ->whereHas('practices', function ($q) use (
+                             ->whereHas('practices', function ($q) use (
                                  $primaryPractice
                              ) {
                                  $q->where('id', '=', $primaryPractice->id);
                              })
-            ->with('roles')
-            ->get()
-            ->sortBy('first_name')
-            ->values();
+                             ->with('roles')
+                             ->get()
+                             ->sortBy('first_name')
+                             ->values();
 
         if ( ! auth()->user()->isAdmin()) {
             $practiceUsers->reject(function ($user) {
                 return $user->isAdmin();
             })
-                ->values();
+                          ->values();
         }
 
         //Get the users that were as clinical emergency contacts from the locations page
@@ -102,53 +103,53 @@ class PracticeStaffController extends Controller
         $roles = $user->rolesInPractice($primaryPractice->id);
 
         $forwardAlertsToContactUsers = $user->forwardAlertsTo()
-            ->having('name', '=', User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER)
-            ->orHaving('name', '=', User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER)
-            ->get()
-            ->mapToGroups(function ($user) {
+                                            ->having('name', '=', User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER)
+                                            ->orHaving('name', '=', User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER)
+                                            ->get()
+                                            ->mapToGroups(function ($user) {
                                                 return [$user->pivot->name => $user->id];
                                             })
                                        ?? null;
 
         $forwardCarePlanApprovalEmailsToContactUsers = $user->forwardAlertsTo()
-            ->having(
+                                                            ->having(
                                                                 'name',
                                                                 '=',
                                                                 User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER
                                                             )
-            ->orHaving(
+                                                            ->orHaving(
                                                                 'name',
                                                                 '=',
                                                                 User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER
                                                             )
-            ->get()
-            ->mapToGroups(function ($user) {
+                                                            ->get()
+                                                            ->mapToGroups(function ($user) {
                                                                 return [$user->pivot->name => $user->id];
                                                             })
                                                        ?? null;
 
         return [
-            'id'              => $user->id,
-            'practice_id'     => $primaryPractice->id,
-            'email'           => $user->email,
-            'last_name'       => $user->getLastName(),
-            'first_name'      => $user->getFirstName(),
-            'full_name'       => $user->display_name,
-            'phone_number'    => $phone->number ?? '',
-            'phone_extension' => $phone->extension ?? '',
-            'phone_type'      => array_search(
-                $phone->type ?? '',
-                PhoneNumber::getTypes()
+            'id'                                  => $user->id,
+            'practice_id'                         => $primaryPractice->id,
+            'email'                               => $user->email,
+            'last_name'                           => $user->getLastName(),
+            'first_name'                          => $user->getFirstName(),
+            'full_name'                           => $user->display_name,
+            'phone_number'                        => $phone->number ?? '',
+            'phone_extension'                     => $phone->extension ?? '',
+            'phone_type'                          => array_search(
+                                                         $phone->type ?? '',
+                                                         PhoneNumber::getTypes()
                                                      ) ?? '',
-            'sendBillingReports'     => $permissions->pivot->send_billing_reports ?? false,
-            'canApproveAllCareplans' => $user->canApproveCarePlans(),
-            'role_names'             => $roles->map(function ($r) {
+            'sendBillingReports'                  => $permissions->pivot->send_billing_reports ?? false,
+            'canApproveAllCareplans'              => $user->canApproveCarePlans(),
+            'role_names'                          => $roles->map(function ($r) {
                 return $r->name;
             }),
-            'role_display_names' => $roles->implode('display_name', ', '),
-            'locations'          => $user->locations->pluck('id'),
-            'emr_direct_address' => $user->emr_direct_address,
-            'forward_alerts_to'  => [
+            'role_display_names'                  => $roles->implode('display_name', ', '),
+            'locations'                           => $user->locations->pluck('id'),
+            'emr_direct_address'                  => $user->emr_direct_address,
+            'forward_alerts_to'                   => [
                 'who'      => $forwardAlertsToContactUsers->keys()->first() ?? 'billing_provider',
                 'user_ids' => $forwardAlertsToContactUsers->values()->first() ?? [],
             ],
@@ -163,9 +164,9 @@ class PracticeStaffController extends Controller
      * Update the specified resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @param int                      $id
-     * @param mixed                    $primaryPracticeId
-     * @param mixed                    $userId
+     * @param int $id
+     * @param mixed $primaryPracticeId
+     * @param mixed $userId
      *
      * @return \Illuminate\Http\Response
      */
@@ -177,6 +178,7 @@ class PracticeStaffController extends Controller
 
         $implementationLead = $primaryPractice->lead;
 
+        //role names, NOT display names
         $roleNames = $formData['role_names'];
         $roles     = Role::whereIn('name', $roleNames)->get()->keyBy('id');
 
@@ -211,7 +213,7 @@ class PracticeStaffController extends Controller
             $sendBillingReports = true;
         }
 
-        $user->attachPractice($primaryPractice, $roles->keys(), $sendBillingReports);
+        $user->attachPractice($primaryPractice, $roles->keys()->toArray(), $sendBillingReports);
 
         //attach phone
         $phone = $user->clearAllPhonesAndAddNewPrimary(
@@ -231,7 +233,7 @@ class PracticeStaffController extends Controller
 //            $user->forwardTo($formData['forward_alerts_to']['user_id'], $formData['forward_alerts_to']['who']);
         }
 
-        if ('provider' == $formData['role_name']) {
+        if (in_array('provider', $roleNames)) {
             $providerInfo = ProviderInfo::firstOrCreate([
                 'user_id' => $user->id,
             ]);
@@ -245,6 +247,21 @@ class PracticeStaffController extends Controller
 //                    $formData['forward_careplan_approval_emails_to']['who']
 //                );
             }
+        }
+
+        if (in_array('care-center-external', $roleNames)) {
+            // add nurse info
+            if ( ! $user->nurseInfo) {
+                $nurseInfo          = new Nurse();
+                $nurseInfo->status  = 'active';
+                $nurseInfo->user_id = $user->id;
+                $nurseInfo->save();
+            } else {
+                $user->nurseInfo->status = 'active';
+            }
+        } else if ($user->nurseInfo) {
+            $user->nurseInfo->status = 'inactive';
+            $user->nurseInfo->save();
         }
 
 //                $user->notify(new StaffInvite($implementationLead, $primaryPractice));
