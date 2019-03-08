@@ -10,6 +10,7 @@ use App\Activity;
 use App\Billing\NurseInvoices\VariablePay;
 use App\Call;
 use App\Nurse;
+use App\NurseMonthlySummary;
 use App\PageTimer;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Carbon\Carbon;
@@ -46,6 +47,9 @@ class NurseMonthlyBillGenerator
     protected $percentTime;
     protected $rate;
     protected $startDate;
+    protected $pageTimerData;
+    protected $activityData;
+    protected $summary;
 
     //total time in system
     protected $systemTime;
@@ -59,7 +63,8 @@ class NurseMonthlyBillGenerator
         Carbon $billingDateEnd,
         $withVariablePaymentSystem,
         $manualTimeAdd = 0,
-        $notes = ''
+        $notes = '',
+        $summary
     ) {
         $this->nurse                     = $newNurse;
         $this->nurseName                 = $newNurse->user->getFullName();
@@ -68,6 +73,16 @@ class NurseMonthlyBillGenerator
         $this->addDuration               = $manualTimeAdd;
         $this->addNotes                  = $notes;
         $this->withVariablePaymentSystem = $withVariablePaymentSystem;
+        $this->summary                   = $summary;
+
+        $this->pageTimerData = PageTimer::where('provider_id', $this->nurse->user_id)
+                                        ->select(['id', 'duration', 'created_at'])
+                                        ->whereBetween('created_at', [$this->startDate, $this->endDate])
+                                        ->get();
+        $this->activityData  = Activity::where('provider_id', $this->nurse->user_id)
+                                       ->whereBetween('created_at', [$this->startDate, $this->endDate])
+                                       ->get();
+
 
         if (0 != $this->addDuration) {
             $this->hasAddedTime = true;
@@ -88,10 +103,11 @@ class NurseMonthlyBillGenerator
         $this->payable = $this->formattedSystemTime * $this->nurse->hourly_rate;
 
         if ($this->withVariablePaymentSystem) {
-            $variable = (new VariablePay(
+            $variable               = (new VariablePay(
                 $this->nurse,
                 $this->startDate,
-                $this->endDate
+                $this->endDate,
+                $this->summary
             ))->getItemizedActivities();
             $this->total['after']   = $variable['total']['after'];
             $this->total['towards'] = $variable['total']['towards'];
@@ -105,11 +121,11 @@ class NurseMonthlyBillGenerator
 
                 $this->rate = "Variable Rates: ${high_rate}/hr or ${low_rate}/hr";
             } else {
-                $this->rate = 'Fixed Rate: '.$this->nurse->hourly_rate.'/hr';
+                $this->rate = 'Fixed Rate: ' . $this->nurse->hourly_rate . '/hr';
             }
         } else {
             $variable   = false;
-            $this->rate = 'Fixed Rate: '.$this->nurse->hourly_rate.'/hr';
+            $this->rate = 'Fixed Rate: ' . $this->nurse->hourly_rate . '/hr';
         }
 
         $dayCounterCarbon = Carbon::parse($this->startDate->toDateString());
@@ -119,7 +135,7 @@ class NurseMonthlyBillGenerator
         if ($this->hasAddedTime) {
             //round to .5
             $this->formattedAddDuration = ceil(($this->addDuration * 2) / 60) / 2;
-            $this->formattedSystemTime += $this->formattedAddDuration;
+            $this->formattedSystemTime  += $this->formattedAddDuration;
 
             $this->payable += $this->formattedAddDuration * $this->nurse->hourly_rate;
 
@@ -163,22 +179,22 @@ class NurseMonthlyBillGenerator
             'manual_time_amount' => $this->formattedAddDuration * $this->nurse->hourly_rate,
 
             //variable
-            'variable_pay' => $variable,
-            'total'        => $this->total,
-            'others'       => $others,
+            'variable_pay'       => $variable,
+            'total'              => $this->total,
+            'others'             => $others,
 
-            'high_rate' => $this->nurse->high_rate,
-            'low_rate'  => $this->nurse->low_rate,
+            'high_rate'             => $this->nurse->high_rate,
+            'low_rate'              => $this->nurse->low_rate,
 
             //headers
             'nurse_billable_time'   => $this->formattedSystemTime,
-            'total_billable_amount' => '$'.$this->payable,
+            'total_billable_amount' => '$' . $this->payable,
             'total_billable_rate'   => $this->rate,
             'nurse_name'            => $this->nurse->user->getFullName(),
 
             //range
-            'date_start' => $this->startDate->format('jS M, Y'),
-            'date_end'   => $this->endDate->format('jS M, Y'),
+            'date_start'            => $this->startDate->format('jS M, Y'),
+            'date_end'              => $this->endDate->format('jS M, Y'),
         ];
     }
 
@@ -189,7 +205,7 @@ class NurseMonthlyBillGenerator
 
         $pdf = PDF::loadView('billing.nurse.invoice', $this->formattedItemizedActivities);
 
-        $name = trim($this->nurseName).'-'.Carbon::now()->toDateString();
+        $name = trim($this->nurseName) . '-' . Carbon::now()->toDateString();
 
         $pdf->save(storage_path("download/${name}.pdf"), true);
 
@@ -208,7 +224,7 @@ class NurseMonthlyBillGenerator
             'id'         => $this->nurse->id,
             'name'       => $this->nurseName,
             'email'      => $this->nurse->user->email,
-            'link'       => $name.'.pdf',
+            'link'       => $name . '.pdf',
             'date_start' => $this->startDate->toDateString(),
             'date_end'   => $this->endDate->toDateString(),
             'email_body' => $data,
@@ -217,30 +233,22 @@ class NurseMonthlyBillGenerator
 
     private function getCallsPerHourOverPeriod()
     {
-        $duration = intval(PageTimer::where('provider_id', $this->nurse->user_id)
-            ->where(function ($q) {
-                $q->where('created_at', '>=', $this->startDate->toDateString())
-                    ->where('created_at', '<=', $this->endDate->toDateString());
-            })
-            ->sum('billable_duration'));
+        $duration = intval($this->pageTimerData
+                                    ->sum('billable_duration'));
 
-        $ccm_duration = intval(Activity::where('logger_id', $this->nurse->user_id)
-            ->where(function ($q) {
-                $q->where('created_at', '>=', $this->startDate->toDateString())
-                    ->where('created_at', '<=', $this->endDate->toDateString());
-            })
-            ->sum('duration'));
+        $ccm_duration = intval($this->activityData
+                                       ->sum('duration'));
 
         $calls = Call::where('outbound_cpm_id', $this->nurse->user_id)
-            ->where(function ($q) {
-                $q->where('updated_at', '>=', $this->startDate->toDateString())
-                    ->where('updated_at', '<=', $this->endDate->toDateString());
-            })
-            ->where(function ($k) {
-                $k->where('status', '=', 'reached')
-                    ->orWhere('status', '=', 'not reached');
-            })
-            ->count();
+                     ->where(function ($q) {
+                         $q->where('updated_at', '>=', $this->startDate->toDateString())
+                           ->where('updated_at', '<=', $this->endDate->toDateString());
+                     })
+                     ->where(function ($k) {
+                         $k->where('status', '=', 'reached')
+                           ->orWhere('status', '=', 'not reached');
+                     })
+                     ->count();
 
         $hours = $duration / 3600;
 
@@ -271,22 +279,10 @@ class NurseMonthlyBillGenerator
     {
         $data = [];
 
-        $pageTimers = PageTimer::where('provider_id', $this->nurse->user_id)
-            ->select(['id', 'duration', 'created_at'])
-            ->where(function ($q) {
-                $q->where('created_at', '>=', $this->startDate)
-                    ->where('created_at', '<=', $this->endDate);
-            })
-            ->get();
+        $pageTimers = $this->pageTimerData;
 
-        $offlineActivities = Activity::where('provider_id', $this->nurse->user_id)
-            ->select(['id', 'duration', 'created_at'])
-            ->where(function ($q) {
-                $q->where('created_at', '>=', $this->startDate)
-                    ->where('created_at', '<=', $this->endDate);
-            })
-            ->where('logged_from', 'manual_input')
-            ->get();
+        $offlineActivities = $this->activityData
+                                     ->where('logged_from', 'manual_input');
 
         $pageTimers = $pageTimers->groupBy(function ($q) {
             return Carbon::parse($q->created_at)->format('d'); // grouping by days
@@ -313,27 +309,14 @@ class NurseMonthlyBillGenerator
 
     private function getSystemTimeForNurse()
     {
-        $this->systemTime = PageTimer::where('provider_id', $this->nurse->user_id)
-            ->where(function ($q) {
-                $q->where('created_at', '>=', $this->startDate)
-                    ->where('created_at', '<=', $this->endDate);
-            })
-            ->sum('duration');
+        $this->systemTime = $this->pageTimerData->sum('duration');
 
         //add manual activities.
-        $this->systemTime += Activity::where('provider_id', $this->nurse->user_id)
-            ->where(function ($q) {
-                $q->where('created_at', '>=', $this->startDate)
-                    ->where('created_at', '<=', $this->endDate);
-            })
+        $this->systemTime += $this->activityData
             ->where('logged_from', 'manual_input')
             ->sum('duration');
 
-        $this->activityTime = Activity::where('provider_id', $this->nurse->user_id)
-            ->where(function ($q) {
-                $q->where('created_at', '>=', $this->startDate)
-                    ->where('created_at', '<=', $this->endDate);
-            })
+        $this->activityTime = $this->activityData
             ->sum('duration');
 
         //percent calc
