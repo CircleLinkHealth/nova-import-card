@@ -22,6 +22,10 @@
     },
     {
       "type": "git",
+      "url": "git@github.com:subzero10/laravel-raygun.git"
+    },
+    {
+      "type": "git",
       "url": "git@github.com:CircleLinkHealth/opcache-gui.git"
     },
     {
