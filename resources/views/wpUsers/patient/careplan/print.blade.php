@@ -250,7 +250,6 @@ if (isset($patient) && ! empty($patient)) {
                         <div class="col-lg-12 col-xs-12 print-row text-bold text-right">{{$patient->getPreferredLocationName()}}</div>
                     </div>
 
-
                     @if($regularDoctor)
                         <div class="row gutter">
                             <div class="col-xs-5 print-row text-bold">
