@@ -56,8 +56,7 @@ class PatientCareplanController extends Controller
         $practiceIds       = auth()->user()->viewableProgramIds();
         $carePlansForWebix = collect();
 
-        $query = CarePlanPrintListView::leftJoin('practice_role_user', 'patient_id', 'practice_role_user.user_id')
-                                      ->whereIn('practice_role_user.program_id', $practiceIds)
+        $query = CarePlanPrintListView::whereIn('primary_practice_id', $practiceIds)
               ->get()
               ->map(function ($cp) use (&$carePlansForWebix) {
 
