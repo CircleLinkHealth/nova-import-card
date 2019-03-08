@@ -58,7 +58,7 @@ class PatientCareplanController extends Controller
 
         $query = CarePlanPrintListView::whereIn('primary_practice_id', $practiceIds)
               ->get()
-              ->map(function ($cp) use (&$carePlansForWebix) {
+              ->each(function ($cp) use (&$carePlansForWebix) {
 
 
                   $last_printed = $cp->last_printed;
