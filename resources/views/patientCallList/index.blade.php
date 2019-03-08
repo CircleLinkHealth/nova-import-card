@@ -3,6 +3,18 @@
 @section('title', 'Patient Listing')
 @section('activity', '')
 
+<?php
+function formatTime($time)
+{
+    $seconds = $time;
+    $H       = floor($seconds / 3600);
+    $i       = ($seconds / 60) % 60;
+    $s       = $seconds % 60;
+
+    return sprintf('%02d:%02d:%02d', $H, $i, $s);
+}
+?>
+
 @section('content')
     @push('styles')
         <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -36,7 +48,7 @@
                     return true;
                 });
 
-                $('.patientNameLink').tooltip({ boundary: 'window' });
+                $('.patientNameLink').tooltip({boundary: 'window'});
 
             });
         </script>
@@ -130,14 +142,11 @@
                                             <tbody>
                                             @if (count($calls) > 0)
                                                 @foreach($calls as $key => $call)
-                                                    @if(!$call->inboundUser)
-                                                        @continue
-                                                    @endif
                                                     <?php
                                                     $curTime = \Carbon\Carbon::now();
                                                     $curDate = $curTime->toDateString();
                                                     $curTime = $curTime->toTimeString();
-                                                    $rowBg   = '';
+                                                    $rowBg = '';
                                                     if ($call->scheduled_date == $curDate && $call->window_end < $curTime) {
                                                         $rowBg = 'background-color: rgba(255, 0, 0, 0.4);';
                                                     }
@@ -146,12 +155,10 @@
                                                         <td class="vert-align" style="text-align:center">
                                                             @if(empty($call->type) || $call->type === 'call')
                                                                 <i class="fas fa-phone"></i>
+                                                            @elseif ($call->type === 'Call Back')
+                                                                <i class="fas fa-phone"></i> Back
                                                             @else
-                                                                @if ($call->sub_type === 'Call Back')
-                                                                    <i class="fas fa-phone"></i> Back
-                                                                @else
-                                                                    <span>{{$call->sub_type}}</span>
-                                                                @endif
+                                                                <span>{{$call->type}}</span>
                                                             @endif
                                                             @if(!empty($call->attempt_note))
                                                                 <button type="button"
@@ -161,70 +168,61 @@
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            @if($call->inboundUser)
-                                                                <a href="{{ route('patient.careplan.print', array('patient' => $call->inboundUser->id)) }}"
-                                                                   class="patientNameLink" call-id="{{ $call->id }}"
-                                                                   style="text-decoration:underline;font-weight:bold;"
-                                                                   data-template='<div class="tooltip" style="text-align:left" role="tooltip"><div class="arrow"></div><div class="tooltip-inner" style="text-align:left"></div></div>'
-                                                                   data-toggle="tooltip"
-                                                                   data-container="body"
-                                                                   data-placement="right"
-                                                                   data-html="true"
-                                                                   title="{{$call->inboundUser->patientInfo->getContactWindowsString()}}">
-                                                                    {{ $call->inboundUser->display_name }}
-                                                                </a>
-                                                            @else
-                                                                <em style="color:red;">unassigned</em>
-                                                            @endif
+                                                            <a href="{{ route('patient.careplan.print', array('patient' => $call->patient_id)) }}"
+                                                               class="patientNameLink" call-id="{{ $call->id }}"
+                                                               style="text-decoration:underline;font-weight:bold;"
+                                                               data-template='<div class="tooltip" style="text-align:left" role="tooltip"><div class="arrow"></div><div class="tooltip-inner" style="text-align:left"></div></div>'
+                                                               data-toggle="tooltip"
+                                                               data-container="body"
+                                                               data-placement="right"
+                                                               data-html="true"
+                                                               title="{{$call->preferredCallDaysToExpandedString()}}">
+                                                                {{ $call->patient }}
+                                                            </a>
                                                         </td>
                                                         <td class="{{ \Carbon\Carbon::parse($call->scheduled_date)->lessThan(\Carbon\Carbon::today()) ? 'red' : '' }}">
                                                             {{ $call->scheduled_date }}
                                                         </td>
-                                                        <td>{{ $call->window_start }}</td>
-                                                        <td>{{ $call->window_end }}</td>
+                                                        <td>{{ $call->call_time_start }}</td>
+                                                        <td>{{ $call->call_time_end }}</td>
                                                         <td>
-                                                            @if($call->inboundUser)
-                                                                <?php
-                                                                $dateTime = new DateTime();
-                                                                $dateTime->setTimeZone(new DateTimeZone($call->inboundUser->timezone));
-                                                                echo '<span style="font-weight:bold;color:green;">'.$dateTime->format('T').'</a>';
-                                                                ?>
-                                                            @endif
+                                                            <?php
+                                                            $dateTime = new DateTime();
+                                                            $dateTime->setTimeZone(new DateTimeZone($call->timezone));
+                                                            echo '<span style="font-weight:bold;color:green;">' . $dateTime->format('T') . '</a>';
+                                                            ?>
                                                         </td>
                                                         <td>
-                                                            @if( $call->inboundUser && $call->inboundUser->patientInfo)
-                                                                {{ $call->inboundUser->patientInfo->last_contact_time }}
-                                                            @endif
+                                                            {{ $call->last_call }}
                                                         </td>
                                                         <td>
-                                                            @if( $call->inboundUser)
-                                                                {{ $call->inboundUser->formattedCcmTime() }}
+                                                            @if( isset($call->ccm_time))
+                                                                {{ formatTime($call->ccm_time) }}
                                                             @else
                                                                 <em style="color:red;">-</em>
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            @if( $call->inboundUser)
-                                                                {{ $call->inboundUser->formattedBhiTime() }}
+                                                            @if( isset($call->bhi_time))
+                                                                {{ formatTime($call->bhi_time) }}
                                                             @else
                                                                 <em style="color:red;">-</em>
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            @if($call->inboundUser)                                                                             {{ $call->inboundUser->patientSummaries->first()->no_of_calls ?? 0 }}
+                                                            {{$call->no_of_calls ?? 0}}
                                                             (
-                                                            <span style="color:green;">{{ $call->inboundUser->patientSummaries->first()->no_of_successful_calls ?? 0 }}</span>
+                                                            <span style="color:green;">
+                                                            {{$call->no_of_successful_calls ?? 0}}
+                                                            </span>
                                                             )
-                                                            @endif
                                                         </td>
                                                         <td>
-                                                            @if($call->inboundUser && $call->inboundUser->careTeamMembers && $call->inboundUser->careTeamMembers->where('type', 'billing_provider')->first() && $call->inboundUser->careTeamMembers->where('type', 'billing_provider')->first()->user)
-                                                                {{ $call->inboundUser->careTeamMembers->where('type', 'billing_provider')->first()->user->display_name }}
-                                                            @endif
+                                                            {{$call->billing_provider}}
                                                         </td>
                                                         <td>
-                                                            @if($call->inboundUser && $call->inboundUser->primaryPractice)
-                                                                {{ $call->inboundUser->primaryPractice->display_name }}
+                                                            @if(!empty($call->practice))
+                                                                {{ $call->practice }}
                                                             @else
                                                                 <em style="color:red;">n/a</em>
                                                             @endif
@@ -268,7 +266,7 @@
     <!-- call attempt_note modals -->
     @if (count($calls) > 0)
         @foreach($calls as $call)
-            @if ($call->inboundUser && $call->inboundUser->patientInfo && (!empty($call->attempt_note) || !empty($call->inboundUser->patientInfo->general_comment)) )
+            @if ((!empty($call->attempt_note) || !empty($call->general_comment)) )
                 <!-- Modal -->
                 <div id="attemptNoteCall{{ $call->id }}" class="modal fade" role="dialog">
                     <div class="modal-dialog">
@@ -277,13 +275,11 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                <h4 class="modal-title">Couple things about {{ $call->inboundUser->display_name }}</h4>
+                                <h4 class="modal-title">Couple things about {{ $call->patient }}</h4>
                             </div>
                             <div class="modal-body">
-                                @if($call->inboundUser && $call->inboundUser->patientInfo &&
-                                !empty($call->inboundUser->patientInfo->general_comment))
-                                    <p style="font-size:125%"><strong>General:</strong> {{
-                        $call->inboundUser->patientInfo->general_comment }}</p>
+                                @if(!empty($call->general_comment))
+                                    <p style="font-size:125%"><strong>General:</strong> {{$call->general_comment }}</p>
                                 @endif
                                 @if(!empty($call->attempt_note))
                                     <p style="font-size:125%"><strong>This Call:</strong> {{ $call->attempt_note }}</p>
@@ -291,7 +287,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                <a href="{{ route('patient.careplan.print', array('patient' => $call->inboundUser->id)) }}"
+                                <a href="{{ route('patient.careplan.print', array('patient' => $call->patient_id)) }}"
                                    class="btn btn-primary">Continue to care plan</a>
                             </div>
                         </div>
