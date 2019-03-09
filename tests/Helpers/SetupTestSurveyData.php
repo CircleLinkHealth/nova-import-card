@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Helpers;
 
 use App\Question;
 use App\QuestionGroup;
@@ -9,29 +9,39 @@ use App\Survey;
 use App\SurveyInstance;
 use App\User;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Tests\Helpers\SetupTestSurveyData;
-use Tests\TestCase;
 use Faker\Factory;
 
-class UserSurveyTest extends TestCase
+trait SetupTestSurveyData
 {
-    private $faker;
-    private $date;
-    private $user;
-    private $surveys;
+    protected $faker;
 
-    use DatabaseTransactions;
+    protected $date;
+
+    protected $user;
+
+    protected $surveys;
+
 
     /**
-     * A user can have multiple surveys, and each survey can have multiple instances, with variable statuses of
-     * completion for that user. These relationships exist in the intermediary table 'users_survey', with pivot value
-     * 'status'.
-     *
-     *
-     * @return void
+     * Creates User
      */
-    private function createSurveys()
+    public function createUser()
+    {
+
+        $this->user = User::create([
+            'name'              => $this->faker->name,
+            'email'             => $this->faker->unique()->safeEmail,
+            'email_verified_at' => $this->date,
+            'password'          => bcrypt('secret'),
+            'remember_token'    => str_random(10),
+        ]);
+        $this->assertNotNull($this->user);
+    }
+
+    /**
+     *  Creates Surveys
+     */
+    public function createSurveys()
     {
         Survey::create(
             [
@@ -43,19 +53,15 @@ class UserSurveyTest extends TestCase
                 'name'        => Survey::VITALS,
                 'description' => 'Vitals Report',
             ]);
-
         $this->surveys = Survey::get();
         $this->assertEquals(2, $this->surveys->count());
-
     }
 
     /**
-     * A survey can have multiple instances
      *
      */
     public function createAndAttachSurveyInstances()
     {
-
         foreach ($this->surveys as $survey) {
             $instances = $survey->instances()->createMany([
                 [
@@ -87,18 +93,12 @@ class UserSurveyTest extends TestCase
                         'status'             => SurveyInstance::PENDING,
                     ]
                 );
+
             }
         }
-        $this->assertEquals(2, $this->user->getSurveys()->count());
-        $this->assertEquals(3, $this->user->getSurveys()->first()->instances()->count());
-        $this->assertEquals(3, $this->user->getSurveys()->last()->instances()->count());
-
     }
 
-    /**
-     *Testing inverse of relationship on survey instance
-     */
-    public function test_questions_can_be_created_for_each_survey()
+    public function createQuestionsForEachSurveyInstance()
     {
         $questionTypes = collect([
             QuestionType::CHECKBOX,
@@ -184,28 +184,21 @@ class UserSurveyTest extends TestCase
                 $this->assertEquals($instance->questions()->whereNotNull('sub_order')->count(), 4);
             }
         }
-
     }
 
-    public function setUp()
+
+    public function createTestSurveyData()
     {
-        parent::setUp();
-
         $this->faker = $faker = Factory::create();
-
         $this->date  = Carbon::now();
 
-        $this->user = User::create([
-            'name'              => $this->faker->name,
-            'email'             => $this->faker->unique()->safeEmail,
-            'email_verified_at' => $this->date,
-            'password'          => bcrypt('secret'),
-            'remember_token'    => str_random(10),
-        ]);
-        $this->assertNotNull($this->user);
+        $this->createUser();
 
         $this->createSurveys();
+
         $this->createAndAttachSurveyInstances();
+
+        $this->createQuestionsForEachSurveyInstance();
 
 
     }

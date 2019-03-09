@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class QuestionTypesAnswers extends Model
+class QuestionTypesAnswer extends Model
 {
     /*
      *
@@ -16,7 +16,7 @@ class QuestionTypesAnswers extends Model
     protected $fillable = [
         'question_type_id',
         'value',
-        'options'
+        'options',
     ];
 
     /**
@@ -28,7 +28,8 @@ class QuestionTypesAnswers extends Model
         'options' => 'array',
     ];
 
-    public function questionType(){
+    public function questionType()
+    {
         return $this->belongsTo(QuestionType::class, 'question_type_id');
     }
 }
