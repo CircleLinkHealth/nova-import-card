@@ -1,12 +1,9 @@
 .practice-title {
-  /*  width: 300px;
-    height: 58px;*/
     font-family: Poppins, sans-serif;
     font-size: 18px;
     letter-spacing: 1.5px;
     text-align: center;
     margin-top: 20px;
-   /* margin-left: 390px;*/
     color: #50b2e2;
 }
 
@@ -15,21 +12,16 @@
 }
 
 .survey-main-title {
-   /* width: 400px;
-    height: 80px;*/
     font-family: Poppins, sans-serif;
     font-size: 24px;
     font-weight: 600;
     letter-spacing: 1.5px;
     text-align: center;
     margin-top: 30px;
-   /* margin-left: 325px;*/
     color: #1a1a1a;
 }
 
 .survey-sub-welcome-text {
-    /*width: 800px;
-    height: 100px;*/
     font-family: Poppins, sans-serif;
     font-size: 18px;
     font-weight: normal;
@@ -39,7 +31,6 @@
     letter-spacing: 1px;
     text-align: center;
     margin-top: 25px;
-    /*margin-left: 120px;*/
     color: #1a1a1a;
 }
 .btn-primary {
@@ -58,8 +49,6 @@
 }
 
 .by-circlelink {
-   /* width: 234px;
-    height: 30px;*/
     font-family: Poppins;
     font-size: 18px;
     font-weight: 600;

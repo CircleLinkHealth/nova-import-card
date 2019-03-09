@@ -1,7 +1,7 @@
 @extends('surveysMaster')
 @section('content')
     <link href="{{asset('css/surveyLoginHra.css')}}" rel="stylesheet">
-    <form method="POST" action="{{route('surveyLoginForm')}}">
+    <form method="POST" action="{{route('surveyLoginAuth')}}">
         {{csrf_field()}}
         <div class="survey-login">
             <div class="practice-title">
@@ -18,13 +18,13 @@
                 <div class="form-group form-group-input">
                     <label for="full-name" class="full-name">Full Name</label><br>
                     <input type="text" name="name" style="width: 400px; height: 60px; border-radius: 5px;"
-                           placeholder="Full Name">
+                           placeholder="Full Name" required>
                 </div>
                 <br>
                 <div class="form-group form-group-input">
                     <label for="birth-date" class="birth-date">Date of Birth</label>
                     <input type="date" name="birth_date" style="width: 400px; height: 60px; border-radius: 5px;"
-                           placeholder="1960-02-15">
+                           placeholder="1969-02-15" required>
                 </div>
                 <br>
                 <input type="hidden" name="url" value="{{$urlWithToken}}">

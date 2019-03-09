@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\SurveyAuthBeforeLoginRequest;
+use App\Http\Requests\SurveyAuthLoginRequest;
 use App\InvitationLink;
 use App\Services\SurveyInvitationLinksService;
 use Illuminate\Http\Request;
@@ -19,7 +19,7 @@ class InvitationLinksController extends Controller
 
     public function __construct(SurveyInvitationLinksService $service)
     {
-        $this->service    = $service;
+        $this->service = $service;
     }
 
     public function enterPatientForm()
@@ -51,22 +51,25 @@ class InvitationLinksController extends Controller
 
     public function sendSms($phoneNumber, $url)
     {
-            $accountSid    = env('TWILIO_SID');
-            $authToken     = env('TWILIO_TOKEN');
+        $accountSid = env('TWILIO_SID');
+        $authToken  = env('TWILIO_TOKEN');
 
-            try {
-                $twilio = new Client($accountSid, $authToken);
-            } catch (ConfigurationException $e) {
+        try {
+            $twilio = new Client($accountSid, $authToken);
+        } catch (ConfigurationException $e) {
 
-            }
-            $message = $twilio->messages
-                ->create($phoneNumber,
-                    //@todo get outgoing number
-                    ["from" => "+1 646 759 2882", "body" => "Dr...... has invited you to complete a survey! Please enroll here:" .''. $url]
-                );
-
-            // print($message->sid);
         }
+        $message = $twilio->messages
+            ->create($phoneNumber,
+                //@todo get outgoing number
+                [
+                    "from" => "+1 646 759 2882",
+                    "body" => "Dr...... has invited you to complete a survey! Please enroll here:" . '' . $url,
+                ]
+            );
+
+        // print($message->sid);
+    }
 
 
     public function surveyLoginForm(Request $request, $userId)
@@ -83,7 +86,7 @@ class InvitationLinksController extends Controller
         return 'New link is on its way';
     }
 
-    public function surveyAuthBeforeRedirect(SurveyAuthBeforeLoginRequest $request)
+    public function surveyLoginAuth(SurveyAuthLoginRequest $request)
     {
         $urlToken       = $this->service->parseUrl($request->input('url'));
         $invitationLink = InvitationLink::with('patientInfo.user')
@@ -108,7 +111,7 @@ class InvitationLinksController extends Controller
             return view('surveyUrlAuth.resendUrl', compact('userId'));
         }
 
-        return view('surveyQuestionnaire.surveyWelcome', compact('urlToken'));
+        return view('surveyQuestionnaire.surveyQuestions', compact('urlToken'));
     }
 
 }

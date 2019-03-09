@@ -1,13 +1,14 @@
 <template>
     <div class="container">
+        <!--Survey welcome note-->
         <div class="card">
-            <div class="practice-title">
+            <div v-show="!questionsVisible" class="practice-title">
                 <label id="title">[Practice Name]
                     Dr. [doctor last name]’s Office</label>
             </div>
-            <img src="https://drive.google.com/uc?export=view&id=14yPR6Z8coudiAzEMTSVQK80BVyZjjqVg"
-                 class="welcome-icon" alt="welcome icon">
-            <div class="card-body">
+            <div v-show="!questionsVisible" class="card-body">
+                <img src="https://drive.google.com/uc?export=view&id=14yPR6Z8coudiAzEMTSVQK80BVyZjjqVg"
+                     class="welcome-icon" alt="welcome icon">
                 <div class="survey-main-title">
                     <label id="sub-title">Annual Wellness
                         Survey Login</label>
@@ -19,40 +20,99 @@
                     left and a representative will help when you call the number. If you skip any questions, our reps
                     will also reach out shortly. Thanks!
                 </div>
-            </div>
-            <a href="#" class="btn btn-primary">Start</a>
 
-            <div class="by-circlelink">
-                ⚡️ by CircleLink Health
+                <a class="btn btn-primary" @click="showQuestions">Start</a>
+
+                <div class="by-circlelink">
+                    ⚡️ by CircleLink Health
+                </div>
             </div>
+            <!--Questions-->
+            <div v-show="questionsVisible"
+                 v-for="question in questions">
+                {{question.name}}
+                <question-type-text v-if="question.type === 'text'"></question-type-text>
+                <question-type-checkbox v-if="question.type === 'checkbox'"></question-type-checkbox>
+                <question-type-range v-if="question.type === 'range'"></question-type-range>
+                <question-type-number v-if="question.type === 'number'"></question-type-number>
+                <question-type-radio v-if="question.type === 'radio'"></question-type-radio>
+                <question-type-date v-if="question.type === 'date'"></question-type-date>
+
+
+            </div>
+            <!--bottom-navbar-->
             <br>
             <div class="bottom-navbar">
-                <div class="next-previous-buttons">
-                    <button type="button" class="btn btn-sm next">Next</button>
+                <div v-show="questionsVisible" class="next-previous-buttons">
+                    <button type="button" class="btn btn-sm next" @click="nextQuestions">Next</button>
                 </div>
             </div>
         </div>
     </div>
+
 </template>
 
+
 <script>
+
+    import questionTypeText from "./questionTypeText";
+    import questionTypeCheckbox from "./questionTypeCheckbox";
+    import questionTypeRange from "./questionTypeRange";
+    import questionTypeNumber from "./questionTypeNumber";
+    import questionTypeRadio from "./questionTypeRadio";
+    import questionTypeDate from "./questionTypeDate";
+
     export default {
         mounted() {
             console.log('Component mounted.')
-        }
+
+        },
+
+        components: {
+            'question-type-text': questionTypeText,
+            'question-type-checkbox': questionTypeCheckbox,
+            'question-type-range': questionTypeRange,
+            'question-type-number': questionTypeNumber,
+            'question-type-radio': questionTypeRadio,
+            'question-type-date': questionTypeDate
+
+        },
+
+        data() {
+            return {
+                questionsVisible: false,
+                questions: [
+                    {name: 'question 1', type: 'text'},
+                    {name: 'question 2', type: 'checkbox'},
+                    {name: 'question 3', type: 'range'},
+                    {name: 'question 4', type: 'number'},
+                    {name: 'question 5', type: 'radio'},
+                    {name: 'question 6', type: 'date'},
+                ],
+            }
+        },
+        methods: {
+            showQuestions() {
+                this.questionsVisible = true
+            },
+            nextQuestions() {
+
+            },
+
+            previousQuestions() {
+
+            },
+        },
     }
 </script>
 
 <style scoped>
     .practice-title {
-        /*  width: 300px;
-          height: 58px;*/
         font-family: Poppins, sans-serif;
         font-size: 18px;
         letter-spacing: 1.5px;
         text-align: center;
         margin-top: 20px;
-        /* margin-left: 390px;*/
         color: #50b2e2;
     }
 
@@ -61,21 +121,16 @@
     }
 
     .survey-main-title {
-        /* width: 400px;
-         height: 80px;*/
         font-family: Poppins, sans-serif;
         font-size: 24px;
         font-weight: 600;
         letter-spacing: 1.5px;
         text-align: center;
         margin-top: 30px;
-        /* margin-left: 325px;*/
         color: #1a1a1a;
     }
 
     .survey-sub-welcome-text {
-        /*width: 800px;
-        height: 100px;*/
         font-family: Poppins, sans-serif;
         font-size: 18px;
         font-weight: normal;
@@ -85,7 +140,6 @@
         letter-spacing: 1px;
         text-align: center;
         margin-top: 25px;
-        /*margin-left: 120px;*/
         color: #1a1a1a;
     }
 
@@ -101,12 +155,12 @@
     .bottom-navbar {
         background-color: #ffffff;
         border-bottom: 1px solid #808080;
+        min-height: 90px;
+        margin-top: auto;
 
     }
 
     .by-circlelink {
-        /* width: 234px;
-         height: 30px;*/
         font-family: Poppins, sans-serif;
         font-size: 18px;
         font-weight: 600;
@@ -130,6 +184,7 @@
         border-top: 1px solid #808080;
         border-left: 1px solid #808080;
         border-right: 1px solid #808080;
+        min-height: 690px;
     }
 
     .next-previous-buttons {
@@ -155,5 +210,4 @@
         margin-left: 490px;
         margin-top: 20px;
     }
-
 </style>
