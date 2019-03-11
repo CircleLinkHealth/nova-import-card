@@ -31,7 +31,7 @@ class UpdatePracticeStaff extends FormRequest
         $userId = $this->get('id', null);
 
         //CPM-754: if the user is new, make sure we do not have existing user with this email
-        if ($userId === 'new') {
+        if ($userId && $userId === 'new') {
             $emailRules .= '|unique:users';
         }
 
