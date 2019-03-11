@@ -163,6 +163,7 @@ export const CLEAR_ERROR = (state, field) => {
 }
 
 export const SET_ERRORS = (state, errors) => {
+    state.practiceStaffIsUpdating = false;
     state.errors.setErrors(errors)
 }
 
@@ -197,6 +198,7 @@ export const SET_PRACTICE_STAFF = (state, practiceStaff) => {
  * @constructor
  */
 export const UPDATE_PRACTICE_STAFF = (state, user) => {
+    state.practiceStaffIsUpdating = false;
     state.practiceStaff.forEach((pracUser, index) => {
         if (pracUser.id === user.id) {
             Vue.set(state.practiceStaff, index, user)
@@ -205,9 +207,14 @@ export const UPDATE_PRACTICE_STAFF = (state, user) => {
 }
 
 export const DELETE_PRACTICE_STAFF = (state, user) => {
+    state.practiceStaffIsUpdating = false;
     state.practiceStaff.forEach((pracUser, index) => {
         if (pracUser.id === user.id) {
             state.practiceStaff.splice(index, 1);
         }
     })
+}
+
+export const UPDATE_PRACTICE_STAFF_WAITING = (state) => {
+    state.practiceStaffIsUpdating = true;
 }

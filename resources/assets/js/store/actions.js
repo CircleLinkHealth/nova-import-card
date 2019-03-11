@@ -154,10 +154,11 @@ export const updatePracticeStaff = ({commit}, user) => {
         return
     }
 
+    commit('UPDATE_PRACTICE_STAFF_WAITING');
     practiceStaffApi.update(user => {
         commit('UPDATE_PRACTICE_STAFF', user);
     }, errors => {
-        commit('SET_ERRORS', errors)
+        commit('SET_ERRORS', errors);
     }, practiceId, user)
 }
 
