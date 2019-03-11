@@ -37,10 +37,6 @@
       "url": "git@github.com:CircleLinkHealth/module-bugsnag.git"
     },
     {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/module-migrations.git"
-    },
-    {
       "type": "composer",
       "url": "https://packagist.org"
     },
@@ -61,7 +57,6 @@
     "barryvdh/laravel-snappy": "0.4.1",
     "blackfire/php-sdk": "^1.17",
     "circlelinkhealth/bugsnag": "dev-main-master",
-    "circlelinkhealth/migrations": "dev-main-master",
     "davibennun/laravel-raygun": "dev-laravel5",
     "doctrine/dbal": "~2.3",
     "fideloper/proxy": "~3.3",

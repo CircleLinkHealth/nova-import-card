@@ -80,7 +80,7 @@
                                         Info</a>
                                 </li>
                             @endif
-                            @if($patient->hasRole('care-center') && $patient->nurseInfo)
+                            @if($patient->isCareCoach() && $patient->nurseInfo)
                                 <li role="presentation">
                                     <a href="#nurseinfo" aria-controls="nurseinfo" role="tab" data-toggle="tab">Nurse
                                         Info</a>
@@ -440,7 +440,7 @@
                             @endif
 
 
-                            @if($patient->hasRole('care-center') && $patient->nurseInfo)
+                            @if($patient->isCareCoach() && $patient->nurseInfo)
                                 <div role="tabpanel" class="tab-pane" id="nurseinfo">
                                     <h2>Nurse Info</h2>
                                     @include('partials.admin.user.nurse-info', ['nurseInfo' =>  $patient->nurseInfo])

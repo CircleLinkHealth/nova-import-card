@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "71dedc9b94df0957aaba143027fc8662",
+    "content-hash": "9ba2364b612058ece6df9cbb99278539",
     "packages": [
         {
             "name": "amnuts/opcache-gui",
@@ -724,43 +724,6 @@
                 }
             ],
             "time": "2019-02-23T13:15:41+00:00"
-        },
-        {
-            "name": "circlelinkhealth/migrations",
-            "version": "dev-main-master",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:CircleLinkHealth/module-migrations.git",
-                "reference": "6641668a059aa5847fecce9c19e87b5816318672"
-            },
-            "require-dev": {
-                "illuminate/console": "^5.7",
-                "illuminate/database": "^5.7",
-                "illuminate/events": "^5.7",
-                "illuminate/filesystem": "^5.7",
-                "symfony/process": "^4.2"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Modules\\Migrations\\Providers\\MigrationsServiceProvider"
-                    ],
-                    "aliases": []
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Modules\\Migrations\\": ""
-                }
-            },
-            "authors": [
-                {
-                    "name": "Michalis Antoniou",
-                    "email": "mantoniou@circlelinkhealth.com"
-                }
-            ],
-            "time": "2019-03-07T12:14:15+00:00"
         },
         {
             "name": "composer/ca-bundle",
@@ -10393,7 +10356,6 @@
                 "mock",
                 "xunit"
             ],
-            "abandoned": true,
             "time": "2018-08-09T05:50:03+00:00"
         },
         {
@@ -11579,7 +11541,6 @@
     "stability-flags": {
         "amnuts/opcache-gui": 20,
         "circlelinkhealth/bugsnag": 20,
-        "circlelinkhealth/migrations": 20,
         "davibennun/laravel-raygun": 20,
         "lynx39/lara-pdf-merger": 20,
         "michalisantoniou6/laravel-cerberus": 20,

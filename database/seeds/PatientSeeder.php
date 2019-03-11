@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use App\Models\CPM\CpmProblem;
 use App\Practice;
 use App\User;
@@ -13,20 +17,17 @@ class PatientSeeder extends Seeder
 
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
     public function run()
     {
-        $problemIds  = CpmProblem::get()
-                                 ->pluck('id');
+        $problemIds = CpmProblem::get()
+            ->pluck('id');
         $months      = collect([1, 2, 3, 4, 5, 6, 7, 8, 9]);
         $practiceIds = Practice::activeBillable()->get()->pluck('id');
 
-
         factory(User::class, 50)->create([])->each(function ($u) use ($problemIds, $practiceIds, $months) {
             $practiceId = $practiceIds->random();
-            $u->attachPractice($practiceId, null, null, 2);
+            $u->attachPractice($practiceId, [2]);
             $u->program_id = $practiceId;
             $u->save();
 
@@ -43,10 +44,9 @@ class PatientSeeder extends Seeder
             ]);
 
             $u->ccdProblems()->createMany([
-                ['name' => 'test' . str_random(5)],
-                ['name' => 'test' . str_random(5)],
+                ['name' => 'test'.str_random(5)],
+                ['name' => 'test'.str_random(5)],
             ]);
         });
     }
-
 }

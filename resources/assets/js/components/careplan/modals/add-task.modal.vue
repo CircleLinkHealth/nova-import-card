@@ -2,7 +2,7 @@
     <modal v-show="show" class="modal-add-task">
         <template slot="header">
             <button type="button" class="close" @click="clearOpenModal">×</button>
-            <h4 class="modal-title">Add New Activity(ies)</h4>
+            <h4 class="modal-title">Add Activity(ies)</h4>
         </template>
         <template slot="body">
             <form id="add-task-form" action="#" @submit="submitForm">
@@ -18,7 +18,7 @@
                             </th>
 
                             <th class="nurses">
-                                Nurse
+                                Care Coach
                                 <loader v-show="loaders.nurses"></loader>
                             </th>
                             <th class="date">
@@ -201,7 +201,7 @@
         },
         computed: {
             hasNotAvailableNurses() {
-                return this.nursesForSelect.length === 0;
+                return this.nursesForSelect.length === 0 && !this.loaders.nurses;
             },
             hasToConfirmFamilyOverrides() {
                 return this.actions.filter(x => x.showFamilyOverride).length > 0;

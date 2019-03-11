@@ -18,8 +18,8 @@
                 <loader class="absolute" v-if="loaders.calls"></loader>
             </div>
             <div class="col-sm-6 text-right" v-if="itemsAreSelected">
-                <button class="btn btn-primary btn-xs" @click="assignSelectedToNurse">Assign To Nurse</button>
-                <button class="btn btn-success btn-xs" @click="assignTimesForSelected">Assign Activity times</button>
+                <button class="btn btn-primary btn-xs" @click="assignSelectedToNurse">Assign To Care Coach</button>
+                <button class="btn btn-success btn-xs" @click="assignTimesForSelected">Assign Activity Date</button>
                 <button class="btn btn-danger btn-xs" @click="deleteSelected">Delete</button>
                 <button class="btn btn-info btn-xs" @click="clearSelected">Clear Selection</button>
             </div>
@@ -63,10 +63,13 @@
                 <template slot="Patient ID" slot-scope="props">
                     <a :href="props.row.notesLink">{{ props.row['Patient ID'] }}</a>
                 </template>
-                <template slot="Nurse" slot-scope="props">
-                    <select-editable v-model="props.row.NurseId" :display-text="props.row.Nurse"
-                                     :values="props.row.nurses()" :class-name="'blue'"
-                                     :on-change="props.row.onNurseUpdate.bind(props.row)"></select-editable>
+                <template slot="Care Coach" slot-scope="props">
+                    <div>
+                        <select-editable v-model="props.row.NurseId" :display-text="props.row['Care Coach']"
+                                         :values="props.row.nurses()" :class-name="'blue'"
+                                         :on-change="props.row.onNurseUpdate.bind(props.row)"></select-editable>
+                        <loader class="relative" v-if="props.row.loaders.nurse"></loader>
+                    </div>
                 </template>
                 <template slot="Activity Day" slot-scope="props">
                     <div>
@@ -158,9 +161,14 @@
     const CALL_MUST_OVERRIDE_STATUS_CODE = 418;
     const CALL_MUST_OVERRIDE_WARNING = "The family members of this patient have a call scheduled at different time. Please confirm you still want to schedule this call.";
 
+    const CALL_CANNOT_CHANGE_CARE_COACH = 421;
+
     export default {
         name: 'CallMgmtAppV2',
         mixins: [VueCache],
+        props: [
+            'isAdmin'
+        ],
         components: {
             'text-editable': TextEditable,
             'date-editable': DateEditable,
@@ -178,7 +186,7 @@
             return {
                 pagination: null,
                 selected: false,
-                columns: ['selected', 'Type', 'Nurse', 'Patient ID', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Successful Calls', 'Practice', 'Activity Start', 'Activity End', 'Preferred Call Days', 'Billing Provider', 'Scheduler'],
+                columns: ['selected', 'Type', 'Care Coach', 'Patient ID', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Successful Calls', 'Practice', 'Activity Start', 'Activity End', 'Preferred Call Days', 'Billing Provider', 'Scheduler'],
                 tableData: [],
                 nurses: [],
                 loaders: {
@@ -198,31 +206,36 @@
                 return !!this.tableData.find(row => !!row.selected)
             },
             selectedPatients() {
-                return this.tableData.filter(row => row.selected && row.Patient).map(row => ({
-                    id: row['Patient ID'],
-                    callId: row.id,
-                    name: row.Patient,
-                    nurse: {
-                        id: row.NurseId,
-                        name: row.Nurse
-                    },
-                    nextCall: row['Activity Day'],
-                    callTimeStart: row['Activity Start'],
-                    callTimeEnd: row['Activity End'],
-                    loaders: row.loaders
-                }))
+                return this.tableData.filter(row => row.selected && row.Patient).map(row => {
+
+                    const nurse = this.nurses.find(n => n.id === row.NurseId);
+                    return {
+                        id: row['Patient ID'],
+                        callId: row.id,
+                        name: row.Patient,
+                        nurse: {
+                            id: row.NurseId,
+                            name: nurse.display_name
+                        },
+                        nextCall: row['Activity Day'],
+                        callTimeStart: row['Activity Start'],
+                        callTimeEnd: row['Activity End'],
+                        loaders: row.loaders
+                    };
+                });
             },
             selectedPatientsNew() {
                 return this.tableData.filter(row => row.selected && row.Patient);
-            },
+            }
+            ,
             options() {
                 return {
                     columnsClasses: {
                         'selected': 'blank',
                         'Type': 'padding-2'
                     },
-                    sortable: ['Nurse', 'Patient ID', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Practice', 'Scheduler'],
-                    filterable: ['Type', 'Nurse', 'Patient ID', 'Activity Day', 'Last Call', 'Practice', 'Billing Provider'],
+                    sortable: ['Care Coach', 'Patient ID', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Practice', 'Scheduler'],
+                    filterable: ['Type', 'Care Coach', 'Patient ID', 'Activity Day', 'Last Call', 'Practice', 'Billing Provider'],
                     filterByColumn: true,
                     texts: {
                         count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
@@ -233,7 +246,7 @@
                     ],
                     customSorting: {
                         Type: (ascending) => (a, b) => 0,
-                        Nurse: (ascending) => (a, b) => 0,
+                        'Care Coach': (ascending) => (a, b) => 0,
                         'Patient ID': (ascending) => (a, b) => 0,
                         'Activity Day': (ascending) => (a, b) => 0,
                         'Last Call': (ascending) => (a, b) => 0,
@@ -243,7 +256,8 @@
                         Scheduler: (ascending) => (a, b) => 0
                     }
                 }
-            },
+            }
+            ,
             nursesForSelect() {
                 return this.nurses.filter(n => !!n.display_name).map(nurse => ({
                     text: nurse.display_name,
@@ -263,7 +277,7 @@
             columnMapping(name) {
                 const columns = {
                     'Type': 'type',
-                    'Nurse': 'nurse',
+                    'Care Coach': 'nurse',
                     'Patient': 'patient',
                     'Patient ID': 'patient_id',
                     'Activity Day': 'scheduled_date',
@@ -415,10 +429,20 @@
                 return this.axios.get(rootUrl('api/nurses?compressed')).then(response => {
                     const pagination = (response || {}).data
                     this.nurses = ((pagination || {}).data || []).filter(nurse => nurse.practices).map(nurse => {
+
+                        const roles = nurse.user.roles.map(r => r.name);
+                        const rolesSet = Array.from(new Set(roles));
+
+                        let displayName = (nurse.user || {}).display_name || '';
+                        if (roles.includes('care-center-external')) {
+                            displayName = displayName + ' (in-house)';
+                        }
+
                         return {
                             id: nurse.user_id,
                             nurseId: nurse.id,
-                            display_name: ((nurse.user || {}).display_name || ''),
+                            roles: rolesSet,
+                            display_name: displayName,
                             states: nurse.states,
                             practiceId: (nurse.user || {}).program_id,
                             practices: (nurse.practices || [])
@@ -462,6 +486,15 @@
                 }
             },
 
+            showCallUpdateAlertIfNeeded: (err) => {
+                if (err && err.response
+                    && err.response.status
+                    && err.response.status === CALL_CANNOT_CHANGE_CARE_COACH
+                ) {
+                    alert('Cannot change CLH care coach.');
+                }
+            },
+
             setupCallNew(call) {
                 const $vm = this;
 
@@ -472,7 +505,7 @@
                     isCcmEligible: call.is_ccm,
                     Type: call.type,
                     Manual: call.is_manual,
-                    Nurse: call.nurse,
+                    'Care Coach': call.nurse,
                     NurseId: call.nurse_id,
                     Patient: call.patient,
                     Practice: call.practice,
@@ -490,13 +523,17 @@
                     'Activity End': call.call_time_end,
                     practiceId: call.practice_id,
                     nurses() {
-                        return [...$vm.nurses.filter(Boolean)
-                            .filter(nurse => nurse.practices.includes(call.practice_id))
-                            .filter(n => !!n.display_name)
-                            .map(nurse => ({text: nurse.display_name, value: nurse.id, nurse})), {
-                            text: 'unassigned',
-                            value: null
-                        }]
+                        return [
+                            ...$vm.nurses
+                                .filter(Boolean)
+                                .filter(nurse => nurse.practices.includes(call.practice_id))
+                                .filter(n => !!n.display_name)
+                                .map(nurse => ({text: nurse.display_name, value: nurse.id, nurse})),
+                            {
+                                text: 'unassigned',
+                                value: null
+                            }
+                        ]
                     },
                     loaders: {
                         nextCall: false,
@@ -515,12 +552,13 @@
                     },
                     onNurseUpdate: function (nurseId, old, revertCallback) {
                         callUpdateFunctions.onNurseUpdate(this, nurseId, false, old, revertCallback)
-                            .catch(err =>
+                            .catch(err => {
+                                $vm.showCallUpdateAlertIfNeeded(err);
                                 $vm.showOverrideConfirmationIfNeeded(
                                     err,
                                     () => callUpdateFunctions.onNurseUpdate(this, nurseId, true, old, revertCallback)
-                                )
-                            );
+                                );
+                            });
                     },
                     onCallTimeStartUpdate: function (time, old, revertCallback) {
                         callUpdateFunctions.onCallTimeStartUpdate(this, time, false, old, revertCallback)
@@ -700,5 +738,9 @@
 
     .disabled {
         color: #cacaca;
+    }
+
+    input[type="checkbox"] {
+        display: inherit;
     }
 </style>

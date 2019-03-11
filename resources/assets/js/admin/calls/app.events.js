@@ -28,7 +28,7 @@ export default (App, Event) => {
 
     Event.$on('vue-tables.filter::Type', App.activateFilters)
 
-    Event.$on('vue-tables.filter::Nurse', App.activateFilters)
+    Event.$on('vue-tables.filter::Care Coach', App.activateFilters)
 
     Event.$on('vue-tables.filter::Patient', App.activateFilters)
 

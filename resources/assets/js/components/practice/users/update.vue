@@ -11,10 +11,11 @@
                     </div>
                 </h5>
 
-                <div @click="submitForm()"
-                     class="btn green waves-effect waves-light right">
+                <button :disabled="waiting" @click="submitForm()"
+                        class="btn green waves-effect waves-light right">
                     Save & Close
-                </div>
+                    <font-awesome-icon :spin="true" v-show="waiting" icon="spinner"/>
+                </button>
 
                 <div @click="close()"
                      class="btn red waves-effect waves-light right"
@@ -45,24 +46,22 @@
 
                 <div class="row">
                     <div class="input-field col s6">
-                        <material-select v-model="formData.role_name" name="role_name" id="role_name"
-                                         :class="isValid(formData.role_name)" :items="roleOptions">
+                        <material-select v-model="formData.role_names" name="role_names" id="role_names"
+                                         :multiple="true"
+                                         select-text="Select all that apply"
+                                         :items="roleOptions">
                         </material-select>
 
-                        <label for="role_name">Role</label>
+                        <label for="role_names">Role</label>
                     </div>
 
-                    <div class="input-field col s3">
-                        <input type="checkbox" class="filled-in" id="grantAdminRights"
-                               v-model="formData.grantAdminRights" :checked="formData.grantAdminRights"/>
-                        <label for="grantAdminRights">Grant Admin Rights</label>
-                    </div>
-
-                    <div class="input-field col s3">
+                    <!-- deprecated -->
+                    <div class="input-field col s3" style="display: none">
                         <input type="checkbox" class="filled-in" id="sendBillingReports"
                                v-model="formData.sendBillingReports" :checked="formData.sendBillingReports"/>
                         <label for="sendBillingReports">Send Billing Reports</label>
                     </div>
+
                     <div class="input-field col s6"></div>
                     <div class="input-field col s6">
                         <input type="checkbox" class="filled-in" id="canApproveAllCareplans"
@@ -121,7 +120,7 @@
                     </div>
                 </div>
 
-                <div v-if="formData.role_name == 'provider' && practiceSettings.email_careplan_approval_reminders == 1"
+                <div v-if="formData.role_names.includes('provider') && practiceSettings.email_careplan_approval_reminders == 1"
                      class="row">
                     <h6 class="col s12">
                         Whom should we notify for approval of care plans regarding provider’s patients?
@@ -161,10 +160,11 @@
 
                 <div class="row">
                     <div class="col s12">
-                        <div @click="submitForm()"
-                             class="btn green waves-effect waves-light right">
+                        <button :disabled="waiting" @click="submitForm()"
+                                class="btn green waves-effect waves-light right">
                             Save & Close
-                        </div>
+                            <font-awesome-icon :spin="true" v-show="waiting" icon="spinner"/>
+                        </button>
 
                         <div @click="close()"
                              class="btn red waves-effect waves-light right"
@@ -185,6 +185,13 @@
     import {addNotification, clearErrors, clearOpenModal, updatePracticeStaff} from '../../../store/actions'
     import {practiceLocations, practiceStaff} from '../../../store/getters'
     import MaterialSelect from '../../src/material-select.vue'
+    import store from '../../../store';
+
+    import {library} from '@fortawesome/fontawesome-svg-core'
+    import {faSpinner} from '@fortawesome/free-solid-svg-icons'
+    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
+
+    library.add(faSpinner);
 
     export default {
         props: {
@@ -204,7 +211,8 @@
 
         components: {
             modal,
-            MaterialSelect
+            MaterialSelect,
+            FontAwesomeIcon
         },
 
         created() {
@@ -218,11 +226,29 @@
                     return loc.id
                 })
             }
+
+            //store the watcher in a variable so we can destroy this watcher
+            this.unwatch = store.watch(
+                (state) => state.practiceStaffIsUpdating,
+                (val, oldVal) => {
+                    if (oldVal === true && val === false && !this.errors.any()) {
+                        Materialize.toast(this.formData.first_name + ' ' + this.formData.last_name + ' was successfully updated.', 3000);
+                        this.close();
+                    }
+                }
+            );
+        },
+
+        destroyed() {
+            if (this.unwatch) {
+                this.unwatch();
+            }
         },
 
         computed: Object.assign(
             mapGetters({
                 errors: 'errors',
+                waiting: 'practiceStaffIsUpdating',
                 staff: 'practiceStaff',
                 locations: 'practiceLocations'
             })
@@ -232,16 +258,7 @@
             mapActions(['clearOpenModal', 'addNotification', 'updatePracticeStaff', 'clearErrors']),
             {
                 submitForm() {
-                    this.updatePracticeStaff(this.formData)
-
-                    Vue.nextTick(() => {
-                        setTimeout(() => {
-                            if (!this.errors.any()) {
-                                Materialize.toast(this.formData.first_name + ' ' + this.formData.last_name + ' was successfully updated.', 3000)
-                                this.close()
-                            }
-                        }, 500);
-                    })
+                    this.updatePracticeStaff(this.formData);
                 },
 
                 isValid(field) {
@@ -265,6 +282,7 @@
 
         data() {
             return {
+                unwatch: null,
                 formData: {
                     'id': 'new',
                     'practice_id': $('meta[name=practice-id]').attr('content'),
@@ -275,11 +293,10 @@
                     'phone_number': '',
                     'phone_extension': '',
                     'phone_type': 1,
-                    'grantAdminRights': '',
                     'sendBillingReports': '',
                     'canApproveAllCareplans': '',
                     'role': {},
-                    'role_name': 'med_assistant',
+                    'role_names': ['med_assistant'],
                     'locations': [],
                     'emr_direct_address': '',
                     'forward_alerts_to': {
@@ -292,22 +309,30 @@
                     },
                 },
                 formState: {},
-                roleOptions: [{
-                    text: 'Medical Assistant',
-                    id: 'med_assistant'
-                }, {
-                    text: 'Office Admin',
-                    id: 'office_admin'
-                }, {
-                    text: 'Provider',
-                    id: 'provider'
-                }, {
-                    text: 'Registered Nurse',
-                    id: 'registered-nurse'
-                }, {
-                    text: 'Specialist',
-                    id: 'specialist'
-                }],
+                roleOptions: [
+                    {
+                        text: 'Medical Assistant',
+                        id: 'med_assistant'
+                    }, {
+                        text: 'Office Admin',
+                        id: 'office_admin'
+                    }, {
+                        text: 'Provider',
+                        id: 'provider'
+                    }, {
+                        text: 'Registered Nurse',
+                        id: 'registered-nurse'
+                    }, {
+                        text: 'Specialist',
+                        id: 'specialist'
+                    }, {
+                        text: 'CCM Admin',
+                        id: 'software-only'
+                    }, {
+                        text: 'Care Coach',
+                        id: 'care-center-external'
+                    }
+                ],
                 phoneTypes: [
                     {
                         name: 'Home',

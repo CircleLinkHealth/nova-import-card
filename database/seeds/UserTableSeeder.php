@@ -1,13 +1,16 @@
 <?php
 
-use App\User;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use App\Practice;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
 class UserTableSeeder extends Seeder
 {
-
     public function run()
     {
         $practice = Practice::first();
@@ -17,27 +20,25 @@ class UserTableSeeder extends Seeder
             factory(User::class, 1)->create()->each(function ($admin) use ($practice) {
                 $admin->username = 'admin';
                 $admin->email = 'admin@example.org';
-                $admin->attachPractice($practice->id, true, null, 1);
+                $admin->attachPractice($practice->id, [1]);
                 $admin->program_id = $practice->id;
                 $admin->save();
 
                 $this->command->info("admin user $admin->display_name seeded");
             });
-            
 
             //create nurse
             factory(User::class, 1)->create()->each(function ($nurse) use ($practice) {
                 $nurse->username = 'nurse';
                 $nurse->email = 'nurse@example.org';
-                $nurse->attachPractice($practice->id, false, null, 11);
+                $nurse->attachPractice($practice->id, [11]);
                 $nurse->program_id = $practice->id;
                 $nurse->save();
                 $nurse->nurseInfo()->create();
 
                 $this->command->info("nurse user $nurse->display_name seeded");
             });
-        }
-        else {
+        } else {
             $this->command->error('user-seeder: no practice found');
         }
     }
