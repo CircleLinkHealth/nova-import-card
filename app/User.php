@@ -447,8 +447,13 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function attachPractice($practice, array $roleIds, $sendBillingReports = null)
     {
+        if (is_a($practice, Practice::class)){
+            $practiceId = $practice->id;
+        }else{
+            $practiceId = $practice;
+        }
         $rolesForPractice = PracticeRoleUser::where('user_id', '=', $this->id)
-                                            ->where('program_id', '=', $practice->id)
+                                            ->where('program_id', '=', $practiceId)
                                             ->get();
 
         //remove any roles not in $roleIds array
@@ -471,7 +476,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             PracticeRoleUser::updateOrCreate(
                 [
                     'user_id'    => $this->id,
-                    'program_id' => $practice->id,
+                    'program_id' => $practiceId,
                 ],
                 null != $sendBillingReports
                     ? [
@@ -484,7 +489,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 PracticeRoleUser::updateOrCreate(
                     [
                         'user_id'    => $this->id,
-                        'program_id' => $practice->id,
+                        'program_id' => $practiceId,
                         'role_id'    => $r,
                     ],
                     null != $sendBillingReports

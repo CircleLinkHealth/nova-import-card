@@ -170,7 +170,7 @@ return [
     |
     */
 
-    'release_stage' => env('BUGSNAG_RELEASE_STAGE'),
+    'release_stage' => 'local',
 
     /*
     |--------------------------------------------------------------------------
@@ -181,7 +181,7 @@ return [
     |
     */
 
-    'notify_release_stages' => empty(env('BUGSNAG_NOTIFY_RELEASE_STAGES')) ? null : explode(',', str_replace(' ', '', env('BUGSNAG_NOTIFY_RELEASE_STAGES'))),
+    'notify_release_stages' => ['staging', 'worker', 'production'],
 
     /*
     |--------------------------------------------------------------------------
