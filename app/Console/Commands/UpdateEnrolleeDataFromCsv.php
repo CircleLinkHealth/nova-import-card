@@ -121,8 +121,6 @@ class UpdateEnrolleeDataFromCsv extends Command
                                     }
                             }
                             $e->save();
-                            echo $e->id;
-
                         }
                     });
                 });
