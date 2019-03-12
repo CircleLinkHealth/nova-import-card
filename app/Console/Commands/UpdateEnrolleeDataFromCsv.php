@@ -44,6 +44,8 @@ class UpdateEnrolleeDataFromCsv extends Command
      */
     public function handle()
     {
+//        $contents = collect(Storage::drive('google')
+//                                   ->listContents('/', true));
         $file = collect(Storage::drive('google')
                                ->listContents('/', true))
             ->where('filename', '=', 'English Enrollment Records All Time - Sheet2')
@@ -108,11 +110,18 @@ class UpdateEnrolleeDataFromCsv extends Command
 
                         if ($row) {
                             $e = $this->setEnrolleeStatus($e, $row);
-                            if (array_key_exists('Call_Date', $row)) {
-                                $date               = preg_split("/[.|\/]/", $row['Call_Date']);
-                                $e->last_attempt_at = Carbon::parse("{$date[0]}/{$date[1]}/{$date[2]}");
+                            if (array_key_exists('Call_Date', $row) && ! empty($row['Call_Date'])) {
+                                    $date               = preg_split("/[.|\/]/", $row['Call_Date']);
+                                    if (count($date) == 3){
+                                        try{
+                                            $e->last_attempt_at = Carbon::parse("{$date[0]}/{$date[1]}/{$date[2]}");
+                                        }catch (\Exception $e){
+                                            //do nothing, date provided in csv is invalid
+                                        }
+                                    }
                             }
                             $e->save();
+                            echo $e->id;
 
                         }
                     });
