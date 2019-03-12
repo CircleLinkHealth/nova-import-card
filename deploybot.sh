@@ -5,17 +5,15 @@ set -e
 
 SHARED=$1
 RELEASE=$2
-declare -a HOSTS=('github.com')
 
 # Add github to known hosts
-for host in $HOSTS; do
-  ssh-keygen -F $host 2>/dev/null 1>/dev/null
-  if [ $? -eq 0 ]; then
-    echo “$host is already known”
-    continue
-   fi
-   ssh-keyscan -t rsa -T 10 $host >> ~/.ssh/known_hosts
-done
+GH_HOST='github.com'
+ssh-keygen -F $GH_HOST 2>/dev/null 1>/dev/null
+if [ $? -eq 0 ]; then
+    echo “$GH_HOST is already known”
+else
+    ssh-keyscan -t rsa -T 10 $GH_HOST >> ~/.ssh/known_hosts
+fi
 
 
 # Create a shared storage directory and symlink it to the project root
