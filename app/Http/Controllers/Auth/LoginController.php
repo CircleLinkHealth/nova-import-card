@@ -130,7 +130,7 @@ class LoginController extends Controller
         if (auth()->check()) {
             return redirect('/');
         }
-        
+
         $agent = new Agent();
 
         if ( ! $this->validateBrowserVersion($agent) && ! optional(session('errors'))->has('invalid-browser-force-switch')) {
@@ -222,7 +222,7 @@ class LoginController extends Controller
      */
     protected function storeBrowserCompatibilityCheckPreference(Request $request)
     {
-        if ( ! auth()->check() || auth()->user()->hasRole('care-center')) {
+        if ( ! auth()->check() || auth()->user()->isCareCoach()) {
             return;
         }
 

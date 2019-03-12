@@ -197,7 +197,7 @@ class NurseFinder
 //        $match['nurse'] = current(array_keys($this->nursesForPatient));
 
         $user               = auth()->user();
-        $isCurrentUserNurse = $user->hasRole('care-center');
+        $isCurrentUserNurse = $user->isCareCoach();
 
         if ($isCurrentUserNurse) {
             $match['nurse']        = auth()->id();

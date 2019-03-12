@@ -1,5 +1,5 @@
 <template>
-    <modal name="select-nurse" :no-title="true" :no-footer="true" :info="selectNursesModalInfo">
+    <modal name="select-nurse" :no-title="true" :no-footer="true" :info="selectNursesModalInfo" class-name="modal-select-nurse">
         <template slot-scope="props">
             <div class="row">
                 <div class="col-sm-12 text-right">
@@ -145,14 +145,21 @@
                 return Promise.all(this.selectedPatients.map(patient => patient.id).filter(Boolean).map(id => {
                     return this.cache().get(rootUrl('api/nurses?canCallPatient=' + id)).then((response) => {
                         const nurses = (response.data || []).map(nurse => {
-                            nurse.user = nurse.user || {}
+                            nurse.user = nurse.user || {};
+                            const roles = nurse.user.roles.map(r => r.name);
+
+                            let displayName = nurse.user.display_name || '';
+                            if (roles.includes('care-center-external')) {
+                                displayName = displayName + ' (in-house)';
+                            }
+
                             return {
                                 id: nurse.user_id,
-                                name: nurse.user.display_name,
+                                name: displayName,
                                 email: nurse.user.email,
                                 status: nurse.status
                             }
-                        })
+                        });
                         const patient = this.patients.find(patient => patient.id === id)
                         console.log('select-nurse:find-patient', id, patient, nurses)
                         if (patient) {
@@ -203,13 +210,12 @@
     }
 </script>
 
-<style scoped>
-    div.modal-container {
-        width: 600px !important;
-    }
-</style>
-
 <style>
+
+    .modal-select-nurse .modal-container {
+        width: 600px;
+    }
+
     .loader {
         border: 2px solid #f3f3f3;
         border-top: 2px solid #3498db;

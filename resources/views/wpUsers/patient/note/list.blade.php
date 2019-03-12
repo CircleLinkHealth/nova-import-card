@@ -12,7 +12,7 @@
     //this view.
 
     if ($notes && ! empty($notes)) {
-        $webix = 'data:' . json_encode(array_values($notes)) . '';
+        $webix = 'data:'.json_encode(array_values($notes)).'';
     }
 
     ?>
@@ -46,7 +46,7 @@
                         @if(isset($input['admin_filter']))
                             {{'checked'}}
                                 @endif>
-                        @if(auth()->user()->isAdmin() || auth()->user()->hasRole('care-center') )
+                        @if(auth()->user()->isAdmin() || auth()->user()->isCareCoach() )
                             <label for="admin_filter"><span> </span>All Forwarded Notes for All Programs<br/></label>
                         @endif
                     </li>
@@ -77,7 +77,7 @@
                         <div style="padding-top: 10px">
                             <select name="getNotesFor[]" id="getNotesFor" data-placeholder="Select Practice or Provider" multiple="" class="provider-select" data-width="200px"
                                     data-size="10" style="display: none;" @if(! auth()->user()->isAdmin()  &&
-                                                          ! auth()->user()->hasRole('care-center'))
+                                                          ! auth()->user()->isCareCoach())
                                     required
                                     @endif>
                                 <optgroup label="All Providers at Practice">

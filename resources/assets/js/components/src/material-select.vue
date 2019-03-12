@@ -41,12 +41,12 @@
 
         watch: {
             items () {
-                this.$el.removeAttribute('onchange')
-                this.$nextTick(this.init)
+                this.$el.removeAttribute('onchange');
+                this.$nextTick(this.init);
             },
             value () {
-                this.$el.removeAttribute('onchange')
-                this.$nextTick(this.init)
+                this.$el.removeAttribute('onchange');
+                this.$nextTick(this.init);
             }
         },
 
@@ -64,9 +64,21 @@
             IsLoadable
         ],
 
+        date: function () {
+            return {
+                isInit: false
+            }
+        },
+
         methods: {
             init () {
-                $(this.$el).material_select()
+
+                //added this check so dropdown does not re-initialise at all times
+                //otherwise, when multiple is enabled, the dropdown closes on every item check
+                if (!this.isInit) {
+                    $(this.$el).material_select();
+                    this.isInit = true;
+                }
 
                 const vm = this
                 this.$el.onchange = function () {
