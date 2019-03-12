@@ -46,7 +46,6 @@ class UserSurveyTest extends TestCase
 
         $this->surveys = Survey::get();
         $this->assertEquals(2, $this->surveys->count());
-
     }
 
     /**
@@ -196,7 +195,9 @@ class UserSurveyTest extends TestCase
         $this->date  = Carbon::now();
 
         $this->user = User::create([
-            'name'              => $this->faker->name,
+            'first_name'              => $this->faker->name,
+            'last_name'              => $this->faker->lastName,
+            'display_name'              => $this->faker->name,
             'email'             => $this->faker->unique()->safeEmail,
             'email_verified_at' => $this->date,
             'password'          => bcrypt('secret'),

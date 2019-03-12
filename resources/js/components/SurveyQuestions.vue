@@ -30,19 +30,24 @@
             <!--Questions-->
             <div v-show="questionsVisible"
                  v-for="question in questions">
-                {{question.name}}
-                <question-type-text v-if="question.type === 'text'"></question-type-text>
-                <question-type-checkbox v-if="question.type === 'checkbox'"></question-type-checkbox>
-                <question-type-range v-if="question.type === 'range'"></question-type-range>
-                <question-type-number v-if="question.type === 'number'"></question-type-number>
-                <question-type-radio v-if="question.type === 'radio'"></question-type-radio>
-                <question-type-date v-if="question.type === 'date'"></question-type-date>
-
+                {{question.body}}
+                <!--Questions Answer Type-->
+                 <question-type-text v-if="question.type.answer_type === 'text'"></question-type-text>
+                 <question-type-checkbox v-if="question.type.answer_type === 'checkbox'"></question-type-checkbox>
+                 <question-type-range v-if="question.type.answer_type === 'range'"></question-type-range>
+                 <question-type-number v-if="question.type.answer_type === 'number'"></question-type-number>
+                 <question-type-radio v-if="question.type.answer_type === 'radio'"></question-type-radio>
+                 <question-type-date v-if="question.type.answer_type === 'date'"></question-type-date>
 
             </div>
             <!--bottom-navbar-->
             <br>
             <div class="bottom-navbar">
+                <div class="call-assistance">
+                    <button type="button" class="btn btn-default btn-sm">
+                        <span class="glyphicon glyphicon-earphone">Call</span>
+                    </button>
+                </div>
                 <div v-show="questionsVisible" class="next-previous-buttons">
                     <button type="button" class="btn btn-sm next" @click="nextQuestions">Next</button>
                 </div>
@@ -63,6 +68,8 @@
     import questionTypeDate from "./questionTypeDate";
 
     export default {
+        props: ['questions'],
+
         mounted() {
             console.log('Component mounted.')
 
@@ -81,14 +88,6 @@
         data() {
             return {
                 questionsVisible: false,
-                questions: [
-                    {name: 'question 1', type: 'text'},
-                    {name: 'question 2', type: 'checkbox'},
-                    {name: 'question 3', type: 'range'},
-                    {name: 'question 4', type: 'number'},
-                    {name: 'question 5', type: 'radio'},
-                    {name: 'question 6', type: 'date'},
-                ],
             }
         },
         methods: {
@@ -209,5 +208,9 @@
         width: 108px;
         margin-left: 490px;
         margin-top: 20px;
+    }
+
+    .call-assistance {
+
     }
 </style>

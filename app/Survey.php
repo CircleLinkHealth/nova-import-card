@@ -21,7 +21,6 @@ class Survey extends Model
         'description',
     ];
 
-
     public function user()
     {
         return $this->belongsToMany(User::class, 'users_surveys', 'survey_id', 'user_id')

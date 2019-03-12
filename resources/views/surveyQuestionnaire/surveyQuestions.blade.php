@@ -1,9 +1,5 @@
 @extends('surveysMaster')
 @section('content')
-    {{--<link href="{{asset('css/surveyQuestions.css')}}" rel="stylesheet">--}}
-
-    <survey-questions></survey-questions>
-
-
+<survey-questions :questions="{{json_encode($questions)}}"></survey-questions>
 @endsection
 

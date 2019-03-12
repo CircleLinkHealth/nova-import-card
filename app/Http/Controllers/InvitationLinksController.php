@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SurveyAuthLoginRequest;
 use App\InvitationLink;
 use App\Services\SurveyInvitationLinksService;
+use App\Services\SurveyService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Twilio\Exceptions\ConfigurationException;
@@ -16,10 +17,12 @@ class InvitationLinksController extends Controller
     const LINK_EXPIRES_IN_DAYS = 14;
 
     private $service;
+    private $surveyService;
 
-    public function __construct(SurveyInvitationLinksService $service)
+    public function __construct(SurveyInvitationLinksService $service, SurveyService $surveyService)
     {
-        $this->service = $service;
+        $this->service       = $service;
+        $this->surveyService = $surveyService;
     }
 
     public function enterPatientForm()
@@ -29,7 +32,6 @@ class InvitationLinksController extends Controller
 
     public function createSendInvitationUrl(Request $request)
     {//@todo:should validate using more conditions
-
         $validator = Validator::make($request->all(), [
             'id' => 'required|exists:users,id',
         ]);
@@ -100,6 +102,7 @@ class InvitationLinksController extends Controller
             return 'Name does not exists in our DB';
         }
         $userId       = $invitationLink->patientInfo->user_id;
+        $surveyId = $invitationLink->survey_id;
         $urlUpdatedAt = $invitationLink->updated_at;
         $isExpiredUrl = $invitationLink->is_manually_expired;
         $today        = now();
@@ -111,7 +114,10 @@ class InvitationLinksController extends Controller
             return view('surveyUrlAuth.resendUrl', compact('userId'));
         }
 
-        return view('surveyQuestionnaire.surveyQuestions', compact('urlToken'));
+        $surveyData = $this->surveyService->getSurveyData($userId, $surveyId);
+        $questions = $surveyData['survey_instances'][0]['questions'];
+
+        return view('surveyQuestionnaire.surveyQuestions', compact('urlToken', 'questions'));
     }
 
 }

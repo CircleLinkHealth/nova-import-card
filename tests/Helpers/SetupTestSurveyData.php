@@ -27,14 +27,16 @@ trait SetupTestSurveyData
      */
     public function createUser()
     {
-
         $this->user = User::create([
-            'name'              => $this->faker->name,
+            'first_name'              => $this->faker->name,
+            'last_name'              => $this->faker->lastname,
+            'display_name'              => $this->faker->name,
             'email'             => $this->faker->unique()->safeEmail,
             'email_verified_at' => $this->date,
             'password'          => bcrypt('secret'),
             'remember_token'    => str_random(10),
         ]);
+
         $this->assertNotNull($this->user);
     }
 
