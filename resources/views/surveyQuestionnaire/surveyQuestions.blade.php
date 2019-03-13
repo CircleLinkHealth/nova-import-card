@@ -1,5 +1,5 @@
 @extends('surveysMaster')
 @section('content')
-<survey-questions :questions="{{json_encode($questions)}}"></survey-questions>
+<survey-questions :surveyData="{{json_encode($surveyData)}}"></survey-questions>
 @endsection
 

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="custom-checkbox">
         <input type="checkbox" name="checkboxTypeAnswer">
     </div>
 </template>

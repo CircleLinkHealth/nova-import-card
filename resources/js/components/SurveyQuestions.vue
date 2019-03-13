@@ -2,11 +2,11 @@
     <div class="container">
         <!--Survey welcome note-->
         <div class="card">
-            <div v-show="!questionsVisible" class="practice-title">
+            <div v-if="welcomeStage" class="practice-title">
                 <label id="title">[Practice Name]
                     Dr. [doctor last name]’s Office</label>
             </div>
-            <div v-show="!questionsVisible" class="card-body">
+            <div v-if="welcomeStage" class="card-body">
                 <img src="https://drive.google.com/uc?export=view&id=14yPR6Z8coudiAzEMTSVQK80BVyZjjqVg"
                      class="welcome-icon" alt="welcome icon">
                 <div class="survey-main-title">
@@ -28,28 +28,28 @@
                 </div>
             </div>
             <!--Questions-->
-            <div v-show="questionsVisible"
+            <div v-if="questionsStage"
                  v-for="question in questions">
-                {{question.body}}
+                {{question.id}}{{'.'}} {{question.body}}
                 <!--Questions Answer Type-->
-                 <question-type-text v-if="question.type.answer_type === 'text'"></question-type-text>
-                 <question-type-checkbox v-if="question.type.answer_type === 'checkbox'"></question-type-checkbox>
-                 <question-type-range v-if="question.type.answer_type === 'range'"></question-type-range>
-                 <question-type-number v-if="question.type.answer_type === 'number'"></question-type-number>
-                 <question-type-radio v-if="question.type.answer_type === 'radio'"></question-type-radio>
-                 <question-type-date v-if="question.type.answer_type === 'date'"></question-type-date>
-
+                <question-type-text v-if="question.type.answer_type === 'text'"></question-type-text>
+                <question-type-checkbox v-if="question.type.answer_type === 'checkbox'"></question-type-checkbox>
+                <question-type-range v-if="question.type.answer_type === 'range'"></question-type-range>
+                <question-type-number v-if="question.type.answer_type === 'number'"></question-type-number>
+                <question-type-radio :question="question" v-if="question.type.answer_type === 'radio'"></question-type-radio>
+                <question-type-date v-if="question.type.answer_type === 'date'"></question-type-date>
             </div>
             <!--bottom-navbar-->
             <br>
             <div class="bottom-navbar">
                 <div class="call-assistance">
-                    <button type="button" class="btn btn-default btn-sm">
-                        <span class="glyphicon glyphicon-earphone">Call</span>
+                    <button type="button" class="btn btn-default">
+                        <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>Call
                     </button>
                 </div>
-                <div v-show="questionsVisible" class="next-previous-buttons">
+                <div v-if="questionsStage" class="next-previous-buttons">
                     <button type="button" class="btn btn-sm next" @click="nextQuestions">Next</button>
+                    <button type="button" class="btn btn-sm next" @click="previousQuestions">Previous</button>
                 </div>
             </div>
         </div>
@@ -68,7 +68,7 @@
     import questionTypeDate from "./questionTypeDate";
 
     export default {
-        props: ['questions'],
+        props: ['surveydata'],
 
         mounted() {
             console.log('Component mounted.')
@@ -87,12 +87,20 @@
 
         data() {
             return {
-                questionsVisible: false,
+                questionsStage: false,
+                welcomeStage:true,
+                questions:this.surveydata.survey_instances[0].questions
             }
         },
+
+        computed:{
+
+        },
+
         methods: {
             showQuestions() {
-                this.questionsVisible = true
+                this.questionsStage = true;
+                this.welcomeStage = false;
             },
             nextQuestions() {
 

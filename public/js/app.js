@@ -1876,6 +1876,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 
@@ -1883,6 +1888,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['surveydata'],
   mounted: function mounted() {
     console.log('Component mounted.');
   },
@@ -1896,31 +1902,16 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      questionsVisible: false,
-      questions: [{
-        name: 'question 1',
-        type: 'text'
-      }, {
-        name: 'question 2',
-        type: 'checkbox'
-      }, {
-        name: 'question 3',
-        type: 'range'
-      }, {
-        name: 'question 4',
-        type: 'number'
-      }, {
-        name: 'question 5',
-        type: 'radio'
-      }, {
-        name: 'question 6',
-        type: 'date'
-      }]
+      questionsStage: false,
+      welcomeStage: true,
+      questions: this.surveydata.survey_instances[0].questions
     };
   },
+  computed: {},
   methods: {
     showQuestions: function showQuestions() {
-      this.questionsVisible = true;
+      this.questionsStage = true;
+      this.welcomeStage = false;
     },
     nextQuestions: function nextQuestions() {},
     previousQuestions: function previousQuestions() {}
@@ -2013,9 +2004,21 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['question'],
   mounted: function mounted() {
     console.log('Component mounted.');
+  },
+  data: function data() {
+    return {
+      options: this.question.type.question_type_answers
+    };
   }
 });
 
@@ -6524,7 +6527,26 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.practice-title[data-v-119cac10] {\n    font-family: Poppins, sans-serif;\n    font-size: 18px;\n    letter-spacing: 1.5px;\n    text-align: center;\n    margin-top: 20px;\n    color: #50b2e2;\n}\n.practice-title .text-style-1[data-v-119cac10] {\n    font-weight: 600;\n}\n.survey-main-title[data-v-119cac10] {\n    font-family: Poppins, sans-serif;\n    font-size: 24px;\n    font-weight: 600;\n    letter-spacing: 1.5px;\n    text-align: center;\n    margin-top: 30px;\n    color: #1a1a1a;\n}\n.survey-sub-welcome-text[data-v-119cac10] {\n    font-family: Poppins, sans-serif;\n    font-size: 18px;\n    font-weight: normal;\n    font-style: normal;\n    font-stretch: normal;\n    line-height: normal;\n    letter-spacing: 1px;\n    text-align: center;\n    margin-top: 25px;\n    color: #1a1a1a;\n}\n.btn-primary[data-v-119cac10] {\n    border-radius: 3px;\n    background-color: #50b2e2;\n    margin-top: 50px;\n    margin-left: 469px;\n    width: 160px;\n    height: 50px;\n}\n.bottom-navbar[data-v-119cac10] {\n    background-color: #ffffff;\n    border-bottom: 1px solid #808080;\n    min-height: 90px;\n    margin-top: auto;\n}\n.by-circlelink[data-v-119cac10] {\n    font-family: Poppins, sans-serif;\n    font-size: 18px;\n    font-weight: 600;\n    font-style: normal;\n    font-stretch: normal;\n    line-height: normal;\n    letter-spacing: 1px;\n    margin-top: 10px;\n    margin-left: 430px;\n    color: #50b2e2;\n}\n.by-circlelink .text-style-1[data-v-119cac10] {\n    font-weight: normal;\n    color: #1a1a1a;\n}\n.card[data-v-119cac10] {\n    margin-top: 50px;\n    background-color: #f2f6f9;\n    border-top: 1px solid #808080;\n    border-left: 1px solid #808080;\n    border-right: 1px solid #808080;\n    min-height: 690px;\n}\n.next-previous-buttons[data-v-119cac10] {\n    width: 55px;\n    margin-top: 10px;\n    margin-bottom: 10px;\n    margin-left: 1020px;\n    height: 55px;\n    border-radius: 5px;\n    background-color: #50b2e2;\n}\n.next[data-v-119cac10] {\n    position: center;\n}\n.previous[data-v-119cac10] {\n    position: center;\n}\n.welcome-icon[data-v-119cac10] {\n    width: 108px;\n    margin-left: 490px;\n    margin-top: 20px;\n}\n", ""]);
+exports.push([module.i, "\n.practice-title[data-v-119cac10] {\n    font-family: Poppins, sans-serif;\n    font-size: 18px;\n    letter-spacing: 1.5px;\n    text-align: center;\n    margin-top: 20px;\n    color: #50b2e2;\n}\n.practice-title .text-style-1[data-v-119cac10] {\n    font-weight: 600;\n}\n.survey-main-title[data-v-119cac10] {\n    font-family: Poppins, sans-serif;\n    font-size: 24px;\n    font-weight: 600;\n    letter-spacing: 1.5px;\n    text-align: center;\n    margin-top: 30px;\n    color: #1a1a1a;\n}\n.survey-sub-welcome-text[data-v-119cac10] {\n    font-family: Poppins, sans-serif;\n    font-size: 18px;\n    font-weight: normal;\n    font-style: normal;\n    font-stretch: normal;\n    line-height: normal;\n    letter-spacing: 1px;\n    text-align: center;\n    margin-top: 25px;\n    color: #1a1a1a;\n}\n.btn-primary[data-v-119cac10] {\n    border-radius: 3px;\n    background-color: #50b2e2;\n    margin-top: 50px;\n    margin-left: 469px;\n    width: 160px;\n    height: 50px;\n}\n.bottom-navbar[data-v-119cac10] {\n    background-color: #ffffff;\n    border-bottom: 1px solid #808080;\n    min-height: 90px;\n    margin-top: auto;\n}\n.by-circlelink[data-v-119cac10] {\n    font-family: Poppins, sans-serif;\n    font-size: 18px;\n    font-weight: 600;\n    font-style: normal;\n    font-stretch: normal;\n    line-height: normal;\n    letter-spacing: 1px;\n    margin-top: 10px;\n    margin-left: 430px;\n    color: #50b2e2;\n}\n.by-circlelink .text-style-1[data-v-119cac10] {\n    font-weight: normal;\n    color: #1a1a1a;\n}\n.card[data-v-119cac10] {\n    margin-top: 50px;\n    background-color: #f2f6f9;\n    border-top: 1px solid #808080;\n    border-left: 1px solid #808080;\n    border-right: 1px solid #808080;\n    min-height: 690px;\n}\n.next-previous-buttons[data-v-119cac10] {\n    width: 55px;\n    margin-top: 10px;\n    margin-bottom: 10px;\n    margin-left: 1020px;\n    height: 55px;\n    border-radius: 5px;\n    background-color: #50b2e2;\n}\n.next[data-v-119cac10] {\n    position: center;\n}\n.previous[data-v-119cac10] {\n    position: center;\n}\n.welcome-icon[data-v-119cac10] {\n    width: 108px;\n    margin-left: 490px;\n    margin-top: 20px;\n}\n.call-assistance[data-v-119cac10] {\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/questionTypeRadio.vue?vue&type=style&index=0&id=12b72760&scoped=true&lang=css&":
+/*!***********************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/questionTypeRadio.vue?vue&type=style&index=0&id=12b72760&scoped=true&lang=css& ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n.boxed label[data-v-12b72760] {\n    width: 450px;\n    height: 50px;\n    border-radius: 5px;\n    border: solid 1px #4aa5d2;\n    background-color: #ffffff;\n}\n.boxed input[type=\"radio\"][data-v-12b72760] {\n    display: none;\n}\n.boxed input[type=\"radio\"]:checked + label[data-v-12b72760] {\n    background-color: #4aa5d2;\n}\n", ""]);
 
 // exports
 
@@ -37155,6 +37177,36 @@ if(false) {}
 
 /***/ }),
 
+/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/questionTypeRadio.vue?vue&type=style&index=0&id=12b72760&scoped=true&lang=css&":
+/*!***************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/questionTypeRadio.vue?vue&type=style&index=0&id=12b72760&scoped=true&lang=css& ***!
+  \***************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../node_modules/css-loader??ref--6-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--6-2!../../../node_modules/vue-loader/lib??vue-loader-options!./questionTypeRadio.vue?vue&type=style&index=0&id=12b72760&scoped=true&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/questionTypeRadio.vue?vue&type=style&index=0&id=12b72760&scoped=true&lang=css&");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
+
+/***/ }),
+
 /***/ "./node_modules/style-loader/lib/addStyles.js":
 /*!****************************************************!*\
   !*** ./node_modules/style-loader/lib/addStyles.js ***!
@@ -37830,139 +37882,125 @@ var render = function() {
       "div",
       { staticClass: "card" },
       [
-        _c(
-          "div",
-          {
-            directives: [
-              {
-                name: "show",
-                rawName: "v-show",
-                value: !_vm.questionsVisible,
-                expression: "!questionsVisible"
-              }
-            ],
-            staticClass: "practice-title"
-          },
-          [
-            _c("label", { attrs: { id: "title" } }, [
-              _vm._v(
-                "[Practice Name]\n                Dr. [doctor last name]’s Office"
-              )
+        _vm.welcomeStage
+          ? _c("div", { staticClass: "practice-title" }, [
+              _c("label", { attrs: { id: "title" } }, [
+                _vm._v(
+                  "[Practice Name]\n                Dr. [doctor last name]’s Office"
+                )
+              ])
             ])
-          ]
-        ),
+          : _vm._e(),
         _vm._v(" "),
-        _c(
-          "div",
-          {
-            directives: [
-              {
-                name: "show",
-                rawName: "v-show",
-                value: !_vm.questionsVisible,
-                expression: "!questionsVisible"
-              }
-            ],
-            staticClass: "card-body"
-          },
-          [
-            _c("img", {
-              staticClass: "welcome-icon",
-              attrs: {
-                src:
-                  "https://drive.google.com/uc?export=view&id=14yPR6Z8coudiAzEMTSVQK80BVyZjjqVg",
-                alt: "welcome icon"
-              }
-            }),
-            _vm._v(" "),
-            _vm._m(0),
-            _vm._v(" "),
-            _c("div", { staticClass: "survey-sub-welcome-text" }, [
-              _vm._v(
-                "Welcome to your\n                Annual Wellness Visit (AWV) Questionnaire! Understanding your health is of upmost importance to us,\n                so thank you for taking time to fill this out.\n                If there’s any question you have trouble answering, feel free to click the call button on the bottom\n                left and a representative will help when you call the number. If you skip any questions, our reps\n                will also reach out shortly. Thanks!\n            "
-              )
-            ]),
-            _vm._v(" "),
-            _c(
-              "a",
-              {
-                staticClass: "btn btn-primary",
-                on: { click: _vm.showQuestions }
-              },
-              [_vm._v("Start")]
-            ),
-            _vm._v(" "),
-            _c("div", { staticClass: "by-circlelink" }, [
-              _vm._v("\n                ⚡️ by CircleLink Health\n            ")
+        _vm.welcomeStage
+          ? _c("div", { staticClass: "card-body" }, [
+              _c("img", {
+                staticClass: "welcome-icon",
+                attrs: {
+                  src:
+                    "https://drive.google.com/uc?export=view&id=14yPR6Z8coudiAzEMTSVQK80BVyZjjqVg",
+                  alt: "welcome icon"
+                }
+              }),
+              _vm._v(" "),
+              _vm._m(0),
+              _vm._v(" "),
+              _c("div", { staticClass: "survey-sub-welcome-text" }, [
+                _vm._v(
+                  "Welcome to your\n                Annual Wellness Visit (AWV) Questionnaire! Understanding your health is of upmost importance to us,\n                so thank you for taking time to fill this out.\n                If there’s any question you have trouble answering, feel free to click the call button on the bottom\n                left and a representative will help when you call the number. If you skip any questions, our reps\n                will also reach out shortly. Thanks!\n            "
+                )
+              ]),
+              _vm._v(" "),
+              _c(
+                "a",
+                {
+                  staticClass: "btn btn-primary",
+                  on: { click: _vm.showQuestions }
+                },
+                [_vm._v("Start")]
+              ),
+              _vm._v(" "),
+              _c("div", { staticClass: "by-circlelink" }, [
+                _vm._v(
+                  "\n                ⚡️ by CircleLink Health\n            "
+                )
+              ])
             ])
-          ]
-        ),
+          : _vm._e(),
         _vm._v(" "),
         _vm._l(_vm.questions, function(question) {
-          return _c(
-            "div",
-            {
-              directives: [
-                {
-                  name: "show",
-                  rawName: "v-show",
-                  value: _vm.questionsVisible,
-                  expression: "questionsVisible"
-                }
-              ]
-            },
-            [
-              _vm._v(
-                "\n            " + _vm._s(question.name) + "\n            "
-              ),
-              question.type === "text" ? _c("question-type-text") : _vm._e(),
-              _vm._v(" "),
-              question.type === "checkbox"
-                ? _c("question-type-checkbox")
-                : _vm._e(),
-              _vm._v(" "),
-              question.type === "range" ? _c("question-type-range") : _vm._e(),
-              _vm._v(" "),
-              question.type === "number"
-                ? _c("question-type-number")
-                : _vm._e(),
-              _vm._v(" "),
-              question.type === "radio" ? _c("question-type-radio") : _vm._e(),
-              _vm._v(" "),
-              question.type === "date" ? _c("question-type-date") : _vm._e()
-            ],
-            1
-          )
+          return _vm.questionsStage
+            ? _c(
+                "div",
+                [
+                  _vm._v(
+                    "\n            " +
+                      _vm._s(question.id) +
+                      _vm._s(".") +
+                      " " +
+                      _vm._s(question.body) +
+                      "\n            "
+                  ),
+                  _vm._v(" "),
+                  question.type.answer_type === "text"
+                    ? _c("question-type-text")
+                    : _vm._e(),
+                  _vm._v(" "),
+                  question.type.answer_type === "checkbox"
+                    ? _c("question-type-checkbox")
+                    : _vm._e(),
+                  _vm._v(" "),
+                  question.type.answer_type === "range"
+                    ? _c("question-type-range")
+                    : _vm._e(),
+                  _vm._v(" "),
+                  question.type.answer_type === "number"
+                    ? _c("question-type-number")
+                    : _vm._e(),
+                  _vm._v(" "),
+                  question.type.answer_type === "radio"
+                    ? _c("question-type-radio", {
+                        attrs: { question: question }
+                      })
+                    : _vm._e(),
+                  _vm._v(" "),
+                  question.type.answer_type === "date"
+                    ? _c("question-type-date")
+                    : _vm._e()
+                ],
+                1
+              )
+            : _vm._e()
         }),
         _vm._v(" "),
         _c("br"),
         _vm._v(" "),
         _c("div", { staticClass: "bottom-navbar" }, [
-          _c(
-            "div",
-            {
-              directives: [
-                {
-                  name: "show",
-                  rawName: "v-show",
-                  value: _vm.questionsVisible,
-                  expression: "questionsVisible"
-                }
-              ],
-              staticClass: "next-previous-buttons"
-            },
-            [
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-sm next",
-                  attrs: { type: "button" },
-                  on: { click: _vm.nextQuestions }
-                },
-                [_vm._v("Next")]
-              )
-            ]
-          )
+          _vm._m(1),
+          _vm._v(" "),
+          _vm.questionsStage
+            ? _c("div", { staticClass: "next-previous-buttons" }, [
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-sm next",
+                    attrs: { type: "button" },
+                    on: { click: _vm.nextQuestions }
+                  },
+                  [_vm._v("Next")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-sm next",
+                    attrs: { type: "button" },
+                    on: { click: _vm.previousQuestions }
+                  },
+                  [_vm._v("Previous")]
+                )
+              ])
+            : _vm._e()
         ])
       ],
       2
@@ -37978,6 +38016,24 @@ var staticRenderFns = [
       _c("label", { attrs: { id: "sub-title" } }, [
         _vm._v("Annual Wellness\n                    Survey Login")
       ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "call-assistance" }, [
+      _c(
+        "button",
+        { staticClass: "btn btn-default", attrs: { type: "button" } },
+        [
+          _c("span", {
+            staticClass: "glyphicon glyphicon-earphone",
+            attrs: { "aria-hidden": "true" }
+          }),
+          _vm._v("Call\n                ")
+        ]
+      )
     ])
   }
 ]
@@ -38009,7 +38065,7 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", [
+    return _c("div", { staticClass: "custom-checkbox" }, [
       _c("input", { attrs: { type: "checkbox", name: "checkboxTypeAnswer" } })
     ])
   }
@@ -38101,18 +38157,26 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c("div", [
+    _c(
+      "div",
+      { staticClass: "boxed" },
+      [
+        _c("input", {
+          attrs: { type: "radio", id: "radioType", name: "radioTypeAnswer" }
+        }),
+        _vm._v(" "),
+        _vm._l(_vm.options, function(option) {
+          return _c("label", { attrs: { for: "radioType" } }, [
+            _vm._v(_vm._s(option.value))
+          ])
+        })
+      ],
+      2
+    )
+  ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", [
-      _c("input", { attrs: { type: "radio", name: "radioTypeAnswer" } })
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -50815,7 +50879,9 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _questionTypeRadio_vue_vue_type_template_id_12b72760_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./questionTypeRadio.vue?vue&type=template&id=12b72760&scoped=true& */ "./resources/js/components/questionTypeRadio.vue?vue&type=template&id=12b72760&scoped=true&");
 /* harmony import */ var _questionTypeRadio_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./questionTypeRadio.vue?vue&type=script&lang=js& */ "./resources/js/components/questionTypeRadio.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* empty/unused harmony star reexport *//* harmony import */ var _questionTypeRadio_vue_vue_type_style_index_0_id_12b72760_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./questionTypeRadio.vue?vue&type=style&index=0&id=12b72760&scoped=true&lang=css& */ "./resources/js/components/questionTypeRadio.vue?vue&type=style&index=0&id=12b72760&scoped=true&lang=css&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
 
 
 
@@ -50823,7 +50889,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* normalize component */
 
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
   _questionTypeRadio_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
   _questionTypeRadio_vue_vue_type_template_id_12b72760_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
   _questionTypeRadio_vue_vue_type_template_id_12b72760_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
@@ -50852,6 +50918,22 @@ component.options.__file = "resources/js/components/questionTypeRadio.vue"
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_questionTypeRadio_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./questionTypeRadio.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/questionTypeRadio.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_questionTypeRadio_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/questionTypeRadio.vue?vue&type=style&index=0&id=12b72760&scoped=true&lang=css&":
+/*!****************************************************************************************************************!*\
+  !*** ./resources/js/components/questionTypeRadio.vue?vue&type=style&index=0&id=12b72760&scoped=true&lang=css& ***!
+  \****************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_questionTypeRadio_vue_vue_type_style_index_0_id_12b72760_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/style-loader!../../../node_modules/css-loader??ref--6-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--6-2!../../../node_modules/vue-loader/lib??vue-loader-options!./questionTypeRadio.vue?vue&type=style&index=0&id=12b72760&scoped=true&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/questionTypeRadio.vue?vue&type=style&index=0&id=12b72760&scoped=true&lang=css&");
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_questionTypeRadio_vue_vue_type_style_index_0_id_12b72760_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_questionTypeRadio_vue_vue_type_style_index_0_id_12b72760_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_questionTypeRadio_vue_vue_type_style_index_0_id_12b72760_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_questionTypeRadio_vue_vue_type_style_index_0_id_12b72760_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_questionTypeRadio_vue_vue_type_style_index_0_id_12b72760_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
 

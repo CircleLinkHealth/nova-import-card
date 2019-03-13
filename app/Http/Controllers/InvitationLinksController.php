@@ -115,9 +115,8 @@ class InvitationLinksController extends Controller
         }
 
         $surveyData = $this->surveyService->getSurveyData($userId, $surveyId);
-        $questions = $surveyData['survey_instances'][0]['questions'];
 
-        return view('surveyQuestionnaire.surveyQuestions', compact('urlToken', 'questions'));
+        return view('surveyQuestionnaire.surveyQuestions', compact('urlToken','surveyData'));
     }
 
 }

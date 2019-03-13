@@ -46,6 +46,7 @@ class UserSurveyTest extends TestCase
 
         $this->surveys = Survey::get();
         $this->assertEquals(2, $this->surveys->count());
+
     }
 
     /**
