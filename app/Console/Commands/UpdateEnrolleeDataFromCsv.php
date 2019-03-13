@@ -111,14 +111,14 @@ class UpdateEnrolleeDataFromCsv extends Command
                         if ($row) {
                             $e = $this->setEnrolleeStatus($e, $row);
                             if (array_key_exists('Call_Date', $row) && ! empty($row['Call_Date'])) {
-                                    $date               = preg_split("/[.|\/]/", $row['Call_Date']);
-                                    if (count($date) == 3){
-                                        try{
-                                            $e->last_attempt_at = Carbon::parse("{$date[0]}/{$date[1]}/{$date[2]}");
-                                        }catch (\Exception $e){
-                                            //do nothing, date provided in csv is invalid
-                                        }
+                                $date = preg_split("/[.|\/]/", $row['Call_Date']);
+                                if (count($date) == 3) {
+                                    try {
+                                        $e->last_attempt_at = Carbon::parse("{$date[0]}/{$date[1]}/{$date[2]}");
+                                    } catch (\Exception $e) {
+                                        //do nothing, date provided in csv is invalid
                                     }
+                                }
                             }
                             $e->save();
                         }
