@@ -62,7 +62,7 @@ class PracticeReportsService
         foreach ($practices as $practiceId) {
             $practice = Practice::find($practiceId);
 
-            if ('practice' == $practice->cpmSettings()->bill_to) {
+            if ('practice' == $practice->cpmSettings()->bill_to || empty($practice->cpmSettings()->bill_to )) {
                 $chargeableServices = $this->getChargeableServices($practice);
 
                 foreach ($chargeableServices as $service) {
@@ -194,7 +194,7 @@ class PracticeReportsService
             'Pt. billing report:'   => (string) $link,
             'Line Item'             => (string) $chargeableService->code.$providerName,
             'LineQty'               => (string) $data['billable'],
-            'LineDesc'              => (string) $chargeableService->description,
+            'LineDesc'              => (string) $chargeableService->code == 'Software-Only'? 'Software-Only Platform Fee' : $chargeableService->description,
             'LineUnitPrice'         => (string) '$'.' '.$lineUnitPrice,
             'Msg'                   => 'Send Check Payments to:
 CircleLink Health Inc. 

@@ -1,9 +1,19 @@
 #!/bin/bash
 
+# Exit immediately if a command exits with a non-zero status.
 set -e
 
 SHARED=$1
 RELEASE=$2
+
+# Add github to known hosts
+GH_HOST='github.com'
+ssh-keygen -F $GH_HOST 2>/dev/null 1>/dev/null
+if [ $? -eq 0 ]; then
+    echo “$GH_HOST is already known”
+else
+    ssh-keyscan -t rsa -T 10 $GH_HOST >> ~/.ssh/known_hosts
+fi
 
 
 # Create a shared storage directory and symlink it to the project root
@@ -18,7 +28,7 @@ rm -rf storage
 ln -s $SHARED/storage $RELEASE/storage
 
 # Install application dependencies
-composer install --no-dev --classmap-authoritative
+composer install --no-dev --classmap-authoritative --prefer-dist
 
 # Disable lada-cache before migrations
 php artisan lada-cache:disable

@@ -22,7 +22,7 @@
 
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     {!! Form::open(array('url' => route('practice.billing.make', array()),'class' => 'form-horizontal')) !!}
-    <div class="container-fluid" style="padding-top: 50rem;">
+    <div class="container-fluid" style="padding-top: 50px;">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
                 <div class="panel panel-default">

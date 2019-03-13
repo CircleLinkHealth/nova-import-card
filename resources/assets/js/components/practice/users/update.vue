@@ -11,10 +11,11 @@
                     </div>
                 </h5>
 
-                <div @click="submitForm()"
-                     class="btn green waves-effect waves-light right">
+                <button :disabled="waiting" @click="submitForm()"
+                        class="btn green waves-effect waves-light right">
                     Save & Close
-                </div>
+                    <font-awesome-icon :spin="true" v-show="waiting" icon="spinner"/>
+                </button>
 
                 <div @click="close()"
                      class="btn red waves-effect waves-light right"
@@ -159,10 +160,11 @@
 
                 <div class="row">
                     <div class="col s12">
-                        <div @click="submitForm()"
-                             class="btn green waves-effect waves-light right">
+                        <button :disabled="waiting" @click="submitForm()"
+                                class="btn green waves-effect waves-light right">
                             Save & Close
-                        </div>
+                            <font-awesome-icon :spin="true" v-show="waiting" icon="spinner"/>
+                        </button>
 
                         <div @click="close()"
                              class="btn red waves-effect waves-light right"
@@ -183,6 +185,13 @@
     import {addNotification, clearErrors, clearOpenModal, updatePracticeStaff} from '../../../store/actions'
     import {practiceLocations, practiceStaff} from '../../../store/getters'
     import MaterialSelect from '../../src/material-select.vue'
+    import store from '../../../store';
+
+    import {library} from '@fortawesome/fontawesome-svg-core'
+    import {faSpinner} from '@fortawesome/free-solid-svg-icons'
+    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
+
+    library.add(faSpinner);
 
     export default {
         props: {
@@ -202,7 +211,8 @@
 
         components: {
             modal,
-            MaterialSelect
+            MaterialSelect,
+            FontAwesomeIcon
         },
 
         created() {
@@ -216,11 +226,29 @@
                     return loc.id
                 })
             }
+
+            //store the watcher in a variable so we can destroy this watcher
+            this.unwatch = store.watch(
+                (state) => state.practiceStaffIsUpdating,
+                (val, oldVal) => {
+                    if (oldVal === true && val === false && !this.errors.any()) {
+                        Materialize.toast(this.formData.first_name + ' ' + this.formData.last_name + ' was successfully updated.', 3000);
+                        this.close();
+                    }
+                }
+            );
+        },
+
+        destroyed() {
+            if (this.unwatch) {
+                this.unwatch();
+            }
         },
 
         computed: Object.assign(
             mapGetters({
                 errors: 'errors',
+                waiting: 'practiceStaffIsUpdating',
                 staff: 'practiceStaff',
                 locations: 'practiceLocations'
             })
@@ -230,16 +258,7 @@
             mapActions(['clearOpenModal', 'addNotification', 'updatePracticeStaff', 'clearErrors']),
             {
                 submitForm() {
-                    this.updatePracticeStaff(this.formData)
-
-                    Vue.nextTick(() => {
-                        setTimeout(() => {
-                            if (!this.errors.any()) {
-                                Materialize.toast(this.formData.first_name + ' ' + this.formData.last_name + ' was successfully updated.', 3000)
-                                this.close()
-                            }
-                        }, 500);
-                    })
+                    this.updatePracticeStaff(this.formData);
                 },
 
                 isValid(field) {
@@ -263,6 +282,7 @@
 
         data() {
             return {
+                unwatch: null,
                 formData: {
                     'id': 'new',
                     'practice_id': $('meta[name=practice-id]').attr('content'),

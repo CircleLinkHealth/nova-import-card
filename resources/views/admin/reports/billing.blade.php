@@ -65,7 +65,7 @@
     </div>
 
 
-    <div class="container-fluid" style="padding-top: 50rem;">
+    <div class="container-fluid" style="padding-top: 50px;">
         <div class="row">
             <div class="col-md-12">
                 @include('errors.errors')

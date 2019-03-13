@@ -2,7 +2,7 @@
     <div class="patient-info__subareas">
         <div class="row">
             <div class="col-xs-12">
-                <h2 class="patient-summary__subtitles patient-summary--careplan-background">We Are Managing
+                <h2 class="patient-summary__subtitles patient-summary--careplan-background" style="margin-top: 10px">We Are Managing
                     <span class="btn btn-primary glyphicon glyphicon-edit" @click="showModal" aria-hidden="true"></span>
                 </h2>
             </div>
