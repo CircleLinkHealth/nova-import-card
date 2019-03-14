@@ -116,6 +116,7 @@ class BHIReconsentTest extends TestCase
     {
         $practice = factory(Practice::class)->create([]);
 
+
         if ($bhi) {
             $practice->chargeableServices()
                 ->attach(ChargeableService::whereCode('CPT 99484')->firstOrFail()->id);
