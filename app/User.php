@@ -7,6 +7,7 @@
 namespace App;
 
 use App\Contracts\Serviceable;
+use App\Exceptions\InvalidArgumentException;
 use App\Facades\StringManipulation;
 use App\Filters\Filterable;
 use App\Importer\Models\ImportedItems\DemographicsImport;
@@ -447,11 +448,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function attachPractice($practice, array $roleIds, $sendBillingReports = null)
     {
-        if (is_a($practice, Practice::class)){
-            $practiceId = $practice->id;
-        }else{
-            $practiceId = $practice;
+        $ids = parseIds($practice);
+        
+        if (! array_key_exists(0, $ids)) {
+            throw new InvalidArgumentException("Could not parse a Practice id from the argument provided.");
         }
+        
+        $practiceId = $ids[0];
+        
         $rolesForPractice = PracticeRoleUser::where('user_id', '=', $this->id)
                                             ->where('program_id', '=', $practiceId)
                                             ->get();
