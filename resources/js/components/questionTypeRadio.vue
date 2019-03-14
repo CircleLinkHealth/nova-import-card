@@ -3,15 +3,15 @@
         <div class="custom-radio">
             <div class="row">
                 <div v-for="answer in posiibleAnswers">
-                        <label>{{answer.value}}
-                            <input type="radio"
-                                   id="radioType"
-                                   name="radioTypeAnswer">
-                        </label>
-                    </div>
+                    <label>{{answer.value}}
+                        <input type="radio"
+                               id="radioType"
+                               name="radioTypeAnswer">
+                    </label>
                 </div>
             </div>
         </div>
+    </div>
 
 </template>
 
@@ -35,14 +35,19 @@
         border: solid 1px #4aa5d2;
         background-color: #ffffff;
         margin-left: .5rem;
+        padding-left: 4%;
+        padding-top: 3%;
     }
-    .custom-radio label>text {
+
+    .custom-radio label > text {
         padding-left: 3px;
     }
+
     .custom-radio input[type="radio"] {
-        display: none;
+        /*display: none;*/
 
     }
+
     .custom-radio input[type="radio"]:checked + label {
         background-color: #4aa5d2;
     }

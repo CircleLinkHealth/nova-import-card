@@ -30,32 +30,43 @@
             <!--Questions-->
             <div class="questions-box"
                  v-if="questionsStage"
-                 v-for="question in questions">
-               <div class="question">
-                   {{question.id}}{{'.'}} {{question.body}}
-               </div>
+                 v-for="question in orderedQuestions">
+                <div class="question">
+                    {{question.id}}{{'.'}} {{question.body}}
+                </div>
                 <br>
                 <!--Questions Answer Type-->
-               <div class="question-answer-type">
-                   <question-type-text v-if="question.type.answer_type === 'text'"></question-type-text>
-                   <question-type-checkbox v-if="question.type.answer_type === 'checkbox'"></question-type-checkbox>
-                   <question-type-range v-if="question.type.answer_type === 'range'"></question-type-range>
-                   <question-type-number v-if="question.type.answer_type === 'number'"></question-type-number>
-                   <question-type-radio :question="question" v-if="question.type.answer_type === 'radio'"></question-type-radio>
-                   <question-type-date v-if="question.type.answer_type === 'date'"></question-type-date>
-               </div>
+                <div class="question-answer-type">
+                    <question-type-text v-if="question.type.answer_type === 'text'"></question-type-text>
+                    <question-type-checkbox v-if="question.type.answer_type === 'checkbox'"></question-type-checkbox>
+                    <question-type-range v-if="question.type.answer_type === 'range'"></question-type-range>
+                    <question-type-number v-if="question.type.answer_type === 'number'"></question-type-number>
+                    <question-type-radio :question="question"
+                                         v-if="question.type.answer_type === 'radio'"></question-type-radio>
+                    <question-type-date v-if="question.type.answer_type === 'date'"></question-type-date>
+                </div>
             </div>
             <!--bottom-navbar-->
             <br>
             <div class="bottom-navbar">
-                <div class="call-assistance">
+                <div class="call-assistance col-lg-1">
                     <button type="button" class="btn btn-default">
-                        <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>Call
+                        <i class="fa fa-phone" aria-hidden="true"></i>
                     </button>
                 </div>
-                <div v-if="questionsStage" class="next-previous-buttons">
-                    <button type="button" class="btn btn-sm next" @click="nextQuestions">Next</button>
-                    <button type="button" class="btn btn-sm next" @click="previousQuestions">Previous</button>
+                <div v-if="questionsStage">
+                    <button type="button"
+                            id="next-button"
+                            class="btn btn-sm next"
+                            @click="nextQuestions">
+                        <i class="fas fa-angle-down"></i>
+                    </button>
+                    <button type="button"
+                            id="previous-button"
+                            class="btn btn-sm next"
+                            @click="previousQuestions">
+                        <i class="fas fa-angle-up"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -72,6 +83,10 @@
     import questionTypeNumber from "./questionTypeNumber";
     import questionTypeRadio from "./questionTypeRadio";
     import questionTypeDate from "./questionTypeDate";
+    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
+    var VueScrollTo = require('vue-scrollto');
+
+    Vue.use(VueScrollTo);
 
     export default {
         props: ['surveydata'],
@@ -82,20 +97,21 @@
             'question-type-range': questionTypeRange,
             'question-type-number': questionTypeNumber,
             'question-type-radio': questionTypeRadio,
-            'question-type-date': questionTypeDate
-
+            'question-type-date': questionTypeDate,
         },
 
         data() {
             return {
                 questionsStage: false,
-                welcomeStage:true,
-                questions:this.surveydata.survey_instances[0].questions
+                welcomeStage: true,
+                questions: this.surveydata.survey_instances[0].questions
             }
         },
 
-        computed:{
-
+        computed: {
+            orderedQuestions: function () {
+                return _.orderBy(this.questions, 'id')
+            }
         },
 
         methods: {
@@ -119,6 +135,7 @@
         padding-top: 5%;
         padding-left: 15%;
     }
+
     .practice-title {
         font-family: Poppins, sans-serif;
         font-size: 18px;
@@ -168,8 +185,8 @@
         background-color: #ffffff;
         border-bottom: 1px solid #808080;
         min-height: 90px;
+        height: 90px;
         margin-top: auto;
-
     }
 
     .by-circlelink {
@@ -201,21 +218,16 @@
     }
 
     .next-previous-buttons {
-        width: 55px;
-        margin-top: 10px;
-        margin-bottom: 10px;
-        margin-left: 1020px;
-        height: 55px;
-        border-radius: 5px;
+
+    }
+
+    #previous-button, #next-button {
         background-color: #50b2e2;
-    }
-
-    .next {
-        position: center;
-    }
-
-    .previous {
-        position: center;
+        width: 51px;
+        height: 51px;
+        border-radius: 5px;
+        margin-right: 15px;
+        float: right;
     }
 
     .welcome-icon {
@@ -224,7 +236,21 @@
         margin-top: 20px;
     }
 
-    .call-assistance {
+    .fa-phone {
+        transform: scaleX(-1);
+        color: #ffffff;
+    }
 
+    .call-assistance {
+        display: table-cell;
+    }
+
+    .btn-default {
+        height: 50px;
+        width: 50px;
+        border-radius: 50%;
+        border: solid 1px #4aa5d2;
+        background-color: #50b2e2;
+        margin-top: 15px;
     }
 </style>
