@@ -84,9 +84,6 @@
     import questionTypeRadio from "./questionTypeRadio";
     import questionTypeDate from "./questionTypeDate";
     import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
-    var VueScrollTo = require('vue-scrollto');
-
-    Vue.use(VueScrollTo);
 
     export default {
         props: ['surveydata'],
