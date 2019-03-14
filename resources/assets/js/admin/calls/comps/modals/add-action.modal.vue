@@ -960,7 +960,12 @@
     .v-select .dropdown-toggle .clear {
         display: none;
     }
+
     .v-select .vs__selected-options {
         max-width: 86%;
+    }
+
+    .v-select .dropdown-menu > .highlight > a {
+        display: inline-block;
     }
 </style>
