@@ -63,6 +63,9 @@
                 <template slot="Patient ID" slot-scope="props">
                     <a :href="props.row.notesLink">{{ props.row['Patient ID'] }}</a>
                 </template>
+                <template slot="Patient" slot-scope="props">
+                    <a :href="props.row.notesLink">{{ props.row['Patient'] }}</a>
+                </template>
                 <template slot="Care Coach" slot-scope="props">
                     <div>
                         <select-editable v-model="props.row.NurseId" :display-text="props.row['Care Coach']"
@@ -186,7 +189,7 @@
             return {
                 pagination: null,
                 selected: false,
-                columns: ['selected', 'Type', 'Care Coach', 'Patient ID', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Successful Calls', 'Practice', 'Activity Start', 'Activity End', 'Preferred Call Days', 'Billing Provider', 'Scheduler'],
+                columns: ['selected', 'Type', 'Care Coach', (this.isAdmin ? 'Patient ID' : 'Patient'), 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Successful Calls', 'Practice', 'Activity Start', 'Activity End', 'Preferred Call Days', 'Billing Provider', 'Scheduler'],
                 tableData: [],
                 nurses: [],
                 loaders: {
@@ -234,8 +237,8 @@
                         'selected': 'blank',
                         'Type': 'padding-2'
                     },
-                    sortable: ['Care Coach', 'Patient ID', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Practice', 'Scheduler'],
-                    filterable: ['Type', 'Care Coach', 'Patient ID', 'Activity Day', 'Last Call', 'Practice', 'Billing Provider'],
+                    sortable: ['Care Coach', 'Patient ID', 'Patient', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Practice', 'Scheduler'],
+                    filterable: ['Type', 'Care Coach', 'Patient ID', 'Patient', 'Activity Day', 'Last Call', 'Practice', 'Billing Provider'],
                     filterByColumn: true,
                     texts: {
                         count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
@@ -247,6 +250,7 @@
                     customSorting: {
                         Type: (ascending) => (a, b) => 0,
                         'Care Coach': (ascending) => (a, b) => 0,
+                        'Patient': (ascending) => (a, b) => 0,
                         'Patient ID': (ascending) => (a, b) => 0,
                         'Activity Day': (ascending) => (a, b) => 0,
                         'Last Call': (ascending) => (a, b) => 0,

@@ -8,6 +8,7 @@ namespace App\Notifications;
 
 use App\Mail\NurseDailyReport as NurseDailyReportMailable;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
@@ -25,11 +26,19 @@ class NurseDailyReport extends Notification
     protected $data;
 
     /**
+     * The date for which the report is being generated
+     *
+     * @var Carbon
+     */
+    protected $date;
+
+    /**
      * Create a new notification instance.
      */
-    public function __construct(array $data)
+    public function __construct(array $data, Carbon $date)
     {
         $this->data = $data;
+        $this->date = $date;
     }
 
     /**
@@ -50,6 +59,7 @@ class NurseDailyReport extends Notification
         return
             [
                 'data' => $this->data,
+                'date' => $this->date->toDateString()
             ];
     }
 
@@ -62,7 +72,7 @@ class NurseDailyReport extends Notification
      */
     public function toMail(User $notifiable)
     {
-        return new NurseDailyReportMailable($notifiable, $this->data);
+        return new NurseDailyReportMailable($notifiable, $this->data, $this->date);
     }
 
     /**
