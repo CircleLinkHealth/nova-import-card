@@ -2,6 +2,6 @@
 
 return [
     'apiKey'    => env('RAYGUN_API_KEY', ''),
-    'async'     => true,
+    'async'     => false,
     'debugMode' => false,
 ];
