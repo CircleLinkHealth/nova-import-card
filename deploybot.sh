@@ -5,7 +5,7 @@ RELEASE=$2
 
 declare -a HOSTS=('github.com')
 
-# Add github to known hosts
+# Add known hosts
 for host in $HOSTS; do
   ssh-keygen -F $host 2>/dev/null 1>/dev/null
   if [ $? -eq 0 ]; then
