@@ -7,6 +7,7 @@
 namespace App\Mail;
 
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
@@ -28,6 +29,13 @@ class NurseDailyReport extends Mailable
      * @var User
      */
     protected $nurse;
+
+    /**
+     * The date for which the report is being generated
+     *
+     * @var Carbon
+     */
+    protected $date;
     
     /**
      * Create a new message instance.
@@ -35,11 +43,13 @@ class NurseDailyReport extends Mailable
      * @param User $nurse
      * @param array $data
      */
-    public function __construct(User $nurse, array $data)
+    public function __construct(User $nurse, array $data, Carbon $date)
     {
         $this->nurse = $nurse;
 
         $this->data = $data;
+
+        $this->date = $date;
     }
 
     /**
@@ -53,6 +63,6 @@ class NurseDailyReport extends Mailable
             ->with($this->data)
             ->to($this->nurse->email)
             ->from('notifications@careplanmanager.com', 'CircleLink Health')
-            ->subject('CircleLink Daily Time Report');
+            ->subject("CircleLink Daily Time Report ({$this->date->toDateString()})");
     }
 }
