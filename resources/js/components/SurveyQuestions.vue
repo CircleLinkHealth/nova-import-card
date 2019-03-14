@@ -28,16 +28,22 @@
                 </div>
             </div>
             <!--Questions-->
-            <div v-if="questionsStage"
+            <div class="questions-box"
+                 v-if="questionsStage"
                  v-for="question in questions">
-                {{question.id}}{{'.'}} {{question.body}}
+               <div class="question">
+                   {{question.id}}{{'.'}} {{question.body}}
+               </div>
+                <br>
                 <!--Questions Answer Type-->
-                <question-type-text v-if="question.type.answer_type === 'text'"></question-type-text>
-                <question-type-checkbox v-if="question.type.answer_type === 'checkbox'"></question-type-checkbox>
-                <question-type-range v-if="question.type.answer_type === 'range'"></question-type-range>
-                <question-type-number v-if="question.type.answer_type === 'number'"></question-type-number>
-                <question-type-radio :question="question" v-if="question.type.answer_type === 'radio'"></question-type-radio>
-                <question-type-date v-if="question.type.answer_type === 'date'"></question-type-date>
+               <div class="question-answer-type">
+                   <question-type-text v-if="question.type.answer_type === 'text'"></question-type-text>
+                   <question-type-checkbox v-if="question.type.answer_type === 'checkbox'"></question-type-checkbox>
+                   <question-type-range v-if="question.type.answer_type === 'range'"></question-type-range>
+                   <question-type-number v-if="question.type.answer_type === 'number'"></question-type-number>
+                   <question-type-radio :question="question" v-if="question.type.answer_type === 'radio'"></question-type-radio>
+                   <question-type-date v-if="question.type.answer_type === 'date'"></question-type-date>
+               </div>
             </div>
             <!--bottom-navbar-->
             <br>
@@ -69,11 +75,6 @@
 
     export default {
         props: ['surveydata'],
-
-        mounted() {
-            console.log('Component mounted.')
-
-        },
 
         components: {
             'question-type-text': questionTypeText,
@@ -114,6 +115,10 @@
 </script>
 
 <style scoped>
+    .questions-box {
+        padding-top: 5%;
+        padding-left: 15%;
+    }
     .practice-title {
         font-family: Poppins, sans-serif;
         font-size: 18px;
@@ -191,7 +196,8 @@
         border-top: 1px solid #808080;
         border-left: 1px solid #808080;
         border-right: 1px solid #808080;
-        min-height: 690px;
+        width: 100%;
+        min-height: 700px;
     }
 
     .next-previous-buttons {

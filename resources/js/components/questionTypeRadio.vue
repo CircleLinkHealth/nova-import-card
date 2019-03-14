@@ -1,42 +1,49 @@
 <template>
     <div>
-        <div class="boxed">
-
-            <input type="radio" id="radioType" name="radioTypeAnswer">
-
-            <label v-for="option in options" for="radioType">{{option.value}}</label>
-
+        <div class="custom-radio">
+            <div class="row">
+                <div v-for="answer in posiibleAnswers">
+                        <label>{{answer.value}}
+                            <input type="radio"
+                                   id="radioType"
+                                   name="radioTypeAnswer">
+                        </label>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
+
 </template>
 
 <script>
     export default {
-        props:['question'],
+        props: ['question'],
 
-        mounted() {
-            console.log('Component mounted.')
-        },
         data() {
             return {
-                options:this.question.type.question_type_answers
+                posiibleAnswers: this.question.type.question_type_answers,
             }
         },
     }
 </script>
 
 <style scoped>
-    .boxed label {
-        width: 450px;
+    .custom-radio label {
+        width: 350px;
         height: 50px;
         border-radius: 5px;
         border: solid 1px #4aa5d2;
         background-color: #ffffff;
+        margin-left: .5rem;
     }
-    .boxed input[type="radio"] {
+    .custom-radio label>text {
+        padding-left: 3px;
+    }
+    .custom-radio input[type="radio"] {
         display: none;
+
     }
-    .boxed input[type="radio"]:checked + label {
+    .custom-radio input[type="radio"]:checked + label {
         background-color: #4aa5d2;
     }
 </style>
