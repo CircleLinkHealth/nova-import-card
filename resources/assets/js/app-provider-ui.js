@@ -76,6 +76,7 @@ const UserAccountSettings = () => import(/* webpackChunkName: "chunk-user-accoun
 const AuthyPerform2FA = () => import(/* webpackChunkName: "chunk-authy-perform-2fa" */ './components/authy-perform-2fa');
 const CcdUploader = () => import(/* webpackChunkName: "chunk-ccd-uploader" */ './components/importer/ccd-upload');
 const CcdViewer = () => import(/* webpackChunkName: "chunk-ccd-viewer" */ './components/importer/ccd-viewer');
+const CallMgmtAppV2 = () => import(/* webpackChunkName: "chunk-admin" */ './admin/calls/app-v2')
 
 import EventBus from './admin/time-tracker/comps/event-bus'
 import {BindWindowFocusChange, BindWindowVisibilityChange} from './admin/time-tracker/events/window.event'
@@ -121,8 +122,9 @@ Vue.component('add-task-modal', AddTaskModalComponent);
 Vue.component('call-number', CallNumberComponent);
 Vue.component('user-account-settings', UserAccountSettings);
 Vue.component('authy-perform-2fa', AuthyPerform2FA);
-Vue.component('ccd-upload', CcdUploader)
-Vue.component('ccd-viewer', CcdViewer)
+Vue.component('ccd-upload', CcdUploader);
+Vue.component('ccd-viewer', CcdViewer);
+Vue.component('call-mgmt-app-v2', CallMgmtAppV2);
 
 const App = new Vue({
     el: '#app',

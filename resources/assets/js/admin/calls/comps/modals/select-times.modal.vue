@@ -8,9 +8,10 @@
                         No patients selected
                     </div>
                     <div class="row">
-                        <div class="col-sm-12">
+                        <div class="col-lg-12 col-sm-12">
+                            <h4>Change Activity Date to:</h4>
                             <div class="row">
-                                <div class="col-sm-12">
+                                <div class="col-lg-6 col-sm-6 col-xs-4">
                                     <datepicker class="form-control" :disabled="{ to: today }"
                                                 v-model="props.info.nextCall"></datepicker>
                                 </div>
@@ -23,23 +24,12 @@
                             </div>
                         </div>
                         <div class="col-sm-12">
+                            <hr>
                             <div class="row">
-                                <div class="col-sm-1">
-                                    &nbsp;
-                                </div>
-                                <div class="col-sm-4">
+                                <div class="col-lg-10 col-sm-4">
                                     <strong>
                                         Name
                                     </strong>
-                                </div>
-                                <div class="col-sm-3">
-                                    <strong>Next Call</strong>
-                                </div>
-                                <div class="col-sm-2">
-                                    <strong>Start</strong>
-                                </div>
-                                <div class="col-sm-2">
-                                    <strong>End</strong>
                                 </div>
                             </div>
                         </div>
@@ -51,20 +41,10 @@
                                            name="family_override" v-model="call.familyOverride"
                                            :disabled="call.disabled"/>
                                 </div>
-                                <div class="col-sm-4">
+                                <div class="col-lg-12 col-sm-6">
                                     <h5>
                                         {{call.patient['Patient']}} [id:{{call.patient['Patient ID']}}]
                                     </h5>
-                                </div>
-                                <div class="col-sm-3">
-                                    {{call.patient['Next Call']}}
-                                </div>
-                                <div class="col-sm-2">
-                                    {{call.patient['Call Time Start']}}
-                                </div>
-                                <div class="col-sm-2">
-                                    {{call.patient['Call Time End']}}
-                                    <loader v-if="call.patient.loaders.nextCall"></loader>
                                 </div>
                             </div>
                         </div>

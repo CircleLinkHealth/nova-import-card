@@ -32,19 +32,27 @@ class Role extends CerberusRole
 {
     const CCM_TIME_ROLES = [
         'care-center',
+        'care-center-external',
         'med_assistant',
         'provider',
     ];
-    
+
     /**
      * The database table used by the model.
      *
      * @var string
      */
     protected $table = 'lv_roles';
-    
+
     /**
-     * Get the IDs of Roles from names
+     * Cache roles for 24 Hours
+     *
+     * @var integer
+     */
+    private const CACHE_ROLES_MINUTES = 1440;
+
+    /**
+     * Get the IDs of Roles from names.
      *
      * @param array $roleNames
      *
@@ -52,12 +60,14 @@ class Role extends CerberusRole
      */
     public static function getIdsFromNames(array $roleNames = [])
     {
-        return \Cache::rememberForever(
+        return \Cache::remember(
             'all_cpm_roles',
+            Role::CACHE_ROLES_MINUTES,
             function () {
                 return Role::all();
             }
-        )->whereIn('name', $roleNames)
+        )
+                     ->whereIn('name', $roleNames)
                      ->pluck('id')
                      ->all();
     }

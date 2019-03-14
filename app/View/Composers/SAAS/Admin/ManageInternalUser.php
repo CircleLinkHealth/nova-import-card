@@ -36,7 +36,7 @@ class ManageInternalUser extends ServiceProvider
                 $internalUserId = $editedUser->id;
 
                 //Removing since we are not including this in the SAAS product yet
-//                $showNurseInfo      = $editedUser->hasRole('care-center');
+//                $showNurseInfo      = $editedUser->isCareCoach();
             }
             $showNurseInfo = false;
 

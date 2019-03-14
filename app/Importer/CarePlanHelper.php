@@ -360,8 +360,8 @@ class CarePlanHelper
 
                 $makePrimary = 0 == strcasecmp(
                     $primaryPhone,
-                        PhoneNumber::HOME
-                ) || $primaryPhone == $number || ! $primaryPhone;
+                    PhoneNumber::HOME
+                    ) || $primaryPhone == $number || ! $primaryPhone;
 
                 $homePhone = PhoneNumber::create([
                     'user_id'    => $this->user->id,
@@ -388,8 +388,8 @@ class CarePlanHelper
 
                 $makePrimary = 0 == strcasecmp($primaryPhone, PhoneNumber::MOBILE) || 0 == strcasecmp(
                     $primaryPhone,
-                        'cell'
-                ) || $primaryPhone == $number || ! $primaryPhone;
+                    'cell'
+                    ) || $primaryPhone == $number || ! $primaryPhone;
 
                 $mobilePhone = PhoneNumber::create([
                     'user_id'    => $this->user->id,
@@ -476,7 +476,7 @@ class CarePlanHelper
             ?: $this->imr->practice_id;
 
         if ($practiceId) {
-            $this->user->attachPractice($practiceId, false, false, 2);
+            $this->user->attachPractice($practiceId, [2]);
         }
 
         return $this;

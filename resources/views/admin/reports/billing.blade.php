@@ -65,7 +65,7 @@
     </div>
 
 
-    <div class="container-fluid" style="padding-top: 50rem;">
+    <div class="container-fluid" style="padding-top: 50px;">
         <div class="row">
             <div class="col-md-12">
                 @include('errors.errors')
@@ -76,13 +76,13 @@
                 <div class="row">
                     <div class="col-md-12">
                         <?php
-                            function getPractice($practice)
-                            {
-                                return [
-                                    'id'           => $practice->id,
-                                    'display_name' => $practice->display_name,
-                                ];
-                            }
+                        function getPractice($practice)
+                        {
+                            return [
+                                'id'           => $practice->id,
+                                'display_name' => $practice->display_name,
+                            ];
+                        }
                         ?>
                         @push('styles')
                             <script>
@@ -101,6 +101,8 @@
                                 const chargeableServices = JSON.parse("{{json_encode($chargeableServices)}}".replace(/\r\n/g, '').replace(/\&quot;/g, '"'));
 
                                 const dates = JSON.parse("{{json_encode($dates)}}".replace(/\r\n/g, '').replace(/\&quot;/g, '"'));
+
+                                const isSoftwareOnly = @json(auth()->user()->isSoftwareOnly());
                             </script>
                         @endpush
                         <billing-report ref="billingReport"></billing-report>
@@ -108,7 +110,6 @@
                 </div>
             </div>
         </div>
-
 
 
     </div>

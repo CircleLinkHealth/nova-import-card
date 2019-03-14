@@ -29,6 +29,8 @@ use App\Repositories\PracticeRepositoryEloquent;
 use App\Repositories\PrettusUserRepositoryEloquent;
 use App\Services\SnappyPdfWrapper;
 use DB;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Notifications\Channels\DatabaseChannel;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\HasDatabaseNotifications;
@@ -66,6 +68,16 @@ class AppServiceProvider extends ServiceProvider
                 }
             }
         );
+    
+        QueryBuilder::macro('toRawSql', function(){
+            return array_reduce($this->getBindings(), function($sql, $binding){
+                return preg_replace('/\?/', is_numeric($binding) ? $binding : "'".$binding."'" , $sql, 1);
+            }, $this->toSql());
+        });
+    
+        EloquentBuilder::macro('toRawSql', function(){
+            return ($this->getQuery()->toRawSql());
+        });
     }
 
     /**
@@ -77,8 +89,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->register(CPMArtisanServiceProvider::class);
-
         //Bind database notification classes to local
         $this->app->bind(DatabaseChannel::class, \App\Notifications\Channels\DatabaseChannel::class);
         $this->app->bind(DatabaseNotification::class, \App\DatabaseNotification::class);
