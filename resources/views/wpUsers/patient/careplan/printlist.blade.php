@@ -186,7 +186,7 @@
                 },
                 {
                     id: "reg_date",
-                    header: ["Registered On", {content: "dateFilter", placeholder: "Filter"}],
+                    header: ["Registered On", {content: "textFilter", placeholder: "Filter"}],
                     width: 120,
                     sort: 'string',
                     template: function (obj) {
