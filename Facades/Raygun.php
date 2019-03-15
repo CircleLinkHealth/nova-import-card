@@ -1,4 +1,4 @@
-<?php namespace CircleLinkHealth\LaravelRaygun\Facades;
+<?php namespace CircleLinkHealth\Raygun\Facades;
  
 use Illuminate\Support\Facades\Facade;
  
