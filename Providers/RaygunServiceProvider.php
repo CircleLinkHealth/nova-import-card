@@ -2,21 +2,20 @@
 
 namespace CircleLinkHealth\Raygun\Providers;
 
-use CircleLinkHealth\Raygun\LaravelLogger;
 use CircleLinkHealth\Raygun\Facades\Raygun;
+use CircleLinkHealth\Raygun\LaravelLogger;
 use CircleLinkHealth\Raygun\MultiLogger;
 use CircleLinkHealth\Raygun\PsrLogger\MultiLogger as BaseMultiLogger;
 use CircleLinkHealth\Raygun\PsrLogger\RaygunLogger;
+use Illuminate\Contracts\Container\Container;
+use Illuminate\Contracts\Logging\Log;
+use Illuminate\Log\LogManager;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Database\Eloquent\Factory;
-use Illuminate\Contracts\Container\Container;
-use Illuminate\Log\LogManager;
 use Monolog\Handler\PsrHandler;
 use Monolog\Logger;
-use Raygun4php\RaygunClient;
-use Illuminate\Contracts\Logging\Log;
 use Psr\Log\LoggerInterface;
+use Raygun4php\RaygunClient;
 
 
 class RaygunServiceProvider extends ServiceProvider
@@ -35,11 +34,8 @@ class RaygunServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->registerTranslations();
         $this->registerConfig();
         $this->registerViews();
-        $this->registerFactories();
-        $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
     }
     
     /**
@@ -50,8 +46,6 @@ class RaygunServiceProvider extends ServiceProvider
     public function register()
     {
         $this->registerConfig();
-        
-        $this->app->register(RouteServiceProvider::class);
         
         if (true === Config::get('cpm-module-raygun.enable_crash_reporting')) {
             $this->app->singleton(
@@ -160,34 +154,6 @@ class RaygunServiceProvider extends ServiceProvider
             ),
             'cpm-module-raygun'
         );
-    }
-    
-    /**
-     * Register translations.
-     *
-     * @return void
-     */
-    public function registerTranslations()
-    {
-        $langPath = resource_path('lang/modules/raygun');
-        
-        if (is_dir($langPath)) {
-            $this->loadTranslationsFrom($langPath, 'raygun');
-        } else {
-            $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'raygun');
-        }
-    }
-    
-    /**
-     * Register an additional directory of factories.
-     *
-     * @return void
-     */
-    public function registerFactories()
-    {
-        if ( ! app()->environment('production')) {
-            app(Factory::class)->load(__DIR__.'/../Database/factories');
-        }
     }
     
     /**

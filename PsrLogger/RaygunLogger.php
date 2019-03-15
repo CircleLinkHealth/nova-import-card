@@ -70,6 +70,7 @@ class RaygunLogger extends AbstractLogger
         $exception = null;
         if (isset($context['exception']) && ($context['exception'] instanceof Exception || $context['exception'] instanceof Throwable)) {
             $exception = $context['exception'];
+            unset($context['exception']);
         } elseif ($message instanceof Exception || $message instanceof Throwable) {
             $exception = $message;
         }
@@ -81,11 +82,10 @@ class RaygunLogger extends AbstractLogger
     
         if (config('cpm-module-raygun.enable_crash_reporting')) {
             if ($exception !== null) {
-                $this->client->SendException($exception, [get_class($exception)], $context);
+                $this->client->SendException($exception, [get_class($exception), $exception->getMessage()], array_merge($context, ['on' => $exception->getFile().':'.$exception->getLine()]));
             } else {
-                $this->client->SendError(500, $title. $this->formatMessage($message), $context['file'] ?? __FILE__, $context['line'] ?? __LINE__, [$level], ['user_data_test' => '123dsa32']);
+                $this->client->SendError(500, $title. $this->formatMessage($message), $context['file'] ?? __FILE__, $context['line'] ?? __LINE__, [$level]);
             }
-            
         }
     }
     
