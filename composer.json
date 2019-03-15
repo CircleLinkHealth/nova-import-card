@@ -37,6 +37,10 @@
       "url": "git@github.com:CircleLinkHealth/module-bugsnag.git"
     },
     {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/module-raygun.git"
+    },
+    {
       "type": "composer",
       "url": "https://packagist.org"
     },
@@ -57,7 +61,7 @@
     "barryvdh/laravel-snappy": "0.4.1",
     "blackfire/php-sdk": "^1.17",
     "circlelinkhealth/bugsnag": "dev-main-master",
-    "davibennun/laravel-raygun": "dev-laravel5",
+    "circlelinkhealth/raygun": "dev-master",
     "doctrine/dbal": "~2.3",
     "fideloper/proxy": "~3.3",
     "genealabs/laravel-caffeine": "^0.5.0",
@@ -100,6 +104,7 @@
     "tymon/jwt-auth": "0.5.*",
     "venturecraft/revisionable": "dev-master",
     "waavi/url-shortener": "dev-master",
+    "wikimedia/composer-merge-plugin": "^1.4",
     "yajra/laravel-datatables-oracle": "~8.0"
   },
   "require-dev": {
@@ -193,6 +198,21 @@
       "dont-discover": [
         "laravel/dusk"
       ]
+    },
+    "merge-plugin": {
+      "include": [
+        "Modules/*/composer.json"
+      ],
+      "require": [
+
+      ],
+      "recurse": true,
+      "replace": false,
+      "ignore-duplicates": false,
+      "merge-dev": true,
+      "merge-extra": false,
+      "merge-extra-deep": false,
+      "merge-scripts": false
     }
   }
 }
