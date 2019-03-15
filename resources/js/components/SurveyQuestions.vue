@@ -30,20 +30,21 @@
             <!--Questions-->
             <div class="questions-box"
                  v-if="questionsStage"
-                 v-for="question in orderedQuestions">
-                <div class="question">
+                 v-for="(question, index) in orderedQuestions">
+                <div v-show="index === questionIndex" class="question">
                     {{question.id}}{{'.'}} {{question.body}}
-                </div>
-                <br>
-                <!--Questions Answer Type-->
-                <div class="question-answer-type">
-                    <question-type-text v-if="question.type.answer_type === 'text'"></question-type-text>
-                    <question-type-checkbox v-if="question.type.answer_type === 'checkbox'"></question-type-checkbox>
-                    <question-type-range v-if="question.type.answer_type === 'range'"></question-type-range>
-                    <question-type-number v-if="question.type.answer_type === 'number'"></question-type-number>
-                    <question-type-radio :question="question"
-                                         v-if="question.type.answer_type === 'radio'"></question-type-radio>
-                    <question-type-date v-if="question.type.answer_type === 'date'"></question-type-date>
+                    <br>
+                    <!--Questions Answer Type-->
+                    <div class="question-answer-type">
+                        <question-type-text v-if="question.type.answer_type === 'text'"></question-type-text>
+                        <question-type-checkbox
+                                v-if="question.type.answer_type === 'checkbox'"></question-type-checkbox>
+                        <question-type-range v-if="question.type.answer_type === 'range'"></question-type-range>
+                        <question-type-number v-if="question.type.answer_type === 'number'"></question-type-number>
+                        <question-type-radio :question="question"
+                                             v-if="question.type.answer_type === 'radio'"></question-type-radio>
+                        <question-type-date v-if="question.type.answer_type === 'date'"></question-type-date>
+                    </div>
                 </div>
             </div>
             <!--bottom-navbar-->
@@ -61,7 +62,7 @@
                             @click="nextQuestions">
                         <i class="fas fa-angle-down"></i>
                     </button>
-                    <button type="button"
+                    <button v-if="questionIndex > 0" type="button"
                             id="previous-button"
                             class="btn btn-sm next"
                             @click="previousQuestions">
@@ -101,12 +102,14 @@
             return {
                 questionsStage: false,
                 welcomeStage: true,
-                questions: this.surveydata.survey_instances[0].questions
+                questions: this.surveydata.survey_instances[0].questions,
+                questionIndex: 0,
             }
         },
 
         computed: {
-            orderedQuestions: function () {
+            orderedQuestions() {
+                /*todo:this has to change to question->pivot->order */
                 return _.orderBy(this.questions, 'id')
             }
         },
@@ -117,11 +120,11 @@
                 this.welcomeStage = false;
             },
             nextQuestions() {
-
+                this.questionIndex++;
             },
 
             previousQuestions() {
-
+                this.questionIndex--;
             },
         },
     }
