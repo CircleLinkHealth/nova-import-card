@@ -158,7 +158,7 @@ class RaygunServiceProvider extends ServiceProvider
                 ),
                 [$sourcePath]
             ),
-            'raygun'
+            'cpm-module-raygun'
         );
     }
     

@@ -68,15 +68,28 @@ return [
     'debugMode' => env('ENABLE_RAYGUN_CRASH_REPORTING_DEBUG_MODE', false),
 
     /*
-   |--------------------------------------------------------------------------
-   | Enable Real User Monitoring
-   |--------------------------------------------------------------------------
-   |
-   | Use Real User Monitoring feature in this application.
-   |
-   | This will send monitoring data to Raygun, and it will appear under Real User Monitoring.
-   | Defaults to false.
-   |
-   */
+    |--------------------------------------------------------------------------
+    | Enable Real User Monitoring
+    |--------------------------------------------------------------------------
+    |
+    | Use Real User Monitoring feature in this application.
+    |
+    | This will send monitoring data to Raygun, and it will appear under Real User Monitoring.
+    | Defaults to false.
+    |
+    */
     'enable_real_user_monitoring' => env('ENABLE_RAYGUN_REAL_USER_MONITORING', false),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Enable Real User Monitoring Pulse
+    |--------------------------------------------------------------------------
+    |
+    | Enable pulse in Real User Monitoring feature in this application.
+    |
+    |
+    | Defaults to false.
+    |
+    */
+    'enable_real_user_monitoring_pulse' => env('ENABLE_RAYGUN_REAL_USER_MONITORING_PULSE', false),
 ];
