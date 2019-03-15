@@ -23,6 +23,8 @@
         }
     },
     "require": {
-        "mindscape/raygun4php": "1.*"
+        "illuminate/contracts": "^5.0",
+        "mindscape/raygun4php": "1.*",
+        "psr/log": "^1.0"
     }
 }
