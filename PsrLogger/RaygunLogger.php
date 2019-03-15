@@ -82,11 +82,22 @@ class RaygunLogger extends AbstractLogger
     
         if (config('cpm-module-raygun.enable_crash_reporting')) {
             if ($exception !== null) {
-                $this->client->SendException($exception, [get_class($exception), $exception->getMessage()], array_merge($context, ['on' => $exception->getFile().':'.$exception->getLine()]));
+                $this->client->SendException($exception, $this->getTagsFor($exception), array_merge($context, ['on' => $exception->getFile().':'.$exception->getLine()]));
             } else {
                 $this->client->SendError(500, $title. $this->formatMessage($message), $context['file'] ?? __FILE__, $context['line'] ?? __LINE__, [$level]);
             }
         }
+    }
+    
+    /**
+     * Gets the tags to store with the exception.
+     *
+     * @param Exception|Throwable $exception
+     *
+     * @return array
+     */
+    protected function getTagsFor($exception) {
+        return [get_class($exception), $exception->getMessage(), 'env:'.\App::environment()];
     }
     
     /**
