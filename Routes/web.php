@@ -11,6 +11,3 @@
 |
 */
 
-Route::prefix('raygun')->group(function() {
-    Route::get('/', 'RaygunController@index');
-});
