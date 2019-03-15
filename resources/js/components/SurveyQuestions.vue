@@ -44,15 +44,26 @@
                         <question-type-radio :question="question"
                                              v-if="question.type.answer_type === 'radio'"></question-type-radio>
                         <question-type-date v-if="question.type.answer_type === 'date'"></question-type-date>
+
                     </div>
                 </div>
             </div>
             <!--bottom-navbar-->
             <br>
+            <call-assistance v-if="callAssistance" @closeModal="hideCallHelp"></call-assistance>
             <div class="bottom-navbar">
-                <div class="call-assistance col-lg-1">
-                    <button type="button" class="btn btn-default">
+                <div v-if="showPhoneButton" class="call-assistance col-lg-1">
+                    <button type="button"
+                            class="btn btn-default"
+                            @click="showCallHelp">
                         <i class="fa fa-phone" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <div v-if="showPhoneButton === false" class="call-assistance col-lg-1">
+                    <button type="button"
+                            class="btn btn-default"
+                            @click="hideCallHelp">
+                        <i class="fas fa-times"></i>
                     </button>
                 </div>
                 <div v-if="questionsStage">
@@ -84,6 +95,7 @@
     import questionTypeNumber from "./questionTypeNumber";
     import questionTypeRadio from "./questionTypeRadio";
     import questionTypeDate from "./questionTypeDate";
+    import callAssistance from "./callAssistance";
     import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 
     export default {
@@ -96,12 +108,15 @@
             'question-type-number': questionTypeNumber,
             'question-type-radio': questionTypeRadio,
             'question-type-date': questionTypeDate,
+            'call-assistance': callAssistance,
         },
 
         data() {
             return {
+                showPhoneButton: true,
                 questionsStage: false,
                 welcomeStage: true,
+                callAssistance: false,
                 questions: this.surveydata.survey_instances[0].questions,
                 questionIndex: 0,
             }
@@ -115,10 +130,21 @@
         },
 
         methods: {
+            showCallHelp() {
+                this.callAssistance = true;
+                this.showPhoneButton = false;
+            },
+
+            hideCallHelp() {
+                this.callAssistance = false;
+                this.showPhoneButton = true;
+            },
+
             showQuestions() {
                 this.questionsStage = true;
                 this.welcomeStage = false;
             },
+
             nextQuestions() {
                 this.questionIndex++;
             },
@@ -217,10 +243,6 @@
         min-height: 700px;
     }
 
-    .next-previous-buttons {
-
-    }
-
     #previous-button, #next-button {
         background-color: #50b2e2;
         width: 51px;
@@ -238,6 +260,12 @@
 
     .fa-phone {
         transform: scaleX(-1);
+        color: #ffffff;
+    }
+
+    .fa-times {
+        width: 20px;
+        height: 20px;
         color: #ffffff;
     }
 
