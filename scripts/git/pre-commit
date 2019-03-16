@@ -34,7 +34,7 @@ source $DIR/helpers/locate.sh
 
 # Build our list of files, and our list of args by testing if the argument is
 # a valid path
-declare -a CHANGED_FILES=$(git status | grep '^\s*modified:' | cut -f 2- -d :)
+declare -a CHANGED_FILES=$(git diff --name-only --cached)
 args="--verbose --show-progress=dots --diff --path-mode=override"
 
 # Run the command on each file
