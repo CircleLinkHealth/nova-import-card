@@ -52,7 +52,7 @@ class RaygunServiceProvider extends ServiceProvider
                 'raygun',
                 function ($app) {
                     $client = new RaygunClient(
-                        Config::get('cpm-module-raygun.apiKey'),
+                        Config::get('cpm-module-raygun.api_key'),
                         $this->shouldEnableAsync(),
                         Config::get('cpm-module-raygun.debugMode')
                     );
@@ -66,6 +66,10 @@ class RaygunServiceProvider extends ServiceProvider
                             $fullName = $authUSer->display_name,
                             $email = $authUSer->email
                         );
+                    }
+                    
+                    if ($appVersion = Config::get('cpm-module-raygun.app_version')) {
+                        $client->SetVersion($appVersion);
                     }
                     
                     return $client;
