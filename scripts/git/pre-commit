@@ -34,14 +34,14 @@ source $DIR/helpers/locate.sh
 
 # Get modified files, staged for commit
 declare -a CHANGED_FILES=$(git diff --name-only --cached)
-args="--verbose --show-progress=dots --diff --path-mode=override"
-
-# Run the command on each file
-php_errors_found=false
-error_message=""
 
 printf '%s\n' "${CHANGED_FILES}"
 
+args="--verbose --show-progress=dots --diff --path-mode=override"
+php_errors_found=false
+error_message=""
+
+# Run the command on each file
 for path in "${CHANGED_FILES[@]}"
 do
     echo "checking ${path}"
