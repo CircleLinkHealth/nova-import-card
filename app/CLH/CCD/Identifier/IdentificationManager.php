@@ -16,15 +16,12 @@ class IdentificationManager extends BaseIdentificationStrategy
         'doctor_oid'     => null,
         'ehr_oid'        => null,
     ];
-    
-    public
-    
-    function
-    identify
-    ()
+
+    public function identify()
     {
-        $identifierMap = \config('ccdimportervendoridentifiermap');
-        
+        $identifierMap
+            = \config('ccdimportervendoridentifiermap');
+
         /*
          * Extracts Identifier Values from the CCD.
          * This function calls all the Identifiers from config/ccdimportervendoridentifiermap
@@ -37,15 +34,15 @@ class IdentificationManager extends BaseIdentificationStrategy
                 $this->matchedIdentifiers[$field] = (new $identifier['class']($this->ccd))->identify();
             }
         }
-        
+
         //this will get rid of empty entries
         $filteredIdentifiers = array_filter($this->matchedIdentifiers);
-        
+
         if ( ! $filteredIdentifiers) {
             // all identifier values are false
             return false;
         }
-        
+
         return $filteredIdentifiers;
     }
 }
