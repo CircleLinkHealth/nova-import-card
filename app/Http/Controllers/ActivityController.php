@@ -234,6 +234,14 @@ class ActivityController extends Controller
         return view('wpUsers.patient.activity.view', $view_data);
     }
 
+    /**
+     * @param Request $request
+     * @param bool    $params
+     *
+     * @throws \Exception
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(
         Request $request,
         $params = false
