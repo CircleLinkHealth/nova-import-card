@@ -1,7 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
-# Refresh version
-php artisan version:refresh
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# Write version to file
-php artisan version:absorb
