@@ -19,17 +19,20 @@ class IdentificationManager extends BaseIdentificationStrategy
 
     public function identify()
     {
-        $identifierMap=\config('ccdimportervendoridentifiermap');
+        $identifierMap = \config('ccdimportervendoridentifiermap');
 
         /*
          * Extracts Identifier Values from the CCD.
          * This function calls all the Identifiers from config/ccdimportervendoridentifiermap
          */
-        foreach ($identifierMap as $field => $identifiers){ foreach ($identifiers as $identifier){
-                if ( ! empty($this->matchedIdentifiers[$field])){
+        foreach ($identifierMap as $field => $identifiers) {
+            foreach ($identifiers as $identifier) {
+                if ( ! empty($this->matchedIdentifiers[$field])) {
                     continue 2;
                 }
-                $this->matchedIdentifiers[$field] = (new $identifier['class']($this->ccd))->identify()  ;}}
+                $this->matchedIdentifiers[$field] = (new $identifier['class']($this->ccd))->identify();
+            }
+        }
 
         //this will get rid of empty entries
         $filteredIdentifiers = array_filter($this->matchedIdentifiers);

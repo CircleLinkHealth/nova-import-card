@@ -34,7 +34,7 @@ source $DIR/helpers/locate.sh
 
 # Build our list of files, and our list of args by testing if the argument is
 # a valid path
-CHANGED_FILES=$(git diff --name-only --diff-filter=ACM)
+declare -a CHANGED_FILES=$(git status | grep '^\s*modified:' | cut -f 2- -d :)
 args="--verbose --show-progress=dots --diff --path-mode=override"
 
 # Run the command on each file
@@ -47,17 +47,23 @@ for path in "${CHANGED_FILES[@]}"
 do
     echo "checking ${path}"
 
+    add_file_again=0
+
     if [[ ${path} == *"resources/views/"* ]]; then
         echo "php view file"
 
         echo "$exec_command fix $path --config=.php_cs_views.php $args"
 
         ${exec_command} fix ${path} --config=.php_cs_views.php ${args}
+
+        add_file_again=1
     elif [[ ${path} == *".php"* ]]; then
         echo "php file"
         echo "$exec_command fix $path --config=.php_cs.dist $args"
 
         ${exec_command} fix ${path} --config=.php_cs.dist ${args}
+
+        add_file_again=1
     else
         echo "non-php file"
     fi
@@ -66,7 +72,7 @@ do
         echo "errors"
         error_message+="  - ${txtred}${path}${txtrst}\n"
         php_errors_found=true
-    else
+     elif [[ $add_file_again == 1 ]]; then
         echo "git add ${path}"
         git add ${path}
         echo "😍"
