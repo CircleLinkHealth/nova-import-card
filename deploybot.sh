@@ -38,7 +38,7 @@ php artisan lada-cache:enable
 echo "" >> .env
 
 # Append version to .env
-php artisan version:show --format=compact_no_build --suppress-app-name | cat <(echo -n "BUGSNAG_APP_VERSION=") - >> .env
+php artisan version:show --format=compact --suppress-app-name | cat <(echo -n "BUGSNAG_APP_VERSION=") - >> .env
 
 # Perform post depoyment tasks
 php artisan deploy:post
