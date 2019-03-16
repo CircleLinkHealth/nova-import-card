@@ -13,7 +13,7 @@
     </script>
 
     <script type="text/javascript">
-        rg4js('apiKey', '{{\Config::get('cpm-module-raygun.apiKey')}}');
+        rg4js('apiKey', '{{\Config::get('cpm-module-raygun.api_key')}}');
         rg4js('enableCrashReporting', {{\Config::get('cpm-module-raygun.enable_crash_reporting') ? 'true' : 'false'}});
         rg4js('enablePulse', {{\Config::get('cpm-module-raygun.enable_real_user_monitoring_pulse') ? 'true' : 'false'}});
 
