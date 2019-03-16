@@ -1,11 +1,12 @@
 <template>
     <!-- Modal -->
-    <div class="modal-dialog">
+    <div class="call-assistance-modal">
         <div class="content">
             <div class="header">
                 <button type="button"
                         id="close-call-assistance"
-                        class="btn btn-sm">
+                        class="btn btn-sm"
+                        @click="$emit('closeCallAssistanceModal')">
                     <i class="fas fa-angle-left"></i>
                 </button>
                 <span class="title">Call</span>
@@ -23,7 +24,9 @@
     export default {
         name: "callAssistance",
         data() {
-            return {}
+            return {
+
+            }
         },
 
         methods: {},
@@ -32,30 +35,30 @@
 </script>
 
 <style scoped>
-    .modal-dialog {
-        width: 300px;
-        height: 300px;
+    .call-assistance-modal {
+        width: 250px;
+        height: 250px;
         box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
         border: solid 1px #f2f2f2;
         background-color: #ffffff;
         margin-left: 2%;
+        margin-bottom: 1%;
     }
 
     .header {
-        width: 300px;
+        width: 248px;
         height: 50px;
+        box-shadow: 0 0 5px 0 #50b2e2;
+        border: solid 1px #50b2e2;
         background-color: #50b2e2;
     }
 
+    .btn-sm {
+        padding-top: 12px;
+    }
+
     .title {
-        width: 40px;
-        height: 29px;
         font-family: Poppins;
-        font-size: 18px;
-        font-weight: 500;
-        font-style: normal;
-        font-stretch: normal;
-        line-height: normal;
         letter-spacing: 1px;
         color: #ffffff;
     }

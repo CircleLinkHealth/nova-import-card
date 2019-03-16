@@ -50,7 +50,7 @@
             </div>
             <!--bottom-navbar-->
             <br>
-            <call-assistance v-if="callAssistance" @closeModal="hideCallHelp"></call-assistance>
+            <call-assistance v-if="callAssistance" @closeCallAssistanceModal="hideCallHelp"></call-assistance>
             <div class="bottom-navbar">
                 <div v-if="showPhoneButton" class="call-assistance col-lg-1">
                     <button type="button"
@@ -59,7 +59,7 @@
                         <i class="fa fa-phone" aria-hidden="true"></i>
                     </button>
                 </div>
-                <div v-if="showPhoneButton === false" class="call-assistance col-lg-1">
+                <div v-if="!showPhoneButton" class="call-assistance col-lg-1">
                     <button type="button"
                             class="btn btn-default"
                             @click="hideCallHelp">
@@ -205,6 +205,7 @@
         margin-left: 469px;
         width: 160px;
         height: 50px;
+        padding-top: 12px;
     }
 
     .bottom-navbar {
