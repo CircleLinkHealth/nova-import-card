@@ -12,7 +12,7 @@ return [
    | which should receive your application's uncaught exceptions.
    |
    */
-    'apiKey'    => env('RAYGUN_API_KEY', 'yourapikey'),
+    'api_key'    => env('RAYGUN_API_KEY', 'yourapikey'),
 
     /*
     |--------------------------------------------------------------------------
@@ -92,4 +92,17 @@ return [
     |
     */
     'enable_real_user_monitoring_pulse' => env('ENABLE_RAYGUN_REAL_USER_MONITORING_PULSE', false),
+
+    /*
+|--------------------------------------------------------------------------
+| App Version Variable in .env
+|--------------------------------------------------------------------------
+|
+| Where to get the APP_VERSION from
+|
+|
+| Defaults to ''.
+|
+*/
+    'app_version' => env('APP_VERSION', ''),
 ];
