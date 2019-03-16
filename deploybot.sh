@@ -41,7 +41,6 @@ echo "" >> .env
 php artisan version:show --format=compact --suppress-app-name | cat <(echo -n "BUGSNAG_APP_VERSION=") - >> .env
 php artisan version:show --format=compact --suppress-app-name | cat <(echo -n "APP_VERSION=") - >> .env
 
-
 # Perform post depoyment tasks
 php artisan deploy:post
 
