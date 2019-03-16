@@ -32,7 +32,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # Enable lada-cache after migrations
-# php artisan lada-cache:enable
+php artisan lada-cache:enable
 
 # Add new line at the end of .env file
 echo "" >> .env
