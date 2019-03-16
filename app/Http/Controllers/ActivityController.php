@@ -246,13 +246,12 @@ class ActivityController extends Controller
             } else {
                 return response('Unauthorized', 401);
             }
-        }//debug($request->all());
+        }
 
         // convert minutes to seconds.
-        if ($input['duration']) {
-            $input['duration'] = $input['duration'] * 60;
+        if ($input['duration']){$input['duration'] = $input['duration'] * 60;
 
-            $client = new Client();
+            $client = new Client()  ;
 
             $nurseId   = $input['provider_id'];
             $patientId = $input['patient_id'];
