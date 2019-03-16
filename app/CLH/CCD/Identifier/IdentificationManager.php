@@ -17,7 +17,11 @@ class IdentificationManager extends BaseIdentificationStrategy
         'ehr_oid'        => null,
     ];
     
-    public function identify()
+    public
+    
+    function
+    identify
+    ()
     {
         $identifierMap = \config('ccdimportervendoridentifiermap');
         
