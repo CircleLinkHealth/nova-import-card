@@ -47,11 +47,11 @@ do
     if [[ ${path} == *"resources/views/"* ]]; then
         echo "${txtylw} $exec_command fix ${path} --config=.php_cs_views.php ${args} ${txtrst}"
 
-        ${exec_command} fix ${path} --config=.php_cs_views.php ${args} 1> /dev/null
+        ${exec_command} fix ${path} --config=.php_cs_views.php ${args}
     elif [[ ${path} == *".php"* ]]; then
         echo "${txtylw} $exec_command fix ${path} --config=.php_cs.dist  ${args} ${txtrst}"
 
-        ${exec_command} fix ${path} --config=.php_cs.dist  ${args} 1> /dev/null
+        ${exec_command} fix ${path} --config=.php_cs.dist  ${args}
     fi
 
     if [ $? -ne 0 ]; then
