@@ -19,7 +19,7 @@ class IdentificationManager extends BaseIdentificationStrategy
 
     public function identify()
     {
-        $identifierMap         = \config('ccdimportervendoridentifiermap');
+        $identifierMap=\config('ccdimportervendoridentifiermap');
 
         /*
          * Extracts Identifier Values from the CCD.
