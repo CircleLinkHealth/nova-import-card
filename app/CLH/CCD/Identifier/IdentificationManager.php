@@ -21,7 +21,7 @@ class IdentificationManager extends BaseIdentificationStrategy
     {
         $identifierMap
             
-            
+        
         
             = \config('ccdimportervendoridentifiermap');
 
