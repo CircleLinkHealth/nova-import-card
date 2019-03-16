@@ -1,21 +1,21 @@
-version_source: git-local
+version_source: git-remote
 blade_directive: version
 current:
     major: 4
     minor: 4
     patch: 5
     format: '{$major}.{$minor}.{$patch}'
-    git_absorb: git-local
+    git_absorb: git-remote
 cache:
     enabled: true
     key: pragmarx-version
     time: 525600
 build:
     mode: number
-    number: 28fc51
+    number: 5b91c7
     length: 6
     increment_by: 1
-    git_absorb: git-local
+    git_absorb: git-remote
 git:
     git-local: 'git rev-parse --verify HEAD'
     git-remote: 'git ls-remote {$repository}'
