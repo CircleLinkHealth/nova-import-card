@@ -34,6 +34,9 @@ fi
 # Enable lada-cache after migrations
 # php artisan lada-cache:enable
 
+# Absorb version from git
+php artisan version:refresh
+
 # Add new line at the end of .env file
 echo "" >> .env
 
