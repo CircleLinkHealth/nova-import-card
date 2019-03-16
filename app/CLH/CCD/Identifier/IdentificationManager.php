@@ -26,7 +26,7 @@ class IdentificationManager extends BaseIdentificationStrategy
          * This function calls all the Identifiers from config/ccdimportervendoridentifiermap
          */
         foreach ($identifierMap as $field => $identifiers){
-            foreach ($identifiers as $identifier) {
+            foreach ($identifiers as $identifier){
                 if ( ! empty($this->matchedIdentifiers[$field])){
                     continue 2;
                 }
