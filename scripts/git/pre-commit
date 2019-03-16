@@ -71,5 +71,8 @@ if [ "$php_errors_found" = true ]; then
     exit 1
 fi
 
+php artisan version:refresh
+php artisan version:absorb
+
 echo "${txtgrn} All good! 😍 You may proceed to committing/pushing your code.${txtrst} \n"
 exit 0
