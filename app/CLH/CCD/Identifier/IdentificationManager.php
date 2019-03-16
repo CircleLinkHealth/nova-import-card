@@ -20,6 +20,10 @@ class IdentificationManager extends BaseIdentificationStrategy
     public function identify()
     {
         $identifierMap
+            
+            
+            
+            
             = \config('ccdimportervendoridentifiermap');
 
         /*
