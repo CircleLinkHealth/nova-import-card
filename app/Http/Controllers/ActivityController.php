@@ -59,15 +59,15 @@ class ActivityController extends Controller
             ->orderBy('first_name')
             ->get()
             ->mapWithKeys(function ($user) use ($patient) {
-                                 return [
-                                     $user->id => $user->getFullName().($user->hasRoleForSite(
-                                         'care-center-external',
-                                         $patient->primaryProgramId()
-                                     )
-                                             ? ' (in-house)'
-                                             : ''),
-                                 ];
-                             })
+                return [
+                    $user->id => $user->getFullName().($user->hasRoleForSite(
+                        'care-center-external',
+                        $patient->primaryProgramId()
+                    )
+                            ? ' (in-house)'
+                            : ''),
+                ];
+            })
             ->all();
 
         $view_data = [
@@ -83,8 +83,10 @@ class ActivityController extends Controller
     }
 
     public function destroy($id)
-    {
-    }
+    
+    
+    
+    {}
 
     public function getCurrentForPatient($patientId)
     {
@@ -103,7 +105,6 @@ class ActivityController extends Controller
 
     public function index(Request $request)
     {
-        // display view
         $activities = Activity::orderBy('id', 'desc')->paginate(10);
 
         return view('activities.index', ['activities' => $activities]);
@@ -389,10 +390,10 @@ class ActivityController extends Controller
             ->where('lv_activities.performed_at', '<=', $end)
             ->where('lv_activities.patient_id', $patientId)
             ->where(function ($q) {
-                      $q->where('lv_activities.logged_from', 'activity')
-                          ->orWhere('lv_activities.logged_from', 'manual_input')
-                          ->orWhere('lv_activities.logged_from', 'pagetimer');
-                  })
+                $q->where('lv_activities.logged_from', 'activity')
+                    ->orWhere('lv_activities.logged_from', 'manual_input')
+                    ->orWhere('lv_activities.logged_from', 'pagetimer');
+            })
             ->groupBy(DB::raw('lv_activities.provider_id, DATE(lv_activities.performed_at),lv_activities.type,lv_activities.is_behavioral'))
             ->orderBy('lv_activities.created_at', 'desc')
             ->get();
