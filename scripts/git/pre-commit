@@ -79,6 +79,8 @@ do
     fi
 done;
 
+git update-index --again
+
 # There is currently debate about exit codes in php-cs-fixer
 # https://github.com/FriendsOfPHP/PHP-CS-Fixer/issues/1211
 if [ "$php_errors_found" = true ]; then

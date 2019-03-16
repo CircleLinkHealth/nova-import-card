@@ -83,10 +83,8 @@ class ActivityController extends Controller
     }
 
     public function destroy($id)
-    
-    
-    
-    {}
+    {
+    }
 
     public function getCurrentForPatient($patientId)
     {
@@ -120,6 +118,7 @@ class ActivityController extends Controller
 
         $messages = \Session::get('messages');
 
+        //@todo: add validation
         if (isset($input['selectMonth'])) {
             $time                = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
             $start               = $time->startOfMonth()->format('Y-m-d H:i:s');
