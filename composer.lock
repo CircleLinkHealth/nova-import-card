@@ -731,7 +731,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-raygun.git",
-                "reference": "0692bad2137f9beabadca8826813da0de948c20e"
+                "reference": "b5d38044c28658fa0aa2bccee09e7a43c2aad22d"
             },
             "require": {
                 "illuminate/contracts": "^5.0",
@@ -758,7 +758,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-03-15T23:27:15+00:00"
+            "time": "2019-03-16T03:14:50+00:00"
         },
         {
             "name": "composer/ca-bundle",
