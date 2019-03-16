@@ -94,15 +94,15 @@ return [
     'enable_real_user_monitoring_pulse' => env('ENABLE_RAYGUN_REAL_USER_MONITORING_PULSE', false),
 
     /*
- |--------------------------------------------------------------------------
-| App Version Variable in .env
-|--------------------------------------------------------------------------
-|
-| Where to get the APP_VERSION from
-|
-|
-| Defaults to ''.
-|
-*/
+    |--------------------------------------------------------------------------
+    | App Version Variable in .env
+    |--------------------------------------------------------------------------
+    |
+    | Where to get the APP_VERSION from
+    |
+    |
+    | Defaults to ''.
+    |
+    */
     'app_version' => env('APP_VERSION', ''),
 ];
