@@ -23,6 +23,7 @@ class IdentificationManager extends BaseIdentificationStrategy
 
         /*
          * Extracts Identifier Values from the CCD.
+         *
          * This function calls all the Identifiers from config/ccdimportervendoridentifiermap
          */
         foreach ($identifierMap as $field => $identifiers) {
