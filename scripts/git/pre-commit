@@ -71,8 +71,13 @@ if [ "$php_errors_found" = true ]; then
     exit 1
 fi
 
+# Refresh version
 php artisan version:refresh
+
+# Write version to file
 php artisan version:absorb
+
+git add config/version.yml
 
 echo "${txtgrn} All good! 😍 You may proceed to committing/pushing your code.${txtrst} \n"
 exit 0
