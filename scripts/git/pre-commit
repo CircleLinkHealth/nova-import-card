@@ -32,8 +32,7 @@ source $DIR/helpers/formatters.sh
 source $DIR/helpers/welcome.sh
 source $DIR/helpers/locate.sh
 
-# Build our list of files, and our list of args by testing if the argument is
-# a valid path
+# Get modified files, staged for commit
 declare -a CHANGED_FILES=$(git diff --name-only --cached)
 args="--verbose --show-progress=dots --diff --path-mode=override"
 

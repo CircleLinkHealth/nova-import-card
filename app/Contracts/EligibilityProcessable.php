@@ -16,8 +16,7 @@ interface EligibilityProcessable
     /**
      * Process a csv from the `cloud` s3 disk.
      */
-    public function processEligibility()
-    ;
+    public function processEligibility();
 
     /**
      * Queue a file to process for eligibility.
