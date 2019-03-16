@@ -73,13 +73,11 @@ do
         error_message+="  - ${txtred}${path}${txtrst}\n"
         php_errors_found=true
      elif [[ $add_file_again == 1 ]]; then
-        # echo "re-adding $path"
-        # git add ${path}
+        echo "re-adding $path"
+        git add ${path}
         echo "😍"
     fi
 done;
-
-git update-index --again
 
 # There is currently debate about exit codes in php-cs-fixer
 # https://github.com/FriendsOfPHP/PHP-CS-Fixer/issues/1211

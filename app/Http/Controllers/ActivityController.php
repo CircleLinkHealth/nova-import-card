@@ -249,12 +249,12 @@ class ActivityController extends Controller
         }
 
         // convert minutes to seconds.
-        if ($input['duration']){$input['duration'] = $input['duration'] * 60;
+        if ($input['duration']) {
+            $input['duration'] = $input['duration'] * 60;
+            $client            = new Client();
 
-            $client = new Client()  ;
-
-            $nurseId   =    $input['provider_id'];
-            $patientId =  $input['patient_id'];
+            $nurseId   = $input['provider_id'];
+            $patientId = $input['patient_id'];
             $duration  = (int) $input['duration'];
 
             $patient = User::find($patientId);
