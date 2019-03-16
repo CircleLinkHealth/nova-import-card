@@ -253,8 +253,8 @@ class ActivityController extends Controller
 
             $client = new Client()  ;
 
-            $nurseId   = $input['provider_id'];
-            $patientId = $input['patient_id'];
+            $nurseId   =    $input['provider_id'];
+            $patientId =  $input['patient_id'];
             $duration  = (int) $input['duration'];
 
             $patient = User::find($patientId);
