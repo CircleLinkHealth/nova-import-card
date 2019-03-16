@@ -43,23 +43,25 @@ php_errors_found=false
 error_message=""
 for path in "${CHANGED_FILES[@]}"
 do
+    echo "checking ${path}"
     if [[ ${path} == *"resources/views/"* ]]; then
-        echo -e "${txtylw} $exec_command fix ${path} --config=.php_cs_views.php ${args} ${txtrst}"
+        echo "${txtylw} $exec_command fix ${path} --config=.php_cs_views.php ${args} ${txtrst}"
 
         ${exec_command} fix ${path} --config=.php_cs_views.php ${args} 1> /dev/null
     elif [[ ${path} == *".php"* ]]; then
-        echo -e "${txtylw} $exec_command fix ${path} --config=.php_cs.dist  ${args} ${txtrst}"
+        echo "${txtylw} $exec_command fix ${path} --config=.php_cs.dist  ${args} ${txtrst}"
 
         ${exec_command} fix ${path} --config=.php_cs.dist  ${args} 1> /dev/null
     fi
 
     if [ $? -ne 0 ]; then
-        echo -e "errors"
+        echo "errors"
         error_message+="  - ${txtred}${path}${txtrst}\n"
         php_errors_found=true
     else
-        echo -e "git add ${path}"
+        echo "git add ${path}"
         git add ${path}
+        echo "😍"
     fi
 done;
 
@@ -71,9 +73,6 @@ if [ "$php_errors_found" = true ]; then
     echo -en "\n${txtwht}${bakred}Please review the changes above. If you're happy, please commit and push.${txtrst}\n"
     exit 1
 fi
-
-# Refresh version
-php artisan version:refresh
 
 # Write version to file
 php artisan version:absorb
