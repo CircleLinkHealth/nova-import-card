@@ -47,12 +47,12 @@ do
     if [[ ${path} == *"resources/views/"* ]]; then
         echo "view file"
 
-        echo "$txtylw $exec_command fix $path --config=.php_cs_views.php $args $txtrst"
+        echo "$exec_command fix $path --config=.php_cs_views.php $args"
 
         ${exec_command} fix ${path} --config=.php_cs_views.php ${args}
-    else
+    elif [[ ${path} == *".php"* ]]; then
         echo "php file"
-        echo "$txtylw $exec_command fix $path --config=.php_cs.dist  $args $txtrst"
+        echo "$exec_command fix $path --config=.php_cs.dist $args"
 
         ${exec_command} fix ${path} --config=.php_cs.dist ${args}
     fi
