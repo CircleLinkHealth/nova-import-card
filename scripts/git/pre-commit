@@ -73,8 +73,8 @@ do
         error_message+="  - ${txtred}${path}${txtrst}\n"
         php_errors_found=true
      elif [[ $add_file_again == 1 ]]; then
-        echo "re-adding $path"
-        git add ${path}
+        # echo "re-adding $path"
+        # git add ${path}
         echo "😍"
     fi
 done;
