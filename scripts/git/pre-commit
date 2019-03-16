@@ -11,12 +11,11 @@
 # Exit 1 if errors were found
 #
 # Requires
-# - php
-#
+# - php#
 # Arguments
-# - None
+# - Nonq.w-,eœ
 #
-################################################################################
+###########################################################################q.w-,e
 
 # Plugin title
 title="PHP Code Fixer"
@@ -44,14 +43,18 @@ error_message=""
 for path in "${CHANGED_FILES[@]}"
 do
     echo "checking ${path}"
+
     if [[ ${path} == *"resources/views/"* ]]; then
-        echo "${txtylw} $exec_command fix ${path} --config=.php_cs_views.php ${args} ${txtrst}"
+        echo "view file"
+
+        echo "$txtylw $exec_command fix $path --config=.php_cs_views.php $args $txtrst"
 
         ${exec_command} fix ${path} --config=.php_cs_views.php ${args}
     elif [[ ${path} == *".php"* ]]; then
-        echo "${txtylw} $exec_command fix ${path} --config=.php_cs.dist  ${args} ${txtrst}"
+        echo "php file"
+        echo "$txtylw $exec_command fix $path --config=.php_cs.dist  $args $txtrst"
 
-        ${exec_command} fix ${path} --config=.php_cs.dist  ${args}
+        ${exec_command} fix ${path} --config=.php_cs.dist ${args}
     fi
 
     if [ $? -ne 0 ]; then
