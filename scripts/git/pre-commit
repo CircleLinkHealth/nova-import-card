@@ -74,6 +74,9 @@ if [ "$php_errors_found" = true ]; then
     exit 1
 fi
 
+# Refresh version
+php artisan version:refresh
+
 # Write version to file
 php artisan version:absorb
 
