@@ -55,7 +55,7 @@
         }
     </style>
     @stack('styles')
-    @include('partials.raygun-tracking')
+    @include('cpm-module-raygun::partials.real-user-monitoring')
 </head>
 <body>
 <div id="app">

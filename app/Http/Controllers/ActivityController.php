@@ -54,19 +54,21 @@ class ActivityController extends Controller
         }
 
         $provider_info = User::ofType(['care-center', 'care-center-external', 'provider'])
-                             ->intersectPracticesWith($patient)
-                             ->with('roles')
-                             ->orderBy('first_name')
-                             ->get()
-                             ->mapWithKeys(function ($user) use ($patient) {
-                                 return [
-                                     $user->id => $user->getFullName() . ($user->hasRoleForSite('care-center-external',
-                                             $patient->primaryProgramId())
-                                             ? ' (in-house)'
-                                             : ''),
-                                 ];
-                             })
-                             ->all();
+            ->intersectPracticesWith($patient)
+            ->with('roles')
+            ->orderBy('first_name')
+            ->get()
+            ->mapWithKeys(function ($user) use ($patient) {
+                return [
+                    $user->id => $user->getFullName().($user->hasRoleForSite(
+                        'care-center-external',
+                        $patient->primaryProgramId()
+                    )
+                            ? ' (in-house)'
+                            : ''),
+                ];
+            })
+            ->all();
 
         $view_data = [
             'program_id'     => $patient->program_id,
@@ -84,9 +86,23 @@ class ActivityController extends Controller
     {
     }
 
+    public function getCurrentForPatient($patientId)
+    {
+        $start = Carbon::now()->startOfMonth()->format('Y-m-d H:i:s');
+        $end   = Carbon::now()->endOfMonth()->format('Y-m-d H:i:s');
+        $acts  = $this->getActivityForPatient($patientId, $start, $end);
+
+        $patient = User::find($patientId);
+
+        return response()->json([
+            'monthlyTime'    => $patient->formattedCcmTime(),
+            'monthlyBhiTime' => $patient->formattedBhiTime(),
+            'table'          => $acts,
+        ]);
+    }
+
     public function index(Request $request)
     {
-        // display view
         $activities = Activity::orderBy('id', 'desc')->paginate(10);
 
         return view('activities.index', ['activities' => $activities]);
@@ -102,6 +118,7 @@ class ActivityController extends Controller
 
         $messages = \Session::get('messages');
 
+        //@todo: add validation
         if (isset($input['selectMonth'])) {
             $time                = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
             $start               = $time->startOfMonth()->format('Y-m-d H:i:s');
@@ -131,7 +148,7 @@ class ActivityController extends Controller
             $data = false;
         }
 
-        $reportData = 'data:' . json_encode($acts) . '';
+        $reportData = 'data:'.json_encode($acts).'';
 
         $years = [];
         for ($i = 0; $i < 3; ++$i) {
@@ -170,66 +187,6 @@ class ActivityController extends Controller
         );
     }
 
-    public function getCurrentForPatient($patientId)
-    {
-        $start = Carbon::now()->startOfMonth()->format('Y-m-d H:i:s');
-        $end   = Carbon::now()->endOfMonth()->format('Y-m-d H:i:s');
-        $acts  = $this->getActivityForPatient($patientId, $start, $end);
-
-        $patient = User::find($patientId);
-
-        return response()->json([
-            'monthlyTime'    => $patient->formattedCcmTime(),
-            'monthlyBhiTime' => $patient->formattedBhiTime(),
-            'table'          => $acts,
-        ]);
-    }
-
-    private function getActivityForPatient($patientId, $start, $end)
-    {
-        $acts = DB::table('lv_activities')
-                  ->select(DB::raw('lv_activities.id,lv_activities.logged_from,DATE(lv_activities.performed_at)as performed_at, lv_activities.type, SUM(lv_activities.duration) as duration, lv_activities.is_behavioral, users.first_name as provider_first_name, users.last_name as provider_last_name, users.suffix as provider_suffix'))
-                  ->join('users', 'users.id', '=', 'lv_activities.provider_id')
-                  ->where('lv_activities.performed_at', '>=', $start)
-                  ->where('lv_activities.performed_at', '<=', $end)
-                  ->where('lv_activities.patient_id', $patientId)
-                  ->where(function ($q) {
-                      $q->where('lv_activities.logged_from', 'activity')
-                        ->orWhere('lv_activities.logged_from', 'manual_input')
-                        ->orWhere('lv_activities.logged_from', 'pagetimer');
-                  })
-                  ->groupBy(DB::raw('lv_activities.provider_id, DATE(lv_activities.performed_at),lv_activities.type,lv_activities.is_behavioral'))
-                  ->orderBy('lv_activities.created_at', 'desc')
-                  ->get();
-
-        $acts = json_decode(json_encode($acts), true);            //debug($acts);
-
-        foreach ($acts as $key => $value) {
-            $acts[$key]['provider_name'] = $this->getFullName(
-                empty($acts[$key]['provider_first_name'])
-                    ? ''
-                    : $acts[$key]['provider_first_name'],
-                empty($acts[$key]['provider_last_name'])
-                    ? ''
-                    : $acts[$key]['provider_last_name'],
-                empty($acts[$key]['provider_suffix'])
-                    ? ''
-                    : $acts[$key]['provider_suffix']
-            );
-        }
-
-        return $acts;
-    }
-
-    private function getFullName($firstName, $lastName, $suffix)
-    {
-
-        $firstName = ucwords(strtolower($firstName));
-        $lastName  = ucwords(strtolower($lastName));
-
-        return trim("${firstName} ${lastName} ${suffix}");
-    }
-
     public function show(
         Request $input,
         $patientId,
@@ -245,7 +202,7 @@ class ActivityController extends Controller
         $activity['provider_name'] = User::find($act->provider_id)
             ? (User::find($act->provider_id)->getFullName())
             : '';
-        $activity['duration']      = intval($act->duration) / 60;
+        $activity['duration'] = intval($act->duration) / 60;
 
         $careteam_info = [];
         $careteam_ids  = $patient->getCareTeam();
@@ -277,6 +234,14 @@ class ActivityController extends Controller
         return view('wpUsers.patient.activity.view', $view_data);
     }
 
+    /**
+     * @param Request $request
+     * @param bool    $params
+     *
+     * @throws \Exception
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(
         Request $request,
         $params = false
@@ -289,17 +254,16 @@ class ActivityController extends Controller
             } else {
                 return response('Unauthorized', 401);
             }
-        }//debug($request->all());
+        }
 
         // convert minutes to seconds.
         if ($input['duration']) {
             $input['duration'] = $input['duration'] * 60;
-
-            $client = new Client();
+            $client            = new Client();
 
             $nurseId   = $input['provider_id'];
             $patientId = $input['patient_id'];
-            $duration  = (int)$input['duration'];
+            $duration  = (int) $input['duration'];
 
             $patient = User::find($patientId);
 
@@ -307,7 +271,7 @@ class ActivityController extends Controller
                 $isCcm        = $patient->isCcm();
                 $isBehavioral = $patient->isBhi();
                 if ($isCcm && $isBehavioral) {
-                    $is_bhi                 = isset($input['is_behavioral'])
+                    $is_bhi = isset($input['is_behavioral'])
                         ? ('true' != $input['is_behavioral']
                             ? false
                             : true)
@@ -318,24 +282,24 @@ class ActivityController extends Controller
                     $input['is_behavioral'] = $isBehavioral;
                 }
             } else {
-                throw new \Exception('patient_id ' . $patientId . ' does not correspond to any patient');
+                throw new \Exception('patient_id '.$patientId.' does not correspond to any patient');
             }
 
             // Send a request to the time-tracking server to increment the start-time by the duration of the offline-time activity (in seconds)
             if ($nurseId && $patientId && $duration) {
-                $url = config('services.ws.server-url') . '/' . $nurseId . '/' . $patientId;
+                $url = config('services.ws.server-url').'/'.$nurseId.'/'.$patientId;
                 try {
                     $timeParam = $is_bhi
                         ? 'bhiTime'
                         : 'ccmTime';
-                    $res       = $client->put($url, [
+                    $res = $client->put($url, [
                         'form_params' => [
                             'startTime' => $duration,
                             $timeParam  => $duration,
                         ],
                     ]);
-                    $status    = $res->getStatusCode();
-                    $body      = $res->getBody();
+                    $status = $res->getStatusCode();
+                    $body   = $res->getBody();
                     if (200 == $status) {
                         Log::info($body);
                     } else {
@@ -421,5 +385,49 @@ class ActivityController extends Controller
         $this->activityService->processMonthlyActivityTime([$input['patient_id']]);
 
         return response('Activity Updated', 201);
+    }
+
+    private function getActivityForPatient($patientId, $start, $end)
+    {
+        $acts = DB::table('lv_activities')
+            ->select(DB::raw('lv_activities.id,lv_activities.logged_from,DATE(lv_activities.performed_at)as performed_at, lv_activities.type, SUM(lv_activities.duration) as duration, lv_activities.is_behavioral, users.first_name as provider_first_name, users.last_name as provider_last_name, users.suffix as provider_suffix'))
+            ->join('users', 'users.id', '=', 'lv_activities.provider_id')
+            ->where('lv_activities.performed_at', '>=', $start)
+            ->where('lv_activities.performed_at', '<=', $end)
+            ->where('lv_activities.patient_id', $patientId)
+            ->where(function ($q) {
+                $q->where('lv_activities.logged_from', 'activity')
+                    ->orWhere('lv_activities.logged_from', 'manual_input')
+                    ->orWhere('lv_activities.logged_from', 'pagetimer');
+            })
+            ->groupBy(DB::raw('lv_activities.provider_id, DATE(lv_activities.performed_at),lv_activities.type,lv_activities.is_behavioral'))
+            ->orderBy('lv_activities.created_at', 'desc')
+            ->get();
+
+        $acts = json_decode(json_encode($acts), true);            //debug($acts);
+
+        foreach ($acts as $key => $value) {
+            $acts[$key]['provider_name'] = $this->getFullName(
+                empty($acts[$key]['provider_first_name'])
+                    ? ''
+                    : $acts[$key]['provider_first_name'],
+                empty($acts[$key]['provider_last_name'])
+                    ? ''
+                    : $acts[$key]['provider_last_name'],
+                empty($acts[$key]['provider_suffix'])
+                    ? ''
+                    : $acts[$key]['provider_suffix']
+            );
+        }
+
+        return $acts;
+    }
+
+    private function getFullName($firstName, $lastName, $suffix)
+    {
+        $firstName = ucwords(strtolower($firstName));
+        $lastName  = ucwords(strtolower($lastName));
+
+        return trim("${firstName} ${lastName} ${suffix}");
     }
 }
