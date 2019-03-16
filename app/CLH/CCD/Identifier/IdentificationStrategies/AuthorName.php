@@ -19,9 +19,11 @@ class AuthorName extends BaseIdentificationStrategy
         }
 
         $authorName = $this->ccd->document->author->name->given[0]
-                        .' '
-                        .$this->ccd->document->author->name->family;
+                      .' '
+                      .$this->ccd->document->author->name->family;
 
-        return empty($authorName) ? false : $authorName;
+        return empty($authorName)
+            ? false
+            : $authorName;
     }
 }
