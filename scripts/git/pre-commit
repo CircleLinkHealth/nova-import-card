@@ -11,12 +11,11 @@
 # Exit 1 if errors were found
 #
 # Requires
-# - php
-#
+# - php#
 # Arguments
-# - None
+# - Nonq.w-,eœ
 #
-################################################################################
+###########################################################################q.w-,e
 
 # Plugin title
 title="PHP Code Fixer"
@@ -33,32 +32,49 @@ source $DIR/helpers/formatters.sh
 source $DIR/helpers/welcome.sh
 source $DIR/helpers/locate.sh
 
-# Build our list of files, and our list of args by testing if the argument is
-# a valid path
-CHANGED_FILES=$(git diff --name-only --diff-filter=ACM)
-args="--verbose --show-progress=dots --diff --path-mode=override"
+# Get modified files, staged for commit
+declare -a CHANGED_FILES=$(git diff --name-only --cached)
 
-# Run the command on each file
+printf '%s\n' "${CHANGED_FILES}"
+
+args="--verbose --show-progress=dots --diff --path-mode=override"
 php_errors_found=false
 error_message=""
+
+# Run the command on each file
 for path in "${CHANGED_FILES[@]}"
 do
+    echo "checking ${path}"
+
+    add_file_again=0
+
     if [[ ${path} == *"resources/views/"* ]]; then
-        echo -e "${txtylw} $exec_command fix ${path} --config=.php_cs_views.php ${args} ${txtrst}"
+        echo "php view file"
 
-        ${exec_command} fix ${path} --config=.php_cs_views.php ${args} 1> /dev/null
+        echo "$exec_command fix $path --config=.php_cs_views.php $args"
+
+        ${exec_command} fix ${path} --config=.php_cs_views.php ${args}
+
+        add_file_again=1
     elif [[ ${path} == *".php"* ]]; then
-        echo -e "${txtylw} $exec_command fix ${path} --config=.php_cs.dist  ${args} ${txtrst}"
+        echo "php file"
+        echo "$exec_command fix $path --config=.php_cs.dist $args"
 
-        ${exec_command} fix ${path} --config=.php_cs.dist  ${args} 1> /dev/null
+        ${exec_command} fix ${path} --config=.php_cs.dist ${args}
+
+        add_file_again=1
+    else
+        echo "non-php file"
     fi
 
     if [ $? -ne 0 ]; then
+        echo "errors"
         error_message+="  - ${txtred}${path}${txtrst}\n"
         php_errors_found=true
-    else
-        echo -e "git add ${path}"
-        # git add ${path}
+     elif [[ $add_file_again == 1 ]]; then
+        echo "re-adding $path"
+        git add ${path}
+        echo "😍"
     fi
 done;
 
@@ -70,6 +86,14 @@ if [ "$php_errors_found" = true ]; then
     echo -en "\n${txtwht}${bakred}Please review the changes above. If you're happy, please commit and push.${txtrst}\n"
     exit 1
 fi
+
+# Refresh version
+php artisan version:refresh
+
+# Write version to file
+php artisan version:absorb
+
+git add config/version.yml
 
 echo "${txtgrn} All good! 😍 You may proceed to committing/pushing your code.${txtrst} \n"
 exit 0
