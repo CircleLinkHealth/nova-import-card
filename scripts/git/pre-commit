@@ -48,7 +48,7 @@ do
     echo "checking ${path}"
 
     if [[ ${path} == *"resources/views/"* ]]; then
-        echo "view file"
+        echo "php view file"
 
         echo "$exec_command fix $path --config=.php_cs_views.php $args"
 
@@ -58,6 +58,8 @@ do
         echo "$exec_command fix $path --config=.php_cs.dist $args"
 
         ${exec_command} fix ${path} --config=.php_cs.dist ${args}
+    else
+        echo "non-php file"
     fi
 
     if [ $? -ne 0 ]; then
