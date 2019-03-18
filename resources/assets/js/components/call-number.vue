@@ -778,8 +778,10 @@
                 }
                 const msg = `Twilio Warning Events on disconnected call: ${self.warningEvents.join(',')}`;
                 console.error(msg);
-                if (window && window.bugsnagClient) {
-                    window.bugsnagClient.notify(new Error(msg));
+                if (window && window.rg4js) {
+                    rg4js('send', {
+                        error: new Error(msg)
+                    });
                 }
             },
             reportError: function (code, message) {
@@ -789,8 +791,10 @@
                     self.warningEvents = [];
                 }
                 console.error(msg);
-                if (window && window.bugsnagClient) {
-                    window.bugsnagClient.notify(new Error(msg));
+                if (window && window.rg4js) {
+                    rg4js('send', {
+                        error: new Error(msg)
+                    });
                 }
             },
             registerBroadcastChannelHandlers: function () {
