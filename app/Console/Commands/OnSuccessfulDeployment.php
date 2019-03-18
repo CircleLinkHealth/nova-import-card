@@ -62,15 +62,23 @@ class OnSuccessfulDeployment extends Command
         $output = $jiraTicketNumbers->getOutput();
         $this->info("Output `$output`");
 
-        $message     = "*$user* deployed work related to the following tickets *$envName*: \n";
         $jiraTickets = collect(explode("\n", $output))
-            ->sort()
-            ->each(
-                function ($t) use (&$message) {
-                    if ( ! empty($t)) {
-                        $message .= "https://circlelinkhealth.atlassian.net/browse/$t  \n";
-                    }
+            ->filter()
+            ->values()
+            ->sort();
+
+        if ($jiraTickets->isEmpty()) {
+            return;
+        }
+
+        $message = "*$user* deployed work related to the following tickets *$envName*: \n";
+
+        $jiraTickets->each(
+            function ($t) use (&$message) {
+                if ( ! empty($t)) {
+                    $message .= "https://circlelinkhealth.atlassian.net/browse/$t  \n";
                 }
+            }
             );
 
         // Uncomment for testing
