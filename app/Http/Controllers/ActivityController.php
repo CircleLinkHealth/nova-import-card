@@ -9,6 +9,7 @@ namespace App\Http\Controllers;
 use App\Activity;
 use App\ActivityMeta;
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
+use App\Http\Requests\ShowPatientActivities;
 use App\Reports\PatientDailyAuditReport;
 use App\Services\ActivityService;
 use App\User;
@@ -109,7 +110,7 @@ class ActivityController extends Controller
     }
 
     public function providerUIIndex(
-        Request $request,
+        ShowPatientActivities $request,
         $patientId
     ) {
         $patient = User::findOrFail($patientId);
@@ -118,7 +119,6 @@ class ActivityController extends Controller
 
         $messages = \Session::get('messages');
 
-        //@todo: add validation
         if (isset($input['selectMonth'])) {
             $time                = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
             $start               = $time->startOfMonth()->format('Y-m-d H:i:s');
