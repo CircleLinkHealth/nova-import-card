@@ -88,7 +88,7 @@ class OnSuccessfulDeployment extends Command
             throw new \Exception('Unable to resolve Slack channel. Check that environment is allowed to run this command.');
         }
 
-        $loginLink = config('app.url');
+        $loginLink = config('opcache.url');
         $message .= "\n Login at: $loginLink";
 
         sendSlackMessage($channel, $message, true);
