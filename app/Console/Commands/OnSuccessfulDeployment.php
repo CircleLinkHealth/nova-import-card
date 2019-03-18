@@ -73,7 +73,25 @@ class OnSuccessfulDeployment extends Command
                 }
             );
 
-        sendSlackMessage('#deployments', $message, true);
+        // Uncomment for testing
+//        if (app()->environment(['local'])) {
+//            $channel = '#dev-chat';
+//        }
+
+        if (app()->environment(['test', 'staging'])) {
+            $channel = '#releases-staging';
+        } elseif (app()->environment(['worker', 'production'])) {
+            $channel = '#releases-production';
+        }
+
+        if ( ! isset($channel)) {
+            throw new \Exception('Unable to resolve Slack channel. Check that environment is allowed to run this command.');
+        }
+
+        $loginLink = config('app.url');
+        $message .= "\n Login at: $loginLink";
+
+        sendSlackMessage($channel, $message, true);
     }
 
     /**
