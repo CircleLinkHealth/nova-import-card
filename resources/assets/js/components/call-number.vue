@@ -18,6 +18,9 @@
             </strong>
         </div>
         <div>{{log}}</div>
+        <div class="warning-logs" v-show="warningEvents.length > 0">
+            We have detected poor call quality conditions. You may experience degraded call quality.
+        </div>
         <div v-show="closeCountdown > 0">This window will close in <span
                 class="countdown-seconds">{{closeCountdown}}</span> seconds.
         </div>
@@ -249,6 +252,7 @@
                 muted: {},
                 onPhone: {},
                 log: 'Initializing',
+                warningEvents: [],
                 endCallWindowCloseDelay: 5,
                 closeCountdown: 0,
                 closeCountdownInterval: null,
@@ -660,6 +664,7 @@
                 self.waitingForConference = false;
                 self.queuedNumbersForConference = [];
                 self.addedNumbersInConference = [];
+                self.warningEvents = [];
             },
             closeWindow: function (delayInSeconds, force) {
 
@@ -680,6 +685,7 @@
                 self.closeCountdownInterval = setInterval(() => {
 
                     if (self.closeCountdown === 0) {
+                        clearInterval(self.closeCountdownInterval);
                         window.close();
                     }
                     else {
@@ -702,13 +708,17 @@
                     .then(response => {
                         self.log = 'Initializing';
                         self.device = new Twilio.Device(response.data.token, {
-                            closeProtection: true, //show warning when closing the page with active call
+                            closeProtection: true, //show warning when closing the page with active call - NOT WORKING
+                            debug: true,
+                            region: 'us1' //default to US East Coast (Virginia)
                         });
 
                         self.device.on('disconnect', () => {
                             //exit call mode when all calls are disconnected
                             EventBus.$emit('tracker:call-mode:exit');
                             console.log('twilio device: disconnect');
+
+                            self.reportWarnings();
                             self.resetPhoneState();
                             self.connection = null;
                             self.log = 'Call ended.';
@@ -733,9 +743,21 @@
                         });
 
                         self.device.on('error', (err) => {
-                            console.log('twilio device: error', err);
+                            self.reportError(err.code, err.message);
                             self.resetPhoneState();
                             self.log = err.message;
+                        });
+
+                        self.device.on('warning', (warningName) => {
+                            const temp = new Set(self.warningEvents);
+                            temp.add(warningName);
+                            self.warningEvents = Array.from(temp);
+                        });
+
+                        self.device.on('warning-cleared', (warningName) => {
+                            const temp = new Set(self.warningEvents);
+                            temp.delete(warningName);
+                            self.warningEvents = Array.from(temp);
                         });
 
                         self.device.on('ready', () => {
@@ -749,6 +771,31 @@
                         self.log = 'There was an error. Please refresh the page. If the issue persists please let CLH know via slack.';
                         self.waiting = false;
                     });
+            },
+            reportWarnings: function () {
+                if (self.warningEvents.length === 0) {
+                    return;
+                }
+                const msg = `Twilio Warning Events on disconnected call: ${self.warningEvents.join(',')}`;
+                console.error(msg);
+                if (window && window.rg4js) {
+                    rg4js('send', {
+                        error: new Error(msg)
+                    });
+                }
+            },
+            reportError: function (code, message) {
+                let msg = `Twilio Client Error[${code}]: ${message}`;
+                if (self.warningEvents.length > 0) {
+                    msg += `\nWarnings: ${self.warningEvents.join(',')}`;
+                    self.warningEvents = [];
+                }
+                console.error(msg);
+                if (window && window.rg4js) {
+                    rg4js('send', {
+                        error: new Error(msg)
+                    });
+                }
             },
             registerBroadcastChannelHandlers: function () {
                 registerHandler("call_status", (msg) => {
@@ -818,7 +865,15 @@
             this.resetPhoneState();
             this.registerBroadcastChannelHandlers();
 
-            window.onbeforeunload = function (event) {
+            window.onbeforeunload = function (e) {
+
+                if (self.isCurrentlyOnPhone) {
+                    // Cancel the event
+                    e.preventDefault();
+                    // Chrome requires returnValue to be set
+                    e.returnValue = "";
+                    return;
+                }
 
                 for (let i in self.onPhone) {
                     if (self.onPhone[i]) {
@@ -858,6 +913,12 @@
     .countdown-seconds {
         font-weight: bold;
         color: red;
+    }
+
+    .warning-logs {
+        color: #a98e11;
+        margin-top: 4px;
+        margin-bottom: 4px;
     }
 
     .vue-touch-keyboard {
