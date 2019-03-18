@@ -52,7 +52,7 @@ class OnSuccessfulDeployment extends Command
 
         if ( ! file_exists(base_path('.git'))) {
             $initGit = $this->runCommand(
-                "git init && git remote add origin git@github.com:CircleLinkHealth/app-cpm-web.git && git origin fetch $lastDeployedRevision && git origin fetch $newlyDeployedRevision"
+                "git init && git remote add origin git@github.com:CircleLinkHealth/app-cpm-web.git && git fetch origin $lastDeployedRevision && git fetch origin $newlyDeployedRevision"
             );
         }
         $jiraTicketNumbers = $this->runCommand(
