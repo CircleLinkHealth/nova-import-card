@@ -51,8 +51,11 @@ class OnSuccessfulDeployment extends Command
         $user                  = $this->argument('userName');
 
         $command = "git log --pretty=oneline $lastDeployedRevision...$newlyDeployedRevision | perl -ne '{ /(CPM)-(\d+)/ && print \"$1-$2\n\" }' | sort | uniq";
+        $this->info("Running `$command`");
         $process = new Process($command);
-        $process->run();
+        $outcome = $process->run();
+
+        $this->info("Outcome `$outcome`");
 
         if ( ! $process->isSuccessful()) {
             throw new \Exception('Failed to execute process.'.$process->getIncrementalErrorOutput());
@@ -60,7 +63,11 @@ class OnSuccessfulDeployment extends Command
 
         $output = $process->getOutput();
 
-        \Log::debug($output);
+        $this->info("Output `$output`");
+        $this->info("Errors `{$process->getErrorOutput()}`");
+
+        \Log::debug('Output: '.$output);
+        \Log::debug('Error: '.$process->getErrorOutput());
 
         $message     = "*$user* deployed the following tickets to *$envName*: \n";
         $jiraTickets = collect(explode("\n", $output))
