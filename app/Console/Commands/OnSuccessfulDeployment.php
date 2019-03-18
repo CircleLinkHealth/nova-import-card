@@ -50,34 +50,65 @@ class OnSuccessfulDeployment extends Command
         $isRollback            = $this->argument('rollback');
         $user                  = $this->argument('userName');
 
-        $command = "git log --pretty=oneline $lastDeployedRevision...$newlyDeployedRevision | perl -ne '{ /(CPM)-(\d+)/ && print \"$1-$2\n\" }' | sort | uniq";
+        if ( ! file_exists(base_path('.git'))) {
+            $initGit = $this->runCommand(
+                'git init && git remote add origin git@github.com:CircleLinkHealth/app-cpm-web.git && git fetch'
+            );
+        }
+        $jiraTicketNumbers = $this->runCommand(
+            "git log --pretty=oneline $lastDeployedRevision...$newlyDeployedRevision | perl -ne '{ /(CPM)-(\d+)/ && print \"$1-$2\n\" }' | sort | uniq"
+        );
+
+        $output = $jiraTicketNumbers->getOutput();
+        $this->info("Output `$output`");
+
+        $message     = "*$user* deployed the following tickets to *$envName*: \n";
+        $jiraTickets = collect(explode("\n", $output))
+            ->sort()
+            ->each(
+                function ($t) use (&$message) {
+                    if ( ! empty($t)) {
+                        $message .= "https://circlelinkhealth.atlassian.net/browse/$t  \n";
+                    }
+                }
+            );
+
+        sendSlackMessage('#deployments', $message, true);
+    }
+
+    /**
+     * @param string $command
+     *
+     * @throws \Exception
+     *
+     * @return Process
+     */
+    private function runCommand(string $command)
+    {
         $this->info("Running `$command`");
         $process = new Process($command);
-        $outcome = $process->run();
-
-        $this->info("Outcome `$outcome`");
+        $process->run();
 
         if ( ! $process->isSuccessful()) {
             throw new \Exception('Failed to execute process.'.$process->getIncrementalErrorOutput());
         }
 
+        $errors = $process->getErrorOutput();
+
+        $this->info("Errors `{$errors}`");
+
+        if ( ! empty($errors)) {
+            \Log::debug('Errors: '.$errors, ['file' => __FILE__, 'line' => __LINE__]);
+        }
+
         $output = $process->getOutput();
 
-        $this->info("Output `$output`");
-        $this->info("Errors `{$process->getErrorOutput()}`");
+        $this->info('Output: '.$output);
 
-        \Log::debug('Output: '.$output);
-        \Log::debug('Error: '.$process->getErrorOutput());
+        if ($output) {
+            \Log::debug('Output: '.$output, ['file' => __FILE__, 'line' => __LINE__]);
+        }
 
-        $message     = "*$user* deployed the following tickets to *$envName*: \n";
-        $jiraTickets = collect(explode("\n", $output))
-            ->sort()
-            ->each(function ($t) use (&$message) {
-                if ( ! empty($t)) {
-                    $message .= "https://circlelinkhealth.atlassian.net/browse/$t  \n";
-                }
-            });
-
-        sendSlackMessage('#deployments', $message, true);
+        return $process;
     }
 }
