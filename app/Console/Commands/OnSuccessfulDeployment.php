@@ -62,7 +62,7 @@ class OnSuccessfulDeployment extends Command
         $output = $jiraTicketNumbers->getOutput();
         $this->info("Output `$output`");
 
-        $message     = "*$user* deployed the following tickets to *$envName*: \n";
+        $message     = "*$user* deployed work related to the following tickets *$envName*: \n";
         $jiraTickets = collect(explode("\n", $output))
             ->sort()
             ->each(
