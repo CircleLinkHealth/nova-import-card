@@ -79,12 +79,7 @@ class OnSuccessfulDeployment extends Command
                     $message .= "https://circlelinkhealth.atlassian.net/browse/$t  \n";
                 }
             }
-            );
-
-        // Uncomment for testing
-//        if (app()->environment(['local'])) {
-//            $channel = '#dev-chat';
-//        }
+        );
 
         if (app()->environment(['test', 'staging'])) {
             $channel = '#releases-staging';
