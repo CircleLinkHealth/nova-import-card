@@ -116,17 +116,15 @@ class OnSuccessfulDeployment extends Command
 
         $errors = $process->getErrorOutput();
 
-        $this->info("Errors `{$errors}`");
-
         if ( ! empty($errors)) {
+            $this->info("Errors `{$errors}`");
             \Log::debug('Errors: '.$errors, ['file' => __FILE__, 'line' => __LINE__]);
         }
 
         $output = $process->getOutput();
 
-        $this->info('Output: '.$output);
-
         if ($output) {
+            $this->info('Output: '.$output);
             \Log::debug('Output: '.$output, ['file' => __FILE__, 'line' => __LINE__]);
         }
 
