@@ -17,7 +17,7 @@ class NurseDailyReport
     {
         $date = $forDate ?? Carbon::now();
 
-        $nurse_users = User::ofType('care-center')
+        $nurse_users = User::careCoaches()
             ->where('access_disabled', 0)
             ->get();
 
