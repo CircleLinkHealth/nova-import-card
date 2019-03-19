@@ -10,6 +10,7 @@ return [
             '.*careplanmanager.com',
             'circlelink-production.medstack.net',
             'circlelink-worker.medstack.net',
+            'circlelink-awv-1.medstack.net',
         ]
         : [
             '.*ngrok.io',
@@ -18,5 +19,6 @@ return [
             '.*careplanmanager.com',
             'circlelink-production.medstack.net',
             'circlelink-worker.medstack.net',
+            'circlelink-awv-1.medstack.net',
         ],
 ];

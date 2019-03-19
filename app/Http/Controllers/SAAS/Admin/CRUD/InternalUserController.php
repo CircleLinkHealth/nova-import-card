@@ -123,7 +123,9 @@ class InternalUserController extends Controller
             'registered-nurse',
         ];
 
-        if (auth()->user()->isAdmin()) {
+        $authIsAdmin = auth()->user()->isAdmin();
+        
+        if ($authIsAdmin) {
             $rolesArray[] = 'administrator';
         }
 
@@ -159,7 +161,7 @@ class InternalUserController extends Controller
         }
 
         // only let owners see owners
-        if ( ! Auth::user()->hasRole(['administrator'])) {
+        if ( ! $authIsAdmin) {
             $wpUsers = $wpUsers->whereHas('roles', function ($q) {
                 $q->where('name', '!=', 'administrator');
             });

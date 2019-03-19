@@ -68,11 +68,11 @@
                 window.open(URL, "_blank", strWindowFeatures);
             },
             endCall(e) {
+                self.callMode = false;
+                self.buttonClass = 'btn-primary';
+                self.buttonText = "Open Calls Page";
                 sendRequest("end_call", null)
                     .then(msg => {
-                        self.callMode = false;
-                        self.buttonClass = 'btn-primary';
-                        self.buttonText = "Open Calls Page";
                     })
                     .catch(err => console.error(err));
             },
