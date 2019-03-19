@@ -21,7 +21,8 @@
                             <v-client-table ref="unscheduledPatients" :data="patients" :columns="columns"
                                             :options="options">
                                 <template slot="name" slot-scope="props">
-                                    <a class="pointer" @click="triggerParentFilter(props.row.id, props.row.name)">{{props.row.name}}</a>
+                                    <a class="pointer"
+                                       @click="triggerParentFilter(props.row.id, props.row.name, props.row.program_id)">{{props.row.name}}</a>
                                 </template>
                             </v-client-table>
                         </div>
@@ -65,6 +66,7 @@
                 practices: [],
                 patients: [],
                 practiceId: null,
+                practiceName: null,
                 columns: ['id', 'name'],
                 options: {
                     filterable: false
@@ -87,8 +89,9 @@
         methods: {
             changePractice(practice) {
                 if (practice) {
-                    this.practiceId = practice.value
-                    return this.getPatients()
+                    this.practiceId = practice.value;
+                    this.practiceName = practice.label;
+                    return this.getPatients();
                 }
             },
             getPractices() {
@@ -115,9 +118,21 @@
                     console.error('unscheduled-patients-get-patients', err)
                 })
             },
-            triggerParentFilter(id, name) {
+            triggerParentFilter(id, name, practiceId) {
+
+                let pId;
+                let pName;
+                if (!this.practiceId) {
+                    const p = this.practices.find(x => x.id === +practiceId);
+                    if (p) {
+                        pId = p.id;
+                        pName = p.display_name;
+                    }
+                }
+
                 Event.$emit('unscheduled-patients-modal:filter', {
-                    practiceId: this.practiceId,
+                    practiceId: pId,
+                    practiceName: pName,
                     patientId: id,
                     patientName: name
                 })
