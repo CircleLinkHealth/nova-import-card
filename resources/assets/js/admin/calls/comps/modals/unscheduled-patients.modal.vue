@@ -1,32 +1,34 @@
 <template>
-    <modal name="unscheduled-patients" :no-footer="true" :info="unscheduledPatientsModalInfo" class-name="modal-show-unscheduled">
-      <template slot-scope="props" slot="title">
-        <div class="row">
-            <div :class="{ 'col-sm-12': !loaders.patients, 'col-sm-11': loaders.patients }">
-                <v-select class="form-control" v-model="selectedPracticeData" 
-                    :options="practicesForSelect" :on-change="changePractice"></v-select>
-                <loader v-if="loaders.patients"></loader>
-            </div>
-        </div>
-      </template>
-      <template slot-scope="props">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="text-center" v-if="!patients.length">
-                    Looks like every patient has scheduled calls this month
+    <modal name="unscheduled-patients" :no-footer="true" :info="unscheduledPatientsModalInfo"
+           class-name="modal-show-unscheduled">
+        <template slot-scope="props" slot="title">
+            <div class="row">
+                <div :class="{ 'col-sm-12': !loaders.patients, 'col-sm-11': loaders.patients }">
+                    <v-select class="form-control" v-model="selectedPracticeData"
+                              :options="practicesForSelect" :on-change="changePractice"></v-select>
+                    <loader v-if="loaders.patients"></loader>
                 </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <v-client-table ref="unscheduledPatients" :data="patients" :columns="columns" :options="options">
-                            <template slot="name" slot-scope="props">
-                                <a class="pointer" @click="triggerParentFilter(props.row.id, props.row.name)">{{props.row.name}}</a>
-                            </template>
-                        </v-client-table>
+            </div>
+        </template>
+        <template slot-scope="props">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="text-center" v-if="!patients.length">
+                        Looks like every patient has scheduled calls this month
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <v-client-table ref="unscheduledPatients" :data="patients" :columns="columns"
+                                            :options="options">
+                                <template slot="name" slot-scope="props">
+                                    <a class="pointer" @click="triggerParentFilter(props.row.id, props.row.name)">{{props.row.name}}</a>
+                                </template>
+                            </v-client-table>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-      </template>
+        </template>
     </modal>
 </template>
 
@@ -38,11 +40,11 @@
     import VueCache from '../../../../util/vue-cache'
     import VueSelect from 'vue-select'
 
-    const UNASSIGNED_VALUE = { label: 'Unassigned', value: null }
+    const UNASSIGNED_VALUE = {label: 'Unassigned', value: null}
 
     export default {
         name: 'unscheduled-patients-modal',
-        mixins: [ VueCache ],
+        mixins: [VueCache],
         components: {
             'modal': Modal,
             'loader': LoaderComponent,
@@ -50,9 +52,7 @@
         },
         data() {
             return {
-                unscheduledPatientsModalInfo: {
-
-                },
+                unscheduledPatientsModalInfo: {},
                 /**loaders and errors */
                 errors: {
                     practices: null,
@@ -73,16 +73,19 @@
             }
         },
         computed: {
-            practicesForSelect () {
-                return [ UNASSIGNED_VALUE, ...this.practices.map(practice => ({ label: practice.display_name, value: practice.id })) ]
+            practicesForSelect() {
+                return [UNASSIGNED_VALUE, ...this.practices.map(practice => ({
+                    label: practice.display_name,
+                    value: practice.id
+                }))]
             },
-            patientUrl () {
+            patientUrl() {
                 const practice_addendum = this.practiceId ? `practices/${this.practiceId}/` : '';
                 return rootUrl(`api/${practice_addendum}patients/without-scheduled-calls?autocomplete`);
             }
         },
         methods: {
-            changePractice (practice) {
+            changePractice(practice) {
                 if (practice) {
                     this.practiceId = practice.value
                     return this.getPatients()
@@ -120,9 +123,19 @@
                 })
             }
         },
+        created() {
+            Event.$on('actions:add', (action) => {
+                //remove patient from list
+                const patientId = action.inbound_cpm_id;
+                const index = this.patients.findIndex(x => x.id === patientId);
+                if (index > -1) {
+                    this.patients.splice(index, 1);
+                }
+            });
+        },
         mounted() {
-            this.getPractices()
-            this.getPatients()
+            this.getPractices();
+            this.getPatients();
         }
     }
 </script>
