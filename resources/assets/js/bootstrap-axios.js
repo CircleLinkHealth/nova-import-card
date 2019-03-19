@@ -25,6 +25,12 @@ if (window && document) {
     axios.default.interceptors.response.use(response => {
         return response
     }, error => {
+
+        //request was cancelled, ignore
+        if (error && error.constructor.name === "Cancel") {
+            return;
+        }
+
         if (error.response.status === 419) {
             window.location.href = '/auth/inactivity-logout'
         }
