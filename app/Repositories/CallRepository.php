@@ -77,8 +77,8 @@ class CallRepository
     {
         $users = User::ofType('participant')
             ->whereHas('patientInfo', function ($q) {
-                $q->enrolled();
-            });
+                         $q->enrolled();
+                     });
         if ($practiceId) {
             $users = $users->ofPractice($practiceId);
         }
@@ -86,22 +86,32 @@ class CallRepository
         return $users->whereDoesntHave('inboundCalls');
     }
 
+    public function patientsWithoutScheduledActivities($practiceId, Carbon $afterDate = null)
+    {
+        return $this->patientsWithoutScheduledRelation($practiceId, 'inboundScheduledActivities', $afterDate);
+    }
+
     public function patientsWithoutScheduledCalls($practiceId, Carbon $afterDate = null)
     {
-        $users = User::ofType('participant');
-        if ($practiceId) {
-            $users = $users->ofPractice($practiceId);
-        }
-
-        return $users->with('carePlan')
-            ->whereHas('patientInfo', function ($q) {
-                $q->enrolled();
-            })
-            ->whereDoesntHave('inboundScheduledCalls');
+        return $this->patientsWithoutScheduledRelation($practiceId, 'inboundScheduledCalls', $afterDate);
     }
 
     public function scheduledCalls()
     {
         return $this->model()->scheduled();
+    }
+
+    private function patientsWithoutScheduledRelation($practiceId, $relation, Carbon $afterDate = null)
+    {
+        $users = User::ofType('participant')
+            ->whereHas('patientInfo', function ($q) {
+                         $q->enrolled();
+                     });
+        if ($practiceId) {
+            $users = $users->ofPractice($practiceId);
+        }
+
+        return $users->with('carePlan')
+            ->whereDoesntHave($relation);
     }
 }

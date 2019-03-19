@@ -37,12 +37,12 @@ describe('UnscheduledPatientsModal', () => {
 
         it('should NOT include practice', () => {
             $vm.practiceId = null
-            expect($vm.patientUrl).toEqual('/api/patients/without-scheduled-calls?autocomplete')
+            expect($vm.patientUrl).toEqual('/api/patients/without-scheduled-activities?autocomplete')
         })
 
         it('should include practice', () => {
             $vm.practiceId = 1
-            expect($vm.patientUrl).toEqual('/api/practices/1/patients/without-scheduled-calls?autocomplete')
+            expect($vm.patientUrl).toEqual('/api/practices/1/patients/without-scheduled-activities?autocomplete')
         })
     })
 })

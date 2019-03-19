@@ -23,6 +23,11 @@ class ManagementService
         return $this->repository->patientsWithoutAnyInboundCalls($practiceId);
     }
 
+    public function getPatientsWithoutScheduledActivities($practiceId, Carbon $afterDate = null)
+    {
+        return $this->repository->patientsWithoutScheduledActivities($practiceId, $afterDate);
+    }
+
     public function getPatientsWithoutScheduledCalls($practiceId, Carbon $afterDate = null)
     {
         return $this->repository->patientsWithoutScheduledCalls($practiceId, $afterDate);
