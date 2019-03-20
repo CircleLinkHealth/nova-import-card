@@ -5,19 +5,27 @@ namespace App\Services;
 
 use App\InvitationLink;
 use App\Patient;
+use App\Survey;
 use App\User;
 use Illuminate\Support\Facades\URL;
 
 class SurveyInvitationLinksService
 {
+    const HRA = 'HRA';
     public function createAndSaveUrl($userId)
     {
-        $patient       = Patient::where('user_id', $userId)->select('id')->firstOrFail();
+        $patient       = Patient::where('user_id', $userId)
+                                ->select('id')
+                                ->firstOrFail();
         $patientInfoId = $patient->id;
 
         $this->expireAllPastUrls($patientInfoId);
 
-        $surveyId = rand();
+        $survey = Survey::where('name', $this::HRA)
+                        ->select('id')
+                        ->firstOrFail();
+        $surveyId = $survey->id;
+
         $url      = URL::signedRoute('loginSurvey',
             [
                 'user_id'   => $userId,
@@ -32,7 +40,7 @@ class SurveyInvitationLinksService
             'link_token'          => $urlToken,
             'is_manually_expired' => false,
         ]);
-
+dd($url);
         return $url;
     }
 
