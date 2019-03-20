@@ -30,6 +30,10 @@ export const practiceStaff = state => {
     return state.practiceStaff
 }
 
+export const practiceStaffIsUpdating = state => {
+    return state.practiceStaffIsUpdating
+}
+
 export const errors = state => {
     return state.errors
 }

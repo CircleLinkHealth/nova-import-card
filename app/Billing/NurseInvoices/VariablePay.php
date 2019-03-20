@@ -24,7 +24,8 @@ class VariablePay extends NurseInvoice
     public function __construct(
         Nurse $nurse,
         Carbon $start,
-        Carbon $end
+        Carbon $end,
+        $summary
     ) {
         parent::__construct($nurse, $start, $end);
 
@@ -33,7 +34,7 @@ class VariablePay extends NurseInvoice
 
         $day_start = Carbon::parse($this->start->firstOfMonth()->format('Y-m-d'));
 
-        $this->report = NurseMonthlySummary::where('nurse_id', $nurse->id)->where('month_year', $day_start)->first();
+        $this->report = $summary;
 
         if (null != $this->report) {
             $this->ccm_over_duration  = round($this->report->accrued_after_ccm / 3600, 1);
@@ -73,24 +74,13 @@ class VariablePay extends NurseInvoice
         $this->data['total']['towards'] = $this->ccm_under_duration;
         $this->data['total']['after']   = $this->ccm_over_duration;
 
+        $logs = NurseCareRateLog::where('nurse_id', $this->nurse->id)->whereBetween('created_at', [ $this->start->copy()->startOfDay(), $this->end->copy()->endOfDay() ])->get();
         while ($this->end->toDateString() >= $dayCounter) {
-            $raw_after = NurseCareRateLog::where('nurse_id', $this->nurse->id)
-                ->where(function ($q) use (
-                    $dayCounter
-                ) {
-                    $q->where('created_at', '>=', Carbon::parse($dayCounter)->startOfDay())
-                        ->where('created_at', '<=', Carbon::parse($dayCounter)->endOfDay());
-                })
+            $raw_after = $logs->where('created_at', '>=', Carbon::parse($dayCounter)->startOfDay())->where('created_at', '<=', Carbon::parse($dayCounter)->endOfDay())
                 ->where('ccm_type', 'accrued_after_ccm')
                 ->sum('increment');
 
-            $raw_towards = NurseCareRateLog::where('nurse_id', $this->nurse->id)
-                ->where(function ($q) use (
-                    $dayCounter
-                ) {
-                    $q->where('created_at', '>=', Carbon::parse($dayCounter)->startOfDay())
-                        ->where('created_at', '<=', Carbon::parse($dayCounter)->endOfDay());
-                })
+            $raw_towards = $logs->where('created_at', '>=', Carbon::parse($dayCounter)->startOfDay())->where('created_at', '<=', Carbon::parse($dayCounter)->endOfDay())
                 ->where('ccm_type', 'accrued_towards_ccm')
                 ->sum('increment');
 

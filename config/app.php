@@ -12,12 +12,11 @@ use App\Providers\GoogleDriveServiceProvider;
 use App\Providers\ObserversServiceProvider;
 use App\Providers\TwilioClientServiceProvider;
 use App\Providers\ViewComposerServiceProvider;
-use App\View\Composers\ProviderUITimerComposer;
 use App\View\Composers\FabComposer;
+use App\View\Composers\ProviderUITimerComposer;
 use App\View\Composers\SAAS\Admin\ManageInternalUser;
 use Carbon\Carbon;
-use Davibennun\LaravelRaygun\Facades\Raygun;
-use Davibennun\LaravelRaygun\LaravelRaygunServiceProvider;
+use CircleLinkHealth\Raygun\Providers\RaygunServiceProvider;
 
 return [
     /*
@@ -31,7 +30,7 @@ return [
      * atom
      */
     'editor' => env('IDE', 'phpstorm'),
-    
+
     /*
    |--------------------------------------------------------------------------
    | Application Name
@@ -41,9 +40,9 @@ return [
    | framework needs to place the application's name in a notification or
    | any other location as required by the application or its packages.
    */
-    
+
     'name' => 'CarePlan Manager',
-    
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment
@@ -54,9 +53,9 @@ return [
     | services your application utilizes. Set this in your ".env" file.
     |
     */
-    
+
     'env' => env('APP_ENV', 'production'),
-    
+
     /*
     |--------------------------------------------------------------------------
     | Application Debug Mode
@@ -67,9 +66,9 @@ return [
     | application. If disabled, a simple generic error page is shown.
     |
     */
-    
+
     'debug' => env('APP_DEBUG', false),
-    
+
     /*
     |--------------------------------------------------------------------------
     | Application URL
@@ -80,7 +79,7 @@ return [
     | your application so that it is used when running Artisan tasks.
     |
     */
-    
+
     'url' => env('APP_URL', 'http://cpm.dev'),
 
     'asset_url' => env('ASSET_URL', null),
@@ -95,9 +94,9 @@ return [
     | ahead and set this to a sensible default for you out of the box.
     |
     */
-    
+
     'timezone' => 'America/New_York',
-    
+
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration
@@ -108,9 +107,9 @@ return [
     | to any of the locales which will be supported by the application.
     |
     */
-    
+
     'locale' => 'en',
-    
+
     /*
     |--------------------------------------------------------------------------
     | Application Fallback Locale
@@ -121,7 +120,7 @@ return [
     | the language folders that are provided through your application.
     |
     */
-    
+
     'fallback_locale' => 'en',
 
     /*
@@ -147,9 +146,9 @@ return [
     | will not be safe. Please do this before deploying an application!
     |
     */
-    
+
     'key' => env('APP_KEY', 'SomeRandomString'),
-    
+
     'cipher' => 'AES-256-CBC',
 
     /*
@@ -162,11 +161,11 @@ return [
     | this array to grant expanded functionality to your applications.
     |
     */
-    
+
     'providers' => [
         // Jenssegers User Agent
         Jenssegers\Agent\AgentServiceProvider::class,
-        
+
         // Laravel Framework Service Providers...
         Illuminate\Auth\AuthServiceProvider::class,
         Illuminate\Broadcasting\BroadcastServiceProvider::class,
@@ -190,12 +189,12 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
-        
+
         // Application Service Providers...
-        LaravelRaygunServiceProvider::class,
+        RaygunServiceProvider::class,
         Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class,
         Barryvdh\Snappy\ServiceProvider::class,
-        
+
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
@@ -203,10 +202,10 @@ return [
         App\Providers\RouteServiceProvider::class,
         FaxServiceProvider::class,
         DirectMailServiceProvider::class,
-        
+
         App\Providers\UserMetaParserHelpersServiceProvider::class,
         App\Providers\StringManipulationServiceProvider::class,
-        
+
         // CPM Providers
         \Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
         \Collective\Html\HtmlServiceProvider::class,
@@ -231,7 +230,7 @@ return [
         PragmaRX\Health\ServiceProvider::class,
         TwilioClientServiceProvider::class,
     ],
-    
+
     /*
     |--------------------------------------------------------------------------
     | Class Aliases
@@ -242,7 +241,7 @@ return [
     | the aliases are "lazy" loaded so they don't hinder performance.
     |
     */
-    
+
     'aliases' => [
         'App'          => Illuminate\Support\Facades\App::class,
         'Agent'        => Jenssegers\Agent\Facades\Agent::class,
@@ -277,10 +276,10 @@ return [
         'URL'          => Illuminate\Support\Facades\URL::class,
         'Validator'    => Illuminate\Support\Facades\Validator::class,
         'View'         => Illuminate\Support\Facades\View::class,
-        
+
         'Input'     => Illuminate\Support\Facades\Input::class,
         'Inspiring' => Illuminate\Foundation\Inspiring::class,
-        
+
         'DataTables'     => Yajra\DataTables\Facades\DataTables::class,
         'Excel'          => \Maatwebsite\Excel\Facades\Excel::class,
         'Form'           => \Collective\Html\FormFacade::class,
@@ -294,6 +293,5 @@ return [
         'GoogleCalendar' => Spatie\GoogleCalendar\GoogleCalendarFacade::class,
         'Swagger'        => L5Swagger\L5SwaggerServiceProvider::class,
         'UrlShortener'   => Waavi\UrlShortener\Facades\UrlShortener::class,
-        'Raygun'         => Raygun::class,
     ],
 ];

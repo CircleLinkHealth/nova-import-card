@@ -263,8 +263,7 @@ class OnboardingController extends Controller
         $lead->save();
 
         $leadRole = Role::whereName('practice-lead')->first();
-
-        $attachPractice = $lead->attachPractice($practice, true, true, $leadRole);
+        $lead->attachPractice($practice, [$leadRole->id], true);
 
         return redirect()->route('get.onboarding.create.locations', [
             'practiceSlug' => $practice->name,

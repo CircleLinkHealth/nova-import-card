@@ -3,7 +3,7 @@
         <template slot="title">
             <div class="row">
                 <div class="col-sm-6">
-                    Add New Activity(ies)
+                    <h3>Add Activity(ies)</h3>
                 </div>
             </div>
         </template>
@@ -14,52 +14,58 @@
                     <table class="add-actions">
                         <thead>
                         <tr>
-                            <th class="family-override">
-                                <a v-show="hasToConfirmFamilyOverrides" class='my-tool-tip' data-toggle="tooltip"
-                                   data-placement="top"
-                                   title="Tick to confirm family call override">
-                                    <i class='glyphicon glyphicon-info-sign'></i>
-                                </a>
-                            </th>
-                            <th class="sub-type">
+                            <th class="sub-type" :class="showPracticeColumn ? 'with-practice-column' : ''">
                                 Type
+                                <span class="required">*</span>
                             </th>
-                            <th class="practices">
+                            <th class="practices" v-if="showPracticeColumn">
                                 Practice
+                                <span class="required">*</span>
                                 <loader v-show="loaders.practices"></loader>
                             </th>
-                            <th class="patients">
+                            <th class="patients" :class="showPracticeColumn ? 'with-practice-column' : ''">
                                 Patient
                                 <span class="required">*</span>
+                            </th>
+                            <th class="patients-tool-tip">
                                 <a class='my-tool-tip' data-toggle="tooltip" data-placement="top"
                                    title="Tick to show only unscheduled">
                                     <i class='glyphicon glyphicon-info-sign'></i>
                                 </a>
                                 <loader v-show="loaders.patients"></loader>
                             </th>
-                            <th class="nurses">
-                                Nurse
+                            <th class="nurses" :class="showPracticeColumn ? 'with-practice-column' : ''">
+                                Care Coach
                                 <loader v-show="loaders.nurses"></loader>
                             </th>
-                            <th class="date">
+                            <th class="date" :class="showPracticeColumn ? 'with-practice-column' : ''">
                                 Date
                                 <span class="required">*</span>
                             </th>
-                            <th class="start-time">
+                            <th class="start-time" :class="showPracticeColumn ? 'with-practice-column' : ''">
                                 Start Time <span class="required">*</span>
                             </th>
-                            <th class="end-time">
+                            <th class="end-time" :class="showPracticeColumn ? 'with-practice-column' : ''">
                                 End Time
                                 <span class="required">*</span>
+                            </th>
+                            <th class="end-time-tooltip">
                                 <a class='my-tool-tip' data-toggle="tooltip" data-placement="top"
                                    title="Tick if patient requested call time">
                                     <i class='glyphicon glyphicon-info-sign'></i>
                                 </a>
                             </th>
-                            <th class="notes">
+                            <th class="notes" :class="showPracticeColumn ? 'with-practice-column' : ''">
                                 Activity Note
                             </th>
-                            <th class="remove">
+                            <th class="family-override" :class="showPracticeColumn ? 'with-practice-column' : ''">
+                                <a v-show="hasToConfirmFamilyOverrides" class='my-tool-tip' data-toggle="tooltip"
+                                   data-placement="top"
+                                   title="Tick to confirm family call override">
+                                    <i class='glyphicon glyphicon-info-sign'></i>
+                                </a>
+                            </th>
+                            <th class="remove" :class="showPracticeColumn ? 'with-practice-column' : ''">
                                 &nbsp;
                             </th>
                         </tr>
@@ -67,42 +73,34 @@
                         <tbody>
                         <tr v-for="(action, index) in actions">
                             <td>
-                                <div v-show="action.showFamilyOverride">
-                                    <input type="checkbox" id="family_override"
-                                           name="family_override" v-model="action.data.familyOverride"
-                                           :disabled="action.disabled"/>
-                                </div>
-                            </td>
-                            <td>
                                 <v-select :disabled="action.disabled"
-                                          max-height="200px" class="form-control" v-model="action.selectedSubTypeData"
+                                          max-height="200px" class="form-control"
+                                          v-model="action.selectedSubTypeData"
                                           :options="subTypesForSelect"
                                           @input="function (type) {changeSubType(index, type)}">
                                 </v-select>
                             </td>
-                            <td>
+                            <td v-if="showPracticeColumn">
                                 <v-select :disabled="action.disabled"
-                                          max-height="200px" class="form-control" v-model="action.selectedPracticeData"
+                                          max-height="200px" class="form-control"
+                                          v-model="action.selectedPracticeData"
                                           :options="practicesForSelect"
                                           @input="function (practice) {changePractice(index, practice)}">
                                 </v-select>
                             </td>
                             <td>
-                                <div class="width-90">
-                                    <v-select :disabled="action.disabled"
-                                              max-height="200px" class="form-control" name="inbound_cpm_id"
-                                              v-model="action.selectedPatientData"
-                                              :options="action.patientsForSelect"
-                                              @input="function (patient) {changePatient(index, patient)}"
-                                              required>
-                                    </v-select>
-                                </div>
-                                <div class="width-10 padding-left-5 padding-top-7">
-                                    <input :disabled="action.disabled"
-                                           type="checkbox" v-model="action.filters.showUnscheduledPatients"
-                                           @change="function (e) { changeUnscheduledPatients(index, e); }"/>
-                                </div>
-
+                                <v-select :disabled="action.disabled"
+                                          max-height="200px" class="form-control"
+                                          name="inbound_cpm_id"
+                                          v-model="action.selectedPatientData"
+                                          :options="action.patientsForSelect"
+                                          @input="function (patient) {changePatient(index, patient)}" required>
+                                </v-select>
+                            </td>
+                            <td>
+                                <input :disabled="action.disabled"
+                                       type="checkbox" v-model="action.filters.showUnscheduledPatients"
+                                       @change="function (e) { changeUnscheduledPatients(index, e); }"/>
                             </td>
                             <td>
                                 <v-select :disabled="action.disabled"
@@ -115,29 +113,36 @@
                                 </v-select>
                             </td>
                             <td>
-                                <input class="form-control" type="date" name="scheduled_date" v-model="action.data.date"
+                                <input class="form-control height-40" type="date" name="scheduled_date"
+                                       v-model="action.data.date"
                                        :disabled="action.disabled" required/>
                             </td>
                             <td>
-                                <input class="form-control" type="time" name="window_start"
+                                <input class="form-control height-40" type="time" name="window_start"
                                        v-model="action.data.startTime"
                                        :disabled="action.disabled" required/>
                             </td>
                             <td>
-                                <div class="width-82">
-                                    <input class="form-control" type="time" name="window_end"
-                                           v-model="action.data.endTime"
-                                           :disabled="action.disabled" required/>
-                                </div>
-                                <div class="width-18 padding-left-5 padding-top-7">
-                                    <input type="checkbox" id="is_manual"
-                                           name="is_manual" v-model="action.data.isManual"
-                                           :disabled="action.disabled"/>
-                                </div>
+                                <input class="form-control height-40" type="time" name="window_end"
+                                       v-model="action.data.endTime"
+                                       :disabled="action.disabled" required/>
                             </td>
                             <td>
-                                <input class="form-control" type="text" name="text" v-model="action.data.text"
+                                <input type="checkbox" id="is_manual"
+                                       name="is_manual" v-model="action.data.isManual"
                                        :disabled="action.disabled"/>
+                            </td>
+                            <td>
+                                <input class="form-control height-40" type="text" name="text" v-model="action.data.text"
+                                       :disabled="action.disabled"/>
+                            </td>
+                            <td>
+                                <div v-show="action.showFamilyOverride">
+                                    <input type="checkbox" id="family_override"
+                                           name="family_override"
+                                           v-model="action.data.familyOverride"
+                                           :disabled="action.disabled"/>
+                                </div>
                             </td>
                             <td>
                                 <span class="btn btn-xs" @click="removeAction(index)" v-show="actions.length > 1">
@@ -150,7 +155,7 @@
                 </div>
 
                 <div>
-                    <div class="alert alert-danger" v-if="hasNotAvailableNurses">
+                    <div class="alert alert-danger hasNot" v-if="hasNotAvailableNurses">
                         No available nurses for selected patient
                     </div>
                     <div class="alert alert-warning" v-if="hasPatientInDraftMode">
@@ -160,7 +165,7 @@
 
                 <br/>
                 <div class="row">
-                    <div class="btn btn-primary btn-xs" @click="addNewAction">
+                    <div class="btn btn-primary btn-xs add-activity" @click="addNewAction">
                         Add New Activity
                     </div>
                 </div>
@@ -226,6 +231,7 @@
             selectedPatientIsInDraftMode: false,
             nursesForSelect: [],
             patientsForSelect: [],
+            skipRefreshingPatients: false //used when patient is already selected
 
         };
     }
@@ -272,6 +278,7 @@
                 },
 
                 subTypesForSelect: [
+                    UNASSIGNED_VALUE,
                     {label: 'Call', value: 'call'},
                     {label: 'Call back', value: 'Call Back'},
                     {label: 'Refill', value: 'Refill'},
@@ -284,27 +291,30 @@
                 practices: [],
                 practicesForSelect: [],
 
-                actions: [getNewAction()]
+                actions: []
             }
         },
         computed: {
             hasNotAvailableNurses() {
-                return this.actions.filter(x => x.data.practiceId && x.nursesForSelect.length === 0).length > 0;
+                return this.actions.filter(x => x.data.practiceId && x.nursesForSelect.length === 0).length > 0 && !this.loaders.nurses;
             },
             hasPatientInDraftMode() {
                 return this.actions.filter(x => x.selectedPatientIsInDraftMode).length > 0;
             },
             hasToConfirmFamilyOverrides() {
                 return this.actions.filter(x => x.showFamilyOverride).length > 0;
+            },
+            showPracticeColumn() {
+                return this.practices.length > 1;
             }
         },
-        methods: {
 
+        methods: {
             setNursesForSelect(actionIndex) {
                 this.actions[actionIndex].nursesForSelect = [
                     UNASSIGNED_VALUE,
                     ...this.actions[actionIndex].nurses.map(nurse => ({
-                        label: nurse.full_name,
+                        label: nurse.full_name + (nurse.roles.includes('care-center-external') ? ' (in-house)' : ''),
                         value: nurse.id
                     }))]
             },
@@ -331,7 +341,13 @@
             },
 
             addNewAction() {
+
+                const newActionIndex = this.actions.length;
                 this.actions.push(getNewAction());
+
+                this.getPatients(newActionIndex);
+                this.getPractices(newActionIndex);
+
             },
             removeAction(id) {
                 this.$delete(this.actions, id);
@@ -350,8 +366,7 @@
                                 value: practice.id
                             }
                         }
-                    }
-                    else {
+                    } else {
                         this.actions[actionIndex].selectedPracticeData = UNASSIGNED_VALUE;
                     }
                 }
@@ -361,8 +376,7 @@
                     if (type.value === "call") {
                         this.actions[actionIndex].data.type = 'call';
                         this.actions[actionIndex].data.subType = null;
-                    }
-                    else {
+                    } else {
                         this.actions[actionIndex].data.type = 'task';
                         this.actions[actionIndex].data.subType = type.value;
                     }
@@ -381,13 +395,17 @@
                 if (practice) {
 
                     //reset selected patient only if practice is different
-                    if (this.actions[actionIndex].data.practiceId !== practice.value) {
-                        this.selectedPatientData = UNASSIGNED_VALUE;
+                    if (this.actions[actionIndex].data.practiceId !== practice.value && !this.actions[actionIndex].skipRefreshingPatients) {
+                        this.actions[actionIndex].selectedPatientData = UNASSIGNED_VALUE;
                     }
                     //always reset selected nurse
                     this.actions[actionIndex].selectedNurseData = UNASSIGNED_VALUE;
 
                     this.actions[actionIndex].data.practiceId = practice.value;
+
+                    //in case skip was set, we reset
+                    this.actions[actionIndex].skipRefreshingPatients = false;
+
                     return Promise.all([this.getPatients(actionIndex), this.getNurses(actionIndex)])
                 }
                 return Promise.resolve([])
@@ -418,6 +436,12 @@
                             })
                             .distinct(patient => patient.id);
                         this.setPracticesForSelect();
+
+                        if (!this.showPracticeColumn) {
+                            //0 is UNDEFINED option, so this.practicesForSelect[1]
+                            this.changePractice(actionIndex, this.practicesForSelect[1]);
+                        }
+
                     }).catch(err => {
                         this.loaders.practices = false;
                         this.errors.practices = err.message;
@@ -425,17 +449,19 @@
                     })
             },
             getPatients(actionIndex) {
-                return !this.actions[actionIndex].data.practiceId ?
-                    this.getAllPatients(actionIndex) :
-                    (this.actions[actionIndex].filters.showUnscheduledPatients ?
-                            this.getUnscheduledPatients(actionIndex) :
-                            this.getPracticePatients(actionIndex)
-                    );
+
+                if (!this.actions[actionIndex].data.practiceId) {
+                    return Promise.resolve(null);
+                }
+
+                return this.actions[actionIndex].filters.showUnscheduledPatients ?
+                    this.getUnscheduledPatients(actionIndex) :
+                    this.getPracticePatients(actionIndex);
             },
             getUnscheduledPatients(actionIndex) {
                 this.loaders.patients = true
                 const practice_addendum = this.actions[actionIndex].data.practiceId ? `practices/${this.actions[actionIndex].data.practiceId}/` : '';
-                return this.axios.get(rootUrl(`api/${practice_addendum}patients/without-scheduled-calls`)).then(response => {
+                return this.axios.get(rootUrl(`api/${practice_addendum}patients/without-scheduled-activities`)).then(response => {
                     this.loaders.patients = false;
                     const pagination = response.data;
                     console.log('add-action:patients:unscheduled', pagination);
@@ -540,6 +566,7 @@
                         }
 
                         const data = action.data;
+
                         //CPM-291 - allow unassigned nurse
                         //if (call.patientId === null || call.nurseId === null || call.practiceId === null) {
                         if (data.patientId === null || data.practiceId === null) {
@@ -613,11 +640,9 @@
 
                                         if (familyOverrideError) {
                                             msg += CALL_MUST_OVERRIDE_WARNING;
-                                        }
-                                        else if (Array.isArray(action.errors)) {
+                                        } else if (Array.isArray(action.errors)) {
                                             msg += action.errors.join(', ');
-                                        }
-                                        else {
+                                        } else {
                                             const errorsMessages = Object.values(action.errors).map(x => x[0]).join(', ');
                                             msg += errorsMessages;
                                         }
@@ -627,19 +652,17 @@
                                             type: 'error',
                                             noTimeout: true
                                         });
-                                    }
-                                    else {
+                                    } else {
                                         Event.$emit('notifications-add-action-modal:create', {
                                             text: `Action[${index + 1}]: Created successfully`,
                                             noTimeout: true
                                         });
-                                        Event.$emit('actions:add', call);
+                                        Event.$emit('actions:add', action);
                                     }
 
                                 });
 
-                            }
-                            else {
+                            } else {
                                 this.resetForm();
                                 Event.$emit("modal-add-action:hide");
                                 actions.forEach(action => {
@@ -649,8 +672,7 @@
                                 console.log('actions:add', actions);
                             }
 
-                        }
-                        else {
+                        } else {
                             throw new Error('Could not create call. Patient already has a scheduled call')
                         }
                     }).catch(err => {
@@ -673,13 +695,11 @@
                                 const errors = err.response.data.errors;
                                 if (Array.isArray(errors)) {
                                     msg += `: ${errors.join(', ')}`;
-                                }
-                                else {
+                                } else {
                                     const errorsMessages = Object.values(errors).map(x => x[0]).join(', ');
                                     msg += `: ${errorsMessages}`;
                                 }
-                            }
-                            else if (err.response.data.message) {
+                            } else if (err.response.data.message) {
                                 msg += `: ${err.response.data.message}`;
                             }
 
@@ -690,7 +710,7 @@
             }
         },
         created() {
-            return Promise.all([this.getPractices(0), this.getPatients(0)])
+            this.addNewAction();
         },
         mounted() {
 
@@ -726,7 +746,12 @@
             Event.$on('add-action-modals:set', (data) => {
                 if (data) {
                     if (data.practiceId) {
-                        // this.setPractice(data.practiceId)
+                        this.actions[this.actions.length - 1].skipRefreshingPatients = true;
+                        this.actions[this.actions.length - 1].data.patientId = data.practiceId;
+                        this.actions[this.actions.length - 1].selectedPracticeData = {
+                            label: data.practiceName,
+                            value: data.practiceId
+                        };
                     }
                     if (data.patientId) {
                         console.log(data);
@@ -735,8 +760,6 @@
                             label: data.patientName,
                             value: data.patientId
                         };
-                        this.actions[this.actions.length - 1].selectedPatientData.label = data.patientName
-                        this.actions[this.actions.length - 1].selectedPatientData.value = data.patientId
                     }
                 }
             })
@@ -767,53 +790,108 @@
     }
 
     .modal-add-action table.add-actions {
+        width: 100%;
         table-layout: fixed;
+        margin-left: -10px;
     }
 
-    .modal-add-action table.add-actions th.sub-type {
-        width: 5%;
+    /* Table with a Practices column */
+    .modal-add-action table.add-actions th.sub-type.with-practice-column {
+        width: 12%;
     }
 
     .modal-add-action table.add-actions th.practices {
-        width: 16%;
-    }
-
-    .modal-add-action table.add-actions th.patients {
-        width: 16%;
-    }
-
-    .modal-add-action table.add-actions th.nurses {
-        width: 15%;
-    }
-
-    .modal-add-action table.add-actions th.date {
-        width: 10%;
-    }
-
-    .modal-add-action table.add-actions th.start-time {
-        width: 8%;
-    }
-
-    .modal-add-action table.add-actions th.end-time {
         width: 11%;
     }
 
-    .modal-add-action table.add-actions th.notes {
+    .modal-add-action table.add-actions th.patients.with-practice-column {
+        width: 14%;
+    }
+
+    .modal-add-action table.add-actions th.patients-tool-tip.with-practice-column {
+        width: 2%;
+    }
+
+    .modal-add-action table.add-actions th.nurses.with-practice-column {
+        width: 12%;
+    }
+
+    .modal-add-action table.add-actions th.date.with-practice-column {
+        width: 14%;
+    }
+
+    .modal-add-action table.add-actions th.start-time.with-practice-column {
+        width: 11%;
+    }
+
+    .modal-add-action table.add-actions th.end-time.with-practice-column {
+        width: 11%;
+    }
+
+    .modal-add-action table.add-actions th.end-time-tooltip.with-practice-column {
+        width: 2%;
+    }
+
+    .modal-add-action table.add-actions th.notes.with-practice-column {
+        width: 10%;
+    }
+
+    .modal-add-action table.add-actions th.remove.with-practice-column {
+        width: 3%;
+    }
+
+    .modal-add-action table.add-actions th.family-override.with-practice-column {
+        width: 2%;
+    }
+
+    .modal-add-action table.add-actions th.sub-type {
+        width: 10%;
+    }
+
+    .modal-add-action table.add-actions th.patients {
+        width: 15%;
+    }
+
+    .modal-add-action table.add-actions th.patients-tool-tip {
+        width: 2%;
+    }
+
+    .modal-add-action table.add-actions th.nurses {
         width: 16%;
+    }
+
+    .modal-add-action table.add-actions th.date {
+        width: 12%;
+    }
+
+    .modal-add-action table.add-actions th.start-time {
+        width: 10%;
+    }
+
+    .modal-add-action table.add-actions th.end-time {
+        width: 10%;
+    }
+
+    .modal-add-action table.add-actions th.end-time-tooltip {
+        width: 2%;
+    }
+
+    .modal-add-action table.add-actions th.notes {
+        width: 17%;
     }
 
     .modal-add-action table.add-actions th.remove {
         width: 3%;
     }
 
-    .modal-add-call table.add-calls th.family-override {
-        width: 2%;
+    .modal-add-action table.add-actions th.family-override {
+        width: 3%;
     }
 
     .modal-add-action .loader {
         position: absolute;
-        right: 5px;
-        top: 5px;
+        right: 3px;
+        top: 7px;
         width: 20px;
         height: 20px;
     }
@@ -826,24 +904,8 @@
         font-size: 20px;
     }
 
-    .width-90 {
-        float: left;
-        width: 90%;
-    }
-
-    .width-82 {
-        float: left;
-        width: 82%;
-    }
-
-    .width-18 {
-        float: left;
-        width: 18%;
-    }
-
-    .width-10 {
-        float: left;
-        width: 10%;
+    .height-40 {
+        height: 40px;
     }
 
     .padding-left-5 {
@@ -871,25 +933,47 @@
     }
 
     .v-select .dropdown-toggle {
-        height: 34px;
+        height: 40px;
+        position: relative;
         overflow: hidden;
     }
 
     .modal-add-action .modal-body {
         min-height: 300px;
+        margin-left: 20px;
+        margin-top: 1px;
     }
 
     .selected-tag {
-        width: 80%;
+        height: 100%;
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
     }
 
-    a.my-tool-tip {
-        float: right;
-        margin-right: 4px;
+    .add-activity {
+        margin-left: -6px;
     }
 
+    .modal-header h3 {
+        margin-top: 0;
+        margin-left: -2px;
+        color: #000;
+    }
 
+    .v-select .open-indicator {
+        visibility: visible;
+    }
+
+    .v-select .dropdown-toggle .clear {
+        display: none;
+    }
+
+    .v-select .vs__selected-options {
+        max-width: 86%;
+    }
+
+    .v-select .dropdown-menu > .highlight > a {
+        display: inline-block;
+    }
 </style>

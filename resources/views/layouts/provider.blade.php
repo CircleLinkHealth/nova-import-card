@@ -32,7 +32,15 @@
 
     <link href="{{ mix('/compiled/css/stylesheet.css') }}" rel="stylesheet">
     <link href="{{ mix('/css/patientsearch.css') }}" rel="stylesheet">
+
+
+
     <link href="{{ mix('/css/wpstyle.css') }}" rel="stylesheet">
+
+    @if (str_contains(Route::getCurrentRoute()->getName(), 'admin'))
+        <link href="{{mix('/css/bootstrap.min.css')}}" rel="stylesheet">
+    @endif
+
     <link href="{{ mix('/img/favicon.png') }}" rel="icon">
 
     @if(!isset($isPdf))
@@ -57,7 +65,7 @@
         }
     </style>
     @stack('styles')
-    @include('partials.raygun-tracking')
+    @include('cpm-module-raygun::partials.real-user-monitoring')
 </head>
 <body>
 

@@ -85,7 +85,7 @@ class EmailRNDailyReport extends Command
                         if (0 == $systemTime) {
                             continue;
                         }
-                    
+
                         if ($nurse->nurseInfo->hourly_rate < 1
                             && 'active' != $nurse->nurseInfo
                         ) {
@@ -141,7 +141,7 @@ class EmailRNDailyReport extends Command
                                 : null,
                         ];
                     
-                        $nurse->notify(new NurseDailyReport($data));
+                        $nurse->notify(new NurseDailyReport($data, $date));
                     
                         $emailsSent[] = [
                             'nurse' => $nurse->getFullName(),

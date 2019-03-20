@@ -6,6 +6,7 @@
 
 namespace App\Filters;
 
+use App\Role;
 use Illuminate\Http\Request;
 
 class CallViewFilters extends QueryFilters
@@ -25,7 +26,7 @@ class CallViewFilters extends QueryFilters
 
     public function billing_provider($billingProvider)
     {
-        return $this->builder->where('billing_provider', 'like', '%'.$billingProvider.'%');
+        return $this->builder->where('billing_provider', 'like', '%' . $billingProvider . '%');
     }
 
     public function completed_tasks()
@@ -34,23 +35,23 @@ class CallViewFilters extends QueryFilters
             ->where('type', '!=', 'call')
             ->where(function ($q) {
                 $q->where('status', '=', 'done')
-                    ->orWhere('status', '=', 'reached');
+                  ->orWhere('status', '=', 'reached');
             });
     }
 
     public function globalFilters(): array
     {
-        return [];
+        return ['software_only_user' => ! auth()->user()->isAdmin()];
     }
 
     public function last_call($lastCall)
     {
-        return $this->builder->where('last_call', 'like', '%'.$lastCall.'%');
+        return $this->builder->where('last_call', 'like', '%' . $lastCall . '%');
     }
 
     public function nurse($nurse)
     {
-        return $this->builder->where('nurse', 'like', '%'.$nurse.'%');
+        return $this->builder->where('nurse', 'like', '%' . $nurse . '%');
     }
 
     public function patient_id($id)
@@ -58,9 +59,14 @@ class CallViewFilters extends QueryFilters
         return $this->builder->where('patient_id', '=', $id);
     }
 
+    public function patient($name)
+    {
+        return $this->builder->where('patient', 'like', '%' . $name . '%');
+    }
+
     public function practice($practice)
     {
-        return $this->builder->where('practice', 'like', '%'.$practice.'%');
+        return $this->builder->where('practice', 'like', '%' . $practice . '%');
     }
 
     public function scheduled()
@@ -70,7 +76,21 @@ class CallViewFilters extends QueryFilters
 
     public function scheduled_date($date)
     {
-        return $this->builder->where('scheduled_date', 'like', '%'.$date.'%');
+        return $this->builder->where('scheduled_date', 'like', '%' . $date . '%');
+    }
+
+    public function software_only_user($value)
+    {
+        if ( ! $value) {
+            return $this->builder;
+        }
+        $roleIds = Role::getIdsFromNames(['software-only']);
+        $user    = auth()->user();
+
+        return $this->builder->whereRaw(
+            'practice_id IN (SELECT program_id FROM practice_role_user WHERE role_id IN (?) AND user_id = ?)',
+            [implode(',', $roleIds), $user->id]
+        );
     }
 
     public function sort_bhi_time($term)
@@ -120,7 +140,7 @@ class CallViewFilters extends QueryFilters
 
     public function type($type)
     {
-        return $this->builder->where('type', 'like', '%'.$type.'%');
+        return $this->builder->where('type', 'like', '%' . $type . '%');
     }
 
     public function unassigned()

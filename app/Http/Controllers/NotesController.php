@@ -116,7 +116,7 @@ class NotesController extends Controller
                                        ])
                                        ->get();
 
-            $isCareCoach = Auth::user()->hasRole('care-center');
+            $isCareCoach = Auth::user()->isCareCoach();
             $meds        = [];
             if ($isCareCoach && $this->shouldPrePopulateWithMedications($patient)) {
                 $meds = $medicationService->repo()->patientMedicationsList($patientId);
@@ -443,7 +443,7 @@ class NotesController extends Controller
                 $call->save();
             }
         } else {
-            if (Auth::user()->hasRole('care-center')) {
+            if (Auth::user()->isCareCoach()) {
                 $is_withdrawn = 'withdrawn' == $info->ccm_status;
 
                 if ( ! $is_phone_session && $is_withdrawn) {
@@ -592,16 +592,6 @@ class NotesController extends Controller
                               ) . '#create-addendum');
     }
 
-    private function shouldPrePopulateWithMedications(User $patient)
-    {
-        return Practice::whereId($patient->program_id)
-                       ->where(function ($q) {
-                           $q->where('name', '=', 'phoenix-heart')
-                             ->orWhere('name', '=', 'demo');
-                       })
-                       ->exists();
-    }
-
     private function getProviders($getNotesFor)
     {
         return collect($getNotesFor)->map(function ($for) {
@@ -620,4 +610,13 @@ class NotesController extends Controller
                                     ->all();
     }
 
+    private function shouldPrePopulateWithMedications(User $patient)
+    {
+        return Practice::whereId($patient->program_id)
+                       ->where(function ($q) {
+                           $q->where('name', '=', 'phoenix-heart')
+                             ->orWhere('name', '=', 'demo');
+                       })
+                       ->exists();
+    }
 }

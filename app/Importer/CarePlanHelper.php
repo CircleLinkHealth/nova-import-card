@@ -13,6 +13,7 @@ use App\CLH\CCD\Importer\StorageStrategies\Biometrics\Weight;
 use App\CLH\CCD\Importer\StorageStrategies\Problems\ProblemsToMonitor;
 use App\CLH\Helpers\StringManipulation;
 use App\Enrollee;
+use App\Location;
 use App\Models\CCD\Allergy;
 use App\Models\CCD\CcdInsurancePolicy;
 use App\Models\CCD\Medication;
@@ -178,7 +179,7 @@ class CarePlanHelper
     public function storeContactWindows()
     {
         // update timezone
-        $this->user->timezone = 'America/New_York';
+        $this->user->timezone = optional($this->imr->location)->timezone ?? 'America/New_York';
 
         $preferredCallDays  = parseCallDays($this->dem->preferred_call_days);
         $preferredCallTimes = parseCallTimes($this->dem->preferred_call_times);
@@ -360,8 +361,8 @@ class CarePlanHelper
 
                 $makePrimary = 0 == strcasecmp(
                     $primaryPhone,
-                        PhoneNumber::HOME
-                ) || $primaryPhone == $number || ! $primaryPhone;
+                    PhoneNumber::HOME
+                    ) || $primaryPhone == $number || ! $primaryPhone;
 
                 $homePhone = PhoneNumber::create([
                     'user_id'    => $this->user->id,
@@ -388,8 +389,8 @@ class CarePlanHelper
 
                 $makePrimary = 0 == strcasecmp($primaryPhone, PhoneNumber::MOBILE) || 0 == strcasecmp(
                     $primaryPhone,
-                        'cell'
-                ) || $primaryPhone == $number || ! $primaryPhone;
+                    'cell'
+                    ) || $primaryPhone == $number || ! $primaryPhone;
 
                 $mobilePhone = PhoneNumber::create([
                     'user_id'    => $this->user->id,
@@ -476,7 +477,7 @@ class CarePlanHelper
             ?: $this->imr->practice_id;
 
         if ($practiceId) {
-            $this->user->attachPractice($practiceId, false, false, 2);
+            $this->user->attachPractice($practiceId, [2]);
         }
 
         return $this;

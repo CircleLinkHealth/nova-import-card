@@ -45,8 +45,8 @@ mock.onGet('/api/practices').reply(200, PRACTICES)
 
 const patientUrls = [
     '/api/patients?rows=all',
-    '/api/patients/without-scheduled-calls',
-    '/api/practices/8/patients/without-scheduled-calls'
+    '/api/patients/without-scheduled-activities',
+    '/api/practices/8/patients/without-scheduled-activities'
 ]
 
 patientUrls.map((url) => {
@@ -68,7 +68,7 @@ mock.onGet('/api/practices/8/patients').reply(200, PATIENTS)
 /** patient autocomplete */
 
 const autocompletePatientUrls = [
-    '/api/patients/without-scheduled-calls?autocomplete'
+    '/api/patients/without-scheduled-activities?autocomplete'
 ]
 
 const AUTOCOMPLETE_PATIENTS = PATIENTS.map(patient => ({ id: patient.id, 

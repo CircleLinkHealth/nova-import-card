@@ -7,6 +7,7 @@
 namespace App\Http\Controllers\Patient;
 
 use App\CarePlan;
+use App\CarePlanPrintListView;
 use App\CLH\Repositories\UserRepository;
 use App\Contracts\ReportFormatter;
 use App\Http\Controllers\Controller;
@@ -23,6 +24,7 @@ use App\Services\PdfService;
 use App\User;
 use Auth;
 use Carbon\Carbon;
+use DateTime;
 use DateTimeZone;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -51,111 +53,91 @@ class PatientCareplanController extends Controller
     //Show Patient Careplan Print List  (URL: /manage-patients/careplan-print-list)
     public function index()
     {
+        $practiceIds       = auth()->user()->viewableProgramIds();
         $carePlansForWebix = collect();
 
-        CarePlan::with('providerApproverUser')
-            ->whereHas(
-                'patient',
-                function ($q) {
-                    $q->intersectPracticesWith(auth()->user());
-                }
-                )
-            ->with(
-                [
-                    'patient' => function ($q) {
-                        $q
-                            ->with(
-                                [
-                                    'primaryPractice',
-                                    'patientInfo',
-                                ]
-                            )
-                            ->intersectPracticesWith(auth()->user())
-                            ->withCareTeamOfType('billing_provider');
-                    },
-                ]
-                )
-            ->whereHas(
-                'patient.patientInfo',
-                function ($q) {
-                    $q->enrolled();
-                }
-                )
-            ->chunk(
-                100,
-                function ($carePlans) use (&$carePlansForWebix) {
-                    foreach ($carePlans as $cp) {
-                        $last_printed = $cp->last_printed;
+        $query = CarePlanPrintListView::whereIn('primary_practice_id', $practiceIds)
+              ->get()
+              ->each(function ($cp) use (&$carePlansForWebix) {
+                  $last_printed = $cp->last_printed;
 
-                        if ($last_printed) {
-                            $printed_status = 'Yes';
-                            $printed_date = $last_printed;
-                        } else {
-                            $printed_status = 'No';
-                            $printed_date = null;
-                        }
-                        $last_printed
-                                ? $printed = $last_printed
-                                : $printed = 'No';
+                  if ($last_printed) {
+                      $printed_status = 'Yes';
+                      $printed_date   = $last_printed;
+                  } else {
+                      $printed_status = 'No';
+                      $printed_date   = null;
+                  }
+                  $last_printed
+                      ? $printed = $last_printed
+                      : $printed = 'No';
 
-                        // careplan status stuff from 2.x
-                        $careplanStatus = $cp->status;
-                        $careplanStatusLink = '';
-                        $approverName = 'NA';
+                  // careplan status stuff from 2.x
+                  $careplanStatus     = $cp->care_plan_status;
+                  $careplanStatusLink = '';
+                  $approverName       = 'NA';
 
-                        if ('provider_approved' == $careplanStatus) {
-                            $careplanStatus = $careplanStatusLink = 'Approved';
 
-                            $approver = $cp->provider_approver_name;
-                            if ($approver) {
-                                $approverName = $approver;
-                                $carePlanProviderDate = $cp->provider_date;
+                  if ('provider_approved' == $careplanStatus) {
+                      $careplanStatus = $careplanStatusLink = 'Approved';
 
-                                $careplanStatusLink = '<span data-toggle="" title="'.$approverName.' '.$carePlanProviderDate.'">Approved</span>';
-                            }
-                        } elseif ('qa_approved' == $careplanStatus) {
-                            $careplanStatus = 'Prov. to Approve';
-                            $careplanStatusLink = 'Prov. to Approve';
-                        } elseif ('draft' == $careplanStatus) {
-                            $careplanStatus = 'CLH to Approve';
-                            $careplanStatusLink = 'CLH to Approve';
-                        }
+                      $approver = $cp->approver_full_name;
+                      if ($approver) {
+                          $approverName         = $approver;
+                          $carePlanProviderDate = $cp->provider_date;
 
-                        if ($cp->patient->patientInfo
-                                && ! empty($cp->patient->getFullName())
-                                && ! empty($cp->patient->first_name)
-                                && ! empty($cp->patient->last_name)) {
-                            $carePlansForWebix->push(
-                                    [
-                                        'key'                        => $cp->patient->id,
-                                        'id'                         => $cp->patient->id,
-                                        'patient_name'               => $cp->patient->getFullName(),
-                                        'first_name'                 => $cp->patient->getFirstName(),
-                                        'last_name'                  => $cp->patient->getLastName(),
-                                        'careplan_status'            => $careplanStatus,
-                                        'careplan_status_link'       => $careplanStatusLink,
-                                        'careplan_provider_approver' => $approverName,
-                                        'dob'                        => Carbon::parse(
-                                            $cp->patient->getBirthDate()
-                                        )->format('m/d/Y'),
-                                        'phone'    => '',
-                                        'age'      => $cp->patient->getAge(),
-                                        'reg_date' => Carbon::parse(
-                                            $cp->patient->getRegistrationDate()
-                                        )->format('m/d/Y'),
-                                        'last_read'             => '',
-                                        'ccm_time'              => $cp->patient->getCcmTime(),
-                                        'ccm_seconds'           => $cp->patient->getCcmTime(),
-                                        'provider'              => $cp->patient->getBillingProviderName(),
-                                        'program_name'          => $cp->patient->getPrimaryPracticeName(),
-                                        'careplan_last_printed' => $printed_date,
-                                        'careplan_printed'      => $printed_status,
-                                    ]
-                                );
-                        }
-                    }
-                }
-                );
+                          $careplanStatusLink = '<span data-toggle="" title="' . $approverName . ' ' . $carePlanProviderDate . '">Approved</span>';
+
+                      }
+                  } elseif ('qa_approved' == $careplanStatus) {
+                      $careplanStatus     = 'Prov. to Approve';
+                      $careplanStatusLink = 'Prov. to Approve';
+                  } elseif ('draft' == $careplanStatus) {
+                      $careplanStatus     = 'CLH to Approve';
+                      $careplanStatusLink = 'CLH to Approve';
+                  }
+
+                  $from = new DateTime($cp->patient_dob);
+                  $to   = new DateTime('today');
+
+                  $age = $from->diff($to)->y;
+
+                  if ( ! empty($cp->patient_info_id) && ! empty($cp->patient_first_name)
+                       && ! empty($cp->patient_last_name)) {
+
+                      $carePlansForWebix->push(
+                          [
+                              'id'                         => $cp->patient_id,
+                              'key'                        => $cp->patient_id,
+                              'patient_name'               => $cp->patient_full_name,
+                              'first_name'                 => $cp->patient_first_name,
+                              'last_name'                  => $cp->patient_last_name,
+                              'careplan_status'            => $careplanStatus,
+                              'careplan_status_link'       => $careplanStatusLink,
+                              'careplan_provider_approver' => $approverName,
+                              'dob'                        => Carbon::parse(
+                                  $cp->patient_dob
+                              )->format('m/d/Y'),
+                              'phone'                      => '',
+                              'age'                        => $age,
+                              'reg_date'                   => Carbon::parse(
+                                  $cp->patient_registered
+                              )->format('m/d/Y'),
+                              'last_read'                  => '',
+                              'ccm_time'                   => $cp->patient_ccm_time,
+                              'ccm_seconds'                => $cp->patient_ccm_time,
+                              'provider'                   => $cp->provider_full_name,
+                              'program_name'               => $cp->practice_name,
+                              'careplan_last_printed'      => $printed_date,
+                              'careplan_printed'           => $printed_status,
+                          ]
+                      );
+
+                  }
+              }
+
+              );
+
 
         $patientJson = $carePlansForWebix->toJson();
 
@@ -201,6 +183,10 @@ class PatientCareplanController extends Controller
         $p = 1;
         foreach ($users as $user_id) {
             $user = User::with(['careTeamMembers', 'carePlan.pdfs'])->find($user_id);
+
+            if(! $user->billingProviderUser()){
+                return response()->json("User with id: {$user->id}, does not have a billing provider");
+            }
 
             $careplan = $this->formatter->formatDataForViewPrintCareplanReport([$user]);
             $careplan = $careplan[$user_id];

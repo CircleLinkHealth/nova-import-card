@@ -22,6 +22,10 @@
     },
     {
       "type": "git",
+      "url": "git@github.com:subzero10/laravel-raygun.git"
+    },
+    {
+      "type": "git",
       "url": "git@github.com:CircleLinkHealth/opcache-gui.git"
     },
     {
@@ -34,7 +38,7 @@
     },
     {
       "type": "git",
-      "url": "git@github.com:CircleLinkHealth/module-migrations.git"
+      "url": "git@github.com:CircleLinkHealth/module-raygun.git"
     },
     {
       "type": "composer",
@@ -60,8 +64,7 @@
     "fideloper/proxy": "^4.0",
     "genealabs/laravel-caffeine": "^0.7.1",
     "circlelinkhealth/bugsnag": "dev-main-master",
-    "circlelinkhealth/migrations": "dev-main-master",
-    "davibennun/laravel-raygun": "dev-laravel5",
+    "circlelinkhealth/raygun": "dev-master",
     "doctrine/dbal": "~2.3",
     "guzzlehttp/guzzle": "~5.3|~6.0",
     "h4cc/wkhtmltoimage-amd64": "*",
@@ -102,6 +105,7 @@
     "tymon/jwt-auth": "0.5.*",
     "venturecraft/revisionable": "dev-master",
     "waavi/url-shortener": "dev-master",
+    "wikimedia/composer-merge-plugin": "^1.4",
     "yajra/laravel-datatables-oracle": "~8.0"
   },
   "require-dev": {
@@ -154,8 +158,7 @@
     ],
     "post-autoload-dump": [
       "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-      "@php artisan package:discover",
-      "@php artisan version:refresh"
+      "@php artisan package:discover"
     ],
     "post-update-cmd": [
       "Illuminate\\Foundation\\ComposerScripts::postUpdate"
@@ -194,6 +197,21 @@
       "dont-discover": [
         "laravel/dusk"
       ]
+    },
+    "merge-plugin": {
+      "include": [
+        "Modules/*/composer.json"
+      ],
+      "require": [
+
+      ],
+      "recurse": true,
+      "replace": false,
+      "ignore-duplicates": false,
+      "merge-dev": true,
+      "merge-extra": false,
+      "merge-extra-deep": false,
+      "merge-scripts": false
     }
   },
   "prefer-stable": true,

@@ -4,7 +4,6 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-
 Route::post('send-sample-fax', 'DemoController@sendSampleEfaxNote');
 
 Route::post('/send-sample-direct-mail', 'DemoController@sendSampleEMRNote');
@@ -49,18 +48,17 @@ Route::group([
     'prefix'     => 'auth',
     'middleware' => 'web',
 ], function () {
-        Auth::routes();
+    Auth::routes();
 
-        Route::get('logout', [
-            'uses' => 'Auth\LoginController@logout',
-            'as'   => 'user.logout',
-        ]);
-        Route::get('inactivity-logout', [
-            'uses' => 'Auth\LoginController@inactivityLogout',
-            'as'   => 'user.inactivity-logout',
-        ]);
-    });
-
+    Route::get('logout', [
+        'uses' => 'Auth\LoginController@logout',
+        'as'   => 'user.logout',
+    ]);
+    Route::get('inactivity-logout', [
+        'uses' => 'Auth\LoginController@inactivityLogout',
+        'as'   => 'user.inactivity-logout',
+    ]);
+});
 
 //
 //
@@ -322,9 +320,17 @@ Route::group(['middleware' => 'auth'], function () {
             'prefix'     => 'patients',
             'middleware' => ['patientProgramSecurity'],
         ], function () {
+            /*
+             * deprecated in favor of without-scheduled-activities
             Route::get('without-scheduled-calls', [
                 'uses' => 'API\Admin\CallsController@patientsWithoutScheduledCalls',
                 'as'   => 'patients.without-scheduled-calls',
+            ])->middleware('permission:patient.read,careplan.read,call.read');
+            */
+
+            Route::get('without-scheduled-activities', [
+                'uses' => 'API\Admin\CallsController@patientsWithoutScheduledActivities',
+                'as'   => 'patients.without-scheduled-activities',
             ])->middleware('permission:patient.read,careplan.read,call.read');
 
             Route::get('without-inbound-calls', [
@@ -511,9 +517,17 @@ Route::group(['middleware' => 'auth'], function () {
             )->middleware('permission:patient.read');
             Route::get('{practiceId}/nurses', 'API\PracticeController@getNurses')->middleware('permission:nurse.read');
 
+            /*
+             * deprecated in favor of without-scheduled-activities
             Route::get('{practiceId}/patients/without-scheduled-calls', [
                 'uses' => 'API\Admin\CallsController@patientsWithoutScheduledCalls',
                 'as'   => 'practice.patients.without-scheduled-calls',
+            ])->middleware('permission:patient.read,careplan.read');
+            */
+
+            Route::get('{practiceId}/patients/without-scheduled-activities', [
+                'uses' => 'API\Admin\CallsController@patientsWithoutScheduledActivities',
+                'as'   => 'practice.patients.without-scheduled-activities',
             ])->middleware('permission:patient.read,careplan.read');
 
             Route::get('{practiceId}/patients/without-inbound-calls', [
@@ -1088,6 +1102,64 @@ Route::group(['middleware' => 'auth'], function () {
     //
     // ADMIN (/admin)
     //
+    // NOTE: in two route groups. One for software-only and one for super admins
+    //
+
+    Route::group([
+        'middleware' => [
+            'auth',
+            'permission:admin-access,practice-admin',
+        ],
+        'prefix' => 'admin',
+    ], function () {
+        Route::get('calls-v2', [
+            'uses' => 'Admin\PatientCallManagementController@remixV2',
+            'as'   => 'admin.patientCallManagement.v2.index',
+        ]);
+
+        Route::group([
+            'prefix' => 'reports',
+        ], function () {
+            Route::group([
+                'prefix' => 'monthly-billing/v2',
+            ], function () {
+                Route::get('/make', [
+                    'uses' => 'Billing\PracticeInvoiceController@make',
+                    'as'   => 'monthly.billing.make',
+                ])->middleware('permission:patientSummary.read,patientProblem.read,chargeableService.read,practice.read');
+
+                Route::post('/data', [
+                    'uses' => 'Billing\PracticeInvoiceController@data',
+                    'as'   => 'monthly.billing.data',
+                ])->middleware('permission:patientSummary.read,patientSummary.update,patientSummary.create');
+
+                Route::get('/counts', [
+                    'uses' => 'Billing\PracticeInvoiceController@counts',
+                ])->middleware('permission:patientSummary.read');
+
+                Route::post('/storeProblem', [
+                    'uses' => 'Billing\PracticeInvoiceController@storeProblem',
+                    'as'   => 'monthly.billing.store-problem',
+                ])->middleware('permission:patientSummary.update');
+
+                Route::post('/close', [
+                    'uses' => 'Billing\PracticeInvoiceController@closeMonthlySummaryStatus',
+                    'as'   => 'monthly.billing.close.month',
+                ])->middleware('permission:patientSummary.update');
+
+                Route::post('/open', [
+                    'uses' => 'Billing\PracticeInvoiceController@openMonthlySummaryStatus',
+                    'as'   => 'monthly.billing.open.month',
+                ])->middleware('permission:patientSummary.update');
+
+                Route::post('/status/update', [
+                    'uses' => 'Billing\PracticeInvoiceController@updateStatus',
+                    'as'   => 'monthly.billing.status.update',
+                ])->middleware('permission:patientSummary.update');
+            });
+        });
+    });
+
     Route::group([
         'middleware' => [
             'auth',
@@ -1281,8 +1353,6 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::view('api-clients', 'admin.manage-api-clients');
 
-//        Route::resource('medication-groups-maps', 'MedicationGroupsMapController')->middleware('permission:medicationGroup.read,medicationGroup.create,medicationGroup.delete');
-
         Route::get('medication-groups-maps', [
             'uses' => 'MedicationGroupsMapController@index',
             'as'   => 'medication-groups-maps.index',
@@ -1293,7 +1363,7 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'medication-groups-maps.store',
         ])->middleware('permission:medicationGroup.create');
 
-        Route::delete('medication-groups-maps', [
+        Route::delete('medication-groups-maps/{id}', [
             'uses' => 'MedicationGroupsMapController@destroy',
             'as'   => 'medication-groups-maps.destroy',
         ])->middleware('permission:medicationGroup.delete');
@@ -1416,19 +1486,14 @@ Route::group(['middleware' => 'auth'], function () {
             Route::group([
                 'prefix' => 'monthly-billing/v2',
             ], function () {
-                Route::get('/make', [
-                    'uses' => 'Billing\PracticeInvoiceController@make',
-                    'as'   => 'monthly.billing.make',
-                ])->middleware('permission:patientSummary.read,patientProblem.read,chargeableService.read,practice.read');
-
-                Route::post('/data', [
-                    'uses' => 'Billing\PracticeInvoiceController@data',
-                    'as'   => 'monthly.billing.data',
-                ])->middleware('permission:patientSummary.read,patientSummary.update,patientSummary.create');
-
-                Route::get('/data', [
-                    'uses' => 'Billing\PracticeInvoiceController@data',
-                ])->middleware('permission:patientSummary.read,patientSummary.update,patientSummary.create');
+                /*
+                 * '/make'
+                 * '/data'
+                 * '/counts'
+                 * '/storeProblem'
+                 * '/status/update'
+                 * Search for it above in a different tree of permissions
+                 */
 
                 Route::get('/services', [
                     'uses' => 'Billing\PracticeInvoiceController@getChargeableServices',
@@ -1444,35 +1509,6 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses' => 'Billing\PracticeInvoiceController@updateSummaryChargeableServices',
                     'as'   => 'monthly.billing.summary.services',
                 ])->middleware('permission:patientSummary.read,patientSummary.update,patientSummary.create');
-
-                Route::post('/open', [
-                    'uses' => 'Billing\PracticeInvoiceController@openMonthlySummaryStatus',
-                    'as'   => 'monthly.billing.open.month',
-                ])->middleware('permission:patientSummary.update');
-
-                Route::post('/close', [
-                    'uses' => 'Billing\PracticeInvoiceController@closeMonthlySummaryStatus',
-                    'as'   => 'monthly.billing.close.month',
-                ])->middleware('permission:patientSummary.update');
-
-                Route::post('/status/update', [
-                    'uses' => 'Billing\PracticeInvoiceController@updateStatus',
-                    'as'   => 'monthly.billing.status.update',
-                ])->middleware('permission:patientSummary.update');
-
-                Route::post('/counts', [
-                    'uses' => 'Billing\PracticeInvoiceController@counts',
-                    'as'   => 'monthly.billing.count',
-                ])->middleware('permission:patientSummary.read');
-
-                Route::get('/counts', [
-                    'uses' => 'Billing\PracticeInvoiceController@counts',
-                ])->middleware('permission:patientSummary.read');
-
-                Route::post('/storeProblem', [
-                    'uses' => 'Billing\PracticeInvoiceController@storeProblem',
-                    'as'   => 'monthly.billing.store-problem',
-                ])->middleware('permission:patientSummary.update');
 
                 Route::post('/getBillingCount', [
                     'uses' => 'Billing\PracticeInvoiceController@getCounts',
@@ -1809,11 +1845,6 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('users/{id}/msgcenter', [
                 'uses' => 'UserController@showMsgCenter',
                 'as'   => 'admin.users.msgCenterUpdate',
-            ]);
-
-            Route::get('calls-v2', [
-                'uses' => 'Admin\PatientCallManagementController@remixV2',
-                'as'   => 'admin.patientCallManagement.v2.index',
             ]);
 
             Route::get('calls', [

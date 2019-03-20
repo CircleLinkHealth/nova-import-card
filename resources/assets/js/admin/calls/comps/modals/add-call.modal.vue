@@ -285,7 +285,7 @@
             getUnscheduledPatients() {
                 this.loaders.patients = true
                 const practice_addendum = this.formData.practiceId ? `practices/${this.formData.practiceId}/` : '';
-                return this.axios.get(rootUrl(`api/${practice_addendum}patients/without-scheduled-calls`)).then(response => {
+                return this.axios.get(rootUrl(`api/${practice_addendum}patients/without-scheduled-activities`)).then(response => {
                     this.loaders.patients = false
                     const pagination = response.data
                     console.log('add-call:patients:unscheduled', pagination)

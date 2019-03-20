@@ -7,6 +7,7 @@
 namespace App;
 
 use App\Contracts\Serviceable;
+use App\Exceptions\InvalidArgumentException;
 use App\Facades\StringManipulation;
 use App\Filters\Filterable;
 use App\Importer\Models\ImportedItems\DemographicsImport;
@@ -445,58 +446,63 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         }
     }
 
-    public function attachPractice(
-        $practice,
-        bool $grantAdminRights = null,
-        bool $subscribeToBillingReports = null,
-        $roleId = null
-    ) {
-        if (is_array($practice)) {
-            foreach ($practice as $key => $pract) {
-                $this->attachPractice($pract, $grantAdminRights, $subscribeToBillingReports, $roleId);
-                unset($key);
+    public function attachPractice($practice, array $roleIds, $sendBillingReports = null)
+    {
+        $ids = parseIds($practice);
+
+        if ( ! array_key_exists(0, $ids)) {
+            throw new InvalidArgumentException('Could not parse a Practice id from the argument provided.');
+        }
+
+        $practiceId = $ids[0];
+
+        $rolesForPractice = PracticeRoleUser::where('user_id', '=', $this->id)
+            ->where('program_id', '=', $practiceId)
+            ->get();
+
+        //remove any roles not in $roleIds array
+        foreach ($rolesForPractice as $roleForPractice) {
+            //sometimes role_id is null
+            if ( ! $roleForPractice->role_id) {
+                continue;
+            }
+
+            if ( ! in_array($roleForPractice->role_id, $roleIds)) {
+                //table does not have primary key, so need raw query
+                $tableName = (new PracticeRoleUser())->getTable();
+                $q         = "DELETE FROM $tableName where user_id = ? and program_id = ? and role_id = ?";
+                \DB::delete($q, [$roleForPractice->user_id, $roleForPractice->program_id, $roleForPractice->role_id]);
             }
         }
 
-        $practice = is_object($practice)
-            ? $practice
-            : Practice::find($practice);
-
-        $roleId = is_object($roleId)
-            ? $roleId->id
-            : $roleId;
-
-        try {
-            $exists = $this->practice($practice);
-
-            if ($exists) {
-                $this->practices()->detach($practice);
-            }
-
-            $update = [];
-
-            if ( ! is_null($grantAdminRights)) {
-                $update['has_admin_rights'] = $grantAdminRights;
-            }
-
-            if ( ! is_null($subscribeToBillingReports)) {
-                $update['send_billing_reports'] = $subscribeToBillingReports;
-            }
-
-            if ( ! is_null($roleId)) {
-                $update['role_id'] = $roleId;
-            }
-
-            $attachPractice = $this->practices()->save($practice, $update);
-        } catch (\Exception $e) {
-            //check if this is a mysql exception for unique key constraint
-            if ($e instanceof \Illuminate\Database\QueryException) {
-                $errorCode = $e->errorInfo[1];
-                \Log::alert($e);
+        if (empty($roleIds)) {
+            PracticeRoleUser::updateOrCreate(
+                [
+                    'user_id'    => $this->id,
+                    'program_id' => $practiceId,
+                ],
+                null != $sendBillingReports
+                    ? [
+                        'send_billing_reports' => $sendBillingReports,
+                    ]
+                    : []
+            );
+        } else {
+            foreach ($roleIds as $r) {
+                PracticeRoleUser::updateOrCreate(
+                    [
+                        'user_id'    => $this->id,
+                        'program_id' => $practiceId,
+                        'role_id'    => $r,
+                    ],
+                    null != $sendBillingReports
+                        ? [
+                            'send_billing_reports' => $sendBillingReports,
+                        ]
+                        : []
+                );
             }
         }
-
-        return true;
     }
 
     public function authyUser()
@@ -1324,15 +1330,18 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function getDoctorFullNameWithSpecialty()
     {
-        if ( ! $this->providerInfo) {
-            return '';
+        $specialty = '';
+
+        if ($this->providerInfo) {
+            $specialty = $this->getSpecialty() == $this->getSuffix()
+                ? ''
+                : "\n {$this->getSpecialty()}";
         }
 
-        $specialty = $this->getSpecialty() == $this->getSuffix()
-            ? ''
-            : "\n {$this->getSpecialty()}";
+        $fullName = $this->getFullName();
+        $doctor   = starts_with(strtolower($fullName), 'dr.') ? '' : 'Dr. ';
 
-        return $this->getFullName().$specialty;
+        return $doctor.$fullName.$specialty;
     }
 
     public function getEmailForPasswordReset()
@@ -1773,6 +1782,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->exists();
     }
 
+    public function inboundActivities()
+    {
+        return $this->hasMany(Call::class, 'inbound_cpm_id', 'id');
+    }
+
     /**
      * Calls made from CLH to the User.
      *
@@ -1782,9 +1796,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         return $this->hasMany(Call::class, 'inbound_cpm_id', 'id')
             ->where(function ($q) {
-                        $q->whereNull('type')
-                            ->orWhere('type', '=', 'call');
-                    });
+                $q->whereNull('type')
+                    ->orWhere('type', '=', 'call');
+            });
     }
 
     public function inboundMessages()
@@ -1792,13 +1806,23 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasMany(Message::class, 'receiver_cpm_id', 'id');
     }
 
+    public function inboundScheduledActivities(Carbon $after = null)
+    {
+        return $this->inboundActivities()
+            ->where('status', '=', 'scheduled')
+            ->when($after, function ($query) use ($after) {
+                return $query->where('scheduled_date', '>=', $after->toDateString());
+            })
+            ->where('called_date', '=', null);
+    }
+
     public function inboundScheduledCalls(Carbon $after = null)
     {
         return $this->inboundCalls()
             ->where('status', '=', 'scheduled')
             ->when($after, function ($query) use ($after) {
-                        return $query->where('scheduled_date', '>=', $after->toDateString());
-                    })
+                return $query->where('scheduled_date', '>=', $after->toDateString());
+            })
             ->where('called_date', '=', null);
     }
 
@@ -1829,12 +1853,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     /**
      * Returns whether the user is a Care Coach (AKA Care Center).
+     * A Care Coach can be employed from CLH ['care-center']
+     * or not ['care-center-external'].
      *
      * @return bool
      */
     public function isCareCoach()
     {
-        return $this->hasRole('care-center');
+        return $this->hasRole(['care-center', 'care-center-external']);
     }
 
     public function isCcm()
@@ -1842,8 +1868,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->ccdProblems()
             ->where('is_monitored', 1)
             ->whereHas('cpmProblem', function ($cpm) {
-                        return $cpm->where('is_behavioral', 0);
-                    })
+                return $cpm->where('is_behavioral', 0);
+            })
             ->exists();
     }
 
@@ -1897,6 +1923,16 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function isPracticeStaff()
     {
         return $this->hasRole(Constants::PRACTICE_STAFF_ROLE_NAMES);
+    }
+
+    /**
+     * Returns whether the user is an administrator.
+     *
+     * @return bool
+     */
+    public function isSoftwareOnly()
+    {
+        return $this->hasRole('software-only');
     }
 
     public function lastObservation()
@@ -1980,9 +2016,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         return $this->hasMany(Call::class, 'outbound_cpm_id', 'id')
             ->where(function ($q) {
-                        $q->whereNull('type')
-                            ->orWhere('type', '=', 'call');
-                    });
+                $q->whereNull('type')
+                    ->orWhere('type', '=', 'call');
+            });
     }
 
     /*public function hasScheduledCallThisWeek()
@@ -2068,27 +2104,27 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->ofType('participant')
             ->whereHas('patientInfo')
             ->whereHas('carePlan', function ($q) {
-                       $q->whereIn('status', [CarePlan::QA_APPROVED]);
-                   })
+                $q->whereIn('status', [CarePlan::QA_APPROVED]);
+            })
             ->whereHas('careTeamMembers', function ($q) use ($approveOwnCarePlans) {
-                       $q->where([
-                           ['type', '=', CarePerson::BILLING_PROVIDER],
-                           ['member_user_id', '=', $this->id],
-                       ])
-                           ->when( ! $approveOwnCarePlans, function ($q) {
-                             $q->orWhere(function ($q) {
-                                 $q->whereHas('user', function ($q) {
-                                     $q->whereHas('forwardAlertsTo', function ($q) {
-                                         $q->where('contactable_id', $this->id)
-                                             ->orWhereIn('name', [
-                                                 'forward_careplan_approval_emails_instead_of_provider',
-                                                 'forward_careplan_approval_emails_in_addition_to_provider',
-                                             ]);
-                                     });
-                                 });
-                             });
-                         });
-                   })
+                $q->where([
+                    ['type', '=', CarePerson::BILLING_PROVIDER],
+                    ['member_user_id', '=', $this->id],
+                ])
+                    ->when( ! $approveOwnCarePlans, function ($q) {
+                               $q->orWhere(function ($q) {
+                                   $q->whereHas('user', function ($q) {
+                                       $q->whereHas('forwardAlertsTo', function ($q) {
+                                           $q->where('contactable_id', $this->id)
+                                               ->orWhereIn('name', [
+                                                   'forward_careplan_approval_emails_instead_of_provider',
+                                                   'forward_careplan_approval_emails_in_addition_to_provider',
+                                               ]);
+                                       });
+                                   });
+                               });
+                           });
+            })
             ->with('primaryPractice')
             ->with([
                 'observations' => function ($query) {
@@ -2165,23 +2201,29 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->roles->first();
     }
 
-    public function practices(bool $onlyActive = false, bool $onlyEnrolledPatients = false)
-    {
+    public function practices(
+        bool $onlyActive = false,
+        bool $onlyEnrolledPatients = false,
+        array $ofRoleIds = null
+    ) {
         return $this->belongsToMany(Practice::class, 'practice_role_user', 'user_id', 'program_id')
-            ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports')
+            ->withPivot('role_id')
             ->when($onlyActive, function ($query) use ($onlyActive) {
-                        return $query->where('active', '=', 1);
-                    })
+                return $query->where('active', '=', 1);
+            })
             ->when($onlyEnrolledPatients, function ($query) use ($onlyEnrolledPatients) {
-                        //$query -> Practice Model
-                        return $query->whereHas('patients', function ($innerQuery) {
-                            //$innerQuery -> User Model
-                            return $innerQuery->whereHas('patientInfo', function ($innerInnerQuery) {
-                                //$innerInnerQuery -> Patient model
-                                return $innerInnerQuery->where('ccm_status', '=', 'enrolled');
-                            });
-                        });
-                    })
+                //$query -> Practice Model
+                return $query->whereHas('patients', function ($innerQuery) {
+                    //$innerQuery -> User Model
+                    return $innerQuery->whereHas('patientInfo', function ($innerInnerQuery) {
+                        //$innerInnerQuery -> Patient model
+                        return $innerInnerQuery->where('ccm_status', '=', 'enrolled');
+                    });
+                });
+            })
+            ->when($ofRoleIds, function ($query) use ($ofRoleIds) {
+                return $query->whereIn('practice_role_user.role_id', $ofRoleIds);
+            })
             ->withTimestamps();
     }
 
@@ -2225,22 +2267,22 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->groupBy('cpm_problem_id')
             ->get()
             ->map(function ($problem) use ($billableProblems) {
-                                $problem->billing_code = $problem->icd10Code();
+                $problem->billing_code = $problem->icd10Code();
 
-                                if ( ! $problem->billing_code) {
-                                    return $problem;
-                                }
+                if ( ! $problem->billing_code) {
+                    return $problem;
+                }
 
-                                if ($problem->icd10Codes()->exists()) {
-                                    $billableProblems->prepend($problem);
+                if ($problem->icd10Codes()->exists()) {
+                    $billableProblems->prepend($problem);
 
-                                    return $problem;
-                                }
+                    return $problem;
+                }
 
-                                $billableProblems->push($problem);
+                $billableProblems->push($problem);
 
-                                return $problem;
-                            });
+                return $problem;
+            });
 
         return $billableProblems;
     }
@@ -2270,6 +2312,13 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->regularDoctor->isEmpty()
             ? null
             : $this->regularDoctor->first()->user;
+    }
+
+    public function rolesInPractice($practiceId)
+    {
+        return $this->roles()
+            ->wherePivot('program_id', '=', $practiceId)
+            ->get();
     }
 
     public function routeNotificationForTwilio()
@@ -2329,6 +2378,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         ];
     }
 
+    public function scopeCareCoaches($query)
+    {
+        return $query->ofType(['care-center', 'care-center-external']);
+    }
+
     /**
      * Scope a query to include users NOT of a given type (Role).
      *
@@ -2349,19 +2403,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             }
         });
     }
-    
-    /**
-     * Scope the query to practices for which the user has at least one of the given roles.
-     *
-     * @param $query
-     * @param array $roleIds
-     */
-    public function scopePracticesWhereHasRoles($query, array $roleIds) {
-        $query->whereHas('practices', function ($q) use ($roleIds) {
-            $q->whereIn('practice_role_user.role_id', $roleIds);
-        });
-    }
-    
+
     public function scopeHasBillingProvider(
         $query,
         $billing_provider_id
@@ -2482,9 +2524,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function scopeOfPractice($query, $practiceId)
     {
-        if ( ! is_array($practiceId)) {
-            $practiceId = [$practiceId];
-        }
+        $practiceId = parseIds($practiceId);
 
         $query->whereHas('practices', function ($q) use ($practiceId) {
             $q->whereIn('id', $practiceId);
@@ -2509,6 +2549,24 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             } else {
                 $q->where('name', '=', $type);
             }
+        });
+    }
+
+    /**
+     * Scope the query to practices for which the user has at least one of the given roles.
+     *
+     * @param $query
+     * @param array $roleIds
+     * @param bool  $onlyActive
+     */
+    public function scopePracticesWhereHasRoles($query, array $roleIds, bool $onlyActive = false)
+    {
+        $query->whereHas('practices', function ($q) use ($roleIds, $onlyActive) {
+            return $q
+                ->when($onlyActive, function ($query) {
+                    return $query->where('active', '=', 1);
+                })
+                ->whereIn('practice_role_user.role_id', $roleIds);
         });
     }
 
@@ -3237,8 +3295,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         return User::ofType('participant')
             ->whereHas('practices', function ($q) {
-                       $q->whereIn('program_id', $this->viewableProgramIds());
-                   })
+                $q->whereIn('program_id', $this->viewableProgramIds());
+            })
             ->pluck('id')
             ->all();
     }
