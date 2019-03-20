@@ -4,11 +4,18 @@
  * Module dependencies.
  */
 
+require('dotenv').config();
 var app = require('../app');
 var debug = require('debug')('sockets-demo:server');
 var http = require('http');
 var https = require('https');
 var fs = require('fs');
+
+var raygunClient;
+if (process.env.RAYGUN_API_KEY) {
+    var raygun = require('raygun');
+    raygunClient = new raygun.Client().init({apiKey: process.env.RAYGUN_API_KEY});
+}
 
 /**
  * Get port from environment and store in Express.
@@ -32,17 +39,17 @@ var server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 
-if (process.env.NODE_ENV != 'production') {
-  var privateKey = fs.readFileSync('ssl/server.key', 'utf8')
-  var certificate = fs.readFileSync('ssl/server.crt', 'utf8')
-  var httpsServer = https.createServer({
-    key: privateKey,
-    cert: certificate,
-    passphrase: 'x12345678y'
-  }, app)
-  httpsServer.listen(3001)
+if (process.env.NODE_ENV !== 'production') {
+    var privateKey = fs.readFileSync('ssl/server.key', 'utf8')
+    var certificate = fs.readFileSync('ssl/server.crt', 'utf8')
+    var httpsServer = https.createServer({
+        key: privateKey,
+        cert: certificate,
+        passphrase: 'x12345678y'
+    }, app)
+    httpsServer.listen(3001)
 
-  console.log('Listening on port 3001')
+    console.log('Listening on port 3001')
 }
 
 //server.listen(port);
@@ -54,19 +61,19 @@ server.on('listening', onListening);
  */
 
 function normalizePort(val) {
-  var port = parseInt(val, 10);
+    var port = parseInt(val, 10);
 
-  if (isNaN(port)) {
-    // named pipe
-    return val;
-  }
+    if (isNaN(port)) {
+        // named pipe
+        return val;
+    }
 
-  if (port >= 0) {
-    // port number
-    return port;
-  }
+    if (port >= 0) {
+        // port number
+        return port;
+    }
 
-  return false;
+    return false;
 }
 
 /**
@@ -74,27 +81,27 @@ function normalizePort(val) {
  */
 
 function onError(error) {
-  if (error.syscall !== 'listen') {
-    throw error;
-  }
+    if (error.syscall !== 'listen') {
+        throw error;
+    }
 
-  var bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
+    var bind = typeof port === 'string'
+        ? 'Pipe ' + port
+        : 'Port ' + port;
 
-  // handle specific listen errors with friendly messages
-  switch (error.code) {
-    case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
-      process.exit(1);
-      break;
-    case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
-      process.exit(1);
-      break;
-    default:
-      throw error;
-  }
+    // handle specific listen errors with friendly messages
+    switch (error.code) {
+        case 'EACCES':
+            console.error(bind + ' requires elevated privileges');
+            process.exit(1);
+            break;
+        case 'EADDRINUSE':
+            console.error(bind + ' is already in use');
+            process.exit(1);
+            break;
+        default:
+            throw error;
+    }
 }
 
 /**
@@ -102,9 +109,21 @@ function onError(error) {
  */
 
 function onListening() {
-  var addr = server.address();
-  var bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+    var addr = server.address();
+    var bind = typeof addr === 'string'
+        ? 'pipe ' + addr
+        : 'port ' + addr.port;
+    debug('Listening on ' + bind);
 }
+
+process.on('uncaughtException', err => {
+    if (raygunClient) {
+        raygunClient.send(err, {}, function () {
+            process.exit(1);
+        });
+    }
+    else {
+        console.error(err, 'Uncaught Exception thrown');
+        process.exit(1);
+    }
+});
