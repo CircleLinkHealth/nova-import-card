@@ -2378,6 +2378,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         ];
     }
 
+    public function scopeCareCoaches($query)
+    {
+        return $query->ofType(['care-center', 'care-center-external']);
+    }
+
     /**
      * Scope a query to include users NOT of a given type (Role).
      *
