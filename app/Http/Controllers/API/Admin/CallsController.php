@@ -95,7 +95,7 @@ class CallsController extends ApiController
             } else {
                 //if no $practiceId, get all practice ids where user is software-only / practice admin
                 $roleIds    = Role::getIdsFromNames(['software-only']);
-                $practiceId = $user->practices(true, false, $roleIds)->pluck('id');
+                $practiceId = $user->practices(true, false, $roleIds)->pluck('id')->toArray();
             }
         }
 

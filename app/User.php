@@ -2524,9 +2524,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function scopeOfPractice($query, $practiceId)
     {
-        if ( ! is_array($practiceId)) {
-            $practiceId = [$practiceId];
-        }
+        $practiceId = parseIds($practiceId);
 
         $query->whereHas('practices', function ($q) use ($practiceId) {
             $q->whereIn('id', $practiceId);
