@@ -320,9 +320,17 @@ Route::group(['middleware' => 'auth'], function () {
             'prefix'     => 'patients',
             'middleware' => ['patientProgramSecurity'],
         ], function () {
+            /*
+             * deprecated in favor of without-scheduled-activities
             Route::get('without-scheduled-calls', [
                 'uses' => 'API\Admin\CallsController@patientsWithoutScheduledCalls',
                 'as'   => 'patients.without-scheduled-calls',
+            ])->middleware('permission:patient.read,careplan.read,call.read');
+            */
+
+            Route::get('without-scheduled-activities', [
+                'uses' => 'API\Admin\CallsController@patientsWithoutScheduledActivities',
+                'as'   => 'patients.without-scheduled-activities',
             ])->middleware('permission:patient.read,careplan.read,call.read');
 
             Route::get('without-inbound-calls', [
@@ -509,9 +517,17 @@ Route::group(['middleware' => 'auth'], function () {
             )->middleware('permission:patient.read');
             Route::get('{practiceId}/nurses', 'API\PracticeController@getNurses')->middleware('permission:nurse.read');
 
+            /*
+             * deprecated in favor of without-scheduled-activities
             Route::get('{practiceId}/patients/without-scheduled-calls', [
                 'uses' => 'API\Admin\CallsController@patientsWithoutScheduledCalls',
                 'as'   => 'practice.patients.without-scheduled-calls',
+            ])->middleware('permission:patient.read,careplan.read');
+            */
+
+            Route::get('{practiceId}/patients/without-scheduled-activities', [
+                'uses' => 'API\Admin\CallsController@patientsWithoutScheduledActivities',
+                'as'   => 'practice.patients.without-scheduled-activities',
             ])->middleware('permission:patient.read,careplan.read');
 
             Route::get('{practiceId}/patients/without-inbound-calls', [
@@ -1337,8 +1353,6 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::view('api-clients', 'admin.manage-api-clients');
 
-//        Route::resource('medication-groups-maps', 'MedicationGroupsMapController')->middleware('permission:medicationGroup.read,medicationGroup.create,medicationGroup.delete');
-
         Route::get('medication-groups-maps', [
             'uses' => 'MedicationGroupsMapController@index',
             'as'   => 'medication-groups-maps.index',
@@ -1349,7 +1363,7 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'medication-groups-maps.store',
         ])->middleware('permission:medicationGroup.create');
 
-        Route::delete('medication-groups-maps', [
+        Route::delete('medication-groups-maps/{id}', [
             'uses' => 'MedicationGroupsMapController@destroy',
             'as'   => 'medication-groups-maps.destroy',
         ])->middleware('permission:medicationGroup.delete');

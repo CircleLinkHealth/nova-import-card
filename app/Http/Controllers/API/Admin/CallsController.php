@@ -82,24 +82,50 @@ class CallsController extends ApiController
         return UserResource::collection($patients);
     }
 
+    public function patientsWithoutScheduledActivities(PatientFilters $filters, $practiceId = null)
+    {
+        $user = auth()->user();
+
+        if ( ! $user->isAdmin()) {
+            //if we have $practiceId, make sure that user has access to it
+            if ($practiceId) {
+                if ( ! $user->hasRoleForSite('software-only', $practiceId)) {
+                    abort(403);
+                }
+            } else {
+                //if no $practiceId, get all practice ids where user is software-only / practice admin
+                $roleIds    = Role::getIdsFromNames(['software-only']);
+                $practiceId = $user->practices(true, false, $roleIds)->pluck('id')->toArray();
+            }
+        }
+
+        $patients = $this->service->getPatientsWithoutScheduledActivities($practiceId, Carbon::now())
+            ->filter($filters)->get();
+
+        if ($filters->isAutocomplete()) {
+            return $patients->map(function ($patient) {
+                return $patient->autocomplete();
+            });
+        }
+
+        return UserResource::collection($patients);
+    }
+
     public function patientsWithoutScheduledCalls(PatientFilters $filters, $practiceId = null)
     {
         $user = auth()->user();
 
-        if (!$user->isAdmin()) {
-
+        if ( ! $user->isAdmin()) {
             //if we have $practiceId, make sure that user has access to it
             if ($practiceId) {
-                if (!$user->hasRoleForSite('software-only', $practiceId)) {
+                if ( ! $user->hasRoleForSite('software-only', $practiceId)) {
                     abort(403);
                 }
-            }
-            else {
+            } else {
                 //if no $practiceId, get all practice ids where user is software-only / practice admin
-                $roleIds = Role::getIdsFromNames(['software-only']);
+                $roleIds    = Role::getIdsFromNames(['software-only']);
                 $practiceId = $user->practices(true, false, $roleIds)->pluck('id');
             }
-
         }
 
         $patients = $this->service->getPatientsWithoutScheduledCalls($practiceId, Carbon::now())
@@ -150,40 +176,40 @@ class CallsController extends ApiController
             ->with('outboundUser')
             ->with('note')
             ->select(
-                         [
-                             \DB::raw('coalesce(nurse.display_name, "unassigned") as nurse_name'),
-                             'calls.id AS call_id',
-                             'calls.status',
-                             'calls.outbound_cpm_id',
-                             'calls.inbound_cpm_id',
-                             'calls.scheduled_date',
-                             'calls.window_start',
-                             'calls.window_end',
-                             'calls.window_end AS window_end_value',
-                             'calls.attempt_note',
-                             'nurse_info.user_id as nurse_id',
-                             'nurse_info.status as nurse_status',
-                             'notes.type AS note_type',
-                             'notes.body AS note_body',
-                             'notes.performed_at AS note_datetime',
-                             'calls.note_id',
-                             'calls.scheduler AS scheduler',
-                             'scheduler_user.display_name AS scheduler_user_name',
-                             'patient_monthly_summaries.ccm_time',
-                             'patient_info.last_successful_contact_time',
-                             \DB::raw('DATE_FORMAT(patient_info.last_contact_time, "%Y-%m-%d") as last_contact_time'),
-                             \DB::raw('coalesce(patient_info.no_call_attempts_since_last_success, "n/a") as no_call_attempts_since_last_success'),
-                             'patient_info.ccm_status',
-                             'patient_info.birth_date',
-                             'patient_info.general_comment',
-                             'patient_monthly_summaries.is_ccm_complex',
-                             'patient_monthly_summaries.no_of_calls',
-                             'patient_monthly_summaries.no_of_successful_calls',
-                             'patient.timezone AS patient_timezone',
-                             \DB::raw('CONCAT_WS(", ", patient.last_name, patient.first_name) AS patient_name'),
-                             'program.display_name AS program_name',
-                             'billing_provider.display_name AS billing_provider',
-                         ]
+                [
+                    \DB::raw('coalesce(nurse.display_name, "unassigned") as nurse_name'),
+                    'calls.id AS call_id',
+                    'calls.status',
+                    'calls.outbound_cpm_id',
+                    'calls.inbound_cpm_id',
+                    'calls.scheduled_date',
+                    'calls.window_start',
+                    'calls.window_end',
+                    'calls.window_end AS window_end_value',
+                    'calls.attempt_note',
+                    'nurse_info.user_id as nurse_id',
+                    'nurse_info.status as nurse_status',
+                    'notes.type AS note_type',
+                    'notes.body AS note_body',
+                    'notes.performed_at AS note_datetime',
+                    'calls.note_id',
+                    'calls.scheduler AS scheduler',
+                    'scheduler_user.display_name AS scheduler_user_name',
+                    'patient_monthly_summaries.ccm_time',
+                    'patient_info.last_successful_contact_time',
+                    \DB::raw('DATE_FORMAT(patient_info.last_contact_time, "%Y-%m-%d") as last_contact_time'),
+                    \DB::raw('coalesce(patient_info.no_call_attempts_since_last_success, "n/a") as no_call_attempts_since_last_success'),
+                    'patient_info.ccm_status',
+                    'patient_info.birth_date',
+                    'patient_info.general_comment',
+                    'patient_monthly_summaries.is_ccm_complex',
+                    'patient_monthly_summaries.no_of_calls',
+                    'patient_monthly_summaries.no_of_successful_calls',
+                    'patient.timezone AS patient_timezone',
+                    \DB::raw('CONCAT_WS(", ", patient.last_name, patient.first_name) AS patient_name'),
+                    'program.display_name AS program_name',
+                    'billing_provider.display_name AS billing_provider',
+                ]
                      )
 //            ->where('nurse_info.status', '=', 'active')
 //            ->orWhere('nurse_name')
@@ -206,10 +232,10 @@ class CallsController extends ApiController
                 $join->where('patient_care_team_members.type', '=', 'billing_provider');
             })
             ->leftJoin(
-                         'users AS billing_provider',
-                         'patient_care_team_members.member_user_id',
-                         '=',
-                         'billing_provider.id'
+                'users AS billing_provider',
+                'patient_care_team_members.member_user_id',
+                '=',
+                'billing_provider.id'
                      )
             ->groupBy('call_id')
             ->get();
@@ -268,8 +294,8 @@ class CallsController extends ApiController
             })
             ->editColumn('patient_name', function ($call) {
                 return '<a href="'.\route(
-                                     'patient.demographics.show',
-                                     ['patientId' => $call->inboundUser->id]
+                    'patient.demographics.show',
+                    ['patientId' => $call->inboundUser->id]
                                  ).'" target="_blank">'.$call->patient_name.'</span>';
             })
             ->editColumn('nurse_name', function ($call) {
@@ -375,16 +401,16 @@ class CallsController extends ApiController
                 }
 
                 return '<a target="_blank" href="'.\route(
-                                     'patient.note.index',
-                                     ['patientId' => $call->inboundUser->id]
+                    'patient.note.index',
+                    ['patientId' => $call->inboundUser->id]
                                  ).'">Notes</a>';
             })
             ->addColumn('notes_html', function ($call) {
                 $notesHtml = '';
                 if ($call->inboundUser) {
                     $notes = $call->inboundUser->notes()->with(['call', 'notifications'])->orderBy(
-                                     'performed_at',
-                                     'desc'
+                        'performed_at',
+                        'desc'
                                  )->limit(3)->get();
                     if ($notes->count() > 0) {
                         $notesHtml .= '<ul>';
@@ -412,8 +438,8 @@ class CallsController extends ApiController
                                         }
                                     }
                                     $notesHtml .= '<div class="label label-info" style="margin:5px;" data-toggle="tooltip" title="'.rtrim(
-                                                         $mailText,
-                                                         ','
+                                        $mailText,
+                                        ','
                                                      ).'">Forwarded</div>';
                                 }
                             }
