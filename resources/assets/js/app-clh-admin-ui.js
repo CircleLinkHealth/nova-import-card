@@ -44,6 +44,10 @@ const TimeTrackerEventsComponent = () => import(/* webpackChunkName: "chunk-time
 const PassportClientsComponent = () => import(/* webpackChunkName: "chunk-admin" */ './components/passport/Clients')
 const PassportAuthorizedClientsComponent = () => import(/* webpackChunkName: "chunk-admin" */ './components/passport/AuthorizedClients')
 const PassportPersonalAccessTokensComponent = () => import(/* webpackChunkName: "chunk-admin" */ './components/passport/PersonalAccessTokens')
+const CpmMedicationGroupsMapsSettings = () => import(/* webpackChunkName: "chunk-admin" */ './admin/cpm-medication-groups-maps-settings')
+const NotificationsComponent = () => import(/* webpackChunkName: "chunk-admin" */ './components/shared/notifications/notifications')
+const LoaderComponent = () => import(/* webpackChunkName: "chunk-admin" */ './components/loader')
+
 
 Vue.use(ClientTable, {}, false)
 Vue.use(ServerTable, {}, false)
@@ -59,6 +63,11 @@ Vue.component('passport-clients', PassportClientsComponent)
 Vue.component('passport-authorized-clients', PassportAuthorizedClientsComponent)
 Vue.component('importer-trainer', ImporterTrainerComponent)
 Vue.component('passport-personal-access-tokens', PassportPersonalAccessTokensComponent)
+Vue.component('cpm-medication-groups-maps-settings', CpmMedicationGroupsMapsSettings)
+Vue.component('notifications', NotificationsComponent);
+Vue.component('loader', LoaderComponent);
+
+
 
 const App = new Vue({
     el: '#app',
