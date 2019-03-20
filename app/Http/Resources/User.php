@@ -44,8 +44,8 @@ class User extends Resource
             'deleted_at' => $this->deleted_at
                 ? $this->deleted_at->format('c')
                 : null,
-            'timezone' => $this->created_at
-                ? $this->created_at->format('T')
+            'timezone' => $this->timezone
+                ? \Carbon::now()->setTimezone($this->timezone)->format('T')
                 : null,
             'billing_provider'  => BillingProvider::make($this->whenLoaded('billingProvider')),
             'notes'             => Note::collection($this->whenLoaded('notes')),
