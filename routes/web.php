@@ -17,6 +17,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
+
 Route::get('enter-patient-form', 'InvitationLinksController@enterPatientForm')->name('enterPatientForm');
 Route::post('send-invitation-link', 'InvitationLinksController@createSendInvitationUrl')->name('createSendInvitationUrl');
 //this is a signed route
