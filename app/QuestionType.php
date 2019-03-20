@@ -21,12 +21,14 @@ class QuestionType extends Model
     ];
 
 
-    public function question(){
+    public function question()
+    {
         return $this->belongsTo(Question::class, 'question_id');
     }
 
-    public function possibleAnswers(){
-        return $this->hasMany(QuestionTypesAnswers::class, 'question_type_id');
+    public function questionTypeAnswers()
+    {
+        return $this->hasMany(QuestionTypesAnswer::class, 'question_type_id');
     }
 
 }

@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\SurveyAuthBeforeLoginRequest;
+use App\Http\Requests\SurveyAuthLoginRequest;
 use App\InvitationLink;
 use App\Services\SurveyInvitationLinksService;
+use App\Services\SurveyService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Twilio\Exceptions\ConfigurationException;
@@ -16,10 +17,12 @@ class InvitationLinksController extends Controller
     const LINK_EXPIRES_IN_DAYS = 14;
 
     private $service;
+    private $surveyService;
 
-    public function __construct(SurveyInvitationLinksService $service)
+    public function __construct(SurveyInvitationLinksService $service, SurveyService $surveyService)
     {
-        $this->service    = $service;
+        $this->service       = $service;
+        $this->surveyService = $surveyService;
     }
 
     public function enterPatientForm()
@@ -29,7 +32,6 @@ class InvitationLinksController extends Controller
 
     public function createSendInvitationUrl(Request $request)
     {//@todo:should validate using more conditions
-
         $validator = Validator::make($request->all(), [
             'id' => 'required|exists:users,id',
         ]);
@@ -51,29 +53,32 @@ class InvitationLinksController extends Controller
 
     public function sendSms($phoneNumber, $url)
     {
-            $accountSid    = env('TWILIO_SID');
-            $authToken     = env('TWILIO_TOKEN');
+        $accountSid = env('TWILIO_SID');
+        $authToken  = env('TWILIO_TOKEN');
 
-            try {
-                $twilio = new Client($accountSid, $authToken);
-            } catch (ConfigurationException $e) {
+        try {
+            $twilio = new Client($accountSid, $authToken);
+        } catch (ConfigurationException $e) {
 
-            }
-            $message = $twilio->messages
-                ->create($phoneNumber,
-                    //@todo get outgoing number
-                    ["from" => "+1 646 759 2882", "body" => "Dr...... has invited you to complete a survey! Please enroll here:" .''. $url]
-                );
-
-            // print($message->sid);
         }
+        $message = $twilio->messages
+            ->create($phoneNumber,
+                //@todo get outgoing number
+                [
+                    "from" => "+1 646 759 2882",
+                    "body" => "Dr...... has invited you to complete a survey! Please enroll here:" . '' . $url,
+                ]
+            );
+
+        // print($message->sid);
+    }
 
 
-    public function surveyFormAuth(Request $request, $userId)
+    public function surveyLoginForm(Request $request, $userId)
     {
         $urlWithToken = $request->getRequestUri();
 
-        return view('surveyUrlAuth.surveyFormAuth', compact('userId', 'urlWithToken'));
+        return view('surveyUrlAuth.surveyLoginForm', compact('userId', 'urlWithToken'));
     }
 
     public function resendUrl($userId)
@@ -83,7 +88,7 @@ class InvitationLinksController extends Controller
         return 'New link is on its way';
     }
 
-    public function surveyAuthBeforeRedirect(SurveyAuthBeforeLoginRequest $request)
+    public function surveyLoginAuth(SurveyAuthLoginRequest $request)
     {
         $urlToken       = $this->service->parseUrl($request->input('url'));
         $invitationLink = InvitationLink::with('patientInfo.user')
@@ -97,6 +102,7 @@ class InvitationLinksController extends Controller
             return 'Name does not exists in our DB';
         }
         $userId       = $invitationLink->patientInfo->user_id;
+        $surveyId = $invitationLink->survey_id;
         $urlUpdatedAt = $invitationLink->updated_at;
         $isExpiredUrl = $invitationLink->is_manually_expired;
         $today        = now();
@@ -108,7 +114,9 @@ class InvitationLinksController extends Controller
             return view('surveyUrlAuth.resendUrl', compact('userId'));
         }
 
-        return view('surveyQuestionnaire.survey', compact('urlToken'));
+        $surveyData = $this->surveyService->getSurveyData($userId, $surveyId);
+
+        return view('surveyQuestionnaire.surveyQuestions', compact('urlToken','surveyData'));
     }
 
 }
