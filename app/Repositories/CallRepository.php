@@ -81,6 +81,10 @@ class CallRepository
                      });
         if ($practiceId) {
             $users = $users->ofPractice($practiceId);
+        } else {
+            $users = $users->whereHas('practices', function ($q) {
+                $q->where('active', '=', 1);
+            });
         }
 
         return $users->whereDoesntHave('inboundCalls');
@@ -109,6 +113,10 @@ class CallRepository
                      });
         if ($practiceId) {
             $users = $users->ofPractice($practiceId);
+        } else {
+            $users = $users->whereHas('practices', function ($q) {
+                $q->where('active', '=', 1);
+            });
         }
 
         return $users->with('carePlan')

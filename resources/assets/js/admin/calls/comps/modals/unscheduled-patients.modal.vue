@@ -122,12 +122,11 @@
 
                 let pId;
                 let pName;
-                if (!this.practiceId) {
-                    const p = this.practices.find(x => x.id === +practiceId);
-                    if (p) {
-                        pId = p.id;
-                        pName = p.display_name;
-                    }
+
+                const p = this.practices.find(x => x.id === +practiceId);
+                if (p) {
+                    pId = p.id;
+                    pName = p.display_name;
                 }
 
                 Event.$emit('unscheduled-patients-modal:filter', {
