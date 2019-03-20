@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SurveyAuthBeforeLoginRequest;
+use App\AwvUser;
 use App\InvitationLink;
 use App\Services\SurveyInvitationLinksService;
 use Illuminate\Http\Request;
