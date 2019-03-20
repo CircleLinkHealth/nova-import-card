@@ -131,12 +131,17 @@ class CcdaSectionsLogger implements MedicalRecordLogger
                     continue;
                 }
 
-                $insurance = InsuranceLog::create(array_merge($this->transformer->insurance($payer), [
-                    'medical_record_id'   => $this->ccdaId,
-                    'medical_record_type' => Ccda::class,
-                    'approved'            => false,
-                    'import'              => true,
-                ]));
+                $insurance = InsuranceLog::create(
+                    array_merge(
+                        $this->transformer->insurance($payer),
+                        [
+                            'medical_record_id'   => $this->ccdaId,
+                            'medical_record_type' => Ccda::class,
+                            'approved'            => false,
+                            'import'              => true,
+                        ]
+                    )
+                );
             }
         }
 
@@ -203,6 +208,21 @@ class CcdaSectionsLogger implements MedicalRecordLogger
         array_push($this->ccd->document->documentation_of, $this->ccd->document->author);
 
         array_push($this->ccd->document->documentation_of, $this->ccd->demographics->provider);
+
+        $address         = new \stdClass();
+        $address->street = [];
+        $address->city   = '';
+        $address->state  = '';
+        $address->zip    = '';
+
+        $legalAuth               = new \stdClass();
+        $legalAuth->name         = $this->ccd->document->legal_authenticator->assigned_person;
+        $legalAuth->phones       = [];
+        $legalAuth->npi          = '';
+        $legalAuth->organization = '';
+        $legalAuth->address      = $address;
+
+        array_push($this->ccd->document->documentation_of, $legalAuth);
 
         $providers = $this->ccd->document->documentation_of;
 
