@@ -131,24 +131,29 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
 
         $patient = $this->handleLastEncounter($patient, $json);
 
-        $provider = optional(
-            collect($this->transformer->parseProviders($json->document, $json->demographics))
-                ->transform(
-                    function ($p) {
-                        $p = $this->transformer->provider($p);
-                        if ( ! $p['first_name'] && ! $p['last_name']) {
-                            return false;
-                        }
-
-                        return $p;
+        $provider = collect($this->transformer->parseProviders($json->document, $json->demographics))
+            ->transform(
+                function ($p) {
+                    $p = $this->transformer->provider($p);
+                    if ( ! $p['first_name'] && ! $p['last_name']) {
+                        return false;
                     }
-                )
-                ->filter()
-                ->values()
-                ->first()
-        );
 
-        $patient = $patient->put('referring_provider_name', "{$provider['first_name']} {$provider['last_name']}");
+                    return $p;
+                }
+            )
+            ->filter()
+            ->values()
+            ->first();
+
+        if (is_array($provider) && array_key_exists('first_name', $provider) && array_key_exists(
+            'last_name',
+            $provider
+            )) {
+            $patient = $patient->put('referring_provider_name', "{$provider['first_name']} {$provider['last_name']}");
+        } else {
+            $patient = $patient->put('referring_provider_name', '');
+        }
 
         $patient = $patient->put('problems', $problems);
 
