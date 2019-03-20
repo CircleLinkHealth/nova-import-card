@@ -135,6 +135,12 @@ class CcdToLogTranformer
         ];
     }
 
+    /**
+     * @param $documentSection
+     * @param $demographicsSection
+     *
+     * @return array
+     */
     public function parseProviders($documentSection, $demographicsSection)
     {
         //Add them both together

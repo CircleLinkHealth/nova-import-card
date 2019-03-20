@@ -65,9 +65,9 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
      */
     public function handle()
     {
-//        if (Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY != $this->ccda->status) {
-//            return;
-//        }
+        if (Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY != $this->ccda->status) {
+            return;
+        }
 
         $this->determineEligibility();
     }
@@ -175,7 +175,8 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
             $this->ccda->status = Ccda::INELIGIBLE;
         }
 
-        $this->ccda->practice_id = $this->practice->id;
+        $this->ccda->referring_provider_name = $provider;
+        $this->ccda->practice_id             = $this->practice->id;
         $this->ccda->save();
 
         return $this->ccda->status;
