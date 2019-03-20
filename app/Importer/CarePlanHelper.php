@@ -13,6 +13,7 @@ use App\CLH\CCD\Importer\StorageStrategies\Biometrics\Weight;
 use App\CLH\CCD\Importer\StorageStrategies\Problems\ProblemsToMonitor;
 use App\CLH\Helpers\StringManipulation;
 use App\Enrollee;
+use App\Location;
 use App\Models\CCD\Allergy;
 use App\Models\CCD\CcdInsurancePolicy;
 use App\Models\CCD\Medication;
@@ -178,7 +179,7 @@ class CarePlanHelper
     public function storeContactWindows()
     {
         // update timezone
-        $this->user->timezone = 'America/New_York';
+        $this->user->timezone = optional($this->imr->location)->timezone ?? 'America/New_York';
 
         $preferredCallDays  = parseCallDays($this->dem->preferred_call_days);
         $preferredCallTimes = parseCallTimes($this->dem->preferred_call_times);
