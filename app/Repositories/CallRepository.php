@@ -83,7 +83,7 @@ class CallRepository
             $users = $users->ofPractice($practiceId);
         } else {
             $users = $users->whereHas('practices', function ($q) {
-                $q->where('active', '=', 1);
+                $q->active();
             });
         }
 
@@ -115,7 +115,7 @@ class CallRepository
             $users = $users->ofPractice($practiceId);
         } else {
             $users = $users->whereHas('practices', function ($q) {
-                $q->where('active', '=', 1);
+                $q->active();
             });
         }
 
