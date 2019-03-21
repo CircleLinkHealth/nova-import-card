@@ -150,9 +150,11 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
             'last_name',
             $provider
             )) {
-            $patient = $patient->put('referring_provider_name', "{$provider['first_name']} {$provider['last_name']}");
+            $providerFullName = "{$provider['first_name']} {$provider['last_name']}";
+            $patient          = $patient->put('referring_provider_name', $providerFullName);
         } else {
-            $patient = $patient->put('referring_provider_name', '');
+            $providerFullName = '';
+            $patient          = $patient->put('referring_provider_name', $providerFullName);
         }
 
         $patient = $patient->put('problems', $problems);
@@ -180,7 +182,7 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
             $this->ccda->status = Ccda::INELIGIBLE;
         }
 
-        $this->ccda->referring_provider_name = $provider;
+        $this->ccda->referring_provider_name = $providerFullName;
         $this->ccda->practice_id             = $this->practice->id;
         $this->ccda->save();
 
