@@ -199,7 +199,7 @@
                                                     return obj.type;
                                             },
 
-                                            fillspace: false,
+                                            fillspace: true,
                                             width: 202,
                                             sort: 'string',
                                             css: {"color": "black", "text-align": "left"}
@@ -227,7 +227,7 @@
                                             id: "durationBHI",
                                             header: ["Total BHI", "(HH:MM:SS)"],
                                             width: 150,
-                                            fillspace: false,
+                                            fillspace: true,
                                             sort: 'string',
                                             css: {"color": "black", "text-align": "right"},
                                             footer: {content: "mySummColumnBHI", css: "duration-footer"},
