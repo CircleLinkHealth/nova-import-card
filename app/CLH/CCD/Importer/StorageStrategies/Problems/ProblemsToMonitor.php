@@ -13,18 +13,18 @@ class ProblemsToMonitor extends BaseStorageStrategy implements StorageStrategy
 {
     public function import($cpmProblemIds = [], bool $detaching = false)
     {
-        if (empty($cpmProblemIds)) {
-            return;
-        }
-
-        $cpmProblems = $this->user->carePlan->carePlanTemplate->cpmProblems->whereIn('id', $cpmProblemIds);
-
         if ($detaching) {
             $this->user->cpmBiometrics()->sync([]);
             $this->user->cpmLifestyles()->sync([]);
             $this->user->cpmMedicationGroups()->sync([]);
             $this->user->cpmSymptoms()->sync([]);
         }
+
+        if (empty($cpmProblemIds)) {
+            return;
+        }
+
+        $cpmProblems = $this->user->carePlan->carePlanTemplate->cpmProblems->whereIn('id', $cpmProblemIds);
 
         foreach ($cpmProblems as $cpmProblem) {
             $instructionsId = $cpmProblem->pivot->cpm_instruction_id;

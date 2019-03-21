@@ -8,6 +8,7 @@ namespace App\Observers;
 
 use App\CLH\CCD\Importer\StorageStrategies\Problems\ProblemsToMonitor;
 use App\Models\CCD\Problem;
+use App\Models\CPM\CpmProblem;
 use App\User;
 
 class ProblemObserver
@@ -19,7 +20,15 @@ class ProblemObserver
      */
     public function deleted(Problem $problem)
     {
-        $patient = User::with('ccdProblems')->where('id', $problem->patient_id)->first();
+        //exclude generic diabetes
+        $diabetes = CpmProblem::where('name', 'Diabetes')->first();
+
+        $patient = User::with([
+            'ccdProblems' => function ($p) use ($diabetes) {
+                $p->where('cpm_problem_id', '!=', $diabetes->id);
+            },
+        ])
+            ->where('id', $problem->patient_id)->first();
 
         $storage = new ProblemsToMonitor($patient->program_id, $patient);
 

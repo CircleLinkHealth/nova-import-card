@@ -81,7 +81,7 @@ class CcdProblemRepository
 
     public function removePatientCcdProblem($userId, $ccdId)
     {
-        $this->model()->where(['patient_id' => $userId, 'id' => $ccdId])->delete();
+        $this->model()->where(['patient_id' => $userId, 'id' => $ccdId])->first()->delete();
 
         return [
             'message' => 'successful',

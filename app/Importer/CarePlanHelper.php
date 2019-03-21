@@ -211,7 +211,8 @@ class CarePlanHelper
         $this->createNewCarePlan()
             ->storeAllergies()
             ->storeProblemsList()
-            ->storeProblemsToMonitor()
+            //this will be executed by ProblemObserver when problems are created, in line 506
+//            ->storeProblemsToMonitor()
             ->storeMedications()
             ->storeBillingProvider()
             ->storeLocation()
@@ -536,6 +537,7 @@ class CarePlanHelper
 
     /**
      * Activates Problems to Monitor (CCM Conditions).
+     * todo: TO REMOVE because of Problem Observer.
      *
      * @return $this
      */

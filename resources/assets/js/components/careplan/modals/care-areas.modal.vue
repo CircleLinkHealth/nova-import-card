@@ -279,6 +279,7 @@
                         console.log('care-areas:remove-problems', response.data)
                         this.loaders.removeProblem = false
                         Event.$emit(`care-areas:remove-${this.selectedProblem.type}-problem`, this.selectedProblem.id)
+                        Event.$emit('problems:updated', {})
                         this.selectedProblem = null
                         setImmediate(() => this.checkPatientBehavioralStatus())
                     }).catch(err => {
@@ -303,6 +304,7 @@
                 }).then(response => {
                     console.log('full-conditions:add', response.data)
                     this.loaders.addProblem = false
+                    Event.$emit('problems:updated', {})
                     Event.$emit('full-conditions:add', response.data)
                     this.reset()
                     this.selectedProblem = response.data
@@ -324,6 +326,7 @@
                 }).then(response => {
                     console.log('full-conditions:edit', response.data)
                     this.loaders.editProblem = false
+                    Event.$emit('problems:updated', {})
                     Event.$emit('full-conditions:edit', response.data)
                     setImmediate(() => this.checkPatientBehavioralStatus())
                 }).catch(err => {
