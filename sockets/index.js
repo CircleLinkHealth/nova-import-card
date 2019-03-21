@@ -262,7 +262,7 @@ module.exports = app => {
 
             const user = timeTracker.exists(keyInfo) ? timeTracker.get(keyInfo) : null;
             if (user) {
-               closeSessionAndPostToCPM(user, ws);
+                closeSessionAndPostToCPM(user, ws);
             }
 
             const userNoLiveCount = timeTrackerNoLiveCount.exists(keyInfo) ? timeTrackerNoLiveCount.get(keyInfo) : null;
@@ -340,9 +340,31 @@ module.exports = app => {
 };
 
 /**
- * restart process every day
+ * restart process every day at 2 am
  */
 
-setTimeout(function () {
-    process.exit(0)
-}, 24 * 60 * 60 * 1000)
+const THRESHOLD_INTERVAL_SECONDS = 60 * 2; //2 minutes
+const HOURS = 2;
+const MINUTES = 0;
+setInterval(function () {
+
+    const upTimeSeconds = Math.floor(process.uptime());
+
+    if (upTimeSeconds < THRESHOLD_INTERVAL_SECONDS) {
+        // uptime less than 2 minutes.
+        // most probably process was just restarted
+        // console.debug("Uptime is ", upTimeSeconds, "seconds. Exiting.");
+        return;
+    }
+
+    const dateNow = new Date();
+    const hours = dateNow.getHours();
+    const minutes = dateNow.getMinutes();
+    // console.debug('Hours are now', hours, 'and minutes', minutes);
+
+    if (hours === HOURS && minutes === MINUTES) {
+        // console.debug('Exiting. Please restart me PM.');
+        process.exit(0);
+    }
+
+}, 1000 * 60); //check every minute
