@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\GetSurvey;
 use App\Http\Requests\StoreAnswer;
 use App\Services\SurveyService;
 use Illuminate\Http\Request;
@@ -15,21 +16,18 @@ class SurveyController extends Controller
         $this->service = $service;
     }
 
-    public function getSurvey(Request $request)
+    public function getSurvey(GetSurvey $request)
     {
-        if ( ! $request->has('survey_id')) {
-            return response()->json(['errors' => 'Request needs survey id'], 400);
-        }
         //change auth user id
-        $data = $this->service->getSurveyData(auth()->user()->id, $request->survey_id);
+        $userWithSurveyData = $this->service->getSurveyData(auth()->user()->id, $request->survey_id);
 
-        if ( ! $data) {
+        if ( ! $userWithSurveyData) {
             return response()->json(['errors' => 'Data not found'], 400);
         }
 
         return response()->json([
             'success' => true,
-            'data'    => $data,
+            'data'    => $userWithSurveyData->toArray(),
         ], 200);
     }
 

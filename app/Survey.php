@@ -21,7 +21,7 @@ class Survey extends Model
         'description',
     ];
 
-    public function user()
+    public function users()
     {
         return $this->belongsToMany(User::class, 'users_surveys', 'survey_id', 'user_id')
                     ->withPivot([
