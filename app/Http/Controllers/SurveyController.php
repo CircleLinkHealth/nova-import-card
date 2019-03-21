@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\GetSurvey;
 use App\Http\Requests\StoreAnswer;
 use App\Services\SurveyService;
-use Illuminate\Http\Request;
 
 class SurveyController extends Controller
 {

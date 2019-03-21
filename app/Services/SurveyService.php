@@ -101,5 +101,4 @@ class SurveyService
         return $instance->pivot->status;
     }
 
-
 }
