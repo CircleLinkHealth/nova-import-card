@@ -1,5 +1,6 @@
 <template>
     <div class="container">
+
         <!--Survey welcome note-->
         <div class="card">
             <div v-if="welcomeStage" class="practice-title">
@@ -31,23 +32,25 @@
             <div class="questions-box"
                  v-if="questionsStage"
                  v-for="(question, index) in orderedQuestions">
-                <div v-show="index === questionIndex" class="question">
-                    {{question.id}}{{'.'}} {{question.body}}
-                    <br>
-                    <!--Questions Answer Type-->
-                    <div class="question-answer-type">
-                        <question-type-text v-if="question.type.answer_type === 'text'"></question-type-text>
-                        <question-type-checkbox
-                                v-if="question.type.answer_type === 'checkbox'"></question-type-checkbox>
-                        <question-type-range v-if="question.type.answer_type === 'range'"></question-type-range>
-                        <question-type-number v-if="question.type.answer_type === 'number'"></question-type-number>
-                        <question-type-radio :question="question"
-                                             v-if="question.type.answer_type === 'radio'"></question-type-radio>
-                        <question-type-date v-if="question.type.answer_type === 'date'"></question-type-date>
-
+                <div v-show="index >= questionIndex" class="question">
+                    <div v-if="">{{question.id}}{{'.'}} {{question.body}}
+                        <!--  <sub-questions v-if="" :question="question"></sub-questions>-->
+                        <br>
+                        <!--Questions Answer Type-->
+                        <div class="question-answer-type">
+                            <question-type-text v-if="question.type.answer_type === 'text'"></question-type-text>
+                            <question-type-checkbox
+                                    v-if="question.type.answer_type === 'checkbox'"></question-type-checkbox>
+                            <question-type-range v-if="question.type.answer_type === 'range'"></question-type-range>
+                            <question-type-number v-if="question.type.answer_type === 'number'"></question-type-number>
+                            <question-type-radio :question="question"
+                                                 v-if="question.type.answer_type === 'radio'"></question-type-radio>
+                            <question-type-date v-if="question.type.answer_type === 'date'"></question-type-date>
+                        </div>
                     </div>
                 </div>
             </div>
+
             <!--bottom-navbar-->
             <br>
             <call-assistance v-if="callAssistance" @closeCallAssistanceModal="hideCallHelp"></call-assistance>
@@ -82,13 +85,16 @@
                 </div>
             </div>
         </div>
+        <!--<div class="inputArea" v-for="input in inputs" :key="input.id">
+            <input type="text" name="textTypeAnswer">
+        </div>
+        <button @click="addInput">Add input</button>-->
     </div>
 
 </template>
 
 
 <script>
-
     import questionTypeText from "./questionTypeText";
     import questionTypeCheckbox from "./questionTypeCheckbox";
     import questionTypeRange from "./questionTypeRange";
@@ -97,11 +103,15 @@
     import questionTypeDate from "./questionTypeDate";
     import callAssistance from "./callAssistance";
     import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
+    import subQuestions from "./subQuestions";
+    import mainQuestions from "./mainQuestions";
 
     export default {
         props: ['surveydata'],
 
         components: {
+            'main-questions': mainQuestions,
+            'sub-questions': subQuestions,
             'question-type-text': questionTypeText,
             'question-type-checkbox': questionTypeCheckbox,
             'question-type-range': questionTypeRange,
@@ -117,16 +127,29 @@
                 questionsStage: false,
                 welcomeStage: true,
                 callAssistance: false,
-                questions: this.surveydata.survey_instances[0].questions,
+                questionsData: [],
                 questionIndex: 0,
+                areSubQuestions:[]
+                /*   counter: 0,
+                   inputs: [{
+                       id: 'fruit0',
+                           label: 'Enter Fruit Name',
+                       value: '',
+                   }],*/
             }
         },
-
         computed: {
+            questions(){
+                return this.questionsData.flat(1);
+            },
+            sub(){
+                return this.areSubQuestions.flat(1);
+            },
             orderedQuestions() {
                 /*todo:this has to change to question->pivot->order */
                 return _.orderBy(this.questions, 'id')
-            }
+            },
+
         },
 
         methods: {
@@ -152,7 +175,29 @@
             previousQuestions() {
                 this.questionIndex--;
             },
+
+            /*addInput() {
+                this.inputs.push({
+                    id: `fruit${++this.counter}`,
+                    label: 'Enter Fruit Name',
+                    value: '',
+                });
+            }*/
+
         },
+        created() {
+            const questionsData = this.surveydata.survey_instances[0].questions.map(function (questions) {
+                return questions
+            });
+
+            const x = questionsData.map(function (question) {
+                return question.conditions.isSubQuestion === true
+            });
+
+            this.areSubQuestions.push(x);
+            this.questionsData.push(questionsData);
+        },
+
     }
 </script>
 

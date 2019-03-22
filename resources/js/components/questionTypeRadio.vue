@@ -2,11 +2,14 @@
     <div>
         <div class="custom-radio">
             <div class="row">
-                <div v-for="answer in posiibleAnswers">
+                <div v-for="answer in possibleAnswers">
                     <label>{{answer.value}}
                         <input type="radio"
                                id="radioType"
-                               name="radioTypeAnswer">
+                               name="radioTypeAnswer"
+                               v-model="checkedAnswer"
+                               :value="answer.value"
+                               @click="handleAnswer">
                     </label>
                 </div>
             </div>
@@ -16,14 +19,23 @@
 </template>
 
 <script>
+    import {bus} from "../app";
+
     export default {
         props: ['question'],
 
         data() {
             return {
-                posiibleAnswers: this.question.type.question_type_answers,
+                possibleAnswers: this.question.type.question_type_answers,
+                checkedAnswer: [],
             }
         },
+
+        methods: {
+            handleAnswer() {
+                console.log(this.checkedAnswer)
+            },
+        }
     }
 </script>
 

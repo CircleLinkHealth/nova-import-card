@@ -20,10 +20,11 @@ class SurveyInvitationLinksService
         $patientInfoId = $patient->id;
 
         $this->expireAllPastUrls($patientInfoId);
-
+//@todo:lines 24-26 wont work if survey_id = null.
         $survey = Survey::where('name', $this::HRA)
                         ->select('id')
-                        ->firstOrFail();
+                        ->first();
+
         $surveyId = $survey->id;
 
         $url      = URL::signedRoute('loginSurvey',

@@ -20,15 +20,15 @@
         "resolve-url-loader": "^2.3.1",
         "sass": "^1.15.2",
         "sass-loader": "^7.1.0",
-        "vue": "^2.5.17"
+        "vue": "^2.6.10",
+        "vue-loader": "^15.7.0",
+        "vue-template-compiler": "^2.6.10"
     },
     "dependencies": {
         "@fortawesome/fontawesome-free": "^5.7.2",
         "@fortawesome/fontawesome-svg-core": "^1.2.0",
         "@fortawesome/free-solid-svg-icons": "^5.1.0",
         "@fortawesome/vue-fontawesome": "^0.1.0",
-        "font-awesome": "^4.7.0",
-        "vue-progressbar": "^0.7.5",
-        "vue-scrollto": "^2.14.0"
+        "font-awesome": "^4.7.0"
     }
 }
