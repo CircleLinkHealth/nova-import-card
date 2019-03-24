@@ -18,7 +18,7 @@ class SurveyInstanceObserver
     {
 
         if ($instance->pivot->status === SurveyInstance::COMPLETED) {
-            $otherInstance = SurveyInstance::where('status', SurveyInstance::COMPLETED)
+            $otherInstance = SurveyInstance::isCompleted()
                                            ->where('user_id', $instance->user_id)
                                            ->where('start_date', $instance->start_date)
                                            ->where('end_date', $instance->end_date)

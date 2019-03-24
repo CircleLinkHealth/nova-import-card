@@ -16,6 +16,10 @@ class QuestionType extends Model
 
     const DATE = 'date';
 
+    const SELECT = 'select';
+
+    const MULTI_SELECT = 'multi_select';
+
     /**
      * The attributes that are mass assignable.
      *
