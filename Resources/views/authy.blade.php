@@ -1,4 +1,4 @@
-@extends('resources.views.partials.providerUI')
+@extends('partials.providerUI')
 
 @section('title', 'Perform 2FA')
 @section('activity', 'Perform 2FA')

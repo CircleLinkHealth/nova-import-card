@@ -25,7 +25,15 @@ class TwoFAServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->registerViews();
         $this->registerFactories();
+        $this->registerVueComponents();
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
+    }
+    
+    public function registerVueComponents() {
+        $this->publishes([
+                             __DIR__ . '/../Resources/assets/js/components' =>
+                                 resource_path('assets/js/components'
+                                 )], 'vue-components');
     }
 
     /**
