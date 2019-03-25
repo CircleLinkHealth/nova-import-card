@@ -4,12 +4,6 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
-use App\Models\CCD\Problem;
-use App\Models\ProblemCode;
-use App\ProviderInfo;
-use App\State;
-
 return [
     /*
     |--------------------------------------------------------------------------
@@ -80,18 +74,22 @@ return [
     |
     */
     'include-tables' => [
-        (new App\User())->getTable(),
-        (new App\Patient())->getTable(),
-        (new App\Nurse())->getTable(),
-        (new App\CarePlan())->getTable(),
-        (new App\CarePlanTemplate())->getTable(),
-        (new App\Role())->getTable(),
-        (new App\Permission())->getTable(),
-        (new Problem())->getTable(),
-        (new ProblemCode())->getTable(),
-        (new SnomedToCpmIcdMap())->getTable(),
-        (new ProviderInfo())->getTable(),
-        (new State())->getTable(),
+        'users',
+        'patient_info',
+        'nurse_info',
+        'provider_info',
+        'care_plans',
+        'care_plan_templates',
+        'lv_roles',
+        'practice_role_user',
+        'permissibles',
+        'cpm_problems',
+        'ccd_problems',
+        'problem_codes',
+        'cpm_problems_users',
+        'snomed_to_cpm_icd_maps',
+        'practices',
+        'locations',
     ],
 
     /*
