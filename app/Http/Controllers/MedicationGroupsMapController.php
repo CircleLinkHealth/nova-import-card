@@ -55,12 +55,12 @@ class MedicationGroupsMapController extends Controller
     {
         $medicationGroups = CpmMedicationGroup::all()->sortBy('name')->values()
             ->transform(
-                                                         function ($m) {
-                                                             return [
-                                                                 'id'   => $m->id,
-                                                                 'text' => $m->name,
-                                                             ];
-                                                         }
+                function ($m) {
+                    return [
+                        'id'   => $m->id,
+                        'text' => $m->name,
+                    ];
+                }
                                                      )
             ->toJson();
         $maps = MedicationGroupsMap::with('cpmMedicationGroup')
@@ -68,14 +68,14 @@ class MedicationGroupsMapController extends Controller
             ->sortBy('keyword')
             ->values()
             ->transform(
-                                                   function ($m) {
-                                                       return [
-                                                           'id'                  => $m->id,
-                                                           'keyword'             => $m->keyword,
-                                                           'medication_group_id' => $m->medication_group_id,
-                                                           'medication_group'    => $m->cpmMedicationGroup->name,
-                                                       ];
-                                                   }
+                function ($m) {
+                    return [
+                        'id'                  => $m->id,
+                        'keyword'             => $m->keyword,
+                        'medication_group_id' => $m->medication_group_id,
+                        'medication_group'    => $m->cpmMedicationGroup->name,
+                    ];
+                }
                                                )
             ->toJson();
 

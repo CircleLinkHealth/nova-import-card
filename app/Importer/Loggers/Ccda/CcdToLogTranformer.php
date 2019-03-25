@@ -136,6 +136,37 @@ class CcdToLogTranformer
     }
 
     /**
+     * @param $documentSection
+     * @param $demographicsSection
+     *
+     * @return array
+     */
+    public function parseProviders($documentSection, $demographicsSection)
+    {
+        //Add them both together
+        array_push($documentSection->documentation_of, $documentSection->author);
+
+        array_push($documentSection->documentation_of, $demographicsSection->provider);
+
+        $address         = new \stdClass();
+        $address->street = [];
+        $address->city   = '';
+        $address->state  = '';
+        $address->zip    = '';
+
+        $legalAuth               = new \stdClass();
+        $legalAuth->name         = $documentSection->legal_authenticator->assigned_person;
+        $legalAuth->phones       = [];
+        $legalAuth->npi          = '';
+        $legalAuth->organization = '';
+        $legalAuth->address      = $address;
+
+        array_push($documentSection->documentation_of, $legalAuth);
+
+        return $documentSection->documentation_of;
+    }
+
+    /**
      * @see ProblemLog
      *
      * @param $problem
