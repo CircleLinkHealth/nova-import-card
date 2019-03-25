@@ -7,7 +7,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -49,7 +49,7 @@ class RegisterController extends Controller
      *
      * @param array $data
      *
-     * @return User
+     * @return \CircleLinkHealth\Customer\Entities\User
      */
     protected function create(array $data)
     {

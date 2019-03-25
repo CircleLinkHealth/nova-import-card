@@ -7,7 +7,7 @@
 namespace App\Notifications;
 
 use App\Mail\NurseDailyReport as NurseDailyReportMailable;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
@@ -66,7 +66,7 @@ class NurseDailyReport extends Notification
     /**
      * Get the mail representation of the notification.
      *
-     * @param User $notifiable
+     * @param \CircleLinkHealth\Customer\Entities\User $notifiable
      *
      * @return \Illuminate\Notifications\Messages\MailMessage
      */

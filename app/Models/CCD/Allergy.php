@@ -7,7 +7,7 @@
 namespace App\Models\CCD;
 
 use App\Importer\Models\ItemLogs\AllergyLog;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 /**
  * App\Models\CCD\Allergy.
@@ -23,7 +23,7 @@ use App\User;
  * @property \Carbon\Carbon                           $created_at
  * @property \Carbon\Carbon                           $updated_at
  * @property \App\Importer\Models\ItemLogs\AllergyLog $ccdLog
- * @property \App\User                                $patient
+ * @property \CircleLinkHealth\Customer\Entities\User                                $patient
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Allergy whereAllergenName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Allergy whereAllergyImportId($value)

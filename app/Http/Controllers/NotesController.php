@@ -6,19 +6,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Activity;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
 use App\Call;
 use App\Contracts\ReportFormatter;
 use App\Http\Requests\NotesReport;
 use App\Note;
-use App\PatientContactWindow;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\PatientContactWindow;
+use CircleLinkHealth\Customer\Entities\Practice;
 use App\Repositories\PatientWriteRepository;
 use App\SafeRequest;
 use App\Services\Calls\SchedulerService;
 use App\Services\CPM\CpmMedicationService;
 use App\Services\NoteService;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

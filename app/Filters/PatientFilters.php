@@ -6,11 +6,11 @@
 
 namespace App\Filters;
 
-use App\CarePerson;
+use CircleLinkHealth\Customer\Entities\CarePerson;
 use App\CarePlan;
-use App\Patient;
-use App\PatientMonthlySummary;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
+use CircleLinkHealth\Customer\Entities\Practice;
 use App\Repositories\PatientReadRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;

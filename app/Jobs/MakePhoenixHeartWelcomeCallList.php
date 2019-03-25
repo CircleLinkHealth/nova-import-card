@@ -11,7 +11,7 @@ use App\EligibilityJob;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartInsurance;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartProblem;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use App\Repositories\Cache\UserNotificationList;
 use App\Services\Eligibility\Entities\Problem;
 use App\Services\WelcomeCallListGenerator;

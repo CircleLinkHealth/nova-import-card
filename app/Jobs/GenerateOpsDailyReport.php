@@ -6,8 +6,8 @@
 
 namespace App\Jobs;
 
-use App\Practice;
-use App\SaasAccount;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\SaasAccount;
 use App\Services\OpsDashboardService;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;

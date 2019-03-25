@@ -8,7 +8,7 @@ namespace Tests\Unit;
 
 use App\EligibilityBatch;
 use App\Jobs\ProcessSinglePatientEligibility;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use App\Services\CCD\ProcessEligibilityService;
 use App\Services\Eligibility\Csv\CsvPatientList;
 use Tests\Helpers\UserHelpers;

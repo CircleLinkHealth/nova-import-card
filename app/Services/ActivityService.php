@@ -6,7 +6,7 @@
 
 namespace App\Services;
 
-use App\PatientMonthlySummary;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use App\Repositories\CallRepository;
 use App\Repositories\Eloquent\ActivityRepository;
 use App\Repositories\PatientSummaryEloquentRepository;

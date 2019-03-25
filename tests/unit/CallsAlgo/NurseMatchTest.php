@@ -45,7 +45,7 @@ class NurseMatchTest extends TestCase
         $this->prediction['window_start'] = '09:00:00';
         $this->prediction['window_end']   = '17:00:00';
 
-        $this->practice = \App\Practice::create([
+        $this->practice = \CircleLinkHealth\Customer\Entities\Practice::create([
             'name' => 'program'.Carbon::now()->secondsSinceMidnight(),
         ]);
 

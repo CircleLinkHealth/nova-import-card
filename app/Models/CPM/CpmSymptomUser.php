@@ -6,7 +6,7 @@
 
 namespace App\Models\CPM;
 
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 /**
  * App\Models\CPM\CpmSymptomUser.
@@ -19,7 +19,7 @@ use App\User;
  * @property \Carbon\Carbon                                                            $updated_at
  * @property \App\Models\CPM\CpmSymptom                                                $cpmSymptom
  * @property \App\Models\CPM\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection $cpmInstructions
- * @property \App\User[]|\Illuminate\Database\Eloquent\Collection                      $user
+ * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection                      $user
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmSymptomUser whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmSymptomUser whereId($value)

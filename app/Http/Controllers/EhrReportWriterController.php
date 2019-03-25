@@ -6,12 +6,12 @@
 
 namespace App\Http\Controllers;
 
-use App\EhrReportWriterInfo;
+use CircleLinkHealth\Customer\Entities\EhrReportWriterInfo;
 use App\Notifications\EhrReportWriterNotification;
 use App\Services\CCD\ProcessEligibilityService;
 use App\Services\GoogleDrive;
 use App\Traits\ValidatesEligibility;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 use Storage;
 

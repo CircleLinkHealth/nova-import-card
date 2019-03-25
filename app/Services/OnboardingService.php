@@ -6,18 +6,18 @@
 
 namespace App\Services;
 
-use App\CarePerson;
+use CircleLinkHealth\Customer\Entities\CarePerson;
 use App\Contracts\Repositories\InviteRepository;
 use App\Contracts\Repositories\LocationRepository;
 use App\Contracts\Repositories\PracticeRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\Facades\StringManipulation;
-use App\Location;
-use App\PhoneNumber;
-use App\Practice;
-use App\ProviderInfo;
-use App\Role;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Location;
+use CircleLinkHealth\Customer\Entities\PhoneNumber;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\ProviderInfo;
+use CircleLinkHealth\Customer\Entities\Role;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Prettus\Validator\Exceptions\ValidatorException;
@@ -67,7 +67,7 @@ class OnboardingService
     /**
      * Gets existing locations, and outputs them on window.cpm.
      *
-     * @param Practice $primaryPractice
+     * @param \CircleLinkHealth\Customer\Entities\Practice $primaryPractice
      */
     public function getExistingLocations(Practice $primaryPractice)
     {
@@ -118,7 +118,7 @@ class OnboardingService
     /**
      * Gets existing staff, and outputs them on window.cpm.
      *
-     * @param Practice $primaryPractice
+     * @param \CircleLinkHealth\Customer\Entities\Practice $primaryPractice
      */
     public function getExistingStaff(Practice $primaryPractice)
     {

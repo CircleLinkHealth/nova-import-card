@@ -6,12 +6,12 @@
 
 namespace App\Billing;
 
-use App\Activity;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
 use App\Billing\NurseInvoices\VariablePay;
 use App\Call;
-use App\Nurse;
-use App\NurseMonthlySummary;
-use App\PageTimer;
+use CircleLinkHealth\Customer\Entities\Nurse;
+use CircleLinkHealth\Customer\Entities\NurseMonthlySummary;
+use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Carbon\Carbon;
 

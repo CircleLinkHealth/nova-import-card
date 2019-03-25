@@ -10,6 +10,8 @@ use App\Facades\StringManipulation;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Filters\Filterable;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 
 /**
  * App\Enrollee.
@@ -65,10 +67,10 @@ use Carbon\Carbon;
  * @property \App\CareAmbassador|null $careAmbassador
  * @property mixed $practice_name
  * @property mixed $provider_full_name
- * @property \App\Practice|null $practice
- * @property \App\User|null $provider
+ * @property \CircleLinkHealth\Customer\Entities\Practice|null $practice
+ * @property \CircleLinkHealth\Customer\Entities\User|null $provider
  * @property mixed $primary_phone_number
- * @property \App\User|null $user
+ * @property \CircleLinkHealth\Customer\Entities\User|null $user
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee toCall()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee toSMS()

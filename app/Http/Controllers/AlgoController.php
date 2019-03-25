@@ -8,7 +8,7 @@ namespace App\Http\Controllers;
 
 use App\Algorithms\Calls\SuccessfulHandler;
 use App\Algorithms\Calls\UnsuccessfulHandler;
-use App\Patient;
+use CircleLinkHealth\Customer\Entities\Patient;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 

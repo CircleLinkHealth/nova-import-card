@@ -9,7 +9,7 @@ namespace App\Jobs;
 use App\Importer\Loggers\Ccda\CcdToLogTranformer;
 use App\Models\MedicalRecords\Ccda;
 use App\Models\PatientData\LGH\LGHInsurance;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use App\Services\WelcomeCallListGenerator;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

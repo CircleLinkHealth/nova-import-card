@@ -9,8 +9,8 @@ namespace App\Services;
 use App\CPRulesQuestions;
 use App\Observation;
 use App\ObservationMeta;
-use App\Practice;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use DateTime;
 use GuzzleHttp\Client;
 
@@ -1172,8 +1172,8 @@ class DatamonitorService
                 : $bloodPressure,
         ];
 
-        $first_name                = $user->meta()->where('meta_key', '=', 'last_names')->first();
-        $last_name                 = $user->meta()->where('meta_key', '=', 'last_name')->first();
+        $first_name                = $user->first_name;
+        $last_name                 = $user->last_name;
         $extra_vars['patientname'] = $first_name.' '.$last_name;
         $extra_vars['alerts_url']  = $this->get_alerts_url($observation['user_id'], $user->program_id);
         $extra_vars['alert_key']   = str_replace('_', ' ', $observation->obs_key);

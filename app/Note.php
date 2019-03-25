@@ -14,6 +14,7 @@ use App\Notifications\NoteForwarded;
 use App\Traits\IsAddendumable;
 use App\Traits\PdfReportTrait;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
@@ -31,10 +32,10 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @property string                                                          $performed_at
  * @property int|null                                                        $logger_id
  * @property \App\Models\Addendum[]|\Illuminate\Database\Eloquent\Collection $addendums
- * @property \App\User                                                       $author
+ * @property \CircleLinkHealth\Customer\Entities\User                                                       $author
  * @property \App\Call                                                       $call
- * @property \App\User                                                       $patient
- * @property \App\User                                                       $program
+ * @property \CircleLinkHealth\Customer\Entities\User                                                       $patient
+ * @property \CircleLinkHealth\Customer\Entities\User                                                       $program
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereAuthorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereBody($value)
@@ -165,7 +166,7 @@ class Note extends \App\BaseModel implements PdfReport
 
     public function program()
     {
-        return $this->belongsTo('App\User', 'author_id', 'id');
+        return $this->belongsTo('CircleLinkHealth\Customer\Entities\User', 'author_id', 'id');
     }
 
     /**

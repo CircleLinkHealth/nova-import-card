@@ -9,7 +9,7 @@ namespace App\Models\CPM;
 use App\CarePlanTemplate;
 use App\Contracts\Serviceable;
 use App\Services\CPM\CpmBiometricService;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 /**
  * App\Models\CPM\CpmBiometric.
@@ -24,7 +24,7 @@ use App\User;
  * @property \App\Models\CPM\Biometrics\CpmBloodPressure|\App\Models\CPM\Biometrics\CpmBloodSugar|\App\Models\CPM\Biometrics\CpmSmoking|\App\Models\CPM\Biometrics\CpmWeight $info
  * @property \App\CarePlanTemplate[]|\Illuminate\Database\Eloquent\Collection                                                                                                $carePlanTemplates
  * @property \App\Models\CPM\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection                                                                                       $cpmInstructions
- * @property \App\User[]|\Illuminate\Database\Eloquent\Collection                                                                                                            $patient
+ * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection                                                                                                            $patient
  * @property \App\Models\CPM\CpmBiometricUser[]|\Illuminate\Database\Eloquent\Collection                                                                                     $users
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometric whereCareItemId($value)

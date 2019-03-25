@@ -1,5 +1,5 @@
 <?php
-use App\Patient;
+use CircleLinkHealth\Customer\Entities\Patient;
 
 ?>
 <input type="hidden" name="activityName" id="activityName" value="@yield('activity')">

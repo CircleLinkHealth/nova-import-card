@@ -8,8 +8,8 @@ namespace App\Observers;
 
 use App\EligibilityBatch;
 use App\Notifications\EligibilityBatchProcessed;
-use App\Practice;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 
 class EligibilityBatchObserver
 {

@@ -7,9 +7,9 @@
 namespace App\Jobs;
 
 use App\Notifications\WeeklyProviderReport;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use App\Reports\Sales\Provider\SalesByProviderReport;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;

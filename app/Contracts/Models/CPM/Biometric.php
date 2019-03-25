@@ -6,7 +6,7 @@
 
 namespace App\Contracts\Models\CPM;
 
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 interface Biometric
 {

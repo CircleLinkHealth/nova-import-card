@@ -10,12 +10,12 @@ use App\Contracts\Repositories\InviteRepository;
 use App\Contracts\Repositories\LocationRepository;
 use App\Contracts\Repositories\PracticeRepository;
 use App\Contracts\Repositories\UserRepository;
-use App\Entities\Invite;
+use CircleLinkHealth\Customer\Entities\Invite;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateInvitedUserAccount;
-use App\Role;
+use CircleLinkHealth\Customer\Entities\Role;
 use App\Services\OnboardingService;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 use Prettus\Validator\Exceptions\ValidatorException;
 
@@ -24,7 +24,7 @@ class OnboardingController extends Controller
     /**
      * The User's invite, if one exists.
      *
-     * @var Invite
+     * @var \CircleLinkHealth\Customer\Database\Migrations\Invite
      */
     protected $invite;
 

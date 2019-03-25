@@ -7,7 +7,7 @@
 namespace App\Console\Commands;
 
 use App\Services\ActivityService;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 

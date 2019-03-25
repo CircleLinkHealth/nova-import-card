@@ -14,9 +14,9 @@ return [
     | A helper command is provided for this: `php artisan jwt:generate`
     |
     */
-
+    
     'secret' => env('JWT_SECRET', 'VKJQUH6U9m4Z6D7f5aBAPqAprEnKI2wb'),
-
+    
     /*
     |--------------------------------------------------------------------------
     | JWT time to live
@@ -26,9 +26,9 @@ return [
     | Defaults to 1 hour
     |
     */
-
+    
     'ttl' => 60,
-
+    
     /*
     |--------------------------------------------------------------------------
     | Refresh time to live
@@ -40,9 +40,9 @@ return [
     | Defaults to 2 weeks
     |
     */
-
+    
     'refresh_ttl' => 20160,
-
+    
     /*
     |--------------------------------------------------------------------------
     | JWT hashing algorithm
@@ -54,9 +54,9 @@ return [
     | for possible values
     |
     */
-
+    
     'algo' => 'HS256',
-
+    
     /*
     |--------------------------------------------------------------------------
     | User Model namespace
@@ -66,9 +66,9 @@ return [
     | e.g. 'Acme\Entities\User'
     |
     */
-
-    'user' => 'App\User',
-
+    
+    'user' => 'CircleLinkHealth\Customer\Entities\User',
+    
     /*
     |--------------------------------------------------------------------------
     | User identifier
@@ -78,9 +78,9 @@ return [
     | claim of the token payload.
     |
     */
-
+    
     'identifier' => 'id',
-
+    
     /*
     |--------------------------------------------------------------------------
     | Required Claims
@@ -91,9 +91,9 @@ return [
     | present in the payload.
     |
     */
-
+    
     'required_claims' => ['iss', 'iat', 'exp', 'nbf', 'sub', 'jti'],
-
+    
     /*
     |--------------------------------------------------------------------------
     | Blacklist Enabled
@@ -103,9 +103,9 @@ return [
     | If you do not want or need this functionality, then set this to false.
     |
     */
-
+    
     'blacklist_enabled' => env('JWT_BLACKLIST_ENABLED', true),
-
+    
     /*
     |--------------------------------------------------------------------------
     | Providers
@@ -114,7 +114,7 @@ return [
     | Specify the various providers used throughout the package.
     |
     */
-
+    
     'providers' => [
         /*
         |--------------------------------------------------------------------------

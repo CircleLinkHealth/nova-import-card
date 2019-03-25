@@ -6,6 +6,8 @@
 
 namespace App;
 
+use CircleLinkHealth\Customer\Entities\User;
+
 /**
  * App\Comment.
  *
@@ -29,7 +31,7 @@ namespace App;
  * @property \Carbon\Carbon   $created_at
  * @property \Carbon\Carbon   $updated_at
  * @property \App\Observation $observation
- * @property \App\User        $user
+ * @property \CircleLinkHealth\Customer\Entities\User        $user
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentAgent($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentApproved($value)
@@ -137,6 +139,6 @@ class Comment extends \App\BaseModel
 
     public function user()
     {
-        return $this->belongsTo('App\User', 'id');
+        return $this->belongsTo('CircleLinkHealth\Customer\Entities\User', 'id');
     }
 }

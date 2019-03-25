@@ -6,7 +6,7 @@
 
 namespace Tests\Unit;
 
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 

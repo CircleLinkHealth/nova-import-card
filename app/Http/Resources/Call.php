@@ -6,7 +6,7 @@
 
 namespace App\Http\Resources;
 
-use App\User as UserModel;
+use CircleLinkHealth\Customer\Entities\User as UserModel;
 use Illuminate\Http\Resources\Json\Resource;
 
 class Call extends Resource

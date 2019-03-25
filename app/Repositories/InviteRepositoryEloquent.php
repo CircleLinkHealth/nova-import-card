@@ -7,7 +7,7 @@
 namespace App\Repositories;
 
 use App\Contracts\Repositories\InviteRepository;
-use App\Entities\Invite;
+use CircleLinkHealth\Customer\Entities\Invite;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
 

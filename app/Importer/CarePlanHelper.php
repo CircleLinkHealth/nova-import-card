@@ -6,14 +6,14 @@
 
 namespace App\Importer;
 
-use App\CarePerson;
+use CircleLinkHealth\Customer\Entities\CarePerson;
 use App\CarePlan;
 use App\CLH\CCD\Importer\StorageStrategies\Biometrics\BloodPressure;
 use App\CLH\CCD\Importer\StorageStrategies\Biometrics\Weight;
 use App\CLH\CCD\Importer\StorageStrategies\Problems\ProblemsToMonitor;
 use App\CLH\Helpers\StringManipulation;
 use App\Enrollee;
-use App\Location;
+use CircleLinkHealth\Customer\Entities\Location;
 use App\Models\CCD\Allergy;
 use App\Models\CCD\CcdInsurancePolicy;
 use App\Models\CCD\Medication;
@@ -23,10 +23,10 @@ use App\Models\CPM\CpmProblem;
 use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Models\ProblemCode;
-use App\Patient;
-use App\PatientContactWindow;
-use App\PhoneNumber;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\PatientContactWindow;
+use CircleLinkHealth\Customer\Entities\PhoneNumber;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Validation\Rule;
 
 class CarePlanHelper

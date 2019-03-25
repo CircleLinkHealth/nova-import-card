@@ -7,9 +7,9 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\GenerateOpsDashboardCSVReport;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use App\Repositories\OpsDashboardPatientEloquentRepository;
-use App\SaasAccount;
+use CircleLinkHealth\Customer\Entities\SaasAccount;
 use App\Services\OpsDashboardService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;

@@ -6,6 +6,8 @@
 
 namespace App;
 
+use CircleLinkHealth\Customer\Entities\User;
+
 /**
  * App\ObservationMeta.
  *

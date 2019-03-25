@@ -7,7 +7,7 @@
 namespace App\Jobs;
 
 use App\Billing\NurseMonthlyBillGenerator;
-use App\Nurse;
+use CircleLinkHealth\Customer\Entities\Nurse;
 use App\Repositories\Cache\UserNotificationList;
 use App\Repositories\Cache\View;
 use Carbon\Carbon;

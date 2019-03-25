@@ -13,7 +13,7 @@ class ChangeCareCenterDisplayName extends Migration
      */
     public function down()
     {
-        $role = \App\Role::where('name', 'care-center')->first();
+        $role = \CircleLinkHealth\Customer\Entities\Role::where('name', 'care-center')->first();
 
         $role->display_name = 'Care Center';
         $role->save();
@@ -24,7 +24,7 @@ class ChangeCareCenterDisplayName extends Migration
      */
     public function up()
     {
-        $role = \App\Role::where('name', 'care-center')->first();
+        $role = \CircleLinkHealth\Customer\Entities\Role::where('name', 'care-center')->first();
 
         if ($role) {
             $role->display_name = 'Care Coach';

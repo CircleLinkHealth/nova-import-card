@@ -10,7 +10,7 @@ use App\CareItem;
 use App\CarePlanTemplate;
 use App\Contracts\Serviceable;
 use App\Services\CPM\CpmSymptomService;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 /**
  * App\Models\CPM\CpmSymptom.
@@ -23,7 +23,7 @@ use App\User;
  * @property \App\CareItem                                                             $carePlanItemIdDeprecated
  * @property \App\CarePlanTemplate[]|\Illuminate\Database\Eloquent\Collection          $carePlanTemplates
  * @property \App\Models\CPM\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection $cpmInstructions
- * @property \App\User[]|\Illuminate\Database\Eloquent\Collection                      $patient
+ * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection                      $patient
  * @property \App\Models\CPM\CpmSymptomUser[]|\Illuminate\Database\Eloquent\Collection $users
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmSymptom whereCareItemId($value)

@@ -6,8 +6,8 @@
 
 namespace App\View\Composers;
 
-use App\Patient;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;

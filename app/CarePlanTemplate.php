@@ -12,6 +12,7 @@ use App\Models\CPM\CpmMedicationGroup;
 use App\Models\CPM\CpmMisc;
 use App\Models\CPM\CpmProblem;
 use App\Models\CPM\CpmSymptom;
+use CircleLinkHealth\Customer\Entities\Practice;
 
 /**
  * App\CarePlanTemplate.
@@ -28,7 +29,7 @@ use App\Models\CPM\CpmSymptom;
  * @property \App\Models\CPM\CpmMisc[]|\Illuminate\Database\Eloquent\Collection            $cpmMiscs
  * @property \App\Models\CPM\CpmProblem[]|\Illuminate\Database\Eloquent\Collection         $cpmProblems
  * @property \App\Models\CPM\CpmSymptom[]|\Illuminate\Database\Eloquent\Collection         $cpmSymptoms
- * @property \App\Practice|null                                                            $program
+ * @property \CircleLinkHealth\Customer\Entities\Practice|null                                                            $program
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate whereDisplayName($value)

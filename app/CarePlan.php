@@ -16,6 +16,9 @@ use App\Rules\HasAtLeast2CcmOr1BhiProblems;
 use App\Services\CareplanService;
 use App\Services\PdfService;
 use App\Traits\PdfReportTrait;
+use CircleLinkHealth\Customer\Entities\CarePerson;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Log;
 use Validator;
@@ -38,9 +41,9 @@ use Validator;
  * @property \Carbon\Carbon                                             $updated_at
  * @property \App\CarePlanTemplate                                      $carePlanTemplate
  * @property \App\CareplanAssessment                                    $assessment
- * @property \App\User                                                  $patient
+ * @property \CircleLinkHealth\Customer\Entities\User                                                  $patient
  * @property \App\Models\Pdf[]|\Illuminate\Database\Eloquent\Collection $pdfs
- * @property \App\User|null                                             $providerApproverUser
+ * @property \CircleLinkHealth\Customer\Entities\User|null                                             $providerApproverUser
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereCarePlanTemplateId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereCreatedAt($value)

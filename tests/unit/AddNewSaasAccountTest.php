@@ -7,10 +7,10 @@
 namespace Tests\Unit;
 
 use App\Notifications\SAAS\SendInternalUserSignupInvitation;
-use App\Practice;
-use App\Role;
-use App\SaasAccount;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\Role;
+use CircleLinkHealth\Customer\Entities\SaasAccount;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Notification;
 use Tests\Helpers\UserHelpers;

@@ -6,7 +6,7 @@
 
 namespace App\Observers;
 
-use App\PatientMonthlySummary;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 
 class PatientMonthlySummaryObserver
 {

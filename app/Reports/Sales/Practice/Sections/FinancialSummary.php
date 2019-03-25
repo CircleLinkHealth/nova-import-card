@@ -6,7 +6,7 @@
 
 namespace App\Reports\Sales\Practice\Sections;
 
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use App\Reports\Sales\PracticeReportable;
 use App\Reports\Sales\SalesReportSection;
 use App\Reports\Sales\StatsHelper;

@@ -6,6 +6,8 @@
 
 namespace App;
 
+use CircleLinkHealth\Customer\Entities\Practice;
+
 /**
  * App\CPRulesPCP.
  *
@@ -16,7 +18,7 @@ namespace App;
  * @property int|null                                                    $cpset_id
  * @property string|null                                                 $pcp_type
  * @property \App\CPRulesItem[]|\Illuminate\Database\Eloquent\Collection $items
- * @property \App\Practice[]|\Illuminate\Database\Eloquent\Collection    $program
+ * @property \CircleLinkHealth\Customer\Entities\Practice[]|\Illuminate\Database\Eloquent\Collection    $program
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP whereCpsetId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP wherePcpId($value)

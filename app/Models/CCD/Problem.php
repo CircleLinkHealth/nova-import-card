@@ -10,9 +10,9 @@ use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Models\CPM\CpmInstruction;
 use App\Models\CPM\CpmProblem;
 use App\Models\ProblemCode;
-use App\PatientMonthlySummary;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use App\Traits\HasProblemCodes;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -33,7 +33,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \App\Importer\Models\ItemLogs\ProblemLog|null                      $ccdLog
  * @property \App\Models\ProblemCode[]|\Illuminate\Database\Eloquent\Collection $codes
  * @property \App\Models\CPM\CpmProblem|null                                    $cpmProblem
- * @property \App\User                                                          $patient
+ * @property \CircleLinkHealth\Customer\Entities\User                                                          $patient
  * @property \App\Models\CPM\CpmInstruction                                     $cpmInstruction
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereActivate($value)

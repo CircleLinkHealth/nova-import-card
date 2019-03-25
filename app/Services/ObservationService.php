@@ -9,7 +9,7 @@ namespace App\Services;
 use App\Comment;
 use App\Observation;
 use App\ObservationMeta;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use DateTime;
 use DateTimeZone;
 

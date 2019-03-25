@@ -12,7 +12,7 @@ use App\Entities\CcdaRequest;
 use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
 use App\Importer\MedicalRecordEloquent;
 use App\Traits\Relationships\BelongsToPatientUser;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Prettus\Repository\Contracts\Transformable;
@@ -49,7 +49,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  *     $demographicsImports
  * @property \App\Importer\Models\ItemLogs\DocumentLog[]|\Illuminate\Database\Eloquent\Collection   $document
  * @property \App\Importer\Models\ItemLogs\MedicationLog[]|\Illuminate\Database\Eloquent\Collection $medications
- * @property \App\User|null                                                                         $patient
+ * @property \CircleLinkHealth\Customer\Entities\User|null                                                                         $patient
  * @property \App\Importer\Models\ItemLogs\ProblemLog[]|\Illuminate\Database\Eloquent\Collection    $problems
  * @property \App\Importer\Models\ItemLogs\ProviderLog[]|\Illuminate\Database\Eloquent\Collection   $providers
  * @property \App\Models\MedicalRecords\ImportedMedicalRecord                                       $qaSummary
@@ -198,7 +198,7 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
     /**
      * Get the User to whom this record belongs to, if one exists.
      *
-     * @return User
+     * @return \CircleLinkHealth\Customer\Entities\User
      */
     public function getPatient(): User
     {

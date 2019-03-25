@@ -7,6 +7,7 @@
 namespace App;
 
 use App\Services\DatamonitorService;
+use CircleLinkHealth\Customer\Entities\User;
 
 class Observation extends BaseModel
 {
@@ -257,6 +258,6 @@ class Observation extends BaseModel
 
     public function user()
     {
-        return $this->belongsTo('App\User', 'user_id', 'id');
+        return $this->belongsTo('CircleLinkHealth\Customer\Entities\User', 'user_id', 'id');
     }
 }

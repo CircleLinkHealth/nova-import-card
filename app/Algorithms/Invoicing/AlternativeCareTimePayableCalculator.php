@@ -6,10 +6,10 @@
 
 namespace App\Algorithms\Invoicing;
 
-use App\Activity;
-use App\Nurse;
-use App\NurseCareRateLog;
-use App\NurseMonthlySummary;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
+use CircleLinkHealth\Customer\Entities\Nurse;
+use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
+use CircleLinkHealth\Customer\Entities\NurseMonthlySummary;
 use Carbon\Carbon;
 
 /**

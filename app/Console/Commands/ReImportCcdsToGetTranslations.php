@@ -7,7 +7,7 @@
 namespace App\Console\Commands;
 
 use App\Jobs\ReImportCcdToGetProblemTranslationCodes;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Console\Command;
 
 class ReImportCcdsToGetTranslations extends Command

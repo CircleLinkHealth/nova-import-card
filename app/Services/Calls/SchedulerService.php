@@ -6,17 +6,17 @@
 
 namespace App\Services\Calls;
 
-use App\Activity;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
 use App\Algorithms\Calls\SuccessfulHandler;
 use App\Algorithms\Calls\UnsuccessfulHandler;
 use App\Call;
-use App\Family;
+use CircleLinkHealth\Customer\Entities\Family;
 use App\Note;
-use App\Nurse;
-use App\Patient;
+use CircleLinkHealth\Customer\Entities\Nurse;
+use CircleLinkHealth\Customer\Entities\Patient;
 use App\Repositories\PatientWriteRepository;
 use App\Services\NoteService;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Activity;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
 use App\Http\Requests\CreateOfflineActivityTimeRequest;
-use App\OfflineActivityTimeRequest;
-use App\User;
+use CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 
 class OfflineActivityTimeRequestController extends Controller

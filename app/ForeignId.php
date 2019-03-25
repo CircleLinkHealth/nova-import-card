@@ -6,6 +6,7 @@
 
 namespace App;
 
+use CircleLinkHealth\Customer\Entities\User;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 
@@ -25,7 +26,7 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @property string         $system
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @property \App\User      $user
+ * @property \CircleLinkHealth\Customer\Entities\User      $user
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ForeignId whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ForeignId whereForeignId($value)

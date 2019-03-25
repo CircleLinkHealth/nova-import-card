@@ -13,7 +13,7 @@ use App\TwilioCall;
 use App\TwilioConferenceCallParticipant;
 use App\TwilioRawLog;
 use App\TwilioRecording;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;

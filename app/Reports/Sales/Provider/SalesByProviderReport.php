@@ -11,7 +11,7 @@ use App\Reports\Sales\Provider\Sections\FinancialSummary;
 use App\Reports\Sales\Provider\Sections\PracticeDemographics;
 use App\Reports\Sales\Provider\Sections\RangeSummary;
 use App\Reports\Sales\SalesReport;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 
 class SalesByProviderReport extends SalesReport

@@ -11,7 +11,7 @@ use App\CarePlanTemplate;
 use App\Models\CPM\CpmMisc;
 use App\Models\CPM\UI\Biometrics;
 use App\Models\CPM\UI\Section;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 /**
  * This Class does the needful to get the data needed for CarePlan Views and feed it to them.

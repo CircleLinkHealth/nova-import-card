@@ -8,9 +8,9 @@ namespace Tests\Unit;
 
 use App\ChargeableService;
 use App\Models\CPM\CpmProblem;
-use App\Patient;
-use App\Practice;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Tests\Helpers\UserHelpers;
 use Tests\TestCase;

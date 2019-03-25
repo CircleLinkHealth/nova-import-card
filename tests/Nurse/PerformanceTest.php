@@ -6,9 +6,9 @@
 
 namespace Tests\Nurse;
 
-use App\Activity;
-use App\PageTimer;
-use App\User;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
+use CircleLinkHealth\TimeTracking\Entities\PageTimer;
+use CircleLinkHealth\Customer\Entities\User;
 use Tests\TestCase;
 
 class PerformanceTest extends TestCase

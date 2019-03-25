@@ -11,8 +11,8 @@ use App\Importer\Loggers\Csv\PhoenixHeartSectionsLogger;
 use App\Importer\Loggers\Csv\RappaSectionsLogger;
 use App\Importer\Loggers\Csv\TabularMedicalRecordSectionsLogger;
 use App\Importer\MedicalRecordEloquent;
-use App\Practice;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**

@@ -10,7 +10,7 @@ use App\Models\CPM\Biometrics\CpmBloodPressure;
 use App\Models\CPM\Biometrics\CpmBloodSugar;
 use App\Models\CPM\Biometrics\CpmSmoking;
 use App\Models\CPM\Biometrics\CpmWeight;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 /**
  * App\Models\CPM\CpmBiometric.
@@ -21,7 +21,7 @@ use App\User;
  * @property int                                         $patient_id
  * @property \Carbon\Carbon                              $created_at
  * @property \Carbon\Carbon                              $updated_at
- * @property \App\User                                   $patient
+ * @property \CircleLinkHealth\Customer\Entities\User                                   $patient
  * @property \App\Models\CPM\CpmBiometric                $biometric
  * @property \App\Models\CPM\CpmInstruction              $instruction
  * @property \App\Models\CPM\Biometrics\CpmBloodPressure $bloodPressure

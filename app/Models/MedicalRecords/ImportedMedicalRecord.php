@@ -15,11 +15,11 @@ use App\Importer\Models\ImportedItems\AllergyImport;
 use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Importer\Models\ImportedItems\MedicationImport;
 use App\Importer\Models\ImportedItems\ProblemImport;
-use App\Location;
-use App\Patient;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Location;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\Practice;
 use App\Scopes\Universal\MedicalRecordIdAndTypeTrait;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -37,11 +37,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Carbon\Carbon|null                                                                            $updated_at
  * @property string|null                                                                                    $deleted_at
  * @property \App\Importer\Models\ImportedItems\AllergyImport[]|\Illuminate\Database\Eloquent\Collection    $allergies
- * @property \App\User|null                                                                                 $billingProvider
+ * @property \CircleLinkHealth\Customer\Entities\User|null                                                                                 $billingProvider
  * @property \App\Importer\Models\ImportedItems\DemographicsImport                                          $demographics
- * @property \App\Location|null                                                                             $location
+ * @property \CircleLinkHealth\Customer\Entities\Location|null                                                                             $location
  * @property \App\Importer\Models\ImportedItems\MedicationImport[]|\Illuminate\Database\Eloquent\Collection $medications
- * @property \App\Practice|null                                                                             $practice
+ * @property \CircleLinkHealth\Customer\Entities\Practice|null                                                                             $practice
  * @property \App\Importer\Models\ImportedItems\ProblemImport[]|\Illuminate\Database\Eloquent\Collection    $problems
  *
  * @method static bool|null forceDelete()

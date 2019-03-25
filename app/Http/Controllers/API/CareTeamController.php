@@ -6,13 +6,13 @@
 
 namespace App\Http\Controllers\API;
 
-use App\CarePerson;
+use CircleLinkHealth\Customer\Entities\CarePerson;
 use App\CLH\Facades\StringManipulation;
 use App\Http\Controllers\Controller;
-use App\PhoneNumber;
-use App\Practice;
-use App\ProviderInfo;
-use App\User;
+use CircleLinkHealth\Customer\Entities\PhoneNumber;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\ProviderInfo;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 use InvalidArgumentException;
 

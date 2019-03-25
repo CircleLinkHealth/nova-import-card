@@ -6,7 +6,7 @@
 
 namespace App\Observers;
 
-use App\SaasAccount;
+use CircleLinkHealth\Customer\Entities\SaasAccount;
 
 class SaasAccountObserver
 {

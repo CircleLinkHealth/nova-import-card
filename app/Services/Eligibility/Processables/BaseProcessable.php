@@ -8,7 +8,7 @@ namespace App\Services\Eligibility\Processables;
 
 use App\Contracts\EligibilityProcessable;
 use App\Jobs\ProcessEligibilityProcessable;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 
 abstract class BaseProcessable implements EligibilityProcessable
 {

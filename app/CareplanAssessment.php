@@ -7,6 +7,7 @@
 namespace App;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\User;
 
 /**
  * App\CareplanAssessment.
@@ -29,8 +30,8 @@ use Carbon\Carbon;
  * @property string             $tobacco_misuse_counseling
  * @property \Carbon\Carbon     $created_at
  * @property \Carbon\Carbon     $updated_at
- * @property \App\User|null     $approver
- * @property \App\User|null     $patient
+ * @property \CircleLinkHealth\Customer\Entities\User|null     $approver
+ * @property \CircleLinkHealth\Customer\Entities\User|null     $patient
  * @property \App\CarePlan|null $carePlan
  * @mixin \Eloquent
  */

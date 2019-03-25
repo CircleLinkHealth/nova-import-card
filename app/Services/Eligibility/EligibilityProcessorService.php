@@ -6,7 +6,7 @@
 
 namespace App\Services\Eligibility;
 
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use App\Services\Eligibility\Processables\Zip;
 use Illuminate\Http\UploadedFile;
 
@@ -14,7 +14,7 @@ class EligibilityProcessorService
 {
     /**
      * @param UploadedFile $uploadedFile
-     * @param Practice     $practice
+     * @param \CircleLinkHealth\Customer\Entities\Practice     $practice
      * @param bool         $filterLastEncounter
      * @param bool         $filterInsurance
      * @param bool         $filterProblems

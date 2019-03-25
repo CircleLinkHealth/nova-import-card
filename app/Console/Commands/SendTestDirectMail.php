@@ -7,7 +7,7 @@
 namespace App\Console\Commands;
 
 use App\Contracts\DirectMail;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Console\Command;
 
 class SendTestDirectMail extends Command

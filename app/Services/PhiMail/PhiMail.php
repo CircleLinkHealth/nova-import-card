@@ -8,7 +8,7 @@ namespace App\Services\PhiMail;
 
 use App\Contracts\DirectMail;
 use App\DirectMailMessage;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\Log;
 
 class PhiMail implements DirectMail
@@ -129,7 +129,7 @@ class PhiMail implements DirectMail
      * @param $binaryAttachmentFilePath
      * @param $binaryAttachmentFileName
      * @param null      $ccdaAttachmentPath
-     * @param User|null $patient
+     * @param \CircleLinkHealth\Customer\Entities\User|null $patient
      *
      * @throws \Exception
      *

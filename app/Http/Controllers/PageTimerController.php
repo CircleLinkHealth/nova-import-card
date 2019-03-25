@@ -7,8 +7,8 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\StoreTimeTracking;
-use App\PageTimer;
-use App\PatientMonthlySummary;
+use CircleLinkHealth\TimeTracking\Entities\PageTimer;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\ParameterBag;

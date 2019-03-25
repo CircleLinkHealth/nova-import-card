@@ -6,7 +6,7 @@
 
 namespace App\CLH\CCD\Importer\StorageStrategies;
 
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 abstract class BaseStorageStrategy
 {

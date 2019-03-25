@@ -6,8 +6,8 @@
 
 namespace Tests\Unit;
 
-use App\Activity;
-use App\User;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Tests\Helpers\UserHelpers;
 use Tests\TestCase;

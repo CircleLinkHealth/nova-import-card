@@ -8,7 +8,7 @@ namespace App\Models\CCD;
 
 use App\Importer\Models\ItemLogs\MedicationLog;
 use App\Models\CPM\CpmMedicationGroup;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 /**
  * App\Models\CCD\Medication.
@@ -30,7 +30,7 @@ use App\User;
  * @property \Carbon\Carbon                              $updated_at
  * @property \App\Importer\Models\ItemLogs\MedicationLog $ccdLog
  * @property \App\Models\CPM\CpmMedicationGroup          $cpmMedicationGroup
- * @property \App\User                                   $patient
+ * @property \CircleLinkHealth\Customer\Entities\User                                   $patient
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Medication whereCcdMedicationLogId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Medication whereCcdaId($value)

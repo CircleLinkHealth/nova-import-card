@@ -15,7 +15,7 @@ namespace App;
  * @property string|null           $meta_key
  * @property string|null           $meta_value
  * @property \App\CPRulesItem|null $item
- * @property \App\User             $user
+ * @property \CircleLinkHealth\Customer\Entities\User             $user
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP whereItemsId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP whereMetaKey($value)
@@ -72,6 +72,6 @@ class CPRulesUCP extends \App\BaseModel
 
     public function user()
     {
-        return $this->hasOne('App\User', 'user_id');
+        return $this->hasOne('CircleLinkHealth\Customer\Entities\User', 'user_id');
     }
 }

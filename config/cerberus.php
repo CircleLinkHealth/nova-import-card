@@ -14,8 +14,8 @@ return [
     | the role if it is in a different namespace.
     |
     */
-    'role' => 'App\Role',
-
+    'role' => 'CircleLinkHealth\Customer\Entities\Role',
+    
     /*
     |--------------------------------------------------------------------------
     | Cerberus Roles Table
@@ -25,7 +25,7 @@ return [
     |
     */
     'roles_table' => 'lv_roles',
-
+    
     /*
     |--------------------------------------------------------------------------
     | Cerberus role foreign key
@@ -36,7 +36,7 @@ return [
     |
     */
     'role_foreign_key' => 'role_id',
-
+    
     /*
     |--------------------------------------------------------------------------
     | Site role foreign key
@@ -47,7 +47,7 @@ return [
     |
     */
     'site_foreign_key' => 'program_id',
-
+    
     /*
     |--------------------------------------------------------------------------
     | Application User Model
@@ -57,8 +57,8 @@ return [
     | Update the User if it is in a different namespace.
     |
     */
-    'user' => 'App\User',
-
+    'user' => 'CircleLinkHealth\Customer\Entities\User',
+    
     /*
     |--------------------------------------------------------------------------
     | Application Users Table
@@ -69,7 +69,7 @@ return [
     |
     */
     'users_table' => 'users',
-
+    
     /*
     |--------------------------------------------------------------------------
     | Cerberus role_user Table
@@ -80,7 +80,7 @@ return [
     |
     */
     'role_user_site_table' => 'practice_role_user',
-
+    
     /*
     |--------------------------------------------------------------------------
     | Cerberus user foreign key
@@ -91,7 +91,7 @@ return [
     |
     */
     'user_foreign_key' => 'user_id',
-
+    
     /*
     |--------------------------------------------------------------------------
     | Cerberus Permission Model
@@ -101,8 +101,8 @@ return [
     | Update the permission if it is in a different namespace.
     |
     */
-    'permission' => 'App\Permission',
-
+    'permission' => 'CircleLinkHealth\Customer\Entities\Permission',
+    
     /*
     |--------------------------------------------------------------------------
     | Cerberus Permissions Table
@@ -113,7 +113,7 @@ return [
     |
     */
     'permissions_table' => 'lv_permissions',
-
+    
     /*
     |--------------------------------------------------------------------------
     | Cerberus permission_role Table
@@ -124,7 +124,7 @@ return [
     |
     */
     'permissibles' => 'permissibles',
-
+    
     /*
     |--------------------------------------------------------------------------
     | Cerberus permission foreign key
@@ -135,7 +135,7 @@ return [
     |
     */
     'permission_foreign_key' => 'permission_id',
-
+    
     /*
     |--------------------------------------------------------------------------
     | Sites Model
@@ -145,8 +145,8 @@ return [
     | Update the permission if it is in a different namespace.
     |
     */
-    'site' => 'App\Practice',
-
+    'site' => 'CircleLinkHealth\Customer\Entities\Practice',
+    
     /*
     |--------------------------------------------------------------------------
     | Cerberus Sites Table

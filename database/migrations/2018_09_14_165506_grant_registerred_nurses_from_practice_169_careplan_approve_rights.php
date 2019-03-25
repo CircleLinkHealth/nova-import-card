@@ -4,8 +4,8 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Permission;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Permission;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Migrations\Migration;
 
 class GrantRegisterredNursesFromPractice169CareplanApproveRights extends Migration

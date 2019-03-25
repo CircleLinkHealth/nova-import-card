@@ -9,7 +9,7 @@ use App\CarePlanTemplate;
 use App\Constants;
 use App\Exceptions\CsvFieldNotFoundException;
 use App\Jobs\SendSlackMessage;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;

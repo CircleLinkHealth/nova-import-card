@@ -6,6 +6,8 @@
 
 namespace App;
 
+use CircleLinkHealth\Customer\Entities\User;
+
 /**
  * App\Message.
  *
@@ -21,8 +23,8 @@ namespace App;
  * @property \Carbon\Carbon $updated_at
  * @property int|null       $note_id
  * @property string|null    $seen_on
- * @property \App\User      $recipient
- * @property \App\User      $sender
+ * @property \CircleLinkHealth\Customer\Entities\User      $recipient
+ * @property \CircleLinkHealth\Customer\Entities\User      $sender
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereBody($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereCreatedAt($value)

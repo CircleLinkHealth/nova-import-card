@@ -6,7 +6,7 @@
 
 namespace App\Http\Requests;
 
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateNewPatientRequest extends FormRequest

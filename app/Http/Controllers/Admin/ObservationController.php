@@ -8,7 +8,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Observation;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 
 class ObservationController extends Controller

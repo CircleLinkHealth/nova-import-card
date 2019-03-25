@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Seeder;
 
 class UserScrambler extends Seeder

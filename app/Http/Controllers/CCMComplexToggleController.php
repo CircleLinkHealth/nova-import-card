@@ -7,8 +7,8 @@
 namespace App\Http\Controllers;
 
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
-use App\PatientMonthlySummary;
-use App\User;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 

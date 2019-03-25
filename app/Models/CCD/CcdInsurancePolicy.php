@@ -7,7 +7,7 @@
 namespace App\Models\CCD;
 
 use App\Scopes\Universal\MedicalRecordIdAndTypeTrait;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -26,7 +26,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property string|null    $deleted_at
- * @property \App\User|null $patient
+ * @property \CircleLinkHealth\Customer\Entities\User|null $patient
  *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\CCD\CcdInsurancePolicy onlyTrashed()

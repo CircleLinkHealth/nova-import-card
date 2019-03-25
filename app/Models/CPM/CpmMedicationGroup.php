@@ -11,7 +11,7 @@ use App\CarePlanTemplate;
 use App\Contracts\Serviceable;
 use App\Models\CCD\Medication;
 use App\Services\CPM\CpmMedicationGroupService;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 /**
  * App\Models\CPM\CpmMedicationGroup.
@@ -25,7 +25,7 @@ use App\User;
  * @property \App\CarePlanTemplate[]|\Illuminate\Database\Eloquent\Collection          $carePlanTemplates
  * @property \App\Models\CPM\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection $cpmInstructions
  * @property \App\Models\CCD\Medication[]|\Illuminate\Database\Eloquent\Collection     $medications
- * @property \App\User[]|\Illuminate\Database\Eloquent\Collection                      $patient
+ * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection                      $patient
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup whereCareItemId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup whereCreatedAt($value)

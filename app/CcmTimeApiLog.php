@@ -6,6 +6,7 @@
 
 namespace App;
 
+use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 
@@ -16,7 +17,7 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @property int            $activity_id
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @property \App\Activity  $activity
+ * @property \CircleLinkHealth\TimeTracking\Entities\Activity  $activity
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CcmTimeApiLog whereActivityId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CcmTimeApiLog whereCreatedAt($value)

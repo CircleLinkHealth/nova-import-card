@@ -5,8 +5,8 @@
  */
 
 use App\Models\CPM\CpmProblem;
-use App\Practice;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Tests\Helpers\UserHelpers;
@@ -31,10 +31,10 @@ class PatientSeeder extends Seeder
             $u->program_id = $practiceId;
             $u->save();
 
-            $patientInfo = new \App\Patient();
+            $patientInfo = new \CircleLinkHealth\Customer\Entities\Patient();
             $patientInfo->user_id = $u->id;
             //patient info is saved
-            $patientInfo->ccm_status = \App\Patient::ENROLLED;
+            $patientInfo->ccm_status = \CircleLinkHealth\Customer\Entities\Patient::ENROLLED;
 
             $u->patientSummaries()->create([
                 'month_year' => Carbon::now()->copy()->subMonth($months->random())->startOfMonth()->toDateString(),

@@ -7,7 +7,7 @@
 namespace Tests\Unit;
 
 use App\Notifications\NoteForwarded;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Notification;

@@ -4,8 +4,8 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Permission;
-use App\Role;
+use CircleLinkHealth\Customer\Entities\Permission;
+use CircleLinkHealth\Customer\Entities\Role;
 use Illuminate\Database\Seeder;
 
 class RequiredRolesPermissionsSeeder extends Seeder

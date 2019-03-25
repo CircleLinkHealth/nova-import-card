@@ -7,9 +7,9 @@
 namespace App\Repositories;
 
 use App\Filters\PatientFilters;
-use App\Patient;
+use CircleLinkHealth\Customer\Entities\Patient;
 use App\PatientSearchModel;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 class PatientReadRepository
 {

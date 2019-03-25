@@ -7,7 +7,7 @@
 namespace App\Services;
 
 use App\Repositories\UserRepositoryEloquent;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 /**
  * Created by PhpStorm.
@@ -27,7 +27,7 @@ class UserService
     /**
      * Get the User's first CarePlan, or relate the User to CLH's default CarePlan.
      *
-     * @param User|null $user
+     * @param \CircleLinkHealth\Customer\Entities\User|null $user
      *
      * @return \App\CarePlan
      */

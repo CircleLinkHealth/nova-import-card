@@ -8,10 +8,10 @@ namespace Tests\Unit;
 
 use App\Http\Resources\ApprovableBillablePatient;
 use App\Models\CCD\Problem;
-use App\PatientMonthlySummary;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
+use CircleLinkHealth\Customer\Entities\Practice;
 use App\Services\ApproveBillablePatientsService;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
@@ -78,7 +78,7 @@ class PatientMonthlySummaryChargeableServicesTest extends TestCase
     /**
      * Assert patient monthly summary.
      *
-     * @param PatientMonthlySummary $summary
+     * @param \CircleLinkHealth\Customer\Entities\PatientMonthlySummary $summary
      * @param Problem               $problem1
      * @param Problem               $problem2
      * @param Collection            $list
@@ -118,7 +118,7 @@ class PatientMonthlySummaryChargeableServicesTest extends TestCase
      * @param Carbon $monthYear
      * @param $ccmTime
      *
-     * @return PatientMonthlySummary
+     * @return \CircleLinkHealth\Customer\Entities\PatientMonthlySummary
      */
     private function createMonthlySummary(User $patient, Carbon $monthYear, $ccmTime)
     {

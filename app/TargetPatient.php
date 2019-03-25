@@ -6,7 +6,8 @@
 
 namespace App;
 
-use App\Models\Ehr;
+use CircleLinkHealth\Customer\Entities\Ehr;
+use CircleLinkHealth\Customer\Entities\User;
 
 class TargetPatient extends BaseModel
 {

@@ -6,11 +6,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Activity;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
 use App\Jobs\GenerateNurseInvoice;
 use App\Notifications\NurseInvoiceCreated;
 use App\Reports\NurseDailyReport;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Excel;
 use Illuminate\Http\Request;

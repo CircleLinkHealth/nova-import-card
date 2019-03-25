@@ -6,7 +6,7 @@
 
 namespace App\Billing\NurseInvoices;
 
-use App\Nurse;
+use CircleLinkHealth\Customer\Entities\Nurse;
 use Carbon\Carbon;
 
 /**

@@ -6,8 +6,8 @@
 
 namespace App\Console\Commands;
 
-use App\Nurse;
-use App\State;
+use CircleLinkHealth\Customer\Entities\Nurse;
+use CircleLinkHealth\Customer\Entities\State;
 use Illuminate\Console\Command;
 
 class SyncNurseStates extends Command

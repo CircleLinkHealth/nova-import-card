@@ -39,10 +39,10 @@ class TestHelpersTest extends TestCase
 
     public function test_setup_test_customer()
     {
-        $this->assertInstanceOf('App\Practice', $this->practice);
-        $this->assertInstanceOf('App\Location', $this->location);
-        $this->assertInstanceOf('App\User', $this->patient);
-        $this->assertInstanceOf('App\User', $this->provider);
+        $this->assertInstanceOf('CircleLinkHealth\Customer\Entities\Practice', $this->practice);
+        $this->assertInstanceOf('CircleLinkHealth\Customer\Entities\Location', $this->location);
+        $this->assertInstanceOf('CircleLinkHealth\Customer\Entities\User', $this->patient);
+        $this->assertInstanceOf('CircleLinkHealth\Customer\Entities\User', $this->provider);
 
         $this->assertInstanceOf('App\CarePlan', $this->patient->carePlan);
 
@@ -50,11 +50,11 @@ class TestHelpersTest extends TestCase
         $this->assertEquals($this->provider->program_id, $this->practice->id);
 
         //different data
-        $this->assertInstanceOf('App\Location', $this->total['location']);
-        $this->assertInstanceOf('App\User', $this->total['provider']);
-        $this->assertInstanceOf('App\Practice', $this->total['practice']);
+        $this->assertInstanceOf('CircleLinkHealth\Customer\Entities\Location', $this->total['location']);
+        $this->assertInstanceOf('CircleLinkHealth\Customer\Entities\User', $this->total['provider']);
+        $this->assertInstanceOf('CircleLinkHealth\Customer\Entities\Practice', $this->total['practice']);
         foreach ($this->total['patients'] as $patient) {
-            $this->assertInstanceOf('App\User', $patient);
+            $this->assertInstanceOf('CircleLinkHealth\Customer\Entities\User', $patient);
             $this->assertEquals($patient->program_id, $this->total['practice']->id);
             $this->assertEquals($patient->billingProvider->first()->member_user_id, $this->total['provider']->id);
         }

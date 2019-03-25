@@ -12,7 +12,7 @@ use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\Contracts\Serviceable;
 use App\Importer\Models\ImportedItems\ProblemImport;
 use App\Services\CPM\CpmProblemService;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 /**
  * App\Models\CPM\CpmProblem.
@@ -34,7 +34,7 @@ use App\User;
  * @property \App\Models\CPM\CpmLifestyle[]|\Illuminate\Database\Eloquent\Collection       $cpmLifestylesToBeActivated
  * @property \App\Models\CPM\CpmMedicationGroup[]|\Illuminate\Database\Eloquent\Collection $cpmMedicationGroupsToBeActivated
  * @property \App\Models\CPM\CpmSymptom[]|\Illuminate\Database\Eloquent\Collection         $cpmSymptomsToBeActivated
- * @property \App\User[]|\Illuminate\Database\Eloquent\Collection                          $patient
+ * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection                          $patient
  * @property App\Models\CPM\CpmInstructable                                                $instructable
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereContains($value)

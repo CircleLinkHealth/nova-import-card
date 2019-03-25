@@ -6,7 +6,7 @@
 
 namespace App\Repositories;
 
-use App\Appointment;
+use CircleLinkHealth\Customer\Entities\Appointment;
 
 class AppointmentRepository
 {

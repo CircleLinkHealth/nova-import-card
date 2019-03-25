@@ -8,8 +8,8 @@ namespace Tests\Unit;
 
 use App\CarePlan;
 use App\Notifications\CarePlanApprovalReminder;
-use App\Patient;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\Practice;
 use App\Services\PhiMail\IncomingMessageHandler;
 use App\Services\PhiMail\PhiMail;
 use Illuminate\Support\Facades\Notification;

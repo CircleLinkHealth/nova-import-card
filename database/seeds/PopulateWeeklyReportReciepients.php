@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Database\Seeder;
 
 class PopulateWeeklyReportReciepients extends Seeder

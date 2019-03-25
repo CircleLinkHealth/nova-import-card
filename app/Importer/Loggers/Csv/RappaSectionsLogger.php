@@ -16,8 +16,8 @@ use App\Models\MedicalRecords\TabularMedicalRecord;
 use App\Models\PatientData\Rappa\RappaData;
 use App\Models\PatientData\Rappa\RappaInsAllergy;
 use App\Models\PatientData\Rappa\RappaName;
-use App\Practice;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 
 class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
 {

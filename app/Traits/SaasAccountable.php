@@ -6,7 +6,7 @@
 
 namespace App\Traits;
 
-use App\SaasAccount;
+use CircleLinkHealth\Customer\Entities\SaasAccount;
 
 trait SaasAccountable
 {

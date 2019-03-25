@@ -7,7 +7,7 @@
 namespace App\Services\Cache;
 
 use App\Repositories\Cache\UserNotificationList;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 class NotificationService
 {

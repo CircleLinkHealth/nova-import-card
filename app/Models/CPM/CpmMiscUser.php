@@ -6,7 +6,7 @@
 
 namespace App\Models\CPM;
 
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 /**
  * App\Models\CPM\CpmMiscUser.
@@ -18,7 +18,7 @@ use App\User;
  * @property \Carbon\Carbon                 $created_at
  * @property \Carbon\Carbon                 $updated_at
  * @property \App\Models\CPM\CpmInstruction $cpmInstruction
- * @property \App\User                      $user
+ * @property \CircleLinkHealth\Customer\Entities\User                      $user
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereId($value)

@@ -6,6 +6,9 @@
 
 namespace App;
 
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
+
 class EligibilityBatch extends BaseModel
 {
     const ATHENA_API                  = 'athena_csv';

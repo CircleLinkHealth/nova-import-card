@@ -16,7 +16,7 @@ use App\Jobs\CheckCcdaEnrollmentEligibility;
 use App\Jobs\ProcessCcda;
 use App\Jobs\ProcessEligibilityFromGoogleDrive;
 use App\Models\MedicalRecords\Ccda;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use App\Services\Eligibility\Csv\CsvPatientList;
 use App\Services\GoogleDrive;
 use App\Traits\ValidatesEligibility;

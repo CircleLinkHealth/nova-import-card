@@ -6,7 +6,7 @@
 
 namespace App\Models;
 
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 /**
  * App\Models\EmailSettings.
@@ -16,7 +16,7 @@ use App\User;
  * @property string              $frequency
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
- * @property \App\User           $user
+ * @property \CircleLinkHealth\Customer\Entities\User           $user
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\EmailSettings whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\EmailSettings whereFrequency($value)

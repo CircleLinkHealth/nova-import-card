@@ -8,7 +8,7 @@ namespace App\Http;
 
 use App\Http\Middleware\ACL\ProviderDashboardACL;
 use App\Http\Middleware\AprimaCcdApiAuthAdapter;
-use App\Http\Middleware\AuthyMiddleware;
+use CircleLinkHealth\TwoFA\Http\Middleware\AuthyMiddleware;
 use App\Http\Middleware\CheckCarePlanMode;
 use App\Http\Middleware\CheckOnboardingInvite;
 use App\Http\Middleware\CheckWebSocketServer;

@@ -6,12 +6,12 @@
 
 namespace App\Jobs;
 
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use App\Repositories\Cache\UserNotificationList;
 use App\Repositories\Cache\View;
 use App\Repositories\OpsDashboardPatientEloquentRepository;
 use App\Services\OpsDashboardService;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

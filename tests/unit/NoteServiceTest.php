@@ -10,7 +10,7 @@ use App\DatabaseNotification;
 use App\Note;
 use App\Notifications\NoteForwarded;
 use App\Services\NoteService;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Tests\TestCase;
 
 class NoteServiceTest extends TestCase

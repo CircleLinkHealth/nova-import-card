@@ -10,7 +10,7 @@ use App\EligibilityBatch;
 use App\EligibilityJob;
 use App\Importer\Loggers\Ccda\CcdToLogTranformer;
 use App\Models\MedicalRecords\Ccda;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use App\Services\Eligibility\Entities\Problem;
 use App\Services\WelcomeCallListGenerator;
 use Carbon\Carbon;

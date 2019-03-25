@@ -7,7 +7,7 @@
 namespace App\Console\Commands;
 
 use App\EligibilityJob;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use App\ProcessedFile;
 use App\Services\CCD\ProcessEligibilityService;
 use App\WT1CsvParser;

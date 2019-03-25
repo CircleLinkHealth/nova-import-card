@@ -7,11 +7,11 @@
 namespace App\Http\Controllers;
 
 use App\Mail\SalesPracticeReport;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use App\Reports\Sales\Location\SalesByLocationReport;
 use App\Reports\Sales\Practice\SalesByPracticeReport;
 use App\Reports\Sales\Provider\SalesByProviderReport;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Carbon\Carbon;
 use Illuminate\Http\Request;

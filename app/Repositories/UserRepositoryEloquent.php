@@ -6,7 +6,7 @@
 
 namespace App\Repositories;
 
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 /**
  * Class UserRepositoryEloquent.

@@ -1,6 +1,6 @@
 <?php
 
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Database\Seeder;
 
 class PopulateTwilioSMSToPractices extends Seeder

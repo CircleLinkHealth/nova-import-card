@@ -8,7 +8,7 @@ namespace App\Algorithms\Calls;
 
 use App\Call;
 use App\Contracts\CallHandler;
-use App\Patient;
+use CircleLinkHealth\Customer\Entities\Patient;
 use Carbon\Carbon;
 
 //READ ME

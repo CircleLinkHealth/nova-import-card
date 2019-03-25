@@ -6,7 +6,7 @@
 
 namespace App\Http\Requests;
 
-use App\AuthyUser;
+use CircleLinkHealth\TwoFA\Entities\AuthyUser;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 

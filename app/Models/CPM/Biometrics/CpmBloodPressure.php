@@ -8,7 +8,7 @@ namespace App\Models\CPM\Biometrics;
 
 use App\Contracts\Models\CPM\Biometric;
 use App\Models\CPM\CpmBiometric;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 /**
  * App\Models\CPM\Biometrics\CpmBloodPressure.
@@ -23,7 +23,7 @@ use App\User;
  * @property string         $diastolic_low_alert
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @property \App\User      $patient
+ * @property \CircleLinkHealth\Customer\Entities\User      $patient
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure whereDiastolicHighAlert($value)

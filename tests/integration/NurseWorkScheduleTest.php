@@ -6,9 +6,9 @@
 
 namespace Tests\integration;
 
-use App\NurseContactWindow;
-use App\Practice;
-use App\User;
+use CircleLinkHealth\Customer\Entities\NurseContactWindow;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Tests\DuskTestCase;
 use Tests\Helpers\CarePlanHelpers;

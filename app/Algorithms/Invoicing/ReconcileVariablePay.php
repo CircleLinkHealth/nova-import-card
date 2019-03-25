@@ -6,8 +6,8 @@
 
 namespace App\Algorithms\Invoicing;
 
-use App\Activity;
-use App\Nurse;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
+use CircleLinkHealth\Customer\Entities\Nurse;
 use Carbon\Carbon;
 
 class ReconcileVariablePay

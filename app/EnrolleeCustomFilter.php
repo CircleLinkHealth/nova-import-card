@@ -2,6 +2,7 @@
 
 namespace App;
 
+use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Database\Eloquent\Model;
 
 class EnrolleeCustomFilter extends Model

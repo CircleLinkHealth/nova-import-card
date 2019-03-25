@@ -7,7 +7,7 @@
 namespace App\Notifications;
 
 use App\Note;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;

@@ -9,7 +9,7 @@ namespace App\Models\CPM;
 use App\CarePlanTemplate;
 use App\Contracts\Serviceable;
 use App\Services\CPM\CpmMiscService;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 /**
  * App\Models\CPM\CpmMisc.
@@ -22,7 +22,7 @@ use App\User;
  * @property \Carbon\Carbon                                                            $updated_at
  * @property \App\CarePlanTemplate[]|\Illuminate\Database\Eloquent\Collection          $carePlanTemplates
  * @property \App\Models\CPM\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection $cpmInstructions
- * @property \App\User[]|\Illuminate\Database\Eloquent\Collection                      $patient
+ * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection                      $patient
  * @property \App\Models\CPM\CpmMiscUser[]|\Illuminate\Database\Eloquent\Collection    $users
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereCareItemId($value)

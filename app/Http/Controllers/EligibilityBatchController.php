@@ -11,7 +11,7 @@ use App\EligibilityJob;
 use App\Enrollee;
 use App\Models\CPM\CpmProblem;
 use App\Models\MedicalRecords\Ccda;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use App\Services\CCD\ProcessEligibilityService;
 use App\Services\Eligibility\Adapters\JsonMedicalRecordEligibilityJobToCsvAdapter;
 use Carbon\Carbon;

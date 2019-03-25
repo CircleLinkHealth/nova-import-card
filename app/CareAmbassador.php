@@ -6,6 +6,8 @@
 
 namespace App;
 
+use CircleLinkHealth\Customer\Entities\User;
+
 /**
  * App\CareAmbassador.
  *
@@ -16,7 +18,7 @@ namespace App;
  * @property \Carbon\Carbon|null                                               $created_at
  * @property \Carbon\Carbon|null                                               $updated_at
  * @property \App\CareAmbassadorLog[]|\Illuminate\Database\Eloquent\Collection $logs
- * @property \App\User                                                         $user
+ * @property \CircleLinkHealth\Customer\Entities\User                                                         $user
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassador whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassador whereHourlyRate($value)

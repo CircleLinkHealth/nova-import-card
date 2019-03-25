@@ -9,7 +9,7 @@ namespace App\Http\Controllers\Admin\Reports;
 use App\Http\Controllers\Controller;
 use App\Importer\Models\ItemLogs\DemographicsLog;
 use App\Models\CCD\CcdVendor;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Maatwebsite\Excel\Facades\Excel;
 
 class EthnicityReportController extends Controller

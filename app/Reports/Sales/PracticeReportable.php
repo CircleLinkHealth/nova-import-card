@@ -6,14 +6,14 @@
 
 namespace App\Reports\Sales;
 
-use App\Activity;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
 use App\Call;
 use App\Contracts\Reports\Reportable;
 use App\Note;
 use App\Observation;
-use App\PatientMonthlySummary;
-use App\Practice;
-use App\User;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 
 class PracticeReportable implements Reportable

@@ -7,7 +7,7 @@
 namespace App\Services;
 
 use App\CPRulesPCP;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use DB;
 use Illuminate\Support\Facades\Facade;
 

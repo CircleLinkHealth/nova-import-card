@@ -6,7 +6,7 @@
 
 namespace App\Filters;
 
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 

@@ -7,9 +7,9 @@
 namespace App\Http\Controllers\Admin\Reports;
 
 use App\Http\Controllers\Controller;
-use App\PageTimer;
-use App\Practice;
-use App\User;
+use CircleLinkHealth\TimeTracking\Entities\PageTimer;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use Excel;
 use Illuminate\Http\Request;
 

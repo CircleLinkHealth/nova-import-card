@@ -7,8 +7,8 @@
 namespace App\Console\Commands;
 
 use App\AppConfig;
-use App\Patient;
-use App\PatientMonthlySummary;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 

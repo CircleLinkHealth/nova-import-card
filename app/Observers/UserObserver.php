@@ -6,7 +6,7 @@
 
 namespace App\Observers;
 
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\QueryException;
 
 class UserObserver
@@ -23,7 +23,7 @@ class UserObserver
     /**
      * Listen to the User deleting event.
      *
-     * @param User $user
+     * @param \CircleLinkHealth\Customer\Entities\User $user
      */
     public function deleting(User $user)
     {

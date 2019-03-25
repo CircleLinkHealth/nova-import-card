@@ -10,7 +10,7 @@ use App\CLH\Helpers\StringManipulation;
 use App\Contracts\DirectMail;
 use App\Contracts\Efax;
 use App\Reports\PatientDailyAuditReport;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

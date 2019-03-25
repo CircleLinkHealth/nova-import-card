@@ -2,12 +2,12 @@
 
 namespace App\Jobs;
 
-use App\Activity;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
-use App\Nurse;
-use App\PageTimer;
+use CircleLinkHealth\Customer\Entities\Nurse;
+use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use App\Services\ActivityService;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Http\Request;

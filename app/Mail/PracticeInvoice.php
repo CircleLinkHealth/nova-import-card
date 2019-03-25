@@ -6,7 +6,7 @@
 
 namespace App\Mail;
 
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
