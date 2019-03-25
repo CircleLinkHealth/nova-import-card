@@ -1,0 +1,28 @@
+{
+    "name": "circlelinkhealth/twofa",
+    "description": "",
+    "authors": [
+        {
+            "name": "Michalis Antoniou",
+            "email": "mantoniou@cirlelinkhealth.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "CircleLinkHealth\\TwoFA\\Providers\\TwoFAServiceProvider"
+            ],
+            "aliases": {
+                
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "CircleLinkHealth\\TwoFA\\": ""
+        }
+    },
+    "require": {
+        "authy/php": "^3.0"
+    }
+}
