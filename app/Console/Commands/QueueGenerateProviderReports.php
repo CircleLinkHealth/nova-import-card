@@ -46,19 +46,19 @@ class QueueGenerateProviderReports extends Command
     {
         parent::__construct();
 
-        $patientIds = $this->argument('patientIds') ?? null;
-        if ($patientIds) {
-            $patientIds = explode(',', $patientIds);
-        } else {
-            $patientIds = User::ofType('participant')
-                              ->pluck('id')
-                              ->all();
-        }
-
-        $this->patientIds = $patientIds;
-        $this->date       = $this->argument('date')
-            ? Carbon::parse($this->argument('date'))
-            : Carbon::now();
+//        $patientIds = $this->argument('patientIds') ?? null;
+//        if ($patientIds) {
+//            $patientIds = explode(',', $patientIds);
+//        } else {
+//            $patientIds = User::ofType('participant')
+//                              ->pluck('id')
+//                              ->all();
+//        }
+//
+//        $this->patientIds = $patientIds;
+//        $this->date       = $this->argument('date')
+//            ? Carbon::parse($this->argument('date'))
+//            : Carbon::now();
 
     }
 

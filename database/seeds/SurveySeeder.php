@@ -1,6 +1,7 @@
 <?php
 
 use App\Question;
+use App\QuestionGroup;
 use App\QuestionType;
 use App\Survey;
 use App\SurveyInstance;
@@ -33,7 +34,6 @@ class SurveySeeder extends Seeder
 
         $currentInstance = SurveyInstance::create([
             'survey_id'  => $hra->id,
-            //check test code
             'name'       => $hra->name . ' ' . $this->date->year,
             'start_date' => $this->date->copy()->startOfYear(),
             'end_date'   => $this->date->copy()->endOfYear(),
@@ -48,13 +48,24 @@ class SurveySeeder extends Seeder
         $questionsData = $this->hraQuestionData();
 
         foreach ($questionsData as $questionData) {
+
+            if (array_key_exists('question_group', $questionData)) {
+                $groupId = QuestionGroup::firstOrCreate([
+                    'body' => $questionData['question_group'],
+                ])
+                    ->id;
+            }else{
+                $groupId = null;
+            }
+
             $question = Question::create([
-                'survey_id'  => $instance->survey_id,
-                'body'       => $questionData['question_body'],
-                'optional'   => array_key_exists('optional', $questionData)
+                'survey_id'         => $instance->survey_id,
+                'body'              => $questionData['question_body'],
+                'question_group_id' => $groupId,
+                'optional'          => array_key_exists('optional', $questionData)
                     ? $questionData['optional']
                     : false,
-                'conditions' => array_key_exists('conditions', $questionData)
+                'conditions'        => array_key_exists('conditions', $questionData)
                     ? $questionData['conditions']
                     : null,
             ]);
@@ -67,16 +78,17 @@ class SurveySeeder extends Seeder
             if (array_key_exists('question_type_answers', $questionData)) {
                 foreach ($questionData['question_type_answers'] as $questionTypeAnswer) {
                     $questionType->questionTypeAnswers()->create([
-                        //todo: change value to be nullable
                         'value'   => array_key_exists('type_answer_body', $questionTypeAnswer)
                             ? $questionTypeAnswer['type_answer_body']
-                            : 'NULL',
+                            : null,
                         'options' => array_key_exists('options', $questionTypeAnswer)
                             ? $questionTypeAnswer['options']
                             : null,
                     ]);
                 }
             }
+
+
             $instance->questions()->attach(
                 $question->id,
                 [
@@ -1311,67 +1323,67 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
-                'order' => 44,
-                'question_body' => 'Do you have a Medical Power of Attorney? (Someone to make medical decisions for you in the event you are unable to)',
-                'question_type' => QuestionType::RADIO,
+                'order'                 => 44,
+                'question_body'         => 'Do you have a Medical Power of Attorney? (Someone to make medical decisions for you in the event you are unable to)',
+                'question_type'         => QuestionType::RADIO,
                 'question_type_answers' => [
                     [
-                        'type_answer_body' => 'Yes'
+                        'type_answer_body' => 'Yes',
                     ],
                     [
-                        'type_answer_body' => 'No'
+                        'type_answer_body' => 'No',
                     ],
                     [
                         //todo: empty on zepelin ask raph
-                        'type_answer_body' => 'Unsure'
-                    ]
-                ]
+                        'type_answer_body' => 'Unsure',
+                    ],
+                ],
             ],
             [
-                'order' => 45,
-                'question_body' => 'Do you have a living will/advance directive? (Documents that make your health care wishes known)',
-                'question_type' => QuestionType::RADIO,
+                'order'                 => 45,
+                'question_body'         => 'Do you have a living will/advance directive? (Documents that make your health care wishes known)',
+                'question_type'         => QuestionType::RADIO,
                 'question_type_answers' => [
                     [
-                        'type_answer_body' => 'Yes'
+                        'type_answer_body' => 'Yes',
                     ],
                     [
-                        'type_answer_body' => 'No'
+                        'type_answer_body' => 'No',
                     ],
                     [
-                        'type_answer_body' => 'Unsure'
-                    ]
-                ]
+                        'type_answer_body' => 'Unsure',
+                    ],
+                ],
             ],
             [
-                'order' => 45,
-                'sub_order' => 'a',
-                'question_body' => "Is a copy of your advance directive on file at your doctor's office?",
-                'optional' => true,
-                'conditions' => [
+                'order'                 => 45,
+                'sub_order'             => 'a',
+                'question_body'         => "Is a copy of your advance directive on file at your doctor's office?",
+                'optional'              => true,
+                'conditions'            => [
                     [
                         'related_question_order_number'    => 45,
                         'related_question_expected_answer' => 'Yes',
-                    ]
+                    ],
                 ],
-                'question_type' => QuestionType::RADIO,
+                'question_type'         => QuestionType::RADIO,
                 'question_type_answers' => [
                     [
-                        'type_answer_body' => 'Yes'
+                        'type_answer_body' => 'Yes',
                     ],
                     [
-                        'type_answer_body' => 'No'
+                        'type_answer_body' => 'No',
                     ],
                     [
-                        'type_answer_body' => 'Unsure'
-                    ]
-                ]
+                        'type_answer_body' => 'Unsure',
+                    ],
+                ],
             ],
             [
-                'order' => 46,
+                'order'         => 46,
                 'question_body' => 'Do you have any other questions or concerns that you would like to speak to your provider about at your next Annual Wellness Visit?',
-                'question_type' => QuestionType::TEXT
-            ]
+                'question_type' => QuestionType::TEXT,
+            ],
         ]);
     }
 }
