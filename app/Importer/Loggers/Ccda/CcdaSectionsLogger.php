@@ -204,27 +204,7 @@ class CcdaSectionsLogger implements MedicalRecordLogger
      */
     public function logProvidersSection(): MedicalRecordLogger
     {
-        //Add them both together
-        array_push($this->ccd->document->documentation_of, $this->ccd->document->author);
-
-        array_push($this->ccd->document->documentation_of, $this->ccd->demographics->provider);
-
-        $address         = new \stdClass();
-        $address->street = [];
-        $address->city   = '';
-        $address->state  = '';
-        $address->zip    = '';
-
-        $legalAuth               = new \stdClass();
-        $legalAuth->name         = $this->ccd->document->legal_authenticator->assigned_person;
-        $legalAuth->phones       = [];
-        $legalAuth->npi          = '';
-        $legalAuth->organization = '';
-        $legalAuth->address      = $address;
-
-        array_push($this->ccd->document->documentation_of, $legalAuth);
-
-        $providers = $this->ccd->document->documentation_of;
+        $providers = $this->transformer->parseProviders($this->ccd->document, $this->ccd->demographics);
 
         foreach ($providers as $provider) {
             $data = $this->transformer->provider($provider);

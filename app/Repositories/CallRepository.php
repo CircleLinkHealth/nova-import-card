@@ -77,8 +77,8 @@ class CallRepository
     {
         $users = User::ofType('participant')
             ->whereHas('patientInfo', function ($q) {
-                         $q->enrolled();
-                     });
+                $q->enrolled();
+            });
         if ($practiceId) {
             $users = $users->ofPractice($practiceId);
         } else {
@@ -109,8 +109,8 @@ class CallRepository
     {
         $users = User::ofType('participant')
             ->whereHas('patientInfo', function ($q) {
-                         $q->enrolled();
-                     });
+                $q->enrolled();
+            });
         if ($practiceId) {
             $users = $users->ofPractice($practiceId);
         } else {

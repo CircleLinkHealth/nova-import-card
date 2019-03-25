@@ -158,7 +158,8 @@
                                                 } else
                                                     return obj.type_name;
                                             },
-                                            fillspace: false,
+                                            fillspace: true,
+                                            adjust: true,
                                             width: 176,
                                             sort: 'string',
                                             tooltip: false,
