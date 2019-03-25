@@ -4,6 +4,12 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
+use App\Models\CCD\Problem;
+use App\Models\ProblemCode;
+use App\ProviderInfo;
+use App\State;
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -37,7 +43,7 @@ return [
     | be a good idea to set this value to something like 604800 (7 days).
     |
     */
-    'expiration-time' => 604800,
+    'expiration-time' => 86400,
 
     /*
     |--------------------------------------------------------------------------
@@ -73,7 +79,20 @@ return [
     | ],
     |
     */
-    'include-tables' => [],
+    'include-tables' => [
+        (new App\User())->getTable(),
+        (new App\Patient())->getTable(),
+        (new App\Nurse())->getTable(),
+        (new App\CarePlan())->getTable(),
+        (new App\CarePlanTemplate())->getTable(),
+        (new App\Role())->getTable(),
+        (new App\Permission())->getTable(),
+        (new Problem())->getTable(),
+        (new ProblemCode())->getTable(),
+        (new SnomedToCpmIcdMap())->getTable(),
+        (new ProviderInfo())->getTable(),
+        (new State())->getTable(),
+    ],
 
     /*
     |--------------------------------------------------------------------------
