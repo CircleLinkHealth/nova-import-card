@@ -11,6 +11,8 @@
 |
 */
 
+use Illuminate\Http\Request;
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -18,3 +20,11 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+Route::get('enter-patient-form', 'InvitationLinksController@enterPatientForm')->name('enterPatientForm');
+Route::post('send-invitation-link', 'InvitationLinksController@createSendInvitationUrl')->name('createSendInvitationUrl');
+//this is a signed route
+Route::get('login-survey/{user}/{survey}', 'InvitationLinksController@surveyLoginForm')->name('loginSurvey');
+Route::post('survey-login', 'InvitationLinksController@surveyLoginAuth')->name('surveyLoginAuth');
+Route::post('resend-link/{user}', 'InvitationLinksController@resendUrl')->name('resendUrl');
+Route::post('save-survey-answer', 'SurveyController@saveAnswer')->name('saveSurveyAnswer');
