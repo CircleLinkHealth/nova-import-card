@@ -76,9 +76,9 @@
     </div>
 </template>
 <script>
-    import LoaderComponent from '../../../../../../resources/assets/js/components/loader';
-    import {rootUrl} from "../../../../../../resources/assets/js/app.config";
-    import Errors from "../../../../../../resources/assets/js/components/src/Errors";
+    import LoaderComponent from './loader';
+    import {rootUrl} from "../app.config";
+    import Errors from "./src/Errors";
 
     export default {
         name: 'authy-perform-2fa',
