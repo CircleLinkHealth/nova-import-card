@@ -1,0 +1,25 @@
+{
+    "name": "circlelinkhealth/customer",
+    "description": "",
+    "authors": [
+        {
+            "name": "Michalis Antoniou",
+            "email": "mantoniou@cirlelinkhealth.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "CircleLinkHealth\\Customer\\Providers\\CustomerServiceProvider"
+            ],
+            "aliases": {
+                
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "CircleLinkHealth\\Customer\\": ""
+        }
+    }
+}
