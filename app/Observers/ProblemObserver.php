@@ -8,7 +8,6 @@ namespace App\Observers;
 
 use App\CLH\CCD\Importer\StorageStrategies\Problems\ProblemsToMonitor;
 use App\Models\CCD\Problem;
-use App\Models\CPM\CpmProblem;
 use App\User;
 
 class ProblemObserver
@@ -18,72 +17,37 @@ class ProblemObserver
      *
      * @param Problem $problem
      */
-    public function deleted(Problem $problem)
+    public function deleting(Problem $problem)
     {
-        //exclude generic diabetes
-        $diabetes = CpmProblem::where('name', 'Diabetes')->first();
+        $patient = User::find($problem->patient_id);
 
-        $patient = User::with([
-            'ccdProblems' => function ($p) use ($diabetes) {
-                $p->where('cpm_problem_id', '!=', $diabetes->id);
-            },
-        ])
-            ->where('id', $problem->patient_id)->first();
+        if ($patient) {
+            $storage = new ProblemsToMonitor($patient->program_id, $patient);
 
-        $storage = new ProblemsToMonitor($patient->program_id, $patient);
-
-        $problemsToActivate = $this->getProblemsToActivate($patient);
-
-        $storage->import(array_unique($problemsToActivate), true);
+            $storage->detach($problem->cpm_problem_id);
+        }
     }
 
     /**
-     * Listen to the Problem saved event.
+     * Listen to the Problem saving event.
      *
      * @param Problem $problem
      */
-    public function saved(Problem $problem)
+    public function saving(Problem $problem)
     {
         if ($problem->isDirty('cpm_problem_id')) {
-            //exclude generic diabetes
-            $diabetes = CpmProblem::where('name', 'Diabetes')->first();
-
-            $patient = User::with([
-                'ccdProblems' => function ($p) use ($diabetes) {
-                    $p->where('cpm_problem_id', '!=', $diabetes->id);
-                },
-            ])
-                ->where('id', $problem->patient_id)->first();
+            $patient = User::find($problem->patient_id);
 
             if ($patient) {
                 $storage = new ProblemsToMonitor($patient->program_id, $patient);
 
-                // If only the cpm_problem_id is changed, we sync relationships (symptoms, lifestyles etc)  for all problems again,
+                // If only the cpm_problem_id is changed (if the problem is being updated), we need to detach relationships for that problem first
                 if ( ! $problem->isDirty(['patient_id', 'name'])) {
-                    $problemsToActivate = $this->getProblemsToActivate($patient);
-
-                    $storage->import(array_unique($problemsToActivate), true);
-                } else {
-                    // else we are just importing the new problem's relationships.
-                    $storage->import($problem->cpm_problem_id);
+                    $storage->detach($problem->getOriginal('cpm_problem_id'));
                 }
+
+                $storage->import($problem->cpm_problem_id);
             }
         }
-    }
-
-    protected function getProblemsToActivate($patient)
-    {
-        $problems           = $patient->ccdProblems;
-        $problemsToActivate = [];
-
-        foreach ($problems as $problem) {
-            if (empty($problem->cpm_problem_id)) {
-                continue;
-            }
-
-            $problemsToActivate[] = $problem->cpm_problem_id;
-        }
-
-        return $problemsToActivate;
     }
 }
