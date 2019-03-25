@@ -1,6 +1,5 @@
 <template>
     <div class="container">
-
         <!--Survey welcome note-->
         <div class="card">
             <div v-if="welcomeStage" class="practice-title">
@@ -31,18 +30,18 @@
             <!--Questions-->
             <div class="questions-box"
                  v-if="questionsStage"
-                 v-for="(question, index) in orderedQuestions">
+                 v-for="(question, index) in questions">
                 <div v-show="index >= questionIndex" class="question">
-                    <div v-if="">{{question.id}}{{'.'}} {{question.body}}
-                        <!--  <sub-questions v-if="" :question="question"></sub-questions>-->
-                        <br>
+                    <div v-if="question.conditions.isSubQuestion === showSubQuestions" @test="updateShowSubQuestions">
+                        {{question.id}}{{'.'}} {{question.body}}
                         <!--Questions Answer Type-->
                         <div class="question-answer-type">
                             <question-type-text v-if="question.type.answer_type === 'text'"></question-type-text>
                             <question-type-checkbox
                                     v-if="question.type.answer_type === 'checkbox'"></question-type-checkbox>
                             <question-type-range v-if="question.type.answer_type === 'range'"></question-type-range>
-                            <question-type-number v-if="question.type.answer_type === 'number'"></question-type-number>
+                            <question-type-number
+                                    v-if="question.type.answer_type === 'number'"></question-type-number>
                             <question-type-radio :question="question"
                                                  v-if="question.type.answer_type === 'radio'"></question-type-radio>
                             <question-type-date v-if="question.type.answer_type === 'date'"></question-type-date>
@@ -105,6 +104,11 @@
     import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
     import subQuestions from "./subQuestions";
     import mainQuestions from "./mainQuestions";
+    import {app} from "../app";
+
+    /*app.$on('test', ()=>{
+       console.log('ssssssssshhhhhhhh');
+    });*/
 
     export default {
         props: ['surveydata'],
@@ -129,7 +133,7 @@
                 callAssistance: false,
                 questionsData: [],
                 questionIndex: 0,
-                areSubQuestions:[]
+                showSubQuestions: false,
                 /*   counter: 0,
                    inputs: [{
                        id: 'fruit0',
@@ -139,17 +143,9 @@
             }
         },
         computed: {
-            questions(){
+            questions() {
                 return this.questionsData.flat(1);
             },
-            sub(){
-                return this.areSubQuestions.flat(1);
-            },
-            orderedQuestions() {
-                /*todo:this has to change to question->pivot->order */
-                return _.orderBy(this.questions, 'id')
-            },
-
         },
 
         methods: {
@@ -176,6 +172,9 @@
                 this.questionIndex--;
             },
 
+            updateShowSubQuestions() {
+                console.log('Fuckcin');
+            },
             /*addInput() {
                 this.inputs.push({
                     id: `fruit${++this.counter}`,
@@ -194,7 +193,7 @@
                 return question.conditions.isSubQuestion === true
             });
 
-            this.areSubQuestions.push(x);
+           /* this.areSubQuestions.push(x);*/
             this.questionsData.push(questionsData);
         },
 
