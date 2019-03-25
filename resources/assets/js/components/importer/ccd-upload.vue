@@ -4,7 +4,8 @@
             :url="dzOptions.url" 
             :headers="dzOptions.headers" 
             :upload-multiple="true"
-            :accepted-file-types="dzOptions.acceptedFileTypes" />
+            :max-file-size-in-m-b="10"
+            :accepted-file-types="dzOptions.acceptedFileTypes"/>
     </div>
 </template>
 

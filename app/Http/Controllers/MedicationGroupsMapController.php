@@ -30,7 +30,9 @@ class MedicationGroupsMapController extends Controller
      */
     public function destroy($id)
     {
-        MedicationGroupsMap::destroy($id);
+        $count = MedicationGroupsMap::destroy($id);
+
+        return (bool) $count ? $this->ok() : $this->error('Unable to delete '.$id);
     }
 
     /**
@@ -51,8 +53,31 @@ class MedicationGroupsMapController extends Controller
      */
     public function index()
     {
-        $medicationGroups = CpmMedicationGroup::all()->sortBy('name');
-        $maps             = MedicationGroupsMap::with('cpmMedicationGroup')->get()->sortBy('keyword')->values();
+        $medicationGroups = CpmMedicationGroup::all()->sortBy('name')->values()
+            ->transform(
+                function ($m) {
+                    return [
+                        'id'   => $m->id,
+                        'text' => $m->name,
+                    ];
+                }
+                                                     )
+            ->toJson();
+        $maps = MedicationGroupsMap::with('cpmMedicationGroup')
+            ->get()
+            ->sortBy('keyword')
+            ->values()
+            ->transform(
+                function ($m) {
+                    return [
+                        'id'                  => $m->id,
+                        'keyword'             => $m->keyword,
+                        'medication_group_id' => $m->medication_group_id,
+                        'medication_group'    => $m->cpmMedicationGroup->name,
+                    ];
+                }
+                                               )
+            ->toJson();
 
         return view('admin.medicationGroupsMaps.index', compact('medicationGroups', 'maps'));
     }
@@ -80,9 +105,11 @@ class MedicationGroupsMapController extends Controller
         $stored = MedicationGroupsMap::create($request->input());
         $stored->load('cpmMedicationGroup');
 
-        return response()->json([
-            'stored' => $stored,
-        ]);
+        return response()->json(
+            [
+                'stored' => $stored,
+            ]
+        );
     }
 
     /**

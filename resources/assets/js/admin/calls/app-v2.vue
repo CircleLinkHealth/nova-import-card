@@ -606,8 +606,12 @@
                         }
                         $vm.tokens.calls = c
                     })
-                }).then((result) => result).then(result => {
+                }).then(result => {
                     //console.log('calls:response', this.nextPageUrl())
+                    if (!result) {
+                        //request was cancelled
+                        return;
+                    }
                     result = result.data;
                     this.pagination = {
                         current_page: result.meta.current_page,
@@ -655,9 +659,15 @@
                                 }
                             }
                             setTimeout(() => {
-                                $vm.$refs.tblCalls.count = $vm.pagination.total
-                                $vm.loaders.calls = false
-                            }, 1000)
+                                if ($vm.pagination) {
+                                    $vm.$refs.tblCalls.count = $vm.pagination.total;
+                                }
+                                else {
+                                    $vm.$refs.tblCalls.count = 0;
+                                }
+
+                                $vm.loaders.calls = false;
+                            }, 1000);
                             return tableCalls;
                         }
                     }
