@@ -1,10 +1,22 @@
 <template>
     <div>
         <span v-if="twilioEnabled" class="call-mode">
+
+            <button v-if="!isNaN(patientId)"
+                    type="button"
+                    class="btn" :class="callMode ? 'btn-danger' : 'btn-primary'"
+                    :disabled="callMode === null"
+                    @click="toggleCallMode">
+                    <span v-if="callMode">End Roaming</span>
+                    <span v-else>Roaming</span>
+                <loader v-show="(callMode === null) || loaders.callMode"></loader>
+            </button>
+
             <button class="btn" :class="buttonClass" type="button"
                     @click="callButtonClick">
                 <span>{{buttonText}}</span>
             </button>
+
         </span>
         <span v-else class="call-mode">
             <button class="btn btn-primary" type="button"
@@ -50,7 +62,7 @@
         },
         methods: {
             callButtonClick(e) {
-                if (self.callMode) {
+                if (self.isCallPageOpen) {
                     self.endCall(e);
                 }
                 else {
@@ -61,14 +73,14 @@
                 //just setting call mode to indicate that the calls page is open
                 self.buttonClass = 'btn-info';
                 self.buttonText = `Close Calls Page`;
-                self.callMode = true;
+                self.isCallPageOpen = true;
 
                 const strWindowFeatures = "location=yes,height=700,width=520,scrollbars=yes,status=yes";
                 const URL = rootUrl(`manage-patients/${this.patientId}/call`);
                 window.open(URL, "_blank", strWindowFeatures);
             },
             endCall(e) {
-                self.callMode = false;
+                self.isCallPageOpen = false;
                 self.buttonClass = 'btn-primary';
                 self.buttonText = "Open Calls Page";
                 sendRequest("end_call", null)
@@ -77,15 +89,15 @@
                     .catch(err => console.error(err));
             },
             checkForCallStatus() {
-                sendRequest("call_status", null, 1000)
+                sendRequest("call_status", null, 5000)
                     .then(msg => {
                         if (!msg) {
                             return;
                         }
 
                         //if we got a response, it means calls page is open
+                        self.isCallPageOpen = true;
 
-                        self.callMode = true;
                         if (msg.data && msg.data.number) {
                             const number = msg.data.number.value;
                             const muted = msg.data.number.muted;
@@ -98,8 +110,9 @@
                         }
                     })
                     .catch(err => {
+                        self.isCallPageOpen = false;
                         // if calls page is not open, we will receive a timeout
-                        // console.error(err);
+                        console.warn(err);
                     });
             },
             registerBroadcastChannelHandlers() {
@@ -121,23 +134,36 @@
                     //allow sending end call request which will just close the window
                     self.buttonClass = 'btn-info';
                     self.buttonText = `Close Calls Page`;
-                    self.callMode = true;
+                    self.isCallPageOpen = true;
                     return Promise.resolve({});
                 });
 
                 registerHandler("calls_page_closed", (msg) => {
                     self.buttonClass = 'btn-primary';
                     self.buttonText = `Open Calls Page`;
-                    self.callMode = false;
+                    self.isCallPageOpen = false;
+                    return Promise.resolve({});
                 });
 
                 //handle case when calls page is refreshed
                 registerHandler("calls_page_opened", (msg) => {
+                    self.isCallPageOpen = true;
                     self.checkForCallStatus();
                     return Promise.resolve({});
                 });
             },
-            //for web socket call mode
+            toggleCallMode(e) {
+                if (e) {
+                    e.preventDefault();
+                }
+                this.loaders.callMode = true;
+                if (this.callMode) {
+                    EventBus.$emit('tracker:call-mode:exit');
+                }
+                else {
+                    EventBus.$emit('tracker:call-mode:enter');
+                }
+            },
             enterCallMode(e) {
                 if (e) {
                     e.preventDefault()
@@ -145,7 +171,6 @@
                 this.loaders.callMode = true
                 EventBus.$emit('tracker:call-mode:enter')
             },
-            //for web socket call mode
             exitCallMode(e) {
                 if (e) {
                     e.preventDefault()
@@ -163,14 +188,10 @@
             //handle case when patient page is refreshed
             self.checkForCallStatus();
 
-            //if twilio is enabled, web socket server is notified through
-            //the call-number widget (which also makes the calls)
-            if (!this.twilioEnabled) {
-                EventBus.$on('server:call-mode', (callMode) => {
-                    this.callMode = callMode
-                    this.loaders.callMode = false
-                })
-            }
+            EventBus.$on('server:call-mode', (callMode) => {
+                this.callMode = callMode
+                this.loaders.callMode = false
+            });
         }
     }
 </script>
@@ -178,5 +199,12 @@
 <style>
     span.call-mode button {
         margin-top: 10px;
+    }
+
+    .call-mode .loader {
+        display: inline-block;
+        vertical-align: middle;
+        width: 20px;
+        height: 20px;
     }
 </style>
