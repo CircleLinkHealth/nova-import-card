@@ -60,4 +60,11 @@ class Question extends Model
         //not sure if necessary yet
     }
 
+    public function withOrder($order, $subOrder = null){
+        $this->where('surveyInstance', function ($instance) use ($order, $subOrder){
+            $instance->where('order', $order)
+                //change, see if we can use when
+                ->where('sub_order', $subOrder);
+        });
+    }
 }

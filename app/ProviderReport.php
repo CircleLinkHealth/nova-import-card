@@ -26,6 +26,7 @@ class ProviderReport extends Model
         'exercise_activity_levels',
         'functional_capacity',
         'current_providers',
+        'advanced_care_planning',
         'specific_patient_requests',
     ];
 
@@ -44,6 +45,7 @@ class ProviderReport extends Model
         'sexual_activity'        => 'array',
         'functional_capacity'    => 'array',
         'current_providers'      => 'array',
+        'advanced_care_planning' => 'array'
     ];
 
     public function patient()
