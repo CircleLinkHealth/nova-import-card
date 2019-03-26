@@ -1,0 +1,25 @@
+{
+    "name": "circlelinkhealth/timetracking",
+    "description": "",
+    "authors": [
+        {
+            "name": "Michalis Antoniou",
+            "email": "mantoniou@cirlelinkhealth.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "CircleLinkHealth\\TimeTracking\\Providers\\TimeTrackingServiceProvider"
+            ],
+            "aliases": {
+                
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "CircleLinkHealth\\TimeTracking\\": ""
+        }
+    }
+}
