@@ -4,8 +4,9 @@ namespace App\Jobs;
 
 use App\ProviderReport;
 use App\Services\ProviderReportService;
-use App\User;
+
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

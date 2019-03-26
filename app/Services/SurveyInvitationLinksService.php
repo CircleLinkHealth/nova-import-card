@@ -6,7 +6,7 @@ namespace App\Services;
 use App\InvitationLink;
 use App\Patient;
 use App\Survey;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\URL;
 
 class SurveyInvitationLinksService

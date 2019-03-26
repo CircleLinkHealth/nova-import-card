@@ -7,12 +7,12 @@ use App\QuestionGroup;
 use App\QuestionType;
 use App\Survey;
 use App\SurveyInstance;
-use App\User;
+
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Tests\Helpers\SetupTestSurveyData;
-use Tests\TestCase;
+use CircleLinkHealth\Customer\Entities\User;
 use Faker\Factory;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Tests\TestCase;
 
 class UserSurveyTest extends TestCase
 {
@@ -116,23 +116,25 @@ class UserSurveyTest extends TestCase
                 $this->assertNotNull($group);
 
                 //attach group for some questions
-                if ($i >= 5 && $i <= 8){
+                if ($i >= 5 && $i <= 8) {
                     $belongsToGroup = true;
-                }else{
+                } else {
                     $belongsToGroup = false;
                 }
 
-                $question     = Question::create([
-                    'survey_id' => $survey->id,
-                    'body'      => $this->faker->text,
-                    'question_group_id' =>  $belongsToGroup ? $group->id : null
+                $question = Question::create([
+                    'survey_id'         => $survey->id,
+                    'body'              => $this->faker->text,
+                    'question_group_id' => $belongsToGroup
+                        ? $group->id
+                        : null,
                 ]);
 
                 $this->assertNotNull($question);
-                if ($belongsToGroup){
+                if ($belongsToGroup) {
                     $this->assertNotNull($question->questionGroup);
                     $this->assertEquals($question->questionGroup->id, $group->id);
-                }else{
+                } else {
                     $this->assertNull($question->questionGroup);
                 }
 
@@ -155,22 +157,22 @@ class UserSurveyTest extends TestCase
             }
             $this->assertEquals(10, count($questions));
             foreach ($survey->instances as $instance) {
-                $order = 1;
+                $order    = 1;
                 $subOrder = 1;
                 foreach ($questions as $question) {
-                    if (! is_null($question->questionGroup)){
+                    if ( ! is_null($question->questionGroup)) {
                         $instance->questions()->attach(
                             $question->id,
                             [
-                                'order' => $order,
-                                'sub_order' =>$subOrder
+                                'order'     => $order,
+                                'sub_order' => $subOrder,
                             ]
                         );
                         $subOrder += 1;
-                        if ($subOrder = 4){
-                            $order +=1;
+                        if ($subOrder = 4) {
+                            $order += 1;
                         }
-                    }else{
+                    } else {
                         $instance->questions()->attach(
                             $question->id,
                             [
@@ -193,12 +195,12 @@ class UserSurveyTest extends TestCase
 
         $this->faker = $faker = Factory::create();
 
-        $this->date  = Carbon::now();
+        $this->date = Carbon::now();
 
         $this->user = User::create([
-            'first_name'              => $this->faker->name,
-            'last_name'              => $this->faker->lastName,
-            'display_name'              => $this->faker->name,
+            'first_name'        => $this->faker->name,
+            'last_name'         => $this->faker->lastName,
+            'display_name'      => $this->faker->name,
             'email'             => $this->faker->unique()->safeEmail,
             'email_verified_at' => $this->date,
             'password'          => bcrypt('secret'),

@@ -5,7 +5,7 @@ namespace App\Services;
 
 use App\Answer;
 use App\SurveyInstance;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 class SurveyService
 {

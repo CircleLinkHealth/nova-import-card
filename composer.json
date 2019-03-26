@@ -26,11 +26,11 @@
         }
     ],
     "require": {
+        "php": "^7.1.3",
         "circlelinkhealth/customer": "dev-master",
         "circlelinkhealth/raygun": "dev-master",
         "circlelinkhealth/timetracking": "dev-master",
         "circlelinkhealth/twofa": "dev-master",
-        "php": "^7.1.3",
         "doctrine/dbal": "^2.9",
         "fideloper/proxy": "^4.0",
         "lab404/laravel-impersonate": "^1.2",
