@@ -350,6 +350,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         'program_id',
         'remember_token',
         'last_login',
+        'last_session_id',
         'is_online',
     ];
 
