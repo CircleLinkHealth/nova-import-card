@@ -22,31 +22,51 @@ class SurveySeeder extends Seeder
     {
         $this->date = Carbon::now();
         $this->createHraSurvey();
+        $this->createVitalsSurvey();
+    }
+
+    private function createVitalsSurvey()
+    {
+        $vitals = Survey::firstOrCreate([
+            'name'        => Survey::VITALS,
+            'description' => 'Vitals Survey',
+        ]);
+
+        $currentInstance = SurveyInstance::firstOrCreate([
+            'survey_id'  => $vitals->id,
+            'name'       => $vitals->name . ' ' . $this->date->year,
+            'start_date' => $this->date->copy()->startOfYear(),
+            'end_date'   => $this->date->copy()->endOfYear(),
+        ]);
+
+        $questionsData = $this->vitalsQuestionData();
+
+        $this->createQuestions($currentInstance, $questionsData);
 
     }
 
     private function createHraSurvey()
     {
-        $hra = Survey::create([
+        $hra = Survey::firstOrCreate([
             'name'        => Survey::HRA,
             'description' => 'Health Risk Assessment',
         ]);
 
-        $currentInstance = SurveyInstance::create([
+        $currentInstance = SurveyInstance::firstOrCreate([
             'survey_id'  => $hra->id,
             'name'       => $hra->name . ' ' . $this->date->year,
             'start_date' => $this->date->copy()->startOfYear(),
             'end_date'   => $this->date->copy()->endOfYear(),
         ]);
 
-        $this->createHraQuestions($currentInstance);
+        $questionsData = $this->hraQuestionData();
+
+        $this->createQuestions($currentInstance, $questionsData);
 
     }
 
-    private function createHraQuestions($instance)
+    private function createQuestions($instance, $questionsData)
     {
-        $questionsData = $this->hraQuestionData();
-
         foreach ($questionsData as $questionData) {
 
             if (array_key_exists('question_group', $questionData)) {
@@ -100,6 +120,154 @@ class SurveySeeder extends Seeder
             );
         }
 
+    }
+
+    private function vitalsQuestionData(): Collection
+    {
+        return collect([
+            [
+                'order' => 1,
+                'question_body' => "What is the patient's blood pressure?",
+                'question_type' => QuestionType::NUMBER,
+                'question_type_answers' => [
+                    [
+                        'options' => [
+                            'sub-parts' => [
+                                [
+                                    //need placeholder
+                                ],
+                                [
+                                    //need placeholder
+                                ]
+                            ],
+                            'separate_sub_parts_with' => 'dash'
+                        ]
+                    ]
+                ]
+            ],
+            [
+                'order' => 2,
+                'question_body' => "What is the patient's weight?",
+                'question_type' => QuestionType::NUMBER,
+                'question_type_answers' => [
+                    [
+                        'options' => [
+                            'placeholder' => 'ex. 150 (lbs)'
+                        ]
+                    ]
+                ]
+            ],
+            [
+                'order' => 3,
+                'question_body' => "What is the patient's height?",
+                'question_type' => QuestionType::NUMBER,
+                'question_type_answers' => [
+                    [
+                        'options' =>
+                            [
+                                'sub_parts' => [
+                                    [
+                                        'placeholder' => "Feet'",
+                                    ],
+                                    [
+                                        'placeholder' => 'Inches"',
+                                    ],
+                                ],
+
+                            ],
+                    ],
+                ],
+            ],
+            [
+                'order' => 4,
+                'question_body' => "What is the patient's body mass index (BMI)?",
+                'question_type' => QuestionType::NUMBER,
+                'question_type_answer' => [
+                    [
+                        'options' => [
+                            'placeholder' => 'ex. 25'
+                        ]
+                    ]
+                ]
+            ],
+            [
+                'order' => 5,
+                'sub_order' => 'a',
+                'question_body' => 'Word Recall (1 point for each word spontaneously recalled without cueing)',
+                'question_type' =>  QuestionType::RADIO,
+                //we have to see about (c) and inserting the link
+                'question_group' => 'Based off of the Mini-Cog(c) assessment, how did your patient score? (insert link)',
+                'question_type_answers' => [
+                    [
+                        'type_answer_body' => 0
+                    ],
+                    [
+                        'type_answer_body' => 1
+                    ],
+                    [
+                        'type_answer_body' => 2
+                    ],
+                    [
+                        'type_answer_body' => 3
+                    ],
+                ]
+            ],
+            [
+                'order' => 5,
+                'sub_order' => 'b',
+                'question_body' => 'Clock Draw (Normal clock = 2 points. A normal clock has all numbers placed in the cor-rect sequence and approximately correct position (e.g., 12, 3, 6 and 9 are in anchor positions) with no missing or duplicate numbers. Hands are point-ing to the 11 and 2 (11:10). Hand length is not scored.Inability or refusal to draw a clock (abnormal) = 0 points.)',
+                'question_type' =>  QuestionType::RADIO,
+                'question_group' => 'Based off of the Mini-Cog(c) assessment, how did your patient score? (insert link)',
+                'question_type_answers' => [
+                    [
+                        'type_answer_body' => 0
+                    ],
+                    [
+                        'type_answer_body' => 2
+                    ],
+                ]
+            ],
+            [
+                'order' => 5,
+                'sub_order' => 'c',
+                'question_body' => 'Total Score (Total score = Word Recall score + Clock Draw score)',
+                'question_type' =>  QuestionType::RADIO,
+                'conditions' => [
+                    'is_auto_generated' => true,
+                    'generated_from' => [
+                        [
+                            'order' => 5,
+                            'sub_order' => 'a'
+                        ],
+                        [
+                            'order' => 5,
+                            'sub_order' => 'b'
+                        ]
+                    ]
+                ],
+                'question_group' => 'Based off of the Mini-Cog(c) assessment, how did your patient score? (insert link)',
+                'question_type_answers' => [
+                    [
+                        'type_answer_body' => 0
+                    ],
+                    [
+                        'type_answer_body' => 1
+                    ],
+                    [
+                        'type_answer_body' => 2
+                    ],
+                    [
+                        'type_answer_body' => 3
+                    ],
+                    [
+                        'type_answer_body' => 4
+                    ],
+                    [
+                        'type_answer_body' => 5
+                    ],
+                ]
+            ],
+        ]);
     }
 
     private function hraQuestionData(): Collection
