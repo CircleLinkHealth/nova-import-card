@@ -31,22 +31,21 @@
             <div class="questions-box"
                  v-if="questionsStage"
                  v-for="(question, index) in questions">
-                <div v-show="index >= questionIndex" class="question">
-                    <div v-if="question.conditions.isSubQuestion === showSubQuestions" @test="updateShowSubQuestions">
-                        {{question.id}}{{'.'}} {{question.body}}
-                        <!--Questions Answer Type-->
-                        <div class="question-answer-type">
-                            <question-type-text v-if="question.type.answer_type === 'text'"></question-type-text>
-                            <question-type-checkbox
-                                    v-if="question.type.answer_type === 'checkbox'"></question-type-checkbox>
-                            <question-type-range v-if="question.type.answer_type === 'range'"></question-type-range>
-                            <question-type-number
-                                    v-if="question.type.answer_type === 'number'"></question-type-number>
-                            <question-type-radio :question="question"
-                                                 v-if="question.type.answer_type === 'radio'"></question-type-radio>
-                            <question-type-date v-if="question.type.answer_type === 'date'"></question-type-date>
-                        </div>
+                <div v-if="question.conditions.isSubQuestion === showSubQuestions" @showSubQuestions="updateShowSubQuestions">
+                    {{question.id}}{{'.'}} {{question.body}}
+                    <!--Questions Answer Type-->
+                    <div class="question-answer-type">
+                        <question-type-text v-if="question.type.answer_type === 'text'"></question-type-text>
+                        <question-type-checkbox
+                                v-if="question.type.answer_type === 'checkbox'"></question-type-checkbox>
+                        <question-type-range v-if="question.type.answer_type === 'range'"></question-type-range>
+                        <question-type-number
+                                v-if="question.type.answer_type === 'number'"></question-type-number>
+                        <question-type-radio :question="question"
+                                             v-if="question.type.answer_type === 'radio'"></question-type-radio>
+                        <question-type-date v-if="question.type.answer_type === 'date'"></question-type-date>
                     </div>
+
                 </div>
             </div>
 
@@ -70,24 +69,20 @@
                 </div>
                 <div v-if="questionsStage">
                     <button type="button"
-                            id="next-button"
+                            id="scroll-down"
                             class="btn btn-sm next"
-                            @click="nextQuestions">
+                            @click="scrollDown">
                         <i class="fas fa-angle-down"></i>
                     </button>
-                    <button v-if="questionIndex > 0" type="button"
-                            id="previous-button"
+                    <button v-if="" type="button"
+                            id="scroll-up"
                             class="btn btn-sm next"
-                            @click="previousQuestions">
+                            @click="scrollUp">
                         <i class="fas fa-angle-up"></i>
                     </button>
                 </div>
             </div>
         </div>
-        <!--<div class="inputArea" v-for="input in inputs" :key="input.id">
-            <input type="text" name="textTypeAnswer">
-        </div>
-        <button @click="addInput">Add input</button>-->
     </div>
 
 </template>
@@ -104,11 +99,8 @@
     import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
     import subQuestions from "./subQuestions";
     import mainQuestions from "./mainQuestions";
-    import {app} from "../app";
+    import {EventBus} from '../event-bus';
 
-    /*app.$on('test', ()=>{
-       console.log('ssssssssshhhhhhhh');
-    });*/
 
     export default {
         props: ['surveydata'],
@@ -131,21 +123,11 @@
                 questionsStage: false,
                 welcomeStage: true,
                 callAssistance: false,
-                questionsData: [],
-                questionIndex: 0,
+                questions: [],
                 showSubQuestions: false,
-                /*   counter: 0,
-                   inputs: [{
-                       id: 'fruit0',
-                           label: 'Enter Fruit Name',
-                       value: '',
-                   }],*/
             }
         },
         computed: {
-            questions() {
-                return this.questionsData.flat(1);
-            },
         },
 
         methods: {
@@ -164,37 +146,43 @@
                 this.welcomeStage = false;
             },
 
-            nextQuestions() {
-                this.questionIndex++;
+            scrollDown() {
+                //scroll down
             },
 
-            previousQuestions() {
-                this.questionIndex--;
+            scrollUp() {
+                //scrollUp
             },
 
-            updateShowSubQuestions() {
-                console.log('Fuckcin');
+            updateShowSubQuestions(answer) {
+                if (answer === 'yes') {
+                    this.showSubQuestions = true;
+                }
+                console.log('todo::Call method -> "save the answer and move to next"')
             },
-            /*addInput() {
-                this.inputs.push({
-                    id: `fruit${++this.counter}`,
-                    label: 'Enter Fruit Name',
-                    value: '',
+            addInput() {
+                this.questions.push({
+
                 });
-            }*/
+            }
 
         },
+        mounted() {
+            EventBus.$on('showSubQuestions', (answer) => {
+               this.updateShowSubQuestions(answer)
+            });
+        },
         created() {
-            const questionsData = this.surveydata.survey_instances[0].questions.map(function (questions) {
-                return questions
+            const questionsData = this.surveydata.survey_instances[0].questions.map(function (q) {
+                const result = Object.assign(q, {answer_types: [q.answer_type]});
+                return result;
             });
 
-            const x = questionsData.map(function (question) {
-                return question.conditions.isSubQuestion === true
-            });
+            /* const x = questionsData.map(function (question) {
+                 return question.conditions.isSubQuestion === true
+             });*/
 
-           /* this.areSubQuestions.push(x);*/
-            this.questionsData.push(questionsData);
+            this.questions.push(...questionsData);
         },
 
     }
@@ -288,7 +276,7 @@
         min-height: 700px;
     }
 
-    #previous-button, #next-button {
+    #scroll-up, #scroll-down {
         background-color: #50b2e2;
         width: 51px;
         height: 51px;

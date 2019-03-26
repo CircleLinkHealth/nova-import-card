@@ -4,10 +4,10 @@
             <div class="row">
                 <div v-for="answer in possibleAnswers">
                     <label>{{answer.value}}
-                        <input type="radio"
-                               v-model="checkedAnswer"
+                        <input :name="question.id"
                                :value="answer.value"
-                               @change="handleAnswer">
+                               type="radio"
+                               @change="handleAnswer(answer.value)">
                     </label>
                 </div>
             </div>
@@ -17,23 +17,22 @@
 </template>
 
 <script>
-
-    import {app} from "../app";
+    import {EventBus} from "../event-bus";
 
     export default {
-        name:"questionTypeRadio",
+        name: "questionTypeRadio",
         props: ['question'],
+        components: {},
 
         data() {
             return {
                 possibleAnswers: this.question.type.question_type_answers,
-                checkedAnswer: ''
             }
         },
 
         methods: {
-            handleAnswer() {
-                this.$emit('test')
+            handleAnswer(val) {
+                EventBus.$emit('showSubQuestions', val)
             },
         }
     }
