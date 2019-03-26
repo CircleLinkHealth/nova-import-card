@@ -77,12 +77,13 @@
                          style=" border-bottom:3px solid #50b2e2;padding: 8px 0px;">
 
                         <div class="col-xs-12" style="">
-                            <div class="col-lg-8 col-xs-4"><input type="text" class="form-control" name="general_comment"
-                                                         id="general_comment"
-                                                         value="{{$patient->patientInfo->general_comment}}"
-                                                         placeholder="{{$patient->patientInfo->general_comment == '' ? 'Enter General Comment...' : $patient->patientInfo->general_comment}}"
-                                                         aria-describedby="sizing-addon2"
-                                                         style="margin: 0 auto; text-align: left; color: #333;">
+                            <div class="col-lg-8 col-xs-4"><input type="text" class="form-control"
+                                                                  name="general_comment"
+                                                                  id="general_comment"
+                                                                  value="{{$patient->patientInfo->general_comment}}"
+                                                                  placeholder="{{$patient->patientInfo->general_comment == '' ? 'Enter General Comment...' : $patient->patientInfo->general_comment}}"
+                                                                  aria-describedby="sizing-addon2"
+                                                                  style="margin: 0 auto; text-align: left; color: #333;">
                             </div>
                             <div class="col-sm-4 col-xs-8 pull-right"
                                  style="text-align: right;top: 9px;font-size: 22px;color: #ec683e;">
@@ -309,7 +310,8 @@
                                                         </div>
                                                     </div>
                                                 @endif
-                                                <div class="other-radios multi-input-wrapper" style="padding-top: 3px; display: none">
+                                                <div class="other-radios multi-input-wrapper"
+                                                     style="padding-top: 3px; display: none">
                                                     <div><input type="checkbox"
                                                                 name="medication_recon"
                                                                 value="true"
@@ -740,18 +742,13 @@
 
                     submitted = true;
 
-                    //what is this?
-                    $.get('/api/test').always(function (response) {
-                        if (response.status == 200 || response.message == 'clh') {
-                            var key = 'notes:{{$patient->id}}:add'
-                            window.sessionStorage.removeItem(key)
-                        }
-                        //when we associate a note with task, we disable the note topic
-                        //we have to enable it back before posting to server,
-                        //otherwise its value will not reach the server
-                        $('#activityKey').prop("disabled", false);
-                        form.submit();
-                    });
+                    var key = 'notes:{{$patient->id}}:add';
+                    window.sessionStorage.removeItem(key);
+                    //when we associate a note with task, we disable the note topic
+                    //we have to enable it back before posting to server,
+                    //otherwise its value will not reach the server
+                    $('#activityKey').prop("disabled", false);
+                    form.submit();
                 }
 
                 function showTaskCompletedModal() {
