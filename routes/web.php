@@ -83,11 +83,6 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'download',
     ]);
 
-    Route::get('download', [
-        'uses' => 'DownloadController@postDownloadfile',
-        'as'   => 'post.file.download',
-    ]);
-
     Route::group(['prefix' => 'ehr-report-writer'], function () {
         Route::get('index', [
             'uses' => 'EhrReportWriterController@index',
