@@ -535,7 +535,7 @@ class CarePlanHelper
 
     /**
      * Activates Problems to Monitor (CCM Conditions).
-     * todo: TO REMOVE because of Problem Observer.
+     * Still used by: ReImportCcdToGetProblemTranslationCodes.php.
      *
      * @return $this
      */
