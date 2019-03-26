@@ -38,6 +38,10 @@
     },
     {
       "type": "git",
+      "url": "git@github.com:CircleLinkHealth/module-time-tracking.git"
+    },
+    {
+      "type": "git",
       "url": "git@github.com:CircleLinkHealth/module-two-fa.git"
     },
     {
@@ -65,6 +69,7 @@
     "blackfire/php-sdk": "^1.17",
     "circlelinkhealth/customer": "dev-master",
     "circlelinkhealth/raygun": "dev-master",
+    "circlelinkhealth/timetracking": "dev-master",
     "circlelinkhealth/twofa": "dev-master",
     "doctrine/dbal": "~2.3",
     "fideloper/proxy": "~3.3",
