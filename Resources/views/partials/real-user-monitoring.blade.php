@@ -22,7 +22,7 @@
         rg4js('enablePulse', {{\Config::get('cpm-module-raygun.enable_real_user_monitoring_pulse') ? 'true' : 'false'}});
 
         @if(auth()->check())
-            rg4js('setUser', @json($raygunUser());
+            rg4js('setUser', {!! json_encode($raygunUser()) !!});
         @endif
     </script>
 @endif
