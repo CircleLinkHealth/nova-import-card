@@ -16,6 +16,7 @@ class AddUniqueKeysAndAdjustColumnsAwvTables extends Migration
 
         Schema::table('questions', function (Blueprint $table) {
             $table->text('body')->change();
+            $table->unsignedInteger('question_group_id')->nullable()->change();
         });
 
         Schema::table('question_types_answers', function (Blueprint $table) {

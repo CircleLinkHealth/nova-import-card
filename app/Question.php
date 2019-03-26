@@ -59,4 +59,8 @@ class Question extends Model
     public function scopeWithOrder($query, $order){
         //not sure if necessary yet
     }
+
+    public function withOrder($order, $subOrder){
+
+    }
 }

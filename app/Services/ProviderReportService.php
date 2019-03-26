@@ -83,6 +83,5 @@ class ProviderReportService
     //or update?
     public function createDemographicData(){
 
-
     }
 }
