@@ -1,4 +1,8 @@
-@if(true === \Config::get('cpm-module-raygun.enable_crash_reporting'))
+@if(true === \Config::get('cpm-module-raygun.enable_real_user_monitoring'))
+    @php
+        $raygunUser = app(config('cpm-module-raygun.raygun_user'));
+    @endphp
+
     <script type="text/javascript">
         !function (a, b, c, d, e, f, g, h) {
             a.RaygunObject = e, a[e] = a[e] || function () {
@@ -18,13 +22,7 @@
         rg4js('enablePulse', {{\Config::get('cpm-module-raygun.enable_real_user_monitoring_pulse') ? 'true' : 'false'}});
 
         @if(auth()->check())
-            rg4js('setUser', {
-                identifier: "{{auth()->id()}}",
-                isAnonymous: false,
-                email: "{{auth()->user()->email}}",
-                firstName: "{{auth()->user()->first_name}}",
-                fullName: "{{auth()->user()->display_name}}"
-            });
+            rg4js('setUser', @json($raygunUser());
         @endif
     </script>
 @endif
