@@ -73,7 +73,7 @@ class GenerateProviderReport implements ShouldQueue
 
         $patient = User::with([
             'surveyInstances' => function ($instance) {
-                $instance->with('survey')
+                $instance->with(['survey', 'questions.type.questionTypeAnswers'])
                          ->forDate($this->date);
             },
             'answers'         => function ($answers) {

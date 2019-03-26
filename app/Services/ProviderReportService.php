@@ -26,6 +26,7 @@ class ProviderReportService
 
     public function __construct($patient, $date)
     {
+        //patient contains survey data (answers with related questions,types,type_answers)
         $this->patient = $patient;
         $this->date    = Carbon::parse($date);
 
@@ -44,6 +45,44 @@ class ProviderReportService
     public function generateData(){
 
 
+
+
+
+        //todo: fix
+        $reasonForVisit = 'Inital';
+
+        $demographicData = $this->createDemographicData();
+
+        $this->patient->providerReports()->updateOrCreate(
+            [
+                'hra_instance_id',
+                'vitals_instance_id',
+                'reason_for_visit',
+                'demographic_data',
+                'allergy_history',
+                'medical_history',
+                'medication_history',
+                'family_medical_history',
+                'immunization_history',
+                'screenings',
+                'mental_state',
+                'vitals',
+                'diet',
+                'social_factors',
+                'sexual_activity',
+                'exercise_activity_levels',
+                'functional_capacity',
+                'current_providers',
+                'specific_patient_requests',
+            ]
+        );
+
         return true;
+    }
+
+    //or update?
+    public function createDemographicData(){
+
+
     }
 }
