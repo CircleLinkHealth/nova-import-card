@@ -1,20 +1,30 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\Schema;
 
 class CreateEnrolleesViewTable extends Migration
 {
     /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        $viewName = 'enrollees_view';
+        \DB::statement("DROP VIEW IF EXISTS ${viewName}");
+    }
+
+    /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
         $viewName = 'enrollees_view';
         \DB::statement("DROP VIEW IF EXISTS ${viewName}");
-        \DB::statement("
+        $ran = \DB::statement("
         CREATE VIEW ${viewName}
         AS
         SELECT e.*, u.display_name AS provider_name, u2.display_name as care_ambassador_name, p.display_name AS practice_name 
@@ -34,16 +44,9 @@ AND NOT (LOWER(e.primary_insurance) IN (SELECT name FROM enrollee_custom_filters
 e.secondary_insurance IS NULL AND
 e.tertiary_insurance IS NULL); 
         ");
-    }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        $viewName = 'enrollees_view';
-        \DB::statement("DROP VIEW IF EXISTS ${viewName}");
+        if ( ! $ran) {
+            throw new \Exception('Could not create mysql view');
+        }
     }
 }
