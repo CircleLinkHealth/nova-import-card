@@ -16,11 +16,13 @@ class AddUniqueKeysAndAdjustColumnsAwvTables extends Migration
 
         Schema::table('questions', function (Blueprint $table) {
             $table->text('body')->change();
+            $table->json('conditions')->nullable()->change();
             $table->unsignedInteger('question_group_id')->nullable()->change();
         });
 
         Schema::table('question_types_answers', function (Blueprint $table) {
             $table->string('value')->nullable()->change();
+            $table->json('options')->nullable()->change();
         });
 
         Schema::table('surveys', function (Blueprint $table) {
@@ -32,6 +34,7 @@ class AddUniqueKeysAndAdjustColumnsAwvTables extends Migration
         });
 
         Schema::table('survey_questions', function (Blueprint $table) {
+            $table->string('sub_order')->nullable()->change();
             $table->unique(['survey_instance_id', 'order', 'sub_order'], 'survey_instance_order_unique');
         });
 

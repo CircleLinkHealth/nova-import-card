@@ -60,7 +60,4 @@ class Question extends Model
         //not sure if necessary yet
     }
 
-    public function withOrder($order, $subOrder){
-
-    }
 }
