@@ -59,7 +59,6 @@ class CcdProblemService
     public function editPatientCcdProblem(
         $userId,
         $ccdProblemId,
-        $name,
         $problemCode = null,
         $is_monitored = null,
         $icd10 = null,
@@ -68,7 +67,6 @@ class CcdProblemService
         $problem = $this->setupProblem($this->repo()->editPatientCcdProblem(
             $userId,
             $ccdProblemId,
-            $name,
             $problemCode,
             $is_monitored
         ));

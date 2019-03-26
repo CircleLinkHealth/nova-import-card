@@ -318,7 +318,6 @@
                 e.preventDefault()
                 this.loaders.editProblem = true
                 return this.axios.put(rootUrl(`api/patients/${this.patientId}/problems/ccd/${this.selectedProblem.id}`), {
-                    name: this.selectedProblem.original_name,
                     cpm_problem_id: this.selectedProblem.is_monitored ? this.selectedProblem.cpm_id : null,
                     is_monitored: this.selectedProblem.is_monitored,
                     icd10: this.selectedProblem.icd10,
