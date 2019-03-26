@@ -41,17 +41,18 @@ class CcdProblemRepository
         return $this->model()->select('name', DB::raw('count(*) as total'))->groupBy('name')->pluck('total')->count();
     }
 
-    public function editPatientCcdProblem($userId, $ccdId, $name, $problemCode = null, $is_monitored = null)
+    public function editPatientCcdProblem($userId, $ccdProblemId, $name, $problemCode = null, $is_monitored = null)
     {
-        if ($this->patientCcdExists($userId, $name)) {
-            $this->model()->where(['id' => $ccdId, 'patient_id' => $userId])->first()->update([
-                'name'           => $name,
-                'cpm_problem_id' => $problemCode,
-                'is_monitored'   => $is_monitored,
-            ]);
+        $problem = $this->model()->where(['id' => $ccdProblemId, 'patient_id' => $userId])->first();
+
+        if ($problem) {
+            $problem->name           = $name;
+            $problem->cpm_problem_id = $problemCode;
+            $problem->is_monitored   = $is_monitored;
+            $problem->save();
         }
 
-        return $this->model()->where(['id' => $ccdId, 'patient_id' => $userId])->first();
+        return $problem;
     }
 
     public function model()

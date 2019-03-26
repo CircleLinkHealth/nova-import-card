@@ -211,8 +211,6 @@ class CarePlanHelper
         $this->createNewCarePlan()
             ->storeAllergies()
             ->storeProblemsList()
-            //this will be executed by ProblemObserver when problems are created, in line 506
-//            ->storeProblemsToMonitor()
             ->storeMedications()
             ->storeBillingProvider()
             ->storeLocation()

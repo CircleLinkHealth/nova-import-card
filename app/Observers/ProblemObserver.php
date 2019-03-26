@@ -8,7 +8,6 @@ namespace App\Observers;
 
 use App\CLH\CCD\Importer\StorageStrategies\Problems\ProblemsToMonitor;
 use App\Models\CCD\Problem;
-use App\User;
 
 class ProblemObserver
 {
@@ -19,7 +18,7 @@ class ProblemObserver
      */
     public function deleting(Problem $problem)
     {
-        $patient = User::find($problem->patient_id);
+        $patient = $problem->patient;
 
         if ($patient) {
             $storage = new ProblemsToMonitor($patient->program_id, $patient);
@@ -36,7 +35,7 @@ class ProblemObserver
     public function saving(Problem $problem)
     {
         if ($problem->isDirty('cpm_problem_id')) {
-            $patient = User::find($problem->patient_id);
+            $patient = $problem->patient;
 
             if ($patient) {
                 $storage = new ProblemsToMonitor($patient->program_id, $patient);

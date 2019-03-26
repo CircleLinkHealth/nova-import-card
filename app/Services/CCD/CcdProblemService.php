@@ -58,7 +58,7 @@ class CcdProblemService
 
     public function editPatientCcdProblem(
         $userId,
-        $ccdId,
+        $ccdProblemId,
         $name,
         $problemCode = null,
         $is_monitored = null,
@@ -67,7 +67,7 @@ class CcdProblemService
     ) {
         $problem = $this->setupProblem($this->repo()->editPatientCcdProblem(
             $userId,
-            $ccdId,
+            $ccdProblemId,
             $name,
             $problemCode,
             $is_monitored
@@ -85,13 +85,13 @@ class CcdProblemService
             $problem['instruction'] = $instructionData;
 
             $this->repo()->model()->where([
-                'id' => $ccdId,
+                'id' => $ccdProblemId,
             ])->update([
                 'cpm_instruction_id' => $instructionData->id,
             ]);
         } else {
             $this->repo()->model()->where([
-                'id' => $ccdId,
+                'id' => $ccdProblemId,
             ])->update([
                 'cpm_instruction_id' => null,
             ]);
