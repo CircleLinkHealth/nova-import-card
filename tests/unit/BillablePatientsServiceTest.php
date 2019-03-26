@@ -10,12 +10,12 @@ use App\ChargeableService;
 use App\Http\Resources\ApprovableBillablePatient;
 use App\Models\CCD\Problem;
 use App\Models\CPM\CpmProblem;
-use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
-use CircleLinkHealth\Customer\Entities\Practice;
 use App\Repositories\PatientSummaryEloquentRepository;
 use App\Services\ApproveBillablePatientsService;
-use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Collection;
@@ -219,6 +219,9 @@ class BillablePatientsServiceTest extends TestCase
 
     public function test_it_stores_ccd_problem_with_cpm_id()
     {
+        $admin = $this->createUser($this->practice->id, 'administrator');
+        auth()->login($admin);
+
         $uri = route('monthly.billing.store-problem');
 
         $params = [
