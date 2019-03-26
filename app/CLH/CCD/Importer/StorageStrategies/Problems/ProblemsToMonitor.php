@@ -20,15 +20,7 @@ class ProblemsToMonitor extends BaseStorageStrategy implements StorageStrategy
         $cpmProblems = $this->user->carePlan->carePlanTemplate->cpmProblems->whereIn('id', $cpmProblemIds);
 
         foreach ($cpmProblems as $cpmProblem) {
-            $instructionsId = $cpmProblem->pivot->cpm_instruction_id;
-
-            $args = [];
-
-            if ($instructionsId) {
-                $args['cpm_instruction_id'] = $instructionsId;
-            }
-
-            $this->user->cpmProblems()->attach($cpmProblem->id, $args);
+            $this->user->cpmProblems()->detach($cpmProblem->id);
 
             $problemData = $this->getProblemRelationships($cpmProblem);
 

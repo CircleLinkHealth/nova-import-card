@@ -41,9 +41,10 @@ class ProblemObserver
             if ($patient) {
                 $storage = new ProblemsToMonitor($patient->program_id, $patient);
 
+                $originalCpmProblemId = $problem->getOriginal('cpm_problem_id');
                 // If only the cpm_problem_id is changed (if the problem is being updated), we need to detach relationships for that problem first
-                if ( ! $problem->isDirty(['patient_id', 'name'])) {
-                    $storage->detach($problem->getOriginal('cpm_problem_id'));
+                if ($originalCpmProblemId) {
+                    $storage->detach($originalCpmProblemId);
                 }
 
                 $storage->import($problem->cpm_problem_id);

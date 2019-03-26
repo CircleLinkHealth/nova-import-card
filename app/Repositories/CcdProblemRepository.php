@@ -44,7 +44,7 @@ class CcdProblemRepository
     public function editPatientCcdProblem($userId, $ccdId, $name, $problemCode = null, $is_monitored = null)
     {
         if ($this->patientCcdExists($userId, $name)) {
-            $this->model()->where(['id' => $ccdId, 'patient_id' => $userId])->update([
+            $this->model()->where(['id' => $ccdId, 'patient_id' => $userId])->first()->update([
                 'name'           => $name,
                 'cpm_problem_id' => $problemCode,
                 'is_monitored'   => $is_monitored,
