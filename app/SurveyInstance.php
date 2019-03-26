@@ -44,7 +44,7 @@ class SurveyInstance extends Model
         return $this->belongsToMany(Question::class, 'survey_questions', 'survey_instance_id',
             'question_id')->withPivot([
             'order',
-            'sub_order'
+            'sub_order',
         ]);
     }
 
@@ -52,6 +52,27 @@ class SurveyInstance extends Model
     {
         $query->where('start_date', '<=', Carbon::now())
               ->where('end_date', '>=', Carbon::now());
+    }
+
+    public function scopeOfSurvey($query, $surveyName)
+    {
+        $query->whereHas('survey', function ($survey) use ($surveyName) {
+            $survey->where('name', $surveyName);
+        });
+
+    }
+
+    public function scopeForDate($query, $date)
+    {
+        $date = Carbon::parse($date);
+
+        $query->where('start_date', '<=', $date)
+              ->where('end_date', '>=', $date);
+
+    }
+
+    public function scopeIsCompleted($query){
+        $query->where('status', SurveyInstance::COMPLETED);
     }
 
 

@@ -36,7 +36,7 @@ class SurveyService
                                      ->where('id', $patientId)
                                      ->first();
 
-        return $patientWithSurveyData->toArray();
+        return $patientWithSurveyData;
 
     }
 
@@ -100,6 +100,5 @@ class SurveyService
 
         return $instance->pivot->status;
     }
-
 
 }
