@@ -37,7 +37,7 @@ return [
     | be a good idea to set this value to something like 604800 (7 days).
     |
     */
-    'expiration-time' => 604800,
+    'expiration-time' => 86400,
 
     /*
     |--------------------------------------------------------------------------
@@ -73,7 +73,24 @@ return [
     | ],
     |
     */
-    'include-tables' => [],
+    'include-tables' => [
+        'users',
+        'patient_info',
+        'nurse_info',
+        'provider_info',
+        'care_plans',
+        'care_plan_templates',
+        'lv_roles',
+        'practice_role_user',
+        'permissibles',
+        'cpm_problems',
+        'ccd_problems',
+        'problem_codes',
+        'cpm_problems_users',
+        'snomed_to_cpm_icd_maps',
+        'practices',
+        'locations',
+    ],
 
     /*
     |--------------------------------------------------------------------------

@@ -40,7 +40,6 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        \Bugsnag\BugsnagLaravel\Commands\DeployCommand::class,
     ];
 
     /**

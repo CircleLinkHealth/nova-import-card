@@ -34,10 +34,6 @@
     },
     {
       "type": "git",
-      "url": "git@github.com:CircleLinkHealth/module-bugsnag.git"
-    },
-    {
-      "type": "git",
       "url": "git@github.com:CircleLinkHealth/module-raygun.git"
     },
     {
@@ -67,7 +63,6 @@
     "arcturial/clickatell": "*",
     "barryvdh/laravel-snappy": "0.4.1",
     "blackfire/php-sdk": "^1.17",
-    "circlelinkhealth/bugsnag": "dev-main-master",
     "circlelinkhealth/customer": "dev-master",
     "circlelinkhealth/raygun": "dev-master",
     "circlelinkhealth/twofa": "dev-master",
