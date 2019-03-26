@@ -357,6 +357,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         //@todo: Need to fix repository package. It does not validate hidden attributes. May temporarily comment out until then
         'password',
     ];
+    
+    protected $rules = [];
 
     public function __construct(array $attributes = [])
     {
