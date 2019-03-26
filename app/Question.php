@@ -51,7 +51,16 @@ class Question extends Model
     public function questionGroup(){
         return $this->belongsTo(QuestionGroup::class, 'question_group_id');
     }
+
     public function scopeNotOptional($query){
         $query->where('optional', false);
+    }
+
+    public function scopeWithOrder($query, $order){
+        //not sure if necessary yet
+    }
+
+    public function withOrder($order, $subOrder){
+
     }
 }

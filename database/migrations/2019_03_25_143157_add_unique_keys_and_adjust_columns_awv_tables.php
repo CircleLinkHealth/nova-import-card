@@ -15,7 +15,8 @@ class AddUniqueKeysAndAdjustColumnsAwvTables extends Migration
     {
 
         Schema::table('questions', function (Blueprint $table) {
-            $table->text('body')->unique()->change();
+            $table->text('body')->change();
+            $table->unsignedInteger('question_group_id')->nullable()->change();
         });
 
         Schema::table('question_types_answers', function (Blueprint $table) {
@@ -43,10 +44,6 @@ class AddUniqueKeysAndAdjustColumnsAwvTables extends Migration
      */
     public function down()
     {
-        Schema::table('questions', function (Blueprint $table) {
-            $table->dropUnique('questions_body_unique');
-        });
-
         Schema::table('surveys', function (Blueprint $table) {
             $table->dropUnique('surveys_name_unique');
         });
