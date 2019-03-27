@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "bab2224753fba2a279fa4531083c643b",
+    "content-hash": "a1c9043e18802bb2d22896f765698ee0",
     "packages": [
         {
             "name": "authy/php",
@@ -92,7 +92,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "ce495806c907833f718da44d13a3902eefe57796"
+                "reference": "4acca4f4ec5e47ae88d8bcef95d9c10a519f5de7"
             },
             "type": "library",
             "extra": {
@@ -114,7 +114,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-03-27T03:21:54+00:00"
+            "time": "2019-03-27T14:49:38+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
