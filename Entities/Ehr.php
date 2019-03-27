@@ -26,7 +26,7 @@ use App\TargetPatient;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Ehr whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class Ehr extends \App\BaseModel
+class Ehr extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     public $fillable = [
         'name',

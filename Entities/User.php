@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
-use App\BaseModel;
+use CircleLinkHealth\Core\Entities\BaseModel;
 use App\Call;
 use App\CareAmbassador;
 use App\CarePlan;

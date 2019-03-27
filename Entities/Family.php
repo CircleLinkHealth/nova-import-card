@@ -25,7 +25,7 @@ use CircleLinkHealth\Customer\Entities\Patient;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Family whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class Family extends \App\BaseModel
+class Family extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $fillable = ['*'];
 

@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
-use App\BaseModel;
+use CircleLinkHealth\Core\Entities\BaseModel;
 use App\CareAmbassadorLog;
 use App\CLH\Helpers\StringManipulation;
 use App\EnrolleeCustomFilter;

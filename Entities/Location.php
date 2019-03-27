@@ -68,7 +68,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\Location withoutTrashed()
  * @mixin \Eloquent
  */
-class Location extends \App\BaseModel
+class Location extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use HasEmrDirectAddress,
         Notifiable,

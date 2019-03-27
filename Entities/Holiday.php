@@ -25,7 +25,7 @@ use CircleLinkHealth\Customer\Entities\Nurse;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Holiday whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class Holiday extends \App\BaseModel
+class Holiday extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $dates = [
         'date',

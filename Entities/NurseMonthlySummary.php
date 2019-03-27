@@ -32,7 +32,7 @@ use CircleLinkHealth\Customer\Entities\Nurse;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseMonthlySummary whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class NurseMonthlySummary extends \App\BaseModel
+class NurseMonthlySummary extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $fillable = [
         'nurse_id',

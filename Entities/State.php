@@ -21,7 +21,7 @@ use CircleLinkHealth\Customer\Entities\Nurse;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\State whereName($value)
  * @mixin \Eloquent
  */
-class State extends \App\BaseModel
+class State extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     public $timestamps = false;
 

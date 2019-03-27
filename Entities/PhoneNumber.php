@@ -35,7 +35,7 @@ use App\CLH\Helpers\StringManipulation;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereUserId($value)
  * @mixin \Eloquent
  */
-class PhoneNumber extends \App\BaseModel
+class PhoneNumber extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     //types
     const HOME   = 'home';

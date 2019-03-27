@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Customer\Entities;
 
 use CircleLinkHealth\TimeTracking\Entities\Activity;
-use App\BaseModel;
+use CircleLinkHealth\Core\Entities\BaseModel;
 use App\Call;
 use CircleLinkHealth\Customer\Entities\Family;
 use App\Filters\Filterable;

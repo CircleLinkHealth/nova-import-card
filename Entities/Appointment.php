@@ -41,7 +41,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Appointment whereWasCompleted($value)
  * @mixin \Eloquent
  */
-class Appointment extends \App\BaseModel
+class Appointment extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $fillable = [
         'patient_id',

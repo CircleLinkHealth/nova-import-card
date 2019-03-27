@@ -48,7 +48,7 @@ namespace CircleLinkHealth\Customer\Entities;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Settings whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class Settings extends \App\BaseModel
+class Settings extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $fillable = [
         'careplan_mode',

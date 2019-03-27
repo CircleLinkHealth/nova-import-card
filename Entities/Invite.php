@@ -45,7 +45,7 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @method static \Illuminate\Database\Query\Builder|\App\Entities\Invite withoutTrashed()
  * @mixin \Eloquent
  */
-class Invite extends \App\BaseModel implements Transformable
+class Invite extends \CircleLinkHealth\Core\Entities\BaseModel implements Transformable
 {
     use SoftDeletes, TransformableTrait;
 

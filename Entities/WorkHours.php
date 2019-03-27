@@ -46,7 +46,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\WorkHours withoutTrashed()
  * @mixin \Eloquent
  */
-class WorkHours extends \App\BaseModel
+class WorkHours extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use SoftDeletes;
 

@@ -59,7 +59,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereUserId($value)
  * @mixin \Eloquent
  */
-class Nurse extends \App\BaseModel
+class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use Filterable,
         MakesOrReceivesCalls;

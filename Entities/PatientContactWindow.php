@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
-use App\BaseModel;
+use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\Patient;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;

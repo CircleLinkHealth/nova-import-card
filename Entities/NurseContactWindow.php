@@ -42,7 +42,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\NurseContactWindow withoutTrashed()
  * @mixin \Eloquent
  */
-class NurseContactWindow extends \App\BaseModel
+class NurseContactWindow extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use SoftDeletes;
 
