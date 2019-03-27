@@ -2,11 +2,12 @@
     <div>
         <div class="custom-radio">
             <div class="row">
-                <div v-for="answer in posiibleAnswers">
+                <div v-for="answer in possibleAnswers">
                     <label>{{answer.value}}
-                        <input type="radio"
-                               id="radioType"
-                               name="radioTypeAnswer">
+                        <input :name="question.id"
+                               :value="answer.value"
+                               type="radio"
+                               @change="handleAnswer(answer.value)">
                     </label>
                 </div>
             </div>
@@ -16,14 +17,24 @@
 </template>
 
 <script>
+    import {EventBus} from "../event-bus";
+
     export default {
+        name: "questionTypeRadio",
         props: ['question'],
+        components: {},
 
         data() {
             return {
-                posiibleAnswers: this.question.type.question_type_answers,
+                possibleAnswers: this.question.type.question_type_answers,
             }
         },
+
+        methods: {
+            handleAnswer(val) {
+                EventBus.$emit('showSubQuestions', val)
+            },
+        }
     }
 </script>
 

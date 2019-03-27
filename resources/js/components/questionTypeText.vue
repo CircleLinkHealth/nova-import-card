@@ -1,6 +1,6 @@
 <template>
    <div>
-       <input type="text" name="textTypeAnswer">
+       <input type="text" name="textTypeAnswer[]">
    </div>
 </template>
 
