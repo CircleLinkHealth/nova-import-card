@@ -2,7 +2,7 @@
 
 namespace App;
 
-use App\Filters\Filterable;
+use CircleLinkHealth\Core\Filters\Filterable;
 use Illuminate\Database\Eloquent\Model;
 
 class EnrolleeView extends Model

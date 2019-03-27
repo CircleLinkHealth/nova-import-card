@@ -7,7 +7,7 @@
 namespace App;
 
 use App\Contracts\PdfReport;
-use App\Filters\Filterable;
+use CircleLinkHealth\Core\Filters\Filterable;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\Channels\FaxChannel;
 use App\Notifications\NoteForwarded;

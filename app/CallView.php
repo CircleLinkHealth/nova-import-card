@@ -6,7 +6,7 @@
 
 namespace App;
 
-use App\Filters\Filterable;
+use CircleLinkHealth\Core\Filters\Filterable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
