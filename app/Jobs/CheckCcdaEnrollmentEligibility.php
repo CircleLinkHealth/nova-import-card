@@ -72,33 +72,56 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
         $this->determineEligibility();
     }
 
+    private function createEligibilityJob($patient)
+    {
+        $mrn = $patient['mrn_number'] ?? $patient['mrn'] ?? '';
+
+        $hash = $this->practice->name.$patient['first_name'].$patient['last_name'].$mrn.$patient['city'].$patient['state'].$patient['zip'];
+
+        return EligibilityJob::create(
+            [
+                'batch_id' => $this->batch->id,
+                'hash'     => $hash,
+                'data'     => $patient,
+            ]
+        );
+    }
+
     private function determineEligibility()
     {
         $json = $this->ccda->bluebuttonJson();
 
         $demographics = collect($this->transformer->demographics($json->demographics));
-        $problems     = collect($json->problems)->map(function ($prob) {
-            $problem = array_merge($this->transformer->problem($prob));
+        $problems     = collect($json->problems)->map(
+            function ($prob) {
+                $problem = array_merge($this->transformer->problem($prob));
 
-            $code = collect($this->transformer->problemCodes($prob))->sortByDesc(function ($code) {
-                return empty($code['code'])
-                        ? false
-                        : $code['code'];
-            })->filter()->values()->first() ?? ['name' => null, 'code' => null, 'code_system_name' => null];
+                $code = collect($this->transformer->problemCodes($prob))->sortByDesc(
+                    function ($code) {
+                        return empty($code['code'])
+                                ? false
+                                : $code['code'];
+                    }
+                    )->filter()->values()->first() ?? ['name' => null, 'code' => null, 'code_system_name' => null];
 
-            return Problem::create([
-                'name'             => $problem['name'] ?? $code['name'],
-                'code'             => $code['code'],
-                'code_system_name' => $code['code_system_name'],
-            ]);
-        });
-        $insurance = collect($json->payers)->map(function ($payer) {
-            if (empty($payer->insurance)) {
-                return false;
+                return Problem::create(
+                    [
+                        'name'             => $problem['name'] ?? $code['name'],
+                        'code'             => $code['code'],
+                        'code_system_name' => $code['code_system_name'],
+                    ]
+                );
             }
+        );
+        $insurance = collect($json->payers)->map(
+            function ($payer) {
+                if (empty($payer->insurance)) {
+                    return false;
+                }
 
-            return implode($this->transformer->insurance($payer), ' - ');
-        })->filter();
+                return implode($this->transformer->insurance($payer), ' - ');
+            }
+        )->filter();
 
         $patient = $demographics->put('referring_provider_name', '');
 
@@ -108,15 +131,36 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
 
         $patient = $this->handleLastEncounter($patient, $json);
 
-        if (array_key_exists(0, $json->document->documentation_of)) {
-            $provider = $this->transformer->provider($json->document->documentation_of[0]);
-            $patient  = $patient->put('referring_provider_name', "{$provider['first_name']} {$provider['last_name']}");
+        $provider = collect($this->transformer->parseProviders($json->document, $json->demographics))
+            ->transform(
+                function ($p) {
+                    $p = $this->transformer->provider($p);
+                    if ( ! $p['first_name'] && ! $p['last_name']) {
+                        return false;
+                    }
+
+                    return $p;
+                }
+            )
+            ->filter()
+            ->values()
+            ->first();
+
+        if (is_array($provider) && array_key_exists('first_name', $provider) && array_key_exists(
+            'last_name',
+            $provider
+            )) {
+            $providerFullName = "{$provider['first_name']} {$provider['last_name']}";
+            $patient          = $patient->put('referring_provider_name', $providerFullName);
+        } else {
+            $providerFullName = '';
+            $patient          = $patient->put('referring_provider_name', $providerFullName);
         }
 
         $patient = $patient->put('problems', $problems);
 
         $patient = $this->handleInsurance($patient, $insurance);
-        
+
         $job = $this->createEligibilityJob($patient);
 
         $list = (new WelcomeCallListGenerator(
@@ -138,23 +182,11 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
             $this->ccda->status = Ccda::INELIGIBLE;
         }
 
-        $this->ccda->practice_id = $this->practice->id;
+        $this->ccda->referring_provider_name = $providerFullName;
+        $this->ccda->practice_id             = $this->practice->id;
         $this->ccda->save();
 
         return $this->ccda->status;
-    }
-    
-    private function createEligibilityJob($patient)
-    {
-        $mrn = $patient['mrn_number'] ?? $patient['mrn'] ?? '';
-        
-        $hash = $this->practice->name.$patient['first_name'].$patient['last_name'].$mrn.$patient['city'].$patient['state'].$patient['zip'];
-        
-        return EligibilityJob::create([
-                                          'batch_id' => $this->batch->id,
-                                          'hash'     => $hash,
-                                          'data'     => $patient,
-                                      ]);
     }
 
     private function handleInsurance($patient, Collection $insurance)

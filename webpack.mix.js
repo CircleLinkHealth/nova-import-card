@@ -145,4 +145,6 @@ allPublicFiles.forEach((fullPath) => {
     }
 
 });
-mix.version(toVersion);
+mix
+    .sourceMaps()
+    .version(toVersion);
