@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\TimeTracking\Entities;
 
 use CircleLinkHealth\TimeTracking\Entities\ActivityMeta;
-use App\BaseModel;
+use CircleLinkHealth\Core\Entities\BaseModel;
 use App\CcmTimeApiLog;
 use App\Scopes\Universal\DateScopesTrait;
 use Carbon\Carbon;

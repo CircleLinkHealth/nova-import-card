@@ -38,7 +38,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\ActivityMeta withoutTrashed()
  * @mixin \Eloquent
  */
-class ActivityMeta extends \App\BaseModel
+class ActivityMeta extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use SoftDeletes;
 

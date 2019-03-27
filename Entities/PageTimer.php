@@ -76,7 +76,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\PageTimer withoutTrashed()
  * @mixin \Eloquent
  */
-class PageTimer extends \App\BaseModel
+class PageTimer extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use DateScopesTrait, SoftDeletes;
 
