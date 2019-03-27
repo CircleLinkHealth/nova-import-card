@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\TwoFA\Entities;
 
-use App\BaseModel;
+use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\User;
 
 class AuthyUser extends BaseModel
