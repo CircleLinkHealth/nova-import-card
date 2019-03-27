@@ -29,7 +29,7 @@ namespace App\Importer\Models\ItemLogs;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemCodeLog whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class ProblemCodeLog extends \App\BaseModel
+class ProblemCodeLog extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     public $fillable = [
         'problem_code_system_id',

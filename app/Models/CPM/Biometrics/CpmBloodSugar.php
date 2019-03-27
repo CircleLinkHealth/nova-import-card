@@ -35,7 +35,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodSugar whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class CpmBloodSugar extends \App\BaseModel implements Biometric
+class CpmBloodSugar extends \CircleLinkHealth\Core\Entities\BaseModel implements Biometric
 {
     public static $messages = [
         'starting.max'     => 'The Starting Blood Sugar may not be greater than 3 characters.',

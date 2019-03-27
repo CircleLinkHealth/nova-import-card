@@ -49,7 +49,7 @@ use App\Models\CPM\CpmMedicationGroup;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\MedicationImport whereVendorId($value)
  * @mixin \Eloquent
  */
-class MedicationImport extends \App\BaseModel
+class MedicationImport extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $guarded = [];
 

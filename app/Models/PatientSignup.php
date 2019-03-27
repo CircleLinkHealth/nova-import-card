@@ -26,7 +26,7 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientSignup whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class PatientSignup extends \App\BaseModel
+class PatientSignup extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $fillable = [
         'name',

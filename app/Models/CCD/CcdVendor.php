@@ -47,7 +47,7 @@ use App\Traits\Relationships\MedicalRecordItemLoggerRelationships;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\CcdVendor whereVendorName($value)
  * @mixin \Eloquent
  */
-class CcdVendor extends \App\BaseModel
+class CcdVendor extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use MedicalRecordItemLoggerRelationships;
 

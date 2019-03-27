@@ -28,7 +28,7 @@ namespace App\Models\PatientData\Rappa;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\Rappa\RappaData whereProvider($value)
  * @mixin \Eloquent
  */
-class RappaData extends \App\BaseModel
+class RappaData extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     public $guarded = [];
 }

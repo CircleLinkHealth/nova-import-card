@@ -50,7 +50,7 @@ use App\Traits\Relationships\BelongsToVendor;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\DocumentLog whereVendorId($value)
  * @mixin \Eloquent
  */
-class DocumentLog extends \App\BaseModel implements ItemLog
+class DocumentLog extends \CircleLinkHealth\Core\Entities\BaseModel implements ItemLog
 {
     use BelongsToCcda,
         BelongsToVendor;

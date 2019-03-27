@@ -50,7 +50,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class Note extends \App\BaseModel implements PdfReport
+class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfReport
 {
     use Filterable, IsAddendumable,
         PdfReportTrait;

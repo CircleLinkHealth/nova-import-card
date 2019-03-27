@@ -26,7 +26,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class CpmMiscUser extends \App\BaseModel
+class CpmMiscUser extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use Instructable;
 

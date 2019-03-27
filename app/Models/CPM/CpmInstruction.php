@@ -22,7 +22,7 @@ namespace App\Models\CPM;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstruction whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class CpmInstruction extends \App\BaseModel
+class CpmInstruction extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $guarded = [];
 

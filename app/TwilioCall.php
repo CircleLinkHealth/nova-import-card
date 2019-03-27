@@ -6,6 +6,8 @@
 
 namespace App;
 
+use CircleLinkHealth\Core\Entities\BaseModel;
+
 /**
  * Structured twilio call logs.
  *

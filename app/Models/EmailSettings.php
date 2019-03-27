@@ -25,7 +25,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\EmailSettings whereUserId($value)
  * @mixin \Eloquent
  */
-class EmailSettings extends \App\BaseModel
+class EmailSettings extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     const DAILY  = 'daily';
     const MWF    = 'm/w/f';

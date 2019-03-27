@@ -33,7 +33,7 @@ use App\Services\MsgUI;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestions whereQtype($value)
  * @mixin \Eloquent
  */
-class CPRulesQuestions extends \App\BaseModel
+class CPRulesQuestions extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     public $timestamps = false;
 

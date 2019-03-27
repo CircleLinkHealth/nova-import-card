@@ -37,7 +37,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Allergy whereVendorId($value)
  * @mixin \Eloquent
  */
-class Allergy extends \App\BaseModel
+class Allergy extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $fillable = [
         'ccda_id',

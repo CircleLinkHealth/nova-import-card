@@ -25,7 +25,7 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CcmTimeApiLog whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class CcmTimeApiLog extends \App\BaseModel implements Transformable
+class CcmTimeApiLog extends \CircleLinkHealth\Core\Entities\BaseModel implements Transformable
 {
     use TransformableTrait;
 

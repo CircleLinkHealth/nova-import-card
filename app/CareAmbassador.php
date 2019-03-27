@@ -28,7 +28,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassador whereUserId($value)
  * @mixin \Eloquent
  */
-class CareAmbassador extends \App\BaseModel
+class CareAmbassador extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $fillable = [
         'user_id',

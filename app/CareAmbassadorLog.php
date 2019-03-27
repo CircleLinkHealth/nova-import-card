@@ -37,7 +37,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class CareAmbassadorLog extends \App\BaseModel
+class CareAmbassadorLog extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $fillable = [
         'enroller_id',

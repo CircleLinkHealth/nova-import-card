@@ -35,7 +35,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class ObservationMeta extends \App\BaseModel
+class ObservationMeta extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     /**
      * The attributes that are mass assignable.

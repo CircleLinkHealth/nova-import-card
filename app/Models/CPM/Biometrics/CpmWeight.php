@@ -31,7 +31,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmWeight whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class CpmWeight extends \App\BaseModel implements Biometric
+class CpmWeight extends \CircleLinkHealth\Core\Entities\BaseModel implements Biometric
 {
     public static $messages = [
         'starting.max' => 'The Starting Weight may not be greater than 999.',

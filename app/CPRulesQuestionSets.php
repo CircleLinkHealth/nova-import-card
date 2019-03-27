@@ -34,7 +34,7 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestionSets whereQsid($value)
  * @mixin \Eloquent
  */
-class CPRulesQuestionSets extends \App\BaseModel
+class CPRulesQuestionSets extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     public $timestamps = false;
 

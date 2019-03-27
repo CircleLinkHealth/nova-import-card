@@ -49,7 +49,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Medication whereVendorId($value)
  * @mixin \Eloquent
  */
-class Medication extends \App\BaseModel
+class Medication extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $fillable = [
         'ccda_id',

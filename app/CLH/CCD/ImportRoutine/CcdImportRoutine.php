@@ -26,7 +26,7 @@ use App\Models\CCD\CcdVendor;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\ImportRoutine\CcdImportRoutine whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class CcdImportRoutine extends \App\BaseModel
+class CcdImportRoutine extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $guarded = [];
 

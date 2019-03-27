@@ -54,7 +54,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereVendorId($value)
  * @mixin \Eloquent
  */
-class Problem extends \App\BaseModel implements \App\Contracts\Models\CCD\Problem
+class Problem extends \CircleLinkHealth\Core\Entities\BaseModel implements \App\Contracts\Models\CCD\Problem
 {
     use HasProblemCodes, SoftDeletes;
 

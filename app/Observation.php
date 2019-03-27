@@ -7,6 +7,7 @@
 namespace App;
 
 use App\Services\DatamonitorService;
+use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\User;
 
 class Observation extends BaseModel

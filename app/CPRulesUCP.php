@@ -24,7 +24,7 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP whereUserId($value)
  * @mixin \Eloquent
  */
-class CPRulesUCP extends \App\BaseModel
+class CPRulesUCP extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     public $timestamps = false;
 

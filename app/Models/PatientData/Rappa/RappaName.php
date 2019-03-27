@@ -40,7 +40,7 @@ namespace App\Models\PatientData\Rappa;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\Rappa\RappaName whereZip($value)
  * @mixin \Eloquent
  */
-class RappaName extends \App\BaseModel
+class RappaName extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     public $guarded = [];
 }

@@ -48,7 +48,7 @@ use App\Traits\Relationships\BelongsToVendor;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\AllergyLog whereVendorId($value)
  * @mixin \Eloquent
  */
-class AllergyLog extends \App\BaseModel implements ItemLog
+class AllergyLog extends \CircleLinkHealth\Core\Entities\BaseModel implements ItemLog
 {
     use BelongsToCcda,
         BelongsToVendor;

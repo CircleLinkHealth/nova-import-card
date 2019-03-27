@@ -21,7 +21,7 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItemMeta whereMetaValue($value)
  * @mixin \Eloquent
  */
-class CPRulesItemMeta extends \App\BaseModel
+class CPRulesItemMeta extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     public $timestamps = false;
 

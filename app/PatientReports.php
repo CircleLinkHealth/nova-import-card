@@ -6,6 +6,7 @@
 
 namespace App;
 
+use CircleLinkHealth\Core\Entities\BaseModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**

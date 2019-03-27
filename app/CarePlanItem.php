@@ -16,7 +16,7 @@ namespace App;
  * @property \App\CarePlanItem                                            $parents
  * @mixin \Eloquent
  */
-class CarePlanItem extends \App\BaseModel
+class CarePlanItem extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     public $timestamps = false;
 

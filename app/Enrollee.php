@@ -10,6 +10,7 @@ use App\Facades\StringManipulation;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Filters\Filterable;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 

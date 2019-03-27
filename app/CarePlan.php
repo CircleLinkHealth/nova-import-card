@@ -16,6 +16,7 @@ use App\Rules\HasAtLeast2CcmOr1BhiProblems;
 use App\Services\CareplanService;
 use App\Services\PdfService;
 use App\Traits\PdfReportTrait;
+use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;

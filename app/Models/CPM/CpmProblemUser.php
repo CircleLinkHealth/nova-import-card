@@ -18,7 +18,7 @@ namespace App\Models\CPM;
  * @property \App\Models\CPM\CpmInstruction $instruction
  * @mixin \Eloquent
  */
-class CpmProblemUser extends \App\BaseModel
+class CpmProblemUser extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use Instructable;
 

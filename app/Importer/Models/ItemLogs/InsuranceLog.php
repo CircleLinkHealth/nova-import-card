@@ -41,7 +41,7 @@ use App\Traits\Relationships\BelongsToVendor;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class InsuranceLog extends \App\BaseModel
+class InsuranceLog extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use BelongsToCcda,
         BelongsToVendor;

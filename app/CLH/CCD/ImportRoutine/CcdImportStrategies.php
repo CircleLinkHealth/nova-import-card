@@ -28,7 +28,7 @@ namespace App\CLH\CCD\ImportRoutine;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\ImportRoutine\CcdImportStrategies whereValidatorId($value)
  * @mixin \Eloquent
  */
-class CcdImportStrategies extends \App\BaseModel
+class CcdImportStrategies extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $guarded = [];
     protected $table   = 'ccd_import_routines_strategies';

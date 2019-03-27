@@ -40,7 +40,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class Message extends \App\BaseModel
+class Message extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $fillable = ['*'];
 

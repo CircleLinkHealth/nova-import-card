@@ -71,7 +71,7 @@ use App\Traits\Relationships\BelongsToVendor;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemLog whereVendorId($value)
  * @mixin \Eloquent
  */
-class ProblemLog extends \App\BaseModel implements ItemLog, Problem
+class ProblemLog extends \CircleLinkHealth\Core\Entities\BaseModel implements ItemLog, Problem
 {
     use BelongsToCcda,
         BelongsToVendor,

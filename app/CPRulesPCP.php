@@ -28,7 +28,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP whereStatus($value)
  * @mixin \Eloquent
  */
-class CPRulesPCP extends \App\BaseModel
+class CPRulesPCP extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     /**
      * The attributes that are mass assignable.

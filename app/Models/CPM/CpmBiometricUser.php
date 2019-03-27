@@ -36,7 +36,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometric whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class CpmBiometricUser extends \App\BaseModel
+class CpmBiometricUser extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $table = 'cpm_biometrics_users';
 

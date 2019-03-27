@@ -39,7 +39,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class CarePlanTemplate extends \App\BaseModel
+class CarePlanTemplate extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $fillable = ['program_id', 'display_name', 'type'];
 

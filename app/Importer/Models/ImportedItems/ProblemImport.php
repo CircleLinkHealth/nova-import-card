@@ -45,7 +45,7 @@ use App\Importer\Models\ItemLogs\ProblemLog;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\ProblemImport whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class ProblemImport extends \App\BaseModel
+class ProblemImport extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $guarded = [];
 

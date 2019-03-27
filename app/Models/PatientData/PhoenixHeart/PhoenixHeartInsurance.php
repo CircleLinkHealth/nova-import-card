@@ -24,6 +24,6 @@ namespace App\Models\PatientData\PhoenixHeart;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\PhoenixHeart\PhoenixHeartInsurance whereProcessed($value)
  * @mixin \Eloquent
  */
-class PhoenixHeartInsurance extends \App\BaseModel
+class PhoenixHeartInsurance extends \CircleLinkHealth\Core\Entities\BaseModel
 {
 }

@@ -6,6 +6,8 @@
 
 namespace App;
 
+use CircleLinkHealth\Core\Entities\BaseModel;
+
 /**
  * Represents a twilio voice recording.
  *

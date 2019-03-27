@@ -35,7 +35,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometric whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class CpmBiometric extends \App\BaseModel implements Serviceable
+class CpmBiometric extends \CircleLinkHealth\Core\Entities\BaseModel implements Serviceable
 {
     use Instructable;
 

@@ -28,6 +28,6 @@ namespace App\Models\PatientData\PhoenixHeart;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\PhoenixHeart\PhoenixHeartMedication whereStopReason($value)
  * @mixin \Eloquent
  */
-class PhoenixHeartMedication extends \App\BaseModel
+class PhoenixHeartMedication extends \CircleLinkHealth\Core\Entities\BaseModel
 {
 }

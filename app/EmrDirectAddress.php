@@ -25,7 +25,7 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EmrDirectAddress whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class EmrDirectAddress extends \App\BaseModel
+class EmrDirectAddress extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     public $fillable = [
         'emrDirectable_type',

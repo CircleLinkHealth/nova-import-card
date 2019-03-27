@@ -30,7 +30,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class Addendum extends \App\BaseModel
+class Addendum extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $fillable = [
         'addendumable_type',

@@ -35,7 +35,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \App\CarePlan|null $carePlan
  * @mixin \Eloquent
  */
-class CareplanAssessment extends \App\BaseModel
+class CareplanAssessment extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     public function approver()
     {

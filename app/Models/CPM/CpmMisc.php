@@ -33,7 +33,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class CpmMisc extends \App\BaseModel implements Serviceable
+class CpmMisc extends \CircleLinkHealth\Core\Entities\BaseModel implements Serviceable
 {
     use Instructable;
 

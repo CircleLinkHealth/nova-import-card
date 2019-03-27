@@ -30,7 +30,7 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\SnomedToICD9Map whereSnomedName($value)
  * @mixin \Eloquent
  */
-class SnomedToICD9Map extends \App\BaseModel
+class SnomedToICD9Map extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     public $timestamps = false;
     protected $table   = 'snomed_to_icd9_map';

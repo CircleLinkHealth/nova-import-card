@@ -10,7 +10,7 @@ use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 
-class ChargeableService extends \App\BaseModel
+class ChargeableService extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     /**
      * When a Patient consents to receive Care from CLH, they consent to these Chargeable Services, if consent date is

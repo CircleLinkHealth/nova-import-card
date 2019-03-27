@@ -52,7 +52,7 @@ namespace App\Models\PatientData\LGH;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\LGH\LGHInsurance whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class LGHInsurance extends \App\BaseModel
+class LGHInsurance extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $guarded = [];
     protected $table   = 'lgh_insurance';

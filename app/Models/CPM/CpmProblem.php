@@ -49,7 +49,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class CpmProblem extends \App\BaseModel implements Serviceable
+class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel implements Serviceable
 {
     use Instructable;
 

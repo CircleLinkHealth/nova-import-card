@@ -38,7 +38,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Pdf withoutTrashed()
  * @mixin \Eloquent
  */
-class Pdf extends \App\BaseModel
+class Pdf extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use SoftDeletes;
 

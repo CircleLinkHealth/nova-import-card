@@ -25,7 +25,7 @@ use App\Models\CPM\CpmMedicationGroup;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\MedicationGroupsMap whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class MedicationGroupsMap extends \App\BaseModel
+class MedicationGroupsMap extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $fillable = [
         'keyword',

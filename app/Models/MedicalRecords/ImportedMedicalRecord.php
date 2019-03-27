@@ -62,7 +62,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\MedicalRecords\ImportedMedicalRecord withoutTrashed()
  * @mixin \Eloquent
  */
-class ImportedMedicalRecord extends \App\BaseModel implements ImportedMedicalRecordInterface
+class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel implements ImportedMedicalRecordInterface
 {
     /**
      * An option in validation_checks

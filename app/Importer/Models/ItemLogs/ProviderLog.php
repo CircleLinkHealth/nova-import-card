@@ -73,7 +73,7 @@ use App\Traits\Relationships\BelongsToVendor;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProviderLog whereZip($value)
  * @mixin \Eloquent
  */
-class ProviderLog extends \App\BaseModel implements ItemLog
+class ProviderLog extends \CircleLinkHealth\Core\Entities\BaseModel implements ItemLog
 {
     use BelongsToCcda,
         BelongsToVendor;

@@ -41,7 +41,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\ProblemCode withoutTrashed()
  * @mixin \Eloquent
  */
-class ProblemCode extends \App\BaseModel
+class ProblemCode extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use SoftDeletes;
 

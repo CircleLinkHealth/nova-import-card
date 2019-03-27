@@ -58,7 +58,7 @@ namespace App\Models\PatientData\PhoenixHeart;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\PhoenixHeart\PhoenixHeartName whereZip($value)
  * @mixin \Eloquent
  */
-class PhoenixHeartName extends \App\BaseModel
+class PhoenixHeartName extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     public $timestamps = false;
     protected $guarded = [];

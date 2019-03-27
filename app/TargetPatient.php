@@ -6,6 +6,7 @@
 
 namespace App;
 
+use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\Ehr;
 use CircleLinkHealth\Customer\Entities\User;
 

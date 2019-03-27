@@ -20,7 +20,7 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers whereValue($value)
  * @mixin \Eloquent
  */
-class CPRulesAnswers extends \App\BaseModel
+class CPRulesAnswers extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     public $timestamps = false;
 

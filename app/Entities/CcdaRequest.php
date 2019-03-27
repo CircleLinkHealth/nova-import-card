@@ -37,7 +37,7 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Entities\CcdaRequest whereVendor($value)
  * @mixin \Eloquent
  */
-class CcdaRequest extends \App\BaseModel implements Transformable
+class CcdaRequest extends \CircleLinkHealth\Core\Entities\BaseModel implements Transformable
 {
     use TransformableTrait;
 

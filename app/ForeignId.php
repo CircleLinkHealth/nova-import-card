@@ -37,7 +37,7 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ForeignId whereUserId($value)
  * @mixin \Eloquent
  */
-class ForeignId extends \App\BaseModel implements Transformable
+class ForeignId extends \CircleLinkHealth\Core\Entities\BaseModel implements Transformable
 {
     use TransformableTrait;
 

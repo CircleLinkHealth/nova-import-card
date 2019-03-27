@@ -23,7 +23,7 @@ namespace App\Models\CPM;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class CpmInstructable extends \App\BaseModel
+class CpmInstructable extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $table = 'instructables';
 

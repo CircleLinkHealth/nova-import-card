@@ -7,6 +7,7 @@
 namespace App;
 
 use App\Services\WelcomeCallListGenerator;
+use CircleLinkHealth\Core\Entities\BaseModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class EligibilityJob extends BaseModel

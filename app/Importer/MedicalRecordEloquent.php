@@ -29,7 +29,7 @@ use App\Traits\Relationships\MedicalRecordItemLoggerRelationships;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Collection;
 
-abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRecord
+abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\BaseModel implements MedicalRecord
 {
     use MedicalRecordItemLoggerRelationships;
 

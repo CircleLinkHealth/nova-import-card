@@ -11,7 +11,7 @@ namespace App\Models\PatientData\RockyMountain;
  *
  * @mixin \Eloquent
  */
-class RockyData extends \App\BaseModel
+class RockyData extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $guarded = [];
 }

@@ -29,7 +29,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmSmoking whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class CpmSmoking extends \App\BaseModel implements Biometric
+class CpmSmoking extends \CircleLinkHealth\Core\Entities\BaseModel implements Biometric
 {
     public static $messages = [
         'starting.max' => 'The Starting Blood Sugar may not be greater than 999.',

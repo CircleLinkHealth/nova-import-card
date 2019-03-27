@@ -37,7 +37,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class CpmBloodPressure extends \App\BaseModel implements Biometric
+class CpmBloodPressure extends \CircleLinkHealth\Core\Entities\BaseModel implements Biometric
 {
     public static $messages = [
         'systolic_high_alert.max'  => 'The Systolic Blood Pressure High Alert may not be greater than 999.',

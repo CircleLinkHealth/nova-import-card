@@ -83,7 +83,7 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\DemographicsImport whereZip($value)
  * @mixin \Eloquent
  */
-class DemographicsImport extends \App\BaseModel implements Transformable
+class DemographicsImport extends \CircleLinkHealth\Core\Entities\BaseModel implements Transformable
 {
     use BelongsToCcda,
         TransformableTrait;

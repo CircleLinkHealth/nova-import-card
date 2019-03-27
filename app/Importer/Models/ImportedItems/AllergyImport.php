@@ -37,7 +37,7 @@ use App\Importer\Models\ItemLogs\AllergyLog;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\AllergyImport whereVendorId($value)
  * @mixin \Eloquent
  */
-class AllergyImport extends \App\BaseModel
+class AllergyImport extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $guarded = [];
 

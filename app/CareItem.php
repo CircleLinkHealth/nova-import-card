@@ -43,7 +43,7 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class CareItem extends \App\BaseModel
+class CareItem extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     /**
      * The attributes that are mass assignable.

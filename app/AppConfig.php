@@ -22,7 +22,7 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\AppConfig whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class AppConfig extends \App\BaseModel
+class AppConfig extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     public $timestamps = true;
 

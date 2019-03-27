@@ -39,7 +39,7 @@ use App\Models\CPM\CpmProblem;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToCpmIcdMap whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class SnomedToCpmIcdMap extends \App\BaseModel
+class SnomedToCpmIcdMap extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $guarded = [];
 

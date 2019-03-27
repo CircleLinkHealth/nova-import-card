@@ -42,7 +42,7 @@ namespace App\Models\PatientData\Rappa;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\Rappa\RappaInsAllergy whereZip($value)
  * @mixin \Eloquent
  */
-class RappaInsAllergy extends \App\BaseModel
+class RappaInsAllergy extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     public $guarded = [];
 }

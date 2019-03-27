@@ -54,7 +54,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereUserId($value)
  * @mixin \Eloquent
  */
-class Comment extends \App\BaseModel
+class Comment extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $dates = ['comment_date', 'comment_date_gmt'];
 

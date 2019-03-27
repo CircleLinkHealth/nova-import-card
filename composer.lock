@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5a480aba9e391ee9e8398ada7da5f317",
+    "content-hash": "0eda8abdb64e7c03485be7895ff2a014",
     "packages": [
         {
             "name": "amnuts/opcache-gui",
@@ -262,16 +262,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.90.9",
+            "version": "3.90.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "b9d93ad14a504a0833bdafa2e80c9bd90d6cf47a"
+                "reference": "59ffa2a23553dfc4ed5a4f609377bd1881370ad6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/b9d93ad14a504a0833bdafa2e80c9bd90d6cf47a",
-                "reference": "b9d93ad14a504a0833bdafa2e80c9bd90d6cf47a",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/59ffa2a23553dfc4ed5a4f609377bd1881370ad6",
+                "reference": "59ffa2a23553dfc4ed5a4f609377bd1881370ad6",
                 "shasum": ""
             },
             "require": {
@@ -340,7 +340,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2019-03-25T18:17:43+00:00"
+            "time": "2019-03-26T18:29:19+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -551,7 +551,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-raygun.git",
-                "reference": "e2b3376b32a3b534468d0767656d2abe33ad990b"
+                "reference": "f501177c5eb002da27355636b8c4c7667e0cc533"
             },
             "require": {
                 "illuminate/contracts": "^5.0",
@@ -578,7 +578,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-03-16T16:35:30+00:00"
+            "time": "2019-03-26T15:54:56+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking",
@@ -11602,10 +11602,10 @@
         "lynx39/lara-pdf-merger": 20,
         "michalisantoniou6/laravel-cerberus": 20,
         "prettus/l5-repository": 20,
-        "venturecraft/revisionable": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
-        "xethron/migrations-generator": 20
+        "xethron/migrations-generator": 20,
+        "venturecraft/revisionable": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
