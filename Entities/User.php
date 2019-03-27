@@ -16,7 +16,7 @@ use App\Constants;
 use App\Contracts\Serviceable;
 use App\Exceptions\InvalidArgumentException;
 use App\Facades\StringManipulation;
-use App\Filters\Filterable;
+use CircleLinkHealth\Core\Filters\Filterable;
 use App\ForeignId;
 use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Message;

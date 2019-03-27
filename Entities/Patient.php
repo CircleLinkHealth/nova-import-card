@@ -10,7 +10,7 @@ use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use App\Call;
 use CircleLinkHealth\Customer\Entities\Family;
-use App\Filters\Filterable;
+use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use Carbon\Carbon;

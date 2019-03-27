@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Customer\Entities;
 
 use CircleLinkHealth\TimeTracking\Entities\Activity;
-use App\Filters\Filterable;
+use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Customer\Entities\Holiday;
 use CircleLinkHealth\Customer\Entities\WorkHours;
 use App\Traits\MakesOrReceivesCalls;
