@@ -61,9 +61,9 @@ class ProviderReportService
 
         $report = $this->patient->providerReports()->updateOrCreate(
             [
-                'hra_instance_id'           => $this->hraInstance->id,
-                'vitals_instance_id'        => $this->vitalsInstance->id,
-            ],[
+                'hra_instance_id'    => $this->hraInstance->id,
+                'vitals_instance_id' => $this->vitalsInstance->id,
+            ], [
                 'reason_for_visit'          => $reasonForVisit,
                 'demographic_data'          => $this->getDemographicData(),
                 'allergy_history'           => $this->getAllergyHistory(),
@@ -108,7 +108,7 @@ class ProviderReportService
     private function getAllergyHistory()
     {
         return [
-            'allergies' => $this->answerForHraQuestionWithOrder(21)
+            'allergies' => $this->answerForHraQuestionWithOrder(21),
         ];
     }
 
@@ -127,7 +127,7 @@ class ProviderReportService
     private function getMedicationHistory()
     {
         return [
-            'medications' => $this->answerForHraQuestionWithOrder(20)
+            'medications' => $this->answerForHraQuestionWithOrder(20),
         ];
     }
 
@@ -146,15 +146,15 @@ class ProviderReportService
 
         $immunizationHistory = [];
 
-        $immunizationHistory['influenza']          = $this->answerForHraQuestionWithOrder(26);
-        $immunizationHistory['diphtheria_tetanus'] = $this->answerForHraQuestionWithOrder(27);
-        $immunizationHistory['tdap_booster']       = $this->answerForHraQuestionWithOrder(28);
-        $immunizationHistory['varicella']          = $this->answerForHraQuestionWithOrder(29);
-        $immunizationHistory['hepatitis_b']        = $this->answerForHraQuestionWithOrder(30);
-        $immunizationHistory['mmr']                = $this->answerForHraQuestionWithOrder(31);
-        $immunizationHistory['hpv']                = $this->answerForHraQuestionWithOrder(32);
-        $immunizationHistory['shingles']           = $this->answerForHraQuestionWithOrder(33);
-        $immunizationHistory['pneumococcal']       = $this->answerForHraQuestionWithOrder(34);
+        $immunizationHistory['Influenza']                = $this->answerForHraQuestionWithOrder(26);
+        $immunizationHistory['Diphtheria/Tetanus']       = $this->answerForHraQuestionWithOrder(27);
+        $immunizationHistory['TDaP Booster']             = $this->answerForHraQuestionWithOrder(28);
+        $immunizationHistory['Varicella']                = $this->answerForHraQuestionWithOrder(29);
+        $immunizationHistory['Hepatitis B']              = $this->answerForHraQuestionWithOrder(30);
+        $immunizationHistory['MMR']                      = $this->answerForHraQuestionWithOrder(31);
+        $immunizationHistory['HPV']                      = $this->answerForHraQuestionWithOrder(32);
+        $immunizationHistory['Shingles (herpes zoster)'] = $this->answerForHraQuestionWithOrder(33);
+        $immunizationHistory['Pneumococcal']             = $this->answerForHraQuestionWithOrder(34);
 
         return $immunizationHistory;
     }
@@ -229,59 +229,65 @@ class ProviderReportService
 
     }
 
-    private function getSexualActivity(){
+    private function getSexualActivity()
+    {
         $sexualActivity = [];
 
-        $sexualActivity['active'] = $this->answerForHraQuestionWithOrder(15);
+        $sexualActivity['active']            = $this->answerForHraQuestionWithOrder(15);
         $sexualActivity['multiple_partners'] = $this->answerForHraQuestionWithOrder(15, 'a');
-        $sexualActivity['safe_sex'] = $this->answerForHraQuestionWithOrder(15, 'b');
+        $sexualActivity['safe_sex']          = $this->answerForHraQuestionWithOrder(15, 'b');
 
         return $sexualActivity;
     }
 
-    private function getExerciseActivityLevels(){
+    private function getExerciseActivityLevels()
+    {
 
         return [
-            'frequency' => $this->answerForHraQuestionWithOrder(14)
+            'frequency' => $this->answerForHraQuestionWithOrder(14),
         ];
     }
 
-    private function getFunctionalCapacity(){
+    private function getFunctionalCapacity()
+    {
         $functionalCapacity = [];
 
-        $functionalCapacity['needs_help'] = $this->answerForHraQuestionWithOrder(23);
+        $functionalCapacity['needs_help']      = $this->answerForHraQuestionWithOrder(23);
         $functionalCapacity['have_assistance'] = $this->answerForHraQuestionWithOrder(23, 'a');
-        $functionalCapacity['for_tasks'] = $this->answerForHraQuestionWithOrder(26);
+        $functionalCapacity['for_tasks']       = $this->answerForHraQuestionWithOrder(26);
 
         //revisit
         $functionalCapacity['mci_cognitive'] = $this->answerForVitalsQuestionWithOrder(5, 'c');
 
-        $functionalCapacity['has_fallen'] = $this->answerForHraQuestionWithOrder(24);
+        $functionalCapacity['has_fallen']         = $this->answerForHraQuestionWithOrder(24);
         $functionalCapacity['hearing_difficulty'] = $this->answerForHraQuestionWithOrder(25);
 
         return $functionalCapacity;
     }
 
-    private function getCurrentProviders(){
+    private function getCurrentProviders()
+    {
         return [
-            'providers' => $this->answerForHraQuestionWithOrder(43)
+            'providers' => $this->answerForHraQuestionWithOrder(43),
         ];
     }
 
-    private function getAdvancedCarePlanning(){
+    private function getAdvancedCarePlanning()
+    {
 
         $advancedCarePlanning = [];
 
-        $advancedCarePlanning['has_attorney'] = $this->answerForHraQuestionWithOrder(44);
-        $advancedCarePlanning['living_will'] = $this->answerForHraQuestionWithOrder(45);
+        $advancedCarePlanning['has_attorney']  = $this->answerForHraQuestionWithOrder(44);
+        $advancedCarePlanning['living_will']   = $this->answerForHraQuestionWithOrder(45);
         $advancedCarePlanning['existing_copy'] = $this->answerForHraQuestionWithOrder(45, 'a');
 
         return $advancedCarePlanning;
     }
 
-    private function getSpecificPatientRequests(){
+    private function getSpecificPatientRequests()
+    {
         return [
-            'requests' => $this->answerForHraQuestionWithOrder(46)
+            'requests' => $this->answerForHraQuestionWithOrder(46),
         ];
     }
 
