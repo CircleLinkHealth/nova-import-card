@@ -38,12 +38,8 @@ class ProviderReportService
         $this->date    = Carbon::parse($date);
 
 
-        $this->hraInstance    = $this->patient->surveyInstances->where('survey', function ($s) {
-            $s->where('name', Survey::HRA);
-        });
-        $this->vitalsInstance = $this->patient->surveyInstances->where('survey', function ($s) {
-            $s->where('name', Survey::VITALS);
-        });
+        $this->hraInstance    = $this->patient->surveyInstances->where('survey.name', Survey::HRA)->first();
+        $this->vitalsInstance = $this->patient->surveyInstances->where('survey.name', Survey::VITALS)->first();
 
         $this->hraQuestions    = $this->hraInstance->questions;
         $this->vitalsQuestions = $this->vitalsInstance->questions;
@@ -72,7 +68,7 @@ class ProviderReportService
                 'family_medical_history'    => $this->getFamilyMedicalHistory(),
                 'immunization_history'      => $this->getImmunizationHistory(),
                 'screenings'                => $this->getScreenings(),
-                'mental_state',
+                'mental_state'              => $this->getMentalState(),
                 'vitals'                    => $this->getVitals(),
                 'diet'                      => $this->getDiet(),
                 'social_factors'            => $this->getSocialFactors(),
@@ -175,6 +171,24 @@ class ProviderReportService
         return $screenings;
     }
 
+    private function getMentalState(){
+
+        $phq2scores = [
+            'Not at all' => 0,
+            'Several days' => 1,
+            'More than half the days' => 2,
+            'Nearly every day' => 3
+        ];
+
+        $answer1 = $this->answerForHraQuestionWithOrder(22, '1');
+        $answer2 = $this->answerForHraQuestionWithOrder(22, '2');
+
+        //add check
+        return [
+          'depression_score' => $phq2scores[$answer1] + $phq2scores[$answer2]
+        ];
+    }
+
     private function getVitals()
     {
 
@@ -242,7 +256,6 @@ class ProviderReportService
 
     private function getExerciseActivityLevels()
     {
-
         return [
             'frequency' => $this->answerForHraQuestionWithOrder(14),
         ];
@@ -286,50 +299,52 @@ class ProviderReportService
 
     private function getSpecificPatientRequests()
     {
-        return [
-            'requests' => $this->answerForHraQuestionWithOrder(46),
-        ];
+        //todo:fix tangy
+        return $this->answerForHraQuestionWithOrder(46)[0];
     }
 
     private function answerForHraQuestionWithOrder($order, $subOrder = null)
     {
+        $question = $this->hraQuestions->where('pivot.order', $order)->where('pivot.sub_order', $subOrder)->first();
 
-        $question = $this->hraQuestions->where('surveyInstance', function ($instance) use ($order, $subOrder){
-            $instance->where('order', $order)
-                //change, see if we can use when
-                     ->where('sub_order', $subOrder);
-        });
+        $answer = $this->hraAnswers->where('question_id', $question->id)->first();
 
-        $answer = $this->hraAnswers->where('question_id', $question->id);
-
-
-        return [
-            is_json($answer->value_1)
+        return
+            $this->isJson($answer->value_1)
                 ? json_decode($answer->value_1)
-                : $answer->value_1,
-            $answer->value_2,
-        ];
-
+                : $answer->value_1;
     }
 
 
     private function answerForVitalsQuestionWithOrder($order, $subOrder = null)
     {
+        $question = $this->vitalsQuestions->where('pivot.order', $order)->where('pivot.sub_order', $subOrder)->first();
 
-        $question = $this->vitalsQuestions->where('surveyInstance', function ($instance) use ($order, $subOrder){
-            $instance->where('order', $order)
-                //change, see if we can use when
-                     ->where('sub_order', $subOrder);
-        });
+        $answer = $this->vitalsAnswers->where('question_id', $question->id)->first();
 
-        $answer = $this->vitalsAnswers->where('question_id', $question->id);
+        if(! $answer){
+            echo $question->id;
+        }
 
         return [
-            is_json($answer->value_1)
+            $this->isJson($answer->value_1)
                 ? json_decode($answer->value_1)
                 : $answer->value_1,
             $answer->value_2,
         ];
 
+    }
+
+    private function isJson($string){
+        if ('' === $string || ! is_string($string)) {
+            return null;
+        }
+
+        \json_decode($string);
+        if (\json_last_error()) {
+            return false;
+        }
+
+        return true;
     }
 }

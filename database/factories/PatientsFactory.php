@@ -1,7 +1,7 @@
 <?php
 
-use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\Customer\Entities\User;
+use App\Patient;
+use App\User;
 use Faker\Generator as Faker;
 
 $factory->define(Patient::class, function (Faker $faker) {

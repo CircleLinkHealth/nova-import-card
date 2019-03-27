@@ -1,19 +1,17 @@
-<head>
-
-</head>
-<body>
-<div>
+@include('surveysMaster')
+@section('content')
+<div class="container">
     <div>
         <h3>Patient</h3>
         <hr>
     </div>
     <div>
         Patient Name: {{$patient->display_name}} <br>
-        Date of Birth: {{$patient->getDob()}} <br>
-        Age: {{$patient->getAge()}} <br>
-        Address: {{$patient->getAddress()}} <br>
-        City, State, Zip: {{$patient->getCityStateZip()}} <br>
-        Provider: {{$patient->getProviderName()}}
+        Date of Birth: {{$patient->patientInfo->birth_date}} <br>
+        Age: TEST} <br>
+        Address: TEST <br>
+        City, State, Zip: TEST <br>
+        Provider: TEST
         <hr>
     </div>
     <div>
@@ -44,7 +42,9 @@
             The patient has reported allergies to the following:
             @if($report->allergy_history['allergies'])
                 @foreach($report->allergy_history['allergies'] as $allergy)
-                    {{$allergy}},
+                    @if($allergy['name'])
+                    {{$allergy['name']}},
+                    @endif
                 @endforeach()
                 .
             @else
@@ -61,12 +61,12 @@
             The patient has indicated having the following conditions:
             @if($report->medical_history['conditions'] && $report->medical_history['other_conditions'])
                 @foreach($report->medical_history['conditions'] as $condition)
-                    {{$condition}},
+                    {{$condition['name']}}, {{$condition['type']}}
                 @endforeach()
                 .
                 The patient has also reported
                 @foreach($report->medical_history['other_conditions'] as $otherCondition)
-                    {{$otherCondition}},
+                    {{$otherCondition['name']}},
                 @endforeach
                 .
             @else
@@ -84,7 +84,7 @@
 
             @if($report->medication_history['medications'])
                 @foreach($report->medication_history['medications'] as $medication)
-                    {{$medication['dose']}}, {{$medication['name']}}, {{$medication['frequency']}}
+                    {{$medication['dose']}}, {{$medication['drug']}}, {{$medication['frequency']}}
                 @endforeach()
                 .
             @else
@@ -102,7 +102,7 @@
 
             @if($report->family_medical_history['family_conditions'])
                 @foreach($report->family_medical_history['family_conditions'] as $condition)
-                    {{$condition['name']}} in {{$condition['family_member']}},
+                    {{$condition['name']}} in TODO
                 @endforeach()
                 .
             @else
@@ -135,4 +135,4 @@
         <hr>
     </div>
 </div>
-</body>
+@endsection

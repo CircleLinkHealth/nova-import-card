@@ -1,7 +1,7 @@
 <?php
 
 use Faker\Generator as Faker;
-use CircleLinkHealth\Customer\Entities\User;
+use App\User;
 /*
 |--------------------------------------------------------------------------
 | Model Factories

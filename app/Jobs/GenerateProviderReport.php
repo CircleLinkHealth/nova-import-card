@@ -6,7 +6,7 @@ use App\ProviderReport;
 use App\Services\ProviderReportService;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\User;
+use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -57,12 +57,10 @@ class GenerateProviderReport implements ShouldQueue
     {
         //check if it has a report already with those instances
         $existingReport = ProviderReport::whereHas('hraSurveyInstance', function ($hra) {
-            $hra->forDate($this->date)
-                ->isCompleted();
+            $hra->forDate($this->date);
         })
                                         ->whereHas('vitalsSurveyInstance', function ($hra) {
-                                            $hra->forDate($this->date)
-                                                ->isCompleted();
+                                            $hra->forDate($this->date);
                                         })
                                         ->where('patient_id', $this->patientId)
                                         ->first();

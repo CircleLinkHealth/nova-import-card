@@ -17,6 +17,7 @@ class SurveyInstanceObserver
     public function saved(SurveyInstance $instance)
     {
 
+        $x =1;
         if ($instance->pivot->status === SurveyInstance::COMPLETED) {
             $otherInstance = SurveyInstance::isCompleted()
                                            ->where('user_id', $instance->user_id)

@@ -193,7 +193,7 @@ class UserSurveyTest extends TestCase
     {
         parent::setUp();
 
-        $this->faker = $faker = Factory::create();
+        $this->faker = Factory::create();
 
         $this->date = Carbon::now();
 
