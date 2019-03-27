@@ -10,6 +10,10 @@
     "repositories": [
         {
             "type": "git",
+            "url": "git@github.com:CircleLinkHealth/module-core.git"
+        },
+        {
+            "type": "git",
             "url": "git@github.com:CircleLinkHealth/module-raygun.git"
         },
         {
@@ -26,6 +30,7 @@
         }
     ],
     "require": {
+        "circlelinkhealth/core": "dev-master",
         "circlelinkhealth/customer": "dev-master",
         "circlelinkhealth/raygun": "dev-master",
         "circlelinkhealth/timetracking": "dev-master",
