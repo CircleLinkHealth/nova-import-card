@@ -216,8 +216,7 @@
                 const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
                 if (this.pagination) {
                     return rootUrl(`api/patients?page=${this.$refs.tblPatientList.page}&rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}`)
-                }
-                else {
+                } else {
                     return rootUrl(`api/patients?rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}`)
                 }
             },
@@ -237,8 +236,7 @@
             toggleProgramColumn() {
                 if (this.columns.indexOf('program') >= 0) {
                     this.columns.splice(this.columns.indexOf('program'), 1)
-                }
-                else {
+                } else {
                     this.columns.splice(2, 0, 'program')
                 }
             },
@@ -254,8 +252,7 @@
                     this.tableData.forEach(patient => {
                         if (patient.lastName && patient.firstName) patient.name = patient.firstName + ' ' + patient.lastName
                     })
-                }
-                else {
+                } else {
                     this.tableData.forEach(patient => {
                         if (patient.lastName && patient.firstName) patient.name = patient.lastName + ', ' + patient.firstName
                     })
@@ -310,6 +307,10 @@
                         this.tokens.next = c
                     })
                 }).then(response => {
+                    if(!response){
+                        //request was cancelled
+                        return;
+                    }
                     console.log('patient-list', response.data)
                     const pagination = response.data
                     const ids = this.tableData.map(patient => patient.id)
@@ -388,8 +389,7 @@
                             i: arr.length + index + 1,
                             id: arr.length + index
                         }, filterData))]
-                    }
-                    else {
+                    } else {
                         const from = ((this.pagination || {}).from || 0)
                         const to = ((this.pagination || {}).to || 0)
 
@@ -402,18 +402,22 @@
                                     patient.i = (i + 1)
                                     counterIndex += 1
                                     return patient
-                                }
-                                else return Object.assign({}, filterData, row)
-                            }
-                            else {
+                                } else return Object.assign({}, filterData, row)
+                            } else {
                                 return Object.assign({}, filterData, row)
                             }
                         })
                     }
                     setTimeout(() => {
-                        this.$refs.tblPatientList.count = this.pagination.total
-                        this.loaders.next = false
-                    }, 1000)
+                        if (this.pagination) {
+                            this.$refs.tblPatientList.count = this.pagination.total;
+                        } else {
+                            this.$refs.tblPatientList.count = 0;
+                        }
+                        this.loaders.next = false;
+                    }, 1000);
+
+                    return filterData;
                 }).catch(err => {
                     console.error('patient-list', err)
                     this.loaders.next = false

@@ -68,6 +68,8 @@ class PracticeInvoice extends Notification implements ShouldQueue
      *
      * @param mixed $notifiable
      *
+     * @throws \Exception
+     *
      * @return PracticeInvoiceMailable
      */
     public function toMail($notifiable)
