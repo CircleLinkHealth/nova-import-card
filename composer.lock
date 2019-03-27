@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "84319ad0570cbf28166c9534b77a32f7",
+    "content-hash": "bab2224753fba2a279fa4531083c643b",
     "packages": [
         {
             "name": "authy/php",
@@ -53,12 +53,46 @@
             "time": "2018-09-06T20:10:54+00:00"
         },
         {
+            "name": "circlelinkhealth/core",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/module-core.git",
+                "reference": "2c72e8ba5ffe31706b3e6aa61518b389a16a09d6"
+            },
+            "require": {
+                "spiritix/lada-cache": "^2.1",
+                "venturecraft/revisionable": "dev-master"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\Core\\Providers\\CoreServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\Core\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@cirlelinkhealth.com"
+                }
+            ],
+            "time": "2019-03-27T03:09:14+00:00"
+        },
+        {
             "name": "circlelinkhealth/customer",
             "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "5cc371aa36155732eea952160ab10464534450e4"
+                "reference": "ce495806c907833f718da44d13a3902eefe57796"
             },
             "type": "library",
             "extra": {
@@ -80,7 +114,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-03-26T12:31:38+00:00"
+            "time": "2019-03-27T03:21:54+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
@@ -123,7 +157,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "b935ddfc9fdb1f80662a929ef6e56ccfed13d2b2"
+                "reference": "89d3fb431bb1b50496a6afa4826be4f6624523be"
             },
             "type": "library",
             "extra": {
@@ -145,7 +179,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-03-26T11:43:18+00:00"
+            "time": "2019-03-27T03:21:53+00:00"
         },
         {
             "name": "circlelinkhealth/twofa",
@@ -153,7 +187,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "da4dbac21e1b7510ee5019e1dbadd516bfbbbff4"
+                "reference": "06803f52ea858fd999f23b6d4e00707293b17ac6"
             },
             "require": {
                 "authy/php": "^3.0"
@@ -178,7 +212,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-03-25T12:09:57+00:00"
+            "time": "2019-03-27T03:21:54+00:00"
         },
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -2565,6 +2599,67 @@
             "time": "2018-07-19T23:38:55+00:00"
         },
         {
+            "name": "spiritix/lada-cache",
+            "version": "v2.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spiritix/lada-cache.git",
+                "reference": "189dd9e7f2cf3a437622288f49ab12eb834a69c1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spiritix/lada-cache/zipball/189dd9e7f2cf3a437622288f49ab12eb834a69c1",
+                "reference": "189dd9e7f2cf3a437622288f49ab12eb834a69c1",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": "~5.1",
+                "illuminate/redis": "~5.1",
+                "illuminate/support": "~5.1",
+                "php": ">=5.6.4",
+                "predis/predis": "~1.0"
+            },
+            "require-dev": {
+                "codeclimate/php-test-reporter": "dev-master",
+                "laracasts/testdummy": "~2.3",
+                "orchestra/database": "~3.1",
+                "orchestra/testbench": "~3.0",
+                "phpunit/phpunit": "~5.0"
+            },
+            "suggest": {
+                "barryvdh/laravel-debugbar": "Provides debug information about the cache",
+                "ext-phpiredis": "Allows faster serialization and deserialization of the Redis protocol"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Spiritix\\LadaCache\\": "src/Spiritix/LadaCache/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Matthias Isler",
+                    "email": "mi@matthias-isler.ch"
+                }
+            ],
+            "description": "A Redis based, automated and scalable database caching layer for Laravel 5.1+",
+            "keywords": [
+                "cache",
+                "caching",
+                "database",
+                "eloquent",
+                "laravel",
+                "model",
+                "php",
+                "redis"
+            ],
+            "time": "2018-05-14T12:40:22+00:00"
+        },
+        {
             "name": "swiftmailer/swiftmailer",
             "version": "v6.2.0",
             "source": {
@@ -3791,6 +3886,57 @@
                 "twilio"
             ],
             "time": "2019-03-15T20:38:12+00:00"
+        },
+        {
+            "name": "venturecraft/revisionable",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/VentureCraft/revisionable.git",
+                "reference": "1e751eee1190b9297b8f34c5d76e1801263c11ad"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/VentureCraft/revisionable/zipball/1e751eee1190b9297b8f34c5d76e1801263c11ad",
+                "reference": "1e751eee1190b9297b8f34c5d76e1801263c11ad",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "~4.0|~5.0|~5.1",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "~3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/migrations"
+                ],
+                "psr-0": {
+                    "Venturecraft\\Revisionable": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Chris Duell",
+                    "email": "me@chrisduell.com"
+                }
+            ],
+            "description": "Keep a revision history for your models without thinking, created as a package for use with Laravel",
+            "homepage": "http://github.com/venturecraft/revisionable",
+            "keywords": [
+                "ardent",
+                "history",
+                "laravel",
+                "model",
+                "revision"
+            ],
+            "time": "2018-08-09T00:29:46+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -5676,6 +5822,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "circlelinkhealth/core": 20,
         "circlelinkhealth/customer": 20,
         "circlelinkhealth/raygun": 20,
         "circlelinkhealth/timetracking": 20,
