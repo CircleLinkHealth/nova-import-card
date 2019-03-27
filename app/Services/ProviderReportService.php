@@ -294,7 +294,11 @@ class ProviderReportService
     private function answerForHraQuestionWithOrder($order, $subOrder = null)
     {
 
-        $question = $this->hraQuestions->withOrder($order, $subOrder);
+        $question = $this->hraQuestions->where('surveyInstance', function ($instance) use ($order, $subOrder){
+            $instance->where('order', $order)
+                //change, see if we can use when
+                     ->where('sub_order', $subOrder);
+        });
 
         $answer = $this->hraAnswers->where('question_id', $question->id);
 
@@ -312,7 +316,11 @@ class ProviderReportService
     private function answerForVitalsQuestionWithOrder($order, $subOrder = null)
     {
 
-        $question = $this->vitalsQuestions->withOrder($order, $subOrder);
+        $question = $this->vitalsQuestions->where('surveyInstance', function ($instance) use ($order, $subOrder){
+            $instance->where('order', $order)
+                //change, see if we can use when
+                     ->where('sub_order', $subOrder);
+        });
 
         $answer = $this->vitalsAnswers->where('question_id', $question->id);
 
