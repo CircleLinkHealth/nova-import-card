@@ -58,7 +58,7 @@ rm -rf storage
 ln -s $SHARED/storage $RELEASE/storage
 
 # Install application dependencies
-if_file_changed composer.lock "composer install --no-dev --classmap-authoritative --prefer-dist"
+composer install --no-dev --classmap-authoritative --prefer-dist
 
 # Disable lada-cache before migrations
 php artisan lada-cache:disable
