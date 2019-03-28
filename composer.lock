@@ -521,7 +521,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "2c72e8ba5ffe31706b3e6aa61518b389a16a09d6"
+                "reference": "7c20aeb26402c19628aed05a81496a7578167c19"
             },
             "require": {
                 "spiritix/lada-cache": "^2.1",
@@ -547,7 +547,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-03-27T03:09:14+00:00"
+            "time": "2019-03-28T19:11:18+00:00"
         },
         {
             "name": "circlelinkhealth/customer",
