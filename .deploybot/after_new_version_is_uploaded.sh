@@ -4,12 +4,16 @@ set -e
 
 SHARED=$1
 RELEASE=$2
-PREVIOUS_REVISION="${3:-default HEAD}"
-REVISION="${4:-default HEAD}"
+PREVIOUS_REVISION=$3
+REVISION=$4
 BRANCH=$5
 RELEASE_ID=$6
 
-changed_files="$(git diff-tree -r --name-only --no-commit-id $PREVIOUS_REVISION $REVISION)"
+if [ -z "$PREVIOUS_REVISION" || -z "$REVISION" ]; then
+    changed_files=""
+else
+    changed_files="$(git diff-tree -r --name-only --no-commit-id $PREVIOUS_REVISION $REVISION)"
+fi
 
 echo "Files Changed"
 echo $changed_files
