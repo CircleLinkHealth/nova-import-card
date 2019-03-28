@@ -6,12 +6,8 @@ SHARED=$1
 RELEASE=$2
 PREVIOUS_REVISION=$3
 REVISION=$4
-
-if [ ! -d "$RELEASE/.git" ]; then
-    git init && git remote add origin git@github.com:CircleLinkHealth/app-cpm-web.git
-fi
-
-git fetch
+BRANCH=$5
+RELEASE_ID=$6
 
 changed_files="$(git diff-tree -r --name-only --no-commit-id $PREVIOUS_REVISION $REVISION)"
 
@@ -29,26 +25,10 @@ if_file_changed() {
 }
 
 # install npm dependencies
-npm install
-
-# fail deployment if there's an error
-    if [ $? -ne 0 ]; then
-      echo "`npm install` failed.";
-      rm -rf node_modules
-      exit 1;
-    fi
+if_file_changed package.lock "npm install"
 
 # compile assets
-npm run prod
-
-# fail deployment if there's an error
-if [ $? -ne 0 ]; then
-  echo "`npm run prod` failed.";
-  rm -rf node_modules
-  exit 1;
-fi
-
-rm -rf node_modules
+if_file_changed resources/assets "npm run prod"
 
 # Create a shared storage directory and symlink it to the project root
 if [ ! -d "$SHARED/storage" ]; then
@@ -58,17 +38,18 @@ if [ ! -d "$SHARED/storage" ]; then
   chmod -R g+s $SHARED/storage
 fi
 
-rm -rf storage
-ln -s $SHARED/storage $RELEASE/storage
+if [ ! -d "$RELEASE/storage" ]; then
+    mkdir storage
+fi
+
+if [! -L "$RELEASE/storage"]; then
+    ln -s $SHARED/storage $RELEASE/storage
+    echo "$RELEASE/storage symlinked to $SHARED/storage"
+fi
+
 
 # Install application dependencies
-composer install --no-dev --classmap-authoritative --prefer-dist
-
-# fail deployment if there's an error
-if [ $? -ne 0 ]; then
-  echo "`composer install --no-dev --classmap-authoritative --prefer-dist` failed.";
-  exit 1;
-fi
+if_file_changed composer.lock "composer install --no-dev --classmap-authoritative --prefer-dist"
 
 # Disable lada-cache before migrations
 php artisan lada-cache:disable
