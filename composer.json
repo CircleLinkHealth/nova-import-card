@@ -14,7 +14,7 @@
     },
     {
       "type": "git",
-      "url": "git@github.com:michalisantoniou6/url-shortener.git"
+      "url": "git@github.com:subzero10/url-shortener.git"
     },
     {
       "type": "git",
@@ -64,13 +64,13 @@
     "barryvdh/laravel-snappy": "0.4.1",
     "blackfire/php-sdk": "^1.17",
     "circlelinkhealth/customer": "dev-master",
+    "fideloper/proxy": "^4.0",
+    "genealabs/laravel-caffeine": "^0.7.1",
+    "circlelinkhealth/bugsnag": "dev-main-master",
     "circlelinkhealth/raygun": "dev-master",
     "circlelinkhealth/timetracking": "dev-master",
     "circlelinkhealth/twofa": "dev-master",
     "doctrine/dbal": "~2.3",
-    "fideloper/proxy": "~3.3",
-    "fzaninotto/faker": "~1.4",
-    "genealabs/laravel-caffeine": "^0.5.0",
     "guzzlehttp/guzzle": "~5.3|~6.0",
     "h4cc/wkhtmltoimage-amd64": "*",
     "h4cc/wkhtmltopdf-amd64": "*",
@@ -79,11 +79,11 @@
     "jorijn/laravel-security-checker": "^0.3.0",
     "lab404/laravel-impersonate": "^1.2",
     "laracasts/utilities": "~2.0",
-    "laravel/framework": "5.5.*",
+    "laravel/framework": "5.7.*",
     "laravel/horizon": "^1.4",
-    "laravel/passport": "^4.0",
+    "laravel/passport": "^7.0",
     "laravel/tinker": "^1.0",
-    "laravelcollective/html": "5.5.*",
+    "laravelcollective/html": "5.7.*",
     "league/flysystem-aws-s3-v3": "~1.0",
     "league/fractal": "0.12.*",
     "lynx39/lara-pdf-merger": "dev-master",
@@ -112,21 +112,22 @@
     "yajra/laravel-datatables-oracle": "~8.0"
   },
   "require-dev": {
+    "xethron/laravel-4-generators": "*",
     "barryvdh/laravel-debugbar": "*",
     "friendsofphp/php-cs-fixer": "^2.13",
-    "xethron/laravel-4-generators": "*",
     "barryvdh/laravel-ide-helper": "^2.4",
+    "brianium/paratest": "*",
     "darkaonline/l5-swagger": "^5.5",
     "filp/whoops": "~2.0",
-    "laravel/dusk": "^2.0",
+    "friendsofphp/php-cs-fixer": "^2.13",
+    "fzaninotto/faker": "~1.4",
+    "laravel/dusk": "^3.0",
     "mockery/mockery": "0.9.*",
     "orangehill/iseed": "dev-master",
-    "phpspec/phpspec": "~2.1",
-    "phpunit/phpunit": "~6.0",
-    "symfony/css-selector": "3.1.*",
-    "symfony/dom-crawler": "3.1.*",
-    "xethron/migrations-generator": "dev-l5",
-    "brianium/paratest": "*"
+    "phpunit/phpunit": "^7.0",
+    "symfony/css-selector": "^4.0",
+    "symfony/dom-crawler": "^4.0",
+    "xethron/migrations-generator": "dev-l5"
   },
   "autoload": {
     "classmap": [
@@ -182,8 +183,7 @@
     ],
     "clear": [
       "php artisan clear-compiled",
-      "composer dump-autoload",
-      "php artisan optimize"
+      "composer dump-autoload"
     ]
   },
   "config": {
@@ -216,5 +216,7 @@
       "merge-extra-deep": false,
       "merge-scripts": false
     }
-  }
+  },
+  "prefer-stable": true,
+  "minimum-stability": "dev"
 }
