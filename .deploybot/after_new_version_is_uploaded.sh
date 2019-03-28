@@ -24,7 +24,7 @@ if_file_changed() {
 }
 
 # install npm dependencies
-if_file_changed package-lock.json "npm install"
+if_file_changed package-lock.json "npm install --silent"
 
 # compile assets
 if_file_changed resources/assets "npm run prod"
