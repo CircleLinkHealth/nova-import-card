@@ -15,31 +15,26 @@ git fetch
 
 changed_files="$(git diff-tree -r --name-only --no-commit-id $PREVIOUS_REVISION $REVISION)"
 
+echo "Files Changed"
+echo $changed_files
+
 if_file_changed() {
 	echo "$changed_files" | grep --quiet "$1" && eval "$2"
+
+	# fail deployment if there's an error
+    if [ $? -ne 0 ]; then
+      echo "`$2` failed.";
+      exit 1;
+    fi
 }
 
 # install npm dependencies
 if_file_changed package.json "npm install"
 
-# fail depoyment if there's an error
-if [ $? -ne 0 ]; then
-  echo "`npm install` failed.";
-  exit 1;
-fi
-
-if_file_changed bower.json "npm run bower_install"
-
-# fail depoyment if there's an error
-if [ $? -ne 0 ]; then
-  echo "`npm install` failed.";
-  exit 1;
-fi
-
 # compile assets
-if_file_changed resources/assets "npm run prod"
+npm run prod
 
-# fail depoyment if there's an error
+# fail deployment if there's an error
 if [ $? -ne 0 ]; then
   echo "`npm run prod` failed.";
   exit 1;
@@ -58,12 +53,6 @@ ln -s $SHARED/storage $RELEASE/storage
 
 # Install application dependencies
 if_file_changed composer.lock "composer install --no-dev --classmap-authoritative --prefer-dist"
-
-# fail depoyment if there's an error
-if [ $? -ne 0 ]; then
-  echo "`composer install --no-dev --classmap-authoritative --prefer-dist` failed.";
-  exit 1;
-fi
 
 # Disable lada-cache before migrations
 php artisan lada-cache:disable
