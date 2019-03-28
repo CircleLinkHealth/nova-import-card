@@ -344,6 +344,7 @@ class ProviderReportService
 
     }
 
+    //at the moment the method that exists in helpers does not work
     private function isJson($string)
     {
         if ('' === $string || ! is_string($string)) {
