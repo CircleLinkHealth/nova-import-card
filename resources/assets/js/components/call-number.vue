@@ -17,7 +17,7 @@
                 If you would like to make another call, please click on 'Open Calls Page' again.
             </strong>
         </div>
-        <div>{{log}}</div>
+        <div :class="hasError ? 'error-logs' : ''">{{log}}</div>
         <div class="warning-logs" v-show="warningEvents.length > 0">
             We have detected poor call quality conditions. You may experience degraded call quality.
         </div>
@@ -252,6 +252,7 @@
                 addedNumbersInConference: [],
                 muted: {},
                 onPhone: {},
+                hasError: false,
                 log: 'Initializing',
                 warningEvents: [],
                 endCallWindowCloseDelay: 5,
@@ -772,6 +773,7 @@
                     })
                     .catch(error => {
                         console.log(error);
+                        self.hasError = true;
                         self.log = 'There was an error. Please refresh the page. If the issue persists please let CLH know via slack.';
                         self.ready = false;
                         self.waiting = false;
@@ -924,6 +926,10 @@
         color: #a98e11;
         margin-top: 4px;
         margin-bottom: 4px;
+    }
+
+    .error-logs {
+        color: red;
     }
 
     .vue-touch-keyboard {
