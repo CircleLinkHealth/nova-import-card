@@ -22,17 +22,27 @@
     export default {
         name: "questionTypeRadio",
         props: ['question'],
-        components: {},
+        components: {
+
+        },
 
         data() {
             return {
                 possibleAnswers: this.question.type.question_type_answers,
+                questionOrder: this.question.pivot.order,
             }
         },
 
+        computed: {
+            questionHasConditions(){
+                return this.question.conditions != null;
+            }
+        },
+
+
         methods: {
-            handleAnswer(val) {
-                EventBus.$emit('showSubQuestions', val)
+            handleAnswer(answerVal) {
+                EventBus.$emit('showSubQuestions', answerVal, this.questionOrder, this.question.id)
             },
         }
     }

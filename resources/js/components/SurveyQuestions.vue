@@ -31,21 +31,22 @@
             <div class="questions-box"
                  v-if="questionsStage"
                  v-for="(question, index) in questions">
-                <div v-if="question.conditions.isSubQuestion === showSubQuestions" @showSubQuestions="updateShowSubQuestions">
-                    {{question.id}}{{'.'}} {{question.body}}
-                    <!--Questions Answer Type-->
-                    <div class="question-answer-type">
-                        <question-type-text v-if="question.type.answer_type === 'text'"></question-type-text>
-                        <question-type-checkbox
-                                v-if="question.type.answer_type === 'checkbox'"></question-type-checkbox>
-                        <question-type-range v-if="question.type.answer_type === 'range'"></question-type-range>
-                        <question-type-number
-                                v-if="question.type.answer_type === 'number'"></question-type-number>
-                        <question-type-radio :question="question"
-                                             v-if="question.type.answer_type === 'radio'"></question-type-radio>
-                        <question-type-date v-if="question.type.answer_type === 'date'"></question-type-date>
+                <div class="question">
+                    <div v-if="question.optional === 0 || shouldShowQuestion" data-aos="fade-up">
+                        {{question.id}}{{'.'}} {{question.body}}
+                        <!--Questions Answer Type-->
+                        <div class="question-answer-type">
+                            <question-type-text v-if="question.type.type === 'text'"></question-type-text>
+                            <question-type-checkbox
+                                    v-if="question.type.type === 'checkbox'"></question-type-checkbox>
+                            <question-type-range v-if="question.type.type === 'range'"></question-type-range>
+                            <question-type-number
+                                    v-if="question.type.type === 'number'"></question-type-number>
+                            <question-type-radio :question="question"
+                                                 v-if="question.type.type === 'radio'"></question-type-radio>
+                            <question-type-date v-if="question.type.type === 'date'"></question-type-date>
+                        </div>
                     </div>
-
                 </div>
             </div>
 
@@ -100,6 +101,11 @@
     import subQuestions from "./subQuestions";
     import mainQuestions from "./mainQuestions";
     import {EventBus} from '../event-bus';
+    import AOS from 'aos';
+    import 'aos/dist/aos.css';
+    AOS.init({
+        duration: 1200,
+    });
 
 
     export default {
@@ -124,10 +130,23 @@
                 welcomeStage: true,
                 callAssistance: false,
                 questions: [],
-                showSubQuestions: false,
+                subQuestions: [],
+                shouldShowQuestion: false,
+                questionIndex: 0,
             }
         },
         computed: {
+            subQuestionsConditions() {
+                return this.subQuestions.flatMap(function (q) {
+                    return q.conditions;
+                })
+            },
+
+            questionsOrder() {
+                return this.questions.flatMap(function (q) {
+                    return q.pivot;
+                });
+            },
         },
 
         methods: {
@@ -154,22 +173,39 @@
                 //scrollUp
             },
 
-            updateShowSubQuestions(answer) {
-                if (answer === 'yes') {
-                    this.showSubQuestions = true;
-                }
-                console.log('todo::Call method -> "save the answer and move to next"')
+            showSubQuestion(conditions) {
+                this.shouldShowQuestion = true;
             },
-            addInput() {
-                this.questions.push({
 
+            handleRadioInputs(answerVal, questionOrder, questionId) {
+
+                const conditions = this.subQuestionsConditions.filter(function (q) {
+                    return q.related_question_order_number === questionOrder
+                        && q.related_question_expected_answer === answerVal
                 });
+
+                if (conditions.length !== 0) {
+                    this.showSubQuestion(conditions);
+                }
+                this.questionIndex++;
+            },
+
+            handleNumberInputs() {
+                this.questionIndex++;
+            },
+
+            addInput() {
+                this.questions.push({});
             }
 
         },
         mounted() {
-            EventBus.$on('showSubQuestions', (answer) => {
-               this.updateShowSubQuestions(answer)
+            EventBus.$on('showSubQuestions', (answerVal, questionId) => {
+                this.handleRadioInputs(answerVal, questionId)
+            });
+
+            EventBus.$on('handleNumberType', () => {
+                this.handleNumberInputs();
             });
         },
         created() {
@@ -177,12 +213,11 @@
                 const result = Object.assign(q, {answer_types: [q.answer_type]});
                 return result;
             });
-
-            /* const x = questionsData.map(function (question) {
-                 return question.conditions.isSubQuestion === true
-             });*/
+            const questions = questionsData.filter(question => !question.optional);
+            const subQuestions = questionsData.filter(question => question.optional);
 
             this.questions.push(...questionsData);
+            this.subQuestions.push(...subQuestions);
         },
 
     }
