@@ -14,7 +14,7 @@ changed_files="$(git diff-tree -r --name-only --no-commit-id $REVISION $PREVIOUS
 echo $changed_files
 
 if_file_changed() {
-	echo "$changed_files" | grep --quiet "$1" && eval "$2"
+	echo "$changed_files" | grep -q "$1" && eval "$2"
 
 	# fail deployment if there's an error
     if [ $? -ne 0 ]; then
