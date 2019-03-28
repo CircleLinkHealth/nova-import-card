@@ -23,6 +23,13 @@
         }
     },
     "require": {
-        "authy/php": "^3.0"
-    }
+        "authy/php": "^3.0",
+        "circlelinkhealth/core": "dev-master"
+    },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/module-core.git"
+        }
+    ]
 }
