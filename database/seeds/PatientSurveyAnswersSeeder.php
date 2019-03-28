@@ -285,6 +285,7 @@ class PatientSurveyAnswersSeeder extends Seeder
                 'order'    => 15,
                 'subOrder' => 'b',
                 'answer'   => 'Sometimes',
+                'answer'   => 'Sometimes',
             ],
             [
                 'order'    => 16,
@@ -404,11 +405,11 @@ class PatientSurveyAnswersSeeder extends Seeder
                 'subOrder' => null,
                 'answer'   => json_encode([
                     [
-                        'task' => 'Bathing',
+                        'name' => 'Bathing',
 
                     ],
                     [
-                        'task' => 'Preparing a meal',
+                        'name' => 'Preparing a meal',
                     ],
                 ]),
             ],
@@ -518,13 +519,13 @@ class PatientSurveyAnswersSeeder extends Seeder
                 'answer'   => json_encode([
                     [
                         'provider_name' => 'Jonh Doe',
-                        'specialty'     => 'md',
+                        'specialty'     => 'Endocrinologist',
                         'location'      => 'Demo',
                         'phone_number'  => '123123123',
                     ],
                     [
                         'provider_name' => 'Jane Doe',
-                        'specialty'     => 'md',
+                        'specialty'     => 'Dermatologist',
                         'location'      => 'Demo',
                         'phone_number'  => '123123124',
                     ],

@@ -132,7 +132,7 @@ class ProviderReportService
 
         $familyMedicalHistory = [];
 
-        $familyMedicalHistory['family_conditions'] = $this->answerForHraQuestionWithOrder(18);
+        $familyMedicalHistory['family_conditions'] = $this->answerForHraQuestionWithOrder(18, 'a');
 
         return $familyMedicalHistory;
     }
@@ -159,11 +159,11 @@ class ProviderReportService
     {
         $screenings = [];
 
-        $screenings['breast_cancer']     = $this->answerForHraQuestionWithOrder(35);
-        $screenings['cervical_cancer']   = $this->answerForHraQuestionWithOrder(36);
-        $screenings['colorectal_cancer'] = $this->answerForHraQuestionWithOrder(37);
-        $screenings['skin_cancer']       = $this->answerForHraQuestionWithOrder(38);
-        $screenings['prostate_cancer']   = $this->answerForHraQuestionWithOrder(39);
+        $screenings['breast cancer']     = $this->answerForHraQuestionWithOrder(35);
+        $screenings['cervical cancer']   = $this->answerForHraQuestionWithOrder(36);
+        $screenings['colorectal cancer'] = $this->answerForHraQuestionWithOrder(37);
+        $screenings['skin cancer']       = $this->answerForHraQuestionWithOrder(38);
+        $screenings['prostate cancer']   = $this->answerForHraQuestionWithOrder(39);
         $screenings['glaucoma']          = $this->answerForHraQuestionWithOrder(40);
         $screenings['osteoporosis']      = $this->answerForHraQuestionWithOrder(41);
         $screenings['violence']          = $this->answerForHraQuestionWithOrder(42);
@@ -265,12 +265,12 @@ class ProviderReportService
     {
         $functionalCapacity = [];
 
-        $functionalCapacity['needs_help']      = $this->answerForHraQuestionWithOrder(23);
+        $functionalCapacity['needs_help_for_tasks']      = $this->answerForHraQuestionWithOrder(23);
         $functionalCapacity['have_assistance'] = $this->answerForHraQuestionWithOrder(23, 'a');
-        $functionalCapacity['for_tasks']       = $this->answerForHraQuestionWithOrder(26);
 
-        //revisit
-        $functionalCapacity['mci_cognitive'] = $this->answerForVitalsQuestionWithOrder(5, 'c');
+        $functionalCapacity['mci_cognitive']['word_recall'] = $this->answerForVitalsQuestionWithOrder(5, 'a');
+        $functionalCapacity['mci_cognitive']['clock'] = $this->answerForVitalsQuestionWithOrder(5, 'b');
+        $functionalCapacity['mci_cognitive']['total'] = $this->answerForVitalsQuestionWithOrder(5, 'c');
 
         $functionalCapacity['has_fallen']         = $this->answerForHraQuestionWithOrder(24);
         $functionalCapacity['hearing_difficulty'] = $this->answerForHraQuestionWithOrder(25);
@@ -300,7 +300,7 @@ class ProviderReportService
     private function getSpecificPatientRequests()
     {
         //todo:fix tangy
-        return $this->answerForHraQuestionWithOrder(46)[0];
+        return $this->answerForHraQuestionWithOrder(46);
     }
 
     private function answerForHraQuestionWithOrder($order, $subOrder = null)
