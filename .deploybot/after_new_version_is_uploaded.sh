@@ -28,6 +28,12 @@ if_file_changed() {
     fi
 }
 
+if [ ! -d "$SHARED/node_modules" ]; then
+  mkdir -p $SHARED/node_modules
+fi
+
+ln -s $SHARED/node_modules $RELEASE/node_modules
+
 # install npm dependencies
 if_file_changed package.json "npm install"
 
