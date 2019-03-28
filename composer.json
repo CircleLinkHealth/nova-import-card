@@ -23,12 +23,12 @@
         }
     },
     "require": {
-        "circlelinkhealth/core": "dev-master"
+        "circlelinkhealth/customer": "dev-master"
     },
     "repositories": [
         {
             "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-core.git"
+            "url": "git@github.com:CircleLinkHealth/module-customer.git"
         }
     ]
 }
