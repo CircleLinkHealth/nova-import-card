@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "79adbb12030725757aaf821195afbea0",
+    "content-hash": "92f6e0a4a2b69666a5a3d40691413e6e",
     "packages": [
         {
             "name": "amnuts/opcache-gui",
@@ -262,16 +262,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.90.11",
+            "version": "3.90.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "6304e127004f783283d3d13fa07ca13980e43ccd"
+                "reference": "a628927d3a350fbda308eadea88d9d4845aa1c44"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/6304e127004f783283d3d13fa07ca13980e43ccd",
-                "reference": "6304e127004f783283d3d13fa07ca13980e43ccd",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/a628927d3a350fbda308eadea88d9d4845aa1c44",
+                "reference": "a628927d3a350fbda308eadea88d9d4845aa1c44",
                 "shasum": ""
             },
             "require": {
@@ -340,7 +340,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2019-03-27T18:17:43+00:00"
+            "time": "2019-03-28T18:10:49+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -11958,7 +11958,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/customer": 20,
         "circlelinkhealth/raygun": 20,
         "circlelinkhealth/timetracking": 20,
         "circlelinkhealth/twofa": 20,
@@ -11969,7 +11968,8 @@
         "orangehill/iseed": 20,
         "xethron/migrations-generator": 20,
         "venturecraft/revisionable": 20,
-        "circlelinkhealth/core": 20
+        "circlelinkhealth/core": 20,
+        "circlelinkhealth/customer": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
