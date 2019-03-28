@@ -80,11 +80,11 @@ class SurveyService
             },
         ])
                     ->withCount([
-                        'answers' => function ($a) use ($input){
+                        'answers' => function ($a) use ($input) {
                             $a->where('survey_instance_id', $input['survey_instance_id'])
-                                ->whereHas('question', function ($q) {
-                                $q->notOptional();
-                            });
+                              ->whereHas('question', function ($q) {
+                                  $q->notOptional();
+                              });
                         },
                     ])
                     ->where('id', $input['user_id'])

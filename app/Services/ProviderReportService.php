@@ -171,21 +171,21 @@ class ProviderReportService
         return $screenings;
     }
 
-    private function getMentalState(){
+    private function getMentalState()
+    {
 
         $phq2scores = [
-            'Not at all' => 0,
-            'Several days' => 1,
+            'Not at all'              => 0,
+            'Several days'            => 1,
             'More than half the days' => 2,
-            'Nearly every day' => 3
+            'Nearly every day'        => 3,
         ];
 
         $answer1 = $this->answerForHraQuestionWithOrder(22, '1');
         $answer2 = $this->answerForHraQuestionWithOrder(22, '2');
 
-        //add check
         return [
-          'depression_score' => $phq2scores[$answer1] + $phq2scores[$answer2]
+            'depression_score' => $phq2scores[$answer1] + $phq2scores[$answer2],
         ];
     }
 
@@ -265,12 +265,12 @@ class ProviderReportService
     {
         $functionalCapacity = [];
 
-        $functionalCapacity['needs_help_for_tasks']      = $this->answerForHraQuestionWithOrder(23);
-        $functionalCapacity['have_assistance'] = $this->answerForHraQuestionWithOrder(23, 'a');
+        $functionalCapacity['needs_help_for_tasks'] = $this->answerForHraQuestionWithOrder(23);
+        $functionalCapacity['have_assistance']      = $this->answerForHraQuestionWithOrder(23, 'a');
 
         $functionalCapacity['mci_cognitive']['word_recall'] = $this->answerForVitalsQuestionWithOrder(5, 'a');
-        $functionalCapacity['mci_cognitive']['clock'] = $this->answerForVitalsQuestionWithOrder(5, 'b');
-        $functionalCapacity['mci_cognitive']['total'] = $this->answerForVitalsQuestionWithOrder(5, 'c');
+        $functionalCapacity['mci_cognitive']['clock']       = $this->answerForVitalsQuestionWithOrder(5, 'b');
+        $functionalCapacity['mci_cognitive']['total']       = $this->answerForVitalsQuestionWithOrder(5, 'c');
 
         $functionalCapacity['has_fallen']         = $this->answerForHraQuestionWithOrder(24);
         $functionalCapacity['hearing_difficulty'] = $this->answerForHraQuestionWithOrder(25);
@@ -299,7 +299,6 @@ class ProviderReportService
 
     private function getSpecificPatientRequests()
     {
-        //todo:fix tangy
         return $this->answerForHraQuestionWithOrder(46);
     }
 
@@ -309,10 +308,13 @@ class ProviderReportService
 
         $answer = $this->hraAnswers->where('question_id', $question->id)->first();
 
-        return
-            $this->isJson($answer->value_1)
-                ? json_decode($answer->value_1)
-                : $answer->value_1;
+        if ( ! $answer) {
+            throw new \Exception("No answer found for question with id {$question->id}, for patient with id {$this->patient->id}");
+        }
+
+        return $this->isJson($answer->value_1)
+            ? json_decode($answer->value_1)
+            : $answer->value_1;
     }
 
 
@@ -322,8 +324,8 @@ class ProviderReportService
 
         $answer = $this->vitalsAnswers->where('question_id', $question->id)->first();
 
-        if(! $answer){
-            echo $question->id;
+        if ( ! $answer) {
+            throw new \Exception("No answer found for question with id {$question->id}, for patient with id {$this->patient->id}");
         }
 
         return [
@@ -335,7 +337,8 @@ class ProviderReportService
 
     }
 
-    private function isJson($string){
+    private function isJson($string)
+    {
         if ('' === $string || ! is_string($string)) {
             return null;
         }

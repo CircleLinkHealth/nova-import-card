@@ -45,15 +45,15 @@ class PatientSurveyAnswersSeeder extends Seeder
         ])
                            ->where('name', Survey::HRA)->first();
 
-        $vitalsSurvey = Survey::with([
+        $vitalsSurvey   = Survey::with([
             'instances' => function ($instance) use ($date) {
                 $instance->with('questions')
                          ->where('start_date', $date->copy()->startOfYear()->toDateString())
                          ->where('end_Date', $date->copy()->endOfYear()->toDateString());
             },
         ])
-                              ->where('name', Survey::VITALS)->first();
-        $hraInstance = $hraSurvey->instances->first();
+                                ->where('name', Survey::VITALS)->first();
+        $hraInstance    = $hraSurvey->instances->first();
         $vitalsInstance = $vitalsSurvey->instances->first();
 
         $user->surveys()->attach(
@@ -74,29 +74,29 @@ class PatientSurveyAnswersSeeder extends Seeder
 
         $hraAnswers = $this->hraAnswerData();
 
-        foreach ($hraAnswers as $answerData){
+        foreach ($hraAnswers as $answerData) {
 
             $question = $this->getQuestionWithOrder($hraInstance, $answerData['order'], $answerData['subOrder']);
 
             $service->updateOrCreateAnswer([
-                'user_id' => $user->id,
-                'survey_instance_id' =>  $hraInstance->id,
-                'question_id' => $question->id,
-                'value_1' => $answerData['answer']
+                'user_id'            => $user->id,
+                'survey_instance_id' => $hraInstance->id,
+                'question_id'        => $question->id,
+                'value_1'            => $answerData['answer'],
             ]);
         }
 
         $vitalsAnswers = $this->vitalsAnswerData();
 
-        foreach ($vitalsAnswers as $answerData){
+        foreach ($vitalsAnswers as $answerData) {
 
             $question = $this->getQuestionWithOrder($vitalsInstance, $answerData['order'], $answerData['subOrder']);
 
             $service->updateOrCreateAnswer([
-                'user_id' => $user->id,
-                'survey_instance_id' =>  $vitalsInstance->id,
-                'question_id' => $question->id,
-                'value_1' => $answerData['answer']
+                'user_id'            => $user->id,
+                'survey_instance_id' => $vitalsInstance->id,
+                'question_id'        => $question->id,
+                'value_1'            => $answerData['answer'],
             ]);
         }
     }
@@ -104,7 +104,6 @@ class PatientSurveyAnswersSeeder extends Seeder
     public function getQuestionWithOrder($instance, $order, $subOrder = null)
     {
         return $instance->questions->where('pivot.order', $order)->where('pivot.sub_order', $subOrder)->first();
-
 
 
     }

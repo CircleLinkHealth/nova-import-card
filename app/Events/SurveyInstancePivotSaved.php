@@ -34,6 +34,6 @@ class SurveyInstancePivotSaved
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('channel-name');
+        //
     }
 }
