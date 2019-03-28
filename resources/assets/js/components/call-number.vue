@@ -38,7 +38,7 @@
                     <div class="col-xs-3 no-padding" style="padding-left: 2px; padding-right: 2px"
                          v-if="dropdownNumber !== 'patientUnlisted'">
                         <button class="btn btn-circle" @click="togglePatientCallMessage(selectedPatientNumber)"
-                                :disabled="invalidPatientUnlistedNumber || closeCountdown > 0 || (!onPhone[selectedPatientNumber] && isCurrentlyOnPhone)"
+                                :disabled="!ready || invalidPatientUnlistedNumber || closeCountdown > 0 || (!onPhone[selectedPatientNumber] && isCurrentlyOnPhone)"
                                 :class="onPhone[selectedPatientNumber] ? 'btn-danger': 'btn-success'">
                             <i class="fa fa-fw fa-phone"
                                :class="onPhone[selectedPatientNumber] ? 'fa-close': 'fa-phone'"></i>
@@ -76,7 +76,7 @@
 
                     <div class="col-xs-3 no-padding" style="margin-top: 4px; padding-left: 2px; padding-right: 2px">
                         <button class="btn btn-circle" @click="togglePatientCallMessage(selectedPatientNumber)"
-                                :disabled="invalidPatientUnlistedNumber || closeCountdown > 0 || (!onPhone[selectedPatientNumber] && isCurrentlyOnPhone)"
+                                :disabled="!ready || invalidPatientUnlistedNumber || closeCountdown > 0 || (!onPhone[selectedPatientNumber] && isCurrentlyOnPhone)"
                                 :class="onPhone[selectedPatientNumber] ? 'btn-danger': 'btn-success'">
                             <i class="fa fa-fw fa-phone"
                                :class="onPhone[selectedPatientNumber] ? 'fa-close': 'fa-phone'"></i>
@@ -108,7 +108,7 @@
                     </div>
                     <div class="col-xs-3 no-padding" style="margin-top: 4px; padding-left: 2px; padding-right: 2px">
                         <button class="btn btn-circle" @click="toggleOtherCallMessage(clinicalEscalationNumber)"
-                                :disabled="!clinicalEscalationNumber || clinicalEscalationNumber.length === 0
+                                :disabled="!ready || !clinicalEscalationNumber || clinicalEscalationNumber.length === 0
                                                                      || (!allowConference && !onPhone[clinicalEscalationNumber] && isCurrentlyOnPhone)
                                                                      || (allowConference && !onPhone[clinicalEscalationNumber] && isCurrentlyOnConference)
                                                                      || closeCountdown > 0"
@@ -143,7 +143,7 @@
                                        class="form-control" type="tel"
                                        title="10-digit US Phone Number" placeholder="1234567890"
                                        v-model="otherUnlistedNumber"
-                                       :disabled="onPhone[otherUnlistedNumber] || isCurrentlyOnConference"/>
+                                       :disabled="!ready || onPhone[otherUnlistedNumber] || isCurrentlyOnConference"/>
                             </template>
                             <template v-else>
                                 <input name="other-number"
@@ -151,7 +151,7 @@
                                        class="form-control" type="tel"
                                        title="10-digit US Phone Number" placeholder="1234567890"
                                        v-model="otherUnlistedNumber"
-                                       :disabled="onPhone[otherUnlistedNumber] || isCurrentlyOnConference"/>
+                                       :disabled="!ready || onPhone[otherUnlistedNumber] || isCurrentlyOnConference"/>
                             </template>
 
                         </div>
@@ -245,6 +245,7 @@
                         "* {zero} # {backspace} {accept}"
                     ]
                 },
+                ready: false,
                 waiting: false,
                 waitingForConference: false,
                 queuedNumbersForConference: [],
@@ -695,14 +696,17 @@
                 }, 1000);
             },
             twilioOffline: function () {
+                self.ready = false;
                 self.waiting = true;
             },
             twilioOnline: function () {
+                self.ready = true;
                 self.waiting = false;
             },
             initTwilio: function () {
                 const url = rootUrl(`twilio/token`);
 
+                self.ready = false;
                 self.waiting = true;
                 self.axios.get(url)
                     .then(response => {
@@ -769,6 +773,7 @@
                     .catch(error => {
                         console.log(error);
                         self.log = 'There was an error. Please refresh the page. If the issue persists please let CLH know via slack.';
+                        self.ready = false;
                         self.waiting = false;
                     });
             },
