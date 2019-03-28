@@ -14,15 +14,6 @@ if [ $? -ne 0 ]; then
   exit 1;
 fi
 
-# install bower dependencies
-./node_modules/bower/bin/bower -V install
-
-# fail depoyment if there's a bower error
-if [ $? -ne 0 ]; then
-  echo "`./node_modules/bower/bin/bower -V install` failed.";
-  exit 1;
-fi
-
 # compile assets
 npm run prod
 
