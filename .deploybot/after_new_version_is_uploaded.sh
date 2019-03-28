@@ -9,7 +9,7 @@ REVISION=$4
 
 git init && git remote add origin git@github.com:CircleLinkHealth/app-cpm-web.git && git fetch
 
-changed_files="$(git diff-tree -r --name-only --no-commit-id PREVIOUS_REVISION REVISION)"
+changed_files="$(git diff-tree -r --name-only --no-commit-id $PREVIOUS_REVISION $REVISION)"
 
 if_file_changed() {
 	echo "$changed_files" | grep --quiet "$1" && eval "$2"
