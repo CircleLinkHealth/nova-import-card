@@ -4,10 +4,10 @@ set -e
 
 SHARED=$1
 RELEASE=$2
-PREVIOUS_REVISION=$3
-REVISION=$4
-BRANCH=$5
-RELEASE_ID=$6
+REVISION=$3
+BRANCH=$4
+RELEASE_ID=$5
+PREVIOUS_REVISION=$6
 
 changed_files="$(git diff-tree -r --name-only --no-commit-id $REVISION $PREVIOUS_REVISION)"
 

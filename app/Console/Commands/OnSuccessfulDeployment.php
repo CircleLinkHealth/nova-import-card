@@ -22,11 +22,11 @@ class OnSuccessfulDeployment extends Command
      *
      * @var string
      */
-    protected $signature = 'deploy:success {previousRevision    : The revision deployed before the one just deployed.}
-                                           {currentRevision : The revision that was just successfully deployed.}
+    protected $signature = 'deploy:success {currentRevision : The revision that was just successfully deployed.}
                                            {envName : The name of the environment we just deployed to.}
                                            {rollback    : Either 1 or 0 if deployment is a rollback or not.}
                                            {userName    : Name of the user who triggered the deployment.}
+                                           {previousRevision?    : The revision deployed before the one just deployed.}
     ';
 
     /**
