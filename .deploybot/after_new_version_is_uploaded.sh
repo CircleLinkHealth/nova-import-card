@@ -9,13 +9,8 @@ REVISION=$4
 BRANCH=$5
 RELEASE_ID=$6
 
-if [ -z "$PREVIOUS_REVISION" ] || [ -z "$REVISION" ]; then
-    changed_files=""
-else
-    changed_files="$(git diff-tree -r --name-only --no-commit-id $PREVIOUS_REVISION $REVISION)"
-fi
+changed_files="$(git diff-tree -r --name-only --no-commit-id $REVISION $PREVIOUS_REVISION)"
 
-echo "Files Changed"
 echo $changed_files
 
 if_file_changed() {
