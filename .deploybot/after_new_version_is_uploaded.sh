@@ -7,7 +7,11 @@ RELEASE=$2
 PREVIOUS_REVISION=$3
 REVISION=$4
 
-git init && git remote add origin git@github.com:CircleLinkHealth/app-cpm-web.git && git fetch
+if [ ! -d "$RELEASE/.git" ]; then
+    git init && git remote add origin git@github.com:CircleLinkHealth/app-cpm-web.git
+fi
+
+git fetch
 
 changed_files="$(git diff-tree -r --name-only --no-commit-id $PREVIOUS_REVISION $REVISION)"
 
