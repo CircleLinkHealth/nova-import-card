@@ -5,6 +5,24 @@ set -e
 SHARED=$1
 RELEASE=$2
 
+# install npm dependencies
+npm install
+
+# fail depoyment if there's an error
+if [ $? -ne 0 ]; then
+  echo "`npm install` failed.";
+  exit 1;
+fi
+
+# compile assets
+npm run prod
+
+# fail depoyment if there's an error
+if [ $? -ne 0 ]; then
+  echo "`npm run prod` failed.";
+  exit 1;
+fi
+
 # Create a shared storage directory and symlink it to the project root
 if [ ! -d "$SHARED/storage" ]; then
   mkdir -p $SHARED/storage
@@ -18,6 +36,12 @@ ln -s $SHARED/storage $RELEASE/storage
 
 # Install application dependencies
 composer install --no-dev --classmap-authoritative --prefer-dist
+
+# fail depoyment if there's an error
+if [ $? -ne 0 ]; then
+  echo "`composer install --no-dev --classmap-authoritative --prefer-dist` failed.";
+  exit 1;
+fi
 
 # Disable lada-cache before migrations
 php artisan lada-cache:disable

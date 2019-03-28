@@ -14,13 +14,13 @@ use App\Models\CCD\Problem;
 use App\Models\CPM\CpmProblem;
 use App\Models\ProblemCode;
 use App\Notifications\PracticeInvoice;
-use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
-use CircleLinkHealth\Customer\Entities\Practice;
 use App\Repositories\PatientSummaryEloquentRepository;
 use App\Services\ApproveBillablePatientsService;
 use App\Services\PracticeReportsService;
-use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
 
@@ -33,9 +33,9 @@ class PracticeInvoiceController extends Controller
     /**
      * PracticeInvoiceController constructor.
      *
-     * @param ApproveBillablePatientsService $service
+     * @param ApproveBillablePatientsService   $service
      * @param PatientSummaryEloquentRepository $patientSummaryDBRepository
-     * @param PracticeReportsService $practiceReportsService
+     * @param PracticeReportsService           $practiceReportsService
      */
     public function __construct(
         ApproveBillablePatientsService $service,
@@ -65,7 +65,7 @@ class PracticeInvoiceController extends Controller
         }
 
         $summaries = $this->getCurrentMonthSummariesQuery($practice_id, $date)
-                          ->get();
+            ->get();
 
         foreach ($summaries as $summary) {
             $summary->actor_id = $user->id;
@@ -116,10 +116,10 @@ class PracticeInvoiceController extends Controller
         }
 
         $readyToBill = Practice::active()
-                               ->authUserCanAccess()
-                               ->get();
-        $needsQA     = [];
-        $invoice_no  = AppConfig::where('config_key', 'billing_invoice_count')->first()['config_value'];
+            ->authUserCanAccess()
+            ->get();
+        $needsQA    = [];
+        $invoice_no = AppConfig::where('config_key', 'billing_invoice_count')->first()['config_value'];
 
         return view('billing.practice.create', compact(
             [
@@ -158,7 +158,7 @@ class PracticeInvoiceController extends Controller
 
         $month = $this->service->getBillablePatientsForMonth($practice_id, $date);
 
-        return response($month['summaries'])->header('is-closed', (int)$month['is_closed']);
+        return response($month['summaries'])->header('is-closed', (int) $month['is_closed']);
     }
 
     /**
@@ -173,12 +173,12 @@ class PracticeInvoiceController extends Controller
         $practice,
         $name
     ) {
-        if ( ! auth()->user()->practice((int)$practice) && ! auth()->user()->isAdmin()) {
+        if ( ! auth()->user()->practice((int) $practice) && ! auth()->user()->isAdmin()) {
             return abort(403, 'Unauthorized action.');
         }
 
-        return response()->download(storage_path('/download/' . $name), $name, [
-            'Content-Length: ' . filesize(storage_path('/download/' . $name)),
+        return response()->download(storage_path('/download/'.$name), $name, [
+            'Content-Length: '.filesize(storage_path('/download/'.$name)),
         ]);
     }
 
@@ -204,22 +204,22 @@ class PracticeInvoiceController extends Controller
     public function make()
     {
         $practices = Practice::orderBy('display_name')
-                             ->select(['name', 'id', 'display_name'])
-                             ->with('chargeableServices')
-                             ->authUserCanAccess(auth()->user()->isSoftwareOnly())
-                             ->active()
-                             ->get();
+            ->select(['name', 'id', 'display_name'])
+            ->with('chargeableServices')
+            ->authUserCanAccess(auth()->user()->isSoftwareOnly())
+            ->active()
+            ->get();
 
         $cpmProblems = CpmProblem::where('name', '!=', 'Diabetes')
-                                 ->get()
-                                 ->map(function ($p) {
-                                     return [
-                                         'id'            => $p->id,
-                                         'name'          => $p->name,
-                                         'code'          => $p->default_icd_10_code,
-                                         'is_behavioral' => $p->is_behavioral,
-                                     ];
-                                 });
+            ->get()
+            ->map(function ($p) {
+                return [
+                    'id'            => $p->id,
+                    'name'          => $p->name,
+                    'code'          => $p->default_icd_10_code,
+                    'is_behavioral' => $p->is_behavioral,
+                ];
+            });
 
         $currentMonth = Carbon::now()->startOfMonth();
 
@@ -307,23 +307,27 @@ class PracticeInvoiceController extends Controller
         return response()->json($summaries);
     }
 
+    /**
+     * @param Request $request
+     *
+     * @return string
+     */
     public function send(Request $request)
     {
-        $invoices = (array)json_decode($request->input('links'));
+        $invoices = (array) json_decode($request->input('links'));
 
         $logger = '';
 
         foreach ($invoices as $key => $value) {
             $practice = Practice::whereDisplayName($key)->first();
 
-            $data = (array)$value;
+            $data = (array) $value;
 
             $patientReportUrl = $data['patient_report_url'];
             $invoiceURL       = $data['invoice_url'];
 
             if ('' != $practice->invoice_recipients) {
                 $recipients = $practice->getInvoiceRecipientsArray();
-
                 $recipients = array_merge($recipients, $practice->getInvoiceRecipients()->pluck('email')->all());
             } else {
                 $recipients = $practice->getInvoiceRecipients()->pluck('email')->all();
@@ -339,7 +343,7 @@ class PracticeInvoiceController extends Controller
                         $user->notify($notification);
                     } else {
                         Notification::route('mail', $recipient)
-                                    ->notify($notification);
+                            ->notify($notification);
                     }
 
                     $logger .= "Sent report for {$practice->name} to ${recipient} <br />";
@@ -390,25 +394,25 @@ class PracticeInvoiceController extends Controller
 
                 if ($existingProblemId) {
                     Problem::where('id', $existingProblemId)
-                           ->update([
-                               'billable' => false,
-                           ]);
+                        ->update([
+                            'billable' => false,
+                        ]);
                 }
 
                 Problem::where('id', $problemId)
-                       ->update([
-                           'billable'     => true,
-                           'name'         => $request['name'],
-                           'is_monitored' => true,
-                       ]);
+                    ->update([
+                        'billable'     => true,
+                        'name'         => $request['name'],
+                        'is_monitored' => true,
+                    ]);
 
                 $updated = ProblemCode::where('problem_id', $problemId)
-                                      ->where('code_system_name', 'like', '%10%')
-                                      ->update([
-                                          'code'             => $request['code'],
-                                          'code_system_name' => 'ICD-10',
-                                          'code_system_oid'  => '2.16.840.1.113883.6.3',
-                                      ]);
+                    ->where('code_system_name', 'like', '%10%')
+                    ->update([
+                        'code'             => $request['code'],
+                        'code_system_name' => 'ICD-10',
+                        'code_system_oid'  => '2.16.840.1.113883.6.3',
+                    ]);
 
                 if ( ! $updated && $request['code']) {
                     ProblemCode::create([
@@ -434,7 +438,7 @@ class PracticeInvoiceController extends Controller
                     }
                 }
 
-                if ($summary->billableProblems()->where((new Problem())->getTable() . '.id', $problemId)->exists()) {
+                if ($summary->billableProblems()->where((new Problem())->getTable().'.id', $problemId)->exists()) {
                     $summary->billableProblems()->updateExistingPivot($problemId, [
                         'name'        => $request['name'],
                         'icd_10_code' => $request['code'],
@@ -452,7 +456,7 @@ class PracticeInvoiceController extends Controller
 
             $problemNumber = extractNumbers($key);
 
-            if ((int)$problemNumber > 0 && (int)$problemNumber < 3) {
+            if ((int) $problemNumber > 0 && (int) $problemNumber < 3) {
                 $summary->{"billable_problem${problemNumber}"}      = $request['name'];
                 $summary->{"billable_problem{$problemNumber}_code"} = $request['code'];
             }
@@ -548,7 +552,7 @@ class PracticeInvoiceController extends Controller
                 'approved' => $summary->approved,
                 'rejected' => $summary->rejected,
             ],
-            'actor_id'  => $summary->actor_id,
+            'actor_id' => $summary->actor_id,
         ]);
     }
 
@@ -589,14 +593,14 @@ class PracticeInvoiceController extends Controller
      * @param $practice_id
      * @param Carbon $date
      *
-     * @return \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
+     * @return \CircleLinkHealth\Customer\Entities\PatientMonthlySummary|\Illuminate\Database\Eloquent\Builder
      */
     private function getCurrentMonthSummariesQuery($practice_id, Carbon $date)
     {
         return PatientMonthlySummary::with('patient.patientInfo')
-                                    ->whereHas('patient', function ($q) use ($practice_id) {
-                                        $q->ofPractice($practice_id);
-                                    })
-                                    ->where('month_year', $date->startOfMonth());
+            ->whereHas('patient', function ($q) use ($practice_id) {
+                $q->ofPractice($practice_id);
+            })
+            ->where('month_year', $date->startOfMonth());
     }
 }
