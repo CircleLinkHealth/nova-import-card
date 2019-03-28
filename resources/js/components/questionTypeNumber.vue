@@ -1,8 +1,8 @@
 <template>
     <div>
-        <input type="number" name="numberTypeAnswer" v-model="inputHasTypedNumber">
+        <input type="number" name="numberTypeAnswer" v-model="inputHasNumber">
         <br>
-        <div v-if="inputHasTypedNumber.length > '1'">
+        <div v-if="inputHasNumber > '1'">
             <button class="next-btn"
                     name="number"
                     id="number"
@@ -26,10 +26,12 @@
 
         data() {
             return {
-                inputHasTypedNumber: false,
+                inputHasNumber: '',
             }
         },
-        computed: {},
+        computed: {
+
+        },
 
         methods: {
             handleClick() {
