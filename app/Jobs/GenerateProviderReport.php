@@ -65,12 +65,6 @@ class GenerateProviderReport implements ShouldQueue
                                         ->where('patient_id', $this->patientId)
                                         ->first();
 
-        if ($existingReport) {
-            //slack/notify something/someone
-            //return/stop
-            return;
-        }
-
         $patient = User::with([
             'surveyInstances' => function ($instance) {
                 $instance->with(['survey', 'questions.type.questionTypeAnswers'])
@@ -85,7 +79,7 @@ class GenerateProviderReport implements ShouldQueue
                        ->findOrFail($this->patientId);
 
 
-        $service = new ProviderReportService($patient, $this->date);
+        $service = new ProviderReportService($patient, $this->date, $existingReport);
 
         $report = $service->generateData();
 

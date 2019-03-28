@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\ProviderReport;
+use Illuminate\Support\Facades\Request;
 
 class ProviderReportController extends Controller
 {
-    public function getProviderReport($request)
+    public function getProviderReport(Request $request)
     {
-
         //placeholder code
         $report = ProviderReport::with('patient.patientInfo')->first();
 

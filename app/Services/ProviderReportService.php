@@ -30,12 +30,16 @@ class ProviderReportService
 
     protected $vitalsQuestions;
 
+    protected $existingReport;
 
-    public function __construct($patient, $date)
+
+    public function __construct($patient, $date, $existingReport = null)
     {
         //patient contains survey data (answers with related questions,types,type_answers)
         $this->patient = $patient;
         $this->date    = Carbon::parse($date);
+
+        $this->existingReport = $existingReport;
 
 
         $this->hraInstance    = $this->patient->surveyInstances->where('survey.name', Survey::HRA)->first();
@@ -52,8 +56,14 @@ class ProviderReportService
     //make possible to edit data on existing report
     public function generateData()
     {
-        //todo: fix
-        $reasonForVisit = 'Inital';
+        //how to calculate if the visit was initial or subsequent? One thought would be that to check if there is an existing report like below. However is it probable that the patient will
+        //edit their surveys after they have completed both during the same visit?
+        if ($this->existingReport){
+            $reasonForVisit = 'Subsequent';
+        }else{
+            $reasonForVisit = 'Inital';
+        }
+
 
         $report = $this->patient->providerReports()->updateOrCreate(
             [
@@ -129,12 +139,9 @@ class ProviderReportService
 
     private function getFamilyMedicalHistory()
     {
-
-        $familyMedicalHistory = [];
-
-        $familyMedicalHistory['family_conditions'] = $this->answerForHraQuestionWithOrder(18, 'a');
-
-        return $familyMedicalHistory;
+        return [
+            'family_conditions' => $this->answerForHraQuestionWithOrder(18, 'a')
+        ];
     }
 
     private function getImmunizationHistory()
@@ -309,7 +316,7 @@ class ProviderReportService
         $answer = $this->hraAnswers->where('question_id', $question->id)->first();
 
         if ( ! $answer) {
-            throw new \Exception("No answer found for question with id {$question->id}, for patient with id {$this->patient->id}");
+            return [];
         }
 
         return $this->isJson($answer->value_1)
@@ -325,7 +332,7 @@ class ProviderReportService
         $answer = $this->vitalsAnswers->where('question_id', $question->id)->first();
 
         if ( ! $answer) {
-            throw new \Exception("No answer found for question with id {$question->id}, for patient with id {$this->patient->id}");
+           return [];
         }
 
         return [
