@@ -4,9 +4,25 @@ set -e
 
 SHARED=$1
 RELEASE=$2
+PREVIOUS_REVISION=$3
+REVISION=$4
+
+changed_files="$(git diff-tree -r --name-only --no-commit-id PREVIOUS_REVISION REVISION)"
+
+if_file_changed() {
+	echo "$changed_files" | grep --quiet "$1" && eval "$2"
+}
 
 # install npm dependencies
-npm install
+if_file_changed package.json "npm install"
+
+# fail depoyment if there's an error
+if [ $? -ne 0 ]; then
+  echo "`npm install` failed.";
+  exit 1;
+fi
+
+if_file_changed bower.json "npm run bower_install"
 
 # fail depoyment if there's an error
 if [ $? -ne 0 ]; then
@@ -15,7 +31,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # compile assets
-npm run prod
+if_file_changed resources/assets "npm run prod"
 
 # fail depoyment if there's an error
 if [ $? -ne 0 ]; then
@@ -35,7 +51,7 @@ rm -rf storage
 ln -s $SHARED/storage $RELEASE/storage
 
 # Install application dependencies
-composer install --no-dev --classmap-authoritative --prefer-dist
+if_file_changed composer.lock "composer install --no-dev --classmap-authoritative --prefer-dist"
 
 # fail depoyment if there's an error
 if [ $? -ne 0 ]; then
