@@ -24,10 +24,10 @@ if_file_changed() {
 }
 
 # install npm dependencies
-if_file_changed package-lock.json "npm install --silent"
+if_file_changed "package-lock.json" "npm install --silent"
 
 # compile assets
-if_file_changed resources/assets "npm run prod"
+if_file_changed resources/assets "npm run prod --silent"
 
 # Create a shared storage directory and symlink it to the project root
 if [ ! -d "$SHARED/storage" ]; then
