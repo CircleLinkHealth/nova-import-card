@@ -6,11 +6,11 @@
 
 namespace App\Console\Commands;
 
-use CircleLinkHealth\TimeTracking\Entities\Activity;
 use App\Notifications\NurseDailyReport;
-use CircleLinkHealth\TimeTracking\Entities\PageTimer;
-use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
+use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Console\Command;
 
 class EmailRNDailyReport extends Command
@@ -29,7 +29,7 @@ class EmailRNDailyReport extends Command
     protected $signature = 'nurses:emailDailyReport {nurseUserIds? : Comma separated user IDs of nurses to email report to.}
                                                     {date? : Date to generate report for in YYYY-MM-DD.}
                                                     ';
-    
+
     /**
      * Create a new command instance.
      */
@@ -37,7 +37,7 @@ class EmailRNDailyReport extends Command
     {
         parent::__construct();
     }
-    
+
     /**
      * Execute the console command.
      *
@@ -46,15 +46,15 @@ class EmailRNDailyReport extends Command
     public function handle()
     {
         $userIds = $this->argument('nurseUserIds') ?? null;
-        $date    = $this->argument('date') ?? Carbon::today();
-        
+        $date    = $this->argument('date') ?? Carbon::yesterday();
+
         if ( ! is_a($date, Carbon::class)) {
             $date = Carbon::parse($date);
         }
-        
+
         $counter    = 0;
         $emailsSent = [];
-        
+
         User::ofType('care-center')
             ->when(
                 null != $userIds,
@@ -71,17 +71,17 @@ class EmailRNDailyReport extends Command
                             continue;
                         }
                         $activityTime = Activity::createdBy($nurse)
-                                                ->createdOn($date,'performed_at')
-                                                ->sum('duration');
-                    
+                            ->createdOn($date, 'performed_at')
+                            ->sum('duration');
+
                         $systemTime = PageTimer::where('provider_id', $nurse->id)
-                                               ->createdOn($date,'start_time')
-                                               ->sum('billable_duration');
-                    
+                            ->createdOn($date, 'start_time')
+                            ->sum('billable_duration');
+
                         $totalMonthSystemTimeSeconds = PageTimer::where('provider_id', $nurse->id)
-                                                                ->createdInMonth($date, 'start_time')
-                                                                ->sum('billable_duration');
-                    
+                            ->createdInMonth($date, 'start_time')
+                            ->sum('billable_duration');
+
                         if (0 == $systemTime) {
                             continue;
                         }
@@ -91,68 +91,68 @@ class EmailRNDailyReport extends Command
                         ) {
                             continue;
                         }
-                    
+
                         $performance = round((float) ($activityTime / $systemTime) * 100);
-                    
-                        $totalTimeInSystemToday = secondsToHMS($systemTime);
-                    
+
+                        $totalTimeInSystemOnGivenDate = secondsToHMS($systemTime);
+
                         $totalTimeInSystemThisMonth = secondsToHMS($totalMonthSystemTimeSeconds);
-                    
+
                         $totalEarningsThisMonth = round(
                             (float) ($totalMonthSystemTimeSeconds * $nurse->nurseInfo->hourly_rate / 60 / 60),
                             2
                         );
-                    
+
                         $nextUpcomingWindow = $nurse->nurseInfo->firstWindowAfter(Carbon::now());
-                    
+
                         if ($nextUpcomingWindow) {
-                            $carbonDate              = Carbon::parse($nextUpcomingWindow->date);
+                            $carbonDate = Carbon::parse($nextUpcomingWindow->date);
                             $nextUpcomingWindowLabel = clhDayOfWeekToDayName(
-                                                           $nextUpcomingWindow->day_of_week
+                                $nextUpcomingWindow->day_of_week
                                                        )." {$carbonDate->format('m/d/Y')}";
                         }
-                    
+
                         $hours = $nurse->nurseInfo->workhourables
                             ? $nurse->nurseInfo->workhourables->first()
                             : null;
-                    
+
                         $totalHours = $hours && $nextUpcomingWindow
                             ? (string) $hours->{strtolower(
                                 clhDayOfWeekToDayName($nextUpcomingWindow->day_of_week)
                             )}
                             : null;
-                    
+
                         $data = [
-                            'name'                       => $nurse->getFullName(),
-                            'performance'                => $performance,
-                            'totalEarningsThisMonth'     => $totalEarningsThisMonth,
-                            'totalTimeInSystemToday'     => $totalTimeInSystemToday,
-                            'totalTimeInSystemThisMonth' => $totalTimeInSystemThisMonth,
-                            'nextUpcomingWindow'         => $nextUpcomingWindow,
-                            'nextWindowCarbonDate'       => $carbonDate ?? null,
-                            'hours'                      => $hours,
-                            'nextUpcomingWindowLabel'    => $nextUpcomingWindowLabel ?? null,
-                            'totalHours'                 => $totalHours,
-                            'windowStart'                => $nextUpcomingWindow
+                            'name'                         => $nurse->getFullName(),
+                            'performance'                  => $performance,
+                            'totalEarningsThisMonth'       => $totalEarningsThisMonth,
+                            'totalTimeInSystemOnGivenDate' => $totalTimeInSystemOnGivenDate,
+                            'totalTimeInSystemThisMonth'   => $totalTimeInSystemThisMonth,
+                            'nextUpcomingWindow'           => $nextUpcomingWindow,
+                            'nextWindowCarbonDate'         => $carbonDate ?? null,
+                            'hours'                        => $hours,
+                            'nextUpcomingWindowLabel'      => $nextUpcomingWindowLabel ?? null,
+                            'totalHours'                   => $totalHours,
+                            'windowStart'                  => $nextUpcomingWindow
                                 ? Carbon::parse($nextUpcomingWindow->window_time_start)->format('g:i A T')
                                 : null,
-                            'windowEnd'                  => $nextUpcomingWindow
+                            'windowEnd' => $nextUpcomingWindow
                                 ? Carbon::parse($nextUpcomingWindow->window_time_end)->format('g:i A T')
                                 : null,
                         ];
-                    
+
                         $nurse->notify(new NurseDailyReport($data, $date));
-                    
+
                         $emailsSent[] = [
                             'nurse' => $nurse->getFullName(),
                             'email' => $nurse->email,
                         ];
-                    
+
                         ++$counter;
                     }
                 }
             );
-        
+
         $this->table(
             [
                 'nurse',
@@ -160,7 +160,7 @@ class EmailRNDailyReport extends Command
             ],
             $emailsSent
         );
-        
+
         $this->info("${counter} email(s) sent.");
     }
 }
