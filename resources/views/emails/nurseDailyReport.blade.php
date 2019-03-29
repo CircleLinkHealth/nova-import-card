@@ -38,7 +38,7 @@
 </p>
 
 <p>
-    If you have any questions please reach out to your day-to-day contact at CircleLink Health via Slack (direct messaging),
+    If you have any questions please reach out to your day-to-day contact at CircleLink Health via Slack (Direct Messaging),
     e-mail or phone.
 </p>
 
