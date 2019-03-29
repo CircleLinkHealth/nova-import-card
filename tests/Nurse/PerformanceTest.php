@@ -28,7 +28,7 @@ class PerformanceTest extends TestCase
 
             $performance = $activityTime / $systemTime;
 
-            $totalTimeInSystemToday = secondsToHMS($systemTime);
+            $totalTimeInSystemOnGivenDate = secondsToHMS($systemTime);
 
             $totalTimeInSystemThisMonthInSeconds = PageTimer::where('provider_id', $nurse->id)
                 ->createdThisMonth()
