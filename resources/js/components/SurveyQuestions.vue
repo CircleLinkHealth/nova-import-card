@@ -36,7 +36,7 @@
                         {{question.id}}{{'.'}} {{question.body}}
                         <!--Questions Answer Type-->
                         <div class="question-answer-type">
-                            <question-type-text v-if="question.type.type === 'text'"></question-type-text>
+                            <question-type-text :question="question" v-if="question.type.type === 'text'"></question-type-text>
                             <question-type-checkbox
                                     v-if="question.type.type === 'checkbox'"></question-type-checkbox>
                             <question-type-range v-if="question.type.type === 'range'"></question-type-range>
