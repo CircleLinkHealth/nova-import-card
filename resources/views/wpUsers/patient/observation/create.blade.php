@@ -6,16 +6,17 @@
 @section('content')
 
     @push('scripts')
-        <script type="text/javascript" src="{{ mix('/js/patient/observation-create.js') }}"></script>
-
         <script>
             $(function () {
                 $(".observation").select2();
             });
+            $('#observationDate').datetimepicker({
+                format: 'Y-m-d H:i',
+                step: 1
+            });
         </script>
     @endpush
 
-    <div id="dtBox"></div>
     <div class="row" style="margin:60px 0px;">
         <div class="col-lg-10 col-lg-offset-1">
             @include('errors.errors')
@@ -120,7 +121,7 @@
                                         </div>
                                         <div class="col-sm-12">
                                             <div class="form-group">
-                                                <input name="observationDate" type="text" class="selectpickerX form-control" value="{{ (old('observationDate') ? old('observationDate') : date('Y-m-d H:i')) }}" data-field="datetime" data-format="yyyy-MM-dd HH:mm" required>
+                                                <input id="observationDate" name="observationDate" type="text" class="selectpickerX form-control" value="{{ (old('observationDate') ? old('observationDate') : date('Y-m-d H:i')) }}" data-field="datetime" data-format="yyyy-MM-dd HH:mm" required>
                                             </div>
                                         </div>
                                     </div>
