@@ -1,6 +1,6 @@
 <template>
    <div>
-       <input type="text" name="textTypeAnswer[]" v-model="inputHasText">
+       <input type="text" name="textTypeAnswer[]" v-model="inputHasText" @change="onInput">
        <br>
        <div v-if="inputHasText >'1'">
            <button class="next-btn"
@@ -13,6 +13,8 @@
 </template>
 
 <script>
+
+    import {EventBus} from "../event-bus";
     export default {
         name: "questionTypeText",
 
@@ -28,8 +30,8 @@
         computed: {},
 
         methods: {
-            onInput(e) {
-
+            onInput() {
+                EventBus.$emit('handleTextType');
             },
 
         },

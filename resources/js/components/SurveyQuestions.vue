@@ -31,7 +31,7 @@
             <div class="questions-box"
                  v-if="questionsStage"
                  v-for="(question, index) in questions">
-                <div class="question">
+                <div v-show="index === questionIndex" class="question">
                     <div v-if="question.optional === 0 || shouldShowQuestion" data-aos="fade-up">
                         {{question.id}}{{'.'}} {{question.body}}
                         <!--Questions Answer Type-->
@@ -69,6 +69,10 @@
                     </button>
                 </div>
                 <div v-if="questionsStage">
+
+                    {{this.progressCount}} {{'of'}} {{totalQuestions}}
+                    <b-progress :value="progressCount" :max="totalQuestions"></b-progress>
+
                     <button type="button"
                             id="scroll-down"
                             class="btn btn-sm next"
@@ -84,6 +88,7 @@
                 </div>
             </div>
         </div>
+
     </div>
 
 </template>
@@ -103,10 +108,15 @@
     import {EventBus} from '../event-bus';
     import AOS from 'aos';
     import 'aos/dist/aos.css';
+    import BootstrapVue from 'bootstrap-vue'
+    import 'bootstrap/dist/css/bootstrap.css'
+    import 'bootstrap-vue/dist/bootstrap-vue.css'
+
+    Vue.use(BootstrapVue);
+
     AOS.init({
         duration: 1200,
     });
-
 
     export default {
         props: ['surveydata'],
@@ -133,13 +143,14 @@
                 subQuestions: [],
                 shouldShowQuestion: false,
                 questionIndex: 0,
+                progressCount: 0,
             }
         },
         computed: {
             subQuestionsConditions() {
                 return this.subQuestions.flatMap(function (q) {
                     return q.conditions;
-                })
+                });
             },
 
             questionsOrder() {
@@ -147,6 +158,10 @@
                     return q.pivot;
                 });
             },
+
+            totalQuestions() {
+                return this.questions.length - this.subQuestions.length;
+            }
         },
 
         methods: {
@@ -188,15 +203,26 @@
                     this.showSubQuestion(conditions);
                 }
                 this.questionIndex++;
+                this.updateProgressBar();
             },
 
             handleNumberInputs() {
                 this.questionIndex++;
+                this.updateProgressBar();
+            },
+
+            handleTextInputs() {
+                this.questionIndex++;
+                this.updateProgressBar();
             },
 
             addInput() {
-                this.questions.push({});
-            }
+                // this.questions.push({});
+            },
+
+            updateProgressBar() {
+               this.progressCount++;
+            },
 
         },
         mounted() {
@@ -206,6 +232,10 @@
 
             EventBus.$on('handleNumberType', () => {
                 this.handleNumberInputs();
+            });
+
+            EventBus.$on('handleTextType', () => {
+                this.handleTextInputs();
             });
         },
         created() {
@@ -349,4 +379,13 @@
         background-color: #50b2e2;
         margin-top: 15px;
     }
+
+    .progress-bar {
+        width: 180px;
+        height: 29px;
+        margin-left: 43%;
+    }
+
+
+
 </style>
