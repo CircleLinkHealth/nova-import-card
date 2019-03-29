@@ -32,10 +32,9 @@
     <link rel="stylesheet"
           href="{{mix('/css/jquery-ui-timepicker-addon.min.css')}}">
 
-    <!-- http://curioussolutions.github.io/DateTimePicker/ -->
-    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.css"/>
-
     <link rel="stylesheet" href="{{mix('/css/bootstrap.min.css')}}">
+
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"/>
 
     <!-- select2 -->
     <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet"/>
