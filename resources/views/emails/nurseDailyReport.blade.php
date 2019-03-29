@@ -3,7 +3,7 @@
     Dear {{ $name }},
 </p>
 <p>
-    Thanks for providing care on the CircleLink platform {{$date->englishDayOfWeek}}, {{$date->englishMonth}} {{$date->day}}. {{$date->year}}!
+    Thanks for providing care on the CircleLink platform {{$date->englishDayOfWeek}}, {{$date->englishMonth}} {{$date->day}}, {{$date->year}}!
 </p>
 <p>
     Here’s a report on your performance, time worked and earnings:
