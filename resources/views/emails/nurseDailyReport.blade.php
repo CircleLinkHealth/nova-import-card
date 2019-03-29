@@ -3,7 +3,7 @@
     Dear {{ $name }},
 </p>
 <p>
-    Thanks for providing care on the CircleLink platform {{$date->englishDayOfWeek}}, {{$date->englishMonth}} {{$date->day}}, {{$date->year}}!
+    Thanks for providing care on the CircleLink platform on {{$date->englishDayOfWeek}}, {{$date->englishMonth}} {{$date->day}}, {{$date->year}}!
 </p>
 <p>
     Here’s a report on your performance, time worked and earnings:
@@ -38,13 +38,12 @@
 </p>
 
 <p>
-    If you have any questions please reach out to your day-to-day contact at CircleLink Health via direct messaging
-    Slack,
+    If you have any questions please reach out to your day-to-day contact at CircleLink Health via Slack (direct messaging),
     e-mail or phone.
 </p>
 
 <p>
-    Have a great night and keep up the good work!
+    Have a great day and keep up the good work!
 </p>
 
 <p>
