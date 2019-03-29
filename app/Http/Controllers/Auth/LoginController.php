@@ -214,7 +214,9 @@ class LoginController extends Controller
             }
         }
 
-        throw ValidationException::withMessages($messages);
+        return redirect()
+            ->route('login')
+            ->withErrors($messages);
     }
 
     /**
