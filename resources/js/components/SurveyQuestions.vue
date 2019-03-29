@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <!--Survey welcome note-->
-        <div class="card">
+        <div class="survey-container">
             <div v-if="welcomeStage" class="practice-title">
                 <label id="title">[Practice Name]
                     Dr. [doctor last name]’s Office</label>
@@ -31,8 +31,8 @@
             <div class="questions-box"
                  v-if="questionsStage"
                  v-for="(question, index) in questions">
-                <div v-show="index === questionIndex" class="question">
-                    <div v-if="question.optional === 0 || shouldShowQuestion" data-aos="fade-up">
+                <div v-show="index >= questionIndex" class="question">
+                    <div v-if="question.optional === 0 || shouldShowQuestion"> <!--data-aos="fade-up"-->
                         {{question.id}}{{'.'}} {{question.body}}
                         <!--Questions Answer Type-->
                         <div class="question-answer-type">
@@ -49,11 +49,13 @@
                     </div>
                 </div>
             </div>
-
-            <!--bottom-navbar-->
-            <br>
             <call-assistance v-if="callAssistance" @closeCallAssistanceModal="hideCallHelp"></call-assistance>
-            <div class="bottom-navbar">
+            <br>
+        </div>
+        <!--bottom-navbar-->
+        <div class="bottom-navbar">
+            <!--phone assistance-->
+            <div class="row">
                 <div v-if="showPhoneButton" class="call-assistance col-lg-1">
                     <button type="button"
                             class="btn btn-default"
@@ -68,27 +70,38 @@
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
+
                 <div v-if="questionsStage">
-
-                    {{this.progressCount}} {{'of'}} {{totalQuestions}}
-                    <b-progress :value="progressCount" :max="totalQuestions"></b-progress>
-
-                    <button type="button"
-                            id="scroll-down"
-                            class="btn btn-sm next"
-                            @click="scrollDown">
-                        <i class="fas fa-angle-down"></i>
-                    </button>
-                    <button v-if="" type="button"
-                            id="scroll-up"
-                            class="btn btn-sm next"
-                            @click="scrollUp">
-                        <i class="fas fa-angle-up"></i>
-                    </button>
+                    <!--progress bar-->
+                    <div class="row mb-1" style="margin-left: 380px;">
+                        <div class="progressbar-label col-lg-4 col-sm-2">{{this.progressCount}} of {{totalQuestions}}
+                            completed
+                        </div>
+                        <div class="col-lg-4 col-sm-10 pt-1">
+                            <b-progress style="width: 280px; height:10px; margin-left: -40%;"
+                                        :value="progressCount"></b-progress>
+                        </div>
+                    </div>
+                </div>
+                <!--scroll buttons-->
+                <div class="row">
+                    <div class="scroll-buttons">
+                        <button type="button"
+                                id="scroll-down"
+                                class="btn btn-sm next"
+                                @click="scrollDown">
+                            <i class="fas fa-angle-down"></i>
+                        </button>
+                        <button v-if="" type="button"
+                                id="scroll-up"
+                                class="btn btn-sm next"
+                                @click="scrollUp">
+                            <i class="fas fa-angle-up"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-
     </div>
 
 </template>
@@ -112,7 +125,6 @@
     import 'bootstrap/dist/css/bootstrap.css'
     import 'bootstrap-vue/dist/bootstrap-vue.css'
 
-    Vue.use(BootstrapVue);
 
     AOS.init({
         duration: 1200,
@@ -131,6 +143,7 @@
             'question-type-radio': questionTypeRadio,
             'question-type-date': questionTypeDate,
             'call-assistance': callAssistance,
+            'bootstrap-vue': BootstrapVue
         },
 
         data() {
@@ -148,15 +161,16 @@
         },
         computed: {
             subQuestionsConditions() {
-                return this.subQuestions.flatMap(function (q) {
-                    return q.conditions;
+                return this.subQuestions.flatMap(function (subquestion) {
+                    return subquestion.conditions;
                 });
             },
 
             questionsOrder() {
                 return this.questions.flatMap(function (q) {
-                    return q.pivot;
+                    return q.pivot.order;
                 });
+
             },
 
             totalQuestions() {
@@ -181,11 +195,11 @@
             },
 
             scrollDown() {
-                //scroll down
+
             },
 
             scrollUp() {
-                //scrollUp
+
             },
 
             showSubQuestion(conditions) {
@@ -202,6 +216,7 @@
                 if (conditions.length !== 0) {
                     this.showSubQuestion(conditions);
                 }
+
                 this.questionIndex++;
                 this.updateProgressBar();
             },
@@ -217,11 +232,11 @@
             },
 
             addInput() {
-                // this.questions.push({});
+
             },
 
             updateProgressBar() {
-               this.progressCount++;
+                this.progressCount++;
             },
 
         },
@@ -308,6 +323,8 @@
     .bottom-navbar {
         background-color: #ffffff;
         border-bottom: 1px solid #808080;
+        border-left: 1px solid #808080;
+        border-right: 1px solid #808080;
         min-height: 90px;
         height: 90px;
         margin-top: auto;
@@ -331,14 +348,20 @@
         color: #1a1a1a;
     }
 
-    .card {
+    .survey-container {
         margin-top: 50px;
         background-color: #f2f6f9;
         border-top: 1px solid #808080;
         border-left: 1px solid #808080;
         border-right: 1px solid #808080;
         width: 100%;
-        min-height: 700px;
+        min-height: 100%;
+        max-height: 600px;
+    }
+
+    .scroll-buttons {
+        margin-left: 990px;
+        margin-top: 20px;
     }
 
     #scroll-up, #scroll-down {
@@ -380,12 +403,8 @@
         margin-top: 15px;
     }
 
-    .progress-bar {
-        width: 180px;
-        height: 29px;
-        margin-left: 43%;
+    .progressbar-label {
+        position: relative;
     }
-
-
 
 </style>
