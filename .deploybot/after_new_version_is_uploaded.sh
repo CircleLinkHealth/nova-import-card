@@ -29,7 +29,14 @@ if_file_changed() {
 }
 
 # install npm dependencies
-if_file_changed package.json "npm install"
+npm install
+
+# fail deployment if there's an error
+    if [ $? -ne 0 ]; then
+      echo "`npm install` failed.";
+      rm -rf node_modules
+      exit 1;
+    fi
 
 # compile assets
 npm run prod
@@ -37,8 +44,11 @@ npm run prod
 # fail deployment if there's an error
 if [ $? -ne 0 ]; then
   echo "`npm run prod` failed.";
+  rm -rf node_modules
   exit 1;
 fi
+
+rm -rf node_modules
 
 # Create a shared storage directory and symlink it to the project root
 if [ ! -d "$SHARED/storage" ]; then
@@ -52,7 +62,13 @@ rm -rf storage
 ln -s $SHARED/storage $RELEASE/storage
 
 # Install application dependencies
-if_file_changed composer.lock "composer install --no-dev --classmap-authoritative --prefer-dist"
+composer install --no-dev --classmap-authoritative --prefer-dist
+
+# fail deployment if there's an error
+if [ $? -ne 0 ]; then
+  echo "`composer install --no-dev --classmap-authoritative --prefer-dist` failed.";
+  exit 1;
+fi
 
 # Disable lada-cache before migrations
 php artisan lada-cache:disable
