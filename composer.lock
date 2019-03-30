@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0e9dc51fef8f3490355acc4028820905",
+    "content-hash": "7e4f1aced99b6c28b692c683eb7205e9",
     "packages": [
         {
             "name": "amnuts/opcache-gui",
@@ -459,73 +459,6 @@
                 "time"
             ],
             "time": "2019-02-11T02:08:31+00:00"
-        },
-        {
-            "name": "circlelinkhealth/core",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "71a16bab6574ee4600c3bb5615274aefd77a085e"
-            },
-            "require": {
-                "spiritix/lada-cache": "^2.1",
-                "venturecraft/revisionable": "dev-master"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "CircleLinkHealth\\Core\\Providers\\CoreServiceProvider"
-                    ],
-                    "aliases": []
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "CircleLinkHealth\\Core\\": ""
-                }
-            },
-            "authors": [
-                {
-                    "name": "Michalis Antoniou",
-                    "email": "mantoniou@cirlelinkhealth.com"
-                }
-            ],
-            "time": "2019-03-30T04:59:53+00:00"
-        },
-        {
-            "name": "circlelinkhealth/customer",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "a94813cda7cbae10ca9de8e69d83cc12043ab8bd"
-            },
-            "require": {
-                "circlelinkhealth/core": "dev-master"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "CircleLinkHealth\\Customer\\Providers\\CustomerServiceProvider"
-                    ],
-                    "aliases": []
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "CircleLinkHealth\\Customer\\": ""
-                }
-            },
-            "authors": [
-                {
-                    "name": "Michalis Antoniou",
-                    "email": "mantoniou@cirlelinkhealth.com"
-                }
-            ],
-            "time": "2019-03-30T04:59:53+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
@@ -11472,9 +11405,7 @@
         "venturecraft/revisionable": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
-        "xethron/migrations-generator": 20,
-        "circlelinkhealth/core": 20,
-        "circlelinkhealth/customer": 20
+        "xethron/migrations-generator": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
