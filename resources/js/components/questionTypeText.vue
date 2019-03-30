@@ -22,16 +22,16 @@
             </label>
         </div>
         <!--add input fields button-->
-       <div v-if="canAddInputFields">
-           <button type="button"
-                   @click="addInputFields"
-                   class="btn-primary">
-              {{this.addInputFieldsButtonName}}
-           </button>
-       </div>
+        <div v-if="canAddInputFields">
+            <button type="button"
+                    @click="addInputFields"
+                    class="btn-primary">
+                {{this.addInputFieldsButtonName}}
+            </button>
+        </div>
         <div v-if="canRemoveInputFields">
             <button type="button"
-                    @click="removeInputFields"
+                    @click="removeInputFields(index)"
                     class="btn-primary">
                 {{this.removeInputFieldsButtonName}}
             </button>
@@ -64,6 +64,7 @@
                 inputHasText: [],
                 questionOptions: [],
                 canRemoveInputFields: false,
+                canAddInputFields: false,
                 addFields: {
                     title: 'Need to dynamicaly',
                     placeholder: 'Set these fields',
@@ -82,10 +83,11 @@
                 return false;
             },
 
-            questionSubParts(){
-                if(this.questionHasSubParts){
+            questionSubParts() {
+                if (this.questionHasSubParts) {
                     return this.questionOptions[0].sub_parts;
-                } return '';
+                }
+                return '';
             },
 
             questionHasPlaceHolder() {
@@ -98,20 +100,15 @@
             questionPlaceHolder() {
                 if (this.questionHasPlaceHolder) {
                     return this.questionOptions[0].placeholder;
-                } return '';
+                }
+                return '';
             },
 
-            canAddInputFields(){
-                if(this.hasAnswerType){
-                    return this.questionOptions[0].allow_multiple;
-                }return false;
-            },
-
-            addInputFieldsButtonName(){
+            addInputFieldsButtonName() {
                 return this.questionOptions[0].add_extra_answer_text;
             },
 
-            removeInputFieldsButtonName(){
+            removeInputFieldsButtonName() {
                 return this.questionOptions[0].remove_extra_answer_text;
             },
 
@@ -125,17 +122,22 @@
             addInputFields() {
                 this.questionSubParts.push(this.addFields);
                 this.canRemoveInputFields = true;
-                this.canAddInputFields = false;
+                //this.canAddInputFields = false;
             },
 
-            removeInputFields(){
-
+            removeInputFields(index) {
+                Vue.delete(this.questionSubParts, index);
             },
         },
 
         created() {
             const questionOptions = this.question.type.question_type_answers.map(q => q.options);
             this.questionOptions.push(...questionOptions);
+
+            if (this.hasAnswerType) {
+                return this.questionOptions[0].allow_multiple === true ? this.canAddInputFields = true : '';
+            }
+            return false;
         },
     }
 </script>
