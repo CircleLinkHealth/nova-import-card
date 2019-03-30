@@ -1,7 +1,7 @@
 @extends('partials.providerUI')
 
 @section('title', 'Care Plan Print List')
-@section('activity', '')
+@section('activity', 'Care Plan Print List')
 
 @section('content')
     <div class="row" style="margin-top:60px;">
