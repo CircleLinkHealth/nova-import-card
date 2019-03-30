@@ -211,7 +211,6 @@ class CarePlanHelper
         $this->createNewCarePlan()
             ->storeAllergies()
             ->storeProblemsList()
-            ->storeProblemsToMonitor()
             ->storeMedications()
             ->storeBillingProvider()
             ->storeLocation()
@@ -536,6 +535,7 @@ class CarePlanHelper
 
     /**
      * Activates Problems to Monitor (CCM Conditions).
+     * Still used by: ReImportCcdToGetProblemTranslationCodes.php.
      *
      * @return $this
      */

@@ -10,6 +10,7 @@ use App\Call;
 use App\CarePlan;
 use App\CarePlanTemplate;
 use App\EligibilityBatch;
+use App\Models\CCD\Problem;
 use App\Models\Holiday;
 use App\Models\ProblemCode;
 use App\NurseContactWindow;
@@ -24,6 +25,7 @@ use App\Observers\PatientMonthlySummaryObserver;
 use App\Observers\PatientObserver;
 use App\Observers\PracticeObserver;
 use App\Observers\ProblemCodeObserver;
+use App\Observers\ProblemObserver;
 use App\Observers\RevisionObserver;
 use App\Observers\SaasAccountObserver;
 use App\Observers\UserObserver;
@@ -57,6 +59,7 @@ class ObserversServiceProvider extends ServiceProvider
         SaasAccount::observe(SaasAccountObserver::class);
         User::observe(UserObserver::class);
         Call::observe(CallObserver::class);
+        Problem::observe(ProblemObserver::class);
     }
 
     /**

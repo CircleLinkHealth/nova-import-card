@@ -104,6 +104,7 @@
             })
             this.getSymptoms(2)
 
+            Event.$on('problems:updated', this.getPatientSymptoms.bind(this))
             Event.$on('symptoms:select', (id) => {
                 const symptom = this.symptoms.find(symptom => symptom.id === id)
                 if (symptom) {

@@ -105,6 +105,8 @@
             this.groups = this.careplan().medicationGroups
             this.medications = this.careplan().medications.map(this.setupMedication)
             this.getMedications(2)
+
+            Event.$on('problems:updated', this.getMedicationGroups.bind(this))
             
             Event.$on('medication:remove', (id) => {
                 this.medications = this.medications.filter((medication) => medication.id != id)

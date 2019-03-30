@@ -23,18 +23,17 @@ trait CcdProblemTraits
         return response()->json($this->ccdProblemService->addPatientCcdProblem($ccdProblem));
     }
 
-    public function editCcdProblem($userId, $ccdId, SafeRequest $request)
+    public function editCcdProblem($userId, $ccdProblemId, SafeRequest $request)
     {
-        $name           = $request->inputSafe('name');
         $cpm_problem_id = $request->inputSafe('cpm_problem_id');
         $is_monitored   = $request->inputSafe('is_monitored');
         $icd10          = $request->inputSafe('icd10');
         $instruction    = $request->inputSafe('instruction');
-        if ($name) {
-            return response()->json($this->ccdProblemService->editPatientCcdProblem($userId, $ccdId, $name, $cpm_problem_id, $is_monitored, $icd10, $instruction));
+        if ($ccdProblemId) {
+            return response()->json($this->ccdProblemService->editPatientCcdProblem($userId, $ccdProblemId, $cpm_problem_id, $is_monitored, $icd10, $instruction));
         }
 
-        return $this->badRequest('"userId" and "name" are important');
+        return $this->badRequest('"userId" and "ccdProblemId" are important');
     }
 
     public function getCcdProblems($userId)
