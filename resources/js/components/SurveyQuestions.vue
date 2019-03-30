@@ -32,7 +32,7 @@
                  v-if="questionsStage"
                  v-for="(question, index) in questions">
                 <div v-show="index >= questionIndex" class="question">
-                    <div v-if="question.optional === 0 || shouldShowQuestion"> <!--data-aos="fade-up"-->
+                    <div v-if="question.optional === 0 || shouldShowQuestion"><!--data-aos="fade-up"-->
                         {{question.id}}{{'.'}} {{question.body}}
                         <!--Questions Answer Type-->
                         <div class="question-answer-type">
@@ -357,7 +357,12 @@
         width: 100%;
         min-height: 100%;
         max-height: 600px;
+        overflow-y: scroll;
+        padding-right: 17px;
+        box-sizing: content-box;
     }
+
+    .survey-container::-webkit-scrollbar { width: 0 !important }
 
     .scroll-buttons {
         margin-left: 990px;
@@ -406,5 +411,7 @@
     .progressbar-label {
         position: relative;
     }
+
+
 
 </style>
