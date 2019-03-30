@@ -358,8 +358,6 @@
         min-height: 100%;
         max-height: 600px;
         overflow-y: scroll;
-        padding-right: 17px;
-        box-sizing: content-box;
     }
 
     .survey-container::-webkit-scrollbar { width: 0 !important }
