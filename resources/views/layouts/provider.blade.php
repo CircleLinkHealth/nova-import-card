@@ -34,7 +34,6 @@
     <link href="{{ mix('/css/patientsearch.css') }}" rel="stylesheet">
 
 
-
     <link href="{{ mix('/css/wpstyle.css') }}" rel="stylesheet">
 
     @if (str_contains(Route::getCurrentRoute()->getName(), 'admin'))
@@ -53,8 +52,8 @@
 
 
     @if(!isset($isPdf))
-    <!-- http://curioussolutions.github.io/DateTimePicker/ -->
-        <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.css"/>
+        <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"/>
+
         <link rel="stylesheet" href="{{ mix('/webix/codebase/webix.css') }}" type="text/css">
 
         <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>

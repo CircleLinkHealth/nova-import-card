@@ -6,8 +6,6 @@
 @section('content')
 
     @push('scripts')
-        <script type="text/javascript" src="{{ mix('/js/patient/observation-create.js') }}"></script>
-
         <script>
             $(function () {
                 $(".provider").select2();
