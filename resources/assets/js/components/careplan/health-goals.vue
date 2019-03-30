@@ -151,6 +151,7 @@
                         return this.setupGoal(goals.find(g => g.id === baseGoal.id) || baseGoal)
                     })
 
+            Event.$on('problems:updated', this.getGoals.bind(this))
             Event.$on('health-goals:goals', (goals) => {
                 this.goals = goals
             })

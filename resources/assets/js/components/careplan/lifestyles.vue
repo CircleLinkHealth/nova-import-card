@@ -103,6 +103,7 @@
                 return lifestyle
             })
 
+            Event.$on('problems:updated', this.getPatientLifestyles.bind(this))
             Event.$on('lifestyles:select', (id) => {
                 const lifestyle = this.lifestyles.find(lifestyle => lifestyle.id === id)
                 if (lifestyle) {

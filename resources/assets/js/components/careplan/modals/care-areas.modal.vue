@@ -279,6 +279,7 @@
                         console.log('care-areas:remove-problems', response.data)
                         this.loaders.removeProblem = false
                         Event.$emit(`care-areas:remove-${this.selectedProblem.type}-problem`, this.selectedProblem.id)
+                        Event.$emit('problems:updated', {})
                         this.selectedProblem = null
                         setImmediate(() => this.checkPatientBehavioralStatus())
                     }).catch(err => {
@@ -303,6 +304,7 @@
                 }).then(response => {
                     console.log('full-conditions:add', response.data)
                     this.loaders.addProblem = false
+                    Event.$emit('problems:updated', {})
                     Event.$emit('full-conditions:add', response.data)
                     this.reset()
                     this.selectedProblem = response.data
@@ -316,7 +318,6 @@
                 e.preventDefault()
                 this.loaders.editProblem = true
                 return this.axios.put(rootUrl(`api/patients/${this.patientId}/problems/ccd/${this.selectedProblem.id}`), {
-                    name: this.selectedProblem.original_name,
                     cpm_problem_id: this.selectedProblem.is_monitored ? this.selectedProblem.cpm_id : null,
                     is_monitored: this.selectedProblem.is_monitored,
                     icd10: this.selectedProblem.icd10,
@@ -324,6 +325,7 @@
                 }).then(response => {
                     console.log('full-conditions:edit', response.data)
                     this.loaders.editProblem = false
+                    Event.$emit('problems:updated', {})
                     Event.$emit('full-conditions:edit', response.data)
                     setImmediate(() => this.checkPatientBehavioralStatus())
                 }).catch(err => {
