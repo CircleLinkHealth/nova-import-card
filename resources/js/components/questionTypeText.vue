@@ -21,6 +21,21 @@
                        @change="onInput">
             </label>
         </div>
+        <!--add input fields button-->
+       <div v-if="canAddInputFields">
+           <button type="button"
+                   @click="addInputFields"
+                   class="btn-primary">
+              {{this.addInputFieldsButtonName}}
+           </button>
+       </div>
+        <div v-if="canRemoveInputFields">
+            <button type="button"
+                    @click="removeInputFields"
+                    class="btn-primary">
+                {{this.removeInputFieldsButtonName}}
+            </button>
+        </div>
         <!--next button-->
         <div v-if="inputHasText >'1'">
             <button class="next-btn"
@@ -48,6 +63,11 @@
             return {
                 inputHasText: [],
                 questionOptions: [],
+                canRemoveInputFields: false,
+                addFields: {
+                    title: 'Need to dynamicaly',
+                    placeholder: 'Set these fields',
+                },
             }
         },
         computed: {
@@ -81,11 +101,35 @@
                 } return '';
             },
 
+            canAddInputFields(){
+                if(this.hasAnswerType){
+                    return this.questionOptions[0].allow_multiple;
+                }return false;
+            },
+
+            addInputFieldsButtonName(){
+                return this.questionOptions[0].add_extra_answer_text;
+            },
+
+            removeInputFieldsButtonName(){
+                return this.questionOptions[0].remove_extra_answer_text;
+            },
+
         },
 
         methods: {
             onInput() {
                 EventBus.$emit('handleTextType');
+            },
+
+            addInputFields() {
+                this.questionSubParts.push(this.addFields);
+                this.canRemoveInputFields = true;
+                this.canAddInputFields = false;
+            },
+
+            removeInputFields(){
+
             },
         },
 
