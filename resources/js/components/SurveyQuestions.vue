@@ -32,7 +32,7 @@
                  v-if="questionsStage"
                  v-for="(question, index) in questions">
                 <div v-show="index >= questionIndex" class="question">
-                    <div v-if="question.optional === 0 || shouldShowQuestion"><!--data-aos="fade-up"-->
+                    <div v-if=""><!--data-aos="fade-up"-->
                         {{question.id}}{{'.'}} {{question.body}}
                         <!--Questions Answer Type-->
                         <div class="question-answer-type">
@@ -271,7 +271,7 @@
 <style scoped>
     .questions-box {
         padding-top: 5%;
-        padding-left: 15%;
+        padding-left: 12%;
     }
 
     .practice-title {
