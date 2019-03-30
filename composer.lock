@@ -521,7 +521,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "7c20aeb26402c19628aed05a81496a7578167c19"
+                "reference": "71a16bab6574ee4600c3bb5615274aefd77a085e"
             },
             "require": {
                 "spiritix/lada-cache": "^2.1",
@@ -547,7 +547,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-03-28T19:11:18+00:00"
+            "time": "2019-03-30T04:59:53+00:00"
         },
         {
             "name": "circlelinkhealth/customer",
@@ -555,7 +555,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "7e3027bc11305273b631a6647a2ae0dd6c0abf06"
+                "reference": "a94813cda7cbae10ca9de8e69d83cc12043ab8bd"
             },
             "require": {
                 "circlelinkhealth/core": "dev-master"
@@ -580,7 +580,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-03-28T08:15:37+00:00"
+            "time": "2019-03-30T04:59:53+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
@@ -623,7 +623,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "17598394b71c0e47b3dd8f749fe1aeaec9ed01c2"
+                "reference": "c33c777ea52c0d10e4b54720dee8b31f88273923"
             },
             "require": {
                 "circlelinkhealth/customer": "dev-master"
@@ -648,7 +648,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-03-28T08:22:54+00:00"
+            "time": "2019-03-30T04:59:52+00:00"
         },
         {
             "name": "circlelinkhealth/twofa",
@@ -656,7 +656,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "7e225369c6c6ebe5b729965d8aaf1b03cda85808"
+                "reference": "ebcff29b14f7647497cf56c4165660c427b6a119"
             },
             "require": {
                 "authy/php": "^3.0",
@@ -682,7 +682,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-03-28T08:22:54+00:00"
+            "time": "2019-03-30T04:59:53+00:00"
         },
         {
             "name": "composer/ca-bundle",

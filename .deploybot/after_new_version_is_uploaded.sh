@@ -9,26 +9,6 @@ BRANCH=$4
 RELEASE_ID=$5
 PREVIOUS_REVISION=$6
 
-changed_files="$(git diff-tree -r --name-only --no-commit-id $REVISION $PREVIOUS_REVISION)"
-
-echo $changed_files
-
-if_file_changed() {
-	echo "$changed_files" | grep -q "$1" && eval "$2"
-
-	# fail deployment if there's an error
-    if [ $? -ne 0 ]; then
-      echo "`$2` failed.";
-      exit 1;
-    fi
-}
-
-# install npm dependencies
-if_file_changed "package-lock.json" "npm install --silent"
-
-# compile assets
-if_file_changed resources/assets "npm run prod --silent"
-
 # Create a shared storage directory and symlink it to the project root
 if [ ! -d "$SHARED/storage" ]; then
   mkdir -p $SHARED/storage
@@ -48,7 +28,13 @@ fi
 
 
 # Install application dependencies
-if_file_changed composer.lock "composer install --no-dev --classmap-authoritative --prefer-dist"
+composer install --no-dev --classmap-authoritative --prefer-dist
+
+# Exit if composer failed
+if [ $? -ne 0 ]; then
+  echo "Composer failed.";
+  exit 1;
+fi
 
 # Disable lada-cache before migrations
 php artisan lada-cache:disable
