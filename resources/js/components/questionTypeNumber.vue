@@ -1,14 +1,30 @@
 <template>
     <div>
-        <input type="number" name="numberTypeAnswer" v-model="inputHasNumber">
+        <!--question without sub_parts-->
+        <div v-if="!questionHasSubParts">
+            <input
+                    type="text"
+                    name="numberTypeAnswer[]"
+                    v-model="inputHasNumber"
+                    :placeholder="this.questionPlaceHolder"
+                    @change="onInput">
+        </div>
         <br>
-        <div v-if="inputHasNumber > '1'">
+        <!--question with sub_parts-->
+        <div v-if="questionHasSubParts"
+             v-for="subPart in questionSubParts">
+            <input type="number"
+                   name="numberTypeAnswer[]"
+                   v-model="inputHasNumber"
+                   :placeholder="subPart.placeholder"
+                   @change="onInput">
+        </div>
+        <!--next button-->
+        <div v-if="inputHasNumber >'1'">
             <button class="next-btn"
                     name="number"
                     id="number"
-                    type="submit"
-                    value=""
-                    @click="handleClick">Next
+                    type="submit">Next
             </button>
         </div>
     </div>
@@ -19,6 +35,7 @@
 
     export default {
         name: "questionTypeNumber",
+        props: ['question'],
 
         mounted() {
             console.log('Component mounted.')
@@ -27,21 +44,51 @@
         data() {
             return {
                 inputHasNumber: '',
+                questionOptions: [],
             }
         },
         computed: {
+            hasAnswerType() {
+                return this.question.type.question_type_answers.length !== 0;
+            },
 
+            questionHasSubParts() {
+                if (this.hasAnswerType) {
+                    return this.questionOptions[0].hasOwnProperty('sub_parts');
+                }
+                return false;
+            },
+
+            questionSubParts() {
+                if (this.questionHasSubParts) {
+                    return this.questionOptions[0].sub_parts;
+                }
+                return '';
+            },
+
+            questionHasPlaceHolder() {
+                if (this.hasAnswerType) {
+                    return this.questionOptions[0].hasOwnProperty('placeholder');
+                }
+                return false;
+            },
+
+            questionPlaceHolder() {
+                if (this.questionHasPlaceHolder) {
+                    return this.questionOptions[0].placeholder;
+                }
+                return '';
+            },
         },
 
         methods: {
-            handleClick() {
+            onInput() {
                 EventBus.$emit('handleNumberType');
             },
-
-            onInput(e) {
-
-            },
-
+        },
+        created() {
+            const questionOptions = this.question.type.question_type_answers.map(q => q.options);
+            this.questionOptions.push(...questionOptions);
         },
     }
 </script>

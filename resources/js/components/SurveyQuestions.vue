@@ -36,15 +36,32 @@
                         {{question.id}}{{'.'}} {{question.body}}
                         <!--Questions Answer Type-->
                         <div class="question-answer-type">
-                            <question-type-text :question="question" v-if="question.type.type === 'text'"></question-type-text>
+                            <question-type-text
+                                    :question="question"
+                                    v-if="question.type.type === 'text'">
+                            </question-type-text>
+
                             <question-type-checkbox
-                                    v-if="question.type.type === 'checkbox'"></question-type-checkbox>
-                            <question-type-range v-if="question.type.type === 'range'"></question-type-range>
+                                    v-if="question.type.type === 'checkbox'">
+                            </question-type-checkbox>
+
+                            <question-type-range
+                                    v-if="question.type.type === 'range'">
+                            </question-type-range>
+
                             <question-type-number
-                                    v-if="question.type.type === 'number'"></question-type-number>
-                            <question-type-radio :question="question"
-                                                 v-if="question.type.type === 'radio'"></question-type-radio>
-                            <question-type-date v-if="question.type.type === 'date'"></question-type-date>
+                                    :question="question"
+                                    v-if="question.type.type === 'number'">
+                            </question-type-number>
+
+                            <question-type-radio
+                                    :question="question"
+                                    v-if="question.type.type === 'radio'">
+                            </question-type-radio>
+
+                            <question-type-date
+                                    v-if="question.type.type === 'date'">
+                            </question-type-date>
                         </div>
                     </div>
                 </div>
@@ -360,7 +377,9 @@
         overflow-y: scroll;
     }
 
-    .survey-container::-webkit-scrollbar { width: 0 !important }
+    .survey-container::-webkit-scrollbar {
+        width: 0 !important
+    }
 
     .scroll-buttons {
         margin-left: 990px;
@@ -409,7 +428,6 @@
     .progressbar-label {
         position: relative;
     }
-
 
 
 </style>
