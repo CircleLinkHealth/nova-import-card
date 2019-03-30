@@ -40,7 +40,6 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        \Bugsnag\BugsnagLaravel\Commands\DeployCommand::class,
     ];
 
     /**
@@ -112,7 +111,7 @@ class Kernel extends ConsoleKernel
             ->dailyAt('03:00');
 
         $schedule->command(EmailRNDailyReport::class)
-            ->dailyAt('21:00');
+            ->dailyAt('07:00');
 
         $schedule->command(QueueSendApprovedCareplanSlackNotification::class)
             ->dailyAt('23:40');

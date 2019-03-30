@@ -4,24 +4,51 @@ set -e
 
 SHARED=$1
 RELEASE=$2
+PREVIOUS_REVISION=$3
+REVISION=$4
+
+if [ ! -d "$RELEASE/.git" ]; then
+    git init && git remote add origin git@github.com:CircleLinkHealth/app-cpm-web.git
+fi
+
+git fetch
+
+changed_files="$(git diff-tree -r --name-only --no-commit-id $PREVIOUS_REVISION $REVISION)"
+
+echo "Files Changed"
+echo $changed_files
+
+if_file_changed() {
+	echo "$changed_files" | grep --quiet "$1" && eval "$2"
+
+	# fail deployment if there's an error
+    if [ $? -ne 0 ]; then
+      echo "`$2` failed.";
+      exit 1;
+    fi
+}
 
 # install npm dependencies
 npm install
 
-# fail depoyment if there's an error
-if [ $? -ne 0 ]; then
-  echo "`npm install` failed.";
-  exit 1;
-fi
+# fail deployment if there's an error
+    if [ $? -ne 0 ]; then
+      echo "`npm install` failed.";
+      rm -rf node_modules
+      exit 1;
+    fi
 
 # compile assets
 npm run prod
 
-# fail depoyment if there's an error
+# fail deployment if there's an error
 if [ $? -ne 0 ]; then
   echo "`npm run prod` failed.";
+  rm -rf node_modules
   exit 1;
 fi
+
+rm -rf node_modules
 
 # Create a shared storage directory and symlink it to the project root
 if [ ! -d "$SHARED/storage" ]; then
@@ -37,7 +64,7 @@ ln -s $SHARED/storage $RELEASE/storage
 # Install application dependencies
 composer install --no-dev --classmap-authoritative --prefer-dist
 
-# fail depoyment if there's an error
+# fail deployment if there's an error
 if [ $? -ne 0 ]; then
   echo "`composer install --no-dev --classmap-authoritative --prefer-dist` failed.";
   exit 1;
@@ -62,11 +89,7 @@ php artisan lada-cache:enable
 echo "" >> .env
 
 # Append version to .env
-php artisan version:show --format=compact --suppress-app-name | cat <(echo -n "BUGSNAG_APP_VERSION=") - >> .env
 php artisan version:show --format=compact --suppress-app-name | cat <(echo -n "APP_VERSION=") - >> .env
 
 # Perform post depoyment tasks
 php artisan deploy:post
-
-# Notify Bugsnag of release
-php artisan bugsnag:deploy

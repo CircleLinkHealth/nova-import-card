@@ -13,7 +13,8 @@
     "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
     "test": "jest --verbose --coverage",
     "watch-test": "npm run test -- --watch",
-    "postinstall": "./node_modules/bower/bin/bower -V install"
+    "postinstall": "npm run bower_install",
+    "bower_install": "node_modules/bower/bin/bower -V install"
   },
   "jest": {
     "verbose": true,

@@ -3,18 +3,18 @@
     Dear {{ $name }},
 </p>
 <p>
-    Thanks for providing care on the CircleLink platform today!
+    Thanks for providing care on the CircleLink platform on {{$date->englishDayOfWeek}}, {{$date->englishMonth}} {{$date->day}}, {{$date->year}}!
 </p>
 <p>
     Here’s a report on your performance, time worked and earnings:
 </p>
 
 <p>
-    <b>%CCM Time<span style="color: red;">* </span>:</b> {{ $performance }}% of today's time was CCM eligible care time.
+    <b>%CCM Time<span style="color: red;">* </span>:</b> {{ $performance }}% of {{$date->englishDayOfWeek}}'s ({{$date->format('m/d')}}) time was CCM eligible care time.
 </p>
 
 <p>
-    <b>Total time in system today:</b> {{ $totalTimeInSystemToday }}
+    <b>Total time in system on {{$date->englishDayOfWeek}} ({{$date->format('m/d')}}):</b> {{ $totalTimeInSystemOnGivenDate }}
 </p>
 
 <p>
@@ -38,13 +38,12 @@
 </p>
 
 <p>
-    If you have any questions please reach out to your day-to-day contact at CircleLink Health via direct messaging
-    Slack,
+    If you have any questions please reach out to your day-to-day contact at CircleLink Health via Slack (Direct Messaging),
     e-mail or phone.
 </p>
 
 <p>
-    Have a great night and keep up the good work!
+    Have a great day and keep up the good work!
 </p>
 
 <p>
