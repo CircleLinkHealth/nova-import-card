@@ -6,14 +6,12 @@
 
 namespace App\Importer;
 
-use CircleLinkHealth\Customer\Entities\CarePerson;
 use App\CarePlan;
 use App\CLH\CCD\Importer\StorageStrategies\Biometrics\BloodPressure;
 use App\CLH\CCD\Importer\StorageStrategies\Biometrics\Weight;
 use App\CLH\CCD\Importer\StorageStrategies\Problems\ProblemsToMonitor;
 use App\CLH\Helpers\StringManipulation;
 use App\Enrollee;
-use CircleLinkHealth\Customer\Entities\Location;
 use App\Models\CCD\Allergy;
 use App\Models\CCD\CcdInsurancePolicy;
 use App\Models\CCD\Medication;
@@ -23,6 +21,8 @@ use App\Models\CPM\CpmProblem;
 use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Models\ProblemCode;
+use CircleLinkHealth\Customer\Entities\CarePerson;
+use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
@@ -211,7 +211,6 @@ class CarePlanHelper
         $this->createNewCarePlan()
             ->storeAllergies()
             ->storeProblemsList()
-            ->storeProblemsToMonitor()
             ->storeMedications()
             ->storeBillingProvider()
             ->storeLocation()
@@ -536,6 +535,7 @@ class CarePlanHelper
 
     /**
      * Activates Problems to Monitor (CCM Conditions).
+     * Still used by: ReImportCcdToGetProblemTranslationCodes.php.
      *
      * @return $this
      */

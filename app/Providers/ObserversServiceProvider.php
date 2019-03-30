@@ -10,9 +10,8 @@ use App\Call;
 use App\CarePlan;
 use App\CarePlanTemplate;
 use App\EligibilityBatch;
-use CircleLinkHealth\Customer\Entities\Holiday;
+use App\Models\CCD\Problem;
 use App\Models\ProblemCode;
-use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 use App\Observers\CallObserver;
 use App\Observers\CarePlanObserver;
 use App\Observers\CarePlanTemplateObserver;
@@ -24,15 +23,18 @@ use App\Observers\PatientMonthlySummaryObserver;
 use App\Observers\PatientObserver;
 use App\Observers\PracticeObserver;
 use App\Observers\ProblemCodeObserver;
+use App\Observers\ProblemObserver;
 use App\Observers\RevisionObserver;
 use App\Observers\SaasAccountObserver;
 use App\Observers\UserObserver;
-use CircleLinkHealth\TimeTracking\Entities\PageTimer;
+use CircleLinkHealth\Customer\Entities\Holiday;
+use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Support\ServiceProvider;
 use Venturecraft\Revisionable\Revision;
 
@@ -57,6 +59,7 @@ class ObserversServiceProvider extends ServiceProvider
         SaasAccount::observe(SaasAccountObserver::class);
         User::observe(UserObserver::class);
         Call::observe(CallObserver::class);
+        Problem::observe(ProblemObserver::class);
     }
 
     /**
