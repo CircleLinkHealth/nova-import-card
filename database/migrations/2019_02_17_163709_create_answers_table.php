@@ -23,9 +23,9 @@ class CreateAnswersTable extends Migration
             $table->string('value_2')->nullable();
             $table->timestamps();
 
-            $table->foreign('user_id')
+           /* $table->foreign('user_id')
                   ->references('id')
-                  ->on('users');
+                  ->on('users');*/
         });
     }
 

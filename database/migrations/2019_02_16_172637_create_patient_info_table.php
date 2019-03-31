@@ -19,7 +19,7 @@ class CreatePatientInfoTable extends Migration
             $table->date('birth_date');
             $table->timestamps();
 
-           /* $table->foreign('user_id')
+            /*$table->foreign('user_id')
                   ->references('id')
                   ->on('users')
                   ->onDelete('cascade')
