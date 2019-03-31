@@ -2,7 +2,7 @@
     <div class="custom-checkbox">
         <div v-for="checkBox in checkBoxValues">
             <label>{{checkBox.value}}
-                <input class="check-box"
+                <input class="multi-select"
                        type="checkbox"
                        name="checkboxTypeAnswer">
             </label>
@@ -30,7 +30,5 @@
 </script>
 
 <style scoped>
-    .check-box {
 
-    }
 </style>
