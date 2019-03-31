@@ -105,21 +105,22 @@
     "yajra/laravel-datatables-oracle": "~8.0"
   },
   "require-dev": {
-    "xethron/laravel-4-generators": "*",
     "barryvdh/laravel-debugbar": "*",
-    "friendsofphp/php-cs-fixer": "^2.13",
     "barryvdh/laravel-ide-helper": "^2.4",
     "brianium/paratest": "*",
     "darkaonline/l5-swagger": "^5.5",
     "filp/whoops": "~2.0",
+    "friendsofphp/php-cs-fixer": "^2.13",
     "laravel/dusk": "^3.0",
     "mockery/mockery": "0.9.*",
     "nwidart/laravel-modules": "^4.0",
     "orangehill/iseed": "dev-master",
     "phpunit/phpunit": "^7.0",
+    "spatie/phpunit-watcher": "^1.8",
     "squizlabs/php_codesniffer": "*",
     "symfony/css-selector": "^4.0",
     "symfony/dom-crawler": "^4.0",
+    "xethron/laravel-4-generators": "*",
     "xethron/migrations-generator": "dev-l5"
   },
   "autoload": {
