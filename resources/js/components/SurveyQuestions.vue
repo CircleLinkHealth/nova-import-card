@@ -40,38 +40,38 @@
                         <br>
                         <!--Questions Answer Type-->
                         <div class="question-answer-type">
-                         <!--   <question-type-text
+                            <question-type-text
                                     :question="question"
                                     v-if="question.type.type === 'text'">
-                            </question-type-text>-->
+                            </question-type-text>
 
                             <question-type-checkbox
                                     :question="question"
                                     v-if="question.type.type === 'checkbox'">
                             </question-type-checkbox>
 
-                            <question-type-multiselect
+                            <question-type-muti-select
                                     :question="question"
                                     v-if="question.type.type === 'multi_select'">
-                            </question-type-multiselect>
+                            </question-type-muti-select>
 
-                          <!--  <question-type-range-->
-                          <!--          v-if="question.type.type === 'range'">-->
-                          <!--  </question-type-range>-->
+                            <question-type-range
+                                    v-if="question.type.type === 'range'">
+                            </question-type-range>
 
-                          <!--  <question-type-number-->
-                          <!--          :question="question"-->
-                          <!--          v-if="question.type.type === 'number'">-->
-                          <!--  </question-type-number>-->
+                            <question-type-number
+                                    :question="question"
+                                    v-if="question.type.type === 'number'">
+                            </question-type-number>
 
-                          <!--  <question-type-radio-->
-                          <!--          :question="question"-->
-                          <!--          v-if="question.type.type === 'radio'">-->
-                          <!--  </question-type-radio>-->
+                            <question-type-radio
+                                    :question="question"
+                                    v-if="question.type.type === 'radio'">
+                            </question-type-radio>
 
-                          <!--  <question-type-date-->
-                          <!--          v-if="question.type.type === 'date'">-->
-                          <!--  </question-type-date>-->
+                            <question-type-date
+                                    v-if="question.type.type === 'date'">
+                            </question-type-date>
                         </div>
                     </div>
                 </div>
@@ -151,6 +151,7 @@
     import BootstrapVue from 'bootstrap-vue'
     import 'bootstrap/dist/css/bootstrap.css'
     import 'bootstrap-vue/dist/bootstrap-vue.css'
+    import questionTypeMultiSelect from "./questionTypeMultiSelect";
 
 
     AOS.init({
@@ -170,7 +171,8 @@
             'question-type-radio': questionTypeRadio,
             'question-type-date': questionTypeDate,
             'call-assistance': callAssistance,
-            'bootstrap-vue': BootstrapVue
+            'bootstrap-vue': BootstrapVue,
+            'question-type-muti-select':questionTypeMultiSelect
         },
 
         data() {

@@ -12,19 +12,23 @@
 
 <script>
     export default {
-        name: "questionTypeCheckbox",
+        name: "questionTypeMultiSelect",
         props: ['question'],
         components: {},
 
         data() {
             return {
                 checkBoxValues: this.question.type.question_type_answers,
+                checkBoxOptions:[],
             }
         },
-        computed: {},
+        computed: {
+
+        },
 
         created() {
-
+            const options = this.question.type.question_type_answers.map(q => q.options);
+            this.checkBoxOptions.push(...options);
         },
     }
 </script>
