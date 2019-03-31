@@ -1,7 +1,7 @@
 @extends('partials.providerUI')
 
 @section('title', 'Patient Listing')
-@section('activity', '')
+@section('activity', 'Patient Listing')
 
 <?php
 function formatTime($time)
@@ -146,7 +146,7 @@ function formatTime($time)
                                                     $curTime = \Carbon\Carbon::now();
                                                     $curDate = $curTime->toDateString();
                                                     $curTime = $curTime->toTimeString();
-                                                    $rowBg = '';
+                                                    $rowBg   = '';
                                                     if ($call->scheduled_date == $curDate && $call->call_time_end < $curTime) {
                                                         $rowBg = 'background-color: rgba(255, 0, 0, 0.4);';
                                                     }
@@ -189,7 +189,7 @@ function formatTime($time)
                                                             <?php
                                                             $dateTime = new DateTime();
                                                             $dateTime->setTimeZone(new DateTimeZone($call->timezone));
-                                                            echo '<span style="font-weight:bold;color:green;">' . $dateTime->format('T') . '</a>';
+                                                            echo '<span style="font-weight:bold;color:green;">'.$dateTime->format('T').'</a>';
                                                             ?>
                                                         </td>
                                                         <td>
