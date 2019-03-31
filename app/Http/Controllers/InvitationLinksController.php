@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SurveyAuthBeforeLoginRequest;
 use App\Http\Requests\SurveyAuthLoginRequest;
 use App\InvitationLink;
 use App\Services\SurveyInvitationLinksService;

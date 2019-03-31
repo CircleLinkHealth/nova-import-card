@@ -10,6 +10,12 @@ class QuestionType extends Model
 
     const TEXT = 'text';
 
+    const RADIO = 'radio';
+
+    const NUMBER = 'number';
+
+    const DATE = 'date';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -17,7 +23,7 @@ class QuestionType extends Model
      */
     protected $fillable = [
         'question_id',
-        'answer_type',
+        'type',
     ];
 
 
