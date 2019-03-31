@@ -32,8 +32,12 @@
                  v-if="questionsStage"
                  v-for="(question, index) in questions">
                 <div v-show="index >= questionIndex" class="question">
-                    <div v-if=""><!--data-aos="fade-up"-->
-                        {{question.id}}{{'.'}} {{question.body}}
+                    <div class="questions-body" v-if=""><!--data-aos="fade-up"-->
+
+                        <div class="questions-title">
+                            {{question.id}}{{'.'}} {{question.body}}
+                        </div>
+                        <br>
                         <!--Questions Answer Type-->
                         <div class="question-answer-type">
                             <question-type-text
@@ -233,7 +237,6 @@
                 if (conditions.length !== 0) {
                     this.showSubQuestion(conditions);
                 }
-
                 this.questionIndex++;
                 this.updateProgressBar();
             },
@@ -288,11 +291,11 @@
 <style scoped>
     .questions-box {
         padding-top: 5%;
-        padding-left: 12%;
+        padding-left: 9%;
     }
 
     .practice-title {
-        font-family: Poppins, sans-serif;
+        font-family: Poppins;
         font-size: 18px;
         letter-spacing: 1.5px;
         text-align: center;
@@ -305,7 +308,7 @@
     }
 
     .survey-main-title {
-        font-family: Poppins, sans-serif;
+        font-family: Poppins;
         font-size: 24px;
         font-weight: 600;
         letter-spacing: 1.5px;
@@ -315,7 +318,7 @@
     }
 
     .survey-sub-welcome-text {
-        font-family: Poppins, sans-serif;
+        font-family: Poppins;
         font-size: 18px;
         font-weight: normal;
         font-style: normal;
@@ -324,6 +327,32 @@
         letter-spacing: 1px;
         text-align: center;
         margin-top: 25px;
+        color: #1a1a1a;
+    }
+
+    .questions-title {
+        width: 83%;
+        height: 100%;
+        font-family: Poppins;
+        font-size: 120%;
+        font-weight: 500;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: normal;
+        letter-spacing: 1.3px;
+        color: #1a1a1a;
+    }
+
+    .question-answer-type {
+        width: 83%;
+        height: 100%;
+        font-family: Poppins;
+        font-size: initial;
+        font-weight: 500;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: normal;
+        letter-spacing: 1.3px;
         color: #1a1a1a;
     }
 
@@ -348,7 +377,7 @@
     }
 
     .by-circlelink {
-        font-family: Poppins, sans-serif;
+        font-family: Poppins;
         font-size: 18px;
         font-weight: 600;
         font-style: normal;

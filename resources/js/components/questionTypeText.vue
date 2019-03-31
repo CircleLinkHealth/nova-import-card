@@ -4,22 +4,26 @@
         <div v-if="!questionHasSubParts">
             <input
                     type="text"
+                    class="text-field"
                     name="textTypeAnswer[]"
                     v-model="inputHasText"
                     :placeholder="this.questionPlaceHolder"
                     @change="onInput">
         </div>
+
         <br>
         <!--question with sub_parts-->
-        <div v-if="questionHasSubParts"
-             v-for="subPart in questionSubParts">
-            <label v-if="questionHasSubParts">{{subPart.title}}
+        <div class="row">
+            <div v-if="questionHasSubParts"
+                 v-for="subPart in questionSubParts">
+                <label class="label" v-if="questionHasSubParts">{{subPart.title}}</label><br>
                 <input type="text"
+                       class="text-field"
                        name="textTypeAnswer[]"
                        v-model="inputHasText"
                        :placeholder="subPart.placeholder"
                        @change="onInput">
-            </label>
+            </div>
         </div>
         <!--add input fields button-->
         <div v-if="canAddInputFields">
@@ -31,7 +35,7 @@
         </div>
         <div v-if="canRemoveInputFields">
             <button type="button"
-                    @click="removeInputFields(index)"
+                    @click="removeInputFields"
                     class="btn-primary">
                 {{this.removeInputFieldsButtonName}}
             </button>
@@ -66,7 +70,7 @@
                 canRemoveInputFields: false,
                 canAddInputFields: false,
                 addFields: {
-                    title: 'Need to dynamicaly',
+                    title: 'Need to dynamically',
                     placeholder: 'Set these fields',
                 },
             }
@@ -105,11 +109,18 @@
             },
 
             addInputFieldsButtonName() {
-                return this.questionOptions[0].add_extra_answer_text;
+                if (this.hasAnswerType) {
+                    return this.questionOptions[0].add_extra_answer_text;
+                }
+                return '';
+
             },
 
             removeInputFieldsButtonName() {
-                return this.questionOptions[0].remove_extra_answer_text;
+                if (this.hasAnswerType) {
+                    return this.questionOptions[0].remove_extra_answer_text;
+                }
+                return '';
             },
 
         },
@@ -149,6 +160,27 @@
         border-radius: 5px;
         border: solid 1px #4aa5d2;
         background-color: #50b2e2;
+    }
+    .text-field{
+        border: none;
+        border-bottom: solid 1px rgba(0, 0, 0, 0.1);
+        background-color: transparent;
+        outline: 0;
+        width: 300px;
+        height: 30px;
+    }
+
+    .label{
+        width: 64px;
+        height: 40px;
+        font-family: Poppins;
+        font-size: 20px;
+        font-weight: 500;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: normal;
+        letter-spacing: 1.3px;
+        color: #1a1a1a;
 
     }
 </style>

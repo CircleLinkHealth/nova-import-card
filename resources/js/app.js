@@ -5,6 +5,7 @@
  */
 
 require('./bootstrap');
+require('typeface-poppins');
 
 window.Vue = require('vue');
 

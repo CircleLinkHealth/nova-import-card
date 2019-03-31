@@ -3,7 +3,8 @@
         <!--question without sub_parts-->
         <div v-if="!questionHasSubParts">
             <input
-                    type="text"
+                    type="number"
+                    class="number-field"
                     name="numberTypeAnswer[]"
                     v-model="inputHasNumber"
                     :placeholder="this.questionPlaceHolder"
@@ -11,14 +12,17 @@
         </div>
         <br>
         <!--question with sub_parts-->
-        <div v-if="questionHasSubParts"
-             v-for="subPart in questionSubParts">
-            <input type="number"
-                   name="numberTypeAnswer[]"
-                   v-model="inputHasNumber"
-                   :placeholder="subPart.placeholder"
-                   @change="onInput">
-        </div>
+       <div class="row">
+           <div v-if="questionHasSubParts"
+                v-for="subPart in questionSubParts">
+               <input type="number"
+                      class="number-field"
+                      name="numberTypeAnswer[]"
+                      v-model="inputHasNumber"
+                      :placeholder="subPart.placeholder"
+                      @change="onInput">
+           </div>
+       </div>
         <!--next button-->
         <div v-if="inputHasNumber >'1'">
             <button class="next-btn"
@@ -100,6 +104,14 @@
         border-radius: 5px;
         border: solid 1px #4aa5d2;
         background-color: #50b2e2;
+    }
 
+    .number-field{
+        border: none;
+        border-bottom: solid 1px rgba(0, 0, 0, 0.1);
+        background-color: transparent;
+        outline: 0;
+        width: 300px;
+        height: 30px;
     }
 </style>

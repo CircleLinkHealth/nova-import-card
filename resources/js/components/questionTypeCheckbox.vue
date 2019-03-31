@@ -1,6 +1,8 @@
 <template>
     <div class="custom-checkbox">
+
         <input type="checkbox" name="checkboxTypeAnswer">
+
     </div>
 </template>
 
@@ -13,5 +15,7 @@
 </script>
 
 <style scoped>
+.custom-checkbox{
 
+}
 </style>

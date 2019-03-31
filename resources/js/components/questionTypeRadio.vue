@@ -4,7 +4,8 @@
             <div class="row">
                 <div v-for="answer in possibleAnswers">
                     <label>{{answer.value}}
-                        <input :name="question.id"
+                        <input id="question"
+                                :name="question.id"
                                :value="answer.value"
                                type="radio"
                                @change="handleAnswer(answer.value)">
@@ -50,14 +51,14 @@
 
 <style scoped>
     .custom-radio label {
-        width: 350px;
-        height: 50px;
+        width: 420px;
+        height: 60px;
         border-radius: 5px;
         border: solid 1px #4aa5d2;
         background-color: #ffffff;
         margin-left: .5rem;
         padding-left: 4%;
-        padding-top: 3%;
+        padding-top: 4%;
     }
 
     .custom-radio label > text {
@@ -65,7 +66,7 @@
     }
 
     .custom-radio input[type="radio"] {
-        /*display: none;*/
+        display: none;
 
     }
 
