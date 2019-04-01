@@ -27,6 +27,12 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareSection whereTemplate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareSection whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareSection newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareSection newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareSection query()
  */
 class CareSection extends \CircleLinkHealth\Core\Entities\BaseModel
 {

@@ -9,13 +9,13 @@ namespace App;
 /**
  * App\CPRulesUCP.
  *
- * @property int                   $ucp_id
- * @property int|null              $items_id
- * @property int|null              $user_id
- * @property string|null           $meta_key
- * @property string|null           $meta_value
- * @property \App\CPRulesItem|null $item
- * @property \CircleLinkHealth\Customer\Entities\User             $user
+ * @property int                                      $ucp_id
+ * @property int|null                                 $items_id
+ * @property int|null                                 $user_id
+ * @property string|null                              $meta_key
+ * @property string|null                              $meta_value
+ * @property \App\CPRulesItem|null                    $item
+ * @property \CircleLinkHealth\Customer\Entities\User $user
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP whereItemsId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP whereMetaKey($value)
@@ -23,6 +23,12 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP whereUcpId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP whereUserId($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP query()
  */
 class CPRulesUCP extends \CircleLinkHealth\Core\Entities\BaseModel
 {

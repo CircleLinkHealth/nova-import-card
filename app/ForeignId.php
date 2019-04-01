@@ -19,14 +19,14 @@ use Prettus\Repository\Traits\TransformableTrait;
  *
  * Class ForeignId
  *
- * @property int            $id
- * @property int            $user_id
- * @property int|null       $location_id
- * @property string         $foreign_id
- * @property string         $system
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property \CircleLinkHealth\Customer\Entities\User      $user
+ * @property int                                      $id
+ * @property int                                      $user_id
+ * @property int|null                                 $location_id
+ * @property string                                   $foreign_id
+ * @property string                                   $system
+ * @property \Carbon\Carbon                           $created_at
+ * @property \Carbon\Carbon                           $updated_at
+ * @property \CircleLinkHealth\Customer\Entities\User $user
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ForeignId whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ForeignId whereForeignId($value)
@@ -36,6 +36,12 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ForeignId whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ForeignId whereUserId($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ForeignId newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ForeignId newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ForeignId query()
  */
 class ForeignId extends \CircleLinkHealth\Core\Entities\BaseModel implements Transformable
 {

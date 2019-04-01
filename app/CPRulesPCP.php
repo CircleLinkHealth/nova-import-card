@@ -11,14 +11,14 @@ use CircleLinkHealth\Customer\Entities\Practice;
 /**
  * App\CPRulesPCP.
  *
- * @property int                                                         $pcp_id
- * @property int|null                                                    $prov_id
- * @property string|null                                                 $section_text
- * @property string|null                                                 $status
- * @property int|null                                                    $cpset_id
- * @property string|null                                                 $pcp_type
- * @property \App\CPRulesItem[]|\Illuminate\Database\Eloquent\Collection $items
- * @property \CircleLinkHealth\Customer\Entities\Practice[]|\Illuminate\Database\Eloquent\Collection    $program
+ * @property int                                                                                     $pcp_id
+ * @property int|null                                                                                $prov_id
+ * @property string|null                                                                             $section_text
+ * @property string|null                                                                             $status
+ * @property int|null                                                                                $cpset_id
+ * @property string|null                                                                             $pcp_type
+ * @property \App\CPRulesItem[]|\Illuminate\Database\Eloquent\Collection                             $items
+ * @property \CircleLinkHealth\Customer\Entities\Practice[]|\Illuminate\Database\Eloquent\Collection $program
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP whereCpsetId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP wherePcpId($value)
@@ -27,6 +27,12 @@ use CircleLinkHealth\Customer\Entities\Practice;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP whereSectionText($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP whereStatus($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP query()
  */
 class CPRulesPCP extends \CircleLinkHealth\Core\Entities\BaseModel
 {

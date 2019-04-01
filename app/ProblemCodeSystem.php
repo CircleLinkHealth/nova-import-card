@@ -23,6 +23,12 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ProblemCodeSystem whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ProblemCodeSystem whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ProblemCodeSystem newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ProblemCodeSystem newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ProblemCodeSystem query()
  */
 class ProblemCodeSystem extends BaseModel
 {

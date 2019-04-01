@@ -12,15 +12,15 @@ use CircleLinkHealth\Customer\Entities\User;
 /**
  * App\Models\CPM\CpmSymptom.
  *
- * @property int                                                                       $id
- * @property int|null                                                                  $care_item_id
- * @property string                                                                    $name
- * @property \Carbon\Carbon                                                            $created_at
- * @property \Carbon\Carbon                                                            $updated_at
- * @property \App\CarePlanTemplate[]|\Illuminate\Database\Eloquent\Collection          $carePlanTemplates
- * @property \App\Models\CPM\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection $cpmInstructions
- * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection                      $patient
- * @property \App\Models\CPM\CpmSymptomUser[]|\Illuminate\Database\Eloquent\Collection $users
+ * @property int                                                                                 $id
+ * @property int|null                                                                            $care_item_id
+ * @property string                                                                              $name
+ * @property \Carbon\Carbon                                                                      $created_at
+ * @property \Carbon\Carbon                                                                      $updated_at
+ * @property \App\CarePlanTemplate[]|\Illuminate\Database\Eloquent\Collection                    $carePlanTemplates
+ * @property \App\Models\CPM\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection           $cpmInstructions
+ * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection $patient
+ * @property \App\Models\CPM\CpmSymptomUser[]|\Illuminate\Database\Eloquent\Collection           $users
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmSymptom whereCareItemId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmSymptom whereCreatedAt($value)
@@ -28,6 +28,12 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmSymptom whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmSymptom whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmSymptom newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmSymptom newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmSymptom query()
  */
 class CpmSymptom extends \CircleLinkHealth\Core\Entities\BaseModel
 {

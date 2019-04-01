@@ -11,27 +11,27 @@ use CircleLinkHealth\Customer\Entities\User;
 /**
  * App\Comment.
  *
- * @property int              $id
- * @property int              $comment_post_ID
- * @property string           $comment_author
- * @property string           $comment_author_email
- * @property string           $comment_author_url
- * @property string           $comment_author_IP
- * @property \Carbon\Carbon   $comment_date
- * @property \Carbon\Carbon   $comment_date_gmt
- * @property string           $comment_content
- * @property int              $comment_karma
- * @property string           $comment_approved
- * @property string           $comment_agent
- * @property string           $comment_type
- * @property int              $comment_parent
- * @property int              $user_id
- * @property int              $program_id
- * @property int              $legacy_comment_id
- * @property \Carbon\Carbon   $created_at
- * @property \Carbon\Carbon   $updated_at
- * @property \App\Observation $observation
- * @property \CircleLinkHealth\Customer\Entities\User        $user
+ * @property int                                      $id
+ * @property int                                      $comment_post_ID
+ * @property string                                   $comment_author
+ * @property string                                   $comment_author_email
+ * @property string                                   $comment_author_url
+ * @property string                                   $comment_author_IP
+ * @property \Carbon\Carbon                           $comment_date
+ * @property \Carbon\Carbon                           $comment_date_gmt
+ * @property string                                   $comment_content
+ * @property int                                      $comment_karma
+ * @property string                                   $comment_approved
+ * @property string                                   $comment_agent
+ * @property string                                   $comment_type
+ * @property int                                      $comment_parent
+ * @property int                                      $user_id
+ * @property int                                      $program_id
+ * @property int                                      $legacy_comment_id
+ * @property \Carbon\Carbon                           $created_at
+ * @property \Carbon\Carbon                           $updated_at
+ * @property \App\Observation                         $observation
+ * @property \CircleLinkHealth\Customer\Entities\User $user
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentAgent($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentApproved($value)
@@ -53,6 +53,12 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereUserId($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment query()
  */
 class Comment extends \CircleLinkHealth\Core\Entities\BaseModel
 {

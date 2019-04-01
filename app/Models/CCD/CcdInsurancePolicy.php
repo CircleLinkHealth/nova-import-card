@@ -13,19 +13,19 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * App\Models\CCD\CcdInsurancePolicy.
  *
- * @property int            $id
- * @property int|null       $medical_record_id
- * @property string|null    $medical_record_type
- * @property int|null       $patient_id
- * @property string         $name
- * @property string|null    $type
- * @property string|null    $policy_id
- * @property string|null    $relation
- * @property string|null    $subscriber
- * @property int            $approved
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property string|null    $deleted_at
+ * @property int                                           $id
+ * @property int|null                                      $medical_record_id
+ * @property string|null                                   $medical_record_type
+ * @property int|null                                      $patient_id
+ * @property string                                        $name
+ * @property string|null                                   $type
+ * @property string|null                                   $policy_id
+ * @property string|null                                   $relation
+ * @property string|null                                   $subscriber
+ * @property int                                           $approved
+ * @property \Carbon\Carbon                                $created_at
+ * @property \Carbon\Carbon                                $updated_at
+ * @property string|null                                   $deleted_at
  * @property \CircleLinkHealth\Customer\Entities\User|null $patient
  *
  * @method static bool|null forceDelete()
@@ -48,6 +48,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\CCD\CcdInsurancePolicy withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\CCD\CcdInsurancePolicy withoutTrashed()
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\CcdInsurancePolicy newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\CcdInsurancePolicy newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\CcdInsurancePolicy query()
  */
 class CcdInsurancePolicy extends \CircleLinkHealth\Core\Entities\BaseModel
 {

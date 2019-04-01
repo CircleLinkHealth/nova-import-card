@@ -32,6 +32,12 @@ use App\Services\MsgUI;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestions whereQid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestions whereQtype($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestions newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestions newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestions query()
  */
 class CPRulesQuestions extends \CircleLinkHealth\Core\Entities\BaseModel
 {

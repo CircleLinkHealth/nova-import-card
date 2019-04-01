@@ -34,6 +34,12 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem wherePcpId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem whereQid($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem query()
  */
 class CPRulesItem extends \CircleLinkHealth\Core\Entities\BaseModel
 {

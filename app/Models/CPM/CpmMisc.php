@@ -12,17 +12,21 @@ use CircleLinkHealth\Customer\Entities\User;
 /**
  * App\Models\CPM\CpmMisc.
  *
- * @property int                                                                       $id
- * @property int|null                                                                  $details_care_item_id
- * @property int|null                                                                  $care_item_id
- * @property string                                                                    $name
- * @property \Carbon\Carbon                                                            $created_at
- * @property \Carbon\Carbon                                                            $updated_at
- * @property \App\CarePlanTemplate[]|\Illuminate\Database\Eloquent\Collection          $carePlanTemplates
- * @property \App\Models\CPM\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection $cpmInstructions
- * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection                      $patient
- * @property \App\Models\CPM\CpmMiscUser[]|\Illuminate\Database\Eloquent\Collection    $users
+ * @property int                                                                                 $id
+ * @property int|null                                                                            $details_care_item_id
+ * @property int|null                                                                            $care_item_id
+ * @property string                                                                              $name
+ * @property \Illuminate\Support\Carbon                                                          $created_at
+ * @property \Illuminate\Support\Carbon                                                          $updated_at
+ * @property \App\CarePlanTemplate[]|\Illuminate\Database\Eloquent\Collection                    $carePlanTemplates
+ * @property \App\Models\CPM\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection           $cpmInstructions
+ * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection $patient
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[]      $revisionHistory
+ * @property \App\Models\CPM\CpmMiscUser[]|\Illuminate\Database\Eloquent\Collection              $users
  *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereCareItemId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereDetailsCareItemId($value)

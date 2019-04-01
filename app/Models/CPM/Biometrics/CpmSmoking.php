@@ -13,13 +13,13 @@ use CircleLinkHealth\Customer\Entities\User;
 /**
  * App\Models\CPM\Biometrics\CpmSmoking.
  *
- * @property int            $id
- * @property int            $patient_id
- * @property string         $starting
- * @property string         $target
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property \CircleLinkHealth\Customer\Entities\User      $patient
+ * @property int                                      $id
+ * @property int                                      $patient_id
+ * @property string                                   $starting
+ * @property string                                   $target
+ * @property \Carbon\Carbon                           $created_at
+ * @property \Carbon\Carbon                           $updated_at
+ * @property \CircleLinkHealth\Customer\Entities\User $patient
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmSmoking whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmSmoking whereId($value)
@@ -28,6 +28,12 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmSmoking whereTarget($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmSmoking whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmSmoking newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmSmoking newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmSmoking query()
  */
 class CpmSmoking extends \CircleLinkHealth\Core\Entities\BaseModel implements Biometric
 {

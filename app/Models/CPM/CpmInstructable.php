@@ -22,6 +22,16 @@ namespace App\Models\CPM;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property string                                                                         $instructable_type
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstructable newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstructable newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstructable query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstructable whereCpmInstructionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstructable whereInstructableId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstructable whereInstructableType($value)
  */
 class CpmInstructable extends \CircleLinkHealth\Core\Entities\BaseModel
 {
@@ -34,6 +44,8 @@ class CpmInstructable extends \CircleLinkHealth\Core\Entities\BaseModel
 
     public function source()
     {
-        return $this->belongsTo(app($this->instructable_type), 'instructable_id');
+        if ($this->instructable_type) {
+            return $this->belongsTo(app($this->instructable_type), 'instructable_id');
+        }
     }
 }

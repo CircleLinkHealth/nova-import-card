@@ -21,6 +21,12 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\AppConfig whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\AppConfig whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\AppConfig newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\AppConfig newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\AppConfig query()
  */
 class AppConfig extends \CircleLinkHealth\Core\Entities\BaseModel
 {

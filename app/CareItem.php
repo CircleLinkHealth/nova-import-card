@@ -42,6 +42,12 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereTypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem query()
  */
 class CareItem extends \CircleLinkHealth\Core\Entities\BaseModel
 {

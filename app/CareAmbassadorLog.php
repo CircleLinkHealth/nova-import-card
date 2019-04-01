@@ -36,6 +36,16 @@ use CircleLinkHealth\Customer\Entities\Practice;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog whereTotalTimeInSystem($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property int|null                                                                       $practice_id
+ * @property \CircleLinkHealth\Customer\Entities\Practice                                   $practice
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog whereNoSoftRejected($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog wherePracticeId($value)
  */
 class CareAmbassadorLog extends \CircleLinkHealth\Core\Entities\BaseModel
 {

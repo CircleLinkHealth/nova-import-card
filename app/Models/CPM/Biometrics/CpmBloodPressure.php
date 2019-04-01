@@ -13,17 +13,17 @@ use CircleLinkHealth\Customer\Entities\User;
 /**
  * App\Models\CPM\Biometrics\CpmBloodPressure.
  *
- * @property int            $id
- * @property int            $patient_id
- * @property string         $starting
- * @property string         $target
- * @property string         $systolic_high_alert
- * @property string         $systolic_low_alert
- * @property string         $diastolic_high_alert
- * @property string         $diastolic_low_alert
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property \CircleLinkHealth\Customer\Entities\User      $patient
+ * @property int                                      $id
+ * @property int                                      $patient_id
+ * @property string                                   $starting
+ * @property string                                   $target
+ * @property string                                   $systolic_high_alert
+ * @property string                                   $systolic_low_alert
+ * @property string                                   $diastolic_high_alert
+ * @property string                                   $diastolic_low_alert
+ * @property \Carbon\Carbon                           $created_at
+ * @property \Carbon\Carbon                           $updated_at
+ * @property \CircleLinkHealth\Customer\Entities\User $patient
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure whereDiastolicHighAlert($value)
@@ -36,6 +36,12 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure whereTarget($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure query()
  */
 class CpmBloodPressure extends \CircleLinkHealth\Core\Entities\BaseModel implements Biometric
 {

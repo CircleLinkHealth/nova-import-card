@@ -20,6 +20,12 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItemMeta whereMetaKey($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItemMeta whereMetaValue($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItemMeta newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItemMeta newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItemMeta query()
  */
 class CPRulesItemMeta extends \CircleLinkHealth\Core\Entities\BaseModel
 {

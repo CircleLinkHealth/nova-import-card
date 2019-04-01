@@ -6,17 +6,74 @@
 
 namespace App;
 
-use CircleLinkHealth\Core\Filters\Filterable;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Filters\Filterable;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property int $id
+ * App\CallView.
+ *
+ * @property int            $id
  * @property \Carbon\Carbon $call_time_start
  * @property \Carbon\Carbon $call_time_end
  * @property \Carbon\Carbon $patient_created_at
  * @property string preferred_call_days
  * @property int|null no_call_attempts_since_last_success
+ * @property int|null    $is_manual
+ * @property string      $status
+ * @property string|null $type
+ * @property int|null    $nurse_id
+ * @property string|null $nurse
+ * @property int|null    $patient_id
+ * @property string|null $patient
+ * @property string|null $scheduled_date
+ * @property string|null $last_call
+ * @property int|null    $ccm_time
+ * @property int|null    $bhi_time
+ * @property int|null    $no_of_calls
+ * @property int|null    $no_of_successful_calls
+ * @property int|null    $practice_id
+ * @property string|null $practice
+ * @property string|null $timezone
+ * @property string|null $preferred_call_days
+ * @property int         $is_ccm
+ * @property int         $is_bhi
+ * @property string|null $scheduler
+ * @property string|null $billing_provider
+ * @property string|null $attempt_note
+ * @property string|null $general_comment
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView filter(\App\Filters\QueryFilters $filters)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereAttemptNote($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereBhiTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereBillingProvider($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereCallTimeEnd($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereCallTimeStart($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereCcmTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereGeneralComment($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereIsBhi($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereIsCcm($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereIsManual($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereLastCall($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereNoOfCalls($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereNoOfSuccessfulCalls($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereNurse($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereNurseId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView wherePatient($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView wherePatientId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView wherePractice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView wherePracticeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView wherePreferredCallDays($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereScheduledDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereScheduler($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereTimezone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereType($value)
+ * @mixin \Eloquent
  */
 class CallView extends Model
 {
@@ -28,12 +85,11 @@ class CallView extends Model
     {
         $windows = [];
         if ($this->preferred_call_days) {
-            $days    = explode(',', $this->preferred_call_days);
+            $days  = explode(',', $this->preferred_call_days);
             $start = Carbon::parse($this->call_time_start)->format('h:i a');
             $end   = Carbon::parse($this->call_time_end)->format('h:i a');
 
             foreach ($days as $day) {
-
                 switch ($day) {
                     case 1:
                         $windows[] = "Monday: {$start} - {$end}<br/>";

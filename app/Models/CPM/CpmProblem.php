@@ -14,25 +14,24 @@ use CircleLinkHealth\Customer\Entities\User;
 /**
  * App\Models\CPM\CpmProblem.
  *
- * @property int                                                                           $id
- * @property string                                                                        $default_icd_10_code
- * @property string                                                                        $name
- * @property string                                                                        $icd10from
- * @property string                                                                        $icd10to
- * @property float                                                                         $icd9from
- * @property float                                                                         $icd9to
- * @property string                                                                        $contains
- * @property \Carbon\Carbon                                                                $created_at
- * @property \Carbon\Carbon                                                                $updated_at
-
- * @property \App\CarePlanTemplate[]|\Illuminate\Database\Eloquent\Collection              $carePlanTemplates
- * @property \App\Models\CPM\CpmBiometric[]|\Illuminate\Database\Eloquent\Collection       $cpmBiometricsToBeActivated
- * @property \App\Models\CPM\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection     $cpmInstructions
- * @property \App\Models\CPM\CpmLifestyle[]|\Illuminate\Database\Eloquent\Collection       $cpmLifestylesToBeActivated
- * @property \App\Models\CPM\CpmMedicationGroup[]|\Illuminate\Database\Eloquent\Collection $cpmMedicationGroupsToBeActivated
- * @property \App\Models\CPM\CpmSymptom[]|\Illuminate\Database\Eloquent\Collection         $cpmSymptomsToBeActivated
- * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection                          $patient
- * @property App\Models\CPM\CpmInstructable                                                $instructable
+ * @property int                                                                                 $id
+ * @property string                                                                              $default_icd_10_code
+ * @property string                                                                              $name
+ * @property string                                                                              $icd10from
+ * @property string                                                                              $icd10to
+ * @property float                                                                               $icd9from
+ * @property float                                                                               $icd9to
+ * @property string                                                                              $contains
+ * @property \Carbon\Carbon                                                                      $created_at
+ * @property \Carbon\Carbon                                                                      $updated_at
+ * @property \App\CarePlanTemplate[]|\Illuminate\Database\Eloquent\Collection                    $carePlanTemplates
+ * @property \App\Models\CPM\CpmBiometric[]|\Illuminate\Database\Eloquent\Collection             $cpmBiometricsToBeActivated
+ * @property \App\Models\CPM\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection           $cpmInstructions
+ * @property \App\Models\CPM\CpmLifestyle[]|\Illuminate\Database\Eloquent\Collection             $cpmLifestylesToBeActivated
+ * @property \App\Models\CPM\CpmMedicationGroup[]|\Illuminate\Database\Eloquent\Collection       $cpmMedicationGroupsToBeActivated
+ * @property \App\Models\CPM\CpmSymptom[]|\Illuminate\Database\Eloquent\Collection               $cpmSymptomsToBeActivated
+ * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection $patient
+ * @property App\Models\CPM\CpmInstructable                                                      $instructable
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereContains($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereCreatedAt($value)
@@ -45,6 +44,19 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property int                                                                                         $is_behavioral
+ * @property int                                                                                         $weight
+ * @property \App\Importer\Models\ImportedItems\ProblemImport[]|\Illuminate\Database\Eloquent\Collection $problemImports
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[]              $revisionHistory
+ * @property \App\CLH\CCD\Importer\SnomedToCpmIcdMap[]|\Illuminate\Database\Eloquent\Collection          $snomedMaps
+ * @property \App\Models\CPM\CpmProblemUser[]|\Illuminate\Database\Eloquent\Collection                   $user
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereIsBehavioral($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereWeight($value)
  */
 class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
 {

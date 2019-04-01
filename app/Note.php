@@ -7,13 +7,13 @@
 namespace App;
 
 use App\Contracts\PdfReport;
-use CircleLinkHealth\Core\Filters\Filterable;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\Channels\FaxChannel;
 use App\Notifications\NoteForwarded;
 use App\Traits\IsAddendumable;
 use App\Traits\PdfReportTrait;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
@@ -32,10 +32,10 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @property string                                                          $performed_at
  * @property int|null                                                        $logger_id
  * @property \App\Models\Addendum[]|\Illuminate\Database\Eloquent\Collection $addendums
- * @property \CircleLinkHealth\Customer\Entities\User                                                       $author
+ * @property \CircleLinkHealth\Customer\Entities\User                        $author
  * @property \App\Call                                                       $call
- * @property \CircleLinkHealth\Customer\Entities\User                                                       $patient
- * @property \CircleLinkHealth\Customer\Entities\User                                                       $program
+ * @property \CircleLinkHealth\Customer\Entities\User                        $patient
+ * @property \CircleLinkHealth\Customer\Entities\User                        $program
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereAuthorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereBody($value)
@@ -49,6 +49,19 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property \CircleLinkHealth\Customer\Entities\User|null                                        $logger
+ * @property \App\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[]       $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note emergency($yes = true)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note filter(\App\Filters\QueryFilters $filters)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note forwarded(\Carbon\Carbon $from = null, \Carbon\Carbon $to = null, $excludePatientSupport = true)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note forwardedTo($notifiableType, $notifiableId, \Carbon\Carbon $from = null, \Carbon\Carbon $to = null)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note patientPractice($practiceId)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note query()
  */
 class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfReport
 {

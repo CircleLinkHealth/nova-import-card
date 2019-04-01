@@ -15,10 +15,10 @@ use App\Importer\Models\ImportedItems\AllergyImport;
 use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Importer\Models\ImportedItems\MedicationImport;
 use App\Importer\Models\ImportedItems\ProblemImport;
+use App\Scopes\Universal\MedicalRecordIdAndTypeTrait;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
-use App\Scopes\Universal\MedicalRecordIdAndTypeTrait;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -37,11 +37,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Carbon\Carbon|null                                                                            $updated_at
  * @property string|null                                                                                    $deleted_at
  * @property \App\Importer\Models\ImportedItems\AllergyImport[]|\Illuminate\Database\Eloquent\Collection    $allergies
- * @property \CircleLinkHealth\Customer\Entities\User|null                                                                                 $billingProvider
+ * @property \CircleLinkHealth\Customer\Entities\User|null                                                  $billingProvider
  * @property \App\Importer\Models\ImportedItems\DemographicsImport                                          $demographics
- * @property \CircleLinkHealth\Customer\Entities\Location|null                                                                             $location
+ * @property \CircleLinkHealth\Customer\Entities\Location|null                                              $location
  * @property \App\Importer\Models\ImportedItems\MedicationImport[]|\Illuminate\Database\Eloquent\Collection $medications
- * @property \CircleLinkHealth\Customer\Entities\Practice|null                                                                             $practice
+ * @property \CircleLinkHealth\Customer\Entities\Practice|null                                              $practice
  * @property \App\Importer\Models\ImportedItems\ProblemImport[]|\Illuminate\Database\Eloquent\Collection    $problems
  *
  * @method static bool|null forceDelete()
@@ -61,26 +61,34 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\MedicalRecords\ImportedMedicalRecord withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\MedicalRecords\ImportedMedicalRecord withoutTrashed()
  * @mixin \Eloquent
+ *
+ * @property array|null                                                                     $validation_checks
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\ImportedMedicalRecord newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\ImportedMedicalRecord newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\ImportedMedicalRecord query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\ImportedMedicalRecord whereDuplicateId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\ImportedMedicalRecord whereValidationChecks($value)
  */
 class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel implements ImportedMedicalRecordInterface
 {
-    /**
-     * An option in validation_checks
-     */
-    const CHECK_HAS_AT_LEAST_2_CCM_CONDITIONS = 'has_at_least_2_ccm_conditions';
-    
-    /**
-     * An option in validation_checks
-     */
-    const CHECK_HAS_AT_LEAST_1_BHI_CONDITION = 'has_at_least_1_bhi_condition';
-    
-    /**
-     * An option in validation_checks
-     */
-    const CHECK_HAS_MEDICARE = 'has_medicare';
-    
     use MedicalRecordIdAndTypeTrait,
         SoftDeletes;
+
+    /**
+     * An option in validation_checks.
+     */
+    const CHECK_HAS_AT_LEAST_1_BHI_CONDITION = 'has_at_least_1_bhi_condition';
+    /**
+     * An option in validation_checks.
+     */
+    const CHECK_HAS_AT_LEAST_2_CCM_CONDITIONS = 'has_at_least_2_ccm_conditions';
+
+    /**
+     * An option in validation_checks.
+     */
+    const CHECK_HAS_MEDICARE = 'has_medicare';
 
     protected $casts = [
         'validation_checks' => 'array',

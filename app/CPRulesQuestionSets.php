@@ -33,6 +33,12 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestionSets whereQsType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestionSets whereQsid($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestionSets newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestionSets newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestionSets query()
  */
 class CPRulesQuestionSets extends \CircleLinkHealth\Core\Entities\BaseModel
 {

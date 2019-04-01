@@ -51,6 +51,12 @@ namespace App\Models\PatientData\LGH;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\LGH\LGHInsurance whereTertiarySubscriber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\LGH\LGHInsurance whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\LGH\LGHInsurance newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\LGH\LGHInsurance newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\LGH\LGHInsurance query()
  */
 class LGHInsurance extends \CircleLinkHealth\Core\Entities\BaseModel
 {

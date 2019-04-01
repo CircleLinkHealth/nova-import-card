@@ -37,6 +37,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Pdf withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Pdf withoutTrashed()
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pdf newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pdf newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pdf query()
  */
 class Pdf extends \CircleLinkHealth\Core\Entities\BaseModel
 {

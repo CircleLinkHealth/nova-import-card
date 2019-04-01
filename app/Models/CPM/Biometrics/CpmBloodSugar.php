@@ -13,16 +13,16 @@ use CircleLinkHealth\Customer\Entities\User;
 /**
  * App\Models\CPM\Biometrics\CpmBloodSugar.
  *
- * @property int            $id
- * @property int            $patient_id
- * @property string         $starting
- * @property string         $target
- * @property string         $starting_a1c
- * @property string         $high_alert
- * @property string         $low_alert
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property \CircleLinkHealth\Customer\Entities\User      $patient
+ * @property int                                      $id
+ * @property int                                      $patient_id
+ * @property string                                   $starting
+ * @property string                                   $target
+ * @property string                                   $starting_a1c
+ * @property string                                   $high_alert
+ * @property string                                   $low_alert
+ * @property \Carbon\Carbon                           $created_at
+ * @property \Carbon\Carbon                           $updated_at
+ * @property \CircleLinkHealth\Customer\Entities\User $patient
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodSugar whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodSugar whereHighAlert($value)
@@ -34,6 +34,12 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodSugar whereTarget($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodSugar whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodSugar newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodSugar newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodSugar query()
  */
 class CpmBloodSugar extends \CircleLinkHealth\Core\Entities\BaseModel implements Biometric
 {

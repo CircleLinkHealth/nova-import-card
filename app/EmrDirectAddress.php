@@ -24,6 +24,12 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EmrDirectAddress whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EmrDirectAddress whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EmrDirectAddress newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EmrDirectAddress newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EmrDirectAddress query()
  */
 class EmrDirectAddress extends \CircleLinkHealth\Core\Entities\BaseModel
 {

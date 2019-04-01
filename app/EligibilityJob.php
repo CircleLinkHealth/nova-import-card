@@ -10,6 +10,78 @@ use App\Services\WelcomeCallListGenerator;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * App\EligibilityJob.
+ *
+ * @property int                                                                            $id
+ * @property int                                                                            $batch_id
+ * @property string|null                                                                    $hash
+ * @property int|null                                                                       $status
+ * @property array                                                                          $data
+ * @property string|null                                                                    $outcome
+ * @property string|null                                                                    $reason
+ * @property array                                                                          $messages
+ * @property array|null                                                                     $errors
+ * @property \Illuminate\Support\Carbon|null                                                $last_encounter
+ * @property string|null                                                                    $primary_insurance
+ * @property string|null                                                                    $secondary_insurance
+ * @property string|null                                                                    $tertiary_insurance
+ * @property int|null                                                                       $ccm_problem_1_id
+ * @property int|null                                                                       $ccm_problem_2_id
+ * @property int|null                                                                       $bhi_problem_id
+ * @property \Illuminate\Support\Carbon|null                                                $created_at
+ * @property \Illuminate\Support\Carbon|null                                                $updated_at
+ * @property string|null                                                                    $deleted_at
+ * @property int                                                                            $invalid_data
+ * @property int                                                                            $invalid_structure
+ * @property int                                                                            $invalid_mrn
+ * @property int                                                                            $invalid_first_name
+ * @property int                                                                            $invalid_last_name
+ * @property int                                                                            $invalid_dob
+ * @property int                                                                            $invalid_problems
+ * @property int                                                                            $invalid_phones
+ * @property \App\EligibilityBatch                                                          $batch
+ * @property \App\Enrollee                                                                  $enrollee
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob eligible()
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob newQuery()
+ * @method static \Illuminate\Database\Query\Builder|\App\EligibilityJob onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob query()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob whereBatchId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob whereBhiProblemId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob whereCcmProblem1Id($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob whereCcmProblem2Id($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob whereData($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob whereErrors($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob whereHash($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob whereInvalidData($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob whereInvalidDob($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob whereInvalidFirstName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob whereInvalidLastName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob whereInvalidMrn($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob whereInvalidPhones($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob whereInvalidProblems($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob whereInvalidStructure($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob whereLastEncounter($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob whereMessages($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob whereOutcome($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob wherePrimaryInsurance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob whereReason($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob whereSecondaryInsurance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob whereTertiaryInsurance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\EligibilityJob withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\App\EligibilityJob withoutTrashed()
+ * @mixin \Eloquent
+ */
 class EligibilityJob extends BaseModel
 {
     use SoftDeletes;
