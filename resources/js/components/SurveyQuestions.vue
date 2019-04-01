@@ -40,7 +40,7 @@
                         <br>
                         <!--Questions Answer Type-->
                         <div class="question-answer-type">
-                           <!-- <question-type-text
+                            <question-type-text
                                     :question="question"
                                     v-if="question.type.type === 'text'">
                             </question-type-text>
@@ -48,14 +48,14 @@
                             <question-type-checkbox
                                     :question="question"
                                     v-if="question.type.type === 'checkbox'">
-                            </question-type-checkbox>-->
+                            </question-type-checkbox>
 
                             <question-type-muti-select
                                     :question="question"
                                     v-if="question.type.type === 'multi_select'">
                             </question-type-muti-select>
 
-                           <!-- <question-type-range
+                            <question-type-range
                                     v-if="question.type.type === 'range'">
                             </question-type-range>
 
@@ -71,7 +71,7 @@
 
                             <question-type-date
                                     v-if="question.type.type === 'date'">
-                            </question-type-date>-->
+                            </question-type-date>
                         </div>
                     </div>
                 </div>
