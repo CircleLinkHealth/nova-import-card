@@ -45,4 +45,24 @@ class MedicationGroupsMap extends \CircleLinkHealth\Core\Entities\BaseModel
     {
         return $this->belongsTo(CpmMedicationGroup::class, 'medication_group_id');
     }
+
+    /**
+     * Get the medication group to activate.
+     *
+     * @param $name
+     *
+     * @return int|null
+     */
+    public static function getGroup($name)
+    {
+        $maps = MedicationGroupsMap::all();
+
+        foreach ($maps as $map) {
+            if (str_contains(strtolower($name), strtolower($map->keyword))) {
+                return $map->medication_group_id;
+            }
+        }
+
+        return null;
+    }
 }
