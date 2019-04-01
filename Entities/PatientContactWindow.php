@@ -22,7 +22,6 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property \CircleLinkHealth\Customer\Entities\Patient        $patient_info
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientContactWindow whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientContactWindow whereDayOfWeek($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientContactWindow whereId($value)
@@ -31,6 +30,10 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientContactWindow whereWindowTimeEnd($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientContactWindow whereWindowTimeStart($value)
  * @mixin \Eloquent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientContactWindow newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientContactWindow newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientContactWindow query()
  */
 class PatientContactWindow extends BaseModel
 {

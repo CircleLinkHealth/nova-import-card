@@ -75,7 +75,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  * @property \CircleLinkHealth\Customer\Entities\User                                                                      $user
  * @property mixed location
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient enrolled()
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient hasFamily()
@@ -128,6 +127,18 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\Patient withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Patient withoutTrashed()
  * @mixin \Eloquent
+ * @property \Illuminate\Support\Carbon|null $paused_letter_printed_at
+ * @property \Illuminate\Support\Carbon|null $date_unreachable
+ * @property-read mixed $last_call_status
+ * @property-read \CircleLinkHealth\Customer\Entities\Location|null $location
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient byStatus($fromDate, $toDate)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient ccmStatus($status, $operator = '=')
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient filter(\App\Filters\QueryFilters $filters)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereDateUnreachable($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient wherePausedLetterPrintedAt($value)
  */
 class Patient extends BaseModel
 {

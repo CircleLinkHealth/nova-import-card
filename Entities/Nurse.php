@@ -44,7 +44,6 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \CircleLinkHealth\Customer\Entities\User                                                           $user
  * @property \CircleLinkHealth\Customer\Entities\NurseContactWindow[]|\Illuminate\Database\Eloquent\Collection  $windows
  * @property \CircleLinkHealth\Customer\Entities\WorkHours[]|\Illuminate\Database\Eloquent\Collection    $workhourables
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereBillingType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereHighRate($value)
@@ -58,6 +57,11 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereUserId($value)
  * @mixin \Eloquent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse filter(\App\Filters\QueryFilters $filters)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse query()
  */
 class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
 {

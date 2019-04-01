@@ -28,7 +28,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property mixed       $state
  * @property mixed       $zip
  * @property \CircleLinkHealth\Customer\Entities\User   $user
- *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\ProviderInfo onlyTrashed()
  * @method static bool|null restore()
@@ -44,6 +43,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\ProviderInfo withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\ProviderInfo withoutTrashed()
  * @mixin \Eloquent
+ * @property int $approve_own_care_plans
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ProviderInfo newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ProviderInfo newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ProviderInfo query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ProviderInfo whereApproveOwnCarePlans($value)
  */
 class ProviderInfo extends \CircleLinkHealth\Core\Entities\BaseModel
 {

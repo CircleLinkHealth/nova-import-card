@@ -60,7 +60,6 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \App\CPRulesPCP[]|\Illuminate\Database\Eloquent\Collection $pcp
  * @property \CircleLinkHealth\Customer\Entities\Settings[]|\Illuminate\Database\Eloquent\Collection $settings
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection $users
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice active()
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\Practice onlyTrashed()
@@ -90,6 +89,25 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Query\Builder|\App\Practice withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Practice withoutTrashed()
  * @mixin \Eloquent
+ * @property int|null $saas_account_id
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\CareAmbassadorLog[] $careAmbassadorLogs
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\ChargeableService[] $chargeableServices
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\EnrolleeCustomFilter[] $enrolleeCustomFilters
+ * @property-read \App\PracticeEnrollmentTips $enrollmentTips
+ * @property-read string $number_with_dashes
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Media[] $media
+ * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property-read \CircleLinkHealth\Customer\Entities\SaasAccount|null $saasAccount
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice activeBillable()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice authUserCanAccess($softwareOnly = false)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice authUserCannotAccess()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice enrolledPatients()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice hasServiceCode($code)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice whereSaasAccountId($value)
  */
 class Practice extends BaseModel implements HasMedia
 {

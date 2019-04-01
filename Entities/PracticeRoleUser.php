@@ -10,11 +10,27 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 
 /**
  * Class PracticeRoleUser
- * @package App
  *
+ * @package App
  * @property integer $program_id
  * @property integer $user_id
  * @property integer $role_id
+ * @property int|null $has_admin_rights
+ * @property int|null $send_billing_reports
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PracticeRoleUser newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PracticeRoleUser newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PracticeRoleUser query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PracticeRoleUser whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PracticeRoleUser whereHasAdminRights($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PracticeRoleUser whereProgramId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PracticeRoleUser whereRoleId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PracticeRoleUser whereSendBillingReports($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PracticeRoleUser whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PracticeRoleUser whereUserId($value)
+ * @mixin \Eloquent
  */
 class PracticeRoleUser extends BaseModel
 {

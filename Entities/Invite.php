@@ -27,7 +27,6 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @property \Carbon\Carbon|null $deleted_at
  * @property \CircleLinkHealth\Customer\Entities\User           $inviter
  * @property \CircleLinkHealth\Customer\Entities\Role|null      $role
- *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\Entities\Invite onlyTrashed()
  * @method static bool|null restore()
@@ -44,6 +43,10 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @method static \Illuminate\Database\Query\Builder|\App\Entities\Invite withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Entities\Invite withoutTrashed()
  * @mixin \Eloquent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Invite newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Invite newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Invite query()
  */
 class Invite extends \CircleLinkHealth\Core\Entities\BaseModel implements Transformable
 {

@@ -202,7 +202,6 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \CircleLinkHealth\Customer\Entities\Role[]|\Illuminate\Database\Eloquent\Collection                           $roles
  * @property mixed                                                                          $email_address
  * @property \App\CPRulesUCP[]|\Illuminate\Database\Eloquent\Collection                     $ucp
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User exceptType($type)
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User hasBillingProvider($billing_provider_id)
@@ -243,6 +242,41 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Query\Builder|\App\User withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\User withoutTrashed()
  * @mixin \Eloquent
+ * @property int|null $saas_account_id
+ * @property int $skip_browser_checks Skip compatible browser checks when the user logs in
+ * @property string|null $last_session_id
+ * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\TimeTracking\Entities\Activity[] $activitiesAsProvider
+ * @property-read \CircleLinkHealth\TwoFA\Entities\AuthyUser $authyUser
+ * @property-read \App\CareplanAssessment $carePlanAssessment
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\ChargeableService[] $chargeableServices
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Client[] $clients
+ * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\Location[] $clinicalEmergencyContactLocations
+ * @property-read \App\TargetPatient $ehrInfo
+ * @property-read \CircleLinkHealth\Customer\Entities\EhrReportWriterInfo $ehrReportWriterInfo
+ * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\User[] $forwardedAlertsBy
+ * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\User[] $forwardedCarePlanApprovalEmailsBy
+ * @property-read mixed $timezone_abbr
+ * @property-read mixed $timezone_offset
+ * @property-read mixed $timezone_offset_hours
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Call[] $inboundActivities
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Media[] $media
+ * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\TimeTracking\Entities\PageTimer[] $pageTimersAsProvider
+ * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary[] $patientSummaries
+ * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\Permission[] $perms
+ * @property-read \CircleLinkHealth\Customer\Entities\SaasAccount|null $saasAccount
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Token[] $tokens
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User careCoaches()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User filter(\App\Filters\QueryFilters $filters)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User isBhiChargeable()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User isBhiEligible()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User ofPractice($practiceId)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User practicesWhereHasRoles($roleIds, $onlyActive = false)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereLastSessionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereSaasAccountId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User whereSkipBrowserChecks($value)
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
