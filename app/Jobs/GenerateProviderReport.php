@@ -2,11 +2,9 @@
 
 namespace App\Jobs;
 
-use App\ProviderReport;
-use App\Services\ProviderReportService;
-
-use Carbon\Carbon;
+use App\Services\GenerateProviderReportService;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -22,7 +20,7 @@ class GenerateProviderReport implements ShouldQueue
      *
      * @var array
      */
-    protected $patientId;
+    protected $patient;
 
     /**
      * Date to specify for which survey instances to generate Provider Report for.
@@ -42,10 +40,30 @@ class GenerateProviderReport implements ShouldQueue
      */
     public function __construct($patientId, $date)
     {
-        $this->patientId = $patientId;
-
         $this->date = Carbon::parse($date);
 
+        $this->patient = User::with([
+            'surveyInstances' => function ($instance) {
+                $instance->with(['survey', 'questions.type.questionTypeAnswers'])
+                         ->forDate($this->date);
+            },
+            'answers'         => function ($answers) {
+                $answers->whereHas('surveyInstance', function ($instance) {
+                    $instance->forDate($this->date);
+                });
+            },
+            'providerReports' => function ($report) {
+                $report->whereHas('hraSurveyInstance', function ($instance) {
+                    $instance->forDate($this->date);
+                })
+                       ->whereHas('vitalsSurveyInstance', function ($instance) {
+                           $instance->forDate($this->date);
+                       });
+            },
+        ])
+                             ->findOrFail($patientId);
+
+        $this->service = new GenerateProviderReportService($this->patient, $this->date);
     }
 
     /**
@@ -55,33 +73,7 @@ class GenerateProviderReport implements ShouldQueue
      */
     public function handle()
     {
-        //check if it has a report already with those instances
-        $existingReport = ProviderReport::whereHas('hraSurveyInstance', function ($hra) {
-            $hra->forDate($this->date);
-        })
-                                        ->whereHas('vitalsSurveyInstance', function ($hra) {
-                                            $hra->forDate($this->date);
-                                        })
-                                        ->where('patient_id', $this->patientId)
-                                        ->first();
-
-        $patient = User::with([
-            'surveyInstances' => function ($instance) {
-                $instance->with(['survey', 'questions.type.questionTypeAnswers'])
-                         ->forDate($this->date);
-            },
-            'answers'         => function ($answers) {
-                $answers->whereHas('surveyInstance', function ($instance) {
-                            $instance->forDate($this->date);
-                        });
-            },
-        ])
-                       ->findOrFail($this->patientId);
-
-
-        $service = new ProviderReportService($patient, $this->date, $existingReport);
-
-        $report = $service->generateData();
+        $report = $this->service->generateData();
 
         //slack/notify something/someone
     }

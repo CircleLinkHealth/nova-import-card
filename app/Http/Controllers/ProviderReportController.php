@@ -9,7 +9,7 @@ class ProviderReportController extends Controller
 {
     public function getProviderReport(Request $request)
     {
-        //placeholder code
+        //placeholder code to test
         $report = ProviderReport::with('patient.patientInfo')->first();
 
         if ( ! $report) {
