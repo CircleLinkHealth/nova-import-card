@@ -280,7 +280,7 @@ $user_info = [];
                                                     <v-datepicker name="consent_date" class="selectpickerX form-control"
                                                                   format="yyyy-MM-dd"
                                                                   placeholder="YYYY-MM-DD" pattern="\d{4}\-\d{2}\-\d{2}"
-                                                                  value="{{ $patient->resolveTimezoneToGMT($patient->getConsentDate()) }}"
+                                                                  value="{{ $patient->getConsentDate() ? $patient->resolveTimezoneToGMT($patient->getConsentDate()) : null }}"
                                                                   required></v-datepicker>
                                                     <br/>
                                                     <span class="help-block">{{ $errors->first('consent_date') }}</span>
