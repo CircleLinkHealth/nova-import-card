@@ -13,7 +13,6 @@ use App\CarePlan;
 use App\CareplanAssessment;
 use App\ChargeableService;
 use App\Constants;
-use App\Contracts\Serviceable;
 use App\Exceptions\InvalidArgumentException;
 use App\Facades\StringManipulation;
 use CircleLinkHealth\Core\Filters\Filterable;
@@ -245,7 +244,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Query\Builder|\App\User withoutTrashed()
  * @mixin \Eloquent
  */
-class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia, Serviceable
+class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
     use Filterable,
         Authenticatable,
@@ -641,7 +640,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function careItems()
     {
         return $this->belongsToMany(
-            'App\CareItem',
+            \App\CareItem::class,
             'care_item_user_values',
             'user_id',
             'care_item_id'
