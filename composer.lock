@@ -500,10 +500,11 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "d1ea637b409348927ad493c02e2b6dd9e672b21e"
+                "reference": "237437969abd5571554627359c49ce2c79db2e5a"
             },
             "require": {
-                "circlelinkhealth/core": "dev-master"
+                "circlelinkhealth/core": "dev-master",
+                "michalisantoniou6/laravel-cerberus": "dev-master"
             },
             "type": "library",
             "extra": {
@@ -525,7 +526,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-04-01T11:41:51+00:00"
+            "time": "2019-04-01T13:27:37+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
