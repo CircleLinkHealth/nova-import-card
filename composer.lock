@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c015c30b9a3e730012a696e0a617492c",
+    "content-hash": "f65924ecfba15f3b09f4666a715c411e",
     "packages": [
         {
             "name": "amnuts/opcache-gui",
@@ -12427,13 +12427,13 @@
         "circlelinkhealth/timetracking": 20,
         "circlelinkhealth/twofa": 20,
         "lynx39/lara-pdf-merger": 20,
-        "michalisantoniou6/laravel-cerberus": 20,
         "prettus/l5-repository": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
         "xethron/migrations-generator": 20,
         "venturecraft/revisionable": 20,
         "circlelinkhealth/core": 20,
+        "michalisantoniou6/laravel-cerberus": 20,
         "circlelinkhealth/customer": 20
     },
     "prefer-stable": true,

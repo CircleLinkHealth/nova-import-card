@@ -26,10 +26,6 @@
     },
     {
       "type": "git",
-      "url": "git@github.com:CircleLinkHealth/laravel-cerberus.git"
-    },
-    {
-      "type": "git",
       "url": "git@github.com:CircleLinkHealth/module-raygun.git"
     },
     {
@@ -83,7 +79,6 @@
     "league/fractal": "0.12.*",
     "lynx39/lara-pdf-merger": "dev-master",
     "maatwebsite/excel": "^2.1",
-    "michalisantoniou6/laravel-cerberus": "dev-master",
     "nao-pon/flysystem-google-drive": "~1.1",
     "phaxio/phaxio": "^1.0",
     "pragmarx/health": "^0.9.16",
