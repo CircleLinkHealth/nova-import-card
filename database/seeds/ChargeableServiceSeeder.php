@@ -22,20 +22,6 @@ class ChargeableServiceSeeder extends Seeder
         ]);
 
         ChargeableService::updateOrCreate([
-            'code' => 'CPT 99487',
-        ], [
-            'description' => 'Complex CCM over 60 mins (1 month)',
-            'amount'      => null,
-        ]);
-
-        ChargeableService::updateOrCreate([
-            'code' => 'CPT 99489',
-        ], [
-            'description' => 'Complex CCM additional 30 mins (1 month)',
-            'amount'      => null,
-        ]);
-
-        ChargeableService::updateOrCreate([
             'code' => 'CPT 99484',
         ], [
             'description' => 'Behavioural Health Services over 20 mins (1 month)',

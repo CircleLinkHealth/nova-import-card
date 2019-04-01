@@ -488,14 +488,12 @@ class SchedulerService
                             $data = (new SuccessfulHandler(
                                 $patient,
                                 Carbon::parse($last_attempted_time),
-                                $patient->user->isCCMComplex(),
                                 $last_attempted_call
                             ));
                         } else {
                             $data = (new UnsuccessfulHandler(
                                 $patient,
                                 Carbon::parse($last_attempted_time),
-                                $patient->user->isCCMComplex(),
                                 $last_attempted_call
                             ));
                         }
@@ -569,8 +567,6 @@ class SchedulerService
         $noteId,
         $callStatus
     ) {
-        $isComplex = $patient->isCCMComplex();
-
         $scheduled_call = $this->getTodaysCall($patient->id);
 
         $note = Note::find($noteId);
@@ -596,14 +592,12 @@ class SchedulerService
             $prediction = (new SuccessfulHandler(
                 $patient->patientInfo,
                 Carbon::now(),
-                $isComplex,
                 $previousCall
             ))->handle();
         } else {
             $prediction = (new UnsuccessfulHandler(
                 $patient->patientInfo,
                 Carbon::now(),
-                $isComplex,
                 $previousCall
             ))->handle();
         }

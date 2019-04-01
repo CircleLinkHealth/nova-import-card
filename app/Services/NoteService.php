@@ -435,8 +435,7 @@ class NoteService
     }
 
     public function updatePatientRecords(
-        Patient $patient,
-        $ccmComplex
+        Patient $patient
     ) {
         $date_index = Carbon::now()->firstOfMonth()->toDateString();
 
@@ -452,17 +451,7 @@ class NoteService
                 0
             );
         } else {
-            $patientRecord->is_ccm_complex = 0;
             $patientRecord->save();
-        }
-
-        if ($ccmComplex) {
-            $patientRecord->is_ccm_complex = 1;
-            $patientRecord->save();
-
-            if ($patient->user->getCcmTime() > 3600 && auth()->user()->nurseInfo) {
-                (new AlternativeCareTimePayableCalculator(auth()->user()->nurseInfo))->adjustPayOnCCMComplexSwitch60Mins();
-            }
         }
 
         return $patientRecord;

@@ -974,11 +974,6 @@ Route::group(['middleware' => 'auth'], function () {
             ])->middleware('permission:addendum.create');
         });
 
-        Route::post('ccm/toggle', [
-            'uses' => 'CCMComplexToggleController@toggle',
-            'as'   => 'patient.ccm.toggle',
-        ])->middleware('permission:patientSummary.update');
-
         Route::get('progress', [
             'uses' => 'ReportsController@index',
             'as'   => 'patient.reports.progress',

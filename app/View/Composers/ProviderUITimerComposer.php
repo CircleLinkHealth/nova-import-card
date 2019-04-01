@@ -104,12 +104,8 @@ class ProviderUITimerComposer extends ServiceProvider
                 $monthlyTime = $patient->formattedTime($ccmSeconds);
                 $monthlyBhiTime = $patient->formattedBhiTime();
 
-                $ccm_complex = $patient->isCCMComplex() ?? false;
-
                 $ccm_above = false;
-                if ($ccmSeconds > 1199 && ! $ccm_complex) {
-                    $ccm_above = true;
-                } elseif ($ccmSeconds > 3599 && $ccm_complex) {
+                if ($ccmSeconds > 1199) {
                     $ccm_above = true;
                 }
 
@@ -123,7 +119,6 @@ class ProviderUITimerComposer extends ServiceProvider
                     : $patient->getPreferredLocationName();
             } else {
                 $ccm_above = false;
-                $ccm_complex = false;
                 $location = 'N/A';
                 $monthlyTime = sprintf('%02d:%02d:%02d', 0, 0, 0);
                 $monthlyBhiTime = sprintf('%02d:%02d:%02d', 0, 0, 0);
@@ -134,7 +129,6 @@ class ProviderUITimerComposer extends ServiceProvider
 
             $view->with(compact([
                 'ccm_above',
-                'ccm_complex',
                 'location',
                 'monthlyTime',
                 'monthlyBhiTime',

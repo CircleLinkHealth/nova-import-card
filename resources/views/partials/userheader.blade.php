@@ -6,23 +6,6 @@
                             href="{{ route('patient.summary', array('patient' => $patient->id)) }}">
                     {{$patient->getFullName()}}
                     </a> </span>
-                @if($ccm_complex)
-                    <span id="complex_tag"
-                          style="background-color: #ec683e;font-size: 15px; position: relative; top: -7px;"
-                          class="label label-warning">Complex CCM</span>
-                    @push('scripts')
-                        <script>
-                            (function () {
-                                // subscribe to jQuery event to know whether the complex-cscm checkbox value has been changed or not
-                                var $complexSpan = $("#complex_tag");
-                                $(document).on("complex-ccm-form-submit", function (e, status) {
-                                    if (status) $complexSpan.show();
-                                    else $complexSpan.hide();
-                                })
-                            })()
-                        </script>
-                    @endpush
-                @endif
                 <a href="{{ route('patient.demographics.show', array('patient' => $patient->id)) }}"><span
                             class="glyphicon glyphicon-pencil" style="margin-right:3px;"></span></a><br/>
 
@@ -193,23 +176,6 @@
         @endif
     </div>
 </div>
-
-<meta name="is_ccm_complex" content="{{$ccm_complex}}">
-
-@push('scripts')
-    <script>
-        $(document).ready(function () {
-
-            if ($('meta[name="is_ccm_complex"]').attr('content')) {
-                $("#complex_tag").show();
-            } else {
-                $("#complex_tag").hide();
-            }
-
-        });
-
-    </script>
-@endpush
 
 @push('styles')
     <style>
