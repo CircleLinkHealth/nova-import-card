@@ -47,6 +47,6 @@ class QueueGenerateNurseInvoices extends Command
             Carbon::now()->endOfMonth(),
             User::ofType('administrator')->pluck('id')->all(),
             true
-        )->onQueue('high');
+        )->onQueue('low');
     }
 }
