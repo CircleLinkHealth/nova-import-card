@@ -23,9 +23,14 @@
         }
     },
     "require": {
-        "circlelinkhealth/core": "dev-master"
+        "circlelinkhealth/core": "dev-master",
+        "michalisantoniou6/laravel-cerberus": "dev-master"
     },
     "repositories": [
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/laravel-cerberus.git"
+        },
         {
             "type": "git",
             "url": "git@github.com:CircleLinkHealth/module-core.git"
