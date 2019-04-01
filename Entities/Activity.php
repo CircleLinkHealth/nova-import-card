@@ -48,7 +48,6 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @property \CircleLinkHealth\Customer\Entities\User                                                                      $patient
  * @property \CircleLinkHealth\Customer\Entities\User                                                                      $provider
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity createdBy(\CircleLinkHealth\Customer\Entities\User $user)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity createdThisMonth($field = 'created_at')
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity createdOn(Carbon $date, $field = 'created_at')
@@ -72,6 +71,11 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\Activity createdInMonth(\Carbon\Carbon $date, $field = 'created_at')
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\Activity newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\Activity newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\Activity query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\Activity whereIsBehavioral($value)
  */
 class Activity extends BaseModel implements Transformable
 {

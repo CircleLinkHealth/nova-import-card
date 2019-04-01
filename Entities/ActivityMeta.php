@@ -21,7 +21,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Carbon\Carbon      $updated_at
  * @property \Carbon\Carbon|null $deleted_at
  * @property \CircleLinkHealth\TimeTracking\Entities\Activity       $activity
- *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\ActivityMeta onlyTrashed()
  * @method static bool|null restore()
@@ -37,6 +36,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\ActivityMeta withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\ActivityMeta withoutTrashed()
  * @mixin \Eloquent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\ActivityMeta newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\ActivityMeta newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\ActivityMeta query()
  */
 class ActivityMeta extends \CircleLinkHealth\Core\Entities\BaseModel
 {

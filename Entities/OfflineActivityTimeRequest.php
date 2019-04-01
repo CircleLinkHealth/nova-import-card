@@ -12,6 +12,48 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Log;
 
+/**
+ * CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest
+ *
+ * @property int $id
+ * @property int|null $is_approved
+ * @property int $is_behavioral
+ * @property string|null $type
+ * @property int $duration_seconds
+ * @property int $patient_id
+ * @property int $requester_id
+ * @property int|null $activity_id
+ * @property \Illuminate\Support\Carbon|null $performed_at
+ * @property string|null $comment
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \CircleLinkHealth\TimeTracking\Entities\Activity|null $activity
+ * @property-read \CircleLinkHealth\Customer\Entities\User $patient
+ * @property-read \CircleLinkHealth\Customer\Entities\User $requester
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest newQuery()
+ * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest query()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest whereActivityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest whereComment($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest whereDurationSeconds($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest whereIsApproved($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest whereIsBehavioral($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest wherePatientId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest wherePerformedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest whereRequesterId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest withoutTrashed()
+ * @mixin \Eloquent
+ */
 class OfflineActivityTimeRequest extends Model
 {
     use SoftDeletes;
