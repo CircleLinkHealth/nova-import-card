@@ -173,6 +173,11 @@
     "clear": [
       "php artisan clear-compiled",
       "composer dump-autoload"
+    ],
+    "ide": [
+      "php artisan ide-helper:generate",
+      "php artisan -vvv ide-helper:models --dir='app/' --dir='Modules/'",
+      "php artisan ide-helper:meta"
     ]
   },
   "config": {
