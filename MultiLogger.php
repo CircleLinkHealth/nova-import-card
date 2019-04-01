@@ -2,7 +2,7 @@
 
 namespace CircleLinkHealth\Raygun;
 
-use Bugsnag\PsrLogger\MultiLogger as BaseLogger;
+use CircleLinkHealth\Raygun\PsrLogger\MultiLogger as BaseLogger;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Logging\Log;
 
@@ -13,7 +13,7 @@ class MultiLogger extends BaseLogger implements Log
     /**
      * Create a new multi logger instance.
      *
-     * @param \Psr\Log\LoggerInterface[]                   $loggers
+     * @param \Psr\Log\LoggerInterface[] $loggers
      * @param \Illuminate\Contracts\Events\Dispatcher|null $dispatcher
      *
      * @return void
@@ -46,7 +46,7 @@ class MultiLogger extends BaseLogger implements Log
      * Register a daily file log handler.
      *
      * @param string $path
-     * @param int    $days
+     * @param int $days
      * @param string $level
      *
      * @return void
