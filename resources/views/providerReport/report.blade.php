@@ -171,16 +171,16 @@
                 <h4>Vitals</h4>
             </div>
             <div class="section-body">
-                <strong>Blood pressure: </strong> {{$report->vitals['blood_pressure'][0]['first_metric']}}
-                /{{$report->vitals['blood_pressure'][0]['second_metric']}} mmHg <br>
-                <strong>Height: </strong> {{$report->vitals['height'][0]['feet']}}
-                feet, {{$report->vitals['height'][0]['inches']}} inches <br>
-                <strong>Weight: </strong> {{$report->vitals['weight'][0]}} kg (lbs?) <br>
-                <strong>BMI: </strong> {{$report->vitals['bmi'][0]}} kg/m2 <br>
-                As the patient has @if($report->vitals['bmi'][0] < 18.5) a low @elseif($report->vitals['bmi'][0] > 25) a
-                high @else a normal @endif BMI of {{$report->vitals['bmi'][0]}},
-                they are considered @if($report->vitals['bmi'][0] >= 30)
-                    overweight. @elseif($report->vitals['bmi'][0] > 25) obese. @elseif($report->vitals['bmi'][0] < 18)
+                <strong>Blood pressure: </strong> {{$report->vitals['blood_pressure']['first_metric']}}
+                /{{$report->vitals['blood_pressure']['second_metric']}} mmHg <br>
+                <strong>Height: </strong> {{$report->vitals['height']['feet']}}
+                feet, {{$report->vitals['height']['inches']}} inches <br>
+                <strong>Weight: </strong> {{$report->vitals['weight']}} kg (lbs?) <br>
+                <strong>BMI: </strong> {{$report->vitals['bmi']}} kg/m2 <br>
+                As the patient has @if($report->vitals['bmi'] < 18.5) a low @elseif($report->vitals['bmi'] > 25) a
+                high @else a normal @endif BMI of {{$report->vitals['bmi']}},
+                they are considered @if($report->vitals['bmi'] >= 30)
+                    overweight. @elseif($report->vitals['bmi'] > 25) obese. @elseif($report->vitals['bmi']< 18)
                     underweight. @else normal. @endif
             </div>
             <hr>
@@ -289,9 +289,9 @@
                 <br>
                 <strong>MCI/Cognitive</strong>
                 <br>
-                The patient was @if($report->functional_capacity['mci_cognitive']['clock'][0] === 2) able @else unable @endif to put in the hour markers and the time at ten minutes past eleven o'clock.
-                    The patient was able to recall {{$report->functional_capacity['mci_cognitive']['word_recall'][0]}}/3 objects. The patient has a score of {{$report->functional_capacity['mci_cognitive']['total'][0]}}.
-                    This indicates a diagnosis of @if($report->functional_capacity['mci_cognitive']['total'][0] >3 ) no cognitive impairment. @elseif($report->functional_capacity['mci_cognitive']['total'][0] === 3) mild cognitive impairment.
+                The patient was @if($report->functional_capacity['mci_cognitive']['clock'] === 2) able @else unable @endif to put in the hour markers and the time at ten minutes past eleven o'clock.
+                    The patient was able to recall {{$report->functional_capacity['mci_cognitive']['word_recall']}}/3 objects. The patient has a score of {{$report->functional_capacity['mci_cognitive']['total']}}.
+                    This indicates a diagnosis of @if($report->functional_capacity['mci_cognitive']['total'] >3 ) no cognitive impairment. @elseif($report->functional_capacity['mci_cognitive']['total'] === 3) mild cognitive impairment.
                 @else dementia. @endif
                     <br>
                 <br>

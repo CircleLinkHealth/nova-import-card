@@ -58,9 +58,9 @@ class ProviderReportService
     {
         //how to calculate if the visit was initial or subsequent? One thought would be that to check if there is an existing report like below. However is it probable that the patient will
         //edit their surveys after they have completed both during the same visit?
-        if ($this->existingReport){
+        if ($this->existingReport) {
             $reasonForVisit = 'Subsequent';
-        }else{
+        } else {
             $reasonForVisit = 'Inital';
         }
 
@@ -140,7 +140,7 @@ class ProviderReportService
     private function getFamilyMedicalHistory()
     {
         return [
-            'family_conditions' => $this->answerForHraQuestionWithOrder(18, 'a')
+            'family_conditions' => $this->answerForHraQuestionWithOrder(18, 'a'),
         ];
     }
 
@@ -319,7 +319,7 @@ class ProviderReportService
             return [];
         }
 
-        return $this->isJson($answer->value_1)
+        return is_json($answer->value_1)
             ? json_decode($answer->value_1)
             : $answer->value_1;
     }
@@ -332,30 +332,13 @@ class ProviderReportService
         $answer = $this->vitalsAnswers->where('question_id', $question->id)->first();
 
         if ( ! $answer) {
-           return [];
+            return [];
         }
 
-        return [
-            $this->isJson($answer->value_1)
+        return
+            is_json($answer->value_1)
                 ? json_decode($answer->value_1)
-                : $answer->value_1,
-            $answer->value_2,
-        ];
+                : $answer->value_1;
 
-    }
-
-    //at the moment the method that exists in helpers does not work
-    private function isJson($string)
-    {
-        if ('' === $string || ! is_string($string)) {
-            return null;
-        }
-
-        \json_decode($string);
-        if (\json_last_error()) {
-            return false;
-        }
-
-        return true;
     }
 }

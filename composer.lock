@@ -58,7 +58,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "2c72e8ba5ffe31706b3e6aa61518b389a16a09d6"
+                "reference": "64e192b91d3d4179a94cc18ab891660bbd85905a"
             },
             "require": {
                 "spiritix/lada-cache": "^2.1",
@@ -84,7 +84,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-03-27T03:09:14+00:00"
+            "time": "2019-03-31T08:23:48+00:00"
         },
         {
             "name": "circlelinkhealth/customer",
@@ -92,7 +92,10 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "4acca4f4ec5e47ae88d8bcef95d9c10a519f5de7"
+                "reference": "cfcd9bf84ac483f892c92dc2fbedc9ff8b1650d4"
+            },
+            "require": {
+                "circlelinkhealth/core": "dev-master"
             },
             "type": "library",
             "extra": {
@@ -114,7 +117,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-03-27T14:49:38+00:00"
+            "time": "2019-04-01T08:54:21+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
@@ -157,7 +160,10 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "89d3fb431bb1b50496a6afa4826be4f6624523be"
+                "reference": "e7b59c93f21f974327285d1c41107b8f5eb4eede"
+            },
+            "require": {
+                "circlelinkhealth/customer": "dev-master"
             },
             "type": "library",
             "extra": {
@@ -179,7 +185,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-03-27T03:21:53+00:00"
+            "time": "2019-03-31T08:23:47+00:00"
         },
         {
             "name": "circlelinkhealth/twofa",
@@ -187,10 +193,11 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "06803f52ea858fd999f23b6d4e00707293b17ac6"
+                "reference": "962e84a1e797bb18b2903c9e757ea0aedbbca056"
             },
             "require": {
-                "authy/php": "^3.0"
+                "authy/php": "^3.0",
+                "circlelinkhealth/customer": "dev-master"
             },
             "type": "library",
             "extra": {
@@ -212,7 +219,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-03-27T03:21:54+00:00"
+            "time": "2019-03-31T08:23:47+00:00"
         },
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -601,25 +608,30 @@
         },
         {
             "name": "dragonmantank/cron-expression",
-            "version": "v2.2.0",
+            "version": "v2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dragonmantank/cron-expression.git",
-                "reference": "92a2c3768d50e21a1f26a53cb795ce72806266c5"
+                "reference": "72b6fbf76adb3cf5bc0db68559b33d41219aba27"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dragonmantank/cron-expression/zipball/92a2c3768d50e21a1f26a53cb795ce72806266c5",
-                "reference": "92a2c3768d50e21a1f26a53cb795ce72806266c5",
+                "url": "https://api.github.com/repos/dragonmantank/cron-expression/zipball/72b6fbf76adb3cf5bc0db68559b33d41219aba27",
+                "reference": "72b6fbf76adb3cf5bc0db68559b33d41219aba27",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.0.0"
+                "php": "^7.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "~6.4"
+                "phpunit/phpunit": "^6.4|^7.0"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.3-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Cron\\": "src/Cron/"
@@ -646,7 +658,7 @@
                 "cron",
                 "schedule"
             ],
-            "time": "2018-06-06T03:12:17+00:00"
+            "time": "2019-03-31T00:38:28+00:00"
         },
         {
             "name": "egulias/email-validator",
@@ -1519,16 +1531,16 @@
         },
         {
             "name": "league/flysystem",
-            "version": "1.0.50",
+            "version": "1.0.51",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "dab4e7624efa543a943be978008f439c333f2249"
+                "reference": "755ba7bf3fb9031e6581d091db84d78275874396"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/dab4e7624efa543a943be978008f439c333f2249",
-                "reference": "dab4e7624efa543a943be978008f439c333f2249",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/755ba7bf3fb9031e6581d091db84d78275874396",
+                "reference": "755ba7bf3fb9031e6581d091db84d78275874396",
                 "shasum": ""
             },
             "require": {
@@ -1599,7 +1611,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2019-02-01T08:50:36+00:00"
+            "time": "2019-03-30T13:22:34+00:00"
         },
         {
             "name": "mindscape/raygun4php",
@@ -3843,16 +3855,16 @@
         },
         {
             "name": "twilio/sdk",
-            "version": "5.30.2",
+            "version": "5.31.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twilio/twilio-php.git",
-                "reference": "e54f54597849344edd40f86e12b17c1ac815e65b"
+                "reference": "f61003ba5577ccae8ac2ec25d18e1d70fe9ba65e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/e54f54597849344edd40f86e12b17c1ac815e65b",
-                "reference": "e54f54597849344edd40f86e12b17c1ac815e65b",
+                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/f61003ba5577ccae8ac2ec25d18e1d70fe9ba65e",
+                "reference": "f61003ba5577ccae8ac2ec25d18e1d70fe9ba65e",
                 "shasum": ""
             },
             "require": {
@@ -3885,7 +3897,7 @@
                 "sms",
                 "twilio"
             ],
-            "time": "2019-03-15T20:38:12+00:00"
+            "time": "2019-03-28T23:43:43+00:00"
         },
         {
             "name": "venturecraft/revisionable",
