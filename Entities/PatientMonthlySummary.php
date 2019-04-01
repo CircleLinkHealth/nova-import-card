@@ -28,7 +28,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property string $billable_problem1_code
  * @property string $billable_problem2
  * @property string $billable_problem2_code
- * @property int $is_ccm_complex
+
  * @property int $approved
  * @property int $rejected
  * @property int|null $actor_id
@@ -38,24 +38,24 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \CircleLinkHealth\Customer\Entities\User $actor
  * @property \CircleLinkHealth\Customer\Entities\Patient $patient_info
  *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary getCurrent()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary getForMonth(\Carbon\Carbon $month)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereActorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereApproved($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereBillableProblem1($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereBillableProblem1Code($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereBillableProblem2($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereBillableProblem2Code($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereCcmTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereIsCcmComplex($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereMonthYear($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereNoOfCalls($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereNoOfSuccessfulCalls($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary wherePatientInfoId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereRejected($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary getCurrent()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary getForMonth(\Carbon\Carbon $month)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereActorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereApproved($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereBillableProblem1($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereBillableProblem1Code($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereBillableProblem2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereBillableProblem2Code($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereCcmTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereId($value)
+
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereMonthYear($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereNoOfCalls($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereNoOfSuccessfulCalls($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary wherePatientInfoId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereRejected($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class PatientMonthlySummary extends BaseModel
@@ -74,7 +74,6 @@ class PatientMonthlySummary extends BaseModel
         'no_of_calls',
         'no_of_successful_calls',
         'patient_id',
-        'is_ccm_complex',
         'approved',
         'rejected',
         'needs_qa',

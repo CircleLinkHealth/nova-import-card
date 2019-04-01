@@ -1876,14 +1876,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->exists();
     }
 
-    public function isCCMComplex()
-    {
-        return $this->patientSummaries
-            ->where('month_year', Carbon::now()->startOfMonth())
-            ->first()
-            ->is_ccm_complex ?? false;
-    }
-
     public function isCCMCountable()
     {
         return $this->roles()->whereIn('name', Role::CCM_TIME_ROLES)->exists();
