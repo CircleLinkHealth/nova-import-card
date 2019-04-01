@@ -56,11 +56,4 @@ class Question extends Model
         $query->where('optional', false);
     }
 
-    public function scopeWithOrder($query, $order){
-        //not sure if necessary yet
-    }
-
-    public function withOrder($order, $subOrder){
-
-    }
 }

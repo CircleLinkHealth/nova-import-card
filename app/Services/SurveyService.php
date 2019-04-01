@@ -4,6 +4,7 @@ namespace App\Services;
 
 
 use App\Answer;
+use App\Events\SurveyInstancePivotSaved;
 use App\SurveyInstance;
 use App\User;
 
@@ -79,10 +80,11 @@ class SurveyService
             },
         ])
                     ->withCount([
-                        'answers' => function ($a) {
-                            $a->whereHas('question', function ($q) {
-                                $q->notOptional();
-                            });
+                        'answers' => function ($a) use ($input) {
+                            $a->where('survey_instance_id', $input['survey_instance_id'])
+                              ->whereHas('question', function ($q) {
+                                  $q->notOptional();
+                              });
                         },
                     ])
                     ->where('id', $input['user_id'])
@@ -90,13 +92,16 @@ class SurveyService
 
         $instance = $user->surveyInstances->first();
 
-        if ($instance->questions_count === $user->answers_count) {
+        if ($instance->questions_count <= $user->answers_count) {
             $instance->pivot->status = SurveyInstance::COMPLETED;
         } else {
             $instance->pivot->status = SurveyInstance::IN_PROGRESS;
         }
+
         $instance->pivot->last_question_answered_id = $input['question_id'];
-        $instance->save();
+        $instance->pivot->save();
+
+        event(new SurveyInstancePivotSaved($instance));
 
         return $instance->pivot->status;
     }

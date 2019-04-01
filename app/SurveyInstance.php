@@ -71,8 +71,8 @@ class SurveyInstance extends Model
 
     }
 
-    public function scopeIsCompleted($query){
-        $query->where('status', SurveyInstance::COMPLETED);
+    public function scopeIsCompletedForPatient($query){
+        $query->where('users_surveys.status', SurveyInstance::COMPLETED);
     }
 
 

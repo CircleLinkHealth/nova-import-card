@@ -26,24 +26,27 @@ class ProviderReport extends Model
         'exercise_activity_levels',
         'functional_capacity',
         'current_providers',
+        'advanced_care_planning',
         'specific_patient_requests',
     ];
 
     protected $casts = [
-        'demographic_data'       => 'array',
-        'allergy_history'        => 'array',
-        'medical_history'        => 'array',
-        'medication_history'     => 'array',
-        'family_medical_history' => 'array',
-        'immunization_history'   => 'array',
-        'screenings'             => 'array',
-        'mental_state'           => 'array',
-        'vitals'                 => 'array',
-        'diet'                   => 'array',
-        'social_factors'         => 'array',
-        'sexual_activity'        => 'array',
-        'functional_capacity'    => 'array',
-        'current_providers'      => 'array',
+        'demographic_data'         => 'array',
+        'allergy_history'          => 'array',
+        'medical_history'          => 'array',
+        'medication_history'       => 'array',
+        'family_medical_history'   => 'array',
+        'immunization_history'     => 'array',
+        'screenings'               => 'array',
+        'mental_state'             => 'array',
+        'vitals'                   => 'array',
+        'diet'                     => 'array',
+        'social_factors'           => 'array',
+        'sexual_activity'          => 'array',
+        'functional_capacity'      => 'array',
+        'current_providers'        => 'array',
+        'exercise_activity_levels' => 'array',
+        'advanced_care_planning'   => 'array',
     ];
 
     public function patient()
@@ -54,12 +57,12 @@ class ProviderReport extends Model
     public function hraSurveyInstance()
     {
         //todo: add where?
-        return $this->hasOne(SurveyInstance::class, 'hra_instance_id');
+        return $this->hasOne(SurveyInstance::class, 'id', 'hra_instance_id');
     }
 
     public function vitalsSurveyInstance()
     {
         //todo: add where?
-        return $this->hasOne(SurveyInstance::class, 'vitals_instance_id');
+        return $this->hasOne(SurveyInstance::class, 'id', 'vitals_instance_id');
     }
 }
