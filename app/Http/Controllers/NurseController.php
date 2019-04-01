@@ -6,12 +6,12 @@
 
 namespace App\Http\Controllers;
 
-use CircleLinkHealth\TimeTracking\Entities\Activity;
 use App\Jobs\GenerateNurseInvoice;
 use App\Notifications\NurseInvoiceCreated;
 use App\Reports\NurseDailyReport;
-use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Excel;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -53,7 +53,7 @@ class NurseController extends Controller
                 $variablePay,
                 $addTime,
                 $addNotes
-            )->onQueue('high');
+            )->onQueue('low');
         }
 
         return 'Waldo is working on compiling the reports you requested. <br> Give it a minute, and then head to '.link_to('/jobs/completed').' and refresh frantically to see a link to the report you requested.';
