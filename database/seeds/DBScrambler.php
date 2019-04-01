@@ -1,15 +1,15 @@
 <?php
 
-use App\Appointment;
+use CircleLinkHealth\Customer\Entities\Appointment;
 use App\Call;
 use App\CareplanAssessment;
-use App\Location;
+use CircleLinkHealth\Customer\Entities\Location;
 use App\Models\Addendum;
 use App\Models\CCD\CcdInsurancePolicy;
 use App\Note;
-use App\PhoneNumber;
-use App\Practice;
-use App\User;
+use CircleLinkHealth\Customer\Entities\PhoneNumber;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use Faker\Factory;
 use Illuminate\Database\Seeder;
 

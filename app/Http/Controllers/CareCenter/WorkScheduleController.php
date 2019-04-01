@@ -7,11 +7,11 @@
 namespace App\Http\Controllers\CareCenter;
 
 use App\Http\Controllers\Controller;
-use App\Models\Holiday;
-use App\Models\WorkHours;
-use App\Nurse;
-use App\NurseContactWindow;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Holiday;
+use CircleLinkHealth\Customer\Entities\WorkHours;
+use CircleLinkHealth\Customer\Entities\Nurse;
+use CircleLinkHealth\Customer\Entities\NurseContactWindow;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;

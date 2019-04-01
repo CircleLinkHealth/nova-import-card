@@ -6,7 +6,7 @@
 
 namespace App\Filters;
 
-use App\Role;
+use CircleLinkHealth\Customer\Entities\Role;
 use Illuminate\Http\Request;
 
 class CallViewFilters extends QueryFilters

@@ -27,8 +27,14 @@ namespace App\Models\PatientData\Rappa;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\Rappa\RappaData wherePatientId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\Rappa\RappaData whereProvider($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\Rappa\RappaData newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\Rappa\RappaData newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\Rappa\RappaData query()
  */
-class RappaData extends \App\BaseModel
+class RappaData extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     public $guarded = [];
 }

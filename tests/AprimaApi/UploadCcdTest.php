@@ -6,7 +6,7 @@
 
 namespace Tests\AprimaApi;
 
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Tests\TestCase;
 

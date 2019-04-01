@@ -9,7 +9,7 @@ namespace App\Http\Controllers;
 use App\Exceptions\InvalidArgumentException;
 use App\Http\Requests\CreateLegacyBhiConsentDecision;
 use App\Note;
-use App\Patient;
+use CircleLinkHealth\Customer\Entities\Patient;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 

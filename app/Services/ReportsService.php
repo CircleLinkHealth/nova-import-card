@@ -12,7 +12,7 @@ use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmMisc;
 use App\Services\CPM\CpmMiscService;
 use App\Services\CPM\CpmProblemService;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\DB;
 
 class ReportsService

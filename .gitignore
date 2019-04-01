@@ -20,4 +20,6 @@ public/*.js.map
 /tests/Browser/
 /coverage/
 .php_cs.cache
+Modules/
+.phpunit.result.cache
 

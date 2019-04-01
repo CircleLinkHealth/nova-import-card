@@ -9,10 +9,10 @@ namespace App\Http\Controllers\Patient;
 use App\CarePlan;
 use App\Contracts\ReportFormatter;
 use App\Http\Controllers\Controller;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use App\Services\CarePlanViewService;
 use App\Services\PdfService;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -530,17 +530,5 @@ class PatientController extends Controller
             'program' => $program,
             'patient' => $wpUser,
         ]);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @return Response
-     */
-    public function toDeprecateShowPatientListing()
-    {
-        $data = $this->formatter->patientListing();
-
-        return view('wpUsers.patient.listingToDeprecate', $data);
     }
 }

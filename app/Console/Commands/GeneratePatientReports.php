@@ -6,9 +6,9 @@
 
 namespace App\Console\Commands;
 
-use App\Location;
+use CircleLinkHealth\Customer\Entities\Location;
 use App\Services\ReportsService;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 

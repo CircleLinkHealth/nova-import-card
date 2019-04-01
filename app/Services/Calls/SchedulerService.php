@@ -6,17 +6,17 @@
 
 namespace App\Services\Calls;
 
-use App\Activity;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
 use App\Algorithms\Calls\SuccessfulHandler;
 use App\Algorithms\Calls\UnsuccessfulHandler;
 use App\Call;
-use App\Family;
+use CircleLinkHealth\Customer\Entities\Family;
 use App\Note;
-use App\Nurse;
-use App\Patient;
+use CircleLinkHealth\Customer\Entities\Nurse;
+use CircleLinkHealth\Customer\Entities\Patient;
 use App\Repositories\PatientWriteRepository;
 use App\Services\NoteService;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
@@ -488,14 +488,12 @@ class SchedulerService
                             $data = (new SuccessfulHandler(
                                 $patient,
                                 Carbon::parse($last_attempted_time),
-                                $patient->user->isCCMComplex(),
                                 $last_attempted_call
                             ));
                         } else {
                             $data = (new UnsuccessfulHandler(
                                 $patient,
                                 Carbon::parse($last_attempted_time),
-                                $patient->user->isCCMComplex(),
                                 $last_attempted_call
                             ));
                         }
@@ -569,8 +567,6 @@ class SchedulerService
         $noteId,
         $callStatus
     ) {
-        $isComplex = $patient->isCCMComplex();
-
         $scheduled_call = $this->getTodaysCall($patient->id);
 
         $note = Note::find($noteId);
@@ -596,14 +592,12 @@ class SchedulerService
             $prediction = (new SuccessfulHandler(
                 $patient->patientInfo,
                 Carbon::now(),
-                $isComplex,
                 $previousCall
             ))->handle();
         } else {
             $prediction = (new UnsuccessfulHandler(
                 $patient->patientInfo,
                 Carbon::now(),
-                $isComplex,
                 $previousCall
             ))->handle();
         }

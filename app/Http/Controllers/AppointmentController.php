@@ -6,8 +6,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Appointment;
-use App\User;
+use App\Http\Controllers\Controller;
+use CircleLinkHealth\Customer\Entities\Appointment;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 
 class AppointmentController extends Controller

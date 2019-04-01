@@ -7,7 +7,7 @@
 namespace Tests\Unit;
 
 use App\CLH\Faker\Patient\Problem;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\Helpers\UserHelpers;
 
@@ -44,7 +44,7 @@ class FakerProblemTest
 //
 //        $attachProblemSet = $this->faker->attachProblemSet($this->patient);
 //
-//        $this->assertInstanceOf('App\User', $attachProblemSet);
+//        $this->assertInstanceOf('CircleLinkHealth\Customer\Entities\User', $attachProblemSet);
 //
 //
 //    }

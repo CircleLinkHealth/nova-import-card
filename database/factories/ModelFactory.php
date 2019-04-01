@@ -13,13 +13,14 @@
 
 use App\EligibilityBatch;
 use App\Enrollee;
-use App\Entities\Invite;
-use App\Location;
-use App\Nurse;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Invite;
+use CircleLinkHealth\Customer\Entities\Location;
+use CircleLinkHealth\Customer\Entities\Nurse;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Carbon\Carbon;
 
-$factory->define(App\User::class, function (Faker\Generator $faker) {
+$factory->define(
+    \CircleLinkHealth\Customer\Entities\User::class, function (Faker\Generator $faker) {
     return [
         'display_name' => $faker->name,
         'first_name'   => $faker->firstName,
@@ -35,7 +36,8 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
     ];
 });
 
-$factory->define(App\Activity::class, function (Faker\Generator $faker) use ($factory) {
+$factory->define(
+    \CircleLinkHealth\TimeTracking\Entities\Activity::class, function (Faker\Generator $faker) use ($factory) {
     return [
         'type'          => $faker->text(15),
         'duration'      => $faker->numberBetween(1, 120),
@@ -46,9 +48,9 @@ $factory->define(App\Activity::class, function (Faker\Generator $faker) use ($fa
 
 $factory->define(App\Note::class, function (Faker\Generator $faker) use ($factory) {
     return [
-        'patient_id'           => $factory->create(App\User::class)->id,
-        'author_id'            => $factory->create(App\User::class)->id,
-        'logger_id'            => $factory->create(App\User::class)->id,
+        'patient_id'           => $factory->create(\CircleLinkHealth\Customer\Entities\User::class)->id,
+        'author_id'            => $factory->create(\CircleLinkHealth\Customer\Entities\User::class)->id,
+        'logger_id'            => $factory->create(\CircleLinkHealth\Customer\Entities\User::class)->id,
         'body'                 => $faker->text(100),
         'isTCM'                => $faker->boolean(50),
         'type'                 => $faker->text(10),
@@ -130,7 +132,7 @@ $factory->define(\App\Models\CCD\CcdInsurancePolicy::class, function (Faker\Gene
 
 $factory->define(Invite::class, function (Faker\Generator $faker) {
     return [
-        'inviter_id' => factory(App\User::class)->create()->id,
+        'inviter_id' => factory(\CircleLinkHealth\Customer\Entities\User::class)->create()->id,
         'email'      => $faker->email,
         'subject'    => 'subject',
         'message'    => 'message',

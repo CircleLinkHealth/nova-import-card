@@ -7,7 +7,7 @@
 namespace App\Repositories;
 
 use App\Contracts\Repositories\PracticeRepository;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use App\Validators\PracticeValidator;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;

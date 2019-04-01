@@ -10,7 +10,7 @@ use App\EligibilityBatch;
 use App\Enrollee;
 use App\Jobs\ImportConsentedEnrollees;
 use App\Jobs\ImportMedicalRecordsById;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Http\Request;
 
 class EnrolleesController extends Controller

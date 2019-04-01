@@ -6,8 +6,8 @@
 
 namespace App\Services\SAAS\Admin;
 
-use App\Role;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Role;
+use CircleLinkHealth\Customer\Entities\User;
 use App\ValueObjects\SAAS\Admin\InternalUser;
 
 class UserManagementService

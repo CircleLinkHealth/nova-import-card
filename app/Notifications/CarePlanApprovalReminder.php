@@ -8,7 +8,7 @@ namespace App\Notifications;
 
 use App\Mail\CarePlanApprovalReminder as CarePlanApprovalReminderMailable;
 use App\Notifications\Channels\DirectMailChannel;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Channels\MailChannel;
 use Illuminate\Notifications\Notification;

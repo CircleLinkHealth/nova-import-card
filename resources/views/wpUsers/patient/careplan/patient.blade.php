@@ -356,7 +356,7 @@ $user_info = [];
                                                 <div class="form-group form-item form-item-spacing col-sm-12">
                                                     <div class="row">
                                                         <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Enrollment: ') !!}</div>
-                                                        <div class="col-lg-8">{!! Form::select('ccm_status', [ App\Patient::PAUSED => 'Paused', App\Patient::ENROLLED => 'Enrolled', App\Patient::WITHDRAWN => 'Withdrawn', App\Patient::UNREACHABLE => 'Unreachable' ], $patient->getCcmStatus(), ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
+                                                        <div class="col-lg-8">{!! Form::select('ccm_status', [ CircleLinkHealth\Customer\Entities\Patient::PAUSED => 'Paused', CircleLinkHealth\Customer\Entities\Patient::ENROLLED => 'Enrolled', CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN => 'Withdrawn', CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE => 'Unreachable' ], $patient->getCcmStatus(), ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
                                                     </div>
                                                 </div>
                                             @else

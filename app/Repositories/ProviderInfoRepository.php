@@ -6,7 +6,7 @@
 
 namespace App\Repositories;
 
-use App\ProviderInfo;
+use CircleLinkHealth\Customer\Entities\ProviderInfo;
 
 class ProviderInfoRepository
 {

@@ -23,13 +23,13 @@ use App\Importer\Section\Importers\Insurance;
 use App\Importer\Section\Importers\Medications;
 use App\Importer\Section\Importers\Problems;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
-use App\Patient;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\Practice;
 use App\Traits\Relationships\MedicalRecordItemLoggerRelationships;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Collection;
 
-abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRecord
+abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\BaseModel implements MedicalRecord
 {
     use MedicalRecordItemLoggerRelationships;
 

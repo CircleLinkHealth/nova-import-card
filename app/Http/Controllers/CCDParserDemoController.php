@@ -7,7 +7,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\ReportsService;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\App;
 
 class CCDParserDemoController extends Controller

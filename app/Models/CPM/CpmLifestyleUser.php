@@ -6,28 +6,38 @@
 
 namespace App\Models\CPM;
 
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 /**
  * App\Models\CPM\CpmLifestyleUser.
  *
- * @property int                           $id
- * @property int|null                      $cpm_instruction_id
- * @property int                           $patient_id
- * @property int                           $cpm_lifestyle_id
- * @property \Carbon\Carbon                $created_at
- * @property \Carbon\Carbon                $updated_at
- * @property App\Models\CPM\CpmInstruction $cpmInstruction
- * @property App\Models\CPM\CpmLifestyle   $cpmLifestyle
- * @property \App\User                     $user
+ * @property int                                      $id
+ * @property int|null                                 $cpm_instruction_id
+ * @property int                                      $patient_id
+ * @property int                                      $cpm_lifestyle_id
+ * @property \Carbon\Carbon                           $created_at
+ * @property \Carbon\Carbon                           $updated_at
+ * @property App\Models\CPM\CpmInstruction            $cpmInstruction
+ * @property App\Models\CPM\CpmLifestyle              $cpmLifestyle
+ * @property \CircleLinkHealth\Customer\Entities\User $user
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property \App\Models\CPM\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection      $cpmInstructions
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyleUser newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyleUser newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyleUser query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyleUser whereCpmInstructionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyleUser whereCpmLifestyleId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyleUser wherePatientId($value)
  */
-class CpmLifestyleUser extends \App\BaseModel
+class CpmLifestyleUser extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use Instructable;
 

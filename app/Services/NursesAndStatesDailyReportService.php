@@ -2,11 +2,11 @@
 
 namespace App\Services;
 
-use App\Activity;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
 use App\Exceptions\FileNotFoundException;
-use App\PageTimer;
-use App\SaasAccount;
-use App\User;
+use CircleLinkHealth\TimeTracking\Entities\PageTimer;
+use CircleLinkHealth\Customer\Entities\SaasAccount;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 
 

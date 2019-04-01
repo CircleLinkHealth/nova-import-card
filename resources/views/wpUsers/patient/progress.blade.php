@@ -5,7 +5,7 @@
 
 <?php
 $today    = \Carbon\Carbon::now()->toFormattedDateString();
-$provider = App\User::find($patient->getBillingProviderId());
+$provider = \CircleLinkHealth\Customer\Entities\User::find($patient->getBillingProviderId());
 
 function trim_bp($bp)
 {

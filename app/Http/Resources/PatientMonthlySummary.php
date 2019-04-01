@@ -28,7 +28,6 @@ class PatientMonthlySummary extends Resource
             'ccm_time'               => $this->ccm_time,
             'no_of_calls'            => $this->no_of_calls,
             'no_of_successful_calls' => $this->no_of_successful_calls,
-            'is_ccm_complex'         => $this->is_ccm_complex,
             'approved'               => $this->approved,
             'rejected'               => $this->rejected,
             'actor_id'               => $this->actor_id,

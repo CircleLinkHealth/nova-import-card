@@ -5,7 +5,7 @@
  */
 
 use App\Models\MedicalRecords\Ccda;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Seeder;
 
 class CcdaImporterPredictionSeeder extends Seeder

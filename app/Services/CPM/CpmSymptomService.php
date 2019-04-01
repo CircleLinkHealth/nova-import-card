@@ -8,7 +8,7 @@ namespace App\Services\CPM;
 
 use App\Contracts\Services\CpmModel;
 use App\Repositories\CpmSymptomRepository;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 class CpmSymptomService implements CpmModel
 {

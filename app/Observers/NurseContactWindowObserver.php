@@ -6,14 +6,14 @@
 
 namespace App\Observers;
 
-use App\NurseContactWindow;
+use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 
 class NurseContactWindowObserver
 {
     /**
      * Listen for the NurseContactWindow created event.
      *
-     * @param NurseContactWindow $window
+     * @param \CircleLinkHealth\Customer\Entities\NurseContactWindow $window
      *
      * @internal param User $user
      */
@@ -39,7 +39,7 @@ class NurseContactWindowObserver
     /**
      * Listen for the NurseContactWindow deleted event.
      *
-     * @param NurseContactWindow $window
+     * @param \CircleLinkHealth\Customer\Entities\NurseContactWindow $window
      *
      * @internal param User $user
      */

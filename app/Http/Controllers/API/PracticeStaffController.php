@@ -8,13 +8,13 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdatePracticeStaff;
-use App\Nurse;
-use App\Permission;
-use App\PhoneNumber;
-use App\Practice;
-use App\ProviderInfo;
-use App\Role;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Nurse;
+use CircleLinkHealth\Customer\Entities\Permission;
+use CircleLinkHealth\Customer\Entities\PhoneNumber;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\ProviderInfo;
+use CircleLinkHealth\Customer\Entities\Role;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Collection;
 
 class PracticeStaffController extends Controller

@@ -6,8 +6,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Patient;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;

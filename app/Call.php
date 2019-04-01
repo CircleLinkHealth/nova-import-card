@@ -6,8 +6,11 @@
 
 namespace App;
 
-use App\Filters\Filterable;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\BaseModel;
+use CircleLinkHealth\Core\Filters\Filterable;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
+use CircleLinkHealth\Customer\Entities\User;
 
 /**
  * App\Call.
@@ -34,10 +37,10 @@ use Carbon\Carbon;
  * @property string|null    $scheduler
  * @property bool           $is_from_care_center
  * @property bool is_manual
- * @property \App\User|null                                                                 $schedulerUser
- * @property \App\User                                                                      $inboundUser
+ * @property \CircleLinkHealth\Customer\Entities\User|null                                  $schedulerUser
+ * @property \CircleLinkHealth\Customer\Entities\User                                       $inboundUser
  * @property \App\Note|null                                                                 $note
- * @property \App\User|null                                                                 $outboundUser
+ * @property \CircleLinkHealth\Customer\Entities\User|null                                  $outboundUser
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereAttemptNote($value)
@@ -59,6 +62,19 @@ use Carbon\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereWindowEnd($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereWindowStart($value)
  * @mixin \Eloquent
+ *
+ * @property int|null $is_manual
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call filter(\App\Filters\QueryFilters $filters)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call ofMonth(\Carbon\Carbon $monthYear)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call ofStatus($status)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call scheduled()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereIsManual($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereSubType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereType($value)
  */
 class Call extends BaseModel
 {

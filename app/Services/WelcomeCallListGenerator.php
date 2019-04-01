@@ -12,12 +12,12 @@ use App\EligibilityBatch;
 use App\EligibilityJob;
 use App\Enrollee;
 use App\Models\CPM\CpmProblem;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use App\Services\Eligibility\Adapters\JsonMedicalRecordInsurancePlansAdapter;
 use App\Services\Eligibility\Csv\CsvPatientList;
 use App\Services\Eligibility\Entities\Problem;
 use App\Traits\ValidatesEligibility;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Facades\Excel;
@@ -89,7 +89,7 @@ class WelcomeCallListGenerator
      * @param bool                $filterInsurance
      * @param bool                $filterProblems
      * @param bool                $createEnrollees
-     * @param Practice|null       $practice
+     * @param \CircleLinkHealth\Customer\Entities\Practice|null       $practice
      * @param null                $medicalRecordType
      * @param null                $medicalRecordId
      * @param EligibilityBatch    $batch

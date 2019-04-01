@@ -22,7 +22,7 @@ if ( ! function_exists('checkIfExists')) {
 }
 
 $today = \Carbon\Carbon::now()->toFormattedDateString();
-// $provider = App\User::find($patient->getLeadContactID());
+// $provider = CircleLinkHealth\Customer\Entities\User::find($patient->getLeadContactID());
 
 ?>
 
@@ -31,7 +31,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
 @section('content')
     @foreach($careplans as $id => $careplan)
         <?php
-        $patient       = App\User::find($id);
+        $patient       = \CircleLinkHealth\Customer\Entities\User::find($id);
         $billingDoctor = $patient->billingProviderUser();
         $regularDoctor = $patient->regularDoctorUser();
         ?>

@@ -7,7 +7,7 @@
 namespace App\Observers;
 
 use App\Enrollee;
-use App\Patient;
+use CircleLinkHealth\Customer\Entities\Patient;
 use App\TargetPatient;
 use Carbon\Carbon;
 
@@ -73,7 +73,7 @@ class PatientObserver
     /**
      * Listen to the Patient updated event.
      *
-     * @param Patient $patient
+     * @param \CircleLinkHealth\Customer\Entities\Patient $patient
      */
     public function updated(Patient $patient)
     {

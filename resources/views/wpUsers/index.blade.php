@@ -123,7 +123,6 @@
                             <div class="pull-right" style="margin:20px;">
                                 <a href="{{ route('admin.users.create', array()) }}" class="btn btn-success">New
                                     User</a>
-                                {{-- <a href="{{ route('admin.users.createQuickPatient', array('primaryProgramId' => '7')) }}" class="btn btn-success">Participant Quick Add (Program 7)</a> --}}
                             </div>
                         </div>
                     @endif

@@ -8,8 +8,8 @@ namespace App\Http\Controllers\SAAS\Admin\CRUD;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SAAS\StorePractice;
-use App\Location;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Location;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Http\Request;
 
 class PracticeController extends Controller

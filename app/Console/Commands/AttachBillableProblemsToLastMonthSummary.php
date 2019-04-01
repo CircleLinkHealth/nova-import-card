@@ -7,7 +7,7 @@
 namespace App\Console\Commands;
 
 use App\Jobs\AttachBillableProblemsToSummary;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use App\Repositories\BillablePatientsEloquentRepository;
 use Carbon\Carbon;
 use Illuminate\Console\Command;

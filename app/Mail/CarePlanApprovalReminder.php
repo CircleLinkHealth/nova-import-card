@@ -6,7 +6,7 @@
 
 namespace App\Mail;
 
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
@@ -20,7 +20,7 @@ class CarePlanApprovalReminder extends Mailable
     /**
      * Create a new message instance.
      *
-     * @param User $recipient
+     * @param \CircleLinkHealth\Customer\Entities\User $recipient
      * @param $numberOfCareplans
      */
     public function __construct(User $recipient, $numberOfCareplans)

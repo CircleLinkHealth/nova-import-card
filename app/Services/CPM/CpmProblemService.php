@@ -10,7 +10,7 @@ use App\Contracts\Services\CpmModel;
 use App\Models\CCD\Problem;
 use App\Repositories\CpmProblemRepository;
 use App\Repositories\UserRepositoryEloquent;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 class CpmProblemService implements CpmModel
 {

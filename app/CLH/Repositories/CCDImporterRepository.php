@@ -8,8 +8,8 @@ namespace App\CLH\Repositories;
 
 use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
-use App\Role;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Role;
+use CircleLinkHealth\Customer\Entities\User;
 use GuzzleHttp\Client;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -19,7 +19,7 @@ class CCDImporterRepository
      * Creates a user with random credentials
      * Used to attach XML CCDs to a Patient.
      *
-     * @return \App\User
+     * @return \CircleLinkHealth\Customer\Entities\User
      */
     public function createRandomUser(
         DemographicsImport $demographics,

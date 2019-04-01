@@ -6,9 +6,9 @@
 
 namespace App\Billing\NurseInvoices;
 
-use App\Nurse;
-use App\NurseCareRateLog;
-use App\NurseMonthlySummary;
+use CircleLinkHealth\Customer\Entities\Nurse;
+use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
+use CircleLinkHealth\Customer\Entities\NurseMonthlySummary;
 use Carbon\Carbon;
 
 class VariablePay extends NurseInvoice

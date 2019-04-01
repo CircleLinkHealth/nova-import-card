@@ -12,7 +12,7 @@ use App\Repositories\CcdProblemRepository;
 use App\Repositories\ProblemCodeRepository;
 use App\Repositories\UserRepositoryEloquent;
 use App\Services\CPM\CpmInstructionService;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 class CcdProblemService
 {

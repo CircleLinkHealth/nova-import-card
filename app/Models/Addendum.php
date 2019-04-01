@@ -6,7 +6,7 @@
 
 namespace App\Models;
 
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 /**
  * App\Models\Addendum.
@@ -19,7 +19,7 @@ use App\User;
  * @property \Carbon\Carbon|null                           $created_at
  * @property \Carbon\Carbon|null                           $updated_at
  * @property \Eloquent|\Illuminate\Database\Eloquent\Model $addendumable
- * @property \App\User                                     $author
+ * @property \CircleLinkHealth\Customer\Entities\User      $author
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum whereAddendumableId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum whereAddendumableType($value)
@@ -29,8 +29,14 @@ use App\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum query()
  */
-class Addendum extends \App\BaseModel
+class Addendum extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $fillable = [
         'addendumable_type',

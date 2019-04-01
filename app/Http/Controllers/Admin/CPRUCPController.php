@@ -9,7 +9,7 @@ namespace App\Http\Controllers\Admin;
 use App\CPRulesPCP;
 use App\CPRulesUCP;
 use App\Http\Controllers\Controller;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 
 class CPRUCPController extends Controller

@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Http\Request;
 use Spatie\MediaLibrary\Models\Media;
 

@@ -6,11 +6,11 @@
 
 namespace App\Reports\Sales\Provider\Sections;
 
-use App\Patient;
+use CircleLinkHealth\Customer\Entities\Patient;
 use App\Reports\Sales\ProviderReportable;
 use App\Reports\Sales\SalesReportSection;
 use App\Reports\Sales\StatsHelper;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 

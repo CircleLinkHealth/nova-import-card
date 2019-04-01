@@ -6,19 +6,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Activity;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
 use App\Call;
 use App\Contracts\ReportFormatter;
 use App\Http\Requests\NotesReport;
 use App\Note;
-use App\PatientContactWindow;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\PatientContactWindow;
+use CircleLinkHealth\Customer\Entities\Practice;
 use App\Repositories\PatientWriteRepository;
 use App\SafeRequest;
 use App\Services\Calls\SchedulerService;
 use App\Services\CPM\CpmMedicationService;
 use App\Services\NoteService;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -96,8 +96,6 @@ class NotesController extends Controller
                 $contact_days_array = array_merge(explode(',', $patient->patientInfo->preferred_cc_contact_days));
             }
 
-            $ccm_complex = $patient->isCCMComplex() ?? false;
-
             asort($provider_info);
             asort($careteam_info);
 
@@ -136,7 +134,6 @@ class NotesController extends Controller
                 'window'               => $window,
                 'window_flag'          => $patient_contact_window_exists,
                 'contact_days_array'   => $contact_days_array,
-                'ccm_complex'          => $ccm_complex,
                 'notifies_text'        => $patient->getNotifiesText(),
                 'note_channels_text'   => $patient->getNoteChannelsText(),
                 'medications'          => $meds,
@@ -191,8 +188,7 @@ class NotesController extends Controller
         $messages = \Session::get('messages');
 
         $report_data = $this->formatter->formatDataForNotesAndOfflineActivitiesReport($patient);
-
-        $ccm_complex = $patient->isCCMComplex() ?? false;
+        
 
         return view(
             'wpUsers.patient.note.index',
@@ -200,7 +196,6 @@ class NotesController extends Controller
                 'activity_json' => $report_data,
                 'patient'       => $patient,
                 'messages'      => $messages,
-                'ccm_complex'   => $ccm_complex,
                 'showAll'       => $showAll,
             ]
         );
@@ -362,9 +357,8 @@ class NotesController extends Controller
         if (isset($input['status'])) {
             $info->ccm_status = $input['status'];
         }
-
-        //CCM Complexity Handle
-        $this->service->updatePatientRecords($patient->patientInfo, isset($input['complex']));
+        
+        $this->service->updatePatientRecords($patient->patientInfo);
 
         if (isset($input['general_comment'])) {
             $info->general_comment = $input['general_comment'];
@@ -492,17 +486,14 @@ class NotesController extends Controller
 
                     $seconds = $patient->getCcmTime();
 
-                    $ccm_complex = $patient->isCCMComplex() ?? false;
-
                     $ccm_above = false;
-                    if ($seconds > 1199 && ! $ccm_complex) {
+                    if ($seconds > 1199) {
                         $ccm_above = true;
-                    } elseif ($seconds > 3599 && $ccm_complex) {
+                    } elseif ($seconds > 3599) {
                         $ccm_above = true;
                     }
 
                     $prediction['ccm_above']   = $ccm_above;
-                    $prediction['ccm_complex'] = $ccm_complex;
 
                     return view('wpUsers.patient.calls.create', $prediction);
                 }

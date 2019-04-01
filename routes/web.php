@@ -110,54 +110,8 @@ Route::group(['middleware' => 'auth'], function () {
         ]);
     });
 
-    Route::group(['prefix' => '2fa'], function () {
-        Route::get('', [
-            'uses' => 'AuthyController@showVerificationTokenForm',
-            'as'   => 'user.2fa.show.token.form',
-        ]);
-    });
-
     // API
     Route::group(['prefix' => 'api'], function () {
-        Route::group(['prefix' => '2fa'], function () {
-            Route::group(['prefix' => 'token'], function () {
-                Route::post('sms', [
-                    'uses' => 'AuthyController@sendTokenViaSms',
-                    'as'   => 'user.2fa.token.sms',
-                ]);
-
-                Route::post('voice', [
-                    'uses' => 'AuthyController@sendTokenViaVoice',
-                    'as'   => 'user.2fa.token.voice',
-                ]);
-
-                Route::post('verify', [
-                    'uses' => 'AuthyController@verifyToken',
-                    'as'   => 'user.2fa.token.verify',
-                ]);
-            });
-            Route::group(['prefix' => 'one-touch-request'], function () {
-                Route::post('create', [
-                    'uses' => 'AuthyController@createOneTouchRequest',
-                    'as'   => 'user.2fa.one-touch-request.create',
-                ]);
-
-                Route::post('check-status', [
-                    'uses' => 'AuthyController@checkOneTouchRequestStatus',
-                    'as'   => 'user.2fa.one-touch-request.check',
-                ]);
-            });
-        });
-
-        Route::group(['prefix' => 'account-settings'], function () {
-            Route::group(['prefix' => '2fa'], function () {
-                Route::post('', [
-                    'uses' => 'AuthyController@store',
-                    'as'   => 'user.2fa.store',
-                ]);
-            });
-        });
-
         Route::group(['prefix' => 'admin'], function () {
             //the new calls route that uses calls-view table
             Route::get('calls-v2', [
@@ -1020,11 +974,6 @@ Route::group(['middleware' => 'auth'], function () {
             ])->middleware('permission:addendum.create');
         });
 
-        Route::post('ccm/toggle', [
-            'uses' => 'CCMComplexToggleController@toggle',
-            'as'   => 'patient.ccm.toggle',
-        ])->middleware('permission:patientSummary.update');
-
         Route::get('progress', [
             'uses' => 'ReportsController@index',
             'as'   => 'patient.reports.progress',
@@ -1797,51 +1746,6 @@ Route::group(['middleware' => 'auth'], function () {
         // users
         Route::group([
         ], function () {
-            Route::get('users', [
-                'uses' => 'UserController@index',
-                'as'   => 'admin.users.index',
-            ])->middleware('permission:user.read,practice.read');
-            Route::post('users', [
-                'uses' => 'UserController@store',
-                'as'   => 'admin.users.store',
-            ])->middleware('permission:user.create');
-            Route::get('users/create', [
-                'uses' => 'UserController@create',
-                'as'   => 'admin.users.create',
-            ])->middleware('permission:user.read,practice.read,location.read,role.read');
-            Route::get('users/doAction', [
-                'uses' => 'UserController@doAction',
-                'as'   => 'admin.users.doAction',
-            ]);
-            Route::get('users/{id}/edit', [
-                'uses' => 'UserController@edit',
-                'as'   => 'admin.users.edit',
-            ])->middleware('permission:user.read,practice.read,location.read,role.read');
-            Route::get('users/{id}/destroy', [
-                'uses' => 'UserController@destroy',
-                'as'   => 'admin.users.destroy',
-            ])->middleware('permission:user.delete');
-            Route::post('users/{id}/edit', [
-                'uses' => 'UserController@update',
-                'as'   => 'admin.users.update',
-            ])->middleware('permission:user.update');
-            Route::get('users/createQuickPatient/{primaryProgramId}', [
-                'uses' => 'UserController@createQuickPatient',
-                'as'   => 'admin.users.createQuickPatient',
-            ])->middleware('permission:patient.read');
-            Route::post('users/createQuickPatient/', [
-                'uses' => 'UserController@storeQuickPatient',
-                'as'   => 'admin.users.storeQuickPatient',
-            ])->middleware('permission:patient.create');
-            Route::get('users/{id}/msgcenter', [
-                'uses' => 'UserController@showMsgCenter',
-                'as'   => 'admin.users.msgCenter',
-            ]);
-            Route::post('users/{id}/msgcenter', [
-                'uses' => 'UserController@showMsgCenter',
-                'as'   => 'admin.users.msgCenterUpdate',
-            ]);
-
             Route::get('calls', [
                 'uses' => 'Admin\PatientCallManagementController@remix',
                 'as'   => 'admin.patientCallManagement.index',

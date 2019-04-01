@@ -65,11 +65,6 @@
                                             @if($ccm_above)
                                                 <span class="glyphicon glyphicon-ok"></span>
                                             @endif
-                                            @if($ccm_complex)
-                                                <span id="complex_tag"
-                                                      style="background-color: #ec683e;font-size: 11px;"
-                                                      class="label label-warning"> Complex CCM</span>
-                                            @endif
                                         </h3>
                                     </div>
                                 </div>

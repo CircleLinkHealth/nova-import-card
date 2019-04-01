@@ -1,7 +1,7 @@
 <?php
 
-use App\Patient;
-use App\Permission;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\Permission;
 use Illuminate\Database\Seeder;
 
 class RequiredPermissionsTableSeeder extends Seeder

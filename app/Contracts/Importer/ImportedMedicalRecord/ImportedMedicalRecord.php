@@ -9,8 +9,8 @@ namespace App\Contracts\Importer\ImportedMedicalRecord;
 use App\CarePlan;
 use App\Contracts\Importer\MedicalRecord\MedicalRecord;
 use App\Importer\Models\ImportedItems\DemographicsImport;
-use App\Practice;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 
 interface ImportedMedicalRecord
 {

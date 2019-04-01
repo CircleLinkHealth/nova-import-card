@@ -8,9 +8,9 @@ namespace App\Billing\Practices;
 
 use App\AppConfig;
 use App\ChargeableService;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use App\Repositories\PatientSummaryEloquentRepository;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Carbon\Carbon;
 

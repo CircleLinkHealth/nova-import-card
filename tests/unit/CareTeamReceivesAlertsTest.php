@@ -6,8 +6,8 @@
 
 namespace Tests\unit;
 
-use App\CarePerson;
-use App\User;
+use CircleLinkHealth\Customer\Entities\CarePerson;
+use CircleLinkHealth\Customer\Entities\User;
 use Faker\Factory;
 use Tests\Helpers\CarePlanHelpers;
 use Tests\Helpers\SetupTestCustomerTrait;
@@ -30,7 +30,7 @@ class CareTeamReceivesAlertsTest extends TestCase
     protected $practice;
 
     /**
-     * @var User
+     * @var \CircleLinkHealth\Customer\Entities\User
      */
     protected $provider;
 

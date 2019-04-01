@@ -7,7 +7,7 @@
 namespace App\ValueObjects\BlueButtonMedicalRecord;
 
 use App\EligibilityJob;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 
 class MedicalRecord
 {

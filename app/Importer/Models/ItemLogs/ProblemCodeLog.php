@@ -28,8 +28,16 @@ namespace App\Importer\Models\ItemLogs;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemCodeLog whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemCodeLog whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property int|null                                                                       $problem_code_system_id
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemCodeLog newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemCodeLog newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemCodeLog query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemCodeLog whereProblemCodeSystemId($value)
  */
-class ProblemCodeLog extends \App\BaseModel
+class ProblemCodeLog extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     public $fillable = [
         'problem_code_system_id',

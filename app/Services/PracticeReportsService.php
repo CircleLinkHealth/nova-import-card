@@ -8,8 +8,8 @@ namespace App\Services;
 
 use App\Billing\Practices\PracticeInvoiceGenerator;
 use App\ChargeableService;
-use App\Practice;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use App\ValueObjects\QuickBooksRow;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;

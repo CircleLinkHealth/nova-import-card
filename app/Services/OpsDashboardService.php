@@ -6,9 +6,9 @@
 
 namespace App\Services;
 
-use App\Patient;
+use CircleLinkHealth\Customer\Entities\Patient;
 use App\Repositories\OpsDashboardPatientEloquentRepository;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;

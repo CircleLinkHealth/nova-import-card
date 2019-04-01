@@ -7,9 +7,9 @@
 namespace App\Repositories;
 
 use App\Exceptions\InvalidArgumentException;
-use App\Patient;
-use App\PatientMonthlySummary;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 

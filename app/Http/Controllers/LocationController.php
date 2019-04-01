@@ -6,8 +6,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Location;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Location;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Auth;
 use Illuminate\Http\Request;
 

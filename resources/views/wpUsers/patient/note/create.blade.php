@@ -85,10 +85,6 @@
                                                                   aria-describedby="sizing-addon2"
                                                                   style="margin: 0 auto; text-align: left; color: #333;">
                             </div>
-                            <div class="col-sm-4 col-xs-8 pull-right"
-                                 style="text-align: right;top: 9px;font-size: 22px;color: #ec683e;">
-                                @include('partials.complex-ccm-badge')
-                            </div>
                         </div>
                     </div>
 

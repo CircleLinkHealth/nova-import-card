@@ -6,9 +6,9 @@
 
 namespace App\Reports;
 
-use App\Activity;
-use App\PageTimer;
-use App\User;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
+use CircleLinkHealth\TimeTracking\Entities\PageTimer;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 
 class NurseDailyReport

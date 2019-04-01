@@ -10,9 +10,9 @@ use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Models\CPM\CpmInstruction;
 use App\Models\CPM\CpmProblem;
 use App\Models\ProblemCode;
-use App\PatientMonthlySummary;
 use App\Traits\HasProblemCodes;
-use App\User;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -33,7 +33,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \App\Importer\Models\ItemLogs\ProblemLog|null                      $ccdLog
  * @property \App\Models\ProblemCode[]|\Illuminate\Database\Eloquent\Collection $codes
  * @property \App\Models\CPM\CpmProblem|null                                    $cpmProblem
- * @property \App\User                                                          $patient
+ * @property \CircleLinkHealth\Customer\Entities\User                           $patient
  * @property \App\Models\CPM\CpmInstruction                                     $cpmInstruction
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereActivate($value)
@@ -53,8 +53,25 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereVendorId($value)
  * @mixin \Eloquent
+ *
+ * @property int                                                                                                  $is_monitored     A monitored problem is a problem we provide Care Management for.
+ * @property int|null                                                                                             $billable
+ * @property \CircleLinkHealth\Customer\Entities\PatientMonthlySummary[]|\Illuminate\Database\Eloquent\Collection $patientSummaries
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[]                       $revisionHistory
+ *
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem newQuery()
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\CCD\Problem onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem query()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereBillable($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereCpmInstructionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereIsMonitored($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\CCD\Problem withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\CCD\Problem withoutTrashed()
  */
-class Problem extends \App\BaseModel implements \App\Contracts\Models\CCD\Problem
+class Problem extends \CircleLinkHealth\Core\Entities\BaseModel implements \App\Contracts\Models\CCD\Problem
 {
     use HasProblemCodes, SoftDeletes;
 

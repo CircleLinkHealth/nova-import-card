@@ -8,16 +8,16 @@ namespace App\Services;
 
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
 use App\Call;
-use App\CarePerson;
+use CircleLinkHealth\Customer\Entities\CarePerson;
 use App\CareplanAssessment;
 use App\CLH\Repositories\UserRepository;
 use App\Filters\NoteFilters;
 use App\Note;
-use App\Patient;
-use App\PatientMonthlySummary;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use App\Repositories\CareplanAssessmentRepository;
 use App\Repositories\NoteRepository;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use App\View\MetaTag;
 use Carbon\Carbon;
 use Exception;
@@ -435,8 +435,7 @@ class NoteService
     }
 
     public function updatePatientRecords(
-        Patient $patient,
-        $ccmComplex
+        Patient $patient
     ) {
         $date_index = Carbon::now()->firstOfMonth()->toDateString();
 
@@ -452,17 +451,7 @@ class NoteService
                 0
             );
         } else {
-            $patientRecord->is_ccm_complex = 0;
             $patientRecord->save();
-        }
-
-        if ($ccmComplex) {
-            $patientRecord->is_ccm_complex = 1;
-            $patientRecord->save();
-
-            if ($patient->user->getCcmTime() > 3600 && auth()->user()->nurseInfo) {
-                (new AlternativeCareTimePayableCalculator(auth()->user()->nurseInfo))->adjustPayOnCCMComplexSwitch60Mins();
-            }
         }
 
         return $patientRecord;

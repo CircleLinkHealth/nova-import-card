@@ -6,8 +6,8 @@
 
 namespace App\Repositories;
 
-use App\Patient;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\User;
 
 class OpsDashboardPatientEloquentRepository
 {

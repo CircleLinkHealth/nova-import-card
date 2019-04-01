@@ -6,7 +6,7 @@
 
 namespace Tests\Unit;
 
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Collection;
 use Tests\TestCase;
 

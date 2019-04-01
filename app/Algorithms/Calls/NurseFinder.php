@@ -7,9 +7,9 @@
 namespace App\Algorithms\Calls;
 
 use App\Call;
-use App\Nurse;
-use App\Patient;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Nurse;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 
 class NurseFinder
@@ -284,10 +284,10 @@ class NurseFinder
      *
      * Edit (Pangratios) - also filters out nurses that are not active
      *
-     * @param User $patient
+     * @param \CircleLinkHealth\Customer\Entities\User $patient
      * @param int  $nurseToIgnore
      *
-     * @return User|null
+     * @return \CircleLinkHealth\Customer\Entities\User|null
      */
     public function getLastRNCallWithoutAttemptNote($patient, $nurseToIgnore)
     {

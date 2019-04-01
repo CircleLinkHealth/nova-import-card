@@ -6,10 +6,10 @@
 
 namespace App\Notifications\SAAS;
 
-use App\Entities\Invite;
-use App\Practice;
-use App\SaasAccount;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Invite;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\SaasAccount;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Notifications\Messages\MailMessage;

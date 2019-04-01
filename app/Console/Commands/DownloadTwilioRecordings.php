@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Contracts\Services\TwilioClientable;
-use App\SaasAccount;
+use CircleLinkHealth\Customer\Entities\SaasAccount;
 use Illuminate\Console\Command;
 use Twilio\Rest\Api\V2010\Account\RecordingInstance;
 

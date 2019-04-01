@@ -30,10 +30,6 @@
                         + NEW NOTE
                     </a>
                 </div>
-                <div class="col-sm-6 col-xs-7 pull-right"
-                     style="text-align: right;top: 1px;font-size: 22px;color: #ec683e;">
-                    @include('partials.complex-ccm-badge')
-                </div>
 
                 <div class="main-form-horizontal main-form-primary-horizontal col-md-12 col-xs-12"
                      style="border-top: 3px solid #50b2e2">

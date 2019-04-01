@@ -14,13 +14,13 @@ use App\Contracts\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdatePracticeSettingsAndNotifications;
 use App\Http\Resources\SAAS\PracticeChargeableServices;
-use App\Location;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Location;
+use CircleLinkHealth\Customer\Entities\Practice;
 use App\PracticeEnrollmentTips;
 use App\SafeRequest;
 use App\Services\OnboardingService;
-use App\Settings;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Settings;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

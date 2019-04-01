@@ -8,7 +8,7 @@ namespace App\Http\Controllers;
 
 use App\Services\CareplanService;
 use App\Services\UserService;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 
 class CareController extends Controller

@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\NurseContactWindow;
+use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Spatie\GoogleCalendar\Event;

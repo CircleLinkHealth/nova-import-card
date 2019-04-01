@@ -9,7 +9,7 @@
 
         <div class="form-group">
             <select name="practice_id" class="col-sm-12 form-control">
-                @foreach(App\Practice::whereEhrId(2)->get() as $practice)
+                @foreach(CircleLinkHealth\Customer\Entities\Practice::whereEhrId(2)->get() as $practice)
                     <option value="{{$practice->id}}">{{$practice->display_name}}</option>
                 @endforeach
             </select>

@@ -10,7 +10,7 @@ use App\Models\CPM\Biometrics\CpmBloodPressure;
 use App\Models\CPM\Biometrics\CpmBloodSugar;
 use App\Models\CPM\Biometrics\CpmSmoking;
 use App\Models\CPM\Biometrics\CpmWeight;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 /**
  * App\Models\CPM\CpmBiometric.
@@ -21,7 +21,7 @@ use App\User;
  * @property int                                         $patient_id
  * @property \Carbon\Carbon                              $created_at
  * @property \Carbon\Carbon                              $updated_at
- * @property \App\User                                   $patient
+ * @property \CircleLinkHealth\Customer\Entities\User    $patient
  * @property \App\Models\CPM\CpmBiometric                $biometric
  * @property \App\Models\CPM\CpmInstruction              $instruction
  * @property \App\Models\CPM\Biometrics\CpmBloodPressure $bloodPressure
@@ -35,8 +35,17 @@ use App\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometric whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometric whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometricUser newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometricUser newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometricUser query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometricUser whereCpmBiometricId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometricUser whereCpmInstructionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometricUser wherePatientId($value)
  */
-class CpmBiometricUser extends \App\BaseModel
+class CpmBiometricUser extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $table = 'cpm_biometrics_users';
 

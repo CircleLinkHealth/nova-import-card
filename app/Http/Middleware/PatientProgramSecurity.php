@@ -6,7 +6,7 @@
 
 namespace App\Http\Middleware;
 
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
 

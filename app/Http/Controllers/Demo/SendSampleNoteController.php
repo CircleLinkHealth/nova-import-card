@@ -9,8 +9,8 @@ namespace App\Http\Controllers\Demo;
 use App\Contracts\Efax;
 use App\Http\Controllers\Controller;
 use App\Note;
-use App\Practice;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 

@@ -8,7 +8,7 @@ namespace App\Contracts\Importer\MedicalRecord;
 
 use App\Contracts\Importer\ImportedMedicalRecord\ImportedMedicalRecord;
 use App\Contracts\Importer\MedicalRecord\Section\ItemLog;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 /**
  * This is any Health Record that can be Imported.
@@ -76,7 +76,7 @@ interface MedicalRecord
     /**
      * Get the User to whom this record belongs to, if one exists.
      *
-     * @return User
+     * @return \CircleLinkHealth\Customer\Entities\User
      */
     public function getPatient(): User;
 

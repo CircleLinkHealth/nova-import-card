@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers\Patient\Traits;
 
-use App\Appointment;
+use CircleLinkHealth\Customer\Entities\Appointment;
 use Illuminate\Http\Request;
 
 trait AppointmentTraits

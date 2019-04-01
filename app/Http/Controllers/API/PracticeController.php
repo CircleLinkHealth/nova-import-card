@@ -8,10 +8,10 @@ namespace App\Http\Controllers\API;
 
 use App\Filters\UserFilters;
 use App\Http\Controllers\Controller;
-use App\Location;
-use App\Practice;
-use App\Role;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Location;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\Role;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 

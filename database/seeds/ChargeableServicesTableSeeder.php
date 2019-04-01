@@ -25,22 +25,6 @@ class ChargeableServicesTableSeeder extends Seeder
                 'updated_at'  => '2018-02-05 08:38:34',
             ],
             1 => [
-                'id'          => 2,
-                'code'        => 'CPT 99487',
-                'description' => 'Complex CCM over 60 mins (1 month)',
-                'amount'      => '70.00',
-                'created_at'  => '2018-02-24 17:13:02',
-                'updated_at'  => '2018-02-24 17:13:02',
-            ],
-            2 => [
-                'id'          => 3,
-                'code'        => 'CPT 99489',
-                'description' => 'Complex CCM additional 30 mins (1 month)',
-                'amount'      => '35.00',
-                'created_at'  => '2018-02-24 17:13:02',
-                'updated_at'  => '2018-02-24 17:13:02',
-            ],
-            3 => [
                 'id'          => 4,
                 'code'        => 'CPT 99484',
                 'description' => 'Behavioural Health Services over 20 mins (1 month)',
@@ -48,7 +32,7 @@ class ChargeableServicesTableSeeder extends Seeder
                 'created_at'  => '2018-02-24 17:13:02',
                 'updated_at'  => '2018-02-24 17:13:02',
             ],
-            4 => [
+            2 => [
                 'id'          => 5,
                 'code'        => 'G0506',
                 'description' => 'Enrollment in office & Care Planning by Provider',
@@ -56,7 +40,7 @@ class ChargeableServicesTableSeeder extends Seeder
                 'created_at'  => '2018-02-24 17:13:02',
                 'updated_at'  => '2018-02-24 17:13:02',
             ],
-            5 => [
+            3 => [
                 'id'          => 6,
                 'code'        => 'G0511',
                 'description' => 'FQHC / RHC General Care Management (1 month)',

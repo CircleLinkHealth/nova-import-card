@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands\Athena;
 
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use App\Services\AthenaAPI\DetermineEnrollmentEligibility;
 use Carbon\Carbon;
 use Illuminate\Console\Command;

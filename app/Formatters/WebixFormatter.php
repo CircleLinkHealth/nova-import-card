@@ -6,8 +6,8 @@
 
 namespace App\Formatters;
 
-use App\Activity;
-use App\Appointment;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
+use CircleLinkHealth\Customer\Entities\Appointment;
 use App\Contracts\ReportFormatter;
 use App\Models\CCD\Allergy;
 use App\Models\CCD\Medication;
@@ -16,7 +16,7 @@ use App\Models\CPM\CpmMisc;
 use App\Services\CPM\CpmMiscService;
 use App\Services\NoteService;
 use App\Services\ReportsService;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 

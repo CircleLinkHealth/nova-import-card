@@ -29,8 +29,14 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\SnomedToICD9Map whereSnomedCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\SnomedToICD9Map whereSnomedName($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\SnomedToICD9Map newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\SnomedToICD9Map newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\SnomedToICD9Map query()
  */
-class SnomedToICD9Map extends \App\BaseModel
+class SnomedToICD9Map extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     public $timestamps = false;
     protected $table   = 'snomed_to_icd9_map';

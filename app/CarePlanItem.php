@@ -15,8 +15,14 @@ namespace App;
  * @property \App\CarePlanItem[]|\Illuminate\Database\Eloquent\Collection $children
  * @property \App\CarePlanItem                                            $parents
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanItem newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanItem newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanItem query()
  */
-class CarePlanItem extends \App\BaseModel
+class CarePlanItem extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     public $timestamps = false;
 
@@ -43,7 +49,7 @@ class CarePlanItem extends \App\BaseModel
 
     public function careItem()
     {
-        return $this->belongsTo('App\CareItem', 'item_id', 'id');
+        return $this->belongsTo(\App\CareItem::class, 'item_id', 'id');
     }
 
     public function carePlan()

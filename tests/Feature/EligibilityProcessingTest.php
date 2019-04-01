@@ -8,7 +8,7 @@ namespace Tests\Feature;
 
 use App\EligibilityBatch;
 use App\EligibilityJob;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use App\Services\CCD\ProcessEligibilityService;
 use App\Services\WelcomeCallListGenerator;
 use Tests\TestCase;

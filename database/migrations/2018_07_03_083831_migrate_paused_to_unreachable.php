@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Patient;
+use CircleLinkHealth\Customer\Entities\Patient;
 use Carbon\Carbon;
 use Illuminate\Database\Migrations\Migration;
 

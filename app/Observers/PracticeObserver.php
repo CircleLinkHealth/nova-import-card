@@ -6,15 +6,15 @@
 
 namespace App\Observers;
 
-use App\Practice;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 
 class PracticeObserver
 {
     /**
      * Listen to the Practice created event.
      *
-     * @param Practice $practice
+     * @param \CircleLinkHealth\Customer\Entities\Practice $practice
      */
     public function created(Practice $practice)
     {

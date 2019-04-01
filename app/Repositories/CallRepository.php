@@ -7,7 +7,7 @@
 namespace App\Repositories;
 
 use App\Call;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 
 class CallRepository

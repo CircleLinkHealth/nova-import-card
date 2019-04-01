@@ -6,9 +6,9 @@
 
 namespace Tests\Feature\SAAS\Admin;
 
-use App\Practice;
-use App\Role;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\Role;
+use CircleLinkHealth\Customer\Entities\User;
 use Tests\DuskTestCase;
 use Tests\Helpers\UserHelpers;
 

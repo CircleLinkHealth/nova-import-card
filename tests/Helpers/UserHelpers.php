@@ -9,14 +9,14 @@ namespace Tests\Helpers;
 use App\Call;
 use App\CLH\Repositories\UserRepository;
 use App\Facades\StringManipulation;
-use App\Nurse;
-use App\NurseContactWindow;
-use App\Patient;
-use App\PatientContactWindow;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Nurse;
+use CircleLinkHealth\Customer\Entities\NurseContactWindow;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\PatientContactWindow;
+use CircleLinkHealth\Customer\Entities\Practice;
 use App\Repositories\PatientWriteRepository;
-use App\Role;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Role;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -58,7 +58,7 @@ trait UserHelpers
      * @param int    $practiceId
      * @param string $roleName
      *
-     * @return User
+     * @return \CircleLinkHealth\Customer\Entities\User
      */
     public function createUser(
         $practiceId = 8,

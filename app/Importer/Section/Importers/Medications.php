@@ -32,26 +32,6 @@ class Medications extends BaseImporter
         $this->importedMedicalRecord = $importedMedicalRecord;
     }
 
-    /**
-     * Get the medication group to activate.
-     *
-     * @param $name
-     *
-     * @return int|null
-     */
-    public function getMedicationGroup($name)
-    {
-        $maps = MedicationGroupsMap::all();
-
-        foreach ($maps as $map) {
-            if (str_contains(strtolower($name), strtolower($map->keyword))) {
-                return $map->medication_group_id;
-            }
-        }
-
-        return null;
-    }
-
     public function import(
         $medicalRecordId,
         $medicalRecordType,
@@ -80,7 +60,7 @@ class Medications extends BaseImporter
         MedicationLog $itemLog,
         $consolidatedMed
     ) {
-        $medicationGroupId = $this->getMedicationGroup($consolidatedMed->cons_name) ?? $this->getMedicationGroup($consolidatedMed->cons_text);
+        $medicationGroupId = MedicationGroupsMap::getGroup($consolidatedMed->cons_name) ?? MedicationGroupsMap::getGroup($consolidatedMed->cons_text);
 
         $this->imported[] = MedicationImport::updateOrCreate([
             'medical_record_type'        => $this->medicalRecordType,

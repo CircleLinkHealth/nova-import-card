@@ -8,10 +8,10 @@ namespace App\Http\Controllers;
 
 use App\Call;
 use App\Http\Resources\Call as CallResource;
-use App\Patient;
+use CircleLinkHealth\Customer\Entities\Patient;
 use App\Rules\DateBeforeUsingCarbon;
 use App\Services\Calls\SchedulerService;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

@@ -6,8 +6,8 @@
 
 namespace Tests\Unit;
 
-use App\Practice;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Tests\TestCase;
 

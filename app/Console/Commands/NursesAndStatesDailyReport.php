@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\SaasAccount;
+use CircleLinkHealth\Customer\Entities\SaasAccount;
 use App\Services\NursesAndStatesDailyReportService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;

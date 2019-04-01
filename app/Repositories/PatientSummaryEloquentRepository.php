@@ -9,9 +9,9 @@ namespace App\Repositories;
 use App\ChargeableService;
 use App\Exceptions\InvalidArgumentException;
 use App\Models\CCD\Problem;
-use App\PatientMonthlySummary;
-use App\Practice;
-use App\User;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use Cache;
 use Illuminate\Support\Collection;
 
@@ -61,7 +61,7 @@ class PatientSummaryEloquentRepository
      * NOTE: The summary is not persisted to the DB. You will have to call `->save()` on `$summary` this function will
      * return.
      *
-     * @param User                  $patient
+     * @param \CircleLinkHealth\Customer\Entities\User                  $patient
      * @param PatientMonthlySummary $summary
      *
      * @return PatientMonthlySummary
@@ -294,7 +294,7 @@ class PatientSummaryEloquentRepository
     /**
      * Get the patient's billable problems.
      *
-     * @param User $patient
+     * @param \CircleLinkHealth\Customer\Entities\User $patient
      *
      * @return Collection
      */
@@ -382,7 +382,7 @@ class PatientSummaryEloquentRepository
      * Determine whether a summary should be approved.
      *
      * @param User                  $patient
-     * @param PatientMonthlySummary $summary
+     * @param \CircleLinkHealth\Customer\Entities\PatientMonthlySummary $summary
      *
      * @return bool
      */
@@ -408,7 +408,7 @@ class PatientSummaryEloquentRepository
      * If they are the same, then run the summary should go through attach records again.
      *
      * @param PatientMonthlySummary $summary
-     * @param User                  $user
+     * @param \CircleLinkHealth\Customer\Entities\User                  $user
      *
      * @return bool
      */
@@ -464,7 +464,7 @@ class PatientSummaryEloquentRepository
     /**
      * Store a CCD Problem.
      *
-     * @param User  $patient
+     * @param \CircleLinkHealth\Customer\Entities\User  $patient
      * @param array $arguments
      *
      * @return bool|\Illuminate\Database\Eloquent\Model|void
@@ -538,8 +538,8 @@ class PatientSummaryEloquentRepository
     /**
      * Attempt to fill report from the patient's billable problems.
      *
-     * @param User                  $patient
-     * @param PatientMonthlySummary $summary
+     * @param \CircleLinkHealth\Customer\Entities\User                  $patient
+     * @param \CircleLinkHealth\Customer\Entities\PatientMonthlySummary $summary
      * @param Collection|Collection $billableProblems
      * @param int                   $tryCount
      * @param int                   $maxTries

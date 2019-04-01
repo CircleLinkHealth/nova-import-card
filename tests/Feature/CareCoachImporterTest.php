@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;

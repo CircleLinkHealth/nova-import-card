@@ -6,7 +6,7 @@
 
 namespace App\Traits;
 
-use App\Settings;
+use CircleLinkHealth\Customer\Entities\Settings;
 
 trait HasSettings
 {

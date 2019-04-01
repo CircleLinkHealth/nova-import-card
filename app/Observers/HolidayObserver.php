@@ -7,15 +7,15 @@
 namespace App\Observers;
 
 use App\Jobs\SendSlackMessage;
-use App\Models\Holiday;
-use App\NurseContactWindow;
+use CircleLinkHealth\Customer\Entities\Holiday;
+use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 
 class HolidayObserver
 {
     /**
      * Listen for the NurseContactWindow created event.
      *
-     * @param NurseContactWindow $holiday
+     * @param \CircleLinkHealth\Customer\Entities\NurseContactWindow $holiday
      *
      * @internal param User $user
      */
@@ -43,7 +43,7 @@ class HolidayObserver
     /**
      * Listen for the NurseContactWindow deleted event.
      *
-     * @param NurseContactWindow $holiday
+     * @param \CircleLinkHealth\Customer\Entities\NurseContactWindow $holiday
      *
      * @internal param User $user
      */

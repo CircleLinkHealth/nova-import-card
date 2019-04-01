@@ -6,7 +6,7 @@
 
 namespace Tests\integration;
 
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Tests\TestCase;
 
 class OnboardingTest extends TestCase
@@ -17,7 +17,7 @@ class OnboardingTest extends TestCase
     protected $faker;
 
     /**
-     * @var User
+     * @var \CircleLinkHealth\Customer\Entities\User
      */
     protected $provider;
 

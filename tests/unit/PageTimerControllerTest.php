@@ -8,9 +8,9 @@ namespace Tests\Unit;
 
 use App\ChargeableService;
 use App\Models\CPM\CpmProblem;
-use App\Patient;
-use App\Practice;
-use App\Role;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\Role;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Tests\Helpers\UserHelpers;
@@ -24,7 +24,7 @@ class PageTimerControllerTest extends TestCase
     private $patient;
 
     /**
-     * @var Practice
+     * @var \CircleLinkHealth\Customer\Entities\Practice
      */
     private $practice;
     private $provider;

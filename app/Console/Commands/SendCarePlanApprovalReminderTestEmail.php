@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Console\Command;
 
 class SendCarePlanApprovalReminderTestEmail extends Command

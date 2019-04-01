@@ -17,7 +17,7 @@ use App\Services\CPM\CpmMiscService;
 use App\Services\CPM\CpmProblemService;
 use App\Services\CPM\CpmProblemUserService;
 use App\Services\CPM\CpmSymptomService;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 class CareplanService
 {

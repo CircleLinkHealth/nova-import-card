@@ -6,6 +6,8 @@
 
 namespace App;
 
+use CircleLinkHealth\Core\Entities\BaseModel;
+
 /**
  * App\ProcessedFile.
  *
@@ -19,6 +21,12 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ProcessedFile wherePath($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ProcessedFile whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ProcessedFile newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ProcessedFile newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ProcessedFile query()
  */
 class ProcessedFile extends BaseModel
 {

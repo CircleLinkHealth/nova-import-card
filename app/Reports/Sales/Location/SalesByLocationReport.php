@@ -6,8 +6,8 @@
 
 namespace App\Reports\Sales\Location;
 
-use App\Patient;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;

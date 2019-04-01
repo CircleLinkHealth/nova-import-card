@@ -3,7 +3,7 @@
 use App\Observation;
 use App\Services\MsgCPRules;
 use App\Services\ObservationService;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;

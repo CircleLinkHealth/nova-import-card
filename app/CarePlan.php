@@ -16,6 +16,10 @@ use App\Rules\HasAtLeast2CcmOr1BhiProblems;
 use App\Services\CareplanService;
 use App\Services\PdfService;
 use App\Traits\PdfReportTrait;
+use CircleLinkHealth\Core\Entities\BaseModel;
+use CircleLinkHealth\Customer\Entities\CarePerson;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Log;
 use Validator;
@@ -38,9 +42,9 @@ use Validator;
  * @property \Carbon\Carbon                                             $updated_at
  * @property \App\CarePlanTemplate                                      $carePlanTemplate
  * @property \App\CareplanAssessment                                    $assessment
- * @property \App\User                                                  $patient
+ * @property \CircleLinkHealth\Customer\Entities\User                   $patient
  * @property \App\Models\Pdf[]|\Illuminate\Database\Eloquent\Collection $pdfs
- * @property \App\User|null                                             $providerApproverUser
+ * @property \CircleLinkHealth\Customer\Entities\User|null              $providerApproverUser
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereCarePlanTemplateId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereCreatedAt($value)
@@ -56,6 +60,18 @@ use Validator;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereUserId($value)
  * @mixin \Eloquent
+ *
+ * @property int|null                                                                             $first_printed_by
+ * @property \Illuminate\Support\Carbon|null                                                      $first_printed
+ * @property string                                                                               $provider_approver_name
+ * @property \App\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[]       $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereFirstPrinted($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereFirstPrintedBy($value)
  */
 class CarePlan extends BaseModel implements PdfReport
 {

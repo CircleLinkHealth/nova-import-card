@@ -6,7 +6,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Entities\Invite;
+use CircleLinkHealth\Customer\Entities\Invite;
 use Closure;
 
 class CheckOnboardingInvite

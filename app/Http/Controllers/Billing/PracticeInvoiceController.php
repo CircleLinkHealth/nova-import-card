@@ -14,13 +14,13 @@ use App\Models\CCD\Problem;
 use App\Models\CPM\CpmProblem;
 use App\Models\ProblemCode;
 use App\Notifications\PracticeInvoice;
-use App\PatientMonthlySummary;
-use App\Practice;
 use App\Repositories\PatientSummaryEloquentRepository;
 use App\Services\ApproveBillablePatientsService;
 use App\Services\PracticeReportsService;
-use App\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
 
@@ -593,7 +593,7 @@ class PracticeInvoiceController extends Controller
      * @param $practice_id
      * @param Carbon $date
      *
-     * @return \Illuminate\Database\Eloquent\Builder|PatientMonthlySummary
+     * @return \CircleLinkHealth\Customer\Entities\PatientMonthlySummary|\Illuminate\Database\Eloquent\Builder
      */
     private function getCurrentMonthSummariesQuery($practice_id, Carbon $date)
     {

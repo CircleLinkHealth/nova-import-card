@@ -6,7 +6,7 @@
 
 namespace App\Notifications\Onboarding;
 
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -36,7 +36,7 @@ class ImplementationLeadWelcome extends Notification
     /**
      * Create a new notification instance.
      *
-     * @param Practice $practice
+     * @param \CircleLinkHealth\Customer\Entities\Practice $practice
      */
     public function __construct(Practice $practice)
     {

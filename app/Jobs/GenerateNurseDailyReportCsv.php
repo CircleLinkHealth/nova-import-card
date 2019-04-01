@@ -6,11 +6,11 @@
 
 namespace App\Jobs;
 
-use App\Activity;
-use App\PageTimer;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
+use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use App\Reports\NurseDailyReport;
 use App\Services\Cache\NotificationService;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

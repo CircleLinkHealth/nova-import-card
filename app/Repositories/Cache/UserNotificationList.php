@@ -8,7 +8,7 @@ namespace App\Repositories\Cache;
 
 use App\Constants;
 use App\Contracts\UserNotificationListInterface;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 
 class UserNotificationList implements UserNotificationListInterface

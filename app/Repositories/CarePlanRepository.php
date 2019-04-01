@@ -7,7 +7,7 @@
 namespace App\Repositories;
 
 use App\CarePlan;
-use App\Patient;
+use CircleLinkHealth\Customer\Entities\Patient;
 use Carbon\Carbon;
 
 class CareplanRepository
@@ -28,7 +28,7 @@ class CareplanRepository
 
             return $carePlans->first();
         }
-        throw new Exception('careplans with user_id "'.$userId.'" not found');
+        throw new \Exception('careplans with user_id "'.$userId.'" not found');
     }
 
     public function model()

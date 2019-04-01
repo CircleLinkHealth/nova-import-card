@@ -12,7 +12,7 @@ use App\Models\CPM\Biometrics\CpmSmoking;
 use App\Models\CPM\Biometrics\CpmWeight;
 use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmBiometricUser;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Collection;
 
 class CpmBiometricUserRepository

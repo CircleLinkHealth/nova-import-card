@@ -14,7 +14,7 @@ use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Importer\Section\Importers\Problems;
 use App\Models\CCD\Problem;
 use App\Models\MedicalRecords\Ccda;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

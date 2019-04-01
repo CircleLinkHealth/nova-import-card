@@ -6,11 +6,11 @@
 
 namespace App\Console\Commands;
 
-use App\Activity;
 use App\Notifications\NurseDailyReport;
-use App\PageTimer;
-use App\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
+use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Console\Command;
 
 class EmailRNDailyReport extends Command

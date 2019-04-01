@@ -6,14 +6,14 @@
 
 namespace Tests\unit;
 
-use App\CarePerson;
+use CircleLinkHealth\Customer\Entities\CarePerson;
 use App\CarePlan;
-use App\Location;
+use CircleLinkHealth\Customer\Entities\Location;
 use App\Models\CPM\CpmProblem;
 use App\Notifications\CarePlanProviderApproved;
-use App\Permission;
-use App\Practice;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Permission;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Notification;
 use Tests\Helpers\CarePlanHelpers;
@@ -42,7 +42,7 @@ class CarePlanProviderApprovalTest extends TestCase
     protected $practice;
 
     /**
-     * @var User
+     * @var \CircleLinkHealth\Customer\Entities\User
      */
     protected $provider;
 

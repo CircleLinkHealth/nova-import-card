@@ -7,7 +7,7 @@
 namespace App\Repositories;
 
 use App\Contracts\Repositories\LocationRepository;
-use App\Location;
+use CircleLinkHealth\Customer\Entities\Location;
 use App\Presenters\LocationPresenter;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;

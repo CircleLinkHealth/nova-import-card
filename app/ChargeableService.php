@@ -6,7 +6,36 @@
 
 namespace App;
 
-class ChargeableService extends \App\BaseModel
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
+
+/**
+ * App\ChargeableService.
+ *
+ * @property int                                                                                                  $id
+ * @property string                                                                                               $code
+ * @property string|null                                                                                          $description
+ * @property float|null                                                                                           $amount
+ * @property \Illuminate\Support\Carbon|null                                                                      $created_at
+ * @property \Illuminate\Support\Carbon|null                                                                      $updated_at
+ * @property \CircleLinkHealth\Customer\Entities\PatientMonthlySummary[]|\Illuminate\Database\Eloquent\Collection $patientSummaries
+ * @property \CircleLinkHealth\Customer\Entities\Practice[]|\Illuminate\Database\Eloquent\Collection              $practices
+ * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection                  $providers
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[]                       $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ChargeableService newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ChargeableService newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ChargeableService query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ChargeableService whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ChargeableService whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ChargeableService whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ChargeableService whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ChargeableService whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ChargeableService whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+class ChargeableService extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     /**
      * When a Patient consents to receive Care from CLH, they consent to these Chargeable Services, if consent date is

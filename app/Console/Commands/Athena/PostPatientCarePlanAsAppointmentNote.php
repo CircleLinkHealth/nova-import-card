@@ -7,7 +7,7 @@
 namespace App\Console\Commands\Athena;
 
 use App\CarePlan;
-use App\Patient;
+use CircleLinkHealth\Customer\Entities\Patient;
 use App\Services\AthenaAPI\Calls;
 use Illuminate\Console\Command;
 

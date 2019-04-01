@@ -6,7 +6,7 @@
 
 namespace App\Contracts\Services;
 
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 interface CpmModel
 {
@@ -15,7 +15,7 @@ interface CpmModel
      * NOTE: The User will only be related with the Ids passed in ONLY. All others will be erased, just like Laravel's
      *      sync() method.
      *
-     * @param User  $user
+     * @param \CircleLinkHealth\Customer\Entities\User  $user
      * @param array $ids
      * @param int   $page
      * @param array $instructionsInput

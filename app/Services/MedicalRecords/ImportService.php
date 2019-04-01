@@ -10,8 +10,8 @@ use App\Enrollee;
 use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\TabularMedicalRecord;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
-use App\Practice;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 
 class ImportService
@@ -20,7 +20,7 @@ class ImportService
      * Create a TabularMedicalRecord for each row, and import it.
      *
      * @param $row
-     * @param Practice $practice
+     * @param \CircleLinkHealth\Customer\Entities\Practice $practice
      *
      * @throws \Exception
      *

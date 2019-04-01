@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Patient;
+use CircleLinkHealth\Customer\Entities\Patient;
 use Illuminate\Console\Command;
 
 class ResetCallCount extends Command

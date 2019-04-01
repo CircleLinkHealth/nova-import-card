@@ -8,7 +8,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\CPRulesQuestions;
 use App\Http\Controllers\Controller;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Http\Request;
 
 class CPRQuestionController extends Controller

@@ -1,7 +1,7 @@
 <?php
 
-use App\Practice;
-use App\Settings;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\Settings;
 use Illuminate\Database\Seeder;
 
 class MigratePracticeSettings extends Seeder
