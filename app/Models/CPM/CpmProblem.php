@@ -6,12 +6,9 @@
 
 namespace App\Models\CPM;
 
-use App\CareItem;
 use App\CarePlanTemplate;
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
-use App\Contracts\Serviceable;
 use App\Importer\Models\ImportedItems\ProblemImport;
-use App\Services\CPM\CpmProblemService;
 use CircleLinkHealth\Customer\Entities\User;
 
 /**
@@ -27,7 +24,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property string                                                                        $contains
  * @property \Carbon\Carbon                                                                $created_at
  * @property \Carbon\Carbon                                                                $updated_at
- * @property \App\CareItem                                                                 $carePlanItemIdDeprecated
+
  * @property \App\CarePlanTemplate[]|\Illuminate\Database\Eloquent\Collection              $carePlanTemplates
  * @property \App\Models\CPM\CpmBiometric[]|\Illuminate\Database\Eloquent\Collection       $cpmBiometricsToBeActivated
  * @property \App\Models\CPM\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection     $cpmInstructions
@@ -49,18 +46,13 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel implements Serviceable
+class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use Instructable;
 
     protected $guarded = [];
 
     protected $table = 'cpm_problems';
-
-    public function carePlanItemIdDeprecated()
-    {
-        return $this->belongsTo(CareItem::class);
-    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
@@ -153,16 +145,6 @@ class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel implements Se
     public function problemImports()
     {
         return $this->hasMany(ProblemImport::class);
-    }
-
-    /**
-     * Get this Model's Service Class.
-     *
-     * @return Serviceable
-     */
-    public function service()
-    {
-        return new CpmProblemService();
     }
 
     public function snomedMaps()

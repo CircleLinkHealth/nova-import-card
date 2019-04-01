@@ -100,7 +100,7 @@
  
      public function parents()
      {
--        return $this->belongsTo('App\CareItem', 'parent_id');
+-        return $this->belongsTo(\App\CareItem::class, 'parent_id');
 +        return $this->belongsTo(\App\CareItem::class, 'parent_id');
      }
  
@@ -109,7 +109,7 @@
  
      public function children()
      {
--        return $this->hasMany('App\CareItem', 'parent_id');
+-        return $this->hasMany(\App\CareItem::class, 'parent_id');
 +        return $this->hasMany(\App\CareItem::class, 'parent_id');
      }
  
@@ -387,7 +387,7 @@
  
      public function careItem()
      {
--        return $this->belongsTo('App\CareItem', 'item_id', 'id');
+-        return $this->belongsTo(\App\CareItem::class, 'item_id', 'id');
 +        return $this->belongsTo(\App\CareItem::class, 'item_id', 'id');
      }
  
@@ -514,7 +514,7 @@
      public function careItems()
      {
          return $this->belongsToMany(
--            'App\CareItem',
+-            \App\CareItem::class,
 +            \App\CareItem::class,
              'care_item_user_values',
              'user_id',
@@ -574,7 +574,7 @@
  
      public function careItems()
      {
--        return $this->hasMany('App\CareItem', 'qid', 'qid');
+-        return $this->hasMany(\App\CareItem::class, 'qid', 'qid');
 +        return $this->hasMany(\App\CareItem::class, 'qid', 'qid');
      }
  

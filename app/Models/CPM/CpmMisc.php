@@ -7,8 +7,6 @@
 namespace App\Models\CPM;
 
 use App\CarePlanTemplate;
-use App\Contracts\Serviceable;
-use App\Services\CPM\CpmMiscService;
 use CircleLinkHealth\Customer\Entities\User;
 
 /**
@@ -33,7 +31,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class CpmMisc extends \CircleLinkHealth\Core\Entities\BaseModel implements Serviceable
+class CpmMisc extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use Instructable;
 
@@ -66,16 +64,6 @@ class CpmMisc extends \CircleLinkHealth\Core\Entities\BaseModel implements Servi
     public function patient()
     {
         return $this->belongsToMany(User::class, 'cpm_miscs_users', 'patient_id');
-    }
-
-    /**
-     * Get this Model's Service Class.
-     *
-     * @return Serviceable
-     */
-    public function service()
-    {
-        return new CpmMiscService();
     }
 
     public function users()

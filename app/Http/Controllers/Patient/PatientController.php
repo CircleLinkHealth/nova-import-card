@@ -531,16 +531,4 @@ class PatientController extends Controller
             'patient' => $wpUser,
         ]);
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @return Response
-     */
-    public function toDeprecateShowPatientListing()
-    {
-        $data = $this->formatter->patientListing();
-
-        return view('wpUsers.patient.listingToDeprecate', $data);
-    }
 }

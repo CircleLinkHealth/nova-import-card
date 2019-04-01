@@ -7,8 +7,6 @@
 namespace App\Models\CPM;
 
 use App\CarePlanTemplate;
-use App\Contracts\Serviceable;
-use App\Services\CPM\CpmBiometricService;
 use CircleLinkHealth\Customer\Entities\User;
 
 /**
@@ -35,7 +33,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometric whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class CpmBiometric extends \CircleLinkHealth\Core\Entities\BaseModel implements Serviceable
+class CpmBiometric extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use Instructable;
 
@@ -66,16 +64,6 @@ class CpmBiometric extends \CircleLinkHealth\Core\Entities\BaseModel implements 
     public function patient()
     { //I REALLY DON'T THINK THIS IS CORRECT ... RELATIONSHIP should be on "cpm_biometric_id", not "patient_id"
         return $this->belongsToMany(User::class, 'cpm_biometrics_users', 'patient_id');
-    }
-
-    /**
-     * Get this Model's Service Class.
-     *
-     * @return Serviceable
-     */
-    public function service()
-    {
-        return new CpmBiometricService();
     }
 
     /**

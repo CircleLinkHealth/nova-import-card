@@ -6,11 +6,8 @@
 
 namespace App\Models\CPM;
 
-use App\CareItem;
 use App\CarePlanTemplate;
-use App\Contracts\Serviceable;
 use App\Models\CCD\Medication;
-use App\Services\CPM\CpmMedicationGroupService;
 use CircleLinkHealth\Customer\Entities\User;
 
 /**
@@ -21,7 +18,6 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property string                                                                    $name
  * @property \Carbon\Carbon                                                            $created_at
  * @property \Carbon\Carbon                                                            $updated_at
- * @property \App\CareItem                                                             $carePlanItemIdDeprecated
  * @property \App\CarePlanTemplate[]|\Illuminate\Database\Eloquent\Collection          $carePlanTemplates
  * @property \App\Models\CPM\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection $cpmInstructions
  * @property \App\Models\CCD\Medication[]|\Illuminate\Database\Eloquent\Collection     $medications
@@ -34,16 +30,11 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class CpmMedicationGroup extends \CircleLinkHealth\Core\Entities\BaseModel implements Serviceable
+class CpmMedicationGroup extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use Instructable;
 
     protected $guarded = [];
-
-    public function carePlanItemIdDeprecated()
-    {
-        return $this->belongsTo(CareItem::class);
-    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
@@ -67,15 +58,5 @@ class CpmMedicationGroup extends \CircleLinkHealth\Core\Entities\BaseModel imple
     public function patient()
     {
         return $this->belongsToMany(User::class, 'cpm_medication_groups_users', 'patient_id');
-    }
-
-    /**
-     * Get this Model's Service Class.
-     *
-     * @return Serviceable
-     */
-    public function service()
-    {
-        return new CpmMedicationGroupService();
     }
 }

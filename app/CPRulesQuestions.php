@@ -60,7 +60,7 @@ class CPRulesQuestions extends \CircleLinkHealth\Core\Entities\BaseModel
 
     public function careItems()
     {
-        return $this->hasMany('App\CareItem', 'qid', 'qid');
+        return $this->hasMany(\App\CareItem::class, 'qid', 'qid');
     }
 
     // ATTRIBUTES
