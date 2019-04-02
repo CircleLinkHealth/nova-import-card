@@ -71,7 +71,7 @@ class ProviderReportService
                 if ( ! empty($condition)) {
                     $conditionData      = [
                         'name'   => ucwords(strtolower($condition['name'])),
-                        'family' => strtolower($condition['family']),
+                        'family' => strtolower(implode(', ', $condition['family'])),
                     ];
                     $familyConditions[] = $conditionData;
                 }
