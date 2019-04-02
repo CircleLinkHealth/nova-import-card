@@ -6,7 +6,7 @@ namespace App\Services;
 use App\InvitationLink;
 use App\Patient;
 use App\Survey;
-use CircleLinkHealth\Customer\Entities\User;
+use App\User;
 use Illuminate\Support\Facades\URL;
 
 class SurveyInvitationLinksService
@@ -20,12 +20,11 @@ class SurveyInvitationLinksService
         $patientInfoId = $patient->id;
 
         $this->expireAllPastUrls($patientInfoId);
-//@todo:lines 24-26 wont work if survey_id = null.
-//        $survey = Survey::where('name', $this::HRA)
-//                        ->select('id')
-//                        ->first();
 
-        $surveyId = rand();
+        $survey = Survey::where('name', $this::HRA)
+                        ->select('id')
+                        ->firstOrFail();
+        $surveyId = $survey->id;
 
         $url      = URL::signedRoute('loginSurvey',
             [
