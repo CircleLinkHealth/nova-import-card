@@ -173,18 +173,10 @@ class ProviderReportService
 
         $diet = [];
         if ( ! empty($report->diet)) {
-            $diet['fried_fatty']       = ! empty($report->diet['fried_fatty'])
-                ? $report->diet['fried_fatty']
-                : 'N/A';
-            $diet['grain_fiber']       = ! empty($report->diet['grain_fiber'])
-                ? $report->diet['grain_fiber']
-                : 'N/A';
-            $diet['sugary_beverages']  = ! empty($report->diet['sugary_beverages'])
-                ? $report->diet['sugary_beverages']
-                : 'N/A';
-            $diet['fruits_vegetables'] = ! empty($report->diet['fried_fatty'])
-                ? $report->diet['fruits_vegetables']
-                : 'N/A';
+            $diet['fried_fatty']       = $report->diet['fried_fatty'];
+            $diet['grain_fiber']       = $report->diet['grain_fiber'];
+            $diet['sugary_beverages']  = $report->diet['sugary_beverages'];
+            $diet['fruits_vegetables'] = $report->diet['fruits_vegetables'];
             if ( ! empty($report->diet['change_in_diet'])) {
                 $diet['have_changed_diet'] = strtolower($report->diet['change_in_diet']) === 'yes'
                     ? 'have'

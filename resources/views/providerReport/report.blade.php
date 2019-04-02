@@ -61,7 +61,7 @@
                 @else
                     The patient has indicated having the following conditions:
                     @foreach($reportData['medical_history'] as $condition)
-                        {{$condition['name']}} {{$condition['type']}}{{$loop->last ? '.' : ', '}}
+                        {{$condition['name']}}{{$condition['type']}}{{$loop->last ? '.' : ', '}}
                     @endforeach()
                     @if(! empty($reportData['medical_history_other']))
                         The patient has also reported
@@ -203,7 +203,7 @@
                 @endif
                 <br>
                 @if($reportData['social_factors']['alcohol']['drinks'] === 'Yes') They drink alcohol. On average, they
-                have{{$reportData['social_factors']['alcohol']['amount']}} drinks of alcoholic beverages per week.
+                have {{$reportData['social_factors']['alcohol']['amount']}} drinks of alcoholic beverages per week.
                 @else
                     They do not drink alcohol.
                 @endif
