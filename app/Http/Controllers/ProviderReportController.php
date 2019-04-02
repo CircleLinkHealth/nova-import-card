@@ -3,13 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\ProviderReport;
+use App\Services\ProviderReportService;
 use Illuminate\Support\Facades\Request;
 
 class ProviderReportController extends Controller
 {
+    protected $service;
+
+    public function __construct(ProviderReportService $service)
+    {
+        $this->service = $service;
+    }
+
     public function getProviderReport(Request $request)
     {
-        //placeholder code to test
+        //Placeholder code to test. We should get patient id, report id OR date OR hra instance id + vitals instance id. Will create request class when we know for sure.
         $report = ProviderReport::with('patient.patientInfo')->first();
 
         if ( ! $report) {
@@ -23,6 +31,9 @@ class ProviderReportController extends Controller
             return redirect()->back();
         }
 
-        return view('providerReport.report', compact(['report', 'patient']));
+        $reportData = $this->service->formatReportDataForView($report);
+
+
+        return view('providerReport.report', compact(['reportData', 'patient']));
     }
 }

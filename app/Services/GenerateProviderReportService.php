@@ -102,9 +102,7 @@ class GenerateProviderReportService
 
     private function getAllergyHistory()
     {
-        return [
-            'allergies' => $this->answerForHraQuestionWithOrder(21),
-        ];
+        return $this->answerForHraQuestionWithOrder(21);
     }
 
     private function getMedicalHistory()
@@ -121,16 +119,12 @@ class GenerateProviderReportService
 
     private function getMedicationHistory()
     {
-        return [
-            'medications' => $this->answerForHraQuestionWithOrder(20),
-        ];
+        return$this->answerForHraQuestionWithOrder(20);
     }
 
     private function getFamilyMedicalHistory()
     {
-        return [
-            'family_conditions' => $this->answerForHraQuestionWithOrder(18, 'a'),
-        ];
+        return  $this->answerForHraQuestionWithOrder(18, 'a');
     }
 
     private function getImmunizationHistory()
@@ -155,11 +149,11 @@ class GenerateProviderReportService
     {
         $screenings = [];
 
-        $screenings['breast cancer']     = $this->answerForHraQuestionWithOrder(35);
-        $screenings['cervical cancer']   = $this->answerForHraQuestionWithOrder(36);
-        $screenings['colorectal cancer'] = $this->answerForHraQuestionWithOrder(37);
-        $screenings['skin cancer']       = $this->answerForHraQuestionWithOrder(38);
-        $screenings['prostate cancer']   = $this->answerForHraQuestionWithOrder(39);
+        $screenings['breast_cancer']     = $this->answerForHraQuestionWithOrder(35);
+        $screenings['cervical_cancer']   = $this->answerForHraQuestionWithOrder(36);
+        $screenings['colorectal_cancer'] = $this->answerForHraQuestionWithOrder(37);
+        $screenings['skin_cancer']       = $this->answerForHraQuestionWithOrder(38);
+        $screenings['prostate_cancer']   = $this->answerForHraQuestionWithOrder(39);
         $screenings['glaucoma']          = $this->answerForHraQuestionWithOrder(40);
         $screenings['osteoporosis']      = $this->answerForHraQuestionWithOrder(41);
         $screenings['violence']          = $this->answerForHraQuestionWithOrder(42);
@@ -252,9 +246,7 @@ class GenerateProviderReportService
 
     private function getExerciseActivityLevels()
     {
-        return [
-            'frequency' => $this->answerForHraQuestionWithOrder(14),
-        ];
+        return $this->answerForHraQuestionWithOrder(14);
     }
 
     private function getFunctionalCapacity()
@@ -276,9 +268,7 @@ class GenerateProviderReportService
 
     private function getCurrentProviders()
     {
-        return [
-            'providers' => $this->answerForHraQuestionWithOrder(43),
-        ];
+        return $this->answerForHraQuestionWithOrder(43);
     }
 
     private function getAdvancedCarePlanning()
