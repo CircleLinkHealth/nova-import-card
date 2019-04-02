@@ -7,8 +7,8 @@
             <hr>
         </div>
         <div>
-            Patient Name: {{$patient->display_name}} <br>
-            Date of Birth: {{$patient->patientInfo->birth_date}} <br>
+            Patient Name: <span style="color: #50b2e2">{{$patient->display_name}}</span> <br>
+            Date of Birth: <strong>{{$patient->patientInfo->birth_date}} </strong><br>
             Age: TO FIX WHEN USER MODEL IS FIXED <br>
             Address: TO FIX WHEN USER MODEL IS FIXED <br>
             City, State, Zip: TO FIX WHEN USER MODEL IS FIXED <br>
@@ -329,6 +329,5 @@
 
             </div>
         </div>
-
     </div>
 @endsection
