@@ -24,6 +24,7 @@ class SurveyInvitationLinksService
         $survey = Survey::where('name', $this::HRA)
                         ->select('id')
                         ->firstOrFail();
+
         $surveyId = $survey->id;
 
         $url      = URL::signedRoute('loginSurvey',

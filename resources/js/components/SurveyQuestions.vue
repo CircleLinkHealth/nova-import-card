@@ -10,8 +10,7 @@
                 <img src="https://drive.google.com/uc?export=view&id=14yPR6Z8coudiAzEMTSVQK80BVyZjjqVg"
                      class="welcome-icon" alt="welcome icon">
                 <div class="survey-main-title">
-                    <label id="sub-title">Annual Wellness
-                        Survey Login</label>
+                    <label id="sub-title">Annual Wellness Visit (AWV) Questionnaire</label>
                 </div>
                 <div class="survey-sub-welcome-text">Welcome to your
                     Annual Wellness Visit (AWV) Questionnaire! Understanding your health is of upmost importance to us,
@@ -77,7 +76,6 @@
                 </div>
             </div>
             <call-assistance v-if="callAssistance" @closeCallAssistanceModal="hideCallHelp"></call-assistance>
-            <br>
         </div>
         <!--bottom-navbar-->
         <div class="bottom-navbar">
@@ -101,18 +99,18 @@
                 <div v-if="questionsStage">
                     <!--progress bar-->
                     <div class="row mb-1" style="margin-left: 380px;">
-                        <div class="progressbar-label col-lg-4 col-sm-2">{{this.progressCount}} of {{totalQuestions}}
+                        <div class="progressbar-label col-lg-6 col-sm-2">{{this.progressCount}} of {{totalQuestions}}
                             completed
                         </div>
-                        <div class="col-lg-4 col-sm-10 pt-1">
-                            <b-progress style="width: 280px; height:10px; margin-left: -40%;"
+                        <div class="progressbar col-lg-6 col-sm-10 pt-1">
+                            <b-progress style="width: 280px; height:10px; margin-left: -40%; margin-top: 18%;"
                                         :value="progressCount"></b-progress>
                         </div>
                     </div>
                 </div>
                 <!--scroll buttons-->
                 <div class="row">
-                    <div class="scroll-buttons">
+                    <div class="scroll-buttons col-lg-2">
                         <button type="button"
                                 id="scroll-down"
                                 class="btn btn-sm next"
@@ -335,6 +333,8 @@
         letter-spacing: 1px;
         text-align: center;
         margin-top: 25px;
+        margin-left: 13%;
+        width: 75%;
         color: #1a1a1a;
     }
 
@@ -342,13 +342,14 @@
         width: 83%;
         height: 100%;
         font-family: Poppins;
-        font-size: 120%;
+        font-size: 114%;
         font-weight: 500;
         font-style: normal;
         font-stretch: normal;
         line-height: normal;
         letter-spacing: 1.3px;
         color: #1a1a1a;
+
     }
 
     .question-answer-type {
@@ -419,8 +420,9 @@
     }
 
     .scroll-buttons {
-        margin-left: 990px;
-        margin-top: 20px;
+        display: flex;
+        margin-left: 16%;
+        margin-top: 6%;
     }
 
     #scroll-up, #scroll-down {
@@ -450,7 +452,7 @@
     }
 
     .call-assistance {
-        display: table-cell;
+        padding-left: 3%;
     }
 
     .btn-default {
@@ -464,6 +466,8 @@
 
     .progressbar-label {
         position: relative;
+        margin-left: -25%;
+        margin-top: 7%;
     }
 
 

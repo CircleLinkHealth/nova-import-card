@@ -137,7 +137,7 @@
             },
 
             removeInputFields(index) {
-                Vue.delete(this.questionSubParts, index);
+               this.delete(this.questionSubParts, index);
             },
         },
 
