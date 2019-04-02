@@ -19,7 +19,6 @@ class SurveyController extends Controller
     {
         //change auth user id
         $userWithSurveyData = $this->service->getSurveyData(auth()->user()->id, $request->survey_id);
-
         if ( ! $userWithSurveyData) {
             return response()->json(['errors' => 'Data not found'], 400);
         }
