@@ -3,9 +3,6 @@
 @section('title', 'View all Users')
 
 @section('content')
-    @push('scripts')
-    <script type="text/javascript" src="{{ mix('/js/wpUsers/wpUsers.js') }}"></script>
-    @endpush
 
     <div class="container-fluid">
         <div class="row">
@@ -30,7 +27,6 @@
                             <div class="col-md-12">
                                 <div class="pull-left">
                                     <a class="btn btn-info" data-toggle="collapse"
-                                       data-parent="#accordion"
                                        href="#collapseFilter">Toggle Filters</a>
                                 </div>
                             </div>
