@@ -52,11 +52,11 @@
                     <div class="card">
                         <div class="card-content">
                             <ul>
-                                <li class="sidebar-demo-list"><span><b>Name:</b>{{name}}</span></li>
-                                <li class="sidebar-demo-list"><span><b>Language:</b> {{lang}}</span></li>
-                                <li class="sidebar-demo-list"><span><b>Provider Name:</b>{{providerFullName}}</span>
+                                <li class="sidebar-demo-list"><span class='my-tool-tip' data-toggle="tooltip" data-placement="right" :title="name"><b>Name:</b>{{name}}</span></li>
+                                <li class="sidebar-demo-list"><span class='my-tool-tip' data-toggle="tooltip" data-placement="right" :title="lang"><b>Language:</b> {{lang}}</span></li>
+                                <li class="sidebar-demo-list"><span class='my-tool-tip' data-toggle="tooltip" data-placement="right" :title="providerFullName"><b>Provider Name:</b>{{providerFullName}}</span>
                                 </li>
-                                <li class="sidebar-demo-list"><span><b>Practice Name:</b>{{practice_name}}</span>
+                                <li class="sidebar-demo-list"><span class='my-tool-tip' data-toggle="tooltip" data-placement="right" :title="practice_name"><b>Practice Name:</b>{{practice_name}}</span>
                                 </li>
                             </ul>
                         </div>
@@ -717,6 +717,22 @@
                     }
                 }
 
+                const waitForEl = function (selector, callback) {
+                    if (!$(selector).length) {
+                        setTimeout(function () {
+                            window.requestAnimationFrame(function () {
+                                waitForEl(selector, callback)
+                            });
+                        }, 100);
+                    } else {
+                        callback();
+                    }
+                };
+                const el2 = "span.my-tool-tip";
+                waitForEl(el2, () => {
+                    //initialize tooltips
+                    $(el2).tooltip();
+                });
             });
 
         },
@@ -859,11 +875,14 @@
     }
 
     .sidebar-demo-list {
-
         height: 24px;
+        width: 278px;
         font-size: 16px;
         padding-left: 15px;
         line-height: 20px !important;
+        text-overflow: ellipsis;
+        overflow:hidden;
+        white-space:nowrap;
     }
 
     .valid {
