@@ -153,6 +153,9 @@
             clearSelected(){
                 this.selectedEnrolleeIds = [];
             },
+            refreshTable(){
+                this.$refs.table.refresh();
+            },
             getUrl() {
                 return rootUrl('/admin/ca-director/enrollees');
             },
@@ -289,6 +292,7 @@
         },
         mounted() {
             Event.$on('clear-selected-enrollees', this.clearSelected)
+            Event.$on('refresh-table', this.refreshTable)
             console.info('mounted');
         }
 

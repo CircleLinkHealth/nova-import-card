@@ -66,7 +66,7 @@
                     .then(resp => {
                         this.loading = false;
                         Event.$emit('clear-selected-enrollees');
-                        this.$parent.$refs.table.refresh();
+                        Event.$emit('refresh-table');
                         Event.$emit("modal-mark-ineligible:hide");
                     })
                     .catch(err => {
