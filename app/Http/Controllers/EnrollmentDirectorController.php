@@ -10,6 +10,7 @@ use App\Enrollee;
 use App\EnrolleeCustomFilter;
 use App\EnrolleeView;
 use App\Filters\EnrolleeFilters;
+use App\Http\Requests\AddEnrolleeCustomFilter;
 use App\Http\Requests\EditEnrolleeData;
 use App\Http\Requests\UpdateMultipleEnrollees;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -18,26 +19,8 @@ use Illuminate\Http\Request;
 
 class EnrollmentDirectorController extends Controller
 {
-    public function addEnrolleeCustomFilter(Request $request)
+    public function addEnrolleeCustomFilter(AddEnrolleeCustomFilter $request)
     {
-        if (empty($request['practice_id']['value'])) {
-            return response()->json([
-                'errors' => 'Please select Practice or all Practices',
-            ], 400);
-        }
-
-        if (empty($request['filter_type']['value'])) {
-            return response()->json([
-                'errors' => 'Please select a filter type',
-            ], 400);
-        }
-
-        if (empty($request['filter_name'])) {
-            return response()->json([
-                'errors' => 'Please type in the name of the filter you would like to add.',
-            ], 400);
-        }
-
         $customFilter = EnrolleeCustomFilter::updateOrCreate([
             'name' => strtolower($request['filter_name']),
             'type' => $request['filter_type']['value'],
