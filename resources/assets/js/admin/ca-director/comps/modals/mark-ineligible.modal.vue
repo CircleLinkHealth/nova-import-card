@@ -65,8 +65,9 @@
                 })
                     .then(resp => {
                         this.loading = false;
-                        Event.$emit("modal-mark-ineligible:hide");
+                        this.$parent.selectedEnrolleeIds = [];
                         this.$parent.$refs.table.refresh();
+                        Event.$emit("modal-mark-ineligible:hide");
                     })
                     .catch(err => {
                         this.loading = false;

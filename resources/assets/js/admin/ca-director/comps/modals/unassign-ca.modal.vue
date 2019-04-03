@@ -63,8 +63,9 @@
                 })
                     .then(resp => {
                         this.loading = false;
-                        Event.$emit("modal-unassign-ca:hide");
+                        this.$parent.selectedEnrolleeIds = [];
                         this.$parent.$refs.table.refresh();
+                        Event.$emit("modal-unassign-ca:hide");
                     })
                     .catch(err => {
                         this.loading = false;

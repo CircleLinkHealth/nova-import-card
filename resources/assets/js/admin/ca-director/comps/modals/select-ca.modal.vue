@@ -97,8 +97,9 @@
                 })
                     .then(resp => {
                         this.loading = false;
-                        Event.$emit("modal-select-ca:hide");
+                        this.$parent.selectedEnrolleeIds = [];
                         this.$parent.$refs.table.refresh();
+                        Event.$emit("modal-select-ca:hide");
                     })
                     .catch(err => {
                         this.loading = false;
