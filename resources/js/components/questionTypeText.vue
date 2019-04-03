@@ -15,27 +15,28 @@
         <!--question with sub_parts-->
         <div class="row">
             <div v-if="questionHasSubParts"
-                 v-for="(subQuestion, index) in subQuestions" :key="index" style="margin-left: 15%;">
-                <label class="label" v-if="questionHasSubParts">{{subQuestion.title}}</label><br>
+                 v-for="(subPart, index) in subParts" :key="index" style="margin-left: 15%;">
+                <label class="label" v-if="questionHasSubParts">{{subPart.title}}</label><br>
                 <input type="text"
                        class="text-field"
                        name="textTypeAnswer[]"
-                       v-model="inputHasText[subQuestion.title]"
-                       :placeholder="subQuestion.placeholder"
+                       v-model="inputHasText[subPart.title]"
+                       :placeholder="subPart.placeholder"
                        @change="onInput()">
 
 
                 <div v-for="extraFieldButtonName in extraFieldButtonNames">
                     <div v-if="canAddInputFields">
                         <button type="button"
-                                @click="addInputFields(subQuestion.title, subQuestion.placeholder)"
-                                class="btn-primary">
+                                @click="addInputFields(subPart.title, subPart.placeholder)"
+                                class="btn-add-field">
                             {{extraFieldButtonName.add_extra_answer_text}}
                         </button>
                     </div>
+
                     <div v-if="canRemoveInputFields">
                         <button type="button"
-                                @click="removeInputFields()"
+                                @click="removeInputFields(index)"
                                 class="btn-primary">
                             {{extraFieldButtonName.remove_extra_answer_text}}
                         </button>
@@ -72,7 +73,7 @@
             return {
                 inputHasText: [],
                 questionOptions: [],
-                subQuestions: [],
+                subParts: [],
                 extraFieldButtonNames: [],
                 canRemoveInputFields: false,
                 canAddInputFields: false,
@@ -127,7 +128,7 @@
             },
 
             addInputFields(label, placeholder, index) {
-                this.subQuestions.push({
+                this.subParts.push({
                     title: label,
                     placeholder: placeholder
                 });
@@ -137,7 +138,8 @@
             },
 
             removeInputFields(index) {
-                this.delete(this.questionSubParts, index);
+                // this.delete(this.subParts, index);
+                this.subParts.splice(index, 1);
             },
         },
 
@@ -153,7 +155,7 @@
             /*sets subQuestions data*/
             if (this.questionHasSubParts) {
                 const subQuestions = this.questionOptions[0].sub_parts;
-                this.subQuestions.push(...subQuestions);
+                this.subParts.push(...subQuestions);
             }
             /*sets canAddInputField data*/
             if (this.hasAnswerType) {
@@ -171,6 +173,19 @@
         border-radius: 5px;
         border: solid 1px #4aa5d2;
         background-color: #50b2e2;
+    }
+    .btn-add-field{
+        width: 271px;
+        height: 40px;
+        font-family: Poppins;
+        font-size: 24px;
+        font-weight: 500;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: normal;
+        letter-spacing: 1.3px;
+        color: #50b2e2;
+
     }
 
     .text-field {
@@ -193,6 +208,5 @@
         line-height: normal;
         letter-spacing: 1.3px;
         color: #1a1a1a;
-
     }
 </style>

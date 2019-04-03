@@ -65,6 +65,8 @@
 
                             <question-type-radio
                                     :question="question"
+                                    :userId="userId"
+                                    :surveyInstanceId="surveyInstanceId"
                                     v-if="question.type.type === 'radio'">
                             </question-type-radio>
 
@@ -170,7 +172,7 @@
             'question-type-date': questionTypeDate,
             'call-assistance': callAssistance,
             'bootstrap-vue': BootstrapVue,
-            'question-type-muti-select':questionTypeMultiSelect
+            'question-type-muti-select': questionTypeMultiSelect
         },
 
         data() {
@@ -184,6 +186,8 @@
                 shouldShowQuestion: false,
                 questionIndex: 0,
                 progressCount: 0,
+                userId: this.surveydata.id,
+                surveyInstanceId: []
             }
         },
         computed: {
@@ -278,6 +282,9 @@
             EventBus.$on('handleTextType', () => {
                 this.handleTextInputs();
             });
+
+            const surveyInstanceId = this.surveydata.survey_instances.map(q=>q.id);
+            this.surveyInstanceId.push(...surveyInstanceId);
         },
         created() {
             const questionsData = this.surveydata.survey_instances[0].questions.map(function (q) {

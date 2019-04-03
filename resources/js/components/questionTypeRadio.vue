@@ -22,14 +22,13 @@
 
     export default {
         name: "questionTypeRadio",
-        props: ['question'],
+        props: ['question', 'userId', 'surveyInstanceId'],
         components: {},
 
         data() {
             return {
                 possibleAnswers: this.question.type.question_type_answers,
                 questionOrder: this.question.pivot.order,
-
             }
         },
 
@@ -37,11 +36,31 @@
             questionHasConditions() {
                 return this.question.conditions != null;
             },
+
+
         },
 
 
         methods: {
             handleAnswer(answerVal) {
+                const questionTypeAnswerId = this.possibleAnswers.filter(possibleAnswer => {
+                    return possibleAnswer.value === answerVal;
+                }).map(answerType => answerType.id);
+
+                axios.post('/save-answer', {
+                    user_id: this.userId,
+                    survey_instance_id: this.surveyInstanceId[0],
+                    question_id: this.question.id,
+                    question_type_answer_id: questionTypeAnswerId[0],
+                    value_1: answerVal,
+                })
+                    .then(function (response) {
+                        console.log(response);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+
                 EventBus.$emit('showSubQuestions', answerVal, this.questionOrder, this.question.id)
             },
         }
@@ -65,7 +84,7 @@
     }
 
     .radio input[type="radio"] {
-      /*  display: none;*/
+        /*  display: none;*/
 
     }
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\GetSurvey;
 use App\Http\Requests\StoreAnswer;
 use App\Services\SurveyService;
+use Illuminate\Http\Request;
 
 class SurveyController extends Controller
 {
@@ -28,8 +29,8 @@ class SurveyController extends Controller
             'data'    => $userWithSurveyData->toArray(),
         ], 200);
     }
-
-    public function storeAnswer(StoreAnswer $request)
+    //i have disabled storeAnswer since we are not using any auth scaffolding yet
+    public function storeAnswer(/*StoreAnswer*/ Request $request)
     {
         $answer = $this->service->updateOrCreateAnswer($request->input());
 

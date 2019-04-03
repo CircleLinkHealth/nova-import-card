@@ -28,4 +28,4 @@ Route::post('send-invitation-link', 'InvitationLinksController@createSendInvitat
 Route::get('login-survey/{user}/{survey}', 'InvitationLinksController@surveyLoginForm')->name('loginSurvey');
 Route::post('survey-login', 'InvitationLinksController@surveyLoginAuth')->name('surveyLoginAuth');
 Route::post('resend-link/{user}', 'InvitationLinksController@resendUrl')->name('resendUrl');
-Route::post('save-survey-answer', 'SurveyController@saveAnswer')->name('saveSurveyAnswer');
+Route::post('save-answer', 'SurveyController@storeAnswer')->name('saveSurveyAnswer');
