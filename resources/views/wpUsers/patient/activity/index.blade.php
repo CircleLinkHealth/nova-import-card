@@ -237,7 +237,7 @@
                                         }
                                     ],
                                     ready: function () {
-                                        this.adjustRowHeight("obs_key");
+                                        this.adjustRowHeight("type");
                                     },
                                     /*ready:function(){
                                      this.adjustRowHeight("obs_value");

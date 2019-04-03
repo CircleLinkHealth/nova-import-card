@@ -103,7 +103,13 @@
 @stack('scripts')
 <script>
     $(function () {
-        $('.selectpicker').selectpicker('refresh')
+        try {
+            //bootstrap selectpicker is found in issue-688.js (see webpack.mix.js)
+            $('.selectpicker').selectpicker('refresh');
+        }
+        catch (e) {
+            console.debug(e);
+        }
     });
 </script>
 @endif

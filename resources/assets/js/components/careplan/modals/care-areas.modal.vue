@@ -33,10 +33,10 @@
                             </div>
                             <div class="col-sm-12 top-10">
                                 <v-complete placeholder="Enter a Condition" :required="true" v-model="newProblem.name"
-                                            :value="newProblem.name" :limit="15"
-                                            :suggestions="cpmProblemsForAutoComplete"
-                                            :class="{ error: patientHasSelectedProblem }" :threshold="0.9"
-                                            @input="resolveIcd10Code">
+                                        :value="newProblem.name" :limit="15"
+                                        :suggestions="cpmProblemsForAutoComplete"
+                                        :class="{ error: patientHasSelectedProblem }" :threshold="0.8"
+                                        @input="resolveIcd10Code">
                                 </v-complete>
                             </div>
                             <div class="col-sm-6 font-14 top-20">
