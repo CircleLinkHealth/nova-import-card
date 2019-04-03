@@ -34,6 +34,7 @@
                 <button class="btn btn-info btn-xs" v-bind:class="{'btn-selected': !this.hideStatus.includes('ineligible')}"
                         @click="showIneligible">Show Ineligible
                 </button>
+                <button class="btn btn-primary btn-xs" @click="clearSelected">Clear Selected</button>
             </div>
             <div class="col-sm-2">
                 <loader style="margin-left: 80px" v-if="loading"/>
@@ -148,6 +149,9 @@
                 } else {
                     return false;
                 }
+            },
+            clearSelected(){
+                this.selectedEnrolleeIds = [];
             },
             getUrl() {
                 return rootUrl('/admin/ca-director/enrollees');

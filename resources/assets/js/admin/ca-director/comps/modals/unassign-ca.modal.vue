@@ -94,6 +94,81 @@
     }
 </script>
 
-<style scoped>
+<style>
+    .modal-unassign-ca .modal-wrapper {
+        white-space: nowrap;
+        display: block;
+        margin-top: 40px;
+        vertical-align: unset;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /*width will be set automatically when modal is mounted*/
+    .modal-unassign-ca .modal-container {
+        width: 680px;
+        height: 200px;
+    }
+
+
+
+
+    .modal-unassign-ca .loader {
+        position: absolute;
+        right: 5px;
+        top: 5px;
+        width: 20px;
+        height: 20px;
+    }
+
+    .modal-unassign-ca .glyphicon-remove {
+        width: 20px;
+        height: 20px;
+        color: #d44a4a;
+        vertical-align: middle;
+        font-size: 20px;
+    }
+
+    .width-90 {
+        float: left;
+        width: 90%;
+    }
+
+    .width-82 {
+        float: left;
+        width: 82%;
+    }
+
+    .width-18 {
+        float: left;
+        width: 18%;
+    }
+
+    .width-10 {
+        float: left;
+        width: 10%;
+    }
+
+    .padding-left-5 {
+        padding-left: 5px;
+    }
+
+    .padding-top-7 {
+        padding-top: 7px;
+    }
+
+    span.required {
+        color: red;
+        font-size: 18px;
+        position: absolute;
+        top: 2px;
+    }
+
+
+    .modal-unassign-ca .modal-body {
+        height: 90px;
+        width: 600px;
+    }
+
 
 </style>
