@@ -707,11 +707,12 @@
             initTwilio: function () {
                 const url = rootUrl(`twilio/token`);
 
+                self.log = "Fetching token from server";
                 self.ready = false;
                 self.waiting = true;
                 self.axios.get(url)
                     .then(response => {
-                        self.log = 'Initializing';
+                        self.log = 'Initializing Twilio';
                         self.device = new Twilio.Device(response.data.token, {
                             closeProtection: true, //show warning when closing the page with active call - NOT WORKING
                             debug: true,
