@@ -37,7 +37,8 @@ class SurveyService
                                      ->where('id', $patientId)
                                      ->first();
 
-        return $patientWithSurveyData;
+
+       return $patientWithSurveyData;
 
     }
 
