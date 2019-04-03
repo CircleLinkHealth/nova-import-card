@@ -1226,6 +1226,11 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'ca-director.mark-ineligible',
             ]);
 
+            Route::post('/unassign-ca', [
+                'uses' => 'EnrollmentDirectorController@unassignCareAmbassadorFromEnrollees',
+                'as'   => 'ca-director.mark-ineligible',
+            ]);
+
             Route::post('/edit-enrollee', [
                 'uses' => 'EnrollmentDirectorController@editEnrolleeData',
                 'as'   => 'ca-director.edit-enrollee',
