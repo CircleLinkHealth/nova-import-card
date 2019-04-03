@@ -72,7 +72,6 @@
     "laravel/envoy": "^1.5",
     "laravel/framework": "5.7.*",
     "laravel/horizon": "^1.4",
-    "laravel/passport": "^7.0",
     "laravel/tinker": "^1.0",
     "laravelcollective/html": "5.7.*",
     "league/flysystem-aws-s3-v3": "~1.0",
