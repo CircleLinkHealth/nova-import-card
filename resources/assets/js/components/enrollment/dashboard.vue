@@ -161,7 +161,7 @@
             </div>
         </ul>
 
-        <div style="margin-left: 21%;">
+        <div style="margin-left: 26%;">
 
             <div style="padding: 0px 10px; font-size: 16px;">
 
@@ -864,7 +864,6 @@
         font-size: 16px;
         padding-left: 15px;
         line-height: 20px !important;
-
     }
 
     .valid {
@@ -892,7 +891,7 @@
     }
 
     .side-nav.fixed {
-        width: 20%;
+        width: 25%;
         margin-top: 65px;
         position: fixed;
     }
