@@ -500,10 +500,11 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "237437969abd5571554627359c49ce2c79db2e5a"
+                "reference": "e6fc250904a22bd72f5173f6457675e7ca949470"
             },
             "require": {
                 "circlelinkhealth/core": "dev-master",
+                "laravel/passport": "^7.0",
                 "michalisantoniou6/laravel-cerberus": "dev-master"
             },
             "type": "library",
@@ -526,7 +527,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-04-01T13:27:37+00:00"
+            "time": "2019-04-03T07:04:58+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
@@ -569,7 +570,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "84705c135f2ccb97d3e6744e0a811a02b359d426"
+                "reference": "aa3b8e9a01a6900d8e497b1b22549a39a36463e8"
             },
             "require": {
                 "circlelinkhealth/customer": "dev-master"
@@ -594,7 +595,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-04-01T11:41:51+00:00"
+            "time": "2019-04-03T06:31:14+00:00"
         },
         {
             "name": "circlelinkhealth/twofa",
