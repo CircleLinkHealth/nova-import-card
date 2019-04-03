@@ -24,6 +24,7 @@
     },
     "require": {
         "circlelinkhealth/core": "dev-master",
+        "laravel/passport": "^7.0",
         "michalisantoniou6/laravel-cerberus": "dev-master"
     },
     "repositories": [
