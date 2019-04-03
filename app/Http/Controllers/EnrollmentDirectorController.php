@@ -11,6 +11,7 @@ use App\EnrolleeCustomFilter;
 use App\EnrolleeView;
 use App\Filters\EnrolleeFilters;
 use App\Http\Requests\EditEnrolleeData;
+use App\Http\Requests\UpdateMultipleEnrollees;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
@@ -56,32 +57,21 @@ class EnrollmentDirectorController extends Controller
         return response()->json([], 200);
     }
 
-    public function assignCareAmbassadorToEnrollees(Request $request)
+    public function assignCareAmbassadorToEnrollees(UpdateMultipleEnrollees $request)
     {
-        if ( ! $request->input('enrolleeIds')) {
-            return response()->json([
-                'errors' => 'No enrollee Ids were sent in the request',
-            ], 400);
-        }
-        if ( ! $request->input('ambassadorId')) {
-            return response()->json([
-                'errors' => 'No ambassador Id was sent in the request',
-            ], 400);
-        }
-
         Enrollee::whereIn(
             'id',
             $request->input('enrolleeIds')
         )
             ->get()
             ->map(function ($e) use ($request) {
-                    $e->care_ambassador_user_id = $request->input('ambassadorId');
+                $e->care_ambassador_user_id = $request->input('ambassadorId');
 
-                    if (Enrollee::SOFT_REJECTED != $e->status) {
-                        $e->status = Enrollee::TO_CALL;
-                    }
-                    $e->save();
-                });
+                if (Enrollee::SOFT_REJECTED != $e->status) {
+                    $e->status = Enrollee::TO_CALL;
+                }
+                $e->save();
+            });
 
         return response()->json([], 200);
     }
@@ -157,25 +147,15 @@ class EnrollmentDirectorController extends Controller
         return view('admin.ca-director.index');
     }
 
-    public function markEnrolleesAsIneligible(Request $request)
+    public function markEnrolleesAsIneligible(UpdateMultipleEnrollees $request)
     {
-        if ( ! $request->input('enrolleeIds')) {
-            return response()->json([
-            ], 400);
-        }
-
         Enrollee::whereIn('id', $request->input('enrolleeIds'))->update(['status' => Enrollee::INELIGIBLE]);
 
         return response()->json([], 200);
     }
 
-    public function unassignCareAmbassadorFromEnrollees(Request $request)
+    public function unassignCareAmbassadorFromEnrollees(UpdateMultipleEnrollees $request)
     {
-        if ( ! $request->input('enrolleeIds')) {
-            return response()->json([
-            ], 400);
-        }
-
         Enrollee::whereIn('id', $request->input('enrolleeIds'))->update(['care_ambassador_user_id' => null]);
 
         return response()->json([], 200);

@@ -288,7 +288,7 @@
             console.info('created');
         },
         mounted() {
-
+            Event.$on('clear-selected-enrollees', this.clearSelected)
             console.info('mounted');
         }
 

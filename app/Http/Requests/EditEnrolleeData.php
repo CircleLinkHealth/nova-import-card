@@ -1,9 +1,14 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Requests;
 
 use App\Rules\EligibilityPhones;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class EditEnrolleeData extends FormRequest
 {
@@ -14,7 +19,7 @@ class EditEnrolleeData extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return Auth::check();
     }
 
     /**
@@ -25,15 +30,16 @@ class EditEnrolleeData extends FormRequest
     public function rules()
     {
         return [
-            'id'                  => 'required',
-            'first_name'          => 'required|alpha_num',
-            'last_name'           => 'required|alpha_num',
-            'lang'                => [
+            'id'         => 'required',
+            'first_name' => 'required|alpha_num',
+            'last_name'  => 'required|alpha_num',
+            'lang'       => [
                 'required',
                 function ($attribute, $value, $fail) {
-                    if ($value == 'ES' || $value == 'EN') {
+                    if ('ES' == $value || 'EN' == $value) {
                         return true;
                     }
+
                     return $fail('Value for Language should be EN or ES');
                 },
             ],
