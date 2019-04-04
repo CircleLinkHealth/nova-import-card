@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "89329fbb3405ad6baa5108034adac9d2",
+    "content-hash": "0939b84205dfff2eb812f2fec088b7f8",
     "packages": [
         {
             "name": "amnuts/opcache-gui",
@@ -12424,6 +12424,8 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/core": 20,
+        "circlelinkhealth/customer": 20,
         "circlelinkhealth/raygun": 20,
         "circlelinkhealth/timetracking": 20,
         "circlelinkhealth/twofa": 20,
@@ -12433,9 +12435,7 @@
         "orangehill/iseed": 20,
         "xethron/migrations-generator": 20,
         "venturecraft/revisionable": 20,
-        "circlelinkhealth/core": 20,
-        "michalisantoniou6/laravel-cerberus": 20,
-        "circlelinkhealth/customer": 20
+        "michalisantoniou6/laravel-cerberus": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

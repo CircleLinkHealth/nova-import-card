@@ -65,10 +65,10 @@
                     </div>
                 </template>
                 <template slot="Patient ID" slot-scope="props">
-                    <a :href="props.row.notesLink">{{ props.row['Patient ID'] }}</a>
+                    <a :href="props.row.notesLink" :class="props.row['ccmStatus']">{{ props.row['Patient ID'] }}</a>
                 </template>
                 <template slot="Patient" slot-scope="props">
-                    <a :href="props.row.notesLink">{{ props.row['Patient'] }}</a>
+                    <a :href="props.row.notesLink" :class="props.row['ccmStatus']">{{ props.row['Patient'] }}</a>
                 </template>
                 <template slot="Care Coach" slot-scope="props">
                     <div>
@@ -539,6 +539,7 @@
                     'Activity Start': call.call_time_start,
                     'Activity End': call.call_time_end,
                     practiceId: call.practice_id,
+                    ccmStatus: call.ccm_status,
                     nurses() {
                         return [
                             ...$vm.nurses
@@ -773,5 +774,9 @@
 
     .hidden {
         display: none;
+    }
+
+    .paused {
+        color: grey;
     }
 </style>

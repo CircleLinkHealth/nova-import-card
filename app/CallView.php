@@ -17,7 +17,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\Carbon $call_time_start
  * @property \Carbon\Carbon $call_time_end
  * @property \Carbon\Carbon $patient_created_at
- * @property string preferred_call_days
  * @property int|null no_call_attempts_since_last_success
  * @property int|null    $is_manual
  * @property string      $status
@@ -42,6 +41,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $billing_provider
  * @property string|null $attempt_note
  * @property string|null $general_comment
+ * @property string|null $ccm_status
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView filter(\App\Filters\QueryFilters $filters)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView newModelQuery()

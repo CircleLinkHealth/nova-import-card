@@ -42,6 +42,7 @@ class CallView extends Resource
             'is_ccm'                 => $this->is_ccm,
             'is_bhi'                 => $this->is_bhi,
             'billing_provider'       => $this->billing_provider,
+            'ccm_status'             => $this->ccm_status,
         ];
     }
 }
