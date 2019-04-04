@@ -74,7 +74,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \CircleLinkHealth\Customer\Entities\PatientContactWindow[]|\Illuminate\Database\Eloquent\Collection           $contactWindows
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  * @property \CircleLinkHealth\Customer\Entities\User                                                                      $user
- * @property mixed location
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient enrolled()
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient hasFamily()
@@ -599,6 +598,11 @@ class Patient extends BaseModel
     public function scopeEnrolled($query)
     {
         return $query->where('ccm_status', 'enrolled');
+    }
+
+    public function scopeEnrolledOrPaused($query)
+    {
+        return $query->whereIn('ccm_status', ['enrolled', 'paused']);
     }
 
     public function scopeHasFamily($query)
