@@ -556,7 +556,6 @@ class Patient extends BaseModel
             'created_at'       => optional($this->created_at)->format('c'),
             'updated_at'       => optional($this->updated_at)->format('c'),
         ];
-
     }
 
     public function scopeByStatus($query, $fromDate, $toDate)
