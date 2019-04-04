@@ -6,29 +6,28 @@
                     type="number"
                     class="number-field"
                     name="numberTypeAnswer[]"
-                    v-model="inputHasNumber"
-                    :placeholder="this.questionPlaceHolder"
-                    @change="onInput">
+                    v-model="inputNumber"
+                    :placeholder="this.questionPlaceHolder">
         </div>
         <br>
         <!--question with sub_parts-->
-       <div class="row">
-           <div v-if="questionHasSubParts"
-                v-for="subPart in questionSubParts">
-               <input type="number"
-                      class="number-field"
-                      name="numberTypeAnswer[]"
-                      v-model="inputHasNumber"
-                      :placeholder="subPart.placeholder"
-                      @change="onInput">
-           </div>
-       </div>
+        <div class="row">
+            <div v-if="questionHasSubParts"
+                 v-for="subPart in questionSubParts">
+                <input type="number"
+                       class="number-field"
+                       name="numberTypeAnswer[]"
+                       v-model="inputNumber"
+                       :placeholder="subPart.placeholder">
+            </div>
+        </div>
         <!--next button-->
-        <div v-if="inputHasNumber >'1'">
+        <div v-if="inputNumber > 1">
             <button class="next-btn"
                     name="number"
                     id="number"
-                    type="submit">Next
+                    type="submit"
+                    @click="handleAnswer">Next
             </button>
         </div>
     </div>
@@ -39,7 +38,7 @@
 
     export default {
         name: "questionTypeNumber",
-        props: ['question'],
+        props: ['question', 'userId', 'surveyInstanceId'],
 
         mounted() {
             console.log('Component mounted.')
@@ -47,11 +46,16 @@
 
         data() {
             return {
-                inputHasNumber: '',
+                inputNumber: '',
                 questionOptions: [],
+                showNextButton: false
             }
         },
         computed: {
+            /*hasTypedTwoNumbers() {
+                return this.inputNumber > 1 ? this.showNextButton = true : this.showNextButton = false;
+            },
+*/
             hasAnswerType() {
                 return this.question.type.question_type_answers.length !== 0;
             },
@@ -86,9 +90,28 @@
         },
 
         methods: {
-            onInput() {
+            handleAnswer() {
+                console.log({ user_id: this.userId,
+                    survey_instance_id: this.surveyInstanceId[0],
+                    question_id: this.question.id,
+                    question_type_answer_id: 0,
+                    value_1: this.inputNumber});
+
+                axios.post('/save-answer', {
+                    user_id: this.userId,
+                    survey_instance_id: this.surveyInstanceId[0],
+                    question_id: this.question.id,
+                    question_type_answer_id: 0,
+                    value_1: this.inputNumber,
+                })
+                    .then(function (response) {
+                        console.log(response);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
                 EventBus.$emit('handleNumberType');
-            },
+            }
         },
         created() {
             const questionOptions = this.question.type.question_type_answers.map(q => q.options);
@@ -106,7 +129,7 @@
         background-color: #50b2e2;
     }
 
-    .number-field{
+    .number-field {
         border: none;
         border-bottom: solid 1px rgba(0, 0, 0, 0.1);
         background-color: transparent;

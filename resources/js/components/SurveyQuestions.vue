@@ -60,6 +60,8 @@
 
                             <question-type-number
                                     :question="question"
+                                    :userId="userId"
+                                    :surveyInstanceId="surveyInstanceId"
                                     v-if="question.type.type === 'number'">
                             </question-type-number>
 
