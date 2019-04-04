@@ -220,6 +220,9 @@ class EnrollmentCenterController extends Controller
 
         if ('requested callback' == $request->input('reason')) {
             $enrollee->status = 'call_queue';
+            if ($request->has('utc_callback')) {
+                $enrollee->requested_callback = $request->input('utc_callback');
+            }
         } else {
             $enrollee->status = 'utc';
         }
