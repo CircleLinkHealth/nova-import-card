@@ -1,7 +1,7 @@
 @extends('partials.providerUI')
 
-@section('title', 'Patient Listing')
-@section('activity', 'Patient Listing')
+@section('title', 'Patient Call List')
+@section('activity', 'Patient Call List')
 
 <?php
 function formatTime($time)
