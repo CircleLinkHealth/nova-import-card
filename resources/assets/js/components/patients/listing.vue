@@ -501,6 +501,9 @@
                 const dobInput = patientListElem.querySelector('input[name="vf__dob"]')
                 dobInput.setAttribute('placeholder', 'Filter by Date of Birth')
 
+                const mrnInput = patientListElem.querySelector('input[name="vf__mrn"]')
+                mrnInput.setAttribute('placeholder', 'Filter by MRN')
+
                 const registeredOnInput = patientListElem.querySelector('input[name="vf__registeredOn"]')
                 registeredOnInput.setAttribute('placeholder', 'Filter by Registered On')
 
