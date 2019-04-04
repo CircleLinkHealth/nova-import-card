@@ -284,7 +284,6 @@ class PatientSurveyAnswersSeeder extends Seeder
                 'order'    => 15,
                 'subOrder' => 'b',
                 'answer'   => 'Sometimes',
-                'answer'   => 'Sometimes',
             ],
             [
                 'order'    => 16,
@@ -336,11 +335,16 @@ class PatientSurveyAnswersSeeder extends Seeder
                 'answer'   => json_encode([
                     [
                         'name'   => 'Colorectal Cancer',
-                        'family' => 'Mother',
+                        'family' => [
+                            'Mother',
+                            'Father'
+                            ]
                     ],
                     [
                         'name'   => 'Depression',
-                        'family' => 'Child',
+                        'family' => [
+                            'Child',
+                            ]
                     ],
                 ]),
             ],

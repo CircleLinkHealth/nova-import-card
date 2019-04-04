@@ -74,7 +74,7 @@ class SurveySeeder extends Seeder
                     'body' => $questionData['question_group'],
                 ])
                     ->id;
-            }else{
+            } else {
                 $groupId = null;
             }
 
@@ -126,41 +126,41 @@ class SurveySeeder extends Seeder
     {
         return collect([
             [
-                'order' => 1,
-                'question_body' => "What is the patient's blood pressure?",
-                'question_type' => QuestionType::NUMBER,
+                'order'                 => 1,
+                'question_body'         => "What is the patient's blood pressure?",
+                'question_type'         => QuestionType::NUMBER,
                 'question_type_answers' => [
                     [
                         'options' => [
-                            'sub-parts' => [
+                            'sub-parts'               => [
                                 [
-                                    //need placeholder
+                                    'key' => 'first_metric',
                                 ],
                                 [
-                                    //need placeholder
-                                ]
+                                    'key' => 'second_metric',
+                                ],
                             ],
-                            'separate_sub_parts_with' => 'dash'
-                        ]
-                    ]
-                ]
+                            'separate_sub_parts_with' => 'dash',
+                        ],
+                    ],
+                ],
             ],
             [
-                'order' => 2,
-                'question_body' => "What is the patient's weight?",
-                'question_type' => QuestionType::NUMBER,
+                'order'                 => 2,
+                'question_body'         => "What is the patient's weight?",
+                'question_type'         => QuestionType::NUMBER,
                 'question_type_answers' => [
                     [
                         'options' => [
-                            'placeholder' => 'ex. 150 (lbs)'
-                        ]
-                    ]
-                ]
+                            'placeholder' => 'ex. 150 (lbs)',
+                        ],
+                    ],
+                ],
             ],
             [
-                'order' => 3,
-                'question_body' => "What is the patient's height?",
-                'question_type' => QuestionType::NUMBER,
+                'order'                 => 3,
+                'question_body'         => "What is the patient's height?",
+                'question_type'         => QuestionType::NUMBER,
                 'question_type_answers' => [
                     [
                         'options' =>
@@ -168,9 +168,11 @@ class SurveySeeder extends Seeder
                                 'sub_parts' => [
                                     [
                                         'placeholder' => "Feet'",
+                                        'key'         => 'feet',
                                     ],
                                     [
                                         'placeholder' => 'Inches"',
+                                        'key'         => 'inches',
                                     ],
                                 ],
 
@@ -179,93 +181,93 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
-                'order' => 4,
-                'question_body' => "What is the patient's body mass index (BMI)?",
-                'question_type' => QuestionType::NUMBER,
+                'order'                => 4,
+                'question_body'        => "What is the patient's body mass index (BMI)?",
+                'question_type'        => QuestionType::NUMBER,
                 'question_type_answer' => [
                     [
                         'options' => [
-                            'placeholder' => 'ex. 25'
-                        ]
-                    ]
-                ]
+                            'placeholder' => 'ex. 25',
+                        ],
+                    ],
+                ],
             ],
             [
-                'order' => 5,
-                'sub_order' => 'a',
-                'question_body' => 'Word Recall (1 point for each word spontaneously recalled without cueing)',
-                'question_type' =>  QuestionType::RADIO,
+                'order'                 => 5,
+                'sub_order'             => 'a',
+                'question_body'         => 'Word Recall (1 point for each word spontaneously recalled without cueing)',
+                'question_type'         => QuestionType::RADIO,
                 //we have to see about (c) and inserting the link
-                'question_group' => 'Based off of the Mini-Cog(c) assessment, how did your patient score? (insert link)',
+                'question_group'        => 'Based off of the Mini-Cog(c) assessment, how did your patient score? (insert link)',
                 'question_type_answers' => [
                     [
-                        'type_answer_body' => 0
+                        'type_answer_body' => 0,
                     ],
                     [
-                        'type_answer_body' => 1
+                        'type_answer_body' => 1,
                     ],
                     [
-                        'type_answer_body' => 2
+                        'type_answer_body' => 2,
                     ],
                     [
-                        'type_answer_body' => 3
+                        'type_answer_body' => 3,
                     ],
-                ]
+                ],
             ],
             [
-                'order' => 5,
-                'sub_order' => 'b',
-                'question_body' => 'Clock Draw (Normal clock = 2 points. A normal clock has all numbers placed in the cor-rect sequence and approximately correct position (e.g., 12, 3, 6 and 9 are in anchor positions) with no missing or duplicate numbers. Hands are point-ing to the 11 and 2 (11:10). Hand length is not scored.Inability or refusal to draw a clock (abnormal) = 0 points.)',
-                'question_type' =>  QuestionType::RADIO,
-                'question_group' => 'Based off of the Mini-Cog(c) assessment, how did your patient score? (insert link)',
+                'order'                 => 5,
+                'sub_order'             => 'b',
+                'question_body'         => 'Clock Draw (Normal clock = 2 points. A normal clock has all numbers placed in the cor-rect sequence and approximately correct position (e.g., 12, 3, 6 and 9 are in anchor positions) with no missing or duplicate numbers. Hands are point-ing to the 11 and 2 (11:10). Hand length is not scored.Inability or refusal to draw a clock (abnormal) = 0 points.)',
+                'question_type'         => QuestionType::RADIO,
+                'question_group'        => 'Based off of the Mini-Cog(c) assessment, how did your patient score? (insert link)',
                 'question_type_answers' => [
                     [
-                        'type_answer_body' => 0
+                        'type_answer_body' => 0,
                     ],
                     [
-                        'type_answer_body' => 2
+                        'type_answer_body' => 2,
                     ],
-                ]
+                ],
             ],
             [
-                'order' => 5,
-                'sub_order' => 'c',
-                'question_body' => 'Total Score (Total score = Word Recall score + Clock Draw score)',
-                'question_type' =>  QuestionType::RADIO,
-                'conditions' => [
+                'order'                 => 5,
+                'sub_order'             => 'c',
+                'question_body'         => 'Total Score (Total score = Word Recall score + Clock Draw score)',
+                'question_type'         => QuestionType::RADIO,
+                'conditions'            => [
                     'is_auto_generated' => true,
-                    'generated_from' => [
+                    'generated_from'    => [
                         [
-                            'order' => 5,
-                            'sub_order' => 'a'
+                            'order'     => 5,
+                            'sub_order' => 'a',
                         ],
                         [
-                            'order' => 5,
-                            'sub_order' => 'b'
-                        ]
-                    ]
+                            'order'     => 5,
+                            'sub_order' => 'b',
+                        ],
+                    ],
                 ],
-                'question_group' => 'Based off of the Mini-Cog(c) assessment, how did your patient score? (insert link)',
+                'question_group'        => 'Based off of the Mini-Cog(c) assessment, how did your patient score? (insert link)',
                 'question_type_answers' => [
                     [
-                        'type_answer_body' => 0
+                        'type_answer_body' => 0,
                     ],
                     [
-                        'type_answer_body' => 1
+                        'type_answer_body' => 1,
                     ],
                     [
-                        'type_answer_body' => 2
+                        'type_answer_body' => 2,
                     ],
                     [
-                        'type_answer_body' => 3
+                        'type_answer_body' => 3,
                     ],
                     [
-                        'type_answer_body' => 4
+                        'type_answer_body' => 4,
                     ],
                     [
-                        'type_answer_body' => 5
+                        'type_answer_body' => 5,
                     ],
-                ]
+                ],
             ],
         ]);
     }
@@ -304,9 +306,11 @@ class SurveySeeder extends Seeder
                                 'sub_parts' => [
                                     [
                                         'placeholder' => "Feet'",
+                                        'key'         => 'feet',
                                     ],
                                     [
                                         'placeholder' => 'Inches"',
+                                        'key'         => 'inches',
                                     ],
                                 ],
 
@@ -655,10 +659,12 @@ class SurveySeeder extends Seeder
                             'sub_parts'                => [
                                 [
                                     'title'       => 'Drug',
+                                    'key'         => 'name',
                                     'placeholder' => 'Ex. cannabis',
                                 ],
                                 [
                                     'title'       => 'Frequency',
+                                    'key'         => 'frequency',
                                     'placeholder' => 'Ex. 4 per month',
                                 ],
                             ],
@@ -765,66 +771,114 @@ class SurveySeeder extends Seeder
                 'question_type_answers' => [
                     [
                         'type_answer_body' => 'Arrhythmia',
+                        'options'          => [
+                            'key' => 'name',
+                        ],
                     ],
                     [
                         'type_answer_body' => 'Asthma',
+                        'options'          => [
+                            'key' => 'name',
+                        ],
                     ],
                     [
                         'type_answer_body' => 'Cancer',
                         'options'          => [
                             'allow_custom_input' => true,
                             'placeholder'        => 'What type...',
+                            'custom_input_key'   => 'type',
+                            'key'                => 'name',
                         ],
                     ],
                     [
                         'type_answer_body' => 'Cognitive Impairment',
+                        'options'          => [
+                            'key' => 'name',
+                        ],
                     ],
                     [
                         'type_answer_body' => 'Diabetes',
+                        'options'          => [
+                            'key' => 'name',
+                        ],
                     ],
                     [
                         'type_answer_body' => 'Depression',
+                        'options'          => [
+                            'key' => 'name',
+                        ],
                     ],
                     [
                         'type_answer_body' => 'Emphysema',
+                        'options'          => [
+                            'key' => 'name',
+                        ],
                     ],
                     [
                         'type_answer_body' => 'Eye Problems',
                         'options'          => [
                             'allow_custom_input' => true,
                             'placeholder'        => 'What type...',
+                            'custom_input_key'   => 'type',
+                            'key'                => 'name',
                         ],
                     ],
                     [
                         'type_answer_body' => 'Heart Disease',
+                        'options'          => [
+                            'key' => 'name',
+                        ],
                     ],
                     [
                         'type_answer_body' => 'Hepatitis',
+                        'options'          => [
+                            'key' => 'name',
+                        ],
                     ],
                     [
                         'type_answer_body' => 'High Blood Pressure',
+                        'options'          => [
+                            'key' => 'name',
+                        ],
                     ],
                     [
                         'type_answer_body' => 'High Cholesterol',
+                        'options'          => [
+                            'key' => 'name',
+                        ],
                     ],
                     [
                         'type_answer_body' => 'Kidney Disease',
+                        'options'          => [
+                            'key' => 'name',
+                        ],
                     ],
                     [
                         'type_answer_body' => 'Seizures',
+                        'options'          => [
+                            'key' => 'name',
+                        ],
                     ],
                     [
                         'type_answer_body' => 'Sexually Transmitted Disease/Infection',
                         'options'          => [
                             'allow_custom_input' => true,
                             'placeholder'        => 'What type...',
+                            'custom_input_key'   => 'type',
+                            'key'                => 'name',
                         ],
                     ],
                     [
                         'type_answer_body' => 'Stroke',
+                        'options'          => [
+                            'key' => 'name',
+                        ],
                     ],
                     [
                         'type_answer_body' => 'Thyroid Disease',
+                        'options'          => [
+                            'key' => 'name',
+                        ],
                     ],
                 ],
             ],
@@ -918,6 +972,9 @@ class SurveySeeder extends Seeder
                                 'Child',
                             ],
                             'placeholder'                  => 'Choose individuals here...',
+                            'multi_select_key' => 'family',
+                            'key' => 'name',
+
                         ],
                     ],
                 ],
@@ -933,14 +990,17 @@ class SurveySeeder extends Seeder
                                 [
                                     'title'       => 'Reason for Visit',
                                     'placeholder' => 'Type response here...',
+                                    'key' => 'reason'
                                 ],
                                 [
                                     'title'       => 'Location',
                                     'placeholder' => 'Type response here...',
+                                    'key' => 'location'
                                 ],
                                 [
                                     'title'       => 'Year',
                                     'placeholder' => 'Type response here...',
+                                    'key' => 'year'
                                 ],
                             ],
                             'allow_multiple'           => true,
@@ -960,14 +1020,17 @@ class SurveySeeder extends Seeder
                             'sub_parts'                => [
                                 [
                                     'title'       => 'Drug',
+                                    'key'         => 'drug',
                                     'placeholder' => 'Type response here...',
                                 ],
                                 [
                                     'title'       => 'Dose',
+                                    'key'         => 'dose',
                                     'placeholder' => 'Type response here...',
                                 ],
                                 [
                                     'title'       => 'Frequency',
+                                    'key'         => 'frequency',
                                     'placeholder' => 'Type response here...',
                                 ],
                             ],
@@ -990,6 +1053,7 @@ class SurveySeeder extends Seeder
                             'allow_multiple'           => true,
                             'add_extra_answer_text'    => 'Add additional response',
                             'remove_extra_answer_text' => 'Remove response',
+                            'key' => 'name'
                         ],
                     ],
                 ],
@@ -1468,18 +1532,22 @@ class SurveySeeder extends Seeder
                             'sub_parts'                => [
                                 [
                                     'title'       => 'Provider Name',
+                                    'key' => 'provider_name',
                                     'placeholder' => 'Type response here...',
                                 ],
                                 [
                                     'title'       => 'Specialty',
+                                    'key'       => 'specialty',
                                     'placeholder' => 'Type response here...',
                                 ],
                                 [
                                     'title'       => 'Location',
+                                    'key'           => 'location',
                                     'placeholder' => 'Type response here...',
                                 ],
                                 [
                                     'title'       => 'Phone Number',
+                                    'key'       => 'phone_number',
                                     'placeholder' => '(123) 456 7890',
                                 ],
                             ],

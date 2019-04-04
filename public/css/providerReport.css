@@ -6,7 +6,7 @@
     font-stretch: normal;
     line-height: normal;
     letter-spacing: 1.1px;
-    padding-left: 15px;
+    padding-left: 25px;
     padding-top: 10px;
     padding-bottom: 5px;
     color: #ffffff;
@@ -29,6 +29,6 @@
 .report{
     padding-left: 5%;
     padding-right: 5%;
-    padding-top: 2%;
-    paddding-bottom: 10%;
+    padding-top: 5%;
+    padding-bottom: 5%;
 }
