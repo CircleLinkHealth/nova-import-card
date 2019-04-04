@@ -181,7 +181,7 @@ class EnrollmentCenterController extends Controller
 
         $enrollee->status = $status;
         if ($request->has('soft_decline_callback')) {
-            $enrollee->soft_rejected_callback = $request->input('soft_decline_callback');
+            $enrollee->requested_callback = $request->input('soft_decline_callback');
         }
 
         $enrollee->attempt_count    = $enrollee->attempt_count + 1;
