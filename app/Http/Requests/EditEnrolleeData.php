@@ -9,6 +9,7 @@ namespace App\Http\Requests;
 use App\Rules\EligibilityPhones;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class EditEnrolleeData extends FormRequest
 {
@@ -35,13 +36,7 @@ class EditEnrolleeData extends FormRequest
             'last_name'  => 'required|alpha_num',
             'lang'       => [
                 'required',
-                function ($attribute, $value, $fail) {
-                    if ('ES' == $value || 'EN' == $value) {
-                        return true;
-                    }
-
-                    return $fail('Value for Language should be EN or ES');
-                },
+                Rule::in(['EN', 'ES']),
             ],
             'status'              => 'required',
             'phones'              => ['required', new EligibilityPhones()],
