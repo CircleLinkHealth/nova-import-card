@@ -12,6 +12,9 @@ use Symfony\Component\Process\Process;
 
 class OnSuccessfulDeployment extends Command
 {
+    // The environment on which builds happen
+    const BUILD_ENV = 'staging';
+
     /**
      * The console command description.
      *
@@ -27,8 +30,8 @@ class OnSuccessfulDeployment extends Command
                                            {envName : The name of the environment we just deployed to.}
                                            {rollback    : Either 1 or 0 if deployment is a rollback or not.}
                                            {userName    : Name of the user who triggered the deployment.}
+                                           {comment    : Deployment comment or last commit message for automatic deployments.}
                                            {previousRevision?    : The revision deployed before the one just deployed.}
-                                           {comment?    : Deployment comment or last commit message for automatic deployments.}
     ';
 
     /**
@@ -54,6 +57,13 @@ class OnSuccessfulDeployment extends Command
         $isRollback            = (bool) $this->argument('rollback');
         $user                  = $this->argument('userName');
         $comment               = $this->argument('comment');
+
+        $this->info('previousRevision: '.$lastDeployedRevision);
+        $this->info('currentRevision: '.$newlyDeployedRevision);
+        $this->info('envName: '.$envName);
+        $this->info('rollback: '.$isRollback);
+        $this->info('userName: '.$user);
+        $this->info('comment: '.$comment);
 
         $this->publishBuild(
             $envName,
@@ -149,7 +159,10 @@ class OnSuccessfulDeployment extends Command
         bool $isRollback,
         string $comment
     ) {
-        if (true === $isRollback || 'staging' !== $envName || ! str_contains($comment, 'cpm:publish-build')) {
+        if (true === $isRollback || self::BUILD_ENV !== strtolower($envName) || ! str_contains(
+            $comment,
+            'cpm:publish-build'
+            )) {
             return;
         }
 
@@ -174,13 +187,15 @@ class OnSuccessfulDeployment extends Command
 
         if ( ! file_exists(base_path('.git'))) {
             $initGit = $this->runCommand(
-                'git init && git remote add origin git@github.com:CircleLinkHealth/cpm-releases.git'
+                'git init && git remote add origin git@github.com-releases:CircleLinkHealth/cpm-releases.git'
             );
         }
 
         $version = \Version::format('compact');
+        $command = "git add $release && git commit -m '$version' && git push -u origin master";
+
         $this->runCommand(
-            "git add $release && git commit -m '$version' && git tag $version && git push -u origin master"
+            $command
         );
     }
 
@@ -193,7 +208,7 @@ class OnSuccessfulDeployment extends Command
      */
     private function runCommand(string $command)
     {
-        $this->info("Running `$command`");
+        $this->info("Running: `$command`");
         $process = new Process($command);
         $process->run();
 
