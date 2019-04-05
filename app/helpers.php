@@ -9,8 +9,8 @@ use App\CarePlanTemplate;
 use App\Constants;
 use App\Exceptions\CsvFieldNotFoundException;
 use App\Jobs\SendSlackMessage;
-use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
@@ -1310,5 +1310,17 @@ if ( ! function_exists('isProductionEnv')) {
     function isProductionEnv()
     {
         return in_array(config('app.env'), ['production', 'worker']);
+    }
+}
+
+if ( ! function_exists('presentDate')) {
+    function presentDate(Carbon $date, bool $withTime = true)
+    {
+        if ($date->year < 1) {
+            return 'N/A';
+        }
+
+        return $withTime
+        ? $date->format('m-d-y h:iA') : $date->format('m-d-y');
     }
 }

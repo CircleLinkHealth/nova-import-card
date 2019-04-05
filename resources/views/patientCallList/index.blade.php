@@ -181,7 +181,7 @@ function formatTime($time)
                                                             </a>
                                                         </td>
                                                         <td class="{{ \Carbon\Carbon::parse($call->scheduled_date)->lessThan(\Carbon\Carbon::today()) ? 'red' : '' }}">
-                                                            {{ $call->scheduled_date }}
+                                                            {{ presentDate(Carbon\Carbon::parse($call->scheduled_date), false) }}
                                                         </td>
                                                         <td>{{ $call->call_time_start }}</td>
                                                         <td>{{ $call->call_time_end }}</td>
@@ -193,7 +193,7 @@ function formatTime($time)
                                                             ?>
                                                         </td>
                                                         <td>
-                                                            {{ $call->last_call }}
+                                                            {{ presentDate(Carbon\Carbon::parse($call->last_call)) }}
                                                         </td>
                                                         <td>
                                                             @if( isset($call->ccm_time))
