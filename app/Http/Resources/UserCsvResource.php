@@ -41,6 +41,7 @@ class UserCsvResource extends Resource
                '"'.$patient->ccm_status.'",'.
                '"'.optional($careplan)->status.'",'.
                '"'.$patient->birth_date.'",'.
+               '"'.$patient->mrn_number.'",'.
                '"'.$this->getPhone().'",'.
                '"'.($patient->birth_date
                 ? Carbon::parse($patient->birth_date)->age

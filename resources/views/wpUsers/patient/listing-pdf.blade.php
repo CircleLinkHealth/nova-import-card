@@ -14,6 +14,7 @@
                 <th>CCM Status</th>
                 <th>Careplan Status</th>
                 <th>DOB</th>
+                <th>MRN</th>
                 <th>Phone</th>
                 <th>Age</th>
                 <th>Registered on</th>
@@ -38,6 +39,7 @@
                     ?>
                 </td>
                 <td> {{$patient['dob']}} </td>
+                <td> {{$patient['mrn']}} </td>
                 <td> {{$patient['phone']}} </td>
                 <td> {{$patient['age']}} </td>
                 <td> {{$patient['reg_date']}} </td>
