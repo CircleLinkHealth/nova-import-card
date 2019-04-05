@@ -149,7 +149,7 @@ class OnSuccessfulDeployment extends Command
         bool $isRollback,
         string $comment
     ) {
-        if (true === $isRollback || 'staging' !== $envName || ! str_contains($comment, '#!cpm:publish-build!#')) {
+        if (true === $isRollback || 'staging' !== $envName || ! str_contains($comment, 'cpm:publish-build')) {
             return;
         }
 
