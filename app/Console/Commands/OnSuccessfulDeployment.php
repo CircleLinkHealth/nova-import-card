@@ -6,6 +6,7 @@
 
 namespace App\Console\Commands;
 
+use App\Exceptions\FileNotFoundException;
 use Illuminate\Console\Command;
 use Symfony\Component\Process\Process;
 
@@ -27,6 +28,7 @@ class OnSuccessfulDeployment extends Command
                                            {rollback    : Either 1 or 0 if deployment is a rollback or not.}
                                            {userName    : Name of the user who triggered the deployment.}
                                            {previousRevision?    : The revision deployed before the one just deployed.}
+                                           {comment?    : Deployment comment or last commit message for automatic deployments.}
     ';
 
     /**
@@ -40,6 +42,8 @@ class OnSuccessfulDeployment extends Command
     /**
      * Execute the console command.
      *
+     * @throws \Exception
+     *
      * @return mixed
      */
     public function handle()
@@ -47,9 +51,41 @@ class OnSuccessfulDeployment extends Command
         $lastDeployedRevision  = $this->argument('previousRevision');
         $newlyDeployedRevision = $this->argument('currentRevision');
         $envName               = $this->argument('envName');
-        $isRollback            = $this->argument('rollback');
+        $isRollback            = (bool) $this->argument('rollback');
         $user                  = $this->argument('userName');
+        $comment               = $this->argument('comment');
 
+        $this->publishBuild(
+            $envName,
+            $isRollback,
+            $comment
+        );
+
+        $this->notifySlackOfJiraTicketsDeployed(
+            $lastDeployedRevision,
+            $newlyDeployedRevision,
+            $envName,
+            $isRollback,
+            $user
+        );
+    }
+
+    /**
+     * @param string $lastDeployedRevision
+     * @param string $newlyDeployedRevision
+     * @param string $envName
+     * @param bool   $isRollback
+     * @param int    $user
+     *
+     * @throws \Exception
+     */
+    private function notifySlackOfJiraTicketsDeployed(
+        string $lastDeployedRevision,
+        string $newlyDeployedRevision,
+        string $envName,
+        bool $isRollback,
+        string $user
+    ) {
         if ( ! file_exists(base_path('.git'))) {
             $initGit = $this->runCommand(
                 'git init && git remote add origin git@github.com:CircleLinkHealth/app-cpm-web.git && git fetch'
@@ -88,13 +124,62 @@ class OnSuccessfulDeployment extends Command
         }
 
         if ( ! isset($channel)) {
-            throw new \Exception('Unable to resolve Slack channel. Check that environment is allowed to run this command.');
+            throw new \Exception(
+                'Unable to resolve Slack channel. Check that environment is allowed to run this command.'
+            );
         }
 
         $loginLink = config('opcache.url');
         $message .= "\n Login at: $loginLink";
 
         sendSlackMessage($channel, $message, true);
+    }
+
+    /**
+     * @param string $envName
+     * @param bool   $isRollback
+     * @param string $comment
+     *
+     * @throws FileNotFoundException
+     */
+    private function publishBuild(
+        string $envName,
+        bool $isRollback,
+        string $comment
+    ) {
+        if (true === $isRollback || 'staging' !== $envName || ! str_contains($comment, '[publish-build]')) {
+            return;
+        }
+
+        $release    = 'release.tar.gz';
+        $releaseDir = 'releases';
+
+        if ( ! file_exists($release)) {
+            throw new FileNotFoundException("`$release` not found in ".getcwd(), 500);
+        }
+
+        if ( ! file_exists($releaseDir)) {
+            mkdir($releaseDir);
+        }
+
+        $moved = rename($release, getcwd().'/releases/'.$release);
+
+        if ( ! $moved) {
+            throw new \Exception("Could not move `$release` into `releases/$release`", 500);
+        }
+
+        chdir($releaseDir);
+
+        if ( ! file_exists(base_path('.git'))) {
+            $initGit = $this->runCommand(
+                'git init && git remote add origin git@github.com:CircleLinkHealth/cpm-releases.git'
+            );
+        }
+
+        $version = \Version::format('compact');
+        $this->runCommand(
+            "git add $release && git commit -m '$version' && git tag $version && git push -u origin master"
+        );
     }
 
     /**
