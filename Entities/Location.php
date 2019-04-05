@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Customer\Entities;
 
 use App\Notifications\Notifiable;
-use App\Traits\HasEmrDirectAddress;
+use CircleLinkHealth\Customer\Traits\HasEmrDirectAddress;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\SoftDeletes;

@@ -43,7 +43,7 @@ use App\Repositories\Cache\UserNotificationList;
 use App\Rules\PasswordCharacters;
 use App\Services\UserService;
 use App\TargetPatient;
-use App\Traits\HasEmrDirectAddress;
+use CircleLinkHealth\Customer\Traits\HasEmrDirectAddress;
 use App\Traits\MakesOrReceivesCalls;
 use App\Traits\SaasAccountable;
 use App\Traits\TimezoneTrait;
