@@ -549,6 +549,7 @@ class Patient extends BaseModel
                 ? (Carbon::now()->year - Carbon::parse($this->birth_date)->year)
                 : 0,
             'gender'           => $this->gender,
+            'mrn_number'       => $this->mrn_number,
             'date_paused'      => optional($this->date_paused)->format('c'),
             'date_withdrawn'   => optional($this->date_withdrawn)->format('c'),
             'date_unreachable' => optional($this->date_unreachable)->format('c'),
