@@ -71,13 +71,14 @@ class OnSuccessfulDeployment extends Command
             $comment
         );
 
-        $this->notifySlackOfJiraTicketsDeployed(
-            $lastDeployedRevision,
-            $newlyDeployedRevision,
-            $envName,
-            $isRollback,
-            $user
-        );
+//        Do this on the build server
+//        $this->notifySlackOfJiraTicketsDeployed(
+//            $lastDeployedRevision,
+//            $newlyDeployedRevision,
+//            $envName,
+//            $isRollback,
+//            $user
+//        );
     }
 
     /**
@@ -182,7 +183,7 @@ class OnSuccessfulDeployment extends Command
 
         if ( ! file_exists(base_path('.git'))) {
             $initGit = $this->runCommand(
-                'git init && git remote add origin git@github.com-releases:CircleLinkHealth/cpm-releases.git'
+                'git init && git remote add origin git@github.com:CircleLinkHealth/cpm-releases.git'
             );
         }
 
