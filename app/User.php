@@ -7,7 +7,6 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Lab404\Impersonate\Models\Impersonate;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-
 class User extends Authenticatable
 {
     use Notifiable;

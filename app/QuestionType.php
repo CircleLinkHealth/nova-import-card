@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class QuestionType extends Model
+class QuestionType  extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     const CHECKBOX = 'checkbox';
 

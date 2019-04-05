@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Answer extends Model
+class Answer  extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     /**
      * The attributes that are mass assignable.

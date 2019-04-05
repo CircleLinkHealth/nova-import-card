@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ProviderReport extends Model
+class ProviderReport  extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $fillable = [
         'patient_id',
