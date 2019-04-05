@@ -54,7 +54,7 @@ class OnSuccessfulDeployment extends Command
         $lastDeployedRevision  = $this->argument('previousRevision');
         $newlyDeployedRevision = $this->argument('currentRevision');
         $envName               = $this->argument('envName');
-        $isRollback            = (bool) $this->argument('rollback');
+        $isRollback            = 1 == $this->argument('rollback') ? true : false;
         $user                  = $this->argument('userName');
         $comment               = $this->argument('comment');
 
@@ -192,7 +192,7 @@ class OnSuccessfulDeployment extends Command
         }
 
         $version = \Version::format('compact');
-        $command = "git add $release && git commit -m '$version' && git push -u origin master";
+        $command = "git add $release && git commit -m '$version' && git push -f -u origin master";
 
         $this->runCommand(
             $command
