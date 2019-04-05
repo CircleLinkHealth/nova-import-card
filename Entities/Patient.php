@@ -153,11 +153,14 @@ class Patient extends BaseModel
      * services. As of 07/23/2018, there exist ~200 BHI eligible patients who have consented before 07/23/2018.
      */
     const DATE_CONSENT_INCLUDES_BHI = '2018-07-23 00:00:00';
+    
+    /**
+     * Available Patient Statuses
+     */
     const ENROLLED                  = 'enrolled';
     const PATIENT_REJECTED          = 'patient_rejected';
     const PAUSED                    = 'paused';
     const TO_ENROLL                 = 'to_enroll';
-
     const UNREACHABLE = 'unreachable';
     const WITHDRAWN   = 'withdrawn';
 
@@ -598,12 +601,12 @@ class Patient extends BaseModel
 
     public function scopeEnrolled($query)
     {
-        return $query->where('ccm_status', 'enrolled');
+        return $query->where('ccm_status', Patient::ENROLLED);
     }
 
     public function scopeEnrolledOrPaused($query)
     {
-        return $query->whereIn('ccm_status', ['enrolled', 'paused']);
+        return $query->whereIn('ccm_status', [Patient::ENROLLED, Patient::PAUSED]);
     }
 
     public function scopeHasFamily($query)
