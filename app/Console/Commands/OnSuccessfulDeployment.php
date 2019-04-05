@@ -136,6 +136,8 @@ class OnSuccessfulDeployment extends Command
     }
 
     /**
+     * Store the build in Cpm Releases repository so that it can be deployed to a production environment.
+     *
      * @param string $envName
      * @param bool   $isRollback
      * @param string $comment
@@ -147,7 +149,7 @@ class OnSuccessfulDeployment extends Command
         bool $isRollback,
         string $comment
     ) {
-        if (true === $isRollback || 'staging' !== $envName || ! str_contains($comment, '[cpm:publish-build]')) {
+        if (true === $isRollback || 'staging' !== $envName || ! str_contains($comment, '#!cpm:publish-build!#')) {
             return;
         }
 
