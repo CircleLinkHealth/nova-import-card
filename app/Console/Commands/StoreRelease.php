@@ -11,6 +11,9 @@ use Illuminate\Console\Command;
 
 class StoreRelease extends Command
 {
+    // The environment on which builds happen
+    const BUILD_ENV = 'staging';
+
     /**
      * The console command description.
      *
@@ -39,7 +42,7 @@ class StoreRelease extends Command
      */
     public function handle()
     {
-        if ( ! app()->environment('staging')) {
+        if ( ! app()->environment(self::BUILD_ENV)) {
             $this->error('This command can only run on staging');
 
             return;
