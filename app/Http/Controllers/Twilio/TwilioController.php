@@ -457,12 +457,16 @@ class TwilioController extends Controller
             $input['IsUnlistedNumber'] = '1' === $input['IsUnlistedNumber']
                 ? true
                 : false;
+        } else {
+            $input['IsUnlistedNumber'] = false;
         }
 
         if ( ! empty($input['IsCallToPatient'])) {
             $input['IsCallToPatient'] = '1' === $input['IsCallToPatient']
                 ? true
                 : false;
+        } else {
+            $input['IsCallToPatient'] = false;
         }
 
         $validation = \Validator::make($input, [
