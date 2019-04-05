@@ -13,7 +13,8 @@ use Symfony\Component\Process\Process;
 class OnSuccessfulDeployment extends Command
 {
     // The environment on which builds happen
-    const BUILD_ENV = 'staging';
+    const BUILD_ENV              = 'staging';
+    const COMMIT_MESSAGE_TRIGGER = 'cpm:publish-build';
 
     /**
      * The console command description.
@@ -54,9 +55,11 @@ class OnSuccessfulDeployment extends Command
         $lastDeployedRevision  = $this->argument('previousRevision');
         $newlyDeployedRevision = $this->argument('currentRevision');
         $envName               = $this->argument('envName');
-        $isRollback            = 1 == $this->argument('rollback') ? true : false;
-        $user                  = $this->argument('userName');
-        $comment               = $this->argument('comment');
+        $isRollback            = 1 == $this->argument('rollback')
+            ? true
+            : false;
+        $user    = $this->argument('userName');
+        $comment = $this->argument('comment');
 
         $this->info('previousRevision: '.$lastDeployedRevision);
         $this->info('currentRevision: '.$newlyDeployedRevision);
@@ -162,54 +165,58 @@ class OnSuccessfulDeployment extends Command
     ) {
         if (true === $isRollback || self::BUILD_ENV !== strtolower($envName) || ! str_contains(
             $comment,
-            'cpm:publish-build'
+            self::COMMIT_MESSAGE_TRIGGER
             )) {
             return;
         }
 
-        $release     = 'release.tar.gz';
-        $releasesDir = 'releases';
+        //the name of the build. Awkwardly named release
+        $build = 'release.tar.gz';
+
+        //we'll move the zipped build in this dir to setup git repo and push it to remote repo
+        $buildDir = 'releases';
+
+        //this is the actual release (folder we deploy in)
         $releaseRoot = getcwd();
 
-        if ( ! file_exists($release)) {
-            throw new FileNotFoundException("`$release` not found in ".getcwd(), 500);
+        if ( ! file_exists($build)) {
+            throw new FileNotFoundException("`$build` not found in ".getcwd(), 500);
         }
 
-        if ( ! file_exists($releasesDir)) {
-            mkdir($releasesDir);
+        if ( ! file_exists($buildDir)) {
+            mkdir($buildDir);
         }
 
-        chdir($releasesDir);
+        chdir($buildDir);
 
         if ( ! file_exists(base_path('.git'))) {
             $initGit = $this->runCommand(
-                'git init && git remote add origin git@github.com:CircleLinkHealth/cpm-releases.git'
+                'git init'
             );
+
+            $this->runCommand('git remote add origin git@github.com:CircleLinkHealth/cpm-releases.git');
         }
-
-        $this->runCommand(
-            'git checkout master && git pull'
-        );
-
-        // delete existing release
-        unlink($release);
 
         chdir($releaseRoot);
 
-        $moved = rename($release, getcwd().'/releases/'.$release);
+        $moved = rename($build, getcwd().'/releases/'.$build);
 
         if ( ! $moved) {
-            throw new \Exception("Could not move `$release` into `releases/$release`", 500);
+            throw new \Exception("Could not move `$build` into `releases/$build`", 500);
         }
 
-        chdir($releasesDir);
+        chdir($buildDir);
 
         $version = \Version::format('compact');
-        $command = "git add $release && git commit -m '$version' && git push -f -u origin master";
+        $command = "git add $build && git commit -m '$version' && git push -f -u origin master";
 
         $this->runCommand(
             $command
         );
+
+        chdir($releaseRoot);
+
+        $this->runCommand("rm -rf $buildDir");
     }
 
     /**
