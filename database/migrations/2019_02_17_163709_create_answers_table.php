@@ -19,8 +19,7 @@ class CreateAnswersTable extends Migration
             $table->unsignedInteger('survey_instance_id');
             $table->unsignedInteger('question_id');
             $table->unsignedInteger('question_type_answer_id');
-            $table->string('value_1');
-            $table->string('value_2')->nullable();
+            $table->json('value_1');
             $table->timestamps();
 
            /* $table->foreign('user_id')

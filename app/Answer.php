@@ -17,7 +17,7 @@ class Answer  extends \CircleLinkHealth\Core\Entities\BaseModel
         'question_id',
         'question_type_answer_id',
         'value_1',
-        'value_2',
+    /*    'value_2',*/
     ];
 
 

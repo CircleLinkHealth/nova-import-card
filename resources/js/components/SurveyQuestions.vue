@@ -46,6 +46,8 @@
 
                             <question-type-checkbox
                                     :question="question"
+                                    :userId="userId"
+                                    :surveyInstanceId="surveyInstanceId"
                                     v-if="question.type.type === 'checkbox'">
                             </question-type-checkbox>
 

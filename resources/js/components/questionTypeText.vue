@@ -63,7 +63,7 @@
 
     export default {
         name: "questionTypeText",
-        props: ['question'],
+        props: ['question', 'userId', 'surveyInstanceId'],
 
         mounted() {
 

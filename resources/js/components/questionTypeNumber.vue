@@ -27,7 +27,7 @@
                     name="number"
                     id="number"
                     type="submit"
-                    @click="handleAnswer">Next
+                    @click="handleAnswer(inputNumber)">Next
             </button>
         </div>
     </div>
@@ -35,6 +35,7 @@
 
 <script>
     import {EventBus} from "../event-bus";
+    import {saveAnswer} from "../save-answer";
 
     export default {
         name: "questionTypeNumber",
@@ -90,19 +91,20 @@
         },
 
         methods: {
-            handleAnswer() {
-                console.log({ user_id: this.userId,
-                    survey_instance_id: this.surveyInstanceId[0],
-                    question_id: this.question.id,
-                    question_type_answer_id: 0,
-                    value_1: this.inputNumber});
+            handleAnswer(answerVal) {
+
+                var answer = [{
+                    value_1: answerVal,
+                }];
+
+                var answerData = JSON.stringify(answer);
 
                 axios.post('/save-answer', {
                     user_id: this.userId,
                     survey_instance_id: this.surveyInstanceId[0],
                     question_id: this.question.id,
                     question_type_answer_id: 0,
-                    value_1: this.inputNumber,
+                    value_1: answerData,
                 })
                     .then(function (response) {
                         console.log(response);

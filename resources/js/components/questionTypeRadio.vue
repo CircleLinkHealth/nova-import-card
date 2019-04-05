@@ -47,12 +47,18 @@
                     return possibleAnswer.value === answerVal;
                 }).map(answerType => answerType.id);
 
+                var answer = {
+                    value_1: answerVal
+                };
+
+                var answerData = JSON.stringify(answer);
+
                 axios.post('/save-answer', {
                     user_id: this.userId,
                     survey_instance_id: this.surveyInstanceId[0],
                     question_id: this.question.id,
                     question_type_answer_id: questionTypeAnswerId[0],
-                    value_1: answerVal,
+                    value_1: answerData,
                 })
                     .then(function (response) {
                         console.log(response);
