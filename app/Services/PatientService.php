@@ -10,13 +10,13 @@ use App\Filters\PatientFilters;
 use App\Http\Resources\UserAutocompleteResource;
 use App\Http\Resources\UserCsvResource;
 use App\Http\Resources\UserSafeResource;
-use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\Customer\Entities\Practice;
 use App\Repositories\PatientReadRepository;
 use App\Repositories\PatientWriteRepository;
 use App\Repositories\UserRepositoryEloquent;
 use App\Services\CCD\CcdAllergyService;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Excel;
 
 class PatientService
@@ -57,6 +57,7 @@ class PatientService
                     'ccmStatus',
                     'careplanStatus',
                     'dob',
+                    'mrn',
                     'phone',
                     'age',
                     'registeredOn',
@@ -79,6 +80,7 @@ class PatientService
                             $patient ? $patient['ccm_status'] : null,
                             $careplan ? $careplan['status'] : null,
                             $patient ? $patient['birth_date'] : null,
+                            $patient ? $patient['mrn'] : null,
                             $user['phone'],
                             $patient ? ($patient['birth_date'] ? Carbon::parse($patient['birth_date'])->age : 0) : null,
                             $user['created_at'] ? Carbon::parse($user['created_at'])->format('Y-m-d') : null,

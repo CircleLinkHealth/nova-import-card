@@ -6,8 +6,6 @@
 
 namespace App\Formatters;
 
-use CircleLinkHealth\TimeTracking\Entities\Activity;
-use CircleLinkHealth\Customer\Entities\Appointment;
 use App\Contracts\ReportFormatter;
 use App\Models\CCD\Allergy;
 use App\Models\CCD\Medication;
@@ -16,8 +14,10 @@ use App\Models\CPM\CpmMisc;
 use App\Services\CPM\CpmMiscService;
 use App\Services\NoteService;
 use App\Services\ReportsService;
-use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Appointment;
+use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Illuminate\Database\Eloquent\Collection;
 
 class WebixFormatter implements ReportFormatter
@@ -620,6 +620,7 @@ class WebixFormatter implements ReportFormatter
                     //$approverName,
                     'dob' => Carbon::parse($patient->getBirthDate())->format('m/d/Y'),
                     //date("m/d/Y", strtotime($user_config[$part->id]["birth_date"])),
+                    'mrn'   => $patient->getMRN(),
                     'phone' => isset($patient->phoneNumbers->number)
                         ? $patient->phoneNumbers->number
                         : $patient->getPhone(),

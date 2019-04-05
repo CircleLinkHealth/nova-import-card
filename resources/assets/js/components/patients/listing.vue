@@ -66,6 +66,9 @@
             <template slot="h__dob" slot-scope="props">
                 Date of Birth
             </template>
+            <template slot="h__mrn" slot-scope="props">
+                MRN
+            </template>
             <template slot="h__registeredOn" slot-scope="props">
                 Registered On
             </template>
@@ -131,7 +134,7 @@
                 practices: [],
                 providersForSelect: [],
                 nameDisplayType: NameDisplayType.FirstName,
-                columns: ['name', 'provider', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'dob', 'phone', 'age', 'registeredOn', 'bhi', 'ccm'],
+                columns: ['name', 'provider', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'dob', 'mrn', 'phone', 'age', 'registeredOn', 'bhi', 'ccm'],
                 loaders: {
                     next: false,
                     practices: null,
@@ -149,8 +152,8 @@
             options() {
                 return {
                     filterByColumn: true,
-                    sortable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'dob', 'age', 'registeredOn', 'bhi', 'ccm'],
-                    filterable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'dob', 'phone', 'age', 'registeredOn'],
+                    sortable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'dob', 'age', 'mrn', 'registeredOn', 'bhi', 'ccm'],
+                    filterable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'dob', 'phone', 'age', 'mrn', 'registeredOn'],
                     listColumns: {
                         provider: this.providersForSelect,
                         ccmStatus: [
@@ -184,6 +187,7 @@
                         ccmStatusDate: (ascending) => iSort,
                         careplanStatus: (ascending) => iSort,
                         dob: (ascending) => iSort,
+                        mrn: (ascending) => iSort,
                         phone: (ascending) => iSort,
                         age: (ascending) => iSort,
                         registeredOn: (ascending) => iSort,
@@ -350,6 +354,7 @@
                         patient.program = patient.program_id
                         patient.program_name = (this.practices.find(practice => practice.id == patient.program_id) || {}).display_name || ''
                         patient.age = (patient.patient_info || {}).age || ''
+                        patient.mrn = (patient.patient_info || {}).mrn_number || ''
                         patient.registeredOn = moment(patient.created_at || '').format('YYYY-MM-DD')
                         patient.ccmStatusDate = (this.getStatusDate(patient) || '')
                         patient.sort_registeredOn = new Date(patient.created_at)
@@ -439,7 +444,7 @@
                 }
                 return download().then(res => {
 
-                    const str = 'name,provider,program,ccm status,careplan status,dob,phone,age,registered on,bhi,ccm,ccm status change\n'
+                    const str = 'name,provider,program,ccm status,careplan status,dob,mrn,phone,age,registered on,bhi,ccm,ccm status change\n'
                         + patients.join('\n');
                     const csvData = new Blob([str], {type: 'text/csv'});
                     const csvUrl = URL.createObjectURL(csvData);
@@ -496,6 +501,9 @@
                 const dobInput = patientListElem.querySelector('input[name="vf__dob"]')
                 dobInput.setAttribute('placeholder', 'Filter by Date of Birth')
 
+                const mrnInput = patientListElem.querySelector('input[name="vf__mrn"]')
+                mrnInput.setAttribute('placeholder', 'Filter by MRN')
+
                 const registeredOnInput = patientListElem.querySelector('input[name="vf__registeredOn"]')
                 registeredOnInput.setAttribute('placeholder', 'Filter by Registered On')
 
@@ -543,6 +551,8 @@
             Event.$on('vue-tables.filter::careplanStatus', this.activateFilters)
 
             Event.$on('vue-tables.filter::dob', this.activateFilters)
+
+            Event.$on('vue-tables.filter::mrn', this.activateFilters)
 
             Event.$on('vue-tables.filter::phone', this.activateFilters)
 
