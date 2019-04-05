@@ -7,10 +7,13 @@
 namespace App\Console\Commands;
 
 use App\Exceptions\FileNotFoundException;
+use App\Traits\RunsCommands;
 use Illuminate\Console\Command;
 
 class StoreRelease extends Command
 {
+    use RunsCommands;
+
     // The environment on which builds happen
     const BUILD_ENV = 'staging';
 
@@ -69,12 +72,13 @@ class StoreRelease extends Command
         chdir($buildDir);
 
         if ( ! file_exists('.git')) {
-            $initGit = $this->runCommand(
-                'git init'
-            );
-
+            $this->runCommand('git init');
             $this->runCommand('git remote add origin git@github.com:CircleLinkHealth/cpm-releases.git');
         }
+
+        $this->runCommand('git fetch');
+        $this->runCommand('git checkout master');
+        $this->runCommand("rm $buildFileName");
 
         chdir($basePath);
 
