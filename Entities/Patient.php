@@ -409,11 +409,6 @@ class Patient extends BaseModel
 
         return [
             'calls_per_month' => $this->preferred_calls_per_month,
-            //found in contact_window
-            //'contact_days' => $this->preferred_cc_contact_days,
-            //'contact_time' => $this->preferred_contact_time,
-
-            //'contact_timezone' => $this->preferred_contact_timezone,
             'contact_timezone' => $tzAbbr,
 
             'contact_language' => $this->preferred_contact_language,
@@ -524,7 +519,6 @@ class Patient extends BaseModel
         foreach ($nurses as $nurse) {
             //get all locations for nurse
             $nurse_programs = $nurse->user->viewableProgramIds();
-//                dd();
 
             $intersection = in_array($this->user->program_id, $nurse_programs);
 
