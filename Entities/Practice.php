@@ -6,20 +6,14 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
-use CircleLinkHealth\Core\Entities\BaseModel;
 use App\CareAmbassadorLog;
 use App\CLH\Helpers\StringManipulation;
 use App\EnrolleeCustomFilter;
-use CircleLinkHealth\Customer\Entities\Location;
-use CircleLinkHealth\Customer\Entities\Ehr;
-use CircleLinkHealth\Customer\Entities\Patient;
 use App\Traits\HasChargeableServices;
 use App\Traits\HasSettings;
-use App\Traits\SaasAccountable;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\Role;
-use CircleLinkHealth\Customer\Entities\Settings;
-use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Core\Entities\BaseModel;
+use CircleLinkHealth\Customer\Traits\SaasAccountable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
@@ -96,18 +90,23 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property-read \App\PracticeEnrollmentTips $enrollmentTips
  * @property-read string $number_with_dashes
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Media[] $media
- * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
+ * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[]
+ *     $notifications
  * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  * @property-read \CircleLinkHealth\Customer\Entities\SaasAccount|null $saasAccount
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice activeBillable()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice authUserCanAccess($softwareOnly = false)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice authUserCannotAccess()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice
+ *     authUserCanAccess($softwareOnly = false)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice
+ *     authUserCannotAccess()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice enrolledPatients()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice hasServiceCode($code)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice
+ *     hasServiceCode($code)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice query()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice whereSaasAccountId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice
+ *     whereSaasAccountId($value)
  */
 class Practice extends BaseModel implements HasMedia
 {
@@ -370,8 +369,9 @@ class Practice extends BaseModel implements HasMedia
     {
         $user = auth()->user();
         if ($softwareOnly) {
-            $roleIds = Role::getIdsFromNames(['software-only']);
+            $roleIds               = Role::getIdsFromNames(['software-only']);
             $softwareOnlyPractices = $user->practices(true, true, $roleIds)->pluck('id')->all();
+
             return $q->whereIn('id', $softwareOnlyPractices);
         } else {
             return $q->whereIn('id', $user->practices->pluck('id')->all());
