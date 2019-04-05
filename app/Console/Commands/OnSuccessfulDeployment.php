@@ -166,16 +166,34 @@ class OnSuccessfulDeployment extends Command
             return;
         }
 
-        $release    = 'release.tar.gz';
-        $releaseDir = 'releases';
+        $release     = 'release.tar.gz';
+        $releasesDir = 'releases';
+        $releaseRoot = getcwd();
 
         if ( ! file_exists($release)) {
             throw new FileNotFoundException("`$release` not found in ".getcwd(), 500);
         }
 
-        if ( ! file_exists($releaseDir)) {
-            mkdir($releaseDir);
+        if ( ! file_exists($releasesDir)) {
+            mkdir($releasesDir);
         }
+
+        chdir($releasesDir);
+
+        if ( ! file_exists(base_path('.git'))) {
+            $initGit = $this->runCommand(
+                'git init && git remote add origin git@github.com-releases:CircleLinkHealth/cpm-releases.git'
+            );
+        }
+
+        $this->runCommand(
+            'git checkout master && git pull'
+        );
+
+        // delete existing release
+        unlink($release);
+
+        chdir($releaseRoot);
 
         $moved = rename($release, getcwd().'/releases/'.$release);
 
@@ -183,13 +201,7 @@ class OnSuccessfulDeployment extends Command
             throw new \Exception("Could not move `$release` into `releases/$release`", 500);
         }
 
-        chdir($releaseDir);
-
-        if ( ! file_exists(base_path('.git'))) {
-            $initGit = $this->runCommand(
-                'git init && git remote add origin git@github.com-releases:CircleLinkHealth/cpm-releases.git'
-            );
-        }
+        chdir($releasesDir);
 
         $version = \Version::format('compact');
         $command = "git add $release && git commit -m '$version' && git push -f -u origin master";
