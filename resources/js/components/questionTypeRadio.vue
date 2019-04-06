@@ -29,6 +29,7 @@
             return {
                 possibleAnswers: this.question.type.question_type_answers,
                 questionOrder: this.question.pivot.order,
+                questionOptions: [],
             }
         },
 
@@ -37,40 +38,53 @@
                 return this.question.conditions != null;
             },
 
+            hasAnswerType() {
+                return this.question.type.question_type_answers.length !== 0;
+            },
 
+            answerIsYesOrNo() {
+
+
+            },
         },
 
 
-        methods: {
-            handleAnswer(answerVal) {
-                const questionTypeAnswerId = this.possibleAnswers.filter(possibleAnswer => {
-                    return possibleAnswer.value === answerVal;
-                }).map(answerType => answerType.id);
+            methods: {
+                handleAnswer(answerVal) {
+                    const questionTypeAnswerId = this.possibleAnswers.filter(possibleAnswer => {
+                        return possibleAnswer.value === answerVal;
+                    }).map(answerType => answerType.id);
 
-                var answer = {
-                    value_1: answerVal
-                };
+                    var answer = {
+                        value_1: answerVal
+                    };
 
-                var answerData = JSON.stringify(answer);
+                    var answerData = JSON.stringify(answer);
 
-                axios.post('/save-answer', {
-                    user_id: this.userId,
-                    survey_instance_id: this.surveyInstanceId[0],
-                    question_id: this.question.id,
-                    question_type_answer_id: questionTypeAnswerId[0],
-                    value_1: answerData,
-                })
-                    .then(function (response) {
-                        console.log(response);
+                    axios.post('/save-answer', {
+                        user_id: this.userId,
+                        survey_instance_id: this.surveyInstanceId[0],
+                        question_id: this.question.id,
+                        question_type_answer_id: questionTypeAnswerId[0],
+                        value_1: answerData,
                     })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
+                        .then(function (response) {
+                            console.log(response);
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
 
-                EventBus.$emit('showSubQuestions', answerVal, this.questionOrder, this.question.id)
+                    EventBus.$emit('showSubQuestions', answerVal, this.questionOrder, this.question.id)
+                },
             },
+
+            created() {
+                const questionOptions = this.question.type.question_type_answers.map(q => q.options);
+                this.questionOptions.push(...questionOptions);
+
+            }
         }
-    }
 </script>
 
 <style scoped>

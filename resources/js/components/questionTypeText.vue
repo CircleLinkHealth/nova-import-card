@@ -22,7 +22,7 @@
                        name="textTypeAnswer[]"
                        v-model="inputHasText[subPart.title]"
                        :placeholder="subPart.placeholder"
-                       @change="onInput()">
+                       @change="onInput">
 
 
                 <div v-for="extraFieldButtonName in extraFieldButtonNames">
@@ -51,7 +51,8 @@
             <button class="next-btn"
                     name="text"
                     id="text"
-                    type="submit">Next
+                    type="submit"
+                    @click="handleAnswer(inputHasText)">Next
             </button>
         </div>
     </div>
@@ -92,15 +93,18 @@
             },
 
             questionHasPlaceHolder() {
-                if (this.hasAnswerType) {
-                    return this.questionOptions[0].hasOwnProperty('placeholder');
+                if (this.questionHasSubParts) {
+                    const x = this.questionOptions[0].sub_parts.map(q => q.placeholder);
+                    if (x) {
+                        return true;
+                    }
                 }
                 return false;
             },
 
             questionPlaceHolder() {
                 if (this.questionHasPlaceHolder) {
-                    return this.questionOptions[0].placeholder;
+                    return this.questionOptions[0].sub_parts.map(q => q.placeholder);
                 }
                 return '';
             },
@@ -141,6 +145,29 @@
                 // this.delete(this.subParts, index);
                 this.subParts.splice(index, 1);
             },
+
+            handleAnswer(answerVal) {
+
+                var answer = [{
+                    value_1: answerVal,
+                }];
+
+                var answerData = JSON.stringify(answer);
+
+                axios.post('/save-answer', {
+                    user_id: this.userId,
+                    survey_instance_id: this.surveyInstanceId[0],
+                    question_id: this.question.id,
+                    question_type_answer_id: 0,
+                    value_1: answerData,
+                })
+                    .then(function (response) {
+                        console.log(response);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            }
         },
 
         created() {
@@ -174,7 +201,8 @@
         border: solid 1px #4aa5d2;
         background-color: #50b2e2;
     }
-    .btn-add-field{
+
+    .btn-add-field {
         width: 271px;
         height: 40px;
         font-family: Poppins;

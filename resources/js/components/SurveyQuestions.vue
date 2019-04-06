@@ -41,10 +41,12 @@
                         <div class="question-answer-type">
                             <question-type-text
                                     :question="question"
+                                    :userId="userId"
+                                    :surveyInstanceId="surveyInstanceId"
                                     v-if="question.type.type === 'text'">
                             </question-type-text>
 
-                            <question-type-checkbox
+       <!--                     <question-type-checkbox
                                     :question="question"
                                     :userId="userId"
                                     :surveyInstanceId="surveyInstanceId"
@@ -76,7 +78,7 @@
 
                             <question-type-date
                                     v-if="question.type.type === 'date'">
-                            </question-type-date>
+                            </question-type-date>-->
                         </div>
                     </div>
                 </div>

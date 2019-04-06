@@ -13,22 +13,24 @@
         <!--question with sub_parts-->
         <div class="row">
             <div v-if="questionHasSubParts"
-                 v-for="subPart in questionSubParts">
+                 v-for="(subPart, index) in questionSubParts" :key="index">
                 <input type="number"
                        class="number-field"
                        name="numberTypeAnswer[]"
-                       v-model="inputNumber"
+                       v-model="inputNumber[index]"
                        :placeholder="subPart.placeholder">
+
+                <!--next button-->
+                <div v-if="inputNumber > 1">
+                    <button class="next-btn"
+                            name="number"
+                            id="number"
+                            type="submit"
+                            @click="handleAnswer(inputNumber, subPart.key)">Next
+                    </button>
+
+                </div>
             </div>
-        </div>
-        <!--next button-->
-        <div v-if="inputNumber > 1">
-            <button class="next-btn"
-                    name="number"
-                    id="number"
-                    type="submit"
-                    @click="handleAnswer(inputNumber)">Next
-            </button>
         </div>
     </div>
 </template>
@@ -47,7 +49,7 @@
 
         data() {
             return {
-                inputNumber: '',
+                inputNumber: [],
                 questionOptions: [],
                 showNextButton: false
             }
@@ -88,15 +90,16 @@
                 }
                 return '';
             },
+
         },
 
         methods: {
-            handleAnswer(answerVal) {
+            handleAnswer(answerVal, key) {
 
                 var answer = [{
-                    value_1: answerVal,
+                    [key]: answerVal,
                 }];
-
+                console.log(answer);
                 var answerData = JSON.stringify(answer);
 
                 axios.post('/save-answer', {
