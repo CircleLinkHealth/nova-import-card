@@ -540,7 +540,7 @@ class Patient extends BaseModel
             'id'         => $this->id,
             'user_id'    => $this->user_id,
             'ccm_status' => $this->ccm_status,
-            'birth_date' => $this->birth_date,
+            'birth_date' => presentDate($this->birth_date, false),
             'age'        => $this->birth_date
                 ? (Carbon::now()->year - Carbon::parse($this->birth_date)->year)
                 : 0,
