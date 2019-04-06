@@ -100,7 +100,7 @@
                     [key]: answerVal,
                 }];
                 console.log(answer);
-                var answerData = JSON.stringify(answer);
+                var answerData = JSON.stringify({answer});
 
                 axios.post('/save-answer', {
                     user_id: this.userId,
