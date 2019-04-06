@@ -1584,10 +1584,6 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses' => 'OpsDashboardController@getPausedPatientList',
                     'as'   => 'OpsDashboard.pausedPatientList',
                 ]);
-//                Route::get('/patient-list/{type}/{date}/{dateType}/{practiceId?}', [
-//                    'uses' => 'OpsDashboardController@getList',
-//                    'as'   => 'OpsDashboard.patientList'
-//                ]);
                 Route::get('/patients-by-practice', [
                     'uses' => 'OpsDashboardController@getPatientsByPractice',
                     'as'   => 'OpsDashboard.patientsByPractice',
