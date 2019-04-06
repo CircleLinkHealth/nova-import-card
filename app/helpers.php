@@ -1333,7 +1333,7 @@ if ( ! function_exists('presentDate')) {
         }
 
         return $withTime
-            ? $carbonDate->format('m-d-Y h:iA')
-            : $carbonDate->format('m-d-Y');
+            ? $carbonDate->format('Y-m-d h:iA')
+            : $carbonDate->format('Y-m-d');
     }
 }
