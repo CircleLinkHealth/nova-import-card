@@ -5,12 +5,14 @@
                 <input class="check-box"
                        type="checkbox"
                        name="checkboxTypeAnswer"
-                       @click="collectAnswers(checkBox.value)">
+                       :value="checkBox.value"
+                       v-model="checkedAnswers"
+                       @click="showNextButton = true">
             </label>
         </div>
 
         <!--next button-->
-        <div v-if="wasClicked">
+        <div v-if="showNextButton">
             <button class="next-btn"
                     name="text"
                     id="text"
@@ -33,21 +35,16 @@
         data() {
             return {
                 checkBoxValues: this.question.type.question_type_answers,
-                wasClicked: false,
-                clickedAnswers: [],
+                showNextButton: false,
+                checkedAnswers: [],
+                selectedAnswers: [],
             }
         },
-        computed: {
-
-        },
+        computed: {},
 
         methods: {
-            collectAnswers(answerVal) {
-                EventBus.$emit('handleTextType', answerVal);
-                this.wasClicked = true;
-            },
-            handleAnswers(){
-                var answer = this.clickedAnswers;
+            handleAnswers() {
+                var answer = this.checkedAnswers;
                 var answerData = JSON.stringify({answer});
                 axios.post('/save-answer', {
                     user_id: this.userId,
@@ -61,13 +58,12 @@
                     })
                     .catch(function (error) {
                         console.log(error);
-                    });}
+                    });
+            }
         },
 
         created() {
-            EventBus.$on('handleTextType', (answerVal) => {
-                this.clickedAnswers.push(answerVal)
-            });
+
         },
     }
 </script>
