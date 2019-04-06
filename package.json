@@ -14,7 +14,7 @@
     "test": "jest --verbose --coverage",
     "watch-test": "npm run test -- --watch",
     "postinstall": "npm run bower_install",
-    "bower_install": "node_modules/bower/bin/bower -V install"
+    "bower_install": "./node_modules/bower/bin/bower -V install"
   },
   "jest": {
     "verbose": true,
