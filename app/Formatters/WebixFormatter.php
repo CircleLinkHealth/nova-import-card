@@ -44,7 +44,7 @@ class WebixFormatter implements ReportFormatter
                 'comment'       => $note->body,
                 'logged_from'   => 'note',
                 'type_name'     => $note->type,
-                'performed_at'  => $note->performed_at->toDateString(),
+                'performed_at'  => presentDate($note->performed_at, false),
                 'provider_name' => $billingProvider,
                 'tags'          => '',
             ];
@@ -88,7 +88,7 @@ class WebixFormatter implements ReportFormatter
                 'comment'       => $appointment->comment,
                 'logged_from'   => 'appointment',
                 'type_name'     => $appointment->type,
-                'performed_at'  => Carbon::parse($appointment->date)->toDateString(),
+                'performed_at'  => presentDate($appointment->date, false),
                 'provider_name' => $billingProvider,
                 'tags'          => '',
             ];
@@ -105,7 +105,7 @@ class WebixFormatter implements ReportFormatter
                 'comment'       => $activity->getCommentForActivity() ?? '',
                 'logged_from'   => 'manual_input',
                 'type_name'     => $activity->type,
-                'performed_at'  => $activity->performed_at,
+                'performed_at'  => presentDate($activity->performed_at, false),
                 'provider_name' => $billingProvider,
                 'tags'          => '',
             ];
