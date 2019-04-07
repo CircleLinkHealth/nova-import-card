@@ -9,23 +9,23 @@
                        v-model="checkedAnswers"
                        @click="showNextButton = true">
             </label>
+
+            <!--next button-->
+            <div v-if="showNextButton">
+                <button class="next-btn"
+                        name="text"
+                        id="text"
+                        type="submit"
+                        @click="handleAnswers(checkBox.options.key)">Next
+                </button>
+            </div>
         </div>
 
-        <!--next button-->
-        <div v-if="showNextButton">
-            <button class="next-btn"
-                    name="text"
-                    id="text"
-                    type="submit"
-                    @click="handleAnswers">Next
-            </button>
-        </div>
+
     </div>
 </template>
 
 <script>
-
-    import {EventBus} from "../event-bus";
 
     export default {
         name: "questionTypeCheckbox",
@@ -37,15 +37,18 @@
                 checkBoxValues: this.question.type.question_type_answers,
                 showNextButton: false,
                 checkedAnswers: [],
-                selectedAnswers: [],
             }
         },
         computed: {},
 
         methods: {
-            handleAnswers() {
-                var answer = this.checkedAnswers;
-                var answerData = JSON.stringify({answer});
+            handleAnswers(key) {
+                var answer = {};
+                answer[key] = this.checkedAnswers;
+
+                console.log(answer);
+                var answerData = JSON.stringify(answer);
+
                 axios.post('/save-answer', {
                     user_id: this.userId,
                     survey_instance_id: this.surveyInstanceId[0],

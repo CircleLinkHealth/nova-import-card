@@ -37,7 +37,7 @@
 
 <script>
     import {EventBus} from "../event-bus";
-    import {saveAnswer} from "../save-answer";
+   /* import {saveAnswer} from "../save-answer";*/
 
     export default {
         name: "questionTypeNumber",
@@ -96,11 +96,13 @@
         methods: {
             handleAnswer(answerVal, key) {
 
-                var answer = [{
-                    [key]: answerVal,
-                }];
-                console.log(answer);
-                var answerData = JSON.stringify({answer});
+
+              /*  var answer = {};
+                answer[key] = answerVal;*/
+                 var answer = {
+                     [key]: answerVal,
+                 };
+                var answerData = JSON.stringify(answer);
 
                 axios.post('/save-answer', {
                     user_id: this.userId,

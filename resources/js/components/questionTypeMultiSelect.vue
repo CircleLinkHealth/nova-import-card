@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="row">
-            <div class="checkbox-dropdown col-lg-4" v-for="answer in lastQuestionanswers">
+            <div class="checkbox-dropdown col-lg-4" v-for="answer in previousQuestionAnswers">
                 {{answer.name}}
                 <div v-for="checkBoxOption in multiSelectOptions">
                     <label>
@@ -21,7 +21,7 @@
 
     export default {
         name: "questionTypeMultiSelect",
-        props: ['question'],
+        props: ['question', 'userId', 'surveyInstanceId'],
         components: {},
 
         data() {
@@ -29,7 +29,7 @@
                 checkBoxValues: this.question.type.question_type_answers[0].value,
                 checkBoxOptions: [],
                 multiSelectOptions: [],
-                lastQuestionanswers: [
+                previousQuestionAnswers: [
                     {
                         name: 'Colorectal Cancer'
                     },
