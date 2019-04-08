@@ -350,11 +350,6 @@ class UserController extends Controller
         ]);
     }
 
-    public function getPatients()
-    {
-        return User::all();
-    }
-
     /**
      * Display a listing of the resource.
      *
