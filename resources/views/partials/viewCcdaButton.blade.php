@@ -1,4 +1,4 @@
-@if(App\Models\MedicalRecords\Ccda::wherePatientId($patient->id)->exists())
+@if($patient->hasCcda())
     <div class="pull-right">
         <a href="{{ route('get.CCDViewerController.showByUserId', [ 'userId' => $patient->id]) }}"
            class="btn btn-primary btn-xs"
