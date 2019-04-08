@@ -9,9 +9,6 @@ BRANCH=$4
 RELEASE_ID=$5
 PREVIOUS_REVISION=$6
 
-# uncompress tarfile
-tar -xzf $RELEASE/release.tar.gz
-
 # Create a shared storage directory and symlink it to the project root
 if [ ! -d "$SHARED/storage" ]; then
   mkdir -p $SHARED/storage
