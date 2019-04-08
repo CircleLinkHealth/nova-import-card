@@ -10,7 +10,7 @@ use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Customer\Entities\Holiday;
 use CircleLinkHealth\Customer\Entities\WorkHours;
-use App\Traits\MakesOrReceivesCalls;
+use CircleLinkHealth\Customer\Traits\MakesOrReceivesCalls;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
 use CircleLinkHealth\Customer\Entities\NurseContactWindow;
