@@ -94,8 +94,8 @@
 
             questionHasPlaceHolder() {
                 if (this.questionHasSubParts) {
-                    const x = this.questionOptions[0].sub_parts.map(q => q.placeholder);
-                    if (x) {
+                    const placeholder = this.questionOptions[0].sub_parts.map(q => q.placeholder);
+                    if (placeholder) {
                         return true;
                     }
                 }
@@ -152,7 +152,7 @@
                     value_1: answerVal,
                 }];
 
-                var answerData = JSON.stringify({answer});
+                var answerData = JSON.stringify(answer);
 
                 axios.post('/save-answer', {
                     user_id: this.userId,

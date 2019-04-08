@@ -7,20 +7,19 @@
                        name="checkboxTypeAnswer"
                        :value="checkBox.value"
                        v-model="checkedAnswers"
-                       @click="showNextButton = true">
+                       @click="handleClick">
             </label>
 
-            <!--next button-->
-            <div v-if="showNextButton">
-                <button class="next-btn"
-                        name="text"
-                        id="text"
-                        type="submit"
-                        @click="handleAnswers(checkBox.options.key)">Next
-                </button>
-            </div>
         </div>
-
+        <!--next button-->
+        <div v-if="showNextButton">
+            <button class="next-btn"
+                    name="text"
+                    id="text"
+                    type="submit"
+                    @click="handleAnswers">Next
+            </button>
+        </div>
 
     </div>
 </template>
@@ -37,17 +36,33 @@
                 checkBoxValues: this.question.type.question_type_answers,
                 showNextButton: false,
                 checkedAnswers: [],
+                answerTypeOptions: [],
+                keyForValues: {}
             }
         },
         computed: {},
 
         methods: {
-            handleAnswers(key) {
-                var answer = {};
-                answer[key] = this.checkedAnswers;
+            handleClick() {
+                this.showNextButton = true;
+            },
 
-                console.log(answer);
-                var answerData = JSON.stringify(answer);
+            handleAnswers() {
+
+         /*       var keyValuePair = {},
+                    i,
+                    keys = this.answerTypeOptions.map(option => option.key),
+                    values = this.checkedAnswers,
+                    length = values.length;
+
+                for (i = 0; i < length; i++) {
+                    keyValuePair[keys[i]] = values[i];
+                }
+
+                console.log(keys, values);
+                console.log({keyValuePair});*/
+
+                var answerData = JSON.stringify(this.checkedAnswers);
 
                 axios.post('/save-answer', {
                     user_id: this.userId,
@@ -66,7 +81,8 @@
         },
 
         created() {
-
+            const options = this.checkBoxValues.map(checkBoxValue => checkBoxValue.options);
+            this.answerTypeOptions.push(...options);
         },
     }
 </script>

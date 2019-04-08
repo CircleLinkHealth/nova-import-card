@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Answer;
 use App\Http\Requests\GetSurvey;
-use App\Http\Requests\StoreAnswer;
 use App\Services\SurveyService;
 use Illuminate\Http\Request;
 
@@ -29,9 +29,11 @@ class SurveyController extends Controller
             'data'    => $userWithSurveyData->toArray(),
         ], 200);
     }
+
     //i have disabled storeAnswer since we are not using any auth scaffolding yet
-    public function storeAnswer(/*StoreAnswer*/ Request $request)
-    {
+    public function storeAnswer(/*StoreAnswer*/
+        Request $request
+    ) {
         $answer = $this->service->updateOrCreateAnswer($request->input());
 
         if ( ! $answer) {
@@ -43,5 +45,11 @@ class SurveyController extends Controller
             'survey_status' => $answer,
         ], 200);
 
+    }
+
+    public function getPreviousAnswer()
+    {
+        $previousQuestionAnswer = Answer::where('question_id', '26')->get();
+        dd($previousQuestionAnswer);
     }
 }

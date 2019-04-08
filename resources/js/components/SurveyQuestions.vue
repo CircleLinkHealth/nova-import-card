@@ -39,7 +39,7 @@
                         <br>
                         <!--Questions Answer Type-->
                         <div class="question-answer-type">
-                          <!--  <question-type-text
+                            <question-type-text
                                     :question="question"
                                     :userId="userId"
                                     :surveyInstanceId="surveyInstanceId"
@@ -55,6 +55,8 @@
 
                             <question-type-muti-select
                                     :question="question"
+                                    :userId="userId"
+                                    :surveyInstanceId="surveyInstanceId"
                                     v-if="question.type.type === 'multi_select'">
                             </question-type-muti-select>
 
@@ -67,7 +69,7 @@
                                     :userId="userId"
                                     :surveyInstanceId="surveyInstanceId"
                                     v-if="question.type.type === 'number'">
-                            </question-type-number>-->
+                            </question-type-number>
 
                             <question-type-radio
                                     :question="question"
