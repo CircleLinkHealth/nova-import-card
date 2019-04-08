@@ -186,11 +186,13 @@ function formatTime($time)
                                                         <td>{{ $call->call_time_start }}</td>
                                                         <td>{{ $call->call_time_end }}</td>
                                                         <td>
-                                                            <?php
-                                                            $dateTime = new DateTime();
-                                                            $dateTime->setTimeZone(new DateTimeZone($call->timezone));
-                                                            echo '<span style="font-weight:bold;color:green;">'.$dateTime->format('T').'</a>';
-                                                            ?>
+                                                            @if($call->timezone)
+                                                                <?php
+                                                                    $dateTime = new DateTime();
+                                                                    $dateTime->setTimeZone(new DateTimeZone($call->timezone));
+                                                                    echo '<span style="font-weight:bold;color:green;">'.$dateTime->format('T').'</a>';
+                                                                ?>
+                                                            @endif
                                                         </td>
                                                         <td>
                                                             {{ presentDate($call->last_call) }}
