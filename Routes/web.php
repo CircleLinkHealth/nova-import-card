@@ -8,7 +8,7 @@ Route::middleware('auth')->group(function() {
         ]);
     });
     
-    Route::group(['prefix' => '2fa'], function () {
+    Route::group(['prefix' => 'api/2fa'], function () {
         Route::group(['prefix' => 'token'], function () {
             Route::post('sms', [
                 'uses' => 'AuthyController@sendTokenViaSms',
