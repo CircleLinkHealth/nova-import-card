@@ -92,8 +92,8 @@ class AppServiceProvider extends ServiceProvider
         //Bind database notification classes to local
         $this->app->bind(DatabaseChannel::class, \App\Notifications\Channels\DatabaseChannel::class);
         $this->app->bind(DatabaseNotification::class, \App\DatabaseNotification::class);
-        $this->app->bind(HasDatabaseNotifications::class, \App\Notifications\HasDatabaseNotifications::class);
-        $this->app->bind(Notifiable::class, \App\Notifications\Notifiable::class);
+        $this->app->bind(HasDatabaseNotifications::class, \CircleLinkHealth\Customer\Traits\HasDatabaseNotifications::class);
+        $this->app->bind(Notifiable::class, \CircleLinkHealth\Customer\Traits\Notifiable::class);
         $this->app->bind(
             HtmlToPdfService::class,
             function () {
