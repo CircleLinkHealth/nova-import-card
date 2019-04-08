@@ -189,12 +189,16 @@ class ActivityController extends Controller
     }
 
     public function show(
-        Request $input,
         $patientId,
         $actId
     ) {
         $patient = User::find($patientId);
         $act     = Activity::find($actId);
+        
+        if ($act->patient_id !== $patient->id) {
+            abort(400, "Not found");
+        }
+        
         //Set up note pack for view
         $activity                  = [];
         $messages                  = \Session::get('messages');
@@ -207,9 +211,6 @@ class ActivityController extends Controller
 
         $careteam_info = [];
         $careteam_ids  = $patient->getCareTeam();
-        if ((false !== @unserialize($careteam_ids))) {
-            $careteam_ids = unserialize($careteam_ids);
-        }
         if ( ! empty($careteam_ids) && is_array($careteam_ids)) {
             foreach ($careteam_ids as $id) {
                 $careteam_info[$id] = User::find($id)->getFullName();
