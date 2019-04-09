@@ -192,8 +192,8 @@ class ActivityController extends Controller
         $patientId,
         $actId
     ) {
-        $patient = User::find($patientId);
-        $act     = Activity::find($actId);
+        $patient = User::findOrFail($patientId);
+        $act     = Activity::findOrFail($actId);
         
         if ($act->patient_id !== $patient->id) {
             abort(400, "Not found");
