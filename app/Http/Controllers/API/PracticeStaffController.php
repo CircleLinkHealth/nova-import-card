@@ -70,8 +70,8 @@ class PracticeStaffController extends Controller
             ->whereHas('practices', function ($q) use (
                                  $primaryPractice
                              ) {
-                                 $q->where('id', '=', $primaryPractice->id);
-                             })
+                $q->where('id', '=', $primaryPractice->id);
+            })
             ->with('roles')
             ->get()
             ->sortBy('first_name')
@@ -106,25 +106,25 @@ class PracticeStaffController extends Controller
             ->orHaving('name', '=', User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER)
             ->get()
             ->mapToGroups(function ($user) {
-                                                return [$user->pivot->name => $user->id];
-                                            })
+                return [$user->pivot->name => $user->id];
+            })
                                        ?? null;
 
         $forwardCarePlanApprovalEmailsToContactUsers = $user->forwardAlertsTo()
             ->having(
-                                                                'name',
-                                                                '=',
-                                                                User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER
+                'name',
+                '=',
+                User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER
                                                             )
             ->orHaving(
-                                                                'name',
-                                                                '=',
-                                                                User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER
+                'name',
+                '=',
+                User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER
                                                             )
             ->get()
             ->mapToGroups(function ($user) {
-                                                                return [$user->pivot->name => $user->id];
-                                                            })
+                return [$user->pivot->name => $user->id];
+            })
                                                        ?? null;
 
         return [
@@ -190,7 +190,7 @@ class PracticeStaffController extends Controller
             'first_name'   => $formData['first_name'],
             'last_name'    => $formData['last_name'],
             'display_name' => "{$formData['first_name']} {$formData['last_name']}",
-            'suffix'       => $formData['suffix'],
+            'suffix'       => ! empty($formData['suffix']) ? $formData['suffix'] : null,
             'user_status'  => 1,
         ]);
 
