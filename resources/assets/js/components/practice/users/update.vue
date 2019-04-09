@@ -39,12 +39,35 @@
                     </div>
 
                     <div class="input-field col s4">
-                        <v-input type="email" label="Email" v-model="formData.email" name="email"
-                                 required></v-input>
+                        <material-select v-model="formData.suffix"
+                                         select-text="Select suffix"
+                                         id="suffix"
+                                         name="suffix"
+                                         class="form-control input-md">
+                            <option value="">Non-clinical</option>
+                            <option value="MD">MD</option>
+                            <option value="DO">DO</option>
+                            <option value="NP">NP</option>
+                            <option value="PA">PA</option>
+                            <option value="RN">RN</option>
+                            <option value="LPN">LPN</option>
+                            <option value="PN">PN</option>
+                            <option value="CNA">CNA</option>
+                            <option value="MA">MA</option>
+                        </material-select>
+
+                        <label for="suffix">Suffix</label>
                     </div>
                 </div>
 
                 <div class="row">
+                    <div class="input-field col s6">
+                        <v-input type="email" label="Email" v-model="formData.email" name="email"
+                                 required></v-input>
+                    </div>
+                </div>
+                <div class="row">
+
                     <div class="input-field col s6">
                         <material-select v-model="formData.role_names" name="role_names" id="role_names"
                                          :multiple="true"
@@ -98,7 +121,7 @@
                     </div>
                 </div>
 
-                <div class="row">
+                <div v-if="formData.role_names.includes('provider')" class="row">
                     <h6 class="col s12">
                         Whom should we notify for clinical issues regarding provider’s patients?
                     </h6>
