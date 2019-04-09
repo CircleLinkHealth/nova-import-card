@@ -313,6 +313,7 @@
                     'last_name': '',
                     'first_name': '',
                     'full_name': '',
+                    'suffix': '',
                     'phone_number': '',
                     'phone_extension': '',
                     'phone_type': 1,
