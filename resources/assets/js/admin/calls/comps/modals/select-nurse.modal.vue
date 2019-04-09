@@ -126,7 +126,8 @@
                                 type: 'error',
                                 text: reason
                             })
-                            return Promise.reject(reason)
+                            //no need to reject, since the okHandler, used by modal.vue does not read the returned promise (might not be a promise at all times)
+                            //return Promise.reject(reason);
                         }
                     }
                 }
