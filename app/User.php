@@ -7,6 +7,10 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Lab404\Impersonate\Models\Impersonate;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
+
+/*use CircleLinkHealth\Customer\Entities\User as CLHUser;
+
+class User extends CLHUser*/
 class User extends Authenticatable
 {
     use Notifiable;
