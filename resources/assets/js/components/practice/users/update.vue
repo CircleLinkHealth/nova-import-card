@@ -40,7 +40,7 @@
 
                     <div class="input-field col s4">
                         <material-select v-model="formData.suffix"
-                                         select-text="Select suffix"
+                                         select-text="Select Clinical Level"
                                          id="suffix"
                                          name="suffix"
                                          class="form-control input-md">
@@ -56,19 +56,19 @@
                             <option value="MA">MA</option>
                         </material-select>
 
-                        <label for="suffix">Suffix</label>
+                        <label for="suffix">Clinical Level</label>
                     </div>
                 </div>
 
                 <div class="row">
-                    <div class="input-field col s6">
+
+                </div>
+                <div class="row">
+                    <div class="input-field col s4">
                         <v-input type="email" label="Email" v-model="formData.email" name="email"
                                  required></v-input>
                     </div>
-                </div>
-                <div class="row">
-
-                    <div class="input-field col s6">
+                    <div class="input-field col s4">
                         <material-select v-model="formData.role_names" name="role_names" id="role_names"
                                          :multiple="true"
                                          select-text="Select all that apply"
@@ -85,8 +85,8 @@
                         <label for="sendBillingReports">Send Billing Reports</label>
                     </div>
 
-                    <div class="input-field col s6"></div>
-                    <div class="input-field col s6">
+                    <div class="input-field col s4"></div>
+                    <div class="input-field col s4">
                         <input type="checkbox" class="filled-in" id="canApproveAllCareplans"
                                v-model="formData.canApproveAllCareplans" :checked="formData.canApproveAllCareplans"/>
                         <label for="canApproveAllCareplans">Grant Rights to approve all CarePlans</label>
