@@ -260,7 +260,7 @@
             },
             getPractices() {
                 this.loaders.practices = true
-                return this.cache().get(rootUrl(`api/practices`)).then(response => {
+                return this.cache().get(rootUrl(`api/practices?admin-only=true`)).then(response => {
                     this.loaders.practices = false
                     console.log('add-call:practices', response)
                     return this.practices = (response || []).sort((a, b) => {
