@@ -466,7 +466,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "32fc77889d733373c167777e8f8d8e9d46e7cafc"
+                "reference": "269df9ef9186f5b949aa167c9bd49bb240787126"
             },
             "require": {
                 "spiritix/lada-cache": "^2.1",
@@ -492,7 +492,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-04-10T07:57:24+00:00"
+            "time": "2019-04-10T10:19:45+00:00"
         },
         {
             "name": "circlelinkhealth/customer",
@@ -500,7 +500,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "2ebd276918af23b52ea234c3f65f54c35019ec37"
+                "reference": "5a884c27ff994ecaf0e8464e6808f199a5e51d48"
             },
             "require": {
                 "circlelinkhealth/core": "dev-master",
@@ -527,7 +527,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-04-10T08:08:03+00:00"
+            "time": "2019-04-10T09:41:39+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
@@ -535,7 +535,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-raygun.git",
-                "reference": "ae3fdd5da620976ed26859e1b9ca547d8c509235"
+                "reference": "7f4697ef6e5c1d96b68d09f72f087837c692de9a"
             },
             "require": {
                 "illuminate/contracts": "^5.0",
@@ -562,7 +562,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-04-01T11:41:51+00:00"
+            "time": "2019-04-10T10:30:49+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking",
@@ -9113,16 +9113,16 @@
         },
         {
             "name": "composer/composer",
-            "version": "1.8.4",
+            "version": "1.8.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "bc364c2480c17941e2135cfc568fa41794392534"
+                "reference": "949b116f9e7d98d8d276594fed74b580d125c0e6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/bc364c2480c17941e2135cfc568fa41794392534",
-                "reference": "bc364c2480c17941e2135cfc568fa41794392534",
+                "url": "https://api.github.com/repos/composer/composer/zipball/949b116f9e7d98d8d276594fed74b580d125c0e6",
+                "reference": "949b116f9e7d98d8d276594fed74b580d125c0e6",
                 "shasum": ""
             },
             "require": {
@@ -9189,7 +9189,7 @@
                 "dependency",
                 "package"
             ],
-            "time": "2019-02-11T09:52:10+00:00"
+            "time": "2019-04-09T15:46:48+00:00"
         },
         {
             "name": "composer/semver",
