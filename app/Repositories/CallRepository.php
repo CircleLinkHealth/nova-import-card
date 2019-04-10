@@ -7,8 +7,8 @@
 namespace App\Repositories;
 
 use App\Call;
-use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\User;
 
 class CallRepository
 {
@@ -77,7 +77,7 @@ class CallRepository
     {
         $users = User::ofType('participant')
             ->whereHas('patientInfo', function ($q) {
-                $q->enrolled();
+                $q->enrolledOrPaused();
             });
         if ($practiceId) {
             $users = $users->ofPractice($practiceId);
@@ -109,7 +109,7 @@ class CallRepository
     {
         $users = User::ofType('participant')
             ->whereHas('patientInfo', function ($q) {
-                $q->enrolled();
+                $q->enrolledOrPaused();
             });
         if ($practiceId) {
             $users = $users->ofPractice($practiceId);
