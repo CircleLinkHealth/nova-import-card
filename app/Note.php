@@ -13,6 +13,7 @@ use App\Notifications\NoteForwarded;
 use App\Traits\IsAddendumable;
 use App\Traits\PdfReportTrait;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -50,9 +51,8 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereUpdatedAt($value)
  * @mixin \Eloquent
  *
- * @property \CircleLinkHealth\Customer\Entities\User|null                                        $logger
- * @property \App\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[]       $revisionHistory
+ * @property \CircleLinkHealth\Customer\Entities\User|null                                  $logger
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note emergency($yes = true)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note filter(\App\Filters\QueryFilters $filters)
@@ -65,7 +65,8 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  */
 class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfReport
 {
-    use Filterable, IsAddendumable,
+    use Filterable,
+        IsAddendumable,
         PdfReportTrait;
 
     protected $dates = [
@@ -125,27 +126,31 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
             $recipients->push(User::find(948));
         }
 
-        $recipients->unique()
-            ->values()
-            ->map(function ($carePersonUser) {
-                optional($carePersonUser)->notify(new NoteForwarded($this, ['mail']));
-            });
-
-        $channels = [];
+        $channelsForLocation = [];
 
         if ($cpmSettings->efax_pdf_notes) {
-            $channels[] = FaxChannel::class;
+            $channelsForLocation[] = FaxChannel::class;
         }
 
         if ($cpmSettings->dm_pdf_notes) {
-            $channels[] = DirectMailChannel::class;
+            $channelsForLocation[] = DirectMailChannel::class;
         }
 
-        if ( ! $notifyCareteam || empty($channels)) {
+        $channelsForUsers = array_merge($channelsForLocation, ['mail']);
+
+        // Notify Users
+        $recipients->unique()
+            ->values()
+            ->map(function ($carePersonUser) use ($channelsForUsers) {
+                optional($carePersonUser)->notify(new NoteForwarded($this, $channelsForUsers));
+            });
+
+        if ( ! $notifyCareteam || empty($channelsForLocation)) {
             return;
         }
 
-        optional($this->patient->patientInfo->location)->notify(new NoteForwarded($this, $channels));
+        // Notify location
+        optional($this->patient->patientInfo->location)->notify(new NoteForwarded($this, $channelsForLocation));
     }
 
     public function link()
