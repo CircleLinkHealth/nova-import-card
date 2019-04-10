@@ -11,7 +11,7 @@
         <v-client-table ref="tblPatientList" :data="tableData" :columns="columns" :options="options"
                         id="patient-list-table">
             <template slot="name" slot-scope="props">
-                <div><a :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')">{{props.row.name}}</a>
+                <div><a :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')" target="_blank">{{props.row.name}}</a>
                 </div>
             </template>
             <template slot="provider" slot-scope="props">
