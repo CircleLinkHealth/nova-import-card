@@ -20,7 +20,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
         $adminRole = Role::whereName($roleName)->first();
 
         $permissions = Permission::whereNotIn('name', $this->doNotGrantThesePermissionsToSuperAdmins())
-                                 ->get();
+            ->get();
 
         $adminRole->perms()->sync($permissions->pluck('id')->all());
     }
@@ -213,6 +213,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'addendum.read',
                     'role.read',
                     'offlineActivity.create',
+                    'change-patient-enrollment-status',
                 ],
             ],
             [
@@ -866,6 +867,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'note.send',
                     'role.read',
                     'offlineActivity.create',
+                    'change-patient-enrollment-status',
                 ],
             ],
             [
@@ -1267,7 +1269,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
             $role = Role::updateOrCreate(['name' => $role['name']], $role);
 
             $permissionIds = Permission::whereIn('name', $permissionsArr)
-                                       ->pluck('id')->all();
+                ->pluck('id')->all();
 
             $role->perms()->sync($permissionIds);
 
