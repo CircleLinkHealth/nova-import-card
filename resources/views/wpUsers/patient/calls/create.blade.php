@@ -3,10 +3,6 @@
 @section('title', 'Patient Call Scheduler')
 @section('activity', 'Patient Call Scheduler')
 
-<?php
-
-?>
-
 @section('content')
     @push('scripts')
         <script>
@@ -16,6 +12,10 @@
                     $("#confirmButtonModal").modal({    backdrop: 'static',    keyboard: false});
                     e.preventDefault();
                     return false;
+                });
+
+                $('#sched-call-form').on('submit', function () {
+                    $(':submit').attr('disabled', true);
                 });
             });
         </script>

@@ -36,18 +36,19 @@
 </head>
 <body>
 
-    <nav class="navbar primary-navbar col-lg-12 col-lg-offset-0 col-sm-4 col-sm-offset-4">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a href="{{ url('/') }}" class="navbar-brand"><img src="{{ mix('/img/clh_logo_lt.png') }}"
-                                                                   alt="CarePlan Manager" width='50px'
-                                                                   style="position:relative;top:-5px"></a>
-                <a href="{{ url('/') }}" class="navbar-title Xcollapse navbar-collapse navbar-text navbar-left">CarePlan<span
-                            class="thin">Manager™</span></a>
-            </div>
-        </div><!-- /container-fluid -->
+<nav class="navbar primary-navbar col-lg-12 col-lg-offset-0 col-sm-4 col-sm-offset-4">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a href="{{ url('/') }}" class="navbar-brand"><img src="{{ mix('/img/clh_logo_lt.png') }}"
+                                                               alt="CarePlan Manager" width='50px'
+                                                               style="position:relative;top:-5px"></a>
+            <a href="{{ url('/') }}"
+               class="navbar-title Xcollapse navbar-collapse navbar-text navbar-left">CarePlan<span
+                        class="thin">Manager™</span></a>
+        </div>
+    </div><!-- /container-fluid -->
 
-    </nav><!-- /navbar -->
+</nav><!-- /navbar -->
 
 <div class="container">
     <section class="main-form col-lg-12 col-sm-11">
@@ -63,7 +64,8 @@
                         <h2 class="col-sm-4">CarePlan<span class="text-thin">Manager&trade;</span></h2>
                     </div>
                     <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
-                        <form class="" role="form" method="POST" action="{{ url('/auth/login') }}" autocomplete="off">
+                        <form id="login-form" role="form" method="POST" action="{{ url('/auth/login') }}"
+                              autocomplete="off">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
                             <div class="col-lg-12 col-sm-10">
@@ -83,7 +85,7 @@
 
                             <div class="form-group" style="margin-top:25px;">
                                 <div class="col-md-12 text-center">
-                                    <button type="submit" class="btn btn-primary btn-large"
+                                    <button id="login-submit-button" type="submit" class="btn btn-primary btn-large"
                                             style="background-color: #50B2E2;">Log In
                                     </button>
                                     <br/>
@@ -99,6 +101,14 @@
         </div>
     </section>
 </div>
+
+<script>
+    const loginForm = document.getElementById('login-form');
+    loginForm.onsubmit = function () {
+        const loginButton = document.getElementById('login-submit-button');
+        loginButton.setAttribute('disabled', 'true');
+    };
+</script>
 
 </body>
 </html>
