@@ -27,8 +27,6 @@ Route::group(['prefix' => 'algo'], function () {
     Route::get('rescheduler', 'AlgoTestController@algoRescheduler');
 });
 
-Route::get('ajax/patients', 'UserController@getPatients');
-
 Route::post('account/login', 'Patient\PatientController@patientAjaxSearch');
 
 Route::get('/', 'WelcomeController@index', [
@@ -1692,27 +1690,6 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'Admin\AppConfigController@destroy',
                 'as'   => 'admin.appConfig.destroy',
             ])->middleware('permission:appConfig.delete');
-        });
-
-        // activities
-        Route::group([
-            'middleware' => [
-                'permission:activity.read',
-            ],
-        ], function () {
-            Route::resource('activities', 'ActivityController');
-            Route::get('activities/create', [
-                'uses' => 'ActivityController@create',
-                'as'   => 'admin.activities.create',
-            ]);
-            Route::get('activities/{id}', [
-                'uses' => 'ActivityController@show',
-                'as'   => 'admin.activities.show',
-            ]);
-            Route::get('activities/{id}/edit', [
-                'uses' => 'ActivityController@edit',
-                'as'   => 'admin.activities.edit',
-            ]);
         });
 
         // users

@@ -103,15 +103,17 @@ class NotesController extends Controller
                 ->where('type', '=', 'task')
                 ->where('inbound_cpm_id', '=', $patientId)
                 ->where('outbound_cpm_id', '=', $author_id)
-                ->select([
-                    'id',
-                    'type',
-                    'sub_type',
-                    'attempt_note',
-                    'scheduled_date',
-                    'window_start',
-                    'window_end',
-                ])
+                ->select(
+                                           [
+                                               'id',
+                                               'type',
+                                               'sub_type',
+                                               'attempt_note',
+                                               'scheduled_date',
+                                               'window_start',
+                                               'window_end',
+                                           ]
+                                       )
                 ->get();
 
             $isCareCoach = Auth::user()->isCareCoach();
@@ -153,34 +155,40 @@ class NotesController extends Controller
             $date = 0;
         }
 
-        $patient = User::with([
-            'activities' => function ($q) use ($date) {
-                $q->where('logged_from', '=', 'manual_input')
-                    ->where('performed_at', '>=', $date)
-                    ->with('meta')
-                    ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
-                    ->orderBy('performed_at', 'desc');
-            },
-            'appointments' => function ($q) use ($date) {
-                $q->where('date', '>=', $date);
-            },
-            'billingProvider',
-            'primaryPractice',
-            'notes' => function ($q) use ($date) {
-                $q->where('performed_at', '>=', $date)
-                    ->with(['author', 'call', 'notifications']);
-            },
-            'patientInfo',
-        ])
+        $patient = User::with(
+            [
+                'activities' => function ($q) use ($date) {
+                    $q->where('logged_from', '=', 'manual_input')
+                        ->where('performed_at', '>=', $date)
+                        ->with('meta')
+                        ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+                        ->orderBy('performed_at', 'desc');
+                },
+                'appointments' => function ($q) use ($date) {
+                    $q->where('date', '>=', $date)
+                        ->orderBy('date', 'desc');
+                },
+                'billingProvider',
+                'primaryPractice',
+                'notes' => function ($q) use ($date) {
+                    $q->where('performed_at', '>=', $date)
+                        ->with(['author', 'call', 'notifications'])
+                        ->orderBy('performed_at', 'desc');
+                },
+                'patientInfo',
+            ]
+        )
             ->findOrFail($patientId);
 
         //if a patient has no notes for the past 2 months, we load all the results and DON'T display 'show all notes button'
         if ($patient->notes->isEmpty() and false == $showAll) {
-            $patient->load([
-                'notes' => function ($notes) {
-                    $notes->with(['author', 'call', 'notifications']);
-                },
-            ]);
+            $patient->load(
+                [
+                    'notes' => function ($notes) {
+                        $notes->with(['author', 'call', 'notifications']);
+                    },
+                ]
+            );
 
             $showAll = null;
         }
@@ -213,9 +221,11 @@ class NotesController extends Controller
         $data['practices'] = Practice::whereIn('id', $session_user->viewableProgramIds())
             ->pluck('display_name', 'id')->sort();
 
-        $start = Carbon::now()->startOfMonth()->subMonth($request->has('range')
-            ? $request->range
-            : 0)->format('Y-m-d');
+        $start = Carbon::now()->startOfMonth()->subMonth(
+            $request->has('range')
+                ? $request->range
+                : 0
+        )->format('Y-m-d');
         $end = Carbon::now()->endOfMonth()->format('Y-m-d');
 
         //Check to see whether there are providers to fetch notes for.
@@ -564,34 +574,43 @@ class NotesController extends Controller
         $patientId,
         $noteId
     ) {
-        $this->validate($request, [
-            'addendum-body' => 'required',
-        ]);
+        $this->validate(
+            $request,
+            [
+                'addendum-body' => 'required',
+            ]
+        );
 
-        $note = Note::find($noteId)->addendums()->create([
-            'body'           => $request->input('addendum-body'),
-            'author_user_id' => auth()->user()->id,
-        ]);
+        $note = Note::find($noteId)->addendums()->create(
+            [
+                'body'           => $request->input('addendum-body'),
+                'author_user_id' => auth()->user()->id,
+            ]
+        );
 
-        return redirect()->to(route(
-            'patient.note.view',
-            ['patientId' => $patientId, 'noteId' => $noteId]
-                              ).'#create-addendum');
+        return redirect()->to(
+            route(
+                'patient.note.view',
+                ['patientId' => $patientId, 'noteId' => $noteId]
+            ).'#create-addendum'
+        );
     }
 
     private function getProviders($getNotesFor)
     {
-        return collect($getNotesFor)->map(function ($for) {
-            $data = explode(':', $for);
-            $selectKey = $data[0];
-            $practiceOrProviderId = $data[1];
+        return collect($getNotesFor)->map(
+            function ($for) {
+                $data = explode(':', $for);
+                $selectKey = $data[0];
+                $practiceOrProviderId = $data[1];
 
-            if ('practice' == $selectKey) {
-                return Practice::getProviders($practiceOrProviderId)->pluck('id')->all();
+                if ('practice' == $selectKey) {
+                    return Practice::getProviders($practiceOrProviderId)->pluck('id')->all();
+                }
+
+                return optional(User::find($practiceOrProviderId))->id;
             }
-
-            return optional(User::find($practiceOrProviderId))->id;
-        })
+        )
             ->flatten()
             ->all();
     }
@@ -599,10 +618,12 @@ class NotesController extends Controller
     private function shouldPrePopulateWithMedications(User $patient)
     {
         return Practice::whereId($patient->program_id)
-            ->where(function ($q) {
-                           $q->where('name', '=', 'phoenix-heart')
-                               ->orWhere('name', '=', 'demo');
-                       })
+            ->where(
+                           function ($q) {
+                               $q->where('name', '=', 'phoenix-heart')
+                                   ->orWhere('name', '=', 'demo');
+                           }
+                       )
             ->exists();
     }
 }

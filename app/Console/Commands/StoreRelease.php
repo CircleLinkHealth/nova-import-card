@@ -28,7 +28,7 @@ class StoreRelease extends Command
      *
      * @var string
      */
-    protected $signature = 'release:store';
+    protected $signature = 'release:store {--cleanup : Delete all previous releases.}';
 
     /**
      * Create a new command instance.
@@ -76,9 +76,11 @@ class StoreRelease extends Command
             $this->runCommand('git remote add origin git@github.com:CircleLinkHealth/cpm-releases.git');
         }
 
-        $this->runCommand('git fetch');
-        $this->runCommand('git checkout master');
-        $this->runCommand("rm $buildFileName");
+        if ( ! $this->option('cleanup')) {
+            $this->runCommand('git fetch');
+            $this->runCommand('git checkout master');
+            $this->runCommand("rm $buildFileName");
+        }
 
         chdir($basePath);
 
