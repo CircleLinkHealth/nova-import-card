@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
     "content-hash": "89329fbb3405ad6baa5108034adac9d2",
@@ -466,7 +466,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "794f8104b856cd62a097c18c7849aaf14e997ceb"
+                "reference": "32fc77889d733373c167777e8f8d8e9d46e7cafc"
             },
             "require": {
                 "spiritix/lada-cache": "^2.1",
@@ -492,7 +492,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-04-01T11:41:52+00:00"
+            "time": "2019-04-10T07:57:24+00:00"
         },
         {
             "name": "circlelinkhealth/customer",
@@ -500,7 +500,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "360a595342ba30a9cfe8c0a4db004ac059680018"
+                "reference": "2ebd276918af23b52ea234c3f65f54c35019ec37"
             },
             "require": {
                 "circlelinkhealth/core": "dev-master",
@@ -527,7 +527,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-04-05T07:40:14+00:00"
+            "time": "2019-04-10T08:08:03+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
@@ -12436,7 +12436,8 @@
         "xethron/migrations-generator": 20,
         "venturecraft/revisionable": 20,
         "circlelinkhealth/core": 20,
-        "michalisantoniou6/laravel-cerberus": 20
+        "michalisantoniou6/laravel-cerberus": 20,
+        "circlelinkhealth/customer": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
