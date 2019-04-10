@@ -52,7 +52,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property string|null                                       $invite_opened_at
  * @property \Carbon\Carbon|null                               $created_at
  * @property \Carbon\Carbon|null                               $updated_at
- * @property \Carbon\Carbon|null                               $soft_rejected_callback
+ * @property \Carbon\Carbon|null                               $requested_callback
  * @property string                                            $primary_insurance
  * @property string                                            $secondary_insurance
  * @property string                                            $tertiary_insurance
@@ -219,7 +219,7 @@ class Enrollee extends BaseModel
         'invite_sent_at',
         'last_attempt_at',
         'last_encounter',
-        'soft_rejected_callback',
+        'requested_callback',
     ];
 
     protected $fillable = [
@@ -279,7 +279,7 @@ class Enrollee extends BaseModel
         'cpm_problem_1',
         'cpm_problem_2',
 
-        'soft_rejected_callback',
+        'requested_callback',
     ];
 
     protected $table = 'enrollees';
@@ -425,10 +425,10 @@ class Enrollee extends BaseModel
 
         return $query->where('status', self::TO_CALL)
             ->orWhere(
-                         function ($q) {
-                             $q->where('status', '=', 'soft_rejected')
-                                 ->where('soft_rejected_callback', '<=', Carbon::now()->toDateString());
-                         }
+                function ($q) {
+                    $q->where('status', '=', 'soft_rejected')
+                        ->where('requested_callback', '<=', Carbon::now()->toDateString());
+                }
                      );
     }
 

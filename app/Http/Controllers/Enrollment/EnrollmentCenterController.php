@@ -181,7 +181,7 @@ class EnrollmentCenterController extends Controller
 
         $enrollee->status = $status;
         if ($request->has('soft_decline_callback')) {
-            $enrollee->soft_rejected_callback = $request->input('soft_decline_callback');
+            $enrollee->requested_callback = $request->input('soft_decline_callback');
         }
 
         $enrollee->attempt_count    = $enrollee->attempt_count + 1;
@@ -220,6 +220,9 @@ class EnrollmentCenterController extends Controller
 
         if ('requested callback' == $request->input('reason')) {
             $enrollee->status = 'call_queue';
+            if ($request->has('utc_callback')) {
+                $enrollee->requested_callback = $request->input('utc_callback');
+            }
         } else {
             $enrollee->status = 'utc';
         }
