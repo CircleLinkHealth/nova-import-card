@@ -4,6 +4,14 @@ namespace CircleLinkHealth\Core\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
+use Illuminate\Notifications\DatabaseNotification as LaravelDatabaseNotification;
+use \CircleLinkHealth\Core\Entities\DatabaseNotification as CircleLinkDatabaseNotification;
+use Illuminate\Notifications\Channels\DatabaseChannel as LaravelDatabaseChannel;
+use Illuminate\Notifications\HasDatabaseNotifications as LaravelHasDatabaseNotifications;
+use Illuminate\Notifications\Notifiable as LaravelNotifiable;
+use \CircleLinkHealth\Core\Notifications\Channels\DatabaseChannel as CircleLinkDatabaseChannel;
+use \CircleLinkHealth\Core\Traits\HasDatabaseNotifications as CircleLinkHasDatabaseNotifications;
+use \CircleLinkHealth\Core\Traits\Notifiable as CircleLinkNotifiable;
 
 class CoreServiceProvider extends ServiceProvider
 {
@@ -36,6 +44,11 @@ class CoreServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register(RouteServiceProvider::class);
+    
+        $this->app->bind(LaravelDatabaseChannel::class, CircleLinkDatabaseChannel::class);
+        $this->app->bind(LaravelHasDatabaseNotifications::class, CircleLinkHasDatabaseNotifications::class);
+        $this->app->bind(LaravelNotifiable::class, CircleLinkNotifiable::class);
+        $this->app->bind(LaravelDatabaseNotification::class, CircleLinkDatabaseNotification::class);
     }
 
     /**

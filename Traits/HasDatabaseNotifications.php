@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Core\Traits;
 
-use App\DatabaseNotification;
+use CircleLinkHealth\Core\Entities\DatabaseNotification;
 
 trait HasDatabaseNotifications
 {
