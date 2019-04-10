@@ -239,7 +239,7 @@ class CarePlan extends BaseModel implements PdfReport
      */
     public function notifications()
     {
-        return $this->morphMany(DatabaseNotification::class, 'attachment')
+        return $this->morphMany(\CircleLinkHealth\Core\Entities\DatabaseNotification::class, 'attachment')
             ->orderBy('created_at', 'desc');
     }
 
