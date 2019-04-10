@@ -13,7 +13,6 @@ use App\Notifications\NoteForwarded;
 use App\Traits\IsAddendumable;
 use App\Traits\PdfReportTrait;
 use Carbon\Carbon;
-use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -114,7 +113,7 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
 
         $cpmSettings = $this->patient->primaryPractice->cpmSettings();
 
-        if ($notifyCareteam && $cpmSettings->email_note_was_forwarded) {
+        if ($notifyCareteam) {
             $recipients = $this->patient->getCareTeamReceivesAlerts();
 
             if ($force) {
@@ -136,7 +135,11 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
             $channelsForLocation[] = DirectMailChannel::class;
         }
 
-        $channelsForUsers = array_merge($channelsForLocation, ['mail']);
+        $channelsForUsers = $channelsForLocation;
+
+        if ($cpmSettings->email_note_was_forwarded) {
+            $channelsForUsers[] = 'mail';
+        }
 
         // Notify Users
         $recipients->unique()
@@ -173,7 +176,7 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
      */
     public function notifications()
     {
-        return $this->morphMany(DatabaseNotification::class, 'attachment')
+        return $this->morphMany(\CircleLinkHealth\Core\Entities\DatabaseNotification::class, 'attachment')
             ->orderBy('created_at', 'desc');
     }
 
