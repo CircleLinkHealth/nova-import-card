@@ -2,6 +2,9 @@
 
 namespace CircleLinkHealth\Customer\Providers;
 
+use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Notifications\HasDatabaseNotifications;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
 
@@ -36,6 +39,9 @@ class CustomerServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register(RouteServiceProvider::class);
+        $this->app->bind(DatabaseNotification::class, \CircleLinkHealth\Customer\Entities\DatabaseNotification::class);
+        $this->app->bind(HasDatabaseNotifications::class, \CircleLinkHealth\Customer\Traits\HasDatabaseNotifications::class);
+        $this->app->bind(Notifiable::class, \CircleLinkHealth\Customer\Traits\Notifiable::class);
     }
 
     /**
