@@ -51,7 +51,7 @@
                         <p><strong>Select Document Type</strong></p>
                     </div>
                     <div class="col-md-12 row">
-                        <v-select max-height="200px" class="form-control" v-model="selectedDocumentType"
+                        <v-select max-height="200px" v-model="selectedDocumentType"
                                   :options="list">
                         </v-select>
                     </div>
@@ -63,7 +63,6 @@
                               :headers="csrfHeader"
                               :url="uploadUrl"
                               @vdropzone-success-multiple="showSuccess"
-                              @vdropzone-error-multiple="showErrors"
                               acceptedFileTypes="application/pdf"
                               dictDefaultMessage="Drop a PDF here, or click to choose a file to upload."
                               v-on:vdropzone-sending="sendingEvent"
@@ -220,6 +219,7 @@
     .v-select .dropdown-toggle {
         height: 34px;
         overflow: hidden;
+        padding: 0px;
     }
 
     .pointer {
