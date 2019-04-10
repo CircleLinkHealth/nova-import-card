@@ -92,15 +92,15 @@
                                     return div.innerText
                                 }
 
-                                const practices = JSON.parse("{{json_encode($practices)}}".replace(/\r\n/g, '').replace(/\&quot;/g, '"'));
-                                const cpmProblems = JSON.parse("{{json_encode($cpmProblems)}}".replace(/\r\n/g, '').replace(/\&quot;/g, '"')).map(function (problem) {
+                                const practices = @json($practices);
+                                const cpmProblems = @json($cpmProblems).map(function (problem) {
                                     problem.name = decodeHTML(problem.name);
                                     return problem
                                 });
 
-                                const chargeableServices = JSON.parse("{{json_encode($chargeableServices)}}".replace(/\r\n/g, '').replace(/\&quot;/g, '"'));
+                                const chargeableServices = @json($chargeableServices);
 
-                                const dates = JSON.parse("{{json_encode($dates)}}".replace(/\r\n/g, '').replace(/\&quot;/g, '"'));
+                                const dates = @json($dates);
 
                                 const isSoftwareOnly = @json(auth()->user()->isSoftwareOnly());
                             </script>

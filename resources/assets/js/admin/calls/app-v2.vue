@@ -10,6 +10,10 @@
                     <span v-if="showOnlyCompletedTasks">Show All Scheduled Activities</span>
                     <span v-else>Show Completed Tasks</span>
                 </button>
+                <button v-if="isAdmin" class="btn btn-primary btn-xs" @click="changeShowPatientNames">
+                    <span v-if="showPatientNames">Hide Patient Names</span>
+                    <span v-else>Show Patient Names</span>
+                </button>
                 <button class="btn btn-info btn-xs" @click="clearFilters">Clear Filters</button>
                 <label class="btn btn-gray btn-xs">
                     <input type="checkbox" v-model="showOnlyUnassigned" @change="changeShowOnlyUnassigned"/>
@@ -189,7 +193,7 @@
             return {
                 pagination: null,
                 selected: false,
-                columns: ['selected', 'Type', 'Care Coach', (this.isAdmin ? 'Patient ID' : 'Patient'), 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Successful Calls', 'Practice', 'Activity Start', 'Activity End', 'Preferred Call Days', 'Billing Provider', 'Scheduler'],
+                columns: ['selected', 'Type', 'Care Coach', 'Patient ID', 'Patient', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Successful Calls', 'Practice', 'Activity Start', 'Activity End', 'Preferred Call Days', 'Billing Provider', 'Scheduler'],
                 tableData: [],
                 nurses: [],
                 loaders: {
@@ -201,10 +205,14 @@
                     calls: null
                 },
                 showOnlyUnassigned: false,
-                showOnlyCompletedTasks: false
+                showOnlyCompletedTasks: false,
+                showPatientNames: !this.isAdmin
             }
         },
         computed: {
+            patientNamesClass() {
+                return this.showPatientNames ? '' : 'hidden';
+            },
             itemsAreSelected() {
                 return !!this.tableData.find(row => !!row.selected)
             },
@@ -235,7 +243,9 @@
                 return {
                     columnsClasses: {
                         'selected': 'blank',
-                        'Type': 'padding-2'
+                        'Type': 'padding-2',
+                        'Patient ID': !this.isAdmin ? 'hidden' : '',
+                        'Patient': this.patientNamesClass
                     },
                     sortable: ['Care Coach', 'Patient ID', 'Patient', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Practice', 'Scheduler'],
                     filterable: ['Type', 'Care Coach', 'Patient ID', 'Patient', 'Activity Day', 'Last Call', 'Practice', 'Billing Provider'],
@@ -273,6 +283,9 @@
             rootUrl,
             changeShowOnlyUnassigned(e) {
                 return this.activateFilters();
+            },
+            changeShowPatientNames() {
+                this.showPatientNames = !this.showPatientNames;
             },
             changeShowOnlyCompletedTasks(e) {
                 this.showOnlyCompletedTasks = !this.showOnlyCompletedTasks;
@@ -756,5 +769,9 @@
 
     input[type="checkbox"] {
         display: inherit;
+    }
+
+    .hidden {
+        display: none;
     }
 </style>

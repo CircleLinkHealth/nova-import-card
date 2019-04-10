@@ -96,7 +96,7 @@
             },
             getPractices() {
                 this.loaders.practices = true
-                this.axios.get(rootUrl(`api/practices`)).then(response => {
+                this.axios.get(rootUrl(`api/practices?admin-only=true`)).then(response => {
                     this.loaders.practices = false
                     this.practices = (response.data || []).distinct(practice => practice.id)
                     console.log('unscheduled-patients-get-practices', response.data)

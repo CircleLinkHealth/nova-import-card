@@ -20,8 +20,8 @@
                             <div class="col-sm-8 top-20">
                                 <div class="row">
                                     <div class="col-sm-6">
-                                        <datepicker class="form-control pad-0" :class="{ error: !newAppointment.isPending() }" format="yyyy-MM-dd"
-                                            v-model="newAppointment.date" :disabled="{ to: today }" placeholder="YYYY-MM-DD" required></datepicker>
+                                        <datepicker class="form-control pad-0" :class="{ error: !newAppointment.isPending() }" format="MM-dd-yyyy"
+                                            v-model="newAppointment.date" :disabled="{ to: today }" placeholder="MM-DD-YYYY" required></datepicker>
                                     </div>
                                     <div class="col-sm-6">
                                         <input type="time" class="form-control" :class="{ error: !newAppointment.isPending() }" v-model="newAppointment.time" required />
@@ -112,14 +112,14 @@
             newAppointmentDate() {
                 const d = this.newAppointment.date
                 if (!d) return ''
-                else return moment(d).format('YYYY-MM-DD')
+                else return moment(d).format('MM-DD-YYYY')
             }
         },
         data() {
             return {
                 newAppointment: {
                     provider: null,
-                    min: moment(new Date()).format('YYYY-MM-DD'),
+                    min: moment(new Date()).format('MM-DD-YYYY'),
                     date: null,
                     time: '09:00:00',
                     type: null,
@@ -153,7 +153,7 @@
             reset() {
                 this.newAppointment = {
                     provider: null,
-                    date: moment(new Date()).format('YYYY-MM-DD'),
+                    date: moment(new Date()).format('MM-DD-YYYY'),
                     time: '09:00:00',
                     type: null,
                     comment: null,

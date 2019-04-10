@@ -75,7 +75,7 @@
                                         <label for="date">
                                             Appointment Date:
                                         </label>
-                                        <v-datepicker name="date" class="selectpickerX form-control" format="yyyy-MM-dd" placeholder="YYYY-MM-DD" pattern="\d{4}\-\d{2}\-\d{2}" required></v-datepicker>
+                                        <v-datepicker name="date" class="selectpickerX form-control" format="MM-dd-yyyy" placeholder="MM-DD-YYYY" pattern="\d{2}\-\d{2}-\d{4}\" required></v-datepicker>
                                     </div>
                                     <div class="col-sm-12 form-group margin-20">
                                         <label for="time">
