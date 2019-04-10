@@ -33,7 +33,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Carbon\Carbon $updated_at
  * @property string|null $deleted_at
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection $clinicalEmergencyContact
- * @property \App\EmrDirectAddress[]|\Illuminate\Database\Eloquent\Collection $emrDirect
+ * @property \CircleLinkHealth\Customer\Entities\EmrDirectAddress[]|\Illuminate\Database\Eloquent\Collection $emrDirect
  * @property mixed $emr_direct_address
  * @property \App\Location $parent
  * @property \CircleLinkHealth\Customer\Entities\Practice $practice

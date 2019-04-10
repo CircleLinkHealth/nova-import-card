@@ -121,7 +121,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \App\Models\CPM\CpmSymptom[]|\Illuminate\Database\Eloquent\Collection $cpmSymptoms
  * @property \App\Models\CPM\Biometrics\CpmWeight $cpmWeight
  * @property \App\Models\EmailSettings $emailSettings
- * @property \App\EmrDirectAddress[]|\Illuminate\Database\Eloquent\Collection $emrDirect
+ * @property \CircleLinkHealth\Customer\Entities\EmrDirectAddress[]|\Illuminate\Database\Eloquent\Collection $emrDirect
  * @property \App\ForeignId[]|\Illuminate\Database\Eloquent\Collection $foreignId
  * @property \App\User[]|\Illuminate\Database\Eloquent\Collection $forwardAlertsTo
  * @property mixed $active_date

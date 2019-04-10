@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Traits;
 
-use App\EmrDirectAddress;
+use CircleLinkHealth\Customer\Entities\EmrDirectAddress;
 
 trait HasEmrDirectAddress
 {
