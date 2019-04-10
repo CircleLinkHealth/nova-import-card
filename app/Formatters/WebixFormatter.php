@@ -6,8 +6,6 @@
 
 namespace App\Formatters;
 
-use CircleLinkHealth\TimeTracking\Entities\Activity;
-use CircleLinkHealth\Customer\Entities\Appointment;
 use App\Contracts\ReportFormatter;
 use App\Models\CCD\Allergy;
 use App\Models\CCD\Medication;
@@ -16,8 +14,10 @@ use App\Models\CPM\CpmMisc;
 use App\Services\CPM\CpmMiscService;
 use App\Services\NoteService;
 use App\Services\ReportsService;
-use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Appointment;
+use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Illuminate\Database\Eloquent\Collection;
 
 class WebixFormatter implements ReportFormatter
@@ -37,79 +37,88 @@ class WebixFormatter implements ReportFormatter
         $task_types      = Activity::task_types_to_topics();
         $billingProvider = $patient->getBillingProviderName();
 
-        $notes = $patient->notes->sortByDesc('id')->map(function ($note) use ($patient, $billingProvider) {
-            $result = [
-                'id'            => $note->id,
-                'logger_name'   => $note->author->getFullName(),
-                'comment'       => $note->body,
-                'logged_from'   => 'note',
-                'type_name'     => $note->type,
-                'performed_at'  => $note->performed_at->toDateString(),
-                'provider_name' => $billingProvider,
-                'tags'          => '',
-            ];
+        $notes = $patient->notes->sortByDesc('id')->map(
+            function ($note) use ($patient, $billingProvider) {
+                $result = [
+                    'id'               => $note->id,
+                    'logger_name'      => $note->author->getFullName(),
+                    'comment'          => $note->body,
+                    'logged_from'      => 'note',
+                    'type_name'        => $note->type,
+                    'performed_at'     => presentDate($note->performed_at, false),
+                    'date_for_sorting' => $note->performed_at,
+                    'provider_name'    => $billingProvider,
+                    'tags'             => '',
+                ];
 
-            //pangratios: add support for task types
-            if ($note->call && 'task' === $note->call->type) {
-                $result['logged_from'] = 'note_task';
-            }
-
-            if ($note->notifications->count() > 0) {
-                if ($this->noteService->wasForwardedToCareTeam($note)) {
-                    $result['tags'] .= '<div class="label label-warning"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
+                //pangratios: add support for task types
+                if ($note->call && 'task' === $note->call->type) {
+                    $result['logged_from'] = 'note_task';
                 }
+
+                if ($note->notifications->count() > 0) {
+                    if ($this->noteService->wasForwardedToCareTeam($note)) {
+                        $result['tags'] .= '<div class="label label-warning"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
+                    }
+                }
+
+                if ($note->call && 'reached' == $note->call->status) {
+                    $result['tags'] .= '<div class="label label-info"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span></div> ';
+                }
+
+                if ($note->isTCM) {
+                    $result['tags'] .= '<div class="label label-danger"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span></div> ';
+                }
+
+                $was_seen = $this->noteService->wasSeenByBillingProvider($note);
+
+                if ($was_seen) {
+                    $result['tags'] .= '<div class="label label-success"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></div> ';
+                }
+
+                return $result;
             }
-
-            if ($note->call && 'reached' == $note->call->status) {
-                $result['tags'] .= '<div class="label label-info"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span></div> ';
-            }
-
-            if ($note->isTCM) {
-                $result['tags'] .= '<div class="label label-danger"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span></div> ';
-            }
-
-            $was_seen = $this->noteService->wasSeenByBillingProvider($note);
-
-            if ($was_seen) {
-                $result['tags'] .= '<div class="label label-success"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></div> ';
-            }
-
-            return $result;
-        });
+        );
 
         if ($notes->isEmpty()) {
             $notes = collect([]);
         }
 
-        $appointments = $patient->appointments->map(function ($appointment) use ($billingProvider) {
-            return [
-                'id'            => $appointment->id,
-                'logger_name'   => optional($appointment->author)->getFullName(),
-                'comment'       => $appointment->comment,
-                'logged_from'   => 'appointment',
-                'type_name'     => $appointment->type,
-                'performed_at'  => Carbon::parse($appointment->date)->toDateString(),
-                'provider_name' => $billingProvider,
-                'tags'          => '',
-            ];
-        });
+        $appointments = $patient->appointments->map(
+            function ($appointment) use ($billingProvider) {
+                return [
+                    'id'               => $appointment->id,
+                    'logger_name'      => optional($appointment->author)->getFullName(),
+                    'comment'          => $appointment->comment,
+                    'logged_from'      => 'appointment',
+                    'type_name'        => $appointment->type,
+                    'performed_at'     => presentDate($appointment->date, false),
+                    'date_for_sorting' => $appointment->date,
+                    'provider_name'    => $billingProvider,
+                    'tags'             => '',
+                ];
+            }
+        );
 
         if ($appointments->isEmpty()) {
             $appointments = collect([]);
         }
 
-        $activities = $patient->activities->map(function ($activity) use ($billingProvider) {
-            return [
-                'id'            => $activity->id,
-                'logger_name'   => $activity->provider->getFullName(),
-                'comment'       => $activity->getCommentForActivity() ?? '',
-                'logged_from'   => 'manual_input',
-                'type_name'     => $activity->type,
-                'performed_at'  => $activity->performed_at,
-                'provider_name' => $billingProvider,
-                'tags'          => '',
-            ];
-        });
+        $activities = $patient->activities->map(
+            function ($activity) use ($billingProvider) {
+                return [
+                    'id'               => $activity->id,
+                    'logger_name'      => $activity->provider->getFullName(),
+                    'comment'          => $activity->getCommentForActivity() ?? '',
+                    'logged_from'      => 'manual_input',
+                    'type_name'        => $activity->type,
+                    'performed_at'     => presentDate($activity->performed_at, false),
+                    'date_for_sorting' => $activity->performed_at,
+                    'provider_name'    => $billingProvider,
+                    'tags'             => '',
+                ];
+            }
+        );
 
         if ($activities->isEmpty()) {
             $activities = collect([]);
@@ -117,7 +126,7 @@ class WebixFormatter implements ReportFormatter
 
         $report_data = $notes->merge($appointments)
             ->merge($activities)
-            ->sortByDesc('performed_at')
+            ->sortByDesc('date_for_sorting')
             ->values()
             ->toJson();
 
@@ -206,8 +215,9 @@ class WebixFormatter implements ReportFormatter
         ));
 
         foreach ($users as $user) {
-            $careplanReport[$user->id]['symptoms']    = $user->cpmSymptoms()->get()->pluck('name')->all();
-            $careplanReport[$user->id]['problem']     = $user->cpmProblems()->get()->sortBy('name')->pluck('name')->all();
+            $careplanReport[$user->id]['symptoms'] = $user->cpmSymptoms()->get()->pluck('name')->all();
+            $careplanReport[$user->id]['problem']  = $user->cpmProblems()->get()->sortBy('name')->pluck('name')->all(
+            );
             $careplanReport[$user->id]['problems']    = $cpmProblemService->getProblemsWithInstructionsForUser($user);
             $careplanReport[$user->id]['lifestyle']   = $user->cpmLifestyles()->get()->pluck('name')->all();
             $careplanReport[$user->id]['biometrics']  = $user->cpmBiometrics()->get()->pluck('name')->all();
@@ -309,9 +319,13 @@ class WebixFormatter implements ReportFormatter
                 }
             }
 
-            $careplanReport[$user->id]['bio_data'][$metric]['target']   = $biometric_values['target'].ReportsService::biometricsUnitMapping($metric);
-            $careplanReport[$user->id]['bio_data'][$metric]['starting'] = $biometric_values['starting'].ReportsService::biometricsUnitMapping($metric);
-            $careplanReport[$user->id]['bio_data'][$metric]['verb']     = $biometric_values['verb'];
+            $careplanReport[$user->id]['bio_data'][$metric]['target'] = $biometric_values['target'].ReportsService::biometricsUnitMapping(
+                $metric
+                );
+            $careplanReport[$user->id]['bio_data'][$metric]['starting'] = $biometric_values['starting'].ReportsService::biometricsUnitMapping(
+                $metric
+                );
+            $careplanReport[$user->id]['bio_data'][$metric]['verb'] = $biometric_values['verb'];
         }//dd($careplanReport[$user->id]['bio_data']);
 
         array_reverse($careplanReport[$user->id]['bio_data']);
@@ -418,8 +432,10 @@ class WebixFormatter implements ReportFormatter
                 'specialty' => $specialty,
                 'date'      => $appt->date,
                 'type'      => $appt->type,
-                'time'      => Carbon::parse($appt->time)->format('H:i A').' '.Carbon::parse($user->timezone)->format('T'),
-                'address'   => optional($provider)->address
+                'time'      => Carbon::parse($appt->time)->format('H:i A').' '.Carbon::parse($user->timezone)->format(
+                    'T'
+                    ),
+                'address' => optional($provider)->address
                     ? "A: {$provider->address}. "
                     : '',
                 'phone' => $phone,
@@ -465,7 +481,9 @@ class WebixFormatter implements ReportFormatter
                 'type'      => $appt->type
                     ? "{$appt->type},"
                     : '',
-                'time'    => Carbon::parse($appt->time)->format('H:i A').' '.Carbon::parse($user->timezone)->format('T'),
+                'time' => Carbon::parse($appt->time)->format('H:i A').' '.Carbon::parse($user->timezone)->format(
+                    'T'
+                    ),
                 'address' => $provider->address
                     ? "A: {$provider->address}. "
                     : '',
@@ -491,14 +509,16 @@ class WebixFormatter implements ReportFormatter
         $isProvider            = $auth->hasRole('provider');
         $isPracticeStaff       = $auth->hasRole(['office_admin', 'med_assistant']);
 
-        return compact([
-            'patientJson',
-            'canApproveCarePlans',
-            'isCareCenter',
-            'isAdmin',
-            'isProvider',
-            'isPracticeStaff',
-        ]);
+        return compact(
+            [
+                'patientJson',
+                'canApproveCarePlans',
+                'isCareCenter',
+                'isAdmin',
+                'isProvider',
+                'isPracticeStaff',
+            ]
+        );
     }
 
     public function patients(Collection $patients = null)
@@ -620,6 +640,7 @@ class WebixFormatter implements ReportFormatter
                     //$approverName,
                     'dob' => Carbon::parse($patient->getBirthDate())->format('m/d/Y'),
                     //date("m/d/Y", strtotime($user_config[$part->id]["birth_date"])),
+                    'mrn'   => $patient->getMRN(),
                     'phone' => isset($patient->phoneNumbers->number)
                         ? $patient->phoneNumbers->number
                         : $patient->getPhone(),

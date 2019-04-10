@@ -6,9 +6,9 @@
 
 namespace App\Http\Controllers\API;
 
-use CircleLinkHealth\Customer\Entities\CarePerson;
 use App\CLH\Facades\StringManipulation;
 use App\Http\Controllers\Controller;
+use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\ProviderInfo;
@@ -134,78 +134,78 @@ class CareTeamController extends Controller
             ->map(function ($member) use (
                                   $patient
                               ) {
-                $type = $member->type;
+                                  $type = $member->type;
 
-                if ($member->user->practice($patient->primaryPractice->id) && ! in_array(
+                                  if ($member->user->practice($patient->primaryPractice->id) && ! in_array(
                                       $member->type,
-                                          [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
-                                  )) {
-                    $formattedType = $member->user->practiceOrGlobalRole()->display_name.' (Internal)';
-                }
+                                      [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
+                                      )) {
+                                      $formattedType = $member->user->practiceOrGlobalRole()->display_name.' (Internal)';
+                                  }
 
-                if ( ! isset($formattedType)) {
-                    $formattedType = snakeToSentenceCase($type);
-                }
+                                  if ( ! isset($formattedType)) {
+                                      $formattedType = snakeToSentenceCase($type);
+                                  }
 
-                $phone = $member->user->phoneNumbers->where('is_primary', 1)->first();
+                                  $phone = $member->user->phoneNumbers->where('is_primary', 1)->first();
 
-                return [
-                    'id'                  => $member->id,
-                    'formatted_type'      => $formattedType,
-                    'alert'               => $member->alert,
-                    'is_billing_provider' => CarePerson::BILLING_PROVIDER == $type,
-                    'type'                => $type,
-                    'user_id'             => $member->user_id,
-                    'user'                => [
-                        'id'         => $member->user->id,
-                        'email'      => $member->user->email,
-                        'first_name' => $member->user->getFirstName(),
-                        'last_name'  => $member->user->getLastName(),
-                        'full_name'  => $member->user->getFullName(),
-                        'suffix'     => optional($member->user->providerInfo)->is_clinical
-                            ? $member->user->getSuffix()
-                            : 'non-clinical',
-                        'address'       => $member->user->address,
-                        'address2'      => $member->user->address2,
-                        'city'          => $member->user->city,
-                        'state'         => $member->user->state,
-                        'zip'           => $member->user->zip,
-                        'phone_numbers' => $phone
-                            ? [
-                            [
-                                'id'     => $phone->id,
-                                'number' => $phone->number,
-                            ],
-                        ]
-                        : [
-                            [
-                                'id'     => '',
-                                'number' => '',
-                            ],
-                        ],
-                        'primary_practice' => $member->user->primaryPractice
-                            ? [
-                            'id'           => $member->user->primaryPractice->id,
-                            'display_name' => $member->user->primaryPractice->display_name,
-                        ]
-                        : [
-                            'id'           => '',
-                            'display_name' => '',
-                        ],
-                        'provider_info' => $member->user->providerInfo
-                            ? [
-                            'id'          => $member->user->providerInfo->id,
-                            'is_clinical' => $member->user->providerInfo->is_clinical,
-                            'specialty'   => $member->user->getSpecialty(),
-                        ]
-                        : [
-                            'id'          => '',
-                            'is_clinical' => '',
-                            'specialty'   => '',
-                        ],
-                    ],
-                ];
-            });
+                                  return [
+                                      'id'                  => $member->id,
+                                      'formatted_type'      => $formattedType,
+                                      'alert'               => $member->alert,
+                                      'is_billing_provider' => CarePerson::BILLING_PROVIDER == $type,
+                                      'type'                => $type,
+                                      'user_id'             => $member->user_id,
+                                      'user'                => [
+                                          'id'         => $member->user->id,
+                                          'email'      => $member->user->email,
+                                          'first_name' => $member->user->getFirstName(),
+                                          'last_name'  => $member->user->getLastName(),
+                                          'full_name'  => $member->user->getFullName(),
+                                          'suffix'     => optional($member->user->providerInfo)->is_clinical
+                                              ? $member->user->getSuffix()
+                                              : 'non-clinical',
+                                          'address'       => $member->user->address,
+                                          'address2'      => $member->user->address2,
+                                          'city'          => $member->user->city,
+                                          'state'         => $member->user->state,
+                                          'zip'           => $member->user->zip,
+                                          'phone_numbers' => $phone
+                                              ? [
+                                              [
+                                                  'id'     => $phone->id,
+                                                  'number' => $phone->number,
+                                              ],
+                                          ]
+                                          : [
+                                              [
+                                                  'id'     => '',
+                                                  'number' => '',
+                                              ],
+                                          ],
+                                          'primary_practice' => $member->user->primaryPractice
+                                              ? [
+                                              'id'           => $member->user->primaryPractice->id,
+                                              'display_name' => $member->user->primaryPractice->display_name,
+                                          ]
+                                          : [
+                                              'id'           => '',
+                                              'display_name' => '',
+                                          ],
+                                          'provider_info' => $member->user->providerInfo
+                                              ? [
+                                              'id'          => $member->user->providerInfo->id,
+                                              'is_clinical' => $member->user->providerInfo->is_clinical,
+                                              'specialty'   => $member->user->getSpecialty(),
+                                          ]
+                                          : [
+                                              'id'          => '',
+                                              'is_clinical' => '',
+                                              'specialty'   => '',
+                                          ],
+                                      ],
+                                  ];
+                              });
 
         return response()->json($careTeam);
     }
@@ -229,14 +229,14 @@ class CareTeamController extends Controller
             ->where('last_name', 'like', "${lastNameTerm}%")
             ->get()
             ->map(function ($user) {
-                //Add an empty phone number if there are none so that the front end doesn't break
-                //v-model="newCarePerson.user.phone_numbers[0].number"
-                if ($user->phoneNumbers->isEmpty()) {
-                    $user->phoneNumbers->push(['id' => '', 'number' => '']);
-                }
+                         //Add an empty phone number if there are none so that the front end doesn't break
+                         //v-model="newCarePerson.user.phone_numbers[0].number"
+                         if ($user->phoneNumbers->isEmpty()) {
+                             $user->phoneNumbers->push(['id' => '', 'number' => '']);
+                         }
 
-                return $user;
-            });
+                         return $user;
+                     });
 
         return response()->json(['results' => $users]);
     }
@@ -312,8 +312,8 @@ class CareTeamController extends Controller
 
         if ($providerUser->practice($patient->primaryPractice->id) && ! in_array(
             $type,
-                [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
-        )) {
+            [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
+            )) {
             $type = $providerUser->practiceOrGlobalRole()->display_name.' (Internal)';
         }
 

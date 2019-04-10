@@ -424,7 +424,7 @@
             getPractices(actionIndex) {
                 this.loaders.practices = true;
                 return this.cache()
-                    .get(rootUrl(`api/practices`))
+                    .get(rootUrl(`api/practices?admin-only=true`))
                     .then(response => {
                         this.loaders.practices = false;
                         console.log('add-action:practices', response);
