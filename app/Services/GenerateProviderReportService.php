@@ -165,17 +165,17 @@ class GenerateProviderReportService
     {
         //see values for phq2
         $phq2scores = [
-            'Not at all'              => 0,
-            'Several days'            => 1,
-            'More than half the days' => 2,
-            'Nearly every day'        => 3,
+            'not at all'              => 0,
+            'several days'            => 1,
+            'more than half the days' => 2,
+            'nearly every day'        => 3,
         ];
 
         $answer1 = $this->answerForHraQuestionWithOrder(22, '1');
         $answer2 = $this->answerForHraQuestionWithOrder(22, '2');
 
         return [
-            'depression_score' => $phq2scores[$answer1] + $phq2scores[$answer2],
+            'depression_score' => $phq2scores[strtolower($answer1)] + $phq2scores[strtolower($answer2)],
         ];
     }
 
@@ -298,9 +298,7 @@ class GenerateProviderReportService
             return [];
         }
 
-        return is_json($answer->value_1)
-            ? json_decode($answer->value_1)
-            : $answer->value_1;
+        return array_key_exists('value', $answer->value) ? $answer->value['value'] : $answer->value;
     }
 
 
@@ -314,10 +312,7 @@ class GenerateProviderReportService
             return [];
         }
 
-        return
-            is_json($answer->value_1)
-                ? json_decode($answer->value_1)
-                : $answer->value_1;
+        return array_key_exists('value', $answer->value) ? $answer->value['value'] : $answer->value;
 
     }
 }

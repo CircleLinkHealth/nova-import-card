@@ -52,10 +52,7 @@ class SurveyService
             'question_type_answer_id' => array_key_exists('question_type_answer_id', $input)
                 ? $input['question_type_answer_id']
                 : null,
-            'value_1'                 => $input['value_1'],
-            'value_2'                 => array_key_exists('value_2', $input)
-                ? $input['value_2']
-                : null,
+            'value'                 => $input['value'],
         ]);
 
         if ( ! $answer) {
