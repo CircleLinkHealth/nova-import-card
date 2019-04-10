@@ -277,10 +277,12 @@ class NotesController extends Controller
         $patientId,
         $noteId
     ) {
-        $patient = User::findOrFail($patientId);
-        $note    = Note::where('id', $noteId)
-            ->with(['call', 'notifications'])
+        $note = Note::where('id', $noteId)
+            ->where('patient_id', $patientId)
+            ->with(['call', 'notifications', 'patient'])
             ->firstOrFail();
+
+        $patient = $note->patient;
 
         $this->service->markNoteAsRead(auth()->user(), $note);
 
