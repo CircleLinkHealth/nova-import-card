@@ -6,20 +6,18 @@
 
 namespace App\Services;
 
-use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
 use App\Call;
-use CircleLinkHealth\Customer\Entities\CarePerson;
 use App\CareplanAssessment;
 use App\CLH\Repositories\UserRepository;
 use App\Filters\NoteFilters;
 use App\Note;
-use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use App\Repositories\CareplanAssessmentRepository;
 use App\Repositories\NoteRepository;
-use CircleLinkHealth\Customer\Entities\User;
 use App\View\MetaTag;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\CarePerson;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\User;
 use Exception;
 use Illuminate\Support\Facades\URL;
 
@@ -61,9 +59,9 @@ class NoteService
             }
 
             return $this->createNoteFromAssessment($this->assessmentRepo->editKeyTreatment(
-                        $userId,
-                        $authorId,
-                        $body
+                $userId,
+                $authorId,
+                $body
                     ));
         }
         throw new Exception('invalid parameters');
@@ -432,29 +430,6 @@ class NoteService
         }
 
         return $meta_tags;
-    }
-
-    public function updatePatientRecords(
-        Patient $patient
-    ) {
-        $date_index = Carbon::now()->firstOfMonth()->toDateString();
-
-        $patientRecord = PatientMonthlySummary::where('patient_id', $patient->user_id)
-            ->where('month_year', $date_index)
-            ->first();
-
-        if (empty($patientRecord)) {
-            //should not need to do that, because there is a command on start of every month
-            //that sets a monthly summary to 0 for each patient
-            $patientRecord = PatientMonthlySummary::updateCCMInfoForPatient(
-                $patient->user_id,
-                0
-            );
-        } else {
-            $patientRecord->save();
-        }
-
-        return $patientRecord;
     }
 
     public function wasForwardedToCareTeam(Note $note)

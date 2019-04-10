@@ -34,12 +34,14 @@
                 <button class="btn btn-info btn-xs" v-bind:class="{'btn-selected': !this.hideStatus.includes('ineligible')}"
                         @click="showIneligible">Show Ineligible
                 </button>
+                <button class="btn btn-primary btn-xs" @click="clearSelected">Clear Selected Patients</button>
             </div>
             <div class="col-sm-2">
                 <loader style="margin-left: 80px" v-if="loading"/>
             </div>
             <div class="col-sm-5 text-right" v-if="enrolleesAreSelected">
                 <button class="btn btn-primary btn-s" @click="assignSelectedToCa">Assign To CA</button>
+                <button class="btn btn-warning btn-s" @click="unassignSelectedFromCa">Unassign From CA</button>
                 <button class="btn btn-danger btn-s" @click="markSelectedAsIneligible">Mark as Ineligible</button>
             </div>
         </div>
@@ -68,6 +70,7 @@
             </v-server-table>
         </div>
         <select-ca-modal ref="selectCaModal" :selected-enrollee-ids="selectedEnrolleeIds"></select-ca-modal>
+        <unassign-ca-modal ref="unassignCaModal" :selected-enrollee-ids="selectedEnrolleeIds"></unassign-ca-modal>
         <mark-ineligible-modal ref="markIneligibleModal"
                                :selected-enrollee-ids="selectedEnrolleeIds"></mark-ineligible-modal>
         <edit-patient-modal ref="editPatientModal"></edit-patient-modal>
@@ -79,6 +82,7 @@
     import {rootUrl} from '../../app.config.js'
     import Modal from '../common/modal';
     import SelectCaModal from './comps/modals/select-ca.modal'
+    import UnassignCaModal from './comps/modals/unassign-ca.modal'
     import {Event} from 'vue-tables-2'
     import MarkIneligibleModal from "./comps/modals/mark-ineligible.modal";
     import AddCustomFilterModal from "./comps/modals/add-custom-filter.modal";
@@ -94,6 +98,7 @@
             'mark-ineligible-modal': MarkIneligibleModal,
             'modal': Modal,
             'select-ca-modal': SelectCaModal,
+            'unassign-ca-modal': UnassignCaModal,
             'edit-patient-modal': EditPatientModal,
             'add-custom-filter-modal': AddCustomFilterModal,
             'loader': Loader,
@@ -108,7 +113,7 @@
                 hideStatus: ['ineligible', 'consented'],
                 hideAssigned: true,
                 columns: ['select', 'edit', 'id', 'user_id', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'status', 'eligibility_job_id', 'medical_record_id', 'practice_name', 'provider_name', 'total_time_spent', 'attempt_count', 'last_attempt_at',
-                    'last_call_outcome', 'last_call_outcome_reason', 'soft_rejected_callback', 'address', 'address_2', 'city', 'state', 'zip', 'primary_phone', 'other_phone', 'home_phone', 'cell_phone', 'dob', 'preferred_days', 'preferred_window',
+                    'last_call_outcome', 'last_call_outcome_reason', 'requested_callback', 'address', 'address_2', 'city', 'state', 'zip', 'primary_phone', 'other_phone', 'home_phone', 'cell_phone', 'dob', 'preferred_days', 'preferred_window',
                     'primary_insurance', 'secondary_insurance', 'tertiary_insurance', 'has_copay', 'email', 'cpm_problem_1', 'cpm_problem_2', 'created_at'],
                 options: {
                     requestAdapter(data) {
@@ -127,7 +132,7 @@
                     skin: "table-striped table-bordered table-hover",
                     filterByColumn: true,
                     filterable: ['hideStatus', 'hideAssigned', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'status', 'eligibility_job_id', 'medical_record_id', 'practice_name', 'provider_name', 'primary_insurance', 'secondary_insurance', 'tertiary_insurance', 'attempt_count'],
-                    sortable: ['first_name', 'last_name', 'practice_name', 'provider_name', 'primary_insurance', 'status', 'created_at', 'state', 'city', 'care_ambassador_name', 'attempt_count', 'soft_rejected_callback'],
+                    sortable: ['first_name', 'last_name', 'practice_name', 'provider_name', 'primary_insurance', 'status', 'created_at', 'state', 'city', 'care_ambassador_name', 'attempt_count', 'requested_callback'],
                 },
             }
 
@@ -145,11 +150,20 @@
                     return false;
                 }
             },
+            clearSelected(){
+                this.selectedEnrolleeIds = [];
+            },
+            refreshTable(){
+                this.$refs.table.refresh();
+            },
             getUrl() {
                 return rootUrl('/admin/ca-director/enrollees');
             },
             assignSelectedToCa() {
                 Event.$emit("modal-select-ca:show");
+            },
+            unassignSelectedFromCa() {
+                Event.$emit("modal-unassign-ca:show");
             },
             markSelectedAsIneligible() {
                 Event.$emit("modal-mark-ineligible:show");
@@ -277,7 +291,8 @@
             console.info('created');
         },
         mounted() {
-
+            Event.$on('clear-selected-enrollees', this.clearSelected)
+            Event.$on('refresh-table', this.refreshTable)
             console.info('mounted');
         }
 

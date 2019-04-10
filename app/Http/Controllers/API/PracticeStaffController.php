@@ -15,14 +15,13 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\ProviderInfo;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
-use Illuminate\Support\Collection;
 
 class PracticeStaffController extends Controller
 {
     /**
      * Remove the specified resource from storage.
      *
-     * @param int $id
+     * @param int   $id
      * @param mixed $practiceId
      * @param mixed $userId
      *
@@ -68,21 +67,21 @@ class PracticeStaffController extends Controller
         ];
 
         $practiceUsers = User::ofType(array_merge($relevantRoles, ['practice-lead']))
-                             ->whereHas('practices', function ($q) use (
+            ->whereHas('practices', function ($q) use (
                                  $primaryPractice
                              ) {
-                                 $q->where('id', '=', $primaryPractice->id);
-                             })
-                             ->with('roles')
-                             ->get()
-                             ->sortBy('first_name')
-                             ->values();
+                $q->where('id', '=', $primaryPractice->id);
+            })
+            ->with('roles')
+            ->get()
+            ->sortBy('first_name')
+            ->values();
 
         if ( ! auth()->user()->isAdmin()) {
             $practiceUsers->reject(function ($user) {
                 return $user->isAdmin();
             })
-                          ->values();
+                ->values();
         }
 
         //Get the users that were as clinical emergency contacts from the locations page
@@ -103,53 +102,54 @@ class PracticeStaffController extends Controller
         $roles = $user->rolesInPractice($primaryPractice->id);
 
         $forwardAlertsToContactUsers = $user->forwardAlertsTo()
-                                            ->having('name', '=', User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER)
-                                            ->orHaving('name', '=', User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER)
-                                            ->get()
-                                            ->mapToGroups(function ($user) {
-                                                return [$user->pivot->name => $user->id];
-                                            })
+            ->having('name', '=', User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER)
+            ->orHaving('name', '=', User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER)
+            ->get()
+            ->mapToGroups(function ($user) {
+                return [$user->pivot->name => $user->id];
+            })
                                        ?? null;
 
         $forwardCarePlanApprovalEmailsToContactUsers = $user->forwardAlertsTo()
-                                                            ->having(
-                                                                'name',
-                                                                '=',
-                                                                User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER
+            ->having(
+                'name',
+                '=',
+                User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER
                                                             )
-                                                            ->orHaving(
-                                                                'name',
-                                                                '=',
-                                                                User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER
+            ->orHaving(
+                'name',
+                '=',
+                User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER
                                                             )
-                                                            ->get()
-                                                            ->mapToGroups(function ($user) {
-                                                                return [$user->pivot->name => $user->id];
-                                                            })
+            ->get()
+            ->mapToGroups(function ($user) {
+                return [$user->pivot->name => $user->id];
+            })
                                                        ?? null;
 
         return [
-            'id'                                  => $user->id,
-            'practice_id'                         => $primaryPractice->id,
-            'email'                               => $user->email,
-            'last_name'                           => $user->getLastName(),
-            'first_name'                          => $user->getFirstName(),
-            'full_name'                           => $user->display_name,
-            'phone_number'                        => $phone->number ?? '',
-            'phone_extension'                     => $phone->extension ?? '',
-            'phone_type'                          => array_search(
-                                                         $phone->type ?? '',
-                                                         PhoneNumber::getTypes()
+            'id'              => $user->id,
+            'practice_id'     => $primaryPractice->id,
+            'email'           => $user->email,
+            'last_name'       => $user->getLastName(),
+            'first_name'      => $user->getFirstName(),
+            'full_name'       => $user->display_name,
+            'suffix'          => $user->getSuffix(),
+            'phone_number'    => $phone->number ?? '',
+            'phone_extension' => $phone->extension ?? '',
+            'phone_type'      => array_search(
+                $phone->type ?? '',
+                PhoneNumber::getTypes()
                                                      ) ?? '',
-            'sendBillingReports'                  => $permissions->pivot->send_billing_reports ?? false,
-            'canApproveAllCareplans'              => $user->canApproveCarePlans(),
-            'role_names'                          => $roles->map(function ($r) {
+            'sendBillingReports'     => $permissions->pivot->send_billing_reports ?? false,
+            'canApproveAllCareplans' => $user->canApproveCarePlans(),
+            'role_names'             => $roles->map(function ($r) {
                 return $r->name;
             }),
-            'role_display_names'                  => $roles->implode('display_name', ', '),
-            'locations'                           => $user->locations->pluck('id'),
-            'emr_direct_address'                  => $user->emr_direct_address,
-            'forward_alerts_to'                   => [
+            'role_display_names' => $roles->implode('display_name', ', '),
+            'locations'          => $user->locations->pluck('id'),
+            'emr_direct_address' => $user->emr_direct_address,
+            'forward_alerts_to'  => [
                 'who'      => $forwardAlertsToContactUsers->keys()->first() ?? 'billing_provider',
                 'user_ids' => $forwardAlertsToContactUsers->values()->first() ?? [],
             ],
@@ -164,9 +164,9 @@ class PracticeStaffController extends Controller
      * Update the specified resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @param int $id
-     * @param mixed $primaryPracticeId
-     * @param mixed $userId
+     * @param int                      $id
+     * @param mixed                    $primaryPracticeId
+     * @param mixed                    $userId
      *
      * @return \Illuminate\Http\Response
      */
@@ -190,6 +190,7 @@ class PracticeStaffController extends Controller
             'first_name'   => $formData['first_name'],
             'last_name'    => $formData['last_name'],
             'display_name' => "{$formData['first_name']} {$formData['last_name']}",
+            'suffix'       => ! empty($formData['suffix']) ? $formData['suffix'] : null,
             'user_status'  => 1,
         ]);
 
@@ -259,7 +260,7 @@ class PracticeStaffController extends Controller
             } else {
                 $user->nurseInfo->status = 'active';
             }
-        } else if ($user->nurseInfo) {
+        } elseif ($user->nurseInfo) {
             $user->nurseInfo->status = 'inactive';
             $user->nurseInfo->save();
         }

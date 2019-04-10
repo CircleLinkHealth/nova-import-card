@@ -181,19 +181,21 @@ function formatTime($time)
                                                             </a>
                                                         </td>
                                                         <td class="{{ \Carbon\Carbon::parse($call->scheduled_date)->lessThan(\Carbon\Carbon::today()) ? 'red' : '' }}">
-                                                            {{ $call->scheduled_date }}
+                                                            {{ presentDate($call->scheduled_date, false) }}
                                                         </td>
                                                         <td>{{ $call->call_time_start }}</td>
                                                         <td>{{ $call->call_time_end }}</td>
                                                         <td>
-                                                            <?php
-                                                            $dateTime = new DateTime();
-                                                            $dateTime->setTimeZone(new DateTimeZone($call->timezone));
-                                                            echo '<span style="font-weight:bold;color:green;">'.$dateTime->format('T').'</a>';
-                                                            ?>
+                                                            @if($call->timezone)
+                                                                <?php
+                                                                    $dateTime = new DateTime();
+                                                                    $dateTime->setTimeZone(new DateTimeZone($call->timezone));
+                                                                    echo '<span style="font-weight:bold;color:green;">'.$dateTime->format('T').'</a>';
+                                                                ?>
+                                                            @endif
                                                         </td>
                                                         <td>
-                                                            {{ $call->last_call }}
+                                                            {{ presentDate($call->last_call) }}
                                                         </td>
                                                         <td>
                                                             @if( isset($call->ccm_time))

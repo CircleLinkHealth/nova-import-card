@@ -101,7 +101,7 @@ class NurseController extends Controller
             $last       = Carbon::now()->lastOfMonth()->endOfDay();
         }
 
-        $nurses = User::ofType('care-center')->has('access_disabled', 0)->get();
+        $nurses = User::ofType('care-center')->where('access_disabled', 0)->get();
         $data   = [];
 
         while ($dayCounter->lte($last)) {

@@ -52,11 +52,11 @@
                     <div class="card">
                         <div class="card-content">
                             <ul>
-                                <li class="sidebar-demo-list"><span><b>Name:</b>{{name}}</span></li>
-                                <li class="sidebar-demo-list"><span><b>Language:</b> {{lang}}</span></li>
-                                <li class="sidebar-demo-list"><span><b>Provider Name:</b>{{providerFullName}}</span>
+                                <li class="sidebar-demo-list"><span :title="name"><b>Name:</b>{{name}}</span></li>
+                                <li class="sidebar-demo-list"><span :title="lang"><b>Language:</b> {{lang}}</span></li>
+                                <li class="sidebar-demo-list"><span :title="providerFullName"><b>Provider Name:</b>{{providerFullName}}</span>
                                 </li>
-                                <li class="sidebar-demo-list"><span><b>Practice Name:</b>{{practice_name}}</span>
+                                <li class="sidebar-demo-list"><span :title="practice_name"><b>Practice Name:</b>{{practice_name}}</span>
                                 </li>
                             </ul>
                         </div>
@@ -161,7 +161,7 @@
             </div>
         </ul>
 
-        <div style="margin-left: 21%;">
+        <div style="margin-left: 26%;">
 
             <div style="padding: 0px 10px; font-size: 16px;">
 
@@ -380,7 +380,7 @@
                     <div class="row">
                         <div class="col s12 m12">
                             <label for="utc-reason" class="label">Reason:</label>
-                            <select name="reason" id="utc-reason" required>
+                            <select v-model="utc_reason" name="reason" id="utc-reason" required>
                                 <option value="voicemail">Left A Voicemail</option>
                                 <option value="disconnected">Disconnected Number</option>
                                 <option value="requested callback">Requested Call At Other Time</option>
@@ -391,6 +391,11 @@
                         <div class="col s6 m12 select-custom">
                             <label for="utc_reason_other" class="label">If you selected other, please specify:</label>
                             <input class="input-field" name="reason_other" id="utc_reason_other"/>
+                        </div>
+
+                        <div v-show="utc_requested_callback" class="col s6 m12 select-custom">
+                            <label for="utc_callback" class="label">Patient Requests Callback On:</label>
+                            <input type="date" name="utc_callback" id="utc_callback">
                         </div>
 
                     </div>
@@ -632,7 +637,10 @@
             },
             cell_is_invalid: function () {
                 return !this.validatePhone(this.cell_phone)
-            }
+            },
+            utc_requested_callback(){
+                return this.utc_reason === 'requested callback';
+            },
         },
         data: function () {
             return {
@@ -662,6 +670,7 @@
                 callStatus: 'Summoning Calling Gods...',
                 toCall: '',
                 isSoftDecline: false,
+                utc_reason: '',
                 callError: null,
                 consentedUrl: rootUrl('enrollment/consented'),
                 utcUrl: rootUrl('enrollment/utc'),
@@ -684,6 +693,7 @@
             }, 1000);
 
             $(document).ready(function () {
+
                 M.Modal.init($('#consented'));
                 M.Modal.init($('#utc'));
                 M.Modal.init($('#tips'));
@@ -718,7 +728,6 @@
                 }
 
             });
-
         },
         methods: {
 
@@ -859,12 +868,14 @@
     }
 
     .sidebar-demo-list {
-
         height: 24px;
+        width: 278px;
         font-size: 16px;
         padding-left: 15px;
         line-height: 20px !important;
-
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
     }
 
     .valid {
@@ -892,7 +903,7 @@
     }
 
     .side-nav.fixed {
-        width: 20%;
+        width: 25%;
         margin-top: 65px;
         position: fixed;
     }

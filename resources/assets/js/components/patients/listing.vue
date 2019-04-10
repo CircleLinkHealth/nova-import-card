@@ -291,13 +291,13 @@
             },
             getStatusDate(patient) {
                 if (patient.patient_info.ccm_status === 'paused') {
-                    return moment(patient.patient_info.date_paused).format('YYYY-MM-DD')
+                    return moment(patient.patient_info.date_paused).format('MM-DD-YYYY')
                 }
                 if (patient.patient_info.ccm_status === 'withdrawn') {
-                    return moment(patient.patient_info.date_withdrawn).format('YYYY-MM-DD')
+                    return moment(patient.patient_info.date_withdrawn).format('MM-DD-YYYY')
                 }
                 if (patient.patient_info.ccm_status === 'unreachable') {
-                    return moment(patient.patient_info.date_unreachable).format('YYYY-MM-DD')
+                    return moment(patient.patient_info.date_unreachable).format('MM-DD-YYYY')
                 }
             },
             getPatients() {
@@ -355,7 +355,7 @@
                         patient.program_name = (this.practices.find(practice => practice.id == patient.program_id) || {}).display_name || ''
                         patient.age = (patient.patient_info || {}).age || ''
                         patient.mrn = (patient.patient_info || {}).mrn_number || ''
-                        patient.registeredOn = moment(patient.created_at || '').format('YYYY-MM-DD')
+                        patient.registeredOn = moment(patient.created_at || '').format('MM-DD-YYYY')
                         patient.ccmStatusDate = (this.getStatusDate(patient) || '')
                         patient.sort_registeredOn = new Date(patient.created_at)
                         patient.sort_ccmStatusDate = new Date(patient.ccmStatusDate)

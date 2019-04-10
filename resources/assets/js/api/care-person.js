@@ -1,15 +1,16 @@
 export default {
-    destroyCarePerson (cb, ecb = () => ({}), carePerson) {
+    destroyCarePerson(cb, ecb = () => ({}), carePerson) {
         window.axios.delete('user/' + carePerson.user_id + '/care-team/' + carePerson.id).then(
             (resp) => cb(carePerson),
             (resp) => {
-                if (typeof(ecb) == 'function') {
+                console.error(resp);
+                if (typeof(ecb) === 'function') {
                     ecb(resp.data)
                 }
             }
         );
     },
-    updateCarePerson (cb, ecb = () => ({}), carePerson) {
+    updateCarePerson(cb, ecb = () => ({}), carePerson) {
         window.axios.patch('user/' + carePerson.user_id + '/care-team/' + carePerson.id, carePerson).then(
             (resp) => {
                 const createNewPerson = (newCarePerson) => {
@@ -18,10 +19,10 @@ export default {
                 };
                 const modOldBillingProvider = (oldCarePerson) => {
                     if (oldCarePerson) {
-                        if (oldCarePerson.type == 'external') {
+                        if (oldCarePerson.type === 'external') {
                             oldCarePerson.formatted_type = 'Provider (External)'
                         }
-                        else if (oldCarePerson.type == 'internal') {
+                        else if (oldCarePerson.type === 'internal') {
                             oldCarePerson.formatted_type = 'Provider (Internal)'
                         }
                     }
@@ -30,7 +31,8 @@ export default {
                 cb(createNewPerson(resp.data.carePerson), modOldBillingProvider(resp.data.oldBillingProvider))
             },
             (resp) => {
-                if (typeof(ecb) == 'function') {
+                console.error(resp);
+                if (typeof(ecb) === 'function') {
                     ecb(resp.data)
                 }
             }
