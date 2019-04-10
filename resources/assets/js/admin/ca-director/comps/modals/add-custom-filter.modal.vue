@@ -126,8 +126,10 @@
                     .post(rootUrl('/admin/ca-director/add-enrollee-custom-filter'), this.customFilterData)
                     .then(() => {
                         this.loading = false;
+                        Event.$emit("refresh-table");
                         Event.$emit("modal-add-custom-filter:hide");
-                        this.$parent.$refs.table.refresh();
+
+
                     })
                     .catch(err => {
                         this.loading = false;

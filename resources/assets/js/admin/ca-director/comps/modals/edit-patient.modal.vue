@@ -179,8 +179,9 @@
                     .post(rootUrl('/admin/ca-director/edit-enrollee'), this.enrolleeData)
                     .then(() => {
                         this.loading = false;
+                        Event.$emit('refresh-table');
                         Event.$emit("modal-edit-patient:hide");
-                        this.$parent.$refs.table.refresh();
+
                     })
                     .catch(err => {
                         this.loading = false;

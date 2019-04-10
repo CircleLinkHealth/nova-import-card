@@ -142,7 +142,7 @@
                                 : ucwords($patient->getCcmStatus()); ?></li>
                     @endif
                     <br/>
-                    @if(auth()->user()->hasRole(['administrator']))
+                    @if(auth()->user()->isAdmin())
                         @include('partials.viewCcdaButton')
                     @endif
                 </div>
