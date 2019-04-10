@@ -17,8 +17,13 @@ if (process.env.NODE_ENV !== 'production') {
     });
 }
 else {
+    var raygunClient = require('../logger/raygun').getRaygun();
     router.get('/', (req, res) => {
-        res.send({message: 'Time Tracker', uptime: Math.floor(process.uptime())})
+        res.send({
+            message: 'Time Tracker',
+            uptime: Math.floor(process.uptime()),
+            raygun: raygunClient !== null
+        })
     })
 }
 
