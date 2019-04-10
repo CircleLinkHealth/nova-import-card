@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
-use CircleLinkHealth\Customer\Traits\Notifiable;
+use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\Traits\HasEmrDirectAddress;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -76,7 +76,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Location extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use HasEmrDirectAddress,
-        Notifiable,
+        CircleLinkHealth\Core\Traits\Notifiable,
         SoftDeletes;
 
     //Aprima's constant location id.

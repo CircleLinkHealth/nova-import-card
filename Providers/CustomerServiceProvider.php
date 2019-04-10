@@ -39,9 +39,9 @@ class CustomerServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register(RouteServiceProvider::class);
-        $this->app->bind(DatabaseNotification::class, \CircleLinkHealth\Customer\Entities\DatabaseNotification::class);
-        $this->app->bind(HasDatabaseNotifications::class, \CircleLinkHealth\Customer\Traits\HasDatabaseNotifications::class);
-        $this->app->bind(Notifiable::class, \CircleLinkHealth\Customer\Traits\Notifiable::class);
+        $this->app->bind(DatabaseNotification::class, \CircleLinkHealth\Core\Entities\DatabaseNotification::class);
+        $this->app->bind(HasDatabaseNotifications::class, \CircleLinkHealth\Core\Traits\HasDatabaseNotifications::class);
+        $this->app->bind(Notifiable::class, \CircleLinkHealth\Core\Traits\Notifiable::class);
     }
 
     /**

@@ -36,7 +36,7 @@ use App\Models\CPM\CpmSymptom;
 use App\Models\EmailSettings;
 use App\Models\MedicalRecords\Ccda;
 use App\Notifications\CarePlanApprovalReminder;
-use CircleLinkHealth\Customer\Traits\Notifiable;
+use CircleLinkHealth\Core\Traits\Notifiable;
 use App\Notifications\ResetPassword;
 use App\Repositories\Cache\EmptyUserNotificationList;
 use App\Repositories\Cache\UserNotificationList;
@@ -302,7 +302,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         HasMediaTrait,
         Impersonate,
         MakesOrReceivesCalls,
-        Notifiable,
+        CircleLinkHealth\Core\Traits\Notifiable,
         SaasAccountable,
         SoftDeletes,
         TimezoneTrait;
