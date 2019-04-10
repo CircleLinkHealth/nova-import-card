@@ -37,6 +37,14 @@
       "url": "git@github.com:CircleLinkHealth/module-two-fa.git"
     },
     {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/module-customer.git"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/module-core.git"
+    },
+    {
       "type": "composer",
       "url": "https://packagist.org"
     },
@@ -54,6 +62,8 @@
     "appstract/laravel-opcache": "^2.0",
     "arcturial/clickatell": "*",
     "barryvdh/laravel-snappy": "0.4.3",
+    "circlelinkhealth/core": "dev-master",
+    "circlelinkhealth/customer": "dev-master",
     "circlelinkhealth/raygun": "dev-master",
     "circlelinkhealth/timetracking": "dev-master",
     "circlelinkhealth/twofa": "dev-master",
