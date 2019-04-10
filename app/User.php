@@ -2,48 +2,14 @@
 
 namespace App;
 
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Lab404\Impersonate\Models\Impersonate;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Patient;
 
-
-class User extends Authenticatable
+class User extends \CircleLinkHealth\Customer\Entities\User
 {
-    use Notifiable;
-    use Impersonate;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'first_name',
-        'last_name',
-        'display_name',
-        'email',
-        'password',
-    ];
-
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
 
     public function patientInfo()
     {
         return $this->hasOne(Patient::class, 'id');
-    }
-
-    public function phoneNumber()
-    {
-        return $this->hasOne(PhoneNumber::class);
     }
 
     public function url()
