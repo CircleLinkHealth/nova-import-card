@@ -1,4 +1,4 @@
-<nav class="navbar secondary-navbar {{--hidden-xs--}}">
+<nav class="navbar secondary-navbar">
     <div class="patient__actions text-center col-lg-12 col-lg-offset-0 col-sm-4 col-sm-offset-4 col-xs-12 col-xs-offset-0">
         <ul class="navbar-nav nav">
 
@@ -33,10 +33,14 @@
                                 Report</a>
                         </li>
                     @endif
-                    <li class="inline-block">
-                        <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.care-docs', array('patient' => $patient->id)) }}"
-                           role="button">Wellness Visit Docs</a>
+                    <li>
+                        <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.care-docs', array('patient' => $patient->id)) }}">Wellness Visit Docs</a>
                     </li>
+                    @if(auth()->user()->isAdmin() && $patient->hasCcda())
+                        <li>
+                            <a target="_blank" href="{{route('get.CCDViewerController.showByUserId', [ 'userId' => $patient->id])}}">CCDA</a>
+                        </li>
+                    @endif
                 </ul>
             </li>
 

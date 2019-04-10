@@ -1,5 +1,5 @@
 <template>
-    <modal name="mark-ineligible" class="modal-mark-ineligible" :no-title="true" :no-footer="true" :info="markIneligibleModalInfo">
+    <modal name="unassign-ca" class="modal-unassign-ca" :no-title="true" :no-footer="true" :info="unassignCaModalInfo">
         <div class="row">
             <p>
                 You have selected <b>{{this.enrolleeCount()}}</b> patient(s).
@@ -7,14 +7,12 @@
                 <br>
                 <br>
                 <b>Warning:</b>
-                Are you sure you want to mark selected patient(s) as ineligible?
-                <br>
-                (you will have to enable the <b>Show Ineligible</b> filter to view them)
+                Are you sure you want to unassign these patients from their current Care Ambassadors?
             </p>
         </div>
         <div class="row">
-            <div class="col-sm-12" style="width: 90%">
-                <notifications ref="notificationsComponent" name="mark-ineligible-modal"></notifications>
+            <div class="col-sm-12">
+                <notifications ref="notificationsComponent" name="unassign-ca-modal"></notifications>
             </div>
         </div>
         <loader v-if="loading"/>
@@ -32,7 +30,7 @@
     let self;
 
     export default {
-        name: "mark-ineligible-modal",
+        name: "unassign-ca.modal",
         props: {
             selectedEnrolleeIds: {
                 type: Array,
@@ -42,47 +40,47 @@
         data: () => {
             return {
                 loading: false,
-                markIneligibleModalInfo: {
+                unassignCaModalInfo: {
                     okHandler: () => {
-                        Event.$emit('notifications-mark-ineligible-modal:dismissAll');
-                        self.markEnrolleesAsIneligible();
+                        Event.$emit('notifications-unassign-ca-modal:dismissAll');
+                        self.unassignCaFromEnrollees();
                     },
                     cancelHandler: () => {
-                        Event.$emit('notifications-mark-ineligible-modal:dismissAll');
-                        Event.$emit("modal-mark-ineligible:hide");
+                        Event.$emit('notifications-unassign-ca-modal:dismissAll');
+                        Event.$emit("modal-unassign-ca:hide");
                     }
                 }
             }
         },
         methods: {
 
-            markEnrolleesAsIneligible() {
+            unassignCaFromEnrollees() {
 
                 this.loading = true;
 
-                this.axios.post(rootUrl('/admin/ca-director/mark-ineligible'), {
+                this.axios.post(rootUrl('/admin/ca-director/unassign-ca'), {
                     enrolleeIds: this.selectedEnrolleeIds
                 })
                     .then(resp => {
                         this.loading = false;
                         Event.$emit('clear-selected-enrollees');
                         Event.$emit('refresh-table');
-                        Event.$emit("modal-mark-ineligible:hide");
+                        Event.$emit("modal-unassign-ca:hide");
                     })
                     .catch(err => {
                         this.loading = false;
                         let errors = err.response.data.errors ? err.response.data.errors : [];
 
-                        Event.$emit('notifications-mark-ineligible-modal:create', {
+                        Event.$emit('notifications-unassign-ca-modal:create', {
                             noTimeout: true,
-                            text:  errors,
+                            text: errors,
                             type: 'error'
                         });
                     });
             },
             enrolleeCount(){
                 return this.selectedEnrolleeIds.length;
-        }
+            }
         },
         components: {
             'modal': Modal,
@@ -99,7 +97,7 @@
 </script>
 
 <style>
-    .modal-mark-ineligible .modal-wrapper {
+    .modal-unassign-ca .modal-wrapper {
         white-space: nowrap;
         display: block;
         margin-top: 40px;
@@ -109,15 +107,15 @@
     }
 
     /*width will be set automatically when modal is mounted*/
-    .modal-mark-ineligible .modal-container {
-        width: 600px;
-        height: 300px;
+    .modal-unassign-ca .modal-container {
+        width: 680px;
+        height: 200px;
     }
 
 
 
 
-    .modal-mark-ineligible .loader {
+    .modal-unassign-ca .loader {
         position: absolute;
         right: 5px;
         top: 5px;
@@ -125,7 +123,7 @@
         height: 20px;
     }
 
-    .modal-mark-ineligible .glyphicon-remove {
+    .modal-unassign-ca .glyphicon-remove {
         width: 20px;
         height: 20px;
         color: #d44a4a;
@@ -169,11 +167,10 @@
     }
 
 
-    .modal-mark-ineligible .modal-body {
-        height: 200px;
+    .modal-unassign-ca .modal-body {
+        height: 90px;
         width: 600px;
     }
-
 
 
 </style>

@@ -116,6 +116,9 @@ class TwilioController extends Controller
                                 }
                             }
 
+                            //the patient
+                            //conference still runs even on exit
+                            //means that the nurse has to explicitly hang up to end the call
                             $conferenceName = $call->inbound_user_id.'_'.$call->outbound_user_id;
                             $dial           = $response->dial();
                             $dial->conference($conferenceName, [
@@ -150,14 +153,18 @@ class TwilioController extends Controller
                             }
                         }
 
+                        //the nurse
+                        //conference starts immediately
+                        //conference ends on exit
                         $conferenceName = $call->inbound_user_id.'_'.$call->outbound_user_id;
                         $dial           = $response->dial();
                         $dial->conference($conferenceName, [
-                            'endConferenceOnExit'  => true,
-                            'statusCallbackEvent'  => 'start end join leave',
-                            'statusCallback'       => route('twilio.call.conference.status'),
-                            'statusCallbackMethod' => 'POST',
-                            'record'               => $recordCalls
+                            'startConferenceOnEnter' => true,
+                            'endConferenceOnExit'    => true,
+                            'statusCallbackEvent'    => 'start end join leave',
+                            'statusCallback'         => route('twilio.call.conference.status'),
+                            'statusCallbackMethod'   => 'POST',
+                            'record'                 => $recordCalls
                                 ? 'record-from-start'
                                 : 'do-not-record',
                             'recordingStatusCallback'       => route('twilio.call.recording.status'),
@@ -377,9 +384,9 @@ class TwilioController extends Controller
         $dbCall = TwilioCall::where('inbound_user_id', '=', $input['inbound_user_id'])
             ->where('outbound_user_id', '=', $input['outbound_user_id'])
             ->where(function ($q) {
-                $q->where('call_status', '=', 'ringing')
-                    ->orWhere('call_status', '=', 'in-progress');
-            })
+                                $q->where('call_status', '=', 'ringing')
+                                    ->orWhere('call_status', '=', 'in-progress');
+                            })
             ->orderBy('updated_at', 'desc')
             ->first();
 
@@ -396,10 +403,10 @@ class TwilioController extends Controller
 
             $this->client->calls($dialCallSid)
                 ->update(
-                    [
-                        'method' => 'POST',
-                        'url'    => route('twilio.call.dial.action'),
-                    ]
+                             [
+                                 'method' => 'POST',
+                                 'url'    => route('twilio.call.dial.action'),
+                             ]
                          );
 
             return response()->json([]);
@@ -450,12 +457,16 @@ class TwilioController extends Controller
             $input['IsUnlistedNumber'] = '1' === $input['IsUnlistedNumber']
                 ? true
                 : false;
+        } else {
+            $input['IsUnlistedNumber'] = false;
         }
 
         if ( ! empty($input['IsCallToPatient'])) {
             $input['IsCallToPatient'] = '1' === $input['IsCallToPatient']
                 ? true
                 : false;
+        } else {
+            $input['IsCallToPatient'] = false;
         }
 
         $validation = \Validator::make($input, [
@@ -750,9 +761,9 @@ class TwilioController extends Controller
             if ( ! empty($fields['from'])) {
                 $conferenceParticipant = TwilioConferenceCallParticipant::where('call_sid', '=', $callSid)
                     ->where(
-                        'participant_number',
-                        '=',
-                        TwilioController::CLIENT_ANONYMOUS
+                                                                            'participant_number',
+                                                                            '=',
+                                                                            TwilioController::CLIENT_ANONYMOUS
                                                                         )
                     ->first();
 

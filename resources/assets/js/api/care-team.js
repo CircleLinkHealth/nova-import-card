@@ -8,7 +8,12 @@ export default {
 
         window.axios.get('user/' + patientId + '/care-team').then(
             (resp) => cb(resp.data),
-            (resp) => ecb(resp.data)
+            (resp) => {
+                console.error(resp);
+                if (typeof ecb === 'function'){
+                    ecb(resp.data);
+                }
+            }
         );
     },
 }
