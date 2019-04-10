@@ -1314,13 +1314,26 @@ if ( ! function_exists('isProductionEnv')) {
 }
 
 if ( ! function_exists('presentDate')) {
-    function presentDate(Carbon $date, bool $withTime = true)
+    function presentDate($date, bool $withTime = true)
     {
-        if ($date->year < 1) {
+        if ( ! is_a($date, Carbon::class)) {
+            $validator = Validator::make(['date' => $date], ['date' => 'date']);
+
+            if ($validator->fails()) {
+                return 'N/A';
+            }
+
+            $carbonDate = Carbon::parse($date);
+        } else {
+            $carbonDate = $date;
+        }
+
+        if ($carbonDate->year < 1) {
             return 'N/A';
         }
 
         return $withTime
-        ? $date->format('m-d-y h:iA') : $date->format('m-d-y');
+            ? $carbonDate->format('Y-m-d h:iA')
+            : $carbonDate->format('Y-m-d');
     }
 }
