@@ -8,7 +8,7 @@ namespace Tests\Unit;
 
 use App\Notifications\CarePlanApprovalReminder;
 use App\Notifications\CarePlanProviderApproved;
-use App\Notifications\Channels\DatabaseChannel;
+use CircleLinkHealth\Core\Notifications\Channels\DatabaseChannel;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\Channels\FaxChannel;
 use App\Notifications\NoteForwarded;

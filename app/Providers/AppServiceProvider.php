@@ -31,10 +31,6 @@ use App\Services\SnappyPdfWrapper;
 use DB;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
-use Illuminate\Notifications\Channels\DatabaseChannel;
-use Illuminate\Notifications\DatabaseNotification;
-use Illuminate\Notifications\HasDatabaseNotifications;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Dusk\DuskServiceProvider;
@@ -89,11 +85,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //Bind database notification classes to local
-        $this->app->bind(DatabaseChannel::class, \App\Notifications\Channels\DatabaseChannel::class);
-        $this->app->bind(DatabaseNotification::class, \App\DatabaseNotification::class);
-        $this->app->bind(HasDatabaseNotifications::class, \CircleLinkHealth\Core\Traits\HasDatabaseNotifications::class);
-        $this->app->bind(Notifiable::class, \CircleLinkHealth\Core\Traits\Notifiable::class);
         $this->app->bind(
             HtmlToPdfService::class,
             function () {
