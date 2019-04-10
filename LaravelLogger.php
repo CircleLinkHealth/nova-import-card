@@ -2,15 +2,14 @@
 
 namespace CircleLinkHealth\Raygun;
 
-use CircleLinkHealth\Raygun\EventTrait;
-use Raygun4php\RaygunClient;
 use CircleLinkHealth\Raygun\PsrLogger\RaygunLogger;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Logging\Log;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
+use Raygun4php\RaygunClient;
 
-class LaravelLogger extends RaygunLogger implements Log
+class LaravelLogger extends RaygunLogger
 {
     use EventTrait;
     

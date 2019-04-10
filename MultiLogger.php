@@ -6,7 +6,7 @@ use CircleLinkHealth\Raygun\PsrLogger\MultiLogger as BaseLogger;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Logging\Log;
 
-class MultiLogger extends BaseLogger implements Log
+class MultiLogger extends BaseLogger
 {
     use EventTrait;
     
