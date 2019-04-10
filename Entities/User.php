@@ -302,7 +302,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         HasMediaTrait,
         Impersonate,
         MakesOrReceivesCalls,
-        CircleLinkHealth\Core\Traits\Notifiable,
+        Notifiable,
         SaasAccountable,
         SoftDeletes,
         TimezoneTrait;
