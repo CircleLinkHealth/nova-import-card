@@ -6,10 +6,13 @@
 
 namespace App\Console\Commands;
 
+use App\Traits\RunsCommands;
 use Illuminate\Console\Command;
 
-class OnSuccessfulDeployment extends Command
+class StoreJiraTicketsDeployed extends Command
 {
+    use RunsCommands;
+
     /**
      * The console command description.
      *
@@ -21,7 +24,8 @@ class OnSuccessfulDeployment extends Command
      *
      * @var string
      */
-    protected $signature = 'deploy:success {currentRevision : The revision that was just successfully deployed.}
+    protected $signature = 'tickets:store
+                                           {currentRevision : The revision that was just successfully deployed.}
                                            {envName : The name of the environment we just deployed to.}
                                            {rollback    : Either 1 or 0 if deployment is a rollback or not.}
                                            {userName    : Name of the user who triggered the deployment.}
@@ -39,8 +43,6 @@ class OnSuccessfulDeployment extends Command
 
     /**
      * Execute the console command.
-     *
-     * @throws \Exception
      *
      * @return mixed
      */
@@ -62,35 +64,44 @@ class OnSuccessfulDeployment extends Command
         $this->info('userName: '.$user);
         $this->info('comment: '.$comment);
 
-        $this->notifySlackOfTicketsDeployed();
-    }
+        if ( ! file_exists(base_path('.git'))) {
+            $initGit = $this->runCommand(
+                'git init && git remote add origin git@github.com:CircleLinkHealth/app-cpm-web.git && git fetch'
+            );
+        }
+        $jiraTicketNumbers = $this->runCommand(
+            "git log --pretty=oneline $lastDeployedRevision...$newlyDeployedRevision | perl -ne '{ /(CPM)-(\d+)/ && print \"$1-$2\n\" }' | sort | uniq"
+        );
 
-    /**
-     * @throws \Exception
-     */
-    private function notifySlackOfTicketsDeployed()
-    {
-        $filePath = storage_path('jira-tickets-deployed');
+        $output = $jiraTicketNumbers->getOutput();
+        $this->info("Output `$output`");
 
-        if (file_exists($filePath)) {
-            $contents = json_decode(file_get_contents($filePath), true);
+        $jiraTickets = collect(explode("\n", $output))
+            ->filter()
+            ->values()
+            ->sort();
 
-            if (array_key_exists('message', $contents)) {
-                $message = $contents['message'];
-                if (app()->environment(['test', 'staging'])) {
-                    $channel = '#releases-staging';
-                } elseif (app()->environment(['worker', 'production'])) {
-                    $channel = '#releases-production';
+        if ($jiraTickets->isEmpty()) {
+            return;
+        }
+
+        $message = "*$user* deployed work related to the following tickets *$envName*: \n";
+
+        $jiraTickets->each(
+            function ($t) use (&$message) {
+                if ( ! empty($t)) {
+                    $message .= "https://circlelinkhealth.atlassian.net/browse/$t  \n";
                 }
-
-                if ( ! isset($channel)) {
-                    throw new \Exception(
-                        'Unable to resolve Slack channel. Check that environment is allowed to run this command.'
-                    );
-                }
-
-                sendSlackMessage($channel, $message, true);
             }
+        );
+
+        $loginLink = config('opcache.url');
+        $message .= "\n Login at: $loginLink";
+
+        $stored = file_put_contents(storage_path('jira-tickets-deployed'), json_encode(['message' => $message]));
+
+        if (false === $stored) {
+            throw new \Exception('Could not store file');
         }
     }
 }

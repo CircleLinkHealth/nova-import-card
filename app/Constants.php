@@ -8,6 +8,7 @@ namespace App;
 
 class Constants
 {
+    const CACHE_USER_HAS_CCDA = 'user:{$userId}:has_ccda';
     /**
      * Redis Cache Keys.
      */

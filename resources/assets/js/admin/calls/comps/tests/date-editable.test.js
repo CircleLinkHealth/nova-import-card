@@ -10,7 +10,7 @@ const CreateDateEditable = (props) => {
 }
 
 describe('DateEditable', () => {
-    const format = 'YYYY-MM-DD'
+    const format = 'MM-DD-YYYY'
 
     it ('isEditMode is true', () => {
         const vm = CreateDateEditable({

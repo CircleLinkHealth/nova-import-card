@@ -6,13 +6,13 @@
 
 namespace App\Filters;
 
-use CircleLinkHealth\Customer\Entities\CarePerson;
 use App\CarePlan;
+use App\Repositories\PatientReadRepository;
+use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
-use App\Repositories\PatientReadRepository;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class PatientFilters extends QueryFilters
@@ -65,10 +65,10 @@ class PatientFilters extends QueryFilters
                         ->where('date_unreachable', 'LIKE', "%${date}%");
                 })
                 ->orWhere(
-                      function ($subQuery) use ($date) {
-                          $subQuery->where('ccm_status', Patient::WITHDRAWN)
-                              ->where('date_withdrawn', 'LIKE', "%${date}%");
-                      }
+                    function ($subQuery) use ($date) {
+                        $subQuery->where('ccm_status', Patient::WITHDRAWN)
+                            ->where('date_withdrawn', 'LIKE', "%${date}%");
+                    }
                   );
         });
     }
@@ -117,6 +117,13 @@ class PatientFilters extends QueryFilters
         });
     }
 
+    public function mrn($mrn)
+    {
+        return $this->builder->whereHas('patientInfo', function ($query) use ($mrn) {
+            $query->where('mrn_number', 'LIKE', '%'.$mrn.'%');
+        });
+    }
+
     public function name($term)
     {
         return $this->builder->where('users.display_name', 'LIKE', "%${term}%");
@@ -157,6 +164,26 @@ class PatientFilters extends QueryFilters
             : 'asc');
     }
 
+    public function sort_bhi($type = null)
+    {
+        $joinTable = (new PatientMonthlySummary())->getTable();
+        $date      = Carbon::now()->startOfMonth();
+
+        return $this->builder
+            ->select('users.*')
+            ->with([
+                'patientSummaries' => function ($q) use ($date) {
+                    return $q->where('month_year', '=', $date);
+                },
+            ])
+            ->leftJoin($joinTable, function ($join) use ($joinTable, $date) {
+                $join->on('users.id', '=', "${joinTable}.patient_id")
+                    ->where("${joinTable}.month_year", '=', $date);
+            })
+            ->orderBy("${joinTable}.bhi_time", $type)
+            ->groupBy('users.id');
+    }
+
     public function sort_careplanStatus($type = null)
     {
         $careplanTable = (new CarePlan())->getTable();
@@ -186,26 +213,6 @@ class PatientFilters extends QueryFilters
                     ->where("${joinTable}.month_year", '=', $date);
             })
             ->orderBy("${joinTable}.ccm_time", $type)
-            ->groupBy('users.id');
-    }
-
-    public function sort_bhi($type = null)
-    {
-        $joinTable = (new PatientMonthlySummary())->getTable();
-        $date      = Carbon::now()->startOfMonth();
-
-        return $this->builder
-            ->select('users.*')
-            ->with([
-                'patientSummaries' => function ($q) use ($date) {
-                    return $q->where('month_year', '=', $date);
-                },
-            ])
-            ->leftJoin($joinTable, function ($join) use ($joinTable, $date) {
-                $join->on('users.id', '=', "${joinTable}.patient_id")
-                     ->where("${joinTable}.month_year", '=', $date);
-            })
-            ->orderBy("${joinTable}.bhi_time", $type)
             ->groupBy('users.id');
     }
 
@@ -243,6 +250,18 @@ class PatientFilters extends QueryFilters
             '=',
             "${patientTable}.user_id"
         )->orderBy("${patientTable}.birth_date", $type)->groupBy('users.id');
+    }
+
+    public function sort_mrn($type = null)
+    {
+        $patientTable = (new Patient())->getTable();
+
+        return $this->builder->select('users.*')->with('patientInfo')->join(
+            $patientTable,
+            'users.id',
+            '=',
+            "${patientTable}.user_id"
+        )->orderBy("${patientTable}.mrn_number", $type)->groupBy('users.id');
     }
 
     public function sort_name($type = null)
