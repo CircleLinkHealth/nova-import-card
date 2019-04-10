@@ -17,19 +17,19 @@ namespace CircleLinkHealth\Customer\Entities;
  * @property \Carbon\Carbon|null                           $updated_at
  * @property \Eloquent|\Illuminate\Database\Eloquent\Model $emrDirectable
  *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\EmrDirectAddress whereAddress($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\EmrDirectAddress whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\EmrDirectAddress whereEmrDirectableId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\EmrDirectAddress whereEmrDirectableType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\EmrDirectAddress whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\EmrDirectAddress whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\EmrDirectAddress whereAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\EmrDirectAddress whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\EmrDirectAddress whereEmrDirectableId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\EmrDirectAddress whereEmrDirectableType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\EmrDirectAddress whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\EmrDirectAddress whereUpdatedAt($value)
  * @mixin \Eloquent
  *
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\EmrDirectAddress newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\EmrDirectAddress newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\EmrDirectAddress query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\EmrDirectAddress newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\EmrDirectAddress newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\EmrDirectAddress query()
  */
 class EmrDirectAddress extends \CircleLinkHealth\Core\Entities\BaseModel
 {
