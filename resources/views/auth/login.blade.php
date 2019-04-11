@@ -64,7 +64,7 @@
                         <h2 class="col-sm-4">CarePlan<span class="text-thin">Manager&trade;</span></h2>
                     </div>
                     <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
-                        <form id="login-form" role="form" method="POST" action="{{ url('/auth/login') }}"
+                        <form class="form-prevent-multi-submit" role="form" method="POST" action="{{ url('/auth/login') }}"
                               autocomplete="off">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
@@ -85,7 +85,7 @@
 
                             <div class="form-group" style="margin-top:25px;">
                                 <div class="col-md-12 text-center">
-                                    <button id="login-submit-button" type="submit" class="btn btn-primary btn-large"
+                                    <button id="login-submit-button" type="submit" class="btn btn-primary btn-large btn-prevent-multi-submit"
                                             style="background-color: #50B2E2;">Log In
                                     </button>
                                     <br/>
@@ -102,13 +102,6 @@
     </section>
 </div>
 
-<script>
-    const loginForm = document.getElementById('login-form');
-    loginForm.onsubmit = function () {
-        const loginButton = document.getElementById('login-submit-button');
-        loginButton.setAttribute('disabled', 'true');
-    };
-</script>
-
+<script src="{{asset('js/prevent-multiple-submits.js')}}"></script>
 </body>
 </html>

@@ -61,7 +61,7 @@
     @include('partials.confirm-modal')
 
     <form id="newNote" method="post" action="{{route('patient.note.store', ['patientId' => $patient->id])}}"
-          class="form-horizontal">
+          class="form-horizontal form-prevent-multi-submit">
         <div class="row" style="margin-top:30px;">
             <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1 col-xs-10 col-xs-offset-1"
                  style="border-bottom: 3px solid #50b2e2;">
@@ -373,7 +373,7 @@
                                             <div class="col-sm-12">
                                                 <button name="Submit" id="Submit" type="submit" value="Submit"
                                                         form="newNote"
-                                                        class="btn btn-primary btn-lg form-item--button form-item-spacing">
+                                                        class="btn btn-primary btn-lg form-item--button form-item-spacing btn-prevent-multi-submit">
                                                     Save/Send Note
                                                 </button>
                                             </div>

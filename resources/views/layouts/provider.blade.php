@@ -101,6 +101,8 @@
 <script type="text/javascript" src="{{ mix('compiled/js/issue-688.js') }}"></script>
 
 @stack('scripts')
+
+<script src="{{asset('js/prevent-multiple-submits.js')}}"></script>
 <script>
     $(function () {
         try {
