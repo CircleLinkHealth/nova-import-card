@@ -213,6 +213,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'addendum.read',
                     'role.read',
                     'offlineActivity.create',
+                    'change-patient-enrollment-status',
                 ],
             ],
             [
@@ -867,6 +868,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'note.send',
                     'role.read',
                     'offlineActivity.create',
+                    'change-patient-enrollment-status',
                 ],
             ],
             [
