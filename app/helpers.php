@@ -57,6 +57,18 @@ if ( ! function_exists('parseIds')) {
     }
 }
 
+if ( ! function_exists('isOnSqlite')) {
+    /**
+     * Is the app running on sqlite?
+     *
+     * @return bool
+     */
+    function isOnSqlite()
+    {
+        return 'sqlite' === strtolower(config('database.default'));
+    }
+}
+
 if ( ! function_exists('str_substr_after')) {
     /**
      * Get the substring after the given character.
