@@ -7,9 +7,8 @@
 namespace Tests\Unit\CallsAlgo;
 
 use App\Algorithms\Calls\SuccessfulHandler;
-use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
 
@@ -66,7 +65,7 @@ class SuccessfulCallHandlerTest extends TestCase
         $called  = Carbon::now()->startOfMonth()->addDay(4);
         $patient = $this->fakePatient($called);
 
-        $prediction = (new SuccessfulHandler($patient->patientInfo, $called, false, $patient->inboundCalls->first()))
+        $prediction = (new SuccessfulHandler($patient->patientInfo, $called, $patient->inboundCalls->first()))
             ->handle();
 
         $this->assertNotEmpty($prediction);
@@ -83,7 +82,7 @@ class SuccessfulCallHandlerTest extends TestCase
         $called  = Carbon::now()->endOfMonth()->subWeek()->addDays(3);
         $patient = $this->fakePatient($called);
 
-        $prediction = (new SuccessfulHandler($patient->patientInfo, $called, false, $patient->inboundCalls->first()))
+        $prediction = (new SuccessfulHandler($patient->patientInfo, $called, $patient->inboundCalls->first()))
             ->handle();
 
         $this->assertNotEmpty($prediction);
@@ -102,7 +101,7 @@ class SuccessfulCallHandlerTest extends TestCase
 
         $patient->patientInfo->preferred_calls_per_month = 1;
 
-        $prediction = (new SuccessfulHandler($patient->patientInfo, $called, false, $patient->inboundCalls->first()))
+        $prediction = (new SuccessfulHandler($patient->patientInfo, $called, $patient->inboundCalls->first()))
             ->handle();
 
         $this->assertNotEmpty($prediction);
@@ -121,7 +120,7 @@ class SuccessfulCallHandlerTest extends TestCase
 
         $patient->patientInfo->preferred_calls_per_month = 1;
 
-        $prediction = (new SuccessfulHandler($patient->patientInfo, $called, false, $patient->inboundCalls->first()))
+        $prediction = (new SuccessfulHandler($patient->patientInfo, $called, $patient->inboundCalls->first()))
             ->handle();
 
         $this->assertNotEmpty($prediction);
