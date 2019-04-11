@@ -40,7 +40,7 @@ class UpdatePracticeStaff extends FormRequest
             'email'              => $emailRules,
             'first_name'         => 'required',
             'last_name'          => 'required',
-            'suffix'             => 'required',
+            'suffix'             => 'sometimes',
             'phone_number'       => 'nullable|phone:US',
             'phone_type'         => 'required_with:phone_number',
             'phone_extension'    => 'nullable',
