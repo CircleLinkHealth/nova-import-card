@@ -8,6 +8,7 @@ namespace App\Notifications;
 
 use App\CarePlan;
 use App\Note;
+use App\ValueObjects\SimpleNotification;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -119,7 +120,10 @@ class CarePlanProviderApproved extends Notification
             return false;
         }
 
-        return $this->toPdf();
+        return (new SimpleNotification())
+            ->setBody($this->getBody())
+            ->setSubject($this->getSubject())
+            ->setFilePath($this->toPdf());
     }
 
     /**

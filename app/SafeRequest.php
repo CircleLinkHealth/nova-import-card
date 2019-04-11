@@ -32,7 +32,7 @@ class SafeRequest extends Request
 
         $result = [];
         foreach ($all as $key => $value) {
-            $result[$key] = htmlspecialchars($value);
+            $result[$key] = htmlspecialchars($value, ENT_NOQUOTES);
         }
 
         return $result;
@@ -51,7 +51,7 @@ class SafeRequest extends Request
         $res = $this->input($key, $default);
 
         return $res
-            ? htmlspecialchars($res)
+            ? htmlspecialchars($res, ENT_NOQUOTES)
             : $res;
     }
 }

@@ -57,6 +57,32 @@ if ( ! function_exists('parseIds')) {
     }
 }
 
+if ( ! function_exists('safeStartOfMonthQuery')) {
+    /**
+     * Return a start of month query compadible with both sqlite and mysql.
+     *
+     * @return string
+     */
+    function safeStartOfMonthQuery()
+    {
+        return 'mysql' === config('database.connections')[config('database.default')]['driver']
+            ? "DATE_ADD(DATE_ADD(LAST_DAY(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')), INTERVAL 1 DAY), INTERVAL - 1 MONTH)"
+            : "date('now','start of month')"; //sqlite
+    }
+}
+
+if ( ! function_exists('isOnSqlite')) {
+    /**
+     * Is the app running on sqlite?
+     *
+     * @return bool
+     */
+    function isOnSqlite()
+    {
+        return 'sqlite' === strtolower(config('database.default'));
+    }
+}
+
 if ( ! function_exists('str_substr_after')) {
     /**
      * Get the substring after the given character.

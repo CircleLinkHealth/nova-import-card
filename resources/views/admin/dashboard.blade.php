@@ -35,8 +35,8 @@
             </div>
 
             <div class="col-md-4">
-                <div class="panel panel-default">
-                    <div class="panel-heading">Import Eligible Patients Medical Records</div>
+                <div class="panel panel-default" data-step="1" data-intro="This box helps you import CCDs for patients we have already processed for eligibility in CPM. It only applies for batches of CCDs we have already processed.">
+                    <div class="panel-heading">Import Eligible Patients Medical Records <span class="pull-right"><a href="javascript:void(0);" onclick="javascript:introJs().setOption('showProgress', true).start();"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a></span></div>
 
                     <div class="panel-body">
                         @include('partials.importEligiblePatientsMedicalRecords')
@@ -57,7 +57,6 @@
             <div class="col-md-4">
                 <div class="panel panel-default">
                     <div class="panel-heading">Send Sample note via Direct Mail</div>
-
                     <div class="panel-body">
                         <form action="/send-sample-direct-mail" method="POST">
                             {{csrf_field()}}
@@ -106,3 +105,11 @@
     </div>
     </div>
 @endsection
+
+@push('styles')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/introjs.min.css" integrity="sha256-/oZ7h/Jkj6AfibN/zTWrCoba0L+QhP9Tf/ZSgyZJCnY=" crossorigin="anonymous" />
+@endpush
+
+@push('scripts')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/intro.min.js" integrity="sha256-fOPHmaamqkHPv4QYGxkiSKm7O/3GAJ4554pQXYleoLo=" crossorigin="anonymous"></script>
+@endpush
