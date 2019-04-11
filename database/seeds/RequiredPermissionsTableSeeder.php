@@ -79,6 +79,10 @@ class RequiredPermissionsTableSeeder extends Seeder
                 'name'         => 'practice-admin',
                 'display_name' => 'Admin access for privileged users of practice',
             ],
+            [
+                'name'         => 'change-patient-enrollment-status',
+                'display_name' => 'Allows user to change patient enrollment status e.g. to enrolled, withdrawn etc.',
+            ],
         ];
 
         return array_merge($perms, $old);
