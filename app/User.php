@@ -2,15 +2,16 @@
 
 namespace App;
 
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Lab404\Impersonate\Models\Impersonate;
+use CircleLinkHealth\Customer\Entities\CarePerson;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Lab404\Impersonate\Models\Impersonate;
 
 
 /*use CircleLinkHealth\Customer\Entities\User as CLHUser;
 
 class User extends CLHUser*/
+
 class User extends Authenticatable
 {
     use Notifiable;
@@ -38,6 +39,21 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    /**
+     * Get billing provider.
+     *
+     * @return User
+     */
+    public function billingProvider()
+    {
+        return $this->careTeamMembers()->where('type', '=', CarePerson::BILLING_PROVIDER);
+    }
+
+    public function careTeamMembers()
+    {
+        return $this->hasMany(CarePerson::class, 'user_id', 'id');
+    }
 
     public function patientInfo()
     {
@@ -80,29 +96,37 @@ class User extends Authenticatable
         return $this->hasMany(Answer::class, 'user_id');
     }
 
-    public function providerReports(){
+    public function providerReports()
+    {
         return $this->hasMany(ProviderReport::class, 'patient_id');
     }
 
+    public function personalizedPreventionPlan()
+    {
+    return $this->hasOne(PersonalizedPreventionPlan::class, 'user_id');
+    }
 
     public function getSurveys()
     {
         return $this->surveys->unique('id');
     }
 
-    public function getHRAInstances(){
-        return $this->surveyInstances()->whereHas('survey', function ($survey){
+    public function getHRAInstances()
+    {
+        return $this->surveyInstances()->whereHas('survey', function ($survey) {
             $survey->HRA();
         })->get();
     }
 
-    public function getVitalsInstances(){
-        return $this->surveyInstances()->whereHas('survey', function ($survey){
+    public function getVitalsInstances()
+    {
+        return $this->surveyInstances()->whereHas('survey', function ($survey) {
             $survey->vitals();
         })->get();
     }
 
-    public function getSurveyInstancesBySurveyId($surveyId){
+    public function getSurveyInstancesBySurveyId($surveyId)
+    {
         return $this->surveyInstances()->where('users_surveys.survey_id', $surveyId)->get();
     }
 }

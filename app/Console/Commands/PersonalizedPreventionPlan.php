@@ -12,7 +12,7 @@ class PersonalizedPreventionPlan extends Command
      *
      * @var string
      */
-    protected $signature = 'command:PersonalizedPreventionPlan';
+    protected $signature = 'command:PersonalizedPreventionPlanController';
 
     /**
      * The console command description.
@@ -44,18 +44,22 @@ class PersonalizedPreventionPlan extends Command
        CREATE VIEW ${viewName} 
        AS
        SELECT
-         u.display_name,
-         pi.birth_date,
-         u.address,
-         u.address2,
-         pctm.member_user_id AS billing_provider,
-         us.survey_id,
-         us.status AS survey_status,
-         an.question_id,
-         an.value_1
+         u.id AS user_id,
+         max(u.display_name) AS display_name,
+         max(pi.birth_date) AS birth_date,
+         max(u.address) AS address,
+         max(u.address2) AS address2,
+         max(pctm.user_id) AS billing_provider,
+         us.survey_id AS survey_id,
+         max(us.status) AS survey_status,
+         max(an.value_1->>'$.weight') weight,
+         max(an.value_1->>'$.height') height,
+         max(an.value_1->>'$.BMI') BMI,
+         max(an.value_1->>'$.blood_pressure') blood_pressure
       
        FROM 
          users u 
+         
          
        LEFT JOIN users_surveys us ON u.id = us.user_id
        LEFT JOIN patient_info pi ON u.id = pi.user_id
@@ -63,8 +67,10 @@ class PersonalizedPreventionPlan extends Command
        LEFT JOIN patient_care_team_members pctm ON u.id = pctm.user_id
        
        WHERE  us.status = 'completed' 
-       AND pctm.type = 'billing_provider'
-      
+       
+       GROUP BY 
+       u.id,
+       us.survey_id
        ");
 
     }

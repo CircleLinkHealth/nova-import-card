@@ -30,3 +30,4 @@ Route::post('survey-login', 'InvitationLinksController@surveyLoginAuth')->name('
 Route::post('resend-link/{user}', 'InvitationLinksController@resendUrl')->name('resendUrl');
 Route::post('save-answer', 'SurveyController@storeAnswer')->name('saveSurveyAnswer');
 Route::get('get-previous-answer', 'SurveyController@getPreviousAnswer')->name('getPreviousAnswer');
+Route::get('get-ppp-data', 'PersonalizedPreventionPlanController@getPppDataForUser')->name('getPppDataForUser');
