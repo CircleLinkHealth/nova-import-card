@@ -3,10 +3,6 @@
 @section('title', 'Patient Call Scheduler')
 @section('activity', 'Patient Call Scheduler')
 
-<?php
-
-?>
-
 @section('content')
     @push('scripts')
         <script>
@@ -53,7 +49,7 @@
                     @endif
                 </div>
                 {!!
-                Form::open(['url' => route('call.schedule', ['patientId' => $patient->user_id]), 'method' => 'POST', 'id' => 'sched-call-form'])
+                Form::open(['url' => route('call.schedule', ['patientId' => $patient->user_id]), 'method' => 'POST', 'id' => 'sched-call-form', 'class' => 'form-prevent-multi-submit'])
                 !!}
 
                 <div class="form-block col-md-4" style="padding-top: 0px">
@@ -132,7 +128,7 @@
                                             <input type="hidden" value="new_activity"/>
                                             <button id="update" name="submitAction" type="submit" form="sched-call-form"
                                                     value="new_activity"
-                                                    class="btn btn-primary btn-lg form-item--button form-item-spacing">
+                                                    class="btn btn-primary btn-lg form-item--button form-item-spacing btn-prevent-multi-submit">
                                                 Confirm
                                             </button>
                                         </div>
