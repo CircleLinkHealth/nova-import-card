@@ -79,10 +79,6 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(TuneScheduledCalls::class)->dailyAt('00:05');
 
-//        $schedule->call(function () {
-//            (new EnrollmentSMSSender())->exec();
-//        })->dailyAt('13:00');
-
         //family calls will be scheduled in RescheduleMissedCalls
         //$schedule->command(SyncFamilialCalls::class)->dailyAt('00:30');
 
