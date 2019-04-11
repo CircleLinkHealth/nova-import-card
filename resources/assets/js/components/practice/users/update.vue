@@ -61,14 +61,14 @@
                 </div>
 
                 <div class="row">
-
-                </div>
-                <div class="row">
-                    <div class="input-field col s4">
+                    <div class="input-field col s6">
                         <v-input type="email" label="Email" v-model="formData.email" name="email"
                                  required></v-input>
                     </div>
-                    <div class="input-field col s4">
+                </div>
+                <div class="row">
+
+                    <div class="input-field col s6">
                         <material-select v-model="formData.role_names" name="role_names" id="role_names"
                                          :multiple="true"
                                          select-text="Select all that apply"
@@ -85,8 +85,8 @@
                         <label for="sendBillingReports">Send Billing Reports</label>
                     </div>
 
-                    <div class="input-field col s4"></div>
-                    <div class="input-field col s4">
+                    <div class="input-field col s6"></div>
+                    <div class="input-field col s6">
                         <input type="checkbox" class="filled-in" id="canApproveAllCareplans"
                                v-model="formData.canApproveAllCareplans" :checked="formData.canApproveAllCareplans"/>
                         <label for="canApproveAllCareplans">Grant Rights to approve all CarePlans</label>
