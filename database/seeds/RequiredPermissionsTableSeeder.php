@@ -1,27 +1,15 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Permission;
 use Illuminate\Database\Seeder;
 
 class RequiredPermissionsTableSeeder extends Seeder
 {
-    /**
-     * Populate the Permissions table.
-     *
-     * @return void
-     */
-    public function run()
-    {
-        Permission::truncate();
-
-        foreach ($this->domainPermissions() as $perm) {
-            Permission::updateOrCreate([
-                'name' => $perm['name'],
-            ], $perm);
-        }
-    }
-
     /**
      * Permissions used for specific business logic related actions.
      *
@@ -35,7 +23,6 @@ class RequiredPermissionsTableSeeder extends Seeder
             $crud  = $this->crudPermission($entityModel);
             $perms = array_merge($perms, $crud);
         }
-
 
         $old = [
             [
@@ -86,17 +73,33 @@ class RequiredPermissionsTableSeeder extends Seeder
             ],
             [
                 'name'         => 'legacy-bhi-consent-decision.create',
-                'display_name' => 'BHI Eligible Patients who consented before ' . Patient::DATE_CONSENT_INCLUDES_BHI . ' to consent separately for BHI, as it was not listed in CLH Terms and Conditions before that date. Legacy BHI consent is stored as a note with type `' . Patient::BHI_CONSENT_NOTE_TYPE . '``. Legacy BHI rejection is stored as a note with type `' . Patient::BHI_REJECTION_NOTE_TYPE . '``. This permission allows to store a consent or rejection for BHI.',
+                'display_name' => 'BHI Eligible Patients who consented before '.Patient::DATE_CONSENT_INCLUDES_BHI.' to consent separately for BHI, as it was not listed in CLH Terms and Conditions before that date. Legacy BHI consent is stored as a note with type `'.Patient::BHI_CONSENT_NOTE_TYPE.'``. Legacy BHI rejection is stored as a note with type `'.Patient::BHI_REJECTION_NOTE_TYPE.'``. This permission allows to store a consent or rejection for BHI.',
             ],
             [
                 'name'         => 'practice-admin',
                 'display_name' => 'Admin access for privileged users of practice',
             ],
+            [
+                'name'         => 'change-patient-enrollment-status',
+                'display_name' => 'Allows user to change patient enrollment status e.g. to enrolled, withdrawn etc.',
+            ],
         ];
 
         return array_merge($perms, $old);
+    }
 
+    /**
+     * Populate the Permissions table.
+     */
+    public function run()
+    {
+        Permission::truncate();
 
+        foreach ($this->domainPermissions() as $perm) {
+            Permission::updateOrCreate([
+                'name' => $perm['name'],
+            ], $perm);
+        }
     }
 
     /**
@@ -111,22 +114,22 @@ class RequiredPermissionsTableSeeder extends Seeder
         return [
             [
                 'name'         => "$resource.create",
-                'display_name' => ucfirst($resource) . " - " . "Create",
+                'display_name' => ucfirst($resource).' - '.'Create',
                 'description'  => "Create a $resource.",
             ],
             [
                 'name'         => "$resource.read",
-                'display_name' => ucfirst($resource) . " - " . "Read",
+                'display_name' => ucfirst($resource).' - '.'Read',
                 'description'  => "Read a $resource.",
             ],
             [
                 'name'         => "$resource.update",
-                'display_name' => ucfirst($resource) . " - " . "Update",
+                'display_name' => ucfirst($resource).' - '.'Update',
                 'description'  => "Update a $resource.",
             ],
             [
                 'name'         => "$resource.delete",
-                'display_name' => ucfirst($resource) . " - " . "Delete",
+                'display_name' => ucfirst($resource).' - '.'Delete',
                 'description'  => "Delete a $resource.",
             ],
         ];
