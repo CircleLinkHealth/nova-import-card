@@ -93,8 +93,6 @@ class RequiredPermissionsTableSeeder extends Seeder
      */
     public function run()
     {
-        Permission::truncate();
-
         foreach ($this->domainPermissions() as $perm) {
             Permission::updateOrCreate([
                 'name' => $perm['name'],

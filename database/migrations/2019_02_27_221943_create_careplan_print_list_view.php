@@ -1,18 +1,29 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 
 class CreateCareplanPrintListView extends Migration
 {
     /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        $viewName = 'careplan_print_list_view';
+        \DB::statement("DROP VIEW IF EXISTS ${viewName}");
+    }
+
+    /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
+        $startOfMonthQuery = safeStartOfMonthQuery();
+
         $viewName = 'careplan_print_list_view';
         \DB::statement("DROP VIEW IF EXISTS ${viewName}");
         \DB::statement("
@@ -50,20 +61,9 @@ LEFT JOIN (select u.id, CONCAT_WS(' ', u.first_name, u.last_name, u.suffix) as a
 
 LEFT JOIN (select ct.user_id, ct.member_user_id, ct.type, CONCAT_WS(' ', u.first_name, u.last_name, u.suffix) as provider_full_name from patient_care_team_members ct left join users u on ct.member_user_id = u.id where ct.type = 'billing_provider') as ct on ct.user_id=c.user_id
 
-LEFT JOIN (select pms.id, pms.patient_id, pms.month_year, pms.ccm_time as patient_ccm_time from patient_monthly_summaries pms where pms.month_year=DATE_ADD(DATE_ADD(LAST_DAY(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')), INTERVAL 1 DAY), INTERVAL - 1 MONTH)) as pms on pms.patient_id = u1.patient_id
+LEFT JOIN (select pms.id, pms.patient_id, pms.month_year, pms.ccm_time as patient_ccm_time from patient_monthly_summaries pms where pms.month_year={$startOfMonthQuery}) as pms on pms.patient_id = u1.patient_id
 
 WHERE pi.patient_ccm_status = 'enrolled'
         ");
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        $viewName = 'careplan_print_list_view';
-        \DB::statement("DROP VIEW IF EXISTS ${viewName}");
     }
 }

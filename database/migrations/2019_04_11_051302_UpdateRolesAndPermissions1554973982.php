@@ -1,22 +1,15 @@
 <?php
 
-/*
- * This file is part of CarePlan Manager by CircleLink Health.
- */
-
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class UpdateRolesAndPermissions1542721444 extends Migration
+class UpdateRolesAndPermissions1554973982 extends Migration
 {
     /**
-     * Reverse the migrations.
-     */
-    public function down()
-    {
-    }
-
-    /**
      * Run the migrations.
+     *
+     * @return void
      */
     public function up()
     {
@@ -26,4 +19,16 @@ class UpdateRolesAndPermissions1542721444 extends Migration
             ]);
         }
     }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        //
+    }
 }
+
+
