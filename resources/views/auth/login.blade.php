@@ -102,6 +102,6 @@
     </section>
 </div>
 
-<script src="{{asset('js/prevent-multiple-submits.js')}}"></script>
+<script src="{{mix('js/prevent-multiple-submits.js')}}"></script>
 </body>
 </html>

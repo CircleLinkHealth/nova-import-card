@@ -102,7 +102,7 @@
 
 @stack('scripts')
 
-<script src="{{asset('js/prevent-multiple-submits.js')}}"></script>
+<script src="{{mix('js/prevent-multiple-submits.js')}}"></script>
 <script>
     $(function () {
         try {
