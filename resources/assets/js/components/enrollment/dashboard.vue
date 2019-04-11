@@ -888,6 +888,7 @@
 
     .enrollment-script {
         font-size: 20px;
+        padding-top: 5%;
     }
 
     /**

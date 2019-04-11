@@ -234,10 +234,15 @@
             showConsented() {
                 Event.$emit('notifications-ca-panel:dismissAll');
                 this.loading = true;
-                if (this.hideStatus.includes('consented'))
+                if (this.hideStatus.includes('consented')){
                     this.hideStatus = this.hideStatus.filter(item => item !== 'consented');
-                else
+                    this.hideAssigned = false;
+                }
+                else {
+                    this.hideAssigned = true;
                     this.hideStatus.push('consented');
+                }
+
 
                 const query = {
                     hideStatus: this.hideStatus,
