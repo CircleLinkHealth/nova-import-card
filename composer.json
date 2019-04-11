@@ -25,7 +25,8 @@
     "require": {
         "circlelinkhealth/core": "dev-master",
         "laravel/passport": "^7.0",
-        "michalisantoniou6/laravel-cerberus": "dev-master"
+        "michalisantoniou6/laravel-cerberus": "dev-master",
+        "spatie/laravel-medialibrary": "^7.0.0"
     },
     "repositories": [
         {
