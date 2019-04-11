@@ -46,7 +46,7 @@ use App\TargetPatient;
 use CircleLinkHealth\Customer\Traits\HasEmrDirectAddress;
 use CircleLinkHealth\Customer\Traits\MakesOrReceivesCalls;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
-use App\Traits\TimezoneTrait;
+use CircleLinkHealth\Customer\Traits\TimezoneTrait;
 use Carbon\Carbon;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
