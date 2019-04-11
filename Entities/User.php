@@ -391,7 +391,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         'password',
     ];
     
-    protected $rules = [];
+    public $rules = [];
     
     public function __construct(array $attributes = [])
     {
