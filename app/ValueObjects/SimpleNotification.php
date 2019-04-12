@@ -60,6 +60,10 @@ class SimpleNotification
      */
     public function getFileName(): ?string
     {
+        if ( ! $this->fileName && str_contains($this->filePath, '/')) {
+            $this->fileName = substr($this->filePath, strrpos($this->filePath, '/') + 1);
+        }
+
         return $this->fileName;
     }
 

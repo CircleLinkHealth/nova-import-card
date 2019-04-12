@@ -38,7 +38,7 @@ class DirectMailChannel
             $this->dm->send(
                 $notifiable->emr_direct_address,
                 $message->getFilePath(),
-                $message->getFileNamte(),
+                $message->getFileName(),
                 $message->getCcdaAttachmentPath(),
                 $message->getPatient(),
                 $message->getBody(),
