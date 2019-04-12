@@ -2,16 +2,8 @@
 
 namespace App;
 
-use App\Patient;
-
 class User extends \CircleLinkHealth\Customer\Entities\User
 {
-
-    public function patientInfo()
-    {
-        return $this->hasOne(Patient::class, 'id');
-    }
-
     public function url()
     {
         return $this->hasOne(InvitationLink::class);
@@ -46,7 +38,6 @@ class User extends \CircleLinkHealth\Customer\Entities\User
     public function providerReports(){
         return $this->hasMany(ProviderReport::class, 'patient_id');
     }
-
 
     public function getSurveys()
     {

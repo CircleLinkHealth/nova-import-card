@@ -27,6 +27,7 @@ class GeneratePersonalizedPreventionPlanService
 
     public function generateData($patient)
     {
+
         $birthDate = new Carbon('2019-01-01');
 
         $patientPppData = $this->patient
