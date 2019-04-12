@@ -37,7 +37,6 @@ use CircleLinkHealth\Customer\Entities\Nurse;
 class NurseCareRateLog extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $fillable = ['nurse_id', 'activity_id', 'ccm_type', 'increment', 'created_at'];
-    protected $table    = 'nurse_care_rate_logs';
 
     public function activity()
     {
