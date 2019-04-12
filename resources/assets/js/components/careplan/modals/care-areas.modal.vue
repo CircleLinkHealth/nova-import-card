@@ -66,8 +66,11 @@
                             <form @submit="editCcdProblem">
                                 <div class="row">
                                     <div class="col-sm-12 top-20">
-                                        <div class="font-14 color-blue" @click="resetInstructions" v-if="selectedProblem.instruction.name !== selectedInstruction">
-                                            Change Instructions to original
+                                        <div style="margin-bottom: 10px" v-if="selectedProblem.instruction.name !== selectedInstruction">
+                                            <input type="button"
+                                                   class="btn btn-secondary margin-0 instruction-add selected"
+                                                   @click="resetInstructions"
+                                                   value="Change Instructions to original"/>
                                         </div>
                                         <textarea class="form-control height-200"
                                                   v-model="selectedInstruction"
@@ -272,6 +275,8 @@
 
                 if (cpmProblem.instruction){
                     this.selectedInstruction = cpmProblem.instruction.name
+                }else{
+                    this.selectedInstruction = null
                 }
             },
             resetInstructions(){
