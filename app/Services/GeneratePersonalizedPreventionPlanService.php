@@ -9,11 +9,9 @@ use Carbon\Carbon;
 class GeneratePersonalizedPreventionPlanService
 {
     protected $patient;
-    protected $patientName;
-    protected $userId;
-    protected $birthDate;
-    protected $address;
-    protected $billingProvider;
+    protected $hraInstance;
+    protected $vitalsInstance;
+
 
     public function __construct($patient)
     {
@@ -29,21 +27,23 @@ class GeneratePersonalizedPreventionPlanService
 
     public function generateData($patient)
     {
-        $date    = Carbon::parse('2019-01-01')->toDateString();
-        $pppData = $this->patient
+        $birthDate = new Carbon('2019-01-01');
+
+        $patientPppData = $this->patient
             ->personalizedPreventionPlan()
             ->create([
-                'user_id'          => $this->userId,
+                'user_id'          => $patient->id,
                 'display_name'     => $patient->display_name,
-                'birth_date'       => $date/*$patient->patientInfo->birth_date*/
-                ,
+                'birth_date'       => $birthDate/*$patient->patientInfo->birth_date*/,
                 'address'          => $patient->address,
-                'billing_provider' => '322'/*$patient->billingProvider->member_user_id*/,
+                'city'             => $patient->city,
+                'state'            => $patient->state,
+                'billing_provider' => 'Mr. BEan'/*$patient->billingProvider->member_user_id*/,
                 'hra_values'       => $this->hraAnswers,
                 'vitals_values'    => $this->vitalsAnswers,
             ]);
 
-        return $pppData;
+        return $patientPppData;
     }
 }
 
