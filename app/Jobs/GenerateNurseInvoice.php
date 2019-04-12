@@ -7,10 +7,10 @@
 namespace App\Jobs;
 
 use App\Billing\NurseMonthlyBillGenerator;
-use CircleLinkHealth\Customer\Entities\Nurse;
 use App\Repositories\Cache\UserNotificationList;
 use App\Repositories\Cache\View;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Nurse;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -42,17 +42,17 @@ class GenerateNurseInvoice implements ShouldQueue
      */
     public function __construct(
         array $nurseUserIds,
-                                Carbon $startDate,
-                                Carbon $endDate,
-                                $requestors,
-                                bool $variablePay = false,
-                                int $addTime = 0,
-                                string $addNotes = ''
+        Carbon $startDate,
+        Carbon $endDate,
+        $requestors,
+        bool $variablePay = false,
+        int $addTime = 0,
+        string $addNotes = ''
     ) {
-        $this->nurses      = Nurse::whereIn('user_id', $nurseUserIds)->with(['user',
-            'summary' => function($s) use ($startDate){
-            $s->where('month_year', $startDate->copy()->startOfMonth()->format('Y-m-d'));
-            }])->get();
+        $this->nurses = Nurse::whereIn('user_id', $nurseUserIds)->with(['user',
+            'summary' => function ($s) use ($startDate) {
+                $s->where('month_year', $startDate->copy()->startOfMonth()->format('Y-m-d'));
+            }, ])->get();
         $this->startDate   = $startDate;
         $this->endDate     = $endDate;
         $this->variablePay = $variablePay;
@@ -68,6 +68,9 @@ class GenerateNurseInvoice implements ShouldQueue
      */
     public function handle()
     {
+        ini_set('max_execution_time', 420);
+        ini_set('memory_limit', '512M');
+
         $data = $links = [];
 
         foreach ($this->nurses as $nurse) {

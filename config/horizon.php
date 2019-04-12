@@ -15,9 +15,9 @@ return [
     | of supervisors, failed jobs, job metrics, and other information.
     |
     */
-    
+
     'use' => 'default',
-    
+
     /*
     |--------------------------------------------------------------------------
     | Horizon Redis Prefix
@@ -28,9 +28,9 @@ return [
     | of Horizon on the same server so that they don't have problems.
     |
     */
-    
+
     'prefix' => env('HORIZON_PREFIX', 'horizon:'),
-    
+
     /*
     |--------------------------------------------------------------------------
     | Queue Wait Time Thresholds
@@ -41,11 +41,11 @@ return [
     | own, unique threshold (in seconds) before this event is fired.
     |
     */
-    
+
     'waits' => [
         'redis:default' => 60,
     ],
-    
+
     /*
     |--------------------------------------------------------------------------
     | Job Trimming Times
@@ -56,12 +56,12 @@ return [
     | for one hour while all failed jobs are stored for an entire week.
     |
     */
-    
+
     'trim' => [
         'recent' => 1440,
         'failed' => 10080,
     ],
-    
+
     /*
     |--------------------------------------------------------------------------
     | Queue Worker Configuration
@@ -72,9 +72,9 @@ return [
     | queued jobs and will be provisioned by Horizon during deployment.
     |
     */
-    
+
     'environments' => [
-        'local'      => [
+        'local' => [
             'supervisor-1' => [
                 'connection' => 'redis',
                 'queue'      => ['high', 'default', 'low'],
@@ -85,9 +85,8 @@ return [
             ],
         ],
         'production' => [
-        
         ],
-        'staging'    => [
+        'staging' => [
             'supervisor-1' => [
                 'connection' => 'redis',
                 'queue'      => ['high', 'default', 'low'],
@@ -97,7 +96,7 @@ return [
                 'timeout'    => 300,
             ],
         ],
-        'worker'     => [
+        'worker' => [
             'supervisor-1' => [
                 'connection'    => 'redis',
                 'queue'         => ['default', 'low'],
@@ -105,7 +104,7 @@ return [
                 'min-processes' => 0,
                 'max-processes' => 3,
                 'tries'         => 1,
-                'timeout'       => 300,
+                'timeout'       => 30,
             ],
             'supervisor-2' => [
                 'connection'    => 'redis',
@@ -115,6 +114,15 @@ return [
                 'max-processes' => 10,
                 'tries'         => 1,
                 'timeout'       => 30,
+            ],
+            'supervisor-3' => [
+                'connection'    => 'redis',
+                'queue'         => ['demanding'],
+                'balance'       => 'auto',
+                'min-processes' => 0,
+                'max-processes' => 1,
+                'tries'         => 1,
+                'timeout'       => 420,
             ],
         ],
     ],

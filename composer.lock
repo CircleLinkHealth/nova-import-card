@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
     "content-hash": "0939b84205dfff2eb812f2fec088b7f8",
@@ -500,12 +500,13 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "f33d9008deb77292679c7936ae01c7765106ad1e"
+                "reference": "389de1842141e28709fdddf548d1560a712b49a5"
             },
             "require": {
                 "circlelinkhealth/core": "dev-master",
                 "laravel/passport": "^7.0",
-                "michalisantoniou6/laravel-cerberus": "dev-master"
+                "michalisantoniou6/laravel-cerberus": "dev-master",
+                "spatie/laravel-medialibrary": "^7.0.0"
             },
             "type": "library",
             "extra": {
@@ -527,7 +528,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-04-11T07:53:54+00:00"
+            "time": "2019-04-12T11:53:00+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
@@ -570,7 +571,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "7ea6aa89850b350f662ab0843b7a1272a0018093"
+                "reference": "bf47b47732122a8939ccb7cd5996af7077111518"
             },
             "require": {
                 "circlelinkhealth/customer": "dev-master"
@@ -595,7 +596,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-04-09T10:06:15+00:00"
+            "time": "2019-04-12T07:22:37+00:00"
         },
         {
             "name": "circlelinkhealth/twofa",

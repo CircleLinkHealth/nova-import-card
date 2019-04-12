@@ -17,6 +17,22 @@ use Illuminate\Database\QueryException;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Collection;
 
+if ( ! function_exists('abort_if_str_contains_unsafe_characters')) {
+    function abort_if_str_contains_unsafe_characters(string $string)
+    {
+        if (str_contains_unsafe_characters($string)) {
+            abort(404);
+        }
+    }
+}
+
+if ( ! function_exists('str_contains_unsafe_characters')) {
+    function str_contains_unsafe_characters(string $string)
+    {
+        return str_contains($string, ['<', '>', '&', '=']);
+    }
+}
+
 if ( ! function_exists('parseIds')) {
     /**
      * Get all of the IDs from the given mixed value.

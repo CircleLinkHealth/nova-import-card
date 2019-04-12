@@ -8,6 +8,7 @@ namespace App\Services;
 
 use App\Repositories\ProviderInfoRepository;
 use App\Repositories\UserRepositoryEloquent;
+use CircleLinkHealth\Customer\Entities\User;
 
 class ProviderInfoService
 {
@@ -24,15 +25,14 @@ class ProviderInfoService
     {
         $user = $this->userRepo->user($userId);
 
-        return $user->practices()->get()->map(function ($p) {
-            return $p->providers();
-        })->reduce(function ($arr, $item) {
-            return $arr->concat($item);
-        }, collect([]))->groupBy('id')->map(function ($u) {
-            return $u->first();
-        })->values()->map(function ($u) {
-            return $u->safe();
-        });
+        return User::ofType('provider')
+            ->intersectPracticesWith($user)
+            ->get()
+            ->transform(
+                       function ($u) {
+                           return $u->safe();
+                       }
+                   );
     }
 
     public function providers()
