@@ -113,6 +113,29 @@ class PageTimerControllerTest extends TestCase
     {
         $date = Carbon::now();
 
+        $activities = collect(
+            [
+                [
+                    'start_time'    => $date->toDateTimeString(),
+                    'duration'      => 10,
+                    'url'           => 'aa',
+                    'url_short'     => 'aabb',
+                    'name'          => 'Test activity',
+                    'title'         => 'some.route',
+                    'is_behavioral' => false,
+                ],
+                [
+                    'start_time'    => $date->copy()->subMinutes(3)->toDateTimeString(),
+                    'duration'      => 180,
+                    'url'           => 'aazz',
+                    'url_short'     => 'aabbcc',
+                    'name'          => 'Another test activity',
+                    'title'         => 'some.different.route',
+                    'is_behavioral' => false,
+                ],
+            ]
+        );
+
         $response = $this->json(
             'POST',
             route('api.pagetracking'),
@@ -122,67 +145,62 @@ class PageTimerControllerTest extends TestCase
                 'programId'  => '',
                 'ipAddr'     => '',
                 'submitUrl'  => 'url',
-                'activities' => [
-                    [
-                        'start_time'    => $date->toDateTimeString(),
-                        'duration'      => 10,
-                        'url'           => '',
-                        'url_short'     => '',
-                        'name'          => 'Test activity',
-                        'title'         => 'some.route',
-                        'is_behavioral' => false,
-                    ],
-                    [
-                        'start_time'    => $date->copy()->subMinutes(3)->toDateTimeString(),
-                        'duration'      => 180,
-                        'url'           => '',
-                        'url_short'     => '',
-                        'name'          => 'Another test activity',
-                        'title'         => 'some.different.route',
-                        'is_behavioral' => false,
-                    ],
-                ],
+                'activities' => $activities->all(),
             ]
         );
 
         $response->assertStatus(201);
 
-        $this->assertDatabaseHas(
-            'lv_activities',
-            [
-                'patient_id'    => $this->patient->id,
-                'provider_id'   => $this->provider->id,
-                'duration'      => 10,
-                'type'          => 'Test activity',
-                'is_behavioral' => false,
-            ]
-        );
+        $nurseInfo = $this->provider->nurseInfo;
+        $sum       = $activities->sum('duration');
 
-        $this->assertDatabaseHas(
-            'lv_activities',
-            [
-                'patient_id'    => $this->patient->id,
-                'provider_id'   => $this->provider->id,
-                'duration'      => 180,
-                'type'          => 'Another test activity',
-                'is_behavioral' => false,
-            ]
-        );
+        $this->assertInstanceOf(Nurse::class, $nurseInfo);
+
+        foreach ($activities as $act) {
+            $this->assertDatabaseHas(
+                'lv_page_timer',
+                [
+                    'patient_id'    => $this->patient->id,
+                    'provider_id'   => $this->provider->id,
+                    'duration'      => $act['duration'],
+                    'activity_type' => $act['name'],
+                    'title'         => $act['title'],
+                    'url_full'      => $act['url'],
+                    'url_short'     => $act['url_short'],
+                ]
+            );
+
+            $this->assertDatabaseHas(
+                'lv_activities',
+                [
+                    'patient_id'    => $this->patient->id,
+                    'provider_id'   => $this->provider->id,
+                    'duration'      => $act['duration'],
+                    'type'          => $act['name'],
+                    'is_behavioral' => $act['is_behavioral'],
+                ]
+            );
+
+            $this->assertDatabaseHas(
+                'nurse_care_rate_logs',
+                [
+                    'nurse_id'  => $nurseInfo->id,
+                    'ccm_type'  => 'accrued_towards_ccm',
+                    'increment' => $act['duration'],
+                ]
+            );
+        }
 
         $this->assertDatabaseHas(
             'patient_monthly_summaries',
             [
                 'patient_id' => $this->patient->id,
                 'month_year' => $date->copy()->startOfMonth(),
-                'total_time' => 190,
-                'ccm_time'   => 190,
+                'total_time' => $sum,
+                'ccm_time'   => $sum,
                 'bhi_time'   => 0,
             ]
         );
-
-        $nurseInfo = $this->provider->nurseInfo;
-
-        $this->assertInstanceOf(Nurse::class, $nurseInfo);
 
         $this->assertDatabaseHas(
             'nurse_monthly_summaries',
@@ -190,27 +208,9 @@ class PageTimerControllerTest extends TestCase
                 'nurse_id'               => $nurseInfo->id,
                 'month_year'             => $date->copy()->startOfMonth(),
                 'accrued_after_ccm'      => 0,
-                'accrued_towards_ccm'    => 190,
+                'accrued_towards_ccm'    => $sum,
                 'no_of_calls'            => 0,
                 'no_of_successful_calls' => 0,
-            ]
-        );
-
-        $this->assertDatabaseHas(
-            'nurse_care_rate_logs',
-            [
-                'nurse_id'  => $nurseInfo->id,
-                'ccm_type'  => 'accrued_towards_ccm',
-                'increment' => 10,
-            ]
-        );
-
-        $this->assertDatabaseHas(
-            'nurse_care_rate_logs',
-            [
-                'nurse_id'  => $nurseInfo->id,
-                'ccm_type'  => 'accrued_towards_ccm',
-                'increment' => 180,
             ]
         );
     }
