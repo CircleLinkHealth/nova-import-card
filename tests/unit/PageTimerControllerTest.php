@@ -13,14 +13,23 @@ use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
+use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Illuminate\Support\Collection;
 use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
 
 class PageTimerControllerTest extends TestCase
 {
     use UserHelpers,
-        WithoutMiddleware;
+        WithoutMiddleware,
+        WithFaker;
+    const BHI = 'bhi';
+    const CCM = 'ccm';
+    const MIX = 'mix';
+
+    //20 mins in seconds
+    const TWENTY_MINUTES = 1200;
 
     private $patient;
 
@@ -72,87 +81,58 @@ class PageTimerControllerTest extends TestCase
 
     public function test_bhi_time_is_stored()
     {
-        $response = $this->json(
-            'POST',
-            route('api.pagetracking'),
-            [
-                'patientId'  => $this->patient->id,
-                'providerId' => $this->provider->id,
-                'programId'  => '',
-                'ipAddr'     => '',
-                'submitUrl'  => 'url',
-                'activities' => [
-                    [
-                        'start_time'    => Carbon::now()->toDateTimeString(),
-                        'duration'      => 10,
-                        'url'           => '',
-                        'url_short'     => '',
-                        'name'          => 'Test activity',
-                        'title'         => 'some.route',
-                        'is_behavioral' => true,
-                    ],
-                ],
-            ]
-        );
-
-        $response->assertStatus(201);
-
-        $this->assertDatabaseHas(
-            'lv_activities',
-            [
-                'patient_id'    => $this->patient->id,
-                'provider_id'   => $this->provider->id,
-                'duration'      => 10,
-                'type'          => 'Test activity',
-                'is_behavioral' => true,
-            ]
-        );
+        $this->runTestFor(self::BHI);
     }
 
     public function test_ccm_time_is_stored()
     {
-        $date = Carbon::now();
+        $this->runTestFor(self::CCM);
+    }
 
-        $activities = collect(
-            [
-                [
-                    'start_time'    => $date->toDateTimeString(),
-                    'duration'      => 10,
-                    'url'           => 'aa',
-                    'url_short'     => 'aabb',
-                    'name'          => 'Test activity',
-                    'title'         => 'some.route',
-                    'is_behavioral' => false,
-                ],
-                [
-                    'start_time'    => $date->copy()->subMinutes(3)->toDateTimeString(),
-                    'duration'      => 180,
-                    'url'           => 'aazz',
-                    'url_short'     => 'aabbcc',
-                    'name'          => 'Another test activity',
-                    'title'         => 'some.different.route',
-                    'is_behavioral' => false,
-                ],
-            ]
-        );
+    public function test_mixed_activities()
+    {
+        $this->runTestFor(self::MIX);
+    }
 
-        $response = $this->json(
-            'POST',
-            route('api.pagetracking'),
-            [
-                'patientId'  => $this->patient->id,
-                'providerId' => $this->provider->id,
-                'programId'  => '',
-                'ipAddr'     => '',
-                'submitUrl'  => 'url',
-                'activities' => $activities->all(),
-            ]
-        );
-
-        $response->assertStatus(201);
-
+    /**
+     * @param Collection $activities
+     * @param Carbon     $date
+     */
+    private function dbAssertionsForCcm(Collection $activities, Carbon $date)
+    {
         $nurseInfo = $this->provider->nurseInfo;
-        $sum       = $activities->sum('duration');
+
+        $sum = $activities->sum('duration');
+
+        $ccmTotal = (int) $activities->sum(
+            function ($act) {
+                if ( ! (bool) $act['is_behavioral']) {
+                    return (int) $act['duration'];
+                }
+            }
+        );
+
+        $bhiTotal = (int) $activities->sum(
+            function ($act) {
+                if ((bool) $act['is_behavioral']) {
+                    return (int) $act['duration'];
+                }
+            }
+        );
+
+        $this->assertEquals($sum, $bhiTotal + $ccmTotal);
+
+        $sumAfterTarget   = 0;
+        $sumTowardsTarget = 0;
+
+        foreach ([$bhiTotal, $ccmTotal] as $typeTotal) {
+            if ($typeTotal >= self::TWENTY_MINUTES) {
+                $sumTowardsTarget += self::TWENTY_MINUTES;
+                $sumAfterTarget   += $typeTotal - self::TWENTY_MINUTES;
+            } else {
+                $sumTowardsTarget += $typeTotal;
+            }
+        }
 
         $this->assertInstanceOf(Nurse::class, $nurseInfo);
 
@@ -180,15 +160,6 @@ class PageTimerControllerTest extends TestCase
                     'is_behavioral' => $act['is_behavioral'],
                 ]
             );
-
-            $this->assertDatabaseHas(
-                'nurse_care_rate_logs',
-                [
-                    'nurse_id'  => $nurseInfo->id,
-                    'ccm_type'  => 'accrued_towards_ccm',
-                    'increment' => $act['duration'],
-                ]
-            );
         }
 
         $this->assertDatabaseHas(
@@ -197,8 +168,8 @@ class PageTimerControllerTest extends TestCase
                 'patient_id' => $this->patient->id,
                 'month_year' => $date->copy()->startOfMonth(),
                 'total_time' => $sum,
-                'ccm_time'   => $sum,
-                'bhi_time'   => 0,
+                'ccm_time'   => $ccmTotal,
+                'bhi_time'   => $bhiTotal,
             ]
         );
 
@@ -207,17 +178,65 @@ class PageTimerControllerTest extends TestCase
             [
                 'nurse_id'               => $nurseInfo->id,
                 'month_year'             => $date->copy()->startOfMonth(),
-                'accrued_after_ccm'      => 0,
-                'accrued_towards_ccm'    => $sum,
+                'accrued_after_ccm'      => $sumAfterTarget,
+                'accrued_towards_ccm'    => $sumTowardsTarget,
                 'no_of_calls'            => 0,
                 'no_of_successful_calls' => 0,
             ]
         );
     }
 
-    public function test_nurse_rates_for_bhi_over_20_and_ccm_over_20()
+    private function fakeActivity(Carbon $date, $isBehavioral = false)
     {
-        $response = $this->json(
+        return [
+            'start_time'    => $date->toDateTimeString(),
+            'duration'      => $this->faker()->numberBetween(1, 500),
+            'url'           => $this->faker()->url,
+            'url_short'     => $this->faker()->url,
+            'name'          => $this->faker()->realText(30),
+            'title'         => $this->faker()->text(10),
+            'is_behavioral' => $isBehavioral,
+        ];
+    }
+
+    private function getSampleActivities(Carbon $date, $type = self::MIX)
+    {
+        $numberOfActivities = $this->faker()->numberBetween(1, 30);
+
+        $activities = collect();
+
+        while (0 !== $numberOfActivities) {
+            if (self::CCM == $type) {
+                $isBehavioral = false;
+            } elseif (self::BHI == $type) {
+                $isBehavioral = true;
+            } else {
+                $isBehavioral = $this->faker()->boolean;
+            }
+
+            $activities->push($this->fakeActivity($date, $isBehavioral));
+            --$numberOfActivities;
+        }
+
+        return $activities;
+    }
+
+    private function runTestFor($type = self::MIX)
+    {
+        $date = Carbon::now();
+
+        $activities = $this->getSampleActivities($date, $type);
+
+        $response = $this->submit($activities);
+
+        $response->assertStatus(201);
+
+        $this->dbAssertionsForCcm($activities, $date);
+    }
+
+    private function submit(Collection $activities)
+    {
+        return $this->json(
             'POST',
             route('api.pagetracking'),
             [
@@ -226,47 +245,8 @@ class PageTimerControllerTest extends TestCase
                 'programId'  => '',
                 'ipAddr'     => '',
                 'submitUrl'  => 'url',
-                'activities' => [
-                    [
-                        'start_time'    => Carbon::now()->toDateTimeString(),
-                        'duration'      => 18,
-                        'url'           => '',
-                        'url_short'     => '',
-                        'name'          => 'Test bhi activity 1',
-                        'title'         => 'some.route',
-                        'is_behavioral' => true,
-                    ],
-                    [
-                        'start_time'    => Carbon::now()->toDateTimeString(),
-                        'duration'      => 8,
-                        'url'           => '',
-                        'url_short'     => '',
-                        'name'          => 'Test bhi activity 2',
-                        'title'         => 'some.route',
-                        'is_behavioral' => true,
-                    ],
-                    [
-                        'start_time'    => Carbon::now()->toDateTimeString(),
-                        'duration'      => 3,
-                        'url'           => '',
-                        'url_short'     => '',
-                        'name'          => 'Test ccm activity 1',
-                        'title'         => 'some.route',
-                        'is_behavioral' => true,
-                    ],
-                    [
-                        'start_time'    => Carbon::now()->toDateTimeString(),
-                        'duration'      => 22,
-                        'url'           => '',
-                        'url_short'     => '',
-                        'name'          => 'Test ccm activity 2',
-                        'title'         => 'some.route',
-                        'is_behavioral' => false,
-                    ],
-                ],
+                'activities' => $activities->all(),
             ]
         );
-
-        $response->assertStatus(201);
     }
 }
