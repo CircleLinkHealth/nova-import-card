@@ -48,6 +48,8 @@ use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\Traits\HasEmrDirectAddress;
 use CircleLinkHealth\Customer\Traits\MakesOrReceivesCalls;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
+use CircleLinkHealth\Customer\Traits\TimezoneTrait;
+use Carbon\Carbon;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
 use DateTime;
