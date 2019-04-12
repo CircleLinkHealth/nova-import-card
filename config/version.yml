@@ -2,8 +2,8 @@ version_source: config
 blade_directive: version
 current:
     major: 4
-    minor: 4
-    patch: 5
+    minor: 6
+    patch: 2
     format: '{$major}.{$minor}.{$patch}'
     git_absorb: git-local
 cache:
@@ -12,15 +12,15 @@ cache:
     time: 525600
 build:
     mode: number
-    number: da987a
+    number: '871420'
     length: 6
     increment_by: 1
     git_absorb: git-local
 git:
     git-local: 'git rev-parse --verify HEAD'
     git-remote: 'git ls-remote {$repository}'
-    repository: 'https://github.com/CircleLinkHealth/app-cpm-web.git'
-    version: { git-local: 'git describe', git-remote: 'git ls-remote {$repository} | grep tags/ | grep -v {} | cut -d / -f 3 | sort --version-sort | tail -1', matcher: '/[V|v]*[ersion]*\s*\.*(\d+)\.(\d+)\.(\d+)\.*(\w*)/' }
+    repository: 'https://github.com/CircleLinkHealth/app-cpm-web'
+    version: { git-local: 'git describe --tags', git-remote: 'git ls-remote {$repository} | grep tags/ | grep -v {} | cut -d / -f 3 | sort --version-sort | tail -1', matcher: '/[V|v]*[ersion]*\s*\.*(\d+)\.(\d+)\.(\d+)\.*(\w*)/' }
 format:
     major: '{$major}'
     minor: '{$minor}'
