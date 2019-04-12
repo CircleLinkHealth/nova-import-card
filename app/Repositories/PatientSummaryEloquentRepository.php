@@ -9,10 +9,10 @@ namespace App\Repositories;
 use App\ChargeableService;
 use App\Exceptions\InvalidArgumentException;
 use App\Models\CCD\Problem;
+use Cache;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use Cache;
 use Illuminate\Support\Collection;
 
 class PatientSummaryEloquentRepository
@@ -61,8 +61,8 @@ class PatientSummaryEloquentRepository
      * NOTE: The summary is not persisted to the DB. You will have to call `->save()` on `$summary` this function will
      * return.
      *
-     * @param \CircleLinkHealth\Customer\Entities\User                  $patient
-     * @param PatientMonthlySummary $summary
+     * @param \CircleLinkHealth\Customer\Entities\User $patient
+     * @param PatientMonthlySummary                    $summary
      *
      * @return PatientMonthlySummary
      */
@@ -85,9 +85,9 @@ class PatientSummaryEloquentRepository
             $olderSummary = PatientMonthlySummary::wherePatientId($summary->patient_id)
                 ->orderBy('month_year', 'desc')
                 ->where(
-                                                     'month_year',
-                                                     '<=',
-                                                     $summary->month_year->copy()->subMonth()->startOfMonth()
+                    'month_year',
+                    '<=',
+                    $summary->month_year->copy()->subMonth()->startOfMonth()
                                                  )
                 ->whereApproved(true)
                 ->first();
@@ -381,7 +381,7 @@ class PatientSummaryEloquentRepository
     /**
      * Determine whether a summary should be approved.
      *
-     * @param User                  $patient
+     * @param User                                                      $patient
      * @param \CircleLinkHealth\Customer\Entities\PatientMonthlySummary $summary
      *
      * @return bool
@@ -407,8 +407,8 @@ class PatientSummaryEloquentRepository
      * Validate `problem_1` and `problem_2` on the given PatientMonthlySummary
      * If they are the same, then run the summary should go through attach records again.
      *
-     * @param PatientMonthlySummary $summary
-     * @param \CircleLinkHealth\Customer\Entities\User                  $user
+     * @param PatientMonthlySummary                    $summary
+     * @param \CircleLinkHealth\Customer\Entities\User $user
      *
      * @return bool
      */
@@ -464,8 +464,8 @@ class PatientSummaryEloquentRepository
     /**
      * Store a CCD Problem.
      *
-     * @param \CircleLinkHealth\Customer\Entities\User  $patient
-     * @param array $arguments
+     * @param \CircleLinkHealth\Customer\Entities\User $patient
+     * @param array                                    $arguments
      *
      * @return bool|\Illuminate\Database\Eloquent\Model|void
      */
@@ -492,7 +492,6 @@ class PatientSummaryEloquentRepository
             $summary->patient_id,
             $summary->month_year
         );
-        $summary->save();
 
         return $summary;
     }
@@ -540,9 +539,9 @@ class PatientSummaryEloquentRepository
      *
      * @param \CircleLinkHealth\Customer\Entities\User                  $patient
      * @param \CircleLinkHealth\Customer\Entities\PatientMonthlySummary $summary
-     * @param Collection|Collection $billableProblems
-     * @param int                   $tryCount
-     * @param int                   $maxTries
+     * @param Collection|Collection                                     $billableProblems
+     * @param int                                                       $tryCount
+     * @param int                                                       $maxTries
      *
      * @return PatientMonthlySummary
      */
