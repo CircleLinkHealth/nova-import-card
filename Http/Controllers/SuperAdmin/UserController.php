@@ -503,7 +503,7 @@ class UserController extends Controller
 
         $wpUser = new User();
 
-        $this->validate($request, $wpUser->rules);
+        $this->validate($request, $wpUser->getRules());
 
         $wpUser = $userRepo->createNewUser($wpUser, $params);
 
