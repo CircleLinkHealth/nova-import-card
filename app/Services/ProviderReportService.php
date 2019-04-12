@@ -93,28 +93,28 @@ class ProviderReportService
         $screenings = [];
         if ( ! empty($report->screenings)) {
             if ( ! empty($report->screenings['breast_cancer'] &&  $report->screenings['breast_cancer'] !== '10+ years ago/Never/Unsure')) {
-                $screenings[] = "<strong>Breast cancer</strong> (Mammogram): Had " . $report->screenings['breast_cancer'] . '.';
+                $screenings['Breast cancer'] = " (Mammogram): Had " . $report->screenings['breast_cancer'] . '.';
             }
             if ( ! empty($report->screenings['cervical_cancer'] && $report->screenings['cervical_cancer'] !== '10+ years ago/Never/Unsure')) {
-                $screenings[] = "<strong>Cervical cancer</strong> (Pap smear): Had " . $report->screenings['cervical_cancer'] . '.';
+                $screenings['Cervical cancer'] = " (Pap smear): Had " . $report->screenings['cervical_cancer'] . '.';
             }
             if ( ! empty($report->screenings['colorectal_cancer'] && $report->screenings['colorectal_cancer'] !== '10+ years ago/Never/Unsure')) {
-                $screenings[] = "<strong>Colorectal cancer</strong> (e.g. Fecal Occult Blood Test (FOBT), Fecal Immunohistochemistry Test (FIT) Sigmoidoscopy, Colonoscopy): Had " . $report->screenings['colorectal_cancer'] . '.';
+                $screenings['Colorectal cancer'] = " (e.g. Fecal Occult Blood Test (FOBT), Fecal Immunohistochemistry Test (FIT) Sigmoidoscopy, Colonoscopy): Had " . $report->screenings['colorectal_cancer'] . '.';
             }
             if ( ! empty($report->screenings['skin_cancer'] && $report->screenings['skin_cancer'] !== '10+ years ago/Never/Unsure')) {
-                $screenings[] = "<strong>Skin cancer</strong>: Had " . $report->screenings['skin_cancer'] . '.';
+                $screenings['Skin cancer'] = ": Had " . $report->screenings['skin_cancer'] . '.';
             }
             if ( ! empty($report->screenings['prostate_cancer'] && $report->screenings['prostate_cancer'] !== '10+ years ago/Never/Unsure')) {
-                $screenings[] = "<strong>Prostate cancer</strong> (Prostate screening Test): Had " . $report->screenings['prostate_cancer'] . '.';
+                $screenings['Prostate cancer'] = " (Prostate screening Test): Had " . $report->screenings['prostate_cancer'] . '.';
             }
             if ( ! empty($report->screenings['glaucoma'] && $report->screenings['glaucoma'] !== '10+ years ago/Never/Unsure')) {
-                $screenings[] = "<strong>Glaucoma</strong>: Had " . $report->screenings['glaucoma'] . '.';
+                $screenings['Glaucoma'] = ": Had " . $report->screenings['glaucoma'] . '.';
             }
             if ( ! empty($report->screenings['osteoporosis'] && $report->screenings['osteoporosis'] !== '10+ years ago/Never/Unsure')) {
-                $screenings[] = "<strong>Osteoporosis</strong> (Bone Density Test): Had " . $report->screenings['osteoporosis'] . '.';
+                $screenings['Osteoporosis'] = " (Bone Density Test): Had " . $report->screenings['osteoporosis'] . '.';
             }
             if ( ! empty($report->screenings['violence'] && $report->screenings['violence'] !== '10+ years ago/Never/Unsure')) {
-                $screenings[] = "<strong>Intimate Partner Violence/Domestic Violence</strong>: Had " . $report->screenings['violence'] . '.';
+                $screenings['Intimate Partner Violence/Domestic Violence'] = ": Had " . $report->screenings['violence'] . '.';
             }
         }
 

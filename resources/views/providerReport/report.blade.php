@@ -138,8 +138,8 @@
                 The patient's screening history is as follows:
                 <br>
                 @if(! empty($reportData['screenings']))
-                    @foreach($reportData['screenings'] as $screening)
-                        {{$screening}}
+                    @foreach($reportData['screenings'] as $title => $text)
+                        <strong>{{$title}}</strong>{{$text}}<br>
                     @endforeach
                 @else
                     N/A
