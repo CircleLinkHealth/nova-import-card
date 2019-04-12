@@ -340,8 +340,8 @@ class ActivityController extends Controller
         $this->activityService->processMonthlyActivityTime($input['patient_id'], $performedAt);
 
         if ($nurse) {
-            $computer = new AlternativeCareTimePayableCalculator($nurse);
-            $computer->adjustNursePayForActivity($activity);
+            (new AlternativeCareTimePayableCalculator($nurse))
+                ->adjustNursePayForActivity($activity);
         }
 
         return redirect()->route('patient.activity.view', [
