@@ -2,9 +2,9 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use CircleLinkHealth\Core\Entities\BaseModel;
 
-class Answer  extends \CircleLinkHealth\Core\Entities\BaseModel
+class Answer extends BaseModel
 {
     /**
      * The attributes that are mass assignable.
@@ -16,8 +16,16 @@ class Answer  extends \CircleLinkHealth\Core\Entities\BaseModel
         'survey_instance_id',
         'question_id',
         'question_type_answer_id',
-        'value_1',
-    /*    'value_2',*/
+        'value'
+    ];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'value' => 'array',
     ];
 
 

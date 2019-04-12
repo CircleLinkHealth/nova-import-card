@@ -2,9 +2,9 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use CircleLinkHealth\Core\Entities\BaseModel;
 
-class Survey  extends \CircleLinkHealth\Core\Entities\BaseModel
+class Survey extends BaseModel
 {
 
     const HRA = 'HRA';

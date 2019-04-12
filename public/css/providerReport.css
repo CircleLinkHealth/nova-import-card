@@ -11,11 +11,13 @@
     padding-top: 10px;
     padding-bottom: 5px;
     color: #ffffff;
+    font-family: Poppins, sans-serif;
 }
 
 .section-body {
     font-family: Poppins;
     padding-top: 20px;
+    font-family: Poppins, sans-serif;
 }
 
 .report-title {
@@ -27,6 +29,7 @@
     line-height: normal;
     letter-spacing: 1.3px;
     color: #1a1a1a;
+    font-family: Poppins, sans-serif;
 }
 
 .report {
@@ -35,4 +38,5 @@
     padding-right: 5%;
     padding-top: 5%;
     padding-bottom: 5%;
+
 }

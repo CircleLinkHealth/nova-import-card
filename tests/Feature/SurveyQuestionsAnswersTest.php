@@ -22,7 +22,7 @@ class SurveyQuestionsAnswersTest extends TestCase
             'user_id'            => $this->user->id,
             'survey_instance_id' => $surveyInstance->id,
             'question_id'        => $question->id,
-            'value_1'            => $this->faker->text,
+            'value'            => $this->faker->text,
         ]);
 
         $response

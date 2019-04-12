@@ -20,8 +20,8 @@ class CreateQuestionTypesAnswersTable extends Migration
             $table->binary('options');
             $table->timestamps();
 
-            /*$table->foreign('question_type_id')
-                  ->references('id')->on('question_types');*/
+            $table->foreign('question_type_id')
+                  ->references('id')->on('question_types');
         });
     }
 

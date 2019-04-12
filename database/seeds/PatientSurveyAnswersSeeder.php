@@ -30,11 +30,17 @@ class PatientSurveyAnswersSeeder extends Seeder
             'email_verified_at' => now(),
             'password'          => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
             'remember_token'    => str_random(10),
+            'address'           => $faker->address,
+            'city'              => $faker->city,
+            'state'              => $faker->city,
+            'zip'               => $faker->randomNumber(5)
         ]);
 
         $user->patientInfo()->create([
+            'user_id' => $user->id,
             'birth_date' => $faker->date('y-m-d'),
         ]);
+
 
         $hraSurvey = Survey::with([
             'instances' => function ($instance) use ($date) {
@@ -82,7 +88,7 @@ class PatientSurveyAnswersSeeder extends Seeder
                 'user_id'            => $user->id,
                 'survey_instance_id' => $hraInstance->id,
                 'question_id'        => $question->id,
-                'value_1'            => $answerData['answer'],
+                'value'            => $answerData['answer'],
             ]);
         }
 
@@ -96,7 +102,7 @@ class PatientSurveyAnswersSeeder extends Seeder
                 'user_id'            => $user->id,
                 'survey_instance_id' => $vitalsInstance->id,
                 'question_id'        => $question->id,
-                'value_1'            => $answerData['answer'],
+                'value'            => $answerData['answer'],
             ]);
         }
     }
@@ -114,43 +120,53 @@ class PatientSurveyAnswersSeeder extends Seeder
             [
                 'order'    => 1,
                 'subOrder' => null,
-                'answer'   => json_encode([
+                'answer'   => [
                     'first_metric'  => 140,
                     'second_metric' => 80,
-                ]),
+                ],
             ],
             [
                 'order'    => 2,
                 'subOrder' => null,
-                'answer'   => '150',
+                'answer'   => [
+                    'value' => '150'
+                ],
             ],
             [
                 'order'    => 3,
                 'subOrder' => null,
-                'answer'   => json_encode([
+                'answer'   => [
                     'feet'   => 5,
                     'inches' => 10,
-                ]),
+                ],
             ],
             [
                 'order'    => 4,
                 'subOrder' => null,
-                'answer'   => '25',
+                'answer'   => [
+                    'value' => '25'
+                ],
             ],
             [
                 'order'    => 5,
                 'subOrder' => 'a',
-                'answer'   => 3,
+                'answer'   => [
+                    'value' => 3
+                ],
             ],
             [
                 'order'    => 5,
                 'subOrder' => 'b',
-                'answer'   => 2,
+                'answer'   => [
+                    'value' => 2
+                ],
             ],
             [
                 'order'    => 5,
                 'subOrder' => 'c',
-                'answer'   => 5,
+                'answer'   => [
+                    'value' => 5
+                ],
             ],
         ]);
     }
@@ -161,100 +177,137 @@ class PatientSurveyAnswersSeeder extends Seeder
             [
                 'order'    => 1,
                 'subOrder' => null,
-                'answer'   => 'Asian',
+                'answer'   => [
+                    'value' => 'Asian'
+                ],
             ],
             [
                 'order'    => 2,
                 'subOrder' => null,
-                'answer'   => 19,
+                'answer'   => [
+                    'value' => 19
+                ],
             ],
             [
                 'order'    => 3,
                 'subOrder' => null,
-                'answer'   => json_encode([
+                'answer'   => [
                     'feet'   => 5,
                     'inches' => 10,
-                ]),
+                ],
             ],
             [
                 'order'    => 4,
                 'subOrder' => null,
-                'answer'   => 'Female',
+                'answer'   =>
+                    [
+                      'value' =>'Female'
+                    ]
             ],
             [
                 'order'    => 5,
                 'subOrder' => null,
-                'answer'   => 'Fair',
+                'answer'   =>
+                [
+                    'value' => 'Fair'
+                ]
             ],
             [
                 'order'    => 6,
                 'subOrder' => null,
-                'answer'   => '1-2',
+                'answer'   => [
+                    'value' => '1-2'
+                ]
+
             ],
             [
                 'order'    => 7,
                 'subOrder' => null,
-                'answer'   => '3-4',
+                'answer'   => [
+                    'value' => '3-4'
+                ]
             ],
             [
                 'order'    => 8,
                 'subOrder' => null,
-                'answer'   => '4+',
+                'answer'   => [
+                    'value' => '4+'
+                ]
             ],
             [
                 'order'    => 9,
                 'subOrder' => null,
-                'answer'   => '0',
+                'answer'   => [
+                    'value' => '0'
+                ]
             ],
             [
                 'order'    => 10,
                 'subOrder' => null,
-                'answer'   => 'Yes',
+                'answer'   => [
+                    'value' => 'Yes'
+                ]
             ],
             [
                 'order'    => 11,
                 'subOrder' => null,
-                'answer'   => 'Yes',
+                'answer'   => [
+                    'value' => 'Yes'
+                ]
             ],
             [
                 'order'    => 11,
                 'subOrder' => 'a',
-                'answer'   => 'This Year',
+                'answer'   => [
+                    'value' => 'This Year'
+                ]
             ],
             [
                 'order'    => 11,
                 'subOrder' => 'b',
-                'answer'   => 'This Year',
+                'answer'   => [
+                    'value' => 'This Year'
+                ]
             ],
             [
                 'order'    => 11,
                 'subOrder' => 'c',
-                'answer'   => '1/2',
+                'answer'   => [
+                    'value' => '1/2'
+                ]
             ],
             [
                 'order'    => 11,
                 'subOrder' => 'd',
-                'answer'   => 'Maybe',
+                'answer'   => [
+                    'value' => 'Maybe'
+                ]
             ],
             [
                 'order'    => 12,
                 'subOrder' => null,
-                'answer'   => 'Yes',
+                'answer'   => [
+                    'value' => 'Yes'
+                ]
             ],
             [
                 'order'    => 12,
                 'subOrder' => 'a',
-                'answer'   => '<7 drinks per week',
+                'answer'   => [
+                    'value' => '<7 drinks per week'
+                ]
             ],
             [
                 'order'    => 13,
                 'subOrder' => null,
-                'answer'   => 'Yes',
+                'answer'   => [
+                    'value' => 'Yes'
+                ]
             ],
             [
                 'order'    => 13,
                 'subOrder' => 'a',
-                'answer'   => json_encode([
+                'answer'   => [
                     [
                         'name'      => 'Cannabis',
                         'frequency' => '76',
@@ -263,32 +316,40 @@ class PatientSurveyAnswersSeeder extends Seeder
                         'name'      => 'Iowaska',
                         'frequency' => '1',
                     ],
-                ]),
+                ],
             ],
             [
                 'order'    => 14,
                 'subOrder' => null,
-                'answer'   => '<3 times a week',
+                'answer'   => [
+                    'value' => '<3 times a week'
+                ],
             ],
             [
                 'order'    => 15,
                 'subOrder' => null,
-                'answer'   => 'Yes',
+                'answer'   => [
+                    'value' => 'Yes'
+                ]
             ],
             [
                 'order'    => 15,
                 'subOrder' => 'a',
-                'answer'   => 'Yes',
+                'answer'   => [
+                    'value' => 'Yes'
+                ]
             ],
             [
                 'order'    => 15,
                 'subOrder' => 'b',
-                'answer'   => 'Sometimes',
+                'answer'   => [
+                    'value' => 'Sometimes'
+                ]
             ],
             [
                 'order'    => 16,
                 'subOrder' => null,
-                'answer'   => json_encode([
+                'answer'   => [
                     [
                         'name' => 'Cancer',
                         'type' => 'Colon',
@@ -301,12 +362,12 @@ class PatientSurveyAnswersSeeder extends Seeder
                         'name' => 'Hepatitis',
                         'type' => null,
                     ],
-                ]),
+                ],
             ],
             [
                 'order'    => 17,
                 'subOrder' => null,
-                'answer'   => json_encode([
+                'answer'   => [
                     [
                         'name' => 'Tangyness',
 
@@ -314,12 +375,12 @@ class PatientSurveyAnswersSeeder extends Seeder
                     [
                         'name' => 'Arch-tangyness',
                     ],
-                ]),
+                ],
             ],
             [
                 'order'    => 18,
                 'subOrder' => null,
-                'answer'   => json_encode([
+                'answer'   => [
                     [
                         'name' => 'Colorectal Cancer',
 
@@ -327,12 +388,12 @@ class PatientSurveyAnswersSeeder extends Seeder
                     [
                         'name' => 'Depression',
                     ],
-                ]),
+                ],
             ],
             [
                 'order'    => 18,
                 'subOrder' => 'a',
-                'answer'   => json_encode([
+                'answer'   => [
                     [
                         'name'   => 'Colorectal Cancer',
                         'family' => [
@@ -346,12 +407,12 @@ class PatientSurveyAnswersSeeder extends Seeder
                             'Child',
                             ]
                     ],
-                ]),
+                ],
             ],
             [
                 'order'    => 19,
                 'subOrder' => null,
-                'answer'   => json_encode([
+                'answer'   => [
                     [
                         'reason'   => 'Appendix removal',
                         'location' => 'Somewhere',
@@ -362,12 +423,12 @@ class PatientSurveyAnswersSeeder extends Seeder
                         'location' => 'Somewhere',
                         'year'     => '2001',
                     ],
-                ]),
+                ],
             ],
             [
                 'order'    => 20,
                 'subOrder' => null,
-                'answer'   => json_encode([
+                'answer'   => [
                     [
                         'drug'      => 'Tangecil',
                         'dose'      => '2',
@@ -378,12 +439,12 @@ class PatientSurveyAnswersSeeder extends Seeder
                         'dose'      => '1',
                         'frequency' => 'weekly',
                     ],
-                ]),
+                ],
             ],
             [
                 'order'    => 21,
                 'subOrder' => null,
-                'answer'   => json_encode([
+                'answer'   => [
                     [
                         'name' => 'peanuts',
 
@@ -391,22 +452,26 @@ class PatientSurveyAnswersSeeder extends Seeder
                     [
                         'name' => 'figs',
                     ],
-                ]),
+                ],
             ],
             [
                 'order'    => 22,
                 'subOrder' => '1',
-                'answer'   => 'Several days',
+                'answer'   => [
+                    'value' => 'Several days'
+                    ],
             ],
             [
                 'order'    => 22,
                 'subOrder' => '2',
-                'answer'   => 'Nearly every day',
+                'answer'   => [
+                    'value' => 'Nearly Every Day'
+                ],
             ],
             [
                 'order'    => 23,
                 'subOrder' => null,
-                'answer'   => json_encode([
+                'answer'   => [
                     [
                         'name' => 'Bathing',
 
@@ -414,112 +479,152 @@ class PatientSurveyAnswersSeeder extends Seeder
                     [
                         'name' => 'Preparing a meal',
                     ],
-                ]),
+                ],
             ],
             [
                 'order'    => 23,
                 'subOrder' => 'a',
-                'answer'   => 'No',
+                'answer'   => [
+                    'value' => 'No'
+                ]
             ],
             [
                 'order'    => 24,
                 'subOrder' => null,
-                'answer'   => 'No',
+                'answer'   => [
+                    'value' => 'No'
+                ]
             ],
             [
                 'order'    => 25,
                 'subOrder' => null,
-                'answer'   => 'Yes',
+                'answer'   => [
+                    'value' => 'Yes'
+                ]
             ],
             [
                 'order'    => 26,
                 'subOrder' => null,
-                'answer'   => 'No',
+                'answer'   => [
+                    'value' => 'No'
+                ]
             ],
             [
                 'order'    => 27,
                 'subOrder' => null,
-                'answer'   => 'Yes',
+                'answer'   => [
+                    'value' => 'Yes'
+                ]
             ],
             [
                 'order'    => 28,
                 'subOrder' => null,
-                'answer'   => 'No',
+                'answer'   => [
+                    'value' => 'No'
+                ]
             ],
             [
                 'order'    => 29,
                 'subOrder' => null,
-                'answer'   => 'Unsure',
+                'answer'   => [
+                    'value' => 'Unsure'
+                ]
             ],
             [
                 'order'    => 30,
                 'subOrder' => null,
-                'answer'   => 'Yes',
+                'answer'   => [
+                    'value' => 'Yes'
+                ]
             ],
             [
                 'order'    => 31,
                 'subOrder' => null,
-                'answer'   => 'Yes',
+                'answer'   => [
+                    'value' => 'Yes'
+                ]
             ],
             [
                 'order'    => 32,
                 'subOrder' => null,
-                'answer'   => 'Yes',
+                'answer'   => [
+                    'value' => 'Yes'
+                ]
             ],
             [
                 'order'    => 33,
                 'subOrder' => null,
-                'answer'   => 'No',
+                'answer'   => [
+                    'value' => 'No'
+                ]
             ],
             [
                 'order'    => 34,
                 'subOrder' => null,
-                'answer'   => 'Unsure',
+                'answer'   => [
+                    'value' => 'Unsure'
+                ]
             ],
             [
                 'order'    => 35,
                 'subOrder' => null,
-                'answer'   => 'In the last 2-3 years',
+                'answer'   => [
+                    'value' => 'In the last 2-3 years'
+                ]
             ],
             [
                 'order'    => 36,
                 'subOrder' => null,
-                'answer'   => 'In the last 6-10 years',
+                'answer'   => [
+                    'value' => 'In the last 6-10 years'
+                ]
             ],
             [
                 'order'    => 37,
                 'subOrder' => null,
-                'answer'   => 'In the last year',
+                'answer'   => [
+                    'value' => 'In the last year'
+                ]
             ],
             [
                 'order'    => 38,
                 'subOrder' => null,
-                'answer'   => 'In the last  4-5 years',
+                'answer'   => [
+                    'value' => 'In the last 6-10 years'
+                ]
             ],
             [
                 'order'    => 39,
                 'subOrder' => null,
-                'answer'   => 'In the last 6-10 years',
+                'answer'   => [
+                    'value' => 'In the last 6-10 years'
+                ]
             ],
             [
                 'order'    => 40,
                 'subOrder' => null,
-                'answer'   => 'In the last year',
+                'answer'   => [
+                    'value' => 'In the last year'
+                ]
             ],
             [
                 'order'    => 41,
                 'subOrder' => null,
-                'answer'   => 'In the last 6-10 years',
+                'answer'   => [
+                    'value' => 'In the last 6-10 years'
+                ]
             ],
             [
                 'order'    => 42,
                 'subOrder' => null,
-                'answer'   => 'In the last year',
+                'answer'   => [
+                    'value' => 'In the last year'
+                ]
             ],
             [
                 'order'    => 43,
                 'subOrder' => null,
-                'answer'   => json_encode([
+                'answer'   => [
                     [
                         'provider_name' => 'Jonh Doe',
                         'specialty'     => 'Endocrinologist',
@@ -532,27 +637,35 @@ class PatientSurveyAnswersSeeder extends Seeder
                         'location'      => 'Demo',
                         'phone_number'  => '123123124',
                     ],
-                ]),
+                ],
             ],
             [
                 'order'    => 44,
                 'subOrder' => null,
-                'answer'   => 'Yes',
+                'answer'   => [
+                    'value' => 'Yes'
+                ]
             ],
             [
                 'order'    => 45,
                 'subOrder' => null,
-                'answer'   => 'Yes',
+                'answer'   => [
+                    'value' => 'Yes'
+                ]
             ],
             [
                 'order'    => 45,
                 'subOrder' => 'a',
-                'answer'   => 'Unsure',
+                'answer'   => [
+                    'value' => 'Unsure'
+                ]
             ],
             [
                 'order'    => 46,
                 'subOrder' => null,
-                'answer'   => 'I have a question about something',
+                'answer'   => [
+                    'value' => 'I have a question about something'
+                ],
             ],
         ]);
     }
