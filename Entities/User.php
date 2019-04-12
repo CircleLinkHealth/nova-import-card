@@ -37,7 +37,7 @@ use App\Notifications\CarePlanApprovalReminder;
 use App\Notifications\ResetPassword;
 use App\Repositories\Cache\EmptyUserNotificationList;
 use App\Repositories\Cache\UserNotificationList;
-use App\Rules\PasswordCharacters;
+use CircleLinkHealth\Customer\Rules\PasswordCharacters;
 use App\Services\UserService;
 use App\TargetPatient;
 use Carbon\Carbon;
