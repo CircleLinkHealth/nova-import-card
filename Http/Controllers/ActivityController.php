@@ -312,11 +312,7 @@ class ActivityController extends Controller
                 }
             }
         }
-
-        // store activity
-        $actId = Activity::createNewActivity($input);
-
-        $activity = Activity::find($actId);
+        $activity = Activity::create($input);
 
         $nurse = null;
 
