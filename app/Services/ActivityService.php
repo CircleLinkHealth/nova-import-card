@@ -6,11 +6,11 @@
 
 namespace App\Services;
 
-use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use App\Repositories\CallRepository;
 use App\Repositories\Eloquent\ActivityRepository;
 use App\Repositories\PatientSummaryEloquentRepository;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 
 class ActivityService
 {
@@ -88,7 +88,7 @@ class ActivityService
 
         foreach ($acts as $id => $ccmTime) {
             if ($ccmTime > 0) {
-                $summary = PatientMonthlySummary::updateOrCreate([
+                $summary = PatientMonthlySummary::firstOrCreate([
                     'patient_id' => $id,
                     'month_year' => $monthYear,
                 ], [
