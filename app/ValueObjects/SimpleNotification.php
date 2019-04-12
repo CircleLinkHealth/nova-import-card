@@ -88,11 +88,11 @@ class SimpleNotification
     }
 
     /**
-     * @param mixed $body
+     * @param string|null $body
      *
      * @return SimpleNotification
      */
-    public function setBody($body): string
+    public function setBody(string $body)
     {
         $this->body = $body;
 
@@ -100,11 +100,11 @@ class SimpleNotification
     }
 
     /**
-     * @param mixed $ccdaAttachmentPath
+     * @param string|null $ccdaAttachmentPath
      *
      * @return SimpleNotification
      */
-    public function setCcdaAttachmentPath($ccdaAttachmentPath): ?string
+    public function setCcdaAttachmentPath(string $ccdaAttachmentPath = null)
     {
         $this->ccdaAttachmentPath = $ccdaAttachmentPath;
 
@@ -112,11 +112,11 @@ class SimpleNotification
     }
 
     /**
-     * @param mixed $fileName
+     * @param string|null $fileName
      *
      * @return SimpleNotification
      */
-    public function setFileName($fileName): ?string
+    public function setFileName(string $fileName)
     {
         $this->fileName = $fileName;
 
@@ -124,11 +124,11 @@ class SimpleNotification
     }
 
     /**
-     * @param mixed $filePath
+     * @param string|null $filePath
      *
      * @return SimpleNotification
      */
-    public function setFilePath($filePath): ?string
+    public function setFilePath(string $filePath = null)
     {
         $this->filePath = $filePath;
 
@@ -136,11 +136,11 @@ class SimpleNotification
     }
 
     /**
-     * @param mixed $patient
+     * @param User|null $patient
      *
      * @return SimpleNotification
      */
-    public function setPatient($patient): ?User
+    public function setPatient(User $patient = null)
     {
         $this->patient = $patient;
 
@@ -148,11 +148,11 @@ class SimpleNotification
     }
 
     /**
-     * @param mixed $subject
+     * @param string $subject
      *
      * @return SimpleNotification
      */
-    public function setSubject($subject): string
+    public function setSubject(string $subject)
     {
         $this->subject = $subject;
 
