@@ -45,6 +45,10 @@ class NurseMonthlySummary extends \CircleLinkHealth\Core\Entities\BaseModel
         'no_of_calls',
         'no_of_successful_calls',
     ];
+    
+    protected $dates = [
+        'month_year',
+    ];
 
     public function nurse()
     {
