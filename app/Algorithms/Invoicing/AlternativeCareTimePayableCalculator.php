@@ -20,6 +20,8 @@ use CircleLinkHealth\TimeTracking\Entities\Activity;
  */
 class AlternativeCareTimePayableCalculator
 {
+    const MONTHLY_TIME_TARGET_IN_SECONDS = 1200;
+
     protected $nurse;
 
     /**
@@ -34,10 +36,10 @@ class AlternativeCareTimePayableCalculator
 
     public function adjustNursePayForActivity(Activity $activity)
     {
-        $toAddToAccuredTowardsCCM = 0;
-        $toAddToAccuredAfterCCM   = 0;
-        $user                     = $activity->patient;
-        $monthYear                = Carbon::parse($activity->performed_at)->startOfMonth();
+        $add_to_accrued_towards = 0;
+        $add_to_accrued_after   = 0;
+        $user                   = $activity->patient;
+        $monthYear              = Carbon::parse($activity->performed_at)->startOfMonth();
 
         $summary = $user->patientSummaries()
             ->whereMonthYear($monthYear)
@@ -47,67 +49,42 @@ class AlternativeCareTimePayableCalculator
             ? $summary->bhi_time
             : $summary->ccm_time;
 
-        $ccm_after_activity = intval($totalTime);
+        //total time after storing activity
+        $total_time_after = intval($totalTime);
 
-        $ccm_before_activity = $ccm_after_activity - $activity->duration;
+        //total time before storing activity
+        $total_time_before = $total_time_after - $activity->duration;
 
-        //logic switches:
+        //patient was above target before storing activity
+        $was_above = $total_time_before >= self::MONTHLY_TIME_TARGET_IN_SECONDS;
 
-        //read as: if ccm before was over 20...
-        //20mins
-        $ccm_before_over_20  = $ccm_before_activity >= 1200;
-        $ccm_before_under_20 = $ccm_before_activity < 1200;
-        $ccm_after_over_20   = $ccm_after_activity >= 1200;
-        $ccm_after_under_20  = $ccm_after_activity < 1200;
+        //patient was under target before storing activity
+        $was_under = $total_time_before < self::MONTHLY_TIME_TARGET_IN_SECONDS;
 
-        //60mins
-        $ccm_before_under_60 = $ccm_before_activity < 3600;
-        $ccm_before_over_60  = $ccm_before_activity >= 3600;
-        $ccm_after_under_60  = $ccm_after_activity < 3600;
-        $ccm_after_over_60   = $ccm_after_activity >= 3600;
+        //patient went above target after activity
+        $is_above = $total_time_after >= self::MONTHLY_TIME_TARGET_IN_SECONDS;
 
-        //90mins
-        $ccm_before_under_90 = $ccm_before_activity < 5400;
-        $ccm_before_over_90  = $ccm_before_activity >= 5400;
-        $ccm_after_under_90  = $ccm_after_activity < 5400;
-        $ccm_after_over_90   = $ccm_after_activity >= 5400;
-
-        //120mins
-        $ccm_before_under_120 = $ccm_before_activity < 7200;
-        $ccm_before_over_120  = $ccm_before_activity >= 7200;
-        $ccm_after_under_120  = $ccm_after_activity < 7200;
-        $ccm_after_over_120   = $ccm_after_activity >= 7200;
-
-        if ($ccm_before_over_20) { //if patient was already over 20 mins.
-            // before: 1200, add: 200, total: 1400; target: 1200
-            // towards: 0, after: 200
-
-            $toAddToAccuredAfterCCM = $activity->duration;
-        } elseif ($ccm_before_under_20) { //if patient hasn't met 20mins
-            if ($ccm_after_over_20) { //patient reached 20 mins with this activity
-                // before: 600, add: 720, total: 1320; target: 1200
-                // towards: 600, after: 120
-
-                $toAddToAccuredAfterCCM   = $ccm_after_activity - 1200;
-                $toAddToAccuredTowardsCCM = 1200 - $ccm_before_activity;
-            } else {//patient is still under 20mins
-                // before: 200, add: 200, total: 400; target: 1200
-                // towards: 200, after: 0
-
-                $toAddToAccuredTowardsCCM = $activity->duration;
+        if ($was_above) {
+            $add_to_accrued_after = $activity->duration;
+        } elseif ($was_under) {
+            if ($is_above) {
+                $add_to_accrued_after   = $total_time_after - self::MONTHLY_TIME_TARGET_IN_SECONDS;
+                $add_to_accrued_towards = self::MONTHLY_TIME_TARGET_IN_SECONDS - $total_time_before;
+            } else {
+                $add_to_accrued_towards = $activity->duration;
             }
         }
 
         $this->createOrIncrementNurseSummary(
-            $toAddToAccuredTowardsCCM,
-            $toAddToAccuredAfterCCM,
+            $add_to_accrued_towards,
+            $add_to_accrued_after,
             $activity->id,
             $monthYear
         );
 
         return [
-            'toAddToAccuredTowardsCCM' => $toAddToAccuredTowardsCCM,
-            'toAddToAccuredAfterCCM'   => $toAddToAccuredAfterCCM,
+            'toAddToAccuredTowardsCCM' => $add_to_accrued_towards,
+            'toAddToAccuredAfterCCM'   => $add_to_accrued_after,
             'activity_id'              => $activity->id,
         ];
     }
@@ -133,8 +110,8 @@ class AlternativeCareTimePayableCalculator
             ]
         );
 
-        $report->accrued_after_ccm   = $toAddToAccruedAfterCCM + $report->accrued_after_ccm;
-        $report->accrued_towards_ccm = $toAddToAccruedTowardsCCM + $report->accrued_towards_ccm;
+        $report->accrued_after_ccm   += $toAddToAccruedAfterCCM;
+        $report->accrued_towards_ccm += $toAddToAccruedTowardsCCM;
         $report->save();
 
         if ($toAddToAccruedAfterCCM > 0) {
