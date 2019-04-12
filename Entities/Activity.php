@@ -124,20 +124,6 @@ class Activity extends BaseModel implements Transformable
     }
 
     /**
-     * Create a new activity and return its id.
-     *
-     * @param $attr
-     *
-     * @return mixed
-     */
-    public static function createNewActivity($attr)
-    {
-        $newActivity = Activity::create($attr);
-
-        return $newActivity->id;
-    }
-
-    /**
      * Get all activities with all their meta for a given patient.
      *
      * @param $patientId
