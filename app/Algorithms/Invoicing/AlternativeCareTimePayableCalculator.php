@@ -90,6 +90,8 @@ class AlternativeCareTimePayableCalculator
     }
 
     /**
+     * NOTE: We never actually started storing call data.
+     *
      * @param int    $toAddToAccruedTowardsCCM
      * @param int    $toAddToAccruedAfterCCM
      * @param int    $activityId
@@ -97,7 +99,7 @@ class AlternativeCareTimePayableCalculator
      *
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
      */
-    private function createOrIncrementNurseSummary(// note, not storing call data for now.
+    private function createOrIncrementNurseSummary(
         int $toAddToAccruedTowardsCCM,
         int $toAddToAccruedAfterCCM,
         int $activityId,
