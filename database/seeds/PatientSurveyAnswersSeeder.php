@@ -33,6 +33,7 @@ class PatientSurveyAnswersSeeder extends Seeder
         ]);
 
         $user->patientInfo()->create([
+            'user_id' => $user->id,
             'birth_date' => $faker->date('y-m-d'),
         ]);
 

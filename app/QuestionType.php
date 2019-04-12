@@ -2,9 +2,9 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use CircleLinkHealth\Core\Entities\BaseModel;
 
-class QuestionType extends Model
+class QuestionType extends BaseModel
 {
     const CHECKBOX = 'checkbox';
 
