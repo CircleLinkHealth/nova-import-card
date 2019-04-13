@@ -69,7 +69,7 @@
                     survey_instance_id: this.surveyInstanceId[0],
                     question_id: this.question.id,
                     question_type_answer_id: 0,
-                    value_1: answerData,
+                    value: answerData,
                 })
                     .then(function (response) {
                         console.log(response);

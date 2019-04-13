@@ -23,23 +23,29 @@ class PatientSurveyAnswersSeeder extends Seeder
         $service = new SurveyService();
 
         $user = User::create([
-            'first_name'        => $faker->name,
-            'last_name'         => $faker->name,
-            'display_name'      => $faker->name,
-            'email'             => $faker->unique()->safeEmail,
-            'email_verified_at' => now(),
-            'password'          => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
-            'remember_token'    => str_random(10),
-            'address'           => $faker->address,
-            'city'              => $faker->city,
-            'state'              => $faker->city,
-            'zip'               => $faker->randomNumber(5)
+            'first_name'           => $faker->name,
+            'last_name'            => $faker->name,
+            'display_name'         => $faker->name,
+            'email'                => $faker->unique()->safeEmail,
+            //'email_verified_at' => now(),
+            'username'             => $faker->userName,
+            'auto_attach_programs' => 1,
+            'password'             => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
+            'remember_token'       => str_random(10),
+            'address'              => $faker->address,
+            'address2'             => $faker->address,
+            'city'                 => $faker->city,
+            'state'                => $faker->city,
+            'zip'                  => $faker->randomNumber(5),
+            'status'               => 'Active',
+            'access_disabled'      => 0,
         ]);
 
         $user->patientInfo()->create([
-            'user_id' => $user->id,
-            'birth_date' => $faker->date('y-m-d'),
-        ]);
+             'user_id'         => $user->id,
+             'birth_date'      => $faker->date('y-m-d'),
+             'general_comment' => $faker->text,
+         ]);
 
 
         $hraSurvey = Survey::with([
@@ -67,6 +73,7 @@ class PatientSurveyAnswersSeeder extends Seeder
             [
                 'survey_instance_id' => $hraInstance->id,
                 'status'             => SurveyInstance::PENDING,
+
             ]
         );
 
@@ -85,10 +92,10 @@ class PatientSurveyAnswersSeeder extends Seeder
             $question = $this->getQuestionWithOrder($hraInstance, $answerData['order'], $answerData['subOrder']);
 
             $service->updateOrCreateAnswer([
-                'user_id'            => $user->id,
-                'survey_instance_id' => $hraInstance->id,
-                'question_id'        => $question->id,
-                'value'            => $answerData['answer'],
+                'user_id'                 => $user->id,
+                'survey_instance_id'      => $hraInstance->id,
+                'question_id'             => $question->id,
+                'value'                   => $answerData['answer'],
             ]);
         }
 
@@ -102,73 +109,9 @@ class PatientSurveyAnswersSeeder extends Seeder
                 'user_id'            => $user->id,
                 'survey_instance_id' => $vitalsInstance->id,
                 'question_id'        => $question->id,
-                'value'            => $answerData['answer'],
+                'value'              => $answerData['answer'],
             ]);
         }
-    }
-
-    public function getQuestionWithOrder($instance, $order, $subOrder = null)
-    {
-        return $instance->questions->where('pivot.order', $order)->where('pivot.sub_order', $subOrder)->first();
-
-
-    }
-
-    public function vitalsAnswerData(): Collection
-    {
-        return collect([
-            [
-                'order'    => 1,
-                'subOrder' => null,
-                'answer'   => [
-                    'first_metric'  => 140,
-                    'second_metric' => 80,
-                ],
-            ],
-            [
-                'order'    => 2,
-                'subOrder' => null,
-                'answer'   => [
-                    'value' => '150'
-                ],
-            ],
-            [
-                'order'    => 3,
-                'subOrder' => null,
-                'answer'   => [
-                    'feet'   => 5,
-                    'inches' => 10,
-                ],
-            ],
-            [
-                'order'    => 4,
-                'subOrder' => null,
-                'answer'   => [
-                    'value' => '25'
-                ],
-            ],
-            [
-                'order'    => 5,
-                'subOrder' => 'a',
-                'answer'   => [
-                    'value' => 3
-                ],
-            ],
-            [
-                'order'    => 5,
-                'subOrder' => 'b',
-                'answer'   => [
-                    'value' => 2
-                ],
-            ],
-            [
-                'order'    => 5,
-                'subOrder' => 'c',
-                'answer'   => [
-                    'value' => 5
-                ],
-            ],
-        ]);
     }
 
     public function hraAnswerData(): Collection
@@ -178,14 +121,14 @@ class PatientSurveyAnswersSeeder extends Seeder
                 'order'    => 1,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => 'Asian'
+                    'value' => 'Asian',
                 ],
             ],
             [
                 'order'    => 2,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => 19
+                    'value' => 19,
                 ],
             ],
             [
@@ -201,108 +144,108 @@ class PatientSurveyAnswersSeeder extends Seeder
                 'subOrder' => null,
                 'answer'   =>
                     [
-                      'value' =>'Female'
-                    ]
+                        'value' => 'Female',
+                    ],
             ],
             [
                 'order'    => 5,
                 'subOrder' => null,
                 'answer'   =>
-                [
-                    'value' => 'Fair'
-                ]
+                    [
+                        'value' => 'Fair',
+                    ],
             ],
             [
                 'order'    => 6,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => '1-2'
-                ]
+                    'value' => '1-2',
+                ],
 
             ],
             [
                 'order'    => 7,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => '3-4'
-                ]
+                    'value' => '3-4',
+                ],
             ],
             [
                 'order'    => 8,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => '4+'
-                ]
+                    'value' => '4+',
+                ],
             ],
             [
                 'order'    => 9,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => '0'
-                ]
+                    'value' => '0',
+                ],
             ],
             [
                 'order'    => 10,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => 'Yes'
-                ]
+                    'value' => 'Yes',
+                ],
             ],
             [
                 'order'    => 11,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => 'Yes'
-                ]
+                    'value' => 'Yes',
+                ],
             ],
             [
                 'order'    => 11,
                 'subOrder' => 'a',
                 'answer'   => [
-                    'value' => 'This Year'
-                ]
+                    'value' => 'This Year',
+                ],
             ],
             [
                 'order'    => 11,
                 'subOrder' => 'b',
                 'answer'   => [
-                    'value' => 'This Year'
-                ]
+                    'value' => 'This Year',
+                ],
             ],
             [
                 'order'    => 11,
                 'subOrder' => 'c',
                 'answer'   => [
-                    'value' => '1/2'
-                ]
+                    'value' => '1/2',
+                ],
             ],
             [
                 'order'    => 11,
                 'subOrder' => 'd',
                 'answer'   => [
-                    'value' => 'Maybe'
-                ]
+                    'value' => 'Maybe',
+                ],
             ],
             [
                 'order'    => 12,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => 'Yes'
-                ]
+                    'value' => 'Yes',
+                ],
             ],
             [
                 'order'    => 12,
                 'subOrder' => 'a',
                 'answer'   => [
-                    'value' => '<7 drinks per week'
-                ]
+                    'value' => '<7 drinks per week',
+                ],
             ],
             [
                 'order'    => 13,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => 'Yes'
-                ]
+                    'value' => 'Yes',
+                ],
             ],
             [
                 'order'    => 13,
@@ -322,29 +265,29 @@ class PatientSurveyAnswersSeeder extends Seeder
                 'order'    => 14,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => '<3 times a week'
+                    'value' => '<3 times a week',
                 ],
             ],
             [
                 'order'    => 15,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => 'Yes'
-                ]
+                    'value' => 'Yes',
+                ],
             ],
             [
                 'order'    => 15,
                 'subOrder' => 'a',
                 'answer'   => [
-                    'value' => 'Yes'
-                ]
+                    'value' => 'Yes',
+                ],
             ],
             [
                 'order'    => 15,
                 'subOrder' => 'b',
                 'answer'   => [
-                    'value' => 'Sometimes'
-                ]
+                    'value' => 'Sometimes',
+                ],
             ],
             [
                 'order'    => 16,
@@ -398,14 +341,14 @@ class PatientSurveyAnswersSeeder extends Seeder
                         'name'   => 'Colorectal Cancer',
                         'family' => [
                             'Mother',
-                            'Father'
-                            ]
+                            'Father',
+                        ],
                     ],
                     [
                         'name'   => 'Depression',
                         'family' => [
                             'Child',
-                            ]
+                        ],
                     ],
                 ],
             ],
@@ -458,14 +401,14 @@ class PatientSurveyAnswersSeeder extends Seeder
                 'order'    => 22,
                 'subOrder' => '1',
                 'answer'   => [
-                    'value' => 'Several days'
-                    ],
+                    'value' => 'Several days',
+                ],
             ],
             [
                 'order'    => 22,
                 'subOrder' => '2',
                 'answer'   => [
-                    'value' => 'Nearly Every Day'
+                    'value' => 'Nearly Every Day',
                 ],
             ],
             [
@@ -485,141 +428,141 @@ class PatientSurveyAnswersSeeder extends Seeder
                 'order'    => 23,
                 'subOrder' => 'a',
                 'answer'   => [
-                    'value' => 'No'
-                ]
+                    'value' => 'No',
+                ],
             ],
             [
                 'order'    => 24,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => 'No'
-                ]
+                    'value' => 'No',
+                ],
             ],
             [
                 'order'    => 25,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => 'Yes'
-                ]
+                    'value' => 'Yes',
+                ],
             ],
             [
                 'order'    => 26,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => 'No'
-                ]
+                    'value' => 'No',
+                ],
             ],
             [
                 'order'    => 27,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => 'Yes'
-                ]
+                    'value' => 'Yes',
+                ],
             ],
             [
                 'order'    => 28,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => 'No'
-                ]
+                    'value' => 'No',
+                ],
             ],
             [
                 'order'    => 29,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => 'Unsure'
-                ]
+                    'value' => 'Unsure',
+                ],
             ],
             [
                 'order'    => 30,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => 'Yes'
-                ]
+                    'value' => 'Yes',
+                ],
             ],
             [
                 'order'    => 31,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => 'Yes'
-                ]
+                    'value' => 'Yes',
+                ],
             ],
             [
                 'order'    => 32,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => 'Yes'
-                ]
+                    'value' => 'Yes',
+                ],
             ],
             [
                 'order'    => 33,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => 'No'
-                ]
+                    'value' => 'No',
+                ],
             ],
             [
                 'order'    => 34,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => 'Unsure'
-                ]
+                    'value' => 'Unsure',
+                ],
             ],
             [
                 'order'    => 35,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => 'In the last 2-3 years'
-                ]
+                    'value' => 'In the last 2-3 years',
+                ],
             ],
             [
                 'order'    => 36,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => 'In the last 6-10 years'
-                ]
+                    'value' => 'In the last 6-10 years',
+                ],
             ],
             [
                 'order'    => 37,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => 'In the last year'
-                ]
+                    'value' => 'In the last year',
+                ],
             ],
             [
                 'order'    => 38,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => 'In the last 6-10 years'
-                ]
+                    'value' => 'In the last 6-10 years',
+                ],
             ],
             [
                 'order'    => 39,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => 'In the last 6-10 years'
-                ]
+                    'value' => 'In the last 6-10 years',
+                ],
             ],
             [
                 'order'    => 40,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => 'In the last year'
-                ]
+                    'value' => 'In the last year',
+                ],
             ],
             [
                 'order'    => 41,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => 'In the last 6-10 years'
-                ]
+                    'value' => 'In the last 6-10 years',
+                ],
             ],
             [
                 'order'    => 42,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => 'In the last year'
-                ]
+                    'value' => 'In the last year',
+                ],
             ],
             [
                 'order'    => 43,
@@ -643,28 +586,92 @@ class PatientSurveyAnswersSeeder extends Seeder
                 'order'    => 44,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => 'Yes'
-                ]
+                    'value' => 'Yes',
+                ],
             ],
             [
                 'order'    => 45,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => 'Yes'
-                ]
+                    'value' => 'Yes',
+                ],
             ],
             [
                 'order'    => 45,
                 'subOrder' => 'a',
                 'answer'   => [
-                    'value' => 'Unsure'
-                ]
+                    'value' => 'Unsure',
+                ],
             ],
             [
                 'order'    => 46,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => 'I have a question about something'
+                    'value' => 'I have a question about something',
+                ],
+            ],
+        ]);
+    }
+
+    public function getQuestionWithOrder($instance, $order, $subOrder = null)
+    {
+        return $instance->questions->where('pivot.order', $order)->where('pivot.sub_order', $subOrder)->first();
+
+
+    }
+
+    public function vitalsAnswerData(): Collection
+    {
+        return collect([
+            [
+                'order'    => 1,
+                'subOrder' => null,
+                'answer'   => [
+                    'first_metric'  => 140,
+                    'second_metric' => 80,
+                ],
+            ],
+            [
+                'order'    => 2,
+                'subOrder' => null,
+                'answer'   => [
+                    'value' => '150',
+                ],
+            ],
+            [
+                'order'    => 3,
+                'subOrder' => null,
+                'answer'   => [
+                    'feet'   => 5,
+                    'inches' => 10,
+                ],
+            ],
+            [
+                'order'    => 4,
+                'subOrder' => null,
+                'answer'   => [
+                    'value' => '25',
+                ],
+            ],
+            [
+                'order'    => 5,
+                'subOrder' => 'a',
+                'answer'   => [
+                    'value' => 3,
+                ],
+            ],
+            [
+                'order'    => 5,
+                'subOrder' => 'b',
+                'answer'   => [
+                    'value' => 2,
+                ],
+            ],
+            [
+                'order'    => 5,
+                'subOrder' => 'c',
+                'answer'   => [
+                    'value' => 5,
                 ],
             ],
         ]);

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\PersonalizedPreventionPlan;
+use App\Services\GeneratePersonalizedPreventionPlanService;
 use App\Services\SurveyService;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -23,22 +25,28 @@ class PersonalizedPreventionPlanController extends Controller
 
     public function getPppDataForUser(Request $request)
     {
-        $patientPppData = PersonalizedPreventionPlan::first();
+        $this->patient = User::with([
+            'patientInfo',
+            'billingProvider'
+        ])->first();
+        $this->service = new GeneratePersonalizedPreventionPlanService($this->patient);
+        dd($this->patient);
+    /*    $patientPppData = PersonalizedPreventionPlan::first();
 
         if ( ! $patientPppData) {
             //with message
             return redirect()->back();
         }
-         /* $patient = $patientPppData->patient;
+         $patient = $patientPppData->patient;
           if ( ! $patient) {
               //bad data
               return redirect()->back();
-          }*/
+          }
 
         $birthDate = new Carbon($patientPppData->birth_date);
         $age = now()->diff($birthDate)->y;
 
-        return view('personalizedPreventionPlan', compact('patientPppData', 'age'));
+        return view('personalizedPreventionPlan', compact('patientPppData', 'age'));*/
 
     }
 }
