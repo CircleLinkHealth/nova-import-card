@@ -81,7 +81,7 @@ class ActivityService
 
         foreach ($patientTotalCcmTimeMap as $id => $ccmTime) {
             if ($ccmTime > 0) {
-                $summary = PatientMonthlySummary::firstOrNew([
+                $summary = PatientMonthlySummary::firstOrCreate([
                     'patient_id' => $id,
                     'month_year' => $monthYear,
                 ]);
@@ -105,7 +105,7 @@ class ActivityService
 
         foreach ($patientTotalBhiTimeMap as $id => $bhiTime) {
             if ($bhiTime > 0) {
-                $summary = PatientMonthlySummary::firstOrNew([
+                $summary = PatientMonthlySummary::firstOrCreate([
                     'patient_id' => $id,
                     'month_year' => $monthYear,
                 ]);
