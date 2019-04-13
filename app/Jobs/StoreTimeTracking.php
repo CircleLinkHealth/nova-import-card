@@ -66,7 +66,7 @@ class StoreTimeTracking implements ShouldQueue
 
             $pageTimer = $this->createPageTimer($activity);
 
-            if ($this->shouldCreateActivity($pageTimer, $provider)) {
+            if ($this->isBillableActivity($pageTimer, $provider)) {
                 $newActivity = $this->createActivity($pageTimer, $provider, $isBehavioral);
                 $service->processMonthlyActivityTime([$this->params->get('patientId')]);
                 $this->handleNurseLogs($newActivity, $provider);
@@ -162,7 +162,7 @@ class StoreTimeTracking implements ShouldQueue
      *
      * @return bool
      */
-    private function shouldCreateActivity(PageTimer $pageTimer, User $provider = null)
+    private function isBillableActivity(PageTimer $pageTimer, User $provider = null)
     {
         return ! ( ! $provider
                    || ! (bool) $provider->isCCMCountable()
