@@ -11,33 +11,33 @@
         </div>
         <br>
         <!--question with sub_parts-->
-        <div class="row">
-            <div v-if="questionHasSubParts"
-                 v-for="(subPart, index) in questionSubParts" :key="index">
+        <div v-if="questionHasSubParts" class="row">
+            <div v-for="(subPart, index) in questionSubParts" :key="index">
                 <input type="number"
                        class="number-field"
                        name="numberTypeAnswer[]"
                        v-model="inputNumber[index]"
                        :placeholder="subPart.placeholder">
-
-                <!--next button-->
-                <div v-if="inputNumber > 1">
-                    <button class="next-btn"
-                            name="number"
-                            id="number"
-                            type="submit"
-                            @click="handleAnswer(inputNumber, subPart.key)">Next
-                    </button>
-
-                </div>
             </div>
+
+        </div>
+
+        <!--next button-->
+        <div v-if="hasTypedTwoNumbers">
+            <button class="next-btn"
+                    name="number"
+                    id="number"
+                    type="submit"
+                    @click="handleAnswer()">Next
+            </button>
+
         </div>
     </div>
 </template>
 
 <script>
     import {EventBus} from "../event-bus";
-   /* import {saveAnswer} from "../save-answer";*/
+    /* import {saveAnswer} from "../save-answer";*/
 
     export default {
         name: "questionTypeNumber",
@@ -51,16 +51,25 @@
             return {
                 inputNumber: [],
                 questionOptions: [],
-                showNextButton: false
+                showNextButton: false,
+                keys: [],
             }
         },
         computed: {
-            /*hasTypedTwoNumbers() {
-                return this.inputNumber > 1 ? this.showNextButton = true : this.showNextButton = false;
+            hasTypedTwoNumbers() {
+                return this.inputNumber.length > 1 ? this.showNextButton = true : this.showNextButton = false;
             },
-*/
+
             hasAnswerType() {
                 return this.question.type.question_type_answers.length !== 0;
+            },
+
+            questionTypeAnswerId() {
+                if (this.hasAnswerType) {
+                    return this.question.type.question_type_answers[0].id;
+                } else {
+                    return 0;
+                }
             },
 
             questionHasSubParts() {
@@ -94,22 +103,21 @@
         },
 
         methods: {
-            handleAnswer(answerVal, key) {
+            handleAnswer() {
+                const inputVal = this.inputNumber;
 
+                var answer = {
+                    value: inputVal,
+                };
 
-              /*  var answer = {};
-                answer[key] = answerVal;*/
-                 var answer = {
-                     [key]: answerVal,
-                 };
                 var answerData = JSON.stringify(answer);
 
                 axios.post('/save-answer', {
                     user_id: this.userId,
                     survey_instance_id: this.surveyInstanceId[0],
                     question_id: this.question.id,
-                    question_type_answer_id: 0,
-                    value_1: answerData,
+                    question_type_answer_id: this.questionTypeAnswerId,
+                    value: answerData,
                 })
                     .then(function (response) {
                         console.log(response);
@@ -123,6 +131,11 @@
         created() {
             const questionOptions = this.question.type.question_type_answers.map(q => q.options);
             this.questionOptions.push(...questionOptions);
+
+            if (this.questionSubParts !== '') {
+                const keys = this.questionOptions[0].sub_parts.map(q => q.key);
+                this.keys.push(...keys);
+            }
         },
     }
 </script>

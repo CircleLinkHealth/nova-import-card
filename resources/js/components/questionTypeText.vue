@@ -20,15 +20,17 @@
                 <input type="text"
                        class="text-field"
                        name="textTypeAnswer[]"
-                       v-model="inputHasText[subPart.title]"
+                       v-model="inputHasText[index]"
                        :placeholder="subPart.placeholder"
                        @change="onInput">
 
+                <!--add input fields button-->
+                <!--@todo:extraFieldButton should be out of loop-->
 
                 <div v-for="extraFieldButtonName in extraFieldButtonNames">
                     <div v-if="canAddInputFields">
                         <button type="button"
-                                @click="addInputFields(subPart.title, subPart.placeholder)"
+                                @click="addInputFields(subPart.title, subPart.placeholder, subPart.key)"
                                 class="btn-add-field">
                             {{extraFieldButtonName.add_extra_answer_text}}
                         </button>
@@ -44,15 +46,15 @@
                 </div>
             </div>
         </div>
-        <!--add input fields button-->
+
 
         <!--next button-->
-        <div v-if="inputHasText >'1'">
+        <div v-if="hasTypedTwoNumbers">
             <button class="next-btn"
                     name="text"
                     id="text"
                     type="submit"
-                    @click="handleAnswer(inputHasText)">Next
+                    @click="handleAnswer()">Next
             </button>
         </div>
     </div>
@@ -78,11 +80,24 @@
                 extraFieldButtonNames: [],
                 canRemoveInputFields: false,
                 canAddInputFields: false,
+                showNextButton: false,
             }
         },
         computed: {
+            hasTypedTwoNumbers() {
+                return this.inputHasText.length > 1 ? this.showNextButton = true : this.showNextButton = false;
+            },
+
             hasAnswerType() {
                 return this.question.type.question_type_answers.length !== 0;
+            },
+
+            questionTypeAnswerId() {
+                if (this.hasAnswerType) {
+                    return this.question.type.question_type_answers[0].id;
+                } else {
+                    return 0;
+                }
             },
 
             questionHasSubParts() {
@@ -92,7 +107,7 @@
                 return false;
             },
 
-            questionHasPlaceHolder() {
+            questionHasPlaceHolderInSubParts() {
                 if (this.questionHasSubParts) {
                     const placeholder = this.questionOptions[0].sub_parts.map(q => q.placeholder);
                     if (placeholder) {
@@ -102,9 +117,22 @@
                 return false;
             },
 
+            questionHasPlaceHolderInOptions() {
+                if (!this.questionHasPlaceHolderInSubParts && this.questionOptions.length !== 0) {
+                    const placeholder = this.questionOptions[0].placeholder;
+                    if (placeholder) {
+                        return true;
+                    }
+                }
+                return false;
+            },
+
             questionPlaceHolder() {
-                if (this.questionHasPlaceHolder) {
+                if (this.questionHasPlaceHolderInSubParts && !this.questionHasPlaceHolderInOptions) {
                     return this.questionOptions[0].sub_parts.map(q => q.placeholder);
+                }
+                if (this.questionHasPlaceHolderInOptions) {
+                    return this.questionOptions[0].placeholder;
                 }
                 return '';
             },
@@ -131,35 +159,48 @@
                 EventBus.$emit('handleTextType');
             },
 
-            addInputFields(label, placeholder, index) {
+            addInputFields(title, placeholder, key) {
+                /*  const label = this.subParts.map(q => q.title);
+                  const placeholder = this.subParts.map(q => q.placeholder);
+                  const key = this.subParts.map(q => q.key);*/
+
                 this.subParts.push({
-                    title: label,
-                    placeholder: placeholder
+                    title: title,
+                    placeholder: placeholder,
+                    key: key
                 });
 
                 this.canRemoveInputFields = true;
-                //this.canAddInputFields = false;
-            },
 
+            },
+            /*@todo:delete answer also*/
             removeInputFields(index) {
                 // this.delete(this.subParts, index);
                 this.subParts.splice(index, 1);
             },
 
-            handleAnswer(answerVal) {
-
-                var answer = [{
-                    value_1: answerVal,
-                }];
-
+            handleAnswer() {
+                const answer = [];
+                if (this.subParts.length === 0) {
+                    const key = 'value';
+                    answer.push({[key]: this.inputHasText})
+                } else {
+                    for (let j = 0; j < this.inputHasText.length; j++) {
+                        const val = this.inputHasText[j];
+                        const q = this.subParts[j];
+                        if (q) {
+                            answer.push({[q.key]: val});
+                        }
+                    }
+                }
                 var answerData = JSON.stringify(answer);
 
                 axios.post('/save-answer', {
                     user_id: this.userId,
                     survey_instance_id: this.surveyInstanceId[0],
                     question_id: this.question.id,
-                    question_type_answer_id: 0,
-                    value_1: answerData,
+                    question_type_answer_id: this.questionTypeAnswerId,
+                    value: answerData,
                 })
                     .then(function (response) {
                         console.log(response);

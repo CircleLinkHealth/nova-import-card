@@ -31,7 +31,7 @@
                  v-if="questionsStage"
                  v-for="(question, index) in questions">
                 <div v-show="index >= questionIndex" class="question">
-                    <div class="questions-body" v-if=""><!--data-aos="fade-up"-->
+                    <div class="questions-body" v-show="showSubQuestionNew(index)"><!--data-aos="fade-up"-->
 
                         <div class="questions-title">
                             {{question.id}}{{'.'}} {{question.body}}
@@ -53,16 +53,16 @@
                                     v-if="question.type.type === 'checkbox'">
                             </question-type-checkbox>
 
-                            <question-type-muti-select
-                                    :question="question"
-                                    :userId="userId"
-                                    :surveyInstanceId="surveyInstanceId"
-                                    v-if="question.type.type === 'multi_select'">
-                            </question-type-muti-select>
+                            <!--   <question-type-muti-select
+                                       :question="question"
+                                       :userId="userId"
+                                       :surveyInstanceId="surveyInstanceId"
+                                       v-if="question.type.type === 'multi_select'">
+                               </question-type-muti-select>
 
-                            <question-type-range
-                                    v-if="question.type.type === 'range'">
-                            </question-type-range>
+                               <question-type-range
+                                       v-if="question.type.type === 'range'">
+                               </question-type-range>-->
 
                             <question-type-number
                                     :question="question"
@@ -71,16 +71,16 @@
                                     v-if="question.type.type === 'number'">
                             </question-type-number>
 
-                            <question-type-radio
-                                    :question="question"
-                                    :userId="userId"
-                                    :surveyInstanceId="surveyInstanceId"
-                                    v-if="question.type.type === 'radio'">
-                            </question-type-radio>
+                            <!--   <question-type-radio
+                                      :question="question"
+                                      :userId="userId"
+                                      :surveyInstanceId="surveyInstanceId"
+                                      v-if="question.type.type === 'radio'">
+                              </question-type-radio>
 
-                            <question-type-date
-                                    v-if="question.type.type === 'date'">
-                            </question-type-date>
+                              <question-type-date
+                                      v-if="question.type.type === 'date'">
+                              </question-type-date>-->
                         </div>
                     </div>
                 </div>
@@ -195,7 +195,8 @@
                 questionIndex: 0,
                 progressCount: 0,
                 userId: this.surveydata.id,
-                surveyInstanceId: []
+                surveyInstanceId: [],
+                questionIndexAnswers: [],
             }
         },
         computed: {
@@ -241,20 +242,41 @@
 
             },
 
+            showSubQuestionNew(index) {
+                if (index != 11) {
+                    return true;
+                }
+                const q = this.questions[index];
+
+                //get conditions of question
+                //find related_question_order_number in conditions
+                //get value of [question == related_question_order_number]
+                //return value of [question == related_question_order_number] === conditions.related_question_expected_answer
+                const parentQuestionAnswer = this.questionIndexAnswers[q.conditions[0].related_question_order_number];
+                if (parentQuestionAnswer) {
+                    return parentQuestionAnswer === q.conditions[0].related_question_expected_answer;
+                }
+
+                return false;
+            },
+
             showSubQuestion(conditions) {
                 this.shouldShowQuestion = true;
+
             },
 
             handleRadioInputs(answerVal, questionOrder, questionId) {
+
+                this.questionIndexAnswers[questionOrder] = answerVal;
 
                 const conditions = this.subQuestionsConditions.filter(function (q) {
                     return q.related_question_order_number === questionOrder
                         && q.related_question_expected_answer === answerVal
                 });
 
-                if (conditions.length !== 0) {
-                    this.showSubQuestion(conditions);
-                }
+             /* if (conditions.length !== 0) {
+                    this.showSubQuestionNew(conditions);
+                }*/
                 this.questionIndex++;
                 this.updateProgressBar();
             },
@@ -291,7 +313,7 @@
                 this.handleTextInputs();
             });
 
-            const surveyInstanceId = this.surveydata.survey_instances.map(q=>q.id);
+            const surveyInstanceId = this.surveydata.survey_instances.map(q => q.id);
             this.surveyInstanceId.push(...surveyInstanceId);
         },
         created() {
