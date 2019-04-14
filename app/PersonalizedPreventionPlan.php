@@ -12,8 +12,9 @@ class PersonalizedPreventionPlan extends \CircleLinkHealth\Core\Entities\BaseMod
         'birth_date',
         'address',
         'billing_provider',
-        'hra_values',
-        'vitals_values'
+        'rec_task_title',
+        'hra',
+        'vitals'
     ];
 
     protected $table = 'personalized_prevention_plan';

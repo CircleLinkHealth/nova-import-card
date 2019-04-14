@@ -31,7 +31,7 @@
                  v-if="questionsStage"
                  v-for="(question, index) in questions">
                 <div v-show="index >= questionIndex" class="question">
-                    <div class="questions-body" v-if=""><!--data-aos="fade-up"-->
+                    <div class="questions-body" v-show="showSubQuestionNew(index)"><!--data-aos="fade-up"-->
 
                         <div class="questions-title">
                             {{question.id}}{{'.'}} {{question.body}}
@@ -195,7 +195,8 @@
                 questionIndex: 0,
                 progressCount: 0,
                 userId: this.surveydata.id,
-                surveyInstanceId: []
+                surveyInstanceId: [],
+                questionIndexAnswers: [],
             }
         },
         computed: {
@@ -241,11 +242,30 @@
 
             },
 
+            showSubQuestionNew(index) {
+                if (index != 11) {
+                    return true;
+                }
+                const q = this.questions[index];
+                //get conditions of question
+                //find related_question_order_number in conditions
+                //get value of [question == related_question_order_number]
+                //return value of [question == related_question_order_number] === conditions.related_question_expected_answer
+                const parentQuestionAnswer = this.questionIndexAnswers[q.conditions[0].related_question_order_number];
+                if (parentQuestionAnswer) {
+                    return parentQuestionAnswer === q.conditions[0].related_question_expected_answer;
+                }
+                return false;
+            },
+
             showSubQuestion(conditions) {
                 this.shouldShowQuestion = true;
+
             },
 
             handleRadioInputs(answerVal, questionOrder, questionId) {
+
+                this.questionIndexAnswers[questionOrder] = answerVal;
 
                 const conditions = this.subQuestionsConditions.filter(function (q) {
                     return q.related_question_order_number === questionOrder
@@ -291,7 +311,7 @@
                 this.handleTextInputs();
             });
 
-            const surveyInstanceId = this.surveydata.survey_instances.map(q=>q.id);
+            const surveyInstanceId = this.surveydata.survey_instances.map(q => q.id);
             this.surveyInstanceId.push(...surveyInstanceId);
         },
         created() {

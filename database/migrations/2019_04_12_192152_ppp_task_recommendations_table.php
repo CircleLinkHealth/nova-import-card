@@ -16,6 +16,8 @@ class PppTaskRecommendationsTable extends Migration
         Schema::create('ppp_task_recommendations', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title');
+            $table->json('rec_task_titles');
+            $table->string('codes')->nullable();
             $table->json('data');
             $table->timestamps();
         });

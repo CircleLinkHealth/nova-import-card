@@ -59,4 +59,8 @@ class User extends \CircleLinkHealth\Customer\Entities\User
     public function getSurveyInstancesBySurveyId($surveyId){
         return $this->surveyInstances()->where('users_surveys.survey_id', $surveyId)->get();
     }
+
+    public function personalizedPreventionPlan() {
+        return $this->hasOne(PersonalizedPreventionPlan::class, 'user_id');
+    }
 }

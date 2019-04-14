@@ -49,18 +49,26 @@
 
             handleAnswers() {
 
-         /*       var keyValuePair = {},
-                    i,
-                    keys = this.answerTypeOptions.map(option => option.key),
-                    values = this.checkedAnswers,
-                    length = values.length;
-
-                for (i = 0; i < length; i++) {
-                    keyValuePair[keys[i]] = values[i];
+                const keyValuePair = [];
+                for (let j = 0; j < this.checkedAnswers.length; j++) {
+                    const val = this.checkedAnswers[j];
+                    const q = this.checkBoxValues.find(x => x.value === val);
+                    keyValuePair.push({key: q.options.key, value: val});
                 }
 
-                console.log(keys, values);
-                console.log({keyValuePair});*/
+                /*
+                                var keyValuePair = {},
+                                    i,
+                                    keys = this.answerTypeOptions.map(option => option.key),
+                                    values = this.checkedAnswers,
+                                    length = values.length;
+
+                                for (i = 0; i < length; i++) {
+                                    keyValuePair[keys[i]] = values[i];
+                                }
+
+                                console.log(keys, values);*/
+                console.log({keyValuePair});
 
                 var answerData = JSON.stringify(this.checkedAnswers);
 

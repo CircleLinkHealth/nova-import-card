@@ -2,12 +2,12 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-
 class TaskRecommendations extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $fillable = [
         'title',
+        'codes',
+        'rec_task_titles',
         'data',
     ];
 
@@ -17,7 +17,8 @@ class TaskRecommendations extends \CircleLinkHealth\Core\Entities\BaseModel
      * @var array
      */
     protected $casts = [
-        'data' => 'array',
+        'data'            => 'array',
+        'rec_task_titles' => 'array',
     ];
 
     protected $table = 'ppp_task_recommendations';

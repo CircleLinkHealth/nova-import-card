@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Answer;
 use App\InvitationLink;
 use App\Patient;
 use Illuminate\Foundation\Testing\RefreshDatabase;

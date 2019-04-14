@@ -25,28 +25,31 @@ class PersonalizedPreventionPlanController extends Controller
 
     public function getPppDataForUser(Request $request)
     {
-        $this->patient = User::with([
+
+       $this->patient = User::with([
             'patientInfo',
             'billingProvider'
-        ])->first();
+        ])->findOrFail(9784);
+
         $this->service = new GeneratePersonalizedPreventionPlanService($this->patient);
-        dd($this->patient);
-    /*    $patientPppData = PersonalizedPreventionPlan::first();
+
+       $patientPppData = PersonalizedPreventionPlan::findOrFail(2);
+
 
         if ( ! $patientPppData) {
             //with message
             return redirect()->back();
         }
-         $patient = $patientPppData->patient;
+     /*    $patient = $patientPppData->patient;
           if ( ! $patient) {
               //bad data
               return redirect()->back();
-          }
+          }*/
 
         $birthDate = new Carbon($patientPppData->birth_date);
         $age = now()->diff($birthDate)->y;
 
-        return view('personalizedPreventionPlan', compact('patientPppData', 'age'));*/
+        return view('personalizedPreventionPlan', compact('patientPppData', 'age'));
 
     }
 }
