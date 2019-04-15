@@ -112,21 +112,21 @@ class CreateNurseInvoices implements ShouldQueue
     ) {
         return \DB::table($table)
             ->select(
-                      \DB::raw('SUM(duration) as total_time'),
-                      \DB::raw("DATE_FORMAT($dateTimeField, '%Y-%m-%d') as date"),
-                      'provider_id',
-                      $isBillable
+                \DB::raw('SUM(duration) as total_time'),
+                \DB::raw("DATE_FORMAT($dateTimeField, '%Y-%m-%d') as date"),
+                'provider_id as user_id',
+                $isBillable
                           ? \DB::raw('TRUE as is_billable')
                           : \DB::raw('FALSE as is_billable')
                   )
             ->whereIn('provider_id', $this->nurseUserIds)
             ->whereBetween(
-                      $dateTimeField,
-                      [
-                          $start,
-                          $end,
-                      ]
-                  )->groupBy('date', 'provider_id');
+                $dateTimeField,
+                [
+                    $start,
+                    $end,
+                ]
+                  )->groupBy('date', 'user_id');
     }
 
     private function offlineSystemTime()
@@ -164,11 +164,11 @@ class CreateNurseInvoices implements ShouldQueue
     {
         return TimeTrackedPerDayView::whereIn('user_id', $this->nurseUserIds)
             ->whereBetween(
-                                        'date',
-                                        [
-                                            $this->startDate->toDateString(),
-                                            $this->endDate->toDateString(),
-                                        ]
+                'date',
+                [
+                    $this->startDate->toDateString(),
+                    $this->endDate->toDateString(),
+                ]
                                     )
             ->groupBy('date', 'user_id', 'is_billable')
             ->get()
@@ -183,20 +183,20 @@ class CreateNurseInvoices implements ShouldQueue
     {
         return \DB::query()
             ->fromSub(
-                      $this->systemTimeFromPageTimer()
-                          ->unionAll($this->offlineSystemTime())
-                          ->unionAll($this->totalBillableTimeMap()),
-                      'activities'
+                $this->systemTimeFromPageTimer()
+                    ->unionAll($this->offlineSystemTime())
+                    ->unionAll($this->totalBillableTimeMap()),
+                'activities'
                   )
             ->select(
-                      \DB::raw('SUM(total_time) as total_time'),
-                      'date',
-                      'provider_id',
-                      'is_billable'
+                \DB::raw('SUM(total_time) as total_time'),
+                'date',
+                'user_id',
+                'is_billable'
                   )
-            ->groupBy('date', 'provider_id', 'is_billable')
+            ->groupBy('user_id', 'date', 'is_billable')
             ->get()
-            ->groupBy(['provider_id', 'date'], false)
+            ->groupBy(['user_id', 'date'], false)
             ->values();
     }
 }
