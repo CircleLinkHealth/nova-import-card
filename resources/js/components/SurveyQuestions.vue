@@ -53,7 +53,7 @@
                                     v-if="question.type.type === 'checkbox'">
                             </question-type-checkbox>
 
-                            <!--   <question-type-muti-select
+                               <question-type-muti-select
                                        :question="question"
                                        :userId="userId"
                                        :surveyInstanceId="surveyInstanceId"
@@ -62,7 +62,7 @@
 
                                <question-type-range
                                        v-if="question.type.type === 'range'">
-                               </question-type-range>-->
+                               </question-type-range>
 
                             <question-type-number
                                     :question="question"
@@ -71,7 +71,7 @@
                                     v-if="question.type.type === 'number'">
                             </question-type-number>
 
-                            <!--   <question-type-radio
+                               <question-type-radio
                                       :question="question"
                                       :userId="userId"
                                       :surveyInstanceId="surveyInstanceId"
@@ -80,11 +80,14 @@
 
                               <question-type-date
                                       v-if="question.type.type === 'date'">
-                              </question-type-date>-->
+                              </question-type-date>
                         </div>
                     </div>
                 </div>
             </div>
+
+        </div>
+        <div class="call-assistance">
             <call-assistance v-if="callAssistance" @closeCallAssistanceModal="hideCallHelp"></call-assistance>
         </div>
         <!--bottom-navbar-->
@@ -119,7 +122,7 @@
                     </div>
                 </div>
                 <!--scroll buttons-->
-                <div class="row">
+                <div v-show="!welcomeStage" class="row">
                     <div class="scroll-buttons col-lg-2">
                         <button type="button"
                                 id="scroll-down"
@@ -490,6 +493,7 @@
 
     .call-assistance {
         padding-left: 3%;
+        position: absolute;
     }
 
     .btn-default {
