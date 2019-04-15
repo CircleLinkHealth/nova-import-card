@@ -119,6 +119,14 @@
                                             </button>
                                         </div>
                                     </div>
+                                    <div class="row" style="padding-left: 12px;">
+                                        <label class="col-md-2 control-label" for="end_date"></label>
+                                        <div class="col-md-2">
+                                            <button id="submit" name="submit" value="downloadV2" class="btn btn-success">Download
+                                                Invoice(s) V2 (beta)
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
 
 
