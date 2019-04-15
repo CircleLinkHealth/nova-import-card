@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\CreateNurseInvoices;
 use App\Jobs\GenerateNurseInvoice;
 use App\Notifications\NurseInvoiceCreated;
 use App\Reports\NurseDailyReport;
@@ -39,13 +40,21 @@ class NurseController extends Controller
 
         $variablePay = isset($input['alternative_pay']);
 
+        $startDate = Carbon::parse($request->input('start_date'));
+        $endDate   = Carbon::parse($request->input('end_date'));
+
         if ('download' == $request->input('submit')) {
-            $links = [];
-
-            $startDate = Carbon::parse($request->input('start_date'));
-            $endDate   = Carbon::parse($request->input('end_date'));
-
             GenerateNurseInvoice::dispatch(
+                $nurseIds,
+                $startDate,
+                $endDate,
+                auth()->user()->id,
+                $variablePay,
+                $addTime,
+                $addNotes
+            )->onQueue('demanding');
+        } elseif ('downloadV2' == $request->input('submit')) {
+            CreateNurseInvoices::dispatch(
                 $nurseIds,
                 $startDate,
                 $endDate,
