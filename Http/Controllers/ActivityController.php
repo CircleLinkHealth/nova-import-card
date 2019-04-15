@@ -353,38 +353,6 @@ class ActivityController extends Controller
         );
     }
 
-    public function update(Request $request)
-    {
-        if ($request->isJson()) {
-            $input = $request->input();
-        } else {
-            if ($request->isMethod('POST')) {
-                if ('ui' == $request->header('Client')) { // WP Site
-                    $input = json_decode(Crypt::decrypt($request->input('data')), true);
-                }
-            } else {
-                return response('Unauthorized', 401);
-            }
-        }
-
-        //  Check if there are any meta nested parts in the incoming request
-        $meta = $input['meta'];
-        unset($input['meta']);
-
-        $activity = Activity::find($input['activity_id']);
-        $activity->fill($input)->save();
-
-        $actMeta = ActivityMeta::where('activity_id', $input['activity_id'])->where(
-            'meta_key',
-            $meta['0']['meta_key']
-        )->first();
-        $actMeta->fill($meta['0'])->save();
-
-        $this->activityService->processMonthlyActivityTime([$input['patient_id']]);
-
-        return response('Activity Updated', 201);
-    }
-
     private function getActivityForPatient($patientId, $start, $end)
     {
         $acts = DB::table('lv_activities')
