@@ -42,8 +42,8 @@
                                 <div class="form-group">
                                     <label class="col-md-2 control-label" for="start_date">From</label>
                                     <div class="col-md-6">
-                                        <input class="form-control" type="datetime"
-                                               value="{{\Carbon\Carbon::now()->startOfMonth()}}" name="start_date"
+                                        <input class="form-control" type="date"
+                                               value="{{presentDate(\Carbon\Carbon::now()->startOfMonth(), false)}}" name="start_date"
                                                id="start_date" required>
                                     </div>
                                 </div>
@@ -51,8 +51,8 @@
                                 <div class="form-group">
                                     <label class="col-md-2 control-label" for="end_date">To</label>
                                     <div class="col-md-6">
-                                        <input class="form-control" type="datetime"
-                                               value="{{\Carbon\Carbon::now()->endOfMonth()}}" name="end_date"
+                                        <input class="form-control" type="date"
+                                               value="{{presentDate(\Carbon\Carbon::now()->endOfMonth(), false)}}" name="end_date"
                                                id="end_date" required>
                                     </div>
                                 </div>
