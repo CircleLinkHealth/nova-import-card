@@ -43,7 +43,7 @@ class TimeTrackedPerDayView extends Migration
                 SUM(duration) as total_time,
                 DATE_FORMAT(start_time, '%Y-%m-%d') as `date`,
                 provider_id as user_id,
-                '0' as is_billable
+                FALSE as is_billable
                 
             FROM `lv_page_timer`
             WHERE provider_id != 0
@@ -55,7 +55,7 @@ class TimeTrackedPerDayView extends Migration
                 SUM(duration) as total_time,
                 DATE_FORMAT(performed_at, '%Y-%m-%d') as `date`,
                 provider_id as user_id,
-                '1' as is_billable
+                TRUE as is_billable
 
             FROM `lv_activities`
             WHERE provider_id != 0
