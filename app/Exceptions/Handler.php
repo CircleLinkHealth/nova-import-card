@@ -100,7 +100,7 @@ class Handler extends ExceptionHandler
         }
 
         if ($e instanceof \Illuminate\Database\QueryException) {
-            $errorCode = $e->errorInfo[1];
+            $errorCode = $e->errorInfo[1] ?? null;
             if (1062 == $errorCode) {
                 //do nothing
                 //we don't actually want to terminate the program if we detect duplicates
