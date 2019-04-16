@@ -7,12 +7,12 @@ current:
     format: '{$major}.{$minor}.{$patch}'
     git_absorb: git-local
 cache:
-    enabled: true
+    enabled: false
     key: pragmarx-version
     time: 525600
 build:
     mode: number
-    number: 7303f7
+    number: 92c620
     length: 6
     increment_by: 1
     git_absorb: git-local
