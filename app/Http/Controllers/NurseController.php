@@ -54,7 +54,7 @@ class NurseController extends Controller
                 $addNotes
             )->onQueue('demanding');
         } elseif ('downloadV2' == $request->input('submit')) {
-            CreateNurseInvoices::dispatch(
+            CreateNurseInvoices::dispatchNow(
                 $nurseIds,
                 $startDate,
                 $endDate,

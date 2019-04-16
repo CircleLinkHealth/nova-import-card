@@ -259,20 +259,19 @@ class CareCoachInvoiceViewModel extends ViewModel
 
         if ( ! $this->variablePay) {
             $this->amountPayable = $standardPay;
+        } else {
+            $variablePay = $this->totalTimeAfterCcm() * $this->user->nurseInfo->low_rate
+                           + $this->totalTimeTowardsCcm() * $this->user->nurseInfo->high_rate;
 
-            return;
+            if ($standardPay > $variablePay) {
+                $this->amountPayable = $standardPay;
+                $this->variablePay   = false;
+            } else {
+                $this->amountPayable = $variablePay;
+            }
         }
 
-        $variablePay = $this->totalTimeAfterCcm() * $this->user->nurseInfo->low_rate
-                       + $this->totalTimeTowardsCcm() * $this->user->nurseInfo->high_rate;
-
-        if ($standardPay > $variablePay) {
-            $this->amountPayable = $standardPay;
-            $this->variablePay   = false;
-
-            return;
-        }
-
-        $this->amountPayable = $variablePay;
+        //Add extratime
+        $this->amountPayable += ceil($this->extraTime / 60) * $this->user->nurseInfo->hourly_rate;
     }
 }

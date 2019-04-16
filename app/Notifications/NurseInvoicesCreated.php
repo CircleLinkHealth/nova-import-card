@@ -51,10 +51,12 @@ class NurseInvoicesCreated extends Notification
      */
     public function toMail($notifiable)
     {
+        $url = str_replace(config('app.url'), config('opcache.url'), url($this->link));
+
         return (new MailMessage())
             ->greeting('Hello!')
             ->line('We would like to inform you that the nurse invoices you have requested are ready.')
-            ->action('View Invoices', url($this->link))
+            ->action('View Invoices', $url)
             ->line('Have a nice day!');
     }
 

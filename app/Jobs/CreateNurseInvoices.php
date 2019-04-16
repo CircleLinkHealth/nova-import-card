@@ -71,7 +71,7 @@ class CreateNurseInvoices implements ShouldQueue
         array $nurseUserIds,
         Carbon $startDate,
         Carbon $endDate,
-        int $requestedBy,
+        int $requestedBy = null,
         bool $variablePay = false,
         int $extraTime = 0,
         string $note = ''
@@ -121,12 +121,12 @@ class CreateNurseInvoices implements ShouldQueue
             'billing.nurse.invoice-v2',
             $viewModel->toArray(),
             [
-                'margin-top'       => '12',
-                'margin-left'      => '12',
-                'margin-bottom'    => '12',
-                'margin-right'     => '12',
+                'margin-top'       => '8',
+                'margin-left'      => '8',
+                'margin-bottom'    => '8',
+                'margin-right'     => '6',
                 'footer-right'     => 'Page [page] of [toPage]',
-                'footer-font-size' => '8',
+                'footer-font-size' => '6',
             ],
             storage_path("download/${name}.pdf")
         );
