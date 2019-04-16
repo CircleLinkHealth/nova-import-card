@@ -54,18 +54,6 @@ class NurseController extends Controller
                 $addNotes
             )->onQueue('demanding');
         } elseif ('downloadV2' == $request->input('submit')) {
-            if (count($nurseIds) < 6) {
-                return CreateNurseInvoices::dispatchNow(
-                    $nurseIds,
-                    $startDate,
-                    $endDate,
-                    auth()->user()->id,
-                    $variablePay,
-                    $addTime,
-                    $addNotes
-                );
-            }
-
             CreateNurseInvoices::dispatch(
                 $nurseIds,
                 $startDate,
@@ -250,32 +238,32 @@ class NurseController extends Controller
         $nurses = User::orderBy('id')
             ->ofType('care-center')
             ->whereHas(
-                          'activitiesAsProvider',
-                          function ($a) use ($fromDate, $toDate) {
-                              $a->where('performed_at', '>=', $fromDate)
-                                  ->where('performed_at', '<=', $toDate);
-                          }
+                'activitiesAsProvider',
+                function ($a) use ($fromDate, $toDate) {
+                    $a->where('performed_at', '>=', $fromDate)
+                        ->where('performed_at', '<=', $toDate);
+                }
                       )
             ->chunk(
-                          50,
-                          function ($nurses) use (&$rows, $fromDate, $toDate) {
-                              foreach ($nurses as $nurse) {
-                                  $seconds = Activity::where('provider_id', $nurse->id)
-                                      ->where(
-                                                         function ($q) use ($fromDate, $toDate) {
-                                                             $q->where('performed_at', '>=', $fromDate)
-                                                                 ->where('performed_at', '<=', $toDate);
-                                                         }
+                50,
+                function ($nurses) use (&$rows, $fromDate, $toDate) {
+                    foreach ($nurses as $nurse) {
+                        $seconds = Activity::where('provider_id', $nurse->id)
+                            ->where(
+                                          function ($q) use ($fromDate, $toDate) {
+                                              $q->where('performed_at', '>=', $fromDate)
+                                                  ->where('performed_at', '<=', $toDate);
+                                          }
                                                      )
-                                      ->sum('duration');
+                            ->sum('duration');
 
-                                  if (0 == $seconds) {
-                                      continue;
-                                  }
+                        if (0 == $seconds) {
+                            continue;
+                        }
 
-                                  $rows[$nurse->display_name] = gmdate('H:i:s', $seconds);
-                              }
-                          }
+                        $rows[$nurse->display_name] = gmdate('H:i:s', $seconds);
+                    }
+                }
                       );
 
         return collect($rows);
