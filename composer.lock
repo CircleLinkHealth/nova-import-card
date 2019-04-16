@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0939b84205dfff2eb812f2fec088b7f8",
+    "content-hash": "a7bba4d9d493c4a4be0a59e8318056f5",
     "packages": [
         {
             "name": "amnuts/opcache-gui",
@@ -6629,6 +6629,60 @@
                 "spatie"
             ],
             "time": "2019-02-27T09:31:55+00:00"
+        },
+        {
+            "name": "spatie/laravel-view-models",
+            "version": "1.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/laravel-view-models.git",
+                "reference": "3dffe14ad49fab62c088035153ca09702c9a4748"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/laravel-view-models/zipball/3dffe14ad49fab62c088035153ca09702c9a4748",
+                "reference": "3dffe14ad49fab62c088035153ca09702c9a4748",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "~5.5|~5.6|~5.7|~5.8",
+                "php": "^7.1"
+            },
+            "require-dev": {
+                "orchestra/testbench": "~3.5|~3.6|~3.7|~3.8"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Spatie\\ViewModels\\Providers\\ViewModelsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\ViewModels\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Brent Roose",
+                    "email": "brent@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "View models in Laravel",
+            "homepage": "https://github.com/spatie/laravel-view-models",
+            "keywords": [
+                "laravel-view-models",
+                "spatie"
+            ],
+            "time": "2019-02-28T09:47:44+00:00"
         },
         {
             "name": "spatie/pdf-to-image",
