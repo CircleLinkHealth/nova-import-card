@@ -986,6 +986,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'note.send',
                     'offlineActivityRequest.create',
                     'offlineActivityRequest.read',
+                    'has-schedule',
                 ],
             ],
             [
@@ -1105,6 +1106,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'note.send',
                     'offlineActivityRequest.create',
                     'offlineActivityRequest.read',
+                    'has-schedule',
                 ],
             ],
             [
