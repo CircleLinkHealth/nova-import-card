@@ -101,6 +101,7 @@
     "spatie/laravel-backup": "^5.10",
     "spatie/laravel-google-calendar": "^2.0",
     "spatie/laravel-medialibrary": "^7.0.0",
+    "spatie/laravel-view-models": "^1.1",
     "spiritix/lada-cache": "^2.1",
     "twilio/sdk": "5.7",
     "tymon/jwt-auth": "0.5.*",
