@@ -54,6 +54,18 @@ class NurseController extends Controller
                 $addNotes
             )->onQueue('demanding');
         } elseif ('downloadV2' == $request->input('submit')) {
+            if (count($nurseIds) < 6) {
+                return CreateNurseInvoices::dispatchNow(
+                    $nurseIds,
+                    $startDate,
+                    $endDate,
+                    auth()->user()->id,
+                    $variablePay,
+                    $addTime,
+                    $addNotes
+                );
+            }
+
             CreateNurseInvoices::dispatch(
                 $nurseIds,
                 $startDate,
@@ -62,10 +74,12 @@ class NurseController extends Controller
                 $variablePay,
                 $addTime,
                 $addNotes
-            )->onQueue('demanding');
+            );
         }
 
-        return 'Waldo is working on compiling the reports you requested. <br> Give it a minute, and then head to '.link_to('/jobs/completed').' and refresh frantically to see a link to the report you requested.';
+        return 'Waldo is working on compiling the reports you requested. <br> Give it a minute, and then head to '.link_to(
+            '/jobs/completed'
+            ).' and refresh frantically to see a link to the report you requested.';
     }
 
     public function makeDailyReport()
@@ -143,10 +157,13 @@ class NurseController extends Controller
             $dayCounter = $dayCounter->addDays(1);
         }
 
-        return view('admin.reports.allocation', [
-            'data'  => $data,
-            'month' => Carbon::parse($last),
-        ]);
+        return view(
+            'admin.reports.allocation',
+            [
+                'data'  => $data,
+                'month' => Carbon::parse($last),
+            ]
+        );
     }
 
     public function monthlyReport(Request $request)
@@ -162,33 +179,39 @@ class NurseController extends Controller
             return response()->json($rows);
         }
         if ($request->has('excel')) {
-            return Excel::create('CLH-Nurse-Monthly-Report-'.$date, function ($excel) use ($date, $rows) {
-                // Set the title
-                $excel->setTitle('CLH Nurse Monthly Report - '.$date);
+            return Excel::create(
+                'CLH-Nurse-Monthly-Report-'.$date,
+                function ($excel) use ($date, $rows) {
+                    // Set the title
+                    $excel->setTitle('CLH Nurse Monthly Report - '.$date);
 
-                // Chain the setters
-                $excel->setCreator('CLH System')
-                    ->setCompany('CircleLink Health');
+                    // Chain the setters
+                    $excel->setCreator('CLH System')
+                        ->setCompany('CircleLink Health');
 
-                // Call them separately
-                $excel->setDescription('CLH Call Report - '.$date);
+                    // Call them separately
+                    $excel->setDescription('CLH Call Report - '.$date);
 
-                // Our first sheet
-                $excel->sheet('Sheet 1', function ($sheet) use ($rows) {
-                    $i = 0;
-                    // header
-                    $userColumns = [
-                        'Nurse',
-                        'CCM Time (HH:MM:SS)',
-                    ];
-                    $sheet->appendRow($userColumns);
+                    // Our first sheet
+                    $excel->sheet(
+                        'Sheet 1',
+                        function ($sheet) use ($rows) {
+                            $i = 0;
+                            // header
+                            $userColumns = [
+                                'Nurse',
+                                'CCM Time (HH:MM:SS)',
+                            ];
+                            $sheet->appendRow($userColumns);
 
-                    foreach ($rows as $name => $time) {
-                        $columns = [$name, $time];
-                        $sheet->appendRow($columns);
-                    }
-                });
-            })->export('xls');
+                            foreach ($rows as $name => $time) {
+                                $columns = [$name, $time];
+                                $sheet->appendRow($columns);
+                            }
+                        }
+                    );
+                }
+            )->export('xls');
         }
 
         $currentPage              = LengthAwarePaginator::resolveCurrentPage();
@@ -226,26 +249,34 @@ class NurseController extends Controller
 
         $nurses = User::orderBy('id')
             ->ofType('care-center')
-            ->whereHas('activitiesAsProvider', function ($a) use ($fromDate, $toDate) {
-                $a->where('performed_at', '>=', $fromDate)
-                    ->where('performed_at', '<=', $toDate);
-            })
-            ->chunk(50, function ($nurses) use (&$rows, $fromDate, $toDate) {
-                foreach ($nurses as $nurse) {
-                    $seconds = Activity::where('provider_id', $nurse->id)
-                        ->where(function ($q) use ($fromDate, $toDate) {
-                            $q->where('performed_at', '>=', $fromDate)
-                                ->where('performed_at', '<=', $toDate);
-                        })
-                        ->sum('duration');
+            ->whereHas(
+                          'activitiesAsProvider',
+                          function ($a) use ($fromDate, $toDate) {
+                              $a->where('performed_at', '>=', $fromDate)
+                                  ->where('performed_at', '<=', $toDate);
+                          }
+                      )
+            ->chunk(
+                          50,
+                          function ($nurses) use (&$rows, $fromDate, $toDate) {
+                              foreach ($nurses as $nurse) {
+                                  $seconds = Activity::where('provider_id', $nurse->id)
+                                      ->where(
+                                                         function ($q) use ($fromDate, $toDate) {
+                                                             $q->where('performed_at', '>=', $fromDate)
+                                                                 ->where('performed_at', '<=', $toDate);
+                                                         }
+                                                     )
+                                      ->sum('duration');
 
-                    if (0 == $seconds) {
-                        continue;
-                    }
+                                  if (0 == $seconds) {
+                                      continue;
+                                  }
 
-                    $rows[$nurse->display_name] = gmdate('H:i:s', $seconds);
-                }
-            });
+                                  $rows[$nurse->display_name] = gmdate('H:i:s', $seconds);
+                              }
+                          }
+                      );
 
         return collect($rows);
     }

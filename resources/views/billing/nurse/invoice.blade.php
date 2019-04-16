@@ -2,7 +2,7 @@
 
 <div class="page-header">
     <h1>CircleLink Health
-        <small>Monthly Time Report for <b>{{$nurse_name}}</b> ({{Carbon\Carbon::now()->toDateTimeString()}})</small>
+        <small>Monthly Time Report for <b>{{$nurse_name}}</b> ({{presentDate(Carbon\Carbon::now()->toDateTimeString())}})</small>
     </h1>
 </div>
 
