@@ -2,17 +2,17 @@ version_source: config
 blade_directive: version
 current:
     major: 4
-    minor: 6
-    patch: 3
+    minor: 7
+    patch: 0
     format: '{$major}.{$minor}.{$patch}'
     git_absorb: git-local
 cache:
-    enabled: true
+    enabled: false
     key: pragmarx-version
     time: 525600
 build:
     mode: number
-    number: 1a7262
+    number: a23910
     length: 6
     increment_by: 1
     git_absorb: git-local
