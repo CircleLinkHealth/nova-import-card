@@ -65,9 +65,7 @@ class NurseController extends Controller
             );
         }
 
-        return 'Waldo is working on compiling the reports you requested. <br> Give it a minute, and then head to '.link_to(
-            '/jobs/completed'
-            ).' and refresh frantically to see a link to the report you requested.';
+        return 'Bessie Bots is crunching the invoices you requested. <br> She will send you an email when everything is done. You can always see previous jobs completed at '.link_to('/jobs/completed');
     }
 
     public function makeDailyReport()
@@ -250,10 +248,10 @@ class NurseController extends Controller
                     foreach ($nurses as $nurse) {
                         $seconds = Activity::where('provider_id', $nurse->id)
                             ->where(
-                                          function ($q) use ($fromDate, $toDate) {
-                                              $q->where('performed_at', '>=', $fromDate)
-                                                  ->where('performed_at', '<=', $toDate);
-                                          }
+                                function ($q) use ($fromDate, $toDate) {
+                                    $q->where('performed_at', '>=', $fromDate)
+                                        ->where('performed_at', '<=', $toDate);
+                                }
                                                      )
                             ->sum('duration');
 

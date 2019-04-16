@@ -6,6 +6,7 @@
 
 namespace App\Jobs;
 
+use App\Notifications\NurseInvoicesCreated;
 use App\Repositories\Cache\UserNotificationList;
 use App\Repositories\Cache\View;
 use App\Services\PdfService;
@@ -107,7 +108,9 @@ class CreateNurseInvoices implements ShouldQueue
 
         $invoices = $this->generatePdfInvoices($nurseUsers, $nurseSystemTimeMap, $pdfService);
 
-        $this->storeInJobsCompleted($invoices);
+        $link = $this->storeInJobsCompleted($invoices);
+
+        $this->notifyRequestor($link);
     }
 
     private function createPdf(CareCoachInvoiceViewModel $viewModel, PdfService $pdfService)
@@ -225,21 +228,27 @@ class CreateNurseInvoices implements ShouldQueue
     ) {
         return \DB::table($table)
             ->select(
-                      \DB::raw('SUM(duration) as total_time'),
-                      \DB::raw("DATE_FORMAT($dateTimeField, '%Y-%m-%d') as date"),
-                      'provider_id as user_id',
-                      $isBillable
+                \DB::raw('SUM(duration) as total_time'),
+                \DB::raw("DATE_FORMAT($dateTimeField, '%Y-%m-%d') as date"),
+                'provider_id as user_id',
+                $isBillable
                           ? \DB::raw('TRUE as is_billable')
                           : \DB::raw('FALSE as is_billable')
                   )
             ->whereIn('provider_id', $this->nurseUserIds)
             ->whereBetween(
-                      $dateTimeField,
-                      [
-                          $start,
-                          $end,
-                      ]
+                $dateTimeField,
+                [
+                    $start,
+                    $end,
+                ]
                   )->groupBy('date', 'user_id');
+    }
+
+    private function notifyRequestor($link)
+    {
+        User::findOrFail($this->requestedBy)
+            ->notify(new NurseInvoicesCreated($link));
     }
 
     /**
@@ -300,14 +309,18 @@ class CreateNurseInvoices implements ShouldQueue
             return;
         }
 
+        $linkToView = linkToCachedView($viewHashKey);
+
         $userNotification->push(
             'Nurse Invoices (V2)',
             "Invoice(s) were generated for {$invoices->count()} nurse(s): {$invoices->map(function ($n) {
                 return $n['name'];
             })->implode(', ')}",
-            linkToCachedView($viewHashKey),
+            $linkToView,
             'Go to page'
         );
+
+        return $linkToView;
     }
 
     private function systemTimeFromPageTimer()
@@ -335,11 +348,11 @@ class CreateNurseInvoices implements ShouldQueue
     {
         return TimeTrackedPerDayView::whereIn('user_id', $this->nurseUserIds)
             ->whereBetween(
-                                        'date',
-                                        [
-                                            $this->startDate->toDateString(),
-                                            $this->endDate->toDateString(),
-                                        ]
+                'date',
+                [
+                    $this->startDate->toDateString(),
+                    $this->endDate->toDateString(),
+                ]
                                     )
             ->groupBy('date', 'user_id', 'is_billable')
             ->get()
@@ -354,16 +367,16 @@ class CreateNurseInvoices implements ShouldQueue
     {
         return \DB::query()
             ->fromSub(
-                      $this->systemTimeFromPageTimer()
-                          ->unionAll($this->offlineSystemTime())
-                          ->unionAll($this->totalBillableTimeMap()),
-                      'activities'
+                $this->systemTimeFromPageTimer()
+                    ->unionAll($this->offlineSystemTime())
+                    ->unionAll($this->totalBillableTimeMap()),
+                'activities'
                   )
             ->select(
-                      \DB::raw('SUM(total_time) as total_time'),
-                      'date',
-                      'user_id',
-                      'is_billable'
+                \DB::raw('SUM(total_time) as total_time'),
+                'date',
+                'user_id',
+                'is_billable'
                   )
             ->groupBy('user_id', 'date', 'is_billable')
             ->get()
@@ -381,10 +394,10 @@ class CreateNurseInvoices implements ShouldQueue
         return NurseCareRateLog::whereIn('nurse_id', $nurseInfoIds)
             ->whereBetween('created_at', [$this->startDate, $this->endDate])
             ->select(
-                                   \DB::raw('SUM(increment) as total_time'),
-                                   'ccm_type',
-                                   \DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d') as date"),
-                                   'nurse_id'
+                \DB::raw('SUM(increment) as total_time'),
+                'ccm_type',
+                \DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d') as date"),
+                'nurse_id'
                                )
             ->groupBy('nurse_id', 'date', 'ccm_type')
             ->get()
