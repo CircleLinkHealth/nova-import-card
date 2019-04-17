@@ -31,7 +31,7 @@
             </div>
             <bhi-switch ref="bhiSwitch" :is-manual-behavioral="info.isManualBehavioral"
                         :user-id="info.providerId" :is-bhi="info.isBehavioral" :is-ccm="info.isCcm"
-                        v-if="!info.noBhiSwitch && (info.isCcm || info.isBehavioral)"></bhi-switch>
+                        v-if="!noLiveCount && !info.noBhiSwitch && (info.isCcm || info.isBehavioral)"></bhi-switch>
 
             <br><br>
             <span :class="{ hidden: showLoader, 'hide-tracker': hideTracker }">
