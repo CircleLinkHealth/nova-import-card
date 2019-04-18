@@ -220,7 +220,6 @@ return [
         jeremykenedy\Slack\Laravel\ServiceProvider::class,
         EmailArrayValidatorServiceProvider::class,
         Propaganistas\LaravelPhone\PhoneServiceProvider::class,
-        Spiritix\LadaCache\LadaCacheServiceProvider::class,
         Waavi\UrlShortener\UrlShortenerServiceProvider::class,
         GoogleDriveServiceProvider::class,
         ManageInternalUser::class,
