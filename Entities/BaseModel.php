@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\Core\Entities;
 
 use Illuminate\Database\Eloquent\Model;
-use Spiritix\LadaCache\Database\LadaCacheTrait;
 use Venturecraft\Revisionable\RevisionableTrait;
 
 /**
@@ -21,8 +20,7 @@ use Venturecraft\Revisionable\RevisionableTrait;
  */
 class BaseModel extends Model
 {
-    use LadaCacheTrait,
-        RevisionableTrait;
+    use RevisionableTrait;
 
     /**
      * Add any attributes that are PHI here.
