@@ -129,6 +129,7 @@ class CreateNurseInvoices implements ShouldQueue
                 'margin-bottom'    => '8',
                 'margin-right'     => '6',
                 'footer-right'     => 'Page [page] of [toPage]',
+                'footer-left'      => 'report generated on '.Carbon::now()->format('m-d-Y').' at '.Carbon::now()->format('H:iA'),
                 'footer-font-size' => '6',
             ],
             storage_path("download/${name}.pdf")
@@ -238,20 +239,20 @@ class CreateNurseInvoices implements ShouldQueue
     ) {
         return \DB::table($table)
             ->select(
-                      \DB::raw('SUM(duration) as total_time'),
-                      \DB::raw("DATE_FORMAT($dateTimeField, '%Y-%m-%d') as date"),
-                      'provider_id as user_id',
-                      $isBillable
+                \DB::raw('SUM(duration) as total_time'),
+                \DB::raw("DATE_FORMAT($dateTimeField, '%Y-%m-%d') as date"),
+                'provider_id as user_id',
+                $isBillable
                           ? \DB::raw('TRUE as is_billable')
                           : \DB::raw('FALSE as is_billable')
                   )
             ->whereIn('provider_id', $this->nurseUserIds)
             ->whereBetween(
-                      $dateTimeField,
-                      [
-                          $start,
-                          $end,
-                      ]
+                $dateTimeField,
+                [
+                    $start,
+                    $end,
+                ]
                   )->groupBy('date', 'user_id');
     }
 
@@ -358,11 +359,11 @@ class CreateNurseInvoices implements ShouldQueue
     {
         return TimeTrackedPerDayView::whereIn('user_id', $this->nurseUserIds)
             ->whereBetween(
-                                        'date',
-                                        [
-                                            $this->startDate->toDateString(),
-                                            $this->endDate->toDateString(),
-                                        ]
+                'date',
+                [
+                    $this->startDate->toDateString(),
+                    $this->endDate->toDateString(),
+                ]
                                     )
             ->groupBy('date', 'user_id', 'is_billable')
             ->get()
@@ -377,16 +378,16 @@ class CreateNurseInvoices implements ShouldQueue
     {
         return \DB::query()
             ->fromSub(
-                      $this->systemTimeFromPageTimer()
-                          ->unionAll($this->offlineSystemTime())
-                          ->unionAll($this->totalBillableTimeMap()),
-                      'activities'
+                $this->systemTimeFromPageTimer()
+                    ->unionAll($this->offlineSystemTime())
+                    ->unionAll($this->totalBillableTimeMap()),
+                'activities'
                   )
             ->select(
-                      \DB::raw('SUM(total_time) as total_time'),
-                      'date',
-                      'user_id',
-                      'is_billable'
+                \DB::raw('SUM(total_time) as total_time'),
+                'date',
+                'user_id',
+                'is_billable'
                   )
             ->groupBy('user_id', 'date', 'is_billable')
             ->get()
@@ -404,10 +405,10 @@ class CreateNurseInvoices implements ShouldQueue
         return NurseCareRateLog::whereIn('nurse_id', $nurseInfoIds)
             ->whereBetween('created_at', [$this->startDate, $this->endDate])
             ->select(
-                                   \DB::raw('SUM(increment) as total_time'),
-                                   'ccm_type',
-                                   \DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d') as date"),
-                                   'nurse_id'
+                \DB::raw('SUM(increment) as total_time'),
+                'ccm_type',
+                \DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d') as date"),
+                'nurse_id'
                                )
             ->groupBy('nurse_id', 'date', 'ccm_type')
             ->get()

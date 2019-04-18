@@ -3,7 +3,6 @@
 <div class="page-header">
     <h1>CircleLink Health
         <small>Monthly Time Report for <b>{{$user->getFullName()}}</b>
-            ({{presentDate(Carbon\Carbon::now()->toDateTimeString())}})
         </small>
     </h1>
 </div>
@@ -21,8 +20,15 @@
 
         @endif
 
-        <dt>Invoice Amount</dt>
-        <dd>{{$invoiceAmount}} ({{$totalBillableRate}})</dd>
+        <dt>Invoice Amount <small>(highest amount used)</small></dt>
+        <dd>
+            @if(is_array($totalBillableRate))
+                <div style="display: block;">{{$totalBillableRate['high']}}</div>
+                <div style="display: block; text-decoration: line-through;"><small>{{$totalBillableRate['low']}}</small></div>
+            @else
+                {{$totalBillableRate}}
+            @endif
+        </dd>
     </h4>
 </dl>
 

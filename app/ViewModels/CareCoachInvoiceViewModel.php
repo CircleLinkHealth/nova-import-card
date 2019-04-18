@@ -53,6 +53,11 @@ class CareCoachInvoiceViewModel extends ViewModel
      */
     protected $variablePaySummary;
     private $amountPayable;
+
+    /**
+     * @var float the total pay with fixed rate algorithm
+     */
+    private $fixedRatePay;
     /**
      * @var int|null
      */
@@ -65,6 +70,11 @@ class CareCoachInvoiceViewModel extends ViewModel
      * @var int|null
      */
     private $totalTimeTowardsCcm;
+
+    /**
+     * @var float the total pay with variable rate algorithm
+     */
+    private $variableRatePay;
 
     /**
      * CareCoachInvoiceViewModel constructor.
@@ -215,14 +225,26 @@ class CareCoachInvoiceViewModel extends ViewModel
 
     public function totalBillableRate()
     {
-        if ( ! $this->variablePay) {
-            return "Fixed Rate: \${$this->user->nurseInfo->hourly_rate}/hr";
-        }
+        $fixedRateMessage = "\${$this->fixedRatePay} (Fixed Rate: \${$this->user->nurseInfo->hourly_rate}/hr).";
 
         $high_rate = $this->user->nurseInfo->high_rate;
         $low_rate  = $this->user->nurseInfo->low_rate;
 
-        return "Variable Rates: \$$high_rate/hr or \$$low_rate/hr";
+        $variableRateMessage = "\${$this->variableRatePay} (Variable Rates: \$$high_rate/hr or \$$low_rate/hr).";
+
+        if ($this->variableRatePay > $this->fixedRatePay) {
+            $result = [
+                'high' => $variableRateMessage,
+                'low'  => $fixedRateMessage,
+            ];
+        } else {
+            $result = [
+                'high' => $fixedRateMessage,
+                'low'  => $variableRateMessage,
+            ];
+        }
+
+        return $result;
     }
 
     public function totalTimeAfterCcm()
@@ -255,19 +277,19 @@ class CareCoachInvoiceViewModel extends ViewModel
 
     private function setPayableAmount()
     {
-        $standardPay = $this->systemTimeInHours() * $this->user->nurseInfo->hourly_rate;
+        $this->fixedRatePay = $this->systemTimeInHours() * $this->user->nurseInfo->hourly_rate;
 
         if ( ! $this->variablePay) {
-            $this->amountPayable = $standardPay;
+            $this->amountPayable = $this->fixedRatePay;
         } else {
-            $variablePay = $this->totalTimeAfterCcm() * $this->user->nurseInfo->low_rate
-                           + $this->totalTimeTowardsCcm() * $this->user->nurseInfo->high_rate;
+            $this->variableRatePay = $this->totalTimeAfterCcm() * $this->user->nurseInfo->low_rate
+                                     + $this->totalTimeTowardsCcm() * $this->user->nurseInfo->high_rate;
 
-            if ($standardPay > $variablePay) {
-                $this->amountPayable = $standardPay;
+            if ($this->fixedRatePay > $this->variableRatePay) {
+                $this->amountPayable = $this->fixedRatePay;
                 $this->variablePay   = false;
             } else {
-                $this->amountPayable = $variablePay;
+                $this->amountPayable = $this->variableRatePay;
             }
         }
 
