@@ -21,7 +21,7 @@ if [ ! -d "$RELEASE/storage" ]; then
     mkdir storage
 fi
 
-if [! -L "$RELEASE/storage"]; then
+if [ ! -L "$RELEASE/storage"]; then
     ln -s $SHARED/storage $RELEASE/storage
     echo "$RELEASE/storage symlinked to $SHARED/storage"
 fi
