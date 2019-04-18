@@ -43,3 +43,6 @@ php artisan version:show --format=compact --suppress-app-name | cat <(echo -n "A
 
 # Perform post depoyment tasks
 php artisan deploy:post
+
+# Clear response cache
+php artisan responsecache:clear
