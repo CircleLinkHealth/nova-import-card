@@ -56,10 +56,10 @@ class SendCareCoachInvoices extends Command
 
         $users = User::ofType('care-center')
             ->whereHas(
-                         'pageTimersAsProvider',
-                         function ($q) use ($start, $end) {
-                             $q->whereBetween('start_time', [$start, $end]);
-                         }
+                'pageTimersAsProvider',
+                function ($q) use ($start, $end) {
+                    $q->whereBetween('start_time', [$start, $end]);
+                }
                      )->when(
                          ! empty($userIds),
                          function ($q) use ($userIds) {
@@ -73,13 +73,7 @@ class SendCareCoachInvoices extends Command
             return;
         }
 
-        CreateNurseInvoices::dispatch(
-            $users->pluck('id')->all(),
-            $start,
-            $end,
-            null,
-            (bool) $this->option('variable-time')
-        );
+        $this->info("Sending invoices to Nurses below for {$start->englishMonth}, {$start->year}");
 
         $this->table(
             ['name', 'id'],
@@ -89,5 +83,15 @@ class SendCareCoachInvoices extends Command
                 }
             )
         );
+
+        CreateNurseInvoices::dispatch(
+            $users->pluck('id')->all(),
+            $start,
+            $end,
+            null,
+            (bool) $this->option('variable-time')
+        );
+
+        $this->info('All done!');
     }
 }
