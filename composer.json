@@ -61,7 +61,10 @@
     "config": {
         "preferred-install": "dist",
         "sort-packages": true,
-        "optimize-autoloader": true
+        "optimize-autoloader": true,
+        "github-oauth": {
+            "github.com": "e0e31db02693e426dc2be482ecbee4daeafd8196"
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true
