@@ -38,7 +38,7 @@ Route::middleware('auth')->group(function() {
         });
     });
     
-    Route::group(['prefix' => 'account-settings'], function () {
+    Route::group(['prefix' => 'api/account-settings'], function () {
         Route::group(['prefix' => '2fa'], function () {
             Route::post('', [
                 'uses' => 'AuthyController@store',
