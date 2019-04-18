@@ -205,6 +205,10 @@
             loader: LoaderComponent,
         },
         props: {
+            cpmCallerUrl: {
+                type: String,
+                default: ''
+            },
             debug: {
                 type: Boolean,
                 default: false
@@ -299,6 +303,18 @@
             }
         },
         methods: {
+
+            getUrl: function (path) {
+                if (this.cpmCallerUrl && this.cpmCallerUrl.length > 0) {
+                    if (this.cpmCallerUrl[this.cpmCallerUrl.length - 1] === "/") {
+                        return this.cpmCallerUrl + path;
+                    }
+                    else {
+                        return this.cpmCallerUrl + "/" + path;
+                    }
+                }
+                return rootUrl(path);
+            },
 
             numpadChanged: function (allInput, lastInput) {
 
@@ -429,7 +445,7 @@
                         if (isCurrentlyOnConference) {
                             this.log = `Hanging up call to ${number}`;
                             this.axios
-                                .post(rootUrl('twilio/call/end'), {
+                                .post(this.getUrl('twilio/call/end'), {
                                     CallSid: this.callSids[number],
                                     InboundUserId: this.inboundUserId,
                                     OutboundUserId: this.outboundUserId,
@@ -473,7 +489,7 @@
             },
             createConference: function () {
                 this.waitingForConference = true;
-                this.axios.post(rootUrl(`twilio/call/js-create-conference`),
+                this.axios.post(this.getUrl(`twilio/call/js-create-conference`),
                     {
                         'inbound_user_id': this.inboundUserId,
                         'outbound_user_id': this.outboundUserId,
@@ -499,7 +515,7 @@
                     return;
                 }
 
-                this.axios.post(rootUrl(`twilio/call/get-conference-info`),
+                this.axios.post(this.getUrl(`twilio/call/get-conference-info`),
                     {
                         'inbound_user_id': this.inboundUserId,
                         'outbound_user_id': this.outboundUserId,
@@ -630,7 +646,7 @@
                 const {number, isUnlisted, isCallToPatient} = this.queuedNumbersForConference.pop();
                 this.addedNumbersInConference.push({number, date: Date.now()});
                 this.axios
-                    .post(rootUrl('twilio/call/join-conference'), this.getTwimlAppRequest(number, isUnlisted, isCallToPatient))
+                    .post(this.getUrl('twilio/call/join-conference'), this.getTwimlAppRequest(number, isUnlisted, isCallToPatient))
                     .then(resp => {
                         console.log(resp.data);
                         if (resp && resp.data && resp.data.call_sid) {
@@ -705,7 +721,7 @@
                 self.waiting = false;
             },
             initTwilio: function () {
-                const url = rootUrl(`twilio/token`);
+                const url = this.getUrl(`twilio/token`);
 
                 self.log = "Fetching token from server";
                 self.ready = false;
