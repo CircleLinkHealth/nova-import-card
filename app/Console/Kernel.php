@@ -125,7 +125,8 @@ class Kernel extends ConsoleKernel
             ->cron('30 0 1 * *');
 
         $schedule->command(
-            SendCareCoachInvoices::class.[
+            SendCareCoachInvoices::class,
+            [
                 '--variable-time' => true,
             ]
         )->monthlyOn(1, '5:0');
