@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "aaed0c827840db6b167e414f5c9f52d1",
+    "content-hash": "b2cb7ee163fdbd3cba6e2ed9f679258e",
     "packages": [
         {
             "name": "amnuts/opcache-gui",
@@ -6846,67 +6846,6 @@
                 "temporary-directory"
             ],
             "time": "2018-04-12T09:34:43+00:00"
-        },
-        {
-            "name": "spiritix/lada-cache",
-            "version": "v2.1.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/spiritix/lada-cache.git",
-                "reference": "189dd9e7f2cf3a437622288f49ab12eb834a69c1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/spiritix/lada-cache/zipball/189dd9e7f2cf3a437622288f49ab12eb834a69c1",
-                "reference": "189dd9e7f2cf3a437622288f49ab12eb834a69c1",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/database": "~5.1",
-                "illuminate/redis": "~5.1",
-                "illuminate/support": "~5.1",
-                "php": ">=5.6.4",
-                "predis/predis": "~1.0"
-            },
-            "require-dev": {
-                "codeclimate/php-test-reporter": "dev-master",
-                "laracasts/testdummy": "~2.3",
-                "orchestra/database": "~3.1",
-                "orchestra/testbench": "~3.0",
-                "phpunit/phpunit": "~5.0"
-            },
-            "suggest": {
-                "barryvdh/laravel-debugbar": "Provides debug information about the cache",
-                "ext-phpiredis": "Allows faster serialization and deserialization of the Redis protocol"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Spiritix\\LadaCache\\": "src/Spiritix/LadaCache/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Matthias Isler",
-                    "email": "mi@matthias-isler.ch"
-                }
-            ],
-            "description": "A Redis based, automated and scalable database caching layer for Laravel 5.1+",
-            "keywords": [
-                "cache",
-                "caching",
-                "database",
-                "eloquent",
-                "laravel",
-                "model",
-                "php",
-                "redis"
-            ],
-            "time": "2018-05-14T12:40:22+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
