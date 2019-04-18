@@ -23,7 +23,6 @@
         }
     },
     "require": {
-        "spiritix/lada-cache": "^2.1",
         "venturecraft/revisionable": "dev-master"
     },
     "repositories": [
