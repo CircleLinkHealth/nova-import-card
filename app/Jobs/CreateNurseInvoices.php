@@ -6,6 +6,7 @@
 
 namespace App\Jobs;
 
+use App\Notifications\NurseInvoiceCreated;
 use App\Notifications\NurseInvoicesCreated;
 use App\Repositories\Cache\UserNotificationList;
 use App\Repositories\Cache\View;
@@ -108,14 +109,16 @@ class CreateNurseInvoices implements ShouldQueue
 
         $invoices = $this->generatePdfInvoices($nurseUsers, $nurseSystemTimeMap, $pdfService);
 
-        $link = $this->storeInJobsCompleted($invoices);
-
-        $this->notifyRequestor($link);
+        if ($this->requestedBy) {
+            $link = $this->storeInJobsCompleted($invoices);
+            $this->notifyRequestor($link);
+        }
     }
 
     private function createPdf(CareCoachInvoiceViewModel $viewModel, PdfService $pdfService)
     {
         $name = trim($viewModel->user->getFullName()).'-'.Carbon::now()->toDateString();
+        $link = $name.'.pdf';
 
         $pdfPath = $pdfService->createPdfFromView(
             'billing.nurse.invoice-v2',
@@ -131,11 +134,17 @@ class CreateNurseInvoices implements ShouldQueue
             storage_path("download/${name}.pdf")
         );
 
+        if ( ! $this->requestedBy) {
+            //if the report was not requested by anybody, it was called from the command. In this case we want to send the invoice to the nurses
+            $viewModel->user->notify(new NurseInvoiceCreated($link, "{$this->startDate->englishMonth} {$this->startDate->year}"));
+            $viewModel->user->addMedia($pdfPath)->toMediaCollection("monthly_invoice_{$this->startDate->year}_{$this->startDate->month}");
+        }
+
         return [
             'nurse_user_id' => $viewModel->user->id,
             'name'          => $viewModel->user->getFullName(),
             'email'         => $viewModel->user->email,
-            'link'          => $name.'.pdf',
+            'link'          => $link,
             'date_start'    => presentDate($this->startDate),
             'date_end'      => presentDate($this->endDate),
             'email_body'    => [
@@ -187,6 +196,7 @@ class CreateNurseInvoices implements ShouldQueue
     /**
      * @param Collection $nurseUsers
      * @param Collection $nurseSystemTimeMap
+     * @param bool       $sendToNurses
      * @param PdfService $pdfService
      *
      * @return Collection
@@ -228,20 +238,20 @@ class CreateNurseInvoices implements ShouldQueue
     ) {
         return \DB::table($table)
             ->select(
-                \DB::raw('SUM(duration) as total_time'),
-                \DB::raw("DATE_FORMAT($dateTimeField, '%Y-%m-%d') as date"),
-                'provider_id as user_id',
-                $isBillable
+                      \DB::raw('SUM(duration) as total_time'),
+                      \DB::raw("DATE_FORMAT($dateTimeField, '%Y-%m-%d') as date"),
+                      'provider_id as user_id',
+                      $isBillable
                           ? \DB::raw('TRUE as is_billable')
                           : \DB::raw('FALSE as is_billable')
                   )
             ->whereIn('provider_id', $this->nurseUserIds)
             ->whereBetween(
-                $dateTimeField,
-                [
-                    $start,
-                    $end,
-                ]
+                      $dateTimeField,
+                      [
+                          $start,
+                          $end,
+                      ]
                   )->groupBy('date', 'user_id');
     }
 
@@ -348,11 +358,11 @@ class CreateNurseInvoices implements ShouldQueue
     {
         return TimeTrackedPerDayView::whereIn('user_id', $this->nurseUserIds)
             ->whereBetween(
-                'date',
-                [
-                    $this->startDate->toDateString(),
-                    $this->endDate->toDateString(),
-                ]
+                                        'date',
+                                        [
+                                            $this->startDate->toDateString(),
+                                            $this->endDate->toDateString(),
+                                        ]
                                     )
             ->groupBy('date', 'user_id', 'is_billable')
             ->get()
@@ -367,16 +377,16 @@ class CreateNurseInvoices implements ShouldQueue
     {
         return \DB::query()
             ->fromSub(
-                $this->systemTimeFromPageTimer()
-                    ->unionAll($this->offlineSystemTime())
-                    ->unionAll($this->totalBillableTimeMap()),
-                'activities'
+                      $this->systemTimeFromPageTimer()
+                          ->unionAll($this->offlineSystemTime())
+                          ->unionAll($this->totalBillableTimeMap()),
+                      'activities'
                   )
             ->select(
-                \DB::raw('SUM(total_time) as total_time'),
-                'date',
-                'user_id',
-                'is_billable'
+                      \DB::raw('SUM(total_time) as total_time'),
+                      'date',
+                      'user_id',
+                      'is_billable'
                   )
             ->groupBy('user_id', 'date', 'is_billable')
             ->get()
@@ -394,10 +404,10 @@ class CreateNurseInvoices implements ShouldQueue
         return NurseCareRateLog::whereIn('nurse_id', $nurseInfoIds)
             ->whereBetween('created_at', [$this->startDate, $this->endDate])
             ->select(
-                \DB::raw('SUM(increment) as total_time'),
-                'ccm_type',
-                \DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d') as date"),
-                'nurse_id'
+                                   \DB::raw('SUM(increment) as total_time'),
+                                   'ccm_type',
+                                   \DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d') as date"),
+                                   'nurse_id'
                                )
             ->groupBy('nurse_id', 'date', 'ccm_type')
             ->get()
