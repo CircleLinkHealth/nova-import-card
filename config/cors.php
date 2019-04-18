@@ -11,13 +11,15 @@ return [
     | to accept any value.
     |
     */
-   
-    'supportsCredentials' => false,
-    'allowedOrigins' => ['*'],
+
+    'supportsCredentials'    => false,
+    'allowedOrigins'         => env('APP_ENV', 'production') === 'production'
+        ? ['*.careplanmanager.com']
+        : ['*.ngrok.io', '*.test'],
     'allowedOriginsPatterns' => [],
-    'allowedHeaders' => ['*'],
-    'allowedMethods' => ['*'],
-    'exposedHeaders' => [],
-    'maxAge' => 0,
+    'allowedHeaders'         => ['*'],
+    'allowedMethods'         => ['*'],
+    'exposedHeaders'         => [],
+    'maxAge'                 => 0,
 
 ];
