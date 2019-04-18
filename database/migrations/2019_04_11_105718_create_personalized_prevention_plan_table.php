@@ -22,8 +22,9 @@ class CreatePersonalizedPreventionPlanTable extends Migration
             $table->string('state');
             $table->unsignedInteger('user_id');
             $table->string('billing_provider');
-            $table->json('hra');
-            $table->json('vitals');
+            $table->json('hra_answers');
+            $table->json('vitals_answers');
+            $table->json('answers_for_eval');
             $table->timestamps();
         });
     }

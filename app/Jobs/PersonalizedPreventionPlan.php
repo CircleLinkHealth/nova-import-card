@@ -27,7 +27,7 @@ class PersonalizedPreventionPlan implements ShouldQueue
     {
         $this->patient = User::with([
             'patientInfo',
-            'billingProvider'
+            'billingProvider',
         ])->findOrFail($patientId);
 
         $this->service = new GeneratePersonalizedPreventionPlanService($this->patient);

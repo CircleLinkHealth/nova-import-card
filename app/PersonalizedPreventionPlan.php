@@ -2,8 +2,6 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-
 class PersonalizedPreventionPlan extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $fillable = [
@@ -13,10 +11,17 @@ class PersonalizedPreventionPlan extends \CircleLinkHealth\Core\Entities\BaseMod
         'address',
         'billing_provider',
         'rec_task_title',
-        'hra',
-        'vitals'
+        'hra_answers',
+        'vitals_answers',
+        'answers_for_eval',
     ];
 
+    protected $casts = [
+        'vitals_answers'   => 'array',
+        'hra_answers'      => 'array',
+        'answers_for_eval' => 'array',
+
+    ];
     protected $table = 'personalized_prevention_plan';
 
     public function patient()
