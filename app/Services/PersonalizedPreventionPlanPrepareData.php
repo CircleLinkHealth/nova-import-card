@@ -23,6 +23,7 @@ class PersonalizedPreventionPlanPrepareData
             $fattyFriedFoods = $this->fattyFriedFoods($patientPppData, $title),
             $candySugaryBeverages = $this->candySugaryBeverages($patientPppData, $title),
         ];
+
         $smokingRecommendations   = [
             'title' => $title = 'Tobacco/Smoking',
             $currentSmoker = $this->currentSmoker($patientPppData, $title),
@@ -37,6 +38,7 @@ class PersonalizedPreventionPlanPrepareData
             'state'                => $state,
             'city'                 => $city,
             'billing_provider'     => $billingProvider,
+            //@todo: i should get all the above from relationships in controller but relationships from  cpm dont work yet
             'recommendation_tasks' => [
                 'nutrition_recommendations'       => $nutritionRecommendations,
                 'tobacco_smoking_recommendations' => $smokingRecommendations,
@@ -67,27 +69,12 @@ class PersonalizedPreventionPlanPrepareData
         }
         $nutritionRec = $recommendation[$index];
 
-        /*$nutritionRec = [];
-        foreach ($recommendation as $data) {
-            if ($data['sub_title'] === $subTitle) {
-
-                $nutritionRec = collect([
-                    'task_body'           => $data['task_body'],
-                    'sub_title'           => $data['sub_title'],
-                    'recommendation_body' => $data['recommendation_body'],
-
-                ]);
-            };
-        }*/
-
         return $nutritionRec;
 
     }
 
     public function wholeGrain($patientPppData, $title)
     {
-        dd($patientPppData);
-
         $index                        = 1;
         $wholeGrain                   = [];
         $nutritionData['whole_grain'] = ! empty($patientPppData->answers_for_eval['whole_grain'])
@@ -153,11 +140,11 @@ class PersonalizedPreventionPlanPrepareData
             ? $patientPppData->answers_for_eval['current_smoker']
             : 'N/A';
 
-        $smokingData['already_quit_smoking'] = ! empty($patientPppData->answers_for_eval['already_quit_smoking'])
-            ? $patientPppData->answers_for_eval['already_quit_smoking']
+        $smokingData['smoker_interested_quitting'] = ! empty($patientPppData->answers_for_eval['smoker_interested_quitting'])
+            ? $patientPppData->answers_for_eval['smoker_interested_quitting']
             : 'N/A';
 
-        if ($smokingData['current_smoker'] === 'Yes' && $smokingData['already_quit_smoking'] !== 'I already quit') {
+        if ($smokingData['current_smoker'] === 'Yes' && $smokingData['smoker_interested_quitting'] !== 'I already quit') {
             $currentSmoker = $this->getTaskRecommendations($title, $index);
         }
 
@@ -195,11 +182,11 @@ class PersonalizedPreventionPlanPrepareData
             ? $patientPppData->answers_for_eval['current_smoker']
             : 'N/A';
 
-        $smokingData['already_quit_smoking'] = ! empty($patientPppData->answers_for_eval['already_quit_smoking'])
-            ? $patientPppData->answers_for_eval['already_quit_smoking']
+        $smokingData['smoker_interested_quitting'] = ! empty($patientPppData->answers_for_eval['smoker_interested_quitting'])
+            ? $patientPppData->answers_for_eval['smoker_interested_quitting']
             : 'N/A';
 
-        if ($smokingData['current_smoker'] === 'Yes' && $smokingData['already_quit_smoking'] === 'I already quit') {
+        if ($smokingData['current_smoker'] === 'Yes' && $smokingData['smoker_interested_quitting'] === 'I already quit') {
             $formerSmoker = $this->getTaskRecommendations($title, $index);
         }
 

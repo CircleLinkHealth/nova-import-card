@@ -22,12 +22,15 @@ class TaskRecommendationsSeeder extends Seeder
 
         foreach ($taskRecommendations as $taskRecommendation) {
 
-            TaskRecommendations::create([
-                'title'           => $taskRecommendation['title'],
-                'codes'           => '5',
-                'rec_task_titles' => 'testing',
-                'data'            => $taskRecommendation['data'],
-            ]);
+            TaskRecommendations::updateOrCreate(
+                [
+                    'title' => $taskRecommendation['title'],
+                ],
+                [
+                    'codes'           => '5',
+                    'rec_task_titles' => 'testing',
+                    'data'            => $taskRecommendation['data'],
+                ]);
 
         }
 
@@ -67,25 +70,8 @@ class TaskRecommendationsSeeder extends Seeder
 
             /*Tobacco Smoking*/
             [
-                'title'       => 'Tobacco/Smoking',
-                'task_titles' => [
-                    [
-                        'body'       => 'Smoking Counseling',
-                        'code'       => '99406 / 99407',
-                        'time_frame' => 'As Needed',
-                    ],
-                    [
-                        'body'       => 'Smoking Pharmacotherapy',
-                        'code'       => 'various',
-                        'time_frame' => 'As Needed',
-                    ],
-                    [
-                        'body'       => 'Lung cancer screening (precautionary)',
-                        'code'       => '71250 / Z12.2',
-                        'time_frame' => 'As Needed',
-                    ],
-                ],
-                'data'        => [
+                'title' => 'Tobacco/Smoking',
+                'data'  => [
                     [
                         'qualitative_trigger' => 'Current Smoker',
                         'task_body'           => 'Smoking, or the use of any tobacco products harms nearly every organ of the body, causes many diseases, and reduces the health of smokers in general. Smokers are more likely than nonsmokers to develop heart disease, stroke, and lung cancer. Cigarette smoking is the leading preventable cause of death in the United States, causing more than 480,000 deaths domestically each year. This includes about 90% of all lung cancer deaths, and about 80% of all deaths from chronic obstructive pulmonary disease (COPD). Quitting smoking lowers your risk for smoking-related diseases and can add years to your life. Talk to your doctor about what interventions you may be able to use to help you quit. These may include:',
@@ -94,16 +80,49 @@ class TaskRecommendationsSeeder extends Seeder
                                 '~Counseling and/or pharmacotherapy interventions',
                                 '~Lung cancer screening (precautionary)',
                             ],
+                        'report_table_data' => [
+                            [
+                                'body'       => 'Smoking Counseling',
+                                'code'       => '99406 / 99407',
+                                'time_frame' => 'As Needed',
+                            ],
+                            [
+                                'body'       => 'Smoking Pharmacotherapy',
+                                'code'       => 'various',
+                                'time_frame' => 'As Needed',
+                            ],
+                            [
+                                'body'       => 'Lung cancer screening (precautionary)',
+                                'code'       => '71250 / Z12.2',
+                                'time_frame' => 'As Needed',
+                            ],
+                        ],
                     ],
                     [
                         'qualitative_trigger' => 'Males 65-75 and current or former smoker',
                         'task_body'           => 'Due to your age, sex, and smoking status, your Doctor may also recommend an:',
                         'recommendation_body' => '~AAA (Abdominal Aortic Aneurysm) screening',
+                        'report_table_data' =>
+                            [
+                                [
+                                    'body'       => 'AAA (Abdominal Aortic Aneurysm) screening',
+                                    'code'       => '76706',
+                                    'time_frame' => 'As Needed',
+                                ],
+                            ],
                     ],
                     [
                         'qualitative_trigger' => 'Former Smoker',
                         'task_body'           => 'Congrats! Having quit smoking is a great achievement. By avoiding smoking, you are lowering your risk of smoking-related illnesses every day. Quitting smoking has health benefits that start right away and improve over many years. Unfortunately, smoking any amount can cause damage that can lead to health problems. The risk of lung cancer decreases over time, though it remains higher than a non-smoker’s. As a result, your doctor may suggest:',
                         'recommendation_body' => '~Lung cancer screening (precautionary)',
+                        'report_table_data' =>
+                            [
+                                [
+                                    'body'       => 'Lung cancer screening (precautionary)',
+                                    'code'       => '71250 / Z12.2',
+                                    'time_frame' => 'As Needed',
+                                ],
+                            ],
                     ],
                 ],
             ],

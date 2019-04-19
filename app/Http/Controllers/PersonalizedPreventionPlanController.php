@@ -22,7 +22,7 @@ class PersonalizedPreventionPlanController extends Controller
 
     public function getPppDataForUser(Request $request)
     {
-      $patientPppData = PersonalizedPreventionPlan::with('patient.patientInfo')->find(33);
+      $patientPppData = PersonalizedPreventionPlan::with('patient.patientInfo')->find(34);
 
         if ( ! $patientPppData) {
             //with message
