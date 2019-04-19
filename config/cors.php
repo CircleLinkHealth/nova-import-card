@@ -13,7 +13,8 @@ return [
     */
 
     'supportsCredentials'    => false,
-    'allowedOrigins'         => env('APP_ENV', 'production') === 'production'
+    'allowedOrigins'         => (env('APP_ENV', 'production') === 'production' || env('APP_ENV',
+            'production') === 'worker' || env('APP_ENV', 'production') === 'staging')
         ? ['*.careplanmanager.com']
         : ['*.ngrok.io', '*.test'],
     'allowedOriginsPatterns' => [],
