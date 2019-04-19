@@ -8,12 +8,12 @@
             <hr>
         </div>
         <div>
-            Patient Name: <span style="color: #50b2e2">{{$reportData->display_name}}</span> <br>
-            Date of Birth: <strong>{{$reportData->birth_date}} </strong><br>
+            Patient Name: <span style="color: #50b2e2">{{$reportData['display_name']}}</span> <br>
+            Date of Birth: <strong>{{$reportData['birth_date']}} </strong><br>
             Age: <strong>{{$age}}</strong> <br>
-            Address: <strong>{{$reportData->address}}</strong> <br>
-            City, State, Zip: <strong>HAVE TO GET THIS</strong> <br>
-            Provider: <strong>{{$reportData->billing_provider}}</strong>
+            Address: <strong>{{$reportData['address']}}</strong> <br>
+            City, State, Zip: <strong>{{$reportData['city']}}, {{$reportData['state']}}, 'GET ZIP'</strong> <br>
+            Provider: <strong>{{$reportData['billing_provider']}}</strong>
         </div>
         <div class="report-title">
             <br>
@@ -51,4 +51,5 @@
         </div>
     </div>
 
+    {{$reportData['recommendation_tasks']['nutrition_recommendations'][0]['task_body']}}
 @endsection

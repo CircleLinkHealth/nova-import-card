@@ -9,21 +9,34 @@ class PersonalizedPreventionPlanPrepareData
 {
     public function prepareRecommendations($patientPppData)
     {
+        $displayName     = $patientPppData->display_name;
+        $birthDate       = $patientPppData->birth_date;
+        $address         = $patientPppData->address;
+        $state           = $patientPppData->state;
+        $city            = $patientPppData->city;
+        $billingProvider = $patientPppData->billing_provider;
+
         $nutritionRecommendations = [
             'title' => $title = 'Nutrition',
-            $fruitVeggies = $this->evaluateAnswer6($patientPppData, $title),
-            $wholeGrain = $this->evaluateAnswer7($patientPppData, $title),
-            $fattyFriedFoods = $this->evaluateAnswer8($patientPppData, $title),
-            $candySugaryBeverages = $this->evaluateAnswer9($patientPppData, $title),
+            $fruitVeggies = $this->fruitVeggies($patientPppData, $title),
+            $wholeGrain = $this->wholeGrain($patientPppData, $title),
+            $fattyFriedFoods = $this->fattyFriedFoods($patientPppData, $title),
+            $candySugaryBeverages = $this->candySugaryBeverages($patientPppData, $title),
         ];
         $smokingRecommendations   = [
             'title' => $title = 'Tobacco/Smoking',
-            $currentSmoker = $this->evaluateAnswer11($patientPppData, $title),
-            $currentSmokerAge = $this->evaluateAnswer2_4_11($patientPppData, $title),
+            $currentSmoker = $this->currentSmoker($patientPppData, $title),
+            $currentSmokerAge = $this->currentSmokerMale($patientPppData, $title),
             $formerSmoker = $this->formerSmoker($patientPppData, $title),
         ];
 
         return collect([
+            'display_name'         => $displayName,
+            'birth_date'           => $birthDate,
+            'address'              => $address,
+            'state'                => $state,
+            'city'                 => $city,
+            'billing_provider'     => $billingProvider,
             'recommendation_tasks' => [
                 'nutrition_recommendations'       => $nutritionRecommendations,
                 'tobacco_smoking_recommendations' => $smokingRecommendations,
@@ -31,10 +44,10 @@ class PersonalizedPreventionPlanPrepareData
         ]);
     }
 
-    public function evaluateAnswer6($patientPppData, $title)
+    public function fruitVeggies($patientPppData, $title)
     {
         $index                          = 0;
-        $fruitVeggies         = [];
+        $fruitVeggies                   = [];
         $nutritionData['fruit_veggies'] = ! empty($patientPppData->answers_for_eval['fruit_veggies'])
             ? $patientPppData->answers_for_eval['fruit_veggies']
             : 'N/A';
@@ -71,11 +84,12 @@ class PersonalizedPreventionPlanPrepareData
 
     }
 
-    public function evaluateAnswer7($patientPppData, $title)
+    public function wholeGrain($patientPppData, $title)
     {
+        dd($patientPppData);
 
         $index                        = 1;
-        $wholeGrain       = [];
+        $wholeGrain                   = [];
         $nutritionData['whole_grain'] = ! empty($patientPppData->answers_for_eval['whole_grain'])
             ? $patientPppData->answers_for_eval['whole_grain']
             : 'N/A';
@@ -102,9 +116,9 @@ class PersonalizedPreventionPlanPrepareData
         return $wholeGrain;
     }
 
-    public function evaluateAnswer8($patientPppData, $title)
+    public function fattyFriedFoods($patientPppData, $title)
     {
-        $index                  = 2;
+        $index           = 2;
         $fattyFriedFoods = [];
 
         $nutritionData['fatty_fried_foods'] = ! empty($patientPppData->answers_for_eval['fatty_fried_foods'])
@@ -117,10 +131,10 @@ class PersonalizedPreventionPlanPrepareData
         return $fattyFriedFoods;
     }
 
-    public function evaluateAnswer9($patientPppData, $title)
+    public function candySugaryBeverages($patientPppData, $title)
     {
         $index                                   = 3;
-        $candySugaryBeverages                  = [];
+        $candySugaryBeverages                    = [];
         $nutritionData['candy_sugary_beverages'] = ! empty($patientPppData->answers_for_eval['candy_sugary_beverages'])
             ? $patientPppData->answers_for_eval['candy_sugary_beverages']
             : 'N/A';
@@ -131,10 +145,10 @@ class PersonalizedPreventionPlanPrepareData
         return $candySugaryBeverages;
     }
 
-    public function evaluateAnswer11($patientPppData, $title)
+    public function currentSmoker($patientPppData, $title)
     {
         $index                         = 0;
-        $currentSmoker       = [];
+        $currentSmoker                 = [];
         $smokingData['current_smoker'] = ! empty($patientPppData->answers_for_eval['current_smoker'])
             ? $patientPppData->answers_for_eval['current_smoker']
             : 'N/A';
@@ -150,10 +164,10 @@ class PersonalizedPreventionPlanPrepareData
         return $currentSmoker;
     }
 
-    public function evaluateAnswer2_4_11($patientPppData, $title)
+    public function currentSmokerMale($patientPppData, $title)
     {
         $index                         = 1;
-        $currentSmokerAge       = [];
+        $currentSmokerAge              = [];
         $smokingData['current_smoker'] = ! empty($patientPppData->answers_for_eval['current_smoker'])
             ? $patientPppData->answers_for_eval['current_smoker']
             : 'N/A';
@@ -176,7 +190,7 @@ class PersonalizedPreventionPlanPrepareData
     public function formerSmoker($patientPppData, $title)
     {
         $index                         = 2;
-        $formerSmoker       = [];
+        $formerSmoker                  = [];
         $smokingData['current_smoker'] = ! empty($patientPppData->answers_for_eval['current_smoker'])
             ? $patientPppData->answers_for_eval['current_smoker']
             : 'N/A';

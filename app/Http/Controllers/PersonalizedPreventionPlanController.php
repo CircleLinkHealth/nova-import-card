@@ -22,14 +22,14 @@ class PersonalizedPreventionPlanController extends Controller
 
     public function getPppDataForUser(Request $request)
     {
-      $patientPppData = PersonalizedPreventionPlan::with('patient.patientInfo')->find(28);
+      $patientPppData = PersonalizedPreventionPlan::with('patient.patientInfo')->find(33);
 
         if ( ! $patientPppData) {
             //with message
             return redirect()->back();
         }
-     /*    $patient = $patientPppData->patient;
-          if ( ! $patient) {
+      $patient = $patientPppData->patient;
+        /*     if ( ! $patient) {
               //bad data
               return redirect()->back();
           }*/
@@ -37,7 +37,7 @@ class PersonalizedPreventionPlanController extends Controller
         $birthDate = new Carbon($patientPppData->birth_date);
         $age = now()->diff($birthDate)->y;
         $reportData = $this->service->prepareRecommendations($patientPppData);
-        dd($reportData);
+dd($reportData);
         return view('personalizedPreventionPlan', compact('reportData', 'age'));
 
     }
