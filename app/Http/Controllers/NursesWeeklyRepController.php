@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Services\NursesAndStatesDailyReportService;
@@ -8,7 +12,6 @@ use Illuminate\Http\Request;
 
 class NursesWeeklyRepController extends Controller
 {
-    const NO_DATA_ON_S3_BEFORE = '2019-02-03';
     private $service;
 
     public function __construct(NursesAndStatesDailyReportService $service)
@@ -19,7 +22,7 @@ class NursesWeeklyRepController extends Controller
     public function index(Request $request)
     {
         $yesterdayDate = Carbon::yesterday()->startOfDay();
-        $limitDate     = Carbon::parse(NursesWeeklyRepController::NO_DATA_ON_S3_BEFORE);
+        $limitDate     = $this->service->getLimitDate();
 
         if ($request->has('date')) {
             $requestDate = new Carbon($request['date']);
@@ -38,11 +41,11 @@ class NursesWeeklyRepController extends Controller
         $startOfWeek   = $date->copy()->startOfWeek();
         $upToDayOfWeek = carbonToClhDayOfWeek($date->dayOfWeek);
 
-        for ($i = 0; $i < $upToDayOfWeek; $i++) {
+        for ($i = 0; $i < $upToDayOfWeek; ++$i) {
             $days[] = $startOfWeek->copy()->addDay($i);
         }
         //data are returned in 2 arrays. {Data} and the {Totals of data}.
-        $nurses = $this->service->manipulateData($days, $limitDate);
+        $nurses = $this->service->manipulateData($days);
         $totals = $nurses->only('totals');
         $data   = $nurses->forget('totals');
 

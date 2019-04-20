@@ -13,6 +13,7 @@ use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
+use Illuminate\Support\Collection;
 
 class NursesAndStatesDailyReportService
 {
@@ -48,41 +49,7 @@ class NursesAndStatesDailyReportService
             })
             ->chunk(10, function ($nurses) use (&$data, $date) {
                 foreach ($nurses as $nurse) {
-                    $nurseData = [
-                        'assignedCallsCount' => $nurse->outboundCalls->count(),
-                        'actualCallsCount'   => $nurse->outboundCalls->whereIn(
-                            'status',
-                            ['reached', 'not reached', 'dropped']
-                        )->count(),
-                        //                        'scheduledCallsCount'    => $nurse->outboundCalls->where('status', 'scheduled')->count(),
-                        'successfulCallsCount'   => $nurse->outboundCalls->where('status', 'reached')->count(),
-                        'unsuccessfulCallsCount' => $nurse->outboundCalls->whereIn(
-                            'status',
-                            ['not reached', 'dropped']
-                        )->count(),
-                        'actualHours'   => round((float) ($nurse->pageTimersAsProvider->sum('billable_duration') / 3600), 2),
-                        'commitedHours' => round((float) $nurse->nurseInfo->windows->where(
-                            'day_of_week',
-                            carbonToClhDayOfWeek($date->dayOfWeek)
-                        )->sum(function ($window) {
-                            return $window->numberOfHoursCommitted();
-                        }), 2),
-                    ];
-
-                    $data[] = collect([
-                        'nurse_id'        => $nurse->id,
-                        'nurse_full_name' => $nurse->getFullName(),
-                        'actualHours'     => $nurseData['actualHours'],
-                        'committedHours'  => $nurseData['commitedHours'],
-                        'scheduledCalls'  => $nurseData['assignedCallsCount'],
-                        'actualCalls'     => $nurseData['actualCallsCount'],
-                        'successful'      => $nurseData['successfulCallsCount'],
-                        'unsuccessful'    => $nurseData['unsuccessfulCallsCount'],
-                        'efficiency'      => $this->nursesEfficiencyPercentageDaily($date, $nurse),
-                        'completionRate'  => $this->getCompletionRate($nurseData),
-                        'efficiencyIndex' => $this->getEfficiencyIndex($nurseData),
-                        'hoursBehind'     => $this->getHoursBehind($nurse, $date),
-                    ]);
+                    $data[] = $this->getDataForNurse($nurse, $date);
                 }
             });
 
@@ -90,22 +57,165 @@ class NursesAndStatesDailyReportService
     }
 
     /**
+     * @param $nurse
+     * @param $date
+     * @param $data
+     *
+     * maximum(calls_made / calls_assigned,hours_worked/hours_committed)
+     *
+     * (multiplied by 100 to show percentage)
+     *
+     * @return mixed
+     */
+    public function getCompletionRate($data)
+    {
+        $callRate = 0 != $data['scheduledCalls']
+            ? round((float) (($data['actualCalls'] / $data['scheduledCalls']) * 100), 2)
+            : 0;
+        $hourRate = 0 != $data['committedHours']
+            ? round((float) (($data['actualHours'] / $data['committedHours']) * 100), 2)
+            : 0;
+
+        return max([
+            $callRate,
+            $hourRate,
+        ]);
+    }
+
+    /**
+     * @param $nurse
+     * @param $date
+     *
+     * Sets up data needed by both Nurse and States Dashboard and EmailRNDailyReport
+     *
+     * @return Collection
+     */
+    public function getDataForNurse($nurse, $date)
+    {
+        $systemTime = $nurse->pageTimersAsProvider->sum('billable_duration');
+
+        $data = [
+            'nurse_id'        => $nurse->id,
+            'nurse_full_name' => $nurse->getFullName(),
+            'systemTime'      => $systemTime,
+            'actualHours'     => round((float) ($systemTime / 3600), 2),
+            'committedHours'  => round((float) $nurse->nurseInfo->windows->where(
+                'day_of_week',
+                carbonToClhDayOfWeek($date->dayOfWeek)
+            )->sum(function ($window) {
+                return $window->numberOfHoursCommitted();
+            }), 2),
+            'scheduledCalls' => $nurse->outboundCalls->count(),
+            'actualCalls'    => $nurse->outboundCalls->whereIn(
+                'status',
+                ['reached', 'not reached', 'dropped']
+            )->count(),
+            'successful'   => $nurse->outboundCalls->where('status', 'reached')->count(),
+            'unsuccessful' => $nurse->outboundCalls->whereIn(
+                'status',
+                ['not reached', 'dropped']
+            )->count(),
+            'totalMonthSystemTimeSeconds'    => $this->getTotalMonthSystemTimeSeconds($nurse, $date),
+            'uniquePatientsAssignedForMonth' => $this->getUniquePatientsAssignedForMonth($nurse, $date),
+        ];
+
+        $data['completionRate']  = $this->getCompletionRate($data);
+        $data['efficiencyIndex'] = $this->getEfficiencyIndex($data);
+        $data['hoursBehind']     = $this->getHoursBehind($data, $date);
+
+        return collect($data);
+    }
+
+    /**
+     * @param $nurse
+     * @param $date
+     * @param $data
+     *
+     * 100 X ((0.25*# of successful calls in day) + (0.067*# of unsuccessful calls in day))/(actual hours worked in day)
+     *
+     * @return float|int
+     */
+    public function getEfficiencyIndex($data)
+    {
+        return 0 != $data['actualHours']
+            ? round((float) (100 * (
+                (0.25 * $data['successful']) + (0.067 * $data['unsuccessful'])
+            ) / $data['actualHours']), 2)
+            : 0;
+    }
+
+    /**
+     * @param $nurse
+     * @param $date
+     * @param $data
+     *
+     * (time_goal* - Avg. CCM Minutes per Patient assigned) X  Total patients assigned care coach / 60  [end formula]
+     *
+     * Time_goal =  (elapsed work days in month / total work days in month) X 30
+     *
+     * @return float|int
+     */
+    public function getHoursBehind($data, $date)
+    {
+        $startOfMonth = $date->copy()->startOfMonth();
+        $endOfMonth   = $date->copy()->endOfMonth();
+
+        $avgCCMMinutesPerPatientAssigned = ($data['totalMonthSystemTimeSeconds'] / $data['uniquePatientsAssignedForMonth']) / 60;
+
+        $timeGoal = (calculateWeekdays($startOfMonth, $date) / calculateWeekdays($startOfMonth, $endOfMonth)) * 30;
+
+        return round((float) (($timeGoal - $avgCCMMinutesPerPatientAssigned) * $data['uniquePatientsAssignedForMonth'] / 60), 2);
+    }
+
+    /**
+     * There are no data on S3 before this date.
+     *
+     * @return Carbon
+     */
+    public function getLimitDate()
+    {
+        return Carbon::parse('2018-02-03');
+    }
+
+    public function getTotalMonthSystemTimeSeconds($nurse, $date)
+    {
+        return PageTimer::where('provider_id', $nurse->id)
+            ->createdInMonth($date, 'start_time')
+            ->sum('billable_duration');
+    }
+
+    public function getUniquePatientsAssignedForMonth($nurse, $date)
+    {
+        return Call::select('inbound_cpm_id')
+            ->where('outbound_cpm_id', $nurse->id)->where([
+                ['called_date', '>=', $date->copy()->startOfMonth()->startOfDay()],
+                ['called_date', '<=', $date->copy()->endOfDay()],
+            ])
+            ->orWhere([
+                ['scheduled_date', '>=', $date->copy()->startOfMonth()->startOfDay()],
+                ['scheduled_date', '<=', $date->copy()->endOfDay()],
+            ])
+            //distinct inbound_cpm_id
+            ->distinct()
+            ->count();
+    }
+
+    /**
      * Data structure:
      * Nurses < Days < Data.
      *
      * @param $days
-     * @param $limitDate
      *
      * @throws \Exception
      *
-     * @return array
+     * @return Collection
      */
-    public function manipulateData($days, $limitDate)
+    public function manipulateData($days)
     {
         $reports = [];
         foreach ($days as $day) {
             try {
-                $reports[$day->toDateString()] = collect($this->showDataFromS3($day, $limitDate));
+                $reports[$day->toDateString()] = $this->showDataFromS3($day);
             } catch (FileNotFoundException $exception) {
                 $reports[$day->toDateString()] = [];
             }
@@ -167,6 +277,14 @@ class NursesAndStatesDailyReportService
         return $nurses;
     }
 
+    /**
+     * @param Carbon $date
+     * @param $nurse
+     *
+     * Replaced by new metrics: Completion Rate, Efficiency Index, Hours Behind
+     *
+     * @return float|int
+     */
     public function nursesEfficiencyPercentageDaily(Carbon $date, $nurse)
     {
         $actualHours = PageTimer::where([
@@ -188,16 +306,15 @@ class NursesAndStatesDailyReportService
 
     /**
      * @param $day
-     * @param $limitDate
      *
      * @throws FileNotFoundException
      * @throws \Exception
      *
      * @return mixed
      */
-    public function showDataFromS3($day, $limitDate)
+    public function showDataFromS3($day)
     {
-        if ($day->lte($limitDate)) {
+        if ($day->lte($this->getLimitDate())) {
             throw new FileNotFoundException('No reports exists before this date');
         }
         $json = optional(SaasAccount::whereSlug('circlelink-health')
@@ -214,87 +331,6 @@ class NursesAndStatesDailyReportService
             throw new \Exception('File retrieved is not in json format.', 500);
         }
 
-        return json_decode($json, true);
-    }
-
-    /**
-     * @param $nurse
-     * @param $date
-     * @param $data
-     *
-     * maximum(calls_made / calls_assigned,hours_worked/hours_committed)
-     *
-     * (multiplied by 100 to show percentage)
-     *
-     * @return mixed
-     */
-    private function getCompletionRate($data)
-    {
-        $callRate = 0 != $data['assignedCallsCount']
-            ? round((float) (($data['actualCallsCount'] / $data['assignedCallsCount']) * 100), 2)
-            : 0;
-        $hourRate = 0 != $data['commitedHours']
-            ? round((float) (($data['actualHours'] / $data['commitedHours']) * 100), 2)
-            : 0;
-
-        return max([
-            $callRate,
-            $hourRate,
-        ]);
-    }
-
-    /**
-     * @param $nurse
-     * @param $date
-     * @param $data
-     *
-     * 100 X ((0.25*# of successful calls in day) + (0.067*# of unsuccessful calls in day))/(actual hours worked in day)
-     *
-     * @return float|int
-     */
-    private function getEfficiencyIndex($data)
-    {
-        return 0 != $data['actualHours']
-            ? round((float) (100 * (
-                (0.25 * $data['successfulCallsCount']) + (0.067 * $data['unsuccessfulCallsCount'])
-            ) / $data['actualHours']), 2)
-            : 0;
-    }
-
-    /**
-     * @param $nurse
-     * @param $date
-     * @param $data
-     *
-     * (time_goal* - Avg. CCM Minutes per Patient assigned) X  Total patients assigned care coach / 60  [end formula]
-     *
-     * Time_goal =  (elapsed work days in month / total work days in month) X 30
-     *
-     * @return float|int
-     */
-    private function getHoursBehind($nurse, $date)
-    {
-        $startOfMonth = $date->copy()->startOfMonth();
-        $endOfMonth   = $date->copy()->endOfMonth();
-
-        $uniquePatientsAssignedForMonth = Call::select('inbound_cpm_id')
-            ->where('outbound_cpm_id', $nurse->id)->where([
-                ['called_date', '>=', $date->copy()->startOfDay()],
-                ['called_date', '<=', $date->copy()->endOfDay()],
-            ])
-            ->orWhere('scheduled_date', $date->toDateString())
-            //distinct inbound_cpm_id
-            ->distinct()
-            ->count();
-
-        $totalMonthSystemTimeSeconds = PageTimer::where('provider_id', $nurse->id)
-            ->createdInMonth($date, 'start_time')
-            ->sum('billable_duration');
-
-        $avgCCMMinutesPerPatientAssigned = ($totalMonthSystemTimeSeconds / $uniquePatientsAssignedForMonth) / 60;
-
-        $timeGoal = (calculateWeekdays($startOfMonth, $date) / calculateWeekdays($startOfMonth, $endOfMonth)) * 30;
-
-        return round((float) (($timeGoal - $avgCCMMinutesPerPatientAssigned) * $uniquePatientsAssignedForMonth / 60), 2);
+        return collect(json_decode($json, true));
     }
 }

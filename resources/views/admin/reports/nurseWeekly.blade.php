@@ -31,7 +31,6 @@
                                     <th>{{$weekDay->format('D')}}<br>Unsuccessful Calls</th>
                                     <th>{{$weekDay->format('D')}}<br>Actual Hrs Worked</th>
                                     <th>{{$weekDay->format('D')}}<br>Committed Hrs</th>
-                                    <th>{{$weekDay->format('D')}}<br>Efficiency</th>
                                     <th>{{$weekDay->format('D')}}<br>Attendance/Calls Completion Rate</th>
                                     <th>{{$weekDay->format('D')}}<br>Efficiency Index</th>
                                     <th>{{$weekDay->format('D')}}<br>Hours Behind</th>
@@ -49,10 +48,9 @@
                                         <td>{{$reportPerDay['unsuccessful']}} </td>
                                         <td>{{$reportPerDay['actualHours']}} </td>
                                         <td>{{$reportPerDay['committedHours']}} </td>
-                                        <td>{{$reportPerDay['efficiency']}} %</td>
-                                        <td>{{$reportPerDay['completionRate']}} %</td>
-                                        <td>{{$reportPerDay['efficiencyIndex']}}</td>
-                                        <td>{{$reportPerDay['hoursBehind']}}</td>
+                                        <td>{{array_key_exists('completionRate', $reportPerDay) ? $reportPerDay['completionRate'] : 'N/A'}} %</td>
+                                        <td>{{array_key_exists('efficiencyIndex', $reportPerDay) ? $reportPerDay['efficiencyIndex'] : 'N/A'}}</td>
+                                        <td>{{array_key_exists('hoursBehind', $reportPerDay) ? $reportPerDay['hoursBehind'] : 'N/A'}}</td>
                                     @endforeach
                                     @empty
                                         <div class="no-data">
@@ -70,10 +68,9 @@
                                             <td style="font-weight: bolder">{{$totalsForDay['unsuccessfulCallsSum']}}</td>
                                             <td style="font-weight: bolder">{{$totalsForDay['actualHoursSum']}}</td>
                                             <td style="font-weight: bolder">{{$totalsForDay['committedHoursSum']}}</td>
-                                            <td style="font-weight: bolder">{{$totalsForDay['efficiency']}} %</td>
-                                            <td style="font-weight: bolder">{{$totalsForDay['completionRate']}} %</td>
-                                            <td style="font-weight: bolder">{{$totalsForDay['efficiencyIndex']}}</td>
-                                            <td style="font-weight: bolder">{{$totalsForDay['hoursBehind']}}</td>
+                                            <td style="font-weight: bolder">{{$totalsForDay->has('completionRate') ? $totalsForDay['completionRate'] : 'N/A'}} %</td>
+                                            <td style="font-weight: bolder">{{$totalsForDay->has('efficiencyIndex') ? $totalsForDay['efficiencyIndex'] : 'N/A'}}</td>
+                                            <td style="font-weight: bolder">{{$totalsForDay->has('hoursBehind') ? $totalsForDay['hoursBehind'] : 'N/A'}}</td>
                                         @endforeach
                                     @endforeach
                                 </tr>

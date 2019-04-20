@@ -7,6 +7,7 @@
 namespace App\Console\Commands;
 
 use App\Notifications\NurseDailyReport;
+use App\Services\NursesAndStatesDailyReportService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
@@ -21,6 +22,7 @@ class EmailRNDailyReport extends Command
      * @var string
      */
     protected $description = '';
+
     /**
      * The name and signature of the console command.
      *
@@ -30,12 +32,17 @@ class EmailRNDailyReport extends Command
                                                     {date? : Date to generate report for in YYYY-MM-DD.}
                                                     ';
 
+    private $report;
+    private $service;
+
     /**
      * Create a new command instance.
      */
-    public function __construct()
+    public function __construct(NursesAndStatesDailyReportService $service)
     {
         parent::__construct();
+
+        $this->service = $service;
     }
 
     /**
@@ -46,11 +53,14 @@ class EmailRNDailyReport extends Command
     public function handle()
     {
         $userIds = $this->argument('nurseUserIds') ?? null;
-        $date    = $this->argument('date') ?? Carbon::yesterday();
+
+        $date = $this->argument('date') ?? Carbon::yesterday();
 
         if ( ! is_a($date, Carbon::class)) {
             $date = Carbon::parse($date);
         }
+
+        $this->report = $this->service->showDataFromS3($date);
 
         $counter    = 0;
         $emailsSent = [];
@@ -70,17 +80,12 @@ class EmailRNDailyReport extends Command
                         if ( ! $nurse->nurseInfo) {
                             continue;
                         }
-                        $activityTime = Activity::createdBy($nurse)
-                            ->createdOn($date, 'performed_at')
-                            ->sum('duration');
 
-                        $systemTime = PageTimer::where('provider_id', $nurse->id)
-                            ->createdOn($date, 'start_time')
-                            ->sum('billable_duration');
+                        $reportDataForNurse = $this->report->where('nurse_id', $nurse->id)->first();
 
-                        $totalMonthSystemTimeSeconds = PageTimer::where('provider_id', $nurse->id)
-                            ->createdInMonth($date, 'start_time')
-                            ->sum('billable_duration');
+                        $systemTime = $reportDataForNurse['systemTime'];
+
+                        $totalMonthSystemTimeSeconds = $reportDataForNurse['totalMonthSystemTimeSeconds'];
 
                         if (0 == $systemTime) {
                             continue;
@@ -91,8 +96,6 @@ class EmailRNDailyReport extends Command
                         ) {
                             continue;
                         }
-
-                        $performance = round((float) ($activityTime / $systemTime) * 100);
 
                         $totalTimeInSystemOnGivenDate = secondsToHMS($systemTime);
 
@@ -123,8 +126,16 @@ class EmailRNDailyReport extends Command
                             : null;
 
                         $data = [
-                            'name'                         => $nurse->getFullName(),
-                            'performance'                  => $performance,
+                            'name'           => $nurse->getFullName(),
+                            'completionRate' => array_key_exists('completionRate', $reportDataForNurse)
+                                ? $reportDataForNurse['completionRate']
+                                : 'N/A',
+                            'efficiencyIndex' => array_key_exists('efficiencyIndex', $reportDataForNurse)
+                                ? $reportDataForNurse['efficiencyIndex']
+                                : 'N/A',
+                            'hoursBehind' => array_key_exists('hoursBehind', $reportDataForNurse)
+                                ? $reportDataForNurse['hoursBehind']
+                                : 'N/A',
                             'totalEarningsThisMonth'       => $totalEarningsThisMonth,
                             'totalTimeInSystemOnGivenDate' => $totalTimeInSystemOnGivenDate,
                             'totalTimeInSystemThisMonth'   => $totalTimeInSystemThisMonth,
