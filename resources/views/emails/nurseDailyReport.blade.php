@@ -10,9 +10,13 @@
 </p>
 
 <p>
-    <b>%CCM Time<span style="color: red;">* </span>:</b> {{ $performance }}% of {{$date->englishDayOfWeek}}'s ({{$date->format('m/d')}}) time was CCM eligible care time.
+    <b>Attendance/calls completion rate<span style="color: red;">* </span></b> {{$completionRate}}%
 </p>
-
+<p>
+    <b>Efficiency Index (100 is goal, higher is better)<span style="color: red;">** </span></b> {{$efficiencyIndex}}
+</p>
+<p>
+    <b>Hours behind for month<span style="color: red;">*** </span></b> {{$hoursBehind}}
 <p>
     <b>Total time in system on {{$date->englishDayOfWeek}} ({{$date->format('m/d')}}):</b> {{ $totalTimeInSystemOnGivenDate }}
 </p>
@@ -50,5 +54,9 @@
     CircleLink Team
 </p>
 <p></p>
-<p><span style="color: red;">*</span> Please note %CCM time is a reference metric. If curious, you can review how our variable pay rate works <a href="https://docs.google.com/document/d/1rW4W1vbtK3Kn0SVsp9Oi34qFzfgiE7Ac9DfsbcffCUE/edit?usp=sharing">here</a>.</p>
+<p><span style="color: red;">*</span> Shows the greater of i) %age of the hours committed that you worked; or ii) %age of assigned calls that you completed.</p>
+
+<p><span style="color: red;">**</span> ”100” means that successful calls take 15 minutes and unsuccessful calls take 4 minutes. Over 100 means you are more efficient and less than 100 means less efficient than this. </p>
+
+<p><span style="color: red;">***</span> Hours of work behind based on # of currently assigned patients and remaining work days in month. Assumes you’re working every biz. day, so may swing day to day if you’re not.</p>
 </body>

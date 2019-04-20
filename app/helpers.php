@@ -1379,3 +1379,25 @@ if ( ! function_exists('presentDate')) {
             : $carbonDate->format('Y-m-d');
     }
 }
+
+if ( ! function_exists('calculateWeekdays')) {
+    /**
+     * Returns the number of working days for the date range given.
+     * Accounts for weekends and holidays.
+     *
+     * @param $fromDate
+     * @param $toDate
+     *
+     * @return int
+     */
+    function calculateWeekdays($fromDate, $toDate)
+    {
+        $holidays = DB::table('company_holidays')->get();
+
+        return Carbon::parse($fromDate)->diffInDaysFiltered(function (Carbon $date) use ($holidays) {
+            $matchingHolidays = $holidays->where('holiday_date', $date->toDateString());
+
+            return ! $date->isWeekend() && ! $matchingHolidays->count() >= 1;
+        }, new Carbon($toDate));
+    }
+}
