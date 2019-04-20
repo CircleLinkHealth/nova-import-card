@@ -1594,6 +1594,10 @@ Route::group(['middleware' => 'auth'], function () {
             });
         });
 
+        Route::resource('report-settings', 'ReportSettingsController')->names([
+            'index' => 'report-settings.index',
+        ]);
+
         Route::group([
             'prefix' => 'settings',
         ], function () {
