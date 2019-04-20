@@ -25,11 +25,14 @@
         "barryvdh/laravel-ide-helper": "^2.6",
         "circlelinkhealth/core": "dev-master",
         "circlelinkhealth/customer": "dev-master",
-        "laravel/lumen-framework": "5.8.*",
+        "illuminate/redis": "^5.7",
+        "illuminate/session": "^5.7",
+        "laravel/lumen-framework": "5.7.*",
         "laravel/tinker": "^1.0",
+        "predis/predis": "^1.1",
         "propaganistas/laravel-phone": "^4.1",
         "twilio/sdk": "^5.31",
-        "vlucas/phpdotenv": "^3.3"
+        "vlucas/phpdotenv": "~2.2"
     },
     "require-dev": {
         "fzaninotto/faker": "^1.4",

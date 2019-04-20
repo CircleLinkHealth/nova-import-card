@@ -12,7 +12,7 @@ return [
     |
     */
 
-    'supportsCredentials'    => false,
+    'supportsCredentials'    => true,
     'allowedOrigins'         => (env('APP_ENV', 'production') === 'production' || env('APP_ENV',
             'production') === 'worker' || env('APP_ENV', 'production') === 'staging')
         ? ['*.careplanmanager.com']

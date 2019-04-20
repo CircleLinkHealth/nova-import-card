@@ -16,10 +16,11 @@ $router->get('/', function () use ($router) {
 });
 
 /**
- * This group should have authenticated routes
+ * This group has authenticated routes
  */
 $router->group([
     'prefix'     => 'twilio',
+//    'middleware' => 'auth',
 ], function () use ($router) {
     $router->get('/token', [
         'uses' => 'Twilio\TwilioController@obtainToken',
@@ -43,6 +44,10 @@ $router->group([
     ]);
 });
 
+/**
+ * This group is not authenticated,
+ * because it's called directly from Twilio
+ */
 $router->group([
     'prefix' => 'twilio',
 ], function () use ($router) {

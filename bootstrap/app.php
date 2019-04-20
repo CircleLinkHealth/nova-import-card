@@ -2,9 +2,11 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-(new Laravel\Lumen\Bootstrap\LoadEnvironmentVariables(
-    dirname(__DIR__)
-))->bootstrap();
+try {
+    (new Dotenv\Dotenv(dirname(__DIR__)))->load();
+} catch (Dotenv\Exception\InvalidPathException $e) {
+    //
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -24,6 +26,7 @@ $app = new Laravel\Lumen\Application(
 $app->configure('app');
 $app->configure('services');
 $app->configure('cors');
+$app->configure('session');
 
 $app->withFacades();
 
@@ -50,6 +53,10 @@ $app->singleton(
     App\Console\Kernel::class
 );
 
+$app->bind(\Illuminate\Session\SessionManager::class, function () use ($app) {
+    return new \Illuminate\Session\SessionManager($app);
+});
+
 /*
 |--------------------------------------------------------------------------
 | Register Middleware
@@ -64,11 +71,12 @@ $app->singleton(
 $app->middleware([
     //App\Http\Middleware\ExampleMiddleware::class
     \Barryvdh\Cors\HandleCors::class,
+    \Illuminate\Session\Middleware\StartSession::class,
 ]);
 
-// $app->routeMiddleware([
-//     'auth' => App\Http\Middleware\Authenticate::class,
-// ]);
+$app->routeMiddleware([
+    'auth' => App\Http\Middleware\Authenticate::class,
+]);
 
 /*
 |--------------------------------------------------------------------------
@@ -82,8 +90,9 @@ $app->middleware([
 */
 
 // $app->register(App\Providers\AppServiceProvider::class);
-// $app->register(App\Providers\AuthServiceProvider::class);
-// $app->register(App\Providers\EventServiceProvider::class);
+$app->register(Illuminate\Redis\RedisServiceProvider::class);
+$app->register(\Illuminate\Session\SessionServiceProvider::class);
+//$app->register(App\Providers\AuthServiceProvider::class);
 $app->register(Barryvdh\Cors\ServiceProvider::class);
 $app->register(App\Providers\TwilioClientServiceProvider::class);
 $app->register(Propaganistas\LaravelPhone\PhoneServiceProvider::class);
