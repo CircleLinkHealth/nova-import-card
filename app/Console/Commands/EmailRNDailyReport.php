@@ -10,8 +10,6 @@ use App\Notifications\NurseDailyReport;
 use App\Services\NursesAndStatesDailyReportService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\TimeTracking\Entities\Activity;
-use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Console\Command;
 
 class EmailRNDailyReport extends Command
@@ -21,7 +19,7 @@ class EmailRNDailyReport extends Command
      *
      * @var string
      */
-    protected $description = '';
+    protected $description = 'Send emails to nurses containing a report on their performance for a given date.';
 
     /**
      * The name and signature of the console command.
@@ -83,6 +81,13 @@ class EmailRNDailyReport extends Command
 
                         $reportDataForNurse = $this->report->where('nurse_id', $nurse->id)->first();
 
+                        //In case something goes wrong with nurses and states report, or transitioning to new metrics issues
+                        if ( ! $reportDataForNurse || ! $this->validateReportData($reportDataForNurse)) {
+                            //too heavy on memory.
+//                            $reportDataForNurse = $this->service->getDataForNurse($nurse, $date);
+                            continue;
+                        }
+
                         $systemTime = $reportDataForNurse['systemTime'];
 
                         $totalMonthSystemTimeSeconds = $reportDataForNurse['totalMonthSystemTimeSeconds'];
@@ -126,16 +131,10 @@ class EmailRNDailyReport extends Command
                             : null;
 
                         $data = [
-                            'name'           => $nurse->getFullName(),
-                            'completionRate' => array_key_exists('completionRate', $reportDataForNurse)
-                                ? $reportDataForNurse['completionRate']
-                                : 'N/A',
-                            'efficiencyIndex' => array_key_exists('efficiencyIndex', $reportDataForNurse)
-                                ? $reportDataForNurse['efficiencyIndex']
-                                : 'N/A',
-                            'hoursBehind' => array_key_exists('hoursBehind', $reportDataForNurse)
-                                ? $reportDataForNurse['hoursBehind']
-                                : 'N/A',
+                            'name'                         => $nurse->getFullName(),
+                            'completionRate'               => $reportDataForNurse['completionRate'],
+                            'efficiencyIndex'              => $reportDataForNurse['efficiencyIndex'],
+                            'hoursBehind'                  => $reportDataForNurse['hoursBehind'],
                             'totalEarningsThisMonth'       => $totalEarningsThisMonth,
                             'totalTimeInSystemOnGivenDate' => $totalTimeInSystemOnGivenDate,
                             'totalTimeInSystemThisMonth'   => $totalTimeInSystemThisMonth,
@@ -173,5 +172,16 @@ class EmailRNDailyReport extends Command
         );
 
         $this->info("${counter} email(s) sent.");
+    }
+
+    private function validateReportData($report)
+    {
+        return array_keys_exist([
+            'systemTime',
+            'totalMonthSystemTimeSeconds',
+            'completionRate',
+            'efficiencyIndex',
+            'hoursBehind',
+        ], $report);
     }
 }
