@@ -80,7 +80,7 @@ class TaskRecommendationsSeeder extends Seeder
                                 '~Counseling and/or pharmacotherapy interventions',
                                 '~Lung cancer screening (precautionary)',
                             ],
-                        'report_table_data' => [
+                        'report_table_data'   => [
                             [
                                 'body'       => 'Smoking Counseling',
                                 'code'       => '99406 / 99407',
@@ -102,7 +102,7 @@ class TaskRecommendationsSeeder extends Seeder
                         'qualitative_trigger' => 'Males 65-75 and current or former smoker',
                         'task_body'           => 'Due to your age, sex, and smoking status, your Doctor may also recommend an:',
                         'recommendation_body' => '~AAA (Abdominal Aortic Aneurysm) screening',
-                        'report_table_data' =>
+                        'report_table_data'   =>
                             [
                                 [
                                     'body'       => 'AAA (Abdominal Aortic Aneurysm) screening',
@@ -115,7 +115,7 @@ class TaskRecommendationsSeeder extends Seeder
                         'qualitative_trigger' => 'Former Smoker',
                         'task_body'           => 'Congrats! Having quit smoking is a great achievement. By avoiding smoking, you are lowering your risk of smoking-related illnesses every day. Quitting smoking has health benefits that start right away and improve over many years. Unfortunately, smoking any amount can cause damage that can lead to health problems. The risk of lung cancer decreases over time, though it remains higher than a non-smoker’s. As a result, your doctor may suggest:',
                         'recommendation_body' => '~Lung cancer screening (precautionary)',
-                        'report_table_data' =>
+                        'report_table_data'   =>
                             [
                                 [
                                     'body'       => 'Lung cancer screening (precautionary)',
@@ -493,14 +493,14 @@ If you cannot do this because of chronic conditions, be as physically active as 
                             'recommendation_body' => '~Test your blood for dyslipidemia (high cholesterol)',
                         ],
                         /*Advanced Care Planning*/
-                        [
-                            'sub_title'           => 'Advanced Care Planning',
-                            'qualitative_trigger' => 'No Medical Power of Attorney',
-                            'task_body'           => 'A Medical Power of Attorney is a legal instrument (separate from a durable power of attorney) that allows you to select the person that you want to make healthcare decisions for you if and when you become unable to make them for yourself. The person you pick is your representative in that situation for purposes of healthcare decision-making. You could limit your representative to certain types of decisions, or allow your representative to make any healthcare decision that might come up. Talk to your doctor about taking steps to:',
-                            'recommendation_body' => '~Set up a Medical Power of Attorney',
+                        [/*No Medical Power of Attorney = NMPA*/
+                         'sub_title'           => 'Advanced Care Planning/NMPA',
+                         'qualitative_trigger' => 'No Medical Power of Attorney',
+                         'task_body'           => 'A Medical Power of Attorney is a legal instrument (separate from a durable power of attorney) that allows you to select the person that you want to make healthcare decisions for you if and when you become unable to make them for yourself. The person you pick is your representative in that situation for purposes of healthcare decision-making. You could limit your representative to certain types of decisions, or allow your representative to make any healthcare decision that might come up. Talk to your doctor about taking steps to:',
+                         'recommendation_body' => '~Set up a Medical Power of Attorney',
                         ],
                         [
-                            'sub_title'           => 'Advanced Care Planning case2',
+                            'sub_title'           => 'Advanced Care Planning/NLWAD',
                             'qualitative_trigger' => ' No living will/advance directive',
                             'task_body'           => 'Living wills and other advance directives are written, legal instructions regarding your preferences for medical care if you are unable to make decisions for yourself. Advance directives guide choices for doctors and caregivers if you\'re terminally ill, seriously injured, in a coma, in the late stages of dementia or near the end of life. By planning ahead, you can get the medical care you want, avoid unnecessary suffering and relieve caregivers of decision-making burdens during moments of crisis or grief. You also help reduce confusion or disagreement about the choices you would want people to make on your behalf. Advance directives aren\'t just for older adults. Unexpected end-of-life situations can happen at any age, so it\'s important for all adults to prepare these documents. Talk to your doctor about taking steps to:',
                             'recommendation_body' => '~Set up a living will/advance directive',

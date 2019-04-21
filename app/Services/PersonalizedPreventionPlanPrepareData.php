@@ -14,6 +14,10 @@ class PersonalizedPreventionPlanPrepareData
         $this->getAnswersForEval = $service;
     }
 
+    /*
+     * https://docs.google.com/document/d/1ZC68KlBgKFYZIDd9uTVBAw_P85oO1VjloHw9vZt2Tmc/edit
+    each evaluation from this doc belongs to a function
+    */
     public function prepareRecommendations($patientPppData)
     {
         $displayName     = $patientPppData->display_name;
@@ -104,8 +108,22 @@ class PersonalizedPreventionPlanPrepareData
         $screenings            = [
             'title' => $title = 'Screenings:',
             $breastCancerMammogram = $this->breastCancerMammogram($patientPppData, $title),
-            $cervicalCancer = $this->cervicalCancer($patientPppData, $title),
+            $cervicalCancerYoung = $this->cervicalCancerYoung($patientPppData, $title),
+            $cervicalCancerElder = $this->cervicalCancerElder($patientPppData, $title),
+            $prostateCancer = $this->prostateCancer($patientPppData, $title),
+            $colorectalCancer = $this->colorectalCancer($patientPppData, $title),
+            $skinCancer = $this->skinCancer($patientPppData, $title),
 
+        ];
+
+        $otherMisc = [
+            'title' => $title = 'Other misc:',
+            $osteoporosis = $this->osteoporosis($patientPppData, $title),
+            $glaukoma = $this->glaukoma($patientPppData, $title),
+            $diabetes = $this->diabetes($patientPppData, $title),
+            $cholesterolDyslipidemia = $this->cholesterolDyslipidemia($patientPppData, $title),
+            $noMedicalPowerOfAttorney = $this->noMedicalPowerOfAttorney($patientPppData, $title),
+            $livingWill = $this->noLivingWillAdvanceDirective($patientPppData, $title),
         ];
 
         return collect([
@@ -131,6 +149,7 @@ class PersonalizedPreventionPlanPrepareData
                 'adl'                             => $adl,
                 'immunizations_vaccines'          => $immunizationsVaccines,
                 'screenings'                      => $screenings,
+                'other_misc'                      => $otherMisc,
             ],
         ]);
     }
@@ -170,17 +189,45 @@ class PersonalizedPreventionPlanPrepareData
             ? $patientPppData->answers_for_eval['whole_grain']
             : 'N/A';
 
-        $nutritionData['diabetes'] = ! empty($patientPppData->answers_for_eval['diabetes'])
-            ? $patientPppData->answers_for_eval['diabetes']
+        $nutritionData['multipleQuestion16'] = ! empty($patientPppData->answers_for_eval['multipleQuestion16'])
+            ? $patientPppData->answers_for_eval['multipleQuestion16']
             : 'N/A';
 
-        $diabetesSelected = $this->checkForConditionSelected($nutritionData, $condition = 'Diabetes', $checkInCategory = 'diabetes');
+        $diabetesSelected = $this->checkForConditionSelected($nutritionData, $condition = 'Diabetes',
+            $checkInCategory = 'multipleQuestion16');
 
         if ($nutritionData['whole_grain'] !== '3-4' || $nutritionData['whole_grain'] !== '5+' && $diabetesSelected !== true) {
             $wholeGrain = $this->getTaskRecommendations($title, $index);
         }
 
         return $wholeGrain;
+    }
+
+    /**
+     * @param $screenings
+     *
+     * @param null $condition
+     *
+     * @param $checkInCategory
+     *
+     * @return bool
+     */
+    public function checkForConditionSelected($screenings, $condition, $checkInCategory): bool
+    {
+        $answers        = [];
+        $checkInAnswers = $screenings;
+
+        foreach ($checkInAnswers[$checkInCategory] as $data) {
+            $answers[] = $data['name'];
+        }
+
+        if (in_array($condition, $answers)) {
+            $conditionIsSelectedAsAnswer = true;
+        } else {
+            $conditionIsSelectedAsAnswer = false;
+        }
+
+        return $conditionIsSelectedAsAnswer;
     }
 
     public function fattyFriedFoods($patientPppData, $title)
@@ -310,6 +357,8 @@ class PersonalizedPreventionPlanPrepareData
         return $recreationalDrugs;
     }
 
+//@todo:ask - this should be taken from clinic or i same as vitals???
+
     public function physicalActivity($patientPppData, $title)
     {
         $index                                 = 0;
@@ -331,7 +380,6 @@ class PersonalizedPreventionPlanPrepareData
         return $physicalActivity;
     }
 
-//@todo:this should be taken from clinic or i same as vitals???
     public function weightBmiUnderweight($patientPppData, $title)
     {
         $index                = 0;
@@ -372,7 +420,6 @@ class PersonalizedPreventionPlanPrepareData
 
     }
 
-//@todo:this has evalution on  Q4 = yes but Q4 = Gender question
     public function womanOfReproductiveAge($patientPppData, $title)
     {
         $index                                  = 1;
@@ -625,7 +672,9 @@ class PersonalizedPreventionPlanPrepareData
 
         return $pneumococcal;
     }
+
 //@todo:should check conditionals again!!!!
+
     public function breastCancerMammogram($patientPppData, $title)
     {
         $index                                 = 0;
@@ -643,7 +692,8 @@ class PersonalizedPreventionPlanPrepareData
             ? $patientPppData->answers_for_eval['family_conditions']
             : 'N/A';
 
-        $breastCancerSelected = $this->checkForConditionSelected($screenings, $condition = 'Breast Cancer', $checkInCategory = 'family_conditions');
+        $breastCancerSelected = $this->checkForConditionSelected($screenings, $condition = 'Breast Cancer',
+            $checkInCategory = 'family_conditions');
 
         if ($screenings['sex'] === 'Female' && '50' < $screenings['age'] && $screenings['age'] < '74') {
             $breastCancerMammogram = $this->getTaskRecommendations($title, $index);
@@ -662,11 +712,11 @@ class PersonalizedPreventionPlanPrepareData
 
         return $breastCancerMammogram;
     }
-//@todo:should check conditionals again!!!!
-    public function cervicalCancer($patientPppData, $title)
+
+    public function cervicalCancerYoung($patientPppData, $title)
     {
-        $index          = 1;
-        $cervicalCancer = [];
+        $index               = 1;
+        $cervicalCancerYoung = [];
 
         $screenings['sex']                       = ! empty($patientPppData->answers_for_eval['sex'])
             ? $patientPppData->answers_for_eval['sex']
@@ -682,15 +732,297 @@ class PersonalizedPreventionPlanPrepareData
             && '21' <= $screenings['age']
             && $screenings['age'] <= '29'
             && $screenings['cervical_cancer_screening'] !== 'In the last 2-3 years') {
-            $cervicalCancer = $this->getTaskRecommendations($title, $index);
+            $cervicalCancerYoung = $this->getTaskRecommendations($title, $index);
         } elseif ($screenings['sex'] === 'Female'
                   && '21' <= $screenings['age']
                   && $screenings['age'] <= '29'
                   && $screenings['cervical_cancer_screening'] !== 'In the last year') {
-            $cervicalCancer = $this->getTaskRecommendations($title, $index);
+            $cervicalCancerYoung = $this->getTaskRecommendations($title, $index);
         }
 
-        return $cervicalCancer;
+        return $cervicalCancerYoung;
+    }
+
+    public function cervicalCancerElder($patientPppData, $title)
+    {
+        $index               = 2;
+        $cervicalCancerElder = [];
+
+        $screenings['sex']                       = ! empty($patientPppData->answers_for_eval['sex'])
+            ? $patientPppData->answers_for_eval['sex']
+            : 'N/A';
+        $screenings['age']                       = ! empty($patientPppData->answers_for_eval['age'])
+            ? $patientPppData->answers_for_eval['age']
+            : 'N/A';
+        $screenings['cervical_cancer_screening'] = ! empty($patientPppData->answers_for_eval['cervical_cancer_screening'])
+            ? $patientPppData->answers_for_eval['cervical_cancer_screening']
+            : 'N/A';
+
+        if ($screenings['sex'] === 'Female'
+            && '30' <= $screenings['age']
+            && $screenings['age'] <= '65'
+            && $screenings['cervical_cancer_screening'] === 'In the last 6-10 years') {
+            $cervicalCancerElder = $this->getTaskRecommendations($title, $index);
+        } elseif ($screenings['sex'] === 'Female'
+                  && '30' <= $screenings['age']
+                  && $screenings['age'] <= '65'
+                  && $screenings['cervical_cancer_screening'] === '10+ years ago/Never/Unsure') {
+            $cervicalCancerElder = $this->getTaskRecommendations($title, $index);
+        }
+
+        return $cervicalCancerElder;
+    }
+
+    public function prostateCancer($patientPppData, $title)
+    {
+        $index                                   = 3;
+        $prostateCancer                          = [];
+        $screenings['race']                      = ! empty($patientPppData->answers_for_eval['race'])
+            ? $patientPppData->answers_for_eval['race']
+            : 'N/A';
+        $screenings['sex']                       = ! empty($patientPppData->answers_for_eval['sex'])
+            ? $patientPppData->answers_for_eval['sex']
+            : 'N/A';
+        $screenings['age']                       = ! empty($patientPppData->answers_for_eval['age'])
+            ? $patientPppData->answers_for_eval['age']
+            : 'N/A';
+        $screenings['prostate_cancer_screening'] = ! empty($patientPppData->answers_for_eval['prostate_cancer_screening'])
+            ? $patientPppData->answers_for_eval['prostate_cancer_screening']
+            : 'N/A';
+
+        $screenings['multipleQuestion16'] = ! empty($patientPppData->answers_for_eval['multipleQuestion16'])
+            ? $patientPppData->answers_for_eval['multipleQuestion16']
+            : 'N/A';
+
+        $prostateCancerSelected = $this->checkForConditionSelected($screenings, $condition = 'Prostate Cancer',
+            $checkInCategory = 'multipleQuestion16');
+
+        if ($screenings['sex'] === 'Male'
+            && '55' <= $screenings['age']
+            && $screenings['age'] <= '69'
+            && $screenings['prostate_cancer_screening'] === '10+ years ago/Never/Unsure') {
+            $prostateCancer = $this->getTaskRecommendations($title, $index);
+        } elseif ($screenings['sex'] === 'Male'
+                  && $screenings['race'] === 'African American/Black'
+                  && $screenings['prostate_cancer_screening'] === '10+ years ago/Never/Unsure') {
+            $prostateCancer = $this->getTaskRecommendations($title, $index);
+        } elseif ($screenings['sex'] === 'Male' && $prostateCancerSelected === true) {
+            $prostateCancer = $this->getTaskRecommendations($title, $index);
+        }
+
+        return $prostateCancer;
+    }
+
+    public function colorectalCancer($patientPppData, $title)
+    {
+        $index            = 4;
+        $colorectalCancer = [];
+
+        $screenings['age']                         = ! empty($patientPppData->answers_for_eval['age'])
+            ? $patientPppData->answers_for_eval['age']
+            : 'N/A';
+        $screenings['colorectal_cancer_screening'] = ! empty($patientPppData->answers_for_eval['colorectal_cancer_screening'])
+            ? $patientPppData->answers_for_eval['colorectal_cancer_screening']
+            : 'N/A';
+        $screenings['family_conditions']           = ! empty($patientPppData->answers_for_eval['family_conditions'])
+            ? $patientPppData->answers_for_eval['family_conditions']
+            : 'N/A';
+
+        $colorectalCancerSelected = $this->checkForConditionSelected($screenings, $condition = 'Colorectal Cancer',
+            $checkInCategory = 'family_conditions');
+
+        if ('50' <= $screenings['age']
+            && $screenings['age'] <= '75'
+            || $colorectalCancerSelected === true
+            || $screenings['family_conditions'] === 'In the last 6-10 years'
+            || $screenings['family_conditions'] === 'Never/10 years ago') {
+
+            $colorectalCancer = $this->getTaskRecommendations($title, $index);
+        }
+
+        return $colorectalCancer;
+    }
+
+    //@todo:should come back to this(check on name and type)
+    public function skinCancer($patientPppData, $title)
+    {
+        $index                            = 5;
+        $skinCancer                       = [];
+        $screenings['multipleQuestion16'] = ! empty($patientPppData->answers_for_eval['multipleQuestion16'])
+            ? $patientPppData->answers_for_eval['multipleQuestion16']
+            : 'N/A';
+
+        $screenings['family_conditions'] = ! empty($patientPppData->answers_for_eval['family_conditions'])
+            ? $patientPppData->answers_for_eval['family_conditions']
+            : 'N/A';
+
+        $screenings['family_members_with_condition'] = ! empty($patientPppData->answers_for_eval['family_members_with_condition'])
+            ? $patientPppData->answers_for_eval['family_members_with_condition']
+            : 'N/A';
+
+        $hasSkinCancerselected = $this->checkForConditionSelected($screenings, $condition = 'Skin Cancer',
+            $checkInCategory = 'family_conditions');
+
+        $checkInCategory             = 'multipleQuestion16';
+        $conditionName               = 'Cancer';
+        $conditionType               = 'Skin';
+        $checkInAnswers              = $screenings;
+        $conditionWithTypeIsSelected = [];
+        foreach ($checkInAnswers[$checkInCategory] as $data) {
+            if (array_key_exists('type', $data)
+                && isset($data['type'])) {
+                $data['name'] === $conditionName && $data['type'] === $conditionType
+                    ? $conditionWithTypeIsSelected = true
+                    : $conditionWithTypeIsSelected = false;
+            }
+        }
+
+        $answers                     = [];
+        $checkInCategory             = 'family_members_with_condition';
+        $checkInAnswers              = $screenings;
+        foreach ($checkInAnswers[$checkInCategory] as $data) {
+            if ($data['name'] === $hasSkinCancerselected) {
+                $answers = $data['family'];
+            }
+        }
+        $famMembWithSelectCond = count($answers);
+
+        if ($hasSkinCancerselected === true && $famMembWithSelectCond >= '2' || $conditionWithTypeIsSelected === true) {
+           $skinCancer = $this->getTaskRecommendations($title, $index);
+        }
+        return $skinCancer;
+
+
+        //@todo:should come back to this(check on name and type)
+
+    }
+
+    public function osteoporosis($patientPppData, $title)
+    {
+        $index             = 0;
+        $osteoporosis      = [];
+        $screenings['sex'] = ! empty($patientPppData->answers_for_eval['sex'])
+            ? $patientPppData->answers_for_eval['sex']
+            : 'N/A';
+
+        $screenings['age'] = ! empty($patientPppData->answers_for_eval['age'])
+            ? $patientPppData->answers_for_eval['age']
+            : 'N/A';
+
+        $screenings['osteoporosis_screening'] = ! empty($patientPppData->answers_for_eval['osteoporosis_screening'])
+            ? $patientPppData->answers_for_eval['osteoporosis_screening']
+            : 'N/A';
+
+        $screenings['fall_risk'] = ! empty($patientPppData->answers_for_eval['fall_risk'])
+            ? $patientPppData->answers_for_eval['fall_risk']
+            : 'N/A';
+
+        if ($screenings['sex'] === 'Female'
+            && $screenings['age'] >= '65'
+            && $screenings['osteoporosis_screening'] !== 'In the last year') {
+            $osteoporosis = $this->getTaskRecommendations($title, $index);
+        } elseif ($screenings['sex'] === 'Male'
+                  && $screenings['age'] >= '70'
+                  && $screenings['osteoporosis_screening'] !== 'In the last year') {
+            $osteoporosis = $this->getTaskRecommendations($title, $index);
+        } elseif ($screenings['fall_risk'] === 'Yes'
+                  && $screenings['osteoporosis_screening'] !== 'In the last year') {
+            $osteoporosis = $this->getTaskRecommendations($title, $index);
+        }
+
+        return $osteoporosis;
+    }
+
+    public function glaukoma($patientPppData, $title)
+    {
+        $index                            = 1;
+        $glaukoma                         = [];
+        $screenings['glaukoma_screening'] = ! empty($patientPppData->answers_for_eval['glaukoma_screening'])
+            ? $patientPppData->answers_for_eval['glaukoma_screening']
+            : 'N/A';
+        if ($screenings['glaukoma_screening'] !== 'In the last year') {
+            $glaukoma = $this->getTaskRecommendations($title, $index);
+        }
+
+        return $glaukoma;
+    }
+
+    public function diabetes($patientPppData, $title)
+    {
+        $index             = 2;
+        $diabetes          = [];
+        $screenings['age'] = ! empty($patientPppData->answers_for_eval['age'])
+            ? $patientPppData->answers_for_eval['age']
+            : 'N/A';
+        $screenings['bmi'] = ! empty($patientPppData->answers_for_eval['bmi'])
+            ? $patientPppData->answers_for_eval['bmi']
+            : 'N/A';
+
+        if ($screenings['age'] > '20' && $screenings['bmi'] >= '25') {
+            $diabetes = $this->getTaskRecommendations($title, $index);
+        }
+
+        return $diabetes;
+    }
+
+    //@todo:should come back to this(check on first and second metric)
+
+    public function cholesterolDyslipidemia($patientPppData, $title)
+    {
+        $index                            = 3;
+        $diabetes                         = [];
+        $screenings['blood_pressure']     = ! empty($patientPppData->answers_for_eval['blood_pressure'])
+            ? $patientPppData->answers_for_eval['blood_pressure']
+            : 'N/A';
+        $screenings['bmi']                = ! empty($patientPppData->answers_for_eval['bmi'])
+            ? $patientPppData->answers_for_eval['bmi']
+            : 'N/A';
+        $screenings['multipleQuestion16'] = ! empty($patientPppData->answers_for_eval['multipleQuestion16'])
+            ? $patientPppData->answers_for_eval['multipleQuestion16']
+            : 'N/A';
+        $screenings['current_smoker']     = ! empty($patientPppData->answers_for_eval['current_smoker'])
+            ? $patientPppData->answers_for_eval['current_smoker']
+            : 'N/A';
+
+        $screenings['physical_activity'] = ! empty($patientPppData->answers_for_eval['physical_activity'])
+            ? $patientPppData->answers_for_eval['physical_activity']
+            : 'N/A';
+        $screenings['fatty_fried_foods'] = ! empty($patientPppData->answers_for_eval['fatty_fried_foods'])
+            ? $patientPppData->answers_for_eval['fatty_fried_foods']
+            : 'N/A';
+    }
+
+    public function noMedicalPowerOfAttorney($patientPppData, $title)
+    {
+
+        $index                    = 4;
+        $noMedicalPowerOfAttorney = [];
+
+        $screenings['medical_attonery'] = ! empty($patientPppData->answers_for_eval['medical_attonery'])
+            ? $patientPppData->answers_for_eval['medical_attonery']
+            : 'N/A';
+
+        if ($screenings['medical_attonery'] === 'No') {
+            $noMedicalPowerOfAttorney = $this->getTaskRecommendations($title, $index);
+        }
+
+        return $noMedicalPowerOfAttorney;
+    }
+
+    public function noLivingWillAdvanceDirective($patientPppData, $title)
+    {
+        $index                        = 5;
+        $noLivingWillAdvanceDirective = [];
+
+        $screenings['living_will'] = ! empty($patientPppData->answers_for_eval['living_will'])
+            ? $patientPppData->answers_for_eval['living_will']
+            : 'N/A';
+
+        if ($screenings['living_will'] === 'No') {
+            $noLivingWillAdvanceDirective = $this->getTaskRecommendations($title, $index);
+        }
+
+        return $noLivingWillAdvanceDirective;
     }
 
     public function weightBmiOverweight($patientPppData, $title)
@@ -707,29 +1039,4 @@ class PersonalizedPreventionPlanPrepareData
 
         return $weightBmiOverweight;
     }
-
-    /**
-     * @param $screenings
-     *
-     * @param null $condition
-     *
-     * @param $checkInCategory
-     *
-     * @return bool
-     */
-    public function checkForConditionSelected($screenings, $condition, $checkInCategory): bool
-    {
-        $answers              = [];
-        $checkInAnswers = $screenings;
-        foreach ($checkInAnswers[$checkInCategory] as $data) {
-            $answers[] = $data['name'];
-        }
-
-        if (in_array($condition, $answers)) {
-            $conditionIsSelectedAsAnswer = true;
-        } else {
-            $conditionIsSelectedAsAnswer = false;
-        }
-        return $conditionIsSelectedAsAnswer;
-}
 }
