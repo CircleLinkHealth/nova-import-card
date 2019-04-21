@@ -173,17 +173,8 @@ class PersonalizedPreventionPlanPrepareData
         $nutritionData['diabetes'] = ! empty($patientPppData->answers_for_eval['diabetes'])
             ? $patientPppData->answers_for_eval['diabetes']
             : 'N/A';
-//@todo:should extract this later
-        $diabetesSelected = [];
-        $answers          = [];
-        $checkForDiabetes = $nutritionData;
-        foreach ($checkForDiabetes['diabetes'] as $data) {
-            $answers[] = $data['name'];
-        }
 
-        if (in_array('Diabetes', $answers)) {
-            $diabetesSelected = true;
-        }
+        $diabetesSelected = $this->checkForConditionSelected($nutritionData, $condition = 'Diabetes', $checkInCategory = 'diabetes');
 
         if ($nutritionData['whole_grain'] !== '3-4' || $nutritionData['whole_grain'] !== '5+' && $diabetesSelected !== true) {
             $wholeGrain = $this->getTaskRecommendations($title, $index);
@@ -634,7 +625,7 @@ class PersonalizedPreventionPlanPrepareData
 
         return $pneumococcal;
     }
-
+//@todo:should check conditionals again!!!!
     public function breastCancerMammogram($patientPppData, $title)
     {
         $index                                 = 0;
@@ -652,30 +643,26 @@ class PersonalizedPreventionPlanPrepareData
             ? $patientPppData->answers_for_eval['family_conditions']
             : 'N/A';
 
-        $breastcancerSelected = [];
-        $answers              = [];
-        $checkForbreastcancer = $screenings;
-        foreach ($checkForbreastcancer['family_conditions'] as $data) {
-            $answers[] = $data['name'];
-        }
+        $breastCancerSelected = $this->checkForConditionSelected($screenings, $condition = 'Breast Cancer', $checkInCategory = 'family_conditions');
 
-        if (in_array('Breast Cancer', $answers)) {
-            $breastcancerSelected = true;
-        }
-//@todo:should check this again!!!!
         if ($screenings['sex'] === 'Female' && '50' < $screenings['age'] && $screenings['age'] < '74') {
             $breastCancerMammogram = $this->getTaskRecommendations($title, $index);
-        } elseIf ($screenings['breast_cancer_screening'] !== 'In the past 2-3 years'
-                  || $screenings['breast_cancer_screening'] !== 'In the past year'
+
+        } elseIf ($screenings['breast_cancer_screening'] !== 'In the last 2-3 years'
+                  || $screenings['breast_cancer_screening'] !== 'In the last year'
                      && $screenings['sex'] === 'Female'
-                     && $breastcancerSelected === true
-        ) {
+                     && $breastCancerSelected === true) {
+            $breastCancerMammogram = $this->getTaskRecommendations($title, $index);
+
+        } elseIf ($screenings['breast_cancer_screening'] !== 'In the last year'
+                  && $screenings['sex'] === 'Female'
+                  && $breastCancerSelected === true) {
             $breastCancerMammogram = $this->getTaskRecommendations($title, $index);
         }
 
         return $breastCancerMammogram;
     }
-
+//@todo:should check conditionals again!!!!
     public function cervicalCancer($patientPppData, $title)
     {
         $index          = 1;
@@ -690,11 +677,16 @@ class PersonalizedPreventionPlanPrepareData
         $screenings['cervical_cancer_screening'] = ! empty($patientPppData->answers_for_eval['cervical_cancer_screening'])
             ? $patientPppData->answers_for_eval['cervical_cancer_screening']
             : 'N/A';
+
         if ($screenings['sex'] === 'Female'
             && '21' <= $screenings['age']
             && $screenings['age'] <= '29'
-            && $screenings['cervical_cancer_screening'] !== 'In the past 2-3 years'
-            || $screenings['cervical_cancer_screening'] !== 'In the past year') {
+            && $screenings['cervical_cancer_screening'] !== 'In the last 2-3 years') {
+            $cervicalCancer = $this->getTaskRecommendations($title, $index);
+        } elseif ($screenings['sex'] === 'Female'
+                  && '21' <= $screenings['age']
+                  && $screenings['age'] <= '29'
+                  && $screenings['cervical_cancer_screening'] !== 'In the last year') {
             $cervicalCancer = $this->getTaskRecommendations($title, $index);
         }
 
@@ -715,4 +707,29 @@ class PersonalizedPreventionPlanPrepareData
 
         return $weightBmiOverweight;
     }
+
+    /**
+     * @param $screenings
+     *
+     * @param null $condition
+     *
+     * @param $checkInCategory
+     *
+     * @return bool
+     */
+    public function checkForConditionSelected($screenings, $condition, $checkInCategory): bool
+    {
+        $answers              = [];
+        $checkInAnswers = $screenings;
+        foreach ($checkInAnswers[$checkInCategory] as $data) {
+            $answers[] = $data['name'];
+        }
+
+        if (in_array($condition, $answers)) {
+            $conditionIsSelectedAsAnswer = true;
+        } else {
+            $conditionIsSelectedAsAnswer = false;
+        }
+        return $conditionIsSelectedAsAnswer;
+}
 }

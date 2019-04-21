@@ -50,6 +50,11 @@
             </div>
         </div>
     </div>
+    @foreach($recommendationTasks as $key => $tasks)
+        @foreach($tasks as $task => $items)
 
-    {{$reportData['recommendation_tasks']['nutrition_recommendations'][0]['task_body']}}
+        @endforeach
+    @endforeach
+
+    {{--{{$reportData['recommendation_tasks']['nutrition_recommendations'][0]['task_body']}}--}}
 @endsection
