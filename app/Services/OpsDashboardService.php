@@ -10,16 +10,23 @@ use App\Repositories\OpsDashboardPatientEloquentRepository;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
 class OpsDashboardService
 {
     const TWENTY_MINUTES = 1200;
+
+    protected $timeGoal;
     private $repo;
 
     public function __construct(OpsDashboardPatientEloquentRepository $repo)
     {
         $this->repo = $repo;
+
+        $timeGoal = DB::table('report_settings')->where('name', 'time_goal_per_billable_patient')->first();
+
+        $this->timeGoal = $timeGoal ? $timeGoal->value : '35';
     }
 
     public function billingChurnRow($summaries, $months)
@@ -104,7 +111,7 @@ class OpsDashboardService
         })->flatten()->unique('id');
 
         $totActPt                = $enrolledPatients->count();
-        $targetMinutesPerPatient = 35;
+        $targetMinutesPerPatient = floatval($this->timeGoal);
 
         $startOfMonth       = $date->copy()->startOfMonth();
         $endOfMonth         = $date->copy()->endOfMonth();
@@ -380,10 +387,10 @@ class OpsDashboardService
             },
         ])
             ->whereHas('patientInfo', function ($patient) use ($fromDate, $toDate) {
-                            $patient->ccmStatus(Patient::PAUSED)
-                                ->where('date_paused', '>=', $fromDate)
-                                ->where('date_paused', '<=', $toDate);
-                        })
+                $patient->ccmStatus(Patient::PAUSED)
+                    ->where('date_paused', '>=', $fromDate)
+                    ->where('date_paused', '<=', $toDate);
+            })
             ->get();
 
         return $patients;

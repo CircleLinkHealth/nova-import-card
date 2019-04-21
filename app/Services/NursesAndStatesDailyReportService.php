@@ -14,9 +14,28 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class NursesAndStatesDailyReportService
 {
+    protected $successfulCallsMultiplier;
+    protected $timeGoal;
+
+    protected $unsuccessfulCallsMultiplier;
+
+    public function __construct()
+    {
+        $settings = DB::table('report_settings')->get();
+
+        $nurseSuccessful   = $settings->where('name', 'nurse_report_successful')->first();
+        $nurseUnsuccessful = $settings->where('name', 'nurse_report_unsuccessful')->first();
+        $timeGoal          = $settings->where('name', 'time_goal_per_billable_patient')->first();
+
+        $this->successfulCallsMultiplier   = $nurseSuccessful ? $nurseSuccessful->value : '0.25';
+        $this->unsuccessfulCallsMultiplier = $nurseUnsuccessful ? $nurseUnsuccessful->value : '0.067';
+        $this->timeGoal                    = $timeGoal ? $timeGoal->value : '30';
+    }
+
     public function collectData(Carbon $date)
     {
         $data = [];
@@ -139,7 +158,7 @@ class NursesAndStatesDailyReportService
     {
         return 0 != $data['actualHours']
             ? round((float) (100 * (
-                (0.25 * $data['successful']) + (0.067 * $data['unsuccessful'])
+                (floatval($this->successfulCallsMultiplier) * $data['successful']) + (floatval($this->unsuccessfulCallsMultiplier) * $data['unsuccessful'])
             ) / $data['actualHours']), 2)
             : 0;
     }
@@ -162,7 +181,7 @@ class NursesAndStatesDailyReportService
 
         $avgCCMMinutesPerPatientAssigned = ($data['totalMonthSystemTimeSeconds'] / $data['uniquePatientsAssignedForMonth']) / 60;
 
-        $timeGoal = (calculateWeekdays($startOfMonth, $date) / calculateWeekdays($startOfMonth, $endOfMonth)) * 30;
+        $timeGoal = (calculateWeekdays($startOfMonth, $date) / calculateWeekdays($startOfMonth, $endOfMonth)) * floatval($this->timeGoal);
 
         return round((float) (($timeGoal - $avgCCMMinutesPerPatientAssigned) * $data['uniquePatientsAssignedForMonth'] / 60), 2);
     }
