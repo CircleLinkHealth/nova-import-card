@@ -1595,8 +1595,31 @@ Route::group(['middleware' => 'auth'], function () {
         });
 
         Route::resource('report-settings', 'ReportSettingsController')->names([
-            'index' => 'report-settings.index',
+            'index'  => 'report-settings.index',
+            'update' => 'report-settings.update',
         ]);
+
+        Route::group(
+            [
+                'prefix' => 'report-settings',
+            ],
+            function () {
+                Route::get(
+                    '',
+                    [
+                        'uses' => 'ReportSettingsController@index',
+                        'as'   => 'report-settings.index',
+                    ]
+                );
+                Route::post(
+                    'update',
+                    [
+                        'uses' => 'ReportSettingsController@update',
+                        'as'   => 'report-settings.update',
+                    ]
+                );
+            }
+        );
 
         Route::group([
             'prefix' => 'settings',
