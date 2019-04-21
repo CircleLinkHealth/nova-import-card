@@ -1,6 +1,6 @@
 <?php
 
-use App\PhoneNumber;
+use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use Illuminate\Database\Seeder;
 
 class PhoneNumbersTableSeeder extends Seeder

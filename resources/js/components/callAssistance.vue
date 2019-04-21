@@ -6,7 +6,7 @@
                 <button type="button"
                         id="close-call-assistance"
                         class="btn btn-sm"
-                        @click="$emit('closeCallAssistanceModal')">
+                        @click="handleClick">
                     <i class="fas fa-angle-left"></i>
                 </button>
                 <span class="title">Call</span>
@@ -29,7 +29,11 @@
             }
         },
 
-        methods: {},
+        methods: {
+            handleClick(){
+                this.$emit('closeCallAssistanceModal')
+            }
+        },
     }
 
 </script>

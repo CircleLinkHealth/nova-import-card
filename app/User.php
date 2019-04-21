@@ -2,50 +2,8 @@
 
 namespace App;
 
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Lab404\Impersonate\Models\Impersonate;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-
-
-class User extends Authenticatable
+class User extends \CircleLinkHealth\Customer\Entities\User
 {
-    use Notifiable;
-    use Impersonate;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'first_name',
-        'last_name',
-        'display_name',
-        'email',
-        'password',
-    ];
-
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
-
-    public function patientInfo()
-    {
-        return $this->hasOne(Patient::class, 'id');
-    }
-
-    public function phoneNumber()
-    {
-        return $this->hasOne(PhoneNumber::class);
-    }
-
     public function url()
     {
         return $this->hasOne(InvitationLink::class);
@@ -77,6 +35,9 @@ class User extends Authenticatable
         return $this->hasMany(Answer::class, 'user_id');
     }
 
+    public function providerReports(){
+        return $this->hasMany(ProviderReport::class, 'patient_id');
+    }
 
     public function getSurveys()
     {
@@ -97,5 +58,9 @@ class User extends Authenticatable
 
     public function getSurveyInstancesBySurveyId($surveyId){
         return $this->surveyInstances()->where('users_surveys.survey_id', $surveyId)->get();
+    }
+
+    public function personalizedPreventionPlan() {
+        return $this->hasOne(PersonalizedPreventionPlan::class, 'user_id');
     }
 }

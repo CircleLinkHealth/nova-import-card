@@ -19,6 +19,7 @@ Route::get('/', function () {
 
 Auth::routes();
 
+Route::get('/provider-report', 'ProviderReportController@getProviderReport');
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('enter-patient-form', 'InvitationLinksController@enterPatientForm')->name('enterPatientForm');
@@ -27,4 +28,6 @@ Route::post('send-invitation-link', 'InvitationLinksController@createSendInvitat
 Route::get('login-survey/{user}/{survey}', 'InvitationLinksController@surveyLoginForm')->name('loginSurvey');
 Route::post('survey-login', 'InvitationLinksController@surveyLoginAuth')->name('surveyLoginAuth');
 Route::post('resend-link/{user}', 'InvitationLinksController@resendUrl')->name('resendUrl');
-Route::post('save-survey-answer', 'SurveyController@saveAnswer')->name('saveSurveyAnswer');
+Route::post('save-answer', 'SurveyController@storeAnswer')->name('saveSurveyAnswer');
+Route::get('get-previous-answer', 'SurveyController@getPreviousAnswer')->name('getPreviousAnswer');
+Route::get('get-ppp-data', 'PersonalizedPreventionPlanController@getPppDataForUser')->name('getPppDataForUser');

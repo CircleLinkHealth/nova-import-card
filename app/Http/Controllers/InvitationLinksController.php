@@ -32,7 +32,8 @@ class InvitationLinksController extends Controller
     }
 
     public function createSendInvitationUrl(Request $request)
-    {//@todo:should validate using more conditions
+    {
+        //@todo:should validate using more conditions
         $validator = Validator::make($request->all(), [
             'id' => 'required|exists:users,id',
         ]);
@@ -46,7 +47,7 @@ class InvitationLinksController extends Controller
         $userId      = $request->get('id');
         $url         = $this->service->createAndSaveUrl($userId);
         $phoneNumber = $this->service->getPatientPhoneNumberById($userId);
-
+        dd($phoneNumber);
         $this->sendSms($phoneNumber, $url);
 
         return 'invitation has been sent';

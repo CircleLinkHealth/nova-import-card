@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <!--Survey welcome note-->
-        <div class="card">
+        <div class="survey-container">
             <div v-if="welcomeStage" class="practice-title">
                 <label id="title">[Practice Name]
                     Dr. [doctor last name]’s Office</label>
@@ -10,8 +10,7 @@
                 <img src="https://drive.google.com/uc?export=view&id=14yPR6Z8coudiAzEMTSVQK80BVyZjjqVg"
                      class="welcome-icon" alt="welcome icon">
                 <div class="survey-main-title">
-                    <label id="sub-title">Annual Wellness
-                        Survey Login</label>
+                    <label id="sub-title">Annual Wellness Visit (AWV) Questionnaire</label>
                 </div>
                 <div class="survey-sub-welcome-text">Welcome to your
                     Annual Wellness Visit (AWV) Questionnaire! Understanding your health is of upmost importance to us,
@@ -30,28 +29,68 @@
             <!--Questions-->
             <div class="questions-box"
                  v-if="questionsStage"
-                 v-for="(question, index) in orderedQuestions">
-                <div v-show="index === questionIndex" class="question">
-                    {{question.id}}{{'.'}} {{question.body}}
-                    <br>
-                    <!--Questions Answer Type-->
-                    <div class="question-answer-type">
-                        <question-type-text v-if="question.type.answer_type === 'text'"></question-type-text>
-                        <question-type-checkbox
-                                v-if="question.type.answer_type === 'checkbox'"></question-type-checkbox>
-                        <question-type-range v-if="question.type.answer_type === 'range'"></question-type-range>
-                        <question-type-number v-if="question.type.answer_type === 'number'"></question-type-number>
-                        <question-type-radio :question="question"
-                                             v-if="question.type.answer_type === 'radio'"></question-type-radio>
-                        <question-type-date v-if="question.type.answer_type === 'date'"></question-type-date>
+                 v-for="(question, index) in questions">
+                <div v-show="index >= questionIndex" class="question">
+                    <div class="questions-body" v-show="showSubQuestionNew(index)"><!--data-aos="fade-up"-->
 
+                        <div class="questions-title">
+                            {{question.id}}{{'.'}} {{question.body}}
+                        </div>
+                        <br>
+                        <!--Questions Answer Type-->
+                        <div class="question-answer-type">
+                            <question-type-text
+                                    :question="question"
+                                    :userId="userId"
+                                    :surveyInstanceId="surveyInstanceId"
+                                    v-if="question.type.type === 'text'">
+                            </question-type-text>
+
+                            <question-type-checkbox
+                                    :question="question"
+                                    :userId="userId"
+                                    :surveyInstanceId="surveyInstanceId"
+                                    v-if="question.type.type === 'checkbox'">
+                            </question-type-checkbox>
+
+                            <question-type-muti-select
+                                    :question="question"
+                                    :userId="userId"
+                                    :surveyInstanceId="surveyInstanceId"
+                                    v-if="question.type.type === 'multi_select'">
+                            </question-type-muti-select>
+
+                            <question-type-range
+                                    v-if="question.type.type === 'range'">
+                            </question-type-range>
+
+                            <question-type-number
+                                    :question="question"
+                                    :userId="userId"
+                                    :surveyInstanceId="surveyInstanceId"
+                                    v-if="question.type.type === 'number'">
+                            </question-type-number>
+
+                            <question-type-radio
+                                    :question="question"
+                                    :userId="userId"
+                                    :surveyInstanceId="surveyInstanceId"
+                                    v-if="question.type.type === 'radio'">
+                            </question-type-radio>
+
+                            <question-type-date
+                                    v-if="question.type.type === 'date'">
+                            </question-type-date>
+                        </div>
                     </div>
                 </div>
             </div>
-            <!--bottom-navbar-->
-            <br>
             <call-assistance v-if="callAssistance" @closeCallAssistanceModal="hideCallHelp"></call-assistance>
-            <div class="bottom-navbar">
+        </div>
+        <!--bottom-navbar-->
+        <div class="bottom-navbar">
+            <!--phone assistance-->
+            <div class="row">
                 <div v-if="showPhoneButton" class="call-assistance col-lg-1">
                     <button type="button"
                             class="btn btn-default"
@@ -66,19 +105,35 @@
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
+
                 <div v-if="questionsStage">
-                    <button type="button"
-                            id="next-button"
-                            class="btn btn-sm next"
-                            @click="nextQuestions">
-                        <i class="fas fa-angle-down"></i>
-                    </button>
-                    <button v-if="questionIndex > 0" type="button"
-                            id="previous-button"
-                            class="btn btn-sm next"
-                            @click="previousQuestions">
-                        <i class="fas fa-angle-up"></i>
-                    </button>
+                    <!--progress bar-->
+                    <div class="row mb-1" style="margin-left: 380px;">
+                        <div class="progressbar-label col-lg-6 col-sm-2">{{this.progressCount}} of {{totalQuestions}}
+                            completed
+                        </div>
+                        <div class="progressbar col-lg-6 col-sm-10 pt-1">
+                            <b-progress style="width: 280px; height:10px; margin-left: -40%; margin-top: 18%;"
+                                        :value="progressCount"></b-progress>
+                        </div>
+                    </div>
+                </div>
+                <!--scroll buttons-->
+                <div class="row">
+                    <div class="scroll-buttons col-lg-2">
+                        <button type="button"
+                                id="scroll-down"
+                                class="btn btn-sm next"
+                                @click="scrollDown">
+                            <i class="fas fa-angle-down"></i>
+                        </button>
+                        <button v-if="" type="button"
+                                id="scroll-up"
+                                class="btn btn-sm next"
+                                @click="scrollUp">
+                            <i class="fas fa-angle-up"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -88,7 +143,6 @@
 
 
 <script>
-
     import questionTypeText from "./questionTypeText";
     import questionTypeCheckbox from "./questionTypeCheckbox";
     import questionTypeRange from "./questionTypeRange";
@@ -97,11 +151,27 @@
     import questionTypeDate from "./questionTypeDate";
     import callAssistance from "./callAssistance";
     import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
+    import subQuestions from "./subQuestions";
+    import mainQuestions from "./mainQuestions";
+    import {EventBus} from '../event-bus';
+    import AOS from 'aos';
+    import 'aos/dist/aos.css';
+    import BootstrapVue from 'bootstrap-vue'
+    import 'bootstrap/dist/css/bootstrap.css'
+    import 'bootstrap-vue/dist/bootstrap-vue.css'
+    import questionTypeMultiSelect from "./questionTypeMultiSelect";
+
+
+    AOS.init({
+        duration: 1200,
+    });
 
     export default {
         props: ['surveydata'],
 
         components: {
+            'main-questions': mainQuestions,
+            'sub-questions': subQuestions,
             'question-type-text': questionTypeText,
             'question-type-checkbox': questionTypeCheckbox,
             'question-type-range': questionTypeRange,
@@ -109,6 +179,8 @@
             'question-type-radio': questionTypeRadio,
             'question-type-date': questionTypeDate,
             'call-assistance': callAssistance,
+            'bootstrap-vue': BootstrapVue,
+            'question-type-muti-select': questionTypeMultiSelect
         },
 
         data() {
@@ -117,15 +189,32 @@
                 questionsStage: false,
                 welcomeStage: true,
                 callAssistance: false,
-                questions: this.surveydata.survey_instances[0].questions,
+                questions: [],
+                subQuestions: [],
+                shouldShowQuestion: false,
                 questionIndex: 0,
+                progressCount: 0,
+                userId: this.surveydata.id,
+                surveyInstanceId: [],
+                questionIndexAnswers: [],
             }
         },
-
         computed: {
-            orderedQuestions() {
-                /*todo:this has to change to question->pivot->order */
-                return _.orderBy(this.questions, 'id')
+            subQuestionsConditions() {
+                return this.subQuestions.flatMap(function (subquestion) {
+                    return subquestion.conditions;
+                });
+            },
+
+            questionsOrder() {
+                return this.questions.flatMap(function (q) {
+                    return q.pivot.order;
+                });
+
+            },
+
+            totalQuestions() {
+                return this.questions.length - this.subQuestions.length;
             }
         },
 
@@ -145,25 +234,109 @@
                 this.welcomeStage = false;
             },
 
-            nextQuestions() {
-                this.questionIndex++;
+            scrollDown() {
+
             },
 
-            previousQuestions() {
-                this.questionIndex--;
+            scrollUp() {
+
             },
+
+            showSubQuestionNew(index) {
+                if (index != 11) {
+                    return true;
+                }
+                const q = this.questions[index];
+                //get conditions of question
+                //find related_question_order_number in conditions
+                //get value of [question == related_question_order_number]
+                //return value of [question == related_question_order_number] === conditions.related_question_expected_answer
+                const parentQuestionAnswer = this.questionIndexAnswers[q.conditions[0].related_question_order_number];
+                if (parentQuestionAnswer) {
+                    return parentQuestionAnswer === q.conditions[0].related_question_expected_answer;
+                }
+                return false;
+            },
+
+            showSubQuestion(conditions) {
+                this.shouldShowQuestion = true;
+
+            },
+
+            handleRadioInputs(answerVal, questionOrder, questionId) {
+
+                this.questionIndexAnswers[questionOrder] = answerVal;
+
+                const conditions = this.subQuestionsConditions.filter(function (q) {
+                    return q.related_question_order_number === questionOrder
+                        && q.related_question_expected_answer === answerVal
+                });
+
+                if (conditions.length !== 0) {
+                    this.showSubQuestion(conditions);
+                }
+                this.questionIndex++;
+                this.updateProgressBar();
+            },
+
+            handleNumberInputs() {
+                this.questionIndex++;
+                this.updateProgressBar();
+            },
+
+            handleTextInputs() {
+                this.questionIndex++;
+                this.updateProgressBar();
+            },
+
+            addInput() {
+
+            },
+
+            updateProgressBar() {
+                this.progressCount++;
+            },
+
         },
+        mounted() {
+            EventBus.$on('showSubQuestions', (answerVal, questionId) => {
+                this.handleRadioInputs(answerVal, questionId)
+            });
+
+            EventBus.$on('handleNumberType', () => {
+                this.handleNumberInputs();
+            });
+
+            EventBus.$on('handleTextType', () => {
+                this.handleTextInputs();
+            });
+
+            const surveyInstanceId = this.surveydata.survey_instances.map(q => q.id);
+            this.surveyInstanceId.push(...surveyInstanceId);
+        },
+        created() {
+            const questionsData = this.surveydata.survey_instances[0].questions.map(function (q) {
+                const result = Object.assign(q, {answer_types: [q.answer_type]});
+                return result;
+            });
+            const questions = questionsData.filter(question => !question.optional);
+            const subQuestions = questionsData.filter(question => question.optional);
+
+            this.questions.push(...questionsData);
+            this.subQuestions.push(...subQuestions);
+        },
+
     }
 </script>
 
 <style scoped>
     .questions-box {
         padding-top: 5%;
-        padding-left: 15%;
+        padding-left: 9%;
     }
 
     .practice-title {
-        font-family: Poppins, sans-serif;
+        font-family: Poppins;
         font-size: 18px;
         letter-spacing: 1.5px;
         text-align: center;
@@ -176,7 +349,7 @@
     }
 
     .survey-main-title {
-        font-family: Poppins, sans-serif;
+        font-family: Poppins;
         font-size: 24px;
         font-weight: 600;
         letter-spacing: 1.5px;
@@ -186,7 +359,7 @@
     }
 
     .survey-sub-welcome-text {
-        font-family: Poppins, sans-serif;
+        font-family: Poppins;
         font-size: 18px;
         font-weight: normal;
         font-style: normal;
@@ -195,6 +368,35 @@
         letter-spacing: 1px;
         text-align: center;
         margin-top: 25px;
+        margin-left: 13%;
+        width: 75%;
+        color: #1a1a1a;
+    }
+
+    .questions-title {
+        width: 83%;
+        height: 100%;
+        font-family: Poppins;
+        font-size: 114%;
+        font-weight: 500;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: normal;
+        letter-spacing: 1.3px;
+        color: #1a1a1a;
+
+    }
+
+    .question-answer-type {
+        width: 83%;
+        height: 100%;
+        font-family: Poppins;
+        font-size: initial;
+        font-weight: 500;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: normal;
+        letter-spacing: 1.3px;
         color: #1a1a1a;
     }
 
@@ -211,13 +413,15 @@
     .bottom-navbar {
         background-color: #ffffff;
         border-bottom: 1px solid #808080;
+        border-left: 1px solid #808080;
+        border-right: 1px solid #808080;
         min-height: 90px;
         height: 90px;
         margin-top: auto;
     }
 
     .by-circlelink {
-        font-family: Poppins, sans-serif;
+        font-family: Poppins;
         font-size: 18px;
         font-weight: 600;
         font-style: normal;
@@ -234,17 +438,29 @@
         color: #1a1a1a;
     }
 
-    .card {
+    .survey-container {
         margin-top: 50px;
         background-color: #f2f6f9;
         border-top: 1px solid #808080;
         border-left: 1px solid #808080;
         border-right: 1px solid #808080;
         width: 100%;
-        min-height: 700px;
+        min-height: 100%;
+        max-height: 600px;
+        overflow-y: scroll;
     }
 
-    #previous-button, #next-button {
+    .survey-container::-webkit-scrollbar {
+        width: 0 !important
+    }
+
+    .scroll-buttons {
+        display: flex;
+        margin-left: 16%;
+        margin-top: 6%;
+    }
+
+    #scroll-up, #scroll-down {
         background-color: #50b2e2;
         width: 51px;
         height: 51px;
@@ -271,7 +487,7 @@
     }
 
     .call-assistance {
-        display: table-cell;
+        padding-left: 3%;
     }
 
     .btn-default {
@@ -282,4 +498,12 @@
         background-color: #50b2e2;
         margin-top: 15px;
     }
+
+    .progressbar-label {
+        position: relative;
+        margin-left: -25%;
+        margin-top: 7%;
+    }
+
+
 </style>

@@ -2,9 +2,9 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use CircleLinkHealth\Core\Entities\BaseModel;
 
-class QuestionTypesAnswer extends Model
+class QuestionTypesAnswer extends BaseModel
 {
     /*
      *
