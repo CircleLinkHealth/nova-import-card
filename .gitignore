@@ -24,3 +24,4 @@ public/*.js.map
 Modules/
 .phpunit.result.cache
 
+/app/Console/Commands/CreateOrReplaceCallsViewTable.php
