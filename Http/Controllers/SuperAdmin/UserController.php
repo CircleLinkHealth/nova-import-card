@@ -7,16 +7,15 @@
 namespace CircleLinkHealth\Customer\Http\Controllers\SuperAdmin;
 
 use App\CLH\Repositories\UserRepository;
-use App\CPRulesPCP;
 use App\Http\Controllers\Controller;
-use CircleLinkHealth\Customer\Entities\Location;
 use App\Note;
+use Auth;
+use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
-use Auth;
-use Carbon\Carbon;
 use DateTimeZone;
 use Illuminate\Http\Request;
 use Response;
@@ -183,7 +182,11 @@ class UserController extends Controller
                 return redirect()->back()->with('messages', ['Action [Scramble] was successful']);
             }
             if ('withdraw' == $action) {
-                $this->withdrawUsers($users, $params->get('withdrawal-note-body'));
+                $withdrawalReason = $params->get('withdrawal-reason');
+                if ($withdrawalReason == 'Other') {
+                    $withdrawalReason = $params->get('withdrawal-reason-other');
+                }
+                $this->withdrawUsers($users, $withdrawalReason);
 
                 return redirect()->back()->with('messages', ['Action [Withdraw] was successful']);
             }
@@ -247,7 +250,7 @@ class UserController extends Controller
                 if ('impersonate' == $params['action']) {
                     Auth::login($id);
 
-                    return redirect()->route('/', [])->with('messages', ['Logged in as user '.$id]);
+                    return redirect()->route('/', [])->with('messages', ['Logged in as user ' . $id]);
                 }
             }
         }
@@ -370,14 +373,14 @@ class UserController extends Controller
 
         // filter user
         $users = User::whereIn('id', Auth::user()->viewableUserIds())
-            ->orderBy('id', 'desc')
-            ->get()
-            ->mapWithKeys(function ($user) {
-                return [
-                    $user->id => "{$user->getFirstName()} {$user->getLastName()} ({$user->id})",
-                ];
-            })
-            ->all();
+                     ->orderBy('id', 'desc')
+                     ->get()
+                     ->mapWithKeys(function ($user) {
+                         return [
+                             $user->id => "{$user->getFirstName()} {$user->getLastName()} ({$user->id})",
+                         ];
+                     })
+                     ->all();
 
         $filterUser = 'all';
 
@@ -390,8 +393,8 @@ class UserController extends Controller
 
         // role filter
         $roles = Role::all()
-            ->pluck('display_name', 'name')
-            ->all();
+                     ->pluck('display_name', 'name')
+                     ->all();
 
         $filterRole = 'all';
 
@@ -404,10 +407,10 @@ class UserController extends Controller
 
         // program filter
         $programs = Practice::orderBy('id', 'desc')
-            ->whereIn('id', Auth::user()->viewableProgramIds())
-            ->get()
-            ->pluck('display_name', 'id')
-            ->all();
+                            ->whereIn('id', Auth::user()->viewableProgramIds())
+                            ->get()
+                            ->pluck('display_name', 'id')
+                            ->all();
 
         $filterProgram = 'all';
 
@@ -518,7 +521,7 @@ class UserController extends Controller
 
         return redirect()->route('admin.users.edit', [$wpUser->id])->with(
             'messages',
-            ['successfully created new user - '.$wpUser->id]
+            ['successfully created new user - ' . $wpUser->id]
         );
     }
 
@@ -533,7 +536,7 @@ class UserController extends Controller
 
         return redirect()->route('admin.users.edit', [$wpUser->id])->with(
             'messages',
-            ['successfully created new user - '.$wpUser->id]
+            ['successfully created new user - ' . $wpUser->id]
         );
     }
 
@@ -604,28 +607,29 @@ class UserController extends Controller
         }
 
         return $wpUsers->whereIn('id', Auth::user()->viewableUserIds())
-            ->select('id')
-            ->get();
+                       ->select('id')
+                       ->get();
     }
 
-    private function withdrawUsers($userIds, String $noteBody)
+    private function withdrawUsers($userIds, String $withdrawalReason)
     {
         //need to make sure that we are creating notes for participants
         //and withdrawn patients that are not already withdrawn
         $participantIds = User::ofType('participant')
-            ->whereHas('patientInfo', function ($query) {
-                $query->where('ccm_status', '!=', 'withdrawn');
-            })
-            ->whereIn('id', $userIds)
-            ->select(['id'])
-            ->pluck('id')
-            ->all();
+                              ->whereHas('patientInfo', function ($query) {
+                                  $query->where('ccm_status', '!=', 'withdrawn');
+                              })
+                              ->whereIn('id', $userIds)
+                              ->select(['id'])
+                              ->pluck('id')
+                              ->all();
 
         Patient::whereIn('user_id', $participantIds)
-            ->update([
-                'ccm_status'     => 'withdrawn',
-                'date_withdrawn' => Carbon::now()->toDateTimeString(),
-            ]);
+               ->update([
+                   'ccm_status'        => 'withdrawn',
+                   'withdrawal_reason' => $withdrawalReason,
+                   'date_withdrawn'    => Carbon::now()->toDateTimeString(),
+               ]);
 
         $authorId = auth()->id();
 
@@ -635,7 +639,7 @@ class UserController extends Controller
                 'patient_id'   => $userId,
                 'author_id'    => $authorId,
                 'logger_id'    => $authorId,
-                'body'         => $noteBody,
+                'body'         => $withdrawalReason,
                 'type'         => 'Other',
                 'performed_at' => Carbon::now(),
             ];

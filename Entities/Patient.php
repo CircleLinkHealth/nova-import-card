@@ -199,6 +199,7 @@ class Patient extends BaseModel
         'gender',
         'date_paused',
         'date_withdrawn',
+        'withdrawal_reason',
         'date_unreachable',
         'mrn_number',
         'preferred_cc_contact_days',
