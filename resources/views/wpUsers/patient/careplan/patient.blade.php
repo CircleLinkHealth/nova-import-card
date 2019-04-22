@@ -308,8 +308,7 @@ $user_info = [];
                                                 @endif
                                                 <input type=hidden name=program_id value="{{ $programId }}">
                                                 <div class="form-group form-item form-item-spacing col-lg-12 col-sm-12 col-xs-12 {{ $errors->first('program') ? 'has-error' : '' }}">
-                                                    {!! Form::label('preferred_contact_location', 'Preferred Office Location  *:
-        :') !!}
+                                                    {!! Form::label('preferred_contact_location', 'Preferred Office Location  *:') !!}
                                                     {!! Form::select('preferred_contact_location', $locations, $patient->getPreferredContactLocation(), ['class' => 'form-control select-picker'/*, 'style' => 'width:90;'*/]) !!}
                                                 </div>
                                             @else
@@ -359,11 +358,11 @@ $user_info = [];
                                                         <div id="perform-status-select" class="col-lg-8">{!! Form::select('ccm_status', [ CircleLinkHealth\Customer\Entities\Patient::PAUSED => 'Paused', CircleLinkHealth\Customer\Entities\Patient::ENROLLED => 'Enrolled', CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN => 'Withdrawn', CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE => 'Unreachable' ], $patient->getCcmStatus(), ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
                                                     </div>
                                                     <div id="withdrawal-reason" class="row hidden" style="margin-top: 20px">
-                                                        <div class="col-lg-4">{!! Form::label('withdrawal_reason', 'Withdrawal Reason: ') !!}</div>
-                                                        <div id="perform-reason-select" class="col-lg-8">{!! Form::select('withdrawal_reason', $withdrawalReasons, ! array_key_exists($patientWithdrawalReason, $withdrawalReasons) ? 'Other' : $patientWithdrawalReason, ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
+                                                        <div class="col-lg-12">{!! Form::label('withdrawal_reason', 'Withdrawal Reason: ') !!}</div>
+                                                        <div id="perform-reason-select" class="col-lg-12">{!! Form::select('withdrawal_reason', $withdrawalReasons, ! array_key_exists($patientWithdrawalReason, $withdrawalReasons) && $patientWithdrawalReason != null ? 'Other' : $patientWithdrawalReason, ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
                                                     </div>
                                                     <div id="withdrawal-reason-other" class="hidden withdrawal-input">
-                                <textarea id="withdrawal_reason_other" rows="5" cols="100"
+                                <textarea id="withdrawal_reason_other" rows="5" cols="100" style="resize: none;"
                                           placeholder="Enter Withdrawal Reason..." name="withdrawal_reason_other"
                                           required="required" class="form-control">{{! array_key_exists($patientWithdrawalReason, $withdrawalReasons) ? $patientWithdrawalReason : null}}</textarea>
                                                     </div>
@@ -390,9 +389,11 @@ $user_info = [];
 
                                                         if (ccmStatus.value === "withdrawn") {
                                                             $('#withdrawal-reason').removeClass('hidden');
+                                                            onReasonChange();
                                                         }
                                                         else {
                                                             $('#withdrawal-reason').addClass('hidden');
+                                                            $('#withdrawal-reason-other').addClass('hidden');
                                                         }
 
                                                     }
