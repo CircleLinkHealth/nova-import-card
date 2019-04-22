@@ -673,8 +673,6 @@ class PersonalizedPreventionPlanPrepareData
         return $pneumococcal;
     }
 
-//@todo:should check conditionals again!!!!
-
     public function breastCancerMammogram($patientPppData, $title)
     {
         $index                                 = 0;
@@ -843,7 +841,6 @@ class PersonalizedPreventionPlanPrepareData
         return $colorectalCancer;
     }
 
-    //@todo:should come back to this(check on name and type)
     public function skinCancer($patientPppData, $title)
     {
         $index                            = 5;
@@ -963,7 +960,6 @@ class PersonalizedPreventionPlanPrepareData
         return $osteoporosis;
     }
 
-    //@todo:should come back to this(check on first and second metric)
 
     public function glaukoma($patientPppData, $title)
     {

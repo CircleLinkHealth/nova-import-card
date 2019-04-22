@@ -11,12 +11,8 @@ namespace App\Services;
 
 class GetSurveyAnswersForEvaluation
 {
-    public function getAnswersForEvaluation($patientPppData)
+    public function getAnswersForEvaluation()
     {
-        $nutritionData['fruit_veggies'] = ! empty($patientPppData->answers_for_eval['fruit_veggies'])
-            ? $patientPppData->answers_for_eval['fruit_veggies']
-            : 'N/A';
 
-        return $nutritionData['fruit_veggies'];
     }
 }

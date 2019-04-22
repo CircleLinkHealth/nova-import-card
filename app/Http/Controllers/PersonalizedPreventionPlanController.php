@@ -40,8 +40,7 @@ class PersonalizedPreventionPlanController extends Controller
             $recommendationTasks[$tasks['title']] = $tasks;
         }
 
-
-
+//dd($reportData);
         return view('personalizedPreventionPlan', compact('recommendationTasks', 'reportData', 'age'));
 
     }
