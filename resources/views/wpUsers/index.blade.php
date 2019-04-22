@@ -14,6 +14,10 @@
                 margin-bottom: 5px;
             }
 
+            .withdrawal-input {
+                margin-top: 10px;
+            }
+
             a {
                 cursor: pointer;
             }
@@ -40,7 +44,7 @@
             }
 
             function onReasonChange(e){
-                console.log('this works');
+
                 if (e.target.value === "Other") {
                     $('#withdrawal-reason-other').removeClass('hidden');
                 }
@@ -195,7 +199,7 @@
                             </select>
 
 
-                            <div id="withdrawal-reason" class="hidden" style="margin-top: 10px">
+                            <div id="withdrawal-reason" class="hidden withdrawal-input">
                                 Select Withdrawn Reason:
                                 <select id="perform-reason-select" name="withdrawal-reason" >
                                     <option value="No Longer Interested">No Longer Interested</option>
@@ -209,7 +213,7 @@
                                     <option value="Other">Other</option>
                                 </select>
                             </div>
-                            <div id="withdrawal-reason-other" class="hidden" style="margin-top: 10px">
+                            <div id="withdrawal-reason-other" class="hidden withdrawal-input">
                                 <textarea id="withdrawal-reason-other" rows="5" cols="100"
                                           placeholder="Enter Withdrawal Reason..." name="withdrawal-reason-other"
                                           required="required" class="form-control"></textarea>
@@ -224,7 +228,7 @@
                             </button>
                         </div>
 
-                            <div id="select-all-container" class="hidden" style="margin-top: 10px">
+                            <div id="select-all-container" class="hidden withdrawal-input">
 
                                 <input type="checkbox" id="select-all-in-page"/>
                                 <label for="select-all-in-page" id="select-all-in-page-label">Select all</label>
