@@ -1328,6 +1328,15 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->patientInfo->ccm_status;
     }
 
+    public function getWithdrawalReason()
+    {
+        if ( ! $this->patientInfo) {
+            return '';
+        }
+
+        return $this->patientInfo->withdrawal_reason;
+    }
+
     public function getCcmTime()
     {
         return optional(
