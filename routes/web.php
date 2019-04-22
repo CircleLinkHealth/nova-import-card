@@ -20,7 +20,7 @@ $router->get('/', function () use ($router) {
  */
 $router->group([
     'prefix'     => 'twilio',
-//    'middleware' => 'auth',
+    'middleware' => 'auth',
 ], function () use ($router) {
     $router->get('/token', [
         'uses' => 'Twilio\TwilioController@obtainToken',
