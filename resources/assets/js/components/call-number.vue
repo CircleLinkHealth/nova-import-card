@@ -18,6 +18,11 @@
             </strong>
         </div>
         <div :class="hasError ? 'error-logs' : ''">{{log}}</div>
+        <div v-if="hasError" style="display: none">
+            <button class="btn btn-circle btn-warning" @click="initTwilio">
+                Retry
+            </button>
+        </div>
         <div class="warning-logs" v-show="warningEvents.length > 0">
             We have detected poor call quality conditions. You may experience degraded call quality.
         </div>
@@ -205,6 +210,10 @@
             loader: LoaderComponent,
         },
         props: {
+            cpmToken: {
+                type: String,
+                default: ''
+            },
             cpmCallerUrl: {
                 type: String,
                 default: ''
@@ -445,11 +454,11 @@
                         if (isCurrentlyOnConference) {
                             this.log = `Hanging up call to ${number}`;
                             this.axios
-                                .post(this.getUrl('twilio/call/end'), {
+                                .post(this.getUrl(`twilio/call/end?cpm-token=${this.cpmToken}`), {
                                     CallSid: this.callSids[number],
                                     InboundUserId: this.inboundUserId,
                                     OutboundUserId: this.outboundUserId,
-                                })
+                                }, {withCredentials: true})
                                 .then(resp => {
 
                                 })
@@ -489,11 +498,11 @@
             },
             createConference: function () {
                 this.waitingForConference = true;
-                this.axios.post(this.getUrl(`twilio/call/js-create-conference`),
+                this.axios.post(this.getUrl(`twilio/call/js-create-conference?cpm-token=${this.cpmToken}`),
                     {
                         'inbound_user_id': this.inboundUserId,
                         'outbound_user_id': this.outboundUserId,
-                    })
+                    }, {withCredentials: true})
                     .then(resp => {
 
                         if (resp.data.errors) {
@@ -515,11 +524,11 @@
                     return;
                 }
 
-                this.axios.post(this.getUrl(`twilio/call/get-conference-info`),
+                this.axios.post(this.getUrl(`twilio/call/get-conference-info?cpm-token=${this.cpmToken}`),
                     {
                         'inbound_user_id': this.inboundUserId,
                         'outbound_user_id': this.outboundUserId,
-                    })
+                    }, {withCredentials: true})
                     .then(resp => {
 
                         if (resp.data.errors) {
@@ -646,7 +655,7 @@
                 const {number, isUnlisted, isCallToPatient} = this.queuedNumbersForConference.pop();
                 this.addedNumbersInConference.push({number, date: Date.now()});
                 this.axios
-                    .post(this.getUrl('twilio/call/join-conference'), this.getTwimlAppRequest(number, isUnlisted, isCallToPatient))
+                    .post(this.getUrl(`twilio/call/join-conference?cpm-token=${this.cpmToken}`), this.getTwimlAppRequest(number, isUnlisted, isCallToPatient), {withCredentials: true})
                     .then(resp => {
                         console.log(resp.data);
                         if (resp && resp.data && resp.data.call_sid) {
@@ -721,12 +730,12 @@
                 self.waiting = false;
             },
             initTwilio: function () {
-                const url = this.getUrl(`twilio/token`);
+                const url = this.getUrl(`twilio/token?cpm-token=${this.cpmToken}`);
 
                 self.log = "Fetching token from server";
                 self.ready = false;
                 self.waiting = true;
-                self.axios.get(url)
+                self.axios.get(url, {withCredentials: true})
                     .then(response => {
                         self.log = 'Initializing Twilio';
                         self.device = new Twilio.Device(response.data.token, {
