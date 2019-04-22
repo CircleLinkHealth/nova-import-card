@@ -860,14 +860,40 @@ class PersonalizedPreventionPlanPrepareData
             ? $patientPppData->answers_for_eval['family_members_with_condition']
             : 'N/A';
 
-        $hasSkinCancerselected = $this->checkForConditionSelected($screenings, $condition = 'Skin Cancer',
+        $hasSkinCancerSelected = $this->checkForConditionSelected($screenings, $condition = 'Skin Cancer',
             $checkInCategory = 'family_conditions');
 
-        $checkInCategory             = 'multipleQuestion16';
-        $conditionName               = 'Cancer';
-        $conditionType               = 'Skin';
-        $checkInAnswers              = $screenings;
+        $conditionWithTypeIsSelected = $this->checkForConditionWithType($screenings,
+            'multipleQuestion16',
+            'Cancer',
+            'Skin');
+
+        $famMembWithSelectCond = $this->countFamilyMembersWithCondition($screenings, $hasSkinCancerSelected);
+
+        if ($hasSkinCancerSelected === true && $famMembWithSelectCond >= '2' || $conditionWithTypeIsSelected === true) {
+            $skinCancer = $this->getTaskRecommendations($title, $index);
+        }
+
+        return $skinCancer;
+    }
+
+    /**
+     * @param $screenings
+     *
+     * @param string $checkInCategory
+     * @param string $conditionName
+     * @param string $conditionType
+     *
+     * @return array|bool
+     */
+    public function checkForConditionWithType(
+        $screenings,
+        string $checkInCategory,
+        string $conditionName,
+        string $conditionType
+    ) {
         $conditionWithTypeIsSelected = [];
+        $checkInAnswers              = $screenings;
         foreach ($checkInAnswers[$checkInCategory] as $data) {
             if (array_key_exists('type', $data)
                 && isset($data['type'])) {
@@ -877,24 +903,28 @@ class PersonalizedPreventionPlanPrepareData
             }
         }
 
-        $answers                     = [];
-        $checkInCategory             = 'family_members_with_condition';
-        $checkInAnswers              = $screenings;
+        return $conditionWithTypeIsSelected;
+    }
+
+    /**
+     * @param $screenings
+     * @param bool $hasSkinCancerSelected
+     *
+     * @return int
+     */
+    public function countFamilyMembersWithCondition($screenings, bool $hasSkinCancerSelected): int
+    {
+        $answers         = [];
+        $checkInCategory = 'family_members_with_condition';
+        $checkInAnswers  = $screenings;
         foreach ($checkInAnswers[$checkInCategory] as $data) {
-            if ($data['name'] === $hasSkinCancerselected) {
+            if ($data['name'] === $hasSkinCancerSelected) {
                 $answers = $data['family'];
             }
         }
         $famMembWithSelectCond = count($answers);
 
-        if ($hasSkinCancerselected === true && $famMembWithSelectCond >= '2' || $conditionWithTypeIsSelected === true) {
-           $skinCancer = $this->getTaskRecommendations($title, $index);
-        }
-        return $skinCancer;
-
-
-        //@todo:should come back to this(check on name and type)
-
+        return $famMembWithSelectCond;
     }
 
     public function osteoporosis($patientPppData, $title)
@@ -933,6 +963,8 @@ class PersonalizedPreventionPlanPrepareData
         return $osteoporosis;
     }
 
+    //@todo:should come back to this(check on first and second metric)
+
     public function glaukoma($patientPppData, $title)
     {
         $index                            = 1;
@@ -965,12 +997,10 @@ class PersonalizedPreventionPlanPrepareData
         return $diabetes;
     }
 
-    //@todo:should come back to this(check on first and second metric)
-
     public function cholesterolDyslipidemia($patientPppData, $title)
     {
         $index                            = 3;
-        $diabetes                         = [];
+        $cholesterolDyslipidemia          = [];
         $screenings['blood_pressure']     = ! empty($patientPppData->answers_for_eval['blood_pressure'])
             ? $patientPppData->answers_for_eval['blood_pressure']
             : 'N/A';
@@ -983,13 +1013,64 @@ class PersonalizedPreventionPlanPrepareData
         $screenings['current_smoker']     = ! empty($patientPppData->answers_for_eval['current_smoker'])
             ? $patientPppData->answers_for_eval['current_smoker']
             : 'N/A';
-
-        $screenings['physical_activity'] = ! empty($patientPppData->answers_for_eval['physical_activity'])
+        $screenings['physical_activity']  = ! empty($patientPppData->answers_for_eval['physical_activity'])
             ? $patientPppData->answers_for_eval['physical_activity']
             : 'N/A';
-        $screenings['fatty_fried_foods'] = ! empty($patientPppData->answers_for_eval['fatty_fried_foods'])
+        $screenings['fatty_fried_foods']  = ! empty($patientPppData->answers_for_eval['fatty_fried_foods'])
             ? $patientPppData->answers_for_eval['fatty_fried_foods']
             : 'N/A';
+
+        $diabetesSelected = $this->checkForConditionSelected($screenings,
+            'Diabetes',
+            'multipleQuestion16');
+
+        $highBloodPressure = $this->checkForHighBloodPressure($screenings,
+            'blood_pressure',
+            '130',
+            '80');
+
+        if ($highBloodPressure === 'true'
+            || $screenings['bmi'] >= '30'
+            || $diabetesSelected === true
+            || $screenings['current_smoker'] === 'Yes'
+            || $screenings['physical_activity'] === '<3 times a week'
+            || $screenings['physical_activity'] === 'Never'
+            || $screenings['fatty_fried_foods'] !== '0'
+            || $screenings['fatty_fried_foods'] !== '1') {
+
+            $cholesterolDyslipidemia = $this->getTaskRecommendations($title, $index);
+        }
+
+        return $cholesterolDyslipidemia;
+    }
+
+    /**
+     * @param $screenings
+     * @param string $checkInCategory
+     * @param string $conditionFirstMetric
+     * @param string $conditionSecondMetric
+     *
+     * @return array|bool
+     */
+    public function checkForHighBloodPressure(
+        $screenings,
+        string $checkInCategory,
+        string $conditionFirstMetric,
+        string $conditionSecondMetric
+    ) {
+        $highBloodPressure = [];
+        $checkInAnswers    = $screenings;
+        foreach ($checkInAnswers[$checkInCategory] as $data) {
+
+            if ($data['first_metric'] >= $conditionFirstMetric
+                && $data['second_metric'] >= $conditionSecondMetric) {
+                $highBloodPressure = true;
+            } else {
+                $highBloodPressure = false;
+            }
+        }
+
+        return $highBloodPressure;
     }
 
     public function noMedicalPowerOfAttorney($patientPppData, $title)

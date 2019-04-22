@@ -41,7 +41,7 @@ class PersonalizedPreventionPlanController extends Controller
         }
 
 
-dd($recommendationTasks);
+
         return view('personalizedPreventionPlan', compact('recommendationTasks', 'reportData', 'age'));
 
     }

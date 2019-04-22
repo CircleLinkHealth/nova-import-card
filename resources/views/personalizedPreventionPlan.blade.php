@@ -51,9 +51,7 @@
         </div>
     </div>
     @foreach($recommendationTasks as $key => $tasks)
-        @foreach($tasks as $task => $items)
-
-        @endforeach
+       {{$key[$tasks]}}
     @endforeach
 
     {{--{{$reportData['recommendation_tasks']['nutrition_recommendations'][0]['task_body']}}--}}
