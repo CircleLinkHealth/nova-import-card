@@ -12,7 +12,7 @@ cache:
     time: 525600
 build:
     mode: number
-    number: bf08a7
+    number: 35fdd3
     length: 6
     increment_by: 1
     git_absorb: git-local

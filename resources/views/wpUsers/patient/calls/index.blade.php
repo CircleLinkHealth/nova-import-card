@@ -52,7 +52,6 @@
                                 <?php
                                 $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
                                 $ccmCountableUser        = auth()->user()->isCCMCountable();
-                                $cpmToken                = Hash::make(config('app.key').Carbon\Carbon::today()->toDateString());
                                 ?>
                                 <time-tracker ref="TimeTrackerApp"
                                               :twilio-enabled="true"
