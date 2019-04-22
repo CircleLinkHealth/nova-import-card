@@ -14,9 +14,14 @@ class RemoveValue2FromAnswersTable extends Migration
     public function up()
     {
         Schema::table('answers', function (Blueprint $table) {
-            $table->json('value_1')->change();
-            $table->renameColumn('value_1', 'value');
-            $table->dropColumn('value_2');
+            if (Schema::hasColumn('answers', 'value_1')) {
+                $table->json('value_1')->change();
+                $table->renameColumn('value_1', 'value');
+            }
+
+            if (Schema::hasColumn('answers', 'value_2')) {
+                $table->dropColumn('value_2');
+            }
         });
     }
 
@@ -28,9 +33,15 @@ class RemoveValue2FromAnswersTable extends Migration
     public function down()
     {
         Schema::table('answers', function (Blueprint $table) {
-            $table->renameColumn('value', 'value_1');
-            $table->string('value_1')->change();
-            $table->json('value_2');
+            if (Schema::hasColumn('answers', 'value')) {
+                $table->renameColumn('value', 'value_1');
+                $table->string('value_1')->change();
+            }
+
+            if ( ! Schema::hasColumn('answers', 'value_2')) {
+                $table->json('value_2');
+            }
+
         });
     }
 }
