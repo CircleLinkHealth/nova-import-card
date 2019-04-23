@@ -38,12 +38,19 @@ class SurveyService
                                      ->first();
 
 
-       return $patientWithSurveyData;
+        return $patientWithSurveyData;
 
     }
 
-    public function updateOrCreateAnswer($input)
-    {//update or create the answer
+    /**
+     * Update or create an answer for a survey
+     *
+     * @param $input
+     *
+     * @return bool|string false if could not create/update answer, string for new survey status
+     */
+    public static function updateOrCreateAnswer($input)
+    {
         $answer = Answer::updateOrCreate([
             'user_id'            => $input['user_id'],
             'survey_instance_id' => $input['survey_instance_id'],
@@ -52,18 +59,25 @@ class SurveyService
             'question_type_answer_id' => array_key_exists('question_type_answer_id', $input)
                 ? $input['question_type_answer_id']
                 : null,
-            'value'                 => $input['value']
+            'value'                   => $input['value'],
         ]);
 
         if ( ! $answer) {
             return false;
         }
 
-        return $this->updateSurveyInstanceStatus($input);
+        return SurveyService::updateSurveyInstanceStatus($input);
 
     }
 
-    private function updateSurveyInstanceStatus($input)
+    /**
+     * Update the status of a survey based on answered questions
+     *
+     * @param $input
+     *
+     * @return string Status of survey
+     */
+    public static function updateSurveyInstanceStatus($input)
     {
         $user = User::with([
             'surveyInstances' => function ($instance) use ($input) {

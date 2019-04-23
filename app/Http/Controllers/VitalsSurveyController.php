@@ -2,24 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Answer;
-use App\Http\Requests\GetSurvey;
-use App\Services\SurveyService;
-use Illuminate\Http\Request;
+use App\Http\Requests\GetVitalsSurvey;
+use App\Http\Requests\StoreVitalsAnswer;
+use App\Services\VitalsSurveyService;
 
-class SurveyController extends Controller
+class VitalsSurveyController extends Controller
 {
     private $service;
 
-    public function __construct(SurveyService $service)
+    public function __construct(VitalsSurveyService $service)
     {
         $this->service = $service;
     }
 
-    public function getSurvey(GetSurvey $request)
+    public function getSurvey(GetVitalsSurvey $request)
     {
         //change auth user id
-        $userWithSurveyData = $this->service->getSurveyData(auth()->user()->id, $request->survey_id);
+        $userWithSurveyData = $this->service->getSurveyData($request->get('patient_id'));
         if ( ! $userWithSurveyData) {
             return response()->json(['errors' => 'Data not found'], 400);
         }
@@ -31,10 +30,8 @@ class SurveyController extends Controller
     }
 
     //i have disabled storeAnswer since we are not using any auth scaffolding yet
-    public function storeAnswer(/*StoreAnswer*/
-        Request $request
-    ) {
-        $answer = SurveyService::updateOrCreateAnswer($request->input());
+    public function storeAnswer(StoreVitalsAnswer $request) {
+        $answer = $this->service->updateOrCreateAnswer($request);
 
         if ( ! $answer) {
             return response()->json(['errors' => 'Answer was not created'], 400);
@@ -45,11 +42,5 @@ class SurveyController extends Controller
             'survey_status' => $answer,
         ], 200);
 
-    }
-
-    public function getPreviousAnswer()
-    {
-        $previousQuestionAnswer = Answer::where('question_id', '26')->get();
-        dd($previousQuestionAnswer);
     }
 }
