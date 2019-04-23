@@ -49,6 +49,47 @@
                 <span style="color: #50b2e2">Billing Code</span>
             </div>
         </div>
+        <br>
+
+
+        <div class="row">
+            <div class="col">
+                <div class="report-title">
+                    <h3>Personalized Health Advice</h3>
+                </div>
+            </div>
+        </div>
+
+
+        {{--Recommendations Section--}}
+        @foreach($recommendationTasks as $key => $recommendations)
+            @foreach($recommendationTasks[$key] as $recommendations)
+            <div class="col" style="padding-top: 1%">
+
+            </div>
+            <div class="recommendations-area">
+                @if(! empty($recommendations))
+
+                    {{$recommendations['task_body']}}
+                @endif
+                   @endforeach
+                @endforeach
+
+            </div>
     </div>
 
 @endsection
+
+<style>
+    .recommendations-area {
+        font-family: Poppins;
+        font-size: 14px;
+        font-weight: normal;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: normal;
+        letter-spacing: 0.8px;
+        text-align: justify;
+        color: #1a1a1a;
+    }
+</style>

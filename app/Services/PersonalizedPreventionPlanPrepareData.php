@@ -175,9 +175,9 @@ class PersonalizedPreventionPlanPrepareData
         foreach ($taskRecommendation->data as $item) {
             $recommendation[] = $item;
         }
-        $nutritionRec = $recommendation[$index];
+        $recommend = $recommendation[$index];
 
-        return $nutritionRec;
+        return $recommend;
 
     }
 
