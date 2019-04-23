@@ -6,78 +6,80 @@
 
 namespace CircleLinkHealth\TimeTracking\Entities;
 
-use App\Scopes\Universal\DateScopesTrait;
+use CircleLinkHealth\TimeTracking\Traits\DateScopesTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * CircleLinkHealth\TimeTracking\Entities\PageTimer.
  *
- * @property int                                                      $id
- * @property int                                                      $billable_duration
- * @property int                                                      $duration
- * @property string|null                                              $duration_unit
- * @property int                                                      $patient_id
- * @property int                                                      $provider_id
- * @property string                                                   $start_time
- * @property string                                                   $end_time
- * @property string|null                                              $redirect_to
- * @property string|null                                              $url_full
- * @property string|null                                              $url_short
- * @property string                                                   $activity_type
- * @property string                                                   $title
- * @property string                                                   $query_string
- * @property int                                                      $program_id
- * @property string|null                                              $ip_addr
- * @property \Carbon\Carbon                                           $created_at
- * @property \Carbon\Carbon                                           $updated_at
- * @property string|null                                              $processed
- * @property string|null                                              $rule_params
- * @property int|null                                                 $rule_id
- * @property \Carbon\Carbon|null                                      $deleted_at
- * @property string|null                                              $user_agent
+ * @property int $id
+ * @property int $billable_duration
+ * @property int $duration
+ * @property string|null $duration_unit
+ * @property int $patient_id
+ * @property int $provider_id
+ * @property string $start_time
+ * @property string $end_time
+ * @property string|null $redirect_to
+ * @property string|null $url_full
+ * @property string|null $url_short
+ * @property string $activity_type
+ * @property string $title
+ * @property string $query_string
+ * @property int $program_id
+ * @property string|null $ip_addr
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property string|null $processed
+ * @property string|null $rule_params
+ * @property int|null $rule_id
+ * @property \Carbon\Carbon|null $deleted_at
+ * @property string|null $user_agent
  * @property \CircleLinkHealth\TimeTracking\Entities\Activity[]|\Illuminate\Database\Eloquent\Collection $activities
- * @property \CircleLinkHealth\Customer\Entities\User                                                $logger
- * @property \CircleLinkHealth\Customer\Entities\User                                                $patient
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer createdThisMonth($field = 'created_at')
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer createdOn(Carbon $date, $field = 'created_at')
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer createdToday($field = 'created_at')
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer createdYesterday($field = 'created_at')
+ * @property \CircleLinkHealth\Customer\Entities\User $logger
+ * @property \CircleLinkHealth\Customer\Entities\User $patient
+ * @method static \Illuminate\Database\Eloquent\Builder|PageTimer createdThisMonth($field = 'created_at')
+ * @method static \Illuminate\Database\Eloquent\Builder|PageTimer createdOn(Carbon $date, $field = 'created_at')
+ * @method static \Illuminate\Database\Eloquent\Builder|PageTimer createdToday($field = 'created_at')
+ * @method static \Illuminate\Database\Eloquent\Builder|PageTimer createdYesterday($field = 'created_at')
  * @method static bool|null forceDelete()
- * @method static \Illuminate\Database\Query\Builder|\App\PageTimer onlyTrashed()
+ * @method static \Illuminate\Database\Query\Builder|PageTimer onlyTrashed()
  * @method static bool|null restore()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer whereActivityType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer whereActualEndTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer whereActualStartTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer whereBillableDuration($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer whereDuration($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer whereDurationUnit($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer whereEndTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer whereIpAddr($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer wherePatientId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer whereProcessed($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer whereProgramId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer whereProviderId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer whereQueryString($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer whereRedirectTo($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer whereRuleId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer whereRuleParams($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer whereStartTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer whereTitle($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer whereUrlFull($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer whereUrlShort($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer whereUserAgent($value)
- * @method static \Illuminate\Database\Query\Builder|\App\PageTimer withTrashed()
- * @method static \Illuminate\Database\Query\Builder|\App\PageTimer withoutTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|PageTimer whereActivityType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PageTimer whereActualEndTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PageTimer whereActualStartTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PageTimer whereBillableDuration($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PageTimer whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PageTimer whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PageTimer whereDuration($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PageTimer whereDurationUnit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PageTimer whereEndTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PageTimer whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PageTimer whereIpAddr($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PageTimer wherePatientId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PageTimer whereProcessed($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PageTimer whereProgramId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PageTimer whereProviderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PageTimer whereQueryString($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PageTimer whereRedirectTo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PageTimer whereRuleId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PageTimer whereRuleParams($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PageTimer whereStartTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PageTimer whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PageTimer whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PageTimer whereUrlFull($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PageTimer whereUrlShort($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PageTimer whereUserAgent($value)
+ * @method static \Illuminate\Database\Query\Builder|PageTimer withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|PageTimer withoutTrashed()
  * @mixin \Eloquent
  * @property-read \CircleLinkHealth\TimeTracking\Entities\Activity $activity
  * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\PageTimer createdInMonth(\Carbon\Carbon $date, $field = 'created_at')
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\PageTimer newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\PageTimer
+ *     createdInMonth(\Carbon\Carbon $date, $field = 'created_at')
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\PageTimer
+ *     newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\PageTimer newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\PageTimer query()
  */

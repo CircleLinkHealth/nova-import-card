@@ -6,13 +6,11 @@
 
 namespace CircleLinkHealth\TimeTracking\Entities;
 
-use CircleLinkHealth\TimeTracking\Entities\ActivityMeta;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use App\CcmTimeApiLog;
-use App\Scopes\Universal\DateScopesTrait;
+use CircleLinkHealth\TimeTracking\Traits\DateScopesTrait;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
-use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\DB;
@@ -22,60 +20,65 @@ use Prettus\Repository\Traits\TransformableTrait;
 /**
  * CircleLinkHealth\TimeTracking\Entities\Activity.
  *
- * @property int                                                                            $id
- * @property string|null                                                                    $type
- * @property int                                                                            $duration
- * @property string|null                                                                    $duration_unit
- * @property int                                                                            $patient_id
- * @property int                                                                            $provider_id
- * @property int                                                                            $logger_id
- * @property int                                                                            $comment_id
- * @property bool                                                                           $is_behavioral
- * @property int|null                                                                       $sequence_id
- * @property string                                                                         $obs_message_id
- * @property string                                                                         $logged_from
- * @property string                                                                         $performed_at
- * @property string                                                                         $performed_at_gmt
- * @property \Carbon\Carbon                                                                 $created_at
- * @property \Carbon\Carbon                                                                 $updated_at
- * @property \Carbon\Carbon|null                                                            $deleted_at
- * @property int|null                                                                       $page_timer_id
- * @property \CircleLinkHealth\Customer\Entities\NurseCareRateLog[]|\Illuminate\Database\Eloquent\Collection               $careRateLogs
- * @property \App\CcmTimeApiLog                                                             $ccmApiTimeSentLog
- * @property mixed                                                                          $performed_at_year_month
- * @property \CircleLinkHealth\TimeTracking\Entities\ActivityMeta[]|\Illuminate\Database\Eloquent\Collection                   $meta
- * @property \CircleLinkHealth\TimeTracking\Entities\PageTimer                                                                 $pageTime
- * @property \CircleLinkHealth\Customer\Entities\User                                                                      $patient
- * @property \CircleLinkHealth\Customer\Entities\User                                                                      $provider
+ * @property int $id
+ * @property string|null $type
+ * @property int $duration
+ * @property string|null $duration_unit
+ * @property int $patient_id
+ * @property int $provider_id
+ * @property int $logger_id
+ * @property int $comment_id
+ * @property bool $is_behavioral
+ * @property int|null $sequence_id
+ * @property string $obs_message_id
+ * @property string $logged_from
+ * @property string $performed_at
+ * @property string $performed_at_gmt
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property \Carbon\Carbon|null $deleted_at
+ * @property int|null $page_timer_id
+ * @property \CircleLinkHealth\Customer\Entities\NurseCareRateLog[]|\Illuminate\Database\Eloquent\Collection
+ *     $careRateLogs
+ * @property \App\CcmTimeApiLog $ccmApiTimeSentLog
+ * @property mixed $performed_at_year_month
+ * @property \CircleLinkHealth\TimeTracking\Entities\ActivityMeta[]|\Illuminate\Database\Eloquent\Collection $meta
+ * @property \CircleLinkHealth\TimeTracking\Entities\PageTimer $pageTime
+ * @property \CircleLinkHealth\Customer\Entities\User $patient
+ * @property \CircleLinkHealth\Customer\Entities\User $provider
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity createdBy(\CircleLinkHealth\Customer\Entities\User $user)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity createdThisMonth($field = 'created_at')
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity createdOn(Carbon $date, $field = 'created_at')
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity createdToday($field = 'created_at')
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity createdYesterday($field = 'created_at')
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity whereCommentId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity whereDuration($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity whereDurationUnit($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity whereLoggedFrom($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity whereLoggerId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity whereObsMessageId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity wherePageTimerId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity wherePatientId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity wherePerformedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity wherePerformedAtGmt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity whereProviderId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity whereSequenceId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity
+ *     createdBy(\CircleLinkHealth\Customer\Entities\User $user)
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity createdThisMonth($field = 'created_at')
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity createdOn(Carbon $date, $field = 'created_at')
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity createdToday($field = 'created_at')
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity createdYesterday($field = 'created_at')
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity whereCommentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity whereDuration($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity whereDurationUnit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity whereLoggedFrom($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity whereLoggerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity whereObsMessageId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity wherePageTimerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity wherePatientId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity wherePerformedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity wherePerformedAtGmt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity whereProviderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity whereSequenceId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity whereUpdatedAt($value)
  * @mixin \Eloquent
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\Activity createdInMonth(\Carbon\Carbon $date, $field = 'created_at')
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\Activity newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\Activity
+ *     createdInMonth(\Carbon\Carbon $date, $field = 'created_at')
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\Activity
+ *     newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\Activity newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\Activity query()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\Activity whereIsBehavioral($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\Activity
+ *     whereIsBehavioral($value)
  */
 class Activity extends BaseModel implements Transformable
 {
@@ -171,9 +174,9 @@ class Activity extends BaseModel implements Transformable
      * Returns activity data used to build reports.
      *
      * @param array $months
-     * @param int   $timeLessThan
+     * @param int $timeLessThan
      * @param array $patientIds
-     * @param bool  $range
+     * @param bool $range
      *
      * @return bool
      */
@@ -197,10 +200,10 @@ class Activity extends BaseModel implements Transformable
                 $timeLessThan
             ) {
                 $subQuery->select('patient_id')
-                    ->from(with(new Activity())->getTable())
-                    ->groupBy('patient_id')
+                         ->from(with(new Activity())->getTable())
+                         ->groupBy('patient_id')
                     //->having(DB::raw('SUM(duration)'), '<', $timeLessThan)
-                    ->get();
+                         ->get();
             })
             ->with('patient')
             ->orderBy('performed_at', 'asc')
@@ -265,7 +268,7 @@ class Activity extends BaseModel implements Transformable
         User $user
     ) {
         $builder->where('provider_id', $user->id)
-            ->orWhere('logger_id', $user->id);
+                ->orWhere('logger_id', $user->id);
     }
 
     public static function task_types_to_topics()
@@ -286,9 +289,9 @@ class Activity extends BaseModel implements Transformable
         $format = false
     ) {
         $raw = Activity::where('patient_id', $p->user_id)
-            ->where('performed_at', '>', $month->firstOfMonth()->startOfMonth()->toDateTimeString())
-            ->where('performed_at', '<', $month->lastOfMonth()->endOfDay()->toDateTimeString())
-            ->sum('duration');
+                       ->where('performed_at', '>', $month->firstOfMonth()->startOfMonth()->toDateTimeString())
+                       ->where('performed_at', '<', $month->lastOfMonth()->endOfDay()->toDateTimeString())
+                       ->sum('duration');
 
         if ($format) {
             return round($raw / 60, 2);
