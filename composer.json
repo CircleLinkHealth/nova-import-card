@@ -51,6 +51,7 @@
         "twilio/sdk": "^5.28"
     },
     "require-dev": {
+        "barryvdh/laravel-ide-helper": "^2.6",
         "beyondcode/laravel-dump-server": "^1.0",
         "filp/whoops": "^2.0",
         "fzaninotto/faker": "^1.4",
@@ -100,6 +101,15 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
+        ],
+        "clear": [
+            "php artisan clear-compiled",
+            "composer dump-autoload"
+        ],
+        "ide": [
+            "php artisan ide-helper:generate",
+            "php artisan -vvv ide-helper:models --dir='app/' --dir='Modules/'",
+            "php artisan ide-helper:meta"
         ]
     }
 }

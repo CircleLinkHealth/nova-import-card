@@ -1,6 +1,9 @@
 {
     "private": true,
     "scripts": {
+        "build": "composer install && php artisan migrate && npm install",
+        "build-dev": "npm run build && npm run dev && composer ide",
+        "build-prod": "npm run build && npm run prod",
         "dev": "npm run development",
         "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
         "watch": "npm run development -- --watch",
@@ -14,7 +17,7 @@
         "bootstrap": "^4.3.1",
         "cross-env": "^5.1",
         "jquery": "^3.2",
-        "laravel-mix": "^4.0.7",
+        "laravel-mix": "^4.0.15",
         "lodash": "^4.17.5",
         "popper.js": "^1.12",
         "resolve-url-loader": "^2.3.1",
@@ -32,7 +35,7 @@
         "aos": "^3.0.0-beta.6",
         "bootstrap-vue": "^2.0.0-rc.16",
         "font-awesome": "^4.7.0",
-        "mdbootstrap": "^4.7.6",
+        "mdbootstrap": "^4.7.7",
         "typeface-poppins": "0.0.72",
         "vue-progressbar": "^0.7.5"
     }
