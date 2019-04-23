@@ -14,7 +14,7 @@ class AddWithdrawalReasonToPatientInfoTable extends Migration
     public function up()
     {
         Schema::table('patient_info', function (Blueprint $table) {
-            $table->text('withdrawal_reason')->after('date_withdrawn')->nullable();
+            $table->text('withdrawn_reason')->after('date_withdrawn')->nullable();
         });
     }
 
@@ -26,7 +26,7 @@ class AddWithdrawalReasonToPatientInfoTable extends Migration
     public function down()
     {
         Schema::table('patient_info', function (Blueprint $table) {
-            $table->dropColumn('withdrawal_reason');
+            $table->dropColumn('withdrawn_reason');
         });
     }
 }

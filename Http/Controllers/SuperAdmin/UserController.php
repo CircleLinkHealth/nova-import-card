@@ -182,11 +182,11 @@ class UserController extends Controller
                 return redirect()->back()->with('messages', ['Action [Scramble] was successful']);
             }
             if ('withdraw' == $action) {
-                $withdrawalReason = $params->get('withdrawal-reason');
-                if ($withdrawalReason == 'Other') {
-                    $withdrawalReason = $params->get('withdrawal-reason-other');
+                $withdrawnReason = $params->get('withdrawn-reason');
+                if ($withdrawnReason == 'Other') {
+                    $withdrawnReason = $params->get('withdrawn-reason-other');
                 }
-                $this->withdrawUsers($users, $withdrawalReason);
+                $this->withdrawUsers($users, $withdrawnReason);
 
                 return redirect()->back()->with('messages', ['Action [Withdraw] was successful']);
             }
@@ -611,7 +611,7 @@ class UserController extends Controller
                        ->get();
     }
 
-    private function withdrawUsers($userIds, String $withdrawalReason)
+    private function withdrawUsers($userIds, String $withdrawnReason)
     {
         //need to make sure that we are creating notes for participants
         //and withdrawn patients that are not already withdrawn
@@ -627,7 +627,7 @@ class UserController extends Controller
         Patient::whereIn('user_id', $participantIds)
                ->update([
                    'ccm_status'        => 'withdrawn',
-                   'withdrawal_reason' => $withdrawalReason,
+                   'withdrawn_reason' => $withdrawnReason,
                    'date_withdrawn'    => Carbon::now()->toDateTimeString(),
                ]);
 
@@ -639,7 +639,7 @@ class UserController extends Controller
                 'patient_id'   => $userId,
                 'author_id'    => $authorId,
                 'logger_id'    => $authorId,
-                'body'         => $withdrawalReason,
+                'body'         => $withdrawnReason,
                 'type'         => 'Other',
                 'performed_at' => Carbon::now(),
             ];

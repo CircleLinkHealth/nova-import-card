@@ -199,7 +199,7 @@ class Patient extends BaseModel
         'gender',
         'date_paused',
         'date_withdrawn',
-        'withdrawal_reason',
+        'withdrawn_reason',
         'date_unreachable',
         'mrn_number',
         'preferred_cc_contact_days',
@@ -550,7 +550,7 @@ class Patient extends BaseModel
             'date_paused'      => optional($this->date_paused)->format('c'),
             'date_withdrawn'   => optional($this->date_withdrawn)->format('c'),
             'date_unreachable' => optional($this->date_unreachable)->format('c'),
-            'withdrawal_reason'=> $this->withdrawal_reason,
+            'withdrawn_reason'=> $this->withdrawn_reason,
             'created_at'       => optional($this->created_at)->format('c'),
             'updated_at'       => optional($this->updated_at)->format('c'),
         ];
