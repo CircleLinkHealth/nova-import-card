@@ -308,13 +308,13 @@ class PatientFilters extends QueryFilters
             'users.id',
             '=',
             "${patientTable}.user_id"
-        )->orderBy("${patientTable}.withdrawal_reason", $type)->groupBy('users.id');
+        )->orderBy("${patientTable}.withdrawn_reason", $type)->groupBy('users.id');
     }
 
     public function withdrawnReason($reason)
     {
         return $this->builder->whereHas('patientInfo', function ($query) use ($reason) {
-            $query->where('withdrawal_reason', 'LIKE', '%'.$reason.'%');
+            $query->where('withdrawn_reason', 'LIKE', '%'.$reason.'%');
         });
     }
 }

@@ -357,14 +357,14 @@ $user_info = [];
                                                         <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Enrollment: ') !!}</div>
                                                         <div id="perform-status-select" class="col-lg-8">{!! Form::select('ccm_status', [ CircleLinkHealth\Customer\Entities\Patient::PAUSED => 'Paused', CircleLinkHealth\Customer\Entities\Patient::ENROLLED => 'Enrolled', CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN => 'Withdrawn', CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE => 'Unreachable' ], $patient->getCcmStatus(), ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
                                                     </div>
-                                                    <div id="withdrawal-reason" class="row hidden" style="margin-top: 20px">
-                                                        <div class="col-lg-12">{!! Form::label('withdrawal_reason', 'Withdrawal Reason: ') !!}</div>
-                                                        <div id="perform-reason-select" class="col-lg-12">{!! Form::select('withdrawal_reason', $withdrawalReasons, ! array_key_exists($patientWithdrawalReason, $withdrawalReasons) && $patientWithdrawalReason != null ? 'Other' : $patientWithdrawalReason, ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
+                                                    <div id="withdrawn-reason" class="row hidden" style="margin-top: 20px">
+                                                        <div class="col-lg-12">{!! Form::label('withdrawn_reason', 'Withdrawn Reason: ') !!}</div>
+                                                        <div id="perform-reason-select" class="col-lg-12">{!! Form::select('withdrawn_reason', $withdrawnReasons, ! array_key_exists($patientWithdrawnReason, $withdrawnReasons) && $patientWithdrawnReason != null ? 'Other' : $patientWithdrawnReason, ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
                                                     </div>
-                                                    <div id="withdrawal-reason-other" class="hidden withdrawal-input">
-                                <textarea id="withdrawal_reason_other" rows="5" cols="100" style="resize: none;"
-                                          placeholder="Enter Withdrawal Reason..." name="withdrawal_reason_other"
-                                          required="required" class="form-control">{{! array_key_exists($patientWithdrawalReason, $withdrawalReasons) ? $patientWithdrawalReason : null}}</textarea>
+                                                    <div id="withdrawn-reason-other" class="hidden withdrawn-input">
+                                <textarea id="withdrawn_reason_other" rows="5" cols="100" style="resize: none;"
+                                          placeholder="Enter Withdrawal Reason..." name="withdrawn_reason_other"
+                                          required="required" class="form-control">{{! array_key_exists($patientWithdrawnReason, $withdrawnReasons) ? $patientWithdrawnReason : null}}</textarea>
                                                     </div>
                                                 </div>
                                             @else
@@ -388,27 +388,27 @@ $user_info = [];
                                                         let ccmStatus = document.getElementById("ccm_status");
 
                                                         if (ccmStatus.value === "withdrawn") {
-                                                            $('#withdrawal-reason').removeClass('hidden');
+                                                            $('#withdrawn-reason').removeClass('hidden');
                                                             onReasonChange();
                                                         }
                                                         else {
-                                                            $('#withdrawal-reason').addClass('hidden');
-                                                            $('#withdrawal-reason-other').addClass('hidden');
+                                                            $('#withdrawn-reason').addClass('hidden');
+                                                            $('#withdrawn-reason-other').addClass('hidden');
                                                         }
 
                                                     }
 
                                                     function onReasonChange(e){
 
-                                                        let reason = document.getElementById("withdrawal_reason");
-                                                        let reasonOther = document.getElementById('withdrawal_reason_other');
+                                                        let reason = document.getElementById("withdrawn_reason");
+                                                        let reasonOther = document.getElementById('withdrawn_reason_other');
 
                                                         if (reason.value === "Other") {
-                                                            $('#withdrawal-reason-other').removeClass('hidden');
+                                                            $('#withdrawn-reason-other').removeClass('hidden');
                                                             reasonOther.setAttribute('required', '');
                                                         }
                                                         else {
-                                                            $('#withdrawal-reason-other').addClass('hidden');
+                                                            $('#withdrawn-reason-other').addClass('hidden');
                                                             reasonOther.removeAttribute('required');
                                                         }
 

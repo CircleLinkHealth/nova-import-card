@@ -37,7 +37,7 @@
                         echo $status;
                     ?>
                 </td>
-                <td> {{$patient['withdrawal_reason']}}
+                <td> {{$patient['withdrawn_reason']}}
                 <td> {{$patient['dob']}} </td>
                 <td> {{$patient['mrn']}} </td>
                 <td> {{$patient['phone']}} </td>

@@ -359,7 +359,7 @@
                         patient.program_name = (this.practices.find(practice => practice.id == patient.program_id) || {}).display_name || ''
                         patient.age = (patient.patient_info || {}).age || ''
                         patient.mrn = (patient.patient_info || {}).mrn_number || ''
-                        patient.withdrawnReason = (patient.patient_info || {}).withdrawal_reason || ''
+                        patient.withdrawnReason = (patient.patient_info || {}).withdrawn_reason || ''
                         patient.registeredOn = moment(patient.created_at || '').format('MM-DD-YYYY')
                         patient.ccmStatusDate = (this.getStatusDate(patient) || '')
                         patient.sort_registeredOn = new Date(patient.created_at)

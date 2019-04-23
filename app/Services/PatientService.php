@@ -80,7 +80,7 @@ class PatientService
                             $practice ? $practice['display_name'] : null,
                             $patient ? $patient['ccm_status'] : null,
                             $careplan ? $careplan['status'] : null,
-                            $patient ? $patient['withdrawal_date'] : null,
+                            $patient ? $patient['withdrawn_reason'] : null,
                             $patient ? $patient['birth_date'] : null,
                             $patient ? $patient['mrn'] : null,
                             $user['phone'],

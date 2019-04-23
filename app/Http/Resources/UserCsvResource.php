@@ -40,7 +40,7 @@ class UserCsvResource extends Resource
                '"'.$practice->display_name.'",'.
                '"'.$patient->ccm_status.'",'.
                '"'.optional($careplan)->status.'",'.
-               '"'.$patient->withdrawal_reason.'",'.
+               '"'.$patient->withdrawn_reason.'",'.
                '"'.$patient->birth_date.'",'.
                '"'.$patient->mrn_number.'",'.
                '"'.$this->getPhone().'",'.
