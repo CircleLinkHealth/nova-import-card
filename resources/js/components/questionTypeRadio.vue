@@ -82,8 +82,6 @@
 
         methods: {
             handleAnswer(answerVal) {
-                console.log(answerVal);
-
                 const questionTypeAnswerId = this.possibleAnswers.filter(possibleAnswer => {
                     /*what i want to say is - if value === null*/
                     if (possibleAnswer.value !== answerVal) {
@@ -92,11 +90,8 @@
                     return possibleAnswer.value === answerVal;
                 }).map(questionTypeAnswer => questionTypeAnswer.id);
 
-
-                console.log(questionTypeAnswerId);
-
                 var answer = {
-                    value_1: answerVal
+                    value: answerVal
                 };
 
                 var answerData = JSON.stringify(answer);
@@ -106,7 +101,7 @@
                     survey_instance_id: this.surveyInstanceId[0],
                     question_id: this.question.id,
                     question_type_answer_id: questionTypeAnswerId[0],
-                    value_1: answerData,
+                    value: answerData,
                 })
                     .then(function (response) {
                         console.log(response);

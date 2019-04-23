@@ -2374,16 +2374,16 @@
         },
         {
             "name": "nexmo/client",
-            "version": "1.6.3",
+            "version": "1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Nexmo/nexmo-php.git",
-                "reference": "29f6856b4d918f3565bf56c26bc01dd664988b24"
+                "reference": "f8582d2361382e2b02352b1cb96c69ce2a2c7360"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Nexmo/nexmo-php/zipball/29f6856b4d918f3565bf56c26bc01dd664988b24",
-                "reference": "29f6856b4d918f3565bf56c26bc01dd664988b24",
+                "url": "https://api.github.com/repos/Nexmo/nexmo-php/zipball/f8582d2361382e2b02352b1cb96c69ce2a2c7360",
+                "reference": "f8582d2361382e2b02352b1cb96c69ce2a2c7360",
                 "shasum": ""
             },
             "require": {
@@ -2418,7 +2418,7 @@
                 }
             ],
             "description": "PHP Client for using Nexmo's API.",
-            "time": "2019-03-15T11:47:11+00:00"
+            "time": "2019-04-13T10:18:16+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -4866,16 +4866,16 @@
         },
         {
             "name": "twilio/sdk",
-            "version": "5.31.0",
+            "version": "5.31.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twilio/twilio-php.git",
-                "reference": "f61003ba5577ccae8ac2ec25d18e1d70fe9ba65e"
+                "reference": "7bf7fc2912720122a37df1bc330eaffe382de65b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/f61003ba5577ccae8ac2ec25d18e1d70fe9ba65e",
-                "reference": "f61003ba5577ccae8ac2ec25d18e1d70fe9ba65e",
+                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/7bf7fc2912720122a37df1bc330eaffe382de65b",
+                "reference": "7bf7fc2912720122a37df1bc330eaffe382de65b",
                 "shasum": ""
             },
             "require": {
@@ -4908,7 +4908,7 @@
                 "sms",
                 "twilio"
             ],
-            "time": "2019-03-28T23:43:43+00:00"
+            "time": "2019-04-12T23:00:47+00:00"
         },
         {
             "name": "venturecraft/revisionable",

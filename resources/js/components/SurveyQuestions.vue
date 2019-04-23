@@ -53,16 +53,16 @@
                                     v-if="question.type.type === 'checkbox'">
                             </question-type-checkbox>
 
-                            <question-type-muti-select
-                                    :question="question"
-                                    :userId="userId"
-                                    :surveyInstanceId="surveyInstanceId"
-                                    v-if="question.type.type === 'multi_select'">
-                            </question-type-muti-select>
+                               <question-type-muti-select
+                                       :question="question"
+                                       :userId="userId"
+                                       :surveyInstanceId="surveyInstanceId"
+                                       v-if="question.type.type === 'multi_select'">
+                               </question-type-muti-select>
 
-                            <question-type-range
-                                    v-if="question.type.type === 'range'">
-                            </question-type-range>
+                               <question-type-range
+                                       v-if="question.type.type === 'range'">
+                               </question-type-range>
 
                             <question-type-number
                                     :question="question"
@@ -71,20 +71,23 @@
                                     v-if="question.type.type === 'number'">
                             </question-type-number>
 
-                            <question-type-radio
-                                    :question="question"
-                                    :userId="userId"
-                                    :surveyInstanceId="surveyInstanceId"
-                                    v-if="question.type.type === 'radio'">
-                            </question-type-radio>
+                               <question-type-radio
+                                      :question="question"
+                                      :userId="userId"
+                                      :surveyInstanceId="surveyInstanceId"
+                                      v-if="question.type.type === 'radio'">
+                              </question-type-radio>
 
-                            <question-type-date
-                                    v-if="question.type.type === 'date'">
-                            </question-type-date>
+                              <question-type-date
+                                      v-if="question.type.type === 'date'">
+                              </question-type-date>
                         </div>
                     </div>
                 </div>
             </div>
+
+        </div>
+        <div class="call-assistance">
             <call-assistance v-if="callAssistance" @closeCallAssistanceModal="hideCallHelp"></call-assistance>
         </div>
         <!--bottom-navbar-->
@@ -119,7 +122,7 @@
                     </div>
                 </div>
                 <!--scroll buttons-->
-                <div class="row">
+                <div v-show="!welcomeStage" class="row">
                     <div class="scroll-buttons col-lg-2">
                         <button type="button"
                                 id="scroll-down"
@@ -247,6 +250,7 @@
                     return true;
                 }
                 const q = this.questions[index];
+
                 //get conditions of question
                 //find related_question_order_number in conditions
                 //get value of [question == related_question_order_number]
@@ -255,6 +259,7 @@
                 if (parentQuestionAnswer) {
                     return parentQuestionAnswer === q.conditions[0].related_question_expected_answer;
                 }
+
                 return false;
             },
 
@@ -272,9 +277,9 @@
                         && q.related_question_expected_answer === answerVal
                 });
 
-                if (conditions.length !== 0) {
-                    this.showSubQuestion(conditions);
-                }
+             /* if (conditions.length !== 0) {
+                    this.showSubQuestionNew(conditions);
+                }*/
                 this.questionIndex++;
                 this.updateProgressBar();
             },
@@ -488,6 +493,7 @@
 
     .call-assistance {
         padding-left: 3%;
+        position: absolute;
     }
 
     .btn-default {

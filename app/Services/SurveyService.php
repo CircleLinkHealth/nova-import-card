@@ -37,13 +37,13 @@ class SurveyService
                                      ->where('id', $patientId)
                                      ->first();
 
-        return $patientWithSurveyData;
+
+       return $patientWithSurveyData;
 
     }
 
     public function updateOrCreateAnswer($input)
-    {
-        //update or create the answer
+    {//update or create the answer
         $answer = Answer::updateOrCreate([
             'user_id'            => $input['user_id'],
             'survey_instance_id' => $input['survey_instance_id'],
@@ -52,7 +52,7 @@ class SurveyService
             'question_type_answer_id' => array_key_exists('question_type_answer_id', $input)
                 ? $input['question_type_answer_id']
                 : null,
-            'value'                 => $input['value'],
+            'value'                 => $input['value']
         ]);
 
         if ( ! $answer) {
