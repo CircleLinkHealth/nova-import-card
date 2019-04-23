@@ -3,8 +3,7 @@
 ?>
 
 <link href="{{ asset('/css/app.css') }}" rel="stylesheet">
-
-<div class="table-responsive  panel">
+<div class="table-responsive  panel" style="overflow: visible !important;">
     <table class="table table-striped table-bordered">
         <thead>
             <tr>
@@ -13,12 +12,12 @@
                 <th>Program</th>
                 <th>CCM Status</th>
                 <th>Careplan Status</th>
+                <th>Withdrawn Reason</th>
                 <th>DOB</th>
                 <th>MRN</th>
                 <th>Phone</th>
                 <th>Age</th>
                 <th>Registered on</th>
-                <th>Last Reading</th>
                 <th>CCM</th>
             </tr>
         </thead>
@@ -29,7 +28,7 @@
                 <td> {{$patient['provider']}} </td>
                 <td> {{$patient['site']}} </td>
                 <td> {{$patient['ccm_status']}} </td>
-                <td> 
+                <td>
                     <?php
                         $status = $patient['careplan_status'];
                         if ($status && str_contains($status, '{')) {
@@ -38,13 +37,13 @@
                         echo $status;
                     ?>
                 </td>
+                <td> {{$patient['withdrawal_reason']}}
                 <td> {{$patient['dob']}} </td>
                 <td> {{$patient['mrn']}} </td>
                 <td> {{$patient['phone']}} </td>
                 <td> {{$patient['age']}} </td>
                 <td> {{$patient['reg_date']}} </td>
-                <td> {{$patient['last_read']}} </td>
-                <td> 
+                <td>
                     <?php
                         $seconds = (int) ($patient['ccm_seconds'] ?? '0');
                         $hours   = str_pad((string) floor($seconds / 3600), 2, '0', STR_PAD_LEFT);
