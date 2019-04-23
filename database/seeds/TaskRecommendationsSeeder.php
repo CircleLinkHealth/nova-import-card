@@ -88,7 +88,7 @@ class TaskRecommendationsSeeder extends Seeder
                             ],
                             [
                                 'body'       => 'Smoking Pharmacotherapy',
-                                'code'       => 'various',
+                                'code'       => 'Various',
                                 'time_frame' => 'As Needed',
                             ],
                             [
@@ -229,11 +229,34 @@ If you cannot do this because of chronic conditions, be as physically active as 
                         'task_body'           => 'If you are sexually active with multiple sexual partners, you should be diligent in protecting yourself from sexually transmitted infections (STI) and diseases. Vaginal or anal penetration by an infected partner who isn\'t wearing a latex condom significantly increases the risk of getting an STI. Improper or inconsistent use of condoms can also increase your risk. When being sexually active, make sure to use protection or ask your partner to use protection. Your doctor may suggest:',
                         'recommendation_body' => '~Enrolling in sexual health counseling 
                         ~And/or taking HIV and/or STI tests ',
+                        'report_table_data'   =>
+                            [
+                                [
+                                    'body'       => 'Counseling (Sexual Health)',
+                                    'code'       => 'G0445',
+                                    'time_frame' => 'As Needed',
+                                ],
+                                [
+
+                                    'body'       => 'STI Testing',
+                                    'code'       => 'Various',
+                                    'time_frame' => 'As Needed',
+
+                                ],
+                            ],
                     ],
                     [
                         'qualitative_trigger' => 'Woman of reproductive age (15-44)',
                         'task_body'           => 'As you are a woman of reproductive age, your doctor may also suggest an:',
                         'recommendation_body' => '~Intimate Partner Violence (IPV) screening',
+                        'report_table_data'   =>
+                            [
+                                [
+                                    'body'       => 'Intimate Partner Violence (IPV) screening',
+                                    'code'       => 'Various',
+                                    'time_frame' => 'As Needed',
+                                ],
+                            ],
                     ],
                 ],
 
@@ -272,6 +295,19 @@ If you cannot do this because of chronic conditions, be as physically active as 
                         ~Bone density test 											
                         ~Home fall risk evaluation by home health (may include physical therapy, occupational  therapy, home inspection to determine if your house (rugs, cords, etc) are hazards for falls etc.)												
                         ~Balance exercises',
+                            'report_table_data'   =>
+                                [
+                                    [
+                                        'body'       => 'Home fall risk evaluation',
+                                        'code'       => 'N/A',
+                                        'time_frame' => 'As Needed',
+                                    ],
+                                    [
+                                        'body'       => 'Bone density test',
+                                        'code'       => '77085 / 77080 / 77082',
+                                        'time_frame' => 'Every 2 Years',
+                                    ],
+                                ],
                         ],
                     ],
             ],
@@ -290,6 +326,14 @@ If you cannot do this because of chronic conditions, be as physically active as 
                             Your doctor may follow up with:',
                             'recommendation_body' => '~A hearing test in the office
                             ~Potential for hearing aids',
+                            'report_table_data'   =>
+                                [
+                                    [
+                                        'body'       => 'A hearing test in the office',
+                                        'code'       => 'Various',
+                                        'time_frame' => 'As Needed',
+                                    ],
+                                ],
                         ],
                     ],
             ],
@@ -307,6 +351,14 @@ If you cannot do this because of chronic conditions, be as physically active as 
                             'recommendation_body' => '~Laboratory and/or brain imaging evaluations							
                         ~Cognitive training, lifestyle behavioral interventions, exercise, educational interventions, and/or multidisciplinary care interventions					
                         ~Medications',
+                            'report_table_data'   =>
+                                [
+                                    [
+                                        'body'       => 'Cognitive training, lifestyle behavioral interventions, exercise, educational interventions, and/or multidisciplinary care interventions',
+                                        'code'       => 'Various',
+                                        'time_frame' => 'As Needed',
+                                    ],
+                                ],
                         ],
                         [
                             'qualitative_trigger' => 'Moderate to severe neurocognitive impairment',
@@ -314,6 +366,19 @@ If you cannot do this because of chronic conditions, be as physically active as 
                             'recommendation_body' => '~Laboratory and/or brain imaging evaluations						
                             ~Cognitive training, lifestyle behavioral interventions, exercise, educational interventions, and/or multidisciplinary care interventions
                             ~Pharmacological treatments',
+                            'report_table_data'   =>
+                                [
+                                    [
+                                        'body'       => 'Laboratory and/or brain imaging',
+                                        'code'       => 'Various',
+                                        'time_frame' => 'As Needed',
+                                    ],
+                                    [
+                                        'body'       => 'Cognitive training, lifestyle behavioral interventions, exercise, educational interventions, and/or multidisciplinary care interventions',
+                                        'code'       => 'Various',
+                                        'time_frame' => 'As Needed',
+                                    ],
+                                ],
 
                         ],
                     ],
@@ -331,6 +396,19 @@ If you cannot do this because of chronic conditions, be as physically active as 
                             'task_body'           => 'Many older people experience problems in daily activities. Those difficulties restrict their ability to perform self-care, a common reason why older people seek help from outsiders, move to assisted living communities, or enter nursing homes. As you indicated you have trouble doing {insert all selected tasks in Q26} and have indicated you have nobody to assist you, your doctor may suggest:',
                             'recommendation_body' => '~Occupational therapy
                             ~Assisted living or a home care provider',
+                            'report_table_data'   =>
+                                [
+                                    [
+                                        'body'       => 'Occupational therapy',
+                                        'code'       => 'Various',
+                                        'time_frame' => 'As Needed',
+                                    ],
+                                    [
+                                        'body'       => 'Assisted living or a home care provider',
+                                        'code'       => 'Various',
+                                        'time_frame' => 'As Needed',
+                                    ],
+                                ],
 
                         ],
                     ],
@@ -349,6 +427,14 @@ If you cannot do this because of chronic conditions, be as physically active as 
                             'qualitative_trigger' => 'Pt. hasn’t/not planning on receiving flu shot this year',
                             'task_body'           => 'You indicated you are not planning on receiving a flu shot this year. Influenza is a potentially serious disease that can lead to hospitalization and sometimes even death. Every flu season is different, and influenza infection can affect people differently, but millions of people get the flu every year, and  an annual seasonal flu vaccine is the best way to help protect against flu.  Flu vaccines cause antibodies to develop in the body about two weeks after vaccination. These antibodies provide protection against infection with the viruses that are in the vaccine. Your doctor should advise you to get a:',
                             'recommendation_body' => '~Flu vaccine yearly',
+                            'report_table_data'   =>
+                                [
+                                    [
+                                        'body'       => 'Flu Vaccine',
+                                        'code'       => 'G0008',
+                                        'time_frame' => 'Annual',
+                                    ],
+                                ],
                         ],
                         /*Tetanus Diphtheria (initial and/or booster)*/
                         [
@@ -356,6 +442,19 @@ If you cannot do this because of chronic conditions, be as physically active as 
                             'qualitative_trigger' => 'Pt. hasn’t received a TDaP or DTaP',
                             'task_body'           => 'You have indicated you have not received, or are unsure of having received, either an initial Tetanus Diphtheria (DTaP) vaccine or a booster (TDaP) vaccination in the past 10 years.The Td vaccine is used to protect against Tetanus and diphtheria, both infections caused by bacteria. Tetanus (Lockjaw) causes painful muscle tightening and stiffness, and kills 1 out of every 10 people who are infected. Diphtheria can cause a thick coating to form in the back of the throat, and can lead to breathing problems, heart failure, paralysis, and death. Since vaccination began, reports of cases for both diseases have dropped by about 99%. Your doctor should advise you to receive:',
                             'recommendation_body' => '~One dose of Tdap (if you have never gotten it before), and a Tdap booster every 10 years at your next visit',
+                            'report_table_data'   =>
+                                [
+                                    [
+                                        'body'       => 'Tetanus: One dose of Tdap (if you have never gotten it before)',
+                                        'code'       => '90715 / 90471',
+                                        'time_frame' => '1x per lifetime',
+                                    ],
+                                    [
+                                        'body'       => 'Tetanus: Tdap booster every 10 years at your next visit',
+                                        'code'       => '90715 / 90471',
+                                        'time_frame' => 'Every 10 Years',
+                                    ],
+                                ],
                         ],
                         /*Chicken Pox/Varicella*/
                         [
@@ -363,6 +462,14 @@ If you cannot do this because of chronic conditions, be as physically active as 
                             'qualitative_trigger' => 'Pt. hasn’t received Varicella vaccination',
                             'task_body'           => 'Chickenpox is a very contagious disease caused by the varicella-zoster virus (VZV). It causes a blister-like rash, itching, tiredness, and fever. Each year, chickenpox caused about 10,600 hospitalizations and 100 to 150 deaths. Two doses of the vaccine are about 90% effective at preventing chickenpox. When you get vaccinated, you protect yourself and others in your community. This is especially important for people who cannot get vaccinated, such as those with weakened immune systems or pregnant women. At your next visit, your doctor should advise a:',
                             'recommendation_body' => '~Varicella Vaccination',
+                            'report_table_data'   =>
+                                [
+                                    [
+                                        'body'       => 'Chicken Pox/Varicella Vaccine',
+                                        'code'       => '90396 / 90471',
+                                        'time_frame' => '1x per lifetime',
+                                    ],
+                                ],
                         ],
                         /*Hepatitis B*/
                         [
@@ -370,6 +477,14 @@ If you cannot do this because of chronic conditions, be as physically active as 
                             'qualitative_trigger' => 'Patient hasn’t received Hep B vaccine',
                             'task_body'           => 'Hepatitis B is a serious disease caused by a virus that attacks the liver. The virus, which is called Hepatitis B virus (HBV), can cause lifelong infection, cirrhosis (scarring) of the liver, liver cancer, liver failure, and death. At your next visit, your doctor should consider a:',
                             'recommendation_body' => '~Hepatitis B (HBV) Vaccination',
+                            'report_table_data'   =>
+                                [
+                                    [
+                                        'body'       => 'Hepatitis B (HBV) Vaccination',
+                                        'code'       => '90746 / 90471',
+                                        'time_frame' => '1x per lifetime',
+                                    ],
+                                ],
                         ],
                         /*Measles Mumps Rubella (MMR)*/
                         [
@@ -377,6 +492,14 @@ If you cannot do this because of chronic conditions, be as physically active as 
                             'qualitative_trigger' => 'Patient hasn’t received appropriate doses of MMR Vaccine',
                             'task_body'           => 'Measles is a very contagious disease caused by a virus. It spreads through the air when an infected person coughs or sneezes. Measles starts with fever. Soon after, it causes a cough, runny nose, and red eyes. Then a rash of tiny, red spots breaks out. At your next visit, your doctor should consider a:',
                             'recommendation_body' => '~Measles, Mumps, and Rubella (MMR) Vaccination',
+                            'report_table_data'   =>
+                                [
+                                    [
+                                        'body'       => 'Measles, Mumps, and Rubella (MMR) Vaccination',
+                                        'code'       => '90707 / 90708 / 90710 / 90471',
+                                        'time_frame' => '1x per lifetime',
+                                    ],
+                                ],
                         ],
                         /*Human Papillomavirus (HPV)*/
                         [
@@ -384,6 +507,14 @@ If you cannot do this because of chronic conditions, be as physically active as 
                             'qualitative_trigger' => 'Patient hasn’t received appropriate doses of HPV vaccine',
                             'task_body'           => 'Human Papillomavirus is a group of more than 150 related viruses which are transmitted through intimate skin-to-skin contact, most commonly vaginal, anal, or oral sex. Some HPV types can cause genital warts (papillomas). Some other HPV types can lead to cancer, including cancer of mouth/ throat, anus/rectum, penis in males, and cervix, vagina, and vulva in females. At your next visit, if you are female or a homosexual male, your doctor should advise a:',
                             'recommendation_body' => '~An appropriate number of doses of Human Papillomavirus (HPV) Vaccination (2 if under age 15, 3 if under age 26)',
+                            'report_table_data'   =>
+                                [
+                                    [
+                                        'body'       => 'An appropriate number of doses of Human Papillomavirus (HPV) Vaccination (2 if under age 15, 3 if under age 26)',
+                                        'code'       => '90650 / 90471',
+                                        'time_frame' => '1x per lifetime',
+                                    ],
+                                ],
                         ],
                         /*Shingles (Herpes Zoster)*/
                         [
@@ -391,6 +522,14 @@ If you cannot do this because of chronic conditions, be as physically active as 
                             'qualitative_trigger' => 'Pt. has not received Shingles Vaccine AND patient is over 50 yrs. old',
                             'task_body'           => 'Shingles is a painful rash that usually develops on one side of the body, often the face or torso. The rash consists of blisters that typically scab over in 7 to 10 days and clears up within 2 to 4 weeks. This long-lasting pain is called postherpetic neuralgia (PHN), and it is the most common complication of shingles. Your risk of getting shingles and PHN increases as you get older. Your doctor should consider:',
                             'recommendation_body' => '~2 doses of RZV (preferred) or 1 dose of ZVL, (even if you have had shingles before)',
+                            'report_table_data'   =>
+                                [
+                                    [
+                                        'body'       => 'Shingles: 2 doses of RZV (preferred) or 1 dose of ZVL, (even if you have had shingles before)',
+                                        'code'       => '90736 / 90471',
+                                        'time_frame' => '1x per lifetime',
+                                    ],
+                                ],
                         ],
                         /*Pneumococcal Vaccine*/
                         [
@@ -398,6 +537,14 @@ If you cannot do this because of chronic conditions, be as physically active as 
                             'qualitative_trigger' => 'Pt. has not had: 1 dose of PCV13 plus at least 1 dose of PPSV23.',
                             'task_body'           => 'Pneumococcal disease is any type of infection caused by Streptococcus pneumoniae bacteria. The CDC recommends pneumococcal conjugate vaccine for all children younger than 2 years old, all adults 65 years or older, and people 2 through 64 years old with certain medical conditions. The CDC also recommends pneumococcal polysaccharide vaccine for all adults 65 years or older, people 2 through 64 years old with certain medical conditions, and adults 19 through 64 years old who smoke cigarettes. Your doctor should advise you to get:',
                             'recommendation_body' => '~1 dose of PCV13 and at least 1 dose of PPSV23',
+                            'report_table_data'   =>
+                                [
+                                    [
+                                        'body'       => 'Pneumonia vaccine: 1 dose of PCV13 and at least 1 dose of PPSV23',
+                                        'code'       => 'G0009',
+                                        'time_frame' => '1x per lifetime',
+                                    ],
+                                ],
                         ],
                     ],
             ],
@@ -415,6 +562,14 @@ If you cannot do this because of chronic conditions, be as physically active as 
                             'qualitative_trigger' => 'Female and 50-74 years old, OR have family history of breast cancer AND has not had a mammogram in the past 2 years',
                             'task_body'           => 'Breast cancer screening is checking a woman’s breasts for cancer before there are signs or symptoms of the disease. At this time, mammograms (X-rays of the breast) are the best way to find breast cancer early, when it is easier to treat and before it is big enough to feel or cause symptoms.  Due to your age and other potential risk factors, your doctor may suggest:',
                             'recommendation_body' => '~Getting a mammogram every 2 years',
+                            'report_table_data'   =>
+                                [
+                                    [
+                                        'body'       => 'Mammogram',
+                                        'code'       => '77067',
+                                        'time_frame' => 'Every 2 Years',
+                                    ],
+                                ],
                         ],
                         /*Cervical Cancer - Pap Smear*/
                         [
@@ -422,6 +577,14 @@ If you cannot do this because of chronic conditions, be as physically active as 
                             'qualitative_trigger' => 'Female and 21-29 years old',
                             'task_body'           => 'Screening tests offer the best chance to have cervical cancer found early when successful treatment is likely. Screening can also actually prevent most cervical cancers by finding abnormal cervical cell changes (pre-cancers) so that they can be treated before they have a chance to turn into a cervical cancer. If it’s found early, cervical cancer is one of the most successfully treatable cancers. Since you are between 21-29 years old, your doctor may recommend:',
                             'recommendation_body' => '~Screening for cervical cancer every 3 years with cervical cytology alone',
+                            'report_table_data'   =>
+                                [
+                                    [
+                                        'body'       => 'Screening for cervical cancer with cervical cytology alone',
+                                        'code'       => 'Various',
+                                        'time_frame' => 'Every 3 Years',
+                                    ],
+                                ],
                         ],
 
                         [
@@ -429,6 +592,14 @@ If you cannot do this because of chronic conditions, be as physically active as 
                             'qualitative_trigger' => 'Female and 30-65 years old',
                             'task_body'           => 'Screening tests offer the best chance to have cervical cancer found early when successful treatment is likely. Screening can also actually prevent most cervical cancers by finding abnormal cervical cell changes (pre-cancers) so that they can be treated before they have a chance to turn into a cervical cancer. If it’s found early, cervical cancer is one of the most successfully treatable cancers. Since you are between 30-65 years old, your doctor may recommend:',
                             'recommendation_body' => '~Screening every 3 years with cervical cytology alone, every 5 years with high-risk human papillomavirus (hrHPV) testing alone, or every 5 years with hrHPV testing in combination with cytology (cotesting)',
+                            'report_table_data'   =>
+                                [
+                                    [
+                                        'body'       => 'Screening every 3 years with cervical cytology alone, every 5 years with high-risk human papillomavirus (hrHPV) testing alone, or every 5 years with hrHPV testing in combination with cytology (cotesting)',
+                                        'code'       => 'Various',
+                                        'time_frame' => 'Every 3 or 5 Years',
+                                    ],
+                                ],
                         ],
                         /*Prostate Cancer- Prostate Screening*/
                         [
@@ -436,6 +607,14 @@ If you cannot do this because of chronic conditions, be as physically active as 
                             'qualitative_trigger' => 'Male and 55-69 years old and has not been screened in 10 years',
                             'task_body'           => 'Prostate cancer is the most common cancer among men (after skin cancer), but it can often be treated successfully. For every 1,000 men between the ages of 55 and 69 years old who are screened, about 1 death will be prevented, and 3 men will be prevented from getting prostate cancer that spreads to other places in the body. At your next visit, your doctor may:',
                             'recommendation_body' => '~Discuss the benefits and harms of the prostate specific antigen (PSA) test',
+                            'report_table_data'   =>
+                                [
+                                    [
+                                        'body'       => 'Discuss pros and cons of Prostrate Screening (PSA)',
+                                        'code'       => 'N/A',
+                                        'time_frame' => 'Every 10 Years',
+                                    ],
+                                ],
                         ],
                         /*Colorectal Cancer Screening:*/
                         [
@@ -446,6 +625,14 @@ If you cannot do this because of chronic conditions, be as physically active as 
                             ~Fecal Immunohistochemistry Test (FIT) every year						
                             ~Sigmoidoscopy every 5 years								
                             ~Colonoscopy every 10 years',
+                            'report_table_data'   =>
+                                [
+                                    [
+                                        'body'       => 'Dr. may suggest 1 of following: Fecal Occult Blood Test (FOBT) 1x per year, Fecal Immunohistochemistry Test (FIT) 1x per year, Sigmoidoscopy every 5 years, OR Colonoscopy every 10 years',
+                                        'code'       => 'Various',
+                                        'time_frame' => 'Annual to every 10 years',
+                                    ],
+                                ],
                         ],
                         /*Skin Cancer Screening:*/
                         [
@@ -469,6 +656,14 @@ If you cannot do this because of chronic conditions, be as physically active as 
                             'qualitative_trigger' => 'Female older than 65 or Male older than 70 or fall risk is expressed (and bone mass test not done for two years consecutively in the past)',
                             'task_body'           => 'Bone is living tissue that is constantly being broken down and replaced. Osteoporosis occurs when the creation of new bone doesn\'t keep up with the removal of old bone. Your bones are prone to becoming weak and brittle as you grow older— so brittle that a fall or even mild stresses such as bending over or coughing has the potential to cause a dangerous fracture. Your provider may recommend screening for Osteoporosis by getting a:',
                             'recommendation_body' => '~Bone Density Test',
+                            'report_table_data'   =>
+                                [
+                                    [
+                                        'body'       => 'Bone density test',
+                                        'code'       => '77085 / 77080 / 77082',
+                                        'time_frame' => 'Every 2 Years',
+                                    ],
+                                ],
                         ],
                         /*Glaucoma*/
                         [
@@ -476,6 +671,14 @@ If you cannot do this because of chronic conditions, be as physically active as 
                             'qualitative_trigger' => 'If patient has not had an eye test/Glaucoma screening in the past 2 years',
                             'task_body'           => 'Glaucoma is a group of diseases that damage the eye’s optic nerve and can result in vision loss and even blindness. About 3 million Americans have glaucoma. There are often no early symptoms, which is why 50% of people with glaucoma don’t know they have the disease. There is no cure (yet) for glaucoma, but if it’s caught early, you can preserve your vision and prevent vision loss. Your doctor may suggest:',
                             'recommendation_body' => '~Testing for glaucoma once every 1-2 years',
+                            'report_table_data'   =>
+                                [
+                                    [
+                                        'body'       => 'Home fall risk evaluation',
+                                        'code'       => 'G0117 / G0118',
+                                        'time_frame' => 'Every 1-2 Years',
+                                    ],
+                                ],
                         ],
                         /*Diabetes*/
                         [
@@ -484,6 +687,19 @@ If you cannot do this because of chronic conditions, be as physically active as 
                             'task_body'           => 'Diabetes mellitus refers to a group of diseases that affect how your body uses blood sugar (glucose). Glucose is vital to your health because it\'s an important source of energy for the cells that make up your muscles and tissues. It\'s also your brain\'s main source of fuel. No matter what type of diabetes you have, it can lead to excess sugar in your blood. Too much sugar in your blood can lead to serious health problems. You may be at risk for diabetes due to your age and BMI. Your doctor may:',
                             'recommendation_body' => '~Test your blood glucose levels									
                             ~Suggest behavioral counseling interventions to promote a healthful diet and physical activity',
+                            'report_table_data'   =>
+                                [
+                                    [
+                                        'body'       => 'Blood Glucose Test (A1C) / Diabetes Screening',
+                                        'code'       => '82947',
+                                        'time_frame' => 'As Needed',
+                                    ],
+                                    [
+                                        'body'       => 'Behavioral counseling for healthy diet and physical activity',
+                                        'code'       => 'G0270 / G0271 / G0447 / G0479 /  Others',
+                                        'time_frame' => 'As Needed',
+                                    ],
+                                ],
                         ],
                         /*Cholesterol/Dyslipidemia*/
                         [
@@ -491,6 +707,14 @@ If you cannot do this because of chronic conditions, be as physically active as 
                             'qualitative_trigger' => 'If high blood pressure, Obesity or any other risk factor (eg Poor diet (High in saturated fats), lack of physical activity, smoking, diabetes etc..)',
                             'task_body'           => 'Cholesterol is a dense, fatty substance found in every cell of your body. High cholesterol is a condition that occurs when levels of cholesterol in your blood are elevated enough to cause health problems such as heart disease. You may be at risk of High Cholesterol. Your provider may encourage you to:',
                             'recommendation_body' => '~Test your blood for dyslipidemia (high cholesterol)',
+                            'report_table_data'   =>
+                                [
+                                    [
+                                        'body'       => 'Dyslipidemia (high cholesterol) testing',
+                                        'code'       => '82465 / Others',
+                                        'time_frame' => 'As Needed',
+                                    ],
+                                ],
                         ],
                         /*Advanced Care Planning*/
                         [/*No Medical Power of Attorney = NMPA*/
@@ -498,12 +722,28 @@ If you cannot do this because of chronic conditions, be as physically active as 
                          'qualitative_trigger' => 'No Medical Power of Attorney',
                          'task_body'           => 'A Medical Power of Attorney is a legal instrument (separate from a durable power of attorney) that allows you to select the person that you want to make healthcare decisions for you if and when you become unable to make them for yourself. The person you pick is your representative in that situation for purposes of healthcare decision-making. You could limit your representative to certain types of decisions, or allow your representative to make any healthcare decision that might come up. Talk to your doctor about taking steps to:',
                          'recommendation_body' => '~Set up a Medical Power of Attorney',
+                         'report_table_data'   =>
+                             [
+                                 [
+                                     'body'       => 'Bone density test',
+                                     'code'       => '99497',
+                                     'time_frame' => 'As Needed',
+                                 ],
+                             ],
                         ],
                         [
                             'sub_title'           => 'Advanced Care Planning/NLWAD',
                             'qualitative_trigger' => ' No living will/advance directive',
                             'task_body'           => 'Living wills and other advance directives are written, legal instructions regarding your preferences for medical care if you are unable to make decisions for yourself. Advance directives guide choices for doctors and caregivers if you\'re terminally ill, seriously injured, in a coma, in the late stages of dementia or near the end of life. By planning ahead, you can get the medical care you want, avoid unnecessary suffering and relieve caregivers of decision-making burdens during moments of crisis or grief. You also help reduce confusion or disagreement about the choices you would want people to make on your behalf. Advance directives aren\'t just for older adults. Unexpected end-of-life situations can happen at any age, so it\'s important for all adults to prepare these documents. Talk to your doctor about taking steps to:',
                             'recommendation_body' => '~Set up a living will/advance directive',
+                            'report_table_data'   =>
+                                [
+                                    [
+                                        'body'       => 'Set up a living will/advance directive',
+                                        'code'       => '99497',
+                                        'time_frame' => 'As Needed',
+                                    ],
+                                ],
                         ],
                     ],
             ],
