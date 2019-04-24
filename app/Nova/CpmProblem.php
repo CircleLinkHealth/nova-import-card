@@ -8,8 +8,8 @@ namespace App\Nova;
 
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
-use Laravel\Nova\Http\Requests\NovaRequest;
 
 class CpmProblem extends Resource
 {
@@ -72,7 +72,9 @@ class CpmProblem extends Resource
         return [
             ID::make()->sortable(),
             Text::make('Name')->sortable(),
+            Text::make('default_icd_10_code')->sortable(),
             Text::make('Contains')->sortable(),
+            Number::make('Weight')->sortable(),
         ];
     }
 
