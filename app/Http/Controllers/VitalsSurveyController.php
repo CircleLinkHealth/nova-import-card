@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\GetVitalsSurvey;
+use App\Http\Requests\GetVitalsSurveyRequest;
 use App\Http\Requests\StoreVitalsAnswer;
 use App\Services\VitalsSurveyService;
 
@@ -15,22 +15,33 @@ class VitalsSurveyController extends Controller
         $this->service = $service;
     }
 
-    public function getSurvey(GetVitalsSurvey $request)
+    /**
+     * Patient cannot access this route.
+     * User must have `vitals-survey-complete` permission.
+     *
+     * @param GetVitalsSurveyRequest $request
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function getSurvey(GetVitalsSurveyRequest $request)
     {
-        //change auth user id
         $userWithSurveyData = $this->service->getSurveyData($request->get('patient_id'));
-        if ( ! $userWithSurveyData) {
-            return response()->json(['errors' => 'Data not found'], 400);
-        }
 
-        return response()->json([
-            'success' => true,
-            'data'    => $userWithSurveyData->toArray(),
-        ], 200);
+        return view('survey.vitals.index', [
+            'data' => $userWithSurveyData->toArray(),
+        ]);
     }
 
-    //i have disabled storeAnswer since we are not using any auth scaffolding yet
-    public function storeAnswer(StoreVitalsAnswer $request) {
+    /**
+     * Patient cannot access this route.
+     * User must have `vitals-survey-complete` permission.
+     *
+     * @param StoreVitalsAnswer $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function storeAnswer(StoreVitalsAnswer $request)
+    {
         $answer = $this->service->updateOrCreateAnswer($request);
 
         if ( ! $answer) {
