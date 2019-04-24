@@ -9,6 +9,7 @@ use App\Providers\DirectMailServiceProvider;
 use App\Providers\EmailArrayValidatorServiceProvider;
 use App\Providers\FaxServiceProvider;
 use App\Providers\GoogleDriveServiceProvider;
+use App\Providers\NovaServiceProvider;
 use App\Providers\ObserversServiceProvider;
 use App\Providers\TwilioClientServiceProvider;
 use App\Providers\ViewComposerServiceProvider;
@@ -228,6 +229,7 @@ return [
         AuthyServiceProvider::class,
         PragmaRX\Health\ServiceProvider::class,
         TwilioClientServiceProvider::class,
+        NovaServiceProvider::class,
     ],
 
     /*
