@@ -124,12 +124,12 @@ class Kernel extends ConsoleKernel
         $schedule->command(AttachBillableProblemsToLastMonthSummary::class)
             ->cron('30 0 1 * *');
 
-        $schedule->command(
-            SendCareCoachInvoices::class,
-            [
-                '--variable-time' => true,
-            ]
-        )->monthlyOn(1, '5:0');
+//        $schedule->command(
+//            SendCareCoachInvoices::class,
+//            [
+//                '--variable-time' => true,
+//            ]
+//        )->monthlyOn(1, '5:0');
 
 //        $schedule->command('lgh:importInsurance')
 //            ->dailyAt('05:00');
