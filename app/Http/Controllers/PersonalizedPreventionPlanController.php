@@ -35,23 +35,26 @@ class PersonalizedPreventionPlanController extends Controller
         $age        = now()->diff($birthDate)->y;
         $reportData = $this->service->prepareRecommendations($patientPppData);
 
-        $recommendationTasks = collect([]);
+        $recommendationTasks = collect();
         foreach ($reportData['recommendation_tasks'] as $key => $tasks) {
-          unset($tasks['title']);
+            // unset($tasks['title']);
             $recommendationTasks[$key] = $tasks;
         }
-        /* $recommendations = [];
-         foreach ($recommendationTasks as $recommendationTask) {
-             foreach ($recommendationTask as $key => $item) {
-                 $recommendations[] = $item;
-             }
-         }*/
-        /*foreach ($recommendationTasks['nutrition_recommendations']as $item) {
-            dd($item['task_body']);
-       }*/
 
-        //dd($recommendationTasks);
-        return view('personalizedPreventionPlan', compact('reportData', 'age', 'recommendationTasks'));/*->with([
+        $data = $recommendationTasks->map(function ($recommendation) {
+            $tasks = array_slice($recommendation, 1);
+            return [
+                    'title' => $recommendation[0],
+                    'tasks'  => $tasks,
+                ];
+        });
+
+        foreach ($data as $recommendations){
+  //             dd($recommendations['tasks']);
+        }
+//dd($data);
+
+        return view('personalizedPreventionPlan', compact('reportData', 'age', 'recommendationTasks', 'data'));/*->with([
             'reportData'      => $reportData,
             'age'             => $age,
             'recommendations' => $recommendations,

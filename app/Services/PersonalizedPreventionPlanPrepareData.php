@@ -28,7 +28,7 @@ class PersonalizedPreventionPlanPrepareData
         $billingProvider = $patientPppData->billing_provider;
 
         $nutritionRecommendations = [
-            'title' => $title = 'Nutrition',
+            $title = 'Nutrition',
             $fruitVeggies = $this->fruitVeggies($patientPppData, $title),
             $wholeGrain = $this->wholeGrain($patientPppData, $title),
             $fattyFriedFoods = $this->fattyFriedFoods($patientPppData, $title),
@@ -36,66 +36,66 @@ class PersonalizedPreventionPlanPrepareData
         ];
 
         $smokingRecommendations = [
-            'title' => $title = 'Tobacco/Smoking',
+            $title = 'Tobacco/Smoking',
             $currentSmoker = $this->currentSmoker($patientPppData, $title),
             $currentSmokerAge = $this->currentSmokerMale($patientPppData, $title),
             $formerSmoker = $this->formerSmoker($patientPppData, $title),
         ];
 
         $alcoholRecommendations = [
-            'title' => $title = 'Alcohol',
+             $title = 'Alcohol',
             $alcoholUse = $this->alcoholUse($patientPppData, $title),
         ];
 
         $recreationalDrugsRecommendations = [
-            'title' => $title = 'Recreational Drug Use',
+            $title = 'Recreational Drug Use',
             $recreationalDrugs = $this->recreationalDrugs($patientPppData, $title),
         ];
 
         $physicalActivity = [
-            'title' => $title = 'Physical Activity',
+            $title = 'Physical Activity',
             $physicalActivity = $this->physicalActivity($patientPppData, $title),
         ];
 
         $weightBmi = [
-            'title' => $title = 'Weight/BMI',
+            $title = 'Weight/BMI',
             $weightBmiUnderweight = $this->weightBmiUnderweight($patientPppData, $title),
         ];
 
         $sexualPractices = [
-            'title' => $title = 'Sexual Practices',
+            $title = 'Sexual Practices',
             $unprotectedSex = $this->unprotectedSex($patientPppData, $title),
             $womanOfReproductiveAge = $this->womanOfReproductiveAge($patientPppData, $title),
         ];
 
         $emotionalHealth = [
-            'title' => $title = 'Emotional Health',
+            $title = 'Emotional Health',
             $depression = $this->depression($patientPppData, $title),
         ];
 
         $fallRisk = [
-            'title' => $title = 'Fall Risk',
+            $title = 'Fall Risk',
             $patientHasFallen = $this->patientHasFallen($patientPppData, $title),
         ];
 
         $hearingImpairment = [
-            'title' => $title = 'Hearing Impairment',
+            $title = 'Hearing Impairment',
             $patientHasHearingImper = $this->hearingImpairment($patientPppData, $title),
         ];
 
         $cognitiveImpairment = [
-            'title' => $title = 'Cognitive Impairment:',
+            $title = 'Cognitive Impairment:',
             $mildCognitiveImpairment = $this->mildCognitiveImpairment($patientPppData, $title),
             $modToSevNeurocognitiveImpairment = $this->modToSevNeurocognitiveImpairment($patientPppData, $title),
         ];
 
         $adl = [
-            'title' => $title = 'ADL',
+            $title = 'ADL',
             $adlWithNoHelp = $this->adlWithNoHelp($patientPppData, $title),
         ];
 
         $immunizationsVaccines = [
-            'title' => $title = 'Immunizations/Vaccines:',
+           $title = 'Immunizations/Vaccines:',
             $fluInfluenza = $this->fluInfluenza($patientPppData, $title),
             $tetanusDiphtheria = $this->tetanusDiphtheria($patientPppData, $title),
             $chickenPox = $this->chickenPoxVaricella($patientPppData, $title),
@@ -106,7 +106,7 @@ class PersonalizedPreventionPlanPrepareData
             $pneumococcalVaccine = $this->pneumococcalVaccine($patientPppData, $title),
         ];
         $screenings            = [
-            'title' => $title = 'Screenings:',
+            $title = 'Screenings:',
             $breastCancerMammogram = $this->breastCancerMammogram($patientPppData, $title),
             $cervicalCancerYoung = $this->cervicalCancerYoung($patientPppData, $title),
             $cervicalCancerElder = $this->cervicalCancerElder($patientPppData, $title),
@@ -117,7 +117,7 @@ class PersonalizedPreventionPlanPrepareData
         ];
 
         $otherMisc = [
-            'title' => $title = 'Other misc:',
+            $title = 'Other misc:',
             $osteoporosis = $this->osteoporosis($patientPppData, $title),
             $glaukoma = $this->glaukoma($patientPppData, $title),
             $diabetes = $this->diabetes($patientPppData, $title),
@@ -173,12 +173,11 @@ class PersonalizedPreventionPlanPrepareData
         $taskRecommendation = TaskRecommendations::where('title', '=', $title)->first();
         $recommendation     = [];
         foreach ($taskRecommendation->data as $item) {
+
             $recommendation[] = $item;
         }
-        $recommend = $recommendation[$index];
-
-        return $recommend;
-
+        $nutritionRec = $recommendation[$index];
+        return $nutritionRec;
     }
 
     public function wholeGrain($patientPppData, $title)

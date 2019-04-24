@@ -62,34 +62,53 @@
 
 
         {{--Recommendations Section--}}
-        @foreach($recommendationTasks as $key => $recommendations)
-            @foreach($recommendationTasks[$key] as $recommendations)
-            <div class="col" style="padding-top: 1%">
+        {{-- @foreach($recommendationTasks as $key => $recommend)
+             {{$recommend}}
+             @foreach($recommendationTasks[$key] as $recommendations)
 
-            </div>
-            <div class="recommendations-area">
+                 @if(! empty($recommendations))
+                     <div class="col" style="padding-top: 1%">
+
+                     </div>
+                     <div class="recommendations-area">
+
+                         <strong>{{$recommendations['qualitative_trigger']}}</strong><br>
+                         {{$recommendations['task_body']}}<br>
+
+                         @endif
+                         @endforeach
+                         @endforeach
+
+                     </div>--}}
+        @foreach($data as $key => $tasks)
+            @if(! empty($tasks['tasks']))
+                <div class="col" style="padding-top: 1%">
+                    <strong>{{$tasks['title']}}</strong>
+                </div>
+            @endif
+
+            @foreach($tasks['tasks'] as $key => $recommendations)
                 @if(! empty($recommendations))
 
-                    {{$recommendations['task_body']}}
+                    <div class="recommendations-area">
+                        <strong>{{$recommendations['qualitative_trigger']}}</strong><br>
+                        {{$recommendations['task_body']}}
+                    </div>
                 @endif
-                   @endforeach
-                @endforeach
+            @endforeach
+        @endforeach
+        @endsection
 
-            </div>
-    </div>
-
-@endsection
-
-<style>
-    .recommendations-area {
-        font-family: Poppins;
-        font-size: 14px;
-        font-weight: normal;
-        font-style: normal;
-        font-stretch: normal;
-        line-height: normal;
-        letter-spacing: 0.8px;
-        text-align: justify;
-        color: #1a1a1a;
-    }
-</style>
+        <style>
+            .recommendations-area {
+                font-family: Poppins;
+                font-size: 14px;
+                font-weight: normal;
+                font-style: normal;
+                font-stretch: normal;
+                line-height: normal;
+                letter-spacing: 0.8px;
+                text-align: justify;
+                color: #1a1a1a;
+            }
+        </style>
