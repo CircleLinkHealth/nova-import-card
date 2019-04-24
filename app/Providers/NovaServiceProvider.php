@@ -6,8 +6,8 @@
 
 namespace App\Providers;
 
+use App\Nova\Metrics\PatientsOverTargetBillableTime;
 use Illuminate\Support\Facades\Gate;
-use Laravel\Nova\Cards\Help;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
 
@@ -46,7 +46,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     protected function cards()
     {
         return [
-            new Help(),
+            new PatientsOverTargetBillableTime(),
         ];
     }
 
