@@ -38,77 +38,56 @@
             </div>
         </div>
         <hr>
-        <div class="row">
-            <div class="col">
-                <span style="color: #50b2e2">Task Recommendation</span>
-            </div>
-            <div class="col">
-                <span style="color: #50b2e2">Follow-up Dates</span>
-            </div>
-            <div class="col">
-                <span style="color: #50b2e2">Billing Code</span>
-            </div>
-        </div>
+
+        <table class="table table-borderless">
+            <thead>
+            <tr>
+                <th scope="col"><span style="color: #50b2e2">Task Recommendation</span></th>
+                <th scope="col"><span style="color: #50b2e2">Follow-up Dates</span></th>
+                <th scope="col"><span style="color: #50b2e2">Billing Code</span></th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach($personalizedHealthAdvices as $key => $tasks)
+                @if(! empty($tasks['tasks']))
+                    @foreach($tasks['table_data'] as $table)
+                        <tr>
+                            <td>{{$table['body']}}</td>
+                            <td>{{$table['code']}}</td>
+                            <td>{{$table['time_frame']}}</td>
+                        </tr>
+                    @endforeach
+                @endif
+            @endforeach
+            </tbody>
+        </table>
         <br>
-
-
         <div class="row">
             <div class="col">
                 <div class="report-title">
                     <h3>Personalized Health Advice</h3>
                 </div>
+                <hr>
+
+                @foreach($personalizedHealthAdvices as $key => $tasks)
+                    @if(! empty($tasks['tasks']))
+                        <div class="col" style="padding-top: 2%">
+                            <strong>{{$tasks['title']}}</strong>
+                        </div>
+                        <br>
+                    @endif
+                    @foreach($tasks['tasks'] as $key => $recommendations)
+                        @if(! empty($recommendations))
+                            <div class="recommendations-area">
+                                {{$recommendations['qualitative_trigger']}}<br>
+                                {{$recommendations['task_body']}}<br>
+                            </div>
+                        @endif
+                    @endforeach
+                @endforeach
             </div>
         </div>
+    </div>
 
+@endsection
 
-        {{--Recommendations Section--}}
-        {{-- @foreach($recommendationTasks as $key => $recommend)
-             {{$recommend}}
-             @foreach($recommendationTasks[$key] as $recommendations)
-
-                 @if(! empty($recommendations))
-                     <div class="col" style="padding-top: 1%">
-
-                     </div>
-                     <div class="recommendations-area">
-
-                         <strong>{{$recommendations['qualitative_trigger']}}</strong><br>
-                         {{$recommendations['task_body']}}<br>
-
-                         @endif
-                         @endforeach
-                         @endforeach
-
-                     </div>--}}
-        @foreach($data as $key => $tasks)
-            @if(! empty($tasks['tasks']))
-                <div class="col" style="padding-top: 1%">
-                    <strong>{{$tasks['title']}}</strong>
-                </div>
-            @endif
-
-            @foreach($tasks['tasks'] as $key => $recommendations)
-                @if(! empty($recommendations))
-
-                    <div class="recommendations-area">
-                        <strong>{{$recommendations['qualitative_trigger']}}</strong><br>
-                        {{$recommendations['task_body']}}
-                    </div>
-                @endif
-            @endforeach
-        @endforeach
-        @endsection
-
-        <style>
-            .recommendations-area {
-                font-family: Poppins;
-                font-size: 14px;
-                font-weight: normal;
-                font-style: normal;
-                font-stretch: normal;
-                line-height: normal;
-                letter-spacing: 0.8px;
-                text-align: justify;
-                color: #1a1a1a;
-            }
-        </style>

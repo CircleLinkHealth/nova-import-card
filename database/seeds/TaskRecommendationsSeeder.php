@@ -75,12 +75,10 @@ class TaskRecommendationsSeeder extends Seeder
                     [
                         'qualitative_trigger' => 'Current Smoker',
                         'task_body'           => 'Smoking, or the use of any tobacco products harms nearly every organ of the body, causes many diseases, and reduces the health of smokers in general. Smokers are more likely than nonsmokers to develop heart disease, stroke, and lung cancer. Cigarette smoking is the leading preventable cause of death in the United States, causing more than 480,000 deaths domestically each year. This includes about 90% of all lung cancer deaths, and about 80% of all deaths from chronic obstructive pulmonary disease (COPD). Quitting smoking lowers your risk for smoking-related diseases and can add years to your life. Talk to your doctor about what interventions you may be able to use to help you quit. These may include:',
-                        'recommendation_body' =>
-                            [
-                                '~Counseling and/or pharmacotherapy interventions',
-                                '~Lung cancer screening (precautionary)',
-                            ],
-                        'report_table_data'   => [
+                        'recommendation_body' => '~Counseling and/or pharmacotherapy interventions
+                        ~Lung cancer screening (precautionary)',
+
+                        'report_table_data' => [
                             [
                                 'body'       => 'Smoking Counseling',
                                 'code'       => '99406 / 99407',

@@ -37,24 +37,27 @@ class PersonalizedPreventionPlanController extends Controller
 
         $recommendationTasks = collect();
         foreach ($reportData['recommendation_tasks'] as $key => $tasks) {
-            // unset($tasks['title']);
             $recommendationTasks[$key] = $tasks;
         }
 
-        $data = $recommendationTasks->map(function ($recommendation) {
+        $personalizedHealthAdvices = $recommendationTasks->map(function ($recommendation) {
             $tasks = array_slice($recommendation, 1);
-            return [
-                    'title' => $recommendation[0],
-                    'tasks'  => $tasks,
-                ];
+            $tableData=[];
+            foreach ($tasks as $task) {
+                if ( ! empty($task['report_table_data'])) {
+                    $tableData = $task['report_table_data'];
+                }
+            }
+                    return [
+                        'title' => $recommendation[0],
+                        'tasks' => $tasks,
+                        'table_data' => $tableData,
+                    ];
+
+
         });
-
-        foreach ($data as $recommendations){
-  //             dd($recommendations['tasks']);
-        }
-//dd($data);
-
-        return view('personalizedPreventionPlan', compact('reportData', 'age', 'recommendationTasks', 'data'));/*->with([
+//dd($personalizedHealthAdvices);
+        return view('personalizedPreventionPlan', compact('reportData', 'age', 'personalizedHealthAdvices'));/*->with([
             'reportData'      => $reportData,
             'age'             => $age,
             'recommendations' => $recommendations,
