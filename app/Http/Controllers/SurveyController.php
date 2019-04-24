@@ -34,7 +34,7 @@ class SurveyController extends Controller
     public function storeAnswer(/*StoreAnswer*/
         Request $request
     ) {
-        $answer = SurveyService::updateOrCreateAnswer($request->input());
+        $answer = $this->service->updateOrCreateAnswer($request->input());
 
         if ( ! $answer) {
             return response()->json(['errors' => 'Answer was not created'], 400);

@@ -10,7 +10,7 @@ use App\User;
 
 class SurveyService
 {
-    public function getSurveyData($patientId, $surveyId)
+    public static function getSurveyData($patientId, $surveyId)
     {
         $patientWithSurveyData = User::with([
             'surveyInstances' => function ($instance) use ($surveyId) {
