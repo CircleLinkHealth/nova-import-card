@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Laravel\Nova\Metrics\Value;
 use Venturecraft\Revisionable\Revision;
 
-class PatientsOverTargetBillableTime extends Value
+class PatientsOverTargetBhiTime extends Value
 {
     /**
      * Determine for how many minutes the metric should be cached.
@@ -21,7 +21,7 @@ class PatientsOverTargetBillableTime extends Value
      */
     public function cacheFor()
     {
-//        return now()->addMinutes(5);
+        return now()->addMinutes(5);
     }
 
     /**
@@ -35,7 +35,7 @@ class PatientsOverTargetBillableTime extends Value
     {
         return $this->count(
             $request,
-            $this->patientsOverTargetQuery()
+            $this->patientsOverTargetQuery('bhi_time')
         );
     }
 
@@ -68,20 +68,20 @@ class PatientsOverTargetBillableTime extends Value
         return 'patients-over-twenty-minutes';
     }
 
-    private function patientsOverTargetQuery()
+    private function patientsOverTargetQuery($key)
     {
         return Revision::query()
             ->where('revisionable_type', PatientMonthlySummary::class)
-            ->where('key', 'total_time')
+            ->where('key', $key)
             ->where(
-                           'old_value',
-                           '<',
-                           Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS
+                'old_value',
+                '<',
+                Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS
                        )
             ->where(
-                           'new_value',
-                           '>=',
-                           Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS
+                'new_value',
+                '>=',
+                Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS
                        );
     }
 }
