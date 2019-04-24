@@ -6,12 +6,11 @@
 
 namespace App\Nova;
 
+use App\Nova\Filters\CodesFlaggedForReview;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
-use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
-use Laravel\Nova\Http\Requests\NovaRequest;
 
 class ImporterProblemCodes extends Resource
 {
@@ -81,12 +80,12 @@ class ImporterProblemCodes extends Resource
                 ->sortable()
                 ->nullable(),
 
-            Number::make('Snomed Code')->sortable(),
-            Text::make('Snomed Name')->sortable(),
-            Text::make('ICD 10 Code')->sortable(),
-            Text::make('ICD 10 Name')->sortable(),
-            Text::make('ICD 9 Code')->sortable(),
-            Text::make('ICD 9 Name')->sortable(),
+            Number::make('Snomed Code')->sortable()->nullable(),
+            Text::make('Snomed Name')->sortable()->nullable(),
+            Text::make('ICD 10 Code')->sortable()->nullable(),
+            Text::make('ICD 10 Name')->sortable()->nullable(),
+            Text::make('ICD 9 Code')->sortable()->nullable(),
+            Text::make('ICD 9 Name')->sortable()->nullable(),
         ];
     }
 
@@ -99,7 +98,9 @@ class ImporterProblemCodes extends Resource
      */
     public function filters(Request $request)
     {
-        return [];
+        return [
+            new CodesFlaggedForReview(),
+        ];
     }
 
     /**
