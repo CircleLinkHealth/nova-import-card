@@ -39,7 +39,6 @@ class PersonalizedPreventionPlanController extends Controller
         foreach ($reportData['recommendation_tasks'] as $key => $tasks) {
             $recommendationTasks[$key] = $tasks;
         }
-
         $personalizedHealthAdvices = $recommendationTasks->map(function ($recommendation) {
             $tasks = array_slice($recommendation, 1);
             $tableData=[];
@@ -53,14 +52,8 @@ class PersonalizedPreventionPlanController extends Controller
                         'tasks' => $tasks,
                         'table_data' => $tableData,
                     ];
-
-
         });
-//dd($personalizedHealthAdvices);
-        return view('personalizedPreventionPlan', compact('reportData', 'age', 'personalizedHealthAdvices'));/*->with([
-            'reportData'      => $reportData,
-            'age'             => $age,
-            'recommendations' => $recommendations,
-        ]);*/
+
+        return view('personalizedPreventionPlan', compact('reportData', 'age', 'personalizedHealthAdvices'));
     }
 }

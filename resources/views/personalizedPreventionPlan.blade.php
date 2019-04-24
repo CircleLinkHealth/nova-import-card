@@ -70,12 +70,14 @@
                 <hr>
 
                 @foreach($personalizedHealthAdvices as $key => $tasks)
-                    @if(! empty($tasks['tasks']))
+                    {{-- array_filter -- If no callback is supplied, all entries of array equal to FALSE
+                    i use it to hide titles for empty task_bodies--}}
+                    @if(array_filter($tasks['tasks']))
                         <div class="col" style="padding-top: 2%">
                             <strong>{{$tasks['title']}}</strong>
                         </div>
-                        <br>
                     @endif
+                    <br>
                     @foreach($tasks['tasks'] as $key => $recommendations)
                         @if(! empty($recommendations))
                             <div class="recommendations-area">
