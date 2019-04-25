@@ -8,6 +8,9 @@ namespace App\Nova\Metrics;
 
 use App\Constants;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\PracticeRoleUser;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 use Laravel\Nova\Metrics\Value;
 use Venturecraft\Revisionable\Revision;
@@ -33,10 +36,45 @@ class PatientsOverTargetCcmTime extends Value
      */
     public function calculate(Request $request)
     {
+        $revisionsTable = (new Revision())->getTable();
+
         return $this->count(
             $request,
-            $this->patientsOverTargetQuery('ccm_time')
+            $this->patientsOverTargetQuery('ccm_time'),
+            null,
+            "$revisionsTable.created_at"
         );
+    }
+
+    public function patientsOverTargetQuery($key)
+    {
+        $summariesTable        = (new PatientMonthlySummary())->getTable();
+        $revisionsTable        = (new Revision())->getTable();
+        $practiceRoleUserTable = (new PracticeRoleUser())->getTable();
+        $usersTable            = (new User())->getTable();
+        $activePracticesIds    = Practice::activeBillable()->pluck('id')->all();
+
+        return Revision::query()
+            ->where('revisionable_type', PatientMonthlySummary::class)
+            ->where('key', $key)
+            ->where(
+                           'old_value',
+                           '<',
+                           Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS
+                       )
+            ->where(
+                           'new_value',
+                           '>=',
+                           Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS
+                       )
+            ->leftJoin($summariesTable, "$revisionsTable.revisionable_id", '=', "$summariesTable.id")
+            ->leftJoin(
+                           $usersTable,
+                           "$usersTable.id",
+                           '=',
+                           "$summariesTable.patient_id"
+                       )
+            ->whereIn("$usersTable.program_id", $activePracticesIds);
     }
 
     /**
@@ -47,12 +85,12 @@ class PatientsOverTargetCcmTime extends Value
     public function ranges()
     {
         return [
+            'MTD' => 'Month To Date',
             1     => '24 hours',
             2     => '48 hours',
             7     => '7 Days',
             60    => '60 Days',
             365   => '365 Days',
-            'MTD' => 'Month To Date',
             'QTD' => 'Quarter To Date',
             'YTD' => 'Year To Date',
         ];
@@ -65,23 +103,6 @@ class PatientsOverTargetCcmTime extends Value
      */
     public function uriKey()
     {
-        return 'patients-over-twenty-minutes';
-    }
-
-    private function patientsOverTargetQuery($key)
-    {
-        return Revision::query()
-            ->where('revisionable_type', PatientMonthlySummary::class)
-            ->where('key', $key)
-            ->where(
-                'old_value',
-                '<',
-                Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS
-                       )
-            ->where(
-                'new_value',
-                '>=',
-                Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS
-                       );
+        return 'patients-over-target-ccm-time';
     }
 }
