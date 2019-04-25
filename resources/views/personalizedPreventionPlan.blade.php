@@ -8,12 +8,12 @@
             <hr>
         </div>
         <div>
-            Patient Name: <span style="color: #50b2e2">{{$reportData['display_name']}}</span> <br>
-            Date of Birth: <strong>{{$reportData['birth_date']}} </strong><br>
-            Age: <strong>{{$age}}</strong> <br>
-            Address: <strong>{{$reportData['address']}}</strong> <br>
-            City, State, Zip: <strong>{{$reportData['city']}}, {{$reportData['state']}}, 'GET ZIP'</strong> <br>
-            Provider: <strong>{{$reportData['billing_provider']}}</strong>
+            Patient Name: <span style="color: #50b2e2">{{$patient->display_name}}</span> <br>
+            Date of Birth: <strong>{{--{{$patient->patientInfo->birth_date}}--}}</strong><br>
+            Age: <strong>{{$patient->getAge()}}</strong> <br>
+            Address: <strong>{{$patient->address}}</strong> <br>
+            City, State, Zip: <strong>{{$patient->city}}, {{$patient->state}}, {{$patient->zip}}</strong> <br>
+            Provider: <strong>{{$patient->getBillingProviderName()}}</strong>
         </div>
         <div class="report-title">
             <br>

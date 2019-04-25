@@ -4,12 +4,10 @@ namespace App\Http\Controllers;
 
 use App\PersonalizedPreventionPlan;
 use App\Services\PersonalizedPreventionPlanPrepareData;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class PersonalizedPreventionPlanController extends Controller
 {
-    protected $patient;
     protected $service;
 
     public function __construct(PersonalizedPreventionPlanPrepareData $service)
@@ -19,20 +17,18 @@ class PersonalizedPreventionPlanController extends Controller
 
     public function getPppDataForUser(Request $request)
     {
-        $patientPppData = PersonalizedPreventionPlan::with('patient.patientInfo')->find(34);
+        $patientPppData = PersonalizedPreventionPlan::with('patient.patientInfo')->first();
 
         if ( ! $patientPppData) {
             //with message
             return redirect()->back();
         }
         $patient = $patientPppData->patient;
-        /*     if ( ! $patient) {
+
+            if ( ! $patient) {
               //bad data
               return redirect()->back();
-          }*/
-
-        $birthDate  = new Carbon($patientPppData->birth_date);
-        $age        = now()->diff($birthDate)->y;
+          }
         $reportData = $this->service->prepareRecommendations($patientPppData);
 
         $recommendationTasks = collect();
@@ -54,6 +50,6 @@ class PersonalizedPreventionPlanController extends Controller
                     ];
         });
 
-        return view('personalizedPreventionPlan', compact('reportData', 'age', 'personalizedHealthAdvices'));
+        return view('personalizedPreventionPlan', compact( 'personalizedHealthAdvices', 'patient'));
     }
 }

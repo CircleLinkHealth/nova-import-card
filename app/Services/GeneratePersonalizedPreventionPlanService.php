@@ -19,43 +19,43 @@ class GeneratePersonalizedPreventionPlanService
     protected $vitalsQuestions;
     protected $hraAnswers;
     protected $vitalsAnswers;
+    protected $date;
 
 
-    public function __construct(User $patient)
+    /**
+     * GeneratePersonalizedPreventionPlanService constructor.
+     *
+     * @param User $patient
+     * @param $date
+     */
+    public function __construct($patient, $date)
     {
-        $this->patient         = $patient;
-        $this->hraInstance     = $patient->surveyInstances->where('survey.name', Survey::HRA)->first();
-        $this->vitalsInstance  = $patient->surveyInstances->where('survey.name', Survey::VITALS)->first();
-        $this->hraAnswers      = $patient->answers->where('survey_instance_id', $this->hraInstance->id);
-        $this->vitalsAnswers   = $patient->answers->where('survey_instance_id', $this->vitalsInstance->id);
+
+        $this->patient = $patient;
+        $this->date    = Carbon::parse($date);
+
+        $this->hraInstance    = $this->patient->surveyInstances->where('survey.name', Survey::HRA)->first();
+        $this->vitalsInstance = $this->patient->surveyInstances->where('survey.name', Survey::VITALS)->first();
+
         $this->hraQuestions    = $this->hraInstance->questions;
         $this->vitalsQuestions = $this->vitalsInstance->questions;
 
-        //@todo::remove this when done dev
+        $this->hraAnswers    = $patient->answers->where('survey_instance_id', $this->hraInstance->id);
+        $this->vitalsAnswers = $patient->answers->where('survey_instance_id', $this->vitalsInstance->id);
         $this->generateData($patient);
     }
 
     public function generateData($patient)
     {
-        $birthDate = new Carbon('2019-01-01');
-
         $patientPppData = $this->patient
             ->personalizedPreventionPlan()
             ->updateOrCreate(
                 [
-                    'user_id' => $patient->id,
+                    'patient_id' => $patient->id,
                 ],
                 [
-                    'display_name'     => $patient->display_name,
-                    'birth_date'       => /*$patient->patientInfo->birth_date*/
-                        $birthDate,
-                    'address'          => $patient->address,
-                    'city'             => $patient->city,
-                    'state'            => $patient->state,
                     'hra_answers'      => $this->hraAnswers,
                     'vitals_answers'   => $this->vitalsAnswers,
-                    'billing_provider' => /*$patient->billingProvider->member_user_id*/
-                        'Kirkillis',
                     'answers_for_eval' => $this->getAnswersToEvaluate(),
                 ]
             );

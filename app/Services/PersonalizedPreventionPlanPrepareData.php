@@ -20,13 +20,6 @@ class PersonalizedPreventionPlanPrepareData
     */
     public function prepareRecommendations($patientPppData)
     {
-        $displayName     = $patientPppData->display_name;
-        $birthDate       = $patientPppData->birth_date;
-        $address         = $patientPppData->address;
-        $state           = $patientPppData->state;
-        $city            = $patientPppData->city;
-        $billingProvider = $patientPppData->billing_provider;
-
         $nutritionRecommendations = [
             $title = 'Nutrition',
             $fruitVeggies = $this->fruitVeggies($patientPppData, $title),
@@ -127,13 +120,6 @@ class PersonalizedPreventionPlanPrepareData
         ];
 
         return collect([
-            'display_name'         => $displayName,
-            'birth_date'           => $birthDate,
-            'address'              => $address,
-            'state'                => $state,
-            'city'                 => $city,
-            'billing_provider'     => $billingProvider,
-            //@todo: i should get all the above from relationships in controller but relationships from  cpm dont work yet
             'recommendation_tasks' => [
                 'nutrition_recommendations'       => $nutritionRecommendations,
                 'tobacco_smoking_recommendations' => $smokingRecommendations,

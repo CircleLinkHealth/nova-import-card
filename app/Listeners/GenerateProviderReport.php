@@ -48,7 +48,7 @@ class GenerateProviderReport
 
             if ($otherInstance) {
                 GenerateReport::dispatch($patient->id, $instance->start_date)->onQueue('high');
-                GeneratePppReport::dispatch($patient->id)->onQueue('high');
+                GeneratePppReport::dispatch($patient->id, $instance->start_date)->onQueue('high');
             }
         }
     }

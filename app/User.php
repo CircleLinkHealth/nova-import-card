@@ -2,6 +2,10 @@
 
 namespace App;
 
+/**
+ * @property mixed surveyInstances
+ * @property mixed answers
+ */
 class User extends \CircleLinkHealth\Customer\Entities\User
 {
     public function url()
@@ -61,6 +65,6 @@ class User extends \CircleLinkHealth\Customer\Entities\User
     }
 
     public function personalizedPreventionPlan() {
-        return $this->hasOne(PersonalizedPreventionPlan::class, 'user_id');
+        return $this->hasOne(PersonalizedPreventionPlan::class, 'patient_id');
     }
 }

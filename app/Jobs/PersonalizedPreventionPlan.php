@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Services\GeneratePersonalizedPreventionPlanService;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -15,22 +16,41 @@ class PersonalizedPreventionPlan implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $patient;
-
+    protected $date;
     protected $service;
 
     /**
      * Create a new job instance.
      *
      * @param $patientId
+     * @param $date
      */
-    public function __construct($patientId)
+    public function __construct($patientId, $date)
     {
-        $this->patient = User::with([
-            'patientInfo',
-            'billingProvider',
-        ])->findOrFail($patientId);
+        $this->date = Carbon::parse($date);
 
-        $this->service = new GeneratePersonalizedPreventionPlanService($this->patient);
+        $this->patient = User::with([
+            'surveyInstances' => function ($instance) {
+                $instance->with(['survey', 'questions.type.questionTypeAnswers'])
+                         ->forDate($this->date);
+            },
+            'answers'         => function ($answers) {
+                $answers->whereHas('surveyInstance', function ($instance) {
+                    $instance->forDate($this->date);
+                });
+            },
+            'providerReports' => function ($report) {
+                $report->whereHas('hraSurveyInstance', function ($instance) {
+                    $instance->forDate($this->date);
+                })
+                       ->whereHas('vitalsSurveyInstance', function ($instance) {
+                           $instance->forDate($this->date);
+                       });
+            },
+        ])
+                             ->findOrFail($patientId);
+
+        $this->service = new GeneratePersonalizedPreventionPlanService($this->patient, $this->date);
     }
 
     /**
