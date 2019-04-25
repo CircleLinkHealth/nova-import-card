@@ -49,13 +49,11 @@ class NursesAndStatesDailyReportService
                     ]);
                 },
                 'outboundCalls' => function ($q) use ($date) {
-                    $q->where([
-                        ['called_date', '>=', $date->copy()->startOfDay()],
-                        ['called_date', '<=', $date->copy()->endOfDay()],
-                    ])
+                    $q->whereBetween('called_date', [$date->copy()->startOfDay(), $date->copy()->endOfDay()])
                         ->orWhere('scheduled_date', $date->toDateString());
                 },
             ])
+            //REMOVE THESE WHERE HAS?
             ->whereHas('outboundCalls', function ($q) use ($date) {
                 $q->where([
                     ['called_date', '>=', $date->copy()->startOfDay()],
@@ -73,6 +71,19 @@ class NursesAndStatesDailyReportService
             });
 
         return collect($data);
+    }
+
+    /**
+     *(25 - average of CCM minutes for assigned patients with under 20 minutes of CCM time)
+     * X # of assigned patients under 20 minutes / 60.
+     *
+     * @param mixed $patients
+     */
+    public function estHoursToCompleteCaseLoadMonth($patients)
+    {
+        //patient->summaryCcmTime
+        //
+        return $patients->sum('patient_time_left') / 60;
     }
 
     /**
@@ -111,14 +122,16 @@ class NursesAndStatesDailyReportService
      */
     public function getDataForNurse($nurse, $date)
     {
-        $systemTime = $nurse->pageTimersAsProvider->sum('billable_duration');
+        $systemTime       = $nurse->pageTimersAsProvider->sum('billable_duration');
+        $patientsForMonth = $this->getUniquePatientsAssignedForNurseForMonth($nurse, $date);
+        $nurseWindows     = $nurse->nurseInfo->windows;
 
         $data = [
             'nurse_id'        => $nurse->id,
             'nurse_full_name' => $nurse->getFullName(),
             'systemTime'      => $systemTime,
             'actualHours'     => round((float) ($systemTime / 3600), 2),
-            'committedHours'  => round((float) $nurse->nurseInfo->windows->where(
+            'committedHours'  => round((float) $nurseWindows->where(
                 'day_of_week',
                 carbonToClhDayOfWeek($date->dayOfWeek)
             )->sum(function ($window) {
@@ -135,12 +148,16 @@ class NursesAndStatesDailyReportService
                 ['not reached', 'dropped']
             )->count(),
             'totalMonthSystemTimeSeconds'    => $this->getTotalMonthSystemTimeSeconds($nurse, $date),
-            'uniquePatientsAssignedForMonth' => $this->getUniquePatientsAssignedForMonth($nurse, $date),
+            'uniquePatientsAssignedForMonth' => $patientsForMonth->count(),
         ];
 
-        $data['completionRate']  = $this->getCompletionRate($data);
-        $data['efficiencyIndex'] = $this->getEfficiencyIndex($data);
-        $data['hoursBehind']     = $this->getHoursBehind($data, $date);
+        $data['completionRate']            = $this->getCompletionRate($data);
+        $data['efficiencyIndex']           = $this->getEfficiencyIndex($data);
+        $data['caseLoadComplete']          = $this->percentageCaseLoadComplete($patientsForMonth);
+        $data['caseLoadNeededToComplete']  = $this->estHoursToCompleteCaseLoadMonth($patientsForMonth);
+        $data['hoursCommittedRestOfMonth'] = $this->getHoursCommittedRestOfMonth($nurseWindows, $date);
+        $data['hoursBehind']               = $this->getHoursBehind($data, $date);
+        $data['surplusShortfallHours']     = $data['hoursCommittedRestOfMonth'] - $data['caseLoadNeededToComplete'];
 
         return collect($data);
     }
@@ -168,6 +185,8 @@ class NursesAndStatesDailyReportService
      * @param $date
      * @param $data
      *
+     * TODO: TO REMOVE
+     *
      * (time_goal* - Avg. CCM Minutes per Patient assigned) X  Total patients assigned care coach / 60  [end formula]
      *
      * Time_goal =  (elapsed work days in month / total work days in month) X 30
@@ -184,6 +203,27 @@ class NursesAndStatesDailyReportService
         $timeGoal = (calculateWeekdays($startOfMonth, $date) / calculateWeekdays($startOfMonth, $endOfMonth)) * floatval($this->timeGoal);
 
         return round((float) (($timeGoal - $avgCCMMinutesPerPatientAssigned) * $data['uniquePatientsAssignedForMonth'] / 60), 2);
+    }
+
+    public function getHoursCommittedRestOfMonth($nurseWindows, Carbon $date)
+    {
+        $endOfMonth = $date->copy()->endOfMonth();
+        $diff       = $date->diffInDays($endOfMonth);
+
+        $mutableDate = $date->copy();
+        $hours       = [];
+        for ($i = $diff; $i > 0; --$i ) {
+            $hours[] = round((float) $nurseWindows->where(
+                'day_of_week',
+                carbonToClhDayOfWeek($mutableDate->dayOfWeek)
+            )->sum(function ($window) {
+                return $window->numberOfHoursCommitted();
+            }), 2);
+
+            $mutableDate->addDay();
+        }
+
+        return array_sum($hours);
     }
 
     /**
@@ -203,20 +243,33 @@ class NursesAndStatesDailyReportService
             ->sum('billable_duration');
     }
 
-    public function getUniquePatientsAssignedForMonth($nurse, $date)
+    public function getUniquePatientsAssignedForNurseForMonth($nurse, $date)
     {
-        return Call::select('inbound_cpm_id')
-            ->where('outbound_cpm_id', $nurse->id)->where([
-                ['called_date', '>=', $date->copy()->startOfMonth()->startOfDay()],
-                ['called_date', '<=', $date->copy()->endOfDay()],
-            ])
-            ->orWhere([
-                ['scheduled_date', '>=', $date->copy()->startOfMonth()->startOfDay()],
-                ['scheduled_date', '<=', $date->copy()->endOfDay()],
-            ])
-            //distinct inbound_cpm_id
-            ->distinct()
-            ->count();
+        return \DB::table('calls')
+            ->select(
+                                      \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
+                                      \DB::raw('GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60 as patient_time'),
+                                      \DB::raw('25 - GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60 as patient_time_left'),
+                                      'no_of_successful_calls as successful_calls'
+                                  )
+            ->leftJoin('users', 'users.id', '=', 'calls.inbound_cpm_id')
+            ->leftJoin('patient_monthly_summaries', 'users.id', '=', 'patient_monthly_summaries.patient_id')
+            ->whereRaw("(
+(
+DATE(calls.scheduled_date) >= DATE('{$date->copy()->startOfMonth()->toDateString()}')
+AND
+DATE(calls.scheduled_date)<=DATE('{$date->toDateString()}')
+) 
+OR (
+DATE(calls.called_date) >= DATE('{$date->copy()->startOfMonth()->toDateString()}') 
+AND
+DATE(calls.called_date)<=DATE('{$date->toDateString()}')
+)
+)
+AND (calls.type IS NULL OR calls.type='call') 
+AND calls.outbound_cpm_id = {$nurse->id} AND
+DATE(patient_monthly_summaries.month_year) = DATE('{$date->copy()->startOfMonth()->toDateString()}')")
+            ->get();
     }
 
     /**
@@ -321,6 +374,17 @@ class NursesAndStatesDailyReportService
         return 0 == $actualHours || 0 == $activityTime
             ? 0
             : round((float) ($activityTime / $actualHours) * 100);
+    }
+
+    /**
+     *(# of patients assigned to care coach with > 20mins CCM time AND with 1 or more successful call)
+     * / total # of patients assigned to Care Coach.
+     *
+     * @param mixed $patients
+     */
+    public function percentageCaseLoadComplete($patients)
+    {
+        return $patients->where('patient_time', '>=', 20)->where('successful_calls', '>=', 1)->count() / $patients->count();
     }
 
     /**
