@@ -11,16 +11,14 @@
     padding-top: 10px;
     padding-bottom: 5px;
     color: #ffffff;
-    font-family: Poppins, sans-serif;
 }
 
 .section-body {
     font-family: Poppins;
     padding-top: 20px;
-    font-family: Poppins, sans-serif;
 }
 
-.report-title {
+.health-advice-title {
     font-family: Poppins;
     font-size: 24px;
     font-weight: 600;
@@ -29,7 +27,6 @@
     line-height: normal;
     letter-spacing: 1.3px;
     color: #1a1a1a;
-    font-family: Poppins, sans-serif;
 }
 
 .report {
@@ -38,5 +35,29 @@
     padding-right: 5%;
     padding-top: 5%;
     padding-bottom: 5%;
+}
 
+.recommendation-title{
+    font-family: Poppins;
+    font-size: 18px;
+    font-weight: 600;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 1px;
+    color: #ffffff;
+    padding-top: 1%;
+    padding-bottom: 1%;
+    padding-left: 5%;
+    background-color: #50b2e2;
+}
+
+.table.table td, table.table th{
+    padding-top: 0.4rem;
+    padding-bottom: 0.2rem;
+}
+
+.table.table thead th{
+    width: 900px;
+    padding-left: 1%;
 }
