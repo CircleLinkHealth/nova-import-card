@@ -1,6 +1,7 @@
 @extends('partials.providerUI')
 
 @section('title', 'Edit Practice')
+@section('activity', 'Edit Practice')
 
 @section('content')
     <style>

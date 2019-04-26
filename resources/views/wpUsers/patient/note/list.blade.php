@@ -1,6 +1,7 @@
 @extends('partials.providerUI')
 
 @section('title', 'All Patient Notes')
+@section('activity', 'All Patient Notes')
 
 @section('content')
 
@@ -165,7 +166,7 @@
                                     obs_alerts_dtable = new webix.ui({
                                         container: "obs_alerts_container",
                                         view: "datatable",
-                                        autoheight: true,
+                                        autoheight: false,
                                         fixedRowHeight: false, rowLineHeight: 25, rowHeight: 25,
                                         scrollX: true,
                                         resizeColumn: true,
@@ -241,6 +242,9 @@
 
                                         ready: function () {
                                             this.adjustRowHeight("tags");
+                                            
+                                            //CPM-725: Maximum Call Stack Size exceeded error on low-end machines
+                                            this.config.autoheight = false;
                                         },
 
                                         pager: {

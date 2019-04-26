@@ -32,23 +32,37 @@ function formatTime($time)
         <script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
         <script>
             $(document).ready(function () {
-                $('#cpmEditableTable').DataTable({
+
+                const table = $('#cpmEditableTable');
+                table.DataTable({
                     "order": [[2, "asc"], [3, "asc"]],
                     "iDisplayLength": 100,
                     scrollX: true,
                     fixedHeader: true
                 });
 
-                $('.patientNameLink').click(function () {
-                    callId = $(this).attr('call-id');
-                    if (callId && $("#attemptNoteCall" + callId).length) {
-                        $("#attemptNoteCall" + callId).modal();
-                        return false;
-                    }
-                    return true;
-                });
+                function addClickListener() {
+                    const row = $('.patientNameLink');
+                    row.click(function () {
+                        const callId = $(this).attr('call-id');
 
-                $('.patientNameLink').tooltip({boundary: 'window'});
+                        const noteModal = $("#attemptNoteCall" + callId);
+                        if (callId && noteModal.length) {
+                            noteModal.modal();
+                            return false;
+                        }
+                        return true;
+                    });
+
+                    row.tooltip({boundary: 'window'});
+                }
+
+                addClickListener();
+
+                //make sure we add the click listener when we change the page
+                table.on('page.dt', function () {
+                    setTimeout(addClickListener, 500);
+                })
 
             });
         </script>
@@ -188,9 +202,9 @@ function formatTime($time)
                                                         <td>
                                                             @if($call->timezone)
                                                                 <?php
-                                                                    $dateTime = new DateTime();
-                                                                    $dateTime->setTimeZone(new DateTimeZone($call->timezone));
-                                                                    echo '<span style="font-weight:bold;color:green;">'.$dateTime->format('T').'</a>';
+                                                                $dateTime = new DateTime();
+                                                                $dateTime->setTimeZone(new DateTimeZone($call->timezone));
+                                                                echo '<span style="font-weight:bold;color:green;">'.$dateTime->format('T').'</a>';
                                                                 ?>
                                                             @endif
                                                         </td>
