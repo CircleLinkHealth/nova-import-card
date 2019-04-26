@@ -240,7 +240,9 @@
                                         ],
 
                                         ready: function () {
-                                            this.adjustRowHeight("obs_key");
+                                            this.adjustRowHeight("tags");
+                                            //CPM-725: Maximum Call Stack Size exceeded error on low-end machines
+                                            this.config.autoheight = false;
                                         },
 
                                         pager: {

@@ -159,7 +159,7 @@
                                             width: 176,
                                             sort: 'string',
                                             tooltip: false,
-                                            moveToFront:true
+                                            moveToFront: true
                                         },
                                         {
                                             id: "performed_at",
@@ -178,6 +178,8 @@
                                     ],
                                     ready: function () {
                                         this.adjustRowHeight("comment");
+                                        //CPM-725: Maximum Call Stack Size exceeded error on low-end machines
+                                        this.config.autoheight = false;
                                     },
                                     /*ready:function(){
                                      this.adjustRowHeight("obs_value");
