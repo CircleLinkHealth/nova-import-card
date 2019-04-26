@@ -36,7 +36,7 @@
         bottom: 0;
         background-color: #f5f5f5;
         color: #444 !important;
-        font-size: 12rem;
+        font-size: 12px;
         padding: 6px;
         cursor: pointer;
     }
