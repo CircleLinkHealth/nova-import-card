@@ -4103,8 +4103,14 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "git@github.com:CircleLinkHealth/laravel-cerberus.git",
-                "reference": "a70637130916aad3f5f4bda25080550f0fef5551"
+                "url": "https://github.com/michalisantoniou6/laravel-cerberus.git",
+                "reference": "a35c7821026529304c0ca5768386f204c2045347"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/michalisantoniou6/laravel-cerberus/zipball/a35c7821026529304c0ca5768386f204c2045347",
+                "reference": "a35c7821026529304c0ca5768386f204c2045347",
+                "shasum": ""
             },
             "require": {
                 "illuminate/cache": "~5.0",
@@ -4137,22 +4143,18 @@
                     "Michalisantoniou6\\Cerberus\\": "src/Cerberus/"
                 }
             },
-            "autoload-dev": {
-                "classmap": [
-                    "tests/Middleware/MiddlewareTest.php"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "authors": [
                 {
-                    "name": "Zizaco Zizuini",
-                    "email": "zizaco@gmail.com"
-                },
-                {
                     "name": "Andrew Elkins",
                     "homepage": "http://andrewelkins.com"
+                },
+                {
+                    "name": "Zizaco Zizuini",
+                    "email": "zizaco@gmail.com"
                 },
                 {
                     "name": "Ben Batschelet",
@@ -4177,7 +4179,7 @@
                 "permission",
                 "roles"
             ],
-            "time": "2019-04-05T19:26:30+00:00"
+            "time": "2018-08-03T09:03:19+00:00"
         },
         {
             "name": "mindscape/raygun4php",
@@ -8547,12 +8549,21 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "git@github.com:michalisantoniou6/revisionable.git",
-                "reference": "2f4340355b7ec02e8d9c07102c25edf7477c1188"
+                "url": "https://github.com/VentureCraft/revisionable.git",
+                "reference": "1e751eee1190b9297b8f34c5d76e1801263c11ad"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/VentureCraft/revisionable/zipball/1e751eee1190b9297b8f34c5d76e1801263c11ad",
+                "reference": "1e751eee1190b9297b8f34c5d76e1801263c11ad",
+                "shasum": ""
             },
             "require": {
                 "illuminate/support": "~4.0|~5.0|~5.1",
                 "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "~3.0"
             },
             "type": "library",
             "autoload": {
@@ -8563,6 +8574,7 @@
                     "Venturecraft\\Revisionable": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -8581,12 +8593,7 @@
                 "model",
                 "revision"
             ],
-            "support": {
-                "issues": "https://github.com/VentureCraft/revisionable/issues",
-                "source": "https://github.com/VentureCraft/revisionable"
-            },
-            "abandoned": true,
-            "time": "2018-08-06T23:22:33+00:00"
+            "time": "2018-08-09T00:29:46+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -12667,9 +12674,7 @@
         "prettus/l5-repository": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
-        "xethron/migrations-generator": 20,
-        "venturecraft/revisionable": 20,
-        "michalisantoniou6/laravel-cerberus": 20
+        "xethron/migrations-generator": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
