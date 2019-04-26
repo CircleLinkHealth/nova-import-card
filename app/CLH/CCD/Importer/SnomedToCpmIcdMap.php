@@ -25,11 +25,13 @@ use App\Models\CPM\CpmProblem;
  * @property int|null                        $cpm_problem_id
  * @property \App\Models\CPM\CpmProblem|null $cpmProblem
  *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToCpmIcdMap whereCpmProblemId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToCpmIcdMap
+ *     whereCpmProblemId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToCpmIcdMap whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToCpmIcdMap whereIcd10Code($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToCpmIcdMap whereIcd10Name($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToCpmIcdMap whereIcd9AvgUsage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToCpmIcdMap
+ *     whereIcd9AvgUsage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToCpmIcdMap whereIcd9Code($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToCpmIcdMap whereIcd9IsNec($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToCpmIcdMap whereIcd9Name($value)
@@ -47,7 +49,15 @@ use App\Models\CPM\CpmProblem;
  */
 class SnomedToCpmIcdMap extends \CircleLinkHealth\Core\Entities\BaseModel
 {
-    protected $guarded = [];
+    protected $fillable = [
+        'snomed_code',
+        'snomed_name',
+        'icd_10_code',
+        'icd_10_name',
+        'icd_9_code',
+        'icd_9_name',
+        'cpm_problem_id',
+    ];
 
     public function cpmProblem()
     {

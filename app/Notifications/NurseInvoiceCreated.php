@@ -9,6 +9,7 @@ namespace App\Notifications;
 use App\Mail\NurseInvoiceMailer;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class NurseInvoiceCreated extends Notification
@@ -41,7 +42,7 @@ class NurseInvoiceCreated extends Notification
         return [
             'channels' => $this->via($notifiable),
 
-            'sender_id'    => auth()->user()->id,
+            'sender_id'    => auth()->user()->id ?? null,
             'sender_type'  => User::class,
             'sender_email' => 'no-reply@circlelinkhealth.com',
 
@@ -49,8 +50,8 @@ class NurseInvoiceCreated extends Notification
             'receiver_id'    => get_class($notifiable),
             'receiver_email' => $notifiable->email,
 
-            'subject'   => "{$this->month} Time and Fees Report",
-            'pathToPdf' => $this->link,
+            'subject'  => "{$this->month} Time and Fees Report",
+            'pdf_path' => $this->link,
         ];
     }
 
@@ -63,8 +64,16 @@ class NurseInvoiceCreated extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new NurseInvoiceMailer($notifiable->getFullName(), $this->link, $this->month))
-            ->to($notifiable->email, $notifiable->getFullName());
+        return (new MailMessage())
+            ->subject("{$this->month} Time and Fees Report")
+            ->greeting("Hi {$notifiable->getFullName()},")
+            ->line('Thanks for your efforts at CircleLink Health!')
+            ->line('Attached please find a time receipt and calculation of fees payable to you for subject line hours.')
+            ->line('Please let us know any questions or concerns. We’d like to initiate funds transfer to you in the next day or two.')
+            ->attach(storage_path("download/{$this->link}"), [
+                'as'   => "$this->month Invoice.pdf",
+                'mime' => 'application/pdf',
+            ]);
     }
 
     /**

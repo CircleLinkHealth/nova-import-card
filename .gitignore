@@ -23,4 +23,3 @@ public/*.js.map
 .php_cs.cache
 Modules/
 .phpunit.result.cache
-

@@ -319,6 +319,7 @@
             },
             changePractice() {
                 this.tableData = []
+                this.url = null;
                 this.$refs.tblBillingReport.setPage(1)
                 this.retrieve()
                 this.getCounts()

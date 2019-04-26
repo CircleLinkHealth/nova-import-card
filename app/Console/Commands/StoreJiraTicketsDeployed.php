@@ -82,6 +82,8 @@ class StoreJiraTicketsDeployed extends Command
             ->sort();
 
         if ($jiraTickets->isEmpty()) {
+            $this->info('No Jira tickets found');
+
             return;
         }
 

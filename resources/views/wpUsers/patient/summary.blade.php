@@ -178,6 +178,8 @@
                                 ],
                                 ready: function () {
                                     this.adjustRowHeight("description");
+                                    //CPM-725: Maximum Call Stack Size exceeded error on low-end machines
+                                    this.config.autoheight = false;
                                 },
                                 <?php if ( ! empty($detailSection)) {
                             ?>

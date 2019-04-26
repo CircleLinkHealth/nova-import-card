@@ -8,7 +8,7 @@
     <div class="container">
         <section class="main-form">
             <div class="row">
-                <div class="main-form-container col-lg-6 col-lg-offset-3 main-form-container-last"
+                <div class="main-form-container col-lg-8 col-lg-offset-2 main-form-container-last"
                      style="border-bottom: 3px solid #50b2e2; padding-bottom: 100px">
                     <div class="row">
                         <div class="main-form-title">

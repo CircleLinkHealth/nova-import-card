@@ -156,6 +156,10 @@
                                         size: 10, // the number of records per a page
                                         group: 5   // the number of pages in the pager
                                     },
+                                    ready: function () {
+                                        //CPM-725: Maximum Call Stack Size exceeded error on low-end machines
+                                        this.config.autoheight = false;
+                                    },
                                     on: {
                                         onSelectChange: function () {
                                             var text = paused_patients_letters_table.getSelectedId(true).join();
