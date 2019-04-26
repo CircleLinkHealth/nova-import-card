@@ -7,8 +7,7 @@ use App\Jobs\GenerateProviderReport as GenerateReport;
 use App\Jobs\PersonalizedPreventionPlan as GeneratePppReport;
 use App\SurveyInstance;
 use App\User;
-
-class GenerateProviderReport
+class GenerateProviderReport  //@todo: shall we change this class since its now dispatching 2 reports(line 49-51)?
 {
     /**
      * Create the event listener.

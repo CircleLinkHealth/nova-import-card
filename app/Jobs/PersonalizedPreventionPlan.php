@@ -39,14 +39,7 @@ class PersonalizedPreventionPlan implements ShouldQueue
                     $instance->forDate($this->date);
                 });
             },
-            'providerReports' => function ($report) {
-                $report->whereHas('hraSurveyInstance', function ($instance) {
-                    $instance->forDate($this->date);
-                })
-                       ->whereHas('vitalsSurveyInstance', function ($instance) {
-                           $instance->forDate($this->date);
-                       });
-            },
+
         ])
                              ->findOrFail($patientId);
 
