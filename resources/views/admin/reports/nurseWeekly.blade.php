@@ -33,7 +33,10 @@
                                     <th>{{$weekDay->format('D')}}<br>Committed Hrs</th>
                                     <th>{{$weekDay->format('D')}}<br>Attendance/Calls Completion Rate</th>
                                     <th>{{$weekDay->format('D')}}<br>Efficiency Index</th>
-                                    <th>{{$weekDay->format('D')}}<br>Hours Behind</th>
+                                    <th>{{$weekDay->format('D')}}<br>Est. Hrs to Complete Case Load</th>
+                                    <th>{{$weekDay->format('D')}}<br>Hours Committed Rest of Month</th>
+                                    <th>{{$weekDay->format('D')}}<br>Hours Deficit or Surplus</th>
+                                    <th>{{$weekDay->format('D')}}<br>Percentage Case Load Complete</th>
                                 @endforeach
                             </tr>
                             </thead>
@@ -50,7 +53,11 @@
                                         <td>{{$reportPerDay['committedHours']}} </td>
                                         <td>{{array_key_exists('completionRate', $reportPerDay) ? $reportPerDay['completionRate'] : 'N/A'}} %</td>
                                         <td>{{array_key_exists('efficiencyIndex', $reportPerDay) ? $reportPerDay['efficiencyIndex'] : 'N/A'}}</td>
-                                        <td>{{array_key_exists('hoursBehind', $reportPerDay) ? $reportPerDay['hoursBehind'] : 'N/A'}}</td>
+                                        <td>{{array_key_exists('caseLoadNeededToComplete' , $reportPerDay) ? $reportPerDay['caseLoadNeededToComplete' ] : 'N/A'}}</td>
+                                        <td>{{array_key_exists('hoursCommittedRestOfMonth', $reportPerDay) ? $reportPerDay['hoursCommittedRestOfMonth'] : 'N/A'}}</td>
+                                        <td>{{array_key_exists('surplusShortfallHours', $reportPerDay) ? $reportPerDay['surplusShortfallHours'] : 'N/A'}}</td>
+                                        <td>{{array_key_exists('caseLoadComplete', $reportPerDay) ? $reportPerDay['caseLoadComplete'] : 'N/A'}} %</td>
+
                                     @endforeach
                                     @empty
                                         <div class="no-data">
@@ -70,7 +77,10 @@
                                             <td style="font-weight: bolder">{{$totalsForDay['committedHoursSum']}}</td>
                                             <td style="font-weight: bolder">{{$totalsForDay->has('completionRate') ? $totalsForDay['completionRate'] : 'N/A'}} %</td>
                                             <td style="font-weight: bolder">{{$totalsForDay->has('efficiencyIndex') ? $totalsForDay['efficiencyIndex'] : 'N/A'}}</td>
-                                            <td style="font-weight: bolder">{{$totalsForDay->has('hoursBehind') ? $totalsForDay['hoursBehind'] : 'N/A'}}</td>
+                                            <td style="font-weight: bolder">{{$totalsForDay->has('caseLoadNeededToComplete') ? $totalsForDay['caseLoadNeededToComplete' ] : 'N/A'}}</td>
+                                            <td style="font-weight: bolder">{{$totalsForDay->has('hoursCommittedRestOfMonth') ? $totalsForDay['hoursCommittedRestOfMonth'] : 'N/A'}}</td>
+                                            <td style="font-weight: bolder">{{$totalsForDay->has('surplusShortfallHours') ? $totalsForDay['surplusShortfallHours'] : 'N/A'}}</td>
+                                            <td style="font-weight: bolder">{{$totalsForDay->has('caseLoadComplete') ? $totalsForDay['caseLoadComplete'] : 'N/A'}} %</td>
                                         @endforeach
                                     @endforeach
                                 </tr>

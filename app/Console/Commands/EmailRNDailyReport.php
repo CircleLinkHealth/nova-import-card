@@ -134,7 +134,6 @@ class EmailRNDailyReport extends Command
                             'name'                         => $nurse->getFullName(),
                             'completionRate'               => $reportDataForNurse['completionRate'],
                             'efficiencyIndex'              => $reportDataForNurse['efficiencyIndex'],
-                            'hoursBehind'                  => $reportDataForNurse['hoursBehind'],
                             'totalEarningsThisMonth'       => $totalEarningsThisMonth,
                             'totalTimeInSystemOnGivenDate' => $totalTimeInSystemOnGivenDate,
                             'totalTimeInSystemThisMonth'   => $totalTimeInSystemThisMonth,
