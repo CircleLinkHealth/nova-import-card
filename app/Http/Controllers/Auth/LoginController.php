@@ -109,7 +109,7 @@ class LoginController extends Controller
             $this->sendInvalidBrowserResponse($agent->browser(), $isClh);
         }
 
-        if ( ! $this->validatePasswordAge()) {
+        if ( ! $this->validatePasswordAge() && config('auth.force_password_change')) {
             auth()->logout();
             $days = LoginController::MIN_PASSWORD_CHANGE_IN_DAYS;
 
