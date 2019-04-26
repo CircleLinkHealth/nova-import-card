@@ -9,6 +9,7 @@ use App\Providers\DirectMailServiceProvider;
 use App\Providers\EmailArrayValidatorServiceProvider;
 use App\Providers\FaxServiceProvider;
 use App\Providers\GoogleDriveServiceProvider;
+use App\Providers\NovaServiceProvider;
 use App\Providers\ObserversServiceProvider;
 use App\Providers\TwilioClientServiceProvider;
 use App\Providers\ViewComposerServiceProvider;
@@ -55,6 +56,8 @@ return [
     */
 
     'env' => env('APP_ENV', 'production'),
+
+    'is_production_env' => env('IS_PRODUCTION_SERVER', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -220,7 +223,6 @@ return [
         jeremykenedy\Slack\Laravel\ServiceProvider::class,
         EmailArrayValidatorServiceProvider::class,
         Propaganistas\LaravelPhone\PhoneServiceProvider::class,
-        Spiritix\LadaCache\LadaCacheServiceProvider::class,
         Waavi\UrlShortener\UrlShortenerServiceProvider::class,
         GoogleDriveServiceProvider::class,
         ManageInternalUser::class,
@@ -229,6 +231,7 @@ return [
         AuthyServiceProvider::class,
         PragmaRX\Health\ServiceProvider::class,
         TwilioClientServiceProvider::class,
+        NovaServiceProvider::class,
     ],
 
     /*

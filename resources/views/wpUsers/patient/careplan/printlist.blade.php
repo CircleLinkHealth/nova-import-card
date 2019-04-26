@@ -108,7 +108,7 @@
             return a > b ? 1 : (a < b ? -1 : 0);
         }
 
-        function nameCompare(columnValue, filterValue, obj){
+        function nameCompare(columnValue, filterValue, obj) {
             let value = obj.patient_name.toLowerCase();
             filterValue = filterValue.toLowerCase();
             return value.indexOf(filterValue) >= 0
@@ -195,9 +195,10 @@
                 },
 
             ],
-            /*ready:function(){
-            this.adjustRowHeight("obs_value");
-            },*/
+            ready: function () {
+                //CPM-725: Maximum Call Stack Size exceeded error on low-end machines
+                this.config.autoheight = false;
+            },
             pager: {
                 animate: true,
                 container: "paging_container",// the container where the pager controls will be placed into

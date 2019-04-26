@@ -28,6 +28,7 @@ use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
 use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
+use App\Console\Commands\SendCareCoachInvoices;
 use App\Console\Commands\SendCarePlanApprovalReminders;
 use App\Console\Commands\TuneScheduledCalls;
 use Illuminate\Console\Scheduling\Schedule;
@@ -122,6 +123,13 @@ class Kernel extends ConsoleKernel
         //Run at 12:30am every 1st of month
         $schedule->command(AttachBillableProblemsToLastMonthSummary::class)
             ->cron('30 0 1 * *');
+
+//        $schedule->command(
+//            SendCareCoachInvoices::class,
+//            [
+//                '--variable-time' => true,
+//            ]
+//        )->monthlyOn(1, '5:0');
 
 //        $schedule->command('lgh:importInsurance')
 //            ->dailyAt('05:00');

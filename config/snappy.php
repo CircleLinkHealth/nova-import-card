@@ -4,13 +4,13 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-$debianPdfLib = '/usr/local/bin/wkhtmltopdf';
-$localPdfLib  = base_path('vendor/h4cc/wkhtmltopdf-amd64/bin/wkhtmltopdf-amd64');
+$localBinPath    = '/usr/local/bin/wkhtmltopdf';
+$composerBinPath = base_path('vendor/h4cc/wkhtmltopdf-amd64/bin/wkhtmltopdf-amd64');
 
-if (file_exists($debianPdfLib)) {
-    $pdfBinary = $debianPdfLib;
-} elseif (file_exists($localPdfLib)) {
-    $pdfBinary = $localPdfLib;
+if (file_exists($localBinPath)) {
+    $pdfBinary = $localBinPath;
+} elseif (file_exists($composerBinPath)) {
+    $pdfBinary = $composerBinPath;
 } else {
     throw new \Exception('wkhtmltopdf binary not found.', 500);
 }

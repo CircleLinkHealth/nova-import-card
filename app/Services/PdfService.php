@@ -83,26 +83,29 @@ class PdfService
 //            $pdf->setOption('javascript-delay', 400);
 
         $pdf = $this->htmlToPdfService
-            ->loadView($view, $args)
-            ->setOption('footer-center', 'Page [page]')
-            ->setOption('margin-top', '12')
-            ->setOption('margin-left', '25')
-            ->setOption('margin-bottom', '15')
-            ->setOption('margin-right', '0.75');
+            ->loadView($view, $args);
 
         if ( ! empty($options)) {
             foreach ($options as $key => $value) {
                 $pdf = $pdf->setOption($key, $value);
             }
+        } else {
+            $pdf->setOption('footer-center', 'Page [page]')
+                ->setOption('margin-top', '12')
+                ->setOption('margin-left', '25')
+                ->setOption('margin-bottom', '15')
+                ->setOption('margin-right', '0.75');
         }
 
         $pdf = $pdf->save($outputFullPath, true);
 
         if ( ! $args['generatePdfCareplan']) {
-            $outputFullPath = $this->mergeFiles([
-                $outputFullPath,
-                storage_path("patient/pdf-careplans/{$args['pdfCareplan']->filename}"),
-            ]);
+            $outputFullPath = $this->mergeFiles(
+                [
+                    $outputFullPath,
+                    storage_path("patient/pdf-careplans/{$args['pdfCareplan']->filename}"),
+                ]
+            );
         }
 
         return $outputFullPath;

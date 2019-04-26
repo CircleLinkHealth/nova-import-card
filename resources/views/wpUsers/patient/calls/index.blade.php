@@ -7,7 +7,7 @@
 
     <div class="container">
         <div class="row">
-            <div class="main-form-container col-lg-6 col-lg-offset-3">
+            <div class="main-form-container col-lg-8 col-lg-offset-2">
                 <div class="row">
                     <div class="main-form-title col-lg-12">
                         Patient Call Page
@@ -51,7 +51,7 @@
                             <div class="col-sm-12">
                                 <?php
                                 $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
-                                $ccmCountableUser = auth()->user()->isCCMCountable();
+                                $ccmCountableUser        = auth()->user()->isCCMCountable();
                                 ?>
                                 <time-tracker ref="TimeTrackerApp"
                                               :twilio-enabled="true"
@@ -65,6 +65,7 @@
                             <div class="col-sm-12">
                                 <call-number
                                         :debug="@json(!isProductionEnv())"
+                                        cpm-caller-url="{{config('services.twilio.cpm-caller-url')}}"
                                         from-number="{{$patient->primaryProgramPhoneE164()}}"
                                         :allow-conference="@json(config('services.twilio.allow-conference'))"
                                         inbound-user-id="{{$patient->id}}"

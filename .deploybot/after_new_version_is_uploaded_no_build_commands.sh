@@ -26,10 +26,6 @@ if [ ! -L "$RELEASE/storage" ]; then
     echo "$RELEASE/storage symlinked to $SHARED/storage"
 fi
 
-
-# Disable lada-cache before migrations
-php artisan lada-cache:disable
-
 # Run migrations
 php artisan migrate --force
 
@@ -39,9 +35,6 @@ if [ $? -ne 0 ]; then
   exit 1;
 fi
 
-# Enable lada-cache after migrations
-php artisan lada-cache:enable
-
 # Add new line at the end of .env file
 echo "" >> .env
 
@@ -50,3 +43,6 @@ php artisan version:show --format=compact --suppress-app-name | cat <(echo -n "A
 
 # Perform post depoyment tasks
 php artisan deploy:post
+
+# Clear response cache
+php artisan responsecache:clear

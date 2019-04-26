@@ -6,11 +6,11 @@
 
 namespace App\Services;
 
-use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use App\Repositories\CallRepository;
 use App\Repositories\Eloquent\ActivityRepository;
 use App\Repositories\PatientSummaryEloquentRepository;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 
 class ActivityService
 {
@@ -75,24 +75,15 @@ class ActivityService
             $total_time_per_user[$userId] = 0;
         }
 
-        $acts = $this->repo->totalCCMTime($userIds, $monthYear)
+        $patientTotalCcmTimeMap = $this->repo->totalCCMTime($userIds, $monthYear)
             ->get()
             ->pluck('total_time', 'patient_id');
 
-        //add 0 for the ones not found in this monthYear
-        foreach ($userIds as $userId) {
-            if ( ! isset($acts[$userId])) {
-                $acts[$userId] = 0;
-            }
-        }
-
-        foreach ($acts as $id => $ccmTime) {
+        foreach ($patientTotalCcmTimeMap as $id => $ccmTime) {
             if ($ccmTime > 0) {
-                $summary = PatientMonthlySummary::updateOrCreate([
+                $summary = PatientMonthlySummary::firstOrCreate([
                     'patient_id' => $id,
                     'month_year' => $monthYear,
-                ], [
-                    'ccm_time' => $ccmTime,
                 ]);
 
                 if (0 == $summary->no_of_calls || 0 == $summary->no_of_successful_calls) {
@@ -102,28 +93,21 @@ class ActivityService
                 $total_time_per_user[$id] += $ccmTime;
 
                 $summary->total_time = (int) $total_time_per_user[$id];
+                $summary->ccm_time   = (int) $ccmTime;
+
                 $summary->save();
             }
         }
 
-        $bhi_acts = $this->repo->totalBHITime($userIds, $monthYear)
+        $patientTotalBhiTimeMap = $this->repo->totalBHITime($userIds, $monthYear)
             ->get()
             ->pluck('total_time', 'patient_id');
 
-        //add 0 for the ones not found in this monthYear
-        foreach ($userIds as $userId) {
-            if ( ! isset($bhi_acts[$userId])) {
-                $bhi_acts[$userId] = 0;
-            }
-        }
-
-        foreach ($bhi_acts as $id => $bhiTime) {
+        foreach ($patientTotalBhiTimeMap as $id => $bhiTime) {
             if ($bhiTime > 0) {
-                $summary = PatientMonthlySummary::updateOrCreate([
+                $summary = PatientMonthlySummary::firstOrCreate([
                     'patient_id' => $id,
                     'month_year' => $monthYear,
-                ], [
-                    'bhi_time' => $bhiTime,
                 ]);
 
                 if (0 == $summary->no_of_calls || 0 == $summary->no_of_successful_calls) {
@@ -133,6 +117,7 @@ class ActivityService
                 $total_time_per_user[$id] += $bhiTime;
 
                 $summary->total_time = (int) $total_time_per_user[$id];
+                $summary->bhi_time   = (int) $bhiTime;
                 $summary->save();
             }
         }
