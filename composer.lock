@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
     "content-hash": "43833024e5cf2e2b1fb1432c68a48e81",
@@ -262,16 +262,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.92.1",
+            "version": "3.92.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "94ecf9ad388d9fd04e8dfe492fd9484f94efb69e"
+                "reference": "a23edf1089d1f285abe5cf75db7f28c31e76d2df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/94ecf9ad388d9fd04e8dfe492fd9484f94efb69e",
-                "reference": "94ecf9ad388d9fd04e8dfe492fd9484f94efb69e",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/a23edf1089d1f285abe5cf75db7f28c31e76d2df",
+                "reference": "a23edf1089d1f285abe5cf75db7f28c31e76d2df",
                 "shasum": ""
             },
             "require": {
@@ -340,7 +340,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2019-04-19T18:08:54+00:00"
+            "time": "2019-04-25T18:09:43+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -499,7 +499,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "389de1842141e28709fdddf548d1560a712b49a5"
+                "reference": "0aaedb93efd486846ef764825b636eaa4cdb1b7a"
             },
             "require": {
                 "circlelinkhealth/core": "dev-master",
@@ -527,7 +527,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-04-12T11:53:00+00:00"
+            "time": "2019-04-26T11:03:59+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
@@ -570,7 +570,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "de126ca4d0d6165273970d99eeb3b5b72b3a30fe"
+                "reference": "61c70a5cdcffa02796ba84732b82e39917475c96"
             },
             "require": {
                 "circlelinkhealth/customer": "dev-master"
@@ -595,7 +595,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-04-15T16:15:09+00:00"
+            "time": "2019-04-26T11:02:25+00:00"
         },
         {
             "name": "circlelinkhealth/twofa",
@@ -1569,16 +1569,16 @@
         },
         {
             "name": "giggsey/locale",
-            "version": "1.7",
+            "version": "1.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/Locale.git",
-                "reference": "fa3800e53c7a78cc00ca455367c550e61b9f5bd8"
+                "reference": "b8030fc8df13cdfbecba318588de2d52b49c9b50"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/Locale/zipball/fa3800e53c7a78cc00ca455367c550e61b9f5bd8",
-                "reference": "fa3800e53c7a78cc00ca455367c550e61b9f5bd8",
+                "url": "https://api.github.com/repos/giggsey/Locale/zipball/b8030fc8df13cdfbecba318588de2d52b49c9b50",
+                "reference": "b8030fc8df13cdfbecba318588de2d52b49c9b50",
                 "shasum": ""
             },
             "require": {
@@ -1614,7 +1614,7 @@
                 }
             ],
             "description": "Locale functions required by libphonenumber-for-php",
-            "time": "2019-04-15T17:36:49+00:00"
+            "time": "2019-04-26T07:28:50+00:00"
         },
         {
             "name": "google/apiclient",
@@ -4103,14 +4103,8 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/michalisantoniou6/laravel-cerberus.git",
-                "reference": "a35c7821026529304c0ca5768386f204c2045347"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/michalisantoniou6/laravel-cerberus/zipball/a35c7821026529304c0ca5768386f204c2045347",
-                "reference": "a35c7821026529304c0ca5768386f204c2045347",
-                "shasum": ""
+                "url": "git@github.com:CircleLinkHealth/laravel-cerberus.git",
+                "reference": "a70637130916aad3f5f4bda25080550f0fef5551"
             },
             "require": {
                 "illuminate/cache": "~5.0",
@@ -4143,18 +4137,22 @@
                     "Michalisantoniou6\\Cerberus\\": "src/Cerberus/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "classmap": [
+                    "tests/Middleware/MiddlewareTest.php"
+                ]
+            },
             "license": [
                 "MIT"
             ],
             "authors": [
                 {
-                    "name": "Andrew Elkins",
-                    "homepage": "http://andrewelkins.com"
-                },
-                {
                     "name": "Zizaco Zizuini",
                     "email": "zizaco@gmail.com"
+                },
+                {
+                    "name": "Andrew Elkins",
+                    "homepage": "http://andrewelkins.com"
                 },
                 {
                     "name": "Ben Batschelet",
@@ -4179,7 +4177,7 @@
                 "permission",
                 "roles"
             ],
-            "time": "2018-08-03T09:03:19+00:00"
+            "time": "2019-04-05T19:26:30+00:00"
         },
         {
             "name": "mindscape/raygun4php",
@@ -8549,21 +8547,12 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/VentureCraft/revisionable.git",
-                "reference": "1e751eee1190b9297b8f34c5d76e1801263c11ad"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/VentureCraft/revisionable/zipball/1e751eee1190b9297b8f34c5d76e1801263c11ad",
-                "reference": "1e751eee1190b9297b8f34c5d76e1801263c11ad",
-                "shasum": ""
+                "url": "git@github.com:michalisantoniou6/revisionable.git",
+                "reference": "2f4340355b7ec02e8d9c07102c25edf7477c1188"
             },
             "require": {
                 "illuminate/support": "~4.0|~5.0|~5.1",
                 "php": ">=5.3.0"
-            },
-            "require-dev": {
-                "orchestra/testbench": "~3.0"
             },
             "type": "library",
             "autoload": {
@@ -8574,7 +8563,6 @@
                     "Venturecraft\\Revisionable": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -8593,7 +8581,12 @@
                 "model",
                 "revision"
             ],
-            "time": "2018-08-09T00:29:46+00:00"
+            "support": {
+                "issues": "https://github.com/VentureCraft/revisionable/issues",
+                "source": "https://github.com/VentureCraft/revisionable"
+            },
+            "abandoned": true,
+            "time": "2018-08-06T23:22:33+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -11479,16 +11472,16 @@
         },
         {
             "name": "sebastian/environment",
-            "version": "4.1.0",
+            "version": "4.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/environment.git",
-                "reference": "6fda8ce1974b62b14935adc02a9ed38252eca656"
+                "reference": "3095910f0f0fb155ac4021fc51a4a7a39ac04e8a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/6fda8ce1974b62b14935adc02a9ed38252eca656",
-                "reference": "6fda8ce1974b62b14935adc02a9ed38252eca656",
+                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/3095910f0f0fb155ac4021fc51a4a7a39ac04e8a",
+                "reference": "3095910f0f0fb155ac4021fc51a4a7a39ac04e8a",
                 "shasum": ""
             },
             "require": {
@@ -11503,7 +11496,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "4.1-dev"
+                    "dev-master": "4.2-dev"
                 }
             },
             "autoload": {
@@ -11528,7 +11521,7 @@
                 "environment",
                 "hhvm"
             ],
-            "time": "2019-02-01T05:27:49+00:00"
+            "time": "2019-04-25T07:55:20+00:00"
         },
         {
             "name": "sebastian/exporter",
@@ -12674,7 +12667,9 @@
         "prettus/l5-repository": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
-        "xethron/migrations-generator": 20
+        "xethron/migrations-generator": 20,
+        "venturecraft/revisionable": 20,
+        "michalisantoniou6/laravel-cerberus": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
