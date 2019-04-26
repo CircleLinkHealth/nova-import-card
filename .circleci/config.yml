@@ -63,7 +63,7 @@ jobs:
     #    - run: ./vendor/bin/phpunit --testsuite=Unit
     #- run: ./vendor/bin/codecept build
     #        - run: ./vendor/bin/codecept run --xml result.xml
-    - run: composer test
+    - run: ./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner SqliteRunner -p4
 #    - store_test_results:
 #        path: tests/_output
 #    - store_artifacts:
