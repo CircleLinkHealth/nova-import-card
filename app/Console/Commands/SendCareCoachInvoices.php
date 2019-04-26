@@ -46,7 +46,7 @@ class SendCareCoachInvoices extends Command
         if ($month) {
             $month = Carbon::createFromFormat('Y-m', $month);
         } else {
-            $month = Carbon::now()->subMonth();
+            $month = Carbon::now()->subMonths(2);
         }
 
         $start = $month->startOfMonth();

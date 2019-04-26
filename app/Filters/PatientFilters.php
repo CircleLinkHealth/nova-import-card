@@ -298,4 +298,23 @@ class PatientFilters extends QueryFilters
     {
         return $this->builder->orderBy('users.created_at', $type);
     }
+
+    public function sort_withdrawnReason($type = null)
+    {
+        $patientTable = (new Patient())->getTable();
+
+        return $this->builder->select('users.*')->with('patientInfo')->join(
+            $patientTable,
+            'users.id',
+            '=',
+            "${patientTable}.user_id"
+        )->orderBy("${patientTable}.withdrawn_reason", $type)->groupBy('users.id');
+    }
+
+    public function withdrawnReason($reason)
+    {
+        return $this->builder->whereHas('patientInfo', function ($query) use ($reason) {
+            $query->where('withdrawn_reason', 'LIKE', '%'.$reason.'%');
+        });
+    }
 }
