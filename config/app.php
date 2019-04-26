@@ -297,4 +297,17 @@ return [
         'Swagger'        => L5Swagger\L5SwaggerServiceProvider::class,
         'UrlShortener'   => Waavi\UrlShortener\Facades\UrlShortener::class,
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | App Version Variable in .env
+    |--------------------------------------------------------------------------
+    |
+    | Where to get the APP_VERSION from
+    |
+    |
+    | Defaults to ''.
+    |
+    */
+    'app_version' => env('APP_VERSION', ''),
 ];
