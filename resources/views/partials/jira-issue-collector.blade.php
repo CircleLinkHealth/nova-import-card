@@ -31,7 +31,7 @@
 
 <style>
     #jiraIssueCollectorTrigger {
-        position: absolute;
+        position: fixed;
         left: 0;
         bottom: 0;
         background-color: #f5f5f5;
