@@ -63,6 +63,9 @@
             <template slot="h__careplanStatus" slot-scope="props">
                 Careplan Status
             </template>
+            <template slot="h__withdrawnReason" slot-scope="props">
+                Withdrawn Reason
+            </template>
             <template slot="h__dob" slot-scope="props">
                 Date of Birth
             </template>
@@ -134,7 +137,7 @@
                 practices: [],
                 providersForSelect: [],
                 nameDisplayType: NameDisplayType.FirstName,
-                columns: ['name', 'provider', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'dob', 'mrn', 'phone', 'age', 'registeredOn', 'bhi', 'ccm'],
+                columns: ['name', 'provider', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'withdrawnReason', 'dob', 'mrn', 'phone', 'age', 'registeredOn', 'bhi', 'ccm'],
                 loaders: {
                     next: false,
                     practices: null,
@@ -152,8 +155,8 @@
             options() {
                 return {
                     filterByColumn: true,
-                    sortable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'dob', 'age', 'mrn', 'registeredOn', 'bhi', 'ccm'],
-                    filterable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'dob', 'phone', 'age', 'mrn', 'registeredOn'],
+                    sortable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus','withdrawnReason', 'dob', 'age', 'mrn', 'registeredOn', 'bhi', 'ccm'],
+                    filterable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'withdrawnReason', 'dob', 'phone', 'age', 'mrn', 'registeredOn'],
                     listColumns: {
                         provider: this.providersForSelect,
                         ccmStatus: [
@@ -188,6 +191,7 @@
                         careplanStatus: (ascending) => iSort,
                         dob: (ascending) => iSort,
                         mrn: (ascending) => iSort,
+                        withdrawnReason: (ascending) => iSort,
                         phone: (ascending) => iSort,
                         age: (ascending) => iSort,
                         registeredOn: (ascending) => iSort,
@@ -355,6 +359,7 @@
                         patient.program_name = (this.practices.find(practice => practice.id == patient.program_id) || {}).display_name || ''
                         patient.age = (patient.patient_info || {}).age || ''
                         patient.mrn = (patient.patient_info || {}).mrn_number || ''
+                        patient.withdrawnReason = (patient.patient_info || {}).withdrawn_reason || ''
                         patient.registeredOn = moment(patient.created_at || '').format('MM-DD-YYYY')
                         patient.ccmStatusDate = (this.getStatusDate(patient) || '')
                         patient.sort_registeredOn = new Date(patient.created_at)
@@ -444,7 +449,7 @@
                 }
                 return download().then(res => {
 
-                    const str = 'name,provider,program,ccm status,careplan status,dob,mrn,phone,age,registered on,bhi,ccm,ccm status change\n'
+                    const str = 'name,provider,program,ccm status,careplan status, withdrawn reason, dob,mrn,phone,age,registered on,bhi,ccm,ccm status change\n'
                         + patients.join('\n');
                     const csvData = new Blob([str], {type: 'text/csv'});
                     const csvUrl = URL.createObjectURL(csvData);
@@ -504,6 +509,9 @@
                 const mrnInput = patientListElem.querySelector('input[name="vf__mrn"]')
                 mrnInput.setAttribute('placeholder', 'Filter by MRN')
 
+                const withdrawnReasonInput = patientListElem.querySelector('input[name="vf__withdrawnReason"]')
+                withdrawnReasonInput.setAttribute('placeholder', 'Filter by Reason')
+
                 const registeredOnInput = patientListElem.querySelector('input[name="vf__registeredOn"]')
                 registeredOnInput.setAttribute('placeholder', 'Filter by Registered On')
 
@@ -549,6 +557,8 @@
             Event.$on('vue-tables.filter::ccmStatus', this.activateFilters)
 
             Event.$on('vue-tables.filter::careplanStatus', this.activateFilters)
+
+            Event.$on('vue-tables.filter::withdrawnReason', this.activateFilters)
 
             Event.$on('vue-tables.filter::dob', this.activateFilters)
 
