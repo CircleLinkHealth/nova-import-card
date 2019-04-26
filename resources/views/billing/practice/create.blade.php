@@ -1,5 +1,8 @@
 @extends('partials.providerUI')
 
+@section('title', 'Practice Billing')
+@section('activity', 'Practice Billing')
+
 @section('content')
 
     @push('scripts')
