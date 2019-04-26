@@ -115,7 +115,7 @@
                                         sort: 'string',
                                         template: "<a href='<?php echo route(
     'patient.activity.providerUIIndex',
-                                                ['patient' => '#patient_id#']
+    ['patient' => '#patient_id#']
 ); ?>'>#patient_name#</a>"
                                     },
                                     {
@@ -225,7 +225,7 @@
                                     }
                                 ],
                                 ready: function () {
-                                    this.adjustRowHeight("obs_key");
+                                    this.adjustRowHeight("provider_name");
                                 },
 
                                 scheme: {

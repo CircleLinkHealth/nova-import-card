@@ -240,7 +240,7 @@
                                         ],
 
                                         ready: function () {
-                                            this.adjustRowHeight("obs_key");
+                                            this.adjustRowHeight("tags");
                                         },
 
                                         pager: {
