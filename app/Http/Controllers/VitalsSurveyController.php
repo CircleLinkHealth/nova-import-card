@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\GetVitalsSurveyRequest;
 use App\Http\Requests\StoreVitalsAnswer;
 use App\Services\VitalsSurveyService;
 
@@ -19,13 +18,14 @@ class VitalsSurveyController extends Controller
      * Patient cannot access this route.
      * User must have `vitals-survey-complete` permission.
      *
-     * @param GetVitalsSurveyRequest $request
+     * @param $practiceId
+     * @param $patientId
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function getSurvey(GetVitalsSurveyRequest $request)
+    public function getSurvey($practiceId, $patientId)
     {
-        $userWithSurveyData = $this->service->getSurveyData($request->get('patient_id'));
+        $userWithSurveyData = $this->service->getSurveyData($patientId);
 
         return view('survey.vitals.index', [
             'data' => $userWithSurveyData->toArray(),

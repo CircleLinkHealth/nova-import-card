@@ -42,7 +42,7 @@
 
     export default {
         name: "questionTypeRadio",
-        props: ['question', 'userId', 'surveyInstanceId'],
+        props: ['question', 'userId', 'surveyInstanceId', 'showNextButton', 'onDone'],
         components: {},
 
         data() {
@@ -90,27 +90,15 @@
                     return possibleAnswer.value === answerVal;
                 }).map(questionTypeAnswer => questionTypeAnswer.id);
 
-                var answer = {
+                const answer = {
                     value: answerVal
                 };
 
-                var answerData = JSON.stringify(answer);
-
-                axios.post('/save-answer', {
-                    user_id: this.userId,
-                    survey_instance_id: this.surveyInstanceId[0],
-                    question_id: this.question.id,
-                    question_type_answer_id: questionTypeAnswerId[0],
-                    value: answerData,
-                })
-                    .then(function (response) {
-                        console.log(response);
-                    })
-                    .catch(function (error) {
-                        console.log(error);
+                this.onDone(answer)
+                    .catch(err => {
+                        //if there is error, app will not move to next question.
+                        //handle it here
                     });
-
-                EventBus.$emit('showSubQuestions', answerVal, this.questionOrder, this.question.id)
             },
         },
 

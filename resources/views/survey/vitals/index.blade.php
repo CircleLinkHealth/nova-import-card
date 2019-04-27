@@ -1,4 +1,4 @@
 @extends('surveysMaster')
 @section('content')
-    <survey-vitals :data="{{json_encode($data)}}"></survey-vitals>
+    <vitals-survey :data="{{json_encode($data)}}"></vitals-survey>
 @endsection

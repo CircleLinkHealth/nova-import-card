@@ -49,8 +49,8 @@ Route::get('get-ppp-data', 'PersonalizedPreventionPlanController@getPppDataForUs
      ->name('getPppDataForUser');
 
 Route::group([
-    'prefix'     => 'survey',
-    'middleware' => ['auth'],
+    'prefix' => 'survey',
+    //    'middleware' => ['auth'],
 ], function () {
 
     Route::group([
@@ -62,10 +62,17 @@ Route::group([
     Route::group([
         'prefix' => 'vitals',
     ], function () {
-        Route::get('', 'VitalsSurveyController@getSurvey')
-             ->name('survey.vitals');
-        Route::post('store-answer', 'VitalsSurveyController@storeAnswer')
-             ->name('survey.vitals.store.answer');
+
+        Route::get('{practiceId}/{patientId}', [
+            'uses' => 'VitalsSurveyController@getSurvey',
+            'as' => 'survey.vitals',
+        ]);
+
+        Route::post('store-answer', [
+            'uses' => 'VitalsSurveyController@storeAnswer',
+            'as'   => 'survey.vitals.store.answer',
+        ]);
+
     });
 });
 

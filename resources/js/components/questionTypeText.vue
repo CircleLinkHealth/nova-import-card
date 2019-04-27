@@ -3,12 +3,12 @@
         <!--question without sub_parts-->
         <div v-if="!questionHasSubParts">
             <input
-                    type="text"
-                    class="text-field"
-                    name="textTypeAnswer[]"
-                    v-model="inputHasText"
-                    :placeholder="this.questionPlaceHolder"
-                    @change="onInput">
+                type="text"
+                class="text-field"
+                name="textTypeAnswer[]"
+                v-model="inputHasText"
+                :placeholder="this.questionPlaceHolder"
+                @change="onInput">
         </div>
 
         <br>
@@ -54,7 +54,8 @@
                     name="text"
                     id="text"
                     type="submit"
-                    @click="handleAnswer()">Next
+                    @click="handleAnswer()">
+                Next
             </button>
         </div>
     </div>
@@ -66,7 +67,7 @@
 
     export default {
         name: "questionTypeText",
-        props: ['question', 'userId', 'surveyInstanceId'],
+        props: ['question', 'userId', 'surveyInstanceId', 'showNextButton', 'onDone'],
 
         mounted() {
 
@@ -193,20 +194,11 @@
                         }
                     }
                 }
-                var answerData = JSON.stringify(answer);
 
-                axios.post('/save-answer', {
-                    user_id: this.userId,
-                    survey_instance_id: this.surveyInstanceId[0],
-                    question_id: this.question.id,
-                    question_type_answer_id: this.questionTypeAnswerId,
-                    value: answerData,
-                })
-                    .then(function (response) {
-                        console.log(response);
-                    })
-                    .catch(function (error) {
-                        console.log(error);
+                this.onDone(answer)
+                    .catch(err => {
+                        //if there is error, app will not move to next question.
+                        //handle it here
                     });
             }
         },

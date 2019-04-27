@@ -3,11 +3,11 @@
         <!--question without sub_parts-->
         <div v-if="!questionHasSubParts">
             <input
-                    type="number"
-                    class="number-field"
-                    name="numberTypeAnswer[]"
-                    v-model="inputNumber"
-                    :placeholder="this.questionPlaceHolder">
+                type="number"
+                class="number-field"
+                name="numberTypeAnswer[]"
+                v-model="inputNumber"
+                :placeholder="this.questionPlaceHolder">
         </div>
         <br>
         <!--question with sub_parts-->
@@ -22,26 +22,28 @@
 
         </div>
 
-        <!--next button-->
-        <div v-if="hasTypedTwoNumbers">
-            <button class="next-btn"
-                    name="number"
-                    id="number"
-                    type="submit"
-                    @click="handleAnswer()">Next
-            </button>
+        <mdbBtn v-show="showNextButton"
+                color="primary"
+                class="next-btn"
+                name="number"
+                id="number"
+                :disabled="!hasTypedTwoNumbers"
+                @click="handleAnswer()">
+            Next
+        </mdbBtn>
 
-        </div>
     </div>
 </template>
 
 <script>
     import {EventBus} from "../event-bus";
+    import {mdbBtn} from "mdbvue";
     /* import {saveAnswer} from "../save-answer";*/
 
     export default {
         name: "questionTypeNumber",
-        props: ['question', 'userId', 'surveyInstanceId'],
+        components: {mdbBtn},
+        props: ['question', 'userId', 'surveyInstanceId', 'showNextButton', 'onDone'],
 
         mounted() {
             console.log('Component mounted.')
@@ -51,13 +53,12 @@
             return {
                 inputNumber: [],
                 questionOptions: [],
-                showNextButton: false,
                 keys: [],
             }
         },
         computed: {
             hasTypedTwoNumbers() {
-                return this.inputNumber.length > 1 ? this.showNextButton = true : this.showNextButton = false;
+                return this.showNextButton && this.inputNumber.length > 1;
             },
 
             hasAnswerType() {
@@ -104,28 +105,20 @@
 
         methods: {
             handleAnswer() {
-                const inputVal = this.inputNumber;
 
-                var answer = {
-                    value: inputVal,
+                if (!this.hasTypedTwoNumbers) {
+                    return;
+                }
+
+                const answer = {
+                    value: this.inputNumber,
                 };
 
-                var answerData = JSON.stringify(answer);
-
-                axios.post('/save-answer', {
-                    user_id: this.userId,
-                    survey_instance_id: this.surveyInstanceId[0],
-                    question_id: this.question.id,
-                    question_type_answer_id: this.questionTypeAnswerId,
-                    value: answerData,
-                })
-                    .then(function (response) {
-                        console.log(response);
-                    })
-                    .catch(function (error) {
-                        console.log(error);
+                this.onDone(answer)
+                    .catch(err => {
+                        //if there is error, app will not move to next question.
+                        //handle it here
                     });
-                EventBus.$emit('handleNumberType');
             }
         },
         created() {
@@ -141,12 +134,21 @@
 </script>
 
 <style scoped>
+
+    .btn-primary {
+        background-color: #50b2e2;
+        border-color: #4aa5d2;
+    }
+
+    .btn-primary.disabled {
+        opacity: 50%;
+        background-color: #50b2e2;
+        border-color: #4aa5d2;
+    }
+
     .next-btn {
         width: 120px;
         height: 40px;
-        border-radius: 5px;
-        border: solid 1px #4aa5d2;
-        background-color: #50b2e2;
     }
 
     .number-field {

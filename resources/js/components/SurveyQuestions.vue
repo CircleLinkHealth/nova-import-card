@@ -7,7 +7,7 @@
                     Dr. [doctor last name]’s Office</label>
             </div>
             <div v-if="welcomeStage" class="card-body">
-                <img src="https://drive.google.com/uc?export=view&id=14yPR6Z8coudiAzEMTSVQK80BVyZjjqVg"
+                <img src="../../assets/images/notepad.png"
                      class="welcome-icon" alt="welcome icon">
                 <div class="survey-main-title">
                     <label id="sub-title">Annual Wellness Visit (AWV) Questionnaire</label>
@@ -155,25 +155,13 @@
     import callAssistance from "./callAssistance";
     import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
     import subQuestions from "./subQuestions";
-    import mainQuestions from "./mainQuestions";
     import {EventBus} from '../event-bus';
-    import AOS from 'aos';
-    import 'aos/dist/aos.css';
-    import BootstrapVue from 'bootstrap-vue'
-    import 'bootstrap/dist/css/bootstrap.css'
-    import 'bootstrap-vue/dist/bootstrap-vue.css'
     import questionTypeMultiSelect from "./questionTypeMultiSelect";
-
-
-    AOS.init({
-        duration: 1200,
-    });
 
     export default {
         props: ['surveydata'],
 
         components: {
-            'main-questions': mainQuestions,
             'sub-questions': subQuestions,
             'question-type-text': questionTypeText,
             'question-type-checkbox': questionTypeCheckbox,
@@ -182,7 +170,6 @@
             'question-type-radio': questionTypeRadio,
             'question-type-date': questionTypeDate,
             'call-assistance': callAssistance,
-            'bootstrap-vue': BootstrapVue,
             'question-type-muti-select': questionTypeMultiSelect
         },
 
