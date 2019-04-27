@@ -22,6 +22,7 @@ class PersonalizedPreventionPlanPrepareData
     const VACCINES_TITLE = 'Immunizations/Vaccines:';
     const SCREENINGS_TITLE = 'Screenings:';
     const OTHER_TITLE = 'Other misc:';
+    const VITALS_TITLE = 'Vitals';
 
 
     /*
@@ -659,8 +660,8 @@ class PersonalizedPreventionPlanPrepareData
         if ($vaccines['age'] <= '26'
             && $vaccines['human_papillomavirus'] === 'No') {
             $humanPapillomavirus = $this->getTaskRecommendations($title, $index);
-        }elseif ($vaccines['age'] <= '26'
-                 && $vaccines['human_papillomavirus'] === 'Unsure'){
+        } elseif ($vaccines['age'] <= '26'
+                  && $vaccines['human_papillomavirus'] === 'Unsure') {
             $humanPapillomavirus = $this->getTaskRecommendations($title, $index);
         }
 
@@ -682,10 +683,11 @@ class PersonalizedPreventionPlanPrepareData
             && $vaccines['shingles'] === 'No'
             || $vaccines['shingles'] === 'Unsure') {
             $shingles = $this->getTaskRecommendations($title, $index);
-        }elseif ($vaccines['age'] > '50'
-                 && $vaccines['shingles'] === 'Unsure'){
+        } elseif ($vaccines['age'] > '50'
+                  && $vaccines['shingles'] === 'Unsure') {
             $shingles = $this->getTaskRecommendations($title, $index);
         }
+
         return $shingles;
     }
 
@@ -990,7 +992,6 @@ class PersonalizedPreventionPlanPrepareData
 
         return $osteoporosis;
     }
-
 
     public function glaukoma($patientPppData, $title)
     {

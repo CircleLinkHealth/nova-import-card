@@ -21,10 +21,10 @@
             <hr>
         </div>
         <div>
-            Weight: <strong>160 </strong><br>
-            Height: <strong>345 </strong><br>
-            Body Mass Index (BMI): <strong>20</strong> <br>
-            Blood Pressure: <strong>16/8</strong> <br>
+            Weight: <strong>{{$patientPppData->answers_for_eval['weight']}} </strong><br>
+            Height: <strong> </strong><br>
+            Body Mass Index (BMI): <strong>{{$patientPppData->answers_for_eval['bmi']}}</strong> <br>
+            Blood Pressure: <strong> </strong> <br>
         </div>
         <br>
         <div class="row">

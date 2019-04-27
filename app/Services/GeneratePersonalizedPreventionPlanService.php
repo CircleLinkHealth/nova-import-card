@@ -70,6 +70,8 @@ class GeneratePersonalizedPreventionPlanService
         $data = [];
         /*vitals*/
         $data['blood_pressure']       = $this->answerForVitalsQuestionWithOrder(1);
+        $data['weight']               = $this->answerForVitalsQuestionWithOrder(2);
+        $data['height']               = $this->answerForVitalsQuestionWithOrder(3);
         $data['bmi']                  = $this->answerForVitalsQuestionWithOrder(4);
         $data['cognitive_assessment'] = $this->answerForVitalsQuestionWithOrder(5, 'a');
         /*vitals*/

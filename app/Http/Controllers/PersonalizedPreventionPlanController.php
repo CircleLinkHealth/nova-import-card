@@ -20,12 +20,12 @@ class PersonalizedPreventionPlanController extends Controller
         $patientPppData = PersonalizedPreventionPlan::where('patient_id', 9784)
                                                     ->with('patient.patientInfo')
                                                     ->first();
+
         if ( ! $patientPppData) {
             //with message
             return redirect()->back();
         }
         $patient = $patientPppData->patient;
-
         if ( ! $patient) {
             //bad data
             return redirect()->back();
@@ -33,6 +33,6 @@ class PersonalizedPreventionPlanController extends Controller
 
         $personalizedHealthAdvices = $this->service->prepareRecommendations($patientPppData);
 
-        return view('personalizedPreventionPlan', compact('personalizedHealthAdvices', 'patient'));
+        return view('personalizedPreventionPlan', compact('personalizedHealthAdvices', 'patient', 'patientPppData'));
     }
 }
