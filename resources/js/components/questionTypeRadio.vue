@@ -82,6 +82,7 @@
 
         methods: {
             handleAnswer(answerVal) {
+
                 const questionTypeAnswerId = this.possibleAnswers.filter(possibleAnswer => {
                     /*what i want to say is - if value === null*/
                     if (possibleAnswer.value !== answerVal) {
@@ -102,6 +103,7 @@
                     question_id: this.question.id,
                     question_type_answer_id: questionTypeAnswerId[0],
                     value: answerData,
+
                 })
                     .then(function (response) {
                         console.log(response);
@@ -109,7 +111,7 @@
                     .catch(function (error) {
                         console.log(error);
                     });
-
+                console.log(this.userId, this.surveyInstanceId[0], this.question.id,questionTypeAnswerId[0], answerData);
                 EventBus.$emit('showSubQuestions', answerVal, this.questionOrder, this.question.id)
             },
         },

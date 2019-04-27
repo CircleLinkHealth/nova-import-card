@@ -105,11 +105,18 @@
         methods: {
             handleAnswer() {
                 const inputVal = this.inputNumber;
+                const keys = this.keys;
+                if (keys.length !== 0) {
+                    var answer = inputVal.reduce(function (result, field, index) {
+                        result[keys[index]] = field;
+                        return result;
+                    }, {});
 
-                var answer = {
-                    value: inputVal,
-                };
-
+                } else {
+                    var answer = {
+                        value: inputVal
+                    };
+                }
                 var answerData = JSON.stringify(answer);
 
                 axios.post('/save-answer', {

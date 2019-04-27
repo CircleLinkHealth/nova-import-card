@@ -32,6 +32,7 @@ class SurveyController extends Controller
 
     //i have disabled storeAnswer since we are not using any auth scaffolding yet
     public function storeAnswer(/*StoreAnswer*/Request $request) {
+
         $answer = $this->service->updateOrCreateAnswer($request->input());
 
         if ( ! $answer) {
