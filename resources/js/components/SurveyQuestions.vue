@@ -20,7 +20,7 @@
                     will also reach out shortly. Thanks!
                 </div>
 
-                <div v-if="this.lastQuestionAnswered === null">
+                <div v-if="this.lastQuestionAnswered !== null">
                     <a class="btn btn-primary" @click="showQuestions">Start</a>
                 </div>
 
@@ -36,11 +36,11 @@
             <div class="questions-box"
                  v-if="questionsStage"
                  v-for="(question, index) in questions">
-                <div v-show="index === questionIndex" class="question">
+                <div v-show="index >= questionIndex" class="question">
                     <div class="questions-body" v-show="showSubQuestionNew(index)"><!--data-aos="fade-up"-->
 
                         <div class="questions-title">
-                            {{question.id}}{{'.'}} {{question.body}}
+                            {{question.pivot.order}}{{question.pivot.sub_order}}{{'.'}} {{question.body}}
                         </div>
                         <br>
                         <!--Questions Answer Type-->
@@ -60,6 +60,7 @@
                             </question-type-checkbox>
 
                             <question-type-muti-select
+                                    :questions="questions"
                                     :question="question"
                                     :userId="userId"
                                     :surveyInstanceId="surveyInstanceId"
@@ -221,7 +222,7 @@
 
             questionsOrder() {
                 return this.questions.flatMap(function (q) {
-                    return q.pivot.order;
+                    return q.pivot.order + q.pivot.sub_order;
                 });
 
             },
@@ -250,7 +251,7 @@
                 this.questionsStage = true;
                 this.welcomeStage = false;
                 //@todo:check this again - i dont like it
-                this.questionIndex = this.lastQuestionAnswered -1;
+                this.questionIndex = this.lastQuestionAnswered - 1;
             },
             scrollDown() {
 

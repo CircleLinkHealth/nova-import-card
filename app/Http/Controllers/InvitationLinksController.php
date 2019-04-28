@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\SurveyAuthBeforeLoginRequest;
 use App\Http\Requests\SurveyAuthLoginRequest;
 use App\InvitationLink;
+use App\Question;
 use App\Services\SurveyInvitationLinksService;
 use App\Services\SurveyService;
 use Illuminate\Http\Request;
@@ -114,10 +114,9 @@ class InvitationLinksController extends Controller
 
             return view('surveyUrlAuth.resendUrl', compact('userId'));
         }
-
         $surveyData = $this->surveyService->getSurveyData($userId, $surveyId);
 
-        return view('surveyQuestionnaire.surveyQuestions', compact( 'surveyData'));
+        return view('surveyQuestionnaire.surveyQuestions', compact('ordered', 'surveyData'));
     }
 
 }

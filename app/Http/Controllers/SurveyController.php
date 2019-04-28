@@ -31,7 +31,9 @@ class SurveyController extends Controller
     }
 
     //i have disabled storeAnswer since we are not using any auth scaffolding yet
-    public function storeAnswer(/*StoreAnswer*/Request $request) {
+    public function storeAnswer(/*StoreAnswer*/
+        Request $request
+    ) {
 
         $answer = $this->service->updateOrCreateAnswer($request->input());
 
@@ -46,9 +48,14 @@ class SurveyController extends Controller
 
     }
 
-    public function getPreviousAnswer()
+    public function getPreviousAnswer($questionId, $userId)
     {
-        $previousQuestionAnswer = Answer::where('question_id', '26')->get();
-        dd($previousQuestionAnswer);
+        $previousQuestionAnswer = Answer::where('question_id', $questionId)
+                                        ->where('user_id', $userId)->first();
+
+        return response()->json([
+            'success'                => true,
+            'previousQuestionAnswer' => $previousQuestionAnswer->value,
+        ], 200);
     }
 }

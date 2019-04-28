@@ -62,7 +62,7 @@
                     return 0;
                 }
             },
-/*//:todo:get which checkboses have diff typr input and set this.showDifferentInput === 0 ()*/
+/*//:todo:get which checkboxes have diff type input and set this.showDifferentInput === 0 ()*/
             checkBoxesWithDifferentInputType() {
                 //get which checkboxe have allow custom input
                 const hasAllowCustomInput = this.checkBoxValues.filter(checkBox => checkBox.options.hasOwnProperty('allow_custom_input'));

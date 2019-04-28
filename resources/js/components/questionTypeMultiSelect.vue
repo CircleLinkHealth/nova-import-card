@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="row">
-            <div class="checkbox-dropdown col-lg-4" v-for="answer in previousQuestionAnswers">
+            <div class="checkbox-dropdown col-lg-4" v-for="answer in lastQuestionAnswer">
                 {{answer.name}}
                 <div v-for="checkBoxOption in multiSelectOptions">
                     <label>
@@ -21,7 +21,7 @@
 
     export default {
         name: "questionTypeMultiSelect",
-        props: ['question', 'userId', 'surveyInstanceId'],
+        props: ['question', 'questions', 'userId', 'surveyInstanceId'],
         components: {},
 
         data() {
@@ -29,26 +29,46 @@
                 checkBoxValues: this.question.type.question_type_answers[0].value,
                 checkBoxOptions: [],
                 multiSelectOptions: [],
-                previousQuestionAnswers: [
-                    {
-                        name: 'Colorectal Cancer'
-                    },
-                    {
-                        name: 'Depression'
-                    }
-                ],
+                lastQuestionAnswer: [],
             }
         },
         computed: {
             placeHolder() {
                 return this.checkBoxOptions[0].placeholder
+            },
+
+            lastQuestionId() {
+                const lastQuestionOrder =  this.checkBoxOptions[0].import_answers_from_question.question_order;
+                return this.questions.filter(function (q) {
+                    return q.pivot.order === lastQuestionOrder && q.pivot.sub_order === null;
+                })[0].pivot.question_id;
+            },
+
+            lastAnswerValue() {
+                axios.get('get-previous-answer/' + this.lastQuestionId + '/' + this.userId)
+                    .then(response => {
+                        this.lastQuestionAnswer = response.data.previousQuestionAnswer;
+                        console.log(response)
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+                if (this.lastQuestionAnswer !== null) {
+                    return this.lastQuestionAnswer;
+                }
+                return '';
+
             }
+
+
         },
 
         methods: {
             dropdown() {
 
             },
+
+
         },
 
         created() {
