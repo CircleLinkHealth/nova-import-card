@@ -180,19 +180,26 @@
             },
 
             handleAnswer() {
-                const answer = [];
+                const inputVal = this.inputHasText;
                 if (this.subParts.length === 0) {
-                    const key = 'value';
-                    answer.push({[key]: this.inputHasText})
+                    var answer = {
+                        value: this.inputHasText
+                    };
                 } else {
+                    const keys = [];
                     for (let j = 0; j < this.inputHasText.length; j++) {
-                        const val = this.inputHasText[j];
                         const q = this.subParts[j];
-                        if (q) {
-                            answer.push({[q.key]: val});
-                        }
+                        keys.push(q.key);
+                        //@todo:when new fields added only adds the last 2 in answer = [];
+                        var answer = [];
+                        const values = this.inputHasText.reduce(function (result, field, index) {
+                            result[keys[index]] = field;
+                            return result;
+                        }, {});
+                        answer.push(values);
                     }
                 }
+
                 var answerData = JSON.stringify(answer);
 
                 axios.post('/save-answer', {

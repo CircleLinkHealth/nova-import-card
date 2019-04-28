@@ -20,7 +20,13 @@
                     will also reach out shortly. Thanks!
                 </div>
 
-                <a class="btn btn-primary" @click="showQuestions">Start</a>
+                <div v-if="this.lastQuestionAnswered === null">
+                    <a class="btn btn-primary" @click="showQuestions">Start</a>
+                </div>
+
+                <div v-if="this.lastQuestionAnswered !== null">
+                    <a class="btn btn-primary" @click="scrollToLastQuestion">Continue</a>
+                </div>
 
                 <div class="by-circlelink">
                     ⚡️ by CircleLink Health
@@ -30,7 +36,7 @@
             <div class="questions-box"
                  v-if="questionsStage"
                  v-for="(question, index) in questions">
-                <div v-show="index >= questionIndex" class="question">
+                <div v-show="index === questionIndex" class="question">
                     <div class="questions-body" v-show="showSubQuestionNew(index)"><!--data-aos="fade-up"-->
 
                         <div class="questions-title">
@@ -53,16 +59,16 @@
                                     v-if="question.type.type === 'checkbox'">
                             </question-type-checkbox>
 
-                               <question-type-muti-select
-                                       :question="question"
-                                       :userId="userId"
-                                       :surveyInstanceId="surveyInstanceId"
-                                       v-if="question.type.type === 'multi_select'">
-                               </question-type-muti-select>
+                            <question-type-muti-select
+                                    :question="question"
+                                    :userId="userId"
+                                    :surveyInstanceId="surveyInstanceId"
+                                    v-if="question.type.type === 'multi_select'">
+                            </question-type-muti-select>
 
-                               <question-type-range
-                                       v-if="question.type.type === 'range'">
-                               </question-type-range>
+                            <question-type-range
+                                    v-if="question.type.type === 'range'">
+                            </question-type-range>
 
                             <question-type-number
                                     :question="question"
@@ -71,16 +77,16 @@
                                     v-if="question.type.type === 'number'">
                             </question-type-number>
 
-                               <question-type-radio
-                                      :question="question"
-                                      :userId="userId"
-                                      :surveyInstanceId="surveyInstanceId"
-                                      v-if="question.type.type === 'radio'">
-                              </question-type-radio>
+                            <question-type-radio
+                                    :question="question"
+                                    :userId="userId"
+                                    :surveyInstanceId="surveyInstanceId"
+                                    v-if="question.type.type === 'radio'">
+                            </question-type-radio>
 
-                              <question-type-date
-                                      v-if="question.type.type === 'date'">
-                              </question-type-date>
+                            <question-type-date
+                                    v-if="question.type.type === 'date'">
+                            </question-type-date>
                         </div>
                     </div>
                 </div>
@@ -209,6 +215,10 @@
                 });
             },
 
+            lastQuestionAnswered() {
+                return this.surveydata.survey_instances[0].pivot.last_question_answered_id;
+            },
+
             questionsOrder() {
                 return this.questions.flatMap(function (q) {
                     return q.pivot.order;
@@ -236,7 +246,12 @@
                 this.questionsStage = true;
                 this.welcomeStage = false;
             },
-
+            scrollToLastQuestion() {
+                this.questionsStage = true;
+                this.welcomeStage = false;
+                //@todo:check this again - i dont like it
+                this.questionIndex = this.lastQuestionAnswered -1;
+            },
             scrollDown() {
 
             },
@@ -277,9 +292,9 @@
                         && q.related_question_expected_answer === answerVal
                 });
 
-             /* if (conditions.length !== 0) {
-                    this.showSubQuestionNew(conditions);
-                }*/
+                /* if (conditions.length !== 0) {
+                       this.showSubQuestionNew(conditions);
+                   }*/
                 this.questionIndex++;
                 this.updateProgressBar();
             },

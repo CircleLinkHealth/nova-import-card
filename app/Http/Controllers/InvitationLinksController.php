@@ -103,7 +103,7 @@ class InvitationLinksController extends Controller
             return 'Name does not exists in our DB';
         }
         $userId       = $invitationLink->patientInfo->user_id;
-        $surveyId = $invitationLink->survey_id;
+        $surveyId     = $invitationLink->survey_id;
         $urlUpdatedAt = $invitationLink->updated_at;
         $isExpiredUrl = $invitationLink->is_manually_expired;
         $today        = now();
@@ -117,7 +117,7 @@ class InvitationLinksController extends Controller
 
         $surveyData = $this->surveyService->getSurveyData($userId, $surveyId);
 
-        return view('surveyQuestionnaire.surveyQuestions', compact('urlToken','surveyData'));
+        return view('surveyQuestionnaire.surveyQuestions', compact( 'surveyData'));
     }
 
 }
