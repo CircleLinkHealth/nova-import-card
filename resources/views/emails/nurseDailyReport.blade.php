@@ -9,21 +9,33 @@
     Here’s a report on your performance, time worked and earnings:
 </p>
 
-<p>
-    <b>Attendance/calls completion rate<span style="color: red;">* </span></b> {{$completionRate}}%
-</p>
-<p>
-    <b>Efficiency Index (100 is goal, higher is better)<span style="color: red;">** </span></b> {{$efficiencyIndex}}
-</p>
-<p>
-    <b>Hours behind for month<span style="color: red;">*** </span></b> {{$hoursBehind}}
-<p>
-    <b>Total time in system on {{$date->englishDayOfWeek}} ({{$date->format('m/d')}}):</b> {{ $totalTimeInSystemOnGivenDate }}
-</p>
+<ul>
+    <li><b>Attendance/calls completion rate<span style="color: red;">* </span></b> {{$completionRate}}%</li>
+    <li><b>Efficiency Index (100 is goal, higher is better)<span style="color: red;">** </span></b> {{$efficiencyIndex}}</li>
+    <li><b>Total time in system on {{$date->englishDayOfWeek}} ({{$date->format('m/d')}}):</b> {{ $totalTimeInSystemOnGivenDate }}</li>
+</ul>
+
 
 <p>
-    <b>Total time in system this month:</b> {{ $totalTimeInSystemThisMonth }}
+    Here’s a report on your case load progress this month:
 </p>
+<ul>
+    <li>
+        <b>Est. hours to complete monthly case load:</b>{{$caseLoadNeededToComplete}} hrs
+    </li>
+    <li>
+        <b>Hours committed rest of month:</b>{{$hoursCommittedRestOfMonth}} hrs
+    </li>
+    <li>
+        <b>Hours deficit or surplus:</b> {{$surplusShortfallHours}} hrs
+    </li>
+    <li>
+        <b>%age case load complete:</b> {{$caseLoadComplete}}%
+    </li>
+    <li>
+        <b>Total time in system this month:</b> {{ $totalTimeInSystemThisMonth }}
+    </li>
+</ul>
 
 @if ($nextUpcomingWindowLabel)
     <p>

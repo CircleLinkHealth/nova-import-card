@@ -24,11 +24,11 @@ class EmailRNDailyReport extends Command
     /**
      * The name and signature of the console command.
      *
+     *  {nurseUserIds? : Comma separated user IDs of nurses to email report to.}
+     *
      * @var string
      */
-    protected $signature = 'nurses:emailDailyReport {nurseUserIds? : Comma separated user IDs of nurses to email report to.}
-                                                    {date? : Date to generate report for in YYYY-MM-DD.}
-                                                    ';
+    protected $signature = 'nurses:emailDailyReport {date? : Date to generate report for in YYYY-MM-DD.}';
 
     private $report;
     private $service;
@@ -50,7 +50,8 @@ class EmailRNDailyReport extends Command
      */
     public function handle()
     {
-        $userIds = $this->argument('nurseUserIds') ?? null;
+//        $userIds = $this->argument('nurseUserIds') ?? null;
+        $userIds = null;
 
         $date = $this->argument('date') ?? Carbon::yesterday();
 
@@ -111,42 +112,34 @@ class EmailRNDailyReport extends Command
                             2
                         );
 
-                        $nextUpcomingWindow = $nurse->nurseInfo->firstWindowAfter(Carbon::now());
+                        $nextUpcomingWindow = $reportDataForNurse['nextUpcomingWindow'];
 
                         if ($nextUpcomingWindow) {
-                            $carbonDate = Carbon::parse($nextUpcomingWindow->date);
+                            $carbonDate = Carbon::parse($nextUpcomingWindow['date']);
                             $nextUpcomingWindowLabel = clhDayOfWeekToDayName(
-                                $nextUpcomingWindow->day_of_week
+                                $nextUpcomingWindow['day_of_week']
                                                        )." {$carbonDate->format('m/d/Y')}";
                         }
-
-                        $hours = $nurse->nurseInfo->workhourables
-                            ? $nurse->nurseInfo->workhourables->first()
-                            : null;
-
-                        $totalHours = $hours && $nextUpcomingWindow
-                            ? (string) $hours->{strtolower(
-                                clhDayOfWeekToDayName($nextUpcomingWindow->day_of_week)
-                            )}
-                            : null;
 
                         $data = [
                             'name'                         => $nurse->getFullName(),
                             'completionRate'               => $reportDataForNurse['completionRate'],
                             'efficiencyIndex'              => $reportDataForNurse['efficiencyIndex'],
+                            'caseLoadComplete'             => $reportDataForNurse['caseLoadComplete'],
+                            'caseLoadNeededToComplete'     => $reportDataForNurse['caseLoadNeededToComplete'],
+                            'hoursCommittedRestOfMonth'    => $reportDataForNurse['hoursCommittedRestOfMonth'],
+                            'surplusShortfallHours'        => $reportDataForNurse['surplusShortfallHours'],
                             'totalEarningsThisMonth'       => $totalEarningsThisMonth,
                             'totalTimeInSystemOnGivenDate' => $totalTimeInSystemOnGivenDate,
                             'totalTimeInSystemThisMonth'   => $totalTimeInSystemThisMonth,
-                            'nextUpcomingWindow'           => $nextUpcomingWindow,
                             'nextWindowCarbonDate'         => $carbonDate ?? null,
-                            'hours'                        => $hours,
                             'nextUpcomingWindowLabel'      => $nextUpcomingWindowLabel ?? null,
-                            'totalHours'                   => $totalHours,
+                            'totalHours'                   => $reportDataForNurse['committedHours'],
                             'windowStart'                  => $nextUpcomingWindow
-                                ? Carbon::parse($nextUpcomingWindow->window_time_start)->format('g:i A T')
+                                ? Carbon::parse($nextUpcomingWindow['window_time_start'])->format('g:i A T')
                                 : null,
                             'windowEnd' => $nextUpcomingWindow
-                                ? Carbon::parse($nextUpcomingWindow->window_time_end)->format('g:i A T')
+                                ? Carbon::parse($nextUpcomingWindow['window_time_end'])->format('g:i A T')
                                 : null,
                         ];
 
@@ -180,7 +173,12 @@ class EmailRNDailyReport extends Command
             'totalMonthSystemTimeSeconds',
             'completionRate',
             'efficiencyIndex',
-            'hoursBehind',
+            'committedHours',
+            'caseLoadComplete',
+            'caseLoadNeededToComplete',
+            'hoursCommittedRestOfMonth',
+            'surplusShortfallHours',
+            'nextUpcomingWindow',
         ], $report);
     }
 }

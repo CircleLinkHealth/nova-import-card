@@ -46,7 +46,12 @@ class NursesAndStatesDailyReportService
         $data = [];
         User::ofType('care-center')
             ->with([
-                'nurseInfo.windows',
+                'nurseInfo' => function ($info) {
+                    $info->with([
+                        'windows',
+                        'upcomingHolidays',
+                    ]);
+                },
                 'pageTimersAsProvider' => function ($q) use ($date) {
                     $q->where([
                         ['start_time', '>=', $date->copy()->startOfDay()],
@@ -61,20 +66,10 @@ class NursesAndStatesDailyReportService
             ->whereHas('nurseInfo', function ($info) {
                 $info->where('status', 'active');
             })
-//            //REMOVE THESE WHERE HAS?
-//            ->whereHas('outboundCalls', function ($q) use ($date) {
-//                $q->where([
-//                    ['called_date', '>=', $date->copy()->startOfDay()],
-//                    ['called_date', '<=', $date->copy()->endOfDay()],
-//                ])
-//                  ->orWhere('scheduled_date', $date->toDateString());
-//            })
-//            ->orwhereHas('activitiesAsProvider', function ($q) use ($date) {
-//                $q->where('performed_at', $date->toDateTimeString());
-//            })
             ->chunk(10, function ($nurses) use (&$data, $date) {
                 foreach ($nurses as $nurse) {
                     $data[] = $this->getDataForNurse($nurse, $date);
+                    $x = 1;
                 }
             });
 
@@ -159,12 +154,18 @@ class NursesAndStatesDailyReportService
             'uniquePatientsAssignedForMonth' => $patientsForMonth->count(),
         ];
 
+        //new metrics
         $data['completionRate']            = $this->getCompletionRate($data);
         $data['efficiencyIndex']           = $this->getEfficiencyIndex($data);
         $data['caseLoadComplete']          = $this->percentageCaseLoadComplete($patientsForMonth);
         $data['caseLoadNeededToComplete']  = $this->estHoursToCompleteCaseLoadMonth($patientsForMonth);
-        $data['hoursCommittedRestOfMonth'] = $this->getHoursCommittedRestOfMonth($nurseWindows, $date);
+        $data['hoursCommittedRestOfMonth'] = $this->getHoursCommittedRestOfMonth($nurseWindows, $nurse->nurseInfo->upcomingHolidays, $date);
         $data['surplusShortfallHours']     = $data['hoursCommittedRestOfMonth'] - $data['caseLoadNeededToComplete'];
+
+        //only for EmailRNDailyReport
+        $data['nextUpcomingWindow'] = optional($nurse->nurseInfo->firstWindowAfter($date->copy()))->toArray();
+
+        $data['shit'] = 'shit';
 
         return collect($data);
     }
@@ -210,7 +211,7 @@ class NursesAndStatesDailyReportService
         $timeGoal = (calculateWeekdays($startOfMonth, $date) / calculateWeekdays(
             $startOfMonth,
             $endOfMonth
-        )) * floatval($this->timeGoal);
+                )) * floatval($this->timeGoal);
 
         return round(
             (float) (($timeGoal - $avgCCMMinutesPerPatientAssigned) * $data['uniquePatientsAssignedForMonth'] / 60),
@@ -218,20 +219,24 @@ class NursesAndStatesDailyReportService
         );
     }
 
-    public function getHoursCommittedRestOfMonth($nurseWindows, Carbon $date)
+    public function getHoursCommittedRestOfMonth($nurseWindows, $upcomingHolidays, Carbon $date)
     {
-        $endOfMonth = $date->copy()->endOfMonth();
-        $diff       = $date->diffInDays($endOfMonth);
+        $diff = $date->diffInDays($date->copy()->endOfMonth());
 
         $mutableDate = $date->copy();
         $hours       = [];
         for ($i = $diff; $i > 0; --$i) {
-            $hours[] = round((float) $nurseWindows->where(
-                'day_of_week',
-                carbonToClhDayOfWeek($mutableDate->dayOfWeek)
-            )->sum(function ($window) {
-                return $window->numberOfHoursCommitted();
-            }), 2);
+            $holidayForDate = $upcomingHolidays->where('date', $mutableDate->toDateString());
+
+            //we count the hours only if the nurse has not scheduld a holiday for that day.
+            if ( ! $holidayForDate) {
+                $hours[] = round((float) $nurseWindows->where(
+                    'day_of_week',
+                    carbonToClhDayOfWeek($mutableDate->dayOfWeek)
+                )->sum(function ($window) {
+                    return $window->numberOfHoursCommitted();
+                }), 2);
+            }
 
             $mutableDate->addDay();
         }
@@ -411,7 +416,7 @@ DATE(patient_monthly_summaries.month_year) = DATE('{$date->copy()->startOfMonth(
                 'successful_calls',
                 '>=',
                 1
-            )->count() / $patients->count(), 2)
+                )->count() / $patients->count(), 2)
             : 0;
     }
 
