@@ -4,7 +4,20 @@
 // Variables
 @import 'variables';
 
+$primary-color: #50b2e2;
+
+@import "~bootstrap-css-only/css/bootstrap.min.css";
+
+@import "~mdbvue/build/scss/mdb";
+
 .navbar-laravel {
     background-color: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
+
+/*
+.btn-primary {
+    font-size: 18px;
+    border-color: #4aa5d2;
+}
+*/

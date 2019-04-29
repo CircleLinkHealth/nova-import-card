@@ -30,9 +30,6 @@ import 'jquery';
 import 'lodash';
 import 'popper.js';
 
-import 'bootstrap-css-only/css/bootstrap.min.css';
-import 'mdbvue/build/css/mdb.css';
-
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 

@@ -4,8 +4,11 @@
         <div class="survey-container">
             <template v-if="welcomeStage">
                 <div class="card-body">
-                    <img src="../../assets/images/notepad.png"
-                         class="welcome-icon" alt="welcome icon">
+                    <div class="welcome-icon-container">
+                        <img src="../../assets/images/notepad.png"
+                             class="welcome-icon" alt="welcome icon">
+                    </div>
+
                     <div class="survey-main-title">
                         <label id="sub-title">{{patientName}} Vitals</label>
                     </div>
@@ -375,12 +378,6 @@
         text-align: center;
     }
 
-    .btn-primary {
-        font-size: 18px;
-        background-color: #50b2e2;
-        border-color: #4aa5d2;
-    }
-
     .bottom-navbar {
         background-color: #ffffff;
         border-bottom: 1px solid #808080;
@@ -415,10 +412,13 @@
         width: 0 !important
     }
 
+    .welcome-icon-container {
+        margin: auto;
+        text-align: center;
+    }
+
     .welcome-icon {
         width: 108px;
-        margin-left: 490px;
-        margin-top: 20px;
     }
 
     .fa-phone {

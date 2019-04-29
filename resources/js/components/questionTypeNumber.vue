@@ -9,18 +9,30 @@
                 v-model="inputNumber"
                 :placeholder="this.questionPlaceHolder">
         </div>
-        <br>
+
         <!--question with sub_parts-->
-        <div v-if="questionHasSubParts" class="row">
-            <div v-for="(subPart, index) in questionSubParts" :key="index">
+        <div v-if="questionHasSubParts">
+            <div v-for="(subPart, index) in questionSubParts" :key="index" style="display: inline">
                 <input type="number"
                        class="number-field"
+                       :class="subPartsStyle"
                        name="numberTypeAnswer[]"
                        v-model="inputNumber[index]"
                        :placeholder="subPart.placeholder">
-            </div>
 
+                <span
+                    v-if="questionSubPartsSeparator === 'dash' && index !== questionSubParts.length - 1">
+                    &nbsp;/&nbsp;
+                </span>
+
+                <span
+                    v-if="questionSubPartsSeparator === '' && index !== questionSubParts.length - 1">
+                    &nbsp;
+                </span>
+            </div>
         </div>
+
+        <br>
 
         <mdbBtn v-show="showNextButton"
                 color="primary"
@@ -36,14 +48,12 @@
 </template>
 
 <script>
-    import {EventBus} from "../event-bus";
     import {mdbBtn} from "mdbvue";
-    /* import {saveAnswer} from "../save-answer";*/
 
     export default {
         name: "questionTypeNumber",
         components: {mdbBtn},
-        props: ['question', 'userId', 'surveyInstanceId', 'showNextButton', 'onDone'],
+        props: ['question', 'userId', 'surveyInstanceId', 'showNextButton', 'onDone', 'two-parts'],
 
         mounted() {
             console.log('Component mounted.')
@@ -57,6 +67,11 @@
             }
         },
         computed: {
+
+            subPartsStyle() {
+                return 'parts-' + this.questionSubParts.length;
+            },
+
             hasTypedTwoNumbers() {
                 return this.showNextButton && this.inputNumber.length > 1;
             },
@@ -75,16 +90,20 @@
 
             questionHasSubParts() {
                 if (this.hasAnswerType) {
-                    return this.questionOptions[0].hasOwnProperty('sub_parts');
+                    return this.questionOptions[0].hasOwnProperty('sub_parts') || this.questionOptions[0].hasOwnProperty('sub-parts');
                 }
                 return false;
             },
 
             questionSubParts() {
                 if (this.questionHasSubParts) {
-                    return this.questionOptions[0].sub_parts;
+                    return this.questionOptions[0].sub_parts || this.questionOptions[0]["sub-parts"];
                 }
-                return '';
+                return [];
+            },
+
+            questionSubPartsSeparator() {
+                return this.questionOptions[0].separate_sub_parts_with || '';
             },
 
             questionHasPlaceHolder() {
@@ -125,8 +144,8 @@
             const questionOptions = this.question.type.question_type_answers.map(q => q.options);
             this.questionOptions.push(...questionOptions);
 
-            if (this.questionSubParts !== '') {
-                const keys = this.questionOptions[0].sub_parts.map(q => q.key);
+            if (this.questionSubParts.length > 1) {
+                const keys = (this.questionOptions[0].sub_parts || this.questionOptions[0]["sub-parts"]).map(q => q.key);
                 this.keys.push(...keys);
             }
         },
@@ -158,5 +177,9 @@
         outline: 0;
         width: 300px;
         height: 30px;
+    }
+
+    .number-field.parts-2 {
+        width: 120px;
     }
 </style>
