@@ -579,7 +579,7 @@ class PatientCareplanController extends Controller
                 'display_name'    => $params->get('first_name').' '.$params->get('last_name'),
                 'roles'           => [$role->id],
                 'ccm_status'      => $request->input('ccm_status', Patient::ENROLLED),
-                'careplan_status' => 'draft',
+                'careplan_status' => CarePlan::QA_APPROVED,
                 'careplan_mode'   => CarePlan::WEB,
             ]
         );
