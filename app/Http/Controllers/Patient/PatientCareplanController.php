@@ -567,6 +567,12 @@ class PatientCareplanController extends Controller
         $this->validate($request, $user->getPatientRules(), $messages);
         $role      = Role::whereName('participant')->first();
         $newUserId = str_random(15);
+
+        $carePlanStatus = CarePlan::DRAFT;
+        if (auth()->user()->isPracticeStaff()) {
+            $carePlanStatus = CarePlan::QA_APPROVED;
+        }
+
         $params->add(
             [
                 'username' => $newUserId,
@@ -579,7 +585,7 @@ class PatientCareplanController extends Controller
                 'display_name'    => $params->get('first_name').' '.$params->get('last_name'),
                 'roles'           => [$role->id],
                 'ccm_status'      => $request->input('ccm_status', Patient::ENROLLED),
-                'careplan_status' => CarePlan::QA_APPROVED,
+                'careplan_status' => $carePlanStatus,
                 'careplan_mode'   => CarePlan::WEB,
             ]
         );
