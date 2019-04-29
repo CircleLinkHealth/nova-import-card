@@ -53,6 +53,7 @@
                 differentInputTypesData: [],
                 showDifferentInput: false,
                 inputHasText: [],
+                isYesOrNoQuestion: false,
             }
         },
 
@@ -73,10 +74,15 @@
                 return false;
             },
 
-            /*answerIsYesOrNo() {
+            isYesOrNoQuestionTypeAnswer() {
+                if (this.hasDifferentInputType) {
+                    return this.questionOptions.map(function (q) {
+                        return q.options.hasOwnProperty('yes_or_no_question') ? this.isYesOrNoQuestion = true : '';
+                    });
+                }
+                return false;
 
-
-            },*/
+            },
         },
 
 
@@ -111,9 +117,10 @@
                     .catch(function (error) {
                         console.log(error);
                     });
-                console.log(this.userId, this.surveyInstanceId[0], this.question.id,questionTypeAnswerId[0], answerData);
+                console.log(this.userId, this.surveyInstanceId[0], this.question.id, questionTypeAnswerId[0], answerData);
                 EventBus.$emit('showSubQuestions', answerVal, this.questionOrder, this.question.id)
             },
+
         },
 
         created() {
@@ -158,4 +165,5 @@
     .radio input[type="radio"]:checked + label {
         background-color: #4aa5d2;
     }
+
 </style>

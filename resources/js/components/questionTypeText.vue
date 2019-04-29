@@ -1,16 +1,33 @@
 <template>
     <div>
         <!--question without sub_parts-->
-        <div v-if="!questionHasSubParts">
-            <input
-                    type="text"
+        <div v-if="!questionHasSubParts"
+             v-for="(placeholder, index) in placeholderForSingleQuestion">
+            <input type="text"
                     class="text-field"
                     name="textTypeAnswer[]"
-                    v-model="inputHasText"
-                    :placeholder="this.questionPlaceHolder"
+                    v-model="inputHasText[index]"
+                    :placeholder="placeholder"
                     @change="onInput">
-        </div>
 
+            <div v-for="extraFieldButtonName in extraFieldButtonNames">
+                <div v-if="canAddInputFields">
+                    <button type="button"
+                            @click="addInputField(placeholder)"
+                            class="btn-add-field">
+                        {{extraFieldButtonName.add_extra_answer_text}}
+                    </button>
+                </div>
+
+                <div v-if="canRemoveInputFields">
+                    <button type="button"
+                            @click="removeSingleInputFields(index)"
+                            class="btn-primary">
+                        {{extraFieldButtonName.remove_extra_answer_text}}
+                    </button>
+                </div>
+            </div>
+        </div>
         <br>
         <!--question with sub_parts-->
         <div class="row">
@@ -68,9 +85,7 @@
         name: "questionTypeText",
         props: ['question', 'userId', 'surveyInstanceId'],
 
-        mounted() {
 
-        },
 
         data() {
             return {
@@ -81,6 +96,7 @@
                 canRemoveInputFields: false,
                 canAddInputFields: false,
                 showNextButton: false,
+                placeholderForSingleQuestion: [],
             }
         },
         computed: {
@@ -127,16 +143,6 @@
                 return false;
             },
 
-            questionPlaceHolder() {
-                if (this.questionHasPlaceHolderInSubParts && !this.questionHasPlaceHolderInOptions) {
-                    return this.questionOptions[0].sub_parts.map(q => q.placeholder);
-                }
-                if (this.questionHasPlaceHolderInOptions) {
-                    return this.questionOptions[0].placeholder;
-                }
-                return '';
-            },
-
             addInputFieldsButtonName() {
                 if (this.hasAnswerType) {
                     return this.questionOptions[0].add_extra_answer_text;
@@ -154,9 +160,26 @@
 
         },
 
+        mounted() {
+            /*get placeholder for single question input*/
+            if (this.questionHasPlaceHolderInSubParts && !this.questionHasPlaceHolderInOptions) {
+                const placeholder = this.questionOptions[0].sub_parts.map(q => q.placeholder);
+                this.placeholderForSingleQuestion.push(...placeholder);
+            }
+            if (this.questionHasPlaceHolderInOptions) {
+                const placeholder2 = this.questionOptions[0].placeholder;
+                this.placeholderForSingleQuestion.push(placeholder2);
+            }
+        },
+
         methods: {
             onInput() {
                 EventBus.$emit('handleTextType');
+            },
+            addInputField(placeholder) {
+                this.placeholderForSingleQuestion.push(placeholder);
+
+                this.canRemoveInputFields = true;
             },
 
             addInputFields(title, placeholder, key) {
@@ -177,6 +200,10 @@
             removeInputFields(index) {
                 // this.delete(this.subParts, index);
                 this.subParts.splice(index, 1);
+            },
+
+            removeSingleInputFields(index) {
+                this.placeholderForSingleQuestion.splice(index, 1)
             },
 
             handleAnswer() {

@@ -9,7 +9,7 @@
                        v-model="checkedAnswers"
                        @click="handleClick">
             </label>
-         <!--   <div>
+           <!-- <div v-show="showDifferentInput">
                 <input id="different-input"
                        class="text-field"
                        name="textTypeAnswer"

@@ -62,6 +62,7 @@
                             <question-type-muti-select
                                     :questions="questions"
                                     :question="question"
+                                    :surveyAnswers="surveyAnswers"
                                     :userId="userId"
                                     :surveyInstanceId="surveyInstanceId"
                                     v-if="question.type.type === 'multi_select'">
@@ -207,6 +208,7 @@
                 userId: this.surveydata.id,
                 surveyInstanceId: [],
                 questionIndexAnswers: [],
+                surveyAnswers:[],
             }
         },
         computed: {
@@ -229,7 +231,8 @@
 
             totalQuestions() {
                 return this.questions.length - this.subQuestions.length;
-            }
+            },
+
         },
 
         methods: {
@@ -342,9 +345,11 @@
             });
             const questions = questionsData.filter(question => !question.optional);
             const subQuestions = questionsData.filter(question => question.optional);
-
             this.questions.push(...questionsData);
             this.subQuestions.push(...subQuestions);
+
+            const surveyAnswers = this.surveydata.answers;
+            this.surveyAnswers.push(...surveyAnswers);
         },
 
     }
