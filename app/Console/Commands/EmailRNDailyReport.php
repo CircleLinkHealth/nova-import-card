@@ -24,11 +24,9 @@ class EmailRNDailyReport extends Command
     /**
      * The name and signature of the console command.
      *
-     *  {nurseUserIds? : Comma separated user IDs of nurses to email report to.}
-     *
      * @var string
      */
-    protected $signature = 'nurses:emailDailyReport {date? : Date to generate report for in YYYY-MM-DD.}';
+    protected $signature = 'nurses:emailDailyReport {nurseUserIds? : Comma separated user IDs of nurses to email report to.} {date? : Date to generate report for in YYYY-MM-DD.}';
 
     private $report;
     private $service;
@@ -50,8 +48,7 @@ class EmailRNDailyReport extends Command
      */
     public function handle()
     {
-//        $userIds = $this->argument('nurseUserIds') ?? null;
-        $userIds = null;
+        $userIds = $this->argument('nurseUserIds') ?? null;
 
         $date = $this->argument('date') ?? Carbon::yesterday();
 

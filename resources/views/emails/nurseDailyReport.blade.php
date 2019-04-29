@@ -27,7 +27,7 @@
         <b>Hours committed rest of month:</b>{{$hoursCommittedRestOfMonth}} hrs
     </li>
     <li>
-        <b>Hours deficit or surplus:</b> {{$surplusShortfallHours}} hrs
+        <b>Hours deficit or surplus:</b> {{$surplusShortfallHours}} hrs @if($surplusShortfallHours > 0) <span style="color: green">Surplus</span> @elseif($surplusShortfallHours < 0) <span style="color: green">Deficit</span> @endif
     </li>
     <li>
         <b>%age case load complete:</b> {{$caseLoadComplete}}%
