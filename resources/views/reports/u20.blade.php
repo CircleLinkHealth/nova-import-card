@@ -40,9 +40,9 @@
                     </div>
                     {!! Form::close() !!}
                 </div>
-                <div class="main-form-horizontal main-form-primary-horizontal col-md-12 col-xs-12">
+                <div class="main-form-horizontal main-form-primary-horizontal col-lg-12 col-md-12 col-xs-12">
                     @if($data)
-                        <div id="obs_alerts_container" class=""></div><br/>
+                        <div id="obs_alerts_container"></div><br/>
                         <div id="paging_container"></div><br/>
 
                         @push('styles')
@@ -97,12 +97,15 @@
                                     scrollX: true,
                                     resizeColumn: true,
                                     //tooltip:true,
+
                                     columns: [
                                         {
                                             id: "patient_name",
                                             header: ["Patient", {content: "textFilter", placeholder: "Filter"}],
                                             sort: 'string',
                                             adjust: true,
+                                            fillspace:true,
+                                            minWidth:150,
                                             template: "<a href='<?php echo route(
     'patient.activity.providerUIIndex',
     ['patient' => '#patient_id#']
