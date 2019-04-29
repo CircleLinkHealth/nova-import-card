@@ -55,7 +55,19 @@
                                         <td>{{array_key_exists('efficiencyIndex', $reportPerDay) ? $reportPerDay['efficiencyIndex'] : 'N/A'}}</td>
                                         <td>{{array_key_exists('caseLoadNeededToComplete' , $reportPerDay) ? $reportPerDay['caseLoadNeededToComplete' ] : 'N/A'}}</td>
                                         <td>{{array_key_exists('hoursCommittedRestOfMonth', $reportPerDay) ? $reportPerDay['hoursCommittedRestOfMonth'] : 'N/A'}}</td>
-                                        <td>{{array_key_exists('surplusShortfallHours', $reportPerDay) ? $reportPerDay['surplusShortfallHours'] : 'N/A'}}</td>
+                                    @php
+                                    if(array_key_exists('surplusShortfallHours', $reportPerDay)){
+                                        if($reportPerDay['surplusShortfallHours'] < 0 ){
+                                        $tdClass = 'red';
+                                        }elseif($reportPerDay['surplusShortfallHours'] > 0){
+                                         $tdClass = 'green';
+                                        }else{
+                                        $tdClass = '';
+                                        }
+                                    }
+
+                                    @endphp
+                                        <td><span class="{{$tdClass}}">{{array_key_exists('surplusShortfallHours', $reportPerDay) ? $reportPerDay['surplusShortfallHours'] : 'N/A'}}</span></td>
                                         <td>{{array_key_exists('caseLoadComplete', $reportPerDay) ? $reportPerDay['caseLoadComplete'] : 'N/A'}} %</td>
 
                                     @endforeach
@@ -79,7 +91,18 @@
                                             <td style="font-weight: bolder">{{$totalsForDay->has('efficiencyIndex') ? $totalsForDay['efficiencyIndex'] : 'N/A'}}</td>
                                             <td style="font-weight: bolder">{{$totalsForDay->has('caseLoadNeededToComplete') ? $totalsForDay['caseLoadNeededToComplete' ] : 'N/A'}}</td>
                                             <td style="font-weight: bolder">{{$totalsForDay->has('hoursCommittedRestOfMonth') ? $totalsForDay['hoursCommittedRestOfMonth'] : 'N/A'}}</td>
-                                            <td style="font-weight: bolder">{{$totalsForDay->has('surplusShortfallHours') ? $totalsForDay['surplusShortfallHours'] : 'N/A'}}</td>
+                                            @php
+                                                if($totalsForDay->has('surplusShortfallHours')){
+                                                    if($totalsForDay['surplusShortfallHours'] < 0 ){
+                                                    $totalTdClass = 'red';
+                                                    }elseif($totalsForDay['surplusShortfallHours'] > 0){
+                                                     $totalTdClass = 'green';
+                                                    }else{
+                                                    $totalTdClass = '';
+                                                    }
+                                                }
+                                            @endphp
+                                            <td style="font-weight: bolder"><span class="{{$totalTdClass}}">{{$totalsForDay->has('surplusShortfallHours') ? $totalsForDay['surplusShortfallHours'] : 'N/A'}}</span></td>
                                             <td style="font-weight: bolder">{{$totalsForDay->has('caseLoadComplete') ? $totalsForDay['caseLoadComplete'] : 'N/A'}} %</td>
                                         @endforeach
                                     @endforeach

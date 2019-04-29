@@ -45,7 +45,7 @@ class CreateReportSettingsTable extends Migration
             [
                 'name'        => 'time_goal_per_billable_patient',
                 'description' => 'Average Care Coach time per Billable Patient. Used in Nurses and States Report, Nurse Daily Performance Emails, and Ops Dashboard Reports',
-                'value'       => '30',
+                'value'       => '25',
             ],
         ]);
     }

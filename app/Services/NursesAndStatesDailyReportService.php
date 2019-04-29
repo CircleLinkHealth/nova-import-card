@@ -69,7 +69,6 @@ class NursesAndStatesDailyReportService
             ->chunk(10, function ($nurses) use (&$data, $date) {
                 foreach ($nurses as $nurse) {
                     $data[] = $this->getDataForNurse($nurse, $date);
-                    $x = 1;
                 }
             });
 
@@ -80,13 +79,17 @@ class NursesAndStatesDailyReportService
      *(25 - average of CCM minutes for assigned patients with under 20 minutes of CCM time)
      * X # of assigned patients under 20 minutes / 60.
      *
+     * OR
+     *
+     * time left for time-goal for patients under 20 minutes
+     *
      * @param mixed $patients
+     *
+     * @return float
      */
     public function estHoursToCompleteCaseLoadMonth($patients)
     {
-        //patient->summaryCcmTime
-        //
-        return round($patients->sum('patient_time_left') / 60, 2);
+        return round($patients->where('patient_time', '<', 20)->sum('patient_time_left') / 60, 2);
     }
 
     /**
@@ -165,8 +168,6 @@ class NursesAndStatesDailyReportService
         //only for EmailRNDailyReport
         $data['nextUpcomingWindow'] = optional($nurse->nurseInfo->firstWindowAfter($date->copy()))->toArray();
 
-        $data['shit'] = 'shit';
-
         return collect($data);
     }
 
@@ -229,7 +230,7 @@ class NursesAndStatesDailyReportService
             $holidayForDate = $upcomingHolidays->where('date', $mutableDate->toDateString());
 
             //we count the hours only if the nurse has not scheduld a holiday for that day.
-            if ( ! $holidayForDate) {
+            if ($holidayForDate->isEmpty()) {
                 $hours[] = round((float) $nurseWindows->where(
                     'day_of_week',
                     carbonToClhDayOfWeek($mutableDate->dayOfWeek)
@@ -265,10 +266,10 @@ class NursesAndStatesDailyReportService
     {
         return \DB::table('calls')
             ->select(
-                      \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
-                      \DB::raw('GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60 as patient_time'),
-                      \DB::raw('25 - GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60 as patient_time_left'),
-                      'no_of_successful_calls as successful_calls'
+                \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
+                \DB::raw('GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60 as patient_time'),
+                \DB::raw("({$this->timeGoal} - (GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60)) as patient_time_left"),
+                'no_of_successful_calls as successful_calls'
                   )
             ->leftJoin('users', 'users.id', '=', 'calls.inbound_cpm_id')
             ->leftJoin('patient_monthly_summaries', 'users.id', '=', 'patient_monthly_summaries.patient_id')
@@ -364,7 +365,7 @@ DATE(patient_monthly_summaries.month_year) = DATE('{$date->copy()->startOfMonth(
                     'efficiency'                => number_format($reportPerDay->avg('efficiency'), '2'),
                     'completionRate'            => number_format($reportPerDay->avg('completionRate'), '2'),
                     'efficiencyIndex'           => number_format($reportPerDay->avg('efficiencyIndex'), '2'),
-                    'caseLoadComplete'          => $reportPerDay->sum('caseLoadComplete'),
+                    'caseLoadComplete'          => number_format($reportPerDay->avg('caseLoadComplete'), '2'),
                     'caseLoadNeededToComplete'  => $reportPerDay->sum('caseLoadNeededToComplete'),
                     'hoursCommittedRestOfMonth' => $reportPerDay->sum('hoursCommittedRestOfMonth'),
                     'surplusShortfallHours'     => $reportPerDay->sum('surplusShortfallHours'),
@@ -412,11 +413,11 @@ DATE(patient_monthly_summaries.month_year) = DATE('{$date->copy()->startOfMonth(
     public function percentageCaseLoadComplete($patients)
     {
         return 0 !== $patients->count()
-            ? round($patients->where('patient_time', '>=', 20)->where(
+            ? round(($patients->where('patient_time', '>=', 20)->where(
                 'successful_calls',
                 '>=',
                 1
-                )->count() / $patients->count(), 2)
+                )->count() / $patients->count()) * 100, 2)
             : 0;
     }
 

@@ -73,4 +73,12 @@
         width: 20%;
     }
 
+    .red{
+        color: red;
+    }
+
+    .green{
+        color: green;
+    }
+
 </style>
