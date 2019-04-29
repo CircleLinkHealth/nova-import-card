@@ -262,16 +262,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.92.3",
+            "version": "3.92.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "a23edf1089d1f285abe5cf75db7f28c31e76d2df"
+                "reference": "aefba18e3e2bfe776521e085c93b1739f49514c5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/a23edf1089d1f285abe5cf75db7f28c31e76d2df",
-                "reference": "a23edf1089d1f285abe5cf75db7f28c31e76d2df",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/aefba18e3e2bfe776521e085c93b1739f49514c5",
+                "reference": "aefba18e3e2bfe776521e085c93b1739f49514c5",
                 "shasum": ""
             },
             "require": {
@@ -340,7 +340,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2019-04-25T18:09:43+00:00"
+            "time": "2019-04-26T18:07:09+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -1677,16 +1677,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.95",
+            "version": "v0.96",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "f0c5e3d4683db93d331c259af93b2e338c11e1f8"
+                "reference": "c03d878a948843844428e440e18b760b5d7a744e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/f0c5e3d4683db93d331c259af93b2e338c11e1f8",
-                "reference": "f0c5e3d4683db93d331c259af93b2e338c11e1f8",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/c03d878a948843844428e440e18b760b5d7a744e",
+                "reference": "c03d878a948843844428e440e18b760b5d7a744e",
                 "shasum": ""
             },
             "require": {
@@ -1710,7 +1710,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2019-04-20T00:23:20+00:00"
+            "time": "2019-04-28T00:23:08+00:00"
         },
         {
             "name": "google/auth",
@@ -10256,64 +10256,6 @@
             "time": "2015-05-11T14:41:42+00:00"
         },
         {
-            "name": "jeremeamia/SuperClosure",
-            "version": "2.4.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/jeremeamia/super_closure.git",
-                "reference": "5707d5821b30b9a07acfb4d76949784aaa0e9ce9"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/jeremeamia/super_closure/zipball/5707d5821b30b9a07acfb4d76949784aaa0e9ce9",
-                "reference": "5707d5821b30b9a07acfb4d76949784aaa0e9ce9",
-                "shasum": ""
-            },
-            "require": {
-                "nikic/php-parser": "^1.2|^2.0|^3.0|^4.0",
-                "php": ">=5.4",
-                "symfony/polyfill-php56": "^1.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^4.0|^5.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.4-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "SuperClosure\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jeremy Lindblom",
-                    "email": "jeremeamia@gmail.com",
-                    "homepage": "https://github.com/jeremeamia",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Serialize Closure objects, including their context and binding",
-            "homepage": "https://github.com/jeremeamia/super_closure",
-            "keywords": [
-                "closure",
-                "function",
-                "lambda",
-                "parser",
-                "serializable",
-                "serialize",
-                "tokenizer"
-            ],
-            "time": "2018-03-21T22:21:57+00:00"
-        },
-        {
             "name": "jolicode/jolinotif",
             "version": "v2.0.2",
             "source": {
@@ -11103,69 +11045,6 @@
                 }
             ],
             "time": "2017-07-14T14:27:02+00:00"
-        },
-        {
-            "name": "phpoffice/phpexcel",
-            "version": "1.8.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/PHPOffice/PHPExcel.git",
-                "reference": "1441011fb7ecdd8cc689878f54f8b58a6805f870"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/PHPOffice/PHPExcel/zipball/1441011fb7ecdd8cc689878f54f8b58a6805f870",
-                "reference": "1441011fb7ecdd8cc689878f54f8b58a6805f870",
-                "shasum": ""
-            },
-            "require": {
-                "ext-mbstring": "*",
-                "ext-xml": "*",
-                "ext-xmlwriter": "*",
-                "php": "^5.2|^7.0"
-            },
-            "require-dev": {
-                "squizlabs/php_codesniffer": "2.*"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "PHPExcel": "Classes/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "LGPL-2.1"
-            ],
-            "authors": [
-                {
-                    "name": "Maarten Balliauw",
-                    "homepage": "http://blog.maartenballiauw.be"
-                },
-                {
-                    "name": "Erik Tilt"
-                },
-                {
-                    "name": "Franck Lefevre",
-                    "homepage": "http://rootslabs.net"
-                },
-                {
-                    "name": "Mark Baker",
-                    "homepage": "http://markbakeruk.net"
-                }
-            ],
-            "description": "PHPExcel - OpenXML - Read, Create and Write Spreadsheet documents in PHP - Spreadsheet engine",
-            "homepage": "https://github.com/PHPOffice/PHPExcel",
-            "keywords": [
-                "OpenXML",
-                "excel",
-                "php",
-                "spreadsheet",
-                "xls",
-                "xlsx"
-            ],
-            "abandoned": "phpoffice/phpspreadsheet",
-            "time": "2018-11-22T23:07:24+00:00"
         },
         {
             "name": "phpspec/prophecy",
