@@ -1,16 +1,18 @@
 <template>
     <div>
         <div class="row">
-            <div class="checkbox-dropdown col-lg-4" v-for="answer in lastQuestionAnswer">
-                {{answer.name}}
-                <div v-for="checkBoxOption in multiSelectOptions">
-                    <label>
-                        <input class="multi-select"
-                               type="checkbox"
-                               name="checkboxTypeAnswer">
-                        {{checkBoxOption}}
-                    </label>
+            <div v-for="answer in lastQuestionAnswer">
+                <div>
+                    {{answer.name}}
                 </div>
+                 <div v-for="checkBoxOption in multiSelectOptions">
+                      <label>
+                          <input class="multi-select"
+                                 type="checkbox"
+                                 name="checkboxTypeAnswer">
+                          {{checkBoxOption}}
+                      </label>
+                  </div>
             </div>
         </div>
     </div>
@@ -37,36 +39,38 @@
                 return this.checkBoxOptions[0].placeholder
             },
 
-            lastQuestionId() {
-                const lastQuestionOrder =  this.checkBoxOptions[0].import_answers_from_question.question_order;
-                return this.questions.filter(function (q) {
-                    return q.pivot.order === lastQuestionOrder && q.pivot.sub_order === null;
-                })[0].pivot.question_id;
-            },
-
-            lastAnswerValue() {
-                axios.get('get-previous-answer/' + this.lastQuestionId + '/' + this.userId)
-                    .then(response => {
-                        this.lastQuestionAnswer = response.data.previousQuestionAnswer;
-                        console.log(response)
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
-                if (this.lastQuestionAnswer !== null) {
-                    return this.lastQuestionAnswer;
-                }
-                return '';
-
+            lastQuestionOrderNumber() {
+                const lastQuestionOrder = this.checkBoxOptions[0].import_answers_from_question.question_order;
+                this.lastQuestion(lastQuestionOrder);
+                return lastQuestionOrder;
             }
 
 
         },
 
         methods: {
-            dropdown() {
+            lastQuestion(lastQuestionOrder) {
+                /*const lastQuestionOrder = this.checkBoxOptions[0].import_answers_from_question.question_order;*/
+                const id = this.questions.filter(function (q) {
+                    return q.pivot.order === lastQuestionOrder && q.pivot.sub_order === null;
+                })[0].pivot.question_id;
 
+                axios.get('get-previous-answer/' + id + '/' + this.userId)
+                    .then(response => {
+                        if (response.data.previousQuestionAnswer.length !== 0) {
+                            this.lastQuestionAnswer = JSON.parse(response.data.previousQuestionAnswer);
+                            console.log(response)
+                        } else
+                            this.lastQuestionAnswer = '';
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
             },
+
+
+        },
+        mounted() {
 
 
         },
