@@ -528,6 +528,17 @@ class PatientCareplanController extends Controller
             if ($params->get('frequency')) {
                 $info->preferred_calls_per_month = $params->get('frequency');
             }
+
+            if ('withdrawn' == $params->get('ccm_status')) {
+                if ('Other' == $params->get('withdrawn_reason')) {
+                    $params->set('withdrawn_reason', $params->get('withdrawn_reason_other'));
+                }
+            } else {
+                $params->set('withdrawn_reason', null);
+            }
+
+            $info->withdrawn_reason = $params->get('withdrawn_reason');
+
             //we are checking this $info->contactWindows()->exists()
             //in case we want to delete all call windows, since $params->get('days') will evaluate to null if we unselect all
             if ($params->get('days') || $info->contactWindows()->exists()) {
@@ -545,9 +556,6 @@ class PatientCareplanController extends Controller
                 'home_phone_number.required' => 'The patient phone number field is required.',
             ];
             $this->validate($request, $user->getPatientRules(), $messages);
-            if ('Other' == $params->get('withdrawn_reason')) {
-                $params->set('withdrawn_reason', $params->get('withdrawn_reason_other'));
-            }
 
             $userRepo->editUser($user, $params);
             if ($params->get('direction')) {
