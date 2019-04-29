@@ -252,7 +252,7 @@ class NursesAndStatesDailyReportService
      */
     public function getLimitDate()
     {
-        return Carbon::parse('2018-02-03');
+        return Carbon::parse('2019-02-03');
     }
 
     public function getTotalMonthSystemTimeSeconds($nurse, $date)
