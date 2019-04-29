@@ -70,5 +70,4 @@
 
 <p><span style="color: red;">**</span> ”100” means that successful calls take 15 minutes and unsuccessful calls take 4 minutes. Over 100 means you are more efficient and less than 100 means less efficient than this. </p>
 
-<p><span style="color: red;">***</span> Hours of work behind based on # of currently assigned patients and remaining work days in month. Assumes you’re working every biz. day, so may swing day to day if you’re not.</p>
 </body>
