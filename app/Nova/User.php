@@ -6,6 +6,7 @@
 
 namespace App\Nova;
 
+use CircleLinkHealth\Customer\Entities\User as CpmUser;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Gravatar;
 use Laravel\Nova\Fields\ID;
@@ -26,7 +27,7 @@ class User extends Resource
      *
      * @var string
      */
-    public static $model = 'CircleLinkHealth\\Customer\\Entities\\User';
+    public static $model = CpmUser::class;
 
     /**
      * The columns that should be searched.
