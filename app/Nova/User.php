@@ -15,13 +15,6 @@ use Laravel\Nova\Fields\Text;
 class User extends Resource
 {
     /**
-     * Indicates if the resource should be displayed in the sidebar.
-     *
-     * @var bool
-     */
-    public static $displayInNavigation = false;
-
-    /**
      * The model the resource corresponds to.
      *
      * @var string
@@ -34,7 +27,7 @@ class User extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'display_name', 'email',
+        'id', 'name', 'email',
     ];
 
     /**
@@ -42,7 +35,7 @@ class User extends Resource
      *
      * @var string
      */
-    public static $title = 'display_name';
+    public static $title = 'name';
 
     /**
      * Get the actions available for the resource.
@@ -82,7 +75,7 @@ class User extends Resource
 
             Gravatar::make(),
 
-            Text::make('Display Name')
+            Text::make('Name')
                 ->sortable()
                 ->rules('required', 'max:255'),
 
