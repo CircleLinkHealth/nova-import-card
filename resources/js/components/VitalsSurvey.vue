@@ -42,8 +42,15 @@
                     <!--data-aos="fade-up"-->
                     <div class="questions-body">
 
+                        <div v-if="isSubQuestion(question) && shouldShowQuestionGroupTitle(question)"
+                             class="questions-title">
+                            {{getQuestionGroupTitle(question)}}
+                        </div>
+
+                        <br>
+
                         <div class="questions-title">
-                            {{question.pivot.order}}{{'.'}} {{question.body}}
+                            {{getQuestionTitle(question)}}
                         </div>
 
                         <br>
@@ -55,7 +62,10 @@
                                 :userId="patientId"
                                 :surveyInstanceId="surveyInstanceId"
                                 :show-next-button="currentQuestionIndex === index"
-                                :on-done="postAnswerAndGoToNext"
+                                :is-subquestion="isSubQuestion(question)"
+                                :get-all-questions-func="getAllQuestions"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :is-last-question="isLastQuestion(question)"
                                 v-if="question.type.type === 'text'">
                             </question-type-text>
 
@@ -64,7 +74,10 @@
                                 :userId="patientId"
                                 :surveyInstanceId="surveyInstanceId"
                                 :show-next-button="currentQuestionIndex === index"
-                                :on-done="postAnswerAndGoToNext"
+                                :is-subquestion="isSubQuestion(question)"
+                                :get-all-questions-func="getAllQuestions"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :is-last-question="isLastQuestion(question)"
                                 v-if="question.type.type === 'checkbox'">
                             </question-type-checkbox>
 
@@ -73,12 +86,19 @@
                                 :userId="patientId"
                                 :surveyInstanceId="surveyInstanceId"
                                 :show-next-button="currentQuestionIndex === index"
-                                :on-done="postAnswerAndGoToNext"
+                                :is-subquestion="isSubQuestion(question)"
+                                :get-all-questions-func="getAllQuestions"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :is-last-question="isLastQuestion(question)"
                                 v-if="question.type.type === 'multi_select'">
                             </question-type-muti-select>
 
                             <question-type-range
                                 :show-next-button="currentQuestionIndex === index"
+                                :is-subquestion="isSubQuestion(question)"
+                                :get-all-questions-func="getAllQuestions"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :is-last-question="isLastQuestion(question)"
                                 v-if="question.type.type === 'range'">
                             </question-type-range>
 
@@ -87,7 +107,10 @@
                                 :userId="patientId"
                                 :surveyInstanceId="surveyInstanceId"
                                 :show-next-button="currentQuestionIndex === index"
-                                :on-done="postAnswerAndGoToNext"
+                                :is-subquestion="isSubQuestion(question)"
+                                :get-all-questions-func="getAllQuestions"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :is-last-question="isLastQuestion(question)"
                                 v-if="question.type.type === 'number'">
                             </question-type-number>
 
@@ -96,13 +119,20 @@
                                 :userId="patientId"
                                 :surveyInstanceId="surveyInstanceId"
                                 :show-next-button="currentQuestionIndex === index"
-                                :on-done="postAnswerAndGoToNext"
+                                :is-subquestion="isSubQuestion(question)"
+                                :style-horizontal="true"
+                                :get-all-questions-func="getAllQuestions"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :is-last-question="isLastQuestion(question)"
                                 v-if="question.type.type === 'radio'">
                             </question-type-radio>
 
                             <question-type-date
                                 :show-next-button="currentQuestionIndex === index"
-                                :on-done="postAnswerAndGoToNext"
+                                :is-subquestion="isSubQuestion(question)"
+                                :get-all-questions-func="getAllQuestions"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :is-last-question="isLastQuestion(question)"
                                 v-if="question.type.type === 'date'">
                             </question-type-date>
                         </div>
@@ -204,9 +234,12 @@
                 return this.currentQuestionIndex > 0;
             },
             canScrollDown() {
+                return true;
+                /*
                 return !this.welcomeStage
                     && this.currentQuestionIndex < this.totalQuestions
                     && this.latestQuestionAnsweredIndex >= this.currentQuestionIndex;
+                    */
             },
             progressPercentage() {
                 return 100 * this.latestQuestionAnsweredIndex / this.totalQuestions;
@@ -227,15 +260,58 @@
             },
 
             scrollDown() {
+
+                this.currentQuestionIndex = this.currentQuestionIndex + 1;
+                /*
                 if (this.latestQuestionAnsweredIndex < this.currentQuestionIndex) {
                     return;
                 }
                 this.currentQuestionIndex = this.currentQuestionIndex + 1;
+                */
             },
 
-            postAnswerAndGoToNext(answer) {
+            isSubQuestion(question) {
+                return question.question_group !== null;
+            },
+
+            isLastQuestion(question) {
+                return this.questions[this.questions.length - 1].id === question.id;
+            },
+
+            shouldShowQuestionGroupTitle(question) {
+                return question.pivot.sub_order != null && (question.pivot.sub_order === "a" || question.pivot.sub_order === "1");
+            },
+
+            getQuestionGroupTitle(question) {
+                return question.question_group.body;
+            },
+
+            getQuestionTitle(question) {
+
+                if (this.isSubQuestion(question)) {
+                    return `${question.pivot.sub_order}. ${question.body}`;
+                }
+
+                return `${question.pivot.order}. ${question.body}`;
+            },
+
+            /**
+             * For components that need to access other questions.
+             * i.e. questions that are shown only if some conditions are met,
+             *      or if their answers are auto generated from previous answers
+             */
+            getAllQuestions() {
+                return this.questions;
+            },
+
+            postAnswerAndGoToNext(questionId, answer) {
 
                 return new Promise((resolve, reject) => {
+
+                    //save the answer in state
+                    const q = this.questions.find(x => x.id === questionId);
+                    q.answer = answer;
+
                     this.goToNextQuestion();
                     resolve();
                 });
@@ -267,6 +343,14 @@
                 //increment progress only if current question is not a sub question
                 if (answered.pivot.sub_order === null) {
                     this.progress = this.progress + 1;
+                } else {
+                    //if this is the last sub question of a group, increment progress
+
+                    //get all sub questions and sort them (i.e ["a", "b", "c"]
+                    const allSubs = this.questions.filter(q=> q.pivot.order === answered.pivot.order).map(q => q.pivot.sub_order).sort();
+                    if (allSubs[allSubs.length - 1] === answered.pivot.sub_order) {
+                        this.progress = this.progress + 1;
+                    }
                 }
             }
 
@@ -284,7 +368,6 @@
                 return elem.pivot.order;
             }).length;
         },
-
     }
 </script>
 
@@ -405,7 +488,7 @@
         border-right: 1px solid #808080;
         width: 100%;
         height: 600px;
-        overflow-y: scroll;
+        overflow-y: hidden;
     }
 
     .survey-container::-webkit-scrollbar {
@@ -433,6 +516,7 @@
     }
 
     .scroll-buttons .btn {
+        padding: 0;
         margin-top: 20px;
         width: 60px;
         height: 60px;

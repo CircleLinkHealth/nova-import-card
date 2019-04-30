@@ -47,27 +47,33 @@
             </div>
         </div>
 
+        <br>
 
         <!--next button-->
-        <div v-if="hasTypedTwoNumbers">
-            <button class="next-btn"
-                    name="text"
-                    id="text"
-                    type="submit"
+        <div :class="isLastQuestion ? 'text-center' : 'text-left'">
+            <mdbBtn v-show="showNextButton"
+                    color="primary"
+                    class="next-btn"
+                    name="number"
+                    id="number"
+                    :disabled="!hasTypedTwoNumbers"
                     @click="handleAnswer()">
-                Next
-            </button>
+                {{isLastQuestion ? 'Complete' : 'Next'}}
+            </mdbBtn>
         </div>
+
+
     </div>
 </template>
 
 <script>
 
-    import {EventBus} from "../event-bus";
+    import {mdbBtn} from 'mdbvue';
 
     export default {
         name: "questionTypeText",
-        props: ['question', 'userId', 'surveyInstanceId', 'showNextButton', 'onDone'],
+        props: ['question', 'userId', 'surveyInstanceId', 'showNextButton', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion'],
+        components: {mdbBtn},
 
         mounted() {
 
@@ -156,9 +162,6 @@
         },
 
         methods: {
-            onInput() {
-                EventBus.$emit('handleTextType');
-            },
 
             addInputFields(title, placeholder, key) {
                 /*  const label = this.subParts.map(q => q.title);
@@ -195,7 +198,7 @@
                     }
                 }
 
-                this.onDone(answer)
+                this.onDoneFunc(this.question.id, answer)
                     .catch(err => {
                         //if there is error, app will not move to next question.
                         //handle it here
@@ -227,13 +230,6 @@
 </script>
 
 <style scoped>
-    .next-btn {
-        width: 120px;
-        height: 40px;
-        border-radius: 5px;
-        border: solid 1px #4aa5d2;
-        background-color: #50b2e2;
-    }
 
     .btn-add-field {
         width: 271px;

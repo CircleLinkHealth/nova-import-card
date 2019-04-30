@@ -53,7 +53,7 @@
     export default {
         name: "questionTypeNumber",
         components: {mdbBtn},
-        props: ['question', 'userId', 'surveyInstanceId', 'showNextButton', 'onDone', 'two-parts'],
+        props: ['question', 'userId', 'surveyInstanceId', 'showNextButton', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion'],
 
         mounted() {
             console.log('Component mounted.')
@@ -133,7 +133,7 @@
                     value: this.inputNumber,
                 };
 
-                this.onDone(answer)
+                this.onDoneFunc(this.question.id, answer)
                     .catch(err => {
                         //if there is error, app will not move to next question.
                         //handle it here
@@ -163,11 +163,6 @@
         opacity: 50%;
         background-color: #50b2e2;
         border-color: #4aa5d2;
-    }
-
-    .next-btn {
-        width: 120px;
-        height: 40px;
     }
 
     .number-field {

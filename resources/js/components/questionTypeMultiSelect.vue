@@ -21,7 +21,7 @@
 
     export default {
         name: "questionTypeMultiSelect",
-        props: ['question', 'userId', 'surveyInstanceId', 'showNextButton', 'onDone'],
+        props: ['question', 'userId', 'surveyInstanceId', 'showNextButton', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion'],
         components: {},
 
         data() {

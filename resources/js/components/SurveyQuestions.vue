@@ -154,7 +154,6 @@
     import questionTypeDate from "./questionTypeDate";
     import callAssistance from "./callAssistance";
     import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
-    import subQuestions from "./subQuestions";
     import {EventBus} from '../event-bus';
     import questionTypeMultiSelect from "./questionTypeMultiSelect";
 
@@ -162,7 +161,6 @@
         props: ['surveydata'],
 
         components: {
-            'sub-questions': subQuestions,
             'question-type-text': questionTypeText,
             'question-type-checkbox': questionTypeCheckbox,
             'question-type-range': questionTypeRange,

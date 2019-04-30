@@ -35,7 +35,7 @@
 
     export default {
         name: "questionTypeCheckbox",
-        props: ['question', 'userId', 'surveyInstanceId', 'showNextButton', 'onDone'],
+        props: ['question', 'userId', 'surveyInstanceId', 'showNextButton', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion'],
         components: {},
 
         data() {
@@ -85,7 +85,7 @@
                     answer.push({[q.options.key]: val});
                 }
 
-                this.onDone(answer)
+                this.onDoneFunc(this.question.id, answer)
                     .catch(err => {
                         //if there is error, app will not move to next question.
                         //handle it here
@@ -101,11 +101,4 @@
 </script>
 
 <style scoped>
-    .next-btn {
-        width: 120px;
-        height: 40px;
-        border-radius: 5px;
-        border: solid 1px #4aa5d2;
-        background-color: #50b2e2;
-    }
 </style>
