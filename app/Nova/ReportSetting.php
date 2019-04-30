@@ -18,7 +18,7 @@ class ReportSetting extends Resource
      *
      * @var string
      */
-    public static $model = 'App\ReportSetting';
+    public static $model = \App\ReportSetting::class;
 
     /**
      * The columns that should be searched.
