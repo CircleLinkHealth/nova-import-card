@@ -56,16 +56,14 @@
                                         <td>{{array_key_exists('caseLoadNeededToComplete' , $reportPerDay) ? $reportPerDay['caseLoadNeededToComplete' ] : 'N/A'}}</td>
                                         <td>{{array_key_exists('hoursCommittedRestOfMonth', $reportPerDay) ? $reportPerDay['hoursCommittedRestOfMonth'] : 'N/A'}}</td>
                                     @php
+                                    $tdClass = '';
                                     if(array_key_exists('surplusShortfallHours', $reportPerDay)){
                                         if($reportPerDay['surplusShortfallHours'] < 0 ){
                                         $tdClass = 'red';
                                         }elseif($reportPerDay['surplusShortfallHours'] > 0){
                                          $tdClass = 'green';
-                                        }else{
-                                        $tdClass = '';
                                         }
                                     }
-
                                     @endphp
                                         <td><span class="{{$tdClass}}">{{array_key_exists('surplusShortfallHours', $reportPerDay) ? $reportPerDay['surplusShortfallHours'] : 'N/A'}}</span></td>
                                         <td>{{array_key_exists('caseLoadComplete', $reportPerDay) ? $reportPerDay['caseLoadComplete'] : 'N/A'}} %</td>
@@ -92,13 +90,12 @@
                                             <td style="font-weight: bolder">{{$totalsForDay->has('caseLoadNeededToComplete') ? $totalsForDay['caseLoadNeededToComplete' ] : 'N/A'}}</td>
                                             <td style="font-weight: bolder">{{$totalsForDay->has('hoursCommittedRestOfMonth') ? $totalsForDay['hoursCommittedRestOfMonth'] : 'N/A'}}</td>
                                             @php
+                                            $totalTdClass = '';
                                                 if($totalsForDay->has('surplusShortfallHours')){
                                                     if($totalsForDay['surplusShortfallHours'] < 0 ){
                                                     $totalTdClass = 'red';
                                                     }elseif($totalsForDay['surplusShortfallHours'] > 0){
                                                      $totalTdClass = 'green';
-                                                    }else{
-                                                    $totalTdClass = '';
                                                     }
                                                 }
                                             @endphp
