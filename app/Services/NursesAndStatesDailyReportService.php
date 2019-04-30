@@ -18,31 +18,15 @@ use Illuminate\Support\Facades\DB;
 class NursesAndStatesDailyReportService
 {
     protected $successfulCallsMultiplier;
+
     protected $timeGoal;
 
     protected $unsuccessfulCallsMultiplier;
 
-    public function __construct()
-    {
-        $settings = DB::table('report_settings')->get();
-
-        $nurseSuccessful   = $settings->where('name', 'nurse_report_successful')->first();
-        $nurseUnsuccessful = $settings->where('name', 'nurse_report_unsuccessful')->first();
-        $timeGoal          = $settings->where('name', 'time_goal_per_billable_patient')->first();
-
-        $this->successfulCallsMultiplier = $nurseSuccessful
-            ? $nurseSuccessful->value
-            : '0.25';
-        $this->unsuccessfulCallsMultiplier = $nurseUnsuccessful
-            ? $nurseUnsuccessful->value
-            : '0.067';
-        $this->timeGoal = $timeGoal
-            ? $timeGoal->value
-            : '30';
-    }
-
     public function collectData(Carbon $date)
     {
+        $this->setReportSettings();
+
         $data = [];
         User::ofType('care-center')
             ->with([
@@ -162,8 +146,12 @@ class NursesAndStatesDailyReportService
         $data['efficiencyIndex']           = $this->getEfficiencyIndex($data);
         $data['caseLoadComplete']          = $this->percentageCaseLoadComplete($patientsForMonth);
         $data['caseLoadNeededToComplete']  = $this->estHoursToCompleteCaseLoadMonth($patientsForMonth);
-        $data['hoursCommittedRestOfMonth'] = $this->getHoursCommittedRestOfMonth($nurseWindows, $nurse->nurseInfo->upcomingHolidays, $date);
-        $data['surplusShortfallHours']     = $data['hoursCommittedRestOfMonth'] - $data['caseLoadNeededToComplete'];
+        $data['hoursCommittedRestOfMonth'] = $this->getHoursCommittedRestOfMonth(
+            $nurseWindows,
+            $nurse->nurseInfo->upcomingHolidays,
+            $date
+        );
+        $data['surplusShortfallHours'] = $data['hoursCommittedRestOfMonth'] - $data['caseLoadNeededToComplete'];
 
         //only for EmailRNDailyReport
         $data['nextUpcomingWindow'] = optional($nurse->nurseInfo->firstWindowAfter($date->copy()))->toArray();
@@ -266,10 +254,10 @@ class NursesAndStatesDailyReportService
     {
         return \DB::table('calls')
             ->select(
-                \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
-                \DB::raw('GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60 as patient_time'),
-                \DB::raw("({$this->timeGoal} - (GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60)) as patient_time_left"),
-                'no_of_successful_calls as successful_calls'
+                      \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
+                      \DB::raw('GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60 as patient_time'),
+                      \DB::raw("({$this->timeGoal} - (GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60)) as patient_time_left"),
+                      'no_of_successful_calls as successful_calls'
                   )
             ->leftJoin('users', 'users.id', '=', 'calls.inbound_cpm_id')
             ->leftJoin('patient_monthly_summaries', 'users.id', '=', 'patient_monthly_summaries.patient_id')
@@ -417,8 +405,29 @@ DATE(patient_monthly_summaries.month_year) = DATE('{$date->copy()->startOfMonth(
                 'successful_calls',
                 '>=',
                 1
-                )->count() / $patients->count()) * 100, 2)
+                    )->count() / $patients->count()) * 100, 2)
             : 0;
+    }
+
+    public function setReportSettings()
+    {
+        $settings = DB::table('report_settings')->get();
+
+        $nurseSuccessful   = $settings->where('name', 'nurse_report_successful')->first();
+        $nurseUnsuccessful = $settings->where('name', 'nurse_report_unsuccessful')->first();
+        $timeGoal          = $settings->where('name', 'time_goal_per_billable_patient')->first();
+
+        $this->successfulCallsMultiplier = $nurseSuccessful
+            ? $nurseSuccessful->value
+            : '0.25';
+        $this->unsuccessfulCallsMultiplier = $nurseUnsuccessful
+            ? $nurseUnsuccessful->value
+            : '0.067';
+        $this->timeGoal = $timeGoal
+            ? $timeGoal->value
+            : '30';
+
+        return true;
     }
 
     /**

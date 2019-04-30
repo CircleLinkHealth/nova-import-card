@@ -81,8 +81,7 @@ class EmailRNDailyReport extends Command
 
                         //In case something goes wrong with nurses and states report, or transitioning to new metrics issues
                         if ( ! $reportDataForNurse || ! $this->validateReportData($reportDataForNurse)) {
-                            //too heavy on memory.
-//                            $reportDataForNurse = $this->service->getDataForNurse($nurse, $date);
+                            \Log::error("Invalid/missing report for nurse with id: {$nurse->id} and date {$date->toDateString()}");
                             continue;
                         }
 

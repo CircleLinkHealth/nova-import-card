@@ -23,10 +23,6 @@ class OpsDashboardService
     public function __construct(OpsDashboardPatientEloquentRepository $repo)
     {
         $this->repo = $repo;
-
-        $timeGoal = DB::table('report_settings')->where('name', 'time_goal_per_billable_patient')->first();
-
-        $this->timeGoal = $timeGoal ? $timeGoal->value : '35';
     }
 
     public function billingChurnRow($summaries, $months)
@@ -97,6 +93,8 @@ class OpsDashboardService
      */
     public function calculateHoursBehind(Carbon $date, $practices)
     {
+        $this->setTimeGoal();
+
         $enrolledPatients = $practices->map(function ($practice) {
             return $practice->patients->filter(function ($user) {
                 if ( ! $user) {
@@ -387,10 +385,10 @@ class OpsDashboardService
             },
         ])
             ->whereHas('patientInfo', function ($patient) use ($fromDate, $toDate) {
-                $patient->ccmStatus(Patient::PAUSED)
-                    ->where('date_paused', '>=', $fromDate)
-                    ->where('date_paused', '<=', $toDate);
-            })
+                            $patient->ccmStatus(Patient::PAUSED)
+                                ->where('date_paused', '>=', $fromDate)
+                                ->where('date_paused', '<=', $toDate);
+                        })
             ->get();
 
         return $patients;
@@ -451,5 +449,16 @@ class OpsDashboardService
         ];
 
         return collect($rowData);
+    }
+
+    public function setTimeGoal()
+    {
+        $timeGoal = DB::table('report_settings')->where('name', 'time_goal_per_billable_patient')->first();
+
+        $this->timeGoal = $timeGoal
+            ? $timeGoal->value
+            : '35';
+
+        return true;
     }
 }
