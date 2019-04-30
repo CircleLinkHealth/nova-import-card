@@ -4200,8 +4200,14 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "git@github.com:CircleLinkHealth/laravel-cerberus.git",
-                "reference": "a70637130916aad3f5f4bda25080550f0fef5551"
+                "url": "https://github.com/michalisantoniou6/laravel-cerberus.git",
+                "reference": "a35c7821026529304c0ca5768386f204c2045347"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/michalisantoniou6/laravel-cerberus/zipball/a35c7821026529304c0ca5768386f204c2045347",
+                "reference": "a35c7821026529304c0ca5768386f204c2045347",
+                "shasum": ""
             },
             "require": {
                 "illuminate/cache": "~5.0",
@@ -4234,22 +4240,18 @@
                     "Michalisantoniou6\\Cerberus\\": "src/Cerberus/"
                 }
             },
-            "autoload-dev": {
-                "classmap": [
-                    "tests/Middleware/MiddlewareTest.php"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "authors": [
                 {
-                    "name": "Zizaco Zizuini",
-                    "email": "zizaco@gmail.com"
-                },
-                {
                     "name": "Andrew Elkins",
                     "homepage": "http://andrewelkins.com"
+                },
+                {
+                    "name": "Zizaco Zizuini",
+                    "email": "zizaco@gmail.com"
                 },
                 {
                     "name": "Ben Batschelet",
@@ -4274,7 +4276,7 @@
                 "permission",
                 "roles"
             ],
-            "time": "2019-04-05T19:26:30+00:00"
+            "time": "2018-08-03T09:03:19+00:00"
         },
         {
             "name": "mindscape/raygun4php",
@@ -8726,12 +8728,22 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "git@github.com:michalisantoniou6/revisionable.git",
-                "reference": "2f4340355b7ec02e8d9c07102c25edf7477c1188"
+                "url": "https://github.com/VentureCraft/revisionable.git",
+                "reference": "6b178df991e46b509d230a2bf1b6f8685e426a10"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/VentureCraft/revisionable/zipball/6b178df991e46b509d230a2bf1b6f8685e426a10",
+                "reference": "6b178df991e46b509d230a2bf1b6f8685e426a10",
+                "shasum": ""
             },
             "require": {
                 "illuminate/support": "~4.0|~5.0|~5.1",
-                "php": ">=5.3.0"
+                "laravel/framework": "~5.4",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "~3.0"
             },
             "type": "library",
             "autoload": {
@@ -8742,6 +8754,7 @@
                     "Venturecraft\\Revisionable": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -8754,18 +8767,14 @@
             "description": "Keep a revision history for your models without thinking, created as a package for use with Laravel",
             "homepage": "http://github.com/venturecraft/revisionable",
             "keywords": [
+                "Audit",
                 "ardent",
                 "history",
                 "laravel",
                 "model",
                 "revision"
             ],
-            "support": {
-                "issues": "https://github.com/VentureCraft/revisionable/issues",
-                "source": "https://github.com/VentureCraft/revisionable"
-            },
-            "abandoned": true,
-            "time": "2018-08-06T23:22:33+00:00"
+            "time": "2019-04-23T09:02:06+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -12846,9 +12855,7 @@
         "prettus/l5-repository": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
-        "xethron/migrations-generator": 20,
-        "venturecraft/revisionable": 20,
-        "michalisantoniou6/laravel-cerberus": 20
+        "xethron/migrations-generator": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
