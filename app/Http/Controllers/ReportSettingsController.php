@@ -7,7 +7,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateReportSettings;
-use Illuminate\Support\Facades\DB;
+use App\ReportSetting;
 
 class ReportSettingsController extends Controller
 {
@@ -18,7 +18,7 @@ class ReportSettingsController extends Controller
      */
     public function index()
     {
-        $settings = DB::table('report_settings')->get();
+        $settings = ReportSetting::get();
 
         $nurseSuccessful   = $settings->where('name', 'nurse_report_successful')->first();
         $nurseUnsuccessful = $settings->where('name', 'nurse_report_unsuccessful')->first();
@@ -33,16 +33,13 @@ class ReportSettingsController extends Controller
 
     public function update(UpdateReportSettings $request)
     {
-        DB::table('report_settings')
-            ->where('name', 'nurse_report_successful')
+        ReportSetting::where('name', 'nurse_report_successful')
             ->update(['value' => $request->get('nurse_successful')]);
 
-        DB::table('report_settings')
-            ->where('name', 'nurse_report_unsuccessful')
+        ReportSetting::where('name', 'nurse_report_unsuccessful')
             ->update(['value' => $request->get('nurse_unsuccessful')]);
 
-        DB::table('report_settings')
-            ->where('name', 'time_goal_per_billable_patient')
+        ReportSetting::where('name', 'time_goal_per_billable_patient')
             ->update(['value' => $request->get('time_goal')]);
 
         return redirect()->back();
