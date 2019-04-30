@@ -55,18 +55,11 @@ class PatientCallListController extends Controller
         $calls->orderBy('scheduled_date', 'asc');
         $calls->orderBy('call_time_start', 'asc');
 
-        $calls = $calls->get();
-
-        //add Call Backs at the start of the list
-        $callBacks = $calls->where('type', 'Call Back');
-
-        $calls = $calls->reject(function ($value, $key) {
-            return 'Call Back' == $value->type;
-        });
-
-        foreach ($callBacks as $callBack) {
-            $calls->prepend($callBack);
-        }
+        $calls = $calls->get()->sortByDesc(
+            function ($call) {
+                return 'Call Back' == $call->type;
+            }
+        );
 
         return view('patientCallList.index', compact([
             'calls',

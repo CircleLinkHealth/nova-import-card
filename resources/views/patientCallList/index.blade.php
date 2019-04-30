@@ -26,6 +26,14 @@ function formatTime($time)
             .red {
                 color: #ba1d18;
             }
+
+            .bold-row {
+                font-weight: 900;
+                color:#888888;
+                text-shadow: 1px 0 #888888;
+                letter-spacing:1px;
+            }
+
         </style>
     @endpush
     @push('scripts')
@@ -166,12 +174,10 @@ function formatTime($time)
                                                         $rowBg = 'background-color: rgba(255, 0, 0, 0.4);';
                                                     }
                                                     if ('Call Back' === $call->type) {
-                                                        $boldRow = 'font-weight: 900; color:#888888;
-text-shadow: 1px 0 #888888;
-letter-spacing:1px;';
+                                                        $boldRow = 'bold-row';
                                                     }
                                                     ?>
-                                                    <tr style="{{ $rowBg }} {{$boldRow}}">
+                                                    <tr class="{{$boldRow}}" style="{{ $rowBg }}">
                                                         <td class="vert-align" style="text-align:center">
                                                             @if(empty($call->type) || $call->type === 'call')
                                                                 <i class="fas fa-phone"></i>
