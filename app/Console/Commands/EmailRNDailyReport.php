@@ -7,10 +7,9 @@
 namespace App\Console\Commands;
 
 use App\Notifications\NurseDailyReport;
+use App\Services\NursesAndStatesDailyReportService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\TimeTracking\Entities\Activity;
-use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Console\Command;
 
 class EmailRNDailyReport extends Command
@@ -20,22 +19,26 @@ class EmailRNDailyReport extends Command
      *
      * @var string
      */
-    protected $description = '';
+    protected $description = 'Send emails to nurses containing a report on their performance for a given date.';
+
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'nurses:emailDailyReport {nurseUserIds? : Comma separated user IDs of nurses to email report to.}
-                                                    {date? : Date to generate report for in YYYY-MM-DD.}
-                                                    ';
+    protected $signature = 'nurses:emailDailyReport {nurseUserIds? : Comma separated user IDs of nurses to email report to.} {date? : Date to generate report for in YYYY-MM-DD.}';
+
+    private $report;
+    private $service;
 
     /**
      * Create a new command instance.
      */
-    public function __construct()
+    public function __construct(NursesAndStatesDailyReportService $service)
     {
         parent::__construct();
+
+        $this->service = $service;
     }
 
     /**
@@ -46,11 +49,14 @@ class EmailRNDailyReport extends Command
     public function handle()
     {
         $userIds = $this->argument('nurseUserIds') ?? null;
-        $date    = $this->argument('date') ?? Carbon::yesterday();
+
+        $date = $this->argument('date') ?? Carbon::yesterday();
 
         if ( ! is_a($date, Carbon::class)) {
             $date = Carbon::parse($date);
         }
+
+        $this->report = $this->service->showDataFromS3($date);
 
         $counter    = 0;
         $emailsSent = [];
@@ -70,17 +76,18 @@ class EmailRNDailyReport extends Command
                         if ( ! $nurse->nurseInfo) {
                             continue;
                         }
-                        $activityTime = Activity::createdBy($nurse)
-                            ->createdOn($date, 'performed_at')
-                            ->sum('duration');
 
-                        $systemTime = PageTimer::where('provider_id', $nurse->id)
-                            ->createdOn($date, 'start_time')
-                            ->sum('billable_duration');
+                        $reportDataForNurse = $this->report->where('nurse_id', $nurse->id)->first();
 
-                        $totalMonthSystemTimeSeconds = PageTimer::where('provider_id', $nurse->id)
-                            ->createdInMonth($date, 'start_time')
-                            ->sum('billable_duration');
+                        //In case something goes wrong with nurses and states report, or transitioning to new metrics issues
+                        if ( ! $reportDataForNurse || ! $this->validateReportData($reportDataForNurse)) {
+                            \Log::error("Invalid/missing report for nurse with id: {$nurse->id} and date {$date->toDateString()}");
+                            continue;
+                        }
+
+                        $systemTime = $reportDataForNurse['systemTime'];
+
+                        $totalMonthSystemTimeSeconds = $reportDataForNurse['totalMonthSystemTimeSeconds'];
 
                         if (0 == $systemTime) {
                             continue;
@@ -92,8 +99,6 @@ class EmailRNDailyReport extends Command
                             continue;
                         }
 
-                        $performance = round((float) ($activityTime / $systemTime) * 100);
-
                         $totalTimeInSystemOnGivenDate = secondsToHMS($systemTime);
 
                         $totalTimeInSystemThisMonth = secondsToHMS($totalMonthSystemTimeSeconds);
@@ -103,41 +108,34 @@ class EmailRNDailyReport extends Command
                             2
                         );
 
-                        $nextUpcomingWindow = $nurse->nurseInfo->firstWindowAfter(Carbon::now());
+                        $nextUpcomingWindow = $reportDataForNurse['nextUpcomingWindow'];
 
                         if ($nextUpcomingWindow) {
-                            $carbonDate = Carbon::parse($nextUpcomingWindow->date);
+                            $carbonDate = Carbon::parse($nextUpcomingWindow['date']);
                             $nextUpcomingWindowLabel = clhDayOfWeekToDayName(
-                                $nextUpcomingWindow->day_of_week
+                                $nextUpcomingWindow['day_of_week']
                                                        )." {$carbonDate->format('m/d/Y')}";
                         }
 
-                        $hours = $nurse->nurseInfo->workhourables
-                            ? $nurse->nurseInfo->workhourables->first()
-                            : null;
-
-                        $totalHours = $hours && $nextUpcomingWindow
-                            ? (string) $hours->{strtolower(
-                                clhDayOfWeekToDayName($nextUpcomingWindow->day_of_week)
-                            )}
-                            : null;
-
                         $data = [
                             'name'                         => $nurse->getFullName(),
-                            'performance'                  => $performance,
+                            'completionRate'               => $reportDataForNurse['completionRate'],
+                            'efficiencyIndex'              => $reportDataForNurse['efficiencyIndex'],
+                            'caseLoadComplete'             => $reportDataForNurse['caseLoadComplete'],
+                            'caseLoadNeededToComplete'     => $reportDataForNurse['caseLoadNeededToComplete'],
+                            'hoursCommittedRestOfMonth'    => $reportDataForNurse['hoursCommittedRestOfMonth'],
+                            'surplusShortfallHours'        => $reportDataForNurse['surplusShortfallHours'],
                             'totalEarningsThisMonth'       => $totalEarningsThisMonth,
                             'totalTimeInSystemOnGivenDate' => $totalTimeInSystemOnGivenDate,
                             'totalTimeInSystemThisMonth'   => $totalTimeInSystemThisMonth,
-                            'nextUpcomingWindow'           => $nextUpcomingWindow,
                             'nextWindowCarbonDate'         => $carbonDate ?? null,
-                            'hours'                        => $hours,
                             'nextUpcomingWindowLabel'      => $nextUpcomingWindowLabel ?? null,
-                            'totalHours'                   => $totalHours,
+                            'totalHours'                   => $reportDataForNurse['committedHours'],
                             'windowStart'                  => $nextUpcomingWindow
-                                ? Carbon::parse($nextUpcomingWindow->window_time_start)->format('g:i A T')
+                                ? Carbon::parse($nextUpcomingWindow['window_time_start'])->format('g:i A T')
                                 : null,
                             'windowEnd' => $nextUpcomingWindow
-                                ? Carbon::parse($nextUpcomingWindow->window_time_end)->format('g:i A T')
+                                ? Carbon::parse($nextUpcomingWindow['window_time_end'])->format('g:i A T')
                                 : null,
                         ];
 
@@ -162,5 +160,21 @@ class EmailRNDailyReport extends Command
         );
 
         $this->info("${counter} email(s) sent.");
+    }
+
+    private function validateReportData($report)
+    {
+        return array_keys_exist([
+            'systemTime',
+            'totalMonthSystemTimeSeconds',
+            'completionRate',
+            'efficiencyIndex',
+            'committedHours',
+            'caseLoadComplete',
+            'caseLoadNeededToComplete',
+            'hoursCommittedRestOfMonth',
+            'surplusShortfallHours',
+            'nextUpcomingWindow',
+        ], $report);
     }
 }
