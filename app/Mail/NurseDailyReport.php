@@ -37,6 +37,12 @@ class NurseDailyReport extends Mailable
      */
     protected $nurse;
 
+    private static $nursesForNewReport = [
+        11321,
+        8151,
+        1920,
+    ];
+
     /**
      * Create a new message instance.
      *
@@ -62,7 +68,7 @@ class NurseDailyReport extends Mailable
         $view = 'emails.nurseDailyReportToDeprecate';
 
         //only these 3 nurses get new report
-        if (in_array($this->nurse->id, [11321, 8151, 1920])) {
+        if (in_array($this->nurse->id, static::$nursesForNewReport)) {
             $view = 'emails.nurseDailyReport';
         }
 
