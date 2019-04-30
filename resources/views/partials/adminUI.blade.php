@@ -254,6 +254,8 @@
                                     </a></li>
                                 <li><a href="{{route('medication-groups-maps.index')}}">Medication Group Map
                                     </a></li>
+                                <li><a href="{{route('report-settings.index')}}">Manage Report Settings
+                                    </a></li>
                             </ul>
                         </li>
 
