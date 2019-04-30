@@ -35,7 +35,7 @@ function formatTime($time)
 
                 const table = $('#cpmEditableTable');
                 table.DataTable({
-                    "order": [[2, "asc"], [3, "asc"]],
+                    "order": [],
                     "iDisplayLength": 100,
                     scrollX: true,
                     fixedHeader: true
@@ -161,11 +161,17 @@ function formatTime($time)
                                                     $curDate = $curTime->toDateString();
                                                     $curTime = $curTime->toTimeString();
                                                     $rowBg   = '';
+                                                    $boldRow = '';
                                                     if ($call->scheduled_date == $curDate && $call->call_time_end < $curTime) {
                                                         $rowBg = 'background-color: rgba(255, 0, 0, 0.4);';
                                                     }
+                                                    if ('Call Back' === $call->type) {
+                                                        $boldRow = 'font-weight: 900; color:#888888;
+text-shadow: 1px 0 #888888;
+letter-spacing:1px;';
+                                                    }
                                                     ?>
-                                                    <tr style="{{ $rowBg }}">
+                                                    <tr style="{{ $rowBg }} {{$boldRow}}">
                                                         <td class="vert-align" style="text-align:center">
                                                             @if(empty($call->type) || $call->type === 'call')
                                                                 <i class="fas fa-phone"></i>
