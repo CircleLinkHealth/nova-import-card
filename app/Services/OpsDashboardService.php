@@ -6,7 +6,6 @@
 
 namespace App\Services;
 
-use App\Exports\OpsDashboardPatientsReport;
 use App\Repositories\OpsDashboardPatientEloquentRepository;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -16,6 +15,8 @@ use Illuminate\Support\Facades\DB;
 class OpsDashboardService
 {
     const TWENTY_MINUTES = 1200;
+
+    protected $timeGoal;
     private $repo;
 
     public function __construct(OpsDashboardPatientEloquentRepository $repo)
@@ -91,30 +92,32 @@ class OpsDashboardService
      */
     public function calculateHoursBehind(Carbon $date, $practices)
     {
+        $this->setTimeGoal();
+
         $enrolledPatients = $practices->map(
             function ($practice) {
                 return $practice->patients->filter(
-                    function ($user) {
-                        if ( ! $user) {
-                            return false;
-                        }
-                        if ( ! $user->patientInfo) {
-                            return false;
-                        }
-
-                        return Patient::ENROLLED == $user->patientInfo->ccm_status;
+                function ($user) {
+                    if ( ! $user) {
+                        return false;
                     }
+                    if ( ! $user->patientInfo) {
+                        return false;
+                    }
+
+                    return Patient::ENROLLED == $user->patientInfo->ccm_status;
+                }
                 );
             }
         )->flatten()->unique('id');
 
         $totActPt                = $enrolledPatients->count();
-        $targetMinutesPerPatient = 35;
+        $targetMinutesPerPatient = floatval($this->timeGoal);
 
         $startOfMonth       = $date->copy()->startOfMonth();
         $endOfMonth         = $date->copy()->endOfMonth();
-        $workingDaysElapsed = $this->calculateWeekdays($startOfMonth->toDateTimeString(), $date->toDateTimeString());
-        $workingDaysMonth   = $this->calculateWeekdays(
+        $workingDaysElapsed = calculateWeekdays($startOfMonth->toDateTimeString(), $date->toDateTimeString());
+        $workingDaysMonth   = calculateWeekdays(
             $startOfMonth->toDateTimeString(),
             $endOfMonth->toDateTimeString()
         );
@@ -166,29 +169,6 @@ class OpsDashboardService
         }
 
         return $lost;
-    }
-
-    /**
-     * Returns the number of working days for the date range given.
-     * Accounts for weekends and holidays.
-     *
-     * @param $fromDate
-     * @param $toDate
-     *
-     * @return int
-     */
-    public function calculateWeekdays($fromDate, $toDate)
-    {
-        $holidays = DB::table('company_holidays')->get();
-
-        return Carbon::parse($fromDate)->diffInDaysFiltered(
-            function (Carbon $date) use ($holidays) {
-                $matchingHolidays = $holidays->where('holiday_date', $date->toDateString());
-
-                return ! $date->isWeekend() && ! $matchingHolidays->count() >= 1;
-            },
-            new Carbon($toDate)
-        );
     }
 
     /**
@@ -275,11 +255,9 @@ class OpsDashboardService
                 $to_enroll[] = $patient;
             }
         }
-        $count['Total'] = $patients->filter(
-            function ($value, $key) {
-                return 'enrolled' == $value->patientInfo->ccm_status;
-            }
-        )->count();
+        $count['Total'] = $patients->filter(function ($value, $key) {
+            return 'enrolled' == $value->patientInfo->ccm_status;
+        })->count();
 
         $pausedCount      = count($paused);
         $withdrawnCount   = count($withdrawn);
@@ -386,23 +364,18 @@ class OpsDashboardService
      */
     public function getPausedPatients($fromDate, $toDate)
     {
-        $patients = User::with(
-            [
-                'patientInfo' => function ($patient) use ($fromDate, $toDate) {
-                    $patient->ccmStatus(Patient::PAUSED)
-                        ->where('date_paused', '>=', $fromDate)
-                        ->where('date_paused', '<=', $toDate);
-                },
-            ]
-        )
-            ->whereHas(
-                            'patientInfo',
-                            function ($patient) use ($fromDate, $toDate) {
-                                $patient->ccmStatus(Patient::PAUSED)
-                                    ->where('date_paused', '>=', $fromDate)
-                                    ->where('date_paused', '<=', $toDate);
-                            }
-                        )
+        $patients = User::with([
+            'patientInfo' => function ($patient) use ($fromDate, $toDate) {
+                $patient->ccmStatus(Patient::PAUSED)
+                    ->where('date_paused', '>=', $fromDate)
+                    ->where('date_paused', '<=', $toDate);
+            },
+        ])
+            ->whereHas('patientInfo', function ($patient) use ($fromDate, $toDate) {
+                $patient->ccmStatus(Patient::PAUSED)
+                    ->where('date_paused', '>=', $fromDate)
+                    ->where('date_paused', '<=', $toDate);
+            })
             ->get();
 
         return $patients;
