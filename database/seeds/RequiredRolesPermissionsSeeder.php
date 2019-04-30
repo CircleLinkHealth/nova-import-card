@@ -494,7 +494,6 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'allergy.read',
                     'allergy.update',
                     'allergy.delete',
-                    'care-plan-approve',
                     'users-view-all',
                     'users-view-self',
                     'user.read',
@@ -688,7 +687,6 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'allergy.update',
                     'allergy.delete',
                     'careplan-pdf.read',
-                    'care-plan-approve',
                     'users-view-all',
                     'users-view-self',
                     'user.read',
@@ -988,6 +986,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'note.send',
                     'offlineActivityRequest.create',
                     'offlineActivityRequest.read',
+                    'has-schedule',
                 ],
             ],
             [
@@ -1107,6 +1106,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'note.send',
                     'offlineActivityRequest.create',
                     'offlineActivityRequest.read',
+                    'has-schedule',
                 ],
             ],
             [

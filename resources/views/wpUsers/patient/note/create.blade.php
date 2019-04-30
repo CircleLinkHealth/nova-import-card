@@ -63,7 +63,7 @@
     <form id="newNote" method="post" action="{{route('patient.note.store', ['patientId' => $patient->id])}}"
           class="form-horizontal">
         <div class="row" style="margin-top:30px;">
-            <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1 col-xs-10 col-xs-offset-1"
+            <div class="main-form-container col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 col-xs-10 col-xs-offset-1"
                  style="border-bottom: 3px solid #50b2e2;">
                 <div class="row">
                     <div class="main-form-title col-lg-12"> Record New Note</div>
@@ -693,7 +693,7 @@
                     const CHARACTERS_THRESHOLD = 100;
                     let showModal = false;
                     const noteBody = form['body'].value;
-                    const noteBodyWithoutMeds = noteBody.substring(0, noteBody.indexOf(MEDICATIONS_SEPARATOR)).trim();
+                    const noteBodyWithoutMeds = getNoteBodyExcludingMedications(noteBody);
 
                     //CPM-182:
                     // if time more than 90 seconds
@@ -751,6 +751,30 @@
                     $('#confirm-task-completed').modal('show');
                 }
             });
+
+            window.addEventListener('beforeunload', (event) => {
+
+                if (submitted) {
+                    return;
+                }
+
+                const noteBody = $('#note').val();
+                const trimmed = getNoteBodyExcludingMedications(noteBody);
+
+                if (trimmed.length) {
+                    if (!confirm()) {
+                        // Cancel the event as stated by the standard.
+                        event.preventDefault();
+                        // Chrome requires returnValue to be set.
+                        event.returnValue = '';
+                    }
+                }
+
+            });
+
+            function getNoteBodyExcludingMedications(noteBody) {
+                return noteBody.substring(0, noteBody.indexOf(MEDICATIONS_SEPARATOR)).trim();
+            }
 
         </script>
     @endpush

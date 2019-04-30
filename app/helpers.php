@@ -1351,7 +1351,7 @@ if ( ! function_exists('tryDropForeignKey')) {
 if ( ! function_exists('isProductionEnv')) {
     function isProductionEnv()
     {
-        return in_array(config('app.env'), ['production', 'worker']);
+        return config('app.is_production_env');
     }
 }
 

@@ -40,9 +40,9 @@
                     </div>
                     {!! Form::close() !!}
                 </div>
-                <div class="main-form-horizontal main-form-primary-horizontal col-md-12 col-xs-12">
+                <div class="main-form-horizontal main-form-primary-horizontal col-lg-12 col-md-12 col-xs-12">
                     @if($data)
-                        <div id="obs_alerts_container" class=""></div><br/>
+                        <div id="obs_alerts_container"></div><br/>
                         <div id="paging_container"></div><br/>
 
                         @push('styles')
@@ -97,15 +97,18 @@
                                     scrollX: true,
                                     resizeColumn: true,
                                     //tooltip:true,
+
                                     columns: [
                                         {
                                             id: "patient_name",
                                             header: ["Patient", {content: "textFilter", placeholder: "Filter"}],
                                             sort: 'string',
                                             adjust: true,
+                                            fillspace:true,
+                                            minWidth:150,
                                             template: "<a href='<?php echo route(
-                                                'patient.activity.providerUIIndex',
-                                                ['patient' => '#patient_id#']
+    'patient.activity.providerUIIndex',
+    ['patient' => '#patient_id#']
                                             ); ?>'>#patient_name#</a>"
 
                                         },
@@ -204,7 +207,7 @@
                                             header: ["Total", "(Min:Sec)"],
                                             sort: 'int',
                                             css: {"color": "black", "text-align": "right"},
-                                            width:150,
+                                            width: 150,
                                             adjust: true,
                                             format: webix.numberFormat,
                                             template: function (obj, common) {
@@ -221,6 +224,10 @@
                                         template: "{common.first()} {common.prev()} {common.pages()} {common.next()} {common.last()}",
                                         size: 10, // the number of records per a page
                                         group: 5   // the number of pages in the pager
+                                    },
+                                    ready: function () {
+                                        //CPM-725: Maximum Call Stack Size exceeded error on low-end machines
+                                        this.config.autoheight = false;
                                     },
                                     {!! $activity_json !!}
                                 });

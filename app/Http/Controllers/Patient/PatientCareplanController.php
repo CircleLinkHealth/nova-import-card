@@ -59,79 +59,79 @@ class PatientCareplanController extends Controller
         $query = CarePlanPrintListView::whereIn('primary_practice_id', $practiceIds)
             ->get()
             ->each(
-                  function ($cp) use (&$carePlansForWebix) {
-                      $last_printed = $cp->last_printed;
+                function ($cp) use (&$carePlansForWebix) {
+                    $last_printed = $cp->last_printed;
 
-                      if ($last_printed) {
-                          $printed_status = 'Yes';
-                          $printed_date = $last_printed;
-                      } else {
-                          $printed_status = 'No';
-                          $printed_date = null;
-                      }
-                      $last_printed
+                    if ($last_printed) {
+                        $printed_status = 'Yes';
+                        $printed_date = $last_printed;
+                    } else {
+                        $printed_status = 'No';
+                        $printed_date = null;
+                    }
+                    $last_printed
                       ? $printed = $last_printed
                       : $printed = 'No';
 
-                      // careplan status stuff from 2.x
-                      $careplanStatus = $cp->care_plan_status;
-                      $careplanStatusLink = '';
-                      $approverName = 'NA';
+                    // careplan status stuff from 2.x
+                    $careplanStatus = $cp->care_plan_status;
+                    $careplanStatusLink = '';
+                    $approverName = 'NA';
 
-                      if ('provider_approved' == $careplanStatus) {
-                          $careplanStatus = $careplanStatusLink = 'Approved';
+                    if ('provider_approved' == $careplanStatus) {
+                        $careplanStatus = $careplanStatusLink = 'Approved';
 
-                          $approver = $cp->approver_full_name;
-                          if ($approver) {
-                              $approverName = $approver;
-                              $carePlanProviderDate = $cp->provider_date;
+                        $approver = $cp->approver_full_name;
+                        if ($approver) {
+                            $approverName = $approver;
+                            $carePlanProviderDate = $cp->provider_date;
 
-                              $careplanStatusLink = '<span data-toggle="" title="'.$approverName.' '.$carePlanProviderDate.'">Approved</span>';
-                          }
-                      } elseif ('qa_approved' == $careplanStatus) {
-                          $careplanStatus = 'Prov. to Approve';
-                          $careplanStatusLink = 'Prov. to Approve';
-                      } elseif ('draft' == $careplanStatus) {
-                          $careplanStatus = 'CLH to Approve';
-                          $careplanStatusLink = 'CLH to Approve';
-                      }
+                            $careplanStatusLink = '<span data-toggle="" title="'.$approverName.' '.$carePlanProviderDate.'">Approved</span>';
+                        }
+                    } elseif ('qa_approved' == $careplanStatus) {
+                        $careplanStatus = 'Prov. to Approve';
+                        $careplanStatusLink = 'Prov. to Approve';
+                    } elseif ('draft' == $careplanStatus) {
+                        $careplanStatus = 'CLH to Approve';
+                        $careplanStatusLink = 'CLH to Approve';
+                    }
 
-                      $from = new DateTime($cp->patient_dob);
-                      $to = new DateTime('today');
+                    $from = new DateTime($cp->patient_dob);
+                    $to = new DateTime('today');
 
-                      $age = $from->diff($to)->y;
+                    $age = $from->diff($to)->y;
 
-                      if ( ! empty($cp->patient_info_id) && ! empty($cp->patient_first_name)
+                    if ( ! empty($cp->patient_info_id) && ! empty($cp->patient_first_name)
                        && ! empty($cp->patient_last_name)) {
-                          $carePlansForWebix->push(
-                          [
-                              'id'                         => $cp->patient_id,
-                              'key'                        => $cp->patient_id,
-                              'patient_name'               => $cp->patient_full_name,
-                              'first_name'                 => $cp->patient_first_name,
-                              'last_name'                  => $cp->patient_last_name,
-                              'careplan_status'            => $careplanStatus,
-                              'careplan_status_link'       => $careplanStatusLink,
-                              'careplan_provider_approver' => $approverName,
-                              'dob'                        => Carbon::parse(
-                                  $cp->patient_dob
-                              )->format('m/d/Y'),
-                              'phone'    => '',
-                              'age'      => $age,
-                              'reg_date' => Carbon::parse(
-                                  $cp->patient_registered
-                              )->format('m/d/Y'),
-                              'last_read'             => '',
-                              'ccm_time'              => $cp->patient_ccm_time,
-                              'ccm_seconds'           => $cp->patient_ccm_time,
-                              'provider'              => $cp->provider_full_name,
-                              'program_name'          => $cp->practice_name,
-                              'careplan_last_printed' => $printed_date,
-                              'careplan_printed'      => $printed_status,
-                          ]
+                        $carePlansForWebix->push(
+                            [
+                                'id'                         => $cp->patient_id,
+                                'key'                        => $cp->patient_id,
+                                'patient_name'               => $cp->patient_full_name,
+                                'first_name'                 => $cp->patient_first_name,
+                                'last_name'                  => $cp->patient_last_name,
+                                'careplan_status'            => $careplanStatus,
+                                'careplan_status_link'       => $careplanStatusLink,
+                                'careplan_provider_approver' => $approverName,
+                                'dob'                        => Carbon::parse(
+                                    $cp->patient_dob
+                                )->format('m/d/Y'),
+                                'phone'    => '',
+                                'age'      => $age,
+                                'reg_date' => Carbon::parse(
+                                    $cp->patient_registered
+                                )->format('m/d/Y'),
+                                'last_read'             => '',
+                                'ccm_time'              => $cp->patient_ccm_time,
+                                'ccm_seconds'           => $cp->patient_ccm_time,
+                                'provider'              => $cp->provider_full_name,
+                                'program_name'          => $cp->practice_name,
+                                'careplan_last_printed' => $printed_date,
+                                'careplan_printed'      => $printed_status,
+                            ]
                       );
-                      }
-                  }
+                    }
+                }
               );
 
         $patientJson = $carePlansForWebix->toJson();
@@ -355,6 +355,21 @@ class PatientCareplanController extends Controller
         $patientRoleId = Role::where('name', '=', 'participant')->first();
         $patientRoleId = $patientRoleId->id;
 
+        $reasons = [
+            'No Longer Interested',
+            'Moving out of Area',
+            'New Physician',
+            'Cost / Co-Pay',
+            'Changed Insurance',
+            'Dialysis / End-Stage Renal Disease',
+            'Expired',
+            'Home Health Services',
+            'Other',
+        ];
+
+        $withdrawnReasons       = array_combine($reasons, $reasons);
+        $patientWithdrawnReason = $patient->getWithdrawnReason();
+
         // States (for dropdown)
         $states = [
             'AL' => 'Alabama',
@@ -454,6 +469,8 @@ class PatientCareplanController extends Controller
                     'contact_days_array',
                     'contactWindows',
                     'billingProviders',
+                    'withdrawnReasons',
+                    'patientWithdrawnReason',
                 ]
             )
         );
@@ -511,6 +528,17 @@ class PatientCareplanController extends Controller
             if ($params->get('frequency')) {
                 $info->preferred_calls_per_month = $params->get('frequency');
             }
+
+            if ('withdrawn' == $params->get('ccm_status')) {
+                if ('Other' == $params->get('withdrawn_reason')) {
+                    $params->set('withdrawn_reason', $params->get('withdrawn_reason_other'));
+                }
+            } else {
+                $params->set('withdrawn_reason', null);
+            }
+
+            $info->withdrawn_reason = $params->get('withdrawn_reason');
+
             //we are checking this $info->contactWindows()->exists()
             //in case we want to delete all call windows, since $params->get('days') will evaluate to null if we unselect all
             if ($params->get('days') || $info->contactWindows()->exists()) {
@@ -528,6 +556,7 @@ class PatientCareplanController extends Controller
                 'home_phone_number.required' => 'The patient phone number field is required.',
             ];
             $this->validate($request, $user->getPatientRules(), $messages);
+
             $userRepo->editUser($user, $params);
             if ($params->get('direction')) {
                 return redirect($params->get('direction'))->with(
@@ -546,6 +575,12 @@ class PatientCareplanController extends Controller
         $this->validate($request, $user->getPatientRules(), $messages);
         $role      = Role::whereName('participant')->first();
         $newUserId = str_random(15);
+
+        $carePlanStatus = CarePlan::DRAFT;
+        if (auth()->user()->isPracticeStaff()) {
+            $carePlanStatus = CarePlan::QA_APPROVED;
+        }
+
         $params->add(
             [
                 'username' => $newUserId,
@@ -558,7 +593,7 @@ class PatientCareplanController extends Controller
                 'display_name'    => $params->get('first_name').' '.$params->get('last_name'),
                 'roles'           => [$role->id],
                 'ccm_status'      => $request->input('ccm_status', Patient::ENROLLED),
-                'careplan_status' => 'draft',
+                'careplan_status' => $carePlanStatus,
                 'careplan_mode'   => CarePlan::WEB,
             ]
         );

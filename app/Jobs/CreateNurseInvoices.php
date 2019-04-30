@@ -6,6 +6,7 @@
 
 namespace App\Jobs;
 
+use App\Notifications\NurseInvoiceCreated;
 use App\Notifications\NurseInvoicesCreated;
 use App\Repositories\Cache\UserNotificationList;
 use App\Repositories\Cache\View;
@@ -108,14 +109,16 @@ class CreateNurseInvoices implements ShouldQueue
 
         $invoices = $this->generatePdfInvoices($nurseUsers, $nurseSystemTimeMap, $pdfService);
 
-        $link = $this->storeInJobsCompleted($invoices);
-
-        $this->notifyRequestor($link);
+        if ($this->requestedBy) {
+            $link = $this->storeInJobsCompleted($invoices);
+            $this->notifyRequestor($link);
+        }
     }
 
     private function createPdf(CareCoachInvoiceViewModel $viewModel, PdfService $pdfService)
     {
         $name = trim($viewModel->user->getFullName()).'-'.Carbon::now()->toDateString();
+        $link = $name.'.pdf';
 
         $pdfPath = $pdfService->createPdfFromView(
             'billing.nurse.invoice-v2',
@@ -126,16 +129,23 @@ class CreateNurseInvoices implements ShouldQueue
                 'margin-bottom'    => '8',
                 'margin-right'     => '6',
                 'footer-right'     => 'Page [page] of [toPage]',
+                'footer-left'      => 'report generated on '.Carbon::now()->format('m-d-Y').' at '.Carbon::now()->format('H:iA'),
                 'footer-font-size' => '6',
             ],
             storage_path("download/${name}.pdf")
         );
 
+        if ( ! $this->requestedBy) {
+            //if the report was not requested by anybody, it was called from the command. In this case we want to send the invoice to the nurses
+            $viewModel->user->notify(new NurseInvoiceCreated($link, "{$this->startDate->englishMonth} {$this->startDate->year}"));
+            $viewModel->user->addMedia($pdfPath)->toMediaCollection("monthly_invoice_{$this->startDate->year}_{$this->startDate->month}");
+        }
+
         return [
             'nurse_user_id' => $viewModel->user->id,
             'name'          => $viewModel->user->getFullName(),
             'email'         => $viewModel->user->email,
-            'link'          => $name.'.pdf',
+            'link'          => $link,
             'date_start'    => presentDate($this->startDate),
             'date_end'      => presentDate($this->endDate),
             'email_body'    => [
@@ -187,6 +197,7 @@ class CreateNurseInvoices implements ShouldQueue
     /**
      * @param Collection $nurseUsers
      * @param Collection $nurseSystemTimeMap
+     * @param bool       $sendToNurses
      * @param PdfService $pdfService
      *
      * @return Collection
