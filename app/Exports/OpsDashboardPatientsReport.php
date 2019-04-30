@@ -8,6 +8,7 @@ namespace App\Exports;
 
 use App\Repositories\OpsDashboardPatientEloquentRepository;
 use App\Services\OpsDashboardService;
+use App\Traits\AttachableAsMedia;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Support\Responsable;
@@ -18,7 +19,7 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class OpsDashboardPatientsReport implements FromCollection, Responsable, WithHeadings
 {
-    use Exportable;
+    use AttachableAsMedia, Exportable;
     /**
      * @var Carbon
      */
@@ -109,6 +110,14 @@ class OpsDashboardPatientsReport implements FromCollection, Responsable, WithHea
             'Date Paused/Withdrawn',
             'Enroller',
         ];
+    }
+
+    public function storeAndAttachMediaTo($model)
+    {
+        $filepath = 'exports/'.$this->getFilename();
+        $stored   = $this->store($filepath, 'storage');
+
+        return $this->attachMediaTo($model, storage_path($filepath), "excel_report_for_{$this->fromDate->toDateString()}_to{$this->toDate->toDateString()}");
     }
 
     /**

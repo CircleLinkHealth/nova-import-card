@@ -91,18 +91,22 @@ class OpsDashboardService
      */
     public function calculateHoursBehind(Carbon $date, $practices)
     {
-        $enrolledPatients = $practices->map(function ($practice) {
-            return $practice->patients->filter(function ($user) {
-                if ( ! $user) {
-                    return false;
-                }
-                if ( ! $user->patientInfo) {
-                    return false;
-                }
+        $enrolledPatients = $practices->map(
+            function ($practice) {
+                return $practice->patients->filter(
+                    function ($user) {
+                        if ( ! $user) {
+                            return false;
+                        }
+                        if ( ! $user->patientInfo) {
+                            return false;
+                        }
 
-                return Patient::ENROLLED == $user->patientInfo->ccm_status;
-            });
-        })->flatten()->unique('id');
+                        return Patient::ENROLLED == $user->patientInfo->ccm_status;
+                    }
+                );
+            }
+        )->flatten()->unique('id');
 
         $totActPt                = $enrolledPatients->count();
         $targetMinutesPerPatient = 35;
@@ -177,11 +181,14 @@ class OpsDashboardService
     {
         $holidays = DB::table('company_holidays')->get();
 
-        return Carbon::parse($fromDate)->diffInDaysFiltered(function (Carbon $date) use ($holidays) {
-            $matchingHolidays = $holidays->where('holiday_date', $date->toDateString());
+        return Carbon::parse($fromDate)->diffInDaysFiltered(
+            function (Carbon $date) use ($holidays) {
+                $matchingHolidays = $holidays->where('holiday_date', $date->toDateString());
 
-            return ! $date->isWeekend() && ! $matchingHolidays->count() >= 1;
-        }, new Carbon($toDate));
+                return ! $date->isWeekend() && ! $matchingHolidays->count() >= 1;
+            },
+            new Carbon($toDate)
+        );
     }
 
     /**
@@ -268,9 +275,11 @@ class OpsDashboardService
                 $to_enroll[] = $patient;
             }
         }
-        $count['Total'] = $patients->filter(function ($value, $key) {
-            return 'enrolled' == $value->patientInfo->ccm_status;
-        })->count();
+        $count['Total'] = $patients->filter(
+            function ($value, $key) {
+                return 'enrolled' == $value->patientInfo->ccm_status;
+            }
+        )->count();
 
         $pausedCount      = count($paused);
         $withdrawnCount   = count($withdrawn);
@@ -288,23 +297,25 @@ class OpsDashboardService
             return null;
         }
 
-        return collect([
-            '0 mins'           => $count['0 mins'],
-            '0-5'              => $count['0-5'],
-            '5-10'             => $count['5-10'],
-            '10-15'            => $count['10-15'],
-            '15-20'            => $count['15-20'],
-            '20+'              => $count['20+'],
-            '20+ BHI'          => $count['20+ BHI'],
-            'Total'            => $count['Total'],
-            'Prior Day totals' => $count['Total'] - $delta,
-            'Added'            => $enrolledCount,
-            'Paused'           => $pausedCount,
-            'Unreachable'      => $unreachableCount,
-            'Withdrawn'        => $withdrawnCount,
-            'Delta'            => $delta,
-            'G0506 To Enroll'  => $toEnrollCount,
-        ]);
+        return collect(
+            [
+                '0 mins'           => $count['0 mins'],
+                '0-5'              => $count['0-5'],
+                '5-10'             => $count['5-10'],
+                '10-15'            => $count['10-15'],
+                '15-20'            => $count['15-20'],
+                '20+'              => $count['20+'],
+                '20+ BHI'          => $count['20+ BHI'],
+                'Total'            => $count['Total'],
+                'Prior Day totals' => $count['Total'] - $delta,
+                'Added'            => $enrolledCount,
+                'Paused'           => $pausedCount,
+                'Unreachable'      => $unreachableCount,
+                'Withdrawn'        => $withdrawnCount,
+                'Delta'            => $delta,
+                'G0506 To Enroll'  => $toEnrollCount,
+            ]
+        );
     }
 
     /**
@@ -361,14 +372,8 @@ class OpsDashboardService
      */
     public function getExcelReport($fromDate, $toDate, $status, $practiceId)
     {
-        $report   = new OpsDashboardPatientsReport($practiceId, $status, $fromDate, $toDate);
-        $filepath = 'exports/'.$report->getFilename();
-        $stored   = $report->store($filepath, 'storage');
-
-        return auth()->user()
-            ->saasAccount
-            ->addMedia(storage_path($filepath))
-            ->toMediaCollection("excel_report_for_{$fromDate->toDateString()}_to{$toDate->toDateString()}");
+        return (new OpsDashboardPatientsReport($practiceId, $status, $fromDate, $toDate))
+            ->storeAndAttachMediaTo(auth()->user()->saasAccount);
     }
 
     /**
@@ -381,18 +386,23 @@ class OpsDashboardService
      */
     public function getPausedPatients($fromDate, $toDate)
     {
-        $patients = User::with([
-            'patientInfo' => function ($patient) use ($fromDate, $toDate) {
-                $patient->ccmStatus(Patient::PAUSED)
-                    ->where('date_paused', '>=', $fromDate)
-                    ->where('date_paused', '<=', $toDate);
-            },
-        ])
-            ->whereHas('patientInfo', function ($patient) use ($fromDate, $toDate) {
-                            $patient->ccmStatus(Patient::PAUSED)
-                                ->where('date_paused', '>=', $fromDate)
-                                ->where('date_paused', '<=', $toDate);
-                        })
+        $patients = User::with(
+            [
+                'patientInfo' => function ($patient) use ($fromDate, $toDate) {
+                    $patient->ccmStatus(Patient::PAUSED)
+                        ->where('date_paused', '>=', $fromDate)
+                        ->where('date_paused', '<=', $toDate);
+                },
+            ]
+        )
+            ->whereHas(
+                            'patientInfo',
+                            function ($patient) use ($fromDate, $toDate) {
+                                $patient->ccmStatus(Patient::PAUSED)
+                                    ->where('date_paused', '>=', $fromDate)
+                                    ->where('date_paused', '<=', $toDate);
+                            }
+                        )
             ->get();
 
         return $patients;
