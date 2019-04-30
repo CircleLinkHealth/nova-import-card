@@ -59,7 +59,14 @@ class NurseDailyReport extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.nurseDailyReport')
+        $view = 'emails.nurseDailyReportToDeprecate';
+
+        //only these 3 nurses get new report
+        if (in_array($this->nurse->id, [11321, 8151, 1920])) {
+            $view = 'emails.nurseDailyReport';
+        }
+
+        return $this->view($view)
             ->with($this->data)
             ->with(['date' => $this->date])
             ->to($this->nurse->email)
