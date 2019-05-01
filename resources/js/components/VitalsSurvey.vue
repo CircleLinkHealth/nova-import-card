@@ -1,8 +1,8 @@
 <template>
     <div class="container main-container">
         <!--Survey welcome note-->
-        <div class="survey-container">
-            <template v-if="welcomeStage">
+        <div class="survey-container" :class="stage === 'complete' ? 'max' : ''">
+            <template v-if="stage === 'welcome'">
                 <div class="card-body">
                     <div class="welcome-icon-container">
                         <img src="../../assets/images/notepad-2.png"
@@ -29,9 +29,8 @@
                         ⚡️ by CircleLink Health
                     </div>
                 </div>
-
             </template>
-            <template v-else>
+            <template v-else-if="stage === 'survey'">
                 <div class="questions-box question"
                      :id="question.id"
                      :class="currentQuestionIndex !== index ? 'watermark' : 'active'"
@@ -139,14 +138,43 @@
                 <!-- add an empty div, so we can animate scroll up even if we are on last question -->
                 <div style="height: 600px"></div>
             </template>
+            <template v-else>
+                <div class="card-body">
+                    <div class="welcome-icon-container">
+                        <img src="../../assets/images/doctors.png"
+                             class="welcome-icon" alt="welcome icon">
+                    </div>
+
+                    <div class="survey-main-title">
+                        <label>Thank You!</label>
+                    </div>
+                    <div class="align-items-center">
+                        <div class="survey-sub-welcome-text">
+                            Thank you for completing {{patientName}}'s Vitals. You can access their Vitals at any time
+                            in
+                            CarePlanManager™. A generated PDF of the PPP and Provider Report is also now available in
+                            that patient’s profile, and/or has been sent to your practice based on your preferences
+                            (e.g., DIRECT message or e-mail).
+                        </div>
+                        <br/>
+                        <div class="survey-sub-welcome-text">
+                            If you are using the patient's phone, please hand it back now.
+                        </div>
+                    </div>
+
+                    <div class="by-circlelink text-center">
+                        ⚡️ by CircleLink Health
+                    </div>
+                </div>
+            </template>
 
         </div>
 
         <!--bottom-navbar-->
-        <div class="bottom-navbar container">
+        <div class="bottom-navbar container" :class="stage === 'complete' ? 'hidden' : ''">
             <!-- justify-content-end -->
             <div class="row">
-                <div class="col-5 offset-2 col-sm-7 offset-sm-0 col-md-8 offset-md-0 col-lg-6 offset-lg-3">
+                <div class="col-5 offset-2 col-sm-7 offset-sm-0 col-md-8 offset-md-0 col-lg-6 offset-lg-3 no-padding">
                     <div class="container">
                         <div class="row progress-container">
                             <div class="col-12 col-sm-12 col-md-6 text-center">
@@ -164,7 +192,7 @@
                     </div>
                 </div>
                 <!--scroll buttons-->
-                <div class="col-5 col-sm-5 col-md-4 col-lg-3">
+                <div class="col-5 col-sm-5 col-md-4 col-lg-3 no-padding">
                     <div class="row scroll-buttons">
                         <div class="col text-right">
 
@@ -221,7 +249,7 @@
 
         data() {
             return {
-                welcomeStage: true,
+                stage: "welcome",
                 questions: [],
                 subQuestions: [],
                 currentQuestionIndex: 0,
@@ -238,7 +266,7 @@
                 return this.currentQuestionIndex > 0;
             },
             canScrollDown() {
-                return !this.welcomeStage
+                return this.stage === "survey"
                     && this.currentQuestionIndex < this.totalQuestions
                     && this.latestQuestionAnsweredIndex >= this.currentQuestionIndex;
             },
@@ -249,7 +277,7 @@
         methods: {
 
             startSurvey() {
-                this.welcomeStage = false;
+                this.stage = "survey";
                 this.currentQuestionIndex = 0;
             },
 
@@ -338,12 +366,16 @@
 
                 //survey complete
                 if (!nextQuestion) {
+                    this.stage = "complete";
+                    this.latestQuestionAnsweredIndex = this.currentQuestionIndex;
+                    this.currentQuestionIndex = this.currentQuestionIndex + 1;
+                    this.progress = this.progress + 1;
                     return;
                 }
 
                 $('.survey-container').animate({
                     scrollTop: $(`#${nextQuestion.id}`).offset().top
-                }, 500, 'swing', () => {
+                }, 519, 'swing', () => {
                     this.latestQuestionAnsweredIndex = this.currentQuestionIndex;
                     this.currentQuestionIndex = this.currentQuestionIndex + 1;
                     const answered = this.questions[this.latestQuestionAnsweredIndex];
@@ -389,7 +421,12 @@
         height: calc(100% - 56px);
     }
 
-    @media (min-width: 576px) {
+    .survey-container.max {
+        height: 100%;
+        border: 1px solid #808080;
+    }
+
+    @media (min-width: 519px) {
         .survey-container {
             height: calc(100% - 100px);
         }
@@ -407,7 +444,7 @@
         height: 56px;
     }
 
-    @media (min-width: 576px) {
+    @media (min-width: 519px) {
         .bottom-navbar {
             height: 100px;
         }
@@ -432,7 +469,7 @@
         font-size: 15px;
     }
 
-    @media (min-width: 576px) {
+    @media (min-width: 519px) {
         .scroll-buttons .btn {
             margin-top: 20px;
             width: 60px;
@@ -458,7 +495,7 @@
     .progress-text {
         font-family: Poppins, serif;
         font-size: 10px;
-        font-weight: 500;
+        font-weight: 519;
         font-style: normal;
         font-stretch: normal;
         line-height: normal;
@@ -471,7 +508,7 @@
     /**
     When progress text and bar are in one line (col-sm screens)
      */
-    @media (min-width: 576px) {
+    @media (min-width: 519px) {
         .progress-container {
             margin-top: 26px;
         }

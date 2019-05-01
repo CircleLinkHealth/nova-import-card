@@ -11817,7 +11817,7 @@ body,
   background-color: #a7d9f1;
 }
 
-@media (min-width: 576px) {
+@media (min-width: 519px) {
   .by-circlelink {
     font-size: 18px;
     letter-spacing: 1px;
@@ -11899,7 +11899,7 @@ body,
   color: #1a1a1a;
 }
 
-@media (min-width: 576px) {
+@media (min-width: 519px) {
   .survey-main-title {
     font-size: 24px;
     letter-spacing: 1.5px;
@@ -11925,7 +11925,7 @@ body,
   color: #1a1a1a;
 }
 
-@media (min-width: 576px) {
+@media (min-width: 519px) {
   .questions-title {
     font-size: 24px;
     letter-spacing: 0.78px;
@@ -11972,12 +11972,20 @@ body,
   text-align: center;
 }
 
-@media (min-width: 576px) {
+@media (min-width: 519px) {
   .btn-start {
     margin-top: 60px;
     margin-bottom: 20px;
     font-size: 18px;
     letter-spacing: 1px;
   }
+}
+
+.no-padding {
+  padding: 0;
+}
+
+.hidden {
+  display: none;
 }
 

@@ -71,7 +71,7 @@
         text-align: center;
     }
 
-    @media (min-width: 576px) {
+    @media (min-width: 519px) {
         .btn-login {
             margin-top: 60px;
             margin-bottom: 20px;
