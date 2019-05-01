@@ -11798,24 +11798,35 @@ body,
 
 .by-circlelink {
   font-family: Poppins, serif;
-  font-size: 18px;
+  font-size: 10px;
   font-weight: 600;
   margin-top: 20px;
   font-style: normal;
   font-stretch: normal;
   line-height: normal;
-  letter-spacing: 1px;
+  letter-spacing: 0.56px;
   color: #50b2e2;
 }
 
 .progress {
   width: 100%;
-  margin-left: 1%;
-  margin-top: 9px;
-  height: 10px;
+  margin-top: 2px;
+  height: 5px;
   border-radius: 5px;
   border: solid 1px #d2e8f3;
   background-color: #a7d9f1;
+}
+
+@media (min-width: 576px) {
+  .by-circlelink {
+    font-size: 18px;
+    letter-spacing: 1px;
+  }
+
+  .progress {
+    margin-top: 9px;
+    height: 10px;
+  }
 }
 
 .progress-bar {
@@ -11865,40 +11876,60 @@ body,
 
 .survey-main-title {
   font-family: Poppins, serif;
-  font-size: 24px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 1.5px;
+  letter-spacing: 0.67px;
   text-align: center;
   margin-top: 30px;
   color: #1a1a1a;
 }
 
 .survey-sub-welcome-text {
-  font-family: Poppins;
-  font-size: 18px;
+  font-family: Poppins, serif;
+  font-size: 10px;
   font-weight: normal;
   font-style: normal;
   font-stretch: normal;
   line-height: normal;
-  letter-spacing: 1px;
+  letter-spacing: 0.56px;
   text-align: left;
-  margin-top: 25px;
-  margin-left: 13%;
-  width: 75%;
+  margin-top: 10px;
+  margin-left: 5%;
+  margin-right: 5%;
   color: #1a1a1a;
+}
+
+@media (min-width: 576px) {
+  .survey-main-title {
+    font-size: 24px;
+    letter-spacing: 1.5px;
+  }
+
+  .survey-sub-welcome-text {
+    margin-top: 25px;
+    font-size: 18px;
+    letter-spacing: 1px;
+  }
 }
 
 .questions-title {
   width: 83%;
   height: 100%;
-  font-family: Poppins;
-  font-size: 114%;
+  font-family: Poppins, serif;
+  font-size: 14px;
   font-weight: 500;
   font-style: normal;
   font-stretch: normal;
   line-height: normal;
   letter-spacing: 1.3px;
   color: #1a1a1a;
+}
+
+@media (min-width: 576px) {
+  .questions-title {
+    font-size: 24px;
+    letter-spacing: 0.78px;
+  }
 }
 
 .question-answer-type {
@@ -11928,17 +11959,28 @@ body,
 }
 
 .btn-start {
-  margin-top: 60px;
-  margin-bottom: 20px;
-  width: 180px;
-  height: 60px;
+  padding: 0;
+  margin-top: 30px;
+  width: 90px;
+  height: 30px;
   font-family: Poppins, serif;
-  font-size: 18px;
+  font-size: 10px;
   font-weight: 500;
   font-style: normal;
   font-stretch: normal;
   line-height: normal;
-  letter-spacing: 1px;
+  letter-spacing: 0.6px;
   text-align: center;
+}
+
+@media (min-width: 576px) {
+  .btn-start {
+    margin-top: 60px;
+    margin-bottom: 20px;
+    width: 180px;
+    height: 60px;
+    font-size: 18px;
+    letter-spacing: 1px;
+  }
 }
 

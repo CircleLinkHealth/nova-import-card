@@ -146,35 +146,39 @@
         <div class="bottom-navbar container">
             <!-- justify-content-end -->
             <div class="row">
-                <div class="col-6 col-sm-7 col-md-8 offset-md-0 col-lg-6 offset-lg-3">
-                    <div class="row progress-container">
-                        <div class="col-md text-center progress-flex-container">
-                            <span class="progress-text">
-                                {{progress}} of {{totalQuestions}} completed
-                            </span>
-                            <mdb-progress :value="progressPercentage"
-                                          :height="10"/>
+                <div class="col-5 offset-2 col-sm-7 offset-sm-0 col-md-8 offset-md-0 col-lg-6 offset-lg-3">
+                    <div class="container">
+                        <div class="row progress-container">
+                            <div class="col-12 col-sm-12 col-md-6 text-center">
+                                <span class="progress-text">
+                                    {{progress}} of {{totalQuestions}} completed
+                                </span>
+                            </div>
+
+                            <div class="col-12 col-sm-12 col-md-6 text-center">
+                                <mdb-progress :value="progressPercentage"
+                                              :height="10"/>
+                            </div>
+
                         </div>
                     </div>
                 </div>
                 <!--scroll buttons-->
-                <div class="col-6 col-sm-5 col-md-4 col-lg-3">
+                <div class="col-5 col-sm-5 col-md-4 col-lg-3">
                     <div class="row scroll-buttons">
                         <div class="col text-right">
 
                             <mdb-btn
                                 color="primary"
                                 @click="scrollDown"
-                                :disabled="!canScrollDown"
-                                style="margin-right: 20px">
+                                :disabled="!canScrollDown">
                                 <i class="fas fa-angle-down"></i>
                             </mdb-btn>
 
                             <mdb-btn
                                 color="primary"
                                 @click="scrollUp"
-                                :disabled="!canScrollUp"
-                                style="margin-right: 20px">
+                                :disabled="!canScrollUp">
                                 <i class="fas fa-angle-up"></i>
                             </mdb-btn>
 
@@ -382,7 +386,13 @@
     .survey-container {
         border-bottom: none;
         width: 100%;
-        height: calc(100% - 100px);
+        height: calc(100% - 56px);
+    }
+
+    @media (min-width: 576px) {
+        .survey-container {
+            height: calc(100% - 100px);
+        }
     }
 
     /*.survey-container::-webkit-scrollbar {*/
@@ -394,45 +404,88 @@
         border-bottom: 1px solid #808080;
         border-left: 1px solid #808080;
         border-right: 1px solid #808080;
-        height: 100px;
+        height: 56px;
+    }
+
+    @media (min-width: 576px) {
+        .bottom-navbar {
+            height: 100px;
+        }
     }
 
     .scroll-buttons .btn {
         padding: 0;
-        margin-top: 20px;
-        width: 60px;
-        height: 60px;
+        margin-top: 13px;
+        width: 30px;
+        height: 30px;
+    }
+
+    .scroll-buttons .btn:first-child {
+        margin-right: 10px;
     }
 
     .scroll-buttons .btn:last-child {
-        margin-right: 60px;
+        margin-right: 20px;
     }
 
     .scroll-buttons .fas {
-        font-size: 30px;
+        font-size: 15px;
     }
 
+    @media (min-width: 576px) {
+        .scroll-buttons .btn {
+            margin-top: 20px;
+            width: 60px;
+            height: 60px;
+        }
+
+        .scroll-buttons .btn:last-child {
+            margin-right: 30px;
+        }
+
+        .scroll-buttons .fas {
+            font-size: 30px;
+        }
+    }
+
+    /**
+    When two rows, we have less margin-top (in the col- screens)
+     */
     .progress-container {
-        margin-top: 36px;
+        margin-top: 8px;
     }
 
     .progress-text {
         font-family: Poppins, serif;
-        font-size: 18px;
+        font-size: 10px;
         font-weight: 500;
         font-style: normal;
         font-stretch: normal;
         line-height: normal;
-        letter-spacing: 1px;
+        letter-spacing: 0.56px;
         text-align: right;
         color: #1a1a1a;
         white-space: nowrap;
     }
 
-    .progress-flex-container {
-        display: flex;
-        justify-content: center;
-        flex-wrap: nowrap;
+    /**
+    When progress text and bar are in one line (col-sm screens)
+     */
+    @media (min-width: 576px) {
+        .progress-container {
+            margin-top: 26px;
+        }
+
+        .progress-text {
+            font-size: 18px;
+            letter-spacing: 1px;
+        }
+    }
+
+    @media (min-width: 766px) {
+        .progress-container {
+            margin-top: 36px;
+        }
     }
 
     .active {

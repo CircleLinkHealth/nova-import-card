@@ -212,13 +212,21 @@
     }
 
     .btn.btn-sm {
-        font-size: 24px;
-        width: 60px;
-        height: 60px;
+        font-size: 14px;
+        width: 30px;
+        height: 30px;
         border: solid 1px #4aa5d2;
         margin: 1px;
         padding: 0;
         box-shadow: none;
+    }
+
+    @media (min-width: 576px) {
+        .btn.btn-sm {
+            font-size: 24px;
+            width: 60px;
+            height: 60px;
+        }
     }
 
     .btn.btn-sm.active {
