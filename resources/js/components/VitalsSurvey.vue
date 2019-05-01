@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container main-container">
         <!--Survey welcome note-->
         <div class="survey-container">
             <template v-if="welcomeStage">
@@ -234,12 +234,9 @@
                 return this.currentQuestionIndex > 0;
             },
             canScrollDown() {
-                return true;
-                /*
                 return !this.welcomeStage
                     && this.currentQuestionIndex < this.totalQuestions
                     && this.latestQuestionAnsweredIndex >= this.currentQuestionIndex;
-                    */
             },
             progressPercentage() {
                 return 100 * (this.latestQuestionAnsweredIndex + 1) / this.totalQuestions;
@@ -260,14 +257,10 @@
             },
 
             scrollDown() {
-
-                this.currentQuestionIndex = this.currentQuestionIndex + 1;
-                /*
                 if (this.latestQuestionAnsweredIndex < this.currentQuestionIndex) {
                     return;
                 }
                 this.currentQuestionIndex = this.currentQuestionIndex + 1;
-                */
             },
 
             isSubQuestion(question) {
@@ -382,121 +375,19 @@
         },
     }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 
     $primary-color: #50b2e2;
 
-    .navbar-laravel {
-        background-color: #fff;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+    .survey-container {
+        border-bottom: none;
+        width: 100%;
+        height: calc(100% - 100px);
     }
 
-    .next-btn {
-        font-size: 18px;
-        font-family: Poppins, serif;
-        font-weight: 500;
-        font-style: normal;
-        font-stretch: normal;
-        padding: 6px 40px;
-        line-height: normal;
-        letter-spacing: 1px;
-        color: #ffffff;
-        text-transform: none;
-        height: 40px;
-        border-radius: 5px;
-        border: solid 1px #4aa5d2;
-        background-color: $primary-color;
-        margin: 0;
-    }
-
-    .questions-box {
-        padding-top: 5%;
-        padding-left: 9%;
-    }
-
-    .practice-title {
-        font-family: Poppins, serif;
-        font-size: 18px;
-        letter-spacing: 1.5px;
-        text-align: center;
-        margin-top: 20px;
-        color: $primary-color;
-    }
-
-    .practice-title .text-style-1 {
-        font-weight: 600;
-    }
-
-    .survey-main-title {
-        font-family: Poppins, serif;
-        font-size: 24px;
-        font-weight: 600;
-        letter-spacing: 1.5px;
-        text-align: center;
-        margin-top: 30px;
-        color: #1a1a1a;
-    }
-
-    .survey-sub-welcome-text {
-        font-family: Poppins;
-        font-size: 18px;
-        font-weight: normal;
-        font-style: normal;
-        font-stretch: normal;
-        line-height: normal;
-        letter-spacing: 1px;
-        text-align: left;
-        margin-top: 25px;
-        margin-left: 13%;
-        width: 75%;
-        color: #1a1a1a;
-    }
-
-    .questions-title {
-        width: 83%;
-        height: 100%;
-        font-family: Poppins;
-        font-size: 114%;
-        font-weight: 500;
-        font-style: normal;
-        font-stretch: normal;
-        line-height: normal;
-        letter-spacing: 1.3px;
-        color: #1a1a1a;
-
-    }
-
-    .question-answer-type {
-        width: 83%;
-        height: 100%;
-        font-family: Poppins, serif;
-        font-size: initial;
-        font-weight: 500;
-        font-style: normal;
-        font-stretch: normal;
-        line-height: normal;
-        letter-spacing: 1.3px;
-        color: #1a1a1a;
-    }
-
-    .btn-start-container {
-        text-align: center;
-    }
-
-    .btn-start {
-        margin-top: 60px;
-        margin-bottom: 20px;
-        width: 180px;
-        height: 60px;
-        font-family: Poppins, serif;
-        font-size: 18px;
-        font-weight: 500;
-        font-style: normal;
-        font-stretch: normal;
-        line-height: normal;
-        letter-spacing: 1px;
-        text-align: center;
-    }
+    /*.survey-container::-webkit-scrollbar {*/
+    /*width: 0 !important*/
+    /*}*/
 
     .bottom-navbar {
         background-color: #ffffff;
@@ -504,52 +395,6 @@
         border-left: 1px solid #808080;
         border-right: 1px solid #808080;
         height: 100px;
-    }
-
-    .by-circlelink {
-        font-family: Poppins, serif;
-        font-size: 18px;
-        font-weight: 600;
-        font-style: normal;
-        font-stretch: normal;
-        line-height: normal;
-        letter-spacing: 1px;
-        color: $primary-color;
-    }
-
-    .survey-container {
-        margin-top: 10px;
-        background-color: #f2f6f9;
-        border-top: 1px solid #808080;
-        border-left: 1px solid #808080;
-        border-right: 1px solid #808080;
-        width: 100%;
-        height: 600px;
-        overflow-y: hidden;
-    }
-
-    .survey-container::-webkit-scrollbar {
-        width: 0 !important
-    }
-
-    .welcome-icon-container {
-        margin: auto;
-        text-align: center;
-    }
-
-    .welcome-icon {
-        width: 108px;
-    }
-
-    .fa-phone {
-        transform: scaleX(-1);
-        color: #ffffff;
-    }
-
-    .fa-times {
-        width: 20px;
-        height: 20px;
-        color: #ffffff;
     }
 
     .scroll-buttons .btn {
@@ -584,28 +429,20 @@
         white-space: nowrap;
     }
 
-    .progress {
-        width: 100%;
-        margin-left: 1%;
-        margin-top: 9px;
-        height: 10px;
-        border-radius: 5px;
-        border: solid 1px #d2e8f3;
-        background-color: #a7d9f1;
-    }
-
-    .progress-bar {
-        background-color: $primary-color !important;
-    }
-
     .progress-flex-container {
         display: flex;
         justify-content: center;
         flex-wrap: nowrap;
     }
 
+    .active {
+        opacity: 1;
+        transition: opacity 0.5s linear;
+    }
+
     .watermark {
         opacity: 0.1;
+        transition: opacity 0.5s linear;
     }
 
 </style>

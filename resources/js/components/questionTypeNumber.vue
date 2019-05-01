@@ -7,6 +7,7 @@
                 class="number-field"
                 name="numberTypeAnswer[]"
                 v-model="inputNumber"
+                :disabled="!isActive"
                 :placeholder="this.questionPlaceHolder">
         </div>
 
@@ -18,6 +19,7 @@
                        :class="subPartsStyle"
                        name="numberTypeAnswer[]"
                        v-model="inputNumber[index]"
+                       :disabled="!isActive"
                        :placeholder="subPart.placeholder">
 
                 <span

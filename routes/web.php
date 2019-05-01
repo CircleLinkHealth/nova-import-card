@@ -63,6 +63,16 @@ Route::group([
         'prefix' => 'vitals',
     ], function () {
 
+        Route::get('{practiceId}/{patientId}/welcome', [
+            'uses' => 'VitalsSurveyController@showWelcome',
+            'as' => 'survey.vitals.welcome',
+        ]);
+
+        Route::get('{practiceId}/{patientId}/not-auth', [
+            'uses' => 'VitalsSurveyController@showNotAuthorized',
+            'as' => 'survey.vitals.not.authorized',
+        ]);
+
         Route::get('{practiceId}/{patientId}', [
             'uses' => 'VitalsSurveyController@getSurvey',
             'as' => 'survey.vitals',

@@ -22,6 +22,7 @@
                        name="textTypeAnswer[]"
                        v-model="inputHasText[index]"
                        :placeholder="subPart.placeholder"
+                       :disabled="!isActive"
                        @change="onInput">
 
                 <!--add input fields button-->

@@ -6,6 +6,7 @@
                        type="checkbox"
                        name="checkboxTypeAnswer[]"
                        :value="checkBox.value"
+                       :disabled="!isActive"
                        v-model="checkedAnswers">
             </label>
             <!--   <div>

@@ -7,6 +7,7 @@
                     <label>
                         <input class="multi-select"
                                type="checkbox"
+                               :disabled="!isActive"
                                name="checkboxTypeAnswer">
                         {{checkBoxOption}}
                     </label>

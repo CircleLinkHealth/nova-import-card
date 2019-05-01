@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreVitalsAnswer;
 use App\Services\VitalsSurveyService;
+use App\User;
 
 class VitalsSurveyController extends Controller
 {
@@ -12,6 +13,31 @@ class VitalsSurveyController extends Controller
     public function __construct(VitalsSurveyService $service)
     {
         $this->service = $service;
+    }
+
+    public function showWelcome($practiceId, $patientId)
+    {
+        $patient = User::findOrFail($patientId);
+
+        return view('survey.vitals.welcome', [
+            'patientsName' => $patient->display_name,
+        ]);
+    }
+
+    public function showNotAuthorized($practiceId, $patientId)
+    {
+        $patient = User::with(['regularDoctor', 'billingProvider'])->findOrFail($patientId);
+
+        if (!empty($patient->regularDoctorUser())) {
+            $doctorsName = $patient->regularDoctorUser()->getFullName();
+        }
+        else if (!empty($patient->billingProviderUser())) {
+            $doctorsName = $patient->billingProviderUser()->getFullName();
+        }
+
+        return view('survey.vitals.not-authorized', [
+            'doctorsName' => $doctorsName ?? '',
+        ]);
     }
 
     /**
