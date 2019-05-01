@@ -26,12 +26,7 @@ class EmailRNDailyReport extends Command
      *
      * @var string
      */
-    protected $signature               = 'nurses:emailDailyReport {nurseUserIds? : Comma separated user IDs of nurses to email report to.} {date? : Date to generate report for in YYYY-MM-DD.}';
-    private static $nursesForNewReport = [
-        11321,
-        8151,
-        1920,
-    ];
+    protected $signature = 'nurses:emailDailyReport {nurseUserIds? : Comma separated user IDs of nurses to email report to.} {date? : Date to generate report for in YYYY-MM-DD.}';
 
     private $report;
     private $service;
@@ -74,8 +69,6 @@ class EmailRNDailyReport extends Command
                     $q->whereIn('id', $userIds);
                 }
             )
-            //only these nurses will get the new report
-            ->whereIn('id', static::$nursesForNewReport)
             ->chunk(
                 20,
                 function ($nurses) use (&$counter, &$emailsSent, $date) {

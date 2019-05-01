@@ -37,12 +37,6 @@ class NurseDailyReport extends Mailable
      */
     protected $nurse;
 
-    private static $nursesForNewReport = [
-        11321,
-        8151,
-        1920,
-    ];
-
     /**
      * Create a new message instance.
      *
@@ -67,8 +61,15 @@ class NurseDailyReport extends Mailable
     {
         $view = 'emails.nurseDailyReportToDeprecate';
 
-        //only these 3 nurses get new report
-        if (in_array($this->nurse->id, static::$nursesForNewReport)) {
+        //check if report has new metrics, then load new view
+        if (array_keys_exist([
+            'completionRate',
+            'efficiencyIndex',
+            'caseLoadComplete',
+            'caseLoadNeededToComplete',
+            'hoursCommittedRestOfMonth',
+            'surplusShortfallHours',
+        ], $this->data)) {
             $view = 'emails.nurseDailyReport';
         }
 

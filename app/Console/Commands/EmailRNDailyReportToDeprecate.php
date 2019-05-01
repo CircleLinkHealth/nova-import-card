@@ -29,11 +29,6 @@ class EmailRNDailyReportToDeprecate extends Command
     protected $signature = 'nurses:emailDailyReportToDeprecate {nurseUserIds? : Comma separated user IDs of nurses to email report to.}
                                                     {date? : Date to generate report for in YYYY-MM-DD.}
                                                     ';
-    private static $nursesForNewReport = [
-        11321,
-        8151,
-        1920,
-    ];
 
     /**
      * Create a new command instance.
@@ -68,8 +63,6 @@ class EmailRNDailyReportToDeprecate extends Command
                     $q->whereIn('id', $userIds);
                 }
             )
-            //these nurses will get the new report
-            ->whereNotIn('id', static::$nursesForNewReport)
             ->chunk(
                 20,
                 function ($nurses) use (&$counter, &$emailsSent, $date) {

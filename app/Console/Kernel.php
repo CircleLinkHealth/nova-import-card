@@ -108,12 +108,12 @@ class Kernel extends ConsoleKernel
         $schedule->command(GetCcds::class)
             ->dailyAt('03:00');
 
-        //old report - to deprecate
+        //old report - to deprecate - send to all
         $schedule->command(EmailRNDailyReportToDeprecate::class)
             ->dailyAt('07:00');
 
         //new report - testing with 3 nurses
-        $schedule->command(EmailRNDailyReport::class)
+        $schedule->command(EmailRNDailyReport::class, ['nurseUserIds' => '11321,8151,1920'])
             ->dailyAt('07:20');
 
         $schedule->command(QueueSendApprovedCareplanSlackNotification::class)
