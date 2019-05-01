@@ -15,6 +15,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
+use Session;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class InternalUserController extends Controller
@@ -73,9 +74,10 @@ class InternalUserController extends Controller
 
         $data['editedUser'] = $this->userManagementService->getUser($userId);
 
-        $data['submitUrl']    = route('saas-admin.users.update', ['userId' => $userId]);
-        $data['submitMethod'] = 'patch';
-        $data['titleVerb']    = 'Edit';
+        $data['submitUrl']      = route('saas-admin.users.update', ['userId' => $userId]);
+        $data['submitMethod']   = 'patch';
+        $data['titleVerb']      = 'Edit';
+        $data['successMessage'] = Session::get('messages');
 
         return view('saas.admin.user.manage', $data);
     }
