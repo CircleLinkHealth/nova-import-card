@@ -11771,30 +11771,6 @@ ul.stepper li.completed a .label {
 Add global CSS here
  */
 
-.navbar-laravel {
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
-}
-
-.next-btn {
-  font-size: 18px;
-  font-family: Poppins, serif;
-  font-weight: 500;
-  font-style: normal;
-  font-stretch: normal;
-  line-height: normal;
-  letter-spacing: 1px;
-  color: #ffffff;
-  text-transform: none;
-  padding: 0;
-  width: 120px;
-  height: 40px;
-  border-radius: 5px;
-  border: solid 1px #4aa5d2;
-  background-color: #50b2e2;
-  margin: 0;
-}
-
 /*
 .btn-primary {
     font-size: 18px;

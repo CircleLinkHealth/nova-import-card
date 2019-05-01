@@ -51,7 +51,7 @@
 
         <!--next button-->
         <div :class="isLastQuestion ? 'text-center' : 'text-left'">
-            <mdbBtn v-show="showNextButton"
+            <mdbBtn v-show="isActive"
                     color="primary"
                     class="next-btn"
                     name="number"
@@ -72,7 +72,7 @@
 
     export default {
         name: "questionTypeText",
-        props: ['question', 'userId', 'surveyInstanceId', 'showNextButton', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion'],
+        props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion'],
         components: {mdbBtn},
 
         mounted() {
@@ -87,12 +87,11 @@
                 extraFieldButtonNames: [],
                 canRemoveInputFields: false,
                 canAddInputFields: false,
-                showNextButton: false,
             }
         },
         computed: {
             hasTypedTwoNumbers() {
-                return this.inputHasText.length > 1 ? this.showNextButton = true : this.showNextButton = false;
+                return this.inputHasText.length > 1;
             },
 
             hasAnswerType() {

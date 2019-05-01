@@ -4,44 +4,46 @@
             <label>{{checkBox.value}}
                 <input class="check-box"
                        type="checkbox"
-                       name="checkboxTypeAnswer"
+                       name="checkboxTypeAnswer[]"
                        :value="checkBox.value"
-                       v-model="checkedAnswers"
-                       @click="handleClick">
+                       v-model="checkedAnswers">
             </label>
-         <!--   <div>
-                <input id="different-input"
-                       class="text-field"
-                       name="textTypeAnswer"
-                       v-model="customInputHasText[index]"
-                       :placeholder="checkBox.options.placeholder"
-                       :type="checkBox.options.placeholder">
-            </div>-->
+            <!--   <div>
+                   <input id="different-input"
+                          class="text-field"
+                          name="textTypeAnswer"
+                          v-model="customInputHasText[index]"
+                          :placeholder="checkBox.options.placeholder"
+                          :type="checkBox.options.placeholder">
+               </div>-->
         </div>
         <!--next button-->
-        <div v-if="showNextButton">
-            <button class="next-btn"
-                    name="text"
-                    id="text"
-                    type="submit"
-                    @click="handleAnswers">Next
-            </button>
-        </div>
+
+        <mdbBtn v-show="isActive"
+                color="primary"
+                class="next-btn"
+                :disabled="checkedAnswers.length === 0"
+                @click="handleAnswers">
+            Next
+        </mdbBtn>
 
     </div>
 </template>
 
 <script>
 
+    import {mdbBtn} from "mdbvue";
+
     export default {
         name: "questionTypeCheckbox",
-        props: ['question', 'userId', 'surveyInstanceId', 'showNextButton', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion'],
-        components: {},
+        props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion'],
+        components: {
+            'mdb-btn': mdbBtn
+        },
 
         data() {
             return {
                 checkBoxValues: this.question.type.question_type_answers,
-                showNextButton: false,
                 checkedAnswers: [],
                 questionOptions: [],
                 keyForValues: {},
@@ -62,7 +64,7 @@
                     return 0;
                 }
             },
-/*//:todo:get which checkboses have diff typr input and set this.showDifferentInput === 0 ()*/
+            /*//:todo:get which checkboses have diff typr input and set this.showDifferentInput === 0 ()*/
             checkBoxesWithDifferentInputType() {
                 //get which checkboxe have allow custom input
                 const hasAllowCustomInput = this.checkBoxValues.filter(checkBox => checkBox.options.hasOwnProperty('allow_custom_input'));
@@ -73,9 +75,6 @@
         },
 
         methods: {
-            handleClick() {
-                this.showNextButton = true;
-            },
 
             handleAnswers() {
                 const answer = [];

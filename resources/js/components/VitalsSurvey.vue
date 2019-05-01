@@ -61,7 +61,7 @@
                                 :question="question"
                                 :userId="patientId"
                                 :surveyInstanceId="surveyInstanceId"
-                                :show-next-button="currentQuestionIndex === index"
+                                :is-active="currentQuestionIndex === index"
                                 :is-subquestion="isSubQuestion(question)"
                                 :get-all-questions-func="getAllQuestions"
                                 :on-done-func="postAnswerAndGoToNext"
@@ -73,7 +73,7 @@
                                 :question="question"
                                 :userId="patientId"
                                 :surveyInstanceId="surveyInstanceId"
-                                :show-next-button="currentQuestionIndex === index"
+                                :is-active="currentQuestionIndex === index"
                                 :is-subquestion="isSubQuestion(question)"
                                 :get-all-questions-func="getAllQuestions"
                                 :on-done-func="postAnswerAndGoToNext"
@@ -85,7 +85,7 @@
                                 :question="question"
                                 :userId="patientId"
                                 :surveyInstanceId="surveyInstanceId"
-                                :show-next-button="currentQuestionIndex === index"
+                                :is-active="currentQuestionIndex === index"
                                 :is-subquestion="isSubQuestion(question)"
                                 :get-all-questions-func="getAllQuestions"
                                 :on-done-func="postAnswerAndGoToNext"
@@ -94,7 +94,7 @@
                             </question-type-muti-select>
 
                             <question-type-range
-                                :show-next-button="currentQuestionIndex === index"
+                                :is-active="currentQuestionIndex === index"
                                 :is-subquestion="isSubQuestion(question)"
                                 :get-all-questions-func="getAllQuestions"
                                 :on-done-func="postAnswerAndGoToNext"
@@ -106,7 +106,7 @@
                                 :question="question"
                                 :userId="patientId"
                                 :surveyInstanceId="surveyInstanceId"
-                                :show-next-button="currentQuestionIndex === index"
+                                :is-active="currentQuestionIndex === index"
                                 :is-subquestion="isSubQuestion(question)"
                                 :get-all-questions-func="getAllQuestions"
                                 :on-done-func="postAnswerAndGoToNext"
@@ -118,7 +118,7 @@
                                 :question="question"
                                 :userId="patientId"
                                 :surveyInstanceId="surveyInstanceId"
-                                :show-next-button="currentQuestionIndex === index"
+                                :is-active="currentQuestionIndex === index"
                                 :is-subquestion="isSubQuestion(question)"
                                 :style-horizontal="true"
                                 :get-all-questions-func="getAllQuestions"
@@ -128,7 +128,7 @@
                             </question-type-radio>
 
                             <question-type-date
-                                :show-next-button="currentQuestionIndex === index"
+                                :is-active="currentQuestionIndex === index"
                                 :is-subquestion="isSubQuestion(question)"
                                 :get-all-questions-func="getAllQuestions"
                                 :on-done-func="postAnswerAndGoToNext"
@@ -143,22 +143,22 @@
         </div>
 
         <!--bottom-navbar-->
-        <div class="bottom-navbar">
+        <div class="bottom-navbar container">
             <!-- justify-content-end -->
             <div class="row">
-                <!-- class="col-md-7 offset-md-2" -->
-                <div class="col-md-4 offset-md-4">
+                <div class="col-6 col-sm-7 col-md-8 offset-md-0 col-lg-6 offset-lg-3">
                     <div class="row progress-container">
-                        <div class="col-md text-center">
+                        <div class="col-md text-center progress-flex-container">
                             <span class="progress-text">
                                 {{progress}} of {{totalQuestions}} completed
                             </span>
-                            <mdb-progress :value="progressPercentage" color="warning"/>
+                            <mdb-progress :value="progressPercentage"
+                                          :height="10"/>
                         </div>
                     </div>
                 </div>
                 <!--scroll buttons-->
-                <div class="col-md-4">
+                <div class="col-6 col-sm-5 col-md-4 col-lg-3">
                     <div class="row scroll-buttons">
                         <div class="col text-right">
 
@@ -242,7 +242,7 @@
                     */
             },
             progressPercentage() {
-                return 100 * this.latestQuestionAnsweredIndex / this.totalQuestions;
+                return 100 * (this.latestQuestionAnsweredIndex + 1) / this.totalQuestions;
             }
         },
         methods: {
@@ -347,7 +347,7 @@
                     //if this is the last sub question of a group, increment progress
 
                     //get all sub questions and sort them (i.e ["a", "b", "c"]
-                    const allSubs = this.questions.filter(q=> q.pivot.order === answered.pivot.order).map(q => q.pivot.sub_order).sort();
+                    const allSubs = this.questions.filter(q => q.pivot.order === answered.pivot.order).map(q => q.pivot.sub_order).sort();
                     if (allSubs[allSubs.length - 1] === answered.pivot.sub_order) {
                         this.progress = this.progress + 1;
                     }
@@ -371,19 +371,45 @@
     }
 </script>
 
-<style scoped>
+<style lang="scss">
+
+    $primary-color: #50b2e2;
+
+    .navbar-laravel {
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+    }
+
+    .next-btn {
+        font-size: 18px;
+        font-family: Poppins, serif;
+        font-weight: 500;
+        font-style: normal;
+        font-stretch: normal;
+        padding: 6px 40px;
+        line-height: normal;
+        letter-spacing: 1px;
+        color: #ffffff;
+        text-transform: none;
+        height: 40px;
+        border-radius: 5px;
+        border: solid 1px #4aa5d2;
+        background-color: $primary-color;
+        margin: 0;
+    }
+
     .questions-box {
         padding-top: 5%;
         padding-left: 9%;
     }
 
     .practice-title {
-        font-family: Poppins;
+        font-family: Poppins, serif;
         font-size: 18px;
         letter-spacing: 1.5px;
         text-align: center;
         margin-top: 20px;
-        color: #50b2e2;
+        color: $primary-color;
     }
 
     .practice-title .text-style-1 {
@@ -391,7 +417,7 @@
     }
 
     .survey-main-title {
-        font-family: Poppins;
+        font-family: Poppins, serif;
         font-size: 24px;
         font-weight: 600;
         letter-spacing: 1.5px;
@@ -477,7 +503,7 @@
         font-stretch: normal;
         line-height: normal;
         letter-spacing: 1px;
-        color: #50b2e2;
+        color: $primary-color;
     }
 
     .survey-container {
@@ -527,8 +553,7 @@
     }
 
     .scroll-buttons .fas {
-        width: 12px;
-        height: 20px;
+        font-size: 30px;
     }
 
     .progress-container {
@@ -545,15 +570,27 @@
         letter-spacing: 1px;
         text-align: right;
         color: #1a1a1a;
+        white-space: nowrap;
+    }
+
+    .progress {
+        width: 100%;
+        margin-left: 1%;
+        margin-top: 9px;
+        height: 10px;
+        border-radius: 5px;
+        border: solid 1px #d2e8f3;
+        background-color: #a7d9f1;
     }
 
     .progress-bar {
-        width: 100%;
-        height: 10px;
-        opacity: 0.5;
-        border-radius: 5px;
-        border: solid 1px #4aa5d2;
-        background-color: #50b2e2;
+        background-color: $primary-color !important;
+    }
+
+    .progress-flex-container {
+        display: flex;
+        justify-content: center;
+        flex-wrap: nowrap;
     }
 
     .watermark {

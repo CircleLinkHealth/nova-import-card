@@ -34,7 +34,7 @@
 
         <br>
 
-        <mdbBtn v-show="showNextButton"
+        <mdbBtn v-show="isActive"
                 color="primary"
                 class="next-btn"
                 name="number"
@@ -53,7 +53,7 @@
     export default {
         name: "questionTypeNumber",
         components: {mdbBtn},
-        props: ['question', 'userId', 'surveyInstanceId', 'showNextButton', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion'],
+        props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion'],
 
         mounted() {
             console.log('Component mounted.')
@@ -73,7 +73,7 @@
             },
 
             hasTypedTwoNumbers() {
-                return this.showNextButton && this.inputNumber.length > 1;
+                return this.isActive && this.inputNumber.length > 1;
             },
 
             hasAnswerType() {
