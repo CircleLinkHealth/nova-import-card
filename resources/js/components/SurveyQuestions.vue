@@ -38,19 +38,18 @@
                  v-for="(question, index) in questions">
                 <div v-show="index >= questionIndex" class="question">
                     <div class="questions-body" v-show="showSubQuestionNew(index)"><!--data-aos="fade-up"-->
-
                         <div class="questions-title">
                             {{question.pivot.order}}{{question.pivot.sub_order}}{{'.'}} {{question.body}}
                         </div>
                         <br>
                         <!--Questions Answer Type-->
                         <div class="question-answer-type">
-                            <question-type-text
+                         <!--   <question-type-text
                                     :question="question"
                                     :userId="userId"
                                     :surveyInstanceId="surveyInstanceId"
                                     v-if="question.type.type === 'text'">
-                            </question-type-text>
+                            </question-type-text>-->
 
                             <question-type-checkbox
                                     :question="question"
@@ -59,7 +58,7 @@
                                     v-if="question.type.type === 'checkbox'">
                             </question-type-checkbox>
 
-                            <question-type-muti-select
+                          <!--  <question-type-muti-select
                                     :questions="questions"
                                     :question="question"
                                     :surveyAnswers="surveyAnswers"
@@ -88,7 +87,7 @@
 
                             <question-type-date
                                     v-if="question.type.type === 'date'">
-                            </question-type-date>
+                            </question-type-date>-->
                         </div>
                     </div>
                 </div>
@@ -208,7 +207,7 @@
                 userId: this.surveydata.id,
                 surveyInstanceId: [],
                 questionIndexAnswers: [],
-                surveyAnswers:[],
+                surveyAnswers: [],
             }
         },
         computed: {
@@ -531,6 +530,4 @@
         margin-left: -25%;
         margin-top: 7%;
     }
-
-
 </style>
