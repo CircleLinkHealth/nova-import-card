@@ -5,7 +5,7 @@
             <template v-if="welcomeStage">
                 <div class="card-body">
                     <div class="welcome-icon-container">
-                        <img src="../../assets/images/notepad.png"
+                        <img src="../../assets/images/notepad-2.png"
                              class="welcome-icon" alt="welcome icon">
                     </div>
 
