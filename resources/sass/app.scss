@@ -198,10 +198,9 @@ html, body, #app {
 }
 
 .btn-start {
-    padding: 0;
+    padding-left: 10px;
+    padding-right: 10px;
     margin-top: 30px;
-    width: 90px;
-    height: 30px;
     font-family: Poppins, serif;
     font-size: 10px;
     font-weight: 500;
@@ -216,8 +215,6 @@ html, body, #app {
     .btn-start {
         margin-top: 60px;
         margin-bottom: 20px;
-        width: 180px;
-        height: 60px;
         font-size: 18px;
         letter-spacing: 1px;
     }

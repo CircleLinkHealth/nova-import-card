@@ -56,17 +56,27 @@
 <style scoped>
 
     .btn-login {
-        margin-top: 60px;
+        padding-left: 10px;
+        padding-right: 10px;
+        margin-top: 30px;
         margin-bottom: 20px;
-        height: 60px;
         font-family: Poppins, serif;
-        font-size: 18px;
+        font-size: 10px;
         font-weight: 500;
         font-style: normal;
         font-stretch: normal;
         line-height: normal;
-        letter-spacing: 1px;
+        letter-spacing: 0.6px;
         text-transform: none;
         text-align: center;
+    }
+
+    @media (min-width: 576px) {
+        .btn-login {
+            margin-top: 60px;
+            margin-bottom: 20px;
+            font-size: 18px;
+            letter-spacing: 1px;
+        }
     }
 </style>
