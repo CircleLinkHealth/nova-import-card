@@ -32,14 +32,12 @@
 
             </template>
             <template v-else>
-                <!--:data-aos="currentQuestionIndex === index"-->
                 <div class="questions-box question"
-                     :class="currentQuestionIndex !== index ? 'watermark' : ''"
+                     :id="question.id"
+                     :class="currentQuestionIndex !== index ? 'watermark' : 'active'"
                      v-show="index >= currentQuestionIndex"
                      v-for="(question, index) in questions">
 
-
-                    <!--data-aos="fade-up"-->
                     <div class="questions-body">
 
                         <div v-if="isSubQuestion(question) && shouldShowQuestionGroupTitle(question)"
@@ -138,6 +136,8 @@
                         </div>
                     </div>
                 </div>
+                <!-- add an empty div, so we can animate scroll up even if we are on last question -->
+                <div style="height: 600px"></div>
             </template>
 
         </div>
@@ -336,22 +336,34 @@
             },
 
             goToNextQuestion() {
-                this.latestQuestionAnsweredIndex = this.currentQuestionIndex;
-                this.currentQuestionIndex = this.currentQuestionIndex + 1;
-                const answered = this.questions[this.latestQuestionAnsweredIndex];
 
-                //increment progress only if current question is not a sub question
-                if (answered.pivot.sub_order === null) {
-                    this.progress = this.progress + 1;
-                } else {
-                    //if this is the last sub question of a group, increment progress
+                const nextQuestion = this.questions[this.currentQuestionIndex + 1];
 
-                    //get all sub questions and sort them (i.e ["a", "b", "c"]
-                    const allSubs = this.questions.filter(q => q.pivot.order === answered.pivot.order).map(q => q.pivot.sub_order).sort();
-                    if (allSubs[allSubs.length - 1] === answered.pivot.sub_order) {
-                        this.progress = this.progress + 1;
-                    }
+                //survey complete
+                if (!nextQuestion) {
+                    return;
                 }
+
+                $('.survey-container').animate({
+                    scrollTop: $(`#${nextQuestion.id}`).offset().top
+                }, 500, 'swing', () => {
+                    this.latestQuestionAnsweredIndex = this.currentQuestionIndex;
+                    this.currentQuestionIndex = this.currentQuestionIndex + 1;
+                    const answered = this.questions[this.latestQuestionAnsweredIndex];
+
+                    //increment progress only if current question is not a sub question
+                    if (answered.pivot.sub_order === null) {
+                        this.progress = this.progress + 1;
+                    } else {
+                        //if this is the last sub question of a group, increment progress
+
+                        //get all sub questions and sort them (i.e ["a", "b", "c"]
+                        const allSubs = this.questions.filter(q => q.pivot.order === answered.pivot.order).map(q => q.pivot.sub_order).sort();
+                        if (allSubs[allSubs.length - 1] === answered.pivot.sub_order) {
+                            this.progress = this.progress + 1;
+                        }
+                    }
+                });
             }
 
         },
@@ -370,7 +382,6 @@
         },
     }
 </script>
-
 <style lang="scss">
 
     $primary-color: #50b2e2;
