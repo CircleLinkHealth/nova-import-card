@@ -50,7 +50,7 @@
 
         },
 
-        methods: {
+        methods: {//@todo:fix this
             lastQuestionAnswers(lastQuestionOrder) {
                 const id = this.questions.filter(function (q) {
                     return q.pivot.order === lastQuestionOrder && q.pivot.sub_order === null;

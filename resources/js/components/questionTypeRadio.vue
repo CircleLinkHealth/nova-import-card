@@ -117,7 +117,7 @@
                     .catch(function (error) {
                         console.log(error);
                     });
-                console.log(this.userId, this.surveyInstanceId[0], this.question.id, questionTypeAnswerId[0], answerData);
+
                 EventBus.$emit('showSubQuestions', answerVal, this.questionOrder, this.question.id)
             },
 

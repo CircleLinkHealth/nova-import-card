@@ -24,8 +24,8 @@
             </checkbox-custom-type-eye-problems>
 
             <checkbox-custom-type-std
-            :stdProblemsInputData="stdProblemsInputData"
-            v-if="stdCustomInput">
+                    :stdProblemsInputData="stdProblemsInputData"
+                    v-if="stdCustomInput">
             </checkbox-custom-type-std>
             <!--next button-->
             <div v-if="showNextButton">
@@ -62,7 +62,6 @@
                 showNextButton: false,
                 checkedAnswers: [],
                 questionOptions: [],
-                keyForValues: {},
                 showDifferentInput: false,
                 questionsWithCustomInput: [],
                 customInputHasText: [],
@@ -88,18 +87,18 @@
                 }
             },
 
-            checkCustomInputs() {
-                //@todo:unfinished-issues:need to check foreach key if value = true.then check each value and act
-                //or maybe just dont...
-                const questionsCustomValue = this.questionsWithCustomInput.map(q => q.value);
-                var check = [];
-                for (let j = 0; j < questionsCustomValue.length; j++) {
-                    const val = questionsCustomValue[j];
-                    const q = this.checkedAnswers.includes(val);
-                    check.push({[val]: q});
-                }
-                return check;
-            },
+            /* checkCustomInputs() {
+                 //@todo:unfinished-issues:need to check foreach key if value = true.then check each value and act
+                 //or maybe just dont...
+                 const questionsCustomValue = this.questionsWithCustomInput.map(q => q.value);
+                 var check = [];
+                 for (let j = 0; j < questionsCustomValue.length; j++) {
+                     const val = questionsCustomValue[j];
+                     const q = this.checkedAnswers.includes(val);
+                     check.push({[val]: q});
+                 }
+                 return check;
+             },*/
 
             cancerCustomInput() {
                 return this.checkedAnswers.includes('Cancer');
@@ -119,14 +118,18 @@
 
             },
 
-            handleAnswers() {
+            handleAnswers() {//@todo: also save text answers types
                 const answer = [];
                 for (let j = 0; j < this.checkedAnswers.length; j++) {
                     const val = this.checkedAnswers[j];
                     const q = this.checkBoxValues.find(x => x.value === val);
-                    answer.push({[q.options.key]: val});
-                }
+                    if (!this.questionOptions) {
+                        answer.push({[q.options.key]: val});
+                    } else {
+                        answer.push({name: val})
+                    }
 
+                }
 
                 var answerData = JSON.stringify(answer);
 
@@ -163,11 +166,12 @@
         },
 
         created() {
-            const options = this.checkBoxValues.map(checkBoxValue => checkBoxValue.options);
-            this.questionOptions.push(...options);
-
-            const x = this.checkBoxValues.filter(checkBox => checkBox.options.hasOwnProperty('allow_custom_input'));
+            const x = this.checkBoxValues.filter(checkBoxValue => checkBoxValue.options !== null)
+                .filter(checkBox => checkBox.options.hasOwnProperty('allow_custom_input'));
             this.questionsWithCustomInput.push(...x);
+
+            const options = this.checkBoxValues.filter(checkBoxValue => checkBoxValue.options !== null).map(checkBoxValue => checkBoxValue.options);
+            this.questionOptions.push(...options);
 
             const cancerTypeInputData = this.questionsWithCustomInput.filter(q => q.value === 'Cancer').map(q => q.options);
             this.cancerInputData.push(...cancerTypeInputData);

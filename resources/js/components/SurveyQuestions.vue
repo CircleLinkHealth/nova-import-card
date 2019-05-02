@@ -58,7 +58,7 @@
                                     v-if="question.type.type === 'checkbox'">
                             </question-type-checkbox>
 
-                          <!--  <question-type-muti-select
+                            <question-type-muti-select
                                     :questions="questions"
                                     :question="question"
                                     :surveyAnswers="surveyAnswers"
@@ -87,7 +87,7 @@
 
                             <question-type-date
                                     v-if="question.type.type === 'date'">
-                            </question-type-date>-->
+                            </question-type-date>
                         </div>
                     </div>
                 </div>
