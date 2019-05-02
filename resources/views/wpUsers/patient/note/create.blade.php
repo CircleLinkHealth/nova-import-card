@@ -110,7 +110,7 @@
 
                             $('document').ready(function () {
 
-                                const statusSelectEl = $('#perform-status-select');
+                                const statusSelectEl = $('#header-perform-status-select');
                                 statusSelectEl.on('change', onStatusChange);
                                 statusSelectEl.change();
 
