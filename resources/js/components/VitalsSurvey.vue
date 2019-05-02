@@ -63,6 +63,7 @@
                                 :get-all-questions-func="getAllQuestions"
                                 :on-done-func="postAnswerAndGoToNext"
                                 :is-last-question="isLastQuestion(question)"
+                                :waiting="waiting"
                                 v-if="question.type.type === 'text'">
                             </question-type-text>
 
@@ -75,6 +76,7 @@
                                 :get-all-questions-func="getAllQuestions"
                                 :on-done-func="postAnswerAndGoToNext"
                                 :is-last-question="isLastQuestion(question)"
+                                :waiting="waiting"
                                 v-if="question.type.type === 'checkbox'">
                             </question-type-checkbox>
 
@@ -87,6 +89,7 @@
                                 :get-all-questions-func="getAllQuestions"
                                 :on-done-func="postAnswerAndGoToNext"
                                 :is-last-question="isLastQuestion(question)"
+                                :waiting="waiting"
                                 v-if="question.type.type === 'multi_select'">
                             </question-type-muti-select>
 
@@ -96,6 +99,7 @@
                                 :get-all-questions-func="getAllQuestions"
                                 :on-done-func="postAnswerAndGoToNext"
                                 :is-last-question="isLastQuestion(question)"
+                                :waiting="waiting"
                                 v-if="question.type.type === 'range'">
                             </question-type-range>
 
@@ -108,6 +112,7 @@
                                 :get-all-questions-func="getAllQuestions"
                                 :on-done-func="postAnswerAndGoToNext"
                                 :is-last-question="isLastQuestion(question)"
+                                :waiting="waiting"
                                 v-if="question.type.type === 'number'">
                             </question-type-number>
 
@@ -121,6 +126,7 @@
                                 :get-all-questions-func="getAllQuestions"
                                 :on-done-func="postAnswerAndGoToNext"
                                 :is-last-question="isLastQuestion(question)"
+                                :waiting="waiting"
                                 v-if="question.type.type === 'radio'">
                             </question-type-radio>
 
@@ -130,8 +136,15 @@
                                 :get-all-questions-func="getAllQuestions"
                                 :on-done-func="postAnswerAndGoToNext"
                                 :is-last-question="isLastQuestion(question)"
+                                :waiting="waiting"
                                 v-if="question.type.type === 'date'">
                             </question-type-date>
+                        </div>
+
+                        <br/>
+
+                        <div class="error" v-if="error">
+                            <span v-html="error"></span>
                         </div>
                     </div>
                 </div>
@@ -250,6 +263,8 @@
         data() {
             return {
                 stage: "welcome",
+                waiting: false,
+                error: null,
                 questions: [],
                 subQuestions: [],
                 currentQuestionIndex: 0,
@@ -257,6 +272,7 @@
                 progress: 0,
                 totalQuestions: 0, //does not include sub-questions
                 patientId: -1,
+                practiceId: -1,
                 patientName: '',
                 surveyInstanceId: -1,
             }
@@ -271,20 +287,21 @@
                     && this.latestQuestionAnsweredIndex >= this.currentQuestionIndex;
             },
             progressPercentage() {
-                return 100 * (this.latestQuestionAnsweredIndex + 1) / this.totalQuestions;
+                return 100 * (this.progress) / this.totalQuestions;
             }
         },
         methods: {
 
             startSurvey() {
                 this.stage = "survey";
-                this.currentQuestionIndex = 0;
             },
 
             scrollUp() {
                 if (this.currentQuestionIndex === 0) {
                     return;
                 }
+
+                this.error = null;
                 this.currentQuestionIndex = this.currentQuestionIndex - 1;
             },
 
@@ -292,6 +309,8 @@
                 if (this.latestQuestionAnsweredIndex < this.currentQuestionIndex) {
                     return;
                 }
+
+                this.error = null;
                 this.currentQuestionIndex = this.currentQuestionIndex + 1;
             },
 
@@ -308,7 +327,7 @@
             },
 
             getQuestionGroupTitle(question) {
-                return question.question_group.body;
+                return `${question.pivot.order}. ${question.question_group.body}`;
             },
 
             getQuestionTitle(question) {
@@ -329,38 +348,67 @@
                 return this.questions;
             },
 
-            postAnswerAndGoToNext(questionId, answer) {
+            postAnswerAndGoToNext(questionId, questionTypeAnswerId, answer) {
 
-                return new Promise((resolve, reject) => {
+                this.error = null;
+                this.waiting = true;
 
-                    //save the answer in state
-                    const q = this.questions.find(x => x.id === questionId);
-                    q.answer = answer;
-
-                    this.goToNextQuestion();
-                    resolve();
-                });
-
-                /*
-                var answerData = JSON.stringify(answer);
-
-                axios.post('/save-answer', {
-                    user_id: this.userId,
-                    survey_instance_id: this.surveyInstanceId[0],
-                    question_id: this.question.id,
-                    question_type_answer_id: this.questionTypeAnswerId,
-                    value: answerData,
-                })
-                    .then(function (response) {
-                        console.log(response);
+                return axios
+                    .post(`/survey/vitals/${this.practiceId}/${this.patientId}/save-answer`, {
+                        patient_id: this.patientId,
+                        practice_id: this.practiceId,
+                        survey_instance_id: this.surveyInstanceId,
+                        question_id: questionId,
+                        question_type_answer_id: questionTypeAnswerId,
+                        value: answer,
                     })
-                    .catch(function (error) {
+                    .then((response) => {
+                        this.waiting = false;
+                        //save the answer in state
+                        const q = this.questions.find(x => x.id === questionId);
+
+                        //increment progress only if question was not answered before
+                        const incrementProgress = typeof q.answer === "undefined";
+                        q.answer = answer;
+
+                        this.goToNextQuestion(incrementProgress)
+                            .then(() => {
+                                //NOTE
+                                //this is a hack. still haven't figured out why I have to do this
+                                //the next three lines of code are useless, but somehow they are needed
+                                //when submitting answer, going to the next question and user clicks to go
+                                //to previous question. If these lines are commented out, the `go to previous`
+                                //does not work!
+                                //NOTE
+                                this.currentQuestionIndex = this.currentQuestionIndex + 1;
+                                this.$nextTick().then(() => {
+                                    this.currentQuestionIndex = this.currentQuestionIndex - 1;
+                                });
+                            });
+
+                    })
+                    .catch((error) => {
                         console.log(error);
+                        this.waiting = false;
+
+                        if (error.response && error.response.data) {
+                            const errors = [error.response.data.message];
+                            Object.keys(error.response.data.errors || []).forEach(e => {
+                                errors.push(error.response.data.errors[e]);
+                            });
+                            this.error = errors.join('<br/>');
+                        }
+                        else {
+                            this.error = error.message;
+                        }
                     });
-                */
             },
 
-            goToNextQuestion() {
+            /**
+             * If question was already answered before, we do not increment progress
+             * @param incrementProgress
+             */
+            goToNextQuestion(incrementProgress) {
 
                 const nextQuestion = this.questions[this.currentQuestionIndex + 1];
 
@@ -369,46 +417,75 @@
                     this.stage = "complete";
                     this.latestQuestionAnsweredIndex = this.currentQuestionIndex;
                     this.currentQuestionIndex = this.currentQuestionIndex + 1;
-                    this.progress = this.progress + 1;
+                    if (incrementProgress) {
+                        this.progress = this.progress + 1;
+                    }
                     return;
                 }
 
-                $('.survey-container').animate({
-                    scrollTop: $(`#${nextQuestion.id}`).offset().top
-                }, 519, 'swing', () => {
-                    this.latestQuestionAnsweredIndex = this.currentQuestionIndex;
-                    this.currentQuestionIndex = this.currentQuestionIndex + 1;
-                    const answered = this.questions[this.latestQuestionAnsweredIndex];
+                return new Promise(resolve => {
+                    $('.survey-container').animate({
+                        scrollTop: $(`#${nextQuestion.id}`).offset().top
+                    }, 519, 'swing', () => {
+                        this.latestQuestionAnsweredIndex = this.currentQuestionIndex;
+                        this.currentQuestionIndex = this.currentQuestionIndex + 1;
+                        const answered = this.questions[this.latestQuestionAnsweredIndex];
 
-                    //increment progress only if current question is not a sub question
-                    if (answered.pivot.sub_order === null) {
-                        this.progress = this.progress + 1;
-                    } else {
-                        //if this is the last sub question of a group, increment progress
+                        //increment progress only if current question is not a sub question
+                        if (answered.pivot.sub_order === null) {
+                            if (incrementProgress) {
+                                this.progress = this.progress + 1;
+                            }
+                        } else {
+                            //if this is the last sub question of a group, increment progress
 
-                        //get all sub questions and sort them (i.e ["a", "b", "c"]
-                        const allSubs = this.questions.filter(q => q.pivot.order === answered.pivot.order).map(q => q.pivot.sub_order).sort();
-                        if (allSubs[allSubs.length - 1] === answered.pivot.sub_order) {
+                            //get all sub questions and sort them (i.e ["a", "b", "c"]
+                            const allSubs = this.questions.filter(q => q.pivot.order === answered.pivot.order).map(q => q.pivot.sub_order).sort();
+                            if (allSubs[allSubs.length - 1] === answered.pivot.sub_order) {
+                                if (incrementProgress) {
+                                    this.progress = this.progress + 1;
+                                }
+                            }
+                        }
+                        resolve();
+                    });
+                });
+            },
+
+        },
+        mounted() {
+        },
+        created() {
+            //clone props into data
+            this.patientId = this.data.id;
+            this.practiceId = this.data.program_id;
+            this.patientName = this.data.display_name;
+            this.surveyInstanceId = this.data.survey_instances[0].id;
+            this.questions = this.data.survey_instances[0].questions.slice(0);
+
+            if (this.data.answers && this.data.answers.length) {
+                this.data.answers.forEach(a => {
+                    const q = this.questions.find(q => q.id === a.question_id);
+                    if (q) {
+                        q.answer = a;
+                        if (q.pivot.sub_order === null) {
                             this.progress = this.progress + 1;
                         }
                     }
                 });
             }
 
-        },
-        mounted() {
+            if (typeof this.data.survey_instances[0].pivot.last_question_answered_id !== "undefined") {
+                const lastQuestionAnsweredId = this.data.survey_instances[0].pivot.last_question_answered_id;
+                const index = this.questions.findIndex(q => q.id === lastQuestionAnsweredId);
+                this.latestQuestionAnsweredIndex = index;
+                this.currentQuestionIndex = this.latestQuestionAnsweredIndex + 1;
+            }
 
-        },
-        created() {
-            //clone props into data
-            this.patientId = this.data.id;
-            this.patientName = this.data.display_name;
-            this.surveyInstanceId = this.data.survey_instances[0].id;
-            this.questions = this.data.survey_instances[0].questions.slice(0);
             this.totalQuestions = _.uniqBy(this.questions, (elem) => {
                 return elem.pivot.order;
             }).length;
-        },
+        }
     }
 </script>
 <style lang="scss" scoped>
@@ -495,7 +572,7 @@
     .progress-text {
         font-family: Poppins, serif;
         font-size: 10px;
-        font-weight: 519;
+        font-weight: 500;
         font-style: normal;
         font-stretch: normal;
         line-height: normal;
@@ -533,6 +610,10 @@
     .watermark {
         opacity: 0.1;
         transition: opacity 0.5s linear;
+    }
+
+    .error {
+        color: darkred;
     }
 
 </style>

@@ -43,7 +43,8 @@
                 id="number"
                 :disabled="!hasTypedTwoNumbers"
                 @click="handleAnswer()">
-            Next
+            {{isLastQuestion ? 'Complete' : 'Next'}}
+            <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
         </mdbBtn>
 
     </div>
@@ -51,11 +52,16 @@
 
 <script>
     import {mdbBtn} from "mdbvue";
+    import {library} from '@fortawesome/fontawesome-svg-core';
+    import {faSpinner} from '@fortawesome/free-solid-svg-icons';
+    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
+
+    library.add(faSpinner);
 
     export default {
         name: "questionTypeNumber",
-        components: {mdbBtn},
-        props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion'],
+        components: {mdbBtn, FontAwesomeIcon},
+        props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting'],
 
         mounted() {
             console.log('Component mounted.')
@@ -135,16 +141,17 @@
                     value: this.inputNumber,
                 };
 
-                this.onDoneFunc(this.question.id, answer)
-                    .catch(err => {
-                        //if there is error, app will not move to next question.
-                        //handle it here
-                    });
+                this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer).then(() => {
+                });
             }
         },
         created() {
             const questionOptions = this.question.type.question_type_answers.map(q => q.options);
             this.questionOptions.push(...questionOptions);
+
+            if (this.question.answer) {
+                this.inputNumber = this.question.answer.value.value;
+            }
 
             if (this.questionSubParts.length > 1) {
                 const keys = (this.questionOptions[0].sub_parts || this.questionOptions[0]["sub-parts"]).map(q => q.key);

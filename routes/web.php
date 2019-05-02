@@ -78,7 +78,7 @@ Route::group([
             'as' => 'survey.vitals',
         ]);
 
-        Route::post('store-answer', [
+        Route::post('{practiceId}/{patientId}/save-answer', [
             'uses' => 'VitalsSurveyController@storeAnswer',
             'as'   => 'survey.vitals.store.answer',
         ]);

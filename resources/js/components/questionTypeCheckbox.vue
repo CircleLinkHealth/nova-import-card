@@ -25,7 +25,8 @@
                 class="next-btn"
                 :disabled="checkedAnswers.length === 0"
                 @click="handleAnswers">
-            Next
+            {{isLastQuestion ? 'Complete' : 'Next'}}
+            <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
         </mdbBtn>
 
     </div>
@@ -37,7 +38,7 @@
 
     export default {
         name: "questionTypeCheckbox",
-        props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion'],
+        props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting'],
         components: {
             'mdb-btn': mdbBtn
         },
@@ -85,11 +86,7 @@
                     answer.push({[q.options.key]: val});
                 }
 
-                this.onDoneFunc(this.question.id, answer)
-                    .catch(err => {
-                        //if there is error, app will not move to next question.
-                        //handle it here
-                    });
+                this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer).then(() => {});
             }
         },
 

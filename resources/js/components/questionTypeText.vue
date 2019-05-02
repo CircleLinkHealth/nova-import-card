@@ -60,6 +60,7 @@
                     :disabled="!hasTypedTwoNumbers"
                     @click="handleAnswer()">
                 {{isLastQuestion ? 'Complete' : 'Next'}}
+                <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
             </mdbBtn>
         </div>
 
@@ -70,11 +71,16 @@
 <script>
 
     import {mdbBtn} from 'mdbvue';
+    import {library} from '@fortawesome/fontawesome-svg-core';
+    import {faSpinner} from '@fortawesome/free-solid-svg-icons';
+    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
+
+    library.add(faSpinner);
 
     export default {
         name: "questionTypeText",
-        props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion'],
-        components: {mdbBtn},
+        props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting'],
+        components: {mdbBtn, FontAwesomeIcon},
 
         mounted() {
 
@@ -198,11 +204,8 @@
                     }
                 }
 
-                this.onDoneFunc(this.question.id, answer)
-                    .catch(err => {
-                        //if there is error, app will not move to next question.
-                        //handle it here
-                    });
+                this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer).then(() => {
+                });
             }
         },
 
