@@ -112,6 +112,16 @@
                            value="1" @if($practiceSettings->dm_careplan_approval_reminders){{'checked'}}@endif>
                     <label for="dm_careplan_approval_reminders">Send Care Plan Approval Reminders</label>
                 </div>
+
+                @if($practice->hasAWVServiceCode())
+                <div class="input-field col s6">
+                    <input name="settings[dm_awv_reports]" type="checkbox"
+                           id="dm_awv_reports"
+                           value="1" @if($practiceSettings->dm_awv_reports){{'checked'}}@endif>
+                    <label for="dm_awv_reports">Send AWV Reports</label>
+                </div>
+                @endif
+
             </div>
 
             <div class="row">
@@ -136,6 +146,15 @@
                            value="1" @if($practiceSettings->efax_audit_reports){{'checked'}}@endif>
                     <label for="efax_audit_reports">Send Audit Reports</label>
                 </div>
+
+                @if($practice->hasAWVServiceCode())
+                    <div class="input-field col s6">
+                        <input name="settings[efax_awv_reports]" type="checkbox"
+                               id="efax_awv_reports"
+                               value="1" @if($practiceSettings->efax_awv_reports){{'checked'}}@endif>
+                        <label for="efax_awv_reports">Send AWV Reports</label>
+                    </div>
+                @endif
             </div>
 
             <div class="row">
@@ -159,6 +178,15 @@
                            value="1" @if($practiceSettings->email_weekly_report){{'checked'}}@endif>
                     <label for="email_weekly_report">MDs Receive Weekly Reports</label>
                 </div>
+
+                @if($practice->hasAWVServiceCode())
+                    <div class="input-field col s6">
+                        <input name="settings[email_awv_reports]" type="checkbox"
+                               id="email_awv_reports"
+                               value="1" @if($practiceSettings->email_awv_reports){{'checked'}}@endif>
+                        <label for="email_awv_reports">Send AWV Reports</label>
+                    </div>
+                @endif
 
                 <div class="input-field col s12" style="margin-top: 3rem;">
                     <textarea id="invoice-recipients" name="invoice_recipients"
