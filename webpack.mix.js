@@ -50,12 +50,9 @@ mix.webpackConfig(webpackConfig);
  * CSS
  *
  */
-mix.less('resources/assets/less/css/app.less', 'public/compiled/css/app-compiled.css');
-
 mix.combine([
-    'public/compiled/css/app-compiled.css',
-    'resources/assets/less/css/animate.min.css'
-], 'public/compiled/css/stylesheet.css');
+        'resources/assets/less/css/animate.min.css'
+    ], 'public/compiled/css/stylesheet.css');
 
 mix.sass('resources/assets/sass/css/provider/dashboard.scss', 'public/compiled/css/provider-dashboard.css');
 
