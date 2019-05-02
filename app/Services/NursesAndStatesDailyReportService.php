@@ -29,32 +29,44 @@ class NursesAndStatesDailyReportService
 
         $data = [];
         User::ofType('care-center')
-            ->with([
-                'nurseInfo' => function ($info) {
-                    $info->with([
-                        'windows',
-                        'upcomingHolidays',
-                    ]);
-                },
-                'pageTimersAsProvider' => function ($q) use ($date) {
-                    $q->where([
-                        ['start_time', '>=', $date->copy()->startOfDay()],
-                        ['end_time', '<=', $date->copy()->endOfDay()],
-                    ]);
-                },
-                'outboundCalls' => function ($q) use ($date) {
-                    $q->whereBetween('called_date', [$date->copy()->startOfDay(), $date->copy()->endOfDay()])
-                        ->orWhere('scheduled_date', $date->toDateString());
-                },
-            ])
-            ->whereHas('nurseInfo', function ($info) {
-                $info->where('status', 'active');
-            })
-            ->chunk(10, function ($nurses) use (&$data, $date) {
-                foreach ($nurses as $nurse) {
-                    $data[] = $this->getDataForNurse($nurse, $date);
+            ->with(
+                [
+                    'nurseInfo' => function ($info) {
+                        $info->with(
+                            [
+                                'windows',
+                                'upcomingHolidays',
+                            ]
+                        );
+                    },
+                    'pageTimersAsProvider' => function ($q) use ($date) {
+                        $q->where(
+                            [
+                                ['start_time', '>=', $date->copy()->startOfDay()],
+                                ['end_time', '<=', $date->copy()->endOfDay()],
+                            ]
+                        );
+                    },
+                    'outboundCalls' => function ($q) use ($date) {
+                        $q->whereBetween('called_date', [$date->copy()->startOfDay(), $date->copy()->endOfDay()])
+                            ->orWhere('scheduled_date', $date->toDateString());
+                    },
+                ]
+            )
+            ->whereHas(
+                'nurseInfo',
+                function ($info) {
+                    $info->where('status', 'active');
                 }
-            });
+            )
+            ->chunk(
+                10,
+                function ($nurses) use (&$data, $date) {
+                    foreach ($nurses as $nurse) {
+                        $data[] = $this->getDataForNurse($nurse, $date);
+                    }
+                }
+            );
 
         return collect($data);
     }
@@ -73,7 +85,7 @@ class NursesAndStatesDailyReportService
      */
     public function estHoursToCompleteCaseLoadMonth($patients)
     {
-        return round($patients->where('patient_time', '<', 20)->sum('patient_time_left') / 60, 2);
+        return round($patients->where('patient_time', '<', 20)->sum('patient_time_left') / 60, 1);
     }
 
     /**
@@ -96,10 +108,12 @@ class NursesAndStatesDailyReportService
             ? round((float) (($data['actualHours'] / $data['committedHours']) * 100), 2)
             : 0;
 
-        return max([
-            $callRate,
-            $hourRate,
-        ]);
+        return max(
+            [
+                $callRate,
+                $hourRate,
+            ]
+        );
     }
 
     /**
@@ -121,12 +135,17 @@ class NursesAndStatesDailyReportService
             'nurse_full_name' => $nurse->getFullName(),
             'systemTime'      => $systemTime,
             'actualHours'     => round((float) ($systemTime / 3600), 2),
-            'committedHours'  => round((float) $nurseWindows->where(
-                'day_of_week',
-                carbonToClhDayOfWeek($date->dayOfWeek)
-            )->sum(function ($window) {
-                return $window->numberOfHoursCommitted();
-            }), 2),
+            'committedHours'  => round(
+                (float) $nurseWindows->where(
+                    'day_of_week',
+                    carbonToClhDayOfWeek($date->dayOfWeek)
+                )->sum(
+                    function ($window) {
+                        return $window->numberOfHoursCommitted();
+                    }
+                ),
+                2
+            ),
             'scheduledCalls' => $nurse->outboundCalls->count(),
             'actualCalls'    => $nurse->outboundCalls->whereIn(
                 'status',
@@ -171,9 +190,15 @@ class NursesAndStatesDailyReportService
     public function getEfficiencyIndex($data)
     {
         return 0 != $data['actualHours']
-            ? round((float) (100 * (
-                (floatval($this->successfulCallsMultiplier) * $data['successful']) + (floatval($this->unsuccessfulCallsMultiplier) * $data['unsuccessful'])
-                ) / $data['actualHours']), 2)
+            ? intval(
+                round(
+                    (float) (100 * (
+                        (floatval($this->successfulCallsMultiplier) * $data['successful']) + (floatval(
+                                $this->unsuccessfulCallsMultiplier
+                                                                                                  ) * $data['unsuccessful'])
+                        ) / $data['actualHours'])
+                )
+            )
             : 0;
     }
 
@@ -219,12 +244,17 @@ class NursesAndStatesDailyReportService
 
             //we count the hours only if the nurse has not scheduld a holiday for that day.
             if ($holidayForDate->isEmpty()) {
-                $hours[] = round((float) $nurseWindows->where(
-                    'day_of_week',
-                    carbonToClhDayOfWeek($mutableDate->dayOfWeek)
-                )->sum(function ($window) {
-                    return $window->numberOfHoursCommitted();
-                }), 2);
+                $hours[] = round(
+                    (float) $nurseWindows->where(
+                        'day_of_week',
+                        carbonToClhDayOfWeek($mutableDate->dayOfWeek)
+                    )->sum(
+                        function ($window) {
+                            return $window->numberOfHoursCommitted();
+                        }
+                    ),
+                    1
+                );
             }
 
             $mutableDate->addDay();
@@ -254,14 +284,19 @@ class NursesAndStatesDailyReportService
     {
         return \DB::table('calls')
             ->select(
-                \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
-                \DB::raw('GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60 as patient_time'),
-                \DB::raw("({$this->timeGoal} - (GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60)) as patient_time_left"),
-                'no_of_successful_calls as successful_calls'
+                      \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
+                      \DB::raw(
+                          'GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60 as patient_time'
+                      ),
+                      \DB::raw(
+                          "({$this->timeGoal} - (GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60)) as patient_time_left"
+                      ),
+                      'no_of_successful_calls as successful_calls'
                   )
             ->leftJoin('users', 'users.id', '=', 'calls.inbound_cpm_id')
             ->leftJoin('patient_monthly_summaries', 'users.id', '=', 'patient_monthly_summaries.patient_id')
-            ->whereRaw("(
+            ->whereRaw(
+                      "(
 (
 DATE(calls.scheduled_date) >= DATE('{$date->copy()->startOfMonth()->toDateString()}')
 AND
@@ -275,7 +310,8 @@ DATE(calls.called_date)<=DATE('{$date->toDateString()}')
 )
 AND (calls.type IS NULL OR calls.type='call') 
 AND calls.outbound_cpm_id = {$nurse->id} AND
-DATE(patient_monthly_summaries.month_year) = DATE('{$date->copy()->startOfMonth()->toDateString()}')")
+DATE(patient_monthly_summaries.month_year) = DATE('{$date->copy()->startOfMonth()->toDateString()}')"
+                  )
             ->get();
     }
 
@@ -311,34 +347,36 @@ DATE(patient_monthly_summaries.month_year) = DATE('{$date->copy()->startOfMonth(
         $nurses = collect($nurses)
             ->flatten()
             ->unique()
-            ->mapWithKeys(function ($nurse) use ($reports) {
-                $week = [];
-                foreach ($reports as $dayOfWeek => $reportPerDay) {
-                    if ( ! empty($reportPerDay)) {
-                        $week[$dayOfWeek] = collect($reportPerDay)->where('nurse_full_name', $nurse)->first();
-                        if (empty($week[$dayOfWeek])) {
-                            $week[$dayOfWeek] = [
-                                'nurse_full_name'           => $nurse,
-                                'committedHours'            => 0,
-                                'actualHours'               => 0,
-                                'unsuccessful'              => 0,
-                                'successful'                => 0,
-                                'actualCalls'               => 0,
-                                'scheduledCalls'            => 0,
-                                'efficiency'                => 0,
-                                'completionRate'            => 0,
-                                'efficiencyIndex'           => 0,
-                                'caseLoadComplete'          => 0,
-                                'caseLoadNeededToComplete'  => 0,
-                                'hoursCommittedRestOfMonth' => 0,
-                                'surplusShortfallHours'     => 0,
-                            ];
+            ->mapWithKeys(
+                function ($nurse) use ($reports) {
+                    $week = [];
+                    foreach ($reports as $dayOfWeek => $reportPerDay) {
+                        if ( ! empty($reportPerDay)) {
+                            $week[$dayOfWeek] = collect($reportPerDay)->where('nurse_full_name', $nurse)->first();
+                            if (empty($week[$dayOfWeek])) {
+                                $week[$dayOfWeek] = [
+                                    'nurse_full_name'           => $nurse,
+                                    'committedHours'            => 0,
+                                    'actualHours'               => 0,
+                                    'unsuccessful'              => 0,
+                                    'successful'                => 0,
+                                    'actualCalls'               => 0,
+                                    'scheduledCalls'            => 0,
+                                    'efficiency'                => 0,
+                                    'completionRate'            => 0,
+                                    'efficiencyIndex'           => 0,
+                                    'caseLoadComplete'          => 0,
+                                    'caseLoadNeededToComplete'  => 0,
+                                    'hoursCommittedRestOfMonth' => 0,
+                                    'surplusShortfallHours'     => 0,
+                                ];
+                            }
                         }
                     }
-                }
 
-                return [$nurse => $week];
-            });
+                    return [$nurse => $week];
+                }
+            );
 
         $totalsPerDay = [];
         foreach ($reports as $dayOfWeek => $reportPerDay) {
@@ -375,17 +413,21 @@ DATE(patient_monthly_summaries.month_year) = DATE('{$date->copy()->startOfMonth(
      */
     public function nursesEfficiencyPercentageDaily(Carbon $date, $nurse)
     {
-        $actualHours = PageTimer::where([
-            ['start_time', '>=', $date->copy()->startOfDay()],
-            ['end_time', '<=', $date->copy()->endOfDay()],
-            ['provider_id', $nurse->id],
-        ])->sum('billable_duration') / 3600;
+        $actualHours = PageTimer::where(
+            [
+                ['start_time', '>=', $date->copy()->startOfDay()],
+                ['end_time', '<=', $date->copy()->endOfDay()],
+                ['provider_id', $nurse->id],
+            ]
+            )->sum('billable_duration') / 3600;
 
-        $activityTime = Activity::where([
-            ['performed_at', '>=', $date->copy()->startOfDay()],
-            ['performed_at', '<=', $date->copy()->endOfDay()],
-            ['provider_id', $nurse->id],
-        ])->sum('duration') / 3600;
+        $activityTime = Activity::where(
+            [
+                ['performed_at', '>=', $date->copy()->startOfDay()],
+                ['performed_at', '<=', $date->copy()->endOfDay()],
+                ['provider_id', $nurse->id],
+            ]
+            )->sum('duration') / 3600;
 
         return 0 == $actualHours || 0 == $activityTime
             ? 0
@@ -401,11 +443,14 @@ DATE(patient_monthly_summaries.month_year) = DATE('{$date->copy()->startOfMonth(
     public function percentageCaseLoadComplete($patients)
     {
         return 0 !== $patients->count()
-            ? round(($patients->where('patient_time', '>=', 20)->where(
-                'successful_calls',
-                '>=',
-                1
-                    )->count() / $patients->count()) * 100, 2)
+            ? round(
+                ($patients->where('patient_time', '>=', 20)->where(
+                    'successful_calls',
+                    '>=',
+                    1
+                    )->count() / $patients->count()) * 100,
+                2
+            )
             : 0;
     }
 
@@ -443,11 +488,13 @@ DATE(patient_monthly_summaries.month_year) = DATE('{$date->copy()->startOfMonth(
         if ($day->lte($this->getLimitDate())) {
             throw new FileNotFoundException('No reports exists before this date');
         }
-        $json = optional(SaasAccount::whereSlug('circlelink-health')
-            ->first()
-            ->getMedia("nurses-and-states-daily-report-{$day->toDateString()}.json")
-            ->sortByDesc('id')
-            ->first())
+        $json = optional(
+            SaasAccount::whereSlug('circlelink-health')
+                ->first()
+                ->getMedia("nurses-and-states-daily-report-{$day->toDateString()}.json")
+                ->sortByDesc('id')
+                ->first()
+        )
             ->getFile();
 
         if ( ! $json) {

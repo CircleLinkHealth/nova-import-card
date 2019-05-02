@@ -34,10 +34,12 @@
         position: fixed;
         left: 0;
         bottom: 0;
-        background-color: #f5f5f5;
-        color: #444 !important;
-        font-size: 12px;
-        padding: 6px;
+        background-color: #ff403d;
+        color: #fff !important;
+        font-size: 16px;
+        padding: 10px;
         cursor: pointer;
+        border-radius: 0 8px 0 0;
+        font-weight: 400;
     }
 </style>
