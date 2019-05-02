@@ -10,8 +10,8 @@
 </p>
 
 <ul>
-    <li><b>Attendance/calls completion rate:<span style="color: red;">* </span></b>&nbsp;{{$completionRate}}%</li>
-    <li><b>Efficiency Index (100 is goal)<span style="color: red;">** </span></b>&nbsp;{{$efficiencyIndex}}</li>
+    <li><b>Attendance/calls completion rate:<span style="color: red;">*</span></b>&nbsp;{{$completionRate}}%</li>
+    <li><b>Efficiency Index (100 is goal):<span style="color: red;">**</span></b>&nbsp;{{$efficiencyIndex}}</li>
     <li><b>Total time in system on {{$date->englishDayOfWeek}} ({{$date->format('m/d')}}):</b>&nbsp;{{ $totalTimeInSystemOnGivenDate }}</li>
 </ul>
 
@@ -27,7 +27,7 @@
         <b>Hours committed rest of month:</b>&nbsp;{{$hoursCommittedRestOfMonth}} hrs
     </li>
     <li>
-        <b>Hours deficit or surplus:</b>&nbsp;@if($surplusShortfallHours > 0)  <span style="color: green">{{$surplusShortfallHours}} hrs Surplus</span> @elseif($surplusShortfallHours < 0) <span style="color: red">{{abs($surplusShortfallHours)}} hrs Deficit</span> @endif
+        <b>Hours deficit or surplus:</b>&nbsp;@if($surplusShortfallHours > 0)<span style="color: green">{{$surplusShortfallHours}} hrs Surplus</span>@elseif($surplusShortfallHours < 0)<span style="color: red">{{abs($surplusShortfallHours)}} hrs Deficit</span>@endif
     </li>
     <li>
         <b>%age case load complete:</b>&nbsp;{{$caseLoadComplete}}%
