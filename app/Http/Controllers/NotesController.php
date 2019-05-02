@@ -104,15 +104,15 @@ class NotesController extends Controller
                 ->where('inbound_cpm_id', '=', $patientId)
                 ->where('outbound_cpm_id', '=', $author_id)
                 ->select(
-                    [
-                        'id',
-                        'type',
-                        'sub_type',
-                        'attempt_note',
-                        'scheduled_date',
-                        'window_start',
-                        'window_end',
-                    ]
+                                           [
+                                               'id',
+                                               'type',
+                                               'sub_type',
+                                               'attempt_note',
+                                               'scheduled_date',
+                                               'window_start',
+                                               'window_end',
+                                           ]
                                        )
                 ->get();
 
@@ -122,23 +122,40 @@ class NotesController extends Controller
                 $meds = $medicationService->repo()->patientMedicationsList($patientId);
             }
 
+            $reasons = [
+                'No Longer Interested',
+                'Moving out of Area',
+                'New Physician',
+                'Cost / Co-Pay',
+                'Changed Insurance',
+                'Dialysis / End-Stage Renal Disease',
+                'Expired',
+                'Home Health Services',
+                'Other',
+            ];
+
+            $withdrawnReasons       = array_combine($reasons, $reasons);
+            $patientWithdrawnReason = $patient->getWithdrawnReason();
+
             $view_data = [
-                'program_id'           => $patient->program_id,
-                'patient'              => $patient,
-                'patient_name'         => $patient_name,
-                'note_types'           => Activity::input_activity_types(),
-                'task_types_to_topics' => Activity::task_types_to_topics(),
-                'tasks'                => $nurse_patient_tasks,
-                'author_id'            => $author_id,
-                'author_name'          => $author_name,
-                'careteam_info'        => $careteam_info,
-                'userTimeZone'         => $userTimeZone,
-                'window'               => $window,
-                'window_flag'          => $patient_contact_window_exists,
-                'contact_days_array'   => $contact_days_array,
-                'notifies_text'        => $patient->getNotifiesText(),
-                'note_channels_text'   => $patient->getNoteChannelsText(),
-                'medications'          => $meds,
+                'program_id'             => $patient->program_id,
+                'patient'                => $patient,
+                'patient_name'           => $patient_name,
+                'note_types'             => Activity::input_activity_types(),
+                'task_types_to_topics'   => Activity::task_types_to_topics(),
+                'tasks'                  => $nurse_patient_tasks,
+                'author_id'              => $author_id,
+                'author_name'            => $author_name,
+                'careteam_info'          => $careteam_info,
+                'userTimeZone'           => $userTimeZone,
+                'window'                 => $window,
+                'window_flag'            => $patient_contact_window_exists,
+                'contact_days_array'     => $contact_days_array,
+                'notifies_text'          => $patient->getNotifiesText(),
+                'note_channels_text'     => $patient->getNoteChannelsText(),
+                'medications'            => $meds,
+                'withdrawnReasons'       => $withdrawnReasons,
+                'patientWithdrawnReason' => $patientWithdrawnReason,
             ];
 
             return view('wpUsers.patient.note.create', $view_data);
@@ -367,6 +384,16 @@ class NotesController extends Controller
 
         if (isset($input['status'])) {
             $info->ccm_status = $input['status'];
+
+            if ('withdrawn' == $input['status']) {
+                $withdrawnReason = $input['withdrawn_reason'];
+                if ('Other' == $withdrawnReason) {
+                    $withdrawnReason = $input['withdrawn_reason_other'];
+                }
+                $info->withdrawn_reason = $withdrawnReason;
+            } else {
+                $info->withdrawn_reason = null;
+            }
         }
 
         if (isset($input['general_comment'])) {
@@ -622,10 +649,10 @@ class NotesController extends Controller
     {
         return Practice::whereId($patient->program_id)
             ->where(
-                function ($q) {
-                    $q->where('name', '=', 'phoenix-heart')
-                        ->orWhere('name', '=', 'demo');
-                }
+                           function ($q) {
+                               $q->where('name', '=', 'phoenix-heart')
+                                   ->orWhere('name', '=', 'demo');
+                           }
                        )
             ->exists();
     }

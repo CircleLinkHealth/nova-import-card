@@ -117,7 +117,7 @@
 
                 <span class="sometimes-hidden" style="font-size:15px"></span>
 
-                <div class="ccm-status col-xs-offset-3">
+                <div id="perform-status-select" class="ccm-status col-xs-offset-3">
                     @if(Route::is('patient.note.create'))
                         <li class="inline-block">
                             <select id="status" name="status" class="selectpickerX dropdownValid form-control" data-size="2"
