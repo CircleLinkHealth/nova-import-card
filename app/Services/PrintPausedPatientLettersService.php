@@ -6,6 +6,7 @@
 
 namespace App\Services;
 
+use App\Constants;
 use App\Repositories\PatientReadRepository;
 use App\Repositories\PatientWriteRepository;
 
@@ -71,7 +72,7 @@ class PrintPausedPatientLettersService
                 $fullPathToLetter = $this->pdfService->createPdfFromView('patient.letters.pausedLetter', [
                     'patient' => $user,
                     'lang'    => $lang,
-                ]);
+                ], Constants::SNAPPY_CLH_MAIL_VENDOR_SETTINGS);
 
                 $pathToFlyer = public_path("assets/pdf/flyers/paused/${lang}.pdf");
 

@@ -91,10 +91,10 @@ class PdfService
             }
         } else {
             $pdf->setOption('footer-center', 'Page [page]')
-                ->setOption('margin-top', '12')
-                ->setOption('margin-left', '25')
-                ->setOption('margin-bottom', '15')
-                ->setOption('margin-right', '0.75');
+                ->setOption('margin-top', '8')
+                ->setOption('margin-left', '8')
+                ->setOption('margin-bottom', '8')
+                ->setOption('margin-right', '8');
         }
 
         $pdf = $pdf->save($outputFullPath, true);
