@@ -39,15 +39,19 @@ class PatientSummaryEloquentRepository
                         'id',
                         array_filter([$summary->problem_1, $summary->problem_2])
                     )
-                        ->update([
-                            'billable' => false,
-                        ]);
+                        ->update(
+                               [
+                                   'billable' => false,
+                               ]
+                           );
                 }
 
                 Problem::whereIn('id', array_filter([$summary->problem_1, $summary->problem_2]))
-                    ->update([
-                        'billable' => true,
-                    ]);
+                    ->update(
+                           [
+                               'billable' => true,
+                           ]
+                       );
             }
         } else {
             $summary->approved = false;
@@ -85,9 +89,9 @@ class PatientSummaryEloquentRepository
             $olderSummary = PatientMonthlySummary::wherePatientId($summary->patient_id)
                 ->orderBy('month_year', 'desc')
                 ->where(
-                    'month_year',
-                    '<=',
-                    $summary->month_year->copy()->subMonth()->startOfMonth()
+                                                     'month_year',
+                                                     '<=',
+                                                     $summary->month_year->copy()->subMonth()->startOfMonth()
                                                  )
                 ->whereApproved(true)
                 ->first();
@@ -111,9 +115,11 @@ class PatientSummaryEloquentRepository
             $summary = $this->TO_DEPRECATE_fillProblems(
                 $patient,
                 $summary,
-                $patient->ccdProblems->where('billable', '=', true)->sortByDesc(function ($ccdProblem) {
-                    return optional($ccdProblem->cpmProblem)->weight;
-                })->values()
+                $patient->ccdProblems->where('billable', '=', true)->sortByDesc(
+                    function ($ccdProblem) {
+                        return optional($ccdProblem->cpmProblem)->weight;
+                    }
+                )->values()
             );
 
             $summary = $this->fillBillableProblemsNameAndCode($summary);
@@ -192,11 +198,13 @@ class PatientSummaryEloquentRepository
         );
 
         $attach = $chargeableServices
-            ->map(function ($service) use ($summary) {
-                if ($this->shouldAttachChargeableService($service, $summary)) {
-                    return $service->id;
+            ->map(
+                function ($service) use ($summary) {
+                    if ($this->shouldAttachChargeableService($service, $summary)) {
+                        return $service->id;
+                    }
                 }
-            })
+            )
             ->filter()
             ->values()
             ->all();
@@ -224,7 +232,9 @@ class PatientSummaryEloquentRepository
 
         $summary = $this->setApprovalStatusAndNeedsQA($summary);
 
-        if (($summary->approved && ! $summary->isDirty('approved')) || ($summary->rejected && ! $summary->isDirty('rejected')) || ($summary->needs_qa && ! $summary->isDirty('needs_qa'))) {
+        if (($summary->approved && ! $summary->isDirty('approved')) || ($summary->rejected && ! $summary->isDirty(
+            'rejected'
+                )) || ($summary->needs_qa && ! $summary->isDirty('needs_qa'))) {
             return $summary;
         }
 
@@ -236,17 +246,21 @@ class PatientSummaryEloquentRepository
 
         if ($summary->approved && ($summary->problem_1 || $summary->problem_2)) {
             Problem::whereIn('id', array_filter([$summary->problem_1, $summary->problem_2]))
-                ->update([
-                    'billable' => true,
-                ]);
+                ->update(
+                       [
+                           'billable' => true,
+                       ]
+                   );
 
             Problem::whereNotIn(
                 'id',
                 array_filter([$summary->problem_1, $summary->problem_2])
             )
-                ->update([
-                    'billable' => false,
-                ]);
+                ->update(
+                       [
+                           'billable' => false,
+                       ]
+                   );
         }
 
         return $summary;
@@ -301,13 +315,15 @@ class PatientSummaryEloquentRepository
     public function getBillableProblems(User $patient)
     {
         return $patient->billableProblems
-            ->map(function ($p) {
-                return [
-                    'id'   => $p->id,
-                    'name' => $p->name,
-                    'code' => $p->icd10Code(),
-                ];
-            });
+            ->map(
+                function ($p) {
+                    return [
+                        'id'   => $p->id,
+                        'name' => $p->name,
+                        'code' => $p->icd10Code(),
+                    ];
+                }
+            );
     }
 
     /**
@@ -319,16 +335,22 @@ class PatientSummaryEloquentRepository
     {
         return $patient->ccdProblems->where('cpm_problem_id', '!=', 1)
             ->where('is_monitored', '=', true)
-            ->reject(function ($problem) {
-                return ! validProblemName($problem->name);
-            })
-            ->reject(function ($problem) {
-                return ! $problem->icd10Code();
-            })
+            ->reject(
+                                        function ($problem) {
+                                            return ! validProblemName($problem->name);
+                                        }
+                                    )
+            ->reject(
+                                        function ($problem) {
+                                            return ! $problem->icd10Code();
+                                        }
+                                    )
             ->unique('cpm_problem_id')
-            ->sortByDesc(function ($ccdProblem) {
-                return optional($ccdProblem->cpmProblem)->weight;
-            })
+            ->sortByDesc(
+                                        function ($ccdProblem) {
+                                            return optional($ccdProblem->cpmProblem)->weight;
+                                        }
+                                    )
             ->values();
     }
 
@@ -338,6 +360,18 @@ class PatientSummaryEloquentRepository
                && $summary->billable_problem1_code
                && $summary->billable_problem2
                && $summary->billable_problem2_code;
+    }
+
+    /**
+     * Check whether the patient is lacking any billable problem codes.
+     *
+     * @param PatientMonthlySummary $summary
+     *
+     * @return bool
+     */
+    public function lacksProblemCodes(PatientMonthlySummary $summary)
+    {
+        return ! $summary->billable_problem1_code || ! $summary->billable_problem2_code || $summary->billableBhiProblems()->whereNull('icd_10_code')->where('icd_10_code', '=', '')->exists();
     }
 
     /**
@@ -364,10 +398,14 @@ class PatientSummaryEloquentRepository
     {
         $summary->needs_qa = ( ! $summary->approved && ! $summary->rejected)
                              || $this->lacksProblems($summary)
+                             || $this->lacksProblemCodes($summary)
                              || 0 == $summary->no_of_successful_calls
                              || in_array($summary->patient->patientInfo->ccm_status, ['withdrawn', 'paused']);
 
-        if ($summary->rejected || $summary->approved || $summary->actor_id) {
+        if (
+            ($summary->rejected || $summary->approved || $summary->actor_id)
+            && ! ($this->lacksProblems($summary) || $this->lacksProblemCodes($summary))
+        ) {
             $summary->needs_qa = false;
         }
 
@@ -422,17 +460,19 @@ class PatientSummaryEloquentRepository
         }
 
         $validate = (collect([$summary->problem_1, $summary->problem_2]))
-            ->map(function ($problemId, $i) use ($user) {
-                $problem = $this->getValidCcdProblems($user)
-                    ->where('id', '=', $problemId)
-                    ->first();
+            ->map(
+                function ($problemId, $i) use ($user) {
+                    $problem = $this->getValidCcdProblems($user)
+                        ->where('id', '=', $problemId)
+                        ->first();
 
-                if ( ! $problem) {
-                    return false;
+                    if ( ! $problem) {
+                        return false;
+                    }
+
+                    return $problem;
                 }
-
-                return $problem;
-            });
+            );
 
         if ($validate->get(0) && $validate->get(1)) {
             if (
@@ -451,9 +491,11 @@ class PatientSummaryEloquentRepository
 
             if ( ! $isValid) {
                 Problem::where('id', $summary->{"problem_${problemNo}"})
-                    ->update([
-                        'billable' => false,
-                    ]);
+                    ->update(
+                           [
+                               'billable' => false,
+                           ]
+                       );
                 $summary->{"problem_${problemNo}"} = null;
             }
         }
@@ -501,19 +543,25 @@ class PatientSummaryEloquentRepository
         $bhiProblems = $summary->patient
             ->ccdProblems
             ->where('cpmProblem.is_behavioral', '=', true)
-            ->reject(function ($problem) {
-                return $problem && ! validProblemName($problem->name);
-            })
+            ->reject(
+                function ($problem) {
+                    return $problem && ! validProblemName($problem->name);
+                }
+            )
             ->unique('cpm_problem_id')
-            ->sortByDesc(function ($ccdProblem) {
-                return optional($ccdProblem->cpmProblem)->weight;
-            })
+            ->sortByDesc(
+                function ($ccdProblem) {
+                    return optional($ccdProblem->cpmProblem)->weight;
+                }
+            )
             ->values()
-            ->each(function ($problem) use ($summary) {
-                $summary->attachBillableProblem($problem->id, $problem->name, $problem->icd10Code(), 'bhi');
+            ->each(
+                function ($problem) use ($summary) {
+                    $summary->attachBillableProblem($problem->id, $problem->name, $problem->icd10Code(), 'bhi');
 
-                return false;
-            });
+                    return false;
+                }
+            );
 
         return $summary;
     }
@@ -531,7 +579,9 @@ class PatientSummaryEloquentRepository
         return 'CPT 99484'        == $service->code && $summary->bhi_time >= 1200
                || 'CPT 99490'     == $service->code && $summary->ccm_time >= 1200
                || 'G0511'         == $service->code && $summary->ccm_time >= 1200
-               || 'Software-Only' == $service->code && $summary->patient->primaryPractice->hasServiceCode('Software-Only') && 0 == $summary->timeFromClhCareCoaches();
+               || 'Software-Only' == $service->code && $summary->patient->primaryPractice->hasServiceCode(
+                   'Software-Only'
+            ) && 0 == $summary->timeFromClhCareCoaches();
     }
 
     /**
@@ -558,9 +608,11 @@ class PatientSummaryEloquentRepository
 
         $billableProblems = $billableProblems
             ->where('cpm_problem_id', '!=', 1)
-            ->reject(function ($problem) {
-                return $problem && ! validProblemName($problem->name);
-            })
+            ->reject(
+                function ($problem) {
+                    return $problem && ! validProblemName($problem->name);
+                }
+            )
             ->unique('cpm_problem_id')
             ->values();
 
@@ -577,9 +629,11 @@ class PatientSummaryEloquentRepository
                 $summary->{"problem_${i}"} = $billableProblems[0]['id'];
                 $billableProblems->forget(0);
             } else {
-                $forgetIndex = $billableProblems->search(function ($item) use ($currentProblem) {
-                    return $item['id'] == $currentProblem;
-                });
+                $forgetIndex = $billableProblems->search(
+                    function ($item) use ($currentProblem) {
+                        return $item['id'] == $currentProblem;
+                    }
+                );
 
                 if (is_int($forgetIndex)) {
                     $billableProblems->forget($forgetIndex);
