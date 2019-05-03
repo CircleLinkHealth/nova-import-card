@@ -151,7 +151,10 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
         }
 
         if ( ! $this->json) {
-            $xml        = $this->getMedia('ccd')->first()->getFile();
+            $xml = $this->getMedia('ccd')->first()->getFile();
+            if ( ! is_string($xml) || strlen($xml) < 1 || false == stripos($xml, '<ClinicalDocument')) {
+                throw new \Exception("CCD appears to be invalid. CCD: `$xml`");
+            }
             $this->json = $this->parseToJson($xml);
             $this->save();
         }
@@ -251,20 +254,24 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
 
     protected function parseToJson($xml)
     {
+        $id = $this->id ?? '';
+
+        if ( ! is_string($xml) || strlen($xml) < 1 || false == stripos($xml, '<ClinicalDocument')) {
+            throw new \Exception("CCD with ${id} appears to be invalid.");
+        }
+
         $client = new Client([
             'base_uri' => config('services.ccd-parser.base-uri'),
         ]);
 
         $response = $client->request('POST', '/api/parser', [
-            'headers' => ['Content-Type' => 'text/xml'],
+            'headers' => ['Content-Type' => 'text/xml', 'CCDA-ID' => $this->id ?? 'N/A'],
             'body'    => $xml,
         ]);
 
         $responseBody = (string) $response->getBody();
 
         if ( ! in_array($response->getStatusCode(), [200, 201])) {
-            $id = $this->id ?? '';
-
             $data = json_encode([
                 $response->getStatusCode(),
                 $response->getReasonPhrase(),
