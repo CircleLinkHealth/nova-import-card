@@ -73,55 +73,6 @@
 
                     @include('partials.userheader')
 
-                    @push('scripts')
-                        <script>
-
-                            function onStatusChange(e){
-
-                                let ccmStatus = document.getElementById("status");
-
-                                if (ccmStatus.value === "withdrawn") {
-                                    $('#withdrawn-reason').removeClass('hidden');
-                                    onReasonChange();
-                                    console.log('test');
-                                }
-                                else {
-                                    $('#withdrawn-reason').addClass('hidden');
-                                    $('#withdrawn-reason-other').addClass('hidden');
-                                }
-
-                            }
-
-                            function onReasonChange(e){
-
-                                let reason = document.getElementById("withdrawn_reason");
-                                let reasonOther = document.getElementById('withdrawn_reason_other');
-
-                                if (reason.value === "Other") {
-                                    $('#withdrawn-reason-other').removeClass('hidden');
-                                    reasonOther.setAttribute('required', '');
-                                }
-                                else {
-                                    $('#withdrawn-reason-other').addClass('hidden');
-                                    reasonOther.removeAttribute('required');
-                                }
-
-                            }
-
-                            $('document').ready(function () {
-
-                                const statusSelectEl = $('#header-perform-status-select');
-                                statusSelectEl.on('change', onStatusChange);
-                                statusSelectEl.change();
-
-                                const reasonSelectEl = $('#perform-reason-select');
-                                reasonSelectEl.on('change', onReasonChange);
-                                reasonSelectEl.change();
-                            });
-
-
-                        </script>
-                    @endpush
                     <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12 col-xs-12"
                          style=" border-bottom:3px solid #50b2e2;padding: 8px 0px;">
 
@@ -382,47 +333,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-12">
-
-
-                            <div class="form-block col-md-12">
-                                <div id="withdrawn-reason" class="row hidden">
-                                    <div class="new-note-item">
-                                        <div class="form-group">
-                                            <div class="col-md-12">{!! Form::label('withdrawn_reason', 'Withdrawn Reason: ') !!}</div>
-                                            <div class="col-sm-12">
-                                                <div id="perform-reason-select" class="form-group">
-                                                    {!! Form::select('withdrawn_reason', $withdrawnReasons, ! array_key_exists($patientWithdrawnReason, $withdrawnReasons) && $patientWithdrawnReason != null ? 'Other' : $patientWithdrawnReason, ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div class="form-block col-md-12">
-                                <div class="row">
-                                    <div class="new-note-item">
-                                        <div id="withdrawn-reason-other" class="form-group hidden">
-                                            <div class="col-md-12">{!! Form::label('withdrawn_reason', 'Withdrawn Reason: ') !!}</div>
-                                            <div class="col-sm-12">
-                                                <div class="form-group">
-                                                    <div>
-                                <textarea id="withdrawn_reason_other" rows="5" cols="100" style="resize: none;"
-                                          placeholder="Enter Withdrawal Reason..." name="withdrawn_reason_other"
-                                          required="required" class="">{{! array_key_exists($patientWithdrawnReason, $withdrawnReasons) ? $patientWithdrawnReason : null}}</textarea>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                         <div class="form-block col-md-12">
-                            <div class="row">
+                            <div class="row col-md-12">
 
                                 <div class="new-note-item">
                                     <!-- Enter Note -->
