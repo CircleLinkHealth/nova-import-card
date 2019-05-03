@@ -1504,16 +1504,6 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'CallReportController.exportxlsv2',
             ])->middleware('permission:call.read,note.read,patient.read,patientSummary.read');
 
-            Route::get('provider-usage', [
-                'uses' => 'Admin\Reports\ProviderUsageReportController@index',
-                'as'   => 'ProviderUsageReportController.index',
-            ])->middleware('permission:provider.read,nurse.read');
-
-            Route::get('provider-monthly-usage', [
-                'uses' => 'Admin\Reports\ProviderMonthlyUsageReportController@index',
-                'as'   => 'ProviderMonthlyUsageReportController.index',
-            ])->middleware('permission:provider.read,nurse.read');
-
             Route::group([
                 'prefix' => 'calls-dashboard',
             ], function () {

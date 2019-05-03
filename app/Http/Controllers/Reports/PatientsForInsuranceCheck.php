@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers\Reports;
 
+use App\Exports\FromArray;
 use App\Http\Controllers\Controller;
 use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
@@ -37,15 +38,8 @@ class PatientsForInsuranceCheck extends Controller
                     'insurance_3'      => $user->ccdInsurancePolicies[2]->name ?? '',
                 ];
             });
-
-        Excel::create("{$date->toDateString()} - Patients For Insurance Check", function ($excel) use (
-            $users
-        ) {
-            $excel->sheet('Patients', function ($sheet) use (
-                $users
-            ) {
-                $sheet->fromArray($users);
-            });
-        })->export('xls');
+        
+        $fileName = "{$date->toDateString()} - Patients For Insurance Check";
+        return (new FromArray($fileName, $users->all()))->download($fileName);
     }
 }
