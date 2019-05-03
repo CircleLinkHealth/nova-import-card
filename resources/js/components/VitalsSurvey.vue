@@ -22,7 +22,10 @@
 
 
                     <div class="btn-start-container">
-                        <mdb-btn color="primary" class="btn-start" @click="startSurvey">Start</mdb-btn>
+                        <mdb-btn color="primary" class="btn-start" @click="startSurvey">
+                            <span v-if="progress === 0">Start</span>
+                            <span v-else>Continue</span>
+                        </mdb-btn>
                     </div>
 
                     <div class="by-circlelink text-center">
@@ -165,7 +168,8 @@
                         <div class="survey-sub-welcome-text">
                             Thank you for completing {{patientName}}'s Vitals. You can access their Vitals at any time
                             in
-                            CarePlanManager™. A generated PDF of the PPP and Provider Report is also now available in
+                            <a href="https://careplanmanager.com">CarePlanManager™</a>. A generated PDF of the PPP and
+                            Provider Report is also now available in
                             that patient’s profile, and/or has been sent to your practice based on your preferences
                             (e.g., DIRECT message or e-mail).
                         </div>
@@ -452,6 +456,11 @@
                 });
             },
 
+            hasAnsweredAllOfOrder(order) {
+                const questions = this.questions.filter(q => q.pivot.order === order);
+                return questions.every(q => q.answer !== undefined);
+            }
+
         },
         mounted() {
         },
@@ -468,7 +477,7 @@
                     const q = this.questions.find(q => q.id === a.question_id);
                     if (q) {
                         q.answer = a;
-                        if (q.pivot.sub_order === null) {
+                        if (q.pivot.sub_order === null || this.hasAnsweredAllOfOrder(q.pivot.order)) {
                             this.progress = this.progress + 1;
                         }
                     }
@@ -485,6 +494,10 @@
             this.totalQuestions = _.uniqBy(this.questions, (elem) => {
                 return elem.pivot.order;
             }).length;
+
+            if (this.data.answers && this.data.answers.length === this.questions.length) {
+                this.stage = "complete";
+            }
         }
     }
 </script>
