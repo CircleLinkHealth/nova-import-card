@@ -8,11 +8,11 @@ namespace App\Services;
 
 use App\Billing\Practices\PracticeInvoiceGenerator;
 use App\ChargeableService;
-use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\User;
+use App\Exports\FromArray;
 use App\ValueObjects\QuickBooksRow;
 use Carbon\Carbon;
-use Maatwebsite\Excel\Facades\Excel;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded;
 use Spatie\MediaLibrary\Exceptions\InvalidConversion;
 
@@ -62,7 +62,7 @@ class PracticeReportsService
         foreach ($practices as $practiceId) {
             $practice = Practice::find($practiceId);
 
-            if ('practice' == $practice->cpmSettings()->bill_to || empty($practice->cpmSettings()->bill_to )) {
+            if ('practice' == $practice->cpmSettings()->bill_to || empty($practice->cpmSettings()->bill_to)) {
                 $chargeableServices = $this->getChargeableServices($practice);
 
                 foreach ($chargeableServices as $service) {
@@ -86,6 +86,10 @@ class PracticeReportsService
                     }
                 }
             }
+        }
+
+        if ( ! $data) {
+            return false;
         }
 
         return $this->makeQuickbookReport($data, $format, $date);
@@ -117,17 +121,11 @@ class PracticeReportsService
      */
     private function makeQuickbookReport($rows, $format, Carbon $date)
     {
-        $report = Excel::create("Billable Patients Report - ${date}", function ($excel) use ($rows) {
-            $excel->sheet('Billable Patients', function ($sheet) use ($rows) {
-                $sheet->fromArray($rows);
-            });
-        })
-            ->store($format, false, true);
-
-        return auth()->user()
-            ->saasAccount
-            ->addMedia($report['full'])
-            ->toMediaCollection("quickbooks_report_for_{$date->toDateString()}");
+        return (new FromArray("Billable Patients Report - ${date}.$format", $rows))->storeAndAttachMediaTo(
+            auth()->user()
+                ->saasAccount,
+            "quickbooks_report_for_{$date->toDateString()}"
+        );
     }
 
     /**
@@ -194,9 +192,11 @@ class PracticeReportsService
             'Pt. billing report:'   => (string) $link,
             'Line Item'             => (string) $chargeableService->code.$providerName,
             'LineQty'               => (string) $data['billable'],
-            'LineDesc'              => (string) $chargeableService->code == 'Software-Only'? 'Software-Only Platform Fee' : $chargeableService->description,
-            'LineUnitPrice'         => (string) '$'.' '.$lineUnitPrice,
-            'Msg'                   => 'Send Check Payments to:
+            'LineDesc'              => 'Software-Only' == (string) $chargeableService->code
+                ? 'Software-Only Platform Fee'
+                : $chargeableService->description,
+            'LineUnitPrice' => (string) '$'.' '.$lineUnitPrice,
+            'Msg'           => 'Send Check Payments to:
 CircleLink Health Inc. 
 C/O I2BF Ventures
 304 Park Avenue South, 9th FLoor
