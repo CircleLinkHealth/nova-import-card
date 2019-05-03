@@ -6,10 +6,10 @@
 
 namespace App\Reports\Sales\Location;
 
+use App\Services\PdfService;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
-use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -113,11 +113,12 @@ class SalesByLocationReport
 
     public function generatePdf()
     {
-        $pdf = PDF::loadView('sales.by-location.make', ['data' => $this->data]);
+        $pdfService = app(PdfService::class);
 
-        $name = trim($this->program->name).'-'.Carbon::now()->toDateString();
+        $name     = trim($this->program->name).'-'.Carbon::now()->toDateString();
+        $filePath = storage_path("download/${name}.pdf");
 
-        $pdf->save(storage_path("download/${name}.pdf"), true);
+        $pdf = $pdfService->createPdfFromView('sales.by-location.make', ['data' => $this->data], $filePath);
 
         return $name.'.pdf';
     }
