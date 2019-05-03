@@ -53,6 +53,10 @@ class VitalsSurveyController extends Controller
     {
         $userWithSurveyData = $this->service->getSurveyData($patientId);
 
+        if (!$userWithSurveyData) {
+            throw new \Error("Survey not found for patient " . $patientId);
+        }
+
         return view('survey.vitals.index', [
             'data' => $userWithSurveyData->toArray(),
         ]);
