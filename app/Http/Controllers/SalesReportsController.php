@@ -7,19 +7,28 @@
 namespace App\Http\Controllers;
 
 use App\Mail\SalesPracticeReport;
-use CircleLinkHealth\Customer\Entities\Practice;
 use App\Reports\Sales\Location\SalesByLocationReport;
 use App\Reports\Sales\Practice\SalesByPracticeReport;
 use App\Reports\Sales\Provider\SalesByProviderReport;
-use CircleLinkHealth\Customer\Entities\User;
+use App\Services\PdfService;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
 class SalesReportsController extends Controller
 {
-    //LOCATION REPORTS
+    /**
+     * @var PdfService
+     */
+    protected $pdfService;
+
+    public function __construct(PdfService $pdfService)
+    {
+        $this->pdfService = $pdfService;
+    }
 
     public function createLocationReport(
         Request $request
@@ -136,13 +145,10 @@ class SalesReportsController extends Controller
 
         //PDF download support
         if ('download' == $input['submit']) {
-            $pdf = PDF::loadView('sales.by-practice.report', ['data' => $data]);
-
             $name = $practice->display_name.'-'.Carbon::now()->toDateString();
-
             $path = storage_path("download/${name}.pdf");
 
-            $pdf->save($path, true);
+            $pdf = $this->pdfService->createPdfFromView('sales.by-practice.report', ['data' => $data], [], $path);
 
             return response()->download($path, $name, ['Content-Length: '.filesize($path)]);
         }
@@ -172,13 +178,10 @@ class SalesReportsController extends Controller
 
         //PDF download support
         if ('download' == $input['submit']) {
-            $pdf = PDF::loadView('sales.by-practice.report', ['data' => $data]);
-
             $name = $provider->getLastName().'-'.Carbon::now()->toDateString();
-
             $path = storage_path("download/${name}.pdf");
 
-            $pdf->save($path, true);
+            $pdf = $this->pdfService->createPdfFromView('sales.by-provider.report', ['data' => $data], [], $path);
 
             return response()->download($path, $name, [
                 'Content-Length: '.filesize($path),
