@@ -1,4 +1,8 @@
 @extends('partials.providerUI')
+
+@section('title', 'Under 20 Minute Report')
+@section('activity', 'Under 20 Minute Report')
+
 @section('content')
     <div class="row main-form-block" style="margin-top:60px;">
         <div class="main-form-container  col-lg-8 col-lg-offset-2 col-xs-12 col-xs-offset-0">

@@ -1,5 +1,8 @@
 @extends('partials.providerUI')
 
+@section('title', 'Alerts')
+@section('activity', 'Alerts')
+
 @section('content')
     <div class="row" style="margin-top:60px;">
         <div class="main-form-container-last col-lg-8 col-lg-offset-2">
