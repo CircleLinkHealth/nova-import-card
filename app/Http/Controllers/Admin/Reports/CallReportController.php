@@ -13,7 +13,6 @@ use App\Filters\CallFilters;
 use App\Filters\CallViewFilters;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
-use Excel;
 use Illuminate\Http\Request;
 
 class CallReportController extends Controller
@@ -97,112 +96,92 @@ class CallReportController extends Controller
             return response()->json($calls);
         }
 
-        Excel::create(
-            'CLH-Report-'.$date,
-            function ($excel) use ($date, $calls) {
-                // Set the title
-                $excel->setTitle('CLH Call Report - '.$date);
+        $fileName = 'CLH-Report-'.$date.'.xls';
 
-                // Chain the setters
-                $excel->setCreator('CLH System')
-                    ->setCompany('CircleLink Health');
+        $headings = [
+            'id',
+            'Nurse',
+            'Patient',
+            'Practice',
+            'Last Call Status',
+            'Next Call',
+            'Call Time Start',
+            'Call Time End',
+            'Preferred Call Days',
+            'Last Call',
+            'CCM Time',
+            'Successful Calls',
+            'Patient Status',
+            'Billing Provider',
+            'DOB',
+            'Scheduler',
+        ];
 
-                // Call them separately
-                $excel->setDescription('CLH Call Report - '.$date);
+        $rows = [];
 
-                // Our first sheet
-                $excel->sheet(
-                    'Sheet 1',
-                    function ($sheet) use ($calls) {
-                        $i = 0;
-                        // header
-                        $userColumns = [
-                            'id',
-                            'Nurse',
-                            'Patient',
-                            'Practice',
-                            'Last Call Status',
-                            'Next Call',
-                            'Call Time Start',
-                            'Call Time End',
-                            'Preferred Call Days',
-                            'Last Call',
-                            'CCM Time',
-                            'Successful Calls',
-                            'Patient Status',
-                            'Billing Provider',
-                            'DOB',
-                            'Scheduler',
-                        ];
-                        $sheet->appendRow($userColumns);
+        foreach ($calls as $call) {
+            if ($call->inboundUser) {
+                $ccmTime = $call->inboundUser->formattedCcmTime();
+            } else {
+                $ccmTime = 'n/a';
+            }
 
-                        foreach ($calls as $call) {
-                            if ($call->inboundUser) {
-                                $ccmTime = $call->inboundUser->formattedCcmTime();
-                            } else {
-                                $ccmTime = 'n/a';
+            if ($call->inboundUser && $call->inboundUser->patientInfo) {
+                if (is_null($call->inboundUser->patientInfo->no_call_attempts_since_last_success)) {
+                    $noAttmpts = 'n/a';
+                } elseif ($call->inboundUser->patientInfo->no_call_attempts_since_last_success > 0) {
+                    $noAttmpts = $call->inboundUser->patientInfo->no_call_attempts_since_last_success.'x Attempts';
+                } else {
+                    $noAttmpts = 'Success';
+                }
+            }
+            // call days
+            $days = [
+                1 => 'M',
+                2 => 'Tu',
+                3 => 'W',
+                4 => 'Th',
+                5 => 'F',
+                6 => 'Sa',
+                7 => 'Su',
+            ];
+            $preferredCallDays = 'n/a';
+            if ($call->inboundUser && $call->inboundUser->patientInfo) {
+                $windowText = '';
+                $windows    = $call->inboundUser->patientInfo->contactWindows()->get();
+                if ($windows) {
+                    foreach ($days as $key => $val) {
+                        foreach ($windows as $window) {
+                            if ($window->day_of_week == $key) {
+                                $windowText .= $days[$window->day_of_week].',';
                             }
-
-                            if ($call->inboundUser && $call->inboundUser->patientInfo) {
-                                if (is_null($call->inboundUser->patientInfo->no_call_attempts_since_last_success)) {
-                                    $noAttmpts = 'n/a';
-                                } elseif ($call->inboundUser->patientInfo->no_call_attempts_since_last_success > 0) {
-                                    $noAttmpts = $call->inboundUser->patientInfo->no_call_attempts_since_last_success.'x Attempts';
-                                } else {
-                                    $noAttmpts = 'Success';
-                                }
-                            }
-                            // call days
-                            $days = [
-                                1 => 'M',
-                                2 => 'Tu',
-                                3 => 'W',
-                                4 => 'Th',
-                                5 => 'F',
-                                6 => 'Sa',
-                                7 => 'Su',
-                            ];
-                            $preferredCallDays = 'n/a';
-                            if ($call->inboundUser && $call->inboundUser->patientInfo) {
-                                $windowText = '';
-                                $windows = $call->inboundUser->patientInfo->contactWindows()->get();
-                                if ($windows) {
-                                    foreach ($days as $key => $val) {
-                                        foreach ($windows as $window) {
-                                            if ($window->day_of_week == $key) {
-                                                $windowText .= $days[$window->day_of_week].',';
-                                            }
-                                        }
-                                    }
-                                }
-                                $preferredCallDays = rtrim($windowText, ',');
-                            }
-
-                            //dd($call);
-                            $columns = [
-                                $call->call_id,
-                                $call->nurse_name,
-                                $call->patient_name,
-                                $call->program_name,
-                                $noAttmpts,
-                                $call->scheduled_date,
-                                $call->window_start,
-                                $call->window_end,
-                                $preferredCallDays,
-                                $call->last_contact_time,
-                                $ccmTime,
-                                $call->no_of_successful_calls,
-                                $call->ccm_status,
-                                $call->billing_provider,
-                                $call->birth_date,
-                                $call->scheduler_user_name,
-                            ];
-                            $sheet->appendRow($columns);
                         }
                     }
-                );
+                }
+                $preferredCallDays = rtrim($windowText, ',');
             }
-        )->export('xls');
+
+            $rows[] = [
+                $call->call_id,
+                $call->nurse_name,
+                $call->patient_name,
+                $call->program_name,
+                $noAttmpts,
+                $call->scheduled_date,
+                $call->window_start,
+                $call->window_end,
+                $preferredCallDays,
+                $call->last_contact_time,
+                $ccmTime,
+                $call->no_of_successful_calls,
+                $call->ccm_status,
+                $call->billing_provider,
+                $call->birth_date,
+                $call->scheduler_user_name,
+            ];
+        }
+
+        return (new FromArray($fileName, $rows, $headings))->download($fileName);
     }
 
     public function exportXlsV2(Request $request, CallViewFilters $filters)
