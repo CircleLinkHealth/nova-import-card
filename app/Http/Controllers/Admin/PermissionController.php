@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\FromArray;
 use App\Exports\RolesPermissionsChart;
 use App\Http\Controllers\Controller;
 use Auth;
@@ -123,24 +124,15 @@ class PermissionController extends Controller
             ];
         }
 
-        $report = Excel::create(
-            "Route-Permissions Chart for {$today->toDateString()}",
-            function ($excel) use ($routes) {
-                $excel->sheet(
-                    'Routes-Permissions',
-                    function ($sheet) use ($routes) {
-                        $sheet->fromArray($routes);
-                    }
-                );
-            }
-        )
-            ->store('xls', false, true);
-        $excel = auth()->user()
-            ->saasAccount
-            ->addMedia($report['full'])
-            ->toMediaCollection("excel_report_for_routes_permissions{$today->toDateString()}");
-
-        return $this->downloadMedia($excel);
+        return $this->downloadMedia(
+            (new FromArray(
+                "Route-Permissions Chart for {$today->toDateString()}",
+                $routes
+            ))->storeAndAttachMediaTo(
+                auth()->user()->saasAccount,
+                "excel_report_for_routes_permissions{$today->toDateString()}"
+            )
+        );
     }
 
     /**
