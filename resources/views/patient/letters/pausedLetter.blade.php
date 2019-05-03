@@ -1,5 +1,8 @@
 @extends('partials.providerUI')
 
+@section('title', 'Paused Patients Letter')
+@section('activity', 'Paused Patients Letter')
+
 <style type="text/css">
     body {
         margin: 0;

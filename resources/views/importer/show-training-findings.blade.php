@@ -1,6 +1,7 @@
 @extends('partials.providerUI')
 
 @section('title', 'Imported CCDA')
+@section('activity', 'Imported CCDA')
 
 @section('content')
     <div id="trainer-results" class="container-fluid">
