@@ -97,16 +97,16 @@ class OpsDashboardService
         $enrolledPatients = $practices->map(
             function ($practice) {
                 return $practice->patients->filter(
-                function ($user) {
-                    if ( ! $user) {
-                        return false;
-                    }
-                    if ( ! $user->patientInfo) {
-                        return false;
-                    }
+                    function ($user) {
+                        if ( ! $user) {
+                            return false;
+                        }
+                        if ( ! $user->patientInfo) {
+                            return false;
+                        }
 
-                    return Patient::ENROLLED == $user->patientInfo->ccm_status;
-                }
+                        return Patient::ENROLLED == $user->patientInfo->ccm_status;
+                    }
                 );
             }
         )->flatten()->unique('id');
@@ -386,5 +386,16 @@ class OpsDashboardService
         $countsByStatus = $this->countPatientsByStatus($patientsByPractice, $fromDate);
 
         return collect($countsByStatus);
+    }
+
+    public function setTimeGoal()
+    {
+        $timeGoal = DB::table('report_settings')->where('name', 'time_goal_per_billable_patient')->first();
+
+        $this->timeGoal = $timeGoal
+            ? $timeGoal->value
+            : '35';
+
+        return true;
     }
 }
