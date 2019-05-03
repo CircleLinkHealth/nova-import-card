@@ -1671,21 +1671,9 @@ Route::group(['middleware' => 'auth'], function () {
         });
 
         // excel reports
-        Route::get('excelReportT1', [
-            'uses' => 'ReportsController@excelReportT1',
-            'as'   => 'excel.report.t1',
-        ])->middleware('permission:excelReport.create');
-        Route::get('excelReportT2', [
-            'uses' => 'ReportsController@excelReportT2',
-            'as'   => 'excel.report.t2',
-        ])->middleware('permission:excelReport.create');
-        Route::get('excelReportT3', [
-            'uses' => 'ReportsController@excelReportT3',
-            'as'   => 'excel.report.t3',
-        ])->middleware('permission:excelReport.create');
-        Route::get('excelReportT4', [
-            'uses' => 'ReportsController@excelReportT4',
-            'as'   => 'excel.report.t4',
+        Route::get('excelReportUnreachablePatients', [
+            'uses' => 'ReportsController@excelReportUnreachablePatients',
+            'as'   => 'excel.report.unreachablePatients',
         ])->middleware('permission:excelReport.create');
 
         // dashboard
