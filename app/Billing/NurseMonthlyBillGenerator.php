@@ -209,7 +209,6 @@ class NurseMonthlyBillGenerator
         $pdf = $pdfService->createPdfFromView(
             'billing.nurse.invoice',
             $this->formattedItemizedActivities,
-            [],
             $filePath
         );
 
@@ -249,16 +248,16 @@ class NurseMonthlyBillGenerator
 
         $calls = Call::where('outbound_cpm_id', $this->nurse->user_id)
             ->where(
-                         function ($q) {
-                             $q->where('updated_at', '>=', $this->startDate->toDateString())
-                                 ->where('updated_at', '<=', $this->endDate->toDateString());
-                         }
+                function ($q) {
+                    $q->where('updated_at', '>=', $this->startDate->toDateString())
+                        ->where('updated_at', '<=', $this->endDate->toDateString());
+                }
                      )
             ->where(
-                         function ($k) {
-                             $k->where('status', '=', 'reached')
-                                 ->orWhere('status', '=', 'not reached');
-                         }
+                function ($k) {
+                    $k->where('status', '=', 'reached')
+                        ->orWhere('status', '=', 'not reached');
+                }
                      )
             ->count();
 

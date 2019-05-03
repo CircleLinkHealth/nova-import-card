@@ -37,19 +37,21 @@ class PrintPausedPatientLettersService
             ->paused()
             ->pausedLetterNotPrinted()
             ->fetch()
-            ->map(function ($patient) {
-                return [
-                    'id'           => $patient->id,
-                    'patient_name' => $patient->getFullName(),
-                    'first_name'   => $patient->getFirstName(),
-                    'last_name'    => $patient->getLastName(),
-                    'link'         => route('patient.careplan.print', ['patientId' => $patient->id]),
-                    'reg_date'     => optional($patient->user_registered)->format('m/d/Y'),
-                    'paused_date'  => optional($patient->getDatePaused())->format('m/d/Y'),
-                    'provider'     => $patient->getBillingProviderName(),
-                    'program_name' => $patient->getPrimaryPracticeName(),
-                ];
-            });
+            ->map(
+                function ($patient) {
+                    return [
+                        'id'           => $patient->id,
+                        'patient_name' => $patient->getFullName(),
+                        'first_name'   => $patient->getFirstName(),
+                        'last_name'    => $patient->getLastName(),
+                        'link'         => route('patient.careplan.print', ['patientId' => $patient->id]),
+                        'reg_date'     => optional($patient->user_registered)->format('m/d/Y'),
+                        'paused_date'  => optional($patient->getDatePaused())->format('m/d/Y'),
+                        'provider'     => $patient->getBillingProviderName(),
+                        'program_name' => $patient->getPrimaryPracticeName(),
+                    ];
+                }
+            );
     }
 
     /**
@@ -66,18 +68,25 @@ class PrintPausedPatientLettersService
             ->model()
             ->whereIn('id', $userIdsToPrint)
             ->get()
-            ->map(function ($user) {
-                $lang = strtolower($user->getPreferredContactLanguage());
+            ->map(
+                function ($user) {
+                    $lang = strtolower($user->getPreferredContactLanguage());
 
-                $fullPathToLetter = $this->pdfService->createPdfFromView('patient.letters.pausedLetter', [
-                    'patient' => $user,
-                    'lang'    => $lang,
-                ], Constants::SNAPPY_CLH_MAIL_VENDOR_SETTINGS);
+                    $fullPathToLetter = $this->pdfService->createPdfFromView(
+                        'patient.letters.pausedLetter',
+                        [
+                            'patient' => $user,
+                            'lang'    => $lang,
+                        ],
+                        null,
+                        Constants::SNAPPY_CLH_MAIL_VENDOR_SETTINGS
+                    );
 
-                $pathToFlyer = public_path("assets/pdf/flyers/paused/${lang}.pdf");
+                    $pathToFlyer = public_path("assets/pdf/flyers/paused/${lang}.pdf");
 
-                return $this->pdfService->mergeFiles([$fullPathToLetter, $pathToFlyer]);
-            });
+                    return $this->pdfService->mergeFiles([$fullPathToLetter, $pathToFlyer]);
+                }
+            );
 
         if ( ! $viewOnly) {
             $this->patientWriteRepository->updatePausedLetterPrintedDate($userIdsToPrint);

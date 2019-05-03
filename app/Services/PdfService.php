@@ -61,9 +61,11 @@ class PdfService
      * @param null  $outputFullPath
      * @param array $options
      *
+     * @throws \Exception
+     *
      * @return string|null
      */
-    public function createPdfFromView($view, array $args, array $options = [], $outputFullPath = null)
+    public function createPdfFromView($view, array $args, $outputFullPath = null, array $options = [])
     {
         if ( ! $outputFullPath) {
             $outputFullPath = $this->randomFileFullPath();

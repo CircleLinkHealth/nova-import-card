@@ -183,10 +183,10 @@ class CarePlan extends BaseModel implements PdfReport
             $pendingApprovals = User::ofType('participant')
                 ->intersectPracticesWith($user)
                 ->whereHas(
-                                        'carePlan',
-                                        function ($q) {
-                                            $q->whereStatus('draft');
-                                        }
+                    'carePlan',
+                    function ($q) {
+                        $q->whereStatus('draft');
+                    }
                                     )
                 ->count();
         } else {
@@ -194,25 +194,25 @@ class CarePlan extends BaseModel implements PdfReport
                 $pendingApprovals = User::ofType('participant')
                     ->intersectPracticesWith($user)
                     ->whereHas(
-                                            'carePlan',
-                                            function ($q) {
-                                                $q->whereStatus(CarePlan::QA_APPROVED);
-                                            }
+                        'carePlan',
+                        function ($q) {
+                            $q->whereStatus(CarePlan::QA_APPROVED);
+                        }
                                         )
                     ->whereHas(
-                                            'patientInfo',
-                                            function ($q) {
-                                                $q->whereCcmStatus(Patient::ENROLLED);
-                                            }
+                        'patientInfo',
+                        function ($q) {
+                            $q->whereCcmStatus(Patient::ENROLLED);
+                        }
                                         )
                     ->whereHas(
-                                            'careTeamMembers',
-                                            function ($q) use (
+                        'careTeamMembers',
+                        function ($q) use (
                                                 $user
                                             ) {
-                                                $q->where('member_user_id', '=', $user->id)
-                                                    ->where('type', '=', CarePerson::BILLING_PROVIDER);
-                                            }
+                            $q->where('member_user_id', '=', $user->id)
+                                ->where('type', '=', CarePerson::BILLING_PROVIDER);
+                        }
                                         )
                     ->count();
             }
@@ -335,6 +335,7 @@ class CarePlan extends BaseModel implements PdfReport
                 'careTeam'     => $this->patient->careTeamMembers,
                 'data'         => $careplanService->careplan($this->patient->id),
             ],
+            null,
             Constants::SNAPPY_CLH_MAIL_VENDOR_SETTINGS
         );
     }

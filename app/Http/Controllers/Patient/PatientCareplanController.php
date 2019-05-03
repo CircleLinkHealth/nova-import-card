@@ -222,6 +222,7 @@ class PatientCareplanController extends Controller
                     'data'         => $careplanService->careplan($user_id),
                     'pdfCareplan'  => $pdfCareplan,
                 ],
+                null,
                 Constants::SNAPPY_CLH_MAIL_VENDOR_SETTINGS
             );
 

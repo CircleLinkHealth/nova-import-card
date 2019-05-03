@@ -51,7 +51,7 @@ abstract class SalesReport
         $this->data();
         $filePath = storage_path("download/${name}.pdf");
 
-        $pdf = $pdfservice->createPdfFromView($view, ['data' => $this->data], [], $filePath);
+        $pdf = $pdfservice->createPdfFromView($view, ['data' => $this->data], $filePath);
 
         return $name.'.pdf';
     }

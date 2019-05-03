@@ -97,7 +97,7 @@ class PatientDailyAuditReport
 
         $this->renderData();
 
-        $pdf = $pdfService->createPdfFromView('wpUsers.patient.audit', ['data' => $this->data], [], $path);
+        $pdf = $pdfService->createPdfFromView('wpUsers.patient.audit', ['data' => $this->data], $path);
 
         $collName = 'audit_report_'.$this->data['month'];
 
