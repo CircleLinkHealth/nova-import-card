@@ -44,12 +44,9 @@ class EnrollmentStatsController extends Controller
         $date = Carbon::now()->toAtomString();
         $data = $this->getAmbassadorStats($request);
 
-        return Excel::create("Care Ambassador Enrollment Stats - ${date}", function ($excel) use ($data) {
-            $excel->sheet('Stats', function ($sheet) use ($data) {
-                $sheet->fromArray($data);
-            });
-        })
-            ->export();
+        $fileName = "Care Ambassador Enrollment Stats - ${date}.xls";
+
+        return (new FromArray($fileName, $data))->download($fileName);
     }
 
     /**

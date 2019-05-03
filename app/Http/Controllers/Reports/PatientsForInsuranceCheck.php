@@ -8,9 +8,8 @@ namespace App\Http\Controllers\Reports;
 
 use App\Exports\FromArray;
 use App\Http\Controllers\Controller;
-use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
-use Maatwebsite\Excel\Facades\Excel;
+use CircleLinkHealth\Customer\Entities\User;
 
 class PatientsForInsuranceCheck extends Controller
 {
@@ -38,8 +37,9 @@ class PatientsForInsuranceCheck extends Controller
                     'insurance_3'      => $user->ccdInsurancePolicies[2]->name ?? '',
                 ];
             });
-        
-        $fileName = "{$date->toDateString()} - Patients For Insurance Check";
+
+        $fileName = "{$date->toDateString()} - Patients For Insurance Check.xls";
+
         return (new FromArray($fileName, $users->all()))->download($fileName);
     }
 }
