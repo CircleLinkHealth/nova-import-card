@@ -138,7 +138,7 @@
                     value: answerVal
                 };
 
-                this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer).then(() => {
+                this.onDoneFunc(this.question.id, questionTypeAnswerId > 0 ? questionTypeAnswerId : undefined, answer).then(() => {
                 });
             },
 

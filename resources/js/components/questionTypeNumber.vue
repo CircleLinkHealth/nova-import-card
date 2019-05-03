@@ -92,7 +92,7 @@
                 if (this.hasAnswerType) {
                     return this.question.type.question_type_answers[0].id;
                 } else {
-                    return 0;
+                    return undefined;
                 }
             },
 

@@ -63,7 +63,7 @@
                 if (this.hasAnswerType) {
                     return this.checkBoxValues[0].id;
                 } else {
-                    return 0;
+                    return undefined;
                 }
             },
             /*//:todo:get which checkboses have diff typr input and set this.showDifferentInput === 0 ()*/
