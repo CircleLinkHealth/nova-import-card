@@ -37,10 +37,19 @@ class CCDViewerController extends Controller
         }
     }
 
-    public function show($ccdaId)
+    public function show(Request $request, $ccdaId)
     {
         $ccda = Ccda::withTrashed()
+            ->with('media')
             ->find($ccdaId);
+
+        $type = $request->input('type');
+
+        if ('xml' == $type) {
+            $media = $ccda->getMedia('ccd')->first();
+
+            return $media ? $media->getFile() : 'N/A';
+        }
 
         if ($ccda) {
             $ccd = $ccda->bluebuttonJson();
