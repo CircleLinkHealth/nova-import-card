@@ -1,4 +1,8 @@
 @extends('partials.providerUI')
+
+@section('title', 'Patient Billing Report')
+@section('activity', 'Patient Billing Report')
+
 @section('content')
     <div class="row main-form-block" style="margin-top:60px;">
         <div class="main-form-container col-lg-8 col-lg-offset-2">
