@@ -117,7 +117,11 @@ class OpsDashboardPatientsReport implements FromCollection, Responsable, WithHea
         $filepath = 'exports/'.$this->getFilename();
         $stored   = $this->store($filepath, 'storage');
 
-        return $this->attachMediaTo($model, storage_path($filepath), "excel_report_for_{$this->fromDate->toDateString()}_to{$this->toDate->toDateString()}");
+        return $this->attachMediaTo(
+            $model,
+            storage_path($filepath),
+            "excel_report_for_{$this->fromDate->toDateString()}_to{$this->toDate->toDateString()}"
+        );
     }
 
     /**
@@ -129,9 +133,9 @@ class OpsDashboardPatientsReport implements FromCollection, Responsable, WithHea
      */
     private function makeExcelRow(User $patient, Carbon $fromDate, Carbon $toDate)
     {
-        if ($patient->patientInfo->registration_date >= $fromDate->toDateTimeString(
-            ) && $patient->patientInfo->registration_date <= $toDate->toDateTimeString(
-            ) && 'enrolled' != $patient->patientInfo->ccm_status) {
+        if ($patient->patientInfo->registration_date >= $fromDate->toDateTimeString()
+            && $patient->patientInfo->registration_date <= $toDate->toDateTimeString()
+            && 'enrolled' != $patient->patientInfo->ccm_status) {
             $status       = $patient->patientInfo->ccm_status;
             $statusColumn = "Added - ${status} ";
         } else {
