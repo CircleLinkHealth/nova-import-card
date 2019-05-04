@@ -71,10 +71,7 @@ class CareCoachMonthlyReport implements FromCollection, Responsable, WithHeading
                                   }
 
                                   $rows->push(
-                                      [
-                                          'Nurse'               => $nurse->display_name,
-                                          'CCM Time (HH:MM:SS)' => gmdate('H:i:s', $seconds),
-                                      ]
+                                      $this->row($nurse, $seconds)
                                   );
                               }
                           }
@@ -88,6 +85,20 @@ class CareCoachMonthlyReport implements FromCollection, Responsable, WithHeading
         return [
             'Nurse',
             'CCM Time (HH:MM:SS)',
+        ];
+    }
+
+    /**
+     * @param User $nurse
+     * @param $seconds
+     *
+     * @return array
+     */
+    private function row(User $nurse, $seconds): array
+    {
+        return [
+            'Nurse'               => $nurse->display_name,
+            'CCM Time (HH:MM:SS)' => gmdate('H:i:s', $seconds),
         ];
     }
 }
