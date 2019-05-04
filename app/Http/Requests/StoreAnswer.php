@@ -29,8 +29,7 @@ class StoreAnswer extends FormRequest
             'survey_instance_id'      => 'required|integer|exists:survey_instances,id',
             'question_id'             => 'required|integer|exists:questions,id',
             'question_type_answer_id' => 'sometimes|integer|exists:question_types_answers,id',
-            'value_1'                 => 'required',
-            'value_2'                 => 'sometimes',
+            'value'                 => 'required',
         ];
     }
 }

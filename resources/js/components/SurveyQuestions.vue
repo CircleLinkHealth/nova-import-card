@@ -38,6 +38,7 @@
                  v-for="(question, index) in questions">
                 <div v-show="index >= questionIndex" class="question">
                     <div class="questions-body" v-show="showSubQuestionNew(index)"><!--data-aos="fade-up"-->
+
                         <div class="questions-title">
                             {{question.pivot.order}}{{question.pivot.sub_order}}{{'.'}} {{question.body}}
                         </div>
@@ -207,6 +208,8 @@
                 userId: this.surveydata.id,
                 surveyInstanceId: [],
                 questionIndexAnswers: [],
+                surveyInstanceId: [],
+                questionIndexAnswers: [],
                 surveyAnswers: [],
             }
         },
@@ -268,7 +271,6 @@
                     return true;
                 }
                 const q = this.questions[index];
-
                 //get conditions of question
                 //find related_question_order_number in conditions
                 //get value of [question == related_question_order_number]
@@ -277,7 +279,6 @@
                 if (parentQuestionAnswer) {
                     return parentQuestionAnswer === q.conditions[0].related_question_expected_answer;
                 }
-
                 return false;
             },
 

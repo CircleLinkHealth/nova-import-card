@@ -37,8 +37,7 @@ class SurveyService
                                      ->where('id', $patientId)
                                      ->first();
 
-
-       return $patientWithSurveyData;
+        return $patientWithSurveyData;
 
     }
 
@@ -52,7 +51,7 @@ class SurveyService
             'question_type_answer_id' => array_key_exists('question_type_answer_id', $input)
                 ? $input['question_type_answer_id']
                 : null,
-            'value'                 => $input['value']
+            'value'                 => $input['value'],
         ]);
 
         if ( ! $answer) {

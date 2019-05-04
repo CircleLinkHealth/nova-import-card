@@ -3,9 +3,9 @@
 namespace App;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
+use CircleLinkHealth\Core\Entities\BaseModel;
 
-class SurveyInstance  extends \CircleLinkHealth\Core\Entities\BaseModel
+class SurveyInstance extends BaseModel
 {
     const PENDING = 'pending';
     const IN_PROGRESS = 'in_progress';

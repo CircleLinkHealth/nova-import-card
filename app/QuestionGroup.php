@@ -2,9 +2,9 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use CircleLinkHealth\Core\Entities\BaseModel;
 
-class QuestionGroup  extends \CircleLinkHealth\Core\Entities\BaseModel
+class QuestionGroup extends BaseModel
 {
     /**
      * The attributes that are mass assignable.

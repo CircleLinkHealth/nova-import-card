@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Events\SurveyInstancePivotSaved;
 use App\Jobs\GenerateProviderReport as GenerateReport;
+use App\Jobs\PersonalizedPreventionPlan as GeneratePppReport;
 use App\SurveyInstance;
 use App\User;
 
@@ -47,6 +48,7 @@ class GenerateProviderReport
 
             if ($otherInstance) {
                 GenerateReport::dispatch($patient->id, $instance->start_date)->onQueue('high');
+                GeneratePppReport::dispatch($patient->id)->onQueue('high');
             }
         }
     }

@@ -19,6 +19,15 @@ class Answer extends BaseModel
         'value'
     ];
 
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'value' => 'array',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
