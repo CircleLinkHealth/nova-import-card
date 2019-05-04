@@ -289,7 +289,6 @@ return [
         'Image'          => \Barryvdh\Snappy\Facades\SnappyImage::class,
         'JWTAuth'        => \Tymon\JWTAuth\Facades\JWTAuth::class,
         'JWTFactory'     => \Tymon\JWTAuth\Facades\JWTFactory::class,
-        'PDF'            => \Barryvdh\Snappy\Facades\SnappyPdf::class,
         'PdfMerger'      => LynX39\LaraPdfMerger\Facades\PdfMerger::class,
         'Slack'          => jeremykenedy\Slack\Laravel\Facade::class,
         'GoogleCalendar' => Spatie\GoogleCalendar\GoogleCalendarFacade::class,
