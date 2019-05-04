@@ -51,10 +51,10 @@ class NurseDailyReport implements FromCollection, Responsable, WithHeadings
                 $nurse = User::ofType('care-center')
                     ->with('nurseInfo.workhourables')
                     ->where(
-                                 [
-                                     ['first_name', '=', $first],
-                                     ['last_name', '=', $last],
-                                 ]
+                        [
+                            ['first_name', '=', $first],
+                            ['last_name', '=', $last],
+                        ]
                              )->has('nurseInfo')
                     ->first();
 
@@ -64,25 +64,22 @@ class NurseDailyReport implements FromCollection, Responsable, WithHeadings
                     return [];
                 }
 
+                $dateClause = function ($q) {
+                    return $q->whereBetween('created_at', [
+                        $this->date->copy()->startOfDay(),
+                        $this->date->copy()->endOfDay(),
+                    ]);
+                };
+
                 $pageTimers = PageTimer::where('provider_id', $nurse->id)
                     ->select(['id', 'duration', 'created_at'])
-                    ->where(
-                                           function ($q) {
-                                               $q->where('created_at', '>=', $this->date->copy()->startOfDay())
-                                                   ->where('created_at', '<=', $this->date->copy()->endOfDay());
-                                           }
-                                       )
+                    ->where($dateClause)
                     ->get()
                     ->sum('duration');
 
                 $offlineActivities = Activity::where('provider_id', $nurse->id)
                     ->select(['id', 'duration', 'created_at'])
-                    ->where(
-                                                 function ($q) {
-                                                     $q->where('created_at', '>=', $this->date->copy()->startOfDay())
-                                                         ->where('created_at', '<=', $this->date->copy()->endOfDay());
-                                                 }
-                                             )
+                    ->where($dateClause)
                     ->where('logged_from', 'manual_input')
                     ->get()
                     ->sum('duration');
@@ -95,20 +92,7 @@ class NurseDailyReport implements FromCollection, Responsable, WithHeadings
                     $hoursCommitted = $nurse->nurseInfo->workhourables->first()->{strtolower($this->date->format('l'))};
                 }
 
-                return [
-                    'name'                     => $nurseReport['name'],
-                    'Time since last activity' => $nurseReport['Time Since Last Activity'],
-                    '# Successful Calls today' => $nurseReport['# Successful Calls Today'],
-                    '# Scheduled calls today'  => $nurseReport['# Scheduled Calls Today'],
-                    '# Completed calls today'  => $nurseReport['# Completed Calls Today'],
-                    'CCM mins Today'           => $nurseReport['CCM Mins Today'],
-                    'Last activity'            => $nurseReport['last_activity'],
-                    'Actual hours worked'      => $actualHours
-                        ?: 'N/A',
-                    'Hours Committed' => 0 == $hoursCommitted
-                        ? '0'
-                        : $hoursCommitted,
-                ];
+                return $this->row($nurseReport, $hoursCommitted, $actualHours);
             }
         )->filter()->values();
     }
@@ -166,5 +150,30 @@ class NurseDailyReport implements FromCollection, Responsable, WithHeadings
         $stored   = $this->store($filepath, 'storage');
 
         return $this->attachMediaTo($model, storage_path($filepath), "nurse_daily_report_for_{$this->date->toDateString()}");
+    }
+
+    /**
+     * @param $nurseReport A row from NurseStatsService::data()
+     * @param $hoursCommitted integer|string
+     * @param $actualHoursWorked integer|string
+     *
+     * @return array
+     */
+    private function row($nurseReport, $hoursCommitted, $actualHoursWorked)
+    {
+        return [
+            'name'                     => $nurseReport['name'],
+            'Time since last activity' => $nurseReport['Time Since Last Activity'],
+            '# Successful Calls today' => $nurseReport['# Successful Calls Today'],
+            '# Scheduled calls today'  => $nurseReport['# Scheduled Calls Today'],
+            '# Completed calls today'  => $nurseReport['# Completed Calls Today'],
+            'CCM mins Today'           => $nurseReport['CCM Mins Today'],
+            'Last activity'            => $nurseReport['last_activity'],
+            'Actual hours worked'      => $actualHoursWorked
+                ?: 'N/A',
+            'Hours Committed' => 0 == $hoursCommitted
+                ? '0'
+                : $hoursCommitted,
+        ];
     }
 }
