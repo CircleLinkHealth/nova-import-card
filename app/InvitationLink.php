@@ -3,7 +3,7 @@
 namespace App;
 use Illuminate\Database\Eloquent\Model;
 
-class InvitationLink extends Model
+class InvitationLink  extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $fillable = [
         'patient_info_id',

@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class QuestionType extends Model
+class QuestionType  extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     const CHECKBOX = 'checkbox';
 
@@ -15,6 +15,10 @@ class QuestionType extends Model
     const NUMBER = 'number';
 
     const DATE = 'date';
+
+    const SELECT = 'select';
+
+    const MULTI_SELECT = 'multi_select';
 
     /**
      * The attributes that are mass assignable.

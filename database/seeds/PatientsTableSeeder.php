@@ -1,6 +1,6 @@
 <?php
 
-use App\Patient;
+use CircleLinkHealth\Customer\Entities\Patient;
 use Illuminate\Database\Seeder;
 
 class PatientsTableSeeder extends Seeder

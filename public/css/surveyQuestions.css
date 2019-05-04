@@ -22,7 +22,7 @@
 }
 
 .survey-sub-welcome-text {
-    font-family: Poppins, sans-serif;
+    font-family: Poppins;
     font-size: 18px;
     font-weight: normal;
     font-style: normal;
@@ -31,6 +31,8 @@
     letter-spacing: 1px;
     text-align: center;
     margin-top: 25px;
+    margin-left: 13%;
+    width: 75%;
     color: #1a1a1a;
 }
 .btn-primary {
@@ -45,7 +47,9 @@
 .bottom-navbar {
     background-color: #ffffff;
     border-bottom: 1px solid #808080;
-
+    min-height: 90px;
+    height: 90px;
+    margin-top: auto;
 }
 
 .by-circlelink {

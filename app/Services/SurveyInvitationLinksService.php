@@ -17,6 +17,7 @@ class SurveyInvitationLinksService
         $patient       = Patient::where('user_id', $userId)
                                 ->select('id')
                                 ->firstOrFail();
+
         $patientInfoId = $patient->id;
 
         $this->expireAllPastUrls($patientInfoId);
@@ -24,6 +25,7 @@ class SurveyInvitationLinksService
         $survey = Survey::where('name', $this::HRA)
                         ->select('id')
                         ->firstOrFail();
+
         $surveyId = $survey->id;
 
         $url      = URL::signedRoute('loginSurvey',

@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Question extends Model
+class Question  extends \CircleLinkHealth\Core\Entities\BaseModel
 {
 
     /**
@@ -51,7 +51,9 @@ class Question extends Model
     public function questionGroup(){
         return $this->belongsTo(QuestionGroup::class, 'question_group_id');
     }
+
     public function scopeNotOptional($query){
         $query->where('optional', false);
     }
+
 }

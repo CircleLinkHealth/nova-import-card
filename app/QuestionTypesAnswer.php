@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class QuestionTypesAnswer extends Model
+class QuestionTypesAnswer  extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     /*
      *

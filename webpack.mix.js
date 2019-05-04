@@ -11,5 +11,10 @@ const mix = require('laravel-mix');
  |
  */
 
+const devTool = process.env.NODE_ENV === 'production' ? 'source-map' : 'eval-source-map';
+mix.webpackConfig({
+    devtool: devTool
+});
+
 mix.js('resources/js/app.js', 'public/js')
-   .sass('resources/sass/app.scss', 'public/css');
+    .sass('resources/sass/app.scss', 'public/css');

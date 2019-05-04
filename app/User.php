@@ -7,7 +7,6 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Lab404\Impersonate\Models\Impersonate;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-
 class User extends Authenticatable
 {
     use Notifiable;
@@ -75,6 +74,10 @@ class User extends Authenticatable
     public function answers()
     {
         return $this->hasMany(Answer::class, 'user_id');
+    }
+
+    public function providerReports(){
+        return $this->hasMany(ProviderReport::class, 'patient_id');
     }
 
 

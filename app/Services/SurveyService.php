@@ -4,6 +4,7 @@ namespace App\Services;
 
 
 use App\Answer;
+use App\Events\SurveyInstancePivotSaved;
 use App\SurveyInstance;
 use App\User;
 
@@ -36,13 +37,13 @@ class SurveyService
                                      ->where('id', $patientId)
                                      ->first();
 
-        return $patientWithSurveyData;
+
+       return $patientWithSurveyData;
 
     }
 
     public function updateOrCreateAnswer($input)
-    {
-        //update or create the answer
+    {//update or create the answer
         $answer = Answer::updateOrCreate([
             'user_id'            => $input['user_id'],
             'survey_instance_id' => $input['survey_instance_id'],
@@ -51,10 +52,7 @@ class SurveyService
             'question_type_answer_id' => array_key_exists('question_type_answer_id', $input)
                 ? $input['question_type_answer_id']
                 : null,
-            'value_1'                 => $input['value_1'],
-            'value_2'                 => array_key_exists('value_2', $input)
-                ? $input['value_2']
-                : null,
+            'value'                 => $input['value']
         ]);
 
         if ( ! $answer) {
@@ -79,10 +77,11 @@ class SurveyService
             },
         ])
                     ->withCount([
-                        'answers' => function ($a) {
-                            $a->whereHas('question', function ($q) {
-                                $q->notOptional();
-                            });
+                        'answers' => function ($a) use ($input) {
+                            $a->where('survey_instance_id', $input['survey_instance_id'])
+                              ->whereHas('question', function ($q) {
+                                  $q->notOptional();
+                              });
                         },
                     ])
                     ->where('id', $input['user_id'])
@@ -90,16 +89,18 @@ class SurveyService
 
         $instance = $user->surveyInstances->first();
 
-        if ($instance->questions_count === $user->answers_count) {
+        if ($instance->questions_count <= $user->answers_count) {
             $instance->pivot->status = SurveyInstance::COMPLETED;
         } else {
             $instance->pivot->status = SurveyInstance::IN_PROGRESS;
         }
+
         $instance->pivot->last_question_answered_id = $input['question_id'];
-        $instance->save();
+        $instance->pivot->save();
+
+        event(new SurveyInstancePivotSaved($instance));
 
         return $instance->pivot->status;
     }
-
 
 }

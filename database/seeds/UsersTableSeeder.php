@@ -1,6 +1,6 @@
 <?php
 
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Foundation\Testing\WithFaker;
 
