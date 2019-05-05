@@ -108,8 +108,8 @@ $user_info = [];
                                                         </div>
                                                         <span class="help-block">{{ $errors->first('preferred_contact_language') }}</span>
                                                     </div>
-                                                    <div class="form-group form-item form-item-spacing col-sm-12 col-lg-5 {{ $errors->first('mrn_number') ? 'has-error' : '' }}">
-                                                        <label class="sr-only" for="mrn_number">MRN</label>
+                                                    <div class="col-sm-12  col-lg-5{{ $errors->first('mrn_number') ? 'has-error' : '' }}">
+                                                        <label for="mrn_number">MRN<span class="attention">*</span>:</label>
                                                         <input type="text" class="form-control" name="mrn_number"
                                                                id="mrn_number" placeholder="MRN *"
                                                                value="{{ (old('mrn_number') ? old('mrn_number') : ($patient->getMRN() ? $patient->getMRN() : '')) }}">
