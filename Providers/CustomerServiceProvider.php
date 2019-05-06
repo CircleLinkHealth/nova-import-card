@@ -2,6 +2,7 @@
 
 namespace CircleLinkHealth\Customer\Providers;
 
+use CircleLinkHealth\Customer\Console\Commands\CreateRolesPermissionsMigration;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\HasDatabaseNotifications;
 use Illuminate\Notifications\Notifiable;
@@ -45,6 +46,10 @@ class CustomerServiceProvider extends ServiceProvider
             \CircleLinkHealth\Core\Traits\HasDatabaseNotifications::class
         );
         $this->app->bind(Notifiable::class, \CircleLinkHealth\Core\Traits\Notifiable::class);
+        
+        $this->commands([
+            CreateRolesPermissionsMigration::class
+                        ]);
     }
     
     /**
