@@ -130,10 +130,16 @@ class PatientController extends Controller
             }
         }
 
+        //naive authentication for the CPM Caller Service
+        $cpmToken = \Hash::make(config('app.key').Carbon::today()->toDateString());
+
         return view('wpUsers.patient.calls.index')
-            ->with('patient', $user)
-            ->with('phoneNumbers', $phoneNumbers)
-            ->with('clinicalEscalationNumber', $clinicalEscalationNumber);
+            ->with([
+                'patient'                  => $user,
+                'phoneNumbers'             => $phoneNumbers,
+                'clinicalEscalationNumber' => $clinicalEscalationNumber,
+                'cpmToken'                 => $cpmToken,
+            ]);
     }
 
     /**
