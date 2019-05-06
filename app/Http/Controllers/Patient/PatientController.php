@@ -73,12 +73,12 @@ class PatientController extends Controller
                     ->orWhere('last_name', 'like', "%${term}%")
                     ->orWhere('id', 'like', "%${term}%")
                     ->orWhereHas('patientInfo', function ($query) use ($term) {
-                        $query->where('mrn_number', 'like', "%${term}%")
-                            ->orWhere('birth_date', 'like', "%${term}%");
-                    })
+                      $query->where('mrn_number', 'like', "%${term}%")
+                          ->orWhere('birth_date', 'like', "%${term}%");
+                  })
                     ->orWhereHas('phoneNumbers', function ($query) use ($term) {
-                        $query->where('number', 'like', "%${term}%");
-                    });
+                      $query->where('number', 'like', "%${term}%");
+                  });
             });
         }
 
@@ -130,10 +130,16 @@ class PatientController extends Controller
             }
         }
 
+        //naive authentication for the CPM Caller Service
+        $cpmToken = \Hash::make(config('app.key').Carbon::today()->toDateString());
+
         return view('wpUsers.patient.calls.index')
-            ->with('patient', $user)
-            ->with('phoneNumbers', $phoneNumbers)
-            ->with('clinicalEscalationNumber', $clinicalEscalationNumber);
+            ->with([
+                'patient'                  => $user,
+                'phoneNumbers'             => $phoneNumbers,
+                'clinicalEscalationNumber' => $clinicalEscalationNumber,
+                'cpmToken'                 => $cpmToken,
+            ]);
     }
 
     /**
@@ -293,8 +299,8 @@ class PatientController extends Controller
         // get number of approvals
         $patients = User::intersectPracticesWith(auth()->user())
             ->with('phoneNumbers', 'patientInfo', 'careTeamMembers')->whereHas('roles', function ($q) {
-                $q->where('name', '=', 'participant');
-            })->get()->pluck('fullNameWithId', 'id')->all();
+                            $q->where('name', '=', 'participant');
+                        })->get()->pluck('fullNameWithId', 'id')->all();
 
         return view('wpUsers.patient.select', compact(['patients']));
     }

@@ -66,6 +66,7 @@
                                 <call-number
                                         :debug="@json(!isProductionEnv())"
                                         cpm-caller-url="{{config('services.twilio.cpm-caller-url')}}"
+                                        cpm-token="{{$cpmToken}}"
                                         from-number="{{$patient->primaryProgramPhoneE164()}}"
                                         :allow-conference="@json(config('services.twilio.allow-conference'))"
                                         inbound-user-id="{{$patient->id}}"
