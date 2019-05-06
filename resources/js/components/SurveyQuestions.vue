@@ -1,49 +1,62 @@
 <template>
     <div class="container">
         <!--Survey welcome note-->
-        <div class="survey-container">
-            <div v-if="welcomeStage" class="practice-title">
-                <label id="title">[Practice Name]
-                    Dr. [doctor last name]’s Office</label>
-            </div>
-            <div v-if="welcomeStage" class="card-body">
-                <img src="https://drive.google.com/uc?export=view&id=14yPR6Z8coudiAzEMTSVQK80BVyZjjqVg"
-                     class="welcome-icon" alt="welcome icon">
-                <div class="survey-main-title">
-                    <label id="sub-title">Annual Wellness Visit (AWV) Questionnaire</label>
+        <div class="survey-container" :class="stage === 'complete' ? 'max' : ''">
+            <template v-if="stage === 'welcome'">
+                <div class="practice-title">
+                    <label id="title">[Practice Name]
+                        Dr. [doctor last name]’s Office</label>
                 </div>
-                <div class="survey-sub-welcome-text">Welcome to your
-                    Annual Wellness Visit (AWV) Questionnaire! Understanding your health is of upmost importance to us,
-                    so thank you for taking time to fill this out.
-                    If there’s any question you have trouble answering, feel free to click the call button on the bottom
-                    left and a representative will help when you call the number. If you skip any questions, our reps
-                    will also reach out shortly. Thanks!
-                </div>
+                <div class="card-body">
+                    <img src="https://drive.google.com/uc?export=view&id=14yPR6Z8coudiAzEMTSVQK80BVyZjjqVg"
+                         class="welcome-icon" alt="welcome icon">
+                    <div class="survey-main-title">
+                        <label id="sub-title">Annual Wellness Visit (AWV) Questionnaire</label>
+                    </div>
+                    <div class="survey-sub-welcome-text">Welcome to your
+                        Annual Wellness Visit (AWV) Questionnaire! Understanding your health is of upmost importance to
+                        us,
+                        so thank you for taking time to fill this out.
+                        If there’s any question you have trouble answering, feel free to click the call button on the
+                        bottom
+                        left and a representative will help when you call the number. If you skip any questions, our
+                        reps
+                        will also reach out shortly. Thanks!
+                    </div>
 
-                <div v-if="this.lastQuestionAnswered !== null">
-                    <a class="btn btn-primary" @click="showQuestions">Start</a>
-                </div>
+                    <div v-if="this.lastQuestionAnswered !== null">
+                        <a class="btn btn-primary" @click="showQuestions">Start</a>
+                    </div>
 
-                <div v-if="this.lastQuestionAnswered !== null">
-                    <a class="btn btn-primary" @click="scrollToLastQuestion">Continue</a>
-                </div>
+                    <div v-if="this.lastQuestionAnswered !== null">
+                        <a class="btn btn-primary" @click="scrollToLastQuestion">Continue</a>
+                    </div>
 
-                <div class="by-circlelink">
-                    ⚡️ by CircleLink Health
+                    <div class="by-circlelink">
+                        ⚡️ by CircleLink Health
+                    </div>
                 </div>
-            </div>
+            </template>
             <!--Questions-->
-            <div class="questions-box"
-                 v-if="questionsStage"
-                 v-for="(question, index) in questions">
-                <div v-show="index >= questionIndex" class="question">
-                    <div class="questions-body" v-show="true">
-                        <div class="questions-title">
-                            <div>
-                                {{question.pivot.order}}{{question.pivot.sub_order}}{{'.'}} {{question.body}}
-                            </div>
-                        </div>
+            <template v-if="stage === 'survey'">
+                <div class="questions-box"
+                     :id="question.id"
+                     :class="currentQuestionIndex !== index ? 'watermark' : 'active'"
+                     v-show="index >= currentQuestionIndex"
+                     v-for="(question, index) in questions">
+                    <div class="questions-body">
+
+                        <!--<div v-if="isSubQuestion(question) && shouldShowQuestionGroupTitle(question)"
+                             class="questions-title">
+                            {{getSubQuestionTitle(question)}}
+                        </div>-->
                         <br>
+                        <div class="questions-title">
+                            {{getQuestionTitle(question)}}
+                        </div>
+
+                        <br>
+
                         <!--Questions Answer Type-->
                         <div class="question-answer-type">
                             <question-type-text
@@ -88,14 +101,15 @@
                         </div>
                     </div>
                 </div>
-            </div>
-
+                <!-- add an empty div, so we can animate scroll up even if we are on last question -->
+                <div style="height: 600px"></div>
+            </template>
         </div>
         <div class="call-assistance">
             <call-assistance v-if="callAssistance" @closeCallAssistanceModal="hideCallHelp"></call-assistance>
         </div>
         <!--bottom-navbar-->
-        <div class="bottom-navbar">
+        <div class="bottom-navbar" :class="stage === 'complete' ? 'hidden' : ''">
             <!--phone assistance-->
             <div class="row">
                 <div v-if="showPhoneButton" class="call-assistance col-lg-1">
@@ -126,7 +140,7 @@
                     </div>
                 </div>
                 <!--scroll buttons-->
-                <div v-show="!welcomeStage" class="row">
+                <div v-show="stage === 'survey'" class="row">
                     <div class="scroll-buttons col-lg-2">
                         <button type="button"
                                 id="scroll-down"
@@ -186,6 +200,7 @@
 
         data() {
             return {
+                stage: "welcome",
                 showPhoneButton: true,
                 questionsStage: false,
                 welcomeStage: true,
@@ -201,6 +216,11 @@
                 questionIndexAnswers: [],
                 surveyAnswers: [],
                 conditionsLength: 0,
+                latestQuestionAnsweredIndex: -1,
+                currentQuestionIndex: 0,
+                error: null,
+                progress: 0,
+
             }
         },
 
@@ -239,8 +259,26 @@
             },
 
             showQuestions() {
-                this.questionsStage = true;
-                this.welcomeStage = false;
+                this.stage = "survey";
+            },
+
+            scrollUp() {
+               /* if (this.currentQuestionIndex === 0) {
+                    return;
+                }
+
+                this.error = null;*/
+                this.currentQuestionIndex = this.currentQuestionIndex - 1;
+                this.goToNextQuestion();
+            },
+
+            scrollDown() {
+                if (this.latestQuestionAnsweredIndex < this.currentQuestionIndex) {
+                    return;
+                }
+
+                this.error = null;
+                this.currentQuestionIndex = this.currentQuestionIndex + 1;
             },
             scrollToLastQuestion() {
                 this.questionsStage = true;
@@ -248,12 +286,19 @@
                 //@todo:check this again - i dont like it
                 this.questionIndex = this.lastQuestionAnswered - 1;
             },
-            scrollDown() {
-
+            isSubQuestion(question) {
+                return question.pivot.sub_order !== null;
             },
 
-            scrollUp() {
+            shouldShowQuestionGroupTitle(question) {
+                return question.pivot.sub_order != null && (question.pivot.sub_order === "a" || question.pivot.sub_order === "1");
+            },
 
+            getQuestionTitle(question) {
+                if (this.isSubQuestion(question)) {
+                    return `${question.pivot.order}${question.pivot.sub_order}. ${question.body}`;
+                }
+                return `${question.pivot.order}. ${question.body}`;
             },
 
 
@@ -347,12 +392,78 @@
                     value: answer,
 
                 })
-                    .then(function (response) {
-                        console.log(response);
+                    .then((response) => {
+                       /* this.waiting = false;*/
+                        //save the answer in state
+                        const q = this.questions.find(x => x.id === questionId);
+
+                        //increment progress only if question was not answered before
+                        const incrementProgress = typeof q.answer === "undefined";
+                       /* q.answer = answer;*/
+
+                        this.goToNextQuestion(incrementProgress)
+                            .then(() => {
+                                //NOTE
+                                //this is a hack. still haven't figured out why I have to do this
+                                //the next three lines of code are useless, but somehow they are needed
+                                //when submitting answer, going to the next question and user clicks to go
+                                //to previous question. If these lines are commented out, the `go to previous`
+                                //does not work!
+                                //NOTE
+                                this.currentQuestionIndex = this.currentQuestionIndex + 1;
+                                this.$nextTick().then(() => {
+                                    this.currentQuestionIndex = this.currentQuestionIndex - 1;
+                                });
+                            });
+
                     })
                     .catch(function (error) {
                         console.log(error);
                     });
+            },
+
+            goToNextQuestion(incrementProgress) {
+
+                const nextQuestion = this.questions[this.currentQuestionIndex + 1];
+
+                //survey complete
+                if (!nextQuestion) {
+                    this.stage = "complete";
+                    this.latestQuestionAnsweredIndex = this.currentQuestionIndex;
+                    this.currentQuestionIndex = this.currentQuestionIndex + 1;
+                    if (incrementProgress) {
+                        this.progress = this.progress + 1;
+                    }
+                    return;
+                }
+
+                return new Promise(resolve => {
+                    $('.survey-container').animate({
+                        scrollTop: $(`#${nextQuestion.id}`).offset().top
+                    }, 519, 'swing', () => {
+                        this.latestQuestionAnsweredIndex = this.currentQuestionIndex;
+                        this.currentQuestionIndex = this.currentQuestionIndex + 1;
+                        const answered = this.questions[this.latestQuestionAnsweredIndex];
+
+                        //increment progress only if current question is not a sub question
+                        if (answered.pivot.sub_order === null) {
+                            if (incrementProgress) {
+                                this.progress = this.progress + 1;
+                            }
+                        } else {
+                            //if this is the last sub question of a group, increment progress
+
+                            //get all sub questions and sort them (i.e ["a", "b", "c"]
+                            const allSubs = this.questions.filter(q => q.pivot.order === answered.pivot.order).map(q => q.pivot.sub_order).sort();
+                            if (allSubs[allSubs.length - 1] === answered.pivot.sub_order) {
+                                if (incrementProgress) {
+                                    this.progress = this.progress + 1;
+                                }
+                            }
+                        }
+                        resolve();
+                    });
+                });
             },
 
 
