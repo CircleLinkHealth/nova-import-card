@@ -21,6 +21,7 @@ use App\Observers\HolidayObserver;
 use App\Observers\MedicationObserver;
 use App\Observers\NurseContactWindowObserver;
 use App\Observers\PageTimerObserver;
+use App\Observers\PatientContactWindowObserver;
 use App\Observers\PatientMonthlySummaryObserver;
 use App\Observers\PatientObserver;
 use App\Observers\PracticeObserver;
@@ -32,6 +33,7 @@ use App\Observers\UserObserver;
 use CircleLinkHealth\Customer\Entities\Holiday;
 use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
@@ -63,6 +65,7 @@ class ObserversServiceProvider extends ServiceProvider
         User::observe(UserObserver::class);
         Call::observe(CallObserver::class);
         Problem::observe(ProblemObserver::class);
+        PatientContactWindow::observe(PatientContactWindowObserver::class);
     }
 
     /**
