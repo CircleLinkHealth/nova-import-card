@@ -1594,6 +1594,33 @@ Route::group(['middleware' => 'auth'], function () {
             });
         });
 
+        Route::resource('report-settings', 'ReportSettingsController')->names([
+            'index'  => 'report-settings.index',
+            'update' => 'report-settings.update',
+        ]);
+
+        Route::group(
+            [
+                'prefix' => 'report-settings',
+            ],
+            function () {
+                Route::get(
+                    '',
+                    [
+                        'uses' => 'ReportSettingsController@index',
+                        'as'   => 'report-settings.index',
+                    ]
+                );
+                Route::post(
+                    'update',
+                    [
+                        'uses' => 'ReportSettingsController@update',
+                        'as'   => 'report-settings.update',
+                    ]
+                );
+            }
+        );
+
         Route::group([
             'prefix' => 'settings',
         ], function () {
@@ -1999,7 +2026,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     // CARE-CENTER GROUP
     Route::group([
-        'middleware' => ['role:care-center,care-center-external,administrator'],
+        'middleware' => ['permission:has-schedule'],
         'prefix'     => 'care-center',
     ], function () {
         Route::resource('work-schedule', 'CareCenter\WorkScheduleController', [

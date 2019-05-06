@@ -9,6 +9,7 @@ use App\Providers\DirectMailServiceProvider;
 use App\Providers\EmailArrayValidatorServiceProvider;
 use App\Providers\FaxServiceProvider;
 use App\Providers\GoogleDriveServiceProvider;
+use App\Providers\NovaServiceProvider;
 use App\Providers\ObserversServiceProvider;
 use App\Providers\TwilioClientServiceProvider;
 use App\Providers\ViewComposerServiceProvider;
@@ -55,6 +56,8 @@ return [
     */
 
     'env' => env('APP_ENV', 'production'),
+
+    'is_production_env' => env('IS_PRODUCTION_SERVER', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -228,6 +231,7 @@ return [
         AuthyServiceProvider::class,
         PragmaRX\Health\ServiceProvider::class,
         TwilioClientServiceProvider::class,
+        NovaServiceProvider::class,
     ],
 
     /*
@@ -293,4 +297,17 @@ return [
         'Swagger'        => L5Swagger\L5SwaggerServiceProvider::class,
         'UrlShortener'   => Waavi\UrlShortener\Facades\UrlShortener::class,
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | App Version Variable in .env
+    |--------------------------------------------------------------------------
+    |
+    | Where to get the APP_VERSION from
+    |
+    |
+    | Defaults to ''.
+    |
+    */
+    'app_version' => env('APP_VERSION', ''),
 ];

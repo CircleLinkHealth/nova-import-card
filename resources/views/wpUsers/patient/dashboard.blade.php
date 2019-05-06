@@ -46,7 +46,7 @@
                         </a>
                     </li>
 
-                    @if(auth()->user()->hasRole(['administrator', 'care-center']) && auth()->user()->isNotSaas())
+                    @if(auth()->user()->hasPermission('has-schedule') && auth()->user()->isNotSaas())
                         <li class="menu-item">
                             <a id="patient-list" href="{{ route('patientCallList.index', array()) }}">
                                 <div class="icon-container column-centered">

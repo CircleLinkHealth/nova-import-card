@@ -9,12 +9,13 @@ namespace App\Http\Controllers\SAAS\Admin\CRUD;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SAAS\StoreInternalUser;
 use App\Notifications\SAAS\SendInternalUserSignupInvitation;
+use App\ValueObjects\SAAS\Admin\InternalUser;
+use Auth;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
-use App\ValueObjects\SAAS\Admin\InternalUser;
-use Auth;
 use Illuminate\Http\Request;
+use Session;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class InternalUserController extends Controller
@@ -52,8 +53,7 @@ class InternalUserController extends Controller
      */
     public function create()
     {
-        $data = $this->userManagementService->getDataForCreateUserPage();
-
+        $data                 = $this->userManagementService->getDataForCreateUserPage();
         $data['submitUrl']    = route('saas-admin.users.store');
         $data['submitMethod'] = 'post';
         $data['titleVerb']    = 'Add';
@@ -74,9 +74,10 @@ class InternalUserController extends Controller
 
         $data['editedUser'] = $this->userManagementService->getUser($userId);
 
-        $data['submitUrl']    = route('saas-admin.users.update', ['userId' => $userId]);
-        $data['submitMethod'] = 'patch';
-        $data['titleVerb']    = 'Edit';
+        $data['submitUrl']      = route('saas-admin.users.update', ['userId' => $userId]);
+        $data['submitMethod']   = 'patch';
+        $data['titleVerb']      = 'Edit';
+        $data['successMessage'] = Session::get('messages');
 
         return view('saas.admin.user.manage', $data);
     }
@@ -124,7 +125,7 @@ class InternalUserController extends Controller
         ];
 
         $authIsAdmin = auth()->user()->isAdmin();
-        
+
         if ($authIsAdmin) {
             $rolesArray[] = 'administrator';
         }

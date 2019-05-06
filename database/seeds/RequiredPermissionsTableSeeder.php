@@ -83,6 +83,10 @@ class RequiredPermissionsTableSeeder extends Seeder
                 'name'         => 'change-patient-enrollment-status',
                 'display_name' => 'Allows user to change patient enrollment status e.g. to enrolled, withdrawn etc.',
             ],
+            [
+                'name'         => 'has-schedule',
+                'display_name' => 'Allows user to view schedule, scheduled activities and work-schedule. ',
+            ],
         ];
 
         return array_merge($perms, $old);

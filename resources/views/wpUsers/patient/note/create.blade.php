@@ -333,9 +333,8 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="form-block col-md-12">
-                            <div class="row">
+                            <div class="row col-md-12">
 
                                 <div class="new-note-item">
                                     <!-- Enter Note -->
@@ -382,6 +381,8 @@
                                 </div>
                             </div>
                         </div>
+
+                    </div>
                     </div>
                 </div>
             </div>
@@ -693,7 +694,7 @@
                     const CHARACTERS_THRESHOLD = 100;
                     let showModal = false;
                     const noteBody = form['body'].value;
-                    const noteBodyWithoutMeds = noteBody.substring(0, noteBody.indexOf(MEDICATIONS_SEPARATOR)).trim();
+                    const noteBodyWithoutMeds = getNoteBodyExcludingMedications(noteBody);
 
                     //CPM-182:
                     // if time more than 90 seconds
@@ -751,6 +752,30 @@
                     $('#confirm-task-completed').modal('show');
                 }
             });
+
+            window.addEventListener('beforeunload', (event) => {
+
+                if (submitted) {
+                    return;
+                }
+
+                const noteBody = $('#note').val();
+                const trimmed = getNoteBodyExcludingMedications(noteBody);
+
+                if (trimmed.length) {
+                    if (!confirm()) {
+                        // Cancel the event as stated by the standard.
+                        event.preventDefault();
+                        // Chrome requires returnValue to be set.
+                        event.returnValue = '';
+                    }
+                }
+
+            });
+
+            function getNoteBodyExcludingMedications(noteBody) {
+                return noteBody.substring(0, noteBody.indexOf(MEDICATIONS_SEPARATOR)).trim();
+            }
 
         </script>
     @endpush

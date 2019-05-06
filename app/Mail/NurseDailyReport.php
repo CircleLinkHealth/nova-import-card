@@ -59,7 +59,21 @@ class NurseDailyReport extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.nurseDailyReport')
+        $view = 'emails.nurseDailyReportToDeprecate';
+
+        //check if report has new metrics, then load new view
+        if (array_keys_exist([
+            'completionRate',
+            'efficiencyIndex',
+            'caseLoadComplete',
+            'caseLoadNeededToComplete',
+            'hoursCommittedRestOfMonth',
+            'surplusShortfallHours',
+        ], $this->data)) {
+            $view = 'emails.nurseDailyReport';
+        }
+
+        return $this->view($view)
             ->with($this->data)
             ->with(['date' => $this->date])
             ->to($this->nurse->email)

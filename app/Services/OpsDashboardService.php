@@ -6,18 +6,19 @@
 
 namespace App\Services;
 
-use CircleLinkHealth\Customer\Entities\Patient;
 use App\Repositories\OpsDashboardPatientEloquentRepository;
-use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
 class OpsDashboardService
 {
-    private $repo;
-
     const TWENTY_MINUTES = 1200;
+
+    protected $timeGoal;
+    private $repo;
 
     public function __construct(OpsDashboardPatientEloquentRepository $repo)
     {
@@ -43,13 +44,13 @@ class OpsDashboardService
         $added = 0;
 
         $filteredSummaries = $summaries->where('month_year', '>=', $month->copy()->startOfMonth())
-                                       ->where('month_year', '<=', $month->copy()->endOfMonth());
+            ->where('month_year', '<=', $month->copy()->endOfMonth());
 
         if ($filteredSummaries->count() > 0) {
             foreach ($filteredSummaries as $summary) {
                 $priorMonthSummary = $summaries->where('month_year', '>=', $month->copy()->subMonth()->startOfMonth())
-                                               ->where('month_year', '<=', $month->copy()->subMonth()->endOfMonth())
-                                               ->where('patient_id', $summary->patient_id);
+                    ->where('month_year', '<=', $month->copy()->subMonth()->endOfMonth())
+                    ->where('patient_id', $summary->patient_id);
                 if (0 == $priorMonthSummary->count()) {
                     ++$added;
                 }
@@ -62,7 +63,7 @@ class OpsDashboardService
     public function calculateBilledPatients($summaries, Carbon $month)
     {
         $filteredSummaries = $summaries->where('month_year', '>=', $month->copy()->startOfMonth())
-                                       ->where('month_year', '<=', $month->copy()->endOfMonth());
+            ->where('month_year', '<=', $month->copy()->endOfMonth());
 
         return $filteredSummaries->count();
     }
@@ -92,6 +93,8 @@ class OpsDashboardService
      */
     public function calculateHoursBehind(Carbon $date, $practices)
     {
+        $this->setTimeGoal();
+
         $enrolledPatients = $practices->map(function ($practice) {
             return $practice->patients->filter(function ($user) {
                 if ( ! $user) {
@@ -106,16 +109,16 @@ class OpsDashboardService
         })->flatten()->unique('id');
 
         $totActPt                = $enrolledPatients->count();
-        $targetMinutesPerPatient = 35;
+        $targetMinutesPerPatient = floatval($this->timeGoal);
 
         $startOfMonth       = $date->copy()->startOfMonth();
         $endOfMonth         = $date->copy()->endOfMonth();
-        $workingDaysElapsed = $this->calculateWeekdays($startOfMonth->toDateTimeString(), $date->toDateTimeString());
-        $workingDaysMonth   = $this->calculateWeekdays(
+        $workingDaysElapsed = calculateWeekdays($startOfMonth->toDateTimeString(), $date->toDateTimeString());
+        $workingDaysMonth   = calculateWeekdays(
             $startOfMonth->toDateTimeString(),
             $endOfMonth->toDateTimeString()
         );
-        $avgMinT            = ($workingDaysElapsed / $workingDaysMonth) * $targetMinutesPerPatient;
+        $avgMinT = ($workingDaysElapsed / $workingDaysMonth) * $targetMinutesPerPatient;
 
         $allPatients = $enrolledPatients->pluck('id')->unique()->all();
 
@@ -149,13 +152,13 @@ class OpsDashboardService
         $toDate   = $month->copy()->endOfMonth();
 
         $pastMonthSummaries = $summaries->where('month_year', '>=', $month->copy()->subMonth()->startOfMonth())
-                                        ->where('month_year', '<=', $month->copy()->subMonth()->endOfMonth());
+            ->where('month_year', '<=', $month->copy()->subMonth()->endOfMonth());
 
         if ($pastMonthSummaries->count() > 0) {
             foreach ($pastMonthSummaries as $summary) {
                 $thisMonthSummaries = $summaries->where('month_year', '>=', $month->copy()->startOfMonth())
-                                                ->where('month_year', '<=', $month->copy()->endOfMonth())
-                                                ->where('patient_id', $summary->patient_id);
+                    ->where('month_year', '<=', $month->copy()->endOfMonth())
+                    ->where('patient_id', $summary->patient_id);
                 if (0 == $thisMonthSummaries->count()) {
                     ++$lost;
                 }
@@ -163,26 +166,6 @@ class OpsDashboardService
         }
 
         return $lost;
-    }
-
-    /**
-     * Returns the number of working days for the date range given.
-     * Accounts for weekends and holidays.
-     *
-     * @param $fromDate
-     * @param $toDate
-     *
-     * @return int
-     */
-    public function calculateWeekdays($fromDate, $toDate)
-    {
-        $holidays = DB::table('company_holidays')->get();
-
-        return Carbon::parse($fromDate)->diffInDaysFiltered(function (Carbon $date) use ($holidays) {
-            $matchingHolidays = $holidays->where('holiday_date', $date->toDateString());
-
-            return ! $date->isWeekend() && ! $matchingHolidays->count() >= 1;
-        }, new Carbon($toDate));
     }
 
     /**
@@ -269,8 +252,8 @@ class OpsDashboardService
                 $to_enroll[] = $patient;
             }
         }
-        $count['Total'] = $patients->filter(function($value, $key){
-            return $value->patientInfo->ccm_status == 'enrolled';
+        $count['Total'] = $patients->filter(function ($value, $key) {
+            return 'enrolled' == $value->patientInfo->ccm_status;
         })->count();
 
         $pausedCount      = count($paused);
@@ -353,10 +336,10 @@ class OpsDashboardService
      * @param $practices
      * @param $format
      * @param Carbon $date
-     * @param mixed $fromDate
-     * @param mixed $toDate
-     * @param mixed $status
-     * @param mixed $practiceId
+     * @param mixed  $fromDate
+     * @param mixed  $toDate
+     * @param mixed  $status
+     * @param mixed  $practiceId
      *
      * @return mixed
      */
@@ -397,16 +380,16 @@ class OpsDashboardService
         $patients = User::with([
             'patientInfo' => function ($patient) use ($fromDate, $toDate) {
                 $patient->ccmStatus(Patient::PAUSED)
-                        ->where('date_paused', '>=', $fromDate)
-                        ->where('date_paused', '<=', $toDate);
+                    ->where('date_paused', '>=', $fromDate)
+                    ->where('date_paused', '<=', $toDate);
             },
         ])
-                        ->whereHas('patientInfo', function ($patient) use ($fromDate, $toDate) {
-                            $patient->ccmStatus(Patient::PAUSED)
-                                    ->where('date_paused', '>=', $fromDate)
-                                    ->where('date_paused', '<=', $toDate);
-                        })
-                        ->get();
+            ->whereHas('patientInfo', function ($patient) use ($fromDate, $toDate) {
+                $patient->ccmStatus(Patient::PAUSED)
+                    ->where('date_paused', '>=', $fromDate)
+                    ->where('date_paused', '<=', $toDate);
+            })
+            ->get();
 
         return $patients;
     }
@@ -420,13 +403,15 @@ class OpsDashboardService
 
     public function makeExcelReport($rows, $fromDate, $toDate)
     {
-        $report = Excel::create("Ops Dashboard Patients Report - ${fromDate} to ${toDate}",
+        $report = Excel::create(
+            "Ops Dashboard Patients Report - ${fromDate} to ${toDate}",
             function ($excel) use ($rows) {
                 $excel->sheet('Ops Dashboard Patients', function ($sheet) use ($rows) {
                     $sheet->fromArray($rows);
                 });
-            })
-                       ->store('xls', false, true);
+            }
+        )
+            ->store('xls', false, true);
 
         return auth()->user()
             ->saasAccount
@@ -464,5 +449,16 @@ class OpsDashboardService
         ];
 
         return collect($rowData);
+    }
+
+    public function setTimeGoal()
+    {
+        $timeGoal = DB::table('report_settings')->where('name', 'time_goal_per_billable_patient')->first();
+
+        $this->timeGoal = $timeGoal
+            ? $timeGoal->value
+            : '35';
+
+        return true;
     }
 }

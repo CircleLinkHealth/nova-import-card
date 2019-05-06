@@ -28,7 +28,7 @@ class CreatePatientSummaryProblems extends Migration
             $table->unsignedInteger('patient_summary_id');
             $table->unsignedInteger('problem_id');
             $table->string('name');
-            $table->string('icd_10_code');
+            $table->string('icd_10_code')->nullable();
             $table->enum('type', ['ccm', 'bhi']);
             $table->timestamps();
 

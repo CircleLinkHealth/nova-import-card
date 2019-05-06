@@ -9,6 +9,10 @@
   "type": "project",
   "repositories": [
     {
+      "type": "composer",
+      "url": "https://nova.laravel.com"
+    },
+    {
       "type": "git",
       "url": "git@github.com:jamisonvalenta/Laravel-4-Generators.git"
     },
@@ -54,6 +58,7 @@
   ],
   "require": {
     "php": ">=7.2.0",
+    "ext-bcmath": "*",
     "ext-dom": "*",
     "ext-json": "*",
     "ext-libxml": "*",
@@ -82,6 +87,7 @@
     "laravel/envoy": "^1.5",
     "laravel/framework": "5.7.*",
     "laravel/horizon": "^1.4",
+    "laravel/nova": "~2.0",
     "laravel/tinker": "^1.0",
     "laravelcollective/html": "5.7.*",
     "league/flysystem-aws-s3-v3": "~1.0",
@@ -172,7 +178,7 @@
       "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner WrapperRunner -p8"
     ],
     "test": [
-      "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner SqliteRunner -p4"
+      "export COMPOSER_PROCESS_TIMEOUT=600 && ./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner SqliteRunner -p4"
     ],
     "integration": [
       "./vendor/bin/paratest ./tests/integration --stop-on-failure --colors --runner SqliteRunner -p4"
