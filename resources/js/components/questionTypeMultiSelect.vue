@@ -8,7 +8,7 @@
                         <input class="multi-select"
                                type="checkbox"
                                name="checkboxTypeAnswer"
-                               v-model="checkedAnswers[checkBoxOption]"
+                               v-model="checkedAnswers[index]"
                                @click="handleClick()">
                         {{checkBoxOption}}
                     </label>
@@ -23,7 +23,7 @@
 
     export default {
         name: "questionTypeMultiSelect",
-        props: ['question', 'questions', 'userId', 'surveyInstanceId', 'surveyAnswers'],
+        props: ['question', 'questions',  'surveyAnswers', 'onDoneFunc'],
         components: {},
 
         data() {
@@ -45,7 +45,15 @@
                 const lastQuestionOrder = this.checkBoxOptions[0].import_answers_from_question.question_order;
                 this.lastQuestionAnswers(lastQuestionOrder);
                 return lastQuestionOrder;
-            }
+            },
+
+            questionTypeAnswerId() {
+                if (this.hasAnswerType) {
+                    return this.question.type.question_type_answers[0].id;
+                } else {
+                    return 0;
+                }
+            },
 
 
         },
@@ -75,20 +83,7 @@
 
 
                 var answerData = JSON.stringify(answer);
-
-                axios.post('/save-answer', {
-                    user_id: this.userId,
-                    survey_instance_id: this.surveyInstanceId[0],
-                    question_id: this.question.id,
-                    question_type_answer_id: this.questionTypeAnswerId,
-                    value: answerData,
-                })
-                    .then(function (response) {
-                        console.log(response);
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
+                this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answerData);
             }
 
 

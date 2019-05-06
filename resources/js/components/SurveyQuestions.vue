@@ -37,24 +37,24 @@
                  v-if="questionsStage"
                  v-for="(question, index) in questions">
                 <div v-show="index >= questionIndex" class="question">
-                    <div class="questions-body" v-show="showSubQuestionNew(index)"><!--data-aos="fade-up"-->
+                    <div class="questions-body" v-show="true">
                         <div class="questions-title">
-                            {{question.pivot.order}}{{question.pivot.sub_order}}{{'.'}} {{question.body}}
+                            <div>
+                                {{question.pivot.order}}{{question.pivot.sub_order}}{{'.'}} {{question.body}}
+                            </div>
                         </div>
                         <br>
                         <!--Questions Answer Type-->
                         <div class="question-answer-type">
-                         <!--   <question-type-text
+                            <question-type-text
                                     :question="question"
-                                    :userId="userId"
-                                    :surveyInstanceId="surveyInstanceId"
+                                    :on-done-func="postAnswerAndGoToNext"
                                     v-if="question.type.type === 'text'">
-                            </question-type-text>-->
+                            </question-type-text>
 
                             <question-type-checkbox
                                     :question="question"
-                                    :userId="userId"
-                                    :surveyInstanceId="surveyInstanceId"
+                                    :on-done-func="postAnswerAndGoToNext"
                                     v-if="question.type.type === 'checkbox'">
                             </question-type-checkbox>
 
@@ -62,8 +62,7 @@
                                     :questions="questions"
                                     :question="question"
                                     :surveyAnswers="surveyAnswers"
-                                    :userId="userId"
-                                    :surveyInstanceId="surveyInstanceId"
+                                    :on-done-func="postAnswerAndGoToNext"
                                     v-if="question.type.type === 'multi_select'">
                             </question-type-muti-select>
 
@@ -73,15 +72,13 @@
 
                             <question-type-number
                                     :question="question"
-                                    :userId="userId"
-                                    :surveyInstanceId="surveyInstanceId"
+                                    :on-done-func="postAnswerAndGoToNext"
                                     v-if="question.type.type === 'number'">
                             </question-type-number>
 
                             <question-type-radio
                                     :question="question"
-                                    :userId="userId"
-                                    :surveyInstanceId="surveyInstanceId"
+                                    :on-done-func="postAnswerAndGoToNext"
                                     v-if="question.type.type === 'radio'">
                             </question-type-radio>
 
@@ -164,17 +161,11 @@
     import subQuestions from "./subQuestions";
     import mainQuestions from "./mainQuestions";
     import {EventBus} from '../event-bus';
-    import AOS from 'aos';
-    import 'aos/dist/aos.css';
     import BootstrapVue from 'bootstrap-vue'
     import 'bootstrap/dist/css/bootstrap.css'
     import 'bootstrap-vue/dist/bootstrap-vue.css'
     import questionTypeMultiSelect from "./questionTypeMultiSelect";
 
-
-    AOS.init({
-        duration: 1200,
-    });
 
     export default {
         props: ['surveydata'],
@@ -201,6 +192,7 @@
                 callAssistance: false,
                 questions: [],
                 subQuestions: [],
+                instanceQuestionOrder: -1,
                 shouldShowQuestion: false,
                 questionIndex: 0,
                 progressCount: 0,
@@ -208,12 +200,14 @@
                 surveyInstanceId: [],
                 questionIndexAnswers: [],
                 surveyAnswers: [],
+                conditionsLength: 0,
             }
         },
+
         computed: {
             subQuestionsConditions() {
-                return this.subQuestions.flatMap(function (subquestion) {
-                    return subquestion.conditions;
+                return this.subQuestions.flatMap(function (subQuestion) {
+                    return subQuestion.conditions;
                 });
             },
 
@@ -225,7 +219,6 @@
                 return this.questions.flatMap(function (q) {
                     return q.pivot.order + q.pivot.sub_order;
                 });
-
             },
 
             totalQuestions() {
@@ -263,22 +256,22 @@
 
             },
 
-            showSubQuestionNew(index) {
-                if (index != 11) {
+
+            showSubQuestionNew(index, questionOrder) {
+
+                if (index !== questionOrder) {
                     return true;
                 }
                 const q = this.questions[index];
+                if (q.conditions !== null) {
+                    const parentQuestionAnswer = this.questionIndexAnswers[q.conditions['0'].related_question_order_number];
+                    if (parentQuestionAnswer) {
+                        return parentQuestionAnswer === q.conditions['0'].related_question_expected_answer;
+                    }
 
-                //get conditions of question
-                //find related_question_order_number in conditions
-                //get value of [question == related_question_order_number]
-                //return value of [question == related_question_order_number] === conditions.related_question_expected_answer
-                const parentQuestionAnswer = this.questionIndexAnswers[q.conditions[0].related_question_order_number];
-                if (parentQuestionAnswer) {
-                    return parentQuestionAnswer === q.conditions[0].related_question_expected_answer;
+                    return false;
                 }
 
-                return false;
             },
 
             showSubQuestion(conditions) {
@@ -286,21 +279,46 @@
 
             },
 
-            handleRadioInputs(answerVal, questionOrder, questionId) {
+            /* handleRadioInputs(answerVal, questionOrder, questionId) {
+                 this.questionIndexAnswers[questionOrder] = answerVal;
+                 this.instanceQuestionOrder = questionOrder;
+                 const conditions = this.subQuestionsConditions.filter(function (q) {
+                     return q.related_question_order_number === questionOrder
+                         && q.related_question_expected_answer === answerVal
+                 });
 
-                this.questionIndexAnswers[questionOrder] = answerVal;
+
+                 if (conditions.length !== 0) {
+                     this.conditionsLength = conditions.length;
+                 }
+                 this.questionIndex++;
+                 this.updateProgressBar();
+             },*/
+
+            /*handleRadioInputs(answerVal, questionOrder, questionSubOrder, questionId) {
+
+                const questionIndex = this.questionIndexAnswers[questionOrder] = answerVal;
 
                 const conditions = this.subQuestionsConditions.filter(function (q) {
                     return q.related_question_order_number === questionOrder
                         && q.related_question_expected_answer === answerVal
                 });
 
-                /* if (conditions.length !== 0) {
-                       this.showSubQuestionNew(conditions);
-                   }*/
-                this.questionIndex++;
-                this.updateProgressBar();
-            },
+                if (conditions.length !== 0 && answerVal === 'Yes') {
+                    const relatedQuestionsOrder = conditions.map(q => q.related_question_order_number);
+                    const subQuestionsToShow = this.subQuestions.filter(q => q.conditions['0'].related_question_order_number === relatedQuestionsOrder[0]);
+
+                    var subQuest = [];
+                    subQuest.push(...subQuestionsToShow);
+                    this.subQuestionsToShow = subQuest;
+                    this.showSubQuestionNew();
+                } else {
+                    this.shouldShowQuestion = false;
+                    this.questionIndex++;
+                    this.updateProgressBar();
+                }
+
+            },*/
 
             handleNumberInputs() {
                 this.questionIndex++;
@@ -320,15 +338,33 @@
                 this.progressCount++;
             },
 
+            postAnswerAndGoToNext(questionId, questionTypeAnswerId, answer) {
+                axios.post('/save-answer', {
+                    user_id: this.userId,
+                    survey_instance_id: this.surveyInstanceId[0],
+                    question_id: questionId,
+                    question_type_answer_id: questionTypeAnswerId,
+                    value: answer,
+
+                })
+                    .then(function (response) {
+                        console.log(response);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            },
+
+
         },
         mounted() {
-            EventBus.$on('showSubQuestions', (answerVal, questionId) => {
-                this.handleRadioInputs(answerVal, questionId)
-            });
+            /* EventBus.$on('showSubQuestions', (answerVal, questionOrder, questionId, isSubQuestion) => {
+                 this.handleRadioInputs(answerVal, questionOrder, questionId, isSubQuestion)
+             });*/
 
-            EventBus.$on('handleNumberType', () => {
-                this.handleNumberInputs();
-            });
+            /* EventBus.$on('handleNumberType', () => {
+                 this.handleNumberInputs();
+             });*/
 
             EventBus.$on('handleTextType', () => {
                 this.handleTextInputs();

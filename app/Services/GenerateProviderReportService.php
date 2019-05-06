@@ -298,9 +298,9 @@ class GenerateProviderReportService
             return [];
         }
 
-        return is_json($answer->value_1)
-            ? json_decode($answer->value_1)
-            : $answer->value_1;
+        return is_json($answer->value)
+            ? json_decode($answer->value)
+            : $answer->value;
     }
 
 
@@ -315,9 +315,9 @@ class GenerateProviderReportService
         }
 
         return
-            is_json($answer->value_1)
-                ? json_decode($answer->value_1)
-                : $answer->value_1;
+            is_json($answer->value)
+                ? json_decode($answer->value)
+                : $answer->value;
 
     }
 }

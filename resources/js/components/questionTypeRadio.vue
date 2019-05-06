@@ -42,7 +42,7 @@
 
     export default {
         name: "questionTypeRadio",
-        props: ['question', 'userId', 'surveyInstanceId'],
+        props: ['question', 'onDoneFunc'],
         components: {},
 
         data() {
@@ -54,11 +54,13 @@
                 showDifferentInput: false,
                 inputHasText: [],
                 isYesOrNoQuestion: false,
+                isSubQuestion:false,
             }
         },
 
         computed: {
             questionHasConditions() {
+                this.isSubQuestion = true;
                 return this.question.conditions != null;
             },
 
@@ -102,23 +104,8 @@
                 };
 
                 var answerData = JSON.stringify(answer);
-
-                axios.post('/save-answer', {
-                    user_id: this.userId,
-                    survey_instance_id: this.surveyInstanceId[0],
-                    question_id: this.question.id,
-                    question_type_answer_id: questionTypeAnswerId[0],
-                    value: answerData,
-
-                })
-                    .then(function (response) {
-                        console.log(response);
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
-
-                EventBus.$emit('showSubQuestions', answerVal, this.questionOrder, this.question.id)
+               // EventBus.$emit('showSubQuestions', answerVal, this.questionOrder, this.question.id, this.isSubQuestion);
+                this.onDoneFunc(this.question.id, questionTypeAnswerId[0], answerData);
             },
 
         },

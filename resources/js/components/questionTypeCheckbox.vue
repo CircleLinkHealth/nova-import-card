@@ -49,7 +49,7 @@
 
     export default {
         name: "questionTypeCheckbox",
-        props: ['question', 'userId', 'surveyInstanceId'],
+        props: ['question','onDoneFunc'],
         components: {
             CheckboxCustomTypeStd,
             CheckboxCustomTypeEyeProblems,
@@ -130,22 +130,8 @@
                     }
 
                 }
-
                 var answerData = JSON.stringify(answer);
-
-                axios.post('/save-answer', {
-                    user_id: this.userId,
-                    survey_instance_id: this.surveyInstanceId[0],
-                    question_id: this.question.id,
-                    question_type_answer_id: this.questionTypeAnswerId,
-                    value: answerData,
-                })
-                    .then(function (response) {
-                        console.log(response);
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
+                this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answerData);
             },
 
 

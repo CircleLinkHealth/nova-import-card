@@ -80,7 +80,7 @@
 
     export default {
         name: "questionTypeText",
-        props: ['question', 'userId', 'surveyInstanceId', 'isActive'],
+        props: ['question', 'onDoneFunc'],
 
 
         data() {
@@ -228,27 +228,21 @@
                     }
 
                 } else {
-                    const keys = [];
                     var answer = [];
+                    var obj = {};
+                    //   var keys = this.subParts.map(q => q.key);
                     for (let j = 0; j < this.inputHasText.length; j++) {
-                        const q = this.subParts[j];
-                        keys.push(q.key);
-
-                        const result = this.inputHasText.reduce(function (result, value, index) {
-                            result[keys[index]] = value;
-                            return result;
-                        }, {});
-
-                        answer.push(result);
+                        var subParts = this.subParts[j];
+                        obj[subParts.key] = this.inputHasText[j];
+                        answer.push(obj);
                     }
 
-
                     console.log(answer);
-
                 }
-                var answerData = JSON.stringify(answer);
 
-                axios.post('/save-answer', {
+                var answerData = JSON.stringify(answer);
+                this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answerData);
+         /*       axios.post('/save-answer', {
                     user_id: this.userId,
                     survey_instance_id: this.surveyInstanceId[0],
                     question_id: this.question.id,
@@ -260,7 +254,7 @@
                     })
                     .catch(function (error) {
                         console.log(error);
-                    });
+                    });*/
             }
         },
 

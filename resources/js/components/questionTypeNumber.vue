@@ -36,12 +36,11 @@
 </template>
 
 <script>
-    import {EventBus} from "../event-bus";
     /* import {saveAnswer} from "../save-answer";*/
 
     export default {
         name: "questionTypeNumber",
-        props: ['question', 'userId', 'surveyInstanceId'],
+        props: ['question', 'onDoneFunc'],
 
         mounted() {
             console.log('Component mounted.')
@@ -119,20 +118,21 @@
                 }
                 var answerData = JSON.stringify(answer);
 
-                axios.post('/save-answer', {
-                    user_id: this.userId,
-                    survey_instance_id: this.surveyInstanceId[0],
-                    question_id: this.question.id,
-                    question_type_answer_id: this.questionTypeAnswerId,
-                    value: answerData,
-                })
-                    .then(function (response) {
-                        console.log(response);
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
-                EventBus.$emit('handleNumberType');
+                /* axios.post('/save-answer', {
+                     user_id: this.userId,
+                     survey_instance_id: this.surveyInstanceId[0],
+                     question_id: this.question.id,
+                     question_type_answer_id: this.questionTypeAnswerId,
+                     value: answerData,
+                 })
+                     .then(function (response) {
+                         console.log(response);
+                     })
+                     .catch(function (error) {
+                         console.log(error);
+                     });*/
+                /*EventBus.$emit('handleNumberType');*/
+                this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answerData);
             }
         },
         created() {
