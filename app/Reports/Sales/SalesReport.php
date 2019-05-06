@@ -6,7 +6,7 @@
 
 namespace App\Reports\Sales;
 
-use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
+use App\Services\PdfService;
 use Carbon\Carbon;
 
 abstract class SalesReport
@@ -46,9 +46,12 @@ abstract class SalesReport
         $name,
         $view
     ) {
+        $pdfservice = app(PdfService::class);
+
         $this->data();
-        $pdf = PDF::loadView($view, ['data' => $this->data]);
-        $pdf->save(storage_path("download/${name}.pdf"), true);
+        $filePath = storage_path("download/${name}.pdf");
+
+        $pdf = $pdfservice->createPdfFromView($view, ['data' => $this->data], $filePath);
 
         return $name.'.pdf';
     }

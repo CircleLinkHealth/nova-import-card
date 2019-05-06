@@ -274,6 +274,10 @@ class PracticeInvoiceController extends Controller
                 $date
             );
 
+            if (false === $report) {
+                return 'No data found. Please hit back and try again.';
+            }
+
             return $this->downloadMedia($report);
         }
     }

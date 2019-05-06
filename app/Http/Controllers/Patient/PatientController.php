@@ -222,7 +222,7 @@ class PatientController extends Controller
         $fileName         = $storageDirectory.$datetimePrefix.'-patient-list.pdf';
         $file             = $this->pdfService->createPdfFromView('wpUsers.patient.listing-pdf', [
             'patients' => $this->formatter->patients(),
-        ], [
+        ], null, [
             'orientation'  => 'Landscape',
             'margin-left'  => '3',
             'margin-right' => '3',

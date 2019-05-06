@@ -6,12 +6,12 @@
 
 namespace App\Reports;
 
-use CircleLinkHealth\TimeTracking\Entities\Activity;
 use App\Note;
+use App\Services\PdfService;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
-use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
-use Carbon\Carbon;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -90,15 +90,14 @@ class PatientDailyAuditReport
 
     public function renderPDF()
     {
+        $pdfService = app(PdfService::class);
+
         $name = $this->patient->user->last_name.'-'.Carbon::now()->timestamp;
+        $path = storage_path("download/${name}.pdf");
 
         $this->renderData();
 
-        $pdf = PDF::loadView('wpUsers.patient.audit', ['data' => $this->data]);
-
-        $path = storage_path("download/${name}.pdf");
-
-        $pdf->save($path, true);
+        $pdf = $pdfService->createPdfFromView('wpUsers.patient.audit', ['data' => $this->data], $path);
 
         $collName = 'audit_report_'.$this->data['month'];
 

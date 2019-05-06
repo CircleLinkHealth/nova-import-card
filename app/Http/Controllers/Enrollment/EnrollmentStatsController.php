@@ -9,6 +9,7 @@ namespace App\Http\Controllers\Enrollment;
 use App\CareAmbassador;
 use App\CareAmbassadorLog;
 use App\Enrollee;
+use App\Exports\FromArray;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -43,12 +44,9 @@ class EnrollmentStatsController extends Controller
         $date = Carbon::now()->toAtomString();
         $data = $this->getAmbassadorStats($request);
 
-        return Excel::create("Care Ambassador Enrollment Stats - ${date}", function ($excel) use ($data) {
-            $excel->sheet('Stats', function ($sheet) use ($data) {
-                $sheet->fromArray($data);
-            });
-        })
-            ->export();
+        $fileName = "Care Ambassador Enrollment Stats - ${date}.xls";
+
+        return (new FromArray($fileName, $data))->download($fileName);
     }
 
     /**
@@ -96,12 +94,9 @@ class EnrollmentStatsController extends Controller
         $date = Carbon::now()->toAtomString();
         $data = $this->getPracticeStats($request);
 
-        return Excel::create("Practice Enrollment Stats - ${date}", function ($excel) use ($data) {
-            $excel->sheet('Stats', function ($sheet) use ($data) {
-                $sheet->fromArray($data);
-            });
-        })
-            ->export();
+        $filename = "Practice Enrollment Stats - ${date}";
+
+        return (new FromArray($filename, $data))->download($filename);
     }
 
     /**
