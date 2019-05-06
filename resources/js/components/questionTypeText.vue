@@ -69,6 +69,7 @@
                     id="text"
                     type="submit"
                     @click="handleAnswer()">Next
+                <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
             </button>
         </div>
     </div>
@@ -77,10 +78,17 @@
 <script>
 
     import {EventBus} from "../event-bus";
+    import {mdbBtn} from 'mdbvue';
+    import {library} from '@fortawesome/fontawesome-svg-core';
+    import {faSpinner} from '@fortawesome/free-solid-svg-icons';
+    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
+
+    library.add(faSpinner);
 
     export default {
         name: "questionTypeText",
-        props: ['question', 'onDoneFunc'],
+        props: ['question', 'onDoneFunc', 'waiting'],
+        components: {mdbBtn, FontAwesomeIcon},
 
 
         data() {

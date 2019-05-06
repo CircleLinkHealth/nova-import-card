@@ -7,6 +7,9 @@
                         <input id="question"
                                :name="question.id"
                                :value="answer.value"
+                               :key="answer.id"
+                               :active="answer.value === selectedAnswer"
+                               :disabled="!isActive"
                                type="radio"
                                @change="handleAnswer(answer.value)">
                     </label>
@@ -19,16 +22,18 @@
                            name="textTypeAnswer"
                            v-model="inputHasText"
                            :placeholder="input.placeholder"
+                           :disabled="!isActive"
                            :type="input.type">
                 </div>
             </div>
 
             <!--next button-->
-            <div v-if="inputHasText >'1'">
+            <div v-show="isActive && inputHasText >'1'">
                 <button class="next-btn"
                         name="text"
                         id="text"
                         type="submit"
+                        :disabled="nextButtonDisabled"
                         @click="handleAnswer(inputHasText)">Next
                 </button>
             </div>
@@ -38,15 +43,15 @@
 
 <script>
 
-    import {EventBus} from "../event-bus";
-
     export default {
         name: "questionTypeRadio",
-        props: ['question', 'onDoneFunc'],
+        props: ['question', 'onDoneFunc', 'isActive' ,'getAllQuestionsFunc'],
         components: {},
 
         data() {
             return {
+                selectedAnswer: null,
+                nextButtonDisabled: false,
                 possibleAnswers: [],
                 questionOrder: this.question.pivot.order,
                 questionOptions: [],
@@ -54,7 +59,7 @@
                 showDifferentInput: false,
                 inputHasText: [],
                 isYesOrNoQuestion: false,
-                isSubQuestion:false,
+                isSubQuestion: false,
             }
         },
 
@@ -104,7 +109,7 @@
                 };
 
                 var answerData = JSON.stringify(answer);
-               // EventBus.$emit('showSubQuestions', answerVal, this.questionOrder, this.question.id, this.isSubQuestion);
+                // EventBus.$emit('showSubQuestions', answerVal, this.questionOrder, this.question.id, this.isSubQuestion);
                 this.onDoneFunc(this.question.id, questionTypeAnswerId[0], answerData);
             },
 
@@ -122,9 +127,7 @@
                 const inputTypeData = this.questionOptions.map(a => a.options);
                 this.differentInputTypesData.push(...inputTypeData);
             }
-
-
-        }
+        },
     }
 </script>
 

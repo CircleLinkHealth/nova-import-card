@@ -61,18 +61,22 @@
                         <div class="question-answer-type">
                             <question-type-text
                                     :question="question"
+                                    :is-active="currentQuestionIndex === index"
                                     :on-done-func="postAnswerAndGoToNext"
+                                    :waiting="waiting"
                                     v-if="question.type.type === 'text'">
                             </question-type-text>
 
                             <question-type-checkbox
                                     :question="question"
+                                    :is-active="currentQuestionIndex === index"
                                     :on-done-func="postAnswerAndGoToNext"
                                     v-if="question.type.type === 'checkbox'">
                             </question-type-checkbox>
 
                             <question-type-muti-select
                                     :questions="questions"
+                                    :is-active="currentQuestionIndex === index"
                                     :question="question"
                                     :surveyAnswers="surveyAnswers"
                                     :on-done-func="postAnswerAndGoToNext"
@@ -85,12 +89,15 @@
 
                             <question-type-number
                                     :question="question"
+                                    :is-active="currentQuestionIndex === index"
                                     :on-done-func="postAnswerAndGoToNext"
                                     v-if="question.type.type === 'number'">
                             </question-type-number>
 
                             <question-type-radio
                                     :question="question"
+                                    :is-active="currentQuestionIndex === index"
+                                    :get-all-questions-func="getAllQuestions"
                                     :on-done-func="postAnswerAndGoToNext"
                                     v-if="question.type.type === 'radio'">
                             </question-type-radio>
@@ -99,6 +106,9 @@
                                     v-if="question.type.type === 'date'">
                             </question-type-date>
                         </div>
+                    </div>
+                    <div class="error" v-if="error">
+                        <span v-html="error"></span>
                     </div>
                 </div>
                 <!-- add an empty div, so we can animate scroll up even if we are on last question -->
@@ -109,61 +119,75 @@
             <call-assistance v-if="callAssistance" @closeCallAssistanceModal="hideCallHelp"></call-assistance>
         </div>
         <!--bottom-navbar-->
-        <div class="bottom-navbar" :class="stage === 'complete' ? 'hidden' : ''">
-            <!--phone assistance-->
-            <div class="row">
-                <div v-if="showPhoneButton" class="call-assistance col-lg-1">
-                    <button type="button"
-                            class="btn btn-default"
-                            @click="showCallHelp">
-                        <i class="fa fa-phone" aria-hidden="true"></i>
-                    </button>
-                </div>
-                <div v-if="!showPhoneButton" class="call-assistance col-lg-1">
-                    <button type="button"
-                            class="btn btn-default"
-                            @click="hideCallHelp">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
 
-                <div v-if="questionsStage">
-                    <!--progress bar-->
-                    <div class="row mb-1" style="margin-left: 380px;">
-                        <div class="progressbar-label col-lg-6 col-sm-2">{{this.progressCount}} of {{totalQuestions}}
-                            completed
-                        </div>
-                        <div class="progressbar col-lg-6 col-sm-10 pt-1">
-                            <b-progress style="width: 280px; height:10px; margin-left: -40%; margin-top: 18%;"
-                                        :value="progressCount"></b-progress>
+        <!--&lt;!&ndash;phone assistance&ndash;&gt;
+        <div class="row">
+            <div v-if="showPhoneButton" class="call-assistance col-lg-1">
+                <button type="button"
+                        class="btn btn-default"
+                        @click="showCallHelp">
+                    <i class="fa fa-phone" aria-hidden="true"></i>
+                </button>
+            </div>
+            <div v-if="!showPhoneButton" class="call-assistance col-lg-1">
+                <button type="button"
+                        class="btn btn-default"
+                        @click="hideCallHelp">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+-->
+        <!--bottom-navbar-->
+        <div class="bottom-navbar container" :class="stage === 'complete' ? 'hidden' : ''">
+            <!-- justify-content-end -->
+            <div class="row">
+                <div class="col-5 offset-2 col-sm-7 offset-sm-0 col-md-8 offset-md-0 col-lg-6 offset-lg-3 no-padding">
+                    <div class="container">
+                        <div class="row progress-container">
+                            <div class="col-12 col-sm-12 col-md-6 text-center">
+                                <span class="progress-text">
+                                    {{progress}} of {{totalQuestions}} completed
+                                </span>
+                            </div>
+
+                            <div class="col-12 col-sm-12 col-md-6 text-center">
+                                <mdb-progress :value="progressPercentage"
+                                              :height="10"/>
+                            </div>
+
                         </div>
                     </div>
                 </div>
                 <!--scroll buttons-->
-                <div v-show="stage === 'survey'" class="row">
-                    <div class="scroll-buttons col-lg-2">
-                        <button type="button"
-                                id="scroll-down"
-                                class="btn btn-sm next"
-                                @click="scrollDown">
-                            <i class="fas fa-angle-down"></i>
-                        </button>
-                        <button v-if="" type="button"
-                                id="scroll-up"
-                                class="btn btn-sm next"
-                                @click="scrollUp">
-                            <i class="fas fa-angle-up"></i>
-                        </button>
+                <div class="col-5 col-sm-5 col-md-4 col-lg-3 no-padding">
+                    <div class="row scroll-buttons">
+                        <div class="col text-right">
+
+                            <mdb-btn
+                                    color="primary"
+                                    @click="scrollDown"
+                                    :disabled="!canScrollDown">
+                                <i class="fas fa-angle-down"></i>
+                            </mdb-btn>
+
+                            <mdb-btn
+                                    color="primary"
+                                    @click="scrollUp"
+                                    :disabled="!canScrollUp">
+                                <i class="fas fa-angle-up"></i>
+                            </mdb-btn>
+
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 </template>
 
 
 <script>
+    import {mdbBtn, mdbProgress} from 'mdbvue';
     import questionTypeText from "./questionTypeText";
     import questionTypeCheckbox from "./questionTypeCheckbox";
     import questionTypeRange from "./questionTypeRange";
@@ -172,12 +196,7 @@
     import questionTypeDate from "./questionTypeDate";
     import callAssistance from "./callAssistance";
     import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
-    import subQuestions from "./subQuestions";
-    import mainQuestions from "./mainQuestions";
     import {EventBus} from '../event-bus';
-    import BootstrapVue from 'bootstrap-vue'
-    import 'bootstrap/dist/css/bootstrap.css'
-    import 'bootstrap-vue/dist/bootstrap-vue.css'
     import questionTypeMultiSelect from "./questionTypeMultiSelect";
 
 
@@ -185,8 +204,8 @@
         props: ['surveydata'],
 
         components: {
-            'main-questions': mainQuestions,
-            'sub-questions': subQuestions,
+            'mdb-btn': mdbBtn,
+            'mdb-progress': mdbProgress,
             'question-type-text': questionTypeText,
             'question-type-checkbox': questionTypeCheckbox,
             'question-type-range': questionTypeRange,
@@ -194,7 +213,7 @@
             'question-type-radio': questionTypeRadio,
             'question-type-date': questionTypeDate,
             'call-assistance': callAssistance,
-            'bootstrap-vue': BootstrapVue,
+
             'question-type-muti-select': questionTypeMultiSelect
         },
 
@@ -220,6 +239,7 @@
                 currentQuestionIndex: 0,
                 error: null,
                 progress: 0,
+                waiting: false,
 
             }
         },
@@ -245,6 +265,18 @@
                 return this.questions.length - this.subQuestions.length;
             },
 
+            canScrollUp() {
+                return this.currentQuestionIndex > 0;
+            },
+            canScrollDown() {
+                return this.stage === "survey"
+                    && this.currentQuestionIndex < this.totalQuestions
+                    && this.latestQuestionAnsweredIndex >= this.currentQuestionIndex;
+            },
+            progressPercentage() {
+                return 100 * (this.progress) / this.totalQuestions;
+            }
+
         },
 
         methods: {
@@ -263,13 +295,13 @@
             },
 
             scrollUp() {
-               /* if (this.currentQuestionIndex === 0) {
+                if (this.currentQuestionIndex === 0) {
                     return;
                 }
 
-                this.error = null;*/
+                this.error = null;
                 this.currentQuestionIndex = this.currentQuestionIndex - 1;
-                this.goToNextQuestion();
+
             },
 
             scrollDown() {
@@ -301,6 +333,9 @@
                 return `${question.pivot.order}. ${question.body}`;
             },
 
+            getAllQuestions() {
+                return this.questions;
+            },
 
             showSubQuestionNew(index, questionOrder) {
 
@@ -316,11 +351,6 @@
 
                     return false;
                 }
-
-            },
-
-            showSubQuestion(conditions) {
-                this.shouldShowQuestion = true;
 
             },
 
@@ -365,25 +395,11 @@
 
             },*/
 
-            handleNumberInputs() {
-                this.questionIndex++;
-                this.updateProgressBar();
-            },
-
-            handleTextInputs() {
-                this.questionIndex++;
-                this.updateProgressBar();
-            },
-
-            addInput() {
-
-            },
-
-            updateProgressBar() {
-                this.progressCount++;
-            },
 
             postAnswerAndGoToNext(questionId, questionTypeAnswerId, answer) {
+                this.error = null;
+                this.waiting = true;
+
                 axios.post('/save-answer', {
                     user_id: this.userId,
                     survey_instance_id: this.surveyInstanceId[0],
@@ -393,13 +409,13 @@
 
                 })
                     .then((response) => {
-                       /* this.waiting = false;*/
+                        /* this.waiting = false;*/
                         //save the answer in state
                         const q = this.questions.find(x => x.id === questionId);
 
                         //increment progress only if question was not answered before
                         const incrementProgress = typeof q.answer === "undefined";
-                       /* q.answer = answer;*/
+                        /* q.answer = answer;*/
 
                         this.goToNextQuestion(incrementProgress)
                             .then(() => {
@@ -417,8 +433,19 @@
                             });
 
                     })
-                    .catch(function (error) {
+                    .catch((error) => {
                         console.log(error);
+                        this.waiting = false;
+
+                        if (error.response && error.response.data) {
+                            const errors = [error.response.data.message];
+                            Object.keys(error.response.data.errors || []).forEach(e => {
+                                errors.push(error.response.data.errors[e]);
+                            });
+                            this.error = errors.join('<br/>');
+                        } else {
+                            this.error = error.message;
+                        }
                     });
             },
 
@@ -477,9 +504,9 @@
                  this.handleNumberInputs();
              });*/
 
-            EventBus.$on('handleTextType', () => {
+           /* EventBus.$on('handleTextType', () => {
                 this.handleTextInputs();
-            });
+            });*/
 
             const surveyInstanceId = this.surveydata.survey_instances.map(q => q.id);
             this.surveyInstanceId.push(...surveyInstanceId);
@@ -671,10 +698,37 @@
         background-color: #50b2e2;
         margin-top: 15px;
     }
+    /**
+    When progress text and bar are in one line (col-sm screens)
+     */
+    @media (min-width: 519px) {
+        .progress-container {
+            margin-top: 26px;
+        }
 
-    .progressbar-label {
-        position: relative;
-        margin-left: -25%;
-        margin-top: 7%;
+        .progress-text {
+            font-size: 18px;
+            letter-spacing: 1px;
+        }
+    }
+
+    @media (min-width: 766px) {
+        .progress-container {
+            margin-top: 36px;
+        }
+    }
+
+    .active {
+        opacity: 1;
+        transition: opacity 0.5s linear;
+    }
+
+    .watermark {
+        opacity: 0.1;
+        transition: opacity 0.5s linear;
+    }
+
+    .error {
+        color: darkred;
     }
 </style>
