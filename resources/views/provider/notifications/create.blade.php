@@ -12,6 +12,18 @@
             .mg-bottom-minus-30 {
                 margin-bottom: -30px;
             }
+
+            .grid-row {
+                margin-bottom: 20px;
+            }
+
+            .grid-item {
+                margin-top: 10px;
+            }
+
+            .section-title {
+                font-size: larger;
+            }
         </style>
     @endpush
 
@@ -46,7 +58,7 @@
             </div>
 
             <div class="row">
-                <div class="input-field col s12"><h6>Twilio</h6></div>
+                <div class="input-field col s12 section-title"><span>Twilio</span></div>
 
                 <div class="input-field col s6">
 
@@ -83,112 +95,215 @@
                 </div>
             </div>
 
+            <div class="row"></div>
+
             <div class="row">
-                <div class="input-field col s12"><h6>Direct Mail Notifications</h6></div>
-
-                <div class="input-field col s6">
-                    <input name="settings[dm_pdf_careplan]" type="checkbox" id="dm_pdf_careplan"
-                           value="1" @if($practiceSettings->dm_pdf_careplan){{'checked'}}@endif>
-                    <label for="dm_pdf_careplan">Send PDF Care Plans</label>
+                <div class="input-field col s12 section-title"><span>Notifications</span></div>
+                <div class="input-field col s12 grid-row">
+                    <div class="col s4"></div>
+                    <div class="col s3"><span>Direct Mail</span></div>
+                    <div class="col s3"><span>Efax</span></div>
+                    <div class="col s2"><span>Email</span></div>
                 </div>
-
-                <div class="input-field col s6">
-                    <input name="settings[dm_pdf_notes]" type="checkbox"
-                           id="dm_pdf_notes"
-                           value="1" @if($practiceSettings->dm_pdf_notes){{'checked'}}@endif>
-                    <label for="dm_pdf_notes">Send PDF Notes</label>
+                <div class="col s12">
+                    <hr>
                 </div>
-
-                <div class="input-field col s6">
-                    <input name="settings[dm_audit_reports]" type="checkbox"
-                           id="dm_audit_reports"
-                           value="1" @if($practiceSettings->dm_audit_reports){{'checked'}}@endif>
-                    <label for="dm_audit_reports">Send Audit Reports</label>
+                <div class="input-field col s12 grid-row">
+                    <div class="col s4 grid-item"><span>Send PDF Care Plans</span></div>
+                    <div class="col s3">
+                        <div>
+                            <input name="settings[dm_pdf_careplan]" type="checkbox" id="dm_pdf_careplan"
+                                   value="1" @if($practiceSettings->dm_pdf_careplan){{'checked'}}@endif>
+                            <label for="dm_pdf_careplan"></label>
+                        </div>
+                    </div>
+                    <div class="col s3">
+                        <div>
+                            <input name="settings[efax_pdf_careplan]" type="checkbox" id="efax_pdf_careplan"
+                                   value="1" @if($practiceSettings->efax_pdf_careplan){{'checked'}}@endif>
+                            <label for="efax_pdf_careplan"></label>
+                        </div>
+                    </div>
+                    <div class="col s2"><div>
+                            <input type="checkbox"
+                                   disabled>
+                            <label></label>
+                        </div></div>
                 </div>
-
-                <div class="input-field col s6">
-                    <input name="settings[dm_careplan_approval_reminders]" type="checkbox"
-                           id="dm_careplan_approval_reminders"
-                           value="1" @if($practiceSettings->dm_careplan_approval_reminders){{'checked'}}@endif>
-                    <label for="dm_careplan_approval_reminders">Send Care Plan Approval Reminders</label>
+                <div class="col s12">
+                    <hr>
                 </div>
-
+                <div class="input-field col s12 grid-row">
+                    <div class="col s4 grid-item"><span>Send PDF Notes</span></div>
+                    <div class="col s3">
+                        <div>
+                            <input name="settings[dm_pdf_notes]" type="checkbox"
+                                   id="dm_pdf_notes"
+                                   value="1" @if($practiceSettings->dm_pdf_notes){{'checked'}}@endif>
+                            <label for="dm_pdf_notes"></label>
+                        </div>
+                    </div>
+                    <div class="col s3">
+                        <div>
+                            <input name="settings[efax_pdf_notes]" type="checkbox"
+                                   id="efax_pdf_notes"
+                                   value="1" @if($practiceSettings->efax_pdf_notes){{'checked'}}@endif>
+                            <label for="efax_pdf_notes"></label>
+                        </div>
+                    </div>
+                    <div class="col s2"><div>
+                            <input type="checkbox"
+                                   disabled>
+                            <label></label>
+                        </div></div>
+                </div>
+                <div class="col s12">
+                    <hr>
+                </div>
+                <div class="input-field col s12 grid-row">
+                    <div class="col s4 grid-item"><span>Send Audit Reports</span></div>
+                    <div class="col s3">
+                        <div>
+                            <input name="settings[dm_audit_reports]" type="checkbox"
+                                   id="dm_audit_reports"
+                                   value="1" @if($practiceSettings->dm_audit_reports){{'checked'}}@endif>
+                            <label for="dm_audit_reports"></label>
+                        </div>
+                    </div>
+                    <div class="col s3">
+                        <div>
+                            <input name="settings[efax_audit_reports]" type="checkbox"
+                                   id="efax_audit_reports"
+                                   value="1" @if($practiceSettings->efax_audit_reports){{'checked'}}@endif>
+                            <label for="efax_audit_reports"></label>
+                        </div>
+                    </div>
+                    <div class="col s2"><div>
+                            <input type="checkbox"
+                                   disabled>
+                            <label></label>
+                        </div></div>
+                </div>
+                <div class="col s12">
+                    <hr>
+                </div>
+                <div class="input-field col s12 grid-row">
+                    <div class="col s4 grid-item"><span>Care Plan Approval Reminders</span></div>
+                    <div class="col s3">
+                        <div>
+                            <input name="settings[dm_careplan_approval_reminders]" type="checkbox"
+                                   id="dm_careplan_approval_reminders"
+                                   value="1" @if($practiceSettings->dm_careplan_approval_reminders){{'checked'}}@endif>
+                            <label for="dm_careplan_approval_reminders"></label>
+                        </div>
+                    </div>
+                    <div class="col s3">
+                        <div>
+                            <input type="checkbox"
+                                   disabled>
+                            <label></label>
+                        </div>
+                    </div>
+                    <div class="col s2"><div>
+                            <input name="settings[email_careplan_approval_reminders]" type="checkbox"
+                                   id="email_careplan_approval_reminders"
+                                   value="1" @if($practiceSettings->email_careplan_approval_reminders){{'checked'}}@endif>
+                            <label for="email_careplan_approval_reminders"></label>
+                        </div></div>
+                </div>
+                <div class="col s12">
+                    <hr>
+                </div>
                 @if($practice->hasAWVServiceCode())
-                <div class="input-field col s6">
-                    <input name="settings[dm_awv_reports]" type="checkbox"
-                           id="dm_awv_reports"
-                           value="1" @if($practiceSettings->dm_awv_reports){{'checked'}}@endif>
-                    <label for="dm_awv_reports">Send AWV Reports</label>
+                <div class="input-field col s12 grid-row">
+                    <div class="col s4 grid-item"><span>Send AWV Reports</span></div>
+                    <div class="col s3">
+                        <div>
+                            <input name="settings[dm_awv_reports]" type="checkbox"
+                                   id="dm_awv_reports"
+                                   value="1" @if($practiceSettings->dm_awv_reports){{'checked'}}@endif>
+                            <label for="dm_awv_reports"></label>
+                        </div>
+                    </div>
+                    <div class="col s3">
+                        <div>
+                            <input name="settings[efax_awv_reports]" type="checkbox"
+                                   id="efax_awv_reports"
+                                   value="1" @if($practiceSettings->efax_awv_reports){{'checked'}}@endif>
+                            <label for="efax_awv_reports"></label>
+                        </div>
+                    </div>
+                    <div class="col s2">
+                        <div>
+                            <input name="settings[email_awv_reports]" type="checkbox"
+                                   id="email_awv_reports"
+                                   value="1" @if($practiceSettings->email_awv_reports){{'checked'}}@endif>
+                            <label for="email_awv_reports"></label>
+                        </div>
+                    </div>
                 </div>
-                @endif
-
+                    <div class="col s12">
+                        <hr>
+                    </div>
+                    @endif
+                <div class="input-field col s12 grid-row">
+                    <div class="col s4 grid-item"><span>Note Was Forwarded</span></div>
+                    <div class="col s3">
+                        <div>
+                            <input type="checkbox"
+                                   disabled>
+                            <label></label>
+                        </div>
+                    </div>
+                    <div class="col s3">
+                        <div>
+                            <input type="checkbox"
+                                   disabled>
+                            <label></label>
+                        </div>
+                    </div>
+                    <div class="col s2">
+                        <div>
+                            <input name="settings[email_note_was_forwarded]" type="checkbox" id="email_note_was_forwarded"
+                                   value="1" @if($practiceSettings->email_note_was_forwarded){{'checked'}}@endif>
+                            <label for="email_note_was_forwarded"></label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col s12">
+                    <hr>
+                </div>
+                <div class="input-field col s12 grid-row">
+                    <div class="col s4 grid-item"><span>MDs Receive Weekly Reports</span></div>
+                    <div class="col s3">
+                        <div>
+                            <input type="checkbox"
+                                   disabled>
+                            <label></label>
+                        </div>
+                    </div>
+                    <div class="col s3">
+                        <div>
+                            <input type="checkbox"
+                                   disabled>
+                            <label></label>
+                        </div>
+                    </div>
+                    <div class="col s2">
+                        <div>
+                            <input name="settings[email_weekly_report]" type="checkbox" id="email_weekly_report"
+                                   value="1" @if($practiceSettings->email_weekly_report){{'checked'}}@endif>
+                            <label for="email_weekly_report"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
             </div>
 
             <div class="row">
-                <div class="input-field col s12"><h6>Efax Notifications</h6></div>
-
-                <div class="input-field col s6">
-                    <input name="settings[efax_pdf_careplan]" type="checkbox" id="efax_pdf_careplan"
-                           value="1" @if($practiceSettings->efax_pdf_careplan){{'checked'}}@endif>
-                    <label for="efax_pdf_careplan">Send PDF Care Plans</label>
-                </div>
-
-                <div class="input-field col s6">
-                    <input name="settings[efax_pdf_notes]" type="checkbox"
-                           id="efax_pdf_notes"
-                           value="1" @if($practiceSettings->efax_pdf_notes){{'checked'}}@endif>
-                    <label for="efax_pdf_notes">Send PDF Notes</label>
-                </div>
-
-                <div class="input-field col s6">
-                    <input name="settings[efax_audit_reports]" type="checkbox"
-                           id="efax_audit_reports"
-                           value="1" @if($practiceSettings->efax_audit_reports){{'checked'}}@endif>
-                    <label for="efax_audit_reports">Send Audit Reports</label>
-                </div>
-
-                @if($practice->hasAWVServiceCode())
-                    <div class="input-field col s6">
-                        <input name="settings[efax_awv_reports]" type="checkbox"
-                               id="efax_awv_reports"
-                               value="1" @if($practiceSettings->efax_awv_reports){{'checked'}}@endif>
-                        <label for="efax_awv_reports">Send AWV Reports</label>
-                    </div>
-                @endif
-            </div>
-
-            <div class="row">
-                <div class="input-field col s12"><h6>Email Notifications</h6></div>
-
-                <div class="input-field col s6">
-                    <input name="settings[email_careplan_approval_reminders]" type="checkbox"
-                           id="email_careplan_approval_reminders"
-                           value="1" @if($practiceSettings->email_careplan_approval_reminders){{'checked'}}@endif>
-                    <label for="email_careplan_approval_reminders">CarePlan Approvals Reminders</label>
-                </div>
-
-                <div class="input-field col s6">
-                    <input name="settings[email_note_was_forwarded]" type="checkbox" id="email_note_was_forwarded"
-                           value="1" @if($practiceSettings->email_note_was_forwarded){{'checked'}}@endif>
-                    <label for="email_note_was_forwarded">Email Note Was Forwarded</label>
-                </div>
-
-                <div class="input-field col s6">
-                    <input name="settings[email_weekly_report]" type="checkbox" id="email_weekly_report"
-                           value="1" @if($practiceSettings->email_weekly_report){{'checked'}}@endif>
-                    <label for="email_weekly_report">MDs Receive Weekly Reports</label>
-                </div>
-
-                @if($practice->hasAWVServiceCode())
-                    <div class="input-field col s6">
-                        <input name="settings[email_awv_reports]" type="checkbox"
-                               id="email_awv_reports"
-                               value="1" @if($practiceSettings->email_awv_reports){{'checked'}}@endif>
-                        <label for="email_awv_reports">Send AWV Reports</label>
-                    </div>
-                @endif
-
-                <div class="input-field col s12" style="margin-top: 3rem;">
+                <div class="input-field col s12 section-title"><span>Email Recipient Settings</span></div>
+                <div class="input-field col s12" style="margin-top: 2rem;">
                     <textarea id="invoice-recipients" name="invoice_recipients"
                               class="materialize-textarea">{{$practice->invoice_recipients}}</textarea>
                     <label for="invoice-recipients">Invoice Recipients (comma separated, w/ spaces after comma)</label>
