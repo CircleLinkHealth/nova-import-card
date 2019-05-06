@@ -7,6 +7,7 @@
                     class="number-field"
                     name="numberTypeAnswer[]"
                     v-model="inputNumber"
+                    :disabled="!isActive"
                     :placeholder="this.questionPlaceHolder">
         </div>
         <br>
@@ -17,18 +18,21 @@
                        class="number-field"
                        name="numberTypeAnswer[]"
                        v-model="inputNumber[index]"
+                       :disabled="!isActive"
                        :placeholder="subPart.placeholder">
             </div>
 
         </div>
 
         <!--next button-->
-        <div v-if="hasTypedTwoNumbers">
+        <div v-show="isActive">
             <button class="next-btn"
                     name="number"
                     id="number"
                     type="submit"
+                    :disabled="!hasTypedTwoNumbers"
                     @click="handleAnswer()">Next
+                <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
             </button>
 
         </div>
@@ -36,11 +40,18 @@
 </template>
 
 <script>
-    /* import {saveAnswer} from "../save-answer";*/
+
+    import {mdbBtn} from "mdbvue";
+    import {library} from '@fortawesome/fontawesome-svg-core';
+    import {faSpinner} from '@fortawesome/free-solid-svg-icons';
+    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
+    library.add(faSpinner);
+
 
     export default {
         name: "questionTypeNumber",
-        props: ['question', 'onDoneFunc'],
+        props: ['question', 'onDoneFunc', 'isActive', 'waiting'],
+        components: {mdbBtn, FontAwesomeIcon},
 
         mounted() {
             console.log('Component mounted.')

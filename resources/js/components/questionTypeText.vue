@@ -39,6 +39,7 @@
                        name="textTypeAnswer[]"
                        v-model="inputHasText[index]"
                        :placeholder="subPart.placeholder"
+                       :disabled="!isActive"
                        @change="onInput">
             </div>
             <!--add input fields button-->
@@ -63,11 +64,12 @@
 
 
         <!--next button-->
-        <div v-if="hasTypedInTwoFields || hasTypedTwoCharacters">
+        <div v-show="isActive">
             <button class="next-btn"
                     name="text"
                     id="text"
                     type="submit"
+
                     @click="handleAnswer()">Next
                 <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
             </button>
@@ -87,7 +89,7 @@
 
     export default {
         name: "questionTypeText",
-        props: ['question', 'onDoneFunc', 'waiting'],
+        props: ['question', 'onDoneFunc', 'waiting', 'isActive'],
         components: {mdbBtn, FontAwesomeIcon},
 
 

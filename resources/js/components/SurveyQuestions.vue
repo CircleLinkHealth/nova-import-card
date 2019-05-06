@@ -90,6 +90,7 @@
                             <question-type-number
                                     :question="question"
                                     :is-active="currentQuestionIndex === index"
+                                    :waiting="waiting"
                                     :on-done-func="postAnswerAndGoToNext"
                                     v-if="question.type.type === 'number'">
                             </question-type-number>
@@ -98,6 +99,7 @@
                                     :question="question"
                                     :is-active="currentQuestionIndex === index"
                                     :get-all-questions-func="getAllQuestions"
+                                    :waiting="waiting"
                                     :on-done-func="postAnswerAndGoToNext"
                                     v-if="question.type.type === 'radio'">
                             </question-type-radio>
