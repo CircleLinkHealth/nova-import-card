@@ -2,8 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use Carbon\Carbon;
 use Closure;
 use Illuminate\Contracts\Auth\Factory as Auth;
+use Illuminate\Support\Facades\Hash;
 
 class Authenticate
 {
@@ -35,10 +37,21 @@ class Authenticate
      */
     public function handle($request, Closure $next, $guard = null)
     {
+        /*
         if ($this->auth->guard($guard)->guest()) {
+            return response('Unauthorized.', 401);
+        }
+        */
+
+        $token = $request->input('cpm-token', null);
+        if (empty($token) || !Hash::check($this->getTokenString(), $token)) {
             return response('Unauthorized.', 401);
         }
 
         return $next($request);
+    }
+
+    private function getTokenString() {
+        return config('app.key') . Carbon::today()->toDateString();
     }
 }

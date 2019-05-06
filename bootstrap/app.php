@@ -26,7 +26,6 @@ $app = new Laravel\Lumen\Application(
 $app->configure('app');
 $app->configure('services');
 $app->configure('cors');
-$app->configure('session');
 
 $app->withFacades();
 
@@ -90,9 +89,6 @@ $app->routeMiddleware([
 */
 
 // $app->register(App\Providers\AppServiceProvider::class);
-$app->register(Illuminate\Redis\RedisServiceProvider::class);
-$app->register(\Illuminate\Session\SessionServiceProvider::class);
-//$app->register(App\Providers\AuthServiceProvider::class);
 $app->register(Barryvdh\Cors\ServiceProvider::class);
 $app->register(App\Providers\TwilioClientServiceProvider::class);
 $app->register(Propaganistas\LaravelPhone\PhoneServiceProvider::class);
