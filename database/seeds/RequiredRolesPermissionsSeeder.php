@@ -987,6 +987,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'offlineActivityRequest.create',
                     'offlineActivityRequest.read',
                     'has-schedule',
+                    'change-patient-enrollment-status',
                 ],
             ],
             [
