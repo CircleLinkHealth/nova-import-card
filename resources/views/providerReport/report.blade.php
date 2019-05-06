@@ -9,10 +9,10 @@
         <div>
             Patient Name: <span style="color: #50b2e2">{{$patient->display_name}}</span> <br>
             Date of Birth: <strong>{{$patient->patientInfo->birth_date}} </strong><br>
-            Age: TO FIX WHEN USER MODEL IS FIXED <br>
-            Address: TO FIX WHEN USER MODEL IS FIXED <br>
-            City, State, Zip: TO FIX WHEN USER MODEL IS FIXED <br>
-            Provider: TO FIX WHEN USER MODEL IS FIXED
+            Age: <strong>{{$patient->getAge()}}</strong> <br>
+            Address: <strong>{{$patient->address}}</strong> <br>
+            City, State, Zip: <strong>{{$patient->city}}, {{$patient->state}}, {{$patient->zip}}</strong> <br>
+            Provider: <strong>{{$patient->getBillingProviderName()}}</strong>
             <hr>
         </div>
         <div>
@@ -138,8 +138,8 @@
                 The patient's screening history is as follows:
                 <br>
                 @if(! empty($reportData['screenings']))
-                    @foreach($reportData['screenings'] as $screening)
-                        {{$screening}}
+                    @foreach($reportData['screenings'] as $title => $text)
+                        <strong>{{$title}}</strong>{{$text}}<br>
                     @endforeach
                 @else
                     N/A

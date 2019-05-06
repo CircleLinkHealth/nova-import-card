@@ -2,49 +2,22 @@
 
 namespace App;
 
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Lab404\Impersonate\Models\Impersonate;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Collection;
 
-class User extends Authenticatable
+/**
+ * Class User
+ * @package App
+ *
+ * @property-read SurveyInstance[]|Collection surveyInstances
+ * @property-read Survey[]|Collection surveys
+ * @property-read Answer[]|Collection answers
+ * @property-read ProviderReport[]|Collection providerReports
+ * @property-read InvitationLink url
+ * @property-read PersonalizedPreventionPlan personalizedPreventionPlan
+ *
+ */
+class User extends \CircleLinkHealth\Customer\Entities\User
 {
-    use Notifiable;
-    use Impersonate;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'first_name',
-        'last_name',
-        'display_name',
-        'email',
-        'password',
-    ];
-
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
-
-    public function patientInfo()
-    {
-        return $this->hasOne(Patient::class, 'id');
-    }
-
-    public function phoneNumber()
-    {
-        return $this->hasOne(PhoneNumber::class);
-    }
-
     public function url()
     {
         return $this->hasOne(InvitationLink::class);
@@ -76,29 +49,37 @@ class User extends Authenticatable
         return $this->hasMany(Answer::class, 'user_id');
     }
 
-    public function providerReports(){
+    public function providerReports()
+    {
         return $this->hasMany(ProviderReport::class, 'patient_id');
     }
-
 
     public function getSurveys()
     {
         return $this->surveys->unique('id');
     }
 
-    public function getHRAInstances(){
-        return $this->surveyInstances()->whereHas('survey', function ($survey){
+    public function getHRAInstances()
+    {
+        return $this->surveyInstances()->whereHas('survey', function ($survey) {
             $survey->HRA();
         })->get();
     }
 
-    public function getVitalsInstances(){
-        return $this->surveyInstances()->whereHas('survey', function ($survey){
+    public function getVitalsInstances()
+    {
+        return $this->surveyInstances()->whereHas('survey', function ($survey) {
             $survey->vitals();
         })->get();
     }
 
-    public function getSurveyInstancesBySurveyId($surveyId){
+    public function getSurveyInstancesBySurveyId($surveyId)
+    {
         return $this->surveyInstances()->where('users_surveys.survey_id', $surveyId)->get();
+    }
+
+    public function personalizedPreventionPlan()
+    {
+        return $this->hasOne(PersonalizedPreventionPlan::class, 'user_id');
     }
 }
