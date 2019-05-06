@@ -18,8 +18,17 @@ window.Vue = require('vue');
  * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
  */
 
-const files = require.context('./', true, /\.vue$/i);
-files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
+// const files = require.context('./', true, /\.vue$/i);
+// files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
+
+import VitalsSurvey from './components/VitalsSurvey';
+import VitalsSurveyNotAuthorized from './components/VitalsSurveyNotAuthorized';
+import VitalsSurveyWelcome from './components/VitalsSurveyWelcome';
+
+Vue.component('vitals-survey', VitalsSurvey);
+Vue.component('vitals-survey-not-authorized', VitalsSurveyNotAuthorized);
+Vue.component('vitals-survey-welcome', VitalsSurveyWelcome);
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -28,6 +37,14 @@ files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(
 import $ from 'jquery';
 window.$ = $;
 
+import $ from 'jquery';
+window.$ = $;
+
+import 'lodash';
+import 'popper.js';
+
 export const app = new Vue({
-    el: '#app'
+    el: '#app',
+    created() {
+    }
 });

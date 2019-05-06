@@ -14,17 +14,18 @@ class StoreVitalsAnswer extends FormRequest
      */
     public function authorize()
     {
-        if ( ! Auth::check()) {
-            return false;
-        }
-
-        $practiceId = $this->get('practice_id', null);
-
-        if (empty($practiceId)) {
-            return false;
-        }
-
-        return Auth::user()->hasPermissionForSite('vitals-survey-complete', $practiceId);
+        return true;
+//        if ( ! Auth::check()) {
+//            return false;
+//        }
+//
+//        $practiceId = $this->get('practice_id', null);
+//
+//        if (empty($practiceId)) {
+//            return false;
+//        }
+//
+//        return Auth::user()->hasPermissionForSite('vitals-survey-complete', $practiceId);
     }
 
     /**
