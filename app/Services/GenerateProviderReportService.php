@@ -5,6 +5,7 @@ namespace App\Services;
 
 
 use App\Survey;
+use App\User;
 use Carbon\Carbon;
 
 class GenerateProviderReportService
@@ -26,7 +27,7 @@ class GenerateProviderReportService
     protected $vitalsQuestions;
 
 
-    public function __construct($patient, $date)
+    public function __construct(User $patient, $date)
     {
         //patient contains survey data and existing provider reports
         $this->patient = $patient;

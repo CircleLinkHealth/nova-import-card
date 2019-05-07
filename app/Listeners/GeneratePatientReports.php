@@ -3,12 +3,12 @@
 namespace App\Listeners;
 
 use App\Events\SurveyInstancePivotSaved;
-use App\Jobs\GenerateProviderReport as GenerateReport;
-use App\Jobs\PersonalizedPreventionPlan as GeneratePppReport;
+use App\Jobs\GeneratePatientReports as GenerateReports;
 use App\SurveyInstance;
 use App\User;
+use Carbon\Carbon;
 
-class GenerateProviderReport
+class GeneratePatientReports
 {
     /**
      * Create the event listener.
@@ -47,8 +47,7 @@ class GenerateProviderReport
 
 
             if ($otherInstance) {
-                GenerateReport::dispatch($patient->id, $instance->start_date)->onQueue('high');
-                GeneratePppReport::dispatch($patient->id)->onQueue('high');
+                GenerateReports::dispatch($patient->id, $instance->start_date)->onQueue('high');
             }
         }
     }

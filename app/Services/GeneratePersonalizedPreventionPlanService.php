@@ -31,11 +31,11 @@ class GeneratePersonalizedPreventionPlanService
         $this->hraQuestions    = $this->hraInstance->questions;
         $this->vitalsQuestions = $this->vitalsInstance->questions;
 
-        //@todo::remove this when done dev
-        $this->generateData($patient);
+//        //@todo::remove this when done dev
+//        $this->generateData($patient);
     }
 
-    public function generateData($patient)
+    public function generateData()
     {
         $birthDate = new Carbon('2019-01-01');
 
@@ -43,15 +43,15 @@ class GeneratePersonalizedPreventionPlanService
             ->personalizedPreventionPlan()
             ->updateOrCreate(
                 [
-                    'user_id' => $patient->id,
+                    'user_id' => $this->patient->id,
                 ],
                 [
-                    'display_name'     => $patient->display_name,
+                    'display_name'     => $this->patient->display_name,
                     'birth_date'       => /*$patient->patientInfo->birth_date*/
                         $birthDate,
-                    'address'          => $patient->address,
-                    'city'             => $patient->city,
-                    'state'            => $patient->state,
+                    'address'          => $this->patient->address,
+                    'city'             => $this->patient->city,
+                    'state'            => $this->patient->state,
                     'hra_answers'      => $this->hraAnswers,
                     'vitals_answers'   => $this->vitalsAnswers,
                     'billing_provider' => /*$patient->billingProvider->member_user_id*/

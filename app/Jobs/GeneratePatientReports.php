@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Services\GenerateProviderReportService;
+use App\Services\GeneratePersonalizedPreventionPlanService;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -11,16 +12,11 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class GenerateProviderReport implements ShouldQueue
+class GeneratePatientReports implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /**
-     * Patient to attempt to create provider report for.
-     *
-     * @var array
-     */
-    protected $patient;
+    protected $patientId;
 
     /**
      * Date to specify for which survey instances to generate Provider Report for.
@@ -29,8 +25,6 @@ class GenerateProviderReport implements ShouldQueue
      */
     protected $date;
 
-
-    protected $service;
 
 
     /**
@@ -41,8 +35,19 @@ class GenerateProviderReport implements ShouldQueue
     public function __construct($patientId, $date)
     {
         $this->date = Carbon::parse($date);
+        $this->patientId = $patientId;
 
-        $this->patient = User::with([
+    }
+
+    /**
+     * Execute the job.
+     *
+     * @return void
+     */
+    public function handle()
+    {
+
+        $patient = User::with([
             'surveyInstances' => function ($instance) {
                 $instance->with(['survey', 'questions.type.questionTypeAnswers'])
                          ->forDate($this->date);
@@ -60,21 +65,40 @@ class GenerateProviderReport implements ShouldQueue
                            $instance->forDate($this->date);
                        });
             },
+            'patientAWVSummaries' => function ($summary) {
+                $summary->where('month_year', Carbon::now()->startOfMonth());
+            }
         ])
-                             ->findOrFail($patientId);
+                             ->findOrFail($this->patientId);
 
-        $this->service = new GenerateProviderReportService($this->patient, $this->date);
-    }
+        $providerReport = (new GenerateProviderReportService($patient, $this->date))->generateData();
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
-    public function handle()
-    {
-        $report = $this->service->generateData();
+        $pppReport = (new GeneratePersonalizedPreventionPlanService($patient))->generateData();
+
+
+        //create Pdfs
+        //upload docs to S3
+//        $patient->addMedia($providerReport)
+//                ->withCustomProperties(['doc_type' => 'Provider Report'])
+//                ->toMediaCollection('patient-care-documents');
+//
+//        $patient->addMedia($pppReport)
+//                ->withCustomProperties(['doc_type' => 'PPP'])
+//                ->toMediaCollection('patient-care-documents');
 
         //slack/notify something/someone
+        $billingProvider = $patient->billingProviderUser();
+        if ($billingProvider){
+            $billingProvider->notify();
+        }
+
+        $summary = $patient->patientAWVSummaries->first();
+
+        if ($summary){
+            $summary->update([
+                'is_billable' => true,
+                'completed_at' => Carbon::now()
+            ]);
+        }
     }
 }

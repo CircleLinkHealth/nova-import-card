@@ -19,7 +19,7 @@ class EventServiceProvider extends ServiceProvider
             SendEmailVerificationNotification::class,
         ],
         'App\Events\SurveyInstancePivotSaved' => [
-          'App\Listeners\GenerateProviderReport' ,
+            'App\Listeners\GeneratePatientReports',
         ],
     ];
 
