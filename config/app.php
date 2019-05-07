@@ -284,13 +284,11 @@ return [
         'Inspiring' => Illuminate\Foundation\Inspiring::class,
 
         'DataTables'     => Yajra\DataTables\Facades\DataTables::class,
-        'Excel'          => \Maatwebsite\Excel\Facades\Excel::class,
         'Form'           => \Collective\Html\FormFacade::class,
         'Html'           => \Collective\Html\HtmlFacade::class,
         'Image'          => \Barryvdh\Snappy\Facades\SnappyImage::class,
         'JWTAuth'        => \Tymon\JWTAuth\Facades\JWTAuth::class,
         'JWTFactory'     => \Tymon\JWTAuth\Facades\JWTFactory::class,
-        'PDF'            => \Barryvdh\Snappy\Facades\SnappyPdf::class,
         'PdfMerger'      => LynX39\LaraPdfMerger\Facades\PdfMerger::class,
         'Slack'          => jeremykenedy\Slack\Laravel\Facade::class,
         'GoogleCalendar' => Spatie\GoogleCalendar\GoogleCalendarFacade::class,

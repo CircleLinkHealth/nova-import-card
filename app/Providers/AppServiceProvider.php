@@ -115,7 +115,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             HtmlToPdfService::class,
             function () {
-                return $this->app->make(SnappyPdfWrapper::class);
+                return $this->app->make(SnappyPdfWrapper::class)
+                    ->setTemporaryFolder(storage_path('tmp'));
             }
         );
 

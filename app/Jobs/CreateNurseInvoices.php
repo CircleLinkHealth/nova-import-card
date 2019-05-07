@@ -123,6 +123,7 @@ class CreateNurseInvoices implements ShouldQueue
         $pdfPath = $pdfService->createPdfFromView(
             'billing.nurse.invoice-v2',
             $viewModel->toArray(),
+            storage_path("download/${name}.pdf"),
             [
                 'margin-top'       => '8',
                 'margin-left'      => '8',
@@ -131,8 +132,7 @@ class CreateNurseInvoices implements ShouldQueue
                 'footer-right'     => 'Page [page] of [toPage]',
                 'footer-left'      => 'report generated on '.Carbon::now()->format('m-d-Y').' at '.Carbon::now()->format('H:iA'),
                 'footer-font-size' => '6',
-            ],
-            storage_path("download/${name}.pdf")
+            ]
         );
 
         if ( ! $this->requestedBy) {

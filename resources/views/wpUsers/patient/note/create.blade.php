@@ -333,9 +333,8 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="form-block col-md-12">
-                            <div class="row">
+                            <div class="row col-md-12">
 
                                 <div class="new-note-item">
                                     <!-- Enter Note -->
@@ -382,6 +381,8 @@
                                 </div>
                             </div>
                         </div>
+
+                    </div>
                     </div>
                 </div>
             </div>

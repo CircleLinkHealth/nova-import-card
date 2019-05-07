@@ -30,7 +30,7 @@ $user = auth()->user();
         <a class="navbar-brand" href="{{ url('/') }}" style="border: none"><img
                     src="{{mix('/img/ui/clh_logo_lt.png')}}"
                     alt="Care Plan Manager"
-                    style="position:relative;top:-15px"
+                    style="position:relative;top:-7px"
                     width="50px"/></a>
 
         <button type="button" class="navbar-toggle collapsed" style="border-color:white" data-toggle="collapse"
