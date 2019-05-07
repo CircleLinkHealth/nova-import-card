@@ -98,9 +98,12 @@
                             <question-type-radio
                                     :question="question"
                                     :is-active="currentQuestionIndex === index"
+                                    :is-subquestion="isSubQuestion(question)"
+                                    :style-horizontal="false"
                                     :get-all-questions-func="getAllQuestions"
-                                    :waiting="waiting"
                                     :on-done-func="postAnswerAndGoToNext"
+                                    :is-last-question="isLastQuestion(question)"
+                                    :waiting="waiting"
                                     v-if="question.type.type === 'radio'">
                             </question-type-radio>
 
@@ -324,6 +327,9 @@
                 return question.pivot.sub_order !== null;
             },
 
+            isLastQuestion(question) {
+                return this.questions[this.questions.length - 1].id === question.id;
+            },
             shouldShowQuestionGroupTitle(question) {
                 return question.pivot.sub_order != null && (question.pivot.sub_order === "a" || question.pivot.sub_order === "1");
             },
