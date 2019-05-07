@@ -43,6 +43,10 @@ class CCDViewerController extends Controller
             ->with('media')
             ->find($ccdaId);
 
+        if ( ! $ccda) {
+            abort(400, 'CCDA was not found.');
+        }
+
         $type = $request->input('type');
 
         if ('xml' == $type) {
