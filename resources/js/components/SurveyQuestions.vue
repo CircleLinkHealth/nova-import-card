@@ -333,9 +333,10 @@
                 this.currentQuestionIndex = this.currentQuestionIndex + 1;
             },
             scrollToLastQuestion() {
-                this.stage = "survey";
+                this.stage = true;
+                this.welcomeStage = false;
                 //@todo:check this again - i dont like it
-                this.currentQuestionIndex = this.lastQuestionAnswered - 1;
+                this.questionIndex = this.lastQuestionAnswered - 1;
             },
             isSubQuestion(question) {
                 return question.pivot.sub_order !== null;
@@ -713,6 +714,7 @@
         height: 20px;
         color: #ffffff;
     }
+
     .by-circlelink {
         font-family: Poppins;
         font-size: 18px;
@@ -722,7 +724,7 @@
         line-height: normal;
         letter-spacing: 1px;
         margin-top: 10px;
-        margin-left: 430px;
+        margin-left: 38%;
         color: #50b2e2;
     }
 
