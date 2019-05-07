@@ -10,7 +10,7 @@ use App\CareAmbassadorLog;
 use App\CLH\Helpers\StringManipulation;
 use App\EnrolleeCustomFilter;
 use App\Traits\HasChargeableServices;
-use App\Traits\HasSettings;
+use CircleLinkHealth\Customer\Traits\HasSettings;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
