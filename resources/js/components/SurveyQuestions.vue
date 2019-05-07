@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container main-container">
         <!--Survey welcome note-->
         <div class="survey-container" :class="stage === 'complete' ? 'max' : ''">
             <template v-if="stage === 'welcome'">
@@ -24,13 +24,25 @@
                         will also reach out shortly. Thanks!
                     </div>
 
-                    <div v-if="this.lastQuestionAnswered !== null">
+
+                    <div class="btn-start-container">
+                        <mdb-btn v-show="lastQuestionAnswered === null"
+                                 color="primary" class="btn-start" @click="showQuestions">
+                            <span>Start</span>
+                        </mdb-btn>
+
+                        <mdb-btn v-if="lastQuestionAnswered !== null"
+                                 color="primary" class="btn-start" @click="scrollToLastQuestion">
+                            <span>Continue</span>
+                        </mdb-btn>
+                    </div>
+                    <!--<div v-if="this.lastQuestionAnswered !== null">
                         <a class="btn btn-primary" @click="showQuestions">Start</a>
                     </div>
 
                     <div v-if="this.lastQuestionAnswered !== null">
                         <a class="btn btn-primary" @click="scrollToLastQuestion">Continue</a>
-                    </div>
+                    </div>-->
 
                     <div class="by-circlelink">
                         ⚡️ by CircleLink Health
@@ -39,18 +51,13 @@
             </template>
             <!--Questions-->
             <template v-if="stage === 'survey'">
-                <div class="questions-box"
+                <div class="questions-box question"
                      :id="question.id"
                      :class="currentQuestionIndex !== index ? 'watermark' : 'active'"
                      v-show="index >= currentQuestionIndex"
                      v-for="(question, index) in questions">
                     <div class="questions-body">
 
-                        <!--<div v-if="isSubQuestion(question) && shouldShowQuestionGroupTitle(question)"
-                             class="questions-title">
-                            {{getSubQuestionTitle(question)}}
-                        </div>-->
-                        <br>
                         <div class="questions-title">
                             {{getQuestionTitle(question)}}
                         </div>
@@ -70,16 +77,22 @@
                             <question-type-checkbox
                                     :question="question"
                                     :is-active="currentQuestionIndex === index"
+                                    :is-subquestion="isSubQuestion(question)"
+                                    :get-all-questions-func="getAllQuestions"
                                     :on-done-func="postAnswerAndGoToNext"
+                                    :is-last-question="isLastQuestion(question)"
+                                    :waiting="waiting"
                                     v-if="question.type.type === 'checkbox'">
                             </question-type-checkbox>
 
                             <question-type-muti-select
-                                    :questions="questions"
-                                    :is-active="currentQuestionIndex === index"
                                     :question="question"
-                                    :surveyAnswers="surveyAnswers"
+                                    :is-active="currentQuestionIndex === index"
+                                    :is-subquestion="isSubQuestion(question)"
+                                    :get-all-questions-func="getAllQuestions"
                                     :on-done-func="postAnswerAndGoToNext"
+                                    :is-last-question="isLastQuestion(question)"
+                                    :waiting="waiting"
                                     v-if="question.type.type === 'multi_select'">
                             </question-type-muti-select>
 
@@ -90,8 +103,11 @@
                             <question-type-number
                                     :question="question"
                                     :is-active="currentQuestionIndex === index"
-                                    :waiting="waiting"
+                                    :is-subquestion="isSubQuestion(question)"
+                                    :get-all-questions-func="getAllQuestions"
                                     :on-done-func="postAnswerAndGoToNext"
+                                    :is-last-question="isLastQuestion(question)"
+                                    :waiting="waiting"
                                     v-if="question.type.type === 'number'">
                             </question-type-number>
 
@@ -201,7 +217,6 @@
     import questionTypeDate from "./questionTypeDate";
     import callAssistance from "./callAssistance";
     import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
-    import {EventBus} from '../event-bus';
     import questionTypeMultiSelect from "./questionTypeMultiSelect";
 
 
@@ -318,10 +333,9 @@
                 this.currentQuestionIndex = this.currentQuestionIndex + 1;
             },
             scrollToLastQuestion() {
-                this.questionsStage = true;
-                this.welcomeStage = false;
+                this.stage = "survey";
                 //@todo:check this again - i dont like it
-                this.questionIndex = this.lastQuestionAnswered - 1;
+                this.currentQuestionIndex = this.lastQuestionAnswered - 1;
             },
             isSubQuestion(question) {
                 return question.pivot.sub_order !== null;
@@ -512,9 +526,9 @@
                  this.handleNumberInputs();
              });*/
 
-           /* EventBus.$on('handleTextType', () => {
-                this.handleTextInputs();
-            });*/
+            /* EventBus.$on('handleTextType', () => {
+                 this.handleTextInputs();
+             });*/
 
             const surveyInstanceId = this.surveydata.survey_instances.map(q => q.id);
             this.surveyInstanceId.push(...surveyInstanceId);
@@ -536,176 +550,99 @@
     }
 </script>
 
-<style scoped>
-    .questions-box {
-        padding-top: 5%;
-        padding-left: 9%;
+<style lang="scss" scoped>
+    $primary-color: #50b2e2;
+
+    .survey-container {
+        border-bottom: none;
+        width: 100%;
+        height: calc(100% - 56px);
     }
 
-    .practice-title {
-        font-family: Poppins;
-        font-size: 18px;
-        letter-spacing: 1.5px;
-        text-align: center;
-        margin-top: 20px;
-        color: #50b2e2;
-    }
-
-    .practice-title .text-style-1 {
-        font-weight: 600;
-    }
-
-    .survey-main-title {
-        font-family: Poppins;
-        font-size: 24px;
-        font-weight: 600;
-        letter-spacing: 1.5px;
-        text-align: center;
-        margin-top: 30px;
-        color: #1a1a1a;
-    }
-
-    .survey-sub-welcome-text {
-        font-family: Poppins;
-        font-size: 18px;
-        font-weight: normal;
-        font-style: normal;
-        font-stretch: normal;
-        line-height: normal;
-        letter-spacing: 1px;
-        text-align: center;
-        margin-top: 25px;
-        margin-left: 13%;
-        width: 75%;
-        color: #1a1a1a;
-    }
-
-    .questions-title {
-        width: 83%;
+    .survey-container.max {
         height: 100%;
-        font-family: Poppins;
-        font-size: 114%;
-        font-weight: 500;
-        font-style: normal;
-        font-stretch: normal;
-        line-height: normal;
-        letter-spacing: 1.3px;
-        color: #1a1a1a;
-
+        border: 1px solid #808080;
     }
 
-    .question-answer-type {
-        width: 83%;
-        height: 100%;
-        font-family: Poppins;
-        font-size: initial;
-        font-weight: 500;
-        font-style: normal;
-        font-stretch: normal;
-        line-height: normal;
-        letter-spacing: 1.3px;
-        color: #1a1a1a;
+    @media (min-width: 519px) {
+        .survey-container {
+            height: calc(100% - 100px);
+        }
     }
 
-    .btn-primary {
-        border-radius: 3px;
-        background-color: #50b2e2;
-        margin-top: 50px;
-        margin-left: 469px;
-        width: 160px;
-        height: 50px;
-        padding-top: 12px;
-    }
+    /*.survey-container::-webkit-scrollbar {*/
+    /*width: 0 !important*/
+    /*}*/
 
     .bottom-navbar {
         background-color: #ffffff;
         border-bottom: 1px solid #808080;
         border-left: 1px solid #808080;
         border-right: 1px solid #808080;
-        min-height: 90px;
-        height: 90px;
-        margin-top: auto;
+        height: 56px;
     }
 
-    .by-circlelink {
-        font-family: Poppins;
-        font-size: 18px;
-        font-weight: 600;
+    @media (min-width: 519px) {
+        .bottom-navbar {
+            height: 100px;
+        }
+    }
+
+    .scroll-buttons .btn {
+        padding: 0;
+        margin-top: 13px;
+        width: 30px;
+        height: 30px;
+    }
+
+    .scroll-buttons .btn:first-child {
+        margin-right: 10px;
+    }
+
+    .scroll-buttons .btn:last-child {
+        margin-right: 20px;
+    }
+
+    .scroll-buttons .fas {
+        font-size: 15px;
+    }
+
+    @media (min-width: 519px) {
+        .scroll-buttons .btn {
+            margin-top: 20px;
+            width: 60px;
+            height: 60px;
+        }
+
+        .scroll-buttons .btn:last-child {
+            margin-right: 30px;
+        }
+
+        .scroll-buttons .fas {
+            font-size: 30px;
+        }
+    }
+
+    /**
+    When two rows, we have less margin-top (in the col- screens)
+     */
+    .progress-container {
+        margin-top: 8px;
+    }
+
+    .progress-text {
+        font-family: Poppins, serif;
+        font-size: 10px;
+        font-weight: 500;
         font-style: normal;
         font-stretch: normal;
         line-height: normal;
-        letter-spacing: 1px;
-        margin-top: 10px;
-        margin-left: 430px;
-        color: #50b2e2;
-    }
-
-    .by-circlelink .text-style-1 {
-        font-weight: normal;
+        letter-spacing: 0.56px;
+        text-align: right;
         color: #1a1a1a;
+        white-space: nowrap;
     }
 
-    .survey-container {
-        margin-top: 50px;
-        background-color: #f2f6f9;
-        border-top: 1px solid #808080;
-        border-left: 1px solid #808080;
-        border-right: 1px solid #808080;
-        width: 100%;
-        min-height: 100%;
-        max-height: 600px;
-        overflow-y: scroll;
-    }
-
-    .survey-container::-webkit-scrollbar {
-        width: 0 !important
-    }
-
-    .scroll-buttons {
-        display: flex;
-        margin-left: 16%;
-        margin-top: 6%;
-    }
-
-    #scroll-up, #scroll-down {
-        background-color: #50b2e2;
-        width: 51px;
-        height: 51px;
-        border-radius: 5px;
-        margin-right: 15px;
-        float: right;
-    }
-
-    .welcome-icon {
-        width: 108px;
-        margin-left: 490px;
-        margin-top: 20px;
-    }
-
-    .fa-phone {
-        transform: scaleX(-1);
-        color: #ffffff;
-    }
-
-    .fa-times {
-        width: 20px;
-        height: 20px;
-        color: #ffffff;
-    }
-
-    .call-assistance {
-        padding-left: 3%;
-        position: absolute;
-    }
-
-    .btn-default {
-        height: 50px;
-        width: 50px;
-        border-radius: 50%;
-        border: solid 1px #4aa5d2;
-        background-color: #50b2e2;
-        margin-top: 15px;
-    }
     /**
     When progress text and bar are in one line (col-sm screens)
      */
@@ -739,4 +676,60 @@
     .error {
         color: darkred;
     }
+
+    .survey-sub-welcome-text {
+        font-family: Poppins;
+        font-size: 18px;
+        font-weight: normal;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: normal;
+        letter-spacing: 1px;
+        text-align: center;
+        margin-top: 25px;
+        margin-left: 13%;
+        width: 75%;
+        color: #1a1a1a;
+    }
+
+    .call-assistance {
+        padding-left: 3%;
+        position: absolute;
+    }
+
+    .welcome-icon {
+        width: 108px;
+        margin-left: 490px;
+        margin-top: 20px;
+    }
+
+    .fa-phone {
+        transform: scaleX(-1);
+        color: #ffffff;
+    }
+
+    .fa-times {
+        width: 20px;
+        height: 20px;
+        color: #ffffff;
+    }
+    .by-circlelink {
+        font-family: Poppins;
+        font-size: 18px;
+        font-weight: 600;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: normal;
+        letter-spacing: 1px;
+        margin-top: 10px;
+        margin-left: 430px;
+        color: #50b2e2;
+    }
+
+    .by-circlelink .text-style-1 {
+        font-weight: normal;
+        color: #1a1a1a;
+    }
+
+
 </style>

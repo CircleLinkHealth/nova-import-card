@@ -16,26 +16,36 @@
             <div v-for="(subPart, index) in questionSubParts" :key="index">
                 <input type="number"
                        class="number-field"
+                       :class="subPartsStyle"
                        name="numberTypeAnswer[]"
                        v-model="inputNumber[index]"
                        :disabled="!isActive"
                        :placeholder="subPart.placeholder">
+                <span
+                        v-if="questionSubPartsSeparator === 'dash' && index !== questionSubParts.length - 1">
+                    &nbsp;/&nbsp;
+                </span>
+
+                <span
+                        v-if="questionSubPartsSeparator === '' && index !== questionSubParts.length - 1">
+                    &nbsp;
+                </span>
             </div>
 
         </div>
 
         <!--next button-->
-        <div v-show="isActive">
-            <button class="next-btn"
-                    name="number"
-                    id="number"
-                    type="submit"
-                    :disabled="!hasTypedTwoNumbers"
-                    @click="handleAnswer()">Next
-                <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
-            </button>
-
-        </div>
+        <br>
+        <mdbBtn v-show="isActive"
+                color="primary"
+                class="next-btn"
+                name="number"
+                id="number"
+                :disabled="!hasTypedTwoNumbers"
+                @click="handleAnswer()">
+            {{isLastQuestion ? 'Complete' : 'Next'}}
+            <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
+        </mdbBtn>
     </div>
 </template>
 
@@ -50,7 +60,7 @@
 
     export default {
         name: "questionTypeNumber",
-        props: ['question', 'onDoneFunc', 'isActive', 'waiting'],
+        props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting'],
         components: {mdbBtn, FontAwesomeIcon},
 
         mounted() {
@@ -66,6 +76,10 @@
             }
         },
         computed: {
+            subPartsStyle() {
+                return 'parts-' + this.questionSubParts.length;
+            },
+
             hasTypedTwoNumbers() {
                 return this.inputNumber.length > 1 ? this.showNextButton = true : this.showNextButton = false;
             },
@@ -110,10 +124,18 @@
                 return '';
             },
 
+            questionSubPartsSeparator() {
+                return this.questionOptions[0].separate_sub_parts_with || '';
+            },
+
         },
 
         methods: {
             handleAnswer() {
+                if (!this.hasTypedTwoNumbers) {
+                    return;
+                }
+
                 const inputVal = this.inputNumber;
                 const keys = this.keys;
                 if (keys.length !== 0) {
@@ -129,19 +151,6 @@
                 }
                 var answerData = JSON.stringify(answer);
 
-                /* axios.post('/save-answer', {
-                     user_id: this.userId,
-                     survey_instance_id: this.surveyInstanceId[0],
-                     question_id: this.question.id,
-                     question_type_answer_id: this.questionTypeAnswerId,
-                     value: answerData,
-                 })
-                     .then(function (response) {
-                         console.log(response);
-                     })
-                     .catch(function (error) {
-                         console.log(error);
-                     });*/
                 /*EventBus.$emit('handleNumberType');*/
                 this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answerData);
             }
@@ -150,8 +159,12 @@
             const questionOptions = this.question.type.question_type_answers.map(q => q.options);
             this.questionOptions.push(...questionOptions);
 
-            if (this.questionSubParts !== '') {
-                const keys = this.questionOptions[0].sub_parts.map(q => q.key);
+            if (this.question.answer) {
+                this.inputNumber = this.question.answer.value.value;
+            }
+
+            if (this.questionSubParts.length > 1) {
+                const keys = (this.questionOptions[0].sub_parts || this.questionOptions[0]["sub-parts"]).map(q => q.key);
                 this.keys.push(...keys);
             }
         },
@@ -159,14 +172,15 @@
 </script>
 
 <style scoped>
-    .next-btn {
-        width: 120px;
-        height: 40px;
-        border-radius: 5px;
-        border: solid 1px #4aa5d2;
+    .btn-primary {
         background-color: #50b2e2;
+        border-color: #4aa5d2;
     }
-
+    .btn-primary.disabled {
+        opacity: 50%;
+        background-color: #50b2e2;
+        border-color: #4aa5d2;
+    }
     .number-field {
         border: none;
         border-bottom: solid 1px rgba(0, 0, 0, 0.1);
@@ -174,5 +188,8 @@
         outline: 0;
         width: 300px;
         height: 30px;
+    }
+    .number-field.parts-2 {
+        width: 120px;
     }
 </style>

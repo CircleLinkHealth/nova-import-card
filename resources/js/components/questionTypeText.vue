@@ -64,15 +64,17 @@
 
 
         <!--next button-->
-        <div v-show="isActive">
-            <button class="next-btn"
-                    name="text"
-                    id="text"
-                    type="submit"
-
-                    @click="handleAnswer()">Next
+        <div :class="isLastQuestion ? 'text-center' : 'text-left'">
+            <mdbBtn v-show="isActive"
+                    color="primary"
+                    class="next-btn"
+                    name="number"
+                    id="number"
+                    :disabled="!hasTypedInTwoFields"
+                    @click="handleAnswer()">
+                {{isLastQuestion ? 'Complete' : 'Next'}}
                 <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
-            </button>
+            </mdbBtn>
         </div>
     </div>
 </template>
@@ -89,7 +91,7 @@
 
     export default {
         name: "questionTypeText",
-        props: ['question', 'onDoneFunc', 'waiting', 'isActive'],
+        props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting'],
         components: {mdbBtn, FontAwesomeIcon},
 
 
@@ -197,7 +199,7 @@
 
         methods: {
             onInput() {
-                EventBus.$emit('handleTextType');
+                //EventBus.$emit('handleTextType');
             },
             addInputField(placeholder) {
                 this.placeholderForSingleQuestion.push(placeholder);
@@ -323,5 +325,15 @@
         line-height: normal;
         letter-spacing: 1.3px;
         color: #1a1a1a;
+    }
+
+    .btn-primary {
+        background-color: #50b2e2;
+        border-color: #4aa5d2;
+    }
+    .btn-primary.disabled {
+        opacity: 50%;
+        background-color: #50b2e2;
+        border-color: #4aa5d2;
     }
 </style>

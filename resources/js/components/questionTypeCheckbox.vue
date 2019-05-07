@@ -28,14 +28,14 @@
                     v-if="stdCustomInput">
             </checkbox-custom-type-std>
             <!--next button-->
-            <div v-if="showNextButton">
-                <button class="next-btn"
-                        name="text"
-                        id="text"
-                        type="submit"
-                        @click="handleAnswers">Next
-                </button>
-            </div>
+            <mdbBtn v-show="isActive"
+                    color="primary"
+                    class="next-btn"
+                    :disabled="checkedAnswers.length === 0"
+                    @click="handleAnswers">
+                {{isLastQuestion ? 'Complete' : 'Next'}}
+                <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
+            </mdbBtn>
         </div>
     </div>
 </template>
@@ -46,14 +46,21 @@
     import {EventBus} from "../event-bus";
     import CheckboxCustomTypeEyeProblems from "./checkboxCustomTypeEyeProblems";
     import CheckboxCustomTypeStd from "./checkboxCustomTypeStd";
+    import {mdbBtn} from "mdbvue";
+    import {library} from '@fortawesome/fontawesome-svg-core';
+    import {faSpinner} from '@fortawesome/free-solid-svg-icons';
+    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 
+    library.add(faSpinner);
     export default {
         name: "questionTypeCheckbox",
-        props: ['question','onDoneFunc'],
+        props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting'],
         components: {
             CheckboxCustomTypeStd,
             CheckboxCustomTypeEyeProblems,
-            'checkbox-custom-type-cancer': CheckboxCustomTypeCancer
+            CheckboxCustomTypeCancer,
+            mdbBtn,
+            FontAwesomeIcon
         },
 
         data() {
@@ -190,6 +197,14 @@
         padding-top: 2%;
         padding-left: 7%;
     }
-
+    .btn-primary {
+        background-color: #50b2e2;
+        border-color: #4aa5d2;
+    }
+    .btn-primary.disabled {
+        opacity: 50%;
+        background-color: #50b2e2;
+        border-color: #4aa5d2;
+    }
 
 </style>
