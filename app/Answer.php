@@ -16,7 +16,11 @@ class Answer extends BaseModel
         'survey_instance_id',
         'question_id',
         'question_type_answer_id',
-        'value'
+        'value',
+    ];
+
+    protected $casts = [
+        'value' => 'array',
     ];
 
     public function user()

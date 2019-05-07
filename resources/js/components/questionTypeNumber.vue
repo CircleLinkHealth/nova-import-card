@@ -149,10 +149,9 @@
                         value: inputVal
                     };
                 }
-                var answerData = JSON.stringify(answer);
 
                 /*EventBus.$emit('handleNumberType');*/
-                this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answerData);
+                this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer);
             }
         },
         created() {

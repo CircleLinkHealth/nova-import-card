@@ -26,29 +26,28 @@
 
 
                     <div class="btn-start-container">
-                        <mdb-btn v-show="lastQuestionAnswered === null"
+                        <mdb-btn v-show="true"
                                  color="primary" class="btn-start" @click="showQuestions">
                             <span>Start</span>
                         </mdb-btn>
+                        <!-- @todo: this is not working exactly as expected so im keepin one element true and i ll get back-->
+                        <!-- <mdb-btn v-show="lastQuestionAnswered === null"
+                                  color="primary" class="btn-start" @click="showQuestions">
+                             <span>Start</span>
+                         </mdb-btn>
 
-                        <mdb-btn v-if="lastQuestionAnswered !== null"
-                                 color="primary" class="btn-start" @click="scrollToLastQuestion">
-                            <span>Continue</span>
-                        </mdb-btn>
+                         <mdb-btn v-if="lastQuestionAnswered !== null"
+                                  color="primary" class="btn-start" @click="scrollToLastQuestion">
+                             <span>Continue</span>
+                         </mdb-btn>-->
                     </div>
-                    <!--<div v-if="this.lastQuestionAnswered !== null">
-                        <a class="btn btn-primary" @click="showQuestions">Start</a>
-                    </div>
-
-                    <div v-if="this.lastQuestionAnswered !== null">
-                        <a class="btn btn-primary" @click="scrollToLastQuestion">Continue</a>
-                    </div>-->
-
                     <div class="by-circlelink">
                         ⚡️ by CircleLink Health
                     </div>
                 </div>
             </template>
+
+
             <!--Questions-->
             <template v-if="stage === 'survey'">
                 <div class="questions-box question"
@@ -420,6 +419,7 @@
 
 
             postAnswerAndGoToNext(questionId, questionTypeAnswerId, answer) {
+
                 this.error = null;
                 this.waiting = true;
 
@@ -432,7 +432,8 @@
 
                 })
                     .then((response) => {
-                        /* this.waiting = false;*/
+                        console.log(answer);
+                        this.waiting = false;
                         //save the answer in state
                         const q = this.questions.find(x => x.id === questionId);
 

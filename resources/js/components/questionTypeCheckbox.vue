@@ -5,33 +5,22 @@
                 <label>
                     <input class="checkbox checkbox-info checkbox-circle"
                            type="checkbox"
-                           name="checkboxTypeAnswer"
-                           :value="checkBox.value"
-                           v-model="checkedAnswers"
-                           @click="handleClick(checkBox.value)"> <span style="padding-left:1%">{{checkBox.value}}</span>
+                           v-model="checkBox.checked"> <span style="padding-left:1%">{{checkBox.value}}</span>
                 </label>
 
+                <div v-if="hasCustomInput(checkBox) && checkBox.checked">
+                    <input class="text-field"
+                           type="text"
+                           v-model="checkBox.customInput">
+                    <!--:placeholder="inputData.placeholder"-->
+                </div>
             </div>
 
-            <checkbox-custom-type-cancer
-                    :cancerInputData="cancerInputData"
-                    v-if="cancerCustomInput">
-            </checkbox-custom-type-cancer>
-
-            <checkbox-custom-type-eye-problems
-                    :eyeProblemsInputData="eyeProblemsInputData"
-                    v-if="eyeProblemsCustomInput">
-            </checkbox-custom-type-eye-problems>
-
-            <checkbox-custom-type-std
-                    :stdProblemsInputData="stdProblemsInputData"
-                    v-if="stdCustomInput">
-            </checkbox-custom-type-std>
             <!--next button-->
             <mdbBtn v-show="isActive"
                     color="primary"
                     class="next-btn"
-                    :disabled="checkedAnswers.length === 0"
+                    :disabled="!checkBoxChecked"
                     @click="handleAnswers">
                 {{isLastQuestion ? 'Complete' : 'Next'}}
                 <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
@@ -65,7 +54,7 @@
 
         data() {
             return {
-                checkBoxValues: this.question.type.question_type_answers,
+                checkBoxValues: [],
                 showNextButton: false,
                 checkedAnswers: [],
                 questionOptions: [],
@@ -87,11 +76,15 @@
             },
 
             questionTypeAnswerId() {
-                if (this.hasAnswerType) {
+                if (this.checkBoxValues.length > 0 && this.hasAnswerType) {
                     return this.checkBoxValues[0].id;
                 } else {
                     return 0;
                 }
+            },
+
+            checkBoxChecked() {
+                return this.checkBoxValues.filter(q => q.checked === true).length > 0;
             },
 
             /* checkCustomInputs() {
@@ -107,38 +100,51 @@
                  return check;
              },*/
 
-            cancerCustomInput() {
-                return this.checkedAnswers.includes('Cancer');
-            },
-            stdCustomInput() {
-                return this.checkedAnswers.includes('Sexually Transmitted Disease/Infection');
-            },
-            eyeProblemsCustomInput() {
-                return this.checkedAnswers.includes('Eye Problems');
-            },
 
         },
 
         methods: {
+
+            hasCustomInput(checkBox) {
+                return checkBox.options && !!checkBox.options.allow_custom_input;
+            },
+
             handleClick(answerValue) {
                 this.showNextButton = true;
 
             },
 
             handleAnswers() {//@todo: also save text answers types
-                const answer = [];
-                for (let j = 0; j < this.checkedAnswers.length; j++) {
-                    const val = this.checkedAnswers[j];
-                    const q = this.checkBoxValues.find(x => x.value === val);
-                    if (!this.questionOptions) {
-                        answer.push({[q.options.key]: val});
-                    } else {
-                        answer.push({name: val})
-                    }
+                /*        const answer = [];
+                        for (let j = 0; j < this.checkedAnswers.length; j++) {
+                            const val = this.checkedAnswers[j];
+                            const q = this.checkBoxValues.find(x => x.value === val);
+                            if (!this.questionOptions) {
+                                answer.push({[q.options.key]: val});
+                            } else {
+                                answer.push({name: val})
+                            }
 
-                }
-                var answerData = JSON.stringify(answer);
-                this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answerData);
+                        }
+                        var answerData = JSON.stringify(answer);*/
+
+                const checkedCheckBoxes = this.checkBoxValues.filter(q => q.checked === true);
+                const answer = [];
+                checkedCheckBoxes.forEach(checkBox => {
+                    const obj = {};
+                    if (checkBox.customInput !== null) {
+                        const obj = {
+                            [checkBox.options.key]: checkBox.value,
+                            type: checkBox.customInput
+                        };
+
+                        answer.push(obj);
+                    } else {
+                        obj[checkBox.options.key] = checkBox.value;
+                        answer.push(obj);
+                    }
+                });
+                this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer);
             },
 
 
@@ -159,6 +165,11 @@
         },
 
         created() {
+
+            this.checkBoxValues = this.question.type.question_type_answers.map(x => {
+                return Object.assign({}, x, {checked: false, customInput: ''});
+            });
+
             const x = this.checkBoxValues.filter(checkBoxValue => checkBoxValue.options !== null)
                 .filter(checkBox => checkBox.options.hasOwnProperty('allow_custom_input'));
             this.questionsWithCustomInput.push(...x);
@@ -197,10 +208,12 @@
         padding-top: 2%;
         padding-left: 7%;
     }
+
     .btn-primary {
         background-color: #50b2e2;
         border-color: #4aa5d2;
     }
+
     .btn-primary.disabled {
         opacity: 50%;
         background-color: #50b2e2;

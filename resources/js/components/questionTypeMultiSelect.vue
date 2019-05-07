@@ -80,10 +80,7 @@
                     const q = this.multiSelectOptions.find(x => x.value === val);
                     answer.push({[q.options.key]: val});
                 }
-
-
-                var answerData = JSON.stringify(answer);
-                this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answerData);
+                this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer);
             }
 
 
