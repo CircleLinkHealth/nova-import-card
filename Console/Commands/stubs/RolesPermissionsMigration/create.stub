@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use CircleLinkHealth\Customer\Database\Seeders;
 
 class DummyClass extends Migration
 {
@@ -15,7 +16,7 @@ class DummyClass extends Migration
     {
         if (!app()->environment(['testing'])) {
             Artisan::call('db:seed', [
-                '--class' => 'RequiredRolesPermissionsSeeder',
+                '--class' => RequiredRolesPermissionsSeeder::class,
             ]);
         }
     }
