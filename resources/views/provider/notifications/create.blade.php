@@ -130,11 +130,8 @@
                             <label></label>
                         </div></div>
                 </div>
-                <div class="col s12">
-                    <hr>
-                </div>
                 <div class="input-field col s12 grid-row">
-                    <div class="col s4 grid-item"><span>Send PDF Notes</span></div>
+                    <div class="col s4 grid-item"><span>Note forwarded Alerts</span></div>
                     <div class="col s3">
                         <div>
                             <input name="settings[dm_pdf_notes]" type="checkbox"
@@ -152,13 +149,10 @@
                         </div>
                     </div>
                     <div class="col s2"><div>
-                            <input type="checkbox"
-                                   disabled>
-                            <label></label>
+                            <input name="settings[email_note_was_forwarded]" type="checkbox" id="email_note_was_forwarded"
+                                   value="1" @if($practiceSettings->email_note_was_forwarded){{'checked'}}@endif>
+                            <label for="email_note_was_forwarded"></label>
                         </div></div>
-                </div>
-                <div class="col s12">
-                    <hr>
                 </div>
                 <div class="input-field col s12 grid-row">
                     <div class="col s4 grid-item"><span>Send Audit Reports</span></div>
@@ -184,9 +178,6 @@
                             <label></label>
                         </div></div>
                 </div>
-                <div class="col s12">
-                    <hr>
-                </div>
                 <div class="input-field col s12 grid-row">
                     <div class="col s4 grid-item"><span>Care Plan Approval Reminders</span></div>
                     <div class="col s3">
@@ -210,9 +201,6 @@
                                    value="1" @if($practiceSettings->email_careplan_approval_reminders){{'checked'}}@endif>
                             <label for="email_careplan_approval_reminders"></label>
                         </div></div>
-                </div>
-                <div class="col s12">
-                    <hr>
                 </div>
                 @if($practice->hasAWVServiceCode())
                 <div class="input-field col s12 grid-row">
@@ -242,37 +230,7 @@
                         </div>
                     </div>
                 </div>
-                    <div class="col s12">
-                        <hr>
-                    </div>
                     @endif
-                <div class="input-field col s12 grid-row">
-                    <div class="col s4 grid-item"><span>Note Was Forwarded</span></div>
-                    <div class="col s3">
-                        <div>
-                            <input type="checkbox"
-                                   disabled>
-                            <label></label>
-                        </div>
-                    </div>
-                    <div class="col s3">
-                        <div>
-                            <input type="checkbox"
-                                   disabled>
-                            <label></label>
-                        </div>
-                    </div>
-                    <div class="col s2">
-                        <div>
-                            <input name="settings[email_note_was_forwarded]" type="checkbox" id="email_note_was_forwarded"
-                                   value="1" @if($practiceSettings->email_note_was_forwarded){{'checked'}}@endif>
-                            <label for="email_note_was_forwarded"></label>
-                        </div>
-                    </div>
-                </div>
-                <div class="col s12">
-                    <hr>
-                </div>
                 <div class="input-field col s12 grid-row">
                     <div class="col s4 grid-item"><span>MDs Receive Weekly Reports</span></div>
                     <div class="col s3">
