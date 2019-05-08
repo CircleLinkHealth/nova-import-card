@@ -24,7 +24,7 @@ class UpdateRolesAndPermissions1555418953 extends Migration
     {
         if ( ! app()->environment(['testing'])) {
             Artisan::call('db:seed', [
-                '--class' => 'RequiredRolesPermissionsSeeder',
+                '--class' => 'CircleLinkHealth\Customer\Database\Seeders\RequiredRolesPermissionsSeeder',
             ]);
         }
     }

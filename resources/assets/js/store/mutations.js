@@ -112,6 +112,10 @@ export const REMOVE_NOTIFICATION = (state, notification) => {
     state.notifications.splice(state.notifications.indexOf(notification), 1)
 }
 
+export const CLEAR_NOTIFICATIONS = (state) => {
+    state.notifications = [];
+}
+
 /**
  * Clear Practice Locations
  *
