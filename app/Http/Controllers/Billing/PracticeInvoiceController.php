@@ -330,7 +330,7 @@ class PracticeInvoiceController extends Controller
             $patientReportUrl = $data['patient_report_url'];
             $invoiceURL       = $data['invoice_url'];
 
-            if ('' != $practice->invoice_recipients) {
+            if ( ! empty($practice->invoice_recipients)) {
                 $recipients = $practice->getInvoiceRecipientsArray();
                 $recipients = array_merge($recipients, $practice->getInvoiceRecipients()->pluck('email')->all());
             } else {
