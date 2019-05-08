@@ -20,8 +20,8 @@
             <template slot="program" slot-scope="props">
                 <div>{{ props.row.program_name }}</div>
             </template>
-            <template>
-                <div slot="filter__program">
+            <template slot="filter__program">
+                <div>
                 </div>
             </template>
             <template slot="ccmStatus" slot-scope="props">
