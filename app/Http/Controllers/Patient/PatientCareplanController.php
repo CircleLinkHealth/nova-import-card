@@ -180,6 +180,10 @@ class PatientCareplanController extends Controller
         foreach ($users as $user_id) {
             $user = User::with(['careTeamMembers', 'carePlan.pdfs'])->find($user_id);
 
+            if ( ! $user) {
+                return response()->json("User with id: {$user->id} not found.");
+            }
+
             if ( ! $user->billingProviderUser()) {
                 return response()->json("User with id: {$user->id}, does not have a billing provider");
             }
