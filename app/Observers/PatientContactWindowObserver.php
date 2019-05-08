@@ -8,6 +8,7 @@ namespace App\Observers;
 
 use App\Call;
 use App\CallView;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 
 /**
@@ -59,29 +60,55 @@ class PatientContactWindowObserver
 
         $patientId = $window->patient_info->user_id;
 
-        $callIds = CallView::where('nurse_id', '=', $auth->id)
-            ->where('patient_id', '=', $patientId)
+        $calls = CallView::where('patient_id', '=', $patientId)
             ->where('status', '=', 'scheduled')
-            /*
-             * if only on calls / call backs
-                           ->where(function ($q) {
-                               $q->whereNull('type')
-                                 ->orWhere('type', '=', 'call')
-                                 ->orWhere('sub_type', '=', 'Call Back');
-                           })
-            */
-            ->pluck('id');
+            ->whereIn('scheduler', ['core algorithm', 'rescheduler algorithm'])
+            ->get();
 
-        if (empty($callIds)) {
+        if ($calls->isEmpty()) {
             return;
         }
 
-        // todo: do we handle changes in contact days?
+        $contactDays = $window->patient_info->contactWindows->pluck('day_of_week')->toArray();
 
-        Call::whereIn('id', $callIds)
-            ->update([
-                'window_start' => $window->window_time_start,
-                'window_end'   => $window->window_time_end,
-            ]);
+        //NOTE:
+        //not recommended way to update sql entries
+        //each loop does a trip to the database,
+        //which is a sign of bad practice (bad for performance)
+        //however, for this use case, we know that only a small number of calls
+        //will be updated (usually 1)
+        $calls->each(
+            function (Call $c) use ($window, $contactDays) {
+                $hasChange = false;
+
+                $scheduledDate = Carbon::fromSerialized($c->scheduled_date);
+                if ( ! in_array($scheduledDate->dayOfWeek, $contactDays)) {
+                    //get next day of week
+                    $nextDay = $contactDays[0];
+                    $diff = $scheduledDate->dayOfWeek - $nextDay;
+                    if ($diff > 0) {
+                        $scheduledDate->addDay($diff);
+                    }
+                    //todo: try with next day
+
+                    $c->scheduled_date = $scheduledDate->format('Y-m-d');
+                    $hasChange = true;
+                }
+
+                if ($c->window_start != $window->window_time_start) {
+                    $c->window_start = $window->window_time_start;
+                    $hasChange = true;
+                }
+
+                if ($c->window_end != $window->window_time_end) {
+                    $c->window_end = $window->window_time_end;
+                    $hasChange = true;
+                }
+
+                if ($hasChange) {
+                    $c->save();
+                }
+            }
+        );
     }
 }
