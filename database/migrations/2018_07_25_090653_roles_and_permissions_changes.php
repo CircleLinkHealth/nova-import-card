@@ -21,7 +21,7 @@ class RolesAndPermissionsChanges extends Migration
     public function up()
     {
         Artisan::call('db:seed', [
-            '--class' => 'RequiredRolesPermissionsSeeder',
+            '--class' => 'CircleLinkHealth\Customer\Database\Seeders\RequiredRolesPermissionsSeeder',
         ]);
     }
 }

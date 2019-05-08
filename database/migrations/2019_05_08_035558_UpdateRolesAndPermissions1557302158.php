@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class UpdateRolesAndPermissions1554973982 extends Migration
+class UpdateRolesAndPermissions1557302158 extends Migration
 {
     /**
      * Run the migrations.
