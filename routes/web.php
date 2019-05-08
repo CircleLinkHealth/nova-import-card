@@ -18,39 +18,39 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')
-     ->name('home');
+    ->name('home');
 
 Route::get('/provider-report', 'ProviderReportController@getProviderReport');
 
 Route::get('enter-patient-form', 'InvitationLinksController@enterPatientForm')
-     ->name('enterPatientForm');
+    ->name('enterPatientForm');
 
 Route::post('send-invitation-link', 'InvitationLinksController@createSendInvitationUrl')
-     ->name('createSendInvitationUrl');
+    ->name('createSendInvitationUrl');
 
 //this is a signed route
 Route::get('login-survey/{user}/{survey}', 'InvitationLinksController@surveyLoginForm')
-     ->name('loginSurvey');
+    ->name('loginSurvey');
 
 //fixme: thoughts: the surveys should be accessible from a url, so the POST here should redirect to a route, and not return a view
 Route::post('survey-login', 'InvitationLinksController@surveyLoginAuth')
-     ->name('surveyLoginAuth');
+    ->name('surveyLoginAuth');
 
 Route::post('resend-link/{user}', 'InvitationLinksController@resendUrl')
-     ->name('resendUrl');
+    ->name('resendUrl');
 
 Route::post('save-answer', 'SurveyController@storeAnswer')
-     ->name('saveSurveyAnswer');
+    ->name('saveSurveyAnswer');
 
 Route::get('get-previous-answer', 'SurveyController@getPreviousAnswer')
-     ->name('getPreviousAnswer');
+    ->name('getPreviousAnswer');
 
 Route::get('get-ppp-data', 'PersonalizedPreventionPlanController@getPppDataForUser')
-     ->name('getPppDataForUser');
+    ->name('getPppDataForUser');
 
 Route::group([
     'prefix' => 'survey',
-    //    'middleware' => ['auth'],
+    'middleware' => ['auth'],
 ], function () {
 
     Route::group([
@@ -80,14 +80,14 @@ Route::group([
 
         Route::post('{practiceId}/{patientId}/save-answer', [
             'uses' => 'VitalsSurveyController@storeAnswer',
-            'as'   => 'survey.vitals.store.answer',
+            'as' => 'survey.vitals.store.answer',
         ]);
 
     });
 });
 
 Route::group([
-    'prefix'     => 'reports',
+    'prefix' => 'reports',
     'middleware' => ['auth'],
 ], function () {
     //fixme: add reports routes here
