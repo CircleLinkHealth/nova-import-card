@@ -160,19 +160,19 @@
                     listColumns: {
                         provider: this.providersForSelect,
                         ccmStatus: [
-                            {id: 'enrolled', text: 'enrolled'},
-                            {id: 'paused', text: 'paused'},
-                            {id: 'withdrawn', text: 'withdrawn'},
-                            {id: 'to_enroll', text: 'to_enroll'},
-                            {id: 'unreachable', text: 'unreachable'},
-                            {id: 'patient_rejected', text: 'patient_rejected'}
+                            {id: 'enrolled', text: 'Enrolled'},
+                            {id: 'paused', text: 'Paused'},
+                            {id: 'withdrawn', text: 'Withdrawn'},
+                            {id: 'to_enroll', text: 'To Enroll'},
+                            {id: 'unreachable', text: 'Unreachable'},
+                            {id: 'patient_rejected', text: 'Patient Rejected'}
                         ],
                         careplanStatus: [
                             {id: '', text: 'none'},
-                            {id: 'qa_approved', text: 'qa_approved'},
-                            {id: 'provider_approved', text: 'provider_approved'},
-                            {id: 'g0506', text: 'g0506'},
-                            {id: 'draft', text: 'draft'}
+                            {id: 'qa_approved', text: 'QA Approved'},
+                            {id: 'provider_approved', text: 'Provider Approved'},
+                            {id: 'g0506', text: 'G0506'},
+                            {id: 'draft', text: 'Draft'}
                         ],
                         program: this.practices.map(practice => ({
                             id: practice.id,
