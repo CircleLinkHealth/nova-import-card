@@ -12,8 +12,6 @@ class GenerateProviderReportService
 {
     protected $patient;
 
-    protected $date;
-
     protected $hraInstance;
 
     protected $vitalsInstance;
@@ -27,11 +25,10 @@ class GenerateProviderReportService
     protected $vitalsQuestions;
 
 
-    public function __construct(User $patient, $date)
+    public function __construct(User $patient)
     {
         //patient contains survey data and existing provider reports
         $this->patient = $patient;
-        $this->date    = Carbon::parse($date);
 
         $this->hraInstance    = $this->patient->surveyInstances->where('survey.name', Survey::HRA)->first();
         $this->vitalsInstance = $this->patient->surveyInstances->where('survey.name', Survey::VITALS)->first();
@@ -47,11 +44,9 @@ class GenerateProviderReportService
     //make possible to edit data on existing report
     public function generateData()
     {
-        //how to calculate if the visit was initial or subsequent? One thought would be that to check if there is an existing report like below. However is it probable that the patient will
-        //edit their surveys after they have completed both during the same visit?
         $reasonForVisit = 'Initial';
 
-        if ($this->patient->providerReports->isNotEmpty()) {
+        if ($this->patient->patientAWVSummaries->first()->subsequent_visit !== null) {
             $reasonForVisit = 'Subsequent';
         }
 

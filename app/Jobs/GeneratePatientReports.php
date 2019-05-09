@@ -2,8 +2,11 @@
 
 namespace App\Jobs;
 
-use App\Services\GenerateProviderReportService;
 use App\Services\GeneratePersonalizedPreventionPlanService;
+use App\Services\GenerateProviderReportService;
+use App\Services\GetSurveyAnswersForEvaluation;
+use App\Services\PersonalizedPreventionPlanPrepareData;
+use App\Services\ProviderReportService;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -11,6 +14,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\App;
 
 class GeneratePatientReports implements ShouldQueue
 {
@@ -23,8 +27,9 @@ class GeneratePatientReports implements ShouldQueue
      *
      * @var Carbon
      */
-    protected $date;
+    protected $surveyInstanceStartDate;
 
+    protected $currentDate;
 
 
     /**
@@ -32,10 +37,11 @@ class GeneratePatientReports implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($patientId, $date)
+    public function __construct($patientId, $surveyInstanceStartDate)
     {
-        $this->date = Carbon::parse($date);
-        $this->patientId = $patientId;
+        $this->surveyInstanceStartDate = Carbon::parse($surveyInstanceStartDate);
+        $this->patientId               = $patientId;
+        $this->currentDate             = Carbon::now();
 
     }
 
@@ -48,16 +54,16 @@ class GeneratePatientReports implements ShouldQueue
     {
 
         $patient = User::with([
-            'surveyInstances' => function ($instance) {
+            'surveyInstances'     => function ($instance) {
                 $instance->with(['survey', 'questions.type.questionTypeAnswers'])
-                         ->forDate($this->date);
+                         ->forDate($this->surveyInstanceStartDate);
             },
-            'answers'         => function ($answers) {
+            'answers'             => function ($answers) {
                 $answers->whereHas('surveyInstance', function ($instance) {
                     $instance->forDate($this->date);
                 });
             },
-            'providerReports' => function ($report) {
+            'providerReports'     => function ($report) {
                 $report->whereHas('hraSurveyInstance', function ($instance) {
                     $instance->forDate($this->date);
                 })
@@ -67,38 +73,78 @@ class GeneratePatientReports implements ShouldQueue
             },
             'patientAWVSummaries' => function ($summary) {
                 $summary->where('month_year', Carbon::now()->startOfMonth());
-            }
+            },
         ])
-                             ->findOrFail($this->patientId);
+                       ->findOrFail($this->patientId);
 
-        $providerReport = (new GenerateProviderReportService($patient, $this->date))->generateData();
+        $providerReport = (new GenerateProviderReportService($patient))->generateData();
 
         $pppReport = (new GeneratePersonalizedPreventionPlanService($patient))->generateData();
 
 
-        //create Pdfs
-        //upload docs to S3
-//        $patient->addMedia($providerReport)
-//                ->withCustomProperties(['doc_type' => 'Provider Report'])
-//                ->toMediaCollection('patient-care-documents');
-//
-//        $patient->addMedia($pppReport)
-//                ->withCustomProperties(['doc_type' => 'PPP'])
-//                ->toMediaCollection('patient-care-documents');
+        $this->uploadProviderReport($providerReport, $patient);
 
-        //slack/notify something/someone
+        $this->uploadPPP($pppReport, $patient);
+
+
         $billingProvider = $patient->billingProviderUser();
-        if ($billingProvider){
-            $billingProvider->notify();
+
+        if ($billingProvider) {
+//            $billingProvider->notify();
         }
 
         $summary = $patient->patientAWVSummaries->first();
 
-        if ($summary){
+        if ($summary) {
             $summary->update([
-                'is_billable' => true,
-                'completed_at' => Carbon::now()
+                'is_billable'  => true,
+                'completed_at' => Carbon::now(),
             ]);
         }
+    }
+
+    private function uploadProviderReport($providerReport, $patient)
+    {
+
+        $providerReportFormattedData = (new ProviderReportService())->formatReportDataForView($providerReport);
+
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadView('providerReport.report', ['reportData' => $providerReportFormattedData, 'patient' => $patient]);
+
+
+        $path = storage_path("provider_report_{$patient->id}_{$this->currentDate->toDateTimeString()}.pdf");
+
+        $saved = file_put_contents($path, $pdf->output());
+
+        $patient->addMedia($path)
+                ->withCustomProperties(['doc_type' => 'Provider Report'])
+                ->toMediaCollection('patient-care-documents');
+    }
+
+    private function uploadPPP($ppp, $patient)
+    {
+
+        $pppFormattedData = (new PersonalizedPreventionPlanPrepareData(new GetSurveyAnswersForEvaluation()))->prepareRecommendations($ppp);
+
+        $recommendationTasks = [];
+        foreach ($pppFormattedData['recommendation_tasks'] as $tasks) {
+            $recommendationTasks[$tasks['title']] = $tasks;
+        }
+
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadView('personalizedPreventionPlan', [
+            'reportData'          => $pppFormattedData,
+            'age'                 => $patient->getAge(),
+            'recommendationTasks' => $recommendationTasks,
+        ]);
+
+
+        $path = storage_path("ppp_report_{$patient->id}_{$this->currentDate->toDateTimeString()}.pdf");
+
+        $saved = file_put_contents($path, $pdf->output());
+
+        $patient->addMedia($path)
+                ->withCustomProperties(['doc_type' => 'PPP'])
+                ->toMediaCollection('patient-care-documents');
     }
 }
