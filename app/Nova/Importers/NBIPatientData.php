@@ -13,7 +13,6 @@ use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Row;
-use Sparclex\NovaImportCard\ImportNovaRequest;
 
 class NBIPatientData implements OnEachRow, WithChunkReading, WithValidation, WithHeadingRow
 {
@@ -41,16 +40,6 @@ class NBIPatientData implements OnEachRow, WithChunkReading, WithValidation, Wit
         return 200;
     }
 
-    public function model(array $row)
-    {
-        [$model, $callbacks] = $this->resource::fill(
-            new ImportNovaRequest($row),
-            $this->resource::newModel()
-        );
-
-        return $model;
-    }
-
     /**
      * @param Row $row
      */
@@ -58,7 +47,7 @@ class NBIPatientData implements OnEachRow, WithChunkReading, WithValidation, Wit
     {
         $row = $row->toArray();
 
-        return PatientData::updateOrCreate(
+        PatientData::updateOrCreate(
             [
                 'mrn' => $row['mrn'],
             ],
