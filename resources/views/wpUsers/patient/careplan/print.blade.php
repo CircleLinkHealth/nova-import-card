@@ -279,6 +279,14 @@ if (isset($patient) && ! empty($patient)) {
                         </div>
                     @endif
 
+                    @if(!isset($isPdf) && !empty($patient->patientInfo->general_comment))
+                        <div class="row"></div>
+                        <div class="row gutter">
+                            <div class="col-xs-12 print-row">
+                                <b>General comment</b>: {{$patient->patientInfo->general_comment}}
+                            </div>
+                        </div>
+                    @endif
                 </div>
                 <!-- CARE AREAS -->
                 <care-areas ref="careAreasComponent" patient-id="{{$patient->id}}">

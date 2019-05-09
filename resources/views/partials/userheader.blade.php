@@ -81,7 +81,7 @@
                                     title="{{$patient->getAgentEmail()}}">({{$patient->getAgentRelationship()}}
                                 ) {{$patient->getAgentName()}} {{$patient->getAgentPhone()}}</span></li>
                     @endif
-                    @if ($patient->patientInfo->general_comment)
+                    @if (!empty($patient->patientInfo->general_comment))
                     <li>
                         <b>General comment</b>: {{$patient->patientInfo->general_comment}}
                     </li>
