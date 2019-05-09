@@ -131,7 +131,7 @@
                         </div></div>
                 </div>
                 <div class="input-field col s12 grid-row">
-                    <div class="col s4 grid-item"><span>Note forwarded Alerts</span></div>
+                    <div class="col s4 grid-item"><span>Note Forwarded Alerts</span></div>
                     <div class="col s3">
                         <div>
                             <input name="settings[dm_pdf_notes]" type="checkbox"
@@ -254,6 +254,9 @@
                             <label for="email_weekly_report"></label>
                         </div>
                     </div>
+                </div>
+                <div class="col s12">
+                    <hr>
                 </div>
             </div>
             <div class="row">
