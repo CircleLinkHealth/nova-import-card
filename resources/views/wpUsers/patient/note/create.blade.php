@@ -81,7 +81,7 @@
                                                                   name="general_comment"
                                                                   id="general_comment"
                                                                   value="{{$patient->patientInfo->general_comment}}"
-                                                                  placeholder="{{$patient->patientInfo->general_comment == '' ? 'Enter General Comment...' : $patient->patientInfo->general_comment}}"
+                                                                  placeholder="Enter General Comment..."
                                                                   aria-describedby="sizing-addon2"
                                                                   style="margin: 0 auto; text-align: left; color: #333;">
                             </div>

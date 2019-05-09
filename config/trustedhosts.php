@@ -15,6 +15,8 @@ return [
         '18.205.240.109', //worker ip
         'cl20190401201618660100000002-1125925038.us-east-1.elb.amazonaws.com', //load balancer
         '3.93.90.146', //load balancer ip
+        '10.0.1.80', //awv load balancer
+        '10.0.3.116', //awv load balancer
     ]
     : [
         '.*ngrok.io',
