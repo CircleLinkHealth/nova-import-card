@@ -6,10 +6,9 @@
 
 namespace App\Billing\NurseInvoices;
 
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
-use CircleLinkHealth\Customer\Entities\NurseMonthlySummary;
-use Carbon\Carbon;
 
 class VariablePay extends NurseInvoice
 {
@@ -74,7 +73,7 @@ class VariablePay extends NurseInvoice
         $this->data['total']['towards'] = $this->ccm_under_duration;
         $this->data['total']['after']   = $this->ccm_over_duration;
 
-        $logs = NurseCareRateLog::where('nurse_id', $this->nurse->id)->whereBetween('created_at', [ $this->start->copy()->startOfDay(), $this->end->copy()->endOfDay() ])->get();
+        $logs = NurseCareRateLog::where('nurse_id', $this->nurse->id)->whereBetween('created_at', [$this->start->copy()->startOfDay(), $this->end->copy()->endOfDay()])->get();
         while ($this->end->toDateString() >= $dayCounter) {
             $raw_after = $logs->where('created_at', '>=', Carbon::parse($dayCounter)->startOfDay())->where('created_at', '<=', Carbon::parse($dayCounter)->endOfDay())
                 ->where('ccm_type', 'accrued_after_ccm')

@@ -8,10 +8,10 @@ namespace Tests\Unit;
 
 use App\ChargeableService;
 use App\Models\CPM\CpmProblem;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use Carbon\Carbon;
 use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
 
@@ -115,7 +115,6 @@ class BHIReconsentTest extends TestCase
     private function createPractice($bhi = false)
     {
         $practice = factory(Practice::class)->create([]);
-
 
         if ($bhi) {
             $practice->chargeableServices()

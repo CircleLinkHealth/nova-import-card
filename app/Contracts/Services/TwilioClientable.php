@@ -17,6 +17,15 @@ use Twilio\Rest\Client;
 interface TwilioClientable
 {
     /**
+     * Download media from Twilio and store on disk.
+     *
+     * @param $url - media url to download from Twilio
+     *
+     * @return array - Return array with errorCode, errorDetail and mediaUrl. If error, mediaUrl is null.
+     */
+    public function downloadMedia($url);
+
+    /**
      * Generate a capability token.
      *
      * @return string
@@ -29,13 +38,4 @@ interface TwilioClientable
      * @return Client
      */
     public function getClient(): Client;
-
-    /**
-     * Download media from Twilio and store on disk.
-     *
-     * @param $url - media url to download from Twilio.
-     *
-     * @return array - Return array with errorCode, errorDetail and mediaUrl. If error, mediaUrl is null.
-     */
-    public function downloadMedia($url);
 }

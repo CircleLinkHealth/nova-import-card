@@ -7,8 +7,8 @@
 namespace App\Console\Commands;
 
 use App\Jobs\QueuePatientToExport;
-use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Console\Command;
 
 class ExportPracticeDataToGoogleDrive extends Command

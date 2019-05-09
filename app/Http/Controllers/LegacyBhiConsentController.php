@@ -9,8 +9,8 @@ namespace App\Http\Controllers;
 use App\Exceptions\InvalidArgumentException;
 use App\Http\Requests\CreateLegacyBhiConsentDecision;
 use App\Note;
-use CircleLinkHealth\Customer\Entities\Patient;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Patient;
 use Illuminate\Support\Facades\Cache;
 
 class LegacyBhiConsentController extends Controller

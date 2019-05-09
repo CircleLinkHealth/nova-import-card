@@ -1,15 +1,46 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers;
 
-use CircleLinkHealth\TimeTracking\Entities\Activity;
 use App\Http\Requests\CreateOfflineActivityTimeRequest;
-use CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
+use CircleLinkHealth\TimeTracking\Entities\OfflineActivityTimeRequest;
 use Illuminate\Http\Request;
 
 class OfflineActivityTimeRequestController extends Controller
 {
+    public function adminIndex()
+    {
+        $requests = OfflineActivityTimeRequest::with('patient')
+            ->whereNull('is_approved')
+            ->get();
+
+        return view('care-center.offlineActivityTimeRequest.index')
+            ->with('requests', $requests);
+    }
+
+    public function adminRespond(Request $request)
+    {
+        $timeRequest = OfflineActivityTimeRequest::findOrFail($request->input('offline_time_request_id'));
+
+        $isApproved = (bool) $request->input('approved');
+
+        $timeRequest->is_approved = $isApproved;
+
+        if ($isApproved) {
+            $timeRequest->approve();
+        } else {
+            $timeRequest->reject();
+        }
+
+        return redirect()->route('admin.offline-activity-time-requests.index');
+    }
+
     public function create($patientId)
     {
         if ( ! $patientId) {
@@ -46,46 +77,20 @@ class OfflineActivityTimeRequestController extends Controller
     public function index()
     {
         $requests = OfflineActivityTimeRequest::with('patient')
-                                              ->where('requester_id', auth()->id())
-                                              ->get();
+            ->where('requester_id', auth()->id())
+            ->get();
 
         return view('care-center.offlineActivityTimeRequest.index')
             ->with('requests', $requests);
-    }
-
-    public function adminIndex()
-    {
-        $requests = OfflineActivityTimeRequest::with('patient')
-                                              ->whereNull('is_approved')
-                                              ->get();
-
-        return view('care-center.offlineActivityTimeRequest.index')
-            ->with('requests', $requests);
-    }
-
-    public function adminRespond(Request $request)
-    {
-        $timeRequest = OfflineActivityTimeRequest::findOrFail($request->input('offline_time_request_id'));
-
-        $isApproved = (boolean)$request->input('approved');
-
-        $timeRequest->is_approved = $isApproved;
-
-        if ($isApproved) {
-            $timeRequest->approve();
-        } else {
-            $timeRequest->reject();
-        }
-
-        return redirect()->route('admin.offline-activity-time-requests.index');
     }
 
     /**
      * @param CreateOfflineActivityTimeRequest $request
      * @param $patientId
      *
-     * @return \Illuminate\Http\RedirectResponse
      * @throws \Exception
+     *
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(CreateOfflineActivityTimeRequest $request, $patientId)
     {

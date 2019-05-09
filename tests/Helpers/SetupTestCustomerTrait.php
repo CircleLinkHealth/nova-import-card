@@ -7,13 +7,13 @@
 namespace Tests\Helpers;
 
 use App\CarePlan;
-use CircleLinkHealth\Customer\Entities\Location;
 use App\Models\CPM\CpmProblem;
+use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
-use Carbon\Carbon;
 use Faker\Factory;
 
 trait SetupTestCustomerTrait

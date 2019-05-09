@@ -6,17 +6,18 @@
 
 namespace Tests\integration;
 
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use Carbon\Carbon;
 use Tests\DuskTestCase;
 use Tests\Helpers\CarePlanHelpers;
 use Tests\Helpers\UserHelpers;
 
 class NurseWorkScheduleTest extends DuskTestCase
 {
-    use CarePlanHelpers,
+    use CarePlanHelpers;
+    use
         UserHelpers;
 
     public function report($user)

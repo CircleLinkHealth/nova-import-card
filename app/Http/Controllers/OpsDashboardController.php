@@ -7,11 +7,11 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\GenerateOpsDashboardCSVReport;
-use CircleLinkHealth\Customer\Entities\Practice;
 use App\Repositories\OpsDashboardPatientEloquentRepository;
-use CircleLinkHealth\Customer\Entities\SaasAccount;
 use App\Services\OpsDashboardService;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\SaasAccount;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 

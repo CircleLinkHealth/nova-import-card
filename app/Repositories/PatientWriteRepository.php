@@ -7,10 +7,10 @@
 namespace App\Repositories;
 
 use App\Exceptions\InvalidArgumentException;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
-use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
 class PatientWriteRepository

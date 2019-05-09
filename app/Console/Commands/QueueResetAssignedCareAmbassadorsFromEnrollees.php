@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\Jobs\ResetAssignedCareAmbassadorsFromEnrollees;
@@ -8,6 +12,12 @@ use Illuminate\Console\Command;
 class QueueResetAssignedCareAmbassadorsFromEnrollees extends Command
 {
     /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Unassigns Care Ambassadors from enrollees (daily)';
+    /**
      * The name and signature of the console command.
      *
      * @var string
@@ -15,16 +25,7 @@ class QueueResetAssignedCareAmbassadorsFromEnrollees extends Command
     protected $signature = 'enrollees:resetCareAmbassadors';
 
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Unassigns Care Ambassadors from enrollees (daily)';
-
-    /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {

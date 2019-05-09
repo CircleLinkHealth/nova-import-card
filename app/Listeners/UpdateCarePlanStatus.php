@@ -11,8 +11,8 @@ use App\Contracts\Efax;
 use App\Events\CarePlanWasApproved;
 use App\Events\PdfableCreated;
 use App\Observers\PatientObserver;
-use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\User;
 use Log;
 
 class UpdateCarePlanStatus

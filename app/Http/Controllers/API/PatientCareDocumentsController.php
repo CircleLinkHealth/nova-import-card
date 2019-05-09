@@ -47,10 +47,10 @@ class PatientCareDocumentsController extends Controller
         })
             //get the latest file from each category
             ->unless('true' == $showPast, function ($files) {
-                             return $files->map(function ($typeGroup) {
-                                 return collect([$typeGroup->first()]);
-                             });
-                         });
+                return $files->map(function ($typeGroup) {
+                    return collect([$typeGroup->first()]);
+                });
+            });
 
         return response()->json($files->toArray());
     }

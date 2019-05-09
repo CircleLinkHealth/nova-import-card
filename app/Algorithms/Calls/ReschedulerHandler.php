@@ -7,10 +7,10 @@
 namespace App\Algorithms\Calls;
 
 use App\Call;
-use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 
 //READ ME:
 /*

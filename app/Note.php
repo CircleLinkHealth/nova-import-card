@@ -64,8 +64,10 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  */
 class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfReport
 {
-    use Filterable,
-        IsAddendumable,
+    use Filterable;
+    use
+        IsAddendumable;
+    use
         PdfReportTrait;
 
     protected $dates = [

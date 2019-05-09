@@ -6,7 +6,6 @@
 
 namespace App\Http\Controllers\CcdApi\Aprima;
 
-use CircleLinkHealth\Customer\Entities\CarePerson;
 use App\CarePlan;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Contracts\Repositories\ActivityRepository;
@@ -20,8 +19,9 @@ use App\Models\CCD\ValidatesQAImportOutput;
 use App\Models\MedicalRecords\Ccda;
 use App\Note;
 use App\PatientReports;
-use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\CarePerson;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 
 class CcdApiController extends Controller
@@ -213,8 +213,8 @@ class CcdApiController extends Controller
     /**
      * This is to help notify us of the status of CCDs we receive.
      *
-     * @param \CircleLinkHealth\Customer\Entities\User                            $user
-     * @param \App\Models\MedicalRecords\Ccda $ccda
+     * @param \CircleLinkHealth\Customer\Entities\User $user
+     * @param \App\Models\MedicalRecords\Ccda          $ccda
      * @param $status
      * @param null       $line
      * @param null       $errorMessage

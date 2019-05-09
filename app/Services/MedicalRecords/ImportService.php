@@ -10,9 +10,9 @@ use App\Enrollee;
 use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\TabularMedicalRecord;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use Carbon\Carbon;
 
 class ImportService
 {
@@ -81,7 +81,7 @@ class ImportService
         ])->first();
 
         if ($exists) {
-            if (! $exists->importedMedicalRecord()) {
+            if ( ! $exists->importedMedicalRecord()) {
                 $exists->delete();
             }
         }
