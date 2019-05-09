@@ -24,7 +24,10 @@ use Illuminate\Queue\SerializesModels;
 
 class MakePhoenixHeartWelcomeCallList implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
     const MAX_TIME_TO_PROCESS_BATCH_IN_HOURS = 6;
 
     /**
@@ -120,23 +123,23 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
                 $insurances = PhoenixHeartInsurance::where('patient_id', '=', $patient->get('patient_id'))
                     ->get()
                     ->transform(
-                                                       function ($i) {
-                                                           $i->name = trim($i->name);
+                        function ($i) {
+                            $i->name = trim($i->name);
 
-                                                           return $i;
-                                                       }
+                            return $i;
+                        }
                                                    )
                     ->unique('name')
                     ->sortBy('order')
                     ->pluck('name')
                     ->map(
-                                                       function ($ins) {
-                                                           if ( ! $ins) {
-                                                               return null;
-                                                           }
+                        function ($ins) {
+                            if ( ! $ins) {
+                                return null;
+                            }
 
-                                                           return ['type' => $ins];
-                                                       }
+                            return ['type' => $ins];
+                        }
                                                    )
                     ->filter()
                     ->values();

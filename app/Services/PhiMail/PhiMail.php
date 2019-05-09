@@ -128,8 +128,10 @@ class PhiMail implements DirectMail
      * @param $outboundRecipient
      * @param $binaryAttachmentFilePath
      * @param $binaryAttachmentFileName
-     * @param null      $ccdaAttachmentPath
+     * @param null                                          $ccdaAttachmentPath
      * @param \CircleLinkHealth\Customer\Entities\User|null $patient
+     * @param mixed|null                                    $body
+     * @param mixed|null                                    $subject
      *
      * @throws \Exception
      *
@@ -163,21 +165,20 @@ class PhiMail implements DirectMail
             if ($patient) {
                 // Optionally, set the Subject of the outgoing message.
                 // This will override the default message Subject set by the server.
-                if (!$subject){
+                if ( ! $subject) {
                     $this->connector->setSubject('Message from '.$patient->saasAccountName());
                 }
 
                 // Add the main body of the message.
-                if (!$body){
+                if ( ! $body) {
                     $this->connector->addText("This is message regarding patient {$patient->getFullName()}.");
                 }
-
             }
 
-            if ($body){
+            if ($body) {
                 $this->connector->addText($body);
             }
-            if ($subject){
+            if ($subject) {
                 $this->connector->setSubject($subject);
             }
 

@@ -24,7 +24,7 @@ class NumberedAllergyFields
 
             if ( ! empty($patient["allergy_${i}"]) && ! str_contains(
                 strtolower($patient["allergy_${i}"]),
-                    ['#n/a', 'no known']
+                ['#n/a', 'no known']
             )) {
                 $allergies[] = [
                     'Name' => $patient["allergy_${i}"],

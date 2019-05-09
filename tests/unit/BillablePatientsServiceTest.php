@@ -24,9 +24,11 @@ use Tests\TestCase;
 
 class BillablePatientsServiceTest extends TestCase
 {
-    use UserHelpers,
-        WithoutMiddleware,
+    use UserHelpers;
+    use
         WithFaker;
+    use
+        WithoutMiddleware;
     private $patient;
 
     private $practice;

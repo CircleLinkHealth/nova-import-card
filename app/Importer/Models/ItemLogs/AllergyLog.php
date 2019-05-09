@@ -56,7 +56,8 @@ use App\Traits\Relationships\BelongsToVendor;
  */
 class AllergyLog extends \CircleLinkHealth\Core\Entities\BaseModel implements ItemLog
 {
-    use BelongsToCcda,
+    use BelongsToCcda;
+    use
         BelongsToVendor;
 
     protected $fillable = [

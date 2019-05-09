@@ -10,10 +10,10 @@ use App\EligibilityBatch;
 use App\EligibilityJob;
 use App\Importer\Loggers\Ccda\CcdToLogTranformer;
 use App\Models\MedicalRecords\Ccda;
-use CircleLinkHealth\Customer\Entities\Practice;
 use App\Services\Eligibility\Entities\Problem;
 use App\Services\WelcomeCallListGenerator;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -23,7 +23,10 @@ use Illuminate\Support\Collection;
 
 class CheckCcdaEnrollmentEligibility implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
     protected $ccda;
     protected $practice;
     protected $transformer;

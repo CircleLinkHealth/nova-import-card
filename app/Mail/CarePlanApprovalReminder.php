@@ -13,7 +13,8 @@ use Illuminate\Queue\SerializesModels;
 
 class CarePlanApprovalReminder extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
     public $numberOfCareplans;
     public $recipient;
 

@@ -6,11 +6,11 @@
 
 namespace Tests\Helpers;
 
-use CircleLinkHealth\Customer\Entities\CarePerson;
 use App\Facades\StringManipulation;
 use App\Models\CPM\Biometrics\CpmWeight;
-use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\CarePerson;
+use CircleLinkHealth\Customer\Entities\User;
 use Faker\Factory;
 use Laravel\Dusk\Browser;
 
