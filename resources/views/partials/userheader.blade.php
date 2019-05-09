@@ -77,10 +77,14 @@
                     @endif
                     <li><span> <b>Practice</b>: {{$patient->primaryProgramName()}} </span></li>
                     @if($patient->getAgentName())
-                        <li class="inline-block"><b>Alternate Contact</b>: <span
+                        <li><b>Alternate Contact</b>: <span
                                     title="{{$patient->getAgentEmail()}}">({{$patient->getAgentRelationship()}}
                                 ) {{$patient->getAgentName()}} {{$patient->getAgentPhone()}}</span></li>
-                        <li class="inline-block"></li>
+                    @endif
+                    @if ($patient->patientInfo->general_comment)
+                    <li>
+                        <b>General comment</b>: {{$patient->patientInfo->general_comment}}
+                    </li>
                     @endif
                     <li>
                         <patient-next-call
