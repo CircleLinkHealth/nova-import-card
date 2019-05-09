@@ -56,8 +56,7 @@ class NBIPatientData implements OnEachRow, WithChunkReading, WithValidation, Wit
      */
     public function onRow(Row $row)
     {
-        $rowIndex = $row->getIndex();
-        $row      = $row->toArray();
+        $row = $row->toArray();
 
         return PatientData::updateOrCreate(
             [
