@@ -19,8 +19,8 @@
     },
     "autoload": {
         "classmap": [
-            "database/seeds",
-            "database/factories"
+            "Database/Seeders",
+            "Database/Factories"
         ],
         "psr-4": {
             "CircleLinkHealth\\Customer\\": ""
