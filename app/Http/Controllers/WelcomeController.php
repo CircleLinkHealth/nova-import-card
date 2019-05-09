@@ -20,7 +20,7 @@ class WelcomeController extends Controller
     | controllers, you are free to modify or remove it as you desire.
     |
     */
-    
+
     /**
      * Create a new controller instance.
      */
@@ -28,7 +28,7 @@ class WelcomeController extends Controller
     {
         $this->middleware('guest');
     }
-    
+
     /**
      * Show the application welcome screen to the user.
      *
@@ -41,37 +41,37 @@ class WelcomeController extends Controller
         if ( ! auth()->check()) {
             return \App::call('App\Http\Controllers\Auth\LoginController@showLoginForm');
         }
-        
+
         $user = auth()->user();
-        
+
         if ($user->roles->isEmpty()) {
             auth()->logout();
-            
+
             throw new \Exception("Log in for User with id {$user->id} failed. User has no assigned Roles.");
         }
-        
+
         if ($user->isAdmin()) {
             return \App::call('App\Http\Controllers\Admin\DashboardController@index');
         }
-        
+
         if ($user->hasRole('saas-admin')) {
             return \App::call('App\Http\Controllers\Patient\PatientController@showDashboard');
         }
-        
+
         if ($user->hasRole('care-ambassador') || $user->hasRole('care-ambassador-view-only')) {
             return \App::call('App\Http\Controllers\Enrollment\EnrollmentCenterController@dashboard');
         }
-        
+
         if ($user->hasRole('ehr-report-writer')) {
             if ( ! app()->environment('production')) {
                 return \App::call('App\Http\Controllers\EhrReportWriterController@index');
             }
-            
+
             return redirect()->route('login')->with(
                 ['messages' => ['message' => 'Ehr Report Writers can only login in the Worker. Please visit: https://circlelink-worker.medstack.net']]
             );
         }
-        
+
         return \App::call('App\Http\Controllers\Patient\PatientController@showDashboard');
     }
 }

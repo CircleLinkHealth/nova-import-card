@@ -14,7 +14,9 @@ use Spatie\MediaLibrary\Models\Media;
 
 class Controller extends BaseController
 {
-    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+    use AuthorizesRequests;
+    use DispatchesJobs;
+    use ValidatesRequests;
 
     public function badRequest($message = null)
     {

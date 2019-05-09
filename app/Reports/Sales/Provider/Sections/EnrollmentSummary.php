@@ -6,12 +6,12 @@
 
 namespace App\Reports\Sales\Provider\Sections;
 
-use CircleLinkHealth\Customer\Entities\Patient;
 use App\Reports\Sales\ProviderReportable;
 use App\Reports\Sales\SalesReportSection;
 use App\Reports\Sales\StatsHelper;
-use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\DB;
 
 class EnrollmentSummary extends SalesReportSection

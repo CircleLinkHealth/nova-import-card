@@ -12,7 +12,8 @@ use Illuminate\Queue\SerializesModels;
 
 class NurseInvoiceMailer extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
     protected $link;
     protected $month;

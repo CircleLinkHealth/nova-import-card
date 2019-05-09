@@ -50,39 +50,39 @@ class CreateAndPostPdfCareplan
             ->findWhere([
                 'successful_call' => null,
             ])->take($number)
-              ->map(function ($ccdaRequest) {
-            $xmlCcda = $this->api->getCcd(
-                $ccdaRequest->patient_id,
-                $ccdaRequest->practice_id,
-                $ccdaRequest->department_id
+            ->map(function ($ccdaRequest) {
+                $xmlCcda = $this->api->getCcd(
+                      $ccdaRequest->patient_id,
+                      $ccdaRequest->practice_id,
+                      $ccdaRequest->department_id
             );
 
-            if ( ! isset($xmlCcda[0]['ccda'])) {
-                return false;
-            }
-    
-            $ccda = Ccda::create([
-                                    'xml'       => $xmlCcda[0]['ccda'],
-                                    'source'    => Ccda::ATHENA_API,
-                                ]);
-            
-            $ccdaRequest->ccda_id = $ccda->id;
-            $ccdaRequest->successful_call = true;
-            $ccdaRequest->save();
-    
-            ImportCcda::dispatch($ccda)->onQueue('low');
-    
-            if (app()->environment('worker')) {
-                $link = route('import.ccd.remix');
+                if ( ! isset($xmlCcda[0]['ccda'])) {
+                    return false;
+                }
 
-                sendSlackMessage(
-                    '#ccd-file-status',
-                    "We received a CCD from Athena. \n Please visit {$link} to import."
+                $ccda = Ccda::create([
+                    'xml'    => $xmlCcda[0]['ccda'],
+                    'source' => Ccda::ATHENA_API,
+                ]);
+
+                $ccdaRequest->ccda_id = $ccda->id;
+                $ccdaRequest->successful_call = true;
+                $ccdaRequest->save();
+
+                ImportCcda::dispatch($ccda)->onQueue('low');
+
+                if (app()->environment('worker')) {
+                    $link = route('import.ccd.remix');
+
+                    sendSlackMessage(
+                          '#ccd-file-status',
+                          "We received a CCD from Athena. \n Please visit {$link} to import."
                 );
-            }
+                }
 
-            return $ccda;
-        });
+                return $ccda;
+            });
     }
 
     public function logPatientIdsFromAppointments($response, $practiceId)

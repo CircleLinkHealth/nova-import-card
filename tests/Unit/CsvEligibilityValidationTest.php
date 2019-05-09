@@ -8,9 +8,8 @@ namespace Tests\Unit;
 
 use App\EligibilityBatch;
 use App\Jobs\ProcessSinglePatientEligibility;
-use CircleLinkHealth\Customer\Entities\Practice;
 use App\Services\CCD\ProcessEligibilityService;
-use App\Services\Eligibility\Csv\CsvPatientList;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
 
@@ -19,7 +18,7 @@ class CsvEligibilityValidationTest extends TestCase
     use UserHelpers;
 
     private $practice;
-    
+
     /**
      * @var ProcessEligibilityService
      */
@@ -43,7 +42,7 @@ class CsvEligibilityValidationTest extends TestCase
         $this->assertDatabaseHas('eligibility_batches', [
             'id' => $batch->id,
         ]);
-    
+
         $results = $this->service->createEligibilityJobFromCsvBatch($batch, $csv);
 
         if ($results) {
@@ -77,13 +76,13 @@ class CsvEligibilityValidationTest extends TestCase
         $csv = base_path('tests/Feature/EligibleCsvFormat/Single_Fields_1.csv');
 
         $this->assertFileExists($csv);
-        
+
         $batch = $this->service->createSingleCSVBatch($this->practice->id, false, false, true);
 
         $this->assertDatabaseHas('eligibility_batches', [
             'id' => $batch->id,
         ]);
-    
+
         $results = $this->service->createEligibilityJobFromCsvBatch($batch, $csv);
 
         if ($results) {

@@ -6,8 +6,8 @@
 
 namespace App\Http\Controllers;
 
-use CircleLinkHealth\Customer\Entities\Location;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
+use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;

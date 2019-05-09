@@ -90,7 +90,8 @@ use App\Traits\Relationships\BelongsToVendor;
  */
 class DemographicsLog extends \CircleLinkHealth\Core\Entities\BaseModel implements ItemLog
 {
-    use BelongsToCcda,
+    use BelongsToCcda;
+    use
         BelongsToVendor;
 
     protected $fillable = [

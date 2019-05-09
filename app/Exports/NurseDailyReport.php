@@ -20,7 +20,8 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class NurseDailyReport implements FromCollection, Responsable, WithHeadings
 {
-    use AttachableAsMedia, Exportable;
+    use AttachableAsMedia;
+    use Exportable;
     /**
      * @var Carbon
      */

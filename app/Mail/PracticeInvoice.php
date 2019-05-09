@@ -13,7 +13,8 @@ use Illuminate\Queue\SerializesModels;
 
 class PracticeInvoice extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * The attachment to the Mailable.

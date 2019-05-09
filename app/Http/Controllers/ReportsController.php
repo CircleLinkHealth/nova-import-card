@@ -132,17 +132,17 @@ class ReportsController extends Controller
             $u20_patients[$act_count]['patient_id'] = $patient->id;
             $acts                                   = DB::table('lv_activities')
                 ->select(
-                                                            DB::raw(
-                                                                '*,DATE(performed_at),provider_id, type, SUM(duration) as duration'
+                    DB::raw(
+                        '*,DATE(performed_at),provider_id, type, SUM(duration) as duration'
                                                             )
                                                         )
                 ->where('patient_id', $patient->id)
                 ->whereBetween(
-                                                            'performed_at',
-                                                            [
-                                                                $start,
-                                                                $end,
-                                                            ]
+                    'performed_at',
+                    [
+                        $start,
+                        $end,
+                    ]
                                                         )
                 ->where('duration', '>', 1200)
                 ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
@@ -597,30 +597,30 @@ class ReportsController extends Controller
         $patients = User::intersectPracticesWith(auth()->user())
             ->ofType('participant')
             ->with(
-                            [
-                                'primaryPractice',
-                                'activities' => function ($q) use ($start, $end) {
-                                    $q->select(
-                                        DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration')
-                                    )
-                                        ->whereBetween(
-                                          'performed_at',
-                                          [
-                                              $start,
-                                              $end,
-                                          ]
-                                      )
-                                        ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
-                                        ->orderBy('performed_at', 'desc');
-                                },
-                            ]
+                [
+                    'primaryPractice',
+                    'activities' => function ($q) use ($start, $end) {
+                        $q->select(
+                            DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration')
+                        )
+                            ->whereBetween(
+                                'performed_at',
+                                [
+                                    $start,
+                                    $end,
+                                ]
+                          )
+                            ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+                            ->orderBy('performed_at', 'desc');
+                    },
+                ]
                         )
             ->whereHas(
-                            'patientSummaries',
-                            function ($q) use ($time) {
-                                $q->where('month_year', $time->copy()->startOfMonth()->toDateString())
-                                    ->where('total_time', '<', 1200);
-                            }
+                'patientSummaries',
+                function ($q) use ($time) {
+                    $q->where('month_year', $time->copy()->startOfMonth()->toDateString())
+                        ->where('total_time', '<', 1200);
+                }
                         )
             ->get();
 

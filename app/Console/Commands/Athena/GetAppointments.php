@@ -6,9 +6,9 @@
 
 namespace App\Console\Commands\Athena;
 
-use CircleLinkHealth\Customer\Entities\Practice;
 use App\Services\AthenaAPI\CreateAndPostPdfCareplan;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Console\Command;
 
 class GetAppointments extends Command

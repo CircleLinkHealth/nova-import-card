@@ -10,9 +10,9 @@ use App\Adapters\EligibilityCheck\AthenaAPIAdapter;
 use App\EligibilityBatch;
 use App\EligibilityJob;
 use App\Enrollee;
-use CircleLinkHealth\Customer\Entities\Practice;
 use App\Services\AthenaAPI\DetermineEnrollmentEligibility;
 use App\TargetPatient;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Console\Command;
 
 class DetermineTargetPatientEligibility extends Command
