@@ -76,17 +76,20 @@ class Settings extends \CircleLinkHealth\Core\Entities\BaseModel
         'dm_pdf_notes',
         'dm_audit_reports',
         'dm_careplan_approval_reminders',
+        'dm_awv_reports',
 
         //Efax Notifications
         'efax_pdf_careplan',
         'efax_pdf_notes',
         'efax_audit_reports',
+        'efax_awv_reports',
         'note_font_size',
 
         //Email Notifications
         'email_careplan_approval_reminders',
         'email_note_was_forwarded',
         'email_weekly_report',
+        'email_awv_reports',
 
         'bill_to',
         'api_auto_pull',
