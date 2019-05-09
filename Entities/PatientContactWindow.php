@@ -341,8 +341,8 @@ class PatientContactWindow extends BaseModel
             $created[] = PatientContactWindow::create([
                 'patient_info_id' => $info->id,
                 'day_of_week' => $dayId,
-                'window_time_start' => $windowStart,
-                'window_time_end' => $windowEnd,
+                'window_time_start' => Carbon::parse($windowStart)->format('H:i'),
+                'window_time_end' => Carbon::parse($windowEnd)->format('H:i'),
             ]);
         }
 
