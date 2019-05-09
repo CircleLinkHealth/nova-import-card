@@ -264,7 +264,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property-read mixed $timezone_offset
  * @property-read mixed $timezone_offset_hours
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Call[] $inboundActivities
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Media[] $media
+ * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\Media[] $media
  * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\TimeTracking\Entities\PageTimer[]
  *     $pageTimersAsProvider
  * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary[]
