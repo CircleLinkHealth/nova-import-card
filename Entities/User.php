@@ -2257,6 +2257,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasMany(PatientMonthlySummary::class, 'patient_id');
     }
 
+    public function patientAWVSummaries()
+    {
+        return $this->hasMany(PatientAWVSummary::class, 'patient_id');
+    }
+
     public function phoneNumbers()
     {
         return $this->hasMany(PhoneNumber::class, 'user_id', 'id');
