@@ -130,10 +130,16 @@ class PatientController extends Controller
             }
         }
 
+        //naive authentication for the CPM Caller Service
+        $cpmToken = \Hash::make(config('app.key').Carbon::today()->toDateString());
+
         return view('wpUsers.patient.calls.index')
-            ->with('patient', $user)
-            ->with('phoneNumbers', $phoneNumbers)
-            ->with('clinicalEscalationNumber', $clinicalEscalationNumber);
+            ->with([
+                'patient'                  => $user,
+                'phoneNumbers'             => $phoneNumbers,
+                'clinicalEscalationNumber' => $clinicalEscalationNumber,
+                'cpmToken'                 => $cpmToken,
+            ]);
     }
 
     /**
@@ -216,7 +222,7 @@ class PatientController extends Controller
         $fileName         = $storageDirectory.$datetimePrefix.'-patient-list.pdf';
         $file             = $this->pdfService->createPdfFromView('wpUsers.patient.listing-pdf', [
             'patients' => $this->formatter->patients(),
-        ], [
+        ], null, [
             'orientation'  => 'Landscape',
             'margin-left'  => '3',
             'margin-right' => '3',

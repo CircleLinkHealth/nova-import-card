@@ -6,14 +6,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\CareCoachMonthlyReport;
 use App\Jobs\CreateNurseInvoices;
 use App\Jobs\GenerateNurseInvoice;
 use App\Notifications\NurseInvoiceCreated;
 use App\Reports\NurseDailyReport;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\TimeTracking\Entities\Activity;
-use Excel;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -158,46 +157,14 @@ class NurseController extends Controller
         if ($request['date']) {
             $date = new Carbon($request['date']);
         }
-
-        $rows = $this->getMonthlyReportRows($date);
+        $report = new CareCoachMonthlyReport($date);
+        $rows   = $report->collection();
 
         if ($request->has('json')) {
             return response()->json($rows);
         }
         if ($request->has('excel')) {
-            return Excel::create(
-                'CLH-Nurse-Monthly-Report-'.$date,
-                function ($excel) use ($date, $rows) {
-                    // Set the title
-                    $excel->setTitle('CLH Nurse Monthly Report - '.$date);
-
-                    // Chain the setters
-                    $excel->setCreator('CLH System')
-                        ->setCompany('CircleLink Health');
-
-                    // Call them separately
-                    $excel->setDescription('CLH Call Report - '.$date);
-
-                    // Our first sheet
-                    $excel->sheet(
-                        'Sheet 1',
-                        function ($sheet) use ($rows) {
-                            $i = 0;
-                            // header
-                            $userColumns = [
-                                'Nurse',
-                                'CCM Time (HH:MM:SS)',
-                            ];
-                            $sheet->appendRow($userColumns);
-
-                            foreach ($rows as $name => $time) {
-                                $columns = [$name, $time];
-                                $sheet->appendRow($columns);
-                            }
-                        }
-                    );
-                }
-            )->export('xls');
+            return $report;
         }
 
         $currentPage              = LengthAwarePaginator::resolveCurrentPage();
@@ -224,46 +191,5 @@ class NurseController extends Controller
         }
 
         return redirect()->route('admin.reports.nurse.invoice')->with(['success' => 'yes']);
-    }
-
-    private function getMonthlyReportRows($date)
-    {
-        $fromDate = $date->copy()->startOfMonth()->startOfDay();
-        $toDate   = $date->copy()->endOfMonth()->endOfDay();
-
-        $rows = [];
-
-        $nurses = User::orderBy('id')
-            ->ofType('care-center')
-            ->whereHas(
-                'activitiesAsProvider',
-                function ($a) use ($fromDate, $toDate) {
-                    $a->where('performed_at', '>=', $fromDate)
-                        ->where('performed_at', '<=', $toDate);
-                }
-                      )
-            ->chunk(
-                50,
-                function ($nurses) use (&$rows, $fromDate, $toDate) {
-                    foreach ($nurses as $nurse) {
-                        $seconds = Activity::where('provider_id', $nurse->id)
-                            ->where(
-                                function ($q) use ($fromDate, $toDate) {
-                                    $q->where('performed_at', '>=', $fromDate)
-                                        ->where('performed_at', '<=', $toDate);
-                                }
-                                                     )
-                            ->sum('duration');
-
-                        if (0 == $seconds) {
-                            continue;
-                        }
-
-                        $rows[$nurse->display_name] = gmdate('H:i:s', $seconds);
-                    }
-                }
-                      );
-
-        return collect($rows);
     }
 }

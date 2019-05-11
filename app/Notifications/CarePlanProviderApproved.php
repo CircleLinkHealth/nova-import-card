@@ -170,7 +170,7 @@ class CarePlanProviderApproved extends Notification
         if ('circlelink-health' == $notifiable->saasAccount->slug) {
             return $mail->bcc([
                 'raph@circlelinkhealth.com',
-                'chelsea@circlelinkhealth.com',
+                'abigail@circlelinkhealth.com',
                 'sheller@circlelinkhealth.com',
             ]);
         }

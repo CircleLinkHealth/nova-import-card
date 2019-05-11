@@ -6,11 +6,11 @@
 
 namespace App\Http\Controllers\Admin\Reports;
 
+use App\Exports\FromArray;
 use App\Http\Controllers\Controller;
 use App\Importer\Models\ItemLogs\DemographicsLog;
 use App\Models\CCD\CcdVendor;
 use CircleLinkHealth\Customer\Entities\Practice;
-use Maatwebsite\Excel\Facades\Excel;
 
 class EthnicityReportController extends Controller
 {
@@ -19,23 +19,21 @@ class EthnicityReportController extends Controller
         $data = DemographicsLog::all();
 
         //Prepare spreadsheet data
-        $filtered = $data->map(function ($demoLog) {
-            $ccdVendor = CcdVendor::find($demoLog->vendor_id);
-            $program = Practice::find($ccdVendor->program_id);
+        $filtered = $data->map(
+            function ($demoLog) {
+                $ccdVendor = CcdVendor::find($demoLog->vendor_id);
+                $program = Practice::find($ccdVendor->program_id);
 
-            return [
-                'program'   => $program->display_name,
-                'ethnicity' => $demoLog->ethnicity,
-                'race'      => $demoLog->race,
-            ];
-        });
+                return [
+                    'program'   => $program->display_name,
+                    'ethnicity' => $demoLog->ethnicity,
+                    'race'      => $demoLog->race,
+                ];
+            }
+        );
 
-        Excel::create('Ethnicity Report', function ($excel) use ($filtered) {
-            $excel->sheet('Master', function ($sheet) use ($filtered) {
-                $sheet->fromArray(
-                    $filtered->all()
-                );
-            });
-        })->export('xls');
+        $filename = 'Ethnicity Report';
+
+        return (new FromArray($filename, $filtered->all()))->download($filename);
     }
 }

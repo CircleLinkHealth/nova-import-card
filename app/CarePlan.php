@@ -125,10 +125,12 @@ class CarePlan extends BaseModel implements PdfReport
     {
         Log::debug('CarePlan: Ready to forward');
 
-        $this->load([
-            'patient.primaryPractice.settings',
-            'patient.patientInfo.location',
-        ]);
+        $this->load(
+            [
+                'patient.primaryPractice.settings',
+                'patient.patientInfo.location',
+            ]
+        );
 
         $cpmSettings = $this->patient->primaryPractice->cpmSettings();
 
@@ -147,7 +149,9 @@ class CarePlan extends BaseModel implements PdfReport
         if (empty($channels)) {
             $patientId = $this->patient->id;
             $practice  = $this->patient->primaryPractice->name;
-            Log::debug("CarePlan: Will not be forwarded because primary practice[${practice}] for patient[${patientId}] does not have any enabled channels.");
+            Log::debug(
+                "CarePlan: Will not be forwarded because primary practice[${practice}] for patient[${patientId}] does not have any enabled channels."
+            );
 
             return;
         }
@@ -155,7 +159,9 @@ class CarePlan extends BaseModel implements PdfReport
         $location = $this->patient->patientInfo->location;
         if (null == $location) {
             $patientId = $this->patient->id;
-            Log::debug("CarePlan: Will not be forwarded because patient[${patientId}] does not have a preferred contact location.");
+            Log::debug(
+                "CarePlan: Will not be forwarded because patient[${patientId}] does not have a preferred contact location."
+            );
 
             return;
         }
@@ -167,33 +173,47 @@ class CarePlan extends BaseModel implements PdfReport
     {
         $pendingApprovals = 0;
 
-        if ($user->hasRole([
-            'administrator',
-            'care-center',
-        ])
+        if ($user->hasRole(
+            [
+                'administrator',
+                'care-center',
+            ]
+        )
         ) {
             $pendingApprovals = User::ofType('participant')
                 ->intersectPracticesWith($user)
-                ->whereHas('carePlan', function ($q) {
-                    $q->whereStatus('draft');
-                })
+                ->whereHas(
+                    'carePlan',
+                    function ($q) {
+                        $q->whereStatus('draft');
+                    }
+                                    )
                 ->count();
         } else {
             if ($user->hasRole(['provider'])) {
                 $pendingApprovals = User::ofType('participant')
                     ->intersectPracticesWith($user)
-                    ->whereHas('carePlan', function ($q) {
-                        $q->whereStatus(CarePlan::QA_APPROVED);
-                    })
-                    ->whereHas('patientInfo', function ($q) {
-                        $q->whereCcmStatus(Patient::ENROLLED);
-                    })
-                    ->whereHas('careTeamMembers', function ($q) use (
-                                            $user
-                                        ) {
-                        $q->where('member_user_id', '=', $user->id)
-                            ->where('type', '=', CarePerson::BILLING_PROVIDER);
-                    })
+                    ->whereHas(
+                        'carePlan',
+                        function ($q) {
+                            $q->whereStatus(CarePlan::QA_APPROVED);
+                        }
+                                        )
+                    ->whereHas(
+                        'patientInfo',
+                        function ($q) {
+                            $q->whereCcmStatus(Patient::ENROLLED);
+                        }
+                                        )
+                    ->whereHas(
+                        'careTeamMembers',
+                        function ($q) use (
+                                                $user
+                                            ) {
+                            $q->where('member_user_id', '=', $user->id)
+                                ->where('type', '=', CarePerson::BILLING_PROVIDER);
+                        }
+                                        )
                     ->count();
             }
         }
@@ -227,9 +247,12 @@ class CarePlan extends BaseModel implements PdfReport
      */
     public function link()
     {
-        return route('patient.careplan.print', [
-            'patientId' => $this->user_id,
-        ]);
+        return route(
+            'patient.careplan.print',
+            [
+                'patientId' => $this->user_id,
+            ]
+        );
     }
 
     /**
@@ -302,16 +325,19 @@ class CarePlan extends BaseModel implements PdfReport
             throw new \Exception("Could not get CarePlan info for CarePlan with ID: {$this->id}");
         }
 
-        return $pdfService->createPdfFromView('wpUsers.patient.multiview', [
-            'careplans'    => [$this->patient->id => $careplan],
-            'isPdf'        => true,
-            'letter'       => false,
-            'problemNames' => $careplan['problem'],
-            'careTeam'     => $this->patient->careTeamMembers,
-            'data'         => $careplanService->careplan($this->patient->id),
-        ], [
-            'disable-javascript' => true,
-        ]);
+        return $pdfService->createPdfFromView(
+            'wpUsers.patient.multiview',
+            [
+                'careplans'    => [$this->patient->id => $careplan],
+                'isPdf'        => true,
+                'letter'       => false,
+                'problemNames' => $careplan['problem'],
+                'careTeam'     => $this->patient->careTeamMembers,
+                'data'         => $careplanService->careplan($this->patient->id),
+            ],
+            null,
+            Constants::SNAPPY_CLH_MAIL_VENDOR_SETTINGS
+        );
     }
 
     /**
@@ -321,17 +347,19 @@ class CarePlan extends BaseModel implements PdfReport
      */
     public function validator()
     {
-        $patient = $this->patient->load([
-            'patientInfo',
-            'phoneNumbers',
-            'billingProvider.user',
-            'ccdProblems' => function ($q) {
-                return $q->has('cpmProblem')
-                    ->with('cpmProblem');
-            },
-            //before enabling insurance validation, we have to store all insurance info in CPM
-            //            'ccdInsurancePolicies',
-        ]);
+        $patient = $this->patient->load(
+            [
+                'patientInfo',
+                'phoneNumbers',
+                'billingProvider.user',
+                'ccdProblems' => function ($q) {
+                    return $q->has('cpmProblem')
+                        ->with('cpmProblem');
+                },
+                //before enabling insurance validation, we have to store all insurance info in CPM
+                //            'ccdInsurancePolicies',
+            ]
+        );
 
         $data = [
             'conditions' => $patient->ccdProblems,
@@ -344,13 +372,16 @@ class CarePlan extends BaseModel implements PdfReport
             'billingProvider' => optional($patient->billingProviderUser())->id,
         ];
 
-        return Validator::make($data, [
-            'conditions'      => [new HasAtLeast2CcmOr1BhiProblems()],
-            'phoneNumber'     => 'required|phone:AUTO,US',
-            'dob'             => 'required|date',
-            'mrn'             => 'required',
-            'name'            => 'required',
-            'billingProvider' => 'required|numeric',
-        ]);
+        return Validator::make(
+            $data,
+            [
+                'conditions'      => [new HasAtLeast2CcmOr1BhiProblems()],
+                'phoneNumber'     => 'required|phone:AUTO,US',
+                'dob'             => 'required|date',
+                'mrn'             => 'required',
+                'name'            => 'required',
+                'billingProvider' => 'required|numeric',
+            ]
+        );
     }
 }

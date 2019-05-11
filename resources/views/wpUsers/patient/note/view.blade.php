@@ -114,7 +114,7 @@
                                         <div class="col-sm-12">
                                             @foreach($meta as $tag)
                                                 <h5>
-                                                    <div class="label label-{{$tag->severity}} info" @isset($tag->tooltip) data-tooltip="{{$tag->tooltip}}" @endisset>
+                                                    <div class="label label-{{$tag->severity}}" @isset($tag->tooltip) data-tooltip="{{$tag->tooltip}}" @endisset>
                                                         {{ucwords($tag->title)}}
                                                     </div>
                                                 </h5>

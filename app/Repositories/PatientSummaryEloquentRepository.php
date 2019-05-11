@@ -40,17 +40,17 @@ class PatientSummaryEloquentRepository
                         array_filter([$summary->problem_1, $summary->problem_2])
                     )
                         ->update(
-                               [
-                                   'billable' => false,
-                               ]
+                            [
+                                'billable' => false,
+                            ]
                            );
                 }
 
                 Problem::whereIn('id', array_filter([$summary->problem_1, $summary->problem_2]))
                     ->update(
-                           [
-                               'billable' => true,
-                           ]
+                        [
+                            'billable' => true,
+                        ]
                        );
             }
         } else {
@@ -89,9 +89,9 @@ class PatientSummaryEloquentRepository
             $olderSummary = PatientMonthlySummary::wherePatientId($summary->patient_id)
                 ->orderBy('month_year', 'desc')
                 ->where(
-                                                     'month_year',
-                                                     '<=',
-                                                     $summary->month_year->copy()->subMonth()->startOfMonth()
+                    'month_year',
+                    '<=',
+                    $summary->month_year->copy()->subMonth()->startOfMonth()
                                                  )
                 ->whereApproved(true)
                 ->first();
@@ -247,9 +247,9 @@ class PatientSummaryEloquentRepository
         if ($summary->approved && ($summary->problem_1 || $summary->problem_2)) {
             Problem::whereIn('id', array_filter([$summary->problem_1, $summary->problem_2]))
                 ->update(
-                       [
-                           'billable' => true,
-                       ]
+                    [
+                        'billable' => true,
+                    ]
                    );
 
             Problem::whereNotIn(
@@ -257,9 +257,9 @@ class PatientSummaryEloquentRepository
                 array_filter([$summary->problem_1, $summary->problem_2])
             )
                 ->update(
-                       [
-                           'billable' => false,
-                       ]
+                    [
+                        'billable' => false,
+                    ]
                    );
         }
 
@@ -336,20 +336,20 @@ class PatientSummaryEloquentRepository
         return $patient->ccdProblems->where('cpm_problem_id', '!=', 1)
             ->where('is_monitored', '=', true)
             ->reject(
-                                        function ($problem) {
-                                            return ! validProblemName($problem->name);
-                                        }
+                function ($problem) {
+                    return ! validProblemName($problem->name);
+                }
                                     )
             ->reject(
-                                        function ($problem) {
-                                            return ! $problem->icd10Code();
-                                        }
+                function ($problem) {
+                    return ! $problem->icd10Code();
+                }
                                     )
             ->unique('cpm_problem_id')
             ->sortByDesc(
-                                        function ($ccdProblem) {
-                                            return optional($ccdProblem->cpmProblem)->weight;
-                                        }
+                function ($ccdProblem) {
+                    return optional($ccdProblem->cpmProblem)->weight;
+                }
                                     )
             ->values();
     }
@@ -492,9 +492,9 @@ class PatientSummaryEloquentRepository
             if ( ! $isValid) {
                 Problem::where('id', $summary->{"problem_${problemNo}"})
                     ->update(
-                           [
-                               'billable' => false,
-                           ]
+                        [
+                            'billable' => false,
+                        ]
                        );
                 $summary->{"problem_${problemNo}"} = null;
             }

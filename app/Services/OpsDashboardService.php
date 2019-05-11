@@ -11,7 +11,6 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Facades\Excel;
 
 class OpsDashboardService
 {
@@ -95,18 +94,22 @@ class OpsDashboardService
     {
         $this->setTimeGoal();
 
-        $enrolledPatients = $practices->map(function ($practice) {
-            return $practice->patients->filter(function ($user) {
-                if ( ! $user) {
-                    return false;
-                }
-                if ( ! $user->patientInfo) {
-                    return false;
-                }
+        $enrolledPatients = $practices->map(
+            function ($practice) {
+                return $practice->patients->filter(
+                    function ($user) {
+                        if ( ! $user) {
+                            return false;
+                        }
+                        if ( ! $user->patientInfo) {
+                            return false;
+                        }
 
-                return Patient::ENROLLED == $user->patientInfo->ccm_status;
-            });
-        })->flatten()->unique('id');
+                        return Patient::ENROLLED == $user->patientInfo->ccm_status;
+                    }
+                );
+            }
+        )->flatten()->unique('id');
 
         $totActPt                = $enrolledPatients->count();
         $targetMinutesPerPatient = floatval($this->timeGoal);
@@ -272,23 +275,25 @@ class OpsDashboardService
             return null;
         }
 
-        return collect([
-            '0 mins'           => $count['0 mins'],
-            '0-5'              => $count['0-5'],
-            '5-10'             => $count['5-10'],
-            '10-15'            => $count['10-15'],
-            '15-20'            => $count['15-20'],
-            '20+'              => $count['20+'],
-            '20+ BHI'          => $count['20+ BHI'],
-            'Total'            => $count['Total'],
-            'Prior Day totals' => $count['Total'] - $delta,
-            'Added'            => $enrolledCount,
-            'Paused'           => $pausedCount,
-            'Unreachable'      => $unreachableCount,
-            'Withdrawn'        => $withdrawnCount,
-            'Delta'            => $delta,
-            'G0506 To Enroll'  => $toEnrollCount,
-        ]);
+        return collect(
+            [
+                '0 mins'           => $count['0 mins'],
+                '0-5'              => $count['0-5'],
+                '5-10'             => $count['5-10'],
+                '10-15'            => $count['10-15'],
+                '15-20'            => $count['15-20'],
+                '20+'              => $count['20+'],
+                '20+ BHI'          => $count['20+ BHI'],
+                'Total'            => $count['Total'],
+                'Prior Day totals' => $count['Total'] - $delta,
+                'Added'            => $enrolledCount,
+                'Paused'           => $pausedCount,
+                'Unreachable'      => $unreachableCount,
+                'Withdrawn'        => $withdrawnCount,
+                'Delta'            => $delta,
+                'G0506 To Enroll'  => $toEnrollCount,
+            ]
+        );
     }
 
     /**
@@ -345,26 +350,8 @@ class OpsDashboardService
      */
     public function getExcelReport($fromDate, $toDate, $status, $practiceId)
     {
-        $data = [];
-
-        $patients = $this->repo->getPatientsByStatus($fromDate, $toDate);
-        if ('all' != $practiceId) {
-            $patients = $this->filterPatientsByPractice($patients, $practiceId);
-        }
-
-        if ('paused' == $status || 'withdrawn' == $status) {
-            $patients = $this->filterPatientsByStatus($patients, $status);
-        }
-
-        foreach ($patients as $patient) {
-            //collection
-            $row = $this->makeExcelRow($patient, $fromDate, $toDate);
-            if (null != $row) {
-                $data[] = $row->toArray();
-            }
-        }
-
-        return $this->makeExcelReport($data, $fromDate, $toDate);
+        return (new OpsDashboardPatientsReport($practiceId, $status, $fromDate, $toDate))
+            ->storeAndAttachMediaTo(auth()->user()->saasAccount);
     }
 
     /**
@@ -399,56 +386,6 @@ class OpsDashboardService
         $countsByStatus = $this->countPatientsByStatus($patientsByPractice, $fromDate);
 
         return collect($countsByStatus);
-    }
-
-    public function makeExcelReport($rows, $fromDate, $toDate)
-    {
-        $report = Excel::create(
-            "Ops Dashboard Patients Report - ${fromDate} to ${toDate}",
-            function ($excel) use ($rows) {
-                $excel->sheet('Ops Dashboard Patients', function ($sheet) use ($rows) {
-                    $sheet->fromArray($rows);
-                });
-            }
-        )
-            ->store('xls', false, true);
-
-        return auth()->user()
-            ->saasAccount
-            ->addMedia($report['full'])
-            ->toMediaCollection("excel_report_for_{$fromDate->toDateString()}_to{$toDate->toDateString()}");
-    }
-
-    public function makeExcelRow($patient, $fromDate, $toDate)
-    {
-        if ($patient->patientInfo->registration_date >= $fromDate->toDateTimeString() && $patient->patientInfo->registration_date <= $toDate->toDateTimeString() && 'enrolled' != $patient->patientInfo->ccm_status) {
-            $status       = $patient->patientInfo->ccm_status;
-            $statusColumn = "Added - ${status} ";
-        } else {
-            $statusColumn = $patient->patientInfo->ccm_status;
-        }
-
-        if ('paused' == $patient->patientInfo->ccm_status) {
-            $statusDate       = $patient->patientInfo->date_paused;
-            $statusDateColumn = "Paused: ${statusDate}";
-        } elseif ('withdrawn' == $patient->patientInfo->ccm_status) {
-            $statusDate       = $patient->patientInfo->date_withdrawn;
-            $statusDateColumn = "Withdrawn: ${statusDate}";
-        } else {
-            $statusDateColumn = '-';
-        }
-
-        $rowData = [
-            'Name'                  => $patient->display_name,
-            'DOB'                   => $patient->getBirthDate(),
-            'Practice Name'         => $patient->getPrimaryPracticeName(),
-            'Status'                => $statusColumn,
-            'Date Registered'       => $patient->patientInfo->registration_date,
-            'Date Paused/Withdrawn' => $statusDateColumn,
-            'Enroller'              => '-',
-        ];
-
-        return collect($rowData);
     }
 
     public function setTimeGoal()

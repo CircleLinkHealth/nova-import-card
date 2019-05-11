@@ -4,6 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use CircleLinkHealth\Customer\Database\Seeders\RequiredRolesPermissionsSeeder;
 use Illuminate\Database\Migrations\Migration;
 
 class RolesAndPermissionsChanges extends Migration
@@ -21,7 +22,7 @@ class RolesAndPermissionsChanges extends Migration
     public function up()
     {
         Artisan::call('db:seed', [
-            '--class' => 'RequiredRolesPermissionsSeeder',
+            '--class' => RequiredRolesPermissionsSeeder::class,
         ]);
     }
 }

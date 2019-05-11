@@ -9,6 +9,7 @@ namespace App\Http\Controllers\Patient;
 use App\CarePlan;
 use App\CarePlanPrintListView;
 use App\CLH\Repositories\UserRepository;
+use App\Constants;
 use App\Contracts\ReportFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateNewPatientRequest;
@@ -179,6 +180,10 @@ class PatientCareplanController extends Controller
         foreach ($users as $user_id) {
             $user = User::with(['careTeamMembers', 'carePlan.pdfs'])->find($user_id);
 
+            if ( ! $user) {
+                return response()->json("User with id: {$user->id} not found.");
+            }
+
             if ( ! $user->billingProviderUser()) {
                 return response()->json("User with id: {$user->id}, does not have a billing provider");
             }
@@ -221,9 +226,8 @@ class PatientCareplanController extends Controller
                     'data'         => $careplanService->careplan($user_id),
                     'pdfCareplan'  => $pdfCareplan,
                 ],
-                [
-                    'disable-javascript' => true,
-                ]
+                null,
+                Constants::SNAPPY_CLH_MAIL_VENDOR_SETTINGS
             );
 
             $pageCount = $this->pdfService->countPages($fileNameWithPath);

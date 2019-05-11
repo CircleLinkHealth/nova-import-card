@@ -51,7 +51,8 @@
 
 
     @if(!isset($isPdf))
-        <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"/>
+        <link rel="stylesheet" type="text/css"
+              href="//cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"/>
 
         <link rel="stylesheet" href="{{ mix('/webix/codebase/webix.css') }}" type="text/css">
 
@@ -116,7 +117,7 @@
 @endif
 
 @auth
-    @if(auth()->user()->isAdmin() || auth()->user()->isCareCoach())
+    @if(!isset($isPdf) && auth()->user()->isAdmin() || auth()->user()->isCareCoach())
         @include('partials.jira-issue-collector')
     @endif
 @endauth
