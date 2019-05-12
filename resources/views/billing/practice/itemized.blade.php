@@ -46,4 +46,24 @@
         @endif
 
     </table>
+    <br>
+    @if(isset($awvPatientData))
+    <table class="table table-bordered">
+        <tr>
+            <th>Provider Name</th>
+            <th>Patient Name</th>
+            <th>DOB</th>
+            <th>AWV Date</th>
+
+        </tr>
+            @foreach($awvPatientData as $data)
+                <tr>
+                    <td>{{$data['provider']}}</td>
+                    <td>{{$data['name']}}</td>
+                    <td>{{$data['dob']}}</td>
+                    <td>{{$data['awv_date']}}</td>
+                </tr>
+            @endforeach
+    </table>
+    @endif
 </div>
