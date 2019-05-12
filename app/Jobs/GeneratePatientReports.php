@@ -119,6 +119,7 @@ class GeneratePatientReports implements ShouldQueue
             $summary->update([
                 'is_billable'  => true,
                 'completed_at' => Carbon::now(),
+                'month_year' => Carbon::now()->startOfMonth()->toDateString()
             ]);
         }
     }
@@ -143,7 +144,6 @@ class GeneratePatientReports implements ShouldQueue
 
     private function uploadPPP($ppp, $patient)
     {
-
         $pppFormattedData = (new PersonalizedPreventionPlanPrepareData(new GetSurveyAnswersForEvaluation()))->prepareRecommendations($ppp);
 
         $recommendationTasks = [];
