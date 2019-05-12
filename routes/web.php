@@ -19,7 +19,7 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/provider-report', 'ProviderReportController@getProviderReport');
+Route::get('/provider-report', 'ProviderReportController@getProviderReport')->name('provider-report');
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('enter-patient-form', 'InvitationLinksController@enterPatientForm')->name('enterPatientForm');

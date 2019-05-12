@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Notifications\SendReport;
 use App\Services\GeneratePersonalizedPreventionPlanService;
 use App\Services\GenerateProviderReportService;
 use App\Services\GetSurveyAnswersForEvaluation;
@@ -12,6 +13,7 @@ use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Notifications\Channels\MailChannel;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
@@ -88,9 +90,27 @@ class GeneratePatientReports implements ShouldQueue
 
 
         $billingProvider = $patient->billingProviderUser();
+        $settings = $patient->practiceSettings();
+
+        $channels = [];
+
+        if ($settings){
+            if ($settings->dm_awv_reports){
+                //need to import related classes to Customer
+//                $channels[] = DirectMailChannel::class;
+            }
+            if ($settings->efax_awv_reports){
+                //need to import related classes to Customer
+//                $channels[] = EfaxChannel::class;
+            }
+            if ($settings->email_awv_reports){
+                $channels[] = MailChannel::class;
+            }
+        }
 
         if ($billingProvider) {
-//            $billingProvider->notify();
+            $billingProvider->notify(new SendReport($patient, $providerReport, 'Provider Report', $channels));
+            $billingProvider->notify(new SendReport($patient, $pppReport,'PPP', $channels));
         }
 
         $summary = $patient->patientAWVSummaries->first();
