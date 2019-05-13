@@ -3,6 +3,7 @@ pull_request_rules:
   conditions:
   - status-success=ci/circleci: my_testing_job
   - "#approved-reviews-by>=2"
+  - base=development
   actions:
     merge:
       method: merge
