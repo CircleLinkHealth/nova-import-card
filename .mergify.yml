@@ -1,0 +1,8 @@
+pull_request_rules:
+- name: automatic merge on CI success and 2 reviews
+  conditions:
+  - status-success=ci/circleci: my_testing_job
+  - "#approved-reviews-by>=2"
+  actions:
+    merge:
+      method: merge
