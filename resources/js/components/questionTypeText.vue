@@ -44,30 +44,31 @@
                                :disabled="!isActive">
                     </div>
                 </div>
+            </div>
+            <!--add input fields button-->
+            <div v-for="extraFieldButtonName in extraFieldButtonNames">
+                <div v-if="canAddInputFields">
 
-                <!--add input fields button-->
-                <div v-for="extraFieldButtonName in extraFieldButtonNames">
-                    <div v-if="canAddInputFields">
-                        <button type="button"
-                                @click="addInputFields(extraFieldButtonName.sub_parts)"
-                                class="btn-add-field">
-                            {{extraFieldButtonName.add_extra_answer_text}}
-                        </button>
-                    </div>
-                    <!--remove input fields button-->
-                    <div v-if="canRemoveInputFields">
-                        <button type="button"
-                                @click="removeInputFields()"
-                                class="btn-primary">
-                            {{extraFieldButtonName.remove_extra_answer_text}}
-                        </button>
-                    </div>
+                    <button type="button"
+                            @click="addInputFields(extraFieldButtonName.sub_parts)"
+                            class="btn-add-field">
+                        {{extraFieldButtonName.add_extra_answer_text}}
+                    </button>
+                </div>
+                <!--remove input fields button-->
+                <div v-if="canRemoveInputFields">
+                    <button type="button"
+                            @click="removeInputFields()"
+                            class="btn-primary">
+                        {{extraFieldButtonName.remove_extra_answer_text}}
+                    </button>
                 </div>
             </div>
+
         </template>
 
         <br>
-        <!--:disabled="!hasTypedInTwoFields"-->
+        <!---->
 
         <!--next button-->
         <div :class="isLastQuestion ? 'text-center' : 'text-left'">
@@ -76,7 +77,7 @@
                     class="next-btn"
                     name="number"
                     id="number"
-
+                    :disabled="!hasTypedInTwoFields"
                     @click="handleAnswer()">
                 {{isLastQuestion ? 'Complete' : 'Next'}}
                 <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
@@ -344,5 +345,10 @@
         opacity: 50%;
         background-color: #50b2e2;
         border-color: #4aa5d2;
+    }
+
+    .fa, .fas {
+        color: #50b2e2;
+        font-weight: unset;
     }
 </style>

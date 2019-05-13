@@ -26,11 +26,12 @@
 
 
                     <div class="btn-start-container">
+                        <!-- @todo: this is not working exactly as expected so im keepin one element true and i ll get back-->
                         <mdb-btn v-show="true"
                                  color="primary" class="btn-start" @click="showQuestions">
                             <span>Start</span>
                         </mdb-btn>
-                        <!-- @todo: this is not working exactly as expected so im keepin one element true and i ll get back-->
+
                         <!-- <mdb-btn v-show="lastQuestionAnswered === null"
                                   color="primary" class="btn-start" @click="showQuestions">
                              <span>Start</span>
@@ -138,8 +139,10 @@
         <div class="call-assistance">
             <call-assistance v-if="callAssistance" @closeCallAssistanceModal="hideCallHelp"></call-assistance>
         </div>
-        <!--bottom-navbar-->
 
+
+        <!--bottom-navbar-->
+<!--@todo: this is the call assistance modal. needs some styling and setup twilio-->
         <!--&lt;!&ndash;phone assistance&ndash;&gt;
         <div class="row">
             <div v-if="showPhoneButton" class="call-assistance col-lg-1">
@@ -520,17 +523,6 @@
 
         },
         mounted() {
-            /* EventBus.$on('showSubQuestions', (answerVal, questionOrder, questionId, isSubQuestion) => {
-                 this.handleRadioInputs(answerVal, questionOrder, questionId, isSubQuestion)
-             });*/
-
-            /* EventBus.$on('handleNumberType', () => {
-                 this.handleNumberInputs();
-             });*/
-
-            /* EventBus.$on('handleTextType', () => {
-                 this.handleTextInputs();
-             });*/
 
             const surveyInstanceId = this.surveydata.survey_instances.map(q => q.id);
             this.surveyInstanceId.push(...surveyInstanceId);

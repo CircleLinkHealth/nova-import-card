@@ -1,38 +1,41 @@
 <template>
-    <div class="row">
-        <div class="custom-checkbox">
+
+    <div class="custom-checkbox">
+        <div class="row">
             <div v-for="(checkBox, index) in checkBoxValues">
-                <label>
+                <label v-show="checkBox.value !== null">
                     <input class="checkbox checkbox-info checkbox-circle"
                            type="checkbox"
-                           v-model="checkBox.checked"> <span style="padding-left:1%">{{checkBox.value}}</span>
-                </label>
+                           v-model="checkBox.checked"> <span
+                        style="padding-left:1%">{{checkBox.value}}</span>
+                </label> <br>
 
-                <div v-if="hasCustomInput(checkBox) && checkBox.checked">
+                <div v-if="hasCustomInputAndIsChecked(checkBox) || hasCustomInputSingleCase(checkBox)">
                     <input class="text-field"
-                           type="text"
-                           v-model="checkBox.customInput">
-                    <!--:placeholder="inputData.placeholder"-->
+                           :type="getCustomInputType(checkBox)"
+                           v-model="checkBox.customInput"
+                           :disabled="answerChecked && isSingleCustomInput"
+                           :placeholder="getCustomInputPlaceholder(checkBox)">
                 </div>
             </div>
 
-            <!--next button-->
-            <mdbBtn v-show="isActive"
-                    color="primary"
-                    class="next-btn"
-                    :disabled="!checkBoxChecked"
-                    @click="handleAnswers">
-                {{isLastQuestion ? 'Complete' : 'Next'}}
-                <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
-            </mdbBtn>
         </div>
+        <!--next button-->
+        <mdbBtn v-show="isActive"
+                color="primary"
+                class="next-btn"
+                :disabled="!answerChecked"
+                @click="handleAnswers">
+            {{isLastQuestion ? 'Complete' : 'Next'}}
+            <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
+        </mdbBtn>
     </div>
+
 </template>
 
 <script>
 
     import CheckboxCustomTypeCancer from "./checkboxCustomTypeCancer";
-    import {EventBus} from "../event-bus";
     import CheckboxCustomTypeEyeProblems from "./checkboxCustomTypeEyeProblems";
     import CheckboxCustomTypeStd from "./checkboxCustomTypeStd";
     import {mdbBtn} from "mdbvue";
@@ -60,13 +63,13 @@
                 questionOptions: [],
                 showDifferentInput: false,
                 questionsWithCustomInput: [],
-                customInputHasText: [],
                 cancerInputData: [],
                 eyeProblemsInputData: [],
                 stdProblemsInputData: [],
                 cancerTypeAnswer: [],
                 eyeProblemsTypeAnswer: [],
                 stdProblemsTypeAnswer: [],
+                sex: false,
             }
         },
         computed: {
@@ -83,61 +86,62 @@
                 }
             },
 
-            checkBoxChecked() {
-                return this.checkBoxValues.filter(q => q.checked === true).length > 0;
+            answerChecked() {
+                return this.checkBoxValues.filter(q => q.checked === true).length > 0
+                    || this.checkBoxValues.filter(q => q.customInput.length > 0).length > 0;
             },
 
-            /* checkCustomInputs() {
-                 //@todo:unfinished-issues:need to check foreach key if value = true.then check each value and act
-                 //or maybe just dont...
-                 const questionsCustomValue = this.questionsWithCustomInput.map(q => q.value);
-                 var check = [];
-                 for (let j = 0; j < questionsCustomValue.length; j++) {
-                     const val = questionsCustomValue[j];
-                     const q = this.checkedAnswers.includes(val);
-                     check.push({[val]: q});
-                 }
-                 return check;
-             },*/
+            disableCheckBox() {
+                return this.checkBoxValues.filter(q => q.customInput.length > 0).length > 0;
+            },
 
+            isSingleCustomInput() {
+                return this.checkBoxValues.filter(q => q.options && !!q.options.allow_single_custom_input).length > 0;
+            },
 
         },
 
         methods: {
-
-            hasCustomInput(checkBox) {
-                return checkBox.options && !!checkBox.options.allow_custom_input;
+            hasCustomInputSingleCase(checkBox) {
+                return checkBox.options && !!checkBox.options.allow_single_custom_input;
             },
 
-            handleClick(answerValue) {
-                this.showNextButton = true;
-
+            getCustomInputType(checkBox) {
+                if (checkBox.options !== null) {
+                    return checkBox.options.answer_type
+                }
+                return "text";
             },
 
-            handleAnswers() {//@todo: also save text answers types
-                /*        const answer = [];
-                        for (let j = 0; j < this.checkedAnswers.length; j++) {
-                            const val = this.checkedAnswers[j];
-                            const q = this.checkBoxValues.find(x => x.value === val);
-                            if (!this.questionOptions) {
-                                answer.push({[q.options.key]: val});
-                            } else {
-                                answer.push({name: val})
-                            }
+            getCustomInputPlaceholder(checkBox) {
+                if (checkBox.options !== null) {
+                    return checkBox.options.placeholder
+                }
+                return '';
+            },
 
-                        }
-                        var answerData = JSON.stringify(answer);*/
+            hasCustomInputAndIsChecked(checkBox) {
+                return checkBox.options && !!checkBox.options.allow_custom_input && checkBox.checked;
+            },
 
-                const checkedCheckBoxes = this.checkBoxValues.filter(q => q.checked === true);
+
+            /* handleClick(answerValue) {
+                 this.showNextButton = true;
+
+             },*/
+
+            handleAnswers() {
                 const answer = [];
+                const checkedCheckBoxes = this.checkBoxValues.filter(q => q.checked === true);
                 checkedCheckBoxes.forEach(checkBox => {
                     const obj = {};
-                    if (checkBox.customInput !== null) {
+                    if (checkBox.options === null) { //there are cases where checkBox doesnt have options.
+                        answer.push({name: checkBox.value})
+                    } else if (checkBox.customInput !== null) {
                         const obj = {
                             [checkBox.options.key]: checkBox.value,
                             type: checkBox.customInput
                         };
-
                         answer.push(obj);
                     } else {
                         obj[checkBox.options.key] = checkBox.value;
@@ -148,20 +152,6 @@
             },
 
 
-        },
-
-        mounted() {
-            EventBus.$on('cancerInputValue', (answerVal) => {
-                this.cancerTypeAnswer.push(answerVal);
-            });
-
-            EventBus.$on('eyesProblemInputValue', (answerVal) => {
-                this.eyeProblemsTypeAnswer.push(answerVal);
-            });
-
-            EventBus.$on('sdtProblemInputValue', (answerVal) => {
-                this.stdProblemsTypeAnswer.push(answerVal);
-            });
         },
 
         created() {
@@ -200,13 +190,13 @@
     }
 
     .custom-checkbox label {
-        width: 450px;
-        height: 50px;
+        width: 420px;
+        height: 55px;
         border-radius: 5px;
         border: solid 1px #f2f2f2;
         background-color: #ffffff;
-        padding-top: 2%;
-        padding-left: 7%;
+        padding-top: 3%;
+        padding-left: 5%;
     }
 
     .btn-primary {

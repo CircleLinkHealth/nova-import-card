@@ -23,7 +23,7 @@
 
     export default {
         name: "questionTypeMultiSelect",
-        props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting'],
+        props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting', 'surveyAnswers'],
         components: {},
 
         data() {
@@ -40,7 +40,6 @@
             placeHolder() {
                 return this.checkBoxOptions[0].placeholder
             },
-
             lastQuestionOrderNumber() {
                 const lastQuestionOrder = this.checkBoxOptions[0].import_answers_from_question.question_order;
                 this.lastQuestionAnswers(lastQuestionOrder);
@@ -92,11 +91,10 @@
 
         created() {
             const options = this.question.type.question_type_answers.map(q => q.options);
-            const multiSelect = options.flatMap(q => q.multi_select_options);
-
             this.checkBoxOptions.push(...options);
-            this.multiSelectOptions.push(...multiSelect);
 
+            const multiSelect = options.flatMap(q => q.multi_select_options);
+            this.multiSelectOptions.push(...multiSelect);
 
         },
     }
