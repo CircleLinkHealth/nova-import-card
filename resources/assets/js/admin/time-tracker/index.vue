@@ -172,7 +172,7 @@
                                     self.info.isCcm = data.hasOwnProperty('isCcm') ? data.isCcm : self.info.isCcm
                                     self.info.isBehavioral = data.hasOwnProperty('isBehavioral') ? data.isBehavioral : self.info.isBehavioral
                                 }
-                                console.log(data);
+                                //console.log(data);
                             }
                         }
 
@@ -187,7 +187,7 @@
                             else {
                                 self.startCount = 0;
                             }
-                            console.log("socket connection opened", ev, self.startCount, EventBus.isInFocus)
+                            // console.log("socket connection opened", ev, self.startCount, EventBus.isInFocus)
                             if (EventBus.isInFocus) EventBus.$emit('tracker:start')
                         }
 
@@ -223,6 +223,10 @@
             }
         },
         mounted() {
+
+            // window.addEventListener("unload", () => {
+            //     console.log('window is unloading', this.info.totalTime, this.seconds);
+            // });
 
             this.previousSeconds = this.info.totalTime || 0;
             this.info.initSeconds = 0
