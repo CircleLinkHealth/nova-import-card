@@ -7,11 +7,11 @@
 namespace App\Nova;
 
 use Illuminate\Http\Request;
-use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Trix;
 
-class Instructions extends Resource
+class CpmInstruction extends Resource
 {
+    public static $displayInNavigation = false;
     /**
      * The model the resource corresponds to.
      *
@@ -70,9 +70,7 @@ class Instructions extends Resource
     public function fields(Request $request)
     {
         return [
-            ID::make()->sortable(),
-            Trix::make('name')
-                ->sortable(),
+            Trix::make('name')->alwaysShow(),
         ];
     }
 

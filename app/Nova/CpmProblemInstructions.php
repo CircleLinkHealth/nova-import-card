@@ -7,10 +7,10 @@
 namespace App\Nova;
 
 use Illuminate\Http\Request;
-use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Text;
 
-class Instructables extends Resource
+class CpmProblemInstructions extends Resource
 {
     /**
      * The model the resource corresponds to.
@@ -18,22 +18,12 @@ class Instructables extends Resource
      * @var string
      */
     public static $model = \App\Models\CPM\CpmInstructable::class;
-
-    /**
-     * The columns that should be searched.
-     *
-     * @var array
-     */
-    public static $search = [
-        'id',
-    ];
-
     /**
      * The single value that should be used to represent the resource when being displayed.
      *
      * @var string
      */
-    public static $title = 'id';
+    public static $title = 'name';
 
     /**
      * Get the actions available for the resource.
@@ -45,6 +35,21 @@ class Instructables extends Resource
     public function actions(Request $request)
     {
         return [];
+    }
+
+    public static function authorizedToCreate(Request $request)
+    {
+        return false;
+    }
+
+    public function authorizedToDelete(Request $request)
+    {
+        return false;
+    }
+
+    public function authorizedToUpdate(Request $request)
+    {
+        return false;
     }
 
     /**
@@ -69,9 +74,11 @@ class Instructables extends Resource
     public function fields(Request $request)
     {
         return [
-            ID::make()->sortable(),
-            Text::make('cpm_instruction_id')
-                ->sortable(),
+            BelongsTo::make('cpmProblem')->hideWhenUpdating(),
+            BelongsTo::make('cpmInstruction')->hideFromIndex()->hideWhenUpdating(),
+            Text::make('cpmInstruction.name')->displayUsing(function ($q) {
+                return substr($q, 0, 50);
+            })->hideWhenUpdating()->hideFromDetail(),
         ];
     }
 
@@ -85,6 +92,11 @@ class Instructables extends Resource
     public function filters(Request $request)
     {
         return [];
+    }
+
+    public static function label()
+    {
+        return 'Cpm Problem - Instruction';
     }
 
     /**
