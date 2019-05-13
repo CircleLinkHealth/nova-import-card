@@ -1,9 +1,9 @@
 pull_request_rules:
   - name: automatic merge on CI success and 2 reviews
     conditions:
-    - status-success=ci/circleci: app-cpm-web
-    - "#approved-reviews-by>=2"
-    - base=development
+      - status-success=ci/circleci: app-cpm-web
+      - "#approved-reviews-by>=2"
+      - base=development
     actions:
       merge:
         method: merge
