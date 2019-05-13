@@ -76,3 +76,5 @@ $router->group([
         'as'   => 'twilio.call.recording.status',
     ]);
 });
+
+$router->get('health-check', 'HealthCheckController@isSiteUp');
