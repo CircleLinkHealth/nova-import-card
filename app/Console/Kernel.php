@@ -113,7 +113,7 @@ class Kernel extends ConsoleKernel
             ->dailyAt('07:00');
 
         //new report - testing with 3 nurses
-        $schedule->command(EmailRNDailyReport::class, ['nurseUserIds' => '11321,8151,1920'])
+        $schedule->command(EmailRNDailyReport::class)
             ->dailyAt('07:20');
 
         $schedule->command(QueueSendApprovedCareplanSlackNotification::class)

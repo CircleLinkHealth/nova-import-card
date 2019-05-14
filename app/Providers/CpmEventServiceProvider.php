@@ -11,6 +11,7 @@ use App\Events\PdfableCreated;
 use App\Events\UpdateUserLoginInfo;
 use App\Events\UpdateUserSessionInfo;
 use App\Listeners\CreateAndHandlePdfReport;
+use App\Listeners\LogFailedNotification;
 use App\Listeners\UpdateCarePlanStatus;
 use App\Listeners\UserLoggedOut;
 use Illuminate\Auth\Events\Authenticated;
@@ -18,6 +19,7 @@ use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Mail\Events\MessageSending;
+use Illuminate\Notifications\Events\NotificationFailed;
 
 class CpmEventServiceProvider extends ServiceProvider
 {
@@ -43,6 +45,9 @@ class CpmEventServiceProvider extends ServiceProvider
             UserLoggedOut::class,
         ],
         MessageSending::class => [
+        ],
+        NotificationFailed::class => [
+            LogFailedNotification::class,
         ],
     ];
 
