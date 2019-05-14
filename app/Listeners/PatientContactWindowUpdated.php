@@ -15,7 +15,6 @@ use Illuminate\Support\Collection;
 
 class PatientContactWindowUpdated
 {
-
     const TWENTY_MINUTES = 1200;
     const WEEKDAYS_COUNT = 7;
 
@@ -37,14 +36,14 @@ class PatientContactWindowUpdated
         }
 
         $windowsCollection = collect($event->windows);
-        $window     = $windowsCollection->first();
+        $window            = $windowsCollection->first();
 
         $patientId = $window->patient_info->user_id;
 
         $calls = Call::where('inbound_cpm_id', '=', $patientId)
-                     ->where('status', '=', 'scheduled')
-                     ->whereIn('scheduler', ['core algorithm', 'rescheduler algorithm'])
-                     ->get();
+            ->where('status', '=', 'scheduled')
+            ->whereIn('scheduler', ['core algorithm', 'rescheduler algorithm'])
+            ->get();
 
         if ($calls->isEmpty()) {
             return;
@@ -54,7 +53,7 @@ class PatientContactWindowUpdated
             ->unique('day_of_week')
             ->pluck('day_of_week')
             ->map(function ($elem) {
-                return (int)$elem;
+                return (int) $elem;
             });
 
         //NOTE:
@@ -65,7 +64,6 @@ class PatientContactWindowUpdated
         //will be updated (usually 1)
         $calls->each(
             function (Call $c) use ($window, $contactDays) {
-
                 $scheduledDate = Carbon::parse($c->scheduled_date);
                 if ( ! $contactDays->contains(carbonToClhDayOfWeek($scheduledDate->dayOfWeek))) {
                     $newDate = $this->getNextAvailableContactDate($scheduledDate, $contactDays, $window);
@@ -90,61 +88,49 @@ class PatientContactWindowUpdated
     }
 
     /**
-     *
      * Get the immediate next available date from a list from week days.
      * if the next date moves into the next month, do not move if:
      *  - patient has less than 20 minutes
-     *  - patient has 0 successful calls
+     *  - patient has 0 successful calls.
      *
-     * @param Carbon $currentDate
-     * @param Collection $availableDays
+     * @param Carbon               $currentDate
+     * @param Collection           $availableDays
      * @param PatientContactWindow $window
      *
      * @return Carbon
      */
-    private function getNextAvailableContactDate(Carbon $currentDate, Collection $availableDays, PatientContactWindow $window)
-    {
+    private function getNextAvailableContactDate(
+        Carbon $currentDate,
+        Collection $availableDays,
+        PatientContactWindow $window
+    ) {
         if ($availableDays->isEmpty()) {
             return $currentDate;
         }
 
-        $currentDay = carbonToClhDayOfWeek($currentDate->dayOfWeek);
+        $availableCarbonDates = $availableDays
+            ->map(function ($day) use ($currentDate) {
+                return carbonGetNext($day, $currentDate);
+            })
+            ->sortBy(function (Carbon $date) {
+                return $date->timestamp;
+            });
 
-        //try going to the next available day
-        $candidateDay = -1;
-        foreach ($availableDays as $day) {
-            if ($day > $currentDay) {
-                $candidateDay = $day;
-                break;
-            }
-        }
-
-        if (-1 == $candidateDay) {
-            // the next available day may be next week
-            // current day 5, candidate 2. next week: 7 - (5 - 2)
-            $candidateDay = $availableDays->first();
-            $diff         = PatientContactWindowUpdated::WEEKDAYS_COUNT - ($currentDay - $candidateDay);
-        } else {
-            $diff = $candidateDay - $currentDay;
-        }
-
-        $temp = $currentDate->copy()->addDays($diff);
+        $temp = $availableCarbonDates->first();
 
         //check if new date is in next month
         if ($temp->month != $currentDate->month) {
-
             $patient = $window->patient_info->user;
 
             /**
-             * @var PatientMonthlySummary $summary
+             * @var PatientMonthlySummary
              */
             $summary = $patient->patientSummaryForMonth($currentDate);
 
             //do not move the date to next month if patient has less than 20 minutes ccm time or has no successful calls
-            if ($summary->ccm_time < PatientContactWindowUpdated::TWENTY_MINUTES || $summary->no_of_successful_calls === 0) {
+            if ($summary->ccm_time < PatientContactWindowUpdated::TWENTY_MINUTES || 0 === $summary->no_of_successful_calls) {
                 return $currentDate;
             }
-
         }
 
         return $temp;
