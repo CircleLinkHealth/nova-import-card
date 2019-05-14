@@ -111,7 +111,7 @@
                 return this.info.monthlyBhiTime && this.info.monthlyBhiTime.length > 0 && this.info.monthlyBhiTime !== zeroTime;
             },
             updateTime() {
-                if (this.info.initSeconds === 0) this.info.initSeconds = Math.ceil(startupTime() / 1000);
+                if (this.info.initSeconds === 0) this.info.initSeconds = Math.round(startupTime() / 1000);
                 else this.info.initSeconds = -1;
                 this.startCount += 1;
                 console.log('tracker:init-seconds', this.info.initSeconds);
