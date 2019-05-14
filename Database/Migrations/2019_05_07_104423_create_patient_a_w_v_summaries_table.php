@@ -15,12 +15,19 @@ class CreatePatientAWVSummariesTable extends Migration
     {
         Schema::create('patient_awv_summaries', function (Blueprint $table) {
             $table->increments('id');
+            $table->unsignedInteger('patient_id');
             $table->date('month_year');
             $table->dateTime('initial_visit')->nullable();
             $table->dateTime('subsequent_visit')->nullable();
             $table->boolean('is_billable')->default(0);
             $table->dateTime('completed_at')->nullable();
             $table->timestamps();
+
+            $table->foreign('patient_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
+
         });
     }
 
