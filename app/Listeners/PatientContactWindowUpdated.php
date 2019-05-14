@@ -36,8 +36,8 @@ class PatientContactWindowUpdated
             return;
         }
 
-        $collection = collect($event->windows);
-        $window     = $collection->first();
+        $windowsCollection = collect($event->windows);
+        $window     = $windowsCollection->first();
 
         $patientId = $window->patient_info->user_id;
 
@@ -50,7 +50,8 @@ class PatientContactWindowUpdated
             return;
         }
 
-        $contactDays = $collection
+        $contactDays = $windowsCollection
+            ->unique('day_of_week')
             ->pluck('day_of_week')
             ->map(function ($elem) {
                 return (int)$elem;
@@ -64,28 +65,24 @@ class PatientContactWindowUpdated
         //will be updated (usually 1)
         $calls->each(
             function (Call $c) use ($window, $contactDays) {
-                $hasChange = false;
 
                 $scheduledDate = Carbon::parse($c->scheduled_date);
-                if ( ! $contactDays->contains($scheduledDate->dayOfWeek)) {
+                if ( ! $contactDays->contains(carbonToClhDayOfWeek($scheduledDate->dayOfWeek))) {
                     $newDate = $this->getNextAvailableContactDate($scheduledDate, $contactDays, $window);
                     if ( ! $newDate->equalTo($scheduledDate)) {
                         $c->scheduled_date = $newDate;
-                        $hasChange         = true;
                     }
                 }
 
                 if ($c->window_start != $window->window_time_start) {
                     $c->window_start = $window->window_time_start;
-                    $hasChange       = true;
                 }
 
                 if ($c->window_end != $window->window_time_end) {
                     $c->window_end = $window->window_time_end;
-                    $hasChange     = true;
                 }
 
-                if ($hasChange) {
+                if ($c->isDirty()) {
                     $c->save();
                 }
             }
@@ -105,13 +102,13 @@ class PatientContactWindowUpdated
      *
      * @return Carbon
      */
-    private function getNextAvailableContactDate($currentDate, $availableDays, PatientContactWindow $window)
+    private function getNextAvailableContactDate(Carbon $currentDate, Collection $availableDays, PatientContactWindow $window)
     {
         if ($availableDays->isEmpty()) {
             return $currentDate;
         }
 
-        $currentDay = $currentDate->dayOfWeek;
+        $currentDay = carbonToClhDayOfWeek($currentDate->dayOfWeek);
 
         //try going to the next available day
         $candidateDay = -1;
@@ -141,11 +138,7 @@ class PatientContactWindowUpdated
             /**
              * @var PatientMonthlySummary $summary
              */
-            $summary = $patient->patientSummaries()
-                               ->select(['ccm_time', 'id'])
-                               ->orderBy('id', 'desc')
-                               ->whereMonthYear($currentDate->copy()->startOfMonth())
-                               ->first();
+            $summary = $patient->patientSummaryForMonth($currentDate);
 
             //do not move the date to next month if patient has less than 20 minutes ccm time or has no successful calls
             if ($summary->ccm_time < PatientContactWindowUpdated::TWENTY_MINUTES || $summary->no_of_successful_calls === 0) {
