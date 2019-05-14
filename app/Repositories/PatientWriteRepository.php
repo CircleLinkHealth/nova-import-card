@@ -100,15 +100,12 @@ class PatientWriteRepository
             ->first();
 
         // set increment var
-        $hasChanges                = false;
         $successful_call_increment = 0;
         if ($successfulLastCall) {
-            $hasChanges                = true;
             $successful_call_increment = 1;
             // reset call attempts back to 0
             $patient->no_call_attempts_since_last_success = 0;
         } elseif ( ! $isCallBack) {
-            $hasChanges                                   = true;
             $patient->no_call_attempts_since_last_success = ($patient->no_call_attempts_since_last_success + 1);
 
             if (0 === $patient->no_call_attempts_since_last_success % 5 && optional($record)->no_of_successful_calls < 1) {
@@ -116,7 +113,7 @@ class PatientWriteRepository
             }
         }
 
-        if ($hasChanges) {
+        if ($patient->isDirty()) {
             $patient->save();
         }
 
