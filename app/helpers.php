@@ -10,6 +10,7 @@ use App\Constants;
 use App\Exceptions\CsvFieldNotFoundException;
 use App\Jobs\SendSlackMessage;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
@@ -1399,5 +1400,35 @@ if ( ! function_exists('calculateWeekdays')) {
 
             return ! $date->isWeekend() && ! $matchingHolidays->count() >= 1;
         }, new Carbon($toDate));
+    }
+}
+
+if ( ! function_exists('selectAllNursesForSelectedPeriod')) {
+    /**
+     * Returns all nurses selected for time period in admin/reports/nurse/invoice.
+     *
+     * @param $startDate
+     * @param $endDate
+     *
+     * @return EloquentCollection|\Illuminate\Database\Eloquent\Builder[]|Nurse[]
+     */
+    function selectAllNursesForSelectedPeriod($startDate, $endDate)
+    {
+        $nurses = Nurse::with([
+            'user',
+            'summary' => function ($s) use ($startDate, $endDate) {
+                $s->whereBetween('month_year', [
+                    $startDate->copy()->format('Y-m-d'),
+                    $endDate->copy()->format('Y-m-d'),
+                ]);
+            },
+        ])->whereHas('summary', function ($s) use ($startDate, $endDate) {
+            $s->whereBetween('month_year', [
+                $startDate->copy()->format('Y-m-d'),
+                $endDate->copy()->format('Y-m-d'),
+            ]);
+        })->where('status', 'active')->get()->pluck('user.display_name', 'user.id');
+
+        return $nurses;
     }
 }

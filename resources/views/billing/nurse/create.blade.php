@@ -31,19 +31,32 @@
                                         Active Nurse<br>
                                         Select All <kbd><kbd>cmd</kbd> + <kbd>A</kbd></kbd></label>
                                     <div class="col-md-6">
-                                        <select id="nurse" name="nurses[]" class="nurses dropdown Valid form-control" multiple required>
+                                        <select id="nurse" name="nurses[]" class="nurses dropdown Valid form-control"
+                                                multiple {{--required--}}>
                                             @foreach($nurses as $key => $value)
                                                 <option value="{{$key}}">{{$value}}</option>
                                             @endforeach
                                         </select>
                                     </div>
+
+                                    <label data-target="#collapseOne" class="col-md-3"
+                                           style="width: 25%">
+                                        <div class="radio"><input type="checkbox" name="all_selected_nurses"
+                                                                  id="all_selected_nurses"
+                                                                  value="all_selected_nurses"/>
+                                            <label for="all_selected_nurses"><span> </span>Select all Care Coaches for
+                                                selected period</label>
+                                        </div>
+                                    </label>
                                 </div>
+
 
                                 <div class="form-group">
                                     <label class="col-md-2 control-label" for="start_date">From</label>
                                     <div class="col-md-6">
                                         <input class="form-control" type="date"
-                                               value="{{presentDate(\Carbon\Carbon::now()->startOfMonth(), false)}}" name="start_date"
+                                               value="{{presentDate(\Carbon\Carbon::now()->startOfMonth(), false)}}"
+                                               name="start_date"
                                                id="start_date" required>
                                     </div>
                                 </div>
@@ -52,7 +65,8 @@
                                     <label class="col-md-2 control-label" for="end_date">To</label>
                                     <div class="col-md-6">
                                         <input class="form-control" type="date"
-                                               value="{{presentDate(\Carbon\Carbon::now()->endOfMonth(), false)}}" name="end_date"
+                                               value="{{presentDate(\Carbon\Carbon::now()->endOfMonth(), false)}}"
+                                               name="end_date"
                                                id="end_date" required>
                                     </div>
                                 </div>
@@ -114,7 +128,8 @@
                                     <div class="row" style="padding-left: 12px;">
                                         <label class="col-md-2 control-label" for="end_date"></label>
                                         <div class="col-md-2">
-                                            <button id="submit" name="submit" value="download" class="btn btn-default">Download
+                                            <button id="submit" name="submit" value="download" class="btn btn-default">
+                                                Download
                                                 Invoice(s) V1 (to be removed)
                                             </button>
                                         </div>
@@ -125,7 +140,8 @@
                                     <div class="row" style="padding-left: 12px;">
                                         <label class="col-md-2 control-label" for="end_date"></label>
                                         <div class="col-md-2">
-                                            <button id="submit" name="submit" value="downloadV2" class="btn btn-success">Download
+                                            <button id="submit" name="submit" value="downloadV2"
+                                                    class="btn btn-success">Download
                                                 Invoice(s) V2 (beta)
                                             </button>
                                         </div>
@@ -135,7 +151,7 @@
 
                             </fieldset>
 
-
+                        </form>
                     </div>
                 </div>
             </div>

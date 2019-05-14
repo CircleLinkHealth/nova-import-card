@@ -39,8 +39,18 @@ class NurseController extends Controller
 
         $variablePay = isset($input['alternative_pay']);
 
-        $startDate = Carbon::parse($request->input('start_date'));
+        $startDate = Carbon::parse('2018-12-01'/*$request->input('start_date')*/);
         $endDate   = Carbon::parse($request->input('end_date'));
+
+        $selectAllNursesForTimePeriod = isset($input['all_selected_nurses']);
+
+        if ($selectAllNursesForTimePeriod) {
+            $nurses   = selectAllNursesForSelectedPeriod($startDate, $endDate);
+            $nurseIds = [];
+            foreach ($nurses as $key => $name) {
+                $nurseIds[] = $key;
+            }
+        }
 
         if ('download' == $request->input('submit')) {
             GenerateNurseInvoice::dispatch(
