@@ -6,57 +6,29 @@
 
 namespace App\Billing\Practices;
 
-use App\AppConfig;
-use App\ChargeableService;
-use App\Repositories\PatientSummaryEloquentRepository;
 use App\Services\PdfService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\User;
 
 class PracticeInvoiceGenerator
 {
     private $month;
     private $patients;
-    /**
-     * @var PatientSummaryEloquentRepository
-     */
-    private $patientSummaryEloquentRepository;
+
     private $practice;
 
     /**
      * PracticeInvoiceGenerator constructor.
      *
-     * @param Practice                         $practice
-     * @param Carbon                           $month
-     * @param PatientSummaryEloquentRepository $patientSummaryEloquentRepository
+     * @param Practice $practice
+     * @param Carbon   $month
      */
     public function __construct(
         Practice $practice,
         Carbon $month
     ) {
-        $this->practice                         = $practice;
-        $this->month                            = $month->firstOfMonth();
-        $this->patientSummaryEloquentRepository = app(PatientSummaryEloquentRepository::class);
-    }
-
-    public function array_orderby()
-    {
-        $args = func_get_args();
-        $data = array_shift($args);
-        foreach ($args as $n => $field) {
-            if (is_string($field)) {
-                $tmp = [];
-                foreach ($data as $key => $row) {
-                    $tmp[$key] = $row[$field];
-                }
-                $args[$n] = $tmp;
-            }
-        }
-        $args[] = &$data;
-        call_user_func_array('array_multisort', $args);
-
-        return array_pop($args);
+        $this->practice = $practice;
+        $this->month    = $month->firstOfMonth();
     }
 
     /**
@@ -89,176 +61,6 @@ class PracticeInvoiceGenerator
         return $data;
     }
 
-    public function getInvoiceData($chargeableServiceId = null)
-    {
-        $practiceId = $this->practice->id;
-
-        if ($chargeableServiceId) {
-            //if software only exists on summary we bill for that
-            //if service is not software only we count summaries that have this chargeableService and NOT software only.
-
-            $chargeableServiceCode = ChargeableService::find($chargeableServiceId)->code;
-
-            $isSoftwareOnly = 'Software-Only' == $chargeableServiceCode;
-
-            //for AWV Codes
-            if (starts_with($chargeableServiceCode, 'AWV')) {
-                $billable = User::ofType('participant')
-                    ->ofPractice($this->practice->id)
-                    ->whereHas('patientAWVSummaries', function ($query) use ($chargeableServiceCode) {
-                                    $query->where('is_billable', true)
-                                        ->where('month_year', $this->month->toDateString());
-                                    //todo: adjust for subsequent visit
-//                            ->when($chargeableServiceCode == 'AWV: G0439');
-                                })
-                    ->count() ?? 0;
-            } else {
-                $billable = User::ofType('participant')
-                    ->ofPractice($this->practice->id)
-                    ->whereHas(
-                                    'patientSummaries',
-                                    function ($query) use ($chargeableServiceId, $isSoftwareOnly) {
-                                        $query->whereHas(
-                                            'chargeableServices',
-                                            function ($query) use ($chargeableServiceId) {
-                                                $query->where('id', $chargeableServiceId);
-                                            }
-                                        )
-                                            ->where('month_year', $this->month->toDateString())
-                                            ->where('approved', '=', true)
-                                            ->when( ! $isSoftwareOnly, function ($q) {
-                                                  $q->whereDoesntHave('chargeableServices', function ($query) {
-                                                      $query->where('code', 'Software-Only');
-                                                  });
-                                              });
-                                    }
-                                )
-                    ->count() ?? 0;
-            }
-        } else {
-            $billable = User::ofType('participant')
-                ->ofPractice($this->practice->id)
-                ->whereHas('patientSummaries', function ($query) {
-                                $query->where('month_year', $this->month->toDateString())
-                                    ->where('approved', '=', true);
-                            })
-                ->count() ?? 0;
-        }
-
-        return [
-            'clh_address'    => $this->practice->getAddress(),
-            'bill_to'        => $this->practice->bill_to_name,
-            'practice'       => $this->practice,
-            'month'          => $this->month->format('F, Y'),
-            'rate'           => $this->practice->clh_pppm,
-            'invoice_num'    => $this->incrementInvoiceNo(),
-            'invoice_date'   => Carbon::today()->toDateString(),
-            'due_by'         => Carbon::today()->addDays($this->practice->term_days)->toDateString(),
-            'invoice_amount' => number_format(round((float) $this->practice->clh_pppm * $billable, 2), 2),
-            'billable'       => $billable,
-        ];
-    }
-
-    public function getItemizedPatientData()
-    {
-        $data          = [];
-        $data['name']  = $this->practice->display_name;
-        $data['month'] = $this->month->toDateString();
-
-        $patients = User::orderBy('first_name', 'asc')
-            ->ofType('participant')
-            ->with([
-                'patientSummaries' => function ($q) {
-                    $q
-                        ->with(['billableBhiProblems'])
-                        ->where('month_year', $this->month->toDateString())
-                        ->where('approved', '=', true);
-                },
-                'billingProvider',
-            ])
-            ->whereProgramId($this->practice->id)
-            ->whereHas('patientSummaries', function ($query) {
-                            $query->where('month_year', $this->month->toDateString())
-                                ->where('approved', '=', true);
-                        })
-            ->chunk(500, function ($patients) use (&$data) {
-                            foreach ($patients as $u) {
-                                $summary = $u->patientSummaries->first();
-
-                                if ( ! $this->patientSummaryEloquentRepository->hasBillableProblemsNameAndCode($summary)) {
-                                    $summary = $this->patientSummaryEloquentRepository->fillBillableProblemsNameAndCode($summary);
-                                    $summary->save();
-                                }
-
-                                $data['patientData'][$u->id]['ccm_time'] = round($summary->ccm_time / 60, 2);
-                                $data['patientData'][$u->id]['bhi_time'] = round($summary->bhi_time / 60, 2);
-                                $data['patientData'][$u->id]['name'] = $u->getFullName();
-                                $data['patientData'][$u->id]['dob'] = $u->getBirthDate();
-                                $data['patientData'][$u->id]['practice'] = $u->program_id;
-                                $data['patientData'][$u->id]['provider'] = $u->getBillingProviderName();
-                                $data['patientData'][$u->id]['billing_codes'] = $u->billingCodes($this->month);
-
-                                $data['patientData'][$u->id]['problem1_code'] = $summary->billable_problem1_code;
-                                $data['patientData'][$u->id]['problem1'] = $summary->billable_problem1;
-
-                                $data['patientData'][$u->id]['problem2_code'] = $summary->billable_problem2_code;
-                                $data['patientData'][$u->id]['problem2'] = $summary->billable_problem2;
-
-                                $data['patientData'][$u->id]['bhi_code'] = optional(optional($summary->billableProblems->first())->pivot)->icd_10_code;
-                                $data['patientData'][$u->id]['bhi_problem'] = optional(optional($summary->billableProblems->first())->pivot)->name;
-                            }
-                        });
-
-        $data['patientData'] = array_key_exists('patientData', $data)
-            ? $this->array_orderby($data['patientData'], 'provider', SORT_ASC, 'name', SORT_ASC)
-            : null;
-
-        $awvPatients = User::ofType('participant')
-            ->ofPractice($this->practice->id)
-            ->whereHas('patientAWVSummaries', function ($query) {
-                               $query->where('is_billable', true)
-                                   ->where('month_year', $this->month->toDateString());
-                           })
-            ->with([
-                'patientAWVSummaries' => function ($q) {
-                    $q->where('is_billable', true)
-                        ->where('month_year', $this->month->toDateString());
-                },
-                'billingProvider',
-            ])
-            ->chunk(100, function ($patients) use (&$data) {
-                               foreach ($patients as $u) {
-                                   $summary = $u->patientAWVSummaries->first();
-
-                                   $data['awvPatientData'][$u->id]['name'] = $u->getFullName();
-                                   $data['awvPatientData'][$u->id]['dob'] = $u->getBirthDate();
-                                   $data['awvPatientData'][$u->id]['provider'] = $u->getBillingProviderName();
-                                   $data['awvPatientData'][$u->id]['practice'] = $u->program_id;
-                                   $data['awvPatientData'][$u->id]['awv_date'] = $summary->completed_at;
-                               }
-                           });
-
-        $data['awvPatientData'] = array_key_exists('awvPatientData', $data)
-            ? $this->array_orderby($data['awvPatientData'], 'provider', SORT_ASC, 'name', SORT_ASC)
-            : null;
-
-        return $data;
-    }
-
-    public function incrementInvoiceNo()
-    {
-        $num = AppConfig::where('config_key', 'billing_invoice_count')
-            ->firstOrFail();
-
-        $current = $num->config_value;
-
-        $num->config_value = $current + 1;
-
-        $num->save();
-
-        return $current;
-    }
-
     /**
      * @param $reportName
      *
@@ -274,7 +76,7 @@ class PracticeInvoiceGenerator
             ->makeDirectory('download');
 
         $path = storage_path("download/${reportName}.pdf");
-        $pdf  = $pdfService->createPdfFromView('billing.practice.invoice', $this->getInvoiceData(), $path);
+        $pdf  = $pdfService->createPdfFromView('billing.practice.invoice', $this->practice->getInvoiceData($this->month), $path);
 
         return $this->practice
             ->addMedia($path)
@@ -297,7 +99,7 @@ class PracticeInvoiceGenerator
 
         $path = storage_path("/download/${reportName}.pdf");
 
-        $pdf = $pdfService->createPdfFromView('billing.practice.itemized', $this->getItemizedPatientData(), $path);
+        $pdf = $pdfService->createPdfFromView('billing.practice.itemized', $this->practice->getItemizedPatientData($this->month), $path);
 
         return $this->practice
             ->addMedia($path)

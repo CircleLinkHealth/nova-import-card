@@ -24,14 +24,14 @@ class AddAwvChargeableServicesToChargeableServicesTable extends Migration
     {
         //using create to add timestamps
         ChargeableService::create(
-           [
-               'code'        => 'AWV: G0438',
-               'description' => 'Initial Annual Wellness Visit',
-           ]
+            [
+                'code'        => ChargeableService::AWV_INITIAL,
+                'description' => 'Initial Annual Wellness Visit',
+            ]
        );
 
         ChargeableService::create([
-            'code'        => 'AWV: G0439',
+            'code'        => ChargeableService::AWV_SUBSEQUENT,
             'description' => 'Subsequent Annual Wellness Visit',
         ]);
     }

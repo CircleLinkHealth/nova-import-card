@@ -1401,3 +1401,46 @@ if ( ! function_exists('calculateWeekdays')) {
         }, new Carbon($toDate));
     }
 }
+
+if ( ! function_exists('array_orderby')) {
+    /**
+     * @return mixed
+     */
+    function array_orderby()
+    {
+        $args = func_get_args();
+        $data = array_shift($args);
+        foreach ($args as $n => $field) {
+            if (is_string($field)) {
+                $tmp = [];
+                foreach ($data as $key => $row) {
+                    $tmp[$key] = $row[$field];
+                }
+                $args[$n] = $tmp;
+            }
+        }
+        $args[] = &$data;
+        call_user_func_array('array_multisort', $args);
+
+        return array_pop($args);
+    }
+}
+
+if ( ! function_exists('incrementInvoiceNo')) {
+    /**
+     * @return mixed
+     */
+    function incrementInvoiceNo()
+    {
+        $num = AppConfig::where('config_key', 'billing_invoice_count')
+            ->firstOrFail();
+
+        $current = $num->config_value;
+
+        $num->config_value = $current + 1;
+
+        $num->save();
+
+        return $current;
+    }
+}
