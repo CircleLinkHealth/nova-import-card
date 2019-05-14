@@ -1,25 +1,41 @@
 <template>
-    <ul class="col-xs-12">
-        <li v-for="(carePerson, index) in patientCareTeam" :key="index" class="col-xs-12">
-            <div class="col-md-7">
-                <p style="margin-left: -10px;">
-                    <strong>{{carePerson.formatted_type}}: </strong>{{fullName(carePerson)}}<em>{{carePerson.user.primaryRole}}</em>
-                </p>
-            </div>
-            <div class="col-md-3">
-                <p v-show="carePerson.alert">Receives Alerts</p>
-            </div>
-            <div class="col-md-2">
-                <button class="btn btn-xs btn-danger problem-delete-btn"
-                        v-on:click.stop.prevent="deleteCarePerson(carePerson)"><span> <i
-                        class="glyphicon glyphicon-remove"></i> </span></button>
 
-                <button class="btn btn-xs btn-primary problem-edit-btn"
-                        v-on:click.stop.prevent="editCarePerson(carePerson)"><span> <i
-                        class="glyphicon glyphicon-pencil"></i> </span></button>
+    <div id="care-team" class="patient-info__subareas">
+        <div class="row">
+            <div class="col-xs-12">
+                <h2 id="care-team-label"
+                    class="patient-summary__subtitles patient-summary--careplan-background">
+                    Care Team
+                    <span class="btn btn-primary glyphicon glyphicon-plus" @click="createCarePerson" aria-hidden="true"></span>
+                </h2>
             </div>
-        </li>
-    </ul>
+            <div class="col-xs-12">
+                <div class="v-pdf-careplans">
+                    <ul class="col-xs-12">
+                        <li v-for="(carePerson, index) in patientCareTeam" :key="index" class="col-xs-12">
+                            <div class="col-md-7">
+                                <p style="margin-left: -10px;">
+                                    <strong>{{carePerson.formatted_type}}: </strong>{{fullName(carePerson)}}<em>{{carePerson.user.primaryRole}}</em>
+                                </p>
+                            </div>
+                            <div class="col-md-3">
+                                <p v-show="carePerson.alert">Receives Alerts</p>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-xs btn-danger problem-delete-btn"
+                                        v-on:click.stop.prevent="deleteCarePerson(carePerson)"><span> <i
+                                        class="glyphicon glyphicon-remove"></i> </span></button>
+
+                                <button class="btn btn-xs btn-primary problem-edit-btn"
+                                        v-on:click.stop.prevent="editCarePerson(carePerson)"><span> <i
+                                        class="glyphicon glyphicon-pencil"></i> </span></button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -61,6 +77,13 @@
                         },
                     })
                 }
+            },
+            {
+                createCarePerson() {
+                    this.setOpenModal({
+                        name: 'create-care-person'
+                    });
+                },
             },
             {
                 fullName(carePerson) {

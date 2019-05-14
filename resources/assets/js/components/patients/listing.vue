@@ -2,7 +2,13 @@
     <div>
         <div class="row">
             <div class="col-sm-12 text-right pad-10">
-                <button class="btn btn-info btn-xs" @click="clearFilters">Clear Filters</button>
+                <div class="col-sm-6 text-left" v-if="this.showProviderPatientsButton">
+                    <button v-if="this.showPracticePatients" class="btn btn-info btn-xs" @click="togglePracticePatients">Show My Patients</button>
+                    <button v-if="!this.showPracticePatients" class="btn btn-info btn-xs" @click="togglePracticePatients">Show Practice Patients</button>
+                </div>
+                <div v-bind:class="{'col-sm-6': this.showProviderPatientsButton}">
+                    <button class="btn btn-info btn-xs" @click="clearFilters">Clear Filters</button>
+                </div>
             </div>
         </div>
         <div class="top-10">
@@ -130,12 +136,19 @@
         components: {
             loader
         },
+        props: {
+            showProviderPatientsButton: {
+                type: Boolean,
+                required: true,
+            }
+        },
         data() {
             return {
                 pagination: null,
                 tableData: [],
                 practices: [],
                 providersForSelect: [],
+                showPracticePatients: false,
                 nameDisplayType: NameDisplayType.FirstName,
                 columns: ['name', 'provider', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'withdrawnReason', 'dob', 'mrn', 'phone', 'age', 'registeredOn', 'bhi', 'ccm'],
                 loaders: {
@@ -160,19 +173,19 @@
                     listColumns: {
                         provider: this.providersForSelect,
                         ccmStatus: [
-                            {id: 'enrolled', text: 'enrolled'},
-                            {id: 'paused', text: 'paused'},
-                            {id: 'withdrawn', text: 'withdrawn'},
-                            {id: 'to_enroll', text: 'to_enroll'},
-                            {id: 'unreachable', text: 'unreachable'},
-                            {id: 'patient_rejected', text: 'patient_rejected'}
+                            {id: 'enrolled', text: 'Enrolled'},
+                            {id: 'paused', text: 'Paused'},
+                            {id: 'withdrawn', text: 'Withdrawn'},
+                            {id: 'to_enroll', text: 'To Enroll'},
+                            {id: 'unreachable', text: 'Unreachable'},
+                            {id: 'patient_rejected', text: 'Patient Rejected'}
                         ],
                         careplanStatus: [
                             {id: '', text: 'none'},
-                            {id: 'qa_approved', text: 'qa_approved'},
-                            {id: 'provider_approved', text: 'provider_approved'},
-                            {id: 'g0506', text: 'g0506'},
-                            {id: 'draft', text: 'draft'}
+                            {id: 'qa_approved', text: 'QA Approved'},
+                            {id: 'provider_approved', text: 'Provider Approved'},
+                            {id: 'g0506', text: 'G0506'},
+                            {id: 'draft', text: 'Draft'}
                         ],
                         program: this.practices.map(practice => ({
                             id: practice.id,
@@ -223,9 +236,9 @@
                 })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${encodeURIComponent(item.value)}`).join('')
                 const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
                 if (this.pagination) {
-                    return rootUrl(`api/patients?page=${this.$refs.tblPatientList.page}&rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}`)
+                    return rootUrl(`api/patients?page=${this.$refs.tblPatientList.page}&rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}&showPracticePatients=${this.showPracticePatients}`)
                 } else {
-                    return rootUrl(`api/patients?rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}`)
+                    return rootUrl(`api/patients?rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}&showPracticePatients=${this.showPracticePatients}`)
                 }
             },
             filterData() {
@@ -247,6 +260,10 @@
                 } else {
                     this.columns.splice(2, 0, 'program')
                 }
+            },
+            togglePracticePatients() {
+                this.showPracticePatients = ! this.showPracticePatients
+                this.activateFilters()
             },
             activateFilters() {
                 this.pagination = null
@@ -437,7 +454,7 @@
                 let patients = []
                 this.loaders.excel = true
                 const download = (page = 1) => {
-                    return this.axios.get(rootUrl(`api/patients?rows=50&page=${page}&csv`)).then(response => {
+                    return this.axios.get(rootUrl(`api/patients?rows=50&page=${page}&csv&showPracticePatients=${this.showPracticePatients}`)).then(response => {
                         const pagination = response.data
                         patients = patients.concat(pagination.data)
                         this.exportCSVText = `Export as CSV (${Math.ceil(pagination.meta.to / pagination.meta.total * 100)}%)`

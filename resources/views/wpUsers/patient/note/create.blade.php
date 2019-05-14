@@ -81,7 +81,7 @@
                                                                   name="general_comment"
                                                                   id="general_comment"
                                                                   value="{{$patient->patientInfo->general_comment}}"
-                                                                  placeholder="{{$patient->patientInfo->general_comment == '' ? 'Enter General Comment...' : $patient->patientInfo->general_comment}}"
+                                                                  placeholder="Enter General Comment..."
                                                                   aria-describedby="sizing-addon2"
                                                                   style="margin: 0 auto; text-align: left; color: #333;">
                             </div>
@@ -700,7 +700,9 @@
                     // if time more than 90 seconds
                     // and (is not phone session, or phone session but not success)
 
-                    if ((Date.now() - startDate) >= SECONDS_THRESHOLD || noteBodyWithoutMeds.length > CHARACTERS_THRESHOLD) {
+                    //CPM-880:
+                    // show modal only for ccm countable users
+                    if (userIsCCMCountable && ((Date.now() - startDate) >= SECONDS_THRESHOLD || noteBodyWithoutMeds.length > CHARACTERS_THRESHOLD)) {
 
                         if (!isPhoneSession || !callIsSuccess) {
                             showModal = true;

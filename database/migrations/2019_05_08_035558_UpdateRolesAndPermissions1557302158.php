@@ -7,7 +7,7 @@
 use CircleLinkHealth\Customer\Database\Seeders\RequiredRolesPermissionsSeeder;
 use Illuminate\Database\Migrations\Migration;
 
-class UpdateRolesAndPermissions1554973982 extends Migration
+class UpdateRolesAndPermissions1557302158 extends Migration
 {
     /**
      * Reverse the migrations.

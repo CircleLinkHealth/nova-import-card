@@ -81,7 +81,7 @@ function formatTime($time)
         <div class="main-form-container col-lg-10 col-lg-offset-1 col-md-10 col-md-offset-1">
             <div class="row">
                 <div class="main-form-title col-lg-12">
-                    Patient Activities
+                    Scheduled Activities
                 </div>
                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
 

@@ -361,7 +361,7 @@
             },
             getSystemCodes() {
                 return this.axios.get(rootUrl(`api/problems/codes`)).then(response => {
-                    console.log('full-conditions:get-system-codes', response.data)
+                    // console.log('full-conditions:get-system-codes', response.data)
                     this.codes = response.data
                 }).catch(err => {
                     console.error('full-conditions:get-system-codes', err)
