@@ -2257,6 +2257,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasMany(PatientMonthlySummary::class, 'patient_id');
     }
 
+    public function patientSummaryForMonth(Carbon $date = null)
+    {
+        return $this->patientSummaries()
+                    ->orderBy('id', 'desc')
+                    ->whereMonthYear(($date ?? Carbon::now())->startOfMonth())
+                    ->first();
+    }
+
     public function patientAWVSummaries()
     {
         return $this->hasMany(PatientAWVSummary::class, 'patient_id');
