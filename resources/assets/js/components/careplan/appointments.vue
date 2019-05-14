@@ -94,7 +94,7 @@
                 }
                 return this.axios.get(rootUrl(`api/patients/${this.patientId}/appointments?page=${page}`)).then(response => {
                     const pagination = response.data
-                    console.log('appointments:get-appointments', pagination)
+                    // console.log('appointments:get-appointments', pagination)
                     this.appointments = this.appointments.concat(pagination.data.map(this.setupAppointment))
                     this.appointments.sort((a, b) => a.at < b.at ? 1 : -1)
                     if (pagination.next_page_url) return this.getAppointments(page + 1)

@@ -72,10 +72,10 @@
                             return pdf
                         }).sort((pdfA, pdfB) => pdfB.updated_at - pdfA.updated_at)
 
-                        console.log(carePlan)
+                        // console.log(carePlan)
                         
                         this.patientCarePlan = carePlan;
-                        console.log('patient-careplan', this.patientCarePlan)
+                        // console.log('patient-careplan', this.patientCarePlan)
                     }, error => {
                         console.log(error)
                     }, patientId)
