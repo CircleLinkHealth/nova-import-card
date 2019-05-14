@@ -8,9 +8,10 @@ namespace App\Nova;
 
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\MorphedByMany;
 use Laravel\Nova\Fields\Text;
 
-class CpmProblemInstructions extends Resource
+class CpmInstructable extends Resource
 {
     /**
      * The model the resource corresponds to.
@@ -74,11 +75,22 @@ class CpmProblemInstructions extends Resource
     public function fields(Request $request)
     {
         return [
-            BelongsTo::make('cpmProblem')->hideWhenUpdating(),
-            BelongsTo::make('cpmInstruction')->hideFromIndex()->hideWhenUpdating(),
+            MorphedByMany::make('CpmProblem')
+                ->hideWhenUpdating()
+                ->hideFromDetail(),
+
+            BelongsTo::make('cpmInstruction')
+                ->hideFromIndex()
+                ->hideWhenUpdating(),
+
+            Text::make('CpmProblem', function ($q) {
+                return $q->cpmProblem[0]->name;
+            }),
+
             Text::make('cpmInstruction.name')->displayUsing(function ($q) {
                 return substr($q, 0, 50);
-            })->hideWhenUpdating()->hideFromDetail(),
+            })->hideWhenUpdating()
+                ->hideFromDetail(),
         ];
     }
 

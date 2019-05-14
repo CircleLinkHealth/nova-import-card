@@ -522,7 +522,7 @@ class CpmProblemsTableSeeder extends Seeder
             ],
             36 => [
                 'id'                  => 601,
-                'default_icd_10_code' => '',
+                'default_icd_10_code' => 'E66.9',
                 'name'                => 'Obesity',
                 'icd10from'           => '',
                 'icd10to'             => '',
