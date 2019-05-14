@@ -12,9 +12,10 @@ use App\CLH\Helpers\StringManipulation;
 use App\EnrolleeCustomFilter;
 use App\Repositories\PatientSummaryEloquentRepository;
 use App\Traits\HasChargeableServices;
-use CircleLinkHealth\Customer\Traits\HasSettings;
+use App\ValueObjects\PatientReportData;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
+use CircleLinkHealth\Customer\Traits\HasSettings;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
@@ -276,12 +277,13 @@ class Practice extends BaseModel implements HasMedia
             if (starts_with($chargeableServiceCode, 'AWV')) {
                 $billable = User::ofType('participant')
                                 ->ofPractice($this->id)
-                                ->whereHas('patientAWVSummaries', function ($query) use ($chargeableServiceCode, $month) {
-                                    $query->where('is_billable', true)
-                                          ->where('month_year', $month->toDateString());
-                                    //@todo: adjust for subsequent visit
+                                ->whereHas('patientAWVSummaries',
+                                    function ($query) use ($chargeableServiceCode, $month) {
+                                        $query->where('is_billable', true)
+                                              ->where('month_year', $month->toDateString());
+                                        //@todo: adjust for subsequent visit
 //                            ->when($chargeableServiceCode == 'AWV: G0439');
-                                })
+                                    })
                                 ->count() ?? 0;
             } else {
                 $billable = User::ofType('participant')
@@ -297,7 +299,7 @@ class Practice extends BaseModel implements HasMedia
                                         )
                                               ->where('month_year', $month->toDateString())
                                               ->where('approved', '=', true)
-                                              ->when( ! $isSoftwareOnly, function ($q) {
+                                              ->when(! $isSoftwareOnly, function ($q) {
                                                   $q->whereDoesntHave('chargeableServices', function ($query) {
                                                       $query->where('code', 'Software-Only');
                                                   });
@@ -325,7 +327,7 @@ class Practice extends BaseModel implements HasMedia
             'invoice_num'    => incrementInvoiceNo(),
             'invoice_date'   => Carbon::today()->toDateString(),
             'due_by'         => Carbon::today()->addDays($this->term_days)->toDateString(),
-            'invoice_amount' => number_format(round((float) $this->clh_pppm * $billable, 2), 2),
+            'invoice_amount' => number_format(round((float)$this->clh_pppm * $billable, 2), 2),
             'billable'       => $billable,
         ];
     }
@@ -363,27 +365,32 @@ class Practice extends BaseModel implements HasMedia
                                     $summary->save();
                                 }
 
-                                $data['patientData'][$u->id]['ccm_time'] = round($summary->ccm_time / 60, 2);
-                                $data['patientData'][$u->id]['bhi_time'] = round($summary->bhi_time / 60, 2);
-                                $data['patientData'][$u->id]['name'] = $u->getFullName();
-                                $data['patientData'][$u->id]['dob'] = $u->getBirthDate();
-                                $data['patientData'][$u->id]['practice'] = $u->program_id;
-                                $data['patientData'][$u->id]['provider'] = $u->getBillingProviderName();
-                                $data['patientData'][$u->id]['billing_codes'] = $u->billingCodes($month);
+                                $patientData = new PatientReportData();
+                                $patientData->setCcmTime(round($summary->ccm_time / 60, 2));
+                                $patientData->setBhiTime(round($summary->bhi_time / 60, 2));
+                                $patientData->setName($u->getFullName());
+                                $patientData->setDob($u->getBirthDate());
+                                $patientData->setPractice($u->program_id);
+                                $patientData->setProvider($u->getBillingProviderName());
+                                $patientData->setBillingCodes($u->billingCodes($month));
 
-                                $data['patientData'][$u->id]['problem1_code'] = $summary->billable_problem1_code;
-                                $data['patientData'][$u->id]['problem1'] = $summary->billable_problem1;
+                                $patientData->setProblem1Code($summary->billable_problem1_code);
+                                $patientData->setProblem1($summary->billable_problem1);
 
-                                $data['patientData'][$u->id]['problem2_code'] = $summary->billable_problem2_code;
-                                $data['patientData'][$u->id]['problem2'] = $summary->billable_problem2;
+                                $patientData->setProblem2Code($summary->billable_problem2_code);
+                                $patientData->setProblem2($summary->billable_problem2);
 
-                                $data['patientData'][$u->id]['bhi_code'] = optional(optional($summary->billableProblems->first())->pivot)->icd_10_code;
-                                $data['patientData'][$u->id]['bhi_problem'] = optional(optional($summary->billableProblems->first())->pivot)->name;
+                                $patientData->setBhiCode(optional(optional($summary->billableProblems->first())->pivot)->icd_10_code);
+                                $patientData->setBhiProblem(optional(optional($summary->billableProblems->first())->pivot)->name);
+
+                                $data['patientData'][$u->id] = $patientData;
                             }
                         });
 
         $data['patientData'] = array_key_exists('patientData', $data)
-            ? array_orderby($data['patientData'], 'provider', SORT_ASC, 'name', SORT_ASC)
+            ? collect($data['patientData'])->sortBy(function ($data) {
+                return sprintf('%-12s%s', $data->getProvider(), $data->getName());
+            })
             : null;
 
         $awvPatients = User::ofType('participant')
@@ -403,16 +410,21 @@ class Practice extends BaseModel implements HasMedia
                                foreach ($patients as $u) {
                                    $summary = $u->patientAWVSummaries->first();
 
-                                   $data['awvPatientData'][$u->id]['name'] = $u->getFullName();
-                                   $data['awvPatientData'][$u->id]['dob'] = $u->getBirthDate();
-                                   $data['awvPatientData'][$u->id]['provider'] = $u->getBillingProviderName();
-                                   $data['awvPatientData'][$u->id]['practice'] = $u->program_id;
-                                   $data['awvPatientData'][$u->id]['awv_date'] = $summary->completed_at;
+                                   $patientData = new PatientReportData();
+                                   $patientData->setName($u->getFullName());
+                                   $patientData->setDob($u->getBirthDate());
+                                   $patientData->setPractice($u->program_id);
+                                   $patientData->setProvider($u->getBillingProviderName());
+                                   $patientData->setAwvDate($summary->completed_at);
+
+                                   $data['awvPatientData'][$u->id] = $patientData;
                                }
                            });
 
         $data['awvPatientData'] = array_key_exists('awvPatientData', $data)
-            ? array_orderby($data['awvPatientData'], 'provider', SORT_ASC, 'name', SORT_ASC)
+            ? collect($data['awvPatientData'])->sortBy(function ($data) {
+                return sprintf('%-12s%s', $data->getProvider(), $data->getName());
+            })
             : null;
 
         return $data;
