@@ -41,7 +41,7 @@ class CCDViewerController extends Controller
     {
         $ccda = Ccda::withTrashed()
             ->with('media')
-            ->find($ccdaId);
+            ->findOrFail($ccdaId);
 
         $type = $request->input('type');
 

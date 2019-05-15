@@ -1,6 +1,6 @@
 <p>Thank you for choosing CircleLink for your CCM program!</p>
 
-<p>For paying CircleLink and billing the appropriate Medicare or Medicare Advantage plan, i) a CircleLink invoice for the most recent month can be downloaded <a href="{{$invoiceURL}}"> here</a> (Login required) and ii) a billing report can be downloaded <a href="{{$patientReportURL}}"> here</a>. (Login required)
+<p>For paying CircleLink and billing the appropriate Medicare or Medicare Advantage plan, i) a CircleLink invoice for the most recent month can be downloaded <a href="{{$invoiceURL}}"> here</a> (Login required) and ii) a billing report can be downloaded <a href="{{$patientReportURL}}"> here</a>. (Login required)</p>
 
 <p>Finally, we have some billing tips below. Please let us know if you need anything else!</p>
 
