@@ -8,6 +8,7 @@ namespace App\Repositories;
 
 use App\Filters\PatientFilters;
 use App\PatientSearchModel;
+use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 
@@ -40,6 +41,9 @@ class PatientReadRepository
 
     public function patients(PatientFilters $filters)
     {
+        $shouldSetDefaultRows = false;
+        $filtersInput         = $filters->filters();
+
         $users = $this->model()
             ->with([
                 'carePlan',
@@ -52,12 +56,21 @@ class PatientReadRepository
                         ->latest();
                 },
             ])
+            ->when(
+                auth()->user()->hasRole('provider') && 'false' == $filtersInput['showPracticePatients'],
+                function ($query) {
+                    $query->whereHas('careTeamMembers', function ($subQuery) {
+                        $subQuery->where('member_user_id', auth()->user()->id)
+                            ->whereIn(
+                                          'type',
+                                          [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
+                                           );
+                    });
+                }
+                      )
             ->whereHas('patientInfo')
             ->intersectPracticesWith(auth()->user())
             ->filter($filters);
-
-        $shouldSetDefaultRows = false;
-        $filtersInput         = $filters->filters();
 
         if ( ! isset($filtersInput['rows'])) {
             $shouldSetDefaultRows = true;

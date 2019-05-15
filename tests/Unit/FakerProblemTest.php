@@ -13,9 +13,9 @@ use Tests\Helpers\UserHelpers;
 
 class FakerProblemTest
 {
-    use UserHelpers;
     use
         DatabaseTransactions;
+    use UserHelpers;
 
     protected $faker;
     protected $patient;

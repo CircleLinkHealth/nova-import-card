@@ -23,9 +23,9 @@ class PageTimerControllerTest extends TestCase
 {
     use UserHelpers;
     use
-        WithoutMiddleware;
-    use
         WithFaker;
+    use
+        WithoutMiddleware;
     const BHI = 'bhi';
     const CCM = 'ccm';
     const MIX = 'mix';

@@ -13,9 +13,9 @@ use Tests\TestCase;
 
 class TestHelpersTest extends TestCase
 {
-    use SetupTestCustomerTrait;
     use
         DatabaseTransactions;
+    use SetupTestCustomerTrait;
     private $location;
     private $patient;
 

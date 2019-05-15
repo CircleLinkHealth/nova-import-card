@@ -47,8 +47,8 @@ trait UserHelpers
             'created_at' => Carbon::now()->toDateTimeString(),
 
             'scheduled_date' => '2016-12-01',
-            'window_start'   => '09:00:00',
-            'window_end'     => '10:00:00',
+            'window_start'   => '09:00',
+            'window_end'     => '10:00',
 
             'is_cpm_outbound' => true,
         ]);

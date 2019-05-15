@@ -14,9 +14,9 @@ use Tests\TestCase;
 
 class ActivityApiControllerTest extends TestCase
 {
-    use WithoutMiddleware;
     use
         UserHelpers;
+    use WithoutMiddleware;
     private $activities;
     private $patient;
 

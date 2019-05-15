@@ -23,9 +23,9 @@ class PatientMonthlySummaryChargeableServicesTest extends TestCase
 {
     use UserHelpers;
     use
-        WithoutMiddleware;
-    use
         WithFaker;
+    use
+        WithoutMiddleware;
     private $monthYear;
     private $patient;
 
