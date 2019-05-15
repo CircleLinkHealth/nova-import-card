@@ -15,8 +15,8 @@ use App\Importer\Models\ItemLogs\ProblemCodeLog;
 use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Models\MedicalRecords\TabularMedicalRecord;
-use CircleLinkHealth\Customer\Entities\Practice;
 use App\Services\Eligibility\Entities\Problem as ProblemEntity;
+use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 
 class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger

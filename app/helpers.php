@@ -467,33 +467,32 @@ if ( ! function_exists('carbonGetNext')) {
     /**
      * Get carbon instance of the next $day.
      *
-     * @param $day
+     * @param string      $day
+     * @param Carbon|null $fromDate
      *
      * @return Carbon|false
      */
-    function carbonGetNext($day = 'monday')
+    function carbonGetNext($day = 'monday', Carbon $fromDate = null)
     {
         if ( ! is_numeric($day)) {
             $dayOfWeek = clhToCarbonDayOfWeek(dayNameToClhDayOfWeek($day));
-            $dayName   = $day;
         }
 
         if (is_numeric($day)) {
             $dayOfWeek = clhToCarbonDayOfWeek($day);
-            $dayName   = clhDayOfWeekToDayName($day);
         }
 
         if ( ! isset($dayOfWeek)) {
             return false;
         }
 
-        $now = Carbon::now();
+        $now = $fromDate->copy() ?? Carbon::now();
 
         if ($now->dayOfWeek == $dayOfWeek) {
             return $now;
         }
 
-        return $now->parse("next ${dayName}");
+        return $now->next($dayOfWeek);
     }
 }
 

@@ -28,7 +28,7 @@ class WT1CsvParser
         }
     }
 
-    public function parseFile(String $fileName)
+    public function parseFile(string $fileName)
     {
         $arr = parseCsvToArray($fileName);
         $this->parseCsvArray($arr);

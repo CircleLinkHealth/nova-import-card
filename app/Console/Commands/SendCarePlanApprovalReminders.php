@@ -35,7 +35,7 @@ class SendCarePlanApprovalReminders extends Command
         $pretend = $this->option('pretend');
 
         $providersCount = User::ofType('provider')
-                              ->count();
+            ->count();
 
         $bar = $this->output->createProgressBar($providersCount);
 
@@ -58,8 +58,8 @@ class SendCarePlanApprovalReminders extends Command
                     }
 
                     $recipients = $this->recipients($providerUser)
-                                       ->unique('id')
-                                       ->values();
+                        ->unique('id')
+                        ->values();
 
                     if ($recipients->isEmpty()) {
                         continue;
@@ -88,7 +88,6 @@ class SendCarePlanApprovalReminders extends Command
                     ];
                 }
             });
-
 
         if ( ! app()->environment(['local', 'staging']) && $recipientsWithNoDMAddresses->isNotEmpty()) {
             sendSlackMessage(
@@ -175,4 +174,3 @@ class SendCarePlanApprovalReminders extends Command
         return true;
     }
 }
-

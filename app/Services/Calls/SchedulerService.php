@@ -6,18 +6,18 @@
 
 namespace App\Services\Calls;
 
-use CircleLinkHealth\TimeTracking\Entities\Activity;
 use App\Algorithms\Calls\SuccessfulHandler;
 use App\Algorithms\Calls\UnsuccessfulHandler;
 use App\Call;
-use CircleLinkHealth\Customer\Entities\Family;
 use App\Note;
-use CircleLinkHealth\Customer\Entities\Nurse;
-use CircleLinkHealth\Customer\Entities\Patient;
 use App\Repositories\PatientWriteRepository;
 use App\Services\NoteService;
-use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Family;
+use CircleLinkHealth\Customer\Entities\Nurse;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Illuminate\Support\Facades\Auth;
 
 class SchedulerService
@@ -167,8 +167,8 @@ class SchedulerService
                                $row
                            ) {
                     $q->where(
-                                   'birth_date',
-                                   Carbon::parse($row['DOB'])->toDateString()
+                        'birth_date',
+                        Carbon::parse($row['DOB'])->toDateString()
                                );
                 })
                 ->first();
@@ -272,7 +272,7 @@ class SchedulerService
             ? null
             : $nurse_id;
 
-        if (!($date instanceof Carbon)) {
+        if ( ! ($date instanceof Carbon)) {
             $date = Carbon::parse($date);
         }
 

@@ -6,9 +6,9 @@
 
 namespace App\Repositories;
 
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
-use Carbon\Carbon;
 
 class BillablePatientsEloquentRepository
 {
