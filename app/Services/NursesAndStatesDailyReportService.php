@@ -194,7 +194,7 @@ class NursesAndStatesDailyReportService
                 round(
                     (float) (100 * (
                         (floatval($this->successfulCallsMultiplier) * $data['successful']) + (floatval(
-                                $this->unsuccessfulCallsMultiplier
+                            $this->unsuccessfulCallsMultiplier
                                                                                                   ) * $data['unsuccessful'])
                         ) / $data['actualHours'])
                 )
@@ -237,12 +237,12 @@ class NursesAndStatesDailyReportService
     {
         $diff = $date->diffInDays($date->copy()->endOfMonth());
 
-        $mutableDate = $date->copy();
+        $mutableDate = $date->copy()->addDay();
         $hours       = [];
         for ($i = $diff; $i > 0; --$i) {
             $holidayForDate = $upcomingHolidays->where('date', $mutableDate->toDateString());
 
-            //we count the hours only if the nurse has not scheduld a holiday for that day.
+            //we count the hours only if the nurse has not scheduledd a holiday for that day.
             if ($holidayForDate->isEmpty()) {
                 $hours[] = round(
                     (float) $nurseWindows->where(
@@ -284,19 +284,19 @@ class NursesAndStatesDailyReportService
     {
         return \DB::table('calls')
             ->select(
-                      \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
-                      \DB::raw(
+                \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
+                \DB::raw(
                           'GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60 as patient_time'
                       ),
-                      \DB::raw(
+                \DB::raw(
                           "({$this->timeGoal} - (GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60)) as patient_time_left"
                       ),
-                      'no_of_successful_calls as successful_calls'
+                'no_of_successful_calls as successful_calls'
                   )
             ->leftJoin('users', 'users.id', '=', 'calls.inbound_cpm_id')
             ->leftJoin('patient_monthly_summaries', 'users.id', '=', 'patient_monthly_summaries.patient_id')
             ->whereRaw(
-                      "(
+                "(
 (
 DATE(calls.scheduled_date) >= DATE('{$date->copy()->startOfMonth()->toDateString()}')
 AND
