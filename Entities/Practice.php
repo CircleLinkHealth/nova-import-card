@@ -7,12 +7,15 @@
 namespace CircleLinkHealth\Customer\Entities;
 
 use App\CareAmbassadorLog;
+use App\ChargeableService;
 use App\CLH\Helpers\StringManipulation;
 use App\EnrolleeCustomFilter;
+use App\Repositories\PatientSummaryEloquentRepository;
 use App\Traits\HasChargeableServices;
-use CircleLinkHealth\Customer\Traits\HasSettings;
+use App\ValueObjects\PatientReportData;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
+use CircleLinkHealth\Customer\Traits\HasSettings;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
@@ -89,7 +92,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\EnrolleeCustomFilter[] $enrolleeCustomFilters
  * @property-read \App\PracticeEnrollmentTips $enrollmentTips
  * @property-read string $number_with_dashes
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Media[] $media
+ * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\Media[] $media
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[]
  *     $notifications
  * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
@@ -257,6 +260,174 @@ class Practice extends BaseModel implements HasMedia
     public function getInvoiceRecipientsArray()
     {
         return array_values(array_filter(array_map('trim', explode(',', $this->invoice_recipients))));
+    }
+
+
+    public function getInvoiceData($month, $chargeableServiceId = null)
+    {
+        if ($chargeableServiceId) {
+            //if software only exists on summary we bill for that
+            //if service is not software only we count summaries that have this chargeableService and NOT software only.
+
+            $chargeableServiceCode = ChargeableService::findOrFail($chargeableServiceId)->code;
+
+            $isSoftwareOnly = 'Software-Only' == $chargeableServiceCode;
+
+            //for AWV Codes
+            if (starts_with($chargeableServiceCode, 'AWV')) {
+                $billable = User::ofType('participant')
+                                ->ofPractice($this->id)
+                                ->whereHas('patientAWVSummaries',
+                                    function ($query) use ($chargeableServiceCode, $month) {
+                                        $query->where('is_billable', true)
+                                              ->where('month_year', $month->toDateString());
+                                        //@todo: adjust for subsequent visit
+//                            ->when($chargeableServiceCode == 'AWV: G0439');
+                                    })
+                                ->count() ?? 0;
+            } else {
+                $billable = User::ofType('participant')
+                                ->ofPractice($this->id)
+                                ->whereHas(
+                                    'patientSummaries',
+                                    function ($query) use ($chargeableServiceId, $isSoftwareOnly, $month) {
+                                        $query->whereHas(
+                                            'chargeableServices',
+                                            function ($query) use ($chargeableServiceId) {
+                                                $query->where('id', $chargeableServiceId);
+                                            }
+                                        )
+                                              ->where('month_year', $month->toDateString())
+                                              ->where('approved', '=', true)
+                                              ->when(! $isSoftwareOnly, function ($q) {
+                                                  $q->whereDoesntHave('chargeableServices', function ($query) {
+                                                      $query->where('code', 'Software-Only');
+                                                  });
+                                              });
+                                    }
+                                )
+                                ->count() ?? 0;
+            }
+        } else {
+            $billable = User::ofType('participant')
+                            ->ofPractice($this->id)
+                            ->whereHas('patientSummaries', function ($query) use ($month) {
+                                $query->where('month_year', $month->toDateString())
+                                      ->where('approved', '=', true);
+                            })
+                            ->count() ?? 0;
+        }
+
+        return [
+            'clh_address'    => $this->getAddress(),
+            'bill_to'        => $this->bill_to_name,
+            'practice'       => $this,
+            'month'          => $month->format('F, Y'),
+            'rate'           => $this->clh_pppm,
+            'invoice_num'    => incrementInvoiceNo(),
+            'invoice_date'   => Carbon::today()->toDateString(),
+            'due_by'         => Carbon::today()->addDays($this->term_days)->toDateString(),
+            'invoice_amount' => number_format(round((float)$this->clh_pppm * $billable, 2), 2),
+            'billable'       => $billable,
+        ];
+    }
+
+    public function getItemizedPatientData($month)
+    {
+        $repo = app(PatientSummaryEloquentRepository::class);
+
+        $data          = [];
+        $data['name']  = $this->display_name;
+        $data['month'] = $month->toDateString();
+
+        $patients = User::orderBy('first_name', 'asc')
+                        ->ofType('participant')
+                        ->with([
+                            'patientSummaries' => function ($q) use ($month) {
+                                $q
+                                    ->with(['billableBhiProblems'])
+                                    ->where('month_year', $month->toDateString())
+                                    ->where('approved', '=', true);
+                            },
+                            'billingProvider',
+                        ])
+                        ->whereProgramId($this->id)
+                        ->whereHas('patientSummaries', function ($query) use ($month) {
+                            $query->where('month_year', $month->toDateString())
+                                  ->where('approved', '=', true);
+                        })
+                        ->chunk(500, function ($patients) use (&$data, $repo, $month) {
+                            foreach ($patients as $u) {
+                                $summary = $u->patientSummaries->first();
+
+                                if ( ! $repo->hasBillableProblemsNameAndCode($summary)) {
+                                    $summary = $repo->fillBillableProblemsNameAndCode($summary);
+                                    $summary->save();
+                                }
+
+                                $patientData = new PatientReportData();
+                                $patientData->setCcmTime(round($summary->ccm_time / 60, 2));
+                                $patientData->setBhiTime(round($summary->bhi_time / 60, 2));
+                                $patientData->setName($u->getFullName());
+                                $patientData->setDob($u->getBirthDate());
+                                $patientData->setPractice($u->program_id);
+                                $patientData->setProvider($u->getBillingProviderName());
+                                $patientData->setBillingCodes($u->billingCodes($month));
+
+                                $patientData->setProblem1Code($summary->billable_problem1_code);
+                                $patientData->setProblem1($summary->billable_problem1);
+
+                                $patientData->setProblem2Code($summary->billable_problem2_code);
+                                $patientData->setProblem2($summary->billable_problem2);
+
+                                $patientData->setBhiCode(optional(optional($summary->billableProblems->first())->pivot)->icd_10_code);
+                                $patientData->setBhiProblem(optional(optional($summary->billableProblems->first())->pivot)->name);
+
+                                $data['patientData'][$u->id] = $patientData;
+                            }
+                        });
+
+        $data['patientData'] = array_key_exists('patientData', $data)
+            ? collect($data['patientData'])->sortBy(function ($data) {
+                return sprintf('%-12s%s', $data->getProvider(), $data->getName());
+            })
+            : null;
+
+        $awvPatients = User::ofType('participant')
+                           ->ofPractice($this->id)
+                           ->whereHas('patientAWVSummaries', function ($query) use ($month) {
+                               $query->where('is_billable', true)
+                                     ->where('month_year', $month->toDateString());
+                           })
+                           ->with([
+                               'patientAWVSummaries' => function ($q) use ($month) {
+                                   $q->where('is_billable', true)
+                                     ->where('month_year', $month->toDateString());
+                               },
+                               'billingProvider',
+                           ])
+                           ->chunk(100, function ($patients) use (&$data) {
+                               foreach ($patients as $u) {
+                                   $summary = $u->patientAWVSummaries->first();
+
+                                   $patientData = new PatientReportData();
+                                   $patientData->setName($u->getFullName());
+                                   $patientData->setDob($u->getBirthDate());
+                                   $patientData->setPractice($u->program_id);
+                                   $patientData->setProvider($u->getBillingProviderName());
+                                   $patientData->setAwvDate($summary->completed_at);
+
+                                   $data['awvPatientData'][$u->id] = $patientData;
+                               }
+                           });
+
+        $data['awvPatientData'] = array_key_exists('awvPatientData', $data)
+            ? collect($data['awvPatientData'])->sortBy(function ($data) {
+                return sprintf('%-12s%s', $data->getProvider(), $data->getName());
+            })
+            : null;
+
+        return $data;
     }
 
     /**
