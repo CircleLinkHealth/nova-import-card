@@ -295,13 +295,13 @@
                             <li class="dropdown">
                                 <a href="{{url('/jobs/completed')}}">
                                     <span class="badge">{{auth()->user()->cachedNotificationsList()->count()}}</span>
-                                    Jobs Completed
+                                    Jobs Done
                                 </a>
                             </li>
 
                             <li class="dropdown">
                                 <a href="{{ url('/superadmin') }}" target="_blank"
-                                   style=""><i class="glyphicon glyphicon-fire"></i> Nova</a>
+                                   style=""><i class="glyphicon glyphicon-fire"></i> SuperAdmin</a>
                             </li>
                             <li class="dropdown">
                                 <a href="{{ route('patients.dashboard') }}"
