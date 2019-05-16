@@ -491,12 +491,12 @@ class ReportsService
         //get all medication observations for the user
         $medication_obs = DB::table('rules_questions')
             ->select(
-                                'lv_observations.id',
-                                'rules_items.items_text',
-                                'lv_observations.obs_date',
-                                'lv_observations.obs_value',
-                                'lv_observations.obs_key',
-                                'lv_observations.obs_message_id'
+                'lv_observations.id',
+                'rules_items.items_text',
+                'lv_observations.obs_date',
+                'lv_observations.obs_value',
+                'lv_observations.obs_key',
+                'lv_observations.obs_message_id'
                             )
             ->join('lv_observations', 'rules_questions.msg_id', '=', 'lv_observations.obs_message_id')
             ->join('rules_items', 'rules_questions.qid', '=', 'rules_items.qid')

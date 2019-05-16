@@ -104,18 +104,18 @@ class PracticeInvoiceGenerator
                     'patientSummaries',
                     function ($query) use ($chargeableServiceId, $isSoftwareOnly) {
                         $query->whereHas(
-                                        'chargeableServices',
-                                        function ($query) use ($chargeableServiceId) {
-                                            $query->where('id', $chargeableServiceId);
-                                        }
+                            'chargeableServices',
+                            function ($query) use ($chargeableServiceId) {
+                                $query->where('id', $chargeableServiceId);
+                            }
                                     )
                             ->where('month_year', $this->month->toDateString())
                             ->where('approved', '=', true)
                             ->when( ! $isSoftwareOnly, function ($q) {
-                                            $q->whereDoesntHave('chargeableServices', function ($query) {
-                                                $query->where('code', 'Software-Only');
-                                            });
-                                        });
+                                $q->whereDoesntHave('chargeableServices', function ($query) {
+                                    $query->where('code', 'Software-Only');
+                                });
+                            });
                     }
                             )
                 ->count() ?? 0;

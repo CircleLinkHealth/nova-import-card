@@ -7,12 +7,12 @@
 namespace App\Http\Controllers\CareCenter;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Holiday;
-use CircleLinkHealth\Customer\Entities\WorkHours;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 use CircleLinkHealth\Customer\Entities\User;
-use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\WorkHours;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Validator;
@@ -194,15 +194,15 @@ class WorkScheduleController extends Controller
             ->get()
             ->sum(function ($window) {
                 return Carbon::createFromFormat(
-                        'H:i:s',
-                        $window->window_time_end
+                    'H:i:s',
+                    $window->window_time_end
                     )->diffInHours(Carbon::createFromFormat(
                         'H:i:s',
                         $window->window_time_start
                     ));
             }) + Carbon::createFromFormat(
-                    'H:i',
-                    $request->input('window_time_end')
+                'H:i',
+                $request->input('window_time_end')
                 )->diffInHours(Carbon::createFromFormat(
                     'H:i',
                     $request->input('window_time_start')

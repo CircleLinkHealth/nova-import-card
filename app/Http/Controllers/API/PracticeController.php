@@ -29,19 +29,19 @@ class PracticeController extends Controller
         //fixing up the data for vue. basically keying locations and providers by id
         $practices = $practicesCollection->keyBy('id')
             ->map(function ($practice) {
-                                             return [
-                                                 'id'           => $practice->id,
-                                                 'display_name' => $practice->display_name,
-                                                 'locations'    => $practice->locations->map(function ($loc) {
-                                                     //is there no better way to do this?
-                                                     $loc = new Collection($loc);
+                return [
+                    'id'           => $practice->id,
+                    'display_name' => $practice->display_name,
+                    'locations'    => $practice->locations->map(function ($loc) {
+                        //is there no better way to do this?
+                        $loc = new Collection($loc);
 
-                                                     $loc['providers'] = collect($loc['providers'])->keyBy('id');
+                        $loc['providers'] = collect($loc['providers'])->keyBy('id');
 
-                                                     return $loc;
-                                                 })->keyBy('id'),
-                                             ];
-                                         });
+                        return $loc;
+                    })->keyBy('id'),
+                ];
+            });
 
         return response()->json($practices->all());
     }
@@ -74,10 +74,10 @@ class PracticeController extends Controller
     {
         $nurses = User::ofType(['care-center', 'care-center-external'])
             ->whereHas('nurseInfo', function ($q) {
-                          $q->where([
-                              'status' => 'active',
-                          ]);
-                      })
+                $q->where([
+                    'status' => 'active',
+                ]);
+            })
             ->ofPractice($practiceId)
             ->with(['nurseInfo.states', 'roles'])
             ->get([
@@ -89,35 +89,35 @@ class PracticeController extends Controller
                 'state',
             ])
             ->map(function ($nurse) use ($practiceId) {
-                          $info = $nurse->nurseInfo;
-                          $states = (
-                              $info
+                $info = $nurse->nurseInfo;
+                $states = (
+                    $info
                               ? $info->states
                               : new Collection()
                           )
-                              ->map(function ($state) {
-                                  return $state->code;
-                              });
+                    ->map(function ($state) {
+                        return $state->code;
+                    });
 
-                          if ($nurse->state && ! $states->contains($nurse->state)) {
-                              $states->push($nurse->state);
-                          }
+                if ($nurse->state && ! $states->contains($nurse->state)) {
+                    $states->push($nurse->state);
+                }
 
-                          return [
-                              'id'    => $nurse->id,
-                              'roles' => $nurse->rolesInPractice($practiceId)
-                                  ->map(function ($r) {
-                                                        return $r->name;
-                                                    }),
-                              'first_name' => $nurse->getFirstName(),
-                              'last_name'  => $nurse->getLastName(),
-                              'suffix'     => $nurse->getSuffix(),
-                              'full_name'  => $nurse->display_name ?? ($nurse->getFullName()),
-                              'city'       => $nurse->city,
-                              'state'      => $nurse->state,
-                              'states'     => $states,
-                          ];
-                      })
+                return [
+                    'id'    => $nurse->id,
+                    'roles' => $nurse->rolesInPractice($practiceId)
+                        ->map(function ($r) {
+                            return $r->name;
+                        }),
+                    'first_name' => $nurse->getFirstName(),
+                    'last_name'  => $nurse->getLastName(),
+                    'suffix'     => $nurse->getSuffix(),
+                    'full_name'  => $nurse->display_name ?? ($nurse->getFullName()),
+                    'city'       => $nurse->city,
+                    'state'      => $nurse->state,
+                    'states'     => $states,
+                ];
+            })
             ->toArray();
 
         return response()->json($nurses);

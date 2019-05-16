@@ -7,9 +7,9 @@
 namespace App\Observers;
 
 use App\Enrollee;
-use CircleLinkHealth\Customer\Entities\Patient;
 use App\TargetPatient;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Patient;
 
 class PatientObserver
 {

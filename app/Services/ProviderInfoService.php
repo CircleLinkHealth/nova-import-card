@@ -29,9 +29,9 @@ class ProviderInfoService
             ->intersectPracticesWith($user)
             ->get()
             ->transform(
-                       function ($u) {
-                           return $u->safe();
-                       }
+                function ($u) {
+                    return $u->safe();
+                }
                    );
     }
 

@@ -9,8 +9,8 @@ namespace App\Models\CCD;
 use App\Importer\Models\ItemLogs\DemographicsLog;
 use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
-use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\User;
 
 trait ValidatesQAImportOutput
 {

@@ -6,8 +6,8 @@
 
 namespace App\Jobs;
 
-use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use App\Repositories\PatientSummaryEloquentRepository;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -16,7 +16,10 @@ use Illuminate\Queue\SerializesModels;
 
 class AttachBillableProblemsToSummary implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
     private $summary;
 
     /**

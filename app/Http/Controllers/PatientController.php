@@ -35,17 +35,27 @@ use Illuminate\Http\Request;
 
 class PatientController extends Controller
 {
-    use ProviderInfoTraits,
-        AppointmentTraits,
-        AllergyTraits,
-        CcdProblemTraits,
-        CpmProblemUserTraits,
-        BiometricUserTraits,
-        MedicationTraits,
-        SymptomTraits,
-        LifestyleTraits,
-        NoteTraits,
+    use
+        AllergyTraits;
+    use
+        AppointmentTraits;
+    use
+        BiometricUserTraits;
+    use
+        CcdProblemTraits;
+    use
+        CpmProblemUserTraits;
+    use
+        LifestyleTraits;
+    use
+        MedicationTraits;
+    use
         MiscTraits;
+    use
+        NoteTraits;
+    use ProviderInfoTraits;
+    use
+        SymptomTraits;
     private $allergyService;
     private $appointmentService;
     private $biometricUserService;

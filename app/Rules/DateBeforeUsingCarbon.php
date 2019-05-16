@@ -11,7 +11,6 @@ use Illuminate\Contracts\Validation\Rule;
 
 class DateBeforeUsingCarbon implements Rule
 {
-
     /**
      * For some cases, mysql can handle only 4 digit years.
      * For example, date '23456-01-01' would result to '0000-00-00'.
@@ -28,7 +27,7 @@ class DateBeforeUsingCarbon implements Rule
      *
      * @param $maxDate
      */
-    public function __construct($maxDate= null)
+    public function __construct($maxDate = null)
     {
         $this->MAX_DATE = Carbon::parse($maxDate ?? DateBeforeUsingCarbon::MAX_DATE_DEFAULT);
     }
@@ -47,7 +46,7 @@ class DateBeforeUsingCarbon implements Rule
      * Determine if the validation rule passes.
      *
      * @param string $attribute
-     * @param mixed $value
+     * @param mixed  $value
      *
      * @return bool
      */
@@ -60,6 +59,5 @@ class DateBeforeUsingCarbon implements Rule
         } catch (\Exception $exception) {
             return false;
         }
-
     }
 }

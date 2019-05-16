@@ -46,7 +46,7 @@ class EnrolleesController extends Controller
         return [
             'message' => "A job has been scheduled. Imported CCDs should start showing up in ${url} in 5-10 minutes. Importing ".implode(
                 ',',
-                    $ids
+                $ids
             ),
             'type' => 'success',
         ];

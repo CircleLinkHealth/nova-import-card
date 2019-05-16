@@ -6,9 +6,9 @@
 
 namespace App\Http\Controllers;
 
+use Auth;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
-use Auth;
 use Illuminate\Http\Request;
 
 class LocationController extends Controller

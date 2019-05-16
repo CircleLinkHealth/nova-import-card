@@ -26,7 +26,6 @@ class NurseCallStatistics
     public function __construct(
         $nurses,
         Carbon $startRange,
-
         Carbon $endRange
     ) {
         $this->nurses    = $nurses;

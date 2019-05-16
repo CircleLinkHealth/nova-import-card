@@ -17,20 +17,18 @@ class FabComposer extends ServiceProvider
     public function boot()
     {
         View::composer(['partials.fab'], function ($view) {
-
             $sessionUser = auth()->user();
 
-            if (! $sessionUser){
+            if ( ! $sessionUser) {
                 throw new \Exception('No authenticated User found.', 403);
             }
 
             $canAddOfflineActivity = $sessionUser->hasPermission('offlineActivity.create');
 
             $view->with(compact([
-                'canAddOfflineActivity'
+                'canAddOfflineActivity',
             ]));
         });
-
     }
 
     /**
