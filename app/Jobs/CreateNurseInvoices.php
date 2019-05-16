@@ -112,6 +112,12 @@ class CreateNurseInvoices implements ShouldQueue
 
         $invoices = $this->generatePdfInvoices($nurseUsers, $nurseSystemTimeMap, $pdfService);
 
+        if ($invoices->isEmpty()) {
+            \Log::info('Invoices not generated due to no data for selected nurses and range.');
+
+            return;
+        }
+
         if ($this->requestedBy) {
             $link = $this->storeInJobsCompleted($invoices);
             $this->notifyRequestor($link);
