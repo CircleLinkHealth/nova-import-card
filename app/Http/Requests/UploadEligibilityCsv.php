@@ -6,7 +6,6 @@
 
 namespace App\Http\Requests;
 
-use App\Exceptions\CsvFieldNotFoundException;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UploadEligibilityCsv extends FormRequest
@@ -20,7 +19,7 @@ class UploadEligibilityCsv extends FormRequest
     {
         return true;
     }
-    
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -31,9 +30,9 @@ class UploadEligibilityCsv extends FormRequest
         return [
             'patient_list' => [
                 'required',
-                'mimes:csv,txt'
+                'mimes:csv,txt',
             ],
-            'practice_id'  => 'required|numeric',
+            'practice_id' => 'required|numeric',
         ];
     }
 }

@@ -7,9 +7,9 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\StoreTimeTracking;
-use CircleLinkHealth\TimeTracking\Entities\PageTimer;
-use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
+use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -17,7 +17,6 @@ class PageTimerController extends Controller
 {
     public function getTimeForPatients(Request $request)
     {
-
         $patients = $request->get('patients', []);
 
         if (empty($patients)) {
@@ -25,21 +24,21 @@ class PageTimerController extends Controller
         }
 
         $times = PatientMonthlySummary::whereIn('patient_id', $patients)
-                                      ->whereMonthYear(Carbon::now()->startOfMonth())
-                                      ->orderBy('id', 'desc')
-                                      ->get([
-                                          'ccm_time',
-                                          'patient_id',
-                                      ])
-                                      ->mapWithKeys(function ($p) {
-                                          return [
-                                              $p->patient_id => [
-                                                  'ccm_time' => $p->ccm_time ?? 0,
-                                                  'bhi_time' => $p->bhi_time ?? 0,
-                                              ],
-                                          ];
-                                      })
-                                      ->all();
+            ->whereMonthYear(Carbon::now()->startOfMonth())
+            ->orderBy('id', 'desc')
+            ->get([
+                'ccm_time',
+                'patient_id',
+            ])
+            ->mapWithKeys(function ($p) {
+                return [
+                    $p->patient_id => [
+                        'ccm_time' => $p->ccm_time ?? 0,
+                        'bhi_time' => $p->bhi_time ?? 0,
+                    ],
+                ];
+            })
+            ->all();
 
         return response()->json($times);
     }
@@ -69,7 +68,7 @@ class PageTimerController extends Controller
 
         return view('pageTimer.show', ['pageTime' => $pageTime]);
     }
-    
+
     /**
      * Store a newly created resource in storage.
      *
@@ -81,9 +80,9 @@ class PageTimerController extends Controller
     {
         $params = new ParameterBag($request->input());
         $params->add(['userAgent' => $request->userAgent()]);
-        
+
         StoreTimeTracking::dispatch($params)
-                         ->onQueue('high');
+            ->onQueue('high');
 
         return response('PageTimer activities logged.', 201);
     }

@@ -6,11 +6,11 @@
 
 namespace App\Http\Controllers;
 
-use CircleLinkHealth\Customer\Entities\EhrReportWriterInfo;
 use App\Notifications\EhrReportWriterNotification;
 use App\Services\CCD\ProcessEligibilityService;
 use App\Services\GoogleDrive;
 use App\Traits\ValidatesEligibility;
+use CircleLinkHealth\Customer\Entities\EhrReportWriterInfo;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 use Storage;
@@ -144,7 +144,7 @@ class EhrReportWriterController extends Controller
         }
 
         foreach ($files as $file) {
-            if (strcasecmp('csv', $file['ext']) == 0) {
+            if (0 == strcasecmp('csv', $file['ext'])) {
                 $batch = $service->createSingleCSVBatchFromGoogleDrive(
                     $user->ehrReportWriterInfo->google_drive_folder_path,
                     $file['name'],
@@ -155,7 +155,7 @@ class EhrReportWriterController extends Controller
                     $file['path']
                 );
             }
-            if (strcasecmp('json', $file['ext']) == 0) {
+            if (0 == strcasecmp('json', $file['ext'])) {
                 $batch = $service->createClhMedicalRecordTemplateBatch(
                     $user->ehrReportWriterInfo->google_drive_folder_path,
                     $file['name'],

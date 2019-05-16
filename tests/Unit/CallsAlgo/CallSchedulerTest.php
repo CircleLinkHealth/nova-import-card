@@ -6,11 +6,11 @@
 
 namespace Tests\Unit\CallsAlgo;
 
+use App\Repositories\PatientWriteRepository;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
-use App\Repositories\PatientWriteRepository;
 use CircleLinkHealth\Customer\Entities\User;
-use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 

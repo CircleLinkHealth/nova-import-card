@@ -6,7 +6,6 @@
 
 namespace App\Events;
 
-use Carbon\Carbon;
 use Illuminate\Auth\Events\Authenticated;
 use Illuminate\Auth\Events\Login;
 
@@ -30,7 +29,7 @@ class UpdateUserSessionInfo
 
         if (empty($event->user->last_session_id)) {
             $shouldUpdate = true;
-        } else if (session()->getId() != $event->user->last_session_id) {
+        } elseif (session()->getId() != $event->user->last_session_id) {
             session()->getHandler()->destroy($event->user->last_session_id);
             $shouldUpdate = true;
         }

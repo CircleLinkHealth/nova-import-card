@@ -6,11 +6,11 @@
 
 namespace App\Console\Commands\Athena;
 
-use CircleLinkHealth\Customer\Entities\Appointment;
 use App\Call;
 use App\Services\AthenaAPI\Calls;
-use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Appointment;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Console\Command;
 
 class UpdatePracticeAppointments extends Command

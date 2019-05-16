@@ -60,7 +60,7 @@ class UserCsvResource extends Resource
      *
      * @return string CCM minutes in decimal
      */
-    private function getTimeInDecimals(String $ccmTime = null)
+    private function getTimeInDecimals(string $ccmTime = null)
     {
         if ( ! $ccmTime) {
             return '0.00';

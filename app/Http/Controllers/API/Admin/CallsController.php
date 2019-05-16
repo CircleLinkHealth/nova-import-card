@@ -12,16 +12,13 @@ use App\Filters\PatientFilters;
 use App\Http\Controllers\API\ApiController;
 use App\Http\Resources\Call as CallResource;
 use App\Http\Resources\User as UserResource;
-use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\Customer\Entities\Role;
 use App\Services\Calls\ManagementService;
 use App\Services\CallService;
 use App\Services\NoteService;
 use Carbon\Carbon;
-use DateTime;
-use DateTimeZone;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\Role;
 use Illuminate\Http\Request;
-use Yajra\Datatables\Datatables;
 
 class CallsController extends ApiController
 {

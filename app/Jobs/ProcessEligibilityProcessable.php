@@ -15,7 +15,10 @@ use Illuminate\Queue\SerializesModels;
 
 class ProcessEligibilityProcessable implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * @var EligibilityProcessable

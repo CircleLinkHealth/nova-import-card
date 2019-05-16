@@ -319,32 +319,32 @@ class WelcomeCallListGenerator
                         function ($u) use ($args) {
                             $u->whereProgramId($args['practice_id'])
                                 ->whereHas(
-                                                             'patientInfo',
-                                                             function ($q) use ($args) {
-                                                                 $q->withTrashed()->whereMrnNumber($args['mrn']);
-                                                             }
+                                    'patientInfo',
+                                    function ($q) use ($args) {
+                                        $q->withTrashed()->whereMrnNumber($args['mrn']);
+                                    }
                                                        );
                         }
                                              )->orWhere(
                                                  function ($u) use ($args) {
                                                      $u->where(
-                                [
-                                    [
-                                        'program_id',
-                                        '=',
-                                        $args['practice_id'],
-                                    ],
-                                    [
-                                        'first_name',
-                                        '=',
-                                        $args['first_name'],
-                                    ],
-                                    [
-                                        'last_name',
-                                        '=',
-                                        $args['last_name'],
-                                    ],
-                                ]
+                                                         [
+                                                             [
+                                                                 'program_id',
+                                                                 '=',
+                                                                 $args['practice_id'],
+                                                             ],
+                                                             [
+                                                                 'first_name',
+                                                                 '=',
+                                                                 $args['first_name'],
+                                                             ],
+                                                             [
+                                                                 'last_name',
+                                                                 '=',
+                                                                 $args['last_name'],
+                                                             ],
+                                                         ]
                             )->whereHas(
                                 'patientInfo',
                                 function ($q) use ($args) {
@@ -577,13 +577,13 @@ class WelcomeCallListGenerator
                     ->transform(
                         function ($problem) {
                             $problem->searchKeywords = collect(
-                                             explode(',', $problem->contains),
-                                             [$problem->name]
+                                explode(',', $problem->contains),
+                                [$problem->name]
                                          )
                                 ->transform(
-                                                 function ($keyword) {
-                                                     return trim(strtolower($keyword));
-                                                 }
+                                    function ($keyword) {
+                                        return trim(strtolower($keyword));
+                                    }
                                              )
                                 ->filter()
                                 ->unique()

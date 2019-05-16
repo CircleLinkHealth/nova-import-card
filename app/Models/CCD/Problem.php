@@ -73,7 +73,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Problem extends \CircleLinkHealth\Core\Entities\BaseModel implements \App\Contracts\Models\CCD\Problem
 {
-    use HasProblemCodes, SoftDeletes;
+    use HasProblemCodes;
+    use SoftDeletes;
 
     /**
      * The attributes that should be mutated to dates.
