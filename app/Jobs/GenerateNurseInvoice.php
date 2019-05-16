@@ -20,7 +20,10 @@ use Illuminate\Support\Collection;
 
 class GenerateNurseInvoice implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
     private $addNotes;
     private $addTime;
     private $endDate;

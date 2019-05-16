@@ -6,9 +6,9 @@
 
 namespace App\Repositories;
 
-use CircleLinkHealth\Customer\Entities\CarePerson;
 use App\Contracts\Repositories\AprimaCcdApiRepository;
 use App\ForeignId;
+use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Patient;
 use Illuminate\Support\Facades\DB;
 

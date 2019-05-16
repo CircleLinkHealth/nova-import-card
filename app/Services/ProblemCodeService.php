@@ -18,8 +18,8 @@ class ProblemCodeService
 
     public function __construct(
         ProblemCodeRepository $problemCodeRepo,
-                                ProblemCodeSystemRepository $problemCodeSystemRepo,
-                                CcdProblemRepository $ccdProblemRepo
+        ProblemCodeSystemRepository $problemCodeSystemRepo,
+        CcdProblemRepository $ccdProblemRepo
     ) {
         $this->problemCodeRepo       = $problemCodeRepo;
         $this->problemCodeSystemRepo = $problemCodeSystemRepo;

@@ -9,15 +9,15 @@ namespace Tests\Helpers;
 use App\Call;
 use App\CLH\Repositories\UserRepository;
 use App\Facades\StringManipulation;
+use App\Repositories\PatientWriteRepository;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\Practice;
-use App\Repositories\PatientWriteRepository;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
-use Carbon\Carbon;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -47,8 +47,8 @@ trait UserHelpers
             'created_at' => Carbon::now()->toDateTimeString(),
 
             'scheduled_date' => '2016-12-01',
-            'window_start'   => '09:00:00',
-            'window_end'     => '10:00:00',
+            'window_start'   => '09:00',
+            'window_end'     => '10:00',
 
             'is_cpm_outbound' => true,
         ]);

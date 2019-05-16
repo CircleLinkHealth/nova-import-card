@@ -23,7 +23,10 @@ use Illuminate\Queue\SerializesModels;
 
 class ReImportCcdToGetProblemTranslationCodes implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
     private $ccda;
     private $logger;
     private $patient;

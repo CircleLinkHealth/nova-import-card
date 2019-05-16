@@ -7,8 +7,8 @@
 namespace App\Console\Commands;
 
 use App\Jobs\MakeAndDispatchAuditReports;
-use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Console\Command;
 
 class QueueSendAuditReports extends Command

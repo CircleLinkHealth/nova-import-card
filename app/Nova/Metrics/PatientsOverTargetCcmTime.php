@@ -58,21 +58,21 @@ class PatientsOverTargetCcmTime extends Value
             ->where('revisionable_type', PatientMonthlySummary::class)
             ->where('key', $key)
             ->where(
-                           'old_value',
-                           '<',
-                           Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS
+                'old_value',
+                '<',
+                Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS
                        )
             ->where(
-                           'new_value',
-                           '>=',
-                           Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS
+                'new_value',
+                '>=',
+                Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS
                        )
             ->leftJoin($summariesTable, "$revisionsTable.revisionable_id", '=', "$summariesTable.id")
             ->leftJoin(
-                           $usersTable,
-                           "$usersTable.id",
-                           '=',
-                           "$summariesTable.patient_id"
+                $usersTable,
+                "$usersTable.id",
+                '=',
+                "$summariesTable.patient_id"
                        )
             ->whereIn("$usersTable.program_id", $activePracticesIds);
     }

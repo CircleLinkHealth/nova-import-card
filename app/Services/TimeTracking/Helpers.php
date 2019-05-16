@@ -6,8 +6,8 @@
 
 namespace App\Services\TimeTracking;
 
-use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Carbon\Carbon;
+use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 
 trait Helpers
 {

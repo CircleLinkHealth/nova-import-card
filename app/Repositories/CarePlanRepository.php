@@ -7,8 +7,8 @@
 namespace App\Repositories;
 
 use App\CarePlan;
-use CircleLinkHealth\Customer\Entities\Patient;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Patient;
 
 class CareplanRepository
 {

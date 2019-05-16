@@ -6,11 +6,11 @@
 
 namespace App\Reports\Sales\Practice\Sections;
 
-use CircleLinkHealth\Customer\Entities\Practice;
 use App\Reports\Sales\PracticeReportable;
 use App\Reports\Sales\SalesReportSection;
 use App\Reports\Sales\StatsHelper;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Practice;
 
 class RangeSummary extends SalesReportSection
 {

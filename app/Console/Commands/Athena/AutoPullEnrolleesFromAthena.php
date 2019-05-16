@@ -7,9 +7,9 @@
 namespace App\Console\Commands\Athena;
 
 use App\EligibilityBatch;
-use CircleLinkHealth\Customer\Entities\Practice;
 use App\Services\CCD\ProcessEligibilityService;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 

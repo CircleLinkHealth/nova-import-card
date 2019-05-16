@@ -49,7 +49,8 @@ use App\Traits\Relationships\BelongsToVendor;
  */
 class InsuranceLog extends \CircleLinkHealth\Core\Entities\BaseModel
 {
-    use BelongsToCcda,
+    use BelongsToCcda;
+    use
         BelongsToVendor;
 
     protected $fillable = [

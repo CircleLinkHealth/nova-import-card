@@ -21,7 +21,10 @@ use Illuminate\Queue\SerializesModels;
 
 class GenerateOpsDashboardCSVReport implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     protected $service;
     protected $user;
@@ -65,25 +68,25 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
         $practices = Practice::select(['id', 'display_name'])
             ->activeBillable()
             ->with(
-                                 [
-                                     'patients' => function ($p) use ($date) {
-                                         $p->with(
-                                             [
-                                                 'patientSummaries' => function ($s) use ($date) {
-                                                     $s->where('month_year', $date->copy()->startOfMonth());
-                                                 },
-                                                 'patientInfo.revisionHistory' => function ($r) use ($date) {
-                                                     $r->where('key', 'ccm_status')
-                                                         ->where(
-                                                           'created_at',
-                                                           '>=',
-                                                           $date->copy()->subDay()->setTimeFromTimeString('23:30')
-                                                       );
-                                                 },
-                                             ]
-                                         );
-                                     },
-                                 ]
+                [
+                    'patients' => function ($p) use ($date) {
+                        $p->with(
+                            [
+                                'patientSummaries' => function ($s) use ($date) {
+                                    $s->where('month_year', $date->copy()->startOfMonth());
+                                },
+                                'patientInfo.revisionHistory' => function ($r) use ($date) {
+                                    $r->where('key', 'ccm_status')
+                                        ->where(
+                                            'created_at',
+                                            '>=',
+                                            $date->copy()->subDay()->setTimeFromTimeString('23:30')
+                                      );
+                                },
+                            ]
+                        );
+                    },
+                ]
                              )
             ->whereHas('patients.patientInfo')
             ->get()

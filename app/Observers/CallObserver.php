@@ -7,10 +7,10 @@
 namespace App\Observers;
 
 use App\Call;
-use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use App\Services\ActivityService;
-use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
+use CircleLinkHealth\Customer\Entities\User;
 
 class CallObserver
 {
