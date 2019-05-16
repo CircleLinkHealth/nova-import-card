@@ -52,9 +52,9 @@ class CreateAndPostPdfCareplan
             ])->take($number)
             ->map(function ($ccdaRequest) {
                 $xmlCcda = $this->api->getCcd(
-                      $ccdaRequest->patient_id,
-                      $ccdaRequest->practice_id,
-                      $ccdaRequest->department_id
+                    $ccdaRequest->patient_id,
+                    $ccdaRequest->practice_id,
+                    $ccdaRequest->department_id
             );
 
                 if ( ! isset($xmlCcda[0]['ccda'])) {
@@ -76,8 +76,8 @@ class CreateAndPostPdfCareplan
                     $link = route('import.ccd.remix');
 
                     sendSlackMessage(
-                          '#ccd-file-status',
-                          "We received a CCD from Athena. \n Please visit {$link} to import."
+                        '#ccd-file-status',
+                        "We received a CCD from Athena. \n Please visit {$link} to import."
                 );
                 }
 
