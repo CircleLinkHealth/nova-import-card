@@ -15,7 +15,8 @@ use Tests\TestCase;
 
 class CareTeamReceivesAlertsTest extends TestCase
 {
-    use CarePlanHelpers,
+    use CarePlanHelpers;
+    use
         SetupTestCustomerTrait;
     /**
      * @var Faker\Factory

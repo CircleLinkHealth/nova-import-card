@@ -6,16 +6,17 @@
 
 namespace Tests\Unit;
 
-use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
 
 class ActivityApiControllerTest extends TestCase
 {
-    use WithoutMiddleware,
+    use
         UserHelpers;
+    use WithoutMiddleware;
     private $activities;
     private $patient;
 

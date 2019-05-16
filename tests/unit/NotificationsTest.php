@@ -8,7 +8,6 @@ namespace Tests\Unit;
 
 use App\Notifications\CarePlanApprovalReminder;
 use App\Notifications\CarePlanProviderApproved;
-use CircleLinkHealth\Core\Notifications\Channels\DatabaseChannel;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\Channels\FaxChannel;
 use App\Notifications\NoteForwarded;
@@ -16,6 +15,7 @@ use App\Notifications\ResetPassword;
 use App\Notifications\WeeklyPracticeReport;
 use App\Notifications\WeeklyProviderReport;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Notifications\Channels\DatabaseChannel;
 use Illuminate\Support\Facades\Notification;
 use Tests\Helpers\CarePlanHelpers;
 use Tests\Helpers\SetupTestCustomerTrait;
@@ -23,7 +23,8 @@ use Tests\TestCase;
 
 class NotificationsTest extends TestCase
 {
-    use CarePlanHelpers,
+    use CarePlanHelpers;
+    use
         SetupTestCustomerTrait;
 
     protected $channels;
