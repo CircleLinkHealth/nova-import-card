@@ -194,6 +194,5 @@ class Kernel extends ConsoleKernel
         $schedule->command(SecurityMailCommand::class)
             ->weekly();
         $schedule->command(NursesAndStatesDailyReport::class)->dailyAt('00:05');
-        $schedule->command(CollectInvoicableNurses::class)->monthlyOn(1, '00:05');
     }
 }
