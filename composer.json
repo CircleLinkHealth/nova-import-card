@@ -64,6 +64,7 @@
     "ext-libxml": "*",
     "ext-simplexml": "*",
     "algolia/algoliasearch-client-php": "^2.2",
+    "algolia/scout-extended": "^1.6",
     "amnuts/opcache-gui": "dev-master",
     "appstract/laravel-opcache": "^2.0",
     "arcturial/clickatell": "*",
