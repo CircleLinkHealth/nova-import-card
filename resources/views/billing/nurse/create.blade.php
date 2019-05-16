@@ -39,7 +39,7 @@
                                         </select>
                                     </div>
 
-                                    <label data-target="#collapseOne" class="col-md-3"
+                                   {{-- <label data-target="#collapseOne" class="col-md-3"
                                            style="width: 25%">
                                         <div class="radio"><input type="checkbox" name="all_selected_nurses"
                                                                   id="all_selected_nurses"
@@ -47,7 +47,7 @@
                                             <label for="all_selected_nurses"><span> </span>Select all Care Coaches for
                                                 selected period</label>
                                         </div>
-                                    </label>
+                                    </label>--}}
                                 </div>
 
 

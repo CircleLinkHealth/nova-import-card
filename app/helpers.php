@@ -1402,33 +1402,3 @@ if ( ! function_exists('calculateWeekdays')) {
         }, new Carbon($toDate));
     }
 }
-
-if ( ! function_exists('selectAllNursesForSelectedPeriod')) {
-    /**
-     * Returns all nurses selected for time period in admin/reports/nurse/invoice.
-     *
-     * @param $startDate
-     * @param $endDate
-     *
-     * @return EloquentCollection|\Illuminate\Database\Eloquent\Builder[]|Nurse[]
-     */
-    function selectAllNursesForSelectedPeriod($startDate, $endDate)
-    {
-        $nurses = Nurse::with([
-            'user',
-            'summary' => function ($s) use ($startDate, $endDate) {
-                $s->whereBetween('month_year', [
-                    $startDate->copy()->format('Y-m-d'),
-                    $endDate->copy()->format('Y-m-d'),
-                ]);
-            },
-        ])->whereHas('summary', function ($s) use ($startDate, $endDate) {
-            $s->whereBetween('month_year', [
-                $startDate->copy()->format('Y-m-d'),
-                $endDate->copy()->format('Y-m-d'),
-            ]);
-        })->where('status', 'active')->get()->pluck('user.display_name', 'user.id');
-
-        return $nurses;
-    }
-}
