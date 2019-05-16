@@ -21,7 +21,7 @@ $finders = PhpCsFixer\Finder::create()
                             );
 
 $config = PhpCsFixer\Config::create()
-    ->setUsingCache(false)
+    ->setUsingCache(true)
     ->setRiskyAllowed(false)
     ->setRules(
                                [

@@ -79,8 +79,10 @@ use App\Traits\Relationships\BelongsToVendor;
  */
 class ProblemLog extends \CircleLinkHealth\Core\Entities\BaseModel implements ItemLog, Problem
 {
-    use BelongsToCcda,
-        BelongsToVendor,
+    use BelongsToCcda;
+    use
+        BelongsToVendor;
+    use
         HasProblemCodes;
 
     protected $fillable = [

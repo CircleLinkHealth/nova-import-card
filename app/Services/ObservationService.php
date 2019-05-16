@@ -17,14 +17,14 @@ class ObservationService
 {
     public function storeObservationFromApp(
         $userId,
-                                            $parentId,
-                                            $obsValue,
-                                            $obsDate,
-                                            $obsMessageId,
-                                            $obsKey,
-                                            $timezone,
-                                            $source = 'manual_input',
-                                            $isStartingObs = 'N'
+        $parentId,
+        $obsValue,
+        $obsDate,
+        $obsMessageId,
+        $obsKey,
+        $timezone,
+        $source = 'manual_input',
+        $isStartingObs = 'N'
     ) {
         // get user
         $wpUser = User::find($userId);

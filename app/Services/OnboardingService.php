@@ -6,12 +6,12 @@
 
 namespace App\Services;
 
-use CircleLinkHealth\Customer\Entities\CarePerson;
 use App\Contracts\Repositories\InviteRepository;
 use App\Contracts\Repositories\LocationRepository;
 use App\Contracts\Repositories\PracticeRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\Facades\StringManipulation;
+use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -138,8 +138,8 @@ class OnboardingService
             ->whereHas('practices', function ($q) use (
                                  $primaryPractice
                              ) {
-                                 $q->where('id', '=', $primaryPractice->id);
-                             })
+                $q->where('id', '=', $primaryPractice->id);
+            })
             ->get()
             ->sortBy('first_name')
             ->values();
@@ -170,14 +170,14 @@ class OnboardingService
 
             $forwardCarePlanApprovalEmailsToContactUser = $user->forwardAlertsTo()
                 ->having(
-                                                                   'name',
-                                                                   '=',
-                                                                   User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER
+                    'name',
+                    '=',
+                    User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER
                                                                )
                 ->orHaving(
-                                                                   'name',
-                                                                   '=',
-                                                                   User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER
+                    'name',
+                    '=',
+                    User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER
                                                                )
                 ->first()
                                                           ?? null;

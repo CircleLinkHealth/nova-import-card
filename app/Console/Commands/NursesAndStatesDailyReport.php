@@ -1,26 +1,30 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
-use CircleLinkHealth\Customer\Entities\SaasAccount;
 use App\Services\NursesAndStatesDailyReportService;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\SaasAccount;
 use Illuminate\Console\Command;
 
 class NursesAndStatesDailyReport extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'report:nursesAndStatesDaily {forDate?}';
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Uploads Nurses And States dashboard report to S3';
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'report:nursesAndStatesDaily {forDate?}';
     private $service;
 
     /**
@@ -65,9 +69,9 @@ class NursesAndStatesDailyReport extends Command
         }
 
         SaasAccount::whereSlug('circlelink-health')
-                   ->first()
-                   ->addMedia($path)
-                   ->toMediaCollection($fileName);
+            ->first()
+            ->addMedia($path)
+            ->toMediaCollection($fileName);
 
         if (app()->environment('worker')) {
             sendSlackMessage(
@@ -78,5 +82,4 @@ class NursesAndStatesDailyReport extends Command
 
         $this->info('Daily Nurses Calls & Work hrs uploaded to S3');
     }
-
 }

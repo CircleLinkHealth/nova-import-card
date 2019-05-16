@@ -13,7 +13,8 @@ use Illuminate\Queue\SerializesModels;
 
 class SMSReceived extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
     protected $request;
 
     /**

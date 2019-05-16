@@ -23,9 +23,9 @@ class CareplanAssessmentService
 
     public function __construct(
         CareplanAssessmentRepository $assessmentRepo,
-                                    CareplanRepository $careplanRepo,
-                                        NoteRepository $noteRepo,
-                                            PatientWriteRepository $patientRepo
+        CareplanRepository $careplanRepo,
+        NoteRepository $noteRepo,
+        PatientWriteRepository $patientRepo
     ) {
         $this->assessmentRepo = $assessmentRepo;
         $this->careplanRepo   = $careplanRepo;
