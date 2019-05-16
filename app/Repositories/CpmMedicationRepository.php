@@ -29,6 +29,7 @@ class CpmMedicationRepository
         }
         $medications = $this->model()->where(['id' => $medication->id]);
         $medications->update([
+            'active'              => $medication->active,
             'name'                => $medication->name,
             'sig'                 => $medication->sig,
             'medication_group_id' => $medication->medication_group_id,

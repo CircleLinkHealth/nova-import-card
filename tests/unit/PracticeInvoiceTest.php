@@ -6,9 +6,9 @@
 
 namespace Tests\Unit;
 
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use Carbon\Carbon;
 use Tests\TestCase;
 
 class PracticeInvoiceTest extends TestCase

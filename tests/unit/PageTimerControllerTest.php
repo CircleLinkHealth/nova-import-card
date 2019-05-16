@@ -21,9 +21,11 @@ use Tests\TestCase;
 
 class PageTimerControllerTest extends TestCase
 {
-    use UserHelpers,
-        WithoutMiddleware,
+    use UserHelpers;
+    use
         WithFaker;
+    use
+        WithoutMiddleware;
     const BHI = 'bhi';
     const CCM = 'ccm';
     const MIX = 'mix';
@@ -49,10 +51,10 @@ class PageTimerControllerTest extends TestCase
         //fulfill conditions for patient to be BHI
         Patient::whereUserId($this->patient->id)
             ->update(
-                   [
-                       'ccm_status'   => Patient::ENROLLED,
-                       'consent_date' => Carbon::now(),
-                   ]
+                [
+                    'ccm_status'   => Patient::ENROLLED,
+                    'consent_date' => Carbon::now(),
+                ]
                );
 
         $defaultServices = ChargeableService::defaultServices();

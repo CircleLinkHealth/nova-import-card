@@ -8,10 +8,10 @@ namespace Tests\Unit;
 
 use App\CarePlan;
 use App\Notifications\CarePlanApprovalReminder;
-use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\Customer\Entities\Practice;
 use App\Services\PhiMail\IncomingMessageHandler;
 use App\Services\PhiMail\PhiMail;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Support\Facades\Notification;
 use Tests\Helpers\CarePlanHelpers;
 use Tests\Helpers\UserHelpers;
@@ -19,7 +19,8 @@ use Tests\TestCase;
 
 class CarePlanApprovalReminderTest extends TestCase
 {
-    use CarePlanHelpers, UserHelpers;
+    use CarePlanHelpers;
+    use UserHelpers;
 
     private $directMail;
     private $patient;

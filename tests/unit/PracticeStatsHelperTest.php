@@ -6,10 +6,10 @@
 
 namespace Tests\Unit;
 
-use CircleLinkHealth\Customer\Entities\Practice;
 use App\Reports\Sales\PracticeReportable;
 use App\Reports\Sales\StatsHelper;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
 
