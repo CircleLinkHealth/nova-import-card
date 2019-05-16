@@ -2891,6 +2891,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->id;
     }
     
+    public function shouldBeSearchable()
+    {
+        return $this->isProvider();
+    }
+    
+    
     /**
      * Get the indexable data array for the model.
      *
@@ -2898,7 +2904,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function toSearchableArray()
     {
-        if ($this->isProvider()) {
+        //@todo: confirm if scout already does this. Adding for extra clarity
+        if ($this->shouldBeSearchable()) {
             return [
                 'first_name' => $this->first_name,
                 'last_name'  => $this->last_name,
