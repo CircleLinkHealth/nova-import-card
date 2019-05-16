@@ -23,9 +23,9 @@ use App\Importer\Section\Importers\Insurance;
 use App\Importer\Section\Importers\Medications;
 use App\Importer\Section\Importers\Problems;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
+use App\Traits\Relationships\MedicalRecordItemLoggerRelationships;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
-use App\Traits\Relationships\MedicalRecordItemLoggerRelationships;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Collection;
 
@@ -37,6 +37,11 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
      * @var integer;
      */
     protected $billingProviderIdPrediction;
+
+    /**
+     * @var ImportedMedicalRecord
+     */
+    protected $importedMedicalRecord;
 
     /**
      * A collection.
@@ -61,12 +66,7 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
      * @var Collection
      */
     protected $problemsInGroups;
-    
-    /**
-     * @var ImportedMedicalRecord
-     */
-    protected $importedMedicalRecord;
-    
+
     public function createImportedMedicalRecord(): MedicalRecord
     {
         $this->importedMedicalRecord = ImportedMedicalRecord::create(
@@ -383,7 +383,7 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
 
         return $this;
     }
-    
+
     /**
      * @return bool
      */
@@ -398,7 +398,7 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
             ->where('is_behavioral', true)
             ->count() >= 1;
     }
-    
+
     /**
      * @return bool
      */
@@ -412,7 +412,7 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
                                       )
             ->count() >= 2;
     }
-    
+
     /**
      * @return bool
      */

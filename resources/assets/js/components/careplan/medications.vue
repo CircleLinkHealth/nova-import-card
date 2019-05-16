@@ -82,7 +82,7 @@
                 }
                 return this.axios.get(rootUrl(`api/patients/${this.patientId}/medication?page=${page}`)).then(response => {
                     const pagination = response.data
-                    console.log('medications:get-medications', pagination)
+                    //console.log('medications:get-medications', pagination)
                     this.medications = this.medications.concat(pagination.data.map(this.setupMedication))
                     if (pagination.next_page_url) return this.getMedications(page + 1)
                 }).catch(err => {
@@ -91,7 +91,7 @@
             },
             getMedicationGroups() {
                 return this.axios.get(rootUrl(`api/medication/groups`)).then(response => {
-                    console.log('medications:get-medication-groups', response.data)
+                    // console.log('medications:get-medication-groups', response.data)
                     this.groups = response.data || []
                 }).catch(err => {
                     console.error('medications:get-medication-groups', err)

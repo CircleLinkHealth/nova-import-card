@@ -22,6 +22,27 @@ $user = auth()->user();
             margin-right: 0;
             margin-left: 0;
         }
+
+        .top-nav-item-icon {
+            height: 19px;
+            width: 20px;
+            margin-right: 3px;
+        }
+
+        .top-nav-item {
+            background: none !important;
+            padding: 15px;
+            line-height: 20px;
+            cursor: pointer;
+        }
+
+        .text-white {
+            color: #fff;
+        }
+
+        .background-white {
+
+        }
     </style>
 @endpush
 
@@ -57,30 +78,27 @@ $user = auth()->user();
                     @endif
                     @if($user->hasRole('saas-admin') || $user->isAdmin() || $user->hasRole('saas-admin-view-only'))
                         <li class="dropdown-toggle">
-                            <div class="dropdown-toggle" data-toggle="dropdown" role="button"
-                                 aria-expanded="false"
-                                 style="background: none !important;padding: 15px;line-height: 20px;cursor: pointer;">
-                                Users <span class="caret" style="color: #fff"></span>
+                            <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button" aria-expanded="false">
+                                Users <span class="caret text-white"></span>
                             </div>
                             <ul class="dropdown-menu" role="menu" style="background: white !important;">
-                                <li><a href="{{ route('saas-admin.users.create', []) }}">Add Internal User</a></li>
-                                <li><a href="{{ route('saas-admin.practices.index', []) }}">Add Customer User</a></li>
-                                <li><a href="{{ route('saas-admin.users.index', []) }}">View All</a></li>
+                                <li><a href="{{ route('saas-admin.users.create') }}">Add Internal User</a></li>
+                                <li><a href="{{ route('saas-admin.practices.index') }}">Add Customer User</a></li>
+                                <li><a href="{{ route('saas-admin.users.index') }}">View All</a></li>
                             </ul>
                         </li>
 
                         <li class="dropdown-toggle">
-                            <div class="dropdown-toggle" data-toggle="dropdown" role="button"
-                                 aria-expanded="false"
-                                 style="background: none !important;padding: 15px;line-height: 20px;cursor: pointer;">
-                                Practices <span class="caret" style="color: #fff"></span>
+                            <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
+                                 aria-expanded="false">
+                                Practices <span class="caret text-white"></span>
                             </div>
                             <ul class="dropdown-menu" role="menu" style="background: white !important;">
                                 <li><a href="{{ route('saas-admin.practices.create')}}">Add New</a></li>
                                 <li><a href="{{ route('saas-admin.practices.index')}}">Manage</a></li>
-                                <li><a href="{{ route('saas-admin.practices.billing.create', []) }}">Billable Patient
+                                <li><a href="{{ route('saas-admin.practices.billing.create') }}">Billable Patient
                                         Report</a></li>
-                                <li><a href="{{ route('saas-admin.monthly.billing.make', []) }}">Approve Billable
+                                <li><a href="{{ route('saas-admin.monthly.billing.make') }}">Approve Billable
                                         Patients</a></li>
                             </ul>
                         </li>
@@ -90,11 +108,10 @@ $user = auth()->user();
                          && $user->isNotSaas()
                          && $user->hasRole('software-only'))
                         <li class="dropdown">
-                            <div class="dropdown-toggle" data-toggle="dropdown" role="button"
-                                 aria-expanded="false"
-                                 style="background: none !important;padding: 15px;line-height: 20px;cursor: pointer;">
+                            <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
+                                 aria-expanded="false">
                                 Admin
-                                <span class="caret" style="color: #fff"></span>
+                                <span class="caret text-white"></span>
                             </div>
                             <ul class="dropdown-menu" role="menu" style="background: white !important;">
                                 <li>
@@ -103,7 +120,7 @@ $user = auth()->user();
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('monthly.billing.make', []) }}">
+                                    <a href="{{ route('monthly.billing.make') }}">
                                         Approve Billable Patients
                                     </a>
                                 </li>
@@ -122,26 +139,26 @@ $user = auth()->user();
                     @endif
 
                     <li>
-                        <a href="{{ route('patients.dashboard') }}" style="color: #fff"><i class="icon--home--white"></i>Home</a>
+                        <a href="{{ route('patients.dashboard') }}" class="text-white"><i class="top-nav-item-icon glyphicon glyphicon-home"></i>Home</a>
                     </li>
 
                     <li>
-                        <a href="{{ route('patients.listing') }}" style="color: #fff"><i class="icon--patients"></i> Patient List</a>
+                        <a href="{{ route('patients.listing') }}" class="text-white"><i class="top-nav-item-icon glyphicon glyphicon-user"></i>Patient List</a>
                     </li>
 
+                    @role('care-center')
+                    <li>
+                        <a href="{{ route('patientCallList.index') }}" class="text-white"><i class="top-nav-item-icon glyphicon glyphicon-earphone"></i>Activities</a>
+                    </li>
+                    @endrole
+
                     <li class="dropdown">
-                        <div class="dropdown-toggle" data-toggle="dropdown" role="button"
-                             aria-expanded="false"
-                             style="background: none !important;padding: 15px;line-height: 20px;cursor: pointer;">
-                            <i class="glyphicon glyphicon-list-alt"></i>
-                            Reports
-                            <span class="caret" style="color: #fff"></span>
-                        </div>
+                        <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button" aria-expanded="false"><i class="top-nav-item-icon glyphicon glyphicon-list-alt"></i>Reports<span class="caret text-white"></span></div>
 
                         <ul class="dropdown-menu" role="menu" style="background: white !important;">
                             @role('administrator')
                             <li>
-                                <a href="{{ route('patients.careplan.printlist', []) }}">Care Plan Print List</a>
+                                <a href="{{ route('patients.careplan.printlist') }}">Care Plan Print List</a>
                             </li>
                             @endrole
                             <li>
@@ -153,12 +170,12 @@ $user = auth()->user();
                         </ul>
                     </li>
                     <li class="dropdown">
-                        <div class="dropdown-toggle" data-toggle="dropdown" role="button"
-                             aria-expanded="false"
-                             style="background: none !important;padding: 15px;line-height: 20px;cursor: pointer;">
-                            <i class="glyphicon glyphicon glyphicon-cog"></i>
+                        <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
+                             aria-expanded="false">
+                            <i class="top-nav-item-icon glyphicon glyphicon glyphicon-cog"></i>
+
                             {{$user->getFullName()}}
-                            <span class="caret" style="color: #fff"></span>
+                            <span class="caret text-white"></span>
                         </div>
                         <ul class="dropdown-menu" role="menu" style="background: white !important;">
 

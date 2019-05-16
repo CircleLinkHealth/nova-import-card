@@ -28,38 +28,38 @@ class CallReportController extends Controller
             ->with('outboundUser')
             ->with('note')
             ->select(
-                         [
-                             \DB::raw('coalesce(nurse.display_name, "unassigned") as nurse_name'),
-                             'calls.id AS call_id',
-                             'calls.status',
-                             'calls.outbound_cpm_id',
-                             'calls.inbound_cpm_id',
-                             'calls.scheduled_date',
-                             'calls.window_start',
-                             'calls.window_end',
-                             'calls.window_end AS window_end_value',
-                             'calls.attempt_note',
-                             'notes.type AS note_type',
-                             'notes.body AS note_body',
-                             'notes.performed_at AS note_datetime',
-                             'calls.note_id',
-                             'calls.scheduler AS scheduler',
-                             'scheduler_user.display_name AS scheduler_user_name',
-                             'patient_monthly_summaries.ccm_time',
-                             'patient_info.last_successful_contact_time',
-                             \DB::raw('DATE_FORMAT(patient_info.last_contact_time, "%Y-%m-%d") as last_contact_time'),
-                             \DB::raw(
-                                 'coalesce(patient_info.no_call_attempts_since_last_success, "n/a") as no_call_attempts_since_last_success'
-                             ),
-                             'patient_info.ccm_status',
-                             'patient_info.birth_date',
-                             'patient_info.general_comment',
-                             'patient_monthly_summaries.no_of_calls',
-                             'patient_monthly_summaries.no_of_successful_calls',
-                             \DB::raw('CONCAT_WS(", ", patient.last_name, patient.first_name) AS patient_name'),
-                             'program.display_name AS program_name',
-                             'billing_provider.display_name AS billing_provider',
-                         ]
+                [
+                    \DB::raw('coalesce(nurse.display_name, "unassigned") as nurse_name'),
+                    'calls.id AS call_id',
+                    'calls.status',
+                    'calls.outbound_cpm_id',
+                    'calls.inbound_cpm_id',
+                    'calls.scheduled_date',
+                    'calls.window_start',
+                    'calls.window_end',
+                    'calls.window_end AS window_end_value',
+                    'calls.attempt_note',
+                    'notes.type AS note_type',
+                    'notes.body AS note_body',
+                    'notes.performed_at AS note_datetime',
+                    'calls.note_id',
+                    'calls.scheduler AS scheduler',
+                    'scheduler_user.display_name AS scheduler_user_name',
+                    'patient_monthly_summaries.ccm_time',
+                    'patient_info.last_successful_contact_time',
+                    \DB::raw('DATE_FORMAT(patient_info.last_contact_time, "%Y-%m-%d") as last_contact_time'),
+                    \DB::raw(
+                        'coalesce(patient_info.no_call_attempts_since_last_success, "n/a") as no_call_attempts_since_last_success'
+                    ),
+                    'patient_info.ccm_status',
+                    'patient_info.birth_date',
+                    'patient_info.general_comment',
+                    'patient_monthly_summaries.no_of_calls',
+                    'patient_monthly_summaries.no_of_successful_calls',
+                    \DB::raw('CONCAT_WS(", ", patient.last_name, patient.first_name) AS patient_name'),
+                    'program.display_name AS program_name',
+                    'billing_provider.display_name AS billing_provider',
+                ]
                      )
             ->where('calls.status', '=', 'scheduled')
             ->leftJoin('notes', 'calls.note_id', '=', 'notes.id')
@@ -68,25 +68,25 @@ class CallReportController extends Controller
             ->leftJoin('users AS scheduler_user', 'calls.scheduler', '=', 'scheduler_user.id')
             ->leftJoin('patient_info', 'calls.inbound_cpm_id', '=', 'patient_info.user_id')
             ->leftJoin(
-                         'patient_monthly_summaries',
-                         function ($join) use ($date) {
-                             $join->on('patient_monthly_summaries.patient_id', '=', 'patient.id');
-                             $join->where('patient_monthly_summaries.month_year', '=', $date->format('Y-m-d'));
-                         }
+                'patient_monthly_summaries',
+                function ($join) use ($date) {
+                    $join->on('patient_monthly_summaries.patient_id', '=', 'patient.id');
+                    $join->where('patient_monthly_summaries.month_year', '=', $date->format('Y-m-d'));
+                }
                      )
             ->leftJoin('practices AS program', 'patient.program_id', '=', 'program.id')
             ->leftJoin(
-                         'patient_care_team_members',
-                         function ($join) {
-                             $join->on('patient.id', '=', 'patient_care_team_members.user_id');
-                             $join->where('patient_care_team_members.type', '=', 'billing_provider');
-                         }
+                'patient_care_team_members',
+                function ($join) {
+                    $join->on('patient.id', '=', 'patient_care_team_members.user_id');
+                    $join->where('patient_care_team_members.type', '=', 'billing_provider');
+                }
                      )
             ->leftJoin(
-                         'users AS billing_provider',
-                         'patient_care_team_members.member_user_id',
-                         '=',
-                         'billing_provider.id'
+                'users AS billing_provider',
+                'patient_care_team_members.member_user_id',
+                '=',
+                'billing_provider.id'
                      )
             ->groupBy('call_id')
             ->get();

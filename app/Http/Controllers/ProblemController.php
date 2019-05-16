@@ -25,7 +25,7 @@ class ProblemController extends Controller
     public function __construct(
         CpmProblemService $cpmProblemService,
         CcdProblemService $ccdProblemService,
-                                    PatientService $patientService,
+        PatientService $patientService,
         CcdAllergyService $allergyService
     ) {
         $this->cpmProblemService = $cpmProblemService;

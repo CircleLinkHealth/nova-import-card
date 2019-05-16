@@ -6,9 +6,10 @@
 
 namespace App\CLH\Repositories;
 
-use CircleLinkHealth\TwoFA\Entities\AuthyUser;
 use App\CareAmbassador;
 use App\CarePlan;
+use App\Services\GoogleDrive;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\EhrReportWriterInfo;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -16,10 +17,9 @@ use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\ProviderInfo;
-use App\Services\GoogleDrive;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\UserPasswordsHistory;
-use Carbon\Carbon;
+use CircleLinkHealth\TwoFA\Entities\AuthyUser;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Storage;
@@ -324,8 +324,8 @@ class UserRepository
      * to also populate password history.
      * https://www.5balloons.info/setting-up-change-password-with-laravel-authentication/.
      *
-     * @param \CircleLinkHealth\Customer\Entities\User         $user
-     * @param ParameterBag $params
+     * @param \CircleLinkHealth\Customer\Entities\User $user
+     * @param ParameterBag                             $params
      */
     public function saveOrUpdatePasswordsHistory(
         User $user,

@@ -188,7 +188,7 @@ class NoteForwarded extends Notification
             return $mail->bcc(
                 [
                     'raph@circlelinkhealth.com',
-                    'chelsea@circlelinkhealth.com',
+                    'abigail@circlelinkhealth.com',
                     'sheller@circlelinkhealth.com',
                 ]
             );

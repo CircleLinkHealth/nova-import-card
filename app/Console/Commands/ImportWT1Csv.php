@@ -7,10 +7,10 @@
 namespace App\Console\Commands;
 
 use App\EligibilityJob;
-use CircleLinkHealth\Customer\Entities\Practice;
 use App\ProcessedFile;
 use App\Services\CCD\ProcessEligibilityService;
 use App\WT1CsvParser;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Console\Command;
 
 class ImportWT1Csv extends Command

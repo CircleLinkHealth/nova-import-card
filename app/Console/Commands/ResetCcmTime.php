@@ -7,9 +7,9 @@
 namespace App\Console\Commands;
 
 use App\AppConfig;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
-use Carbon\Carbon;
 use Illuminate\Console\Command;
 
 class ResetCcmTime extends Command

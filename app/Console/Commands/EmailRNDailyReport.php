@@ -69,14 +69,16 @@ class EmailRNDailyReport extends Command
                     $q->whereIn('id', $userIds);
                 }
             )
+            ->whereHas(
+                'nurseInfo',
+                function ($info) {
+                    $info->where('status', 'active');
+                }
+            )
             ->chunk(
                 20,
                 function ($nurses) use (&$counter, &$emailsSent, $date) {
                     foreach ($nurses as $nurse) {
-                        if ( ! $nurse->nurseInfo) {
-                            continue;
-                        }
-
                         $reportDataForNurse = $this->report->where('nurse_id', $nurse->id)->first();
 
                         //In case something goes wrong with nurses and states report, or transitioning to new metrics issues
@@ -93,9 +95,7 @@ class EmailRNDailyReport extends Command
                             continue;
                         }
 
-                        if ($nurse->nurseInfo->hourly_rate < 1
-                            && 'active' != $nurse->nurseInfo
-                        ) {
+                        if ($nurse->nurseInfo->hourly_rate < 1) {
                             continue;
                         }
 
