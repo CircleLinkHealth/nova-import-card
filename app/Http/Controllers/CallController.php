@@ -391,8 +391,15 @@ class CallController extends Controller
             ];
         }
 
-        // validate patient doesnt already have a scheduled call
-        $patient = User::find($input['inbound_cpm_id']);
+        //some cases we need to eager load patientInfo
+        $isFamilyOverride = ! empty($input['family_override']);
+        $isCallBack       = ! empty($input['sub_type']) && 'Call Back' === $input['sub_type'];
+        if ($isCallBack || ! $isFamilyOverride) {
+            $patient = User::with('patientInfo')->find($input['inbound_cpm_id']);
+        } else {
+            $patient = User::find($input['inbound_cpm_id']);
+        }
+
         if ( ! $patient) {
             return [
                 'errors' => ['could not find patient'],
@@ -400,6 +407,7 @@ class CallController extends Controller
             ];
         }
 
+        // validate patient doesnt already have a scheduled call
         if ('call' === $input['type'] && $patient->inboundCalls) {
             $scheduledCall = $patient->inboundCalls()
                 ->where(function ($q) {
@@ -417,7 +425,6 @@ class CallController extends Controller
             }
         }
 
-        $isFamilyOverride = ! empty($input['family_override']);
         if ( ! $isFamilyOverride
              && $this->hasAlreadyFamilyCallAtDifferentTime(
                  $patient->patientInfo,
@@ -432,6 +439,11 @@ class CallController extends Controller
         }
 
         $call = $this->storeNewCall($patient, $input);
+
+        // CPM-689 Reset unsuccessful call back attempts to 0 if call back task is created
+        if ($isCallBack) {
+            $patient->patientInfo->no_call_attempts_since_last_success = 0;
+        }
 
         if ('call' === $input['type']) {
             $this->storeNewCallForFamilyMembers($patient, $input);
