@@ -72,25 +72,25 @@ class AttachBillableProblemsToLastMonthSummary extends Command
 
                         $this->billablePatientsRepo->billablePatients($practice->id, $month)
                             ->chunk(
-                                50,
-                                function ($users) {
-                                    foreach ($users as $user) {
-                                        $pms = $user->patientSummaries->first();
+                                    50,
+                                    function ($users) {
+                                        foreach ($users as $user) {
+                                            $pms = $user->patientSummaries->first();
 
-                                        if ((bool) $this->option('reset')) {
-                                            $pms->reset();
-                                            $pms->save();
-                                        }
+                                            if ((bool) $this->option('reset')) {
+                                                $pms->reset();
+                                                $pms->save();
+                                            }
 
-                                        AttachBillableProblemsToSummary::dispatch(
-                                                $pms
+                                            AttachBillableProblemsToSummary::dispatch(
+                                                                       $pms
                                                                    );
+                                        }
                                     }
-                                }
                                                        );
 
                         $this->output->success(
-                            "END processing $practice->display_name for {$month->toDateString()}"
+                                "END processing $practice->display_name for {$month->toDateString()}"
                             );
                     }
                 }
