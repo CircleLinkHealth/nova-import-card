@@ -32,7 +32,7 @@
                                         Select All <kbd><kbd>cmd</kbd> + <kbd>A</kbd></kbd></label>
                                     <div class="col-md-6">
                                         <select id="nurse" name="nurses[]" class="nurses dropdown Valid form-control"
-                                                multiple {{--required--}}>
+                                                multiple required>
                                             @foreach($nurses as $key => $value)
                                                 <option value="{{$key}}">{{$value}}</option>
                                             @endforeach
