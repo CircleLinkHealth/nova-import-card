@@ -6,7 +6,7 @@
                     <a :href="url">Medications</a>
                     <span class="btn btn-primary glyphicon glyphicon-edit" @click="showModal" aria-hidden="true"></span>
                     <span class="btn btn-primary" @click="toggleShowAll" style="margin-top: 6px; float: right;">
-                        {{showAll ? 'Show Only Active' : 'Show All'}}
+                        {{showAll ? 'Show Active Only' : 'Show Active & Inactive'}}
                     </span>
                 </h2>
             </div>

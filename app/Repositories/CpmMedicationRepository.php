@@ -55,13 +55,16 @@ class CpmMedicationRepository
         ])->paginate();
     }
 
-    public function patientMedicationsList($userId)
+    public function patientMedicationsList($userId, $onlyActive = false)
     {
         return $this
             ->model()
             ->where([
                 'patient_id' => $userId,
             ])
+            ->when($onlyActive, function ($query) {
+                $query->where('active', '=', true);
+            })
             ->select(['name', 'sig'])
             ->get();
     }
