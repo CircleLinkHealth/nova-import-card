@@ -17,7 +17,8 @@ use Tests\Helpers\UserHelpers;
 
 class AddNewSaasAccountTest
 {
-    use UserHelpers, WithFaker;
+    use UserHelpers;
+    use WithFaker;
     private $adminPractice;
     private $adminUser;
 

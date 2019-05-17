@@ -152,7 +152,7 @@ class PracticeReportsService
 
         $link = shortenUrl($patientReport->getUrl());
 
-        $data = $generator->getInvoiceData($chargeableService->id);
+        $data = $practice->getInvoiceData($date->copy()->firstOfMonth(), $chargeableService->id);
 
         if (0 == $data['billable']) {
             return null;

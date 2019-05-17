@@ -8,11 +8,11 @@ namespace Tests\Unit;
 
 use App\Http\Resources\ApprovableBillablePatient;
 use App\Models\CCD\Problem;
+use App\Services\ApproveBillablePatientsService;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
-use App\Services\ApproveBillablePatientsService;
 use CircleLinkHealth\Customer\Entities\User;
-use Carbon\Carbon;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Collection;
@@ -21,9 +21,11 @@ use Tests\TestCase;
 
 class PatientMonthlySummaryChargeableServicesTest extends TestCase
 {
-    use UserHelpers,
-        WithoutMiddleware,
+    use UserHelpers;
+    use
         WithFaker;
+    use
+        WithoutMiddleware;
     private $monthYear;
     private $patient;
 
@@ -79,9 +81,9 @@ class PatientMonthlySummaryChargeableServicesTest extends TestCase
      * Assert patient monthly summary.
      *
      * @param \CircleLinkHealth\Customer\Entities\PatientMonthlySummary $summary
-     * @param Problem               $problem1
-     * @param Problem               $problem2
-     * @param Collection            $list
+     * @param Problem                                                   $problem1
+     * @param Problem                                                   $problem2
+     * @param Collection                                                $list
      */
     private function assertMonthlySummary(
         PatientMonthlySummary $summary,

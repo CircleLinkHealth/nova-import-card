@@ -57,16 +57,16 @@ class PatientReadRepository
                 },
             ])
             ->when(
-                          auth()->user()->hasRole('provider') && 'false' == $filtersInput['showPracticePatients'],
-                          function ($query) {
-                              $query->whereHas('careTeamMembers', function ($subQuery) {
-                                  $subQuery->where('member_user_id', auth()->user()->id)
-                                      ->whereIn(
-                                               'type',
-                                               [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
+                auth()->user()->hasRole('provider') && 'false' == $filtersInput['showPracticePatients'],
+                function ($query) {
+                    $query->whereHas('careTeamMembers', function ($subQuery) {
+                        $subQuery->where('member_user_id', auth()->user()->id)
+                            ->whereIn(
+                                          'type',
+                                          [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
                                            );
-                              });
-                          }
+                    });
+                }
                       )
             ->whereHas('patientInfo')
             ->intersectPracticesWith(auth()->user())

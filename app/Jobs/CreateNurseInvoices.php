@@ -112,6 +112,12 @@ class CreateNurseInvoices implements ShouldQueue
 
         $invoices = $this->generatePdfInvoices($nurseUsers, $nurseSystemTimeMap, $pdfService);
 
+        if ($invoices->isEmpty()) {
+            \Log::info('Invoices not generated due to no data for selected nurses and range.');
+
+            return;
+        }
+
         if ($this->requestedBy) {
             $link = $this->storeInJobsCompleted($invoices);
             $this->notifyRequestor($link);
@@ -304,7 +310,7 @@ class CreateNurseInvoices implements ShouldQueue
         $data = $invoices->toArray();
 
         $viewHashKey = null;
-        if ( ! empty($links) && ! empty($data)) {
+        if ($links->isNotEmpty() && ! empty($data)) {
             $viewHashKey = (new View())->storeViewInCache(
                 'billing.nurse.list',
                 [
@@ -317,7 +323,7 @@ class CreateNurseInvoices implements ShouldQueue
 
         $userNotification = new UserNotificationList($this->requestedBy);
 
-        if (empty($links) && empty($data)) {
+        if ($links->isEmpty() && empty($data)) {
             $userNotification->push('There was not data to generate Nurse Invoices.');
 
             return;

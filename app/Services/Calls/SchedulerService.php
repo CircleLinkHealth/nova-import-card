@@ -22,6 +22,10 @@ use Illuminate\Support\Facades\Auth;
 
 class SchedulerService
 {
+    const CALL_BACK_TYPE = 'Call Back';
+
+    const CALL_TYPE = 'call';
+
     /**
      * @var NoteService
      */
@@ -43,7 +47,7 @@ class SchedulerService
     {
         return Call::where(function ($q) {
             $q->whereNull('type')
-                ->orWhere('type', '=', 'call');
+                ->orWhere('type', '=', SchedulerService::CALL_TYPE);
         })
             ->where('inbound_cpm_id', $patientId)
             ->where('status', '=', 'scheduled')
@@ -81,7 +85,7 @@ class SchedulerService
 
         $call = Call::where(function ($q) {
             $q->whereNull('type')
-                ->orWhere('type', '=', 'call');
+                ->orWhere('type', '=', SchedulerService::CALL_TYPE);
         })
             ->where('inbound_cpm_id', $patient->id)
             ->whereIn('status', ['reached', 'not reached'])
@@ -107,7 +111,7 @@ class SchedulerService
     {
         $call = Call::where(function ($q) {
             $q->whereNull('type')
-                ->orWhere('type', '=', 'call');
+                ->orWhere('type', '=', SchedulerService::CALL_TYPE);
         })
             ->where(function ($q) use (
                         $patient
@@ -130,13 +134,13 @@ class SchedulerService
      *
      * @param $patientId
      *
-     * @return \Illuminate\Database\Eloquent\Model|object|static|null
+     * @return Call|null
      */
-    public function getTodaysCall($patientId)
+    public function getTodaysCall($patientId): Call
     {
         $query = Call::where(function ($q) {
             $q->whereNull('type')
-                ->orWhere('type', '=', 'call');
+                ->orWhere('type', '=', SchedulerService::CALL_TYPE);
         })
             ->where('inbound_cpm_id', $patientId)
             ->where('status', 'scheduled')
@@ -146,7 +150,7 @@ class SchedulerService
         if (0 == $query->count()) {
             $query = Call::where(function ($q) {
                 $q->whereNull('type')
-                    ->orWhere('type', '=', 'call');
+                    ->orWhere('type', '=', SchedulerService::CALL_TYPE);
             })
                 ->where('inbound_cpm_id', $patientId)
                 ->whereNotIn('status', ['reached', 'not reached'])
@@ -199,7 +203,7 @@ class SchedulerService
             $call = $this->getScheduledCallForPatient($patient);
 
             Call::updateOrCreate([
-                'type'    => 'call',
+                'type'    => SchedulerService::CALL_TYPE,
                 'service' => 'phone',
                 'status'  => 'scheduled',
 
@@ -277,7 +281,7 @@ class SchedulerService
         }
 
         return Call::create([
-            'type'    => 'call',
+            'type'    => SchedulerService::CALL_TYPE,
             'service' => 'phone',
             'status'  => 'scheduled',
 
@@ -370,7 +374,7 @@ class SchedulerService
                 } else {
                     //fill in some call info:
                     $call = Call::create([
-                        'type'    => 'call',
+                        'type'    => SchedulerService::CALL_TYPE,
                         'service' => 'phone',
                         'status'  => 'scheduled',
 
@@ -578,7 +582,8 @@ class SchedulerService
         );
 
         if (Call::IGNORED != $callStatus) {
-            $this->patientWriteRepository->updateCallLogs($patient->patientInfo, Call::REACHED == $callStatus);
+            $isCallBack = SchedulerService::CALL_BACK_TYPE === $scheduled_call->sub_type;
+            $this->patientWriteRepository->updateCallLogs($patient->patientInfo, Call::REACHED == $callStatus, $isCallBack);
         }
 
         $nextCall = SchedulerService::getNextScheduledCall($patient->id, true);
