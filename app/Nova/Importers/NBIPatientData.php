@@ -47,10 +47,10 @@ class NBIPatientData implements OnEachRow, WithChunkReading, WithValidation, Wit
      *
      * @return string|null
      */
-    public function nullOrValue(string $value)
+    public function nullOrValue($value)
     {
-        return ! (empty($value) || in_array($value, $this->nullValues()))
-            ?: $value;
+        return empty($value) || in_array($value, $this->nullValues())
+            ? null : $value;
     }
 
     /**
@@ -71,26 +71,31 @@ class NBIPatientData implements OnEachRow, WithChunkReading, WithValidation, Wit
      */
     public function onRow(Row $row)
     {
-        $row = $row->toArray();
-
-        PatientData::updateOrCreate(
-            [
-                'mrn' => $row['mrn'],
-            ],
-            [
-                'dob'                 => $this->nullOrValue($row['dob']),
-                'first_name'          => $this->nullOrValue($row['first_name']),
-                'last_name'           => $this->nullOrValue($row['last_name']),
-                'mrn'                 => $this->nullOrValue($row['mrn']),
-                'primary_insurance'   => $this->nullOrValue($row['primary_insurance']),
-                'provider'            => $this->nullOrValue($row['provider']),
-                'secondary_insurance' => $this->nullOrValue($row['secondary_insurance']),
-            ]
-        );
+        $this->persistRow($row->toArray());
     }
 
     public function rules(): array
     {
         return $this->rules;
+    }
+
+    private function persistRow(array $row)
+    {
+        $args = [
+            'dob'                 => $this->nullOrValue($row['dob']),
+            'first_name'          => $this->nullOrValue($row['first_name']),
+            'last_name'           => $this->nullOrValue($row['last_name']),
+            'mrn'                 => $this->nullOrValue($row['mrn']),
+            'primary_insurance'   => $this->nullOrValue($row['primary_insurance']),
+            'provider'            => $this->nullOrValue($row['provider']),
+            'secondary_insurance' => $this->nullOrValue($row['secondary_insurance']),
+        ];
+
+        return PatientData::updateOrCreate(
+            [
+                'mrn' => $row['mrn'],
+            ],
+            $args
+        );
     }
 }
