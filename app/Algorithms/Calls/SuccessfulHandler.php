@@ -7,8 +7,8 @@
 namespace App\Algorithms\Calls;
 
 use App\Contracts\CallHandler;
-use CircleLinkHealth\Customer\Entities\Patient;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Patient;
 
 //READ ME
 /*
@@ -71,7 +71,7 @@ class SuccessfulHandler implements CallHandler
 
     public function createSchedulerInfoString()
     {
-        $status                      = '<span style="color: green">successfully</span>';
+        $status = '<span style="color: green">successfully</span>';
 
         return
             'You just called '.$this->patient->user->getFullName()

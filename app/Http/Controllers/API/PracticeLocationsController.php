@@ -6,10 +6,10 @@
 
 namespace App\Http\Controllers\API;
 
-use CircleLinkHealth\Customer\Entities\CarePerson;
 use App\CLH\Facades\StringManipulation;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdatePracticeLocation;
+use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;

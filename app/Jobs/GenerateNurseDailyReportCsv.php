@@ -7,9 +7,11 @@
 namespace App\Jobs;
 
 use App\Exports\NurseDailyReport;
+use App\Notifications\NurseDailyReportGenerated;
 use App\Services\Cache\NotificationService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -18,7 +20,10 @@ use Illuminate\Queue\SerializesModels;
 
 class GenerateNurseDailyReportCsv implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     private $date;
     private $reportData;
@@ -52,5 +57,13 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
             $link,
             'Download Spreadsheet'
         );
+
+        if (isProductionEnv()) {
+            $sara = User::whereEmail('sheller@circlelinkhealth.com')->first();
+
+            if ($sara) {
+                $sara->notify(new NurseDailyReportGenerated($this->date, $link));
+            }
+        }
     }
 }

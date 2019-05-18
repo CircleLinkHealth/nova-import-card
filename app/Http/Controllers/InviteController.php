@@ -6,8 +6,8 @@
 
 namespace App\Http\Controllers;
 
-use CircleLinkHealth\Customer\Entities\Invite;
 use App\Notifications\Onboarding\ImplementationLeadInvite;
+use CircleLinkHealth\Customer\Entities\Invite;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;

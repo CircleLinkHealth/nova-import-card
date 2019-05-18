@@ -37,6 +37,8 @@ use CircleLinkHealth\Customer\Entities\User;
  */
 class ChargeableService extends \CircleLinkHealth\Core\Entities\BaseModel
 {
+    const AWV_INITIAL    = 'AWV: G0438';
+    const AWV_SUBSEQUENT = 'AWV: G0439';
     /**
      * When a Patient consents to receive Care from CLH, they consent to these Chargeable Services, if consent date is
      * after 7/23/2018. If consent date is before 7/23/2018, patient was consented to the same services except for 'CPT

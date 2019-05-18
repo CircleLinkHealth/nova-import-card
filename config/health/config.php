@@ -91,7 +91,7 @@ return [
 
         'users' => [
             'model' => \CircleLinkHealth\Customer\Entities\User::class,
-    
+
             'emails' => ['admin@mydomain.com'],
         ],
 

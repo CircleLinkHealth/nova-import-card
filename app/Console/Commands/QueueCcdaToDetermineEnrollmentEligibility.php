@@ -10,8 +10,8 @@ use App\EligibilityBatch;
 use App\Jobs\CheckCcdaEnrollmentEligibility;
 use App\Jobs\LGHDetermineCcdaEnrollmentEligibility;
 use App\Models\MedicalRecords\Ccda;
-use CircleLinkHealth\Customer\Entities\Practice;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Console\Command;
 
 class QueueCcdaToDetermineEnrollmentEligibility extends Command
@@ -56,9 +56,9 @@ class QueueCcdaToDetermineEnrollmentEligibility extends Command
                 //lgh
                 if (141 == $ccda->practice_id) {
                     dispatch(
-                                (new LGHDetermineCcdaEnrollmentEligibility($ccda))
-                                    ->delay(Carbon::now()->addSeconds(5))
-                                    ->onQueue('low')
+                        (new LGHDetermineCcdaEnrollmentEligibility($ccda))
+                            ->delay(Carbon::now()->addSeconds(5))
+                            ->onQueue('low')
                             );
 
                     return true;
@@ -74,9 +74,9 @@ class QueueCcdaToDetermineEnrollmentEligibility extends Command
                     $batch = EligibilityBatch::findOrFail($ccda->batch_id);
 
                     dispatch(
-                                (new CheckCcdaEnrollmentEligibility($ccda, $practice, $batch))
-                                    ->delay(Carbon::now()->addSeconds(5))
-                                    ->onQueue('low')
+                        (new CheckCcdaEnrollmentEligibility($ccda, $practice, $batch))
+                            ->delay(Carbon::now()->addSeconds(5))
+                            ->onQueue('low')
                             );
 
                     return true;

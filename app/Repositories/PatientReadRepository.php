@@ -7,8 +7,9 @@
 namespace App\Repositories;
 
 use App\Filters\PatientFilters;
-use CircleLinkHealth\Customer\Entities\Patient;
 use App\PatientSearchModel;
+use CircleLinkHealth\Customer\Entities\CarePerson;
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 
 class PatientReadRepository
@@ -18,7 +19,7 @@ class PatientReadRepository
     public function __construct(User $user)
     {
         $this->user = $user::ofType('participant')
-                           ->with('patientInfo');
+            ->with('patientInfo');
     }
 
     public function fetch($resetQuery = true)
@@ -27,7 +28,7 @@ class PatientReadRepository
 
         if ($resetQuery) {
             $this->user = User::ofType('participant')
-                              ->with('patientInfo');
+                ->with('patientInfo');
         }
 
         return $result;
@@ -40,29 +41,40 @@ class PatientReadRepository
 
     public function patients(PatientFilters $filters)
     {
-        $users = $this->model()
-                      ->with([
-                          'carePlan',
-                          'phoneNumbers',
-                          'patientInfo',
-                          'primaryPractice',
-                          'providerInfo',
-                          'observations' => function ($q) {
-                              $q
-                                  ->latest();
-                          },
-                      ])
-                      ->whereHas('patientInfo')
-                      ->intersectPracticesWith(auth()->user())
-                      ->filter($filters);
-
         $shouldSetDefaultRows = false;
-        $filtersInput = $filters->filters();
+        $filtersInput         = $filters->filters();
+
+        $users = $this->model()
+            ->with([
+                'carePlan',
+                'phoneNumbers',
+                'patientInfo',
+                'primaryPractice',
+                'providerInfo',
+                'observations' => function ($q) {
+                    $q
+                        ->latest();
+                },
+            ])
+            ->when(
+                auth()->user()->hasRole('provider') && 'false' == $filtersInput['showPracticePatients'],
+                function ($query) {
+                    $query->whereHas('careTeamMembers', function ($subQuery) {
+                        $subQuery->where('member_user_id', auth()->user()->id)
+                            ->whereIn(
+                                          'type',
+                                          [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
+                                           );
+                    });
+                }
+                      )
+            ->whereHas('patientInfo')
+            ->intersectPracticesWith(auth()->user())
+            ->filter($filters);
 
         if ( ! isset($filtersInput['rows'])) {
             $shouldSetDefaultRows = true;
-        }
-        else if ($filtersInput['rows'] !== 'all' && ! is_numeric($filtersInput['rows'])) {
+        } elseif ('all' !== $filtersInput['rows'] && ! is_numeric($filtersInput['rows'])) {
             $shouldSetDefaultRows = true;
         }
 

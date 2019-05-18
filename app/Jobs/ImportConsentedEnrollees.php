@@ -22,7 +22,10 @@ use Illuminate\Queue\SerializesModels;
 
 class ImportConsentedEnrollees implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
     /**
      * @var EligibilityBatch
      */
@@ -55,8 +58,8 @@ class ImportConsentedEnrollees implements ShouldQueue
             ->get()
             ->map(function ($enrollee) use ($importService) {
                 $url = route(
-                                    'import.ccd.remix',
-                                    'Click here to Create and a CarePlan and review.'
+                    'import.ccd.remix',
+                    'Click here to Create and a CarePlan and review.'
                                 );
 
                 //verify it wasn't already imported

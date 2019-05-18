@@ -14,11 +14,11 @@ use App\Jobs\ProcessCcda;
 use App\Jobs\ProcessSinglePatientEligibility;
 use App\Models\MedicalRecords\Ccda;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
-use CircleLinkHealth\Customer\Entities\Practice;
 use App\Services\CCD\ProcessEligibilityService;
 use App\Services\Eligibility\Adapters\JsonMedicalRecordAdapter;
 use App\Services\GoogleDrive;
 use App\TargetPatient;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Console\Command;
 use Storage;
 
@@ -219,10 +219,10 @@ class QueueEligibilityBatchForProcessing extends Command
             ->get()
             ->each(function ($job) use ($batch) {
                 ProcessSinglePatientEligibility::dispatch(
-                              collect([$job->data]),
-                              $job,
-                              $batch,
-                              $batch->practice
+                    collect([$job->data]),
+                    $job,
+                    $batch,
+                    $batch->practice
                           )->onQueue('low');
             });
 

@@ -26,7 +26,7 @@ class ProblemInstructionController extends Controller
     public function __construct(
         CpmInstructionService $cpmInstructionService,
         CpmProblemService $cpmProblemService,
-                    CpmProblemUserService $cpmProblemUserService,
+        CpmProblemUserService $cpmProblemUserService,
         UserService $userService,
         CcdProblemService $ccdProblemService
     ) {

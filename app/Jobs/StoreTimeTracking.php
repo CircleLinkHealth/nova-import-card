@@ -22,7 +22,10 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class StoreTimeTracking implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
     // Do not count time for these routes
     const UNTRACKED_ROUTES = [
         'patient.activity.create',

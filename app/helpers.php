@@ -468,33 +468,32 @@ if ( ! function_exists('carbonGetNext')) {
     /**
      * Get carbon instance of the next $day.
      *
-     * @param $day
+     * @param string      $day
+     * @param Carbon|null $fromDate
      *
      * @return Carbon|false
      */
-    function carbonGetNext($day = 'monday')
+    function carbonGetNext($day = 'monday', Carbon $fromDate = null)
     {
         if ( ! is_numeric($day)) {
             $dayOfWeek = clhToCarbonDayOfWeek(dayNameToClhDayOfWeek($day));
-            $dayName   = $day;
         }
 
         if (is_numeric($day)) {
             $dayOfWeek = clhToCarbonDayOfWeek($day);
-            $dayName   = clhDayOfWeekToDayName($day);
         }
 
         if ( ! isset($dayOfWeek)) {
             return false;
         }
 
-        $now = Carbon::now();
+        $now = $fromDate->copy() ?? Carbon::now();
 
         if ($now->dayOfWeek == $dayOfWeek) {
             return $now;
         }
 
-        return $now->parse("next ${dayName}");
+        return $now->next($dayOfWeek);
     }
 }
 
@@ -1430,5 +1429,48 @@ if ( ! function_exists('selectAllNursesForSelectedPeriod')) {
         })->where('status', 'active')->get()->pluck('user.display_name', 'user.id');
 
         return $nurses;
+    }
+}
+
+if ( ! function_exists('array_orderby')) {
+    /**
+     * @return mixed
+     */
+    function array_orderby()
+    {
+        $args = func_get_args();
+        $data = array_shift($args);
+        foreach ($args as $n => $field) {
+            if (is_string($field)) {
+                $tmp = [];
+                foreach ($data as $key => $row) {
+                    $tmp[$key] = $row[$field];
+                }
+                $args[$n] = $tmp;
+            }
+        }
+        $args[] = &$data;
+        call_user_func_array('array_multisort', $args);
+
+        return array_pop($args);
+    }
+}
+
+if ( ! function_exists('incrementInvoiceNo')) {
+    /**
+     * @return mixed
+     */
+    function incrementInvoiceNo()
+    {
+        $num = AppConfig::where('config_key', 'billing_invoice_count')
+            ->firstOrFail();
+
+        $current = $num->config_value;
+
+        $num->config_value = $current + 1;
+
+        $num->save();
+
+        return $current;
     }
 }
