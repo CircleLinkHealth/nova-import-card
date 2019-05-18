@@ -15,10 +15,10 @@ class NurseInvoiceExtra extends BaseModel
         'date' => 'date',
     ];
     protected $fillable = ['user_id', 'date', 'unit', 'value'];
-    protected $table    = 'nurses_invoice_extras';
+    protected $table    = 'nurse_invoice_extras';
 
     public function nurse()
     {
-        return $this->belongsTo(Nurse::class, 'user_id');
+        return $this->belongsTo(Nurse::class, 'user_id', 'user_id');
     }
 }

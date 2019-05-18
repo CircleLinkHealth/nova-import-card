@@ -27,7 +27,7 @@ class NurseController extends Controller
     {
         $input = $request->input();
 
-        $nurseIds = $request->input('nurses');
+        $nurseUserIds = $request->input('nurses');
 
         $addTime = $request->input('manual_time')
             ? $request->input('manual_time')
@@ -45,15 +45,15 @@ class NurseController extends Controller
         if (isset($input['all_selected_nurses'])) {
             $nurses = selectAllNursesForSelectedPeriod($startDate, $endDate);
 
-            $nurseIds = [];
+            $nurseUserIds = [];
             foreach ($nurses as $key => $name) {
-                $nurseIds[] = $key;
+                $nurseUserIds[] = $key;
             }
         }
 
         if ('download' == $request->input('submit')) {
             GenerateNurseInvoice::dispatch(
-                $nurseIds,
+                $nurseUserIds,
                 $startDate,
                 $endDate,
                 auth()->user()->id,
@@ -63,7 +63,7 @@ class NurseController extends Controller
             )->onQueue('demanding');
         } elseif ('downloadV2' == $request->input('submit')) {
             CreateNurseInvoices::dispatchNow(
-                $nurseIds,
+                $nurseUserIds,
                 $startDate,
                 $endDate,
                 auth()->user()->id,

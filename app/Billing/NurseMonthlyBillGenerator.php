@@ -8,6 +8,7 @@ namespace App\Billing;
 
 use App\Billing\NurseInvoices\VariablePay;
 use App\Call;
+use App\NurseInvoiceExtra;
 use App\Services\PdfService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Nurse;
@@ -65,10 +66,10 @@ class NurseMonthlyBillGenerator
         $notes = '',
         $summary
     ) {
-        $this->nurse                     = $newNurse;
-        $this->nurseName                 = $newNurse->user->getFullName();
-        $this->startDate                 = $billingDateStart;
-        $this->endDate                   = $billingDateEnd;
+        $this->nurse     = $newNurse;
+        $this->nurseName = $newNurse->user->getFullName();
+        $this->startDate = $billingDateStart;
+        $this->endDate   = $billingDateEnd;
         $this->addDuration               = $manualTimeAdd;
         $this->addNotes                  = $notes;
         $this->withVariablePaymentSystem = $withVariablePaymentSystem;
@@ -81,6 +82,16 @@ class NurseMonthlyBillGenerator
         $this->activityData = Activity::where('provider_id', $this->nurse->user_id)
             ->whereBetween('created_at', [$this->startDate, $this->endDate])
             ->get();
+
+        $addedTimeNova = NurseInvoiceExtra::where('user_id', $this->nurse->user_id)
+            ->whereBetween('date', [$this->startDate, $this->endDate])
+            ->sum('value');
+
+        $this->addDurationFromNova = (int)$addedTimeNova;
+
+        if ($this->addDurationFromNova !== 0){
+            $this->addDuration = $this->addDurationFromNova;
+        }
 
         if (0 != $this->addDuration) {
             $this->hasAddedTime = true;
@@ -194,6 +205,8 @@ class NurseMonthlyBillGenerator
             'date_start' => $this->startDate->format('jS M, Y'),
             'date_end'   => $this->endDate->format('jS M, Y'),
         ];
+
+
     }
 
     private function generatePdf($onlyLink = false)
@@ -211,6 +224,8 @@ class NurseMonthlyBillGenerator
             $this->formattedItemizedActivities,
             $filePath
         );
+
+
 
         if ($onlyLink) {
             return $filePath;
@@ -252,13 +267,13 @@ class NurseMonthlyBillGenerator
                     $q->where('updated_at', '>=', $this->startDate->toDateString())
                         ->where('updated_at', '<=', $this->endDate->toDateString());
                 }
-                     )
+            )
             ->where(
                 function ($k) {
                     $k->where('status', '=', 'reached')
                         ->orWhere('status', '=', 'not reached');
                 }
-                     )
+            )
             ->count();
 
         $hours = $duration / 3600;

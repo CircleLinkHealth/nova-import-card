@@ -26,19 +26,19 @@
                             {{ csrf_field() }}
                             <fieldset>
 
-                               {{-- <div class="form-group">
+                                <div class="form-group">
                                     <label class="col-md-2 control-label" for="days">
                                         Active Nurse<br>
                                         Select All <kbd><kbd>cmd</kbd> + <kbd>A</kbd></kbd></label>
                                     <div class="col-md-6">
                                         <select id="nurse" name="nurses[]" class="nurses dropdown Valid form-control"
-                                                multiple required>
+                                                multiple>
                                             @foreach($nurses as $key => $value)
                                                 <option value="{{$key}}">{{$value}}</option>
                                             @endforeach
                                         </select>
                                     </div>
-                                </div>--}}
+                                </div>
                                 <div class="form-group" style="padding-left:40px;">
                                     <label data-target="#collapseOne" class="col-md-3"
                                            style="width: 25%">

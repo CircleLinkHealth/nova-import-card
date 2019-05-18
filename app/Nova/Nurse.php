@@ -25,7 +25,7 @@ class Nurse extends Resource
      * @var array
      */
     public static $search = [
-        'id',
+        'user_id',
     ];
 
     /**
