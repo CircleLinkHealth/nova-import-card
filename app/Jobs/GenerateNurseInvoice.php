@@ -56,7 +56,6 @@ class GenerateNurseInvoice implements ShouldQueue
             'summary' => function ($s) use ($startDate) {
                 $s->where('month_year', $startDate->copy()->startOfMonth()->format('Y-m-d'));
             }, ])->get();
-
         $this->startDate   = $startDate;
         $this->endDate     = $endDate;
         $this->variablePay = $variablePay;
@@ -86,7 +85,8 @@ class GenerateNurseInvoice implements ShouldQueue
                 $this->addTime,
                 $this->addNotes,
                 $nurse->summary->first()
-            ))->handle();
+            ))
+                ->handle();
 
             $data[] = $generator;
 
