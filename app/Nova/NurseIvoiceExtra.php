@@ -85,8 +85,10 @@ class NurseIvoiceExtra extends Resource
         return [
             ID::make()->sortable(),
 
-            BelongsTo::make('nurse')
+            BelongsTo::make('User Id', 'nurse', Nurse::class)
                 ->hideWhenUpdating()
+                ->searchable()
+                ->prepopulate()
                 ->sortable(),
 
             Text::make('Name', 'nurse.user.display_name')
@@ -129,7 +131,7 @@ class NurseIvoiceExtra extends Resource
 
     public static function label()
     {
-        return 'Care Coach Invoices';
+        return 'Care Coach Bonuses';
     }
 
     /**
@@ -141,6 +143,7 @@ class NurseIvoiceExtra extends Resource
      */
     public function lenses(Request $request)
     {
-        return [];
+        return [
+        ];
     }
 }

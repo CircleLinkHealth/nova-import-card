@@ -1269,13 +1269,13 @@ if ( ! function_exists('array_keys_exist')) {
     /**
      * Returns TRUE if the given keys are all set in the array. Each key can be any value possible for an array index.
      *
-     * @see array_key_exists()
-     *
      * @param string[] $keys    keys to check
      * @param array    $array   an array with keys to check
      * @param mixed    $missing reference to a variable that that contains the missing keys
      *
      * @return bool true if all given keys exist in the given array, false if not
+     *
+     * @see array_key_exists()
      */
     function array_keys_exist(array $keys, array $array, &$missing = null)
     {
@@ -1400,5 +1400,35 @@ if ( ! function_exists('calculateWeekdays')) {
 
             return ! $date->isWeekend() && ! $matchingHolidays->count() >= 1;
         }, new Carbon($toDate));
+    }
+}
+
+if ( ! function_exists('selectAllNursesForSelectedPeriod')) {
+    /**
+     * Returns all nurses selected for time period in admin/reports/nurse/invoice.
+     *
+     * @param $startDate
+     * @param $endDate
+     *
+     * @return EloquentCollection|\Illuminate\Database\Eloquent\Builder[]|Nurse[]
+     */
+    function selectAllNursesForSelectedPeriod(Carbon $startDate, Carbon $endDate)
+    {
+        $nurses = Nurse::with([
+            'user',
+            'summary' => function ($s) use ($startDate, $endDate) {
+                $s->whereBetween('month_year', [
+                    $startDate->copy()->toDateString(),
+                    $endDate->copy()->toDateString(),
+                ]);
+            },
+        ])->whereHas('summary', function ($s) use ($startDate, $endDate) {
+            $s->whereBetween('month_year', [
+                $startDate->copy()->toDateString(),
+                $endDate->copy()->toDateString(),
+            ]);
+        })->where('status', 'active')->get()->pluck('user.display_name', 'user.id');
+
+        return $nurses;
     }
 }

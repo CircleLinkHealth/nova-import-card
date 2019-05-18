@@ -9,7 +9,6 @@ namespace App\Nova;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\ID;
-use Laravel\Nova\Http\Requests\NovaRequest;
 
 class Nurse extends Resource
 {
@@ -34,7 +33,7 @@ class Nurse extends Resource
      *
      * @var string
      */
-    public static $title = 'id';
+    public static $title = 'user_id';
 
     /**
      * Get the actions available for the resource.
@@ -85,8 +84,8 @@ class Nurse extends Resource
     public function fields(Request $request)
     {
         return [
-            ID::make()->sortable(),
-            BelongsTo::make('user'),
+            ID::make('User Id', 'user_id')->sortable(),
+            BelongsTo::make('user')->display('display_name'),
         ];
     }
 
@@ -116,6 +115,7 @@ class Nurse extends Resource
      */
     public function lenses(Request $request)
     {
-        return [];
+        return [
+        ];
     }
 }

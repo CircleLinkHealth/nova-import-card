@@ -25,13 +25,13 @@ class CreateNursesInvoiceExtrasTable extends Migration
     {
         Schema::create('nurses_invoice_extras', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('nurse_info_id');
+            $table->unsignedInteger('user_id');
             $table->date('date')->nullable();
             $table->string('unit')->nullable();
             $table->integer('value')->nullable();
             $table->timestamps();
 
-            $table->foreign('nurse_info_id')->references('id')->on('nurse_info');
+            $table->foreign('user_id')->references('user_id')->on('nurse_info');
         });
     }
 }

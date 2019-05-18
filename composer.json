@@ -63,6 +63,7 @@
     "ext-json": "*",
     "ext-libxml": "*",
     "ext-simplexml": "*",
+    "alexbowers/nova-prepopulate-searchable": "^1.0",
     "amnuts/opcache-gui": "dev-master",
     "appstract/laravel-opcache": "^2.0",
     "arcturial/clickatell": "*",

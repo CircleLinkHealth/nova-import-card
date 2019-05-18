@@ -10,7 +10,6 @@ use App\Exports\CareCoachMonthlyReport;
 use App\Jobs\CreateNurseInvoices;
 use App\Jobs\GenerateNurseInvoice;
 use App\Notifications\NurseInvoiceCreated;
-use App\NurseInvoiceExtra;
 use App\Reports\NurseDailyReport;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
@@ -43,6 +42,14 @@ class NurseController extends Controller
         $startDate = Carbon::parse($request->input('start_date'));
         $endDate   = Carbon::parse($request->input('end_date'));
 
+        if (isset($input['all_selected_nurses'])) {
+            $nurses = selectAllNursesForSelectedPeriod($startDate, $endDate);
+
+            $nurseIds = [];
+            foreach ($nurses as $key => $name) {
+                $nurseIds[] = $key;
+            }
+        }
 
         if ('download' == $request->input('submit')) {
             GenerateNurseInvoice::dispatch(
