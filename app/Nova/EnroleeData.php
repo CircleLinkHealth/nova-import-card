@@ -102,37 +102,37 @@ class EnroleeData extends Resource
             Text::make('first_name')
                 ->sortable()
                 ->creationRules('required', 'string')
-                ->updateRules('required', 'string'),
+                ->updateRules('string'),
 
             Text::make('last_name')
                 ->sortable()
                 ->creationRules('required', 'string')
-                ->updateRules('required', 'string'),
+                ->updateRules('string'),
 
             Text::make('address')
                 ->sortable()
-                ->creationRules('required', 'string')
-                ->updateRules('required', 'string'),
+                ->creationRules('string')
+                ->updateRules('string'),
 
             Number::make('mrn')
                 ->sortable()
-                ->creationRules('required', 'integer')
-                ->updateRules('required', 'integer'),
+                ->creationRules('integer')
+                ->updateRules('integer'),
 
             Date::make('dob')
                 ->sortable()
-                ->format('MM/DD/YYYY')->creationRules('required', 'date')
-                ->updateRules('required', 'date'),
+                ->format('MM/DD/YYYY')->creationRules('date')
+                ->updateRules('date'),
 
             Text::make('primary_insurance')
                 ->sortable()
                 ->creationRules('required', 'string')
-                ->updateRules('required', 'string'),
+                ->updateRules('string'),
 
             Text::make('secondary_insurance')
                 ->sortable()
-                ->creationRules('required', 'string')
-                ->updateRules('required', 'string'),
+                ->creationRules('string')
+                ->updateRules('string'),
         ];
     }
 
