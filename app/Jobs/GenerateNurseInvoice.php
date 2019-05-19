@@ -39,9 +39,10 @@ class GenerateNurseInvoice implements ShouldQueue
      * @param Carbon         $startDate
      * @param Carbon         $endDate
      * @param Collection|int $requestors
-     * @param bool           $variablePay
-     * @param int            $addTime
-     * @param string         $addNotes
+     * @param $selectAll
+     * @param bool   $variablePay
+     * @param int    $addTime
+     * @param string $addNotes
      */
     public function __construct(
         array $nurseUserIds,

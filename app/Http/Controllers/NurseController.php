@@ -29,20 +29,18 @@ class NurseController extends Controller
 
         $nurseUserIds = $request->input('nurses');
 
-        $addTime = $request->input('manual_time')
-            ? $request->input('manual_time')
-            : 0;
+        $addTime = 0;
 
-        $addNotes = $request->input('manual_time_notes')
-            ? $request->input('manual_time_notes')
-            : '';
+        $addNotes = '';
 
         $variablePay = isset($input['alternative_pay']);
 
         $startDate = Carbon::parse($request->input('start_date'));
         $endDate   = Carbon::parse($request->input('end_date'));
 
-        if (isset($input['all_selected_nurses'])) {
+        $selectAll = isset($input['all_selected_nurses']);
+
+        if (true === $selectAll) {
             $nurses = selectAllNursesForSelectedPeriod($startDate, $endDate);
 
             $nurseUserIds = [];

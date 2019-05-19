@@ -29,6 +29,7 @@ class NurseMonthlyBillGenerator
     protected $activityTime;
     protected $addDuration;
     protected $addNotes;
+    protected $bonus;
     protected $endDate;
     protected $formattedAddDuration;
 
@@ -43,6 +44,7 @@ class NurseMonthlyBillGenerator
 
     //initializations
     protected $nurse;
+    protected $nurseExtras;
     protected $nurseName;
     protected $pageTimerData;
     protected $payable;
@@ -66,10 +68,10 @@ class NurseMonthlyBillGenerator
         $notes = '',
         $summary
     ) {
-        $this->nurse     = $newNurse;
-        $this->nurseName = $newNurse->user->getFullName();
-        $this->startDate = $billingDateStart;
-        $this->endDate   = $billingDateEnd;
+        $this->nurse                     = $newNurse;
+        $this->nurseName                 = $newNurse->user->getFullName();
+        $this->startDate                 = $billingDateStart;
+        $this->endDate                   = $billingDateEnd;
         $this->addDuration               = $manualTimeAdd;
         $this->addNotes                  = $notes;
         $this->withVariablePaymentSystem = $withVariablePaymentSystem;
@@ -83,15 +85,17 @@ class NurseMonthlyBillGenerator
             ->whereBetween('created_at', [$this->startDate, $this->endDate])
             ->get();
 
-        $addedTimeNova = NurseInvoiceExtra::where('user_id', $this->nurse->user_id)
-            ->whereBetween('date', [$this->startDate, $this->endDate])
+        $this->nurseExtras = NurseInvoiceExtra::where('user_id', $this->nurse->user_id)->get();
+
+        $addExtraTime = $this->nurseExtras
+            ->where('unit', 'minutes')
             ->sum('value');
 
-        $this->addDurationFromNova = (int)$addedTimeNova;
+        $this->bonus = $this->nurseExtras
+            ->where('unit', 'usd')
+            ->sum('value');
 
-        if ($this->addDurationFromNova !== 0){
-            $this->addDuration = $this->addDurationFromNova;
-        }
+        $this->addDuration = $addExtraTime;
 
         if (0 != $this->addDuration) {
             $this->hasAddedTime = true;
@@ -146,7 +150,7 @@ class NurseMonthlyBillGenerator
             $this->formattedAddDuration = ceil(($this->addDuration * 2) / 60) / 2;
             $this->formattedSystemTime += $this->formattedAddDuration;
 
-            $this->payable += $this->formattedAddDuration * $this->nurse->hourly_rate;
+            $this->payable += ($this->formattedAddDuration * $this->nurse->hourly_rate) + $this->bonus;
 
             $others = [
                 'Date'    => $this->addNotes,
@@ -186,6 +190,7 @@ class NurseMonthlyBillGenerator
             'manual_time'        => $this->formattedAddDuration,
             'manual_time_notes'  => $this->addNotes,
             'manual_time_amount' => $this->formattedAddDuration * $this->nurse->hourly_rate,
+            'bonus'              => $this->bonus,
 
             //variable
             'variable_pay' => $variable,
@@ -205,8 +210,6 @@ class NurseMonthlyBillGenerator
             'date_start' => $this->startDate->format('jS M, Y'),
             'date_end'   => $this->endDate->format('jS M, Y'),
         ];
-
-
     }
 
     private function generatePdf($onlyLink = false)
@@ -224,8 +227,6 @@ class NurseMonthlyBillGenerator
             $this->formattedItemizedActivities,
             $filePath
         );
-
-
 
         if ($onlyLink) {
             return $filePath;

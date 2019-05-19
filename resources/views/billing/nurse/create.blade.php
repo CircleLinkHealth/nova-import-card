@@ -45,8 +45,8 @@
                                         <div class="radio"><input type="checkbox" name="all_selected_nurses"
                                                                   id="all_selected_nurses"
                                                                   value="all_selected_nurses"/>
-                                            <label for="all_selected_nurses"><span> </span>Select all Care Coaches for
-                                                selected period</label>
+                                            <label for="all_selected_nurses"><span> </span>Care Coaches For
+                                                Selected Time Period</label>
                                         </div>
                                     </label>
                                 </div>
@@ -81,47 +81,6 @@
                                         </div>
                                     </label>
                                 </div>
-
-                                <div class="form-group" style="padding-left:40px;">
-                                    <div class="panel-group" id="accordion">
-
-                                        <div>
-                                            <label data-toggle="collapse" data-target="#collapseOne" class="col-md-1"
-                                                   style="width: 13%">
-                                                <div class="radio"><input type="checkbox" name="has_extra_time"
-                                                                          id="has_extra_time"
-                                                                          value="has_extra_time"/><label
-                                                            for="phone"><span> </span>Add Time</label>
-                                                </div>
-                                            </label>
-                                        </div>
-
-                                        <div id="collapseOne" class="panel-collapse collapse in">
-
-                                            <div class="form-group">
-                                                <div class="col-md-6">
-                                                    <input class="form-control" type="number"
-                                                           value="" placeholder="Enter Time in Minutes"
-                                                           name="manual_time"
-                                                           id="manual_time">
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <div class="col-md-6">
-                                                    <input class="form-control" type="text"
-                                                           value="" placeholder="Enter Notes"
-                                                           name="manual_time_notes" style="margin-left: 30%"
-                                                           id="manual_time_notes">
-                                                </div>
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
 
                                 <!-- Button -->
                                 <div class="form-group">

@@ -2,7 +2,9 @@
 
 <div class="page-header">
     <h1>CircleLink Health
-        <small>Monthly Time Report for <b>{{$nurse_name}}</b> ({{presentDate(Carbon\Carbon::now()->toDateTimeString())}})</small>
+        <small>Monthly Time Report for <b>{{$nurse_name}}</b> ({{presentDate(Carbon\Carbon::now()->toDateTimeString())}}
+            )
+        </small>
     </h1>
 </div>
 
@@ -14,8 +16,9 @@
 
         @if($hasAddedTime)
 
-        <dt>Extras:</dt>
-        <dd>{{$manual_time_notes}}: {{$manual_time. ' Hours'}} (${{$manual_time_amount}})</dd>
+            <dt>Extras:</dt>
+            <dd>{{$manual_time_notes}}: {{$manual_time. ' Hours'}} (${{$manual_time_amount}}) <br>
+                Bonus: ${{$bonus}}</dd>
 
         @endif
 
