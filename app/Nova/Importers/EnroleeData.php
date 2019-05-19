@@ -7,6 +7,8 @@
 namespace App\Nova\Importers;
 
 use App\Enrollee;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
@@ -22,6 +24,10 @@ class EnroleeData implements OnEachRow, WithChunkReading, WithValidation, WithHe
 
     protected $modelClass;
 
+    protected $practice;
+
+    protected $resource;
+
     protected $rules;
 
     public function __construct($resource, $attributes, $rules, $modelClass)
@@ -30,6 +36,7 @@ class EnroleeData implements OnEachRow, WithChunkReading, WithValidation, WithHe
         $this->attributes = $attributes;
         $this->rules      = $rules;
         $this->modelClass = $modelClass;
+        $this->practice   = $this->getPractice();
     }
 
     /**
@@ -47,6 +54,15 @@ class EnroleeData implements OnEachRow, WithChunkReading, WithValidation, WithHe
     {
         $row = $row->toArray();
 
+        $provider = User::search($row['provider'])->first();
+
+        if ( ! $provider) {
+            return;
+        }
+
+        $row['provider'] = $provider->id;
+        $row['practice'] = optional($this->practice)->id;
+
         Enrollee::updateOrCreate(
             [
                 'mrn' => $row['mrn'],
@@ -58,5 +74,21 @@ class EnroleeData implements OnEachRow, WithChunkReading, WithValidation, WithHe
     public function rules(): array
     {
         return $this->rules;
+    }
+
+    protected function getPractice()
+    {
+        $fileName = array_key_exists('file', $_FILES)
+            ? $_FILES['file']['name']
+            : null;
+
+        if ($fileName) {
+            $array = explode('.', $fileName);
+
+            return Practice::search($array[0])->first();
+        }
+
+        //throw Exception
+        return null;
     }
 }

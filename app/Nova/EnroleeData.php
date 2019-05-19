@@ -9,6 +9,7 @@ namespace App\Nova;
 use App\Enrollee;
 use App\Nova\Importers\EnroleeData as EnroleeDataImporter;
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
@@ -94,22 +95,44 @@ class EnroleeData extends Resource
     {
         return [
             ID::make()->sortable(),
+
+            BelongsTo::make('Provider', 'provider', User::class)
+                ->sortable(),
+
             Text::make('first_name')
                 ->sortable()
                 ->creationRules('required', 'string')
                 ->updateRules('required', 'string'),
+
             Text::make('last_name')
                 ->sortable()
                 ->creationRules('required', 'string')
                 ->updateRules('required', 'string'),
+
+            Text::make('address')
+                ->sortable()
+                ->creationRules('required', 'string')
+                ->updateRules('required', 'string'),
+
             Number::make('mrn')
                 ->sortable()
                 ->creationRules('required', 'integer')
                 ->updateRules('required', 'integer'),
+
             Date::make('dob')
                 ->sortable()
                 ->format('MM/DD/YYYY')->creationRules('required', 'date')
                 ->updateRules('required', 'date'),
+
+            Text::make('primary_insurance')
+                ->sortable()
+                ->creationRules('required', 'string')
+                ->updateRules('required', 'string'),
+
+            Text::make('secondary_insurance')
+                ->sortable()
+                ->creationRules('required', 'string')
+                ->updateRules('required', 'string'),
         ];
     }
 
