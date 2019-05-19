@@ -39,14 +39,12 @@ class NurseController extends Controller
         $startDate = Carbon::parse($request->input('start_date'));
         $endDate   = Carbon::parse($request->input('end_date'));
 
-        $selectAll = isset($input['all_selected_nurses']);
-
-        if (true === $selectAll) {
+        if (isset($input['all_selected_nurses'])) {
             $nurses = selectAllNursesForSelectedPeriod($startDate, $endDate);
 
             $nurseUserIds = [];
-            foreach ($nurses as $key => $name) {
-                $nurseUserIds[] = $key;
+            foreach ($nurses as $nurseUserId) {
+                $nurseUserIds[] = $nurseUserId;
             }
         }
 

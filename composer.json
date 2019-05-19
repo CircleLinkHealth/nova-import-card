@@ -77,6 +77,7 @@
     "circlelinkhealth/twofa": "dev-master",
     "doctrine/dbal": "~2.3",
     "fideloper/proxy": "^4.0",
+    "fourstacks/nova-checkboxes": "^0.1.5",
     "fzaninotto/faker": "~1.4",
     "genealabs/laravel-caffeine": "^0.7.1",
     "guzzlehttp/guzzle": "~5.3|~6.0",

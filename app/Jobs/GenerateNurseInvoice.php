@@ -52,7 +52,7 @@ class GenerateNurseInvoice implements ShouldQueue
         bool $variablePay = false,
         int $addTime = 0,
         string $addNotes = ''
-    ) {//@todo: for selected all nurses no need for the next query.
+    ) {//@todo: for selected all nurses option no need for the next query (it is already queried) how to i go for that?.
         $this->nurses = Nurse::whereIn('user_id', $nurseUserIds)->with(['user',
             'summary' => function ($s) use ($startDate) {
                 $s->where('month_year', $startDate->copy()->startOfMonth()->format('Y-m-d'));

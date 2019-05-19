@@ -18,7 +18,6 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
-
                 <div class="panel panel-default">
                     <div class="panel-heading">Nurse Invoice Generator</div>
                     <div class="panel-body">
@@ -28,8 +27,7 @@
 
                                 <div class="form-group">
                                     <label class="col-md-2 control-label" for="days">
-                                        Active Nurse<br>
-                                        Select All <kbd><kbd>cmd</kbd> + <kbd>A</kbd></kbd></label>
+                                        Active Nurse<br></label>
                                     <div class="col-md-6">
                                         <select id="nurse" name="nurses[]" class="nurses dropdown Valid form-control"
                                                 multiple required>
@@ -38,18 +36,20 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                </div>
-                                <div class="form-group" style="padding-left:40px;">
+
                                     <label data-target="#collapseOne" class="col-md-3"
                                            style="width: 25%">
                                         <div class="radio"><input type="checkbox" name="all_selected_nurses"
                                                                   id="selectAll"
                                                                   onclick="disableTextInput()"
                                                                   value="all_selected_nurses"/>
-                                            <label for="selectAll"><span> </span>Select All Nurses</label>
+                                            <label for="selectAll"><span> </span>Select All Active Nurses</label>
                                         </div>
                                     </label>
                                 </div>
+
+
+
 
                                 <div class="form-group">
                                     <label class="col-md-2 control-label" for="start_date">From</label>
@@ -69,9 +69,7 @@
                                                name="end_date"
                                                id="end_date" required>
                                     </div>
-                                </div>
 
-                                <div class="form-group" style="padding-left:40px;">
                                     <label data-target="#collapseOne" class="col-md-3"
                                            style="width: 25%">
                                         <div class="radio"><input type="checkbox" name="alternative_pay"
@@ -81,6 +79,10 @@
                                         </div>
                                     </label>
                                 </div>
+
+
+
+
 
                                 <!-- Button -->
                                 <div class="form-group">

@@ -1426,7 +1426,7 @@ if ( ! function_exists('selectAllNursesForSelectedPeriod')) {
                 $startDate->copy()->toDateString(),
                 $endDate->copy()->toDateString(),
             ]);
-        })->where('status', 'active')->get()->pluck('user.display_name', 'user.id');
+        })->where('status', 'active')->get()->pluck('user.id');
 
         return $nurses;
     }

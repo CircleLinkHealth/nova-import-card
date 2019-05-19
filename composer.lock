@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9c840025847cbc014cb31d39b4200ce8",
+    "content-hash": "b6c9b7ae0b651ab1276a0341abbf3a11",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1592,6 +1592,52 @@
             "description": "A simple library to encode and decode JSON Web Tokens (JWT) in PHP. Should conform to the current spec.",
             "homepage": "https://github.com/firebase/php-jwt",
             "time": "2017-06-27T22:17:23+00:00"
+        },
+        {
+            "name": "fourstacks/nova-checkboxes",
+            "version": "v0.1.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fourstacks/nova-checkboxes.git",
+                "reference": "56f7d67cdc7e8327c350a9fa5e91689e8c0dd9d9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fourstacks/nova-checkboxes/zipball/56f7d67cdc7e8327c350a9fa5e91689e8c0dd9d9",
+                "reference": "56f7d67cdc7e8327c350a9fa5e91689e8c0dd9d9",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "require-dev": {
+                "laravel/nova": "^1.0",
+                "orchestra/testbench": "3.7.*",
+                "phpunit/phpunit": "^7.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Fourstacks\\NovaCheckboxes\\FieldServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Fourstacks\\NovaCheckboxes\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova field.",
+            "keywords": [
+                "laravel",
+                "nova"
+            ],
+            "time": "2019-03-08T07:46:14+00:00"
         },
         {
             "name": "fzaninotto/faker",
