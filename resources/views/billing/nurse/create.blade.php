@@ -32,7 +32,7 @@
                                         Select All <kbd><kbd>cmd</kbd> + <kbd>A</kbd></kbd></label>
                                     <div class="col-md-6">
                                         <select id="nurse" name="nurses[]" class="nurses dropdown Valid form-control"
-                                                multiple>
+                                                multiple required>
                                             @foreach($nurses as $key => $value)
                                                 <option value="{{$key}}">{{$value}}</option>
                                             @endforeach
@@ -43,10 +43,10 @@
                                     <label data-target="#collapseOne" class="col-md-3"
                                            style="width: 25%">
                                         <div class="radio"><input type="checkbox" name="all_selected_nurses"
-                                                                  id="all_selected_nurses"
+                                                                  id="selectAll"
+                                                                  onclick="disableTextInput()"
                                                                   value="all_selected_nurses"/>
-                                            <label for="all_selected_nurses"><span> </span>Care Coaches For
-                                                Selected Time Period</label>
+                                            <label for="selectAll"><span> </span>Select All Nurses</label>
                                         </div>
                                     </label>
                                 </div>
@@ -120,7 +120,10 @@
 
     @push('scripts')
         <script>
-            $('.collapse').collapse();
+            function disableTextInput() {
+                var checkBox = document.getElementById("selectAll");
+                document.getElementById("nurse").disabled = checkBox.checked === true;
+            }
         </script>
     @endpush
 @stop

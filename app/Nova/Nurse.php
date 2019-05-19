@@ -27,13 +27,13 @@ class Nurse extends Resource
     public static $search = [
         'user_id',
     ];
-
     /**
      * The single value that should be used to represent the resource when being displayed.
      *
-     * @var string
+     * @return
      */
     public static $title = 'user_id';
+    public static $with  = 'user';
 
     /**
      * Get the actions available for the resource.
