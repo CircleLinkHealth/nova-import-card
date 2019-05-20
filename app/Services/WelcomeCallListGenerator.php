@@ -708,6 +708,14 @@ class WelcomeCallListGenerator
                         }
 
                         if ($p->getCode()) {
+                            //Reject if patient is on dialysis
+                            //https://circlelinkhealth.atlassian.net/browse/CPM-954
+                            if ('N18.6' == $p->getCode()) {
+                                $this->ineligibleOnDialysis($row);
+
+                                return false;
+                            }
+
                             if (in_array($codeType, [Constants::ICD9_NAME, 'all'])) {
                                 $cpmProblemId = $icd9Map->get($p->getCode());
 
@@ -756,6 +764,14 @@ class WelcomeCallListGenerator
 
                         // Try to match keywords
                         if ($p->getName()) {
+                            //Reject if patient is on dialysis
+                            //https://circlelinkhealth.atlassian.net/browse/CPM-954
+                            if (str_contains($p->getName(), ['End stage renal disease'])) {
+                                $this->ineligibleOnDialysis($row);
+
+                                return false;
+                            }
+
                             foreach ($cpmProblems->whereNotIn('id', $qualifyingCcmProblemsCpmIdStack) as $problem) {
                                 foreach ($problem->searchKeywords as $keyword) {
                                     if (empty($keyword)) {
@@ -931,6 +947,24 @@ class WelcomeCallListGenerator
             function () {
                 return SnomedToCpmIcdMap::all();
             }
+        );
+    }
+
+    /**
+     * Set a patient's status as ineligible because they are on dialysis.
+     * If the patient is on dialysis, they are ineligible.
+     *
+     * @param $row
+     */
+    private function ineligibleOnDialysis($row)
+    {
+        $this->ineligiblePatients->push($row);
+
+        $this->setEligibilityJobStatus(
+            3,
+            ['problems' => 'Patient is on dialysis. Patient has code N18.6'],
+            EligibilityJob::INELIGIBLE,
+            'on_dialysis'
         );
     }
 
