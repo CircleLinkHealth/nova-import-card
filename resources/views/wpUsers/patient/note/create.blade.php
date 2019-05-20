@@ -667,7 +667,7 @@
 
                 tcmChange({
                     currentTarget: {
-                        checked: $('#tcm').is(':checked')
+                        checked: @json(!empty($note) && $note->isTCM)
                     }
                 });
 
@@ -798,14 +798,22 @@
                 return noteBody.substring(0, noteBody.indexOf(MEDICATIONS_SEPARATOR)).trim();
             }
 
-            const saveDraftUrl = '{{route('patient.note.store.draft'}}';
+            let noteId = null;
+
+            @if (! empty($note))
+                noteId = '{{$note->id}}';
+            @endif
+
+            const saveDraftUrl = '{{route('patient.note.store.draft', ['patientId' => $patient->id])}}';
             const saveDraft = () => {
                 window.axios
                     .post(saveDraftUrl, {
-                        patientId: @json($patient->id),
-                        noteId: @json(optional($note)->id)
+                        noteId: noteId
                     })
                     .then((response, status) => {
+                        if (response.data && response.data.note_id) {
+                            noteId = response.data.note_id;
+                        }
                         setTimeout(() => saveDraft(), 1000 * 60 * 2 /* 2 minutes */);
                     })
                     .catch(err => {

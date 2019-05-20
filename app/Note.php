@@ -29,7 +29,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @property \Carbon\Carbon                                                  $created_at
  * @property \Carbon\Carbon                                                  $updated_at
  * @property string                                                          $type
- * @property string                                                          $performed_at
+ * @property \Carbon\Carbon                                                  $performed_at
  * @property int|null                                                        $logger_id
  * @property \App\Models\Addendum[]|\Illuminate\Database\Eloquent\Collection $addendums
  * @property \CircleLinkHealth\Customer\Entities\User                        $author

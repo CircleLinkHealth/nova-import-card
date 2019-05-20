@@ -399,7 +399,8 @@ class NotesController extends Controller
         $noteId = ! empty($input['note_id'])
             ? $input['note_id']
             : null;
-        $noteStatus = 'complete';
+
+        $input['status'] = 'complete';
 
         //in case Performed By field is removed from the form (per CPM-165)
         if ( ! isset($input['author_id'])) {
@@ -413,7 +414,7 @@ class NotesController extends Controller
             $note = $this->service->storeNote($input);
         }
 
-        $patient = User::where('id', $patientId)->first();
+        $patient = User::findOrFail($patientId);
 
         $info = $this->updatePatientInfo($patient, $input);
         $this->updatePatientCallWindows($info, $input);
@@ -441,7 +442,6 @@ class NotesController extends Controller
                 if ('done' === $task_status) {
                     if ('Call Back' === $call->sub_type) {
                         if ( ! isset($input['call_status'])) {
-                            //todo: do not redirect, throw exception
                             return redirect()
                                 ->back()
                                 ->withErrors(["Invalid form input. Missing ['call_status']"])
@@ -452,12 +452,11 @@ class NotesController extends Controller
 
                         //Updates when the patient was successfully contacted last
                         //use $note->created_at, in case we are editing a note
-                        $info->last_successful_contact_time = $note->created_at->format('Y-m-d H:i:s');
+                        $info->last_successful_contact_time = $note->performed_at->format('Y-m-d H:i:s');
 
                         //took this from below :)
                         if (auth()->user()->hasRole('provider')) {
-                            //todo: CHECK THIS
-                            $this->patientRepo->updateCallLogs($patient->patientInfo, true);
+                            $this->patientRepo->updateCallLogs($patient->patientInfo, true, $note->performed_at);
                         }
                     } else {
                         $call->status = 'done';
@@ -466,7 +465,7 @@ class NotesController extends Controller
 
                 if ('Call Back' === $call->sub_type) {
                     // add last contact time regardless of if success
-                    $info->last_contact_time = $note->created_at->format('Y-m-d H:i:s');
+                    $info->last_contact_time = $note->performed_at->format('Y-m-d H:i:s');
                     $info->save();
                 }
 
@@ -481,7 +480,6 @@ class NotesController extends Controller
                 $is_withdrawn = 'withdrawn' == $info->ccm_status;
 
                 if ( ! $is_phone_session && $is_withdrawn) {
-                    //todo: do not redirect, just return message
                     return redirect()->route('patient.note.index', ['patient' => $patientId])->with(
                         'messages',
                         ['Successfully Created Note']
@@ -490,7 +488,6 @@ class NotesController extends Controller
 
                 if ($is_phone_session) {
                     if ( ! isset($input['call_status'])) {
-                        //todo: do not redirect, throw exception
                         return redirect()
                             ->back()
                             ->withErrors(["Invalid form input. Missing ['call_status']"])
@@ -503,11 +500,10 @@ class NotesController extends Controller
 
                     if (Call::REACHED == $call_status) {
                         //Updates when the patient was successfully contacted last
-                        $info->last_successful_contact_time = $note->created_at->format('Y-m-d H:i:s');
+                        $info->last_successful_contact_time = $note->performed_at->format('Y-m-d H:i:s');
                     }
 
                     if ( ! $is_saas && ! $is_withdrawn) {
-                        //todo: CHECK THIS
                         $prediction = $schedulerService->updateTodaysCallAndPredictNext(
                             $patient,
                             $note->id,
@@ -516,11 +512,10 @@ class NotesController extends Controller
                     }
 
                     // add last contact time regardless of if success
-                    $info->last_contact_time = $note->created_at->format('Y-m-d H:i:s');
+                    $info->last_contact_time = $note->performed_at->format('Y-m-d H:i:s');
                     $info->save();
 
                     if ($is_withdrawn || null == $prediction || $is_saas) {
-                        //todo: do not redirect, return message
                         return redirect()->route('patient.note.index', ['patient' => $patientId])->with(
                             'messages',
                             ['Successfully Created Note']
@@ -555,7 +550,7 @@ class NotesController extends Controller
                             null
                         );
 
-                        $this->patientRepo->updateCallLogs($patient->patientInfo, true);
+                        $this->patientRepo->updateCallLogs($patient->patientInfo, true, $note->performed_at);
 
                         $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s');
                         $info->save();
@@ -573,7 +568,7 @@ class NotesController extends Controller
                             null
                         );
 
-                        $info->date_welcomed = Carbon::now()->format('Y-m-d H:i:s');
+                        $info->date_welcomed = $note->performed_at->format('Y-m-d H:i:s');
                         $info->save();
                     } else {
                         $this->service->storeCallForNote(
@@ -633,8 +628,10 @@ class NotesController extends Controller
         );
     }
 
-    public function storeAjax()
-    {
+    public function storeDraft(
+        SafeRequest $request,
+        $patientId
+    ) {
         //check if this is an existing note:
         //  - update it
         //  - do not associate with any calls (or tasks)
@@ -642,13 +639,49 @@ class NotesController extends Controller
 
         //check if this is a new note:
         //  - create it
-        //  - see if it should be associated with any calls (or tasks)
+        //  - do not see if it should be associated with any calls (or tasks)
         //  - set status to draft
+
+        $input = $request->allSafe();
+
+        $noteId = ! empty($input['note_id'])
+            ? $input['note_id']
+            : null;
+
+        $input['status'] = 'draft';
+
+        //in case Performed By field is removed from the form (per CPM-165)
+        if ( ! isset($input['author_id'])) {
+            $input['author_id'] = auth()->id();
+        }
+        $input['performed_at'] = Carbon::parse($input['performed_at'])->toDateTimeString();
+
+        if ($noteId) {
+            $note = $this->editNote($noteId, $input);
+        } else {
+            $note = $this->service->storeNote($input);
+        }
+
+        return response()->json(['message' => 'success', 'note_id' => $note->id]);
     }
 
     private function editNote($noteId, $requestInput)
     {
-        return Note::find($noteId);
+        $note        = Note::find($noteId);
+        $note->isTCM = isset($requestInput['isTCM'])
+            ? $requestInput['isTCM']
+            : 0;
+        $note->type                 = $requestInput['type'];
+        $note->body                 = $requestInput['body'];
+        $note->performed_at         = $requestInput['performed_at'];
+        $note->did_medication_recon = isset($requestInput['did_medication_recon'])
+            ? $requestInput['did_medication_recon']
+            : 0;
+        if ($note->isDirty()) {
+            $note->save();
+        }
+
+        return $note;
     }
 
     private function getProviders($getNotesFor)
