@@ -443,6 +443,7 @@ class CallController extends Controller
         // CPM-689 Reset unsuccessful call back attempts to 0 if call back task is created
         if ($isCallBack) {
             $patient->patientInfo->no_call_attempts_since_last_success = 0;
+            $patient->patientInfo->save();
         }
 
         if ('call' === $input['type']) {
