@@ -42,6 +42,11 @@ class CpmInstructable extends \CircleLinkHealth\Core\Entities\BaseModel
         return $this->belongsTo(CpmInstruction::class, 'cpm_instruction_id');
     }
 
+    public function cpmProblem()
+    {
+        return $this->morphedByMany(CpmProblem::class, 'instructable', 'instructables', 'id');
+    }
+
     public function source()
     {
         if ($this->instructable_type) {
