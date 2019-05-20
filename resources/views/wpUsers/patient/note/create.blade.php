@@ -6,11 +6,17 @@
 @section('content')
 
     <?php
-    $userTime = \Carbon\Carbon::now();
-    $userTime->setTimezone($userTimeZone);
-    $userTimeGMT = \Carbon\Carbon::now()->setTimezone('GMT');
-    $userTime    = $userTime->format('Y-m-d\TH:i');
-    $userTimeGMT = $userTimeGMT->format('Y-m-d\TH:i');
+
+    if ( ! empty($note)) {
+        $userTime = $note->performed_at;
+    } else {
+        $userTime = \Carbon\Carbon::now();
+        $userTime->setTimezone($userTimeZone);
+        $userTimeGMT = \Carbon\Carbon::now()->setTimezone('GMT');
+        $userTime    = $userTime->format('Y-m-d\TH:i');
+        $userTimeGMT = $userTimeGMT->format('Y-m-d\TH:i');
+    }
+
     ?>
 
     @push('styles')
@@ -91,6 +97,13 @@
                     <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12 col-xs-12"
                          style=" border:0px solid #50b2e2;padding: 10px 35px;">
 
+                        @if (!empty($note))
+                            <div class="col-md-12">
+                                This is a draft note. Please click Save/Send in order to finalize note and create a new
+                                one.
+                            </div>
+                        @endif
+
                         <div class="col-md-6">
 
                             <!-- Note Type -->
@@ -110,7 +123,11 @@
                                                             data-size="10" required>
                                                         <option value=""> Select Topic</option>
                                                         @foreach ($note_types as $note_type)
-                                                            <option value="{{$note_type}}"> {{$note_type}} </option>
+                                                            <option
+                                                                    selected="{{!empty($note) && $note->type === $note_type}}"
+                                                                    value="{{$note_type}}">
+                                                                {{$note_type}}
+                                                            </option>
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -383,9 +400,9 @@
                         </div>
 
                     </div>
-                    </div>
                 </div>
             </div>
+        </div>
         </div>
     </form>
 
@@ -438,6 +455,7 @@
 
     @push('scripts')
         <script>
+
 
             const userIsCCMCountable = @json(auth()->user()->isCCMCountable());
             const taskTypeToTopicMap = @json($task_types_to_topics);
@@ -528,7 +546,8 @@
 
                 phoneSessionChange({
                     currentTarget: {
-                        checked: $('#phone').is(':checked')
+                        //checked: $('#phone').is(':checked')
+                        checked: @json(!empty($existingCall))
                     }
                 });
 
@@ -778,6 +797,24 @@
             function getNoteBodyExcludingMedications(noteBody) {
                 return noteBody.substring(0, noteBody.indexOf(MEDICATIONS_SEPARATOR)).trim();
             }
+
+            const saveDraftUrl = '{{route('patient.note.store.draft'}}';
+            const saveDraft = () => {
+                window.axios
+                    .post(saveDraftUrl, {
+                        patientId: @json($patient->id),
+                        noteId: @json(optional($note)->id)
+                    })
+                    .then((response, status) => {
+                        setTimeout(() => saveDraft(), 1000 * 60 * 2 /* 2 minutes */);
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        setTimeout(() => saveDraft(), 1000 * 60 * 2 /* 2 minutes */);
+                    });
+            };
+
+            setTimeout(() => saveDraft(), 1000 * 60 * 2 /* 2 minutes */);
 
         </script>
     @endpush
