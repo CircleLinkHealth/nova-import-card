@@ -6,6 +6,7 @@
 
 namespace App\ViewModels;
 
+use App\NurseInvoiceExtra;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use CircleLinkHealth\Customer\Entities\User;
@@ -54,10 +55,14 @@ class CareCoachInvoiceViewModel extends ViewModel
     protected $variablePaySummary;
     private $amountPayable;
 
+    private $bonus;
+
     /**
      * @var float the total pay with fixed rate algorithm
      */
     private $fixedRatePay;
+
+    private $nurseExtras;
     /**
      * @var int|null
      */
@@ -83,7 +88,6 @@ class CareCoachInvoiceViewModel extends ViewModel
      * @param Carbon     $startDate
      * @param Carbon     $endDate
      * @param Collection $itemizedData
-     * @param int        $extraTime
      * @param string     $note
      * @param bool       $variablePay
      * @param Collection $variablePaySummary
@@ -93,7 +97,6 @@ class CareCoachInvoiceViewModel extends ViewModel
         Carbon $startDate,
         Carbon $endDate,
         Collection $itemizedData,
-        int $extraTime,
         string $note,
         bool $variablePay,
         Collection $variablePaySummary
@@ -102,7 +105,6 @@ class CareCoachInvoiceViewModel extends ViewModel
         $this->startDate    = $startDate;
         $this->endDate      = $endDate;
         $this->itemizedData = $itemizedData->flatten();
-        $this->extraTime    = $extraTime;
         $this->note         = $note;
         $this->variablePay  = $variablePay;
 
@@ -111,6 +113,16 @@ class CareCoachInvoiceViewModel extends ViewModel
             ->sum('total_time');
 
         $this->variablePaySummary = $variablePaySummary->flatten();
+
+        $this->nurseExtras = NurseInvoiceExtra::where('user_id', $this->user->id)->get();
+
+        $this->extraTime = $this->nurseExtras
+            ->where('unit', 'minutes')
+            ->sum('value');
+
+        $this->bonus = $this->nurseExtras
+            ->where('unit', 'usd')
+            ->sum('value');
 
         $this->setPayableAmount();
     }
@@ -123,6 +135,11 @@ class CareCoachInvoiceViewModel extends ViewModel
     public function addedTimeAmount()
     {
         return $this->addedTime() * $this->user->nurseInfo->hourly_rate;
+    }
+
+    public function bonus()
+    {
+        return ceil($this->bonus);
     }
 
     public function endDate()
@@ -278,13 +295,11 @@ class CareCoachInvoiceViewModel extends ViewModel
     private function setPayableAmount()
     {
         $this->fixedRatePay = $this->systemTimeInHours() * $this->user->nurseInfo->hourly_rate;
-
         if ( ! $this->variablePay) {
             $this->amountPayable = $this->fixedRatePay;
         } else {
             $this->variableRatePay = $this->totalTimeAfterCcm() * $this->user->nurseInfo->low_rate
-                                     + $this->totalTimeTowardsCcm() * $this->user->nurseInfo->high_rate;
-
+                + $this->totalTimeTowardsCcm() * $this->user->nurseInfo->high_rate;
             if ($this->fixedRatePay > $this->variableRatePay) {
                 $this->amountPayable = $this->fixedRatePay;
                 $this->variablePay   = false;
@@ -294,6 +309,6 @@ class CareCoachInvoiceViewModel extends ViewModel
         }
 
         //Add extratime
-        $this->amountPayable += ceil($this->extraTime / 60) * $this->user->nurseInfo->hourly_rate;
+        $this->amountPayable += (ceil($this->extraTime / 60) * $this->user->nurseInfo->hourly_rate) + $this->bonus;
     }
 }

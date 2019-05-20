@@ -30,8 +30,6 @@ class NurseController extends Controller
 
         $nurseUserIds = $request->input('nurses');
 
-        $addTime = 0;
-
         $addNotes = '';
 
         $variablePay = isset($input['alternative_pay']);
@@ -55,7 +53,6 @@ class NurseController extends Controller
                 $endDate,
                 auth()->user()->id,
                 $variablePay,
-                $addTime,
                 $addNotes
             )->onQueue('demanding');
         } elseif ('downloadV2' == $request->input('submit')) {
@@ -65,7 +62,6 @@ class NurseController extends Controller
                 $endDate,
                 auth()->user()->id,
                 $variablePay,
-                $addTime,
                 $addNotes
             );
         }

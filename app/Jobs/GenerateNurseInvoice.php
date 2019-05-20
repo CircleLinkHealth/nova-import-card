@@ -25,7 +25,6 @@ class GenerateNurseInvoice implements ShouldQueue
     use Queueable;
     use SerializesModels;
     private $addNotes;
-    private $addTime;
     private $endDate;
     private $nurses;
     private $requestors;
@@ -50,9 +49,9 @@ class GenerateNurseInvoice implements ShouldQueue
         Carbon $endDate,
         $requestors,
         bool $variablePay = false,
-        int $addTime = 0,
         string $addNotes = ''
-    ) {//@todo: for selected all nurses option no need for the next query (it is already queried) how to i go for that?.
+    ) {//@todo: for selected all nurses option no need for the next query (it is already queried) how to i go for that?
+        //.
         $this->nurses = Nurse::whereIn('user_id', $nurseUserIds)->with(['user',
             'summary' => function ($s) use ($startDate) {
                 $s->where('month_year', $startDate->copy()->startOfMonth()->format('Y-m-d'));
@@ -60,7 +59,6 @@ class GenerateNurseInvoice implements ShouldQueue
         $this->startDate   = $startDate;
         $this->endDate     = $endDate;
         $this->variablePay = $variablePay;
-        $this->addTime     = $addTime;
         $this->addNotes    = $addNotes;
         $this->requestors  = is_a($requestors, Collection::class)
             ? $requestors
@@ -83,7 +81,6 @@ class GenerateNurseInvoice implements ShouldQueue
                 $this->startDate,
                 $this->endDate,
                 $this->variablePay,
-                $this->addTime,
                 $this->addNotes,
                 $nurse->summary->first()
             ))

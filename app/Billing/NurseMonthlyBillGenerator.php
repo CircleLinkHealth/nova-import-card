@@ -64,7 +64,6 @@ class NurseMonthlyBillGenerator
         Carbon $billingDateStart,
         Carbon $billingDateEnd,
         $withVariablePaymentSystem,
-        $manualTimeAdd = 0,
         $notes = '',
         $summary
     ) {
@@ -72,7 +71,6 @@ class NurseMonthlyBillGenerator
         $this->nurseName                 = $newNurse->user->getFullName();
         $this->startDate                 = $billingDateStart;
         $this->endDate                   = $billingDateEnd;
-        $this->addDuration               = $manualTimeAdd;
         $this->addNotes                  = $notes;
         $this->withVariablePaymentSystem = $withVariablePaymentSystem;
         $this->summary                   = $summary;
@@ -87,15 +85,13 @@ class NurseMonthlyBillGenerator
 
         $this->nurseExtras = NurseInvoiceExtra::where('user_id', $this->nurse->user_id)->get();
 
-        $addExtraTime = $this->nurseExtras
+        $this->addDuration = $this->nurseExtras
             ->where('unit', 'minutes')
             ->sum('value');
 
         $this->bonus = $this->nurseExtras
             ->where('unit', 'usd')
             ->sum('value');
-
-        $this->addDuration = $addExtraTime;
 
         if (0 != $this->addDuration) {
             $this->hasAddedTime = true;

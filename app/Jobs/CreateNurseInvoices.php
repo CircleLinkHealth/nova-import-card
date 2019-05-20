@@ -36,10 +36,6 @@ class CreateNurseInvoices implements ShouldQueue
      */
     protected $endDate;
     /**
-     * @var int
-     */
-    protected $extraTime;
-    /**
      * @var string
      */
     protected $note;
@@ -68,7 +64,6 @@ class CreateNurseInvoices implements ShouldQueue
      * @param Carbon $endDate
      * @param int    $requestedBy
      * @param bool   $variablePay
-     * @param int    $extraTime
      * @param string $note
      */
     public function __construct(
@@ -77,7 +72,6 @@ class CreateNurseInvoices implements ShouldQueue
         Carbon $endDate,
         int $requestedBy = null,
         bool $variablePay = false,
-        int $extraTime = 0,
         string $note = ''
     ) {
         $this->nurseUserIds = $nurseUserIds;
@@ -85,7 +79,6 @@ class CreateNurseInvoices implements ShouldQueue
         $this->endDate      = $endDate->endOfDay();
         $this->requestedBy  = $requestedBy;
         $this->variablePay  = $variablePay;
-        $this->extraTime    = $extraTime;
         $this->note         = $note;
     }
 
@@ -196,7 +189,6 @@ class CreateNurseInvoices implements ShouldQueue
             $this->startDate,
             $this->endDate,
             $itemizedData,
-            $this->extraTime,
             $this->note,
             $this->variablePay,
             $variablePaySummary ?? collect()
