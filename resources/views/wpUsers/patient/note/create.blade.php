@@ -811,22 +811,25 @@
                 noteId = '{{$note->id}}';
                     @endif
 
+            const patientId = '{{$patient->id}}';
+
             const saveDraftUrl = '{{route('patient.note.store.draft', ['patientId' => $patient->id])}}';
             const saveDraft = () => {
                 window.axios
                     .post(saveDraftUrl, {
+                        patient_id: patientId,
                         note_id: noteId,
                         type: $('#activityKey').val(),
                         general_comment: $('#general_comment').val(),
                         performed_at: $('#performed_at').val(),
                         author_id: $('#author_id').val(),
-                        task_id: $('#task_id').val(),
-                        phone: $('.phone-radios').val(),
-                        call_status: $('.call-status-radios').val(),
-                        welcome_call: $('#welcome_call').val(),
-                        other_call: $('#other_call').val(),
-                        medication_recon: $('#medication_recon').val(),
-                        tcm: $('#tcm').val(),
+                        task_id: $('.tasks-radio:checked').val(),
+                        phone: $('.phone-radios:checked').val(),
+                        call_status: $('.call-status-radios:checked').val(),
+                        welcome_call: $('#welcome_call').is(":checked"),
+                        other_call: $('#other_call').is(":checked"),
+                        medication_recon: $('#medication_recon').is(":checked"),
+                        tcm: $('#tcm').is(":checked"),
                         body: $('#note').val(),
                         logger_id: $('#logger_id').val(),
                         programId: $('#programId').val(),

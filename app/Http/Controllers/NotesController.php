@@ -139,10 +139,14 @@ class NotesController extends Controller
         $withdrawnReasons       = array_combine($reasons, $reasons);
         $patientWithdrawnReason = $patient->getWithdrawnReason();
 
-        $existingNote = Note::where('patient_id', '=', $patientId)
-            ->where('author_id', '=', $author_id)
-            ->where('status', '=', Note::STATUS_DRAFT)
-            ->first();
+        if ($request->has('note_id')) {
+            $existingNote = Note::findOrFail($request->input('note_id'));
+        } else {
+            $existingNote = Note::where('patient_id', '=', $patientId)
+                ->where('author_id', '=', $author_id)
+                ->where('status', '=', Note::STATUS_DRAFT)
+                ->first();
+        }
 
         $existingCall = $existingNote
             ? Call::where('note_id', '=', $existingNote->id)->first()

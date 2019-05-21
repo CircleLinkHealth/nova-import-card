@@ -11,6 +11,7 @@ use App\Models\CCD\Allergy;
 use App\Models\CCD\Medication;
 use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmMisc;
+use App\Note;
 use App\Services\CPM\CpmMiscService;
 use App\Services\NoteService;
 use App\Services\ReportsService;
@@ -51,13 +52,17 @@ class WebixFormatter implements ReportFormatter
                     'tags'             => '',
                 ];
 
+                if (Note::STATUS_DRAFT === $note->status) {
+                    $result['type_name'] = '<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> '.$result['type_name'];
+                }
+
                 //pangratios: add support for task types
                 if ($note->call && 'task' === $note->call->type) {
                     $result['logged_from'] = 'note_task';
                 }
 
                 $editNoteRoute = route('patient.note.create', ['patientId' => $note->patient_id, 'note_id' => $note->id]);
-                $result['tags'] .= "<div class=\"label label-warning\"><a href=\"$editNoteRoute\"><span class=\"glyphicon glyphicon-edit\" aria-hidden=\"true\"></span></a></div>";
+                $result['tags'] .= "<div class=\"label label-warning\"><a href=\"$editNoteRoute\"><span class=\"glyphicon glyphicon-edit\" aria-hidden=\"true\"></span></a></div> ";
 
                 if ($note->notifications->count() > 0) {
                     if ($this->noteService->wasForwardedToCareTeam($note)) {
