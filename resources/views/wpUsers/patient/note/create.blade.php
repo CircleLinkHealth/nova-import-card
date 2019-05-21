@@ -149,7 +149,7 @@
                                             </div>
                                             <div class="col-sm-12">
                                                 <div class="form-group">
-                                                    <input name="performed_at" type="datetime-local"
+                                                    <input id="performed_at" name="performed_at" type="datetime-local"
                                                            class="selectpickerX form-control"
                                                            data-width="95px" data-size="10" list max="{{$userTime}}"
                                                            value="{{$userTime}}"
@@ -247,11 +247,13 @@
                                                             <div class="radio-inline"><input type="radio"
                                                                                              name="phone"
                                                                                              value="inbound"
+                                                                                             class="phone-radios"
                                                                                              id="Inbound"/><label
                                                                         for="Inbound"><span> </span>Inbound</label>
                                                             </div>
                                                             <div class="radio-inline"><input type="radio"
                                                                                              name="phone"
+                                                                                             class="phone-radios"
                                                                                              value="outbound"
                                                                                              id="Outbound"/><label
                                                                         for="Outbound"><span> </span>Outbound</label>
@@ -266,6 +268,7 @@
                                                          style="padding-bottom: 3px; display: none">
                                                         <div class="radio">
                                                             <input type="radio"
+                                                                   class="call-status-radios"
                                                                    name="call_status"
                                                                    value="not reached"
                                                                    id="not-reached"/>
@@ -276,6 +279,7 @@
                                                         <div class="radio">
                                                             <input type="radio"
                                                                    name="call_status"
+                                                                   class="call-status-radios"
                                                                    value="reached"
                                                                    id="reached"/>
                                                             <label for="reached">
@@ -286,6 +290,7 @@
                                                         <div class="radio">
                                                             <input type="radio"
                                                                    name="call_status"
+                                                                   class="call-status-radios"
                                                                    value="ignored"
                                                                    id="ignored"/>
                                                             <label for="ignored">
@@ -798,31 +803,48 @@
                 return noteBody.substring(0, noteBody.indexOf(MEDICATIONS_SEPARATOR)).trim();
             }
 
+            // const AUTO_SAVE_INTERVAL = 1000 * 60 * 2; /* 2 minutes */
+            const AUTO_SAVE_INTERVAL = 1000 * 10;
             let noteId = null;
 
             @if (! empty($note))
                 noteId = '{{$note->id}}';
-            @endif
+                    @endif
 
             const saveDraftUrl = '{{route('patient.note.store.draft', ['patientId' => $patient->id])}}';
             const saveDraft = () => {
                 window.axios
                     .post(saveDraftUrl, {
-                        noteId: noteId
+                        note_id: noteId,
+                        type: $('#activityKey').val(),
+                        general_comment: $('#general_comment').val(),
+                        performed_at: $('#performed_at').val(),
+                        author_id: $('#author_id').val(),
+                        task_id: $('#task_id').val(),
+                        phone: $('.phone-radios').val(),
+                        call_status: $('.call-status-radios').val(),
+                        welcome_call: $('#welcome_call').val(),
+                        other_call: $('#other_call').val(),
+                        medication_recon: $('#medication_recon').val(),
+                        tcm: $('#tcm').val(),
+                        body: $('#note').val(),
+                        logger_id: $('#logger_id').val(),
+                        programId: $('#programId').val(),
+                        task_status: $('#task_status').val()
                     })
                     .then((response, status) => {
                         if (response.data && response.data.note_id) {
                             noteId = response.data.note_id;
                         }
-                        setTimeout(() => saveDraft(), 1000 * 60 * 2 /* 2 minutes */);
+                        setTimeout(() => saveDraft(), AUTO_SAVE_INTERVAL);
                     })
                     .catch(err => {
                         console.error(err);
-                        setTimeout(() => saveDraft(), 1000 * 60 * 2 /* 2 minutes */);
+                        setTimeout(() => saveDraft(), AUTO_SAVE_INTERVAL);
                     });
             };
 
-            setTimeout(() => saveDraft(), 1000 * 60 * 2 /* 2 minutes */);
+            setTimeout(() => saveDraft(), AUTO_SAVE_INTERVAL);
 
         </script>
     @endpush

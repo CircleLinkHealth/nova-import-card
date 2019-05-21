@@ -56,6 +56,9 @@ class WebixFormatter implements ReportFormatter
                     $result['logged_from'] = 'note_task';
                 }
 
+                $editNoteRoute = route('patient.note.create', ['patientId' => $note->patient_id, 'note_id' => $note->id]);
+                $result['tags'] .= "<div class=\"label label-warning\"><a href=\"$editNoteRoute\"><span class=\"glyphicon glyphicon-edit\" aria-hidden=\"true\"></span></a></div>";
+
                 if ($note->notifications->count() > 0) {
                     if ($this->noteService->wasForwardedToCareTeam($note)) {
                         $result['tags'] .= '<div class="label label-warning"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
@@ -215,9 +218,8 @@ class WebixFormatter implements ReportFormatter
         ));
 
         foreach ($users as $user) {
-            $careplanReport[$user->id]['symptoms'] = $user->cpmSymptoms()->get()->pluck('name')->all();
-            $careplanReport[$user->id]['problem']  = $user->cpmProblems()->get()->sortBy('name')->pluck('name')->all(
-            );
+            $careplanReport[$user->id]['symptoms']    = $user->cpmSymptoms()->get()->pluck('name')->all();
+            $careplanReport[$user->id]['problem']     = $user->cpmProblems()->get()->sortBy('name')->pluck('name')->all();
             $careplanReport[$user->id]['problems']    = $cpmProblemService->getProblemsWithInstructionsForUser($user);
             $careplanReport[$user->id]['lifestyle']   = $user->cpmLifestyles()->get()->pluck('name')->all();
             $careplanReport[$user->id]['biometrics']  = $user->cpmBiometrics()->get()->pluck('name')->all();
