@@ -30,9 +30,6 @@ class AddNewSaasAccountTest
         $this->adminUser     = $this->createUser($this->adminPractice->id, 'administrator');
     }
 
-    /**
-     * A basic test example.
-     */
     //  commenting out because it doesn't run with sqlite. Michalis says no point fixing as we don't use saas.
 //    public function test_flow()
 //    {

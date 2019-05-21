@@ -25,6 +25,9 @@ class NurseMatchTest extends TestCase
 
     private $prediction = [];
 
+    /**
+     * @return array
+     */
     public function createPatientWindows()
     {
         for ($i = 1; $i < 6; ++$i) {

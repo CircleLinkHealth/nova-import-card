@@ -131,9 +131,6 @@ class CarePlanApprovalReminderTest extends TestCase
         );
     }
 
-    /**
-     * A basic test example.
-     */
     public function test_notification_was_sent()
     {
         //Set
