@@ -20,11 +20,10 @@ use Tests\TestCase;
 
 class CarePlanApprovalReminderTest extends TestCase
 {
-    const CLH_TEST_DM_ADDRESS = 'circlelinkhealth@test.directproject.net';
-    
     use CarePlanHelpers;
     use UserHelpers;
-    
+    const CLH_TEST_DM_ADDRESS = 'circlelinkhealth@test.directproject.net';
+
     private $directMail;
     private $patient;
     private $practice;
@@ -50,6 +49,11 @@ class CarePlanApprovalReminderTest extends TestCase
         $this->assertEquals($this->provider->id, $this->patient->getBillingProviderId());
     }
 
+    /**
+     * @param $notification
+     * @param $recipient
+     * @param $numberOfCareplans
+     */
     public function checkToDatabase($notification, $recipient, $numberOfCareplans)
     {
         $databaseData = $notification->toDatabase($recipient);
