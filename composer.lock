@@ -408,16 +408,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.93.12",
+            "version": "3.94.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "60f5c4bd261e19844d4263c3a8f370e88e038282"
+                "reference": "fcc8593b3da8465d1181c73689117d13101a1c9a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/60f5c4bd261e19844d4263c3a8f370e88e038282",
-                "reference": "60f5c4bd261e19844d4263c3a8f370e88e038282",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/fcc8593b3da8465d1181c73689117d13101a1c9a",
+                "reference": "fcc8593b3da8465d1181c73689117d13101a1c9a",
                 "shasum": ""
             },
             "require": {
@@ -487,7 +487,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2019-05-17T18:26:46+00:00"
+            "time": "2019-05-20T18:14:09+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -613,7 +613,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "effe115abe6c469c51fd4642a0d16267e737f220"
+                "reference": "4b6c13cc7d5280b2daf08ead6c815071f7e03a70"
             },
             "require": {
                 "venturecraft/revisionable": "dev-master"
@@ -638,7 +638,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-04-18T19:38:24+00:00"
+            "time": "2019-05-21T10:09:07+00:00"
         },
         {
             "name": "circlelinkhealth/customer",
@@ -646,7 +646,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "0c46edf23aeaddad899a00a55b658ad57f4ff56c"
+                "reference": "092a6122fd3b9fa2c7a8cd60307e7635794f3910"
             },
             "require": {
                 "circlelinkhealth/core": "dev-master",
@@ -678,7 +678,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-05-16T18:00:08+00:00"
+            "time": "2019-05-21T11:38:17+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
@@ -3704,16 +3704,16 @@
         },
         {
             "name": "league/flysystem",
-            "version": "1.0.51",
+            "version": "1.0.52",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "755ba7bf3fb9031e6581d091db84d78275874396"
+                "reference": "c5a5097156387970e6f0ccfcdf03f752856f3391"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/755ba7bf3fb9031e6581d091db84d78275874396",
-                "reference": "755ba7bf3fb9031e6581d091db84d78275874396",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/c5a5097156387970e6f0ccfcdf03f752856f3391",
+                "reference": "c5a5097156387970e6f0ccfcdf03f752856f3391",
                 "shasum": ""
             },
             "require": {
@@ -3784,7 +3784,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2019-03-30T13:22:34+00:00"
+            "time": "2019-05-20T20:21:14+00:00"
         },
         {
             "name": "league/flysystem-aws-s3-v3",
