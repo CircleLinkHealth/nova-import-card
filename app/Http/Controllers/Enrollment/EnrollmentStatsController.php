@@ -94,7 +94,7 @@ class EnrollmentStatsController extends Controller
         $date = Carbon::now()->toAtomString();
         $data = $this->getPracticeStats($request);
 
-        $filename = "Practice Enrollment Stats - ${date}";
+        $filename = "Practice Enrollment Stats - ${date}.xlsx";
 
         return (new FromArray($filename, $data))->download($filename);
     }
