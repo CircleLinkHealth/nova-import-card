@@ -78,9 +78,7 @@ class EnroleeData implements OnEachRow, WithChunkReading, WithValidation, WithHe
 
     protected function getPractice()
     {
-        $fileName = array_key_exists('file', $_FILES)
-            ? $_FILES['file']['name']
-            : null;
+        $fileName = request()->file->getClientOriginalName();
 
         if ($fileName) {
             $array = explode('.', $fileName);
