@@ -107,15 +107,15 @@ class NotesController extends Controller
             ->where('inbound_cpm_id', '=', $patientId)
             ->where('outbound_cpm_id', '=', $author_id)
             ->select(
-                                       [
-                                           'id',
-                                           'type',
-                                           'sub_type',
-                                           'attempt_note',
-                                           'scheduled_date',
-                                           'window_start',
-                                           'window_end',
-                                       ]
+                [
+                    'id',
+                    'type',
+                    'sub_type',
+                    'attempt_note',
+                    'scheduled_date',
+                    'window_start',
+                    'window_end',
+                ]
                                    )
             ->get();
 
@@ -401,8 +401,8 @@ class NotesController extends Controller
 
         $input = $request->allSafe();
 
-        $noteId = ! empty($input['note_id'])
-            ? $input['note_id']
+        $editingNoteId = ! empty($input['noteId'])
+            ? $input['noteId']
             : null;
 
         $input['status'] = 'complete';
@@ -414,10 +414,10 @@ class NotesController extends Controller
         $input['performed_at'] = Carbon::parse($input['performed_at'])->toDateTimeString();
 
         $noteIsAlreadyComplete = false;
-        if ($noteId) {
-            $note                  = Note::findOrFail($noteId);
+        if ($editingNoteId) {
+            $note                  = Note::findOrFail($editingNoteId);
             $noteIsAlreadyComplete = 'complete' === $note->status;
-            $note                  = $this->editNote($note, $input);
+            $note                  = $this->service->editNote($note, $input);
         } else {
             $note = $this->service->storeNote($input);
         }
@@ -491,7 +491,7 @@ class NotesController extends Controller
                     return redirect()->route('patient.note.index', ['patient' => $patientId])->with(
                         'messages',
                         [
-                            $noteId
+                            $editingNoteId
                                 ? 'Successfully Edited Note'
                                 : 'Successfully Created Note',
                         ]
@@ -610,7 +610,7 @@ class NotesController extends Controller
         return redirect()->route('patient.note.index', ['patient' => $patientId])->with(
             'messages',
             [
-                $noteId
+                $editingNoteId
                     ? 'Successfully Edited Note'
                     : 'Successfully Created Note',
             ]
@@ -671,32 +671,17 @@ class NotesController extends Controller
         $input['performed_at'] = Carbon::parse($input['performed_at'])->toDateTimeString();
 
         if ($noteId) {
-            $note = $this->editNote($noteId, $input);
+            $note = Note::find($noteId);
+            if ( ! $note) {
+                return response()->json(['error' => "could not find note with id $noteId"]);
+            }
+            $note = $this->service->editNote($note, $input);
         } else {
             $input['status'] = 'draft';
             $note            = $this->service->storeNote($input);
         }
 
         return response()->json(['message' => 'success', 'note_id' => $note->id]);
-    }
-
-    private function editNote(Note $note, $requestInput)
-    {
-        $note->logger_id = $requestInput['logger_id'];
-        $note->isTCM     = isset($requestInput['tcm'])
-            ? 'true' === $requestInput['tcm']
-            : 0;
-        $note->type                 = $requestInput['type'];
-        $note->body                 = $requestInput['body'];
-        $note->performed_at         = $requestInput['performed_at'];
-        $note->did_medication_recon = isset($requestInput['medication_recon'])
-            ? 'true' === $requestInput['medication_recon']
-            : 0;
-        if ($note->isDirty()) {
-            $note->save();
-        }
-
-        return $note;
     }
 
     private function getProviders($getNotesFor)
@@ -722,10 +707,10 @@ class NotesController extends Controller
     {
         return Practice::whereId($patient->program_id)
             ->where(
-                           function ($q) {
-                               $q->where('name', '=', 'phoenix-heart')
-                                   ->orWhere('name', '=', 'demo');
-                           }
+                function ($q) {
+                    $q->where('name', '=', 'phoenix-heart')
+                        ->orWhere('name', '=', 'demo');
+                }
                        )
             ->exists();
     }

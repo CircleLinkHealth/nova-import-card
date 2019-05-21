@@ -434,7 +434,7 @@
 
                                     <!-- Hidden Fields -->
                                     <div class="form-group col-sm-4">
-                                        <input type="hidden" name="patient_id" value="{{$patient->id}}">
+                                        <input type="hidden" name="patient_id" id="patient_id" value="{{$patient->id}}">
                                         <input type="hidden" name="logger_id" id="logger_id"
                                                value="{{Auth::user()->id}}">
                                         <input type="hidden" name="author_id" value="{{Auth::user()->id}}">
@@ -848,8 +848,9 @@
                 return noteBody.substring(0, noteBody.indexOf(MEDICATIONS_SEPARATOR)).trim();
             }
 
-            const AUTO_SAVE_INTERVAL = 1000 * 60 * 2;
             /* 2 minutes */
+            const AUTO_SAVE_INTERVAL = 1000 * 60 * 2;
+
             // const AUTO_SAVE_INTERVAL = 1000 * 10;
             let noteId = null;
 

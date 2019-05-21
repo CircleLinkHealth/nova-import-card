@@ -105,6 +105,26 @@ class NoteService
         return null;
     }
 
+    public function editNote(Note $note, $requestInput): Note
+    {
+        $note->logger_id = $requestInput['logger_id'];
+        $note->isTCM     = isset($requestInput['tcm'])
+            ? 'true' === $requestInput['tcm']
+            : 0;
+        $note->type                 = $requestInput['type'];
+        $note->body                 = $requestInput['body'];
+        $note->performed_at         = $requestInput['performed_at'];
+        $note->did_medication_recon = isset($requestInput['medication_recon'])
+            ? 'true' === $requestInput['medication_recon']
+            : 0;
+
+        if ($note->isDirty()) {
+            $note->save();
+        }
+
+        return $note;
+    }
+
     public function editPatientNote($id, $userId, $authorId, $body, $isTCM, $did_medication_recon, $type = null)
     {
         if ( ! $type) {
@@ -379,13 +399,13 @@ class NoteService
         $notifyCLH      = $input['notify_circlelink_support'] ?? false;
         $forceNotify    = false;
 
-        if ('true' == $input['tcm']) {
+        if ( ! empty($input['tcm']) && 'true' === $input['tcm']) {
             $notifyCareTeam = $forceNotify = $note->isTCM = true;
         } else {
             $note->isTCM = false;
         }
 
-        if (isset($input['medication_recon'])) {
+        if ( ! empty($input['medication_recon']) && 'medication_recon' === $input['tcm']) {
             $note->did_medication_recon = true;
         } else {
             $note->did_medication_recon = false;
