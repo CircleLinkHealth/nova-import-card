@@ -13,9 +13,9 @@ use Tests\TestCase;
 
 class NurseMatchTest extends TestCase
 {
-    use CallAlgoHelper;
+    use
+        CallAlgoHelper;
     use UserHelpers;
-
     private $matchArray = [];
     private $nurse;
     private $nurse2;
@@ -25,9 +25,6 @@ class NurseMatchTest extends TestCase
 
     private $prediction = [];
 
-    /**
-     * @return array
-     */
     public function createPatientWindows()
     {
         for ($i = 1; $i < 6; ++$i) {

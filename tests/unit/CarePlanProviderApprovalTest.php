@@ -22,7 +22,8 @@ use Tests\TestCase;
 class CarePlanProviderApprovalTest extends TestCase
 {
     use CarePlanHelpers;
-    use UserHelpers;
+    use
+        UserHelpers;
 
     /**
      * @var CarePlan
@@ -89,10 +90,8 @@ class CarePlanProviderApprovalTest extends TestCase
         $careCenter = $this->createUser($this->practice->id, 'care-center');
         auth()->login($careCenter);
 
-        $carePlan = $this->patient->carePlan;
-
-        $carePlan->status = CarePlan::QA_APPROVED;
-        $carePlan->save();
+        $this->patient->carePlan->status = CarePlan::QA_APPROVED;
+        $this->patient->carePlan->save();
 
         $response = $this->get(route('patient.careplan.print', [
             'patientId' => $this->patient->id,
