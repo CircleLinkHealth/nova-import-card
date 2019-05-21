@@ -62,12 +62,27 @@
                 border-color: #353535;
             }
 
+            input[type=checkbox]:disabled + label,
+            input[type=radio]:disabled + label {
+                cursor: default;
+                color: #5b5b5b
+            }
+
+            input[type=radio]:checked:disabled +label span {
+                background: url(../img/ui/radio-active-disabled.png) left top no-repeat;
+            }
+
+            input[type=checkbox]:checked:disabled +label span {
+                background: url(../img/ui/checkbox-active-disabled.png) left top no-repeat;
+            }
+
         </style>
     @endpush
 
     @include('partials.confirm-modal')
 
-    <form id="newNote" method="post" action="{{route('patient.note.store', ['patientId' => $patient->id])}}"
+    <form id="newNote" method="post"
+          action="{{route('patient.note.store', ['patientId' => $patient->id, 'noteId' => !empty($note) ? $note->id : null])}}"
           class="form-horizontal">
         <div class="row" style="margin-top:30px;">
             <div class="main-form-container col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 col-xs-10 col-xs-offset-1"
@@ -132,8 +147,8 @@
                                                             data-size="10" required>
                                                         <option value=""> Select Topic</option>
                                                         @foreach ($note_types as $note_type)
-                                                            <option
-                                                                    selected="{{!empty($note) && $note->type === $note_type}}"
+                                                            <option @if (!empty($note) && $note->type === $note_type) selected
+                                                                    @endif
                                                                     value="{{$note_type}}">
                                                                 {{$note_type}}
                                                             </option>
@@ -208,6 +223,8 @@
                                                 <label id="phone-label">
                                                     <div>
                                                         <input type="checkbox"
+                                                               @if (!empty($note)) disabled
+                                                               @endif
                                                                id="phone"/>
                                                         <label for="phone">
                                                             <span> </span>Patient Phone Session
@@ -219,6 +236,8 @@
                                                 <label id="task-label" style="display: none;">
                                                     <div>
                                                         <input type="checkbox"
+                                                               @if (!empty($note)) disabled
+                                                               @endif
                                                                id="task"/>
                                                         <label for="task">
                                                             <span> </span>Associate with Task
@@ -254,6 +273,10 @@
                                                          style="display: none;">
                                                         <div class="multi-input-wrapper">
                                                             <div class="radio-inline"><input type="radio"
+                                                                                             @if (!empty($note)) disabled
+                                                                                             @endif
+                                                                                             @if (!empty($call) && !$call->is_cpm_outbound) checked
+                                                                                             @endif
                                                                                              name="phone"
                                                                                              value="inbound"
                                                                                              class="phone-radios"
@@ -261,6 +284,10 @@
                                                                         for="Inbound"><span> </span>Inbound</label>
                                                             </div>
                                                             <div class="radio-inline"><input type="radio"
+                                                                                             @if (!empty($note)) disabled
+                                                                                             @endif
+                                                                                             @if (!empty($call) && $call->is_cpm_outbound) checked
+                                                                                             @endif
                                                                                              name="phone"
                                                                                              class="phone-radios"
                                                                                              value="outbound"
@@ -277,7 +304,11 @@
                                                          style="padding-bottom: 3px; display: none">
                                                         <div class="radio">
                                                             <input type="radio"
-                                                                   class="call-status-radios"
+                                                                   @if (!empty($note)) disabled
+                                                                   @endif
+                                                                   @if (!empty($call) && $call->status === \App\Call::NOT_REACHED) checked
+                                                                   @endif
+                                                                   class="call-status-radio"
                                                                    name="call_status"
                                                                    value="not reached"
                                                                    id="not-reached"/>
@@ -287,8 +318,12 @@
                                                         </div>
                                                         <div class="radio">
                                                             <input type="radio"
+                                                                   @if (!empty($note)) disabled
+                                                                   @endif
+                                                                   @if (!empty($call) && $call->status === \App\Call::REACHED) checked
+                                                                   @endif
                                                                    name="call_status"
-                                                                   class="call-status-radios"
+                                                                   class="call-status-radio"
                                                                    value="reached"
                                                                    id="reached"/>
                                                             <label for="reached">
@@ -298,8 +333,12 @@
                                                         <!-- CPM-165 Ability for RN to mark unsuccessful call but NOT count towards an attempt -->
                                                         <div class="radio">
                                                             <input type="radio"
+                                                                   @if (!empty($note)) disabled
+                                                                   @endif
+                                                                   @if (!empty($call) && $call->status === \App\Call::IGNORED) checked
+                                                                   @endif
                                                                    name="call_status"
-                                                                   class="call-status-radios"
+                                                                   class="call-status-radio"
                                                                    value="ignored"
                                                                    id="ignored"/>
                                                             <label for="ignored">
@@ -340,6 +379,8 @@
                                                 <div class="other-radios multi-input-wrapper"
                                                      style="padding-top: 3px; display: none">
                                                     <div><input type="checkbox"
+                                                                @if (!empty($note) && $note->did_medication_recon) checked
+                                                                @endif
                                                                 name="medication_recon"
                                                                 value="true"
                                                                 id="medication_recon"/>
@@ -349,6 +390,8 @@
                                                     </div>
                                                     <input type="hidden" name="tcm" value="hospital">
                                                     <div><input type="checkbox"
+                                                                @if (!empty($note) && $note->isTCM) checked
+                                                                @endif
                                                                 name="tcm"
                                                                 value="true"
                                                                 id="tcm"/>
@@ -559,13 +602,8 @@
                 }
 
                 $('#phone').change(phoneSessionChange);
-
-                phoneSessionChange({
-                    currentTarget: {
-                        //checked: $('#phone').is(':checked')
-                        checked: @json(!empty($existingCall))
-                    }
-                });
+                $('#phone').prop('checked', @json(!empty($call)));
+                $('#phone').trigger('change');
 
                 function associateWithTaskChange(e) {
                     if (!e) {
@@ -680,12 +718,8 @@
                 }
 
                 $('#tcm').change(tcmChange);
-
-                tcmChange({
-                    currentTarget: {
-                        checked: @json(!empty($note) && $note->isTCM)
-                    }
-                });
+                $('#tcm').prop('checked', @json(!empty($note) && $note->isTCM));
+                $('#tcm').trigger('change');
 
                 $('#newNote').submit(function (e) {
                     e.preventDefault();
@@ -814,8 +848,9 @@
                 return noteBody.substring(0, noteBody.indexOf(MEDICATIONS_SEPARATOR)).trim();
             }
 
-            // const AUTO_SAVE_INTERVAL = 1000 * 60 * 2; /* 2 minutes */
-            const AUTO_SAVE_INTERVAL = 1000 * 10;
+            const AUTO_SAVE_INTERVAL = 1000 * 60 * 2;
+            /* 2 minutes */
+            // const AUTO_SAVE_INTERVAL = 1000 * 10;
             let noteId = null;
 
             @if (! empty($note))
@@ -834,7 +869,7 @@
                         author_id: $('#author_id').val(),
                         task_id: $('.tasks-radio:checked').val(),
                         phone: $('.phone-radios:checked').val(),
-                        call_status: $('.call-status-radios:checked').val(),
+                        call_status: $('.call-status-radio:checked').val(),
                         welcome_call: $('#welcome_call').is(":checked"),
                         other_call: $('#other_call').is(":checked"),
                         medication_recon: $('#medication_recon').is(":checked"),

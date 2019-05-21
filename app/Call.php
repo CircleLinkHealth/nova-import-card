@@ -15,28 +15,28 @@ use CircleLinkHealth\Customer\Entities\User;
 /**
  * App\Call.
  *
- * @property int            $id
- * @property int|null       $note_id
- * @property string|null    $type
- * @property string|null    $sub_type
- * @property string         $service
- * @property string         $status
- * @property string         $inbound_phone_number
- * @property string         $outbound_phone_number
- * @property int            $inbound_cpm_id
- * @property int|null       $outbound_cpm_id
- * @property int|null       $call_time
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property int            $is_cpm_outbound
- * @property string         $window_start
- * @property string         $window_end
- * @property string         $scheduled_date
- * @property string|null    $called_date
- * @property string         $attempt_note
- * @property string|null    $scheduler
- * @property bool           $is_from_care_center
- * @property bool is_manual
+ * @property int                                                                            $id
+ * @property int|null                                                                       $note_id
+ * @property string|null                                                                    $type
+ * @property string|null                                                                    $sub_type
+ * @property string                                                                         $service
+ * @property string                                                                         $status
+ * @property string                                                                         $inbound_phone_number
+ * @property string                                                                         $outbound_phone_number
+ * @property int                                                                            $inbound_cpm_id
+ * @property int|null                                                                       $outbound_cpm_id
+ * @property int|null                                                                       $call_time
+ * @property \Carbon\Carbon                                                                 $created_at
+ * @property \Carbon\Carbon                                                                 $updated_at
+ * @property int                                                                            $is_cpm_outbound
+ * @property string                                                                         $window_start
+ * @property string                                                                         $window_end
+ * @property string                                                                         $scheduled_date
+ * @property string|null                                                                    $called_date
+ * @property string                                                                         $attempt_note
+ * @property string|null                                                                    $scheduler
+ * @property bool                                                                           $is_from_care_center
+ * @property bool                                                                           $is_manual
  * @property \CircleLinkHealth\Customer\Entities\User|null                                  $schedulerUser
  * @property \CircleLinkHealth\Customer\Entities\User                                       $inboundUser
  * @property \App\Note|null                                                                 $note
@@ -62,8 +62,6 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereWindowEnd($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereWindowStart($value)
  * @mixin \Eloquent
- *
- * @property int|null $is_manual
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call filter(\App\Filters\QueryFilters $filters)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call newModelQuery()

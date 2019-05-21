@@ -107,15 +107,15 @@ class NotesController extends Controller
             ->where('inbound_cpm_id', '=', $patientId)
             ->where('outbound_cpm_id', '=', $author_id)
             ->select(
-                [
-                    'id',
-                    'type',
-                    'sub_type',
-                    'attempt_note',
-                    'scheduled_date',
-                    'window_start',
-                    'window_end',
-                ]
+                                       [
+                                           'id',
+                                           'type',
+                                           'sub_type',
+                                           'attempt_note',
+                                           'scheduled_date',
+                                           'window_start',
+                                           'window_end',
+                                       ]
                                    )
             ->get();
 
@@ -413,8 +413,11 @@ class NotesController extends Controller
         }
         $input['performed_at'] = Carbon::parse($input['performed_at'])->toDateTimeString();
 
+        $noteIsAlreadyComplete = false;
         if ($noteId) {
-            $note = $this->editNote($noteId, $input);
+            $note                  = Note::findOrFail($noteId);
+            $noteIsAlreadyComplete = 'complete' === $note->status;
+            $note                  = $this->editNote($note, $input);
         } else {
             $note = $this->service->storeNote($input);
         }
@@ -439,7 +442,7 @@ class NotesController extends Controller
          *   - if any other role: store a call
          */
 
-        if ($is_task) {
+        if ( ! $noteIsAlreadyComplete && $is_task) {
             $task_id     = $input['task_id'];
             $task_status = $input['task_status'];
             $call        = Call::find($task_id);
@@ -487,11 +490,15 @@ class NotesController extends Controller
                 if ( ! $is_phone_session && $is_withdrawn) {
                     return redirect()->route('patient.note.index', ['patient' => $patientId])->with(
                         'messages',
-                        ['Successfully Created Note']
+                        [
+                            $noteId
+                                ? 'Successfully Edited Note'
+                                : 'Successfully Created Note',
+                        ]
                     );
                 }
 
-                if ($is_phone_session) {
+                if ( ! $noteIsAlreadyComplete && $is_phone_session) {
                     if ( ! isset($input['call_status'])) {
                         return redirect()
                             ->back()
@@ -543,7 +550,7 @@ class NotesController extends Controller
             }
 
             //If successful phone call and provider, also mark as the last successful day contacted. [ticket: 592]
-            if ($is_phone_session) {
+            if ( ! $noteIsAlreadyComplete && $is_phone_session) {
                 if (isset($input['call_status']) && 'reached' == $input['call_status']) {
                     if (auth()->user()->hasRole('provider')) {
                         $this->service->storeCallForNote(
@@ -602,7 +609,11 @@ class NotesController extends Controller
 
         return redirect()->route('patient.note.index', ['patient' => $patientId])->with(
             'messages',
-            ['Successfully Created Note']
+            [
+                $noteId
+                    ? 'Successfully Edited Note'
+                    : 'Successfully Created Note',
+            ]
         );
     }
 
@@ -669,18 +680,17 @@ class NotesController extends Controller
         return response()->json(['message' => 'success', 'note_id' => $note->id]);
     }
 
-    private function editNote($noteId, $requestInput)
+    private function editNote(Note $note, $requestInput)
     {
-        $note            = Note::find($noteId);
         $note->logger_id = $requestInput['logger_id'];
-        $note->isTCM     = isset($requestInput['isTCM'])
-            ? $requestInput['isTCM']
+        $note->isTCM     = isset($requestInput['tcm'])
+            ? 'true' === $requestInput['tcm']
             : 0;
         $note->type                 = $requestInput['type'];
         $note->body                 = $requestInput['body'];
         $note->performed_at         = $requestInput['performed_at'];
-        $note->did_medication_recon = isset($requestInput['did_medication_recon'])
-            ? $requestInput['did_medication_recon']
+        $note->did_medication_recon = isset($requestInput['medication_recon'])
+            ? 'true' === $requestInput['medication_recon']
             : 0;
         if ($note->isDirty()) {
             $note->save();
@@ -712,10 +722,10 @@ class NotesController extends Controller
     {
         return Practice::whereId($patient->program_id)
             ->where(
-                function ($q) {
-                    $q->where('name', '=', 'phoenix-heart')
-                        ->orWhere('name', '=', 'demo');
-                }
+                           function ($q) {
+                               $q->where('name', '=', 'phoenix-heart')
+                                   ->orWhere('name', '=', 'demo');
+                           }
                        )
             ->exists();
     }
