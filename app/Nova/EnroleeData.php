@@ -33,22 +33,15 @@ class EnroleeData extends Resource
      * @var array
      */
     public static $search = [
+        'provider_id',
         'practice_id',
         'mrn',
         'first_name',
         'last_name',
         'address',
-        'address_2',
-        'city',
-        'state',
-        'zip',
-        'primary_phone',
         'dob',
         'primary_insurance',
         'secondary_insurance',
-        'tertiary_insurance',
-        'email',
-        'referring_provider_name',
     ];
 
     /**
@@ -111,17 +104,17 @@ class EnroleeData extends Resource
 
             Text::make('address')
                 ->sortable()
-                ->creationRules('string')
+                ->creationRules('required', 'string')
                 ->updateRules('string'),
 
             Number::make('mrn')
                 ->sortable()
-                ->creationRules('integer')
+                ->creationRules('required', 'integer')
                 ->updateRules('integer'),
 
             Date::make('dob')
                 ->sortable()
-                ->format('MM/DD/YYYY')->creationRules('date')
+                ->format('MM/DD/YYYY')->creationRules('required', 'date')
                 ->updateRules('date'),
 
             Text::make('primary_insurance')

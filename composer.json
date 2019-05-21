@@ -49,6 +49,10 @@
       "url": "git@github.com:CircleLinkHealth/module-core.git"
     },
     {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/module-notifications.git"
+    },
+    {
       "type": "composer",
       "url": "https://packagist.org"
     },

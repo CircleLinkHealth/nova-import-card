@@ -60,8 +60,8 @@ class EnroleeData implements OnEachRow, WithChunkReading, WithValidation, WithHe
             return;
         }
 
-        $row['provider'] = $provider->id;
-        $row['practice'] = optional($this->practice)->id;
+        $row['provider_id'] = $provider->id;
+        $row['practice_id'] = optional($this->practice)->id;
 
         Enrollee::updateOrCreate(
             [
@@ -85,10 +85,15 @@ class EnroleeData implements OnEachRow, WithChunkReading, WithValidation, WithHe
         if ($fileName) {
             $array = explode('.', $fileName);
 
-            return Practice::search($array[0])->first();
+            $practice = Practice::search($array[0])->first();
+
+            if ( ! $practice) {
+                throw new \Exception('Practice not found. Please make sure that the file name is a valid Practice name.', 500);
+            }
+
+            return $practice;
         }
 
-        //throw Exception
-        return null;
+        throw new \Exception('Something went wrong. File not found.', 500);
     }
 }
