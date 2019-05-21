@@ -7,8 +7,9 @@
 namespace App\ValueObjects;
 
 use CircleLinkHealth\Customer\Entities\User;
+use Illuminate\Contracts\Support\Arrayable;
 
-class SimpleNotification
+class SimpleNotification implements Arrayable
 {
     /**
      * @var string
@@ -161,5 +162,15 @@ class SimpleNotification
         $this->subject = $subject;
 
         return $this;
+    }
+
+    /**
+     * Get the instance as an array.
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return get_object_vars($this);
     }
 }

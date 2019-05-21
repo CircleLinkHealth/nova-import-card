@@ -37,17 +37,7 @@ class NurseIvoiceExtra extends Resource
      *
      * @var string
      */
-    public static $title = 'id';
-
-    public static function authorizedToCreate(Request $request)
-    {
-        return true;
-    }
-
-    public static function label()
-    {
-        return 'Care Coach Bonuses';
-    }
+    public static $title = 'user_id';
 
     /**
      * Get the actions available for the resource.
@@ -59,6 +49,11 @@ class NurseIvoiceExtra extends Resource
     public function actions(Request $request)
     {
         return [];
+    }
+
+    public static function authorizedToCreate(Request $request)
+    {
+        return true;
     }
 
     public function authorizedToDelete(Request $request)
@@ -90,13 +85,13 @@ class NurseIvoiceExtra extends Resource
         return [
             ID::make()->sortable(),
 
-            BelongsTo::make('User Id', 'nurse', Nurse::class)
+            BelongsTo::make('user')->display('id')
                 ->hideWhenUpdating()
                 ->searchable()
                 ->prepopulate()
                 ->sortable(),
 
-            Text::make('Name', 'nurse.user.display_name')
+            Text::make('Name', 'user.display_name')
                 ->sortable()
                 ->hideWhenCreating()
                 ->readonly(true),
@@ -107,9 +102,11 @@ class NurseIvoiceExtra extends Resource
             Select::make('Unit', 'unit')
                 ->options([
                     'minutes' => 'Minutes',
-                    'usd' => '$',
+                    'usd'     => '$',
                 ]),
-            Text::make('+ Days Payment','nurse.pay_interval'),
+
+            Text::make('+ Days Payment', 'user.nurseInfo.pay_interval'),
+
             Text::make('unit')
                 ->sortable()
                 ->hideWhenUpdating()
@@ -134,6 +131,11 @@ class NurseIvoiceExtra extends Resource
         return [];
     }
 
+    public static function label()
+    {
+        return 'Care Coach Bonuses';
+    }
+
     /**
      * Get the lenses available for the resource.
      *
@@ -143,7 +145,6 @@ class NurseIvoiceExtra extends Resource
      */
     public function lenses(Request $request)
     {
-        return [
-        ];
+        return [];
     }
 }

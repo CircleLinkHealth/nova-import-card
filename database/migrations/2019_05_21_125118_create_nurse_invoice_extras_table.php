@@ -8,7 +8,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class NurseInvoiceExtras extends Migration
+class CreateNurseInvoiceExtrasTable extends Migration
 {
     /**
      * Reverse the migrations.
@@ -32,8 +32,8 @@ class NurseInvoiceExtras extends Migration
             $table->timestamps();
 
             $table->foreign('user_id')
-                ->references('user_id')
-                ->on('nurse_info')
+                ->references('id')
+                ->on('users')
                 ->onUpdate('cascade');
         });
     }

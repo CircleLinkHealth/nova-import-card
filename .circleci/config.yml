@@ -47,7 +47,7 @@ jobs:
         keys:
         - node-v3-{{ checksum "package.json" }}
         - node-v3-
-    - run: yarn install
+    - run: npm install
     - save_cache:
         key: node-v3-{{ checksum "package.json" }}
         paths:
@@ -63,8 +63,17 @@ jobs:
     #    - run: ./vendor/bin/phpunit --testsuite=Unit
     #- run: ./vendor/bin/codecept build
     #        - run: ./vendor/bin/codecept run --xml result.xml
-    - run: ./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner SqliteRunner -p8
+#    - run: ./vendor/bin/paratest ./tests/Unit --verbose=1 --stop-on-failure --colors --runner SqliteRunner -p16
+    - run: ./vendor/phpunit/phpunit/phpunit
 #    - store_test_results:
 #        path: tests/_output
 #    - store_artifacts:
 #        path: tests/_output
+    - run:
+        name: Add a version to the build
+        command: |
+          php artisan version:refresh
+          php artisan version:absorb
+          git add config/version.yml
+          git commit --allow-empty -m "Version build"
+          git push
