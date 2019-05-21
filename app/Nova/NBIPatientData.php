@@ -36,6 +36,9 @@ class NBIPatientData extends Resource
         'first_name',
         'last_name',
         'mrn',
+        'primary_insurance',
+        'provider',
+        'secondary_insurance',
     ];
 
     /**
@@ -98,6 +101,12 @@ class NBIPatientData extends Resource
                 ->sortable()
                 ->format('MM/DD/YYYY')->creationRules('required', 'date')
                 ->updateRules('required', 'date'),
+            Text::make('provider')
+                ->sortable(),
+            Text::make('primary_insurance')
+                ->sortable(),
+            Text::make('secondary_insurance')
+                ->sortable(),
         ];
     }
 

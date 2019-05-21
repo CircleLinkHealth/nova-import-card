@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace Tests\unit;
+namespace Tests\Unit;
 
 use App\CarePlan;
 use App\Models\CPM\CpmProblem;
@@ -22,8 +22,7 @@ use Tests\TestCase;
 class CarePlanProviderApprovalTest extends TestCase
 {
     use CarePlanHelpers;
-    use
-        UserHelpers;
+    use UserHelpers;
 
     /**
      * @var CarePlan
@@ -90,8 +89,10 @@ class CarePlanProviderApprovalTest extends TestCase
         $careCenter = $this->createUser($this->practice->id, 'care-center');
         auth()->login($careCenter);
 
-        $this->patient->carePlan->status = CarePlan::QA_APPROVED;
-        $this->patient->carePlan->save();
+        $carePlan = $this->patient->carePlan;
+
+        $carePlan->status = CarePlan::QA_APPROVED;
+        $carePlan->save();
 
         $response = $this->get(route('patient.careplan.print', [
             'patientId' => $this->patient->id,
