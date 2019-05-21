@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "5a2c6ebbc8d585c40710f745f210dce2",
+    "content-hash": "279c6d8e6fc1147bde036a0646b0d946",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -679,6 +679,36 @@
                 }
             ],
             "time": "2019-05-21T14:01:09+00:00"
+        },
+        {
+            "name": "circlelinkhealth/notifications",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/module-notifications.git",
+                "reference": "1de885fa68b926ffb60be1df9ce8e8aebd3dd47f"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\Notifications\\Providers\\NotificationsServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\Notifications\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@cirlelinkhealth.com"
+                }
+            ],
+            "time": "2019-05-21T13:41:10+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
@@ -13171,6 +13201,7 @@
         "circlelinkhealth/raygun": 20,
         "circlelinkhealth/timetracking": 20,
         "circlelinkhealth/twofa": 20,
+        "circlelinkhealth/notifications": 20,
         "lynx39/lara-pdf-merger": 20,
         "prettus/l5-repository": 20,
         "waavi/url-shortener": 20,

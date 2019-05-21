@@ -3,6 +3,11 @@
 @section('content')
     @push('styles')
         <link rel="stylesheet" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css">
+        <style>
+            table.dataTable tbody td {
+                text-align: center;
+            }
+        </style>
     @endpush
 
     <div class="container-fluid">
@@ -54,7 +59,10 @@
                                             #Unable to Contact
                                         </th>
                                         <th>
-                                            #Rejected
+                                            #Soft Declined
+                                        </th>
+                                        <th>
+                                            #Hard Declined
                                         </th>
                                         <th>
                                             Labor Hours
@@ -118,11 +126,12 @@
                         },
                         columns: [
 
-                            {data: 'name', name: 'name'},
+                            {data: 'name', name: 'name', className: "text-center"},
                             {data: 'unique_patients_called', name: 'unique_patients_called'},
                             {data: 'consented', name: 'consented'},
                             {data: 'utc', name: 'utc'},
-                            {data: 'rejected', name: 'rejected'},
+                            {data: 'soft_declined', name: 'soft_declined'},
+                            {data: 'hard_declined', name: 'hard_declined'},
                             {data: 'labor_hours', name: 'labor_hours'},
                             {data: 'conversion', name: 'conversion'},
                             {data: 'labor_rate', name: 'labor_rate'},
