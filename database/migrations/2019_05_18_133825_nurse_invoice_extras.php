@@ -31,7 +31,10 @@ class NurseInvoiceExtras extends Migration
             $table->integer('value')->nullable();
             $table->timestamps();
 
-            $table->foreign('user_id')->references('user_id')->on('nurse_info');
+            $table->foreign('user_id')
+                ->references('user_id')
+                ->on('nurse_info')
+                ->onUpdate('cascade');
         });
     }
 }
