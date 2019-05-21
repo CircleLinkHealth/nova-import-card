@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace Tests\unit;
+namespace Tests\Unit;
 
 use Tests\TestCase;
 
