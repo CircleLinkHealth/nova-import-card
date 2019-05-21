@@ -74,28 +74,49 @@ class NurseMonthlyBillGenerator
         $this->addNotes                  = $notes;
         $this->withVariablePaymentSystem = $withVariablePaymentSystem;
         $this->summary                   = $summary;
-
-        $this->pageTimerData = PageTimer::where('provider_id', $this->nurse->user_id)
-            ->select(['id', 'duration', 'created_at'])
-            ->whereBetween('created_at', [$this->startDate, $this->endDate])
-            ->get();
-        $this->activityData = Activity::where('provider_id', $this->nurse->user_id)
-            ->whereBetween('created_at', [$this->startDate, $this->endDate])
-            ->get();
-
-        $this->nurseExtras = NurseInvoiceExtra::where('user_id', $this->nurse->user_id)->get();
-
-        $this->addDuration = $this->nurseExtras
-            ->where('unit', 'minutes')
-            ->sum('value');
-
-        $this->bonus = $this->nurseExtras
-            ->where('unit', 'usd')
-            ->sum('value');
+        $this->pageTimerData             = $this->getPageTimerData();
+        $this->activityData              = $this->getActivityData();
+        $this->nurseExtras               = $this->getNurseExtras();
+        $this->addDuration               = $this->getAddedDuration();
+        $this->bonus                     = $this->getBonus();
 
         if (0 != $this->addDuration) {
             $this->hasAddedTime = true;
         }
+    }
+
+    public function getActivityData()
+    {
+        return Activity::where('provider_id', $this->nurse->user_id)
+            ->whereBetween('created_at', [$this->startDate, $this->endDate])
+            ->get();
+    }
+
+    public function getAddedDuration()
+    {
+        return $this->nurseExtras
+            ->where('unit', 'minutes')
+            ->sum('value');
+    }
+
+    public function getBonus()
+    {
+        return $this->nurseExtras
+            ->where('unit', 'usd')
+            ->sum('value');
+    }
+
+    public function getNurseExtras()
+    {
+        return NurseInvoiceExtra::where('user_id', $this->nurse->user_id)->get();
+    }
+
+    public function getPageTimerData()
+    {
+        return PageTimer::where('provider_id', $this->nurse->user_id)
+            ->select(['id', 'duration', 'created_at'])
+            ->whereBetween('created_at', [$this->startDate, $this->endDate])
+            ->get();
     }
 
     public function handle()

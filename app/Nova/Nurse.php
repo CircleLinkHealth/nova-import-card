@@ -9,6 +9,7 @@ namespace App\Nova;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Text;
 
 class Nurse extends Resource
 {
@@ -86,6 +87,7 @@ class Nurse extends Resource
         return [
             ID::make('User Id', 'user_id')->sortable(),
             BelongsTo::make('user')->display('display_name'),
+           // Text::make('pay_interval'),
         ];
     }
 

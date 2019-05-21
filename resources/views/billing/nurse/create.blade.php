@@ -48,9 +48,6 @@
                                     </label>
                                 </div>
 
-
-
-
                                 <div class="form-group">
                                     <label class="col-md-2 control-label" for="start_date">From</label>
                                     <div class="col-md-6">
@@ -80,23 +77,7 @@
                                     </label>
                                 </div>
 
-
-
-
-
                                 <!-- Button -->
-                                <div class="form-group">
-                                    <div class="row" style="padding-left: 12px;">
-                                        <label class="col-md-2 control-label" for="end_date"></label>
-                                        <div class="col-md-2">
-                                            <button id="submit" name="submit" value="download" class="btn btn-default">
-                                                Download
-                                                Invoice(s) V1 (to be removed)
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
                                 <div class="form-group">
                                     <div class="row" style="padding-left: 12px;">
                                         <label class="col-md-2 control-label" for="end_date"></label>
@@ -108,10 +89,7 @@
                                         </div>
                                     </div>
                                 </div>
-
-
                             </fieldset>
-
                         </form>
                     </div>
                 </div>

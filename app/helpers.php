@@ -128,10 +128,13 @@ if ( ! function_exists('activeNurseNames')) {
     function activeNurseNames()
     {
         return User::ofType('care-center')
-            ->where([
-                ['user_status', 1],
-                ['program_id', '!=', 8],
-            ])
+            ->with([
+                'nurseInfo' => function ($q) {
+                    $q->where('is_demo', '!=', true);
+                },
+            ])->whereHas('nurseInfo', function ($q) {
+                $q->where('is_demo', '!=', true);
+            })->where('user_status', 1)
             ->pluck('display_name', 'id');
     }
 }
@@ -1416,25 +1419,22 @@ if ( ! function_exists('selectAllNursesForSelectedPeriod')) {
      */
     function selectAllNursesForSelectedPeriod(Carbon $startDate, Carbon $endDate)
     {
-        $demoPracticeId = 8;
-        $nurses         = Nurse::with([
-            'user' => function ($p) use ($demoPracticeId) {
-                $p->where('program_id', '!=', $demoPracticeId);
-            },
+        $nurses = Nurse::with([
             'summary' => function ($s) use ($startDate, $endDate) {
                 $s->whereBetween('month_year', [
                     $startDate->copy()->toDateString(),
                     $endDate->copy()->toDateString(),
                 ]);
             },
-        ])->whereHas('user', function ($p) use ($demoPracticeId) {
-            $p->where('program_id', '!=', $demoPracticeId);
-        })->whereHas('summary', function ($s) use ($startDate, $endDate) {
+        ])->whereHas('summary', function ($s) use ($startDate, $endDate) {
             $s->whereBetween('month_year', [
                 $startDate->copy()->toDateString(),
                 $endDate->copy()->toDateString(),
             ]);
-        })->where('status', 'active')->get()->pluck('user.id');
+        })->where([
+            ['status', 'active'],
+            ['is_demo', '!=', true],
+        ])->get()->pluck('user.id');
 
         return $nurses;
     }

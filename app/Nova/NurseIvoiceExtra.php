@@ -9,7 +9,6 @@ namespace App\Nova;
 use App\NurseInvoiceExtra;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
-use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Select;
@@ -40,6 +39,16 @@ class NurseIvoiceExtra extends Resource
      */
     public static $title = 'id';
 
+    public static function authorizedToCreate(Request $request)
+    {
+        return true;
+    }
+
+    public static function label()
+    {
+        return 'Care Coach Bonuses';
+    }
+
     /**
      * Get the actions available for the resource.
      *
@@ -50,11 +59,6 @@ class NurseIvoiceExtra extends Resource
     public function actions(Request $request)
     {
         return [];
-    }
-
-    public static function authorizedToCreate(Request $request)
-    {
-        return true;
     }
 
     public function authorizedToDelete(Request $request)
@@ -97,15 +101,15 @@ class NurseIvoiceExtra extends Resource
                 ->hideWhenCreating()
                 ->readonly(true),
 
-            Date::make('Extra Time/Bonus Date', 'date')
+            Date::make("Extra's Date", 'date')
                 ->sortable(),
 
             Select::make('Unit', 'unit')
                 ->options([
                     'minutes' => 'Minutes',
-                    'usd'     => '$',
+                    'usd' => '$',
                 ]),
-
+            Text::make('+ Days Payment','nurse.pay_interval'),
             Text::make('unit')
                 ->sortable()
                 ->hideWhenUpdating()
@@ -128,11 +132,6 @@ class NurseIvoiceExtra extends Resource
     public function filters(Request $request)
     {
         return [];
-    }
-
-    public static function label()
-    {
-        return 'Care Coach Bonuses';
     }
 
     /**
