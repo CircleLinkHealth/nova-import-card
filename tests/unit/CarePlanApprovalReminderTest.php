@@ -20,9 +20,11 @@ use Tests\TestCase;
 
 class CarePlanApprovalReminderTest extends TestCase
 {
+    const CLH_TEST_DM_ADDRESS = 'circlelinkhealth@test.directproject.net';
+    
     use CarePlanHelpers;
     use UserHelpers;
-
+    
     private $directMail;
     private $patient;
     private $practice;
@@ -78,7 +80,7 @@ class CarePlanApprovalReminderTest extends TestCase
 
         foreach ($result as $sent) {
             $this->assertTrue($sent->succeeded);
-            $this->assertEquals('circlelinkhealth@test.directproject.net', $sent->recipient);
+            $this->assertEquals(self::CLH_TEST_DM_ADDRESS, $sent->recipient);
             $this->assertNull($sent->errorText);
         }
     }
