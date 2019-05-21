@@ -751,6 +751,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'addendum.read',
                     'role.read',
                     'offlineActivity.create',
+                    'care-plan-approve',
                 ],
             ],
             [
