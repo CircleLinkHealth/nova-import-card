@@ -54,7 +54,11 @@ class WebixFormatter implements ReportFormatter
                 ];
 
                 if (Note::STATUS_DRAFT === $note->status) {
-                    $result['type_name'] = '<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> '.$result['type_name'];
+                    if (empty($result['type_name'])) {
+                        $result['type_name'] = '<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Draft';
+                    } else {
+                        $result['type_name'] = '<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> '.$result['type_name'];
+                    }
                 }
 
                 //pangratios: add support for task types
