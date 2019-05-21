@@ -68,11 +68,11 @@
                 color: #5b5b5b
             }
 
-            input[type=radio]:checked:disabled +label span {
+            input[type=radio]:checked:disabled + label span {
                 background: url(../img/ui/radio-active-disabled.png) left top no-repeat;
             }
 
-            input[type=checkbox]:checked:disabled +label span {
+            input[type=checkbox]:checked:disabled + label span {
                 background: url(../img/ui/checkbox-active-disabled.png) left top no-repeat;
             }
 
@@ -223,7 +223,7 @@
                                                 <label id="phone-label">
                                                     <div>
                                                         <input type="checkbox"
-                                                               @if (!empty($note)) disabled
+                                                               @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
                                                                @endif
                                                                id="phone"/>
                                                         <label for="phone">
@@ -236,7 +236,9 @@
                                                 <label id="task-label" style="display: none;">
                                                     <div>
                                                         <input type="checkbox"
-                                                               @if (!empty($note)) disabled
+                                                               @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                               @endif
+                                                               @if (!empty($call) && !empty($call->sub_type)) checked
                                                                @endif
                                                                id="task"/>
                                                         <label for="task">
@@ -252,6 +254,10 @@
                                                         @foreach($tasks as $task)
                                                             <div class="radio">
                                                                 <input type="radio"
+                                                                       @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                                       @endif
+                                                                       @if (!empty($call) && $call->sub_type === $task->sub_type) checked
+                                                                       @endif
                                                                        class="tasks-radio"
                                                                        name="task_id"
                                                                        value="{{$task->id}}"
@@ -267,13 +273,36 @@
                                                     </div>
                                                 </div>
                                             @endif
+                                        <!-- if editing a complete note and call is a task-->
+                                            @if(!empty($call) && !empty($call->sub_type))
+                                                <div class="col-sm-12" id="tasks-container" style="display: none;">
+                                                    <div class="multi-input-wrapper"
+                                                         style="padding-bottom: 3px">
+                                                        <div class="radio">
+                                                            <input type="radio"
+                                                                   disabled
+                                                                   class="tasks-radio"
+                                                                   name="task_id"
+                                                                   value="{{$call->id}}"
+                                                                   id="{{$call->id}}"/>
+                                                            <label for="{{$call->id}}">
+                                                                <span> </span>{{$call->sub_type}}
+                                                                ; {{!empty($call->attempt_note) ? $call->attempt_note . ',' : ''}}
+                                                                due {{$call->window_end}}
+                                                                on {{$call->scheduled_date}}
+                                                            </label>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            @endif
                                             <div class="col-sm-12">
                                                 <div class="panel-group" id="accordion" style="margin-bottom: 2px">
                                                     <div id="collapseOne" class="panel-collapse collapse in"
                                                          style="display: none;">
                                                         <div class="multi-input-wrapper">
                                                             <div class="radio-inline"><input type="radio"
-                                                                                             @if (!empty($note)) disabled
+                                                                                             @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
                                                                                              @endif
                                                                                              @if (!empty($call) && !$call->is_cpm_outbound) checked
                                                                                              @endif
@@ -284,7 +313,7 @@
                                                                         for="Inbound"><span> </span>Inbound</label>
                                                             </div>
                                                             <div class="radio-inline"><input type="radio"
-                                                                                             @if (!empty($note)) disabled
+                                                                                             @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
                                                                                              @endif
                                                                                              @if (!empty($call) && $call->is_cpm_outbound) checked
                                                                                              @endif
@@ -304,7 +333,7 @@
                                                          style="padding-bottom: 3px; display: none">
                                                         <div class="radio">
                                                             <input type="radio"
-                                                                   @if (!empty($note)) disabled
+                                                                   @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
                                                                    @endif
                                                                    @if (!empty($call) && $call->status === \App\Call::NOT_REACHED) checked
                                                                    @endif
@@ -318,7 +347,7 @@
                                                         </div>
                                                         <div class="radio">
                                                             <input type="radio"
-                                                                   @if (!empty($note)) disabled
+                                                                   @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
                                                                    @endif
                                                                    @if (!empty($call) && $call->status === \App\Call::REACHED) checked
                                                                    @endif
@@ -333,7 +362,7 @@
                                                         <!-- CPM-165 Ability for RN to mark unsuccessful call but NOT count towards an attempt -->
                                                         <div class="radio">
                                                             <input type="radio"
-                                                                   @if (!empty($note)) disabled
+                                                                   @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
                                                                    @endif
                                                                    @if (!empty($call) && $call->status === \App\Call::IGNORED) checked
                                                                    @endif
@@ -352,6 +381,10 @@
                                                         <div>
                                                             <div class="radio">
                                                                 <input type="checkbox"
+                                                                       @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                                       @endif
+                                                                       @if (!empty($call) && $call->status === \App\Call::WELCOME) checked
+                                                                       @endif
                                                                        name="welcome_call"
                                                                        value="welcome_call"
                                                                        id="welcome_call"/>
@@ -364,6 +397,10 @@
                                                         <div>
                                                             <div class="radio">
                                                                 <input type="checkbox"
+                                                                       @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                                       @endif
+                                                                       @if (!empty($call) && $call->status === \App\Call::OTHER) checked
+                                                                       @endif
                                                                        name="other_call"
                                                                        value="other_call"
                                                                        id="other_call"/>
@@ -521,6 +558,8 @@
             const noteTypesMap = @json($note_types);
             const patientNurseTasks = @json($tasks);
             const medications = @json($medications);
+            const isEditingCompleteTask = @json(!empty($call) && !empty($call->sub_type));
+            const editingTaskType = isEditingCompleteTask ? @json(optional($call)->sub_type) : undefined;
 
             const MEDICATIONS_SEPARATOR = '------------------------------';
 
@@ -576,7 +615,7 @@
                             $("#Outbound").prop("checked", true);
                         }
                         else {
-                            if (patientNurseTasks.length) {
+                            if (isEditingCompleteTask || patientNurseTasks.length) {
                                 $('#task-label').show();
                             }
                             $('#collapseOne').hide();
@@ -602,7 +641,7 @@
                 }
 
                 $('#phone').change(phoneSessionChange);
-                $('#phone').prop('checked', @json(!empty($call)));
+                $('#phone').prop('checked', @json(!empty($call) && empty($call->sub_type)));
                 $('#phone').trigger('change');
 
                 function associateWithTaskChange(e) {
@@ -632,16 +671,16 @@
 
                         //if there is a task selected, select it as note topic
                         if ($('.tasks-radio').prop('checked')) {
-                            $('.tasks-radio').change();
+                            $('.tasks-radio').trigger('change');
                         }
 
                         selectList.prop("disabled", true);
                         $('#tasks-container').show();
 
                         //if only one task, just select it
-                        if (patientNurseTasks.length === 1) {
+                        if (isEditingCompleteTask || patientNurseTasks.length === 1) {
                             $('.tasks-radio').prop('checked', true);
-                            $('.tasks-radio').change();
+                            $('.tasks-radio').trigger('change');
                         }
                     }
                     else {
@@ -667,22 +706,27 @@
                     }
                 }
 
-                if (!patientNurseTasks.length) {
-                    $('#task-label').hide();
-                }
-                else {
+                $('.tasks-radio').change(onTaskSelected);
+
+                if (patientNurseTasks.length || isEditingCompleteTask) {
                     $('#task-label').show();
                     $('#task').change(associateWithTaskChange);
+                    if (isEditingCompleteTask) {
+                        $('#task').trigger('change');
+                    }
+                }
+                else {
+                    $('#task-label').hide();
                 }
 
                 function onTaskSelected(e) {
                     //get id of task
-                    const task = patientNurseTasks.find(x => x.id === +e.currentTarget.value);
+                    const task = {sub_type: editingTaskType} || patientNurseTasks.find(x => x.id === +e.currentTarget.value);
                     if (!task) {
                         return;
                     }
 
-                    if (task.sub_type === 'Call Back') {
+                    if (!editingTaskType && task.sub_type === 'Call Back') {
                         $('.call-status-radios').show();
                     }
                     else {
@@ -692,8 +736,6 @@
                     const selectList = $('#activityKey');
                     selectList.val(taskTypeToTopicMap[task.sub_type]);
                 }
-
-                $('.tasks-radio').change(onTaskSelected);
 
                 function tcmChange(e) {
                     if (e) {
@@ -824,6 +866,8 @@
                 }
             });
 
+            /*
+            //no need since we have auto save now
             window.addEventListener('beforeunload', (event) => {
 
                 if (submitted) {
@@ -843,6 +887,7 @@
                 }
 
             });
+            */
 
             function getNoteBodyExcludingMedications(noteBody) {
                 return noteBody.substring(0, noteBody.indexOf(MEDICATIONS_SEPARATOR)).trim();
@@ -850,8 +895,8 @@
 
             /* 2 minutes */
             const AUTO_SAVE_INTERVAL = 1000 * 60 * 2;
-
             // const AUTO_SAVE_INTERVAL = 1000 * 10;
+
             let noteId = null;
 
             @if (! empty($note))

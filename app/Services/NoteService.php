@@ -62,7 +62,7 @@ class NoteService
                 $userId,
                 $authorId,
                 $body
-                    ));
+            ));
         }
         throw new Exception('invalid parameters');
     }
@@ -107,6 +107,10 @@ class NoteService
 
     public function editNote(Note $note, $requestInput): Note
     {
+        if ( ! empty($requestInput['status'])) {
+            $note->status = $requestInput['status'];
+        }
+
         $note->logger_id = $requestInput['logger_id'];
         $note->isTCM     = isset($requestInput['tcm'])
             ? 'true' === $requestInput['tcm']

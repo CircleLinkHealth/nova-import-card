@@ -85,8 +85,12 @@ class Call extends BaseModel
     //patient was not reached
     const NOT_REACHED = 'not reached';
 
+    const OTHER = 'other call';
+
     //patient was reached
     const REACHED = 'reached';
+
+    const WELCOME = 'welcome call';
 
     protected $appends = ['is_from_care_center'];
 

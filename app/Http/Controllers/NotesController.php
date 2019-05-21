@@ -102,22 +102,27 @@ class NotesController extends Controller
         asort($provider_info);
         asort($careteam_info);
 
-        $nurse_patient_tasks = Call::where('status', '=', 'scheduled')
-            ->where('type', '=', 'task')
-            ->where('inbound_cpm_id', '=', $patientId)
-            ->where('outbound_cpm_id', '=', $author_id)
-            ->select(
-                [
-                    'id',
-                    'type',
-                    'sub_type',
-                    'attempt_note',
-                    'scheduled_date',
-                    'window_start',
-                    'window_end',
-                ]
-                                   )
-            ->get();
+        //if we are editing a note, no need to fetch tasks
+        if ($noteId) {
+            $nurse_patient_tasks = [];
+        } else {
+            $nurse_patient_tasks = Call::where('status', '=', 'scheduled')
+                ->where('type', '=', 'task')
+                ->where('inbound_cpm_id', '=', $patientId)
+                ->where('outbound_cpm_id', '=', $author_id)
+                ->select(
+                    [
+                        'id',
+                        'type',
+                        'sub_type',
+                        'attempt_note',
+                        'scheduled_date',
+                        'window_start',
+                        'window_end',
+                    ]
+                                       )
+                ->get();
+        }
 
         $isCareCoach = Auth::user()->isCareCoach();
         $meds        = [];
