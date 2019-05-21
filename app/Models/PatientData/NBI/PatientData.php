@@ -19,6 +19,9 @@ class PatientData extends Model
         'first_name',
         'last_name',
         'mrn',
+        'primary_insurance',
+        'provider',
+        'secondary_insurance',
     ];
     protected $table = 'patient_data';
 }
