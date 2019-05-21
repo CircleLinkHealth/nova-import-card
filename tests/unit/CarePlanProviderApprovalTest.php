@@ -90,8 +90,10 @@ class CarePlanProviderApprovalTest extends TestCase
         $careCenter = $this->createUser($this->practice->id, 'care-center');
         auth()->login($careCenter);
 
-        $this->patient->carePlan->status = CarePlan::QA_APPROVED;
-        $this->patient->carePlan->save();
+        $carePlan = $this->patient->carePlan;
+
+        $carePlan->status = CarePlan::QA_APPROVED;
+        $carePlan->save();
 
         $response = $this->get(route('patient.careplan.print', [
             'patientId' => $this->patient->id,
