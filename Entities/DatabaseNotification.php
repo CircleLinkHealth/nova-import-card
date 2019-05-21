@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Core\Entities;
 
 /**
- * App\DatabaseNotification.
+ * CircleLinkHealth\Core\Entities\DatabaseNotification.
  *
  * @property string                                        $id
  * @property string                                        $type
@@ -22,21 +22,21 @@ namespace CircleLinkHealth\Core\Entities;
  * @property \Eloquent|\Illuminate\Database\Eloquent\Model $attachment
  * @property \Eloquent|\Illuminate\Database\Eloquent\Model $notifiable
  *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DatabaseNotification hasAttachmentType($type)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DatabaseNotification hasNotifiableType($type)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DatabaseNotification newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DatabaseNotification newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DatabaseNotification query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DatabaseNotification whereAttachmentId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DatabaseNotification whereAttachmentType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DatabaseNotification whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DatabaseNotification whereData($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DatabaseNotification whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DatabaseNotification whereNotifiableId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DatabaseNotification whereNotifiableType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DatabaseNotification whereReadAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DatabaseNotification whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DatabaseNotification whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification hasAttachmentType($type)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification hasNotifiableType($type)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereAttachmentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereAttachmentType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereData($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereNotifiableId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereNotifiableType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereReadAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class DatabaseNotification extends \Illuminate\Notifications\DatabaseNotification
