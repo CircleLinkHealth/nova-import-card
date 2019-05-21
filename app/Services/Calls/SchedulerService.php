@@ -136,7 +136,7 @@ class SchedulerService
      *
      * @return Call|null
      */
-    public function getTodaysCall($patientId): Call
+    public function getTodaysCall($patientId): ?Call
     {
         $query = Call::where(function ($q) {
             $q->whereNull('type')
@@ -582,7 +582,7 @@ class SchedulerService
         );
 
         if (Call::IGNORED != $callStatus) {
-            $isCallBack = SchedulerService::CALL_BACK_TYPE === $scheduled_call->sub_type;
+            $isCallBack = null != $scheduled_call && SchedulerService::CALL_BACK_TYPE === $scheduled_call->sub_type;
             $this->patientWriteRepository->updateCallLogs($patient->patientInfo, Call::REACHED == $callStatus, $isCallBack);
         }
 
