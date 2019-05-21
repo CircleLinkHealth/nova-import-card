@@ -10,6 +10,7 @@ use App\CarePlan;
 use App\Notifications\CarePlanApprovalReminder;
 use App\Services\PhiMail\IncomingMessageHandler;
 use App\Services\PhiMail\PhiMail;
+use App\ValueObjects\SimpleNotification;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Support\Facades\Notification;
@@ -51,16 +52,16 @@ class CarePlanApprovalReminderTest extends TestCase
     {
         $databaseData = $notification->toDatabase($recipient);
 
-        $expected = ['numberOfCareplans' => $numberOfCareplans];
-
-        $this->assertEquals($expected, $databaseData);
         $this->assertArrayHasKey('numberOfCareplans', $databaseData);
+        $this->assertEquals($databaseData['numberOfCareplans'], $numberOfCareplans);
     }
 
     public function checkToDirectMail($notification, $recipient)
     {
-        $data = $notification->toDirectMail($recipient);
+        $dmNotification = $notification->toDirectMail($recipient);
 
+        $this->assertInstanceOf(SimpleNotification::class, $dmNotification);
+        $data = $dmNotification->toArray();
         $this->assertArrayHasKey('body', $data);
         $this->assertArrayHasKey('subject', $data);
 
