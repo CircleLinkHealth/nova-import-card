@@ -47,7 +47,7 @@ jobs:
         keys:
         - node-v3-{{ checksum "package.json" }}
         - node-v3-
-    - run: yarn install
+    - run: npm install
     - save_cache:
         key: node-v3-{{ checksum "package.json" }}
         paths:
