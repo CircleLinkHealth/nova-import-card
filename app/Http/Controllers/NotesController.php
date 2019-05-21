@@ -45,6 +45,7 @@ class NotesController extends Controller
     public function create(
         Request $request,
         $patientId,
+        $noteId = null,
         CpmMedicationService $medicationService
     ) {
         //@todo segregate to helper functions :/
@@ -139,8 +140,8 @@ class NotesController extends Controller
         $withdrawnReasons       = array_combine($reasons, $reasons);
         $patientWithdrawnReason = $patient->getWithdrawnReason();
 
-        if ($request->has('note_id')) {
-            $existingNote = Note::findOrFail($request->input('note_id'));
+        if ($noteId) {
+            $existingNote = Note::findOrFail($noteId);
         } else {
             $existingNote = Note::where('patient_id', '=', $patientId)
                 ->where('author_id', '=', $author_id)
@@ -652,8 +653,6 @@ class NotesController extends Controller
             ? $input['note_id']
             : null;
 
-        $input['status'] = 'draft';
-
         //in case Performed By field is removed from the form (per CPM-165)
         if ( ! isset($input['author_id'])) {
             $input['author_id'] = auth()->id();
@@ -663,7 +662,8 @@ class NotesController extends Controller
         if ($noteId) {
             $note = $this->editNote($noteId, $input);
         } else {
-            $note = $this->service->storeNote($input);
+            $input['status'] = 'draft';
+            $note            = $this->service->storeNote($input);
         }
 
         return response()->json(['message' => 'success', 'note_id' => $note->id]);
@@ -671,8 +671,9 @@ class NotesController extends Controller
 
     private function editNote($noteId, $requestInput)
     {
-        $note        = Note::find($noteId);
-        $note->isTCM = isset($requestInput['isTCM'])
+        $note            = Note::find($noteId);
+        $note->logger_id = $requestInput['logger_id'];
+        $note->isTCM     = isset($requestInput['isTCM'])
             ? $requestInput['isTCM']
             : 0;
         $note->type                 = $requestInput['type'];

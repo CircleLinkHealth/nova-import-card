@@ -1,7 +1,7 @@
 @extends('partials.providerUI')
 
-@section('title', 'Create Patient Note')
-@section('activity', 'Patient Note Creation')
+@section('title', empty($note) ? 'Create Patient Note' : 'Edit Patient Note')
+@section('activity', empty($note) ? 'Patient Note Creation' : 'Patient Note Edit')
 
 @section('content')
 
@@ -11,11 +11,12 @@
         $userTime = $note->performed_at;
     } else {
         $userTime = \Carbon\Carbon::now();
-        $userTime->setTimezone($userTimeZone);
-        $userTimeGMT = \Carbon\Carbon::now()->setTimezone('GMT');
-        $userTime    = $userTime->format('Y-m-d\TH:i');
-        $userTimeGMT = $userTimeGMT->format('Y-m-d\TH:i');
     }
+
+    $userTime->setTimezone($userTimeZone);
+    $userTimeGMT = \Carbon\Carbon::now()->setTimezone('GMT');
+    $userTime    = $userTime->format('Y-m-d\TH:i');
+    $userTimeGMT = $userTimeGMT->format('Y-m-d\TH:i');
 
     ?>
 
@@ -72,7 +73,13 @@
             <div class="main-form-container col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 col-xs-10 col-xs-offset-1"
                  style="border-bottom: 3px solid #50b2e2;">
                 <div class="row">
-                    <div class="main-form-title col-lg-12"> Record New Note</div>
+                    <div class="main-form-title col-lg-12">
+                        @if (empty($note) || $note->status === 'draft')
+                            Record New Note
+                        @else
+                            Edit Note
+                        @endif
+                    </div>
 
 
                     {{ csrf_field() }}
@@ -95,13 +102,15 @@
                     </div>
 
                     <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12 col-xs-12"
-                         style=" border:0px solid #50b2e2;padding: 10px 35px;">
+                         style=" border:0 solid #50b2e2;padding: 10px 35px;">
 
-                        @if (!empty($note))
-                            <div class="col-md-12">
-                                This is a draft note. Please click Save/Send in order to finalize note and create a new
+                        @if (!empty($note) && $note->status === 'draft')
+                            <div class="col-md-12 text-center">
+                                This is a draft note. Please click Save/Send in order to finalize and create a new
                                 one.
                             </div>
+                            <br/>
+                            <br/>
                         @endif
 
                         <div class="col-md-6">
@@ -365,6 +374,7 @@
                                             <persistent-textarea storage-key="notes:{{$patient->id}}:add" id="note"
                                                                  class-name="form-control" :rows="10" :cols="100"
                                                                  placeholder="Enter Note..."
+                                                                 value="{{ !empty($note) ? $note->body : '' }}"
                                                                  name="body" :required="true"></persistent-textarea>
                                             <br>
                                         </div>
@@ -382,7 +392,8 @@
                                     <!-- Hidden Fields -->
                                     <div class="form-group col-sm-4">
                                         <input type="hidden" name="patient_id" value="{{$patient->id}}">
-                                        <input type="hidden" name="logger_id" value="{{Auth::user()->id}}">
+                                        <input type="hidden" name="logger_id" id="logger_id"
+                                               value="{{Auth::user()->id}}">
                                         <input type="hidden" name="author_id" value="{{Auth::user()->id}}">
                                         <input type="hidden" name="programId" id="programId" value="{{$program_id}}">
                                         <input type="hidden" name="task_status" id="task_status" value="">
@@ -811,13 +822,11 @@
                 noteId = '{{$note->id}}';
                     @endif
 
-            const patientId = '{{$patient->id}}';
-
             const saveDraftUrl = '{{route('patient.note.store.draft', ['patientId' => $patient->id])}}';
             const saveDraft = () => {
                 window.axios
                     .post(saveDraftUrl, {
-                        patient_id: patientId,
+                        patient_id: $('#patient_id').val(),
                         note_id: noteId,
                         type: $('#activityKey').val(),
                         general_comment: $('#general_comment').val(),

@@ -40,7 +40,13 @@
             }
         },
         mounted() {
-            this.text = sstor.get(this.storageKey)
+            if (this.value && this.value.length) {
+                sstor.remove(this.storageKey);
+                this.changeTextArea();
+            }
+            else {
+                this.text = sstor.get(this.storageKey)
+            }
         }
     }
 </script>
