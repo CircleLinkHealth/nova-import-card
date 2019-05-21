@@ -6,7 +6,6 @@
 
 namespace App\ViewModels;
 
-use App\NurseInvoiceExtra;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use CircleLinkHealth\Customer\Entities\User;
@@ -66,7 +65,9 @@ class CareCoachInvoiceViewModel extends ViewModel
      * @var float the total pay with fixed rate algorithm
      */
     private $fixedRatePay;
-
+    /**
+     * @var \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
+     */
     private $nurseExtras;
     /**
      * @var int|null
@@ -93,6 +94,8 @@ class CareCoachInvoiceViewModel extends ViewModel
      * @param Carbon     $startDate
      * @param Carbon     $endDate
      * @param Collection $itemizedData
+     * @param int        $bonus
+     * @param int        $addedTime
      * @param string     $note
      * @param bool       $variablePay
      * @param Collection $variablePaySummary
@@ -102,6 +105,8 @@ class CareCoachInvoiceViewModel extends ViewModel
         Carbon $startDate,
         Carbon $endDate,
         Collection $itemizedData,
+        int $bonus,
+        int $addedTime,
         string $note,
         bool $variablePay,
         Collection $variablePaySummary
@@ -114,9 +119,8 @@ class CareCoachInvoiceViewModel extends ViewModel
         $this->variablePay        = $variablePay;
         $this->totalSystemTime    = $this->getTotalSystemTime();
         $this->variablePaySummary = $variablePaySummary->flatten();
-        $this->nurseExtras        = $this->getNurseExtras();
-        $this->extraTime          = $this->getAddedDuration();
-        $this->bonus              = $this->getBonus();
+        $this->bonus              = $bonus;
+        $this->extraTime          = $addedTime;
         $this->setPayableAmount();
     }
 
@@ -138,27 +142,6 @@ class CareCoachInvoiceViewModel extends ViewModel
     public function endDate()
     {
         return $this->endDate->format(self::DATE_FORMAT);
-    }
-
-    public function getAddedDuration()
-    {
-        return $this->nurseExtras
-            ->where('unit', 'minutes')
-            ->sum('value');
-    }
-
-    public function getBonus()
-    {
-        return $this->nurseExtras
-            ->where('unit', 'usd')
-            ->sum('value');
-    }
-
-    public function getNurseExtras()
-    {
-        return NurseInvoiceExtra::where('user_id', $this->user->id)
-            ->whereBetween('date', [$this->startDate, $this->endDate])
-            ->get();
     }
 
     public function getTotalSystemTime()

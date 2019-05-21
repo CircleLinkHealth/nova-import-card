@@ -8,6 +8,7 @@ namespace App\Jobs;
 
 use App\Notifications\NurseInvoiceCreated;
 use App\Notifications\NurseInvoicesCreated;
+use App\NurseInvoiceExtra;
 use App\Repositories\Cache\UserNotificationList;
 use App\Repositories\Cache\View;
 use App\Services\PdfService;
@@ -39,6 +40,10 @@ class CreateNurseInvoices implements ShouldQueue
      * @var string
      */
     protected $note;
+    /**
+     * @var int
+     */
+    protected $nurseExtras;
     /**
      * @var array
      */
@@ -80,6 +85,27 @@ class CreateNurseInvoices implements ShouldQueue
         $this->requestedBy  = $requestedBy;
         $this->variablePay  = $variablePay;
         $this->note         = $note;
+    }
+
+    public function getAddedDuration()
+    {
+        return $this->nurseExtras
+            ->where('unit', 'minutes')
+            ->sum('value');
+    }
+
+    public function getBonus()
+    {
+        return $this->nurseExtras
+            ->where('unit', 'usd')
+            ->sum('value');
+    }
+
+    public function getNurseExtras($userId)
+    {
+        return NurseInvoiceExtra::where('user_id', $userId)
+            ->whereBetween('date', [$this->startDate, $this->endDate])
+            ->get();
     }
 
     /**
@@ -172,6 +198,8 @@ class CreateNurseInvoices implements ShouldQueue
         $userId = $itemizedData->first()->first()->user_id;
         $user   = $nurseUsers->firstWhere('id', '=', $userId);
 
+        $this->nurseExtras = $this->getNurseExtras($userId);
+
         if ( ! $user) {
             throw new \Exception("User `$userId` not found");
         }
@@ -189,6 +217,8 @@ class CreateNurseInvoices implements ShouldQueue
             $this->startDate,
             $this->endDate,
             $itemizedData,
+            $this->getBonus(),
+            $this->getAddedDuration(),
             $this->note,
             $this->variablePay,
             $variablePaySummary ?? collect()
@@ -198,7 +228,6 @@ class CreateNurseInvoices implements ShouldQueue
     /**
      * @param Collection $nurseUsers
      * @param Collection $nurseSystemTimeMap
-     * @param bool       $sendToNurses
      * @param PdfService $pdfService
      *
      * @return Collection
@@ -244,9 +273,9 @@ class CreateNurseInvoices implements ShouldQueue
                 \DB::raw("DATE_FORMAT($dateTimeField, '%Y-%m-%d') as date"),
                 'provider_id as user_id',
                 $isBillable
-                          ? \DB::raw('TRUE as is_billable')
-                          : \DB::raw('FALSE as is_billable')
-                  )
+                    ? \DB::raw('TRUE as is_billable')
+                    : \DB::raw('FALSE as is_billable')
+            )
             ->whereIn('provider_id', $this->nurseUserIds)
             ->whereBetween(
                 $dateTimeField,
@@ -254,7 +283,7 @@ class CreateNurseInvoices implements ShouldQueue
                     $start,
                     $end,
                 ]
-                  )->groupBy('date', 'user_id');
+            )->groupBy('date', 'user_id');
     }
 
     private function notifyRequestor($link)
@@ -365,7 +394,7 @@ class CreateNurseInvoices implements ShouldQueue
                     $this->startDate->toDateString(),
                     $this->endDate->toDateString(),
                 ]
-                                    )
+            )
             ->groupBy('date', 'user_id', 'is_billable')
             ->get()
             ->groupBy(['user_id', 'date', 'is_billable'])
@@ -383,13 +412,13 @@ class CreateNurseInvoices implements ShouldQueue
                     ->unionAll($this->offlineSystemTime())
                     ->unionAll($this->totalBillableTimeMap()),
                 'activities'
-                  )
+            )
             ->select(
                 \DB::raw('SUM(total_time) as total_time'),
                 'date',
                 'user_id',
                 'is_billable'
-                  )
+            )
             ->groupBy('user_id', 'date', 'is_billable')
             ->get()
             ->groupBy(['user_id', 'date'])
@@ -410,7 +439,7 @@ class CreateNurseInvoices implements ShouldQueue
                 'ccm_type',
                 \DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d') as date"),
                 'nurse_id'
-                               )
+            )
             ->groupBy('nurse_id', 'date', 'ccm_type')
             ->get()
             ->groupBy(['nurse_id', 'date', 'ccm_type']);
