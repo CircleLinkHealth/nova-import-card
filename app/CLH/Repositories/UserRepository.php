@@ -20,6 +20,7 @@ use CircleLinkHealth\Customer\Entities\ProviderInfo;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\UserPasswordsHistory;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
+use Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Storage;
@@ -465,7 +466,7 @@ class UserRepository
     }
 
     public function saveOrUpdateRoles(
-        User $user,
+        User &$user,
         ParameterBag $params
     ) {
         $practices = $this->saveAndGetPractice($user, $params);
@@ -491,6 +492,8 @@ class UserRepository
             ->where('user_id', $user->id)
             ->whereNotIn('program_id', $practices)
             ->delete();
+
+        $this->clearRolesCache($user);
 
         // add patient info
         if ($user->hasRole('participant') && ! $user->patientInfo) {
@@ -571,6 +574,17 @@ class UserRepository
             $user->timezone = $params->get('timezone');
         }
         $user->save();
+    }
+
+    /**
+     * Clear Cerberus roles cache for User.
+     *
+     * @param User $user
+     */
+    private function clearRolesCache(User $user)
+    {
+        $cacheKey  = 'cerberus_roles_for_user_'.$user->id;
+        $forgotten = \Cache::tags(Config::get('cerberus.role_user_site_table'))->forget($cacheKey);
     }
 
     private function forceEnable2fa(AuthyUser $authyUser)

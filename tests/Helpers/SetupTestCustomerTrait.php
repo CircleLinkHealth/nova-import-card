@@ -104,11 +104,12 @@ trait SetupTestCustomerTrait
             });
 
         //careplan
-        $patient->carePlan()->create([
+        $patient->carePlan()->updateOrCreate([
             'mode'                  => CarePlan::WEB,
             'care_plan_template_id' => 1,
-            'status'                => CarePlan::PROVIDER_APPROVED,
-            'provider_date'         => Carbon::now(),
+        ], [
+            'status'        => CarePlan::PROVIDER_APPROVED,
+            'provider_date' => Carbon::now(),
         ]);
 
         //activities
