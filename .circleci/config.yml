@@ -68,7 +68,7 @@ jobs:
 #        path: tests/_output
 #    - store_artifacts:
 #        path: tests/_output
-    - version_build:
+    - run:
         name: Add a version to the build
         command: |
           php artisan version:refresh
