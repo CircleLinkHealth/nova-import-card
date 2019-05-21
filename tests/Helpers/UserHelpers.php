@@ -64,9 +64,7 @@ trait UserHelpers
         $practiceId = 8,
         $roleName = 'provider'
     ): User {
-        $roles = [
-            Role::whereName($roleName)->firstOrFail()->id,
-        ];
+        $roles = (array) Role::whereName($roleName)->firstOrFail()->id;
 
         //creates the User
         $user = $this->setupUser($practiceId, $roles);
@@ -95,15 +93,7 @@ trait UserHelpers
             ]);
         }
 
-        if ('participant' == $roleName) {
-            $user->carePlan()->create([
-                'status' => 'draft',
-            ]);
-
-            $user->patientInfo()->create();
-        }
-
-        $user->load('practices');
+        $user->load(['practices', 'patientInfo']);
 
         return $user;
     }
