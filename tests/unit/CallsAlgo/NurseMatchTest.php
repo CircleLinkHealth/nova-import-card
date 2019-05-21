@@ -15,6 +15,7 @@ class NurseMatchTest extends TestCase
 {
     use CallAlgoHelper;
     use UserHelpers;
+
     private $matchArray = [];
     private $nurse;
     private $nurse2;
