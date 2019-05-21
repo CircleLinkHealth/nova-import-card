@@ -61,11 +61,11 @@ use Validator;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereUserId($value)
  * @mixin \Eloquent
  *
- * @property int|null                                                                             $first_printed_by
- * @property \Illuminate\Support\Carbon|null                                                      $first_printed
- * @property string                                                                               $provider_approver_name
- * @property \App\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[]       $revisionHistory
+ * @property int|null                                                                                                        $first_printed_by
+ * @property \Illuminate\Support\Carbon|null                                                                                 $first_printed
+ * @property string                                                                                                          $provider_approver_name
+ * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[]                                  $revisionHistory
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan newQuery()
