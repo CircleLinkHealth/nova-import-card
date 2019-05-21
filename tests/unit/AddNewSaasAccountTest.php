@@ -41,6 +41,9 @@ class AddNewSaasAccountTest
 //
 //    }
 
+    /**
+     * @return \stdClass
+     */
     private function createSaasAccountAndAdmin()
     {
         Notification::fake();
