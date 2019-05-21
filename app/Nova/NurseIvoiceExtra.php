@@ -9,6 +9,7 @@ namespace App\Nova;
 use App\NurseInvoiceExtra;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Select;
@@ -85,10 +86,11 @@ class NurseIvoiceExtra extends Resource
         return [
             ID::make()->sortable(),
 
-            BelongsTo::make('user')->display('id')
+            BelongsTo::make('user')
                 ->hideWhenUpdating()
-                ->searchable()
-                ->prepopulate()
+                ->hideFromIndex()
+                /*->searchable()
+                ->prepopulate()*/
                 ->sortable(),
 
             Text::make('Name', 'user.display_name')
@@ -105,8 +107,6 @@ class NurseIvoiceExtra extends Resource
                     'usd'     => '$',
                 ]),
 
-            Text::make('+ Days Payment', 'user.nurseInfo.pay_interval'),
-
             Text::make('unit')
                 ->sortable()
                 ->hideWhenUpdating()
@@ -116,6 +116,10 @@ class NurseIvoiceExtra extends Resource
 
             Text::make('Value', 'value')
                 ->sortable(),
+
+            Text::make('+ Days Payment', 'nurse.pay_interval')->hideWhenCreating()->hideWhenUpdating(),
+
+            Boolean::make('Demo Nurse', 'nurse.is_demo')->hideWhenCreating()->hideWhenUpdating(),
         ];
     }
 

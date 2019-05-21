@@ -80,7 +80,7 @@ class User extends Resource
         return [
             ID::make()->sortable(),
 
-            Text::make('Display Name')
+            Text::make('display_name')
                 ->sortable()
                 ->rules('required', 'max:255'),
 

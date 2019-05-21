@@ -8,7 +8,9 @@ namespace App\Nova;
 
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Text;
 
 class Nurse extends Resource
 {
@@ -58,7 +60,7 @@ class Nurse extends Resource
 
     public function authorizedToUpdate(Request $request)
     {
-        return false;
+        return true;
     }
 
     /**
@@ -83,8 +85,18 @@ class Nurse extends Resource
     public function fields(Request $request)
     {
         return [
-            ID::make('User Id', 'user_id')->sortable(),
-            BelongsTo::make('user'),
+            ID::make()->sortable(),
+            BelongsTo::make('user')
+                ->hideWhenUpdating()
+                ->hideWhenCreating()
+                ->sortable(),
+            Text::make('Name', 'user.display_name')
+                ->hideFromIndex()
+                ->hideFromDetail()
+                ->hideWhenCreating()
+                ->readonly(true),
+            Text::make('+ Days Payment', 'pay_interval'),
+            Boolean::make('Demo Nurse', 'is_demo'),
         ];
     }
 
