@@ -560,6 +560,7 @@
             const medications = @json($medications);
             const isEditingCompleteTask = @json(!empty($call) && !empty($call->sub_type));
             const editingTaskType = isEditingCompleteTask ? @json(optional($call)->sub_type) : undefined;
+            const disableAutoSave = @json(!empty($note) && $note->status == \App\Note::STATUS_COMPLETE);
 
             const MEDICATIONS_SEPARATOR = '------------------------------';
 
@@ -937,7 +938,9 @@
                     });
             };
 
-            setTimeout(() => saveDraft(), AUTO_SAVE_INTERVAL);
+            if (!disableAutoSave) {
+                setTimeout(() => saveDraft(), AUTO_SAVE_INTERVAL);
+            }
 
         </script>
     @endpush

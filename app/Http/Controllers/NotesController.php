@@ -720,13 +720,6 @@ class NotesController extends Controller
             ->exists();
     }
 
-    private function storeInternal(
-        SafeRequest $request,
-        SchedulerService $schedulerService,
-        $patientId
-    ) {
-    }
-
     private function updatePatientCallWindows(Patient $info, $input)
     {
         $params = new ParameterBag($input);
