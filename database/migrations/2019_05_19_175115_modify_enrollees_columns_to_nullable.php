@@ -22,21 +22,34 @@ class ModifyEnrolleesColumnsToNullable extends Migration
      */
     public function up()
     {
-        Schema::table('enrollees', function (Blueprint $table) {
-            $table->dropForeign('enrollees_cpm_problem_1_foreign');
-        });
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
 
-        Schema::table('enrollees', function (Blueprint $table) {
-            $table->string('referring_provider_name', 255)->nullable()->change();
-            $table->string('problems', 255)->nullable()->change();
-            $table->unsignedInteger('cpm_problem_1')->nullable()->change();
-        });
+        Schema::table(
+            'enrollees',
+            function (Blueprint $table) {
+                $table->dropForeign('enrollees_cpm_problem_1_foreign');
+            }
+        );
 
-        Schema::table('enrollees', function (Blueprint $table) {
-            $table->foreign('cpm_problem_1')
-                ->references('id')
-                ->on('cpm_problems')
-                ->onUpdate('cascade');
-        });
+        Schema::table(
+            'enrollees',
+            function (Blueprint $table) {
+                $table->string('referring_provider_name', 255)->nullable()->change();
+                $table->string('problems', 255)->nullable()->change();
+                $table->unsignedInteger('cpm_problem_1')->nullable()->change();
+            }
+        );
+
+        Schema::table(
+            'enrollees',
+            function (Blueprint $table) {
+                $table->foreign('cpm_problem_1')
+                    ->references('id')
+                    ->on('cpm_problems')
+                    ->onUpdate('cascade');
+            }
+        );
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
     }
 }

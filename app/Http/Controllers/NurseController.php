@@ -12,6 +12,7 @@ use App\Jobs\GenerateNurseInvoice;
 use App\Notifications\NurseInvoiceCreated;
 use App\Reports\NurseDailyReport;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -27,39 +28,28 @@ class NurseController extends Controller
     {
         $input = $request->input();
 
-        $nurseIds = $request->input('nurses');
+        $nurseUserIds = $request->input('nurses');
 
-        $addTime = $request->input('manual_time')
-            ? $request->input('manual_time')
-            : 0;
-
-        $addNotes = $request->input('manual_time_notes')
-            ? $request->input('manual_time_notes')
-            : '';
-
-        $variablePay = isset($input['alternative_pay']);
+        $addNotes = '';
 
         $startDate = Carbon::parse($request->input('start_date'));
         $endDate   = Carbon::parse($request->input('end_date'));
 
-        if ('download' == $request->input('submit')) {
-            GenerateNurseInvoice::dispatch(
-                $nurseIds,
-                $startDate,
-                $endDate,
-                auth()->user()->id,
-                $variablePay,
-                $addTime,
-                $addNotes
-            )->onQueue('demanding');
-        } elseif ('downloadV2' == $request->input('submit')) {
+        if (isset($input['all_selected_nurses'])) {
+            $nurses = selectAllNursesForSelectedPeriod($startDate, $endDate);
+
+            $nurseUserIds = [];
+            foreach ($nurses as $nurseUserId) {
+                $nurseUserIds[] = $nurseUserId;
+            }
+        }
+
+        if ('downloadV2' == $request->input('submit')) {
             CreateNurseInvoices::dispatchNow(
-                $nurseIds,
+                $nurseUserIds,
                 $startDate,
                 $endDate,
                 auth()->user()->id,
-                $variablePay,
-                $addTime,
                 $addNotes
             );
         }

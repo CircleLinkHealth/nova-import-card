@@ -6,27 +6,24 @@
 
 namespace App\Nova;
 
-use CircleLinkHealth\Customer\Entities\User as CpmUser;
+use App\NurseInvoiceExtra;
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\ID;
-use Laravel\Nova\Fields\Password;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
+use Titasgailius\SearchRelations\SearchesRelations;
 
-class User extends Resource
+class NurseInvoiceExtras extends Resource
 {
-    /**
-     * Indicates if the resource should be displayed in the sidebar.
-     *
-     * @var bool
-     */
-    public static $displayInNavigation = false;
-
+    use SearchesRelations;
     /**
      * The model the resource corresponds to.
      *
      * @var string
      */
-    public static $model = CpmUser::class;
+    public static $model = NurseInvoiceExtra::class;
 
     /**
      * The columns that should be searched.
@@ -34,7 +31,16 @@ class User extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'display_name', 'email', 'first_name', 'last_name',
+        'id', 'user_id',
+    ];
+
+    /**
+     * The relationship columns that should be searched.
+     *
+     * @var array
+     */
+    public static $searchRelations = [
+        'user' => ['display_name'],
     ];
 
     /**
@@ -42,7 +48,7 @@ class User extends Resource
      *
      * @var string
      */
-    public static $title = 'display_name';
+    public static $title = 'user_id';
 
     /**
      * Get the actions available for the resource.
@@ -58,17 +64,12 @@ class User extends Resource
 
     public static function authorizedToCreate(Request $request)
     {
-        return false;
+        return true;
     }
 
     public function authorizedToDelete(Request $request)
     {
-        return false;
-    }
-
-    public function authorizedToUpdate(Request $request)
-    {
-        return false;
+        return true;
     }
 
     /**
@@ -95,32 +96,40 @@ class User extends Resource
         return [
             ID::make()->sortable(),
 
-            Text::make('display_name')
+            Text::make('Nurse Id', 'nurse.id')
                 ->sortable()
                 ->hideWhenCreating()
-                ->hideFromIndex(),
+                ->readonly(true),
 
-            Text::make('first_name')
+            BelongsTo::make('Care Coach', 'user', CareCoachUser::class)
+                ->hideWhenUpdating()
+                ->hideFromIndex()
+                ->searchable()
+                ->prepopulate(),
+
+            Text::make('Name', 'user.display_name')
                 ->sortable()
-                ->rules('required', 'max:255'),
+                ->hideWhenCreating()
+                ->readonly(true),
 
-            Text::make('last_name')
+            Date::make("Extra's Date", 'date')
+                ->sortable(),
+
+            Select::make('Unit', 'unit')
+                ->options([
+                    'minutes' => 'Minutes',
+                    'usd'     => '$',
+                ]),
+
+            Text::make('unit')
                 ->sortable()
-                ->rules('required', 'max:255'),
+                ->hideWhenUpdating()
+                ->hideFromIndex()
+                ->hideFromDetail()
+                ->hideWhenCreating(),
 
-            Text::make('suffix')
-                ->rules('required', 'max:255'),
-
-            Text::make('Email')
-                ->sortable()
-                ->rules('required', 'email', 'max:254')
-                ->creationRules('unique:users,email')
-                ->updateRules('unique:users,email,{{resourceId}}'),
-
-            Password::make('Password')
-                ->onlyOnForms()
-                ->creationRules('required', 'string', 'min:6')
-                ->updateRules('nullable', 'string', 'min:6'),
+            Text::make('Value', 'value')
+                ->sortable(),
         ];
     }
 
@@ -136,6 +145,11 @@ class User extends Resource
         return [];
     }
 
+    public static function label()
+    {
+        return 'Care Coach Bonuses';
+    }
+
     /**
      * Get the lenses available for the resource.
      *
@@ -146,15 +160,5 @@ class User extends Resource
     public function lenses(Request $request)
     {
         return [];
-    }
-
-    /**
-     * Determine if this resource uses Laravel Scout.
-     *
-     * @return bool
-     */
-    public static function usesScout()
-    {
-        return false;
     }
 }

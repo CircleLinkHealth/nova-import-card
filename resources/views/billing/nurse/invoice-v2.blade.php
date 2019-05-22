@@ -20,6 +20,11 @@
 
         @endif
 
+        @if($bonus)
+            <dt>Bonus:</dt>
+            <dd>{{$note}}: Bonus:(${{$bonus}})</dd>
+        @endif
+
         <dt>Invoice Amount <small>(highest amount used)</small></dt>
         <dd>
             @if(is_array($totalBillableRate))
