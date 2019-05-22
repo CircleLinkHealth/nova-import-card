@@ -76,15 +76,13 @@ class CreateNurseInvoices implements ShouldQueue
         Carbon $startDate,
         Carbon $endDate,
         int $requestedBy = null,
-        bool $variablePay = false,
         string $note = ''
     ) {
         $this->nurseUserIds = $nurseUserIds;
         $this->startDate    = $startDate->startOfDay();
         $this->endDate      = $endDate->endOfDay();
         $this->requestedBy  = $requestedBy;
-        $this->variablePay  = $variablePay;
-        $this->note         = $note;
+        $this->note = $note;
     }
 
     public function getAddedDuration()
@@ -199,6 +197,7 @@ class CreateNurseInvoices implements ShouldQueue
         $user   = $nurseUsers->firstWhere('id', '=', $userId);
 
         $this->nurseExtras = $this->getNurseExtras($userId);
+        $this->variablePay = $user->nurseInfo->pay_algo;
 
         if ( ! $user) {
             throw new \Exception("User `$userId` not found");
@@ -210,6 +209,7 @@ class CreateNurseInvoices implements ShouldQueue
                     return $key === $user->nurseInfo->id;
                 }
             );
+
         }
 
         return new CareCoachInvoiceViewModel(

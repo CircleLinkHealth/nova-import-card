@@ -27,7 +27,7 @@ class Nurse extends Resource
      * @var array
      */
     public static $search = [
-        'user_id',
+        'id',
     ];
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -89,14 +89,15 @@ class Nurse extends Resource
             BelongsTo::make('user')
                 ->hideWhenUpdating()
                 ->hideWhenCreating()
+                ->hideFromIndex()
                 ->sortable(),
             Text::make('Name', 'user.display_name')
-                ->hideFromIndex()
                 ->hideFromDetail()
                 ->hideWhenCreating()
                 ->readonly(true),
             Text::make('+ Days Payment', 'pay_interval'),
             Boolean::make('Demo Nurse', 'is_demo'),
+            Boolean::make('Alternative Pay', 'pay_algo'),
         ];
     }
 

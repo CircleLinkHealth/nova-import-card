@@ -118,8 +118,6 @@ class NurseIvoiceExtra extends Resource
                 ->sortable(),
 
             Text::make('+ Days Payment', 'nurse.pay_interval')->hideWhenCreating()->hideWhenUpdating(),
-
-            Boolean::make('Demo Nurse', 'nurse.is_demo')->hideWhenCreating()->hideWhenUpdating(),
         ];
     }
 

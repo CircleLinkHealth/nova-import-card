@@ -108,7 +108,6 @@ class PdfService
                 ]
             );
         }
-
         return $outputFullPath;
     }
 

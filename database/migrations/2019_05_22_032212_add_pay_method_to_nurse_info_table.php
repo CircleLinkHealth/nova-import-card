@@ -15,6 +15,7 @@ class AddPayMethodToNurseInfoTable extends Migration
      */
     public function down()
     {
+        //
     }
 
     /**
@@ -25,6 +26,7 @@ class AddPayMethodToNurseInfoTable extends Migration
         Schema::table('nurse_info', function (Blueprint $table) {
             $table->boolean('is_demo')->default(false);
             $table->integer('pay_interval')->default(40);
+            $table->boolean('pay_algo')->default(true);
         });
     }
 }

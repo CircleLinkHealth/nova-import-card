@@ -32,8 +32,6 @@ class NurseController extends Controller
 
         $addNotes = '';
 
-        $variablePay = isset($input['alternative_pay']);
-
         $startDate = Carbon::parse($request->input('start_date'));
         $endDate   = Carbon::parse($request->input('end_date'));
 
@@ -46,22 +44,12 @@ class NurseController extends Controller
             }
         }
 
-        if ('download' == $request->input('submit')) {
-            GenerateNurseInvoice::dispatch(
-                $nurseUserIds,
-                $startDate,
-                $endDate,
-                auth()->user()->id,
-                $variablePay,
-                $addNotes
-            )->onQueue('demanding');
-        } elseif ('downloadV2' == $request->input('submit')) {
+        if ('downloadV2' == $request->input('submit')) {
             CreateNurseInvoices::dispatchNow(
                 $nurseUserIds,
                 $startDate,
                 $endDate,
                 auth()->user()->id,
-                $variablePay,
                 $addNotes
             );
         }
