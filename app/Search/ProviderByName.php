@@ -8,47 +8,45 @@ namespace App\Search;
 
 use CircleLinkHealth\Customer\Entities\User;
 
-class ProviderByName
+class ProviderByName extends BaseScoutSearch
 {
-    const TWO_WEEKS = 21600;
-
     /**
-     * Essentially a static wrapper for find so that we can do `ProviderByName::first($term)`.
-     *
-     * @param string $term
-     *
-     * @return mixed
+     * The name of this search.
      */
-    public static function first(string $term)
-    {
-        return (new static())->find($term);
-    }
+    const SEARCH_NAME = 'search_provider_by_name';
 
     /**
-     * Search using given term.
-     *
-     * @param string $term
-     *
-     * @return mixed
-     */
-    private function find(string $term)
-    {
-        return \Cache::remember(
-            self::key($term),
-            self::TWO_WEEKS,
-            function () use ($term) {
-                return User::search($term)->first();
-            }
-        );
-    }
-
-    /**
-     * @param string $term
+     * The name of this search. Will be used in cache keys, tags.
      *
      * @return string
      */
-    private function key(string $term)
+    public function name(): string
     {
-        return "search_$term";
+        return self::SEARCH_NAME;
+    }
+
+    /**
+     * The eloquent query for performing the search.
+     *
+     * @param string $term
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function query(string $term)
+    {
+        return User::search($term)->first();
+    }
+
+    /**
+     * Tags for this search.
+     *
+     * @return array
+     */
+    public function tags(): array
+    {
+        return [
+            $this->name(),
+            'scout_searches',
+        ];
     }
 }
