@@ -11,11 +11,6 @@ use CircleLinkHealth\Customer\Entities\Practice;
 class PracticeByName extends BaseScoutSearch
 {
     /**
-     * The name of this search.
-     */
-    protected $name = 'search_practice_by_name';
-
-    /**
      * The eloquent query for performing the search.
      *
      * @param string $term
