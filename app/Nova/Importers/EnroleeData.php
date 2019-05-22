@@ -7,8 +7,8 @@
 namespace App\Nova\Importers;
 
 use App\Enrollee;
+use App\Search\ProviderByName;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\User;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
@@ -54,7 +54,7 @@ class EnroleeData implements OnEachRow, WithChunkReading, WithValidation, WithHe
     {
         $row = $row->toArray();
 
-        $provider = User::search($row['provider'])->first();
+        $provider = ProviderByName::first($row['provider']);
 
         if ( ! $provider) {
             return;
