@@ -49,10 +49,6 @@
       "url": "git@github.com:CircleLinkHealth/module-core.git"
     },
     {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/module-notifications.git"
-    },
-    {
       "type": "composer",
       "url": "https://packagist.org"
     },
@@ -78,7 +74,6 @@
     "circlelinkhealth/raygun": "dev-master",
     "circlelinkhealth/timetracking": "dev-master",
     "circlelinkhealth/twofa": "dev-master",
-    "circlelinkhealth/notifications": "dev-master",
     "doctrine/dbal": "~2.3",
     "fideloper/proxy": "^4.0",
     "fzaninotto/faker": "~1.4",
