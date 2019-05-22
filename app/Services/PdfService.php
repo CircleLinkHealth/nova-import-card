@@ -86,7 +86,6 @@ class PdfService
 
         $pdf = $this->htmlToPdfService
             ->loadView($view, $args);
-
         if ( ! empty($options)) {
             foreach ($options as $key => $value) {
                 $pdf = $pdf->setOption($key, $value);
@@ -109,7 +108,6 @@ class PdfService
                 ]
             );
         }
-
         return $outputFullPath;
     }
 
