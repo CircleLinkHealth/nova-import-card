@@ -44,6 +44,11 @@ class CarePlanApprovalReminder extends Notification
         ];
     }
 
+    public function toDatabase($notifiable)
+    {
+        return $this->toArray($notifiable);
+    }
+
     /**
      * @param User $notifiable
      *

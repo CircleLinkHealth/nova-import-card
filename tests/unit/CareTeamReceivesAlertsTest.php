@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace Tests\unit;
+namespace Tests\Unit;
 
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\User;
@@ -15,7 +15,8 @@ use Tests\TestCase;
 
 class CareTeamReceivesAlertsTest extends TestCase
 {
-    use CarePlanHelpers,
+    use CarePlanHelpers;
+    use
         SetupTestCustomerTrait;
     /**
      * @var Faker\Factory

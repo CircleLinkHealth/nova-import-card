@@ -27,31 +27,33 @@ trait UserHelpers
         Patient $patient,
         Nurse $scheduler
     ) {
-        return Call::create([
-            'service'     => 'phone',
-            'status'      => 'not reached',
-            'called_date' => '2016-07-16',
+        return Call::create(
+            [
+                'service'     => 'phone',
+                'status'      => 'not reached',
+                'called_date' => '2016-07-16',
 
-            'attempt_note' => '',
+                'attempt_note' => '',
 
-            'scheduler' => $scheduler->user->id,
+                'scheduler' => $scheduler->user->id,
 
-            'inbound_phone_number' => '111-111-1111',
+                'inbound_phone_number' => '111-111-1111',
 
-            'outbound_phone_number' => '',
+                'outbound_phone_number' => '',
 
-            'inbound_cpm_id'  => $patient->user->id,
-            'outbound_cpm_id' => $scheduler->user->id,
+                'inbound_cpm_id'  => $patient->user->id,
+                'outbound_cpm_id' => $scheduler->user->id,
 
-            'call_time'  => 0,
-            'created_at' => Carbon::now()->toDateTimeString(),
+                'call_time'  => 0,
+                'created_at' => Carbon::now()->toDateTimeString(),
 
-            'scheduled_date' => '2016-12-01',
-            'window_start'   => '09:00',
-            'window_end'     => '10:00',
+                'scheduled_date' => '2016-12-01',
+                'window_start'   => '09:00',
+                'window_end'     => '10:00',
 
-            'is_cpm_outbound' => true,
-        ]);
+                'is_cpm_outbound' => true,
+            ]
+        );
     }
 
     /**
@@ -64,9 +66,7 @@ trait UserHelpers
         $practiceId = 8,
         $roleName = 'provider'
     ): User {
-        $roles = [
-            Role::whereName($roleName)->firstOrFail()->id,
-        ];
+        $roles = (array) Role::whereName($roleName)->firstOrFail()->id;
 
         //creates the User
         $user = $this->setupUser($practiceId, $roles);
@@ -75,10 +75,13 @@ trait UserHelpers
         $locations = $user->locations->pluck('id')->all();
 
         foreach ($locations as $locId) {
-            $this->assertDatabaseHas('location_user', [
-                'location_id' => $locId,
-                'user_id'     => $user->id,
-            ]);
+            $this->assertDatabaseHas(
+                'location_user',
+                [
+                    'location_id' => $locId,
+                    'user_id'     => $user->id,
+                ]
+            );
         }
 
         //check that it was created
@@ -88,22 +91,28 @@ trait UserHelpers
         foreach ($roles as $role) {
             $is_admin = 1 == $role;
             $user->attachPractice($practiceId, [$role], $is_admin);
-            $this->assertDatabaseHas('practice_role_user', [
-                'user_id'    => $user->id,
-                'role_id'    => $role,
-                'program_id' => $practiceId,
-            ]);
+            $this->assertDatabaseHas(
+                'practice_role_user',
+                [
+                    'user_id'    => $user->id,
+                    'role_id'    => $role,
+                    'program_id' => $practiceId,
+                ]
+            );
         }
 
         if ('participant' == $roleName) {
-            $user->carePlan()->create([
-                'status' => 'draft',
-            ]);
-
-            $user->patientInfo()->create();
+            $user->carePlan()->updateOrCreate(
+                [
+                    'care_plan_template_id' => getAppConfig('default_care_plan_template_id'),
+                ],
+                [
+                    'status' => 'draft',
+                ]
+            );
         }
 
-        $user->load('practices');
+        $user->load(['practices', 'patientInfo', 'carePlan']);
 
         return $user;
     }
@@ -115,15 +124,17 @@ trait UserHelpers
     ) {
         $window = timestampsToWindow($st, $end);
 
-        return NurseContactWindow::create([
-            'date'              => $st->toDateString(),
-            'window_time_start' => $window['start'],
-            'window_time_end'   => $window['end'],
+        return NurseContactWindow::create(
+            [
+                'date'              => $st->toDateString(),
+                'window_time_start' => $window['start'],
+                'window_time_end'   => $window['end'],
 
-            'day_of_week' => 5,
+                'day_of_week' => 5,
 
-            'nurse_info_id' => $nurse->id,
-        ]);
+                'nurse_info_id' => $nurse->id,
+            ]
+        );
     }
 
     //NURSE TEST HELPERS
@@ -136,14 +147,16 @@ trait UserHelpers
     ) {
         $window = timestampsToWindow($st, $end);
 
-        return PatientContactWindow::create([
-            'window_time_start' => $window['start'],
-            'window_time_end'   => $window['end'],
+        return PatientContactWindow::create(
+            [
+                'window_time_start' => $window['start'],
+                'window_time_end'   => $window['end'],
 
-            'day_of_week' => $dayOfWeek,
+                'day_of_week' => $dayOfWeek,
 
-            'patient_info_id' => $patient->id,
-        ]);
+                'patient_info_id' => $patient->id,
+            ]
+        );
     }
 
     public function makePatientMonthlyRecord(Patient $patient)
@@ -160,36 +173,38 @@ trait UserHelpers
         $email     = $faker->email;
         $workPhone = StringManipulation::formatPhoneNumber($faker->phoneNumber);
 
-        $bag = new ParameterBag([
-            'email'        => $email,
-            'password'     => 'password',
-            'display_name' => "$firstName $lastName",
-            'first_name'   => $firstName,
-            'last_name'    => $lastName,
-            'username'     => $faker->userName,
-            'program_id'   => $practiceId,
-            //id=9 is testdrive
-            'address'           => $faker->streetAddress,
-            'user_status'       => 1,
-            'address2'          => '',
-            'city'              => $faker->city,
-            'state'             => 'AL',
-            'zip'               => '12345',
-            'is_auto_generated' => true,
-            'roles'             => $roles,
-            'timezone'          => 'America/New_York',
+        $bag = new ParameterBag(
+            [
+                'email'        => $email,
+                'password'     => 'password',
+                'display_name' => "$firstName $lastName",
+                'first_name'   => $firstName,
+                'last_name'    => $lastName,
+                'username'     => $faker->userName,
+                'program_id'   => $practiceId,
+                //id=9 is testdrive
+                'address'           => $faker->streetAddress,
+                'user_status'       => 1,
+                'address2'          => '',
+                'city'              => $faker->city,
+                'state'             => 'AL',
+                'zip'               => '12345',
+                'is_auto_generated' => true,
+                'roles'             => $roles,
+                'timezone'          => 'America/New_York',
 
-            //provider Info
-            'prefix'     => 'Dr',
-            'suffix'     => 'MD',
-            'npi_number' => 1234567890,
-            'specialty'  => 'Unit Tester',
+                //provider Info
+                'prefix'     => 'Dr',
+                'suffix'     => 'MD',
+                'npi_number' => 1234567890,
+                'specialty'  => 'Unit Tester',
 
-            //phones
-            'home_phone_number' => $workPhone,
+                //phones
+                'home_phone_number' => $workPhone,
 
-            'ccm_status' => 'enrolled',
-        ]);
+                'ccm_status' => 'enrolled',
+            ]
+        );
 
         //create a user
         $user = (new UserRepository())->createNewUser(new User(), $bag);

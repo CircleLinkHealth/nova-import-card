@@ -65,6 +65,7 @@ trait MedicationTraits
     public function retrieveMedication(Request $request)
     {
         $medication                        = new \App\Models\CCD\Medication();
+        $medication->active                = $request->input('active');
         $medication->medication_import_id  = $request->input('medication_import_id');
         $medication->ccda_id               = $request->input('ccda_id');
         $medication->vendor_id             = $request->input('vendor_id');
