@@ -101,12 +101,11 @@ class NurseInvoiceExtras extends Resource
                 ->hideWhenCreating()
                 ->readonly(true),
 
-            BelongsTo::make('user')
+            BelongsTo::make('Care Coach', 'user', CareCoachUser::class)
                 ->hideWhenUpdating()
                 ->hideFromIndex()
-                /*->searchable()
-                ->prepopulate()*/
-                ->sortable(),
+                ->searchable()
+                ->prepopulate(),
 
             Text::make('Name', 'user.display_name')
                 ->sortable()
