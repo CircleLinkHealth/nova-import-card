@@ -107,7 +107,6 @@ class CareCoachInvoiceViewModel extends ViewModel
         Collection $itemizedData,
         int $bonus,
         int $addedTime,
-        string $note,
         bool $variablePay,
         Collection $variablePaySummary
     ) {
@@ -115,7 +114,6 @@ class CareCoachInvoiceViewModel extends ViewModel
         $this->startDate          = $startDate;
         $this->endDate            = $endDate;
         $this->itemizedData       = $itemizedData->flatten();
-        $this->note               = $note;
         $this->variablePay        = $variablePay;
         $this->totalSystemTime    = $this->getTotalSystemTime();
         $this->variablePaySummary = $variablePaySummary->flatten();

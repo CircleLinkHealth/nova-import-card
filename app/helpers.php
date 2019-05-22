@@ -1400,43 +1400,14 @@ if ( ! function_exists('calculateWeekdays')) {
     {
         $holidays = DB::table('company_holidays')->get();
 
-        return Carbon::parse($fromDate)->diffInDaysFiltered(function (Carbon $date) use ($holidays) {
-            $matchingHolidays = $holidays->where('holiday_date', $date->toDateString());
+        return Carbon::parse($fromDate)->diffInDaysFiltered(
+            function (Carbon $date) use ($holidays) {
+                $matchingHolidays = $holidays->where('holiday_date', $date->toDateString());
 
-            return ! $date->isWeekend() && ! $matchingHolidays->count() >= 1;
-        }, new Carbon($toDate));
-    }
-}
-
-if ( ! function_exists('selectAllNursesForSelectedPeriod')) {
-    /**
-     * Returns all nurses selected for time period in admin/reports/nurse/invoice.
-     *
-     * @param $startDate
-     * @param $endDate
-     *
-     * @return EloquentCollection|\Illuminate\Database\Eloquent\Builder[]|Nurse[]
-     */
-    function selectAllNursesForSelectedPeriod(Carbon $startDate, Carbon $endDate)
-    {
-        $nurses = Nurse::with([
-            'summary' => function ($s) use ($startDate, $endDate) {
-                $s->whereBetween('month_year', [
-                    $startDate->copy()->toDateString(),
-                    $endDate->copy()->toDateString(),
-                ]);
+                return ! $date->isWeekend() && ! $matchingHolidays->count() >= 1;
             },
-        ])->whereHas('summary', function ($s) use ($startDate, $endDate) {
-            $s->whereBetween('month_year', [
-                $startDate->copy()->toDateString(),
-                $endDate->copy()->toDateString(),
-            ]);
-        })->where([
-            ['status', 'active'],
-            ['is_demo', '!=', true],
-        ])->get()->pluck('user.id');
-
-        return $nurses;
+            new Carbon($toDate)
+        );
     }
 }
 
