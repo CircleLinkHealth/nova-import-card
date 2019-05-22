@@ -9,13 +9,19 @@ namespace App\Nova;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
-use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 use Titasgailius\SearchRelations\SearchesRelations;
 
 class Nurse extends Resource
 {
     use SearchesRelations;
+
+    /**
+     * The logical group associated with the resource.
+     *
+     * @var string
+     */
+    public static $group = \App\Constants::NOVA_GROUP_CARE_COACHES;
     /**
      * The model the resource corresponds to.
      *
@@ -96,7 +102,6 @@ class Nurse extends Resource
     public function fields(Request $request)
     {
         return [
-            ID::make('Nurse Id', 'id')->sortable(),
             BelongsTo::make('user')
                 ->hideWhenUpdating()
                 ->hideWhenCreating()
@@ -107,7 +112,7 @@ class Nurse extends Resource
                 ->hideWhenCreating()
                 ->readonly(true),
             Text::make('+ Days Payment', 'pay_interval'),
-            Boolean::make('Demo Nurse', 'is_demo'),
+            Boolean::make('Is Demo?', 'is_demo'),
             Boolean::make('Alternative Pay', 'pay_algo'),
         ];
     }
@@ -126,7 +131,7 @@ class Nurse extends Resource
 
     public static function label()
     {
-        return 'Care Coach Pay Method';
+        return 'Pay Details';
     }
 
     /**
