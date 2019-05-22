@@ -11,11 +11,6 @@ use CircleLinkHealth\Customer\Entities\User;
 class ProviderByName extends BaseScoutSearch
 {
     /**
-     * The name of this search.
-     */
-    protected $name = 'search_provider_by_name';
-
-    /**
      * The eloquent query for performing the search.
      *
      * @param string $term
