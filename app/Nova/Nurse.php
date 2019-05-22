@@ -11,9 +11,11 @@ use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
+use Titasgailius\SearchRelations\SearchesRelations;
 
 class Nurse extends Resource
 {
+    use SearchesRelations;
     /**
      * The model the resource corresponds to.
      *
@@ -27,7 +29,16 @@ class Nurse extends Resource
      * @var array
      */
     public static $search = [
-        'id',
+        'id', 'user_id',
+    ];
+
+    /**
+     * The relationship columns that should be searched.
+     *
+     * @var array
+     */
+    public static $searchRelations = [
+        'user' => ['display_name'],
     ];
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -85,7 +96,7 @@ class Nurse extends Resource
     public function fields(Request $request)
     {
         return [
-            ID::make()->sortable(),
+            ID::make('Nurse Id', 'id')->sortable(),
             BelongsTo::make('user')
                 ->hideWhenUpdating()
                 ->hideWhenCreating()

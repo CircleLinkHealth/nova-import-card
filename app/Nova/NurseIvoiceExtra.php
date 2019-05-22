@@ -13,9 +13,11 @@ use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
+use Titasgailius\SearchRelations\SearchesRelations;
 
 class NurseIvoiceExtra extends Resource
 {
+    use SearchesRelations;
     /**
      * The model the resource corresponds to.
      *
@@ -29,7 +31,16 @@ class NurseIvoiceExtra extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'user',
+        'id', 'user_id',
+    ];
+
+    /**
+     * The relationship columns that should be searched.
+     *
+     * @var array
+     */
+    public static $searchRelations = [
+        'user' => ['display_name'],
     ];
 
     /**
@@ -84,6 +95,11 @@ class NurseIvoiceExtra extends Resource
     {
         return [
             ID::make()->sortable(),
+
+            Text::make('Nurse Id', 'nurse.id')
+                ->sortable()
+                ->hideWhenCreating()
+                ->readonly(true),
 
             BelongsTo::make('user')
                 ->hideWhenUpdating()

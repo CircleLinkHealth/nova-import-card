@@ -63,6 +63,7 @@
     "ext-json": "*",
     "ext-libxml": "*",
     "ext-simplexml": "*",
+    "alexbowers/nova-prepopulate-searchable": "^1.0",
     "algolia/algoliasearch-client-php": "^2.2",
     "algolia/scout-extended": "^1.6",
     "amnuts/opcache-gui": "dev-master",
@@ -114,12 +115,12 @@
     "spatie/laravel-medialibrary": "^7.0.0",
     "spatie/laravel-responsecache": "^5.0",
     "spatie/laravel-view-models": "^1.1",
+    "titasgailius/search-relations": "^1.0",
     "twilio/sdk": "5.7",
     "tymon/jwt-auth": "0.5.*",
     "waavi/url-shortener": "dev-master",
     "wikimedia/composer-merge-plugin": "^1.4",
-    "yajra/laravel-datatables-oracle": "~8.0",
-    "alexbowers/nova-prepopulate-searchable": "^1.0"
+    "yajra/laravel-datatables-oracle": "~8.0"
   },
   "require-dev": {
     "barryvdh/laravel-debugbar": "*",
