@@ -13,17 +13,7 @@ class ProviderByName extends BaseScoutSearch
     /**
      * The name of this search.
      */
-    const SEARCH_NAME = 'search_provider_by_name';
-
-    /**
-     * The name of this search. Will be used in cache keys, tags.
-     *
-     * @return string
-     */
-    public function name(): string
-    {
-        return self::SEARCH_NAME;
-    }
+    protected $name = 'search_provider_by_name';
 
     /**
      * The eloquent query for performing the search.
@@ -35,18 +25,5 @@ class ProviderByName extends BaseScoutSearch
     public function query(string $term)
     {
         return User::search($term)->first();
-    }
-
-    /**
-     * Tags for this search.
-     *
-     * @return array
-     */
-    public function tags(): array
-    {
-        return [
-            $this->name(),
-            'scout_searches',
-        ];
     }
 }
