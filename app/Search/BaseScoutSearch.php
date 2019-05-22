@@ -46,7 +46,9 @@ abstract class BaseScoutSearch implements ScoutSearch
 
     public function __construct()
     {
-        $this->generateSearchName();
+        if ( ! $this->name) {
+            $this->generateSearchName();
+        }
     }
 
     /**
