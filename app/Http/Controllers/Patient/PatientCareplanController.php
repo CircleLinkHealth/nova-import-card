@@ -71,8 +71,8 @@ class PatientCareplanController extends Controller
                         $printed_date = null;
                     }
                     $last_printed
-                      ? $printed = $last_printed
-                      : $printed = 'No';
+                                                  ? $printed = $last_printed
+                                                  : $printed = 'No';
 
                     // careplan status stuff from 2.x
                     $careplanStatus = $cp->care_plan_status;
@@ -103,7 +103,7 @@ class PatientCareplanController extends Controller
                     $age = $from->diff($to)->y;
 
                     if ( ! empty($cp->patient_info_id) && ! empty($cp->patient_first_name)
-                       && ! empty($cp->patient_last_name)) {
+                                                   && ! empty($cp->patient_last_name)) {
                         $carePlansForWebix->push(
                             [
                                 'id'                         => $cp->patient_id,
@@ -130,10 +130,10 @@ class PatientCareplanController extends Controller
                                 'careplan_last_printed' => $printed_date,
                                 'careplan_printed'      => $printed_status,
                             ]
-                      );
+                                                  );
                     }
                 }
-              );
+                                      );
 
         $patientJson = $carePlansForWebix->toJson();
 

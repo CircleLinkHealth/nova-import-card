@@ -83,7 +83,7 @@ class AttachBillableProblemsToLastMonthSummary extends Command
                                         }
 
                                         AttachBillableProblemsToSummary::dispatch(
-                                                $pms
+                                            $pms
                                                                    );
                                     }
                                 }
