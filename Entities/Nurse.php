@@ -84,7 +84,7 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
         'isNLC',
         'is_demo',
         'pay_interval',
-        'pay_algo',
+        'is_variable_rate',
     ];
 
     protected $table = 'nurse_info';
