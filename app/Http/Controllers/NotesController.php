@@ -119,7 +119,7 @@ class NotesController extends Controller
             $isCareCoach = Auth::user()->isCareCoach();
             $meds        = [];
             if ($isCareCoach && $this->shouldPrePopulateWithMedications($patient)) {
-                $meds = $medicationService->repo()->patientMedicationsList($patientId);
+                $meds = $medicationService->repo()->patientMedicationsList($patientId, true);
             }
 
             $reasons = [
