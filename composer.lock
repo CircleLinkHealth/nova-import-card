@@ -458,16 +458,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.94.1",
+            "version": "3.94.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "759a565285324d2248b6ee783de541ce65bddd46"
+                "reference": "96fd506d4000cc8f3909154e2dd1e4180835941e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/759a565285324d2248b6ee783de541ce65bddd46",
-                "reference": "759a565285324d2248b6ee783de541ce65bddd46",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/96fd506d4000cc8f3909154e2dd1e4180835941e",
+                "reference": "96fd506d4000cc8f3909154e2dd1e4180835941e",
                 "shasum": ""
             },
             "require": {
@@ -537,7 +537,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2019-05-21T18:29:47+00:00"
+            "time": "2019-05-22T18:11:35+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -663,7 +663,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "806f0a35cd26319c417fe99743b1ebaefc3db604"
+                "reference": "215642d87ef23e8ff914e961400f67238346ad2f"
             },
             "require": {
                 "venturecraft/revisionable": "dev-master"
@@ -688,7 +688,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-05-21T14:02:17+00:00"
+            "time": "2019-05-22T16:00:36+00:00"
         },
         {
             "name": "circlelinkhealth/customer",
@@ -696,7 +696,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "7186560db2c86b3314832deb656c24dc1ef1743e"
+                "reference": "ac7df3ba56b88aff6b30462012736a3577380377"
             },
             "require": {
                 "circlelinkhealth/core": "dev-master",
@@ -728,7 +728,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-05-21T14:01:09+00:00"
+            "time": "2019-05-22T22:32:00+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
@@ -771,7 +771,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "c9a3194ab40343e2e007843476ad35f2f1d97342"
+                "reference": "ec4bbb78f2452ebb640bb7af9c5bf410e8bef122"
             },
             "require": {
                 "circlelinkhealth/customer": "dev-master"
@@ -796,7 +796,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-05-21T14:02:52+00:00"
+            "time": "2019-05-22T16:00:35+00:00"
         },
         {
             "name": "circlelinkhealth/twofa",
@@ -804,7 +804,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "0f6e783e0e86ce9e443c9544460032af74b82ddc"
+                "reference": "dcfbc025260f81580c19535be850ce121164037a"
             },
             "require": {
                 "authy/php": "^3.0",
@@ -830,7 +830,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-05-21T14:02:52+00:00"
+            "time": "2019-05-22T16:00:35+00:00"
         },
         {
             "name": "composer/ca-bundle",

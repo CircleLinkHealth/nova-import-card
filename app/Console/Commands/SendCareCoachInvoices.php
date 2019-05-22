@@ -85,11 +85,10 @@ class SendCareCoachInvoices extends Command
         );
 
         CreateNurseInvoices::dispatch(
-            $users->pluck('id')->all(),
             $start,
             $end,
-            null,
-            (bool) $this->option('variable-time')
+            $users->pluck('id')->all(),
+            true
         );
 
         $this->info('All done!');

@@ -14,6 +14,12 @@ use Laravel\Nova\Fields\Text;
 class ReportSetting extends Resource
 {
     /**
+     * The logical group associated with the resource.
+     *
+     * @var string
+     */
+    public static $group = \App\Constants::NOVA_GROUP_CARE_COACHES;
+    /**
      * The model the resource corresponds to.
      *
      * @var string
