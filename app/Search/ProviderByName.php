@@ -6,9 +6,10 @@
 
 namespace App\Search;
 
+use App\Contracts\ScoutSearch;
 use CircleLinkHealth\Customer\Entities\User;
 
-class ProviderByName
+class ProviderByName implements ScoutSearch
 {
     /**
      * The name of this search.
@@ -19,6 +20,35 @@ class ProviderByName
      * Two weeks in minutes.
      */
     const TWO_WEEKS = 21600;
+
+    /**
+     * How long to store in cache for.
+     *
+     * @return int
+     */
+    public function duration(): int
+    {
+        return self::TWO_WEEKS;
+    }
+
+    /**
+     * Search using given term.
+     *
+     * @param string $term
+     *
+     * @return mixed
+     */
+    public function find(string $term)
+    {
+        return \Cache::tags($this->tags())
+            ->remember(
+                self::key($term),
+                $this->duration(),
+                function () use ($term) {
+                    return $this->query($term);
+                }
+                     );
+    }
 
     /**
      * Essentially a static wrapper for find so that we can do `ProviderByName::first($term)`.
@@ -33,40 +63,11 @@ class ProviderByName
     }
 
     /**
-     * How long to store in cache for.
-     *
-     * @return int
-     */
-    private function duration(): int
-    {
-        return self::TWO_WEEKS;
-    }
-
-    /**
-     * Search using given term.
-     *
-     * @param string $term
-     *
-     * @return mixed
-     */
-    private function find(string $term)
-    {
-        return \Cache::tags($this->tags())
-            ->remember(
-                self::key($term),
-                $this->duration(),
-                function () use ($term) {
-                    return $this->query($term);
-                }
-                     );
-    }
-
-    /**
      * @param string $term
      *
      * @return string
      */
-    private function key(string $term)
+    public function key(string $term)
     {
         return "{$this->name()}_$term";
     }
@@ -76,7 +77,7 @@ class ProviderByName
      *
      * @return string
      */
-    private function name(): string
+    public function name(): string
     {
         return self::SEARCH_NAME;
     }
@@ -88,12 +89,17 @@ class ProviderByName
      *
      * @return \Illuminate\Database\Eloquent\Model
      */
-    private function query(string $term)
+    public function query(string $term)
     {
         return User::search($term)->first();
     }
 
-    private function tags(): array
+    /**
+     * Tags for this search.
+     *
+     * @return array
+     */
+    public function tags(): array
     {
         return [
             $this->name(),
