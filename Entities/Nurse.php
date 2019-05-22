@@ -103,9 +103,9 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
         return \CircleLinkHealth\TimeTracking\Entities\Activity::where('provider_id', $nurse->user_id)
             ->where('patient_id', $patient->user_id)
             ->where(function ($q) {
-                                                                   $q->where('created_at', '>=', Carbon::now()->startOfMonth())
-                                                                       ->where('updated_at', '<=', Carbon::now()->endOfMonth());
-                                                               })
+                $q->where('created_at', '>=', Carbon::now()->startOfMonth())
+                    ->where('updated_at', '<=', Carbon::now()->endOfMonth());
+            })
             ->sum('duration');
     }
 
