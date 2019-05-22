@@ -10,6 +10,14 @@ use CircleLinkHealth\Customer\Entities\User;
 
 class ProviderByName
 {
+    /**
+     * The name of this search.
+     */
+    const SEARCH_NAME = 'search_provider_by_name';
+
+    /**
+     * Two weeks in minutes.
+     */
     const TWO_WEEKS = 21600;
 
     /**
@@ -25,6 +33,16 @@ class ProviderByName
     }
 
     /**
+     * How long to store in cache for.
+     *
+     * @return int
+     */
+    private function duration(): int
+    {
+        return self::TWO_WEEKS;
+    }
+
+    /**
      * Search using given term.
      *
      * @param string $term
@@ -33,13 +51,14 @@ class ProviderByName
      */
     private function find(string $term)
     {
-        return \Cache::remember(
-            self::key($term),
-            self::TWO_WEEKS,
-            function () use ($term) {
-                return User::search($term)->first();
-            }
-        );
+        return \Cache::tags($this->tags())
+            ->remember(
+                self::key($term),
+                $this->duration(),
+                function () use ($term) {
+                    return $this->query($term);
+                }
+                     );
     }
 
     /**
@@ -49,6 +68,36 @@ class ProviderByName
      */
     private function key(string $term)
     {
-        return "search_$term";
+        return "{$this->name()}_$term";
+    }
+
+    /**
+     * The name of this search. Will be used in cache keys, tags.
+     *
+     * @return string
+     */
+    private function name(): string
+    {
+        return self::SEARCH_NAME;
+    }
+
+    /**
+     * The eloquent query for performing the search.
+     *
+     * @param string $term
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    private function query(string $term)
+    {
+        return User::search($term)->first();
+    }
+
+    private function tags(): array
+    {
+        return [
+            $this->name(),
+            'scout_searches',
+        ];
     }
 }
