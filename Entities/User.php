@@ -35,6 +35,7 @@ use App\Models\EmailSettings;
 use App\Models\MedicalRecords\Ccda;
 use App\Notifications\CarePlanApprovalReminder;
 use App\Notifications\ResetPassword;
+use App\NurseInvoiceExtra;
 use App\Repositories\Cache\EmptyUserNotificationList;
 use App\Repositories\Cache\UserNotificationList;
 use App\Services\UserService;
@@ -3615,5 +3616,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         );
 
         return $patientIds->pluck('id')->all();
+    }
+    
+    /**
+     * Extra time worked, or cash bonuses for Nurses
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function nurseBonuses() {
+        return $this->hasMany(NurseInvoiceExtra::class);
     }
 }
