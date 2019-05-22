@@ -24,6 +24,7 @@ class CarePlanProviderApprovalTest extends TestCase
     use CarePlanHelpers;
     use UserHelpers;
 
+
     /**
      * @var CarePlan
      */
