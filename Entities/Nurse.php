@@ -6,18 +6,9 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
-use CircleLinkHealth\TimeTracking\Entities\Activity;
-use CircleLinkHealth\Core\Filters\Filterable;
-use CircleLinkHealth\Customer\Entities\Holiday;
-use CircleLinkHealth\Customer\Entities\WorkHours;
-use CircleLinkHealth\Customer\Traits\MakesOrReceivesCalls;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
-use CircleLinkHealth\Customer\Entities\NurseContactWindow;
-use CircleLinkHealth\Customer\Entities\NurseMonthlySummary;
-use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\Customer\Entities\State;
-use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Core\Filters\Filterable;
+use CircleLinkHealth\Customer\Traits\MakesOrReceivesCalls;
 
 /**
  * CircleLinkHealth\Customer\Entities\Nurse.
@@ -88,6 +79,9 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
         'low_rate',
         'spanish',
         'isNLC',
+        'is_demo',
+        'pay_interval',
+        'pay_algo',
     ];
 
     protected $table = 'nurse_info';
