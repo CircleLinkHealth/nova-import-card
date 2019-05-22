@@ -231,12 +231,14 @@ class WebixFormatter implements ReportFormatter
         ));
 
         foreach ($users as $user) {
-            $careplanReport[$user->id]['symptoms']    = $user->cpmSymptoms()->get()->pluck('name')->all();
-            $careplanReport[$user->id]['problem']     = $user->cpmProblems()->get()->sortBy('name')->pluck('name')->all();
-            $careplanReport[$user->id]['problems']    = $cpmProblemService->getProblemsWithInstructionsForUser($user);
-            $careplanReport[$user->id]['lifestyle']   = $user->cpmLifestyles()->get()->pluck('name')->all();
-            $careplanReport[$user->id]['biometrics']  = $user->cpmBiometrics()->get()->pluck('name')->all();
-            $careplanReport[$user->id]['medications'] = $user->cpmMedicationGroups()->get()->pluck('name')->all();
+            $careplanReport[$user->id] = [
+                'symptoms'    => $user->cpmSymptoms()->get()->pluck('name')->all(),
+                'problem'     => $user->cpmProblems()->get()->sortBy('name')->pluck('name')->all(),
+                'problems'    => $cpmProblemService->getProblemsWithInstructionsForUser($user),
+                'lifestyle'   => $user->cpmLifestyles()->get()->pluck('name')->all(),
+                'biometrics'  => $user->cpmBiometrics()->get()->pluck('name')->all(),
+                'medications' => $user->cpmMedicationGroups()->get()->pluck('name')->all(),
+            ];
         }
 
         $other_problems = (new ReportsService())->getInstructionsforOtherProblems($user);
