@@ -19,6 +19,7 @@ use CircleLinkHealth\Customer\Traits\HasSettings;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
@@ -118,6 +119,7 @@ class Practice extends BaseModel implements HasMedia
         HasSettings,
         SaasAccountable,
         SoftDeletes,
+        Searchable,
         Notifiable;
     
     protected $fillable = [
@@ -580,7 +582,41 @@ class Practice extends BaseModel implements HasMedia
     {
         return Practice::getProviders($this->id);
     }
-    
+
+    /**
+     * Get Scout index name for the model.
+     *
+     * @return string
+     */
+    public function searchableAs()
+    {
+        return 'practices_index';
+    }
+
+    /**
+     * Get the indexable data array for the model.
+     *
+     * @return array
+     */
+    public function toSearchableArray()
+    {
+        return [
+            'name',
+            'display_name'
+        ];
+    }
+
+    /**
+     * Get the value used to index the model.
+     *
+     * @return mixed
+     */
+    public function getScoutKey()
+    {
+        return $this->id;
+    }
+
+
     public function scopeActive($q)
     {
         return $q->whereActive(1);
