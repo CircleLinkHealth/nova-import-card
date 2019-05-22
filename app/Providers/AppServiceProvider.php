@@ -50,6 +50,16 @@ class AppServiceProvider extends ServiceProvider
         //need to set trusted hosts before request is passed on to our routers
         Request::setTrustedHosts(config('trustedhosts.hosts'));
 
+        /*
+         * If PHP cannot write in default /tmp directory, SwiftMailer fails.
+         * To overcome this, set SwiftMailer to use storage_path('tmp').
+         */
+        if (class_exists('Swift_Preferences')) {
+            \Swift_Preferences::getInstance()->setTempDir(storage_path('tmp'));
+        } else {
+            \Log::warning('Class Swift_Preferences does not exist.');
+        }
+
         Horizon::auth(
             function ($request) {
                 return optional(auth()->user())->isAdmin();
@@ -65,15 +75,32 @@ class AppServiceProvider extends ServiceProvider
             }
         );
 
-        QueryBuilder::macro('toRawSql', function () {
-            return array_reduce($this->getBindings(), function ($sql, $binding) {
-                return preg_replace('/\?/', is_numeric($binding) ? $binding : "'".$binding."'", $sql, 1);
-            }, $this->toSql());
-        });
+        QueryBuilder::macro(
+            'toRawSql',
+            function () {
+                return array_reduce(
+                    $this->getBindings(),
+                    function ($sql, $binding) {
+                        return preg_replace(
+                            '/\?/',
+                            is_numeric($binding)
+                                                ? $binding
+                                                : "'".$binding."'",
+                            $sql,
+                            1
+                        );
+                    },
+                    $this->toSql()
+                );
+            }
+        );
 
-        EloquentBuilder::macro('toRawSql', function () {
-            return $this->getQuery()->toRawSql();
-        });
+        EloquentBuilder::macro(
+            'toRawSql',
+            function () {
+                return $this->getQuery()->toRawSql();
+            }
+        );
     }
 
     /**
@@ -88,7 +115,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             HtmlToPdfService::class,
             function () {
-                return $this->app->make(SnappyPdfWrapper::class);
+                return $this->app->make(SnappyPdfWrapper::class)
+                    ->setTemporaryFolder(storage_path('tmp'));
             }
         );
 

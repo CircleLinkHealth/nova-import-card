@@ -6,6 +6,7 @@
 
 namespace App\Services;
 
+use App\Exports\FromArray;
 use App\Filters\PatientFilters;
 use App\Http\Resources\UserAutocompleteResource;
 use App\Http\Resources\UserCsvResource;
@@ -17,7 +18,7 @@ use App\Services\CCD\CcdAllergyService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
-use Excel;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class PatientService
 {
@@ -26,8 +27,12 @@ class PatientService
     private $patientRepo;
     private $userRepo;
 
-    public function __construct(PatientWriteRepository $patientRepo, PatientReadRepository $patientReadRepo, CcdAllergyService $allergyService, UserRepositoryEloquent $userRepo)
-    {
+    public function __construct(
+        PatientWriteRepository $patientRepo,
+        PatientReadRepository $patientReadRepo,
+        CcdAllergyService $allergyService,
+        UserRepositoryEloquent $userRepo
+    ) {
         $this->patientRepo     = $patientRepo;
         $this->userRepo        = $userRepo;
         $this->allergyService  = $allergyService;
@@ -36,76 +41,99 @@ class PatientService
 
     public function excelReport($users)
     {
+        if (is_a($users, LengthAwarePaginator::class)) {
+            $users = $users->getCollection();
+        }
         $date = date('Y-m-d H:i:s');
 
-        return Excel::create('CLH-Patients-'.$date, function ($excel) use ($date, $users) {
-            $excel->setTitle('CLH Patients List');
-            $excel->setCreator('CLH System')->setCompany('CircleLink Health');
-            $excel->setDescription('CLH Patients List');
+        $practices = Practice::get()->keyBy('id');
 
-            $excel->sheet('Sheet 1', function ($sheet) use (
-                $users
-            ) {
-                $practices = Practice::get()->keyBy('id');
+        $rows = [];
 
-                $i = 0;
-                // header
-                $sheet->appendRow([
-                    'name',
-                    'provider',
-                    'program',
-                    'ccmStatus',
-                    'careplanStatus',
-                    'dob',
-                    'mrn',
-                    'phone',
-                    'age',
-                    'registeredOn',
-                    'ccm',
-                    'bhi',
-                ]);
-                foreach ($users as $user) {
-                    if ($i > 2000000) {
-                        continue 1;
-                    }
-                    $practice = $practices->get($user['program_id']);
-                    if (isset($user['patient_info'])) {
-                        $patient = $user['patient_info'];
-                        $careplan = $user['careplan'];
+        $headings = [
+            'name',
+            'provider',
+            'program',
+            'ccmStatus',
+            'careplanStatus',
+            'withdrawnReason',
+            'dob',
+            'mrn',
+            'phone',
+            'age',
+            'registeredOn',
+            'ccm',
+            'bhi',
+        ];
 
-                        $sheet->appendRow([
-                            $user['name'],
-                            $user['billing_provider_name'],
-                            $practice ? $practice['display_name'] : null,
-                            $patient ? $patient['ccm_status'] : null,
-                            $careplan ? $careplan['status'] : null,
-                            $patient ? $patient['birth_date'] : null,
-                            $patient ? $patient['mrn'] : null,
-                            $user['phone'],
-                            $patient ? ($patient['birth_date'] ? Carbon::parse($patient['birth_date'])->age : 0) : null,
-                            $user['created_at'] ? Carbon::parse($user['created_at'])->format('Y-m-d') : null,
-                            $patient ? gmdate('H:i:s', $user['ccm_time']) : null,
-                            $patient ? gmdate('H:i:s', $user['bhi_time']) : null,
-                        ]);
-                        ++$i;
-                    }
-                }
-            });
-        })->export('xls');
+        foreach ($users as $user) {
+            $practice = $practices->get($user['program_id']);
+            if (isset($user['patient_info'])) {
+                $patient  = $user['patient_info'];
+                $careplan = $user['careplan'];
+
+                array_push(
+                    $rows,
+                    [
+                        $user['name'],
+                        $user['billing_provider_name'],
+                        $practice
+                            ? $practice['display_name']
+                            : null,
+                        $patient
+                            ? $patient['ccm_status']
+                            : null,
+                        $careplan
+                            ? $careplan['status']
+                            : null,
+                        $patient
+                            ? $patient['withdrawn_reason']
+                            : null,
+                        $patient
+                            ? $patient['birth_date']
+                            : null,
+                        $patient
+                            ? $patient['mrn']
+                            : null,
+                        $user['phone'],
+                        $patient
+                            ? ($patient['birth_date']
+                            ? Carbon::parse($patient['birth_date'])->age
+                            : 0)
+                            : null,
+                        $user['created_at']
+                            ? Carbon::parse($user['created_at'])->format('Y-m-d')
+                            : null,
+                        $patient
+                            ? gmdate('H:i:s', $user['ccm_time'])
+                            : null,
+                        $patient
+                            ? gmdate('H:i:s', $user['bhi_time'])
+                            : null,
+                    ]
+                );
+            }
+        }
+        $filename = 'CLH-Patients-'.$date.'.xls';
+
+        return (new FromArray($filename, $rows, $headings))->download($filename);
     }
 
-    public function getCcdAllergies($userId)
-    {
+    public function getCcdAllergies(
+        $userId
+    ) {
         return $this->allergyService->patientAllergies($userId);
     }
 
-    public function getPatientByUserId($userId)
-    {
+    public function getPatientByUserId(
+        $userId
+    ) {
         return optional($this->userRepo->model()->with(['patientInfo'])->find($userId))->patientInfo;
     }
 
-    public function patients(PatientFilters $filters)
-    {
+    public function patients(
+        PatientFilters $filters
+    ) {
         $users = $this->readRepo()->patients($filters);
 
         if ($filters->isAutocomplete()) {
@@ -133,8 +161,10 @@ class PatientService
         return $this->patientRepo;
     }
 
-    public function setStatus($userId, $status)
-    {
+    public function setStatus(
+        $userId,
+        $status
+    ) {
         $this->repo()->setStatus($userId, Patient::ENROLLED);
     }
 }

@@ -159,7 +159,7 @@
                                             width: 176,
                                             sort: 'string',
                                             tooltip: false,
-                                            moveToFront:true
+                                            moveToFront: true
                                         },
                                         {
                                             id: "performed_at",
@@ -178,6 +178,8 @@
                                     ],
                                     ready: function () {
                                         this.adjustRowHeight("comment");
+                                        //CPM-725: Maximum Call Stack Size exceeded error on low-end machines
+                                        this.config.autoheight = false;
                                     },
                                     /*ready:function(){
                                      this.adjustRowHeight("obs_value");
@@ -247,7 +249,7 @@
                                 </li>
 
                             </div>
-                            @if(auth()->user()->hasRole(['administrator', 'med_assistant', 'provider']))
+                            @if(auth()->user()->hasRole(array_merge(['administrator'], \App\Constants::PRACTICE_STAFF_ROLE_NAMES)) )
 
                                 <input type="button" value="Export as PDF" class="btn btn-primary"
                                        style='margin:15px;'

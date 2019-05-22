@@ -14,7 +14,10 @@ use Illuminate\Queue\SerializesModels;
 
 class SendSlackMessage implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
     protected $message;
 
     protected $to;

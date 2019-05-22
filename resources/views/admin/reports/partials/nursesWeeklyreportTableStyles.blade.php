@@ -28,6 +28,7 @@
         border-collapse: separate;
         border-spacing: 0;
         font: normal 13px Arial, sans-serif;
+        margin-left: 10%;
     }
 
     .zui-table thead th {
@@ -47,6 +48,7 @@
         text-shadow: 1px 1px 1px #fff;
         text-align: center;
         white-space: nowrap;
+        background-color: white;
     }
 
     .zui-wrapper {
@@ -58,15 +60,25 @@
         overflow-x: scroll;
         overflow-y: visible;
         padding-bottom: 5px;
-        width: 89%;
+        width: 85%;
     }
 
     .zui-table .zui-sticky-col {
         border-left: solid 2px #DDEFEF;
         border-right: solid 2px #DDEFEF;
+        margin-right: 10%;
         left: 0;
         position: absolute;
         top: auto;
-        width: 11%;
+        width: 20%;
     }
+
+    .red{
+        color: red;
+    }
+
+    .green{
+        color: green;
+    }
+
 </style>

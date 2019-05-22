@@ -384,9 +384,9 @@ class TwilioController extends Controller
         $dbCall = TwilioCall::where('inbound_user_id', '=', $input['inbound_user_id'])
             ->where('outbound_user_id', '=', $input['outbound_user_id'])
             ->where(function ($q) {
-                                $q->where('call_status', '=', 'ringing')
-                                    ->orWhere('call_status', '=', 'in-progress');
-                            })
+                $q->where('call_status', '=', 'ringing')
+                    ->orWhere('call_status', '=', 'in-progress');
+            })
             ->orderBy('updated_at', 'desc')
             ->first();
 
@@ -403,10 +403,10 @@ class TwilioController extends Controller
 
             $this->client->calls($dialCallSid)
                 ->update(
-                             [
-                                 'method' => 'POST',
-                                 'url'    => route('twilio.call.dial.action'),
-                             ]
+                    [
+                        'method' => 'POST',
+                        'url'    => route('twilio.call.dial.action'),
+                    ]
                          );
 
             return response()->json([]);
@@ -761,9 +761,9 @@ class TwilioController extends Controller
             if ( ! empty($fields['from'])) {
                 $conferenceParticipant = TwilioConferenceCallParticipant::where('call_sid', '=', $callSid)
                     ->where(
-                                                                            'participant_number',
-                                                                            '=',
-                                                                            TwilioController::CLIENT_ANONYMOUS
+                        'participant_number',
+                        '=',
+                        TwilioController::CLIENT_ANONYMOUS
                                                                         )
                     ->first();
 

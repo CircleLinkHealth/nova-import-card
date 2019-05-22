@@ -16,8 +16,10 @@ use App\Console\Commands\CheckEmrDirectInbox;
 use App\Console\Commands\DeleteProcessedFiles;
 use App\Console\Commands\DownloadTwilioRecordings;
 use App\Console\Commands\EmailRNDailyReport;
+use App\Console\Commands\EmailRNDailyReportToDeprecate;
 use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\NursesAndStatesDailyReport;
+use App\Console\Commands\OverwriteNBIImportedData;
 use App\Console\Commands\QueueEligibilityBatchForProcessing;
 use App\Console\Commands\QueueGenerateNurseDailyReport;
 use App\Console\Commands\QueueGenerateNurseInvoices;
@@ -28,6 +30,7 @@ use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
 use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
+use App\Console\Commands\SendCareCoachInvoices;
 use App\Console\Commands\SendCarePlanApprovalReminders;
 use App\Console\Commands\TuneScheduledCalls;
 use Illuminate\Console\Scheduling\Schedule;
@@ -106,8 +109,13 @@ class Kernel extends ConsoleKernel
         $schedule->command(GetCcds::class)
             ->dailyAt('03:00');
 
-        $schedule->command(EmailRNDailyReport::class)
+        //old report - to deprecate - send to all
+        $schedule->command(EmailRNDailyReportToDeprecate::class)
             ->dailyAt('07:00');
+
+        //new report - testing with 3 nurses
+        $schedule->command(EmailRNDailyReport::class, ['nurseUserIds' => '11321,8151,1920'])
+            ->dailyAt('07:20');
 
         $schedule->command(QueueSendApprovedCareplanSlackNotification::class)
             ->dailyAt('23:40');
@@ -122,6 +130,13 @@ class Kernel extends ConsoleKernel
         //Run at 12:30am every 1st of month
         $schedule->command(AttachBillableProblemsToLastMonthSummary::class)
             ->cron('30 0 1 * *');
+
+//        $schedule->command(
+//            SendCareCoachInvoices::class,
+//            [
+//                '--variable-time' => true,
+//            ]
+//        )->monthlyOn(1, '5:0');
 
 //        $schedule->command('lgh:importInsurance')
 //            ->dailyAt('05:00');
@@ -179,5 +194,7 @@ class Kernel extends ConsoleKernel
         $schedule->command(SecurityMailCommand::class)
             ->weekly();
         $schedule->command(NursesAndStatesDailyReport::class)->dailyAt('00:05');
+
+        $schedule->command(OverwriteNBIImportedData::class)->everyTenMinutes();
     }
 }

@@ -7,13 +7,13 @@
 namespace Tests\Helpers;
 
 use App\CarePlan;
-use CircleLinkHealth\Customer\Entities\Location;
 use App\Models\CPM\CpmProblem;
+use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
-use Carbon\Carbon;
 use Faker\Factory;
 
 trait SetupTestCustomerTrait
@@ -104,11 +104,12 @@ trait SetupTestCustomerTrait
             });
 
         //careplan
-        $patient->carePlan()->create([
+        $patient->carePlan()->updateOrCreate([
             'mode'                  => CarePlan::WEB,
             'care_plan_template_id' => 1,
-            'status'                => CarePlan::PROVIDER_APPROVED,
-            'provider_date'         => Carbon::now(),
+        ], [
+            'status'        => CarePlan::PROVIDER_APPROVED,
+            'provider_date' => Carbon::now(),
         ]);
 
         //activities

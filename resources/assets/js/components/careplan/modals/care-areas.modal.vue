@@ -66,8 +66,14 @@
                             <form @submit="editCcdProblem">
                                 <div class="row">
                                     <div class="col-sm-12 top-20">
+                                        <div style="margin-bottom: 10px" v-if="selectedProblem.instruction.name !== selectedInstruction">
+                                            <input type="button"
+                                                   class="btn btn-secondary margin-0 instruction-add selected"
+                                                   @click="resetInstructions"
+                                                   value="Change Instructions to original"/>
+                                        </div>
                                         <textarea class="form-control height-200"
-                                                  v-model="selectedProblem.instruction.name"
+                                                  v-model="selectedInstruction"
                                                   placeholder="Enter Instructions"></textarea>
                                         <loader class="absolute" v-if="loaders.addInstruction"></loader>
                                         <div class="font-14 color-blue" v-if="selectedProblem.original_name">
@@ -81,7 +87,7 @@
                                                 <label class="color-red" v-if="selectedProblem.is_monitored">Mapped
                                                     To:</label>
                                                 <select class="form-control" v-model="selectedProblem.cpm_id"
-                                                        v-if="selectedProblem.is_monitored">
+                                                        @change="updateInstructions" v-if="selectedProblem.is_monitored">
                                                     <option :value="null">Selected a Related Condition</option>
                                                     <option v-for="problem in cpmProblemsForSelect" :key="problem.value"
                                                             :value="problem.value">{{problem.label}}
@@ -259,6 +265,22 @@
         methods: {
             select(problem) {
                 this.selectedProblem = problem
+                this.selectedInstruction = problem.instruction.name
+
+            },
+            updateInstructions(event){
+                let cpmProblem = this.cpmProblems.find(problem => {
+                    return problem.id == event.target.value
+                })
+
+                if (cpmProblem.instruction){
+                    this.selectedInstruction = cpmProblem.instruction.name
+                }else{
+                    this.selectedInstruction = null
+                }
+            },
+            resetInstructions(){
+                this.selectedInstruction = this.selectedProblem.instruction.name
             },
             reset() {
                 this.newProblem.name = ''
@@ -321,7 +343,7 @@
                     cpm_problem_id: this.selectedProblem.is_monitored ? this.selectedProblem.cpm_id : null,
                     is_monitored: this.selectedProblem.is_monitored,
                     icd10: this.selectedProblem.icd10,
-                    instruction: this.selectedProblem.instruction.name
+                    instruction: this.selectedInstruction
                 }).then(response => {
                     console.log('full-conditions:edit', response.data)
                     this.loaders.editProblem = false
@@ -339,7 +361,7 @@
             },
             getSystemCodes() {
                 return this.axios.get(rootUrl(`api/problems/codes`)).then(response => {
-                    console.log('full-conditions:get-system-codes', response.data)
+                    // console.log('full-conditions:get-system-codes', response.data)
                     this.codes = response.data
                 }).catch(err => {
                     console.error('full-conditions:get-system-codes', err)

@@ -14,7 +14,9 @@ use Illuminate\Queue\SerializesModels;
 
 class ConvertCcdaToJson implements ShouldQueue
 {
-    use InteractsWithQueue, Queueable, SerializesModels;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
     protected $ccda;
 
     /**

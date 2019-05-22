@@ -1,4 +1,3 @@
-<html lang="en-US">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -52,7 +51,8 @@
 
 
     @if(!isset($isPdf))
-        <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"/>
+        <link rel="stylesheet" type="text/css"
+              href="//cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"/>
 
         <link rel="stylesheet" href="{{ mix('/webix/codebase/webix.css') }}" type="text/css">
 
@@ -115,6 +115,13 @@
     });
 </script>
 @endif
+
+@auth
+    @if(!isset($isPdf) && auth()->user()->isAdmin() || auth()->user()->isCareCoach())
+        @include('partials.jira-issue-collector')
+    @endif
+@endauth
+
 </body>
 
 </html>

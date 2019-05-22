@@ -55,7 +55,7 @@
             },
             getOther() {
                 return this.axios.get(rootUrl(`api/patients/${this.patientId}/misc/${MISC_ID}`)).then(response => {
-                    console.log('others:get-other', response.data)
+                    // console.log('others:get-other', response.data)
                     this.other = this.setupOther(response.data)
                     if (this.other) Event.$emit('misc:select', this.other)
                 }).catch(err => {

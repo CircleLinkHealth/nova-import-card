@@ -1,4 +1,15 @@
 @if($nurse)
+    @push('styles')
+        <style>
+            .nurse-dashboard-schedule {
+                background-color: rgba(80, 178, 226, 0.03);
+                border: 1px solid rgba(204, 204, 204, .8);
+                border-radius: 10px;
+                box-shadow: rgba(128, 128, 128, 0.1) 0px 1px 2px;
+                padding: 0px 15px 15px;
+            }
+        </style>
+        @endpush
     <div id="v-show-nurse-work-schedule" class="row-centered nurse-dashboard-schedule hidden-xs">
         <notifications class="text-left"></notifications>
         <div class="row">

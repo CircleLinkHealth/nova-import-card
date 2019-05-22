@@ -12,15 +12,14 @@ use App\EligibilityBatch;
 use App\EligibilityJob;
 use App\Enrollee;
 use App\Models\CPM\CpmProblem;
-use CircleLinkHealth\Customer\Entities\Practice;
 use App\Services\Eligibility\Adapters\JsonMedicalRecordInsurancePlansAdapter;
 use App\Services\Eligibility\Csv\CsvPatientList;
 use App\Services\Eligibility\Entities\Problem;
 use App\Traits\ValidatesEligibility;
-use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Collection;
-use Maatwebsite\Excel\Facades\Excel;
 use Validator;
 
 /**
@@ -84,16 +83,16 @@ class WelcomeCallListGenerator
     /**
      * WelcomeCallListGenerator constructor.
      *
-     * @param Collection          $patientList
-     * @param bool                $filterLastEncounter
-     * @param bool                $filterInsurance
-     * @param bool                $filterProblems
-     * @param bool                $createEnrollees
-     * @param \CircleLinkHealth\Customer\Entities\Practice|null       $practice
-     * @param null                $medicalRecordType
-     * @param null                $medicalRecordId
-     * @param EligibilityBatch    $batch
-     * @param EligibilityJob|null $eligibilityJob
+     * @param Collection                                        $patientList
+     * @param bool                                              $filterLastEncounter
+     * @param bool                                              $filterInsurance
+     * @param bool                                              $filterProblems
+     * @param bool                                              $createEnrollees
+     * @param \CircleLinkHealth\Customer\Entities\Practice|null $practice
+     * @param null                                              $medicalRecordType
+     * @param null                                              $medicalRecordId
+     * @param EligibilityBatch                                  $batch
+     * @param EligibilityJob|null                               $eligibilityJob
      *
      * @throws \Exception
      */
@@ -201,7 +200,7 @@ class WelcomeCallListGenerator
                 }
 
                 $args['status'] = Enrollee::TO_CALL;
-                
+
 //            if (isset($args['cell_phone'])) {
 //                $args['status'] = Enrollee::TO_SMS;
 //            }
@@ -317,42 +316,42 @@ class WelcomeCallListGenerator
 
                 $enrolledPatientExists = User::withTrashed()
                     ->where(
-                                                 function ($u) use ($args) {
-                                                     $u->whereProgramId($args['practice_id'])
-                                                         ->whereHas(
-                                                           'patientInfo',
-                                                           function ($q) use ($args) {
-                                                               $q->withTrashed()->whereMrnNumber($args['mrn']);
-                                                           }
-                                                       );
-                                                 }
-                                             )->orWhere(
                         function ($u) use ($args) {
-                            $u->where(
-                                [
-                                    [
-                                        'program_id',
-                                        '=',
-                                        $args['practice_id'],
-                                    ],
-                                    [
-                                        'first_name',
-                                        '=',
-                                        $args['first_name'],
-                                    ],
-                                    [
-                                        'last_name',
-                                        '=',
-                                        $args['last_name'],
-                                    ],
-                                ]
+                            $u->whereProgramId($args['practice_id'])
+                                ->whereHas(
+                                    'patientInfo',
+                                    function ($q) use ($args) {
+                                        $q->withTrashed()->whereMrnNumber($args['mrn']);
+                                    }
+                                                       );
+                        }
+                                             )->orWhere(
+                                                 function ($u) use ($args) {
+                                                     $u->where(
+                                                         [
+                                                             [
+                                                                 'program_id',
+                                                                 '=',
+                                                                 $args['practice_id'],
+                                                             ],
+                                                             [
+                                                                 'first_name',
+                                                                 '=',
+                                                                 $args['first_name'],
+                                                             ],
+                                                             [
+                                                                 'last_name',
+                                                                 '=',
+                                                                 $args['last_name'],
+                                                             ],
+                                                         ]
                             )->whereHas(
                                 'patientInfo',
                                 function ($q) use ($args) {
                                     $q->withTrashed()->whereBirthDate($args['dob']);
                                 }
                             );
-                        }
+                                                 }
                     )->first();
 
                 $duplicateMySqlError = false;
@@ -363,8 +362,8 @@ class WelcomeCallListGenerator
                         3,
                         [
                             'duplicate' => 'This patient already has a careplan. '.route(
-                                    'patient.careplan.print',
-                                    [$enrolledPatientExists->id]
+                                'patient.careplan.print',
+                                [$enrolledPatientExists->id]
                                 ),
                         ],
                         EligibilityJob::ENROLLED
@@ -418,175 +417,6 @@ class WelcomeCallListGenerator
                 return false;
             }
         );
-    }
-
-    /**
-     * Exports the Ineligible Patient List to a csv file.
-     */
-    public function exportIneligibleToCsv()
-    {
-        $now = Carbon::now()->toDateTimeString();
-
-        $this->ineligiblePatients = $this->ineligiblePatients->map(
-            function ($patient) {
-                $requiredKeys = [
-                    'patient_id',
-                    'email',
-                    'first_name',
-                    'last_name',
-                    'home_phone',
-                    'primary_phone',
-                    'work_phone',
-                    'preferred_contact_method',
-                    'preferred_provider',
-                    'address_1',
-                    'address_2',
-                    'city',
-                    'state',
-                    'zip',
-                    'patient_name',
-                    'last_encounter',
-                    'allergy',
-                    'primary_insurance',
-                    'secondary_insurance',
-                    'provider',
-                    'county',
-                    'medications',
-                    'problems',
-                    'ccm_condition_1',
-                    'ccm_condition_2',
-                    'cpm_problem_1',
-                    'cpm_problem_2',
-                ];
-
-                $keys = $patient->keys();
-
-                foreach ($requiredKeys as $k) {
-                    if ( ! $keys->contains($k)) {
-                        $patient->put($k, '');
-                    }
-                }
-
-                $patientArr = $patient->all();
-
-                ksort($patientArr);
-
-                return $patientArr;
-            }
-        );
-
-        Excel::create(
-            "Ineligible Patients Welcome Call List - ${now}",
-            function ($excel) {
-                $excel->sheet(
-                    'Ineligible',
-                    function ($sheet) {
-                        $sheet->fromArray(
-                            $this->ineligiblePatients->values()->all()
-                        );
-                    }
-                );
-            }
-        )->export('xls');
-    }
-
-    /**
-     * Exports the Patient List to a csv file.
-     *
-     * @param mixed      $download
-     * @param mixed      $storeOnServer
-     * @param mixed|null $filenamePrefix
-     * @param mixed      $returnStorageInfo
-     */
-    public function exportToCsv(
-        $download = true,
-        $storeOnServer = false,
-        $filenamePrefix = null,
-        $returnStorageInfo = false
-    ) {
-        $filename = 'Welcome Call List';
-
-        if ($filenamePrefix) {
-            $filename = "${filenamePrefix} ${filename}";
-        }
-
-        $now = Carbon::now()->toDateTimeString();
-
-        $this->patientList = $this->patientList->map(
-            function ($patient) {
-                $requiredKeys = [
-                    'patient_id',
-                    'email',
-                    'first_name',
-                    'last_name',
-                    'home_phone',
-                    'primary_phone',
-                    'work_phone',
-                    'preferred_contact_method',
-                    'preferred_provider',
-                    'address_1',
-                    'address_2',
-                    'city',
-                    'state',
-                    'zip',
-                    'patient_name',
-                    'last_encounter',
-                    'allergy',
-                    'primary_insurance',
-                    'secondary_insurance',
-                    'provider',
-                    'county',
-                    'medications',
-                    'problems',
-                    'ccm_condition_1',
-                    'ccm_condition_2',
-                    'cpm_problem_1',
-                    'cpm_problem_2',
-                ];
-
-                $keys = $patient->keys();
-
-                foreach ($requiredKeys as $k) {
-                    if ( ! $keys->contains($k)) {
-                        $patient->put($k, '');
-                    }
-                }
-
-                $patientArr = $patient->all();
-
-                ksort($patientArr);
-
-                return $patientArr;
-            }
-        );
-
-        $slug = str_slug("${filename} - ${now}", '_');
-
-        $excel = Excel::create(
-            $slug,
-            function ($excel) {
-                $excel->sheet(
-                    'Welcome Calls',
-                    function ($sheet) {
-                        $sheet->fromArray(
-                            $this->patientList->values()->all()
-                        );
-                    }
-                );
-            }
-        );
-
-        if ($storeOnServer) {
-            if ( ! $returnStorageInfo) {
-                $excel->store('xls', false, false);
-            } else {
-                return $excel->store('xls', false, true);
-            }
-        }
-
-        if ($download) {
-            return $excel->export('xls');
-        }
     }
 
     public function getEligibilityJob()
@@ -694,8 +524,8 @@ class WelcomeCallListGenerator
                         3,
                         [
                             'last_encounter' => implode(
-                                                    ',',
-                                                    $validator->messages()->all()
+                                ',',
+                                $validator->messages()->all()
                                                 )." value: `${lastEncounter}`",
                         ],
                         EligibilityJob::INELIGIBLE,
@@ -745,23 +575,23 @@ class WelcomeCallListGenerator
             function () {
                 return CpmProblem::all()
                     ->transform(
-                                     function ($problem) {
-                                         $problem->searchKeywords = collect(
-                                             explode(',', $problem->contains),
-                                             [$problem->name]
+                        function ($problem) {
+                            $problem->searchKeywords = collect(
+                                explode(',', $problem->contains),
+                                [$problem->name]
                                          )
-                                             ->transform(
-                                                 function ($keyword) {
-                                                     return trim(strtolower($keyword));
-                                                 }
+                                ->transform(
+                                    function ($keyword) {
+                                        return trim(strtolower($keyword));
+                                    }
                                              )
-                                             ->filter()
-                                             ->unique()
-                                             ->values()
-                                             ->toArray();
+                                ->filter()
+                                ->unique()
+                                ->values()
+                                ->toArray();
 
-                                         return $problem;
-                                     }
+                            return $problem;
+                        }
                                  );
             }
         );
@@ -878,6 +708,14 @@ class WelcomeCallListGenerator
                         }
 
                         if ($p->getCode()) {
+                            //Reject if patient is on dialysis
+                            //https://circlelinkhealth.atlassian.net/browse/CPM-954
+                            if ('N18.6' == $p->getCode()) {
+                                $this->ineligibleOnDialysis($row);
+
+                                return false;
+                            }
+
                             if (in_array($codeType, [Constants::ICD9_NAME, 'all'])) {
                                 $cpmProblemId = $icd9Map->get($p->getCode());
 
@@ -926,6 +764,14 @@ class WelcomeCallListGenerator
 
                         // Try to match keywords
                         if ($p->getName()) {
+                            //Reject if patient is on dialysis
+                            //https://circlelinkhealth.atlassian.net/browse/CPM-954
+                            if (str_contains($p->getName(), ['End stage renal disease'])) {
+                                $this->ineligibleOnDialysis($row);
+
+                                return false;
+                            }
+
                             foreach ($cpmProblems->whereNotIn('id', $qualifyingCcmProblemsCpmIdStack) as $problem) {
                                 foreach ($problem->searchKeywords as $keyword) {
                                     if (empty($keyword)) {
@@ -1027,7 +873,7 @@ class WelcomeCallListGenerator
 
         return $this;
     }
-    
+
     /**
      * @throws \Exception
      */
@@ -1038,10 +884,11 @@ class WelcomeCallListGenerator
             ->byLastEncounter()
             ->byInsurance();
     }
-    
+
     /**
-     * @return $this
      * @throws \Exception
+     *
+     * @return $this
      */
     protected function validateStructureAndData()
     {
@@ -1100,6 +947,24 @@ class WelcomeCallListGenerator
             function () {
                 return SnomedToCpmIcdMap::all();
             }
+        );
+    }
+
+    /**
+     * Set a patient's status as ineligible because they are on dialysis.
+     * If the patient is on dialysis, they are ineligible.
+     *
+     * @param $row
+     */
+    private function ineligibleOnDialysis($row)
+    {
+        $this->ineligiblePatients->push($row);
+
+        $this->setEligibilityJobStatus(
+            3,
+            ['problems' => 'Patient is on dialysis. Patient has code N18.6'],
+            EligibilityJob::INELIGIBLE,
+            'on_dialysis'
         );
     }
 
@@ -1188,7 +1053,7 @@ class WelcomeCallListGenerator
 
         $isEligible = false;
 
-        if (str_contains(strtolower($primary),'medicare')) {
+        if (str_contains(strtolower($primary), 'medicare')) {
             $isEligible = true;
         }
 

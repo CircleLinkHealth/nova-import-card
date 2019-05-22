@@ -16,7 +16,10 @@ use Illuminate\Queue\SerializesModels;
 
 class ImportCcda implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
     private $ccda;
 
     /**
@@ -37,10 +40,10 @@ class ImportCcda implements ShouldQueue
         if (is_a($importedMedicalRecord, ImportedMedicalRecord::class)) {
             $update = Ccda::whereId($this->ccda->id)
                 ->update(
-                              [
-                                  'status'   => Ccda::QA,
-                                  'imported' => true,
-                              ]
+                    [
+                        'status'   => Ccda::QA,
+                        'imported' => true,
+                    ]
                           );
         }
     }

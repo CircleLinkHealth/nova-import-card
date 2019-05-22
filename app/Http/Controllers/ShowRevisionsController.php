@@ -6,9 +6,9 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Venturecraft\Revisionable\Revision;

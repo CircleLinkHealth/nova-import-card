@@ -71,7 +71,7 @@
                 }
                 return this.axios.get(rootUrl(`api/symptoms?page=${page}`)).then(response => {
                     const pagination = response.data
-                    console.log('symptoms:get-symptoms', pagination)
+                    // console.log('symptoms:get-symptoms', pagination)
                     pagination.data.map(this.setupSymptom).forEach(symptom => {
                         this.symptoms.push(symptom)
                     })
@@ -83,7 +83,7 @@
             },
             getPatientSymptoms() {
                 return this.axios.get(rootUrl(`api/patients/${this.patientId}/symptoms`)).then(response => {
-                    console.log('symptoms:get-patient-symptoms', response.data)
+                    // console.log('symptoms:get-patient-symptoms', response.data)
                     const symptomIDs = response.data.map(symptom => symptom.id)
                     this.symptoms.forEach(symptom => {
                         symptom.selected = symptomIDs.includes(symptom.id)

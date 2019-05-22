@@ -91,7 +91,8 @@ use Prettus\Repository\Traits\TransformableTrait;
  */
 class DemographicsImport extends \CircleLinkHealth\Core\Entities\BaseModel implements Transformable
 {
-    use BelongsToCcda,
+    use BelongsToCcda;
+    use
         TransformableTrait;
 
     protected $fillable = [

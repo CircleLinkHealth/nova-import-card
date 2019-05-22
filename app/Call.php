@@ -63,8 +63,6 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereWindowStart($value)
  * @mixin \Eloquent
  *
- * @property int|null $is_manual
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call filter(\App\Filters\QueryFilters $filters)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call newQuery()

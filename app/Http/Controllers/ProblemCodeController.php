@@ -32,11 +32,15 @@ class ProblemCodeController extends Controller
 
     public function remove($id)
     {
+        abort_if_str_contains_unsafe_characters($id);
+
         return response()->json($this->problemCodeService->repo()->remove($id));
     }
 
     public function show($id)
     {
+        abort_if_str_contains_unsafe_characters($id);
+
         return response()->json($this->problemCodeService->system($id));
     }
 

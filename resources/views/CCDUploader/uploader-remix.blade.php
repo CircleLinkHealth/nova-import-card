@@ -1,5 +1,8 @@
 @extends('partials.providerUI')
 
+@section('title', 'CCD Uploader')
+@section('activity', 'CCD Uploader')
+
 @section('content')
     <div class="container" style="padding-top: 3%;">
 

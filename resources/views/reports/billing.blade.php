@@ -1,4 +1,8 @@
 @extends('partials.providerUI')
+
+@section('title', 'Patient Billing Report')
+@section('activity', 'Patient Billing Report')
+
 @section('content')
     <div class="row main-form-block" style="margin-top:60px;">
         <div class="main-form-container col-lg-8 col-lg-offset-2">
@@ -115,7 +119,7 @@
                                         sort: 'string',
                                         template: "<a href='<?php echo route(
     'patient.activity.providerUIIndex',
-                                                ['patient' => '#patient_id#']
+    ['patient' => '#patient_id#']
 ); ?>'>#patient_name#</a>"
                                     },
                                     {
@@ -225,7 +229,9 @@
                                     }
                                 ],
                                 ready: function () {
-                                    this.adjustRowHeight("obs_key");
+                                    this.adjustRowHeight("provider_name");
+                                    //CPM-725: Maximum Call Stack Size exceeded error on low-end machines
+                                    this.config.autoheight = false;
                                 },
 
                                 scheme: {

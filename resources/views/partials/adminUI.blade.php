@@ -187,7 +187,7 @@
 
                                 <li><a href="{{ route('monthly.billing.make') }}">Approve Billable Patients</a></li>
 
-                                <li><a href="{{ route('excel.report.t2') }}">Unreachable Patients (export)</a>
+                                <li><a href="{{ route('excel.report.unreachablePatients') }}">Unreachable Patients (export)</a>
                                 </li>
 
                                 <li>
@@ -254,6 +254,8 @@
                                     </a></li>
                                 <li><a href="{{route('medication-groups-maps.index')}}">Medication Group Map
                                     </a></li>
+                                <li><a href="{{route('report-settings.index')}}">Manage Report Settings
+                                    </a></li>
                             </ul>
                         </li>
 
@@ -293,13 +295,17 @@
                             <li class="dropdown">
                                 <a href="{{url('/jobs/completed')}}">
                                     <span class="badge">{{auth()->user()->cachedNotificationsList()->count()}}</span>
-                                    Jobs Completed
+                                    Jobs Done
                                 </a>
                             </li>
 
                             <li class="dropdown">
+                                <a href="{{ url('/superadmin') }}" target="_blank"
+                                   style=""><i class="glyphicon glyphicon-fire"></i> SuperAdmin</a>
+                            </li>
+                            <li class="dropdown">
                                 <a href="{{ route('patients.dashboard') }}"
-                                   style=""><i class="glyphicon glyphicon-eye-open"></i> Provider UI</a>
+                                   style=""><i class="glyphicon glyphicon-eye-open"></i> Provider</a>
                             </li>
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"

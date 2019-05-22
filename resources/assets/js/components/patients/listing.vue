@@ -2,7 +2,13 @@
     <div>
         <div class="row">
             <div class="col-sm-12 text-right pad-10">
-                <button class="btn btn-info btn-xs" @click="clearFilters">Clear Filters</button>
+                <div class="col-sm-6 text-left" v-if="this.showProviderPatientsButton">
+                    <button v-if="this.showPracticePatients" class="btn btn-info btn-xs" @click="togglePracticePatients">Show My Patients</button>
+                    <button v-if="!this.showPracticePatients" class="btn btn-info btn-xs" @click="togglePracticePatients">Show Practice Patients</button>
+                </div>
+                <div v-bind:class="{'col-sm-6': this.showProviderPatientsButton}">
+                    <button class="btn btn-info btn-xs" @click="clearFilters">Clear Filters</button>
+                </div>
             </div>
         </div>
         <div class="top-10">
@@ -19,6 +25,10 @@
             </template>
             <template slot="program" slot-scope="props">
                 <div>{{ props.row.program_name }}</div>
+            </template>
+            <template slot="filter__program">
+                <div>
+                </div>
             </template>
             <template slot="ccmStatus" slot-scope="props">
                 <div>
@@ -62,6 +72,12 @@
             </template>
             <template slot="h__careplanStatus" slot-scope="props">
                 Careplan Status
+            </template>
+            <template slot="h__withdrawnReason" slot-scope="props">
+                Withdrawn Reason
+            </template>
+            <template slot="withdrawnReason" slot-scope="props">
+                <div class="withdrawn-reason-column"><span :title="props.row.withdrawnReason">{{ props.row.withdrawnReason }}</span></div>
             </template>
             <template slot="h__dob" slot-scope="props">
                 Date of Birth
@@ -127,14 +143,21 @@
         components: {
             loader
         },
+        props: {
+            showProviderPatientsButton: {
+                type: Boolean,
+                required: true,
+            }
+        },
         data() {
             return {
                 pagination: null,
                 tableData: [],
                 practices: [],
                 providersForSelect: [],
+                showPracticePatients: false,
                 nameDisplayType: NameDisplayType.FirstName,
-                columns: ['name', 'provider', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'dob', 'mrn', 'phone', 'age', 'registeredOn', 'bhi', 'ccm'],
+                columns: ['name', 'provider', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'withdrawnReason', 'dob', 'mrn', 'phone', 'age', 'registeredOn', 'bhi', 'ccm'],
                 loaders: {
                     next: false,
                     practices: null,
@@ -152,24 +175,24 @@
             options() {
                 return {
                     filterByColumn: true,
-                    sortable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'dob', 'age', 'mrn', 'registeredOn', 'bhi', 'ccm'],
-                    filterable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'dob', 'phone', 'age', 'mrn', 'registeredOn'],
+                    sortable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus','withdrawnReason', 'dob', 'age', 'mrn', 'registeredOn', 'bhi', 'ccm'],
+                    filterable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'withdrawnReason', 'dob', 'phone', 'age', 'mrn', 'registeredOn'],
                     listColumns: {
                         provider: this.providersForSelect,
                         ccmStatus: [
-                            {id: 'enrolled', text: 'enrolled'},
-                            {id: 'paused', text: 'paused'},
-                            {id: 'withdrawn', text: 'withdrawn'},
-                            {id: 'to_enroll', text: 'to_enroll'},
-                            {id: 'unreachable', text: 'unreachable'},
-                            {id: 'patient_rejected', text: 'patient_rejected'}
+                            {id: 'enrolled', text: 'Enrolled'},
+                            {id: 'paused', text: 'Paused'},
+                            {id: 'withdrawn', text: 'Withdrawn'},
+                            {id: 'to_enroll', text: 'To Enroll'},
+                            {id: 'unreachable', text: 'Unreachable'},
+                            {id: 'patient_rejected', text: 'Patient Rejected'}
                         ],
                         careplanStatus: [
                             {id: '', text: 'none'},
-                            {id: 'qa_approved', text: 'qa_approved'},
-                            {id: 'provider_approved', text: 'provider_approved'},
-                            {id: 'g0506', text: 'g0506'},
-                            {id: 'draft', text: 'draft'}
+                            {id: 'qa_approved', text: 'QA Approved'},
+                            {id: 'provider_approved', text: 'Provider Approved'},
+                            {id: 'g0506', text: 'G0506'},
+                            {id: 'draft', text: 'Draft'}
                         ],
                         program: this.practices.map(practice => ({
                             id: practice.id,
@@ -188,6 +211,7 @@
                         careplanStatus: (ascending) => iSort,
                         dob: (ascending) => iSort,
                         mrn: (ascending) => iSort,
+                        withdrawnReason: (ascending) => iSort,
                         phone: (ascending) => iSort,
                         age: (ascending) => iSort,
                         registeredOn: (ascending) => iSort,
@@ -219,9 +243,9 @@
                 })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${encodeURIComponent(item.value)}`).join('')
                 const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
                 if (this.pagination) {
-                    return rootUrl(`api/patients?page=${this.$refs.tblPatientList.page}&rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}`)
+                    return rootUrl(`api/patients?page=${this.$refs.tblPatientList.page}&rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}&showPracticePatients=${this.showPracticePatients}`)
                 } else {
-                    return rootUrl(`api/patients?rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}`)
+                    return rootUrl(`api/patients?rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}&showPracticePatients=${this.showPracticePatients}`)
                 }
             },
             filterData() {
@@ -243,6 +267,10 @@
                 } else {
                     this.columns.splice(2, 0, 'program')
                 }
+            },
+            togglePracticePatients() {
+                this.showPracticePatients = ! this.showPracticePatients
+                this.activateFilters()
             },
             activateFilters() {
                 this.pagination = null
@@ -355,6 +383,7 @@
                         patient.program_name = (this.practices.find(practice => practice.id == patient.program_id) || {}).display_name || ''
                         patient.age = (patient.patient_info || {}).age || ''
                         patient.mrn = (patient.patient_info || {}).mrn_number || ''
+                        patient.withdrawnReason = (patient.patient_info || {}).withdrawn_reason || ''
                         patient.registeredOn = moment(patient.created_at || '').format('MM-DD-YYYY')
                         patient.ccmStatusDate = (this.getStatusDate(patient) || '')
                         patient.sort_registeredOn = new Date(patient.created_at)
@@ -432,7 +461,7 @@
                 let patients = []
                 this.loaders.excel = true
                 const download = (page = 1) => {
-                    return this.axios.get(rootUrl(`api/patients?rows=50&page=${page}&csv`)).then(response => {
+                    return this.axios.get(rootUrl(`api/patients?rows=50&page=${page}&csv&showPracticePatients=${this.showPracticePatients}`)).then(response => {
                         const pagination = response.data
                         patients = patients.concat(pagination.data)
                         this.exportCSVText = `Export as CSV (${Math.ceil(pagination.meta.to / pagination.meta.total * 100)}%)`
@@ -444,7 +473,7 @@
                 }
                 return download().then(res => {
 
-                    const str = 'name,provider,program,ccm status,careplan status,dob,mrn,phone,age,registered on,bhi,ccm,ccm status change\n'
+                    const str = 'name,provider,program,ccm status,careplan status, withdrawn reason, dob,mrn,phone,age,registered on,bhi,ccm,ccm status change\n'
                         + patients.join('\n');
                     const csvData = new Blob([str], {type: 'text/csv'});
                     const csvUrl = URL.createObjectURL(csvData);
@@ -504,6 +533,9 @@
                 const mrnInput = patientListElem.querySelector('input[name="vf__mrn"]')
                 mrnInput.setAttribute('placeholder', 'Filter by MRN')
 
+                const withdrawnReasonInput = patientListElem.querySelector('input[name="vf__withdrawnReason"]')
+                withdrawnReasonInput.setAttribute('placeholder', 'Filter by Reason')
+
                 const registeredOnInput = patientListElem.querySelector('input[name="vf__registeredOn"]')
                 registeredOnInput.setAttribute('placeholder', 'Filter by Registered On')
 
@@ -550,6 +582,8 @@
 
             Event.$on('vue-tables.filter::careplanStatus', this.activateFilters)
 
+            Event.$on('vue-tables.filter::withdrawnReason', this.activateFilters)
+
             Event.$on('vue-tables.filter::dob', this.activateFilters)
 
             Event.$on('vue-tables.filter::mrn', this.activateFilters)
@@ -580,6 +614,12 @@
         white-space: nowrap;
     }
 
+    .withdrawn-reason-column {
+        max-width: 250px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
 </style>
 
 <style scoped>

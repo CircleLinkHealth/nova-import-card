@@ -7,8 +7,8 @@
 namespace App\Console\Commands\Athena;
 
 use App\CarePlan;
-use CircleLinkHealth\Customer\Entities\Patient;
 use App\Services\AthenaAPI\Calls;
+use CircleLinkHealth\Customer\Entities\Patient;
 use Illuminate\Console\Command;
 
 class PostPatientCarePlanAsAppointmentNote extends Command
@@ -67,18 +67,18 @@ class PostPatientCarePlanAsAppointmentNote extends Command
                     ->external_id;
 
                 $appointments = $this->api->getPatientAppointments(
-                                    $practiceId,
-                                    $c->user_id,
-                                    false
+                    $practiceId,
+                    $c->user_id,
+                    false
                                 );
                 $sortedAppointments = collect($appointments['appointments'])->sortBy('date');
                 $nextAppointment = $sortedAppointments->first();
 
                 $response = $this->api->postAppointmentNotes(
-                                    $practiceId,
-                                    $nextAppointment['appointmentid'],
-                                    $link,
-                                    true
+                    $practiceId,
+                    $nextAppointment['appointmentid'],
+                    $link,
+                    true
                                 );
             });
     }

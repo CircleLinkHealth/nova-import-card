@@ -1,3 +1,10 @@
+COMMIT=$1
+ENV_NAME=$2
+PREVIOUS_COMMIT=$3
+USER_NAME=$4
+COMMENT=$5
+ROLLBACK=$6
+
 if [ ! -d "node_modules" ]; then
   npm install
 fi
@@ -11,9 +18,9 @@ if [ ! -d "vendor" ]; then
   composer install --no-dev --classmap-authoritative --prefer-dist
 fi
 
-php artisan tickets:store "%COMMIT%" "%ENV_NAME%" "%ROLLBACK?%" "%USER_NAME%" "%COMMENT%" "%PREVIOUS_COMMIT%"
+php artisan tickets:store $COMMIT $ENV_NAME $ROLLBACK $USER_NAME $COMMENT $PREVIOUS_COMMIT
 
-rm -rf node_modules/ scripts/ tests/ resources/assets/ .git .circleci .deployment-state
+rm -rf node_modules/ scripts/ tests/ resources/assets/ .git .circleci .deployment-state app/Console/DevCommands/
 
 mkdir compress
 

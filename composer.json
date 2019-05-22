@@ -9,6 +9,10 @@
   "type": "project",
   "repositories": [
     {
+      "type": "composer",
+      "url": "https://nova.laravel.com"
+    },
+    {
       "type": "git",
       "url": "git@github.com:jamisonvalenta/Laravel-4-Generators.git"
     },
@@ -54,10 +58,13 @@
   ],
   "require": {
     "php": ">=7.2.0",
+    "ext-bcmath": "*",
     "ext-dom": "*",
     "ext-json": "*",
     "ext-libxml": "*",
     "ext-simplexml": "*",
+    "algolia/algoliasearch-client-php": "^2.2",
+    "algolia/scout-extended": "^1.6",
     "amnuts/opcache-gui": "dev-master",
     "appstract/laravel-opcache": "^2.0",
     "arcturial/clickatell": "*",
@@ -82,12 +89,14 @@
     "laravel/envoy": "^1.5",
     "laravel/framework": "5.7.*",
     "laravel/horizon": "^1.4",
+    "laravel/nova": "~2.0",
+    "laravel/scout": "^7.1",
     "laravel/tinker": "^1.0",
     "laravelcollective/html": "5.7.*",
     "league/flysystem-aws-s3-v3": "~1.0",
     "league/fractal": "0.12.*",
     "lynx39/lara-pdf-merger": "dev-master",
-    "maatwebsite/excel": "^2.1",
+    "maatwebsite/excel": "^3.1",
     "nao-pon/flysystem-google-drive": "~1.1",
     "phaxio/phaxio": "^1.0",
     "pragmarx/health": "^0.9.16",
@@ -98,10 +107,12 @@
     "propaganistas/laravel-phone": "^3.0",
     "rap2hpoutre/laravel-log-viewer": "^0.4.0",
     "seld/jsonlint": "^1.7",
+    "sparclex/nova-import-card": "^2.0",
     "spatie/laravel-backup": "^5.10",
     "spatie/laravel-google-calendar": "^2.0",
     "spatie/laravel-medialibrary": "^7.0.0",
-    "spiritix/lada-cache": "^2.1",
+    "spatie/laravel-responsecache": "^5.0",
+    "spatie/laravel-view-models": "^1.1",
     "twilio/sdk": "5.7",
     "tymon/jwt-auth": "0.5.*",
     "waavi/url-shortener": "dev-master",
@@ -171,7 +182,7 @@
       "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner WrapperRunner -p8"
     ],
     "test": [
-      "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner SqliteRunner -p4"
+      "export COMPOSER_PROCESS_TIMEOUT=600 && ./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner SqliteRunner -p4"
     ],
     "integration": [
       "./vendor/bin/paratest ./tests/integration --stop-on-failure --colors --runner SqliteRunner -p4"

@@ -638,7 +638,7 @@
             cell_is_invalid: function () {
                 return !this.validatePhone(this.cell_phone)
             },
-            utc_requested_callback(){
+            utc_requested_callback() {
                 return this.utc_reason === 'requested callback';
             },
         },
@@ -665,6 +665,7 @@
                 disableCell: false,
                 disableOther: false,
                 time_elapsed: 0,
+                start_time: null,
                 total_time_in_system_running: 0,
                 onCall: false,
                 callStatus: 'Summoning Calling Gods...',
@@ -682,14 +683,15 @@
         },
         mounted: function () {
 
+            this.start_time = Date.now();
             this.total_time_in_system_running = this.total_time_in_system;
             let self = this;
             self.initTwilio();
 
             //timer
             setInterval(function () {
-                self.$data.total_time_in_system_running++;
-                self.$data.time_elapsed++;
+                self.$data.total_time_in_system_running = self.getTimeDiffInSecondsFromMS(self.start_time) + (self.total_time_in_system);
+                self.$data.time_elapsed = self.getTimeDiffInSecondsFromMS(self.start_time);
             }, 1000);
 
             $(document).ready(function () {
@@ -708,7 +710,8 @@
                 M.FormSelect.init($('select'));
                 M.Dropdown.init($('.dropdown-trigger'), {
                     alignment: 'right',
-                    coverTrigger: false
+                    coverTrigger: false,
+                    closeOnClick: false
                 });
 
                 if (self.hasTips) {
@@ -730,6 +733,10 @@
             });
         },
         methods: {
+
+            getTimeDiffInSecondsFromMS(millis) {
+                return Math.round(Date.now() - millis) / 1000;
+            },
 
             //triggered when cilck on Soft Decline
             //gets reset when modal closes

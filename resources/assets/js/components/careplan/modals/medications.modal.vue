@@ -1,5 +1,6 @@
 <template>
-    <modal name="medications" :no-title="true" :no-footer="true" :no-cancel="true" :no-buttons="true" class-name="modal-medications">
+    <modal name="medications" :no-title="true" :no-footer="true" :no-cancel="true" :no-buttons="true"
+           class-name="modal-medications">
         <template slot-scope="props">
             <div class="row">
                 <div class="col-sm-12">
@@ -8,26 +9,38 @@
                 </div>
                 <div class="col-sm-12 pad-top-10" :class="{ 'medication-container': isExtendedView }">
                     <div class="btn-group" role="group" :class="{ 'medication-buttons': isExtendedView }">
-                        <div class="btn btn-secondary medication-button" :class="{ selected: selectedMedication && (selectedMedication.id === medication.id) }" 
-                                v-for="(medication, index) in medications" :key="index" @click="select(index)">
+                        <div class="btn btn-secondary medication-button"
+                             :class="{ selected: selectedMedication && (selectedMedication.id === medication.id) }"
+                             v-for="(medication, index) in medications" :key="index" @click="select(index)">
                             {{medication.title()}}
                             <span class="delete" title="remove this cpm medication" @click="removeMedication">x</span>
-                            <loader class="absolute" v-if="loaders.removeMedication && selectedMedication && (selectedMedication.id === medication.id)"></loader>
+                            <loader class="absolute"
+                                    v-if="loaders.removeMedication && selectedMedication && (selectedMedication.id === medication.id)"></loader>
                         </div>
-                        <input type="button" class="btn btn-secondary" :class="{ selected: !selectedMedication || !selectedMedication.id }" value="+" @click="select(-1)" />
+                        <input type="button" class="btn btn-secondary"
+                               :class="{ selected: !selectedMedication || !selectedMedication.id }" value="+"
+                               @click="select(-1)"/>
                     </div>
                 </div>
                 <div class="col-sm-12" v-if="selectedMedication">
                     <form @submit="editMedication">
                         <div class="form-group">
                             <div class="top-20">
-                                <input type="text" class="form-control color-black" placeholder="Enter a title" v-model="selectedMedication.name" required />
+                                <bootstrap-toggle v-model="selectedMedication.activeBool"
+                                                  :options="{ on: 'Active', off: 'Inactive' }" :disabled="false"/>
                             </div>
                             <div class="top-20">
-                                <v-select class="form-control" v-model="selectedMedication.groupName" :value="selectedMedication.medication_group_id" :options="groupsForSelect"></v-select>
+                                <input type="text" class="form-control color-black" placeholder="Enter a title"
+                                       v-model="selectedMedication.name" required/>
                             </div>
                             <div class="top-20">
-                                <textarea class="form-control" placeholder="Enter a description" v-model="selectedMedication.sig"></textarea>
+                                <v-select class="form-control" v-model="selectedMedication.groupName"
+                                          :value="selectedMedication.medication_group_id"
+                                          :options="groupsForSelect"></v-select>
+                            </div>
+                            <div class="top-20">
+                                <textarea class="form-control" placeholder="Enter a description"
+                                          v-model="selectedMedication.sig"></textarea>
                             </div>
                             <div class="top-20 text-right">
                                 <loader v-if="loaders.editMedication"></loader>
@@ -40,13 +53,20 @@
                     <form @submit="addMedication">
                         <div class="form-group">
                             <div class="top-20">
-                                <input type="text" class="form-control color-black" placeholder="Enter a title" v-model="newMedication.name" required />
+                                <bootstrap-toggle v-model="newMedication.activeBool"
+                                                  :options="{ on: 'Active', off: 'Inactive' }" :disabled="false"/>
                             </div>
                             <div class="top-20">
-                                <v-select class="form-control" v-model="newMedication.group" :options="groupsForSelect"></v-select>
+                                <input type="text" class="form-control color-black" placeholder="Enter a title"
+                                       v-model="newMedication.name" required/>
                             </div>
                             <div class="top-20">
-                                <textarea class="form-control" placeholder="Enter a description" v-model="newMedication.sig"></textarea>
+                                <v-select class="form-control" v-model="newMedication.group"
+                                          :options="groupsForSelect"></v-select>
+                            </div>
+                            <div class="top-20">
+                                <textarea class="form-control" placeholder="Enter a description"
+                                          v-model="newMedication.sig"></textarea>
                             </div>
                             <div class="top-20 text-right">
                                 <loader v-if="loaders.addMedication"></loader>
@@ -61,13 +81,14 @@
 </template>
 
 <script>
-    import { rootUrl } from '../../../app.config'
-    import { Event } from 'vue-tables-2'
+    import {rootUrl} from '../../../app.config'
+    import {Event} from 'vue-tables-2'
     import Modal from '../../../admin/common/modal'
     import VueSelect from 'vue-select'
+    import BootstrapToggle from 'vue-bootstrap-toggle';
 
     export default {
-        name: 'care-areas-modal',
+        name: 'medications-modal',
         props: {
             'patient-id': String,
             medications: Array,
@@ -75,19 +96,21 @@
         },
         components: {
             'modal': Modal,
-            'v-select': VueSelect
+            'v-select': VueSelect,
+            BootstrapToggle
         },
         computed: {
             isExtendedView() {
                 return this.medications.length > 12
             },
             groupsForSelect() {
-                return this.groups.map(group => ({ label: group.name, value: group.id }))
+                return this.groups.map(group => ({label: group.name, value: group.id}))
             }
         },
         data() {
             return {
                 newMedication: {
+                    activeBool: true,
                     name: null,
                     sig: null,
                     group: 'Select a Medication Type',
@@ -127,39 +150,41 @@
             editMedication(e) {
                 e.preventDefault()
                 this.loaders.editMedication = true
-                return this.axios.put(rootUrl(`api/patients/${this.patientId}/medication/${this.selectedMedication.id}`), { 
-                            name: this.selectedMedication.name, 
-                            sig: this.selectedMedication.sig,
-                            medication_group_id: (this.selectedMedication.groupName || {}).value || this.selectedMedication.medication_group_id
-                    }).then(response => {
-                        console.log('medication:edit', response.data)
-                        this.loaders.editMedication = false
-                        Event.$emit('medication:edit', response.data)
-                    }).catch(err => {
-                        console.error('medication:edit', err)
-                        this.loaders.editMedication = false
-                    })
+                return this.axios.put(rootUrl(`api/patients/${this.patientId}/medication/${this.selectedMedication.id}`), {
+                    active: this.selectedMedication.activeBool,
+                    name: this.selectedMedication.name,
+                    sig: this.selectedMedication.sig,
+                    medication_group_id: (this.selectedMedication.groupName || {}).value || this.selectedMedication.medication_group_id
+                }).then(response => {
+                    console.log('medication:edit', response.data)
+                    this.loaders.editMedication = false
+                    Event.$emit('medication:edit', response.data)
+                }).catch(err => {
+                    console.error('medication:edit', err)
+                    this.loaders.editMedication = false
+                })
             },
             addMedication(e) {
                 e.preventDefault()
                 this.loaders.addMedication = true
-                return this.axios.post(rootUrl(`api/patients/${this.patientId}/medication`), { 
-                            name: this.newMedication.name, 
-                            sig: this.newMedication.sig,
-                            medication_group_id: (this.newMedication.group || {}).value
-                    }).then(response => {
-                        console.log('medication:add', response.data)
-                        this.loaders.addMedication = false
-                        Event.$emit('medication:add', response.data)
-                        this.reset()
-                    }).catch(err => {
-                        console.error('medication:add', err)
-                        this.loaders.addMedication = false
-                    })
+                return this.axios.post(rootUrl(`api/patients/${this.patientId}/medication`), {
+                    active: this.newMedication.activeBool,
+                    name: this.newMedication.name,
+                    sig: this.newMedication.sig,
+                    medication_group_id: (this.newMedication.group || {}).value
+                }).then(response => {
+                    console.log('medication:add', response.data)
+                    this.loaders.addMedication = false
+                    Event.$emit('medication:add', response.data)
+                    this.reset()
+                }).catch(err => {
+                    console.error('medication:add', err)
+                    this.loaders.addMedication = false
+                })
             }
         },
         mounted() {
-            
+
         }
     }
 </script>
@@ -170,12 +195,14 @@
         max-height: 100%;
         overflow-y: auto;
     }
+
     @media only screen and (max-width: 768px) {
         /* For mobile phones: */
         .modal-medications .modal-container {
             width: 95%;
         }
     }
+
     .medication-container {
         overflow-x: scroll;
     }

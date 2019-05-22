@@ -26,9 +26,27 @@ if (isset($patient) && ! empty($patient)) {
             [v-cloak]::before {
                 content: "loading…"
             }
+
+            .patient-summary__subtitles span.glyphicon {
+                margin-top: -7px;
+            }
+
         </style>
     @endpush
     @if(isset($patient) && !empty($patient))
+
+        {{-- NOTE --}}
+        {{--Needed by care-team component--}}
+        {{--In this case I need routes to be able to delete multiple components--}}
+        <meta name="provider-destroy-route"
+              content="{{ route('user.care-team.destroy', ['userId' => $patient->id,'id'=>'']) }}">
+
+        <meta name="provider-update-route" content="{{ route('user.care-team.update', ['userId' => $patient->id,'id'=>'']) }}">
+        <meta name="providers-search" content="{{ route('providers.search') }}">
+        <meta name="created_by" content="{{auth()->id()}}">
+        <meta name="patient_id" content="{{$patient->id}}">
+        {{-- NOTE --}}
+
         <div id="v-pdf-careplans" class="container" v-cloak>
             <section class="patient-summary">
                 <div class="patient-info__main">
@@ -261,6 +279,14 @@ if (isset($patient) && ! empty($patient)) {
                         </div>
                     @endif
 
+                    @if(!isset($isPdf) && !empty($patient->patientInfo->general_comment))
+                        <div class="row"></div>
+                        <div class="row gutter">
+                            <div class="col-xs-12 print-row">
+                                <b>General comment</b>: {{$patient->patientInfo->general_comment}}
+                            </div>
+                        </div>
+                    @endif
                 </div>
                 <!-- CARE AREAS -->
                 <care-areas ref="careAreasComponent" patient-id="{{$patient->id}}">
@@ -410,17 +436,7 @@ if (isset($patient) && ! empty($patient)) {
                 <!-- /SOCIAL AND OTHER SERVICES -->
 
                 <!-- CARE TEAM -->
-                <div id="care-team" class="patient-info__subareas">
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <h2 id="care-team-label"
-                                class="patient-summary__subtitles patient-summary--careplan-background">Care Team:</h2>
-                        </div>
-                        <div class="col-xs-12">
-                            @include('wpUsers.patient.careplan.print.careteam')
-                        </div>
-                    </div>
-                </div>
+                <care-team ref="careTeamComponent"></care-team>
                 <!-- /CARE TEAM -->
 
                 <!-- Appointments -->
@@ -488,7 +504,6 @@ if (isset($patient) && ! empty($patient)) {
 
         @if ($recentSubmission)
             @push('scripts')
-
                 <script type="text/html" name="ccm-enrollment-submission">
                     <ol type="1">
                         <li>You must go over careplan with patient, then print it and hand to patient</li>

@@ -17,6 +17,22 @@ use Illuminate\Database\QueryException;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Collection;
 
+if ( ! function_exists('abort_if_str_contains_unsafe_characters')) {
+    function abort_if_str_contains_unsafe_characters(string $string)
+    {
+        if (str_contains_unsafe_characters($string)) {
+            abort(404);
+        }
+    }
+}
+
+if ( ! function_exists('str_contains_unsafe_characters')) {
+    function str_contains_unsafe_characters(string $string)
+    {
+        return str_contains($string, ['<', '>', '&', '=']);
+    }
+}
+
 if ( ! function_exists('parseIds')) {
     /**
      * Get all of the IDs from the given mixed value.
@@ -451,33 +467,32 @@ if ( ! function_exists('carbonGetNext')) {
     /**
      * Get carbon instance of the next $day.
      *
-     * @param $day
+     * @param string      $day
+     * @param Carbon|null $fromDate
      *
      * @return Carbon|false
      */
-    function carbonGetNext($day = 'monday')
+    function carbonGetNext($day = 'monday', Carbon $fromDate = null)
     {
         if ( ! is_numeric($day)) {
             $dayOfWeek = clhToCarbonDayOfWeek(dayNameToClhDayOfWeek($day));
-            $dayName   = $day;
         }
 
         if (is_numeric($day)) {
             $dayOfWeek = clhToCarbonDayOfWeek($day);
-            $dayName   = clhDayOfWeekToDayName($day);
         }
 
         if ( ! isset($dayOfWeek)) {
             return false;
         }
 
-        $now = Carbon::now();
+        $now = $fromDate->copy() ?? Carbon::now();
 
         if ($now->dayOfWeek == $dayOfWeek) {
             return $now;
         }
 
-        return $now->parse("next ${dayName}");
+        return $now->next($dayOfWeek);
     }
 }
 
@@ -1335,7 +1350,7 @@ if ( ! function_exists('tryDropForeignKey')) {
 if ( ! function_exists('isProductionEnv')) {
     function isProductionEnv()
     {
-        return in_array(config('app.env'), ['production', 'worker']);
+        return config('app.is_production_env');
     }
 }
 
@@ -1361,5 +1376,70 @@ if ( ! function_exists('presentDate')) {
         return $withTime
             ? $carbonDate->format('Y-m-d h:iA')
             : $carbonDate->format('Y-m-d');
+    }
+}
+
+if ( ! function_exists('calculateWeekdays')) {
+    /**
+     * Returns the number of working days for the date range given.
+     * Accounts for weekends and holidays.
+     *
+     * @param $fromDate
+     * @param $toDate
+     *
+     * @return int
+     */
+    function calculateWeekdays($fromDate, $toDate)
+    {
+        $holidays = DB::table('company_holidays')->get();
+
+        return Carbon::parse($fromDate)->diffInDaysFiltered(function (Carbon $date) use ($holidays) {
+            $matchingHolidays = $holidays->where('holiday_date', $date->toDateString());
+
+            return ! $date->isWeekend() && ! $matchingHolidays->count() >= 1;
+        }, new Carbon($toDate));
+    }
+}
+
+if ( ! function_exists('array_orderby')) {
+    /**
+     * @return mixed
+     */
+    function array_orderby()
+    {
+        $args = func_get_args();
+        $data = array_shift($args);
+        foreach ($args as $n => $field) {
+            if (is_string($field)) {
+                $tmp = [];
+                foreach ($data as $key => $row) {
+                    $tmp[$key] = $row[$field];
+                }
+                $args[$n] = $tmp;
+            }
+        }
+        $args[] = &$data;
+        call_user_func_array('array_multisort', $args);
+
+        return array_pop($args);
+    }
+}
+
+if ( ! function_exists('incrementInvoiceNo')) {
+    /**
+     * @return mixed
+     */
+    function incrementInvoiceNo()
+    {
+        $num = AppConfig::where('config_key', 'billing_invoice_count')
+            ->firstOrFail();
+
+        $current = $num->config_value;
+
+        $num->config_value = $current + 1;
+
+        $num->save();
+
+        return $current;
     }
 }

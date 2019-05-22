@@ -33,6 +33,8 @@ use Laravel\Passport\Http\Middleware\CreateFreshApiToken;
 use Michalisantoniou6\Cerberus\Middleware\CerberusAbility;
 use Michalisantoniou6\Cerberus\Middleware\CerberusPermission;
 use Michalisantoniou6\Cerberus\Middleware\CerberusRole;
+use Spatie\ResponseCache\Middlewares\CacheResponse;
+use Spatie\ResponseCache\Middlewares\DoNotCacheResponse;
 
 class Kernel extends HttpKernel
 {
@@ -63,6 +65,7 @@ class Kernel extends HttpKernel
             LogoutIfAccessDisabled::class,
             CreateFreshApiToken::class,
             AuthyMiddleware::class,
+            //CacheResponse::class,
         ],
         'sessions' => [
             StartSession::class,
@@ -97,5 +100,6 @@ class Kernel extends HttpKernel
         'role'                       => CerberusRole::class,
         'verify.invite'              => CheckOnboardingInvite::class,
         'check.careplan.mode'        => CheckCarePlanMode::class,
+        'doNotCacheResponse'         => DoNotCacheResponse::class,
     ];
 }
