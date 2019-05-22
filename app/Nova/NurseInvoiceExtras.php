@@ -15,7 +15,7 @@ use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Titasgailius\SearchRelations\SearchesRelations;
 
-class NurseIvoiceExtra extends Resource
+class NurseInvoiceExtras extends Resource
 {
     use SearchesRelations;
     /**
