@@ -123,6 +123,14 @@ class NBIPatientData extends Resource
     }
 
     /**
+     * @return string
+     */
+    public static function label()
+    {
+        return 'NBI Supplemental Data';
+    }
+
+    /**
      * Get the lenses available for the resource.
      *
      * @param \Illuminate\Http\Request $request
