@@ -147,4 +147,14 @@ class User extends Resource
     {
         return [];
     }
+
+    /**
+     * Determine if this resource uses Laravel Scout.
+     *
+     * @return bool
+     */
+    public static function usesScout()
+    {
+        return false;
+    }
 }
