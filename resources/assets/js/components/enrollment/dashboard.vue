@@ -52,12 +52,13 @@
                     <div class="card">
                         <div class="card-content">
                             <ul>
-                                <li class="sidebar-demo-list"><span :title="name"><b>Name:</b>{{name}}</span></li>
+                                <li class="sidebar-demo-list"><span :title="name"><b>Name:</b> {{name}}</span></li>
                                 <li class="sidebar-demo-list"><span :title="lang"><b>Language:</b> {{lang}}</span></li>
-                                <li class="sidebar-demo-list"><span :title="providerFullName"><b>Provider Name:</b>{{providerFullName}}</span>
-                                </li>
-                                <li class="sidebar-demo-list"><span :title="practice_name"><b>Practice Name:</b>{{practice_name}}</span>
-                                </li>
+                                <li class="sidebar-demo-list"><span :title="practice_name"><b>Practice Name:</b> {{practice_name}}</span></li>
+                                <li class="sidebar-demo-list"><span :title="providerFullName"><b>Provider Name:</b> {{providerFullName}}</span></li>
+                                <li class="sidebar-demo-list"><span :title="provider_pronunciation"><b>Provider Pronunciation:</b> {{provider_pronunciation}}</span></li>
+                                <li class="sidebar-demo-list"><span :title="provider_sex"><b>Provider Sex:</b> {{provider_sex}}</span></li>
+                                <li class="sidebar-demo-list"><span :title="last_office_visit_at"><b>Last Office Visit:</b> {{last_office_visit_at}}</span></li>
                             </ul>
                         </div>
                     </div>
@@ -641,6 +642,15 @@
             utc_requested_callback() {
                 return this.utc_reason === 'requested callback';
             },
+            provider_pronunciation: function(){
+                return enrollee.provider_pronunciation ? enrollee.provider_pronunciation : 'N/A';
+            },
+            provider_sex: function(){
+                return enrollee.provider_sex ? enrollee.provider_sex : 'N/A';
+            },
+            last_office_visit_at: function(){
+                return enrollee.last_office_visit_at ? enrollee.last_office_visit_at : 'N/A';
+            }
         },
         data: function () {
             return {
