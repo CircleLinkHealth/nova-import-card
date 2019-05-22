@@ -62,8 +62,8 @@ class PatientReadRepository
                     $query->whereHas('careTeamMembers', function ($subQuery) {
                         $subQuery->where('member_user_id', auth()->user()->id)
                             ->whereIn(
-                                          'type',
-                                          [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
+                                'type',
+                                [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
                                            );
                     });
                 }

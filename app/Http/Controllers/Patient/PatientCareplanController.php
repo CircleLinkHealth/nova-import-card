@@ -105,31 +105,31 @@ class PatientCareplanController extends Controller
                     if ( ! empty($cp->patient_info_id) && ! empty($cp->patient_first_name)
                                                    && ! empty($cp->patient_last_name)) {
                         $carePlansForWebix->push(
-                                                      [
-                                                          'id'                         => $cp->patient_id,
-                                                          'key'                        => $cp->patient_id,
-                                                          'patient_name'               => $cp->patient_full_name,
-                                                          'first_name'                 => $cp->patient_first_name,
-                                                          'last_name'                  => $cp->patient_last_name,
-                                                          'careplan_status'            => $careplanStatus,
-                                                          'careplan_status_link'       => $careplanStatusLink,
-                                                          'careplan_provider_approver' => $approverName,
-                                                          'dob'                        => Carbon::parse(
-                                                              $cp->patient_dob
-                                                          )->format('m/d/Y'),
-                                                          'phone'    => '',
-                                                          'age'      => $age,
-                                                          'reg_date' => Carbon::parse(
-                                                              $cp->patient_registered
-                                                          )->format('m/d/Y'),
-                                                          'last_read'             => '',
-                                                          'ccm_time'              => $cp->patient_ccm_time,
-                                                          'ccm_seconds'           => $cp->patient_ccm_time,
-                                                          'provider'              => $cp->provider_full_name,
-                                                          'program_name'          => $cp->practice_name,
-                                                          'careplan_last_printed' => $printed_date,
-                                                          'careplan_printed'      => $printed_status,
-                                                      ]
+                            [
+                                'id'                         => $cp->patient_id,
+                                'key'                        => $cp->patient_id,
+                                'patient_name'               => $cp->patient_full_name,
+                                'first_name'                 => $cp->patient_first_name,
+                                'last_name'                  => $cp->patient_last_name,
+                                'careplan_status'            => $careplanStatus,
+                                'careplan_status_link'       => $careplanStatusLink,
+                                'careplan_provider_approver' => $approverName,
+                                'dob'                        => Carbon::parse(
+                                    $cp->patient_dob
+                                )->format('m/d/Y'),
+                                'phone'    => '',
+                                'age'      => $age,
+                                'reg_date' => Carbon::parse(
+                                    $cp->patient_registered
+                                )->format('m/d/Y'),
+                                'last_read'             => '',
+                                'ccm_time'              => $cp->patient_ccm_time,
+                                'ccm_seconds'           => $cp->patient_ccm_time,
+                                'provider'              => $cp->provider_full_name,
+                                'program_name'          => $cp->practice_name,
+                                'careplan_last_printed' => $printed_date,
+                                'careplan_printed'      => $printed_status,
+                            ]
                                                   );
                     }
                 }
