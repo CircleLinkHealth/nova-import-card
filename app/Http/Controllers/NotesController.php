@@ -102,8 +102,17 @@ class NotesController extends Controller
         asort($provider_info);
         asort($careteam_info);
 
-        //if we are editing a note, no need to fetch tasks
         if ($noteId) {
+            $existingNote = Note::findOrFail($noteId);
+        } else {
+            $existingNote = Note::where('patient_id', '=', $patientId)
+                ->where('author_id', '=', $author_id)
+                ->where('status', '=', Note::STATUS_DRAFT)
+                ->first();
+        }
+
+        //if we are editing a note, no need to fetch tasks
+        if ($existingNote && Note::STATUS_COMPLETE === $existingNote->status) {
             $nurse_patient_tasks = [];
         } else {
             $nurse_patient_tasks = Call::where('status', '=', 'scheduled')
@@ -144,15 +153,6 @@ class NotesController extends Controller
 
         $withdrawnReasons       = array_combine($reasons, $reasons);
         $patientWithdrawnReason = $patient->getWithdrawnReason();
-
-        if ($noteId) {
-            $existingNote = Note::findOrFail($noteId);
-        } else {
-            $existingNote = Note::where('patient_id', '=', $patientId)
-                ->where('author_id', '=', $author_id)
-                ->where('status', '=', Note::STATUS_DRAFT)
-                ->first();
-        }
 
         $existingCall = $existingNote
             ? Call::where('note_id', '=', $existingNote->id)->first()

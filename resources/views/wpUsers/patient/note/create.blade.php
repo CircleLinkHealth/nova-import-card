@@ -702,6 +702,7 @@
                         }
 
                         selectList.prop("disabled", false);
+                        $('.call-status-radios').hide();
                         $('#tasks-container').hide();
                     }
                 }
@@ -721,7 +722,7 @@
 
                 function onTaskSelected(e) {
                     //get id of task
-                    const task = {sub_type: editingTaskType} || patientNurseTasks.find(x => x.id === +e.currentTarget.value);
+                    const task = editingTaskType ? {sub_type: editingTaskType} : patientNurseTasks.find(x => x.id === +e.currentTarget.value);
                     if (!task) {
                         return;
                     }
@@ -796,7 +797,7 @@
                         return;
                     }
 
-                    if (isAssociatedWithTask) {
+                    if (isAssociatedWithTask && !isEditingCompleteTask) {
                         showTaskCompletedModal();
                         return;
                     }
@@ -895,7 +896,6 @@
 
             /* 2 minutes */
             const AUTO_SAVE_INTERVAL = 1000 * 60 * 2;
-            // const AUTO_SAVE_INTERVAL = 1000 * 10;
 
             let noteId = null;
 
