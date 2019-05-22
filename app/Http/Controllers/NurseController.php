@@ -33,19 +33,17 @@ class NurseController extends Controller
         $endDate   = Carbon::parse($request->input('end_date'));
 
         if (isset($input['all_selected_nurses'])) {
-            $nurses       = $this->nonDemoNursesWithSystemTimeBetween($startDate, $endDate);
-            $nurseUserIds = $nurses->pluck('id')
-                ->all();
+            $nurseUserIds = [];
         }
 
         CreateNurseInvoices::dispatchNow(
-            $nurseUserIds,
             $startDate,
             $endDate,
+            $nurseUserIds,
             auth()->user()->id
         );
 
-        return 'Bessie Bots is creating invoices for nurse IDs'.json_encode($nurseUserIds).'. <br> She will send you an email when everything is done. You can always see previous jobs completed at '.link_to(
+        return 'We will send you an email when everything is done. You can always see previous jobs completed at '.link_to(
             '/jobs/completed'
             );
     }
@@ -174,31 +172,5 @@ class NurseController extends Controller
         }
 
         return redirect()->route('admin.reports.nurse.invoice')->with(['success' => 'yes']);
-    }
-
-    private function nonDemoNursesWithSystemTimeBetween(Carbon $startDate, Carbon $endDate)
-    {
-        $nurses = User::careCoaches()
-            ->whereHas(
-                          'pageTimersAsProvider',
-                          function ($s) use ($startDate, $endDate) {
-                              $s->whereBetween(
-                                  'start_time',
-                                  [
-                                      $startDate->copy()->startOfDay(),
-                                      $endDate->copy()->endOfDay(),
-                                  ]
-                              );
-                          }
-                      )
-            ->whereHas(
-                          'nurseInfo',
-                          function ($s) use ($startDate, $endDate) {
-                              $s->where('is_demo', false);
-                          }
-                      )
-            ->get();
-
-        return $nurses;
     }
 }

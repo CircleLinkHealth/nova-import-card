@@ -113,7 +113,7 @@ class Nurse extends Resource
                 ->readonly(true),
             Text::make('+ Days Payment', 'pay_interval'),
             Boolean::make('Is Demo?', 'is_demo'),
-            Boolean::make('Alternative Pay', 'pay_algo'),
+            Boolean::make('Alternative Pay', 'is_variable_rate'),
         ];
     }
 
