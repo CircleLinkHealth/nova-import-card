@@ -8,7 +8,6 @@ namespace App\Http\Controllers;
 
 use App\Exports\CareCoachMonthlyReport;
 use App\Jobs\CreateNurseInvoices;
-use App\Jobs\GenerateNurseInvoice;
 use App\Notifications\NurseInvoiceCreated;
 use App\Reports\NurseDailyReport;
 use Carbon\Carbon;
@@ -30,31 +29,24 @@ class NurseController extends Controller
 
         $nurseUserIds = $request->input('nurses');
 
-        $addNotes = '';
-
         $startDate = Carbon::parse($request->input('start_date'));
         $endDate   = Carbon::parse($request->input('end_date'));
 
         if (isset($input['all_selected_nurses'])) {
-            $nurses = selectAllNursesForSelectedPeriod($startDate, $endDate);
-
             $nurseUserIds = [];
-            foreach ($nurses as $nurseUserId) {
-                $nurseUserIds[] = $nurseUserId;
-            }
         }
 
-        if ('downloadV2' == $request->input('submit')) {
-            CreateNurseInvoices::dispatchNow(
-                $nurseUserIds,
-                $startDate,
-                $endDate,
-                auth()->user()->id,
-                $addNotes
+        CreateNurseInvoices::dispatchNow(
+            $startDate,
+            $endDate,
+            $nurseUserIds,
+            false,
+            auth()->user()->id
+        );
+
+        return 'We will send you an email when everything is done. You can always see previous jobs completed at '.link_to(
+            '/jobs/completed'
             );
-        }
-
-        return 'Bessie Bots is crunching the invoices you requested. <br> She will send you an email when everything is done. You can always see previous jobs completed at '.link_to('/jobs/completed');
     }
 
     public function makeDailyReport()
