@@ -115,7 +115,7 @@ class Nurse extends Resource
 
     public static function label()
     {
-        return 'Care Coaches';
+        return 'Care Coach Pay Method';
     }
 
     /**
