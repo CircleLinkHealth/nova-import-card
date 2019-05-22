@@ -451,6 +451,13 @@
                         const rolesSet = Array.from(new Set(roles));
 
                         let displayName = (nurse.user || {}).display_name || '';
+                        const suffix = (nurse.user || {}).suffix;
+                        if (suffix) {
+                            const suffixPos = displayName.indexOf(suffix);
+                            if (suffixPos === -1 || suffixPos + suffix.length !== displayName.length) {
+                                displayName = `${displayName} ${suffix}`;
+                            }
+                        }
                         if (roles.includes('care-center-external')) {
                             displayName = displayName + ' (in-house)';
                         }

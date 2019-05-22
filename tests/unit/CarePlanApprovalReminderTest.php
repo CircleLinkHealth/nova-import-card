@@ -10,6 +10,7 @@ use App\CarePlan;
 use App\Notifications\CarePlanApprovalReminder;
 use App\Services\PhiMail\IncomingMessageHandler;
 use App\Services\PhiMail\PhiMail;
+use App\ValueObjects\SimpleNotification;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Support\Facades\Notification;
@@ -21,6 +22,9 @@ class CarePlanApprovalReminderTest extends TestCase
 {
     use CarePlanHelpers;
     use UserHelpers;
+
+    const CLH_TEST_DM_ADDRESS = 'circlelinkhealth@test.directproject.net';
+
 
     private $directMail;
     private $patient;
@@ -47,20 +51,25 @@ class CarePlanApprovalReminderTest extends TestCase
         $this->assertEquals($this->provider->id, $this->patient->getBillingProviderId());
     }
 
+    /**
+     * @param $notification
+     * @param $recipient
+     * @param $numberOfCareplans
+     */
     public function checkToDatabase($notification, $recipient, $numberOfCareplans)
     {
         $databaseData = $notification->toDatabase($recipient);
 
-        $expected = ['numberOfCareplans' => $numberOfCareplans];
-
-        $this->assertEquals($expected, $databaseData);
         $this->assertArrayHasKey('numberOfCareplans', $databaseData);
+        $this->assertEquals($databaseData['numberOfCareplans'], $numberOfCareplans);
     }
 
     public function checkToDirectMail($notification, $recipient)
     {
-        $data = $notification->toDirectMail($recipient);
+        $dmNotification = $notification->toDirectMail($recipient);
 
+        $this->assertInstanceOf(SimpleNotification::class, $dmNotification);
+        $data = $dmNotification->toArray();
         $this->assertArrayHasKey('body', $data);
         $this->assertArrayHasKey('subject', $data);
 
@@ -77,7 +86,7 @@ class CarePlanApprovalReminderTest extends TestCase
 
         foreach ($result as $sent) {
             $this->assertTrue($sent->succeeded);
-            $this->assertEquals('circlelinkhealth@test.directproject.net', $sent->recipient);
+            $this->assertEquals(self::CLH_TEST_DM_ADDRESS, $sent->recipient);
             $this->assertNull($sent->errorText);
         }
     }
@@ -124,9 +133,6 @@ class CarePlanApprovalReminderTest extends TestCase
         );
     }
 
-    /**
-     * A basic test example.
-     */
     public function test_notification_was_sent()
     {
         //Set

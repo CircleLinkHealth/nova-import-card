@@ -24,7 +24,7 @@ return [
     'queue_name' => '',
 
     // The fully qualified class name of the media model.
-    'media_model' => App\Media::class,
+    'media_model' => CircleLinkHealth\Customer\Entities\Media::class,
 
     's3' => [
         // The domain that should be prepended when generating urls.

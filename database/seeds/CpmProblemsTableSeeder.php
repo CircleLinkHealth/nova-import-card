@@ -520,6 +520,20 @@ class CpmProblemsTableSeeder extends Seeder
                 'created_at'          => '2018-06-08 15:34:22',
                 'updated_at'          => '2018-06-08 15:34:22',
             ],
+            36 => [
+                'id'                  => 601,
+                'default_icd_10_code' => 'E66.9',
+                'name'                => 'Obesity',
+                'icd10from'           => '',
+                'icd10to'             => '',
+                'icd9from'            => 0.0,
+                'icd9to'              => 0.0,
+                'contains'            => '',
+                'is_behavioral'       => 0,
+                'weight'              => 1,
+                'created_at'          => '2019-05-11 15:34:22',
+                'updated_at'          => '2019-05-11 15:34:22',
+            ],
         ]);
 
         $this->command->info('cpm problems seeded');
