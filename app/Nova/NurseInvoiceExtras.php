@@ -105,8 +105,7 @@ class NurseInvoiceExtras extends Resource
                 ->hideWhenUpdating()
                 ->hideFromIndex()
                 ->searchable()
-                ->prepopulate()
-                ->sortable(),
+                ->prepopulate(),
 
             Text::make('Name', 'user.display_name')
                 ->sortable()
