@@ -4,8 +4,58 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5a2c6ebbc8d585c40710f745f210dce2",
+    "content-hash": "b83b13ddd833ec56010273c3759c5300",
     "packages": [
+        {
+            "name": "alexbowers/nova-prepopulate-searchable",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/alexbowers/nova-prepopulate-searchable.git",
+                "reference": "e4b7d0a19190689cfb312dafd979bd73c42274d2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/alexbowers/nova-prepopulate-searchable/zipball/e4b7d0a19190689cfb312dafd979bd73c42274d2",
+                "reference": "e4b7d0a19190689cfb312dafd979bd73c42274d2",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/nova": ">=1.0.13",
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AlexBowers\\NovaPrepopulateSearchable\\ToolServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AlexBowers\\NovaPrepopulateSearchable\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alex Bowers",
+                    "email": "bowersbros@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A tool to allow BelongsTo searchable fields to be pre-populated with data",
+            "homepage": "https://github.com/alexbowers/nova-prepopulate-searchable",
+            "keywords": [
+                "laravel",
+                "nova"
+            ],
+            "time": "2018-09-06T20:24:04+00:00"
+        },
         {
             "name": "algolia/algoliasearch-client-php",
             "version": "2.2.6",
@@ -1542,6 +1592,52 @@
             "description": "A simple library to encode and decode JSON Web Tokens (JWT) in PHP. Should conform to the current spec.",
             "homepage": "https://github.com/firebase/php-jwt",
             "time": "2017-06-27T22:17:23+00:00"
+        },
+        {
+            "name": "fourstacks/nova-checkboxes",
+            "version": "v0.1.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fourstacks/nova-checkboxes.git",
+                "reference": "56f7d67cdc7e8327c350a9fa5e91689e8c0dd9d9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fourstacks/nova-checkboxes/zipball/56f7d67cdc7e8327c350a9fa5e91689e8c0dd9d9",
+                "reference": "56f7d67cdc7e8327c350a9fa5e91689e8c0dd9d9",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "require-dev": {
+                "laravel/nova": "^1.0",
+                "orchestra/testbench": "3.7.*",
+                "phpunit/phpunit": "^7.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Fourstacks\\NovaCheckboxes\\FieldServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Fourstacks\\NovaCheckboxes\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova field.",
+            "keywords": [
+                "laravel",
+                "nova"
+            ],
+            "time": "2019-03-08T07:46:14+00:00"
         },
         {
             "name": "fzaninotto/faker",
@@ -4413,7 +4509,7 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "git@github.com:CircleLinkHealth/laravel-cerberus.git",
+                "url": "https://github.com/michalisantoniou6/laravel-cerberus.git",
                 "reference": "a70637130916aad3f5f4bda25080550f0fef5551"
             },
             "require": {
@@ -8932,6 +9028,42 @@
             "time": "2017-11-27T11:13:29+00:00"
         },
         {
+            "name": "titasgailius/search-relations",
+            "version": "1.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/TitasGailius/nova-search-relations.git",
+                "reference": "1e7408a678b9258537cb15ceb58a56016501243a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/TitasGailius/nova-search-relations/zipball/1e7408a678b9258537cb15ceb58a56016501243a",
+                "reference": "1e7408a678b9258537cb15ceb58a56016501243a",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Titasgailius\\SearchRelations\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova tool.",
+            "keywords": [
+                "laravel",
+                "nova",
+                "relations",
+                "search"
+            ],
+            "time": "2018-12-18T18:06:27+00:00"
+        },
+        {
             "name": "twilio/sdk",
             "version": "5.7.0",
             "source": {
@@ -9045,7 +9177,7 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "git@github.com:michalisantoniou6/revisionable.git",
+                "url": "https://github.com/VentureCraft/revisionable.git",
                 "reference": "2f4340355b7ec02e8d9c07102c25edf7477c1188"
             },
             "require": {
@@ -9083,7 +9215,6 @@
                 "issues": "https://github.com/VentureCraft/revisionable/issues",
                 "source": "https://github.com/VentureCraft/revisionable"
             },
-            "abandoned": true,
             "time": "2018-08-06T23:22:33+00:00"
         },
         {
@@ -13172,9 +13303,7 @@
         "prettus/l5-repository": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
-        "xethron/migrations-generator": 20,
-        "venturecraft/revisionable": 20,
-        "michalisantoniou6/laravel-cerberus": 20
+        "xethron/migrations-generator": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
