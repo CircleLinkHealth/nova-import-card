@@ -62,7 +62,7 @@ class NoteService
                 $userId,
                 $authorId,
                 $body
-                    ));
+            ));
         }
         throw new Exception('invalid parameters');
     }
@@ -103,6 +103,30 @@ class NoteService
         }
 
         return null;
+    }
+
+    public function editNote(Note $note, $requestInput): Note
+    {
+        if ( ! empty($requestInput['status'])) {
+            $note->status = $requestInput['status'];
+        }
+
+        $note->logger_id = $requestInput['logger_id'];
+        $note->isTCM     = isset($requestInput['tcm'])
+            ? 'true' === $requestInput['tcm']
+            : 0;
+        $note->type                 = $requestInput['type'];
+        $note->body                 = $requestInput['body'];
+        $note->performed_at         = $requestInput['performed_at'];
+        $note->did_medication_recon = isset($requestInput['medication_recon'])
+            ? 'true' === $requestInput['medication_recon']
+            : 0;
+
+        if ($note->isDirty()) {
+            $note->save();
+        }
+
+        return $note;
     }
 
     public function editPatientNote($id, $userId, $authorId, $body, $isTCM, $did_medication_recon, $type = null)
@@ -362,8 +386,7 @@ class NoteService
             'inbound_cpm_id'  => $inbound_id,
             'outbound_cpm_id' => $outbound_id,
 
-            //@todo figure out call times!
-            'called_date' => Carbon::now()->toDateTimeString(),
+            'called_date' => $note->performed_at->toDateTimeString(),
 
             'call_time'  => 0,
             'created_at' => $note->performed_at,
@@ -380,13 +403,13 @@ class NoteService
         $notifyCLH      = $input['notify_circlelink_support'] ?? false;
         $forceNotify    = false;
 
-        if ('true' == $input['tcm']) {
+        if ( ! empty($input['tcm']) && 'true' === $input['tcm']) {
             $notifyCareTeam = $forceNotify = $note->isTCM = true;
         } else {
             $note->isTCM = false;
         }
 
-        if (isset($input['medication_recon'])) {
+        if ( ! empty($input['medication_recon']) && 'medication_recon' === $input['tcm']) {
             $note->did_medication_recon = true;
         } else {
             $note->did_medication_recon = false;

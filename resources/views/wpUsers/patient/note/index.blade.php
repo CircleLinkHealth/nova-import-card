@@ -84,12 +84,21 @@
                                                 placeholder: "Filter"
                                             }],
                                             template: function (obj) {
-                                                if (obj.logged_from == "note" || obj.logged_from == "note_task")
-                                                    return "<a href='<?php echo route('patient.note.view', [
-                                                        'patientId' => $patient->id,
-                                                        'noteId'    => '',
-                                                    ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>";
-                                                else if (obj.logged_from == "appointment") {
+                                                if (obj.logged_from === "note" || obj.logged_from === "note_task")
+
+                                                    if (obj.status === "draft") {
+                                                        return "<a href='<?php echo route('patient.note.edit', [
+                                                            'patientId' => $patient->id,
+                                                            'noteId'    => '',
+                                                        ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>";
+                                                    }
+                                                    else {
+                                                        return "<a href='<?php echo route('patient.note.view', [
+                                                            'patientId' => $patient->id,
+                                                            'noteId'    => '',
+                                                        ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>";
+                                                    }
+                                                else if (obj.logged_from === "appointment") {
                                                     return "<a href='<?php echo route('patient.appointment.view', [
                                                         'patientId'     => $patient->id,
                                                         'appointmentId' => '',
