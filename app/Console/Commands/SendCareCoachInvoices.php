@@ -87,7 +87,8 @@ class SendCareCoachInvoices extends Command
         CreateNurseInvoices::dispatch(
             $start,
             $end,
-            $users->pluck('id')->all()
+            $users->pluck('id')->all(),
+            true
         );
 
         $this->info('All done!');

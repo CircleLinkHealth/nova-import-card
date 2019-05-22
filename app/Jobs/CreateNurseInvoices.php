@@ -48,6 +48,10 @@ class CreateNurseInvoices implements ShouldQueue
      */
     protected $requestedBy;
     /**
+     * @var bool
+     */
+    protected $sendToCareCoaches;
+    /**
      * @var Carbon
      */
     protected $startDate;
@@ -59,17 +63,20 @@ class CreateNurseInvoices implements ShouldQueue
      * @param Carbon $endDate
      * @param array  $nurseUserIds
      * @param int    $requestedBy
+     * @param bool   $sendToCareCoaches
      */
     public function __construct(
         Carbon $startDate,
         Carbon $endDate,
         array $nurseUserIds,
+        bool $sendToCareCoaches = false,
         int $requestedBy = null
     ) {
-        $this->nurseUserIds = $nurseUserIds;
-        $this->startDate    = $startDate->startOfDay();
-        $this->endDate      = $endDate->endOfDay();
-        $this->requestedBy  = $requestedBy;
+        $this->nurseUserIds      = $nurseUserIds;
+        $this->startDate         = $startDate->startOfDay();
+        $this->endDate           = $endDate->endOfDay();
+        $this->requestedBy       = $requestedBy;
+        $this->sendToCareCoaches = $sendToCareCoaches;
     }
 
     public function getAddedDuration($nurseExtras)
@@ -130,8 +137,7 @@ class CreateNurseInvoices implements ShouldQueue
             ]
         );
 
-        if ( ! $this->requestedBy) {
-            //if the report was not requested by anybody, it was called from the command. In this case we want to send the invoice to the nurses
+        if ($this->sendToCareCoaches) {
             $viewModel->user->notify(
                 new NurseInvoiceCreated($link, "{$this->startDate->englishMonth} {$this->startDate->year}")
             );

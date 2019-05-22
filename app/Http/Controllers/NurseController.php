@@ -40,6 +40,7 @@ class NurseController extends Controller
             $startDate,
             $endDate,
             $nurseUserIds,
+            false,
             auth()->user()->id
         );
 
