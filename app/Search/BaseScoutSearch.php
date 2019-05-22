@@ -38,6 +38,18 @@ abstract class BaseScoutSearch implements ScoutSearch
     protected $name;
 
     /**
+     * The prefix of the search's name.
+     *
+     * @var string
+     */
+    protected $prefix = 'search:';
+
+    public function __construct()
+    {
+        $this->generateSearchName();
+    }
+
+    /**
      * How long to store in cache for.
      *
      * @return int
@@ -85,7 +97,7 @@ abstract class BaseScoutSearch implements ScoutSearch
      */
     public function key(string $term)
     {
-        return "{$this->name()}_$term";
+        return "{$this->name()}:$term";
     }
 
     /**
@@ -109,5 +121,10 @@ abstract class BaseScoutSearch implements ScoutSearch
             $this->name(),
             self::SCOUT_SEARCHES_CACHE_TAG,
         ];
+    }
+
+    private function generateSearchName()
+    {
+        $this->name = $this->prefix.get_class($this);
     }
 }
