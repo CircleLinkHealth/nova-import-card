@@ -56,11 +56,7 @@ class EnroleeData implements OnEachRow, WithChunkReading, WithValidation, WithHe
 
         $provider = ProviderByName::first($row['provider']);
 
-        if ( ! $provider) {
-            return;
-        }
-
-        $row['provider_id'] = $provider->id;
+        $row['provider_id'] = optional($provider)->id;
         $row['practice_id'] = optional($this->practice)->id;
 
         Enrollee::updateOrCreate(
