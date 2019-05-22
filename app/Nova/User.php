@@ -34,7 +34,7 @@ class User extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'display_name', 'email',
+        'id', 'display_name', 'email', 'first_name', 'last_name',
     ];
 
     /**
@@ -54,6 +54,21 @@ class User extends Resource
     public function actions(Request $request)
     {
         return [];
+    }
+
+    public static function authorizedToCreate(Request $request)
+    {
+        return false;
+    }
+
+    public function authorizedToDelete(Request $request)
+    {
+        return false;
+    }
+
+    public function authorizedToUpdate(Request $request)
+    {
+        return false;
     }
 
     /**
@@ -82,6 +97,18 @@ class User extends Resource
 
             Text::make('display_name')
                 ->sortable()
+                ->hideWhenCreating()
+                ->hideFromIndex(),
+
+            Text::make('first_name')
+                ->sortable()
+                ->rules('required', 'max:255'),
+
+            Text::make('last_name')
+                ->sortable()
+                ->rules('required', 'max:255'),
+
+            Text::make('suffix')
                 ->rules('required', 'max:255'),
 
             Text::make('Email')
