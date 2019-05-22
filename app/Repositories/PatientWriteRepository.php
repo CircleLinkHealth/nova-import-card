@@ -82,19 +82,24 @@ class PatientWriteRepository
     /**
      * Updates the patient's call info based on the status of the last call.
      *
-     * @param Patient $patient
-     * @param bool    $successfulLastCall
-     * @param bool    $isCallBack
+     * @param Patient     $patient
+     * @param bool        $successfulLastCall
+     * @param bool        $isCallBack
+     * @param Carbon|null $forDate
      *
      * @return \Illuminate\Database\Eloquent\Model|PatientMonthlySummary|static|null
      */
     public function updateCallLogs(
         Patient $patient,
         bool $successfulLastCall,
-        bool $isCallBack = false
+        bool $isCallBack = false,
+        Carbon $forDate = null
     ) {
+        if ( ! $forDate) {
+            $forDate = Carbon::now();
+        }
         // get record for month
-        $day_start = Carbon::parse(Carbon::now()->firstOfMonth())->format('Y-m-d');
+        $day_start = Carbon::parse($forDate->firstOfMonth())->format('Y-m-d');
         $record    = PatientMonthlySummary::where('patient_id', $patient->user_id)
             ->where('month_year', $day_start)
             ->first();
