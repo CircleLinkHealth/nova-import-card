@@ -83,8 +83,7 @@ class EmailRNDailyReportToDeprecate extends Command
                             ->sum('billable_duration');
 
                         if (0 == $systemTime) {
-//                            continue;
-                            $systemTime = 100;
+                            continue;
                         }
 
                         if ($nurse->nurseInfo->hourly_rate < 1
