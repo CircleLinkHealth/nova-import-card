@@ -143,7 +143,7 @@
                                                             class="glyphicon glyphicon-edit"></i> Edit</a>
                                             @endif
 
-                                            @if(Cerberus::hasPermission('users-edit-all'))
+                                            @if(auth()->user()->hasPermission('user.delete'))
                                                 <a href="{{ route('admin.users.destroy', array('id' => $wpUser->id)) }}"
                                                    onclick="var result = confirm('Are you sure you want to delete?');if (!result) {event.preventDefault();}"
                                                    class="btn btn-danger btn-xs" style="margin-left:10px;"><i
