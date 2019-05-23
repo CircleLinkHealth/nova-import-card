@@ -19,6 +19,13 @@ class CareCoachUser extends NovaUser
     public static $displayInNavigation = true;
 
     /**
+     * The logical group associated with the resource.
+     *
+     * @var string
+     */
+    public static $group = \App\Constants::NOVA_GROUP_CARE_COACHES;
+
+    /**
      * Build an "index" query for the given resource.
      *
      * @param \Laravel\Nova\Http\Requests\NovaRequest $request
@@ -29,6 +36,11 @@ class CareCoachUser extends NovaUser
     public static function indexQuery(NovaRequest $request, $query)
     {
         return $query->careCoaches();
+    }
+
+    public static function label()
+    {
+        return 'Users';
     }
 
     /**

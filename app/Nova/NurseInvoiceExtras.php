@@ -10,7 +10,6 @@ use App\NurseInvoiceExtra;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Date;
-use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Titasgailius\SearchRelations\SearchesRelations;
@@ -18,6 +17,14 @@ use Titasgailius\SearchRelations\SearchesRelations;
 class NurseInvoiceExtras extends Resource
 {
     use SearchesRelations;
+
+    /**
+     * The logical group associated with the resource.
+     *
+     * @var string
+     */
+    public static $group = \App\Constants::NOVA_GROUP_CARE_COACHES;
+
     /**
      * The model the resource corresponds to.
      *
@@ -94,13 +101,6 @@ class NurseInvoiceExtras extends Resource
     public function fields(Request $request)
     {
         return [
-            ID::make()->sortable(),
-
-            Text::make('Nurse Id', 'nurse.id')
-                ->sortable()
-                ->hideWhenCreating()
-                ->readonly(true),
-
             BelongsTo::make('Care Coach', 'user', CareCoachUser::class)
                 ->hideWhenUpdating()
                 ->hideFromIndex()
@@ -112,7 +112,7 @@ class NurseInvoiceExtras extends Resource
                 ->hideWhenCreating()
                 ->readonly(true),
 
-            Date::make("Extra's Date", 'date')
+            Date::make('Date', 'date')
                 ->sortable(),
 
             Select::make('Unit', 'unit')
@@ -147,7 +147,7 @@ class NurseInvoiceExtras extends Resource
 
     public static function label()
     {
-        return 'Care Coach Bonuses';
+        return 'Bonuses';
     }
 
     /**
