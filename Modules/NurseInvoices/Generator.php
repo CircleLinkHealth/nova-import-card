@@ -8,9 +8,9 @@ namespace CircleLinkHealth\NurseInvoices;
 
 use App\Notifications\NurseInvoiceCreated;
 use App\Services\PdfService;
-use App\ViewModels\CareCoachInvoiceViewModel;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\NurseInvoices\ViewModels\Invoice;
 use Illuminate\Support\Collection;
 
 class Generator
@@ -106,13 +106,13 @@ class Generator
     }
 
     /**
-     * @param CareCoachInvoiceViewModel $viewModel
+     * @param Invoice $viewModel
      *
      * @throws \Exception
      *
      * @return array
      */
-    private function createPdf(CareCoachInvoiceViewModel $viewModel)
+    private function createPdf(Invoice $viewModel)
     {
         $name = trim($viewModel->user->getFullName()).'-'.Carbon::now()->toDateString();
         $link = $name.'.pdf';
@@ -165,7 +165,7 @@ class Generator
      * @param Collection $itemizedData
      * @param Collection $variablePayMap
      *
-     * @return CareCoachInvoiceViewModel
+     * @return Invoice
      */
     private function createViewModel(User $nurse, Collection $itemizedData, Collection $variablePayMap)
     {
@@ -179,7 +179,7 @@ class Generator
             );
         }
 
-        return new CareCoachInvoiceViewModel(
+        return new Invoice(
             $nurse,
             $this->startDate,
             $this->endDate,
@@ -222,11 +222,11 @@ class Generator
                         'pageTimersAsProvider',
                         function ($s) {
                             $s->whereBetween(
-                                       'start_time',
-                                       [
-                                           $this->startDate->copy()->startOfDay(),
-                                           $this->endDate->copy()->endOfDay(),
-                                       ]
+                                'start_time',
+                                [
+                                    $this->startDate->copy()->startOfDay(),
+                                    $this->endDate->copy()->endOfDay(),
+                                ]
                                    );
                         }
                            )

@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\ViewModels;
+namespace CircleLinkHealth\NurseInvoices\ViewModels;
 
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
@@ -12,7 +12,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Collection;
 use Spatie\ViewModels\ViewModel;
 
-class CareCoachInvoiceViewModel extends ViewModel
+class Invoice extends ViewModel
 {
     const DATE_FORMAT = 'jS M, Y';
     /**
@@ -88,7 +88,7 @@ class CareCoachInvoiceViewModel extends ViewModel
     private $variableRatePay;
 
     /**
-     * CareCoachInvoiceViewModel constructor.
+     * Invoice constructor.
      *
      * @param User       $user
      * @param Carbon     $startDate
