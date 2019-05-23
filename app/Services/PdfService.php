@@ -7,6 +7,7 @@
 namespace App\Services;
 
 use App\Contracts\HtmlToPdfService;
+use App\Exceptions\FileNotFoundException;
 use Carbon\Carbon;
 use LynX39\LaraPdfMerger\PdfManage;
 
@@ -108,6 +109,11 @@ class PdfService
                 ]
             );
         }
+
+        if ( ! file_exists($outputFullPath)) {
+            throw new FileNotFoundException("File not found at `$outputFullPath`. Seems like PDF was not generated.");
+        }
+
         return $outputFullPath;
     }
 

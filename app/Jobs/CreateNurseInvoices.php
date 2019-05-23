@@ -124,9 +124,9 @@ class CreateNurseInvoices implements ShouldQueue
             $viewModel->toArray(),
             storage_path("download/${name}.pdf"),
             [
-                'margin-top'    => '8',
-                'margin-left'   => '8',
-                'margin-bottom' => '8',
+                'margin-top'    => '6',
+                'margin-left'   => '6',
+                'margin-bottom' => '6',
                 'margin-right'  => '6',
                 'footer-right'  => 'Page [page] of [toPage]',
                 'footer-left'   => 'report generated on '.Carbon::now()->format('m-d-Y').' at '.Carbon::now(
@@ -146,19 +146,20 @@ class CreateNurseInvoices implements ShouldQueue
             );
         }
 
-        return [
-            'nurse_user_id' => $viewModel->user->id,
-            'name'          => $viewModel->user->getFullName(),
-            'email'         => $viewModel->user->email,
-            'link'          => $link,
-            'date_start'    => presentDate($this->startDate),
-            'date_end'      => presentDate($this->endDate),
-            'email_body'    => [
-                'name'       => $viewModel->user->getFullName(),
-                'total_time' => $viewModel->systemTimeInHours(),
-                'payout'     => $viewModel->invoiceAmount(),
-            ],
-        ];
+        return
+            [
+                'nurse_user_id' => $viewModel->user->id,
+                'name'          => $viewModel->user->getFullName(),
+                'email'         => $viewModel->user->email,
+                'link'          => $link,
+                'date_start'    => presentDate($this->startDate),
+                'date_end'      => presentDate($this->endDate),
+                'email_body'    => [
+                    'name'       => $viewModel->user->getFullName(),
+                    'total_time' => $viewModel->systemTimeInHours(),
+                    'payout'     => $viewModel->invoiceAmount(),
+                ],
+            ];
     }
 
     /**
@@ -220,16 +221,11 @@ class CreateNurseInvoices implements ShouldQueue
                     $nurseUsers->where('nurseInfo.is_variable_rate', true)->pluck('nurseInfo.id')->all()
                 );
 
-                $invoices->merge(
-                    $nurseSystemTimeMap->transform(
-                        function ($itemizedData) use ($nurseUsers, $variablePayMap) {
-                            return $this->createViewModel($itemizedData, $nurseUsers, $variablePayMap);
-                        }
-                    )->map(
-                        function ($viewModel) use ($pdfService) {
-                            return $this->createPdf($viewModel, $pdfService);
-                        }
-                    )
+                $nurseSystemTimeMap->each(
+                    function ($itemizedData) use ($nurseUsers, $variablePayMap, $pdfService, $invoices) {
+                        $viewModel = $this->createViewModel($itemizedData, $nurseUsers, $variablePayMap);
+                        $invoices->push($this->createPdf($viewModel, $pdfService));
+                    }
                 );
             }
         );
