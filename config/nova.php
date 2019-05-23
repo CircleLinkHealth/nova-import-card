@@ -92,5 +92,5 @@ return [
     |
     */
 
-    'pagination' => 'simple',
+    'pagination' => 'links',
 ];
