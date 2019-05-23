@@ -221,13 +221,13 @@
     },
     "merge-plugin": {
       "include": [
-        "CLHPackages/*/composer.json",
-        "Modules/*/composer.json"
+        "Modules/*/composer.json",
+        "CLHPackages/*/composer.json"
       ],
       "require": [
       ],
       "recurse": true,
-      "replace": false,
+      "replace": true,
       "ignore-duplicates": false,
       "merge-dev": true,
       "merge-extra": false,
