@@ -9,9 +9,10 @@ namespace App\Mail;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class NurseDailyReportToDeprecate
+class NurseDailyReportToDeprecate extends Mailable
 {
     use Queueable;
     use SerializesModels;
