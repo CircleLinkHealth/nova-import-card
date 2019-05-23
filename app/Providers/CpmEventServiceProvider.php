@@ -48,11 +48,11 @@ class CpmEventServiceProvider extends ServiceProvider
         ],
         MessageSending::class => [
         ],
-        PatientContactWindowUpdatedEvent::class => [
-            PatientContactWindowUpdated::class,
-        ],
         NotificationFailed::class => [
             LogFailedNotification::class,
+        ],
+        PatientContactWindowUpdatedEvent::class => [
+            PatientContactWindowUpdated::class,
         ],
     ];
 
