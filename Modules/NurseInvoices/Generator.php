@@ -103,7 +103,7 @@ class Generator
      */
     private function createPdf(Invoice $viewModel)
     {
-        $name = trim($viewModel->user->getFullName()).'-'.Carbon::now()->toDateString();
+        $name = trim($viewModel->nurseFullName).'-'.Carbon::now()->toDateString();
         $link = $name.'.pdf';
 
         $pdfPath = $this->pdfService->createPdfFromView(
@@ -127,16 +127,16 @@ class Generator
         return
             [
                 'pdf_path'      => $pdfPath,
-                'nurse_user_id' => $viewModel->user->id,
-                'name'          => $viewModel->user->getFullName(),
-                'email'         => $viewModel->user->email,
+                'nurse_user_id' => $viewModel->user()->id,
+                'name'          => $viewModel->user()->getFullName(),
+                'email'         => $viewModel->user()->email,
                 'link'          => $link,
                 'date_start'    => presentDate($this->startDate),
                 'date_end'      => presentDate($this->endDate),
                 'email_body'    => [
-                    'name'       => $viewModel->user->getFullName(),
+                    'name'       => $viewModel->user()->getFullName(),
                     'total_time' => $viewModel->systemTimeInHours(),
-                    'payout'     => $viewModel->invoiceAmount(),
+                    'payout'     => $viewModel->hourlySalary(),
                 ],
             ];
     }
@@ -162,10 +162,10 @@ class Generator
     private function forwardToCareCoach(Invoice $viewModel, $pdf)
     {
         if ($this->sendToCareCoaches) {
-            $viewModel->user->notify(
+            $viewModel->user()->notify(
                 new NurseInvoiceCreated($pdf['link'], "{$this->startDate->englishMonth} {$this->startDate->year}")
             );
-            $viewModel->user->addMedia($pdf['pdf_path'])->toMediaCollection(
+            $viewModel->user()->addMedia($pdf['pdf_path'])->toMediaCollection(
                 "monthly_invoice_{$this->startDate->year}_{$this->startDate->month}"
             );
         }
@@ -181,24 +181,24 @@ class Generator
         return User::withTrashed()
             ->careCoaches()
             ->with(
-                       [
-                           'nurseBonuses' => function ($q) {
-                               $q->whereBetween('date', [$this->startDate, $this->endDate]);
-                           },
-                           'nurseInfo',
-                       ]
+                [
+                    'nurseBonuses' => function ($q) {
+                        $q->whereBetween('date', [$this->startDate, $this->endDate]);
+                    },
+                    'nurseInfo',
+                ]
                    )
             ->has('nurseInfo')
             ->when(
-                       is_array($this->nurseUserIds) && ! empty($this->nurseUserIds),
-                       function ($q) {
-                           $q->whereIn('id', $this->nurseUserIds);
-                       }
+                is_array($this->nurseUserIds) && ! empty($this->nurseUserIds),
+                function ($q) {
+                    $q->whereIn('id', $this->nurseUserIds);
+                }
                    )
             ->when(
-                       empty($this->nurseUserIds),
-                       function ($q) {
-                           $q->whereHas(
+                empty($this->nurseUserIds),
+                function ($q) {
+                    $q->whereHas(
                                'pageTimersAsProvider',
                                function ($s) {
                                    $s->whereBetween(
@@ -210,13 +210,13 @@ class Generator
                                    );
                                }
                            )
-                               ->whereHas(
-                                 'nurseInfo',
-                                 function ($s) {
-                                     $s->where('is_demo', false);
-                                 }
+                        ->whereHas(
+                                   'nurseInfo',
+                                   function ($s) {
+                                       $s->where('is_demo', false);
+                                   }
                              );
-                       }
+                }
                    );
     }
 }
