@@ -4,13 +4,13 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Services\CareCoaches\Invoices;
+namespace CircleLinkHealth\NurseInvoices;
 
 use App\Notifications\NurseInvoiceCreated;
 use App\Services\PdfService;
-use App\ViewModels\CareCoachInvoiceViewModel;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\NurseInvoices\ViewModels\Invoice;
 use Illuminate\Support\Collection;
 
 class Generator
@@ -38,7 +38,7 @@ class Generator
      */
     private $sendToCareCoaches;
 
-    public function __construct(array $nurseUserIds, Carbon $startDate, Carbon $endDate, $sendToCareCoaches)
+    public function __construct(array $nurseUserIds, Carbon $startDate, Carbon $endDate, $sendToCareCoaches = false)
     {
         $this->pdfService        = app(PdfService::class);
         $this->startDate         = $startDate;
@@ -82,7 +82,10 @@ class Generator
                         }
 
                         $viewModel = $this->createViewModel($user, $nurseAggregatedTotalTime, $variablePayMap);
-                        $invoices->push($this->createPdf($viewModel));
+                        $pdf = $this->createPdf($viewModel);
+                        $this->forwardToCareCoach($viewModel, $pdf);
+
+                        $invoices->push($pdf);
                     }
                 );
             }
@@ -91,28 +94,14 @@ class Generator
         return $invoices;
     }
 
-    public function getAddedDuration($nurseExtras)
-    {
-        return $nurseExtras
-            ->where('unit', 'minutes')
-            ->sum('value');
-    }
-
-    public function getBonus($nurseExtras)
-    {
-        return $nurseExtras
-            ->where('unit', 'usd')
-            ->sum('value');
-    }
-
     /**
-     * @param CareCoachInvoiceViewModel $viewModel
+     * @param Invoice $viewModel
      *
      * @throws \Exception
      *
      * @return array
      */
-    private function createPdf(CareCoachInvoiceViewModel $viewModel)
+    private function createPdf(Invoice $viewModel)
     {
         $name = trim($viewModel->user->getFullName()).'-'.Carbon::now()->toDateString();
         $link = $name.'.pdf';
@@ -135,17 +124,9 @@ class Generator
             ]
         );
 
-        if ($this->sendToCareCoaches) {
-            $viewModel->user->notify(
-                new NurseInvoiceCreated($link, "{$this->startDate->englishMonth} {$this->startDate->year}")
-            );
-            $viewModel->user->addMedia($pdfPath)->toMediaCollection(
-                "monthly_invoice_{$this->startDate->year}_{$this->startDate->month}"
-            );
-        }
-
         return
             [
+                'pdf_path'      => $pdfPath,
                 'nurse_user_id' => $viewModel->user->id,
                 'name'          => $viewModel->user->getFullName(),
                 'email'         => $viewModel->user->email,
@@ -162,33 +143,32 @@ class Generator
 
     /**
      * @param User       $nurse
-     * @param Collection $itemizedData
+     * @param Collection $aggregatedTotalTime
      * @param Collection $variablePayMap
      *
-     * @return CareCoachInvoiceViewModel
+     * @return Invoice
      */
-    private function createViewModel(User $nurse, Collection $itemizedData, Collection $variablePayMap)
+    private function createViewModel(User $nurse, Collection $aggregatedTotalTime, Collection $variablePayMap)
     {
-        $isVariablePay = (bool) $nurse->nurseInfo->is_variable_rate;
-
-        if ($isVariablePay) {
-            $variablePaySummary = $variablePayMap->first(
-                function ($value, $key) use ($nurse) {
-                    return $key === $nurse->nurseInfo->id;
-                }
-            );
-        }
-
-        return new CareCoachInvoiceViewModel(
+        return new Invoice(
             $nurse,
             $this->startDate,
             $this->endDate,
-            $itemizedData,
-            $this->getBonus($nurse->nurseBonuses),
-            $this->getAddedDuration($nurse->nurseBonuses),
-            $isVariablePay,
-            $variablePaySummary ?? collect()
+            $aggregatedTotalTime,
+            $variablePayMap
         );
+    }
+
+    private function forwardToCareCoach(Invoice $viewModel, $pdf)
+    {
+        if ($this->sendToCareCoaches) {
+            $viewModel->user->notify(
+                new NurseInvoiceCreated($pdf['link'], "{$this->startDate->englishMonth} {$this->startDate->year}")
+            );
+            $viewModel->user->addMedia($pdf['pdf_path'])->toMediaCollection(
+                "monthly_invoice_{$this->startDate->year}_{$this->startDate->month}"
+            );
+        }
     }
 
     /**
@@ -201,24 +181,24 @@ class Generator
         return User::withTrashed()
             ->careCoaches()
             ->with(
-                [
-                    'nurseBonuses' => function ($q) {
-                        $q->whereBetween('date', [$this->startDate, $this->endDate]);
-                    },
-                    'nurseInfo',
-                ]
+                       [
+                           'nurseBonuses' => function ($q) {
+                               $q->whereBetween('date', [$this->startDate, $this->endDate]);
+                           },
+                           'nurseInfo',
+                       ]
                    )
             ->has('nurseInfo')
             ->when(
-                is_array($this->nurseUserIds) && ! empty($this->nurseUserIds),
-                function ($q) {
-                    $q->whereIn('id', $this->nurseUserIds);
-                }
+                       is_array($this->nurseUserIds) && ! empty($this->nurseUserIds),
+                       function ($q) {
+                           $q->whereIn('id', $this->nurseUserIds);
+                       }
                    )
             ->when(
-                empty($this->nurseUserIds),
-                function ($q) {
-                    $q->whereHas(
+                       empty($this->nurseUserIds),
+                       function ($q) {
+                           $q->whereHas(
                                'pageTimersAsProvider',
                                function ($s) {
                                    $s->whereBetween(
@@ -230,13 +210,13 @@ class Generator
                                    );
                                }
                            )
-                        ->whereHas(
-                                   'nurseInfo',
-                                   function ($s) {
-                                       $s->where('is_demo', false);
-                                   }
+                               ->whereHas(
+                                 'nurseInfo',
+                                 function ($s) {
+                                     $s->where('is_demo', false);
+                                 }
                              );
-                }
+                       }
                    );
     }
 }
