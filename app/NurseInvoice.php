@@ -6,7 +6,6 @@
 
 namespace App;
 
-use CircleLinkHealth\Customer\Entities\Nurse;
 use Illuminate\Database\Eloquent\Model;
 
 class NurseInvoice extends Model
@@ -16,11 +15,15 @@ class NurseInvoice extends Model
         'invoice_data' => ' array',
     ];
 
-    protected $fillable = ['nurse_info_id', 'month_year', 'sent_to_accountant', 'invoice_data'];
-    protected $table    = 'nurse_invoices';
+    protected $fillable = [
+        'nurse_info_id',
+        'month_year',
+        'sent_to_accountant',
+        'invoice_data',
+    ];
 
-    public function dispute()
+    public function disputes()
     {
-        return $this->morphMany(Nurse::class, 'disputable');
+        return $this->morphMany(Dispute::class, 'disputable');
     }
 }

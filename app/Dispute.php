@@ -8,11 +8,15 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class InvoiceDispute extends Model
+class Dispute extends Model
 {
-    protected $fillable = ['invoice_id', 'user_id', 'reason', 'resolved_at', 'resolution_note'];
-
-    protected $table    = 'invoice_disputes';
+    protected $fillable = [
+            'invoice_id',
+            'user_id',
+            'reason',
+            'resolved_at',
+            'resolution_note',
+        ];
 
     public function disputable()
     {
