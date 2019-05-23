@@ -35,7 +35,6 @@ use App\Models\EmailSettings;
 use App\Models\MedicalRecords\Ccda;
 use App\Notifications\CarePlanApprovalReminder;
 use App\Notifications\ResetPassword;
-use CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra;
 use App\Repositories\Cache\EmptyUserNotificationList;
 use App\Repositories\Cache\UserNotificationList;
 use App\Services\UserService;
@@ -49,6 +48,7 @@ use CircleLinkHealth\Customer\Traits\HasEmrDirectAddress;
 use CircleLinkHealth\Customer\Traits\MakesOrReceivesCalls;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
 use CircleLinkHealth\Customer\Traits\TimezoneTrait;
+use CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
 use DateTime;
@@ -2125,6 +2125,16 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasMany('App\Note', 'patient_id', 'id');
     }
 
+    /**
+     * Extra time worked, or cash bonuses for Nurses.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function nurseBonuses()
+    {
+        return $this->hasMany(NurseInvoiceExtra::class);
+    }
+
     public function nurseInfo()
     {
         return $this->hasOne(Nurse::class, 'user_id', 'id');
@@ -2250,17 +2260,17 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 'careTeamMembers',
                 function ($q) use ($approveOwnCarePlans) {
                     $q->where(
-                               [
-                                   ['type', '=', CarePerson::BILLING_PROVIDER],
-                                   ['member_user_id', '=', $this->id],
-                               ]
+                        [
+                            ['type', '=', CarePerson::BILLING_PROVIDER],
+                            ['member_user_id', '=', $this->id],
+                        ]
                            )
                         ->when(
-                                   ! $approveOwnCarePlans,
-                                   function ($q) {
-                                       $q->orWhere(
-                                         function ($q) {
-                                             $q->whereHas(
+                            ! $approveOwnCarePlans,
+                            function ($q) {
+                                $q->orWhere(
+                                           function ($q) {
+                                               $q->whereHas(
                                                  'user',
                                                  function ($q) {
                                                      $q->whereHas(
@@ -2278,9 +2288,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                                                      );
                                                  }
                                              );
-                                         }
+                                           }
                                      );
-                                   }
+                            }
                              );
                 }
                    )
@@ -2388,17 +2398,17 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 function ($query) use ($onlyEnrolledPatients) {
                     //$query -> Practice Model
                     return $query->whereHas(
-                                'patients',
-                                function ($innerQuery) {
-                                    //$innerQuery -> User Model
-                                    return $innerQuery->whereHas(
+                        'patients',
+                        function ($innerQuery) {
+                            //$innerQuery -> User Model
+                            return $innerQuery->whereHas(
                                         'patientInfo',
                                         function ($innerInnerQuery) {
                                             //$innerInnerQuery -> Patient model
                                             return $innerInnerQuery->where('ccm_status', '=', 'enrolled');
                                         }
                                     );
-                                }
+                        }
                             );
                 }
                     )
@@ -3616,14 +3626,5 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         );
 
         return $patientIds->pluck('id')->all();
-    }
-    
-    /**
-     * Extra time worked, or cash bonuses for Nurses
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function nurseBonuses() {
-        return $this->hasMany(NurseInvoiceExtra::class);
     }
 }
