@@ -75,6 +75,8 @@ class CreateNurseInvoices implements ShouldQueue
 
     /**
      * Execute the job.
+     *
+     * @throws \Exception
      */
     public function handle()
     {
@@ -111,7 +113,7 @@ class CreateNurseInvoices implements ShouldQueue
      *
      * @throws \Exception
      *
-     * @return string|void
+     * @return string
      */
     private function storeInJobsCompleted(Collection $invoices)
     {
@@ -145,7 +147,7 @@ class CreateNurseInvoices implements ShouldQueue
         if ($links->isEmpty() && empty($data)) {
             $userNotification->push('There was not data to generate Nurse Invoices.');
 
-            return;
+            return null;
         }
 
         $linkToView = linkToCachedView($viewHashKey);
@@ -158,5 +160,7 @@ class CreateNurseInvoices implements ShouldQueue
             $linkToView,
             'Go to page'
         );
+
+        return $linkToView;
     }
 }

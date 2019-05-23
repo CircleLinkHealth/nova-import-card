@@ -74,7 +74,14 @@ class Generator
                         $variablePayMap,
                         $invoices
                     ) {
-                        $viewModel = $this->createViewModel($nurseAggregatedTotalTime, $nurseUsers, $variablePayMap);
+                        $userId = $nurseAggregatedTotalTime->first()->first()->user_id;
+                        $user = $nurseUsers->firstWhere('id', '=', $userId);
+
+                        if ( ! $user) {
+                            throw new \Exception("User `$userId` not found");
+                        }
+
+                        $viewModel = $this->createViewModel($user, $nurseAggregatedTotalTime, $variablePayMap);
                         $invoices->push($this->createPdf($viewModel));
                     }
                 );
@@ -154,68 +161,64 @@ class Generator
     }
 
     /**
+     * @param User       $nurse
      * @param Collection $itemizedData
-     * @param Collection $nurseUsers
      * @param Collection $variablePayMap
-     *
-     * @throws \Exception
      *
      * @return CareCoachInvoiceViewModel
      */
-    private function createViewModel(Collection $itemizedData, Collection $nurseUsers, Collection $variablePayMap)
+    private function createViewModel(User $nurse, Collection $itemizedData, Collection $variablePayMap)
     {
-        $userId = $itemizedData->first()->first()->user_id;
-        $user   = $nurseUsers->firstWhere('id', '=', $userId);
-
-        $isVariablePay = (bool) $user->nurseInfo->is_variable_rate;
-
-        if ( ! $user) {
-            throw new \Exception("User `$userId` not found");
-        }
+        $isVariablePay = (bool) $nurse->nurseInfo->is_variable_rate;
 
         if ($isVariablePay) {
             $variablePaySummary = $variablePayMap->first(
-                function ($value, $key) use ($user) {
-                    return $key === $user->nurseInfo->id;
+                function ($value, $key) use ($nurse) {
+                    return $key === $nurse->nurseInfo->id;
                 }
             );
         }
 
         return new CareCoachInvoiceViewModel(
-            $user,
+            $nurse,
             $this->startDate,
             $this->endDate,
             $itemizedData,
-            $this->getBonus($user->nurseBonuses),
-            $this->getAddedDuration($user->nurseBonuses),
+            $this->getBonus($nurse->nurseBonuses),
+            $this->getAddedDuration($nurse->nurseBonuses),
             $isVariablePay,
             $variablePaySummary ?? collect()
         );
     }
 
+    /**
+     * Fetch necessary CareCoach data to create the invoices.
+     *
+     * @return mixed
+     */
     private function nurseUsers()
     {
         return User::withTrashed()
             ->careCoaches()
             ->with(
-                       [
-                           'nurseBonuses' => function ($q) {
-                               $q->whereBetween('date', [$this->startDate, $this->endDate]);
-                           },
-                           'nurseInfo',
-                       ]
+                [
+                    'nurseBonuses' => function ($q) {
+                        $q->whereBetween('date', [$this->startDate, $this->endDate]);
+                    },
+                    'nurseInfo',
+                ]
                    )
             ->has('nurseInfo')
             ->when(
-                       is_array($this->nurseUserIds) && ! empty($this->nurseUserIds),
-                       function ($q) {
-                           $q->whereIn('id', $this->nurseUserIds);
-                       }
+                is_array($this->nurseUserIds) && ! empty($this->nurseUserIds),
+                function ($q) {
+                    $q->whereIn('id', $this->nurseUserIds);
+                }
                    )
             ->when(
-                       empty($this->nurseUserIds),
-                       function ($q) {
-                           $q->whereHas(
+                empty($this->nurseUserIds),
+                function ($q) {
+                    $q->whereHas(
                                'pageTimersAsProvider',
                                function ($s) {
                                    $s->whereBetween(
@@ -227,13 +230,13 @@ class Generator
                                    );
                                }
                            )
-                               ->whereHas(
-                                 'nurseInfo',
-                                 function ($s) {
-                                     $s->where('is_demo', false);
-                                 }
+                        ->whereHas(
+                                   'nurseInfo',
+                                   function ($s) {
+                                       $s->where('is_demo', false);
+                                   }
                              );
-                       }
+                }
                    );
     }
 }
