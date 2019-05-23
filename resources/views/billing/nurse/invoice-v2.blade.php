@@ -16,7 +16,7 @@
         @if($hasAddedTime)
 
             <dt>Extras:</dt>
-            <dd>{{$addedTime. ' Hours'}} (${{$addedTimeAmount}})</dd>
+            <dd>{{$addedTime}} Hours (${{$addedTimeAmount}})</dd>
 
         @endif
 

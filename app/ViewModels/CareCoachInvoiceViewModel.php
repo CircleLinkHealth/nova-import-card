@@ -122,9 +122,14 @@ class CareCoachInvoiceViewModel extends ViewModel
         $this->setPayableAmount();
     }
 
+    /**
+     * Extra time in hours.
+     *
+     * @return float
+     */
     public function addedTime()
     {
-        return ceil(($this->extraTime * 2) / 60) / 2;
+        return ceil($this->extraTime / 60);
     }
 
     public function addedTimeAmount()
