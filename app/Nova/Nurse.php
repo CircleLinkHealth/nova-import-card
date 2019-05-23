@@ -80,6 +80,11 @@ class Nurse extends Resource
         return true;
     }
 
+    public function authorizedToView(Request $request)
+    {
+        return false;
+    }
+
     /**
      * Get the cards available for the request.
      *
@@ -113,7 +118,7 @@ class Nurse extends Resource
                 ->readonly(true),
             Text::make('+ Days Payment', 'pay_interval'),
             Boolean::make('Is Demo?', 'is_demo'),
-            Boolean::make('Alternative Pay', 'is_variable_rate'),
+            Boolean::make('Variable Rate', 'is_variable_rate'),
         ];
     }
 
