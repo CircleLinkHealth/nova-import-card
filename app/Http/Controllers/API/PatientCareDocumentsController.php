@@ -7,6 +7,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 
@@ -19,7 +20,10 @@ class PatientCareDocumentsController extends Controller
 
     public function downloadCareDocument($id, $mediaId)
     {
-        $mediaItem = User::findOrFail($id)->getMedia('patient-care-documents')->where('id', $mediaId)->first();
+        $mediaItem = Media::where('collection_name', 'patient-care-documents')
+            ->where('model_id', $id)
+            ->whereIn('model_type', ['App\User', 'CircleLinkHealth\Customer\Entities\User'])
+            ->find($mediaId);
 
         if ( ! $mediaItem) {
             throw new \Exception('Media for Patient does not exist.', 500);
@@ -33,24 +37,25 @@ class PatientCareDocumentsController extends Controller
 
     public function getCareDocuments(Request $request, $patientId, $showPast = false)
     {
-        $patient = User::findOrFail($patientId);
+        $files = Media::where('collection_name', 'patient-care-documents')
+            ->where('model_id', $patientId)
+            ->whereIn('model_type', ['App\User', 'CircleLinkHealth\Customer\Entities\User'])
+            ->get()
+            ->sortByDesc('created_at')
+            ->mapToGroups(function ($item, $key) {
+                $docType = $item->getCustomProperty('doc_type');
 
-        $files = $patient->getMedia('patient-care-documents')->sortByDesc('created_at')->mapToGroups(function (
-            $item,
-            $key
-        ) {
-            $docType = $item->getCustomProperty('doc_type');
-
-            return [$docType => $item];
-        })->reject(function ($value, $key) {
-            return ! $key;
-        })
+                return [$docType => $item];
+            })
+            ->reject(function ($value, $key) {
+                return ! $key;
+            })
             //get the latest file from each category
             ->unless('true' == $showPast, function ($files) {
-                             return $files->map(function ($typeGroup) {
-                                 return collect([$typeGroup->first()]);
-                             });
-                         });
+                return $files->map(function ($typeGroup) {
+                    return collect([$typeGroup->first()]);
+                });
+            });
 
         return response()->json($files->toArray());
     }

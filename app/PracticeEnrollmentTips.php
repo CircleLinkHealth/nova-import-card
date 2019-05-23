@@ -11,8 +11,6 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 /**
  * Enrollment Tips per Practice.
  *
- * @property int practice_id
- * @property string content
  * @property int                                                                            $id
  * @property int                                                                            $practice_id
  * @property string                                                                         $content

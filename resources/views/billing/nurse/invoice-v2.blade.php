@@ -16,8 +16,13 @@
         @if($hasAddedTime)
 
             <dt>Extras:</dt>
-            <dd>{{$note}}: {{$addedTime. ' Hours'}} (${{$addedTimeAmount}})</dd>
+            <dd>{{$addedTime. ' Hours'}} (${{$addedTimeAmount}})</dd>
 
+        @endif
+
+        @if($bonus)
+            <dt>Bonus:</dt>
+            <dd>${{$bonus}}</dd>
         @endif
 
         <dt>Invoice Amount <small>(highest amount used)</small></dt>

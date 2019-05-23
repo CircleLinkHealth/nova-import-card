@@ -94,7 +94,7 @@ class EnrollmentStatsController extends Controller
         $date = Carbon::now()->toAtomString();
         $data = $this->getPracticeStats($request);
 
-        $filename = "Practice Enrollment Stats - ${date}";
+        $filename = "Practice Enrollment Stats - ${date}.xlsx";
 
         return (new FromArray($filename, $data))->download($filename);
     }
@@ -229,10 +229,19 @@ class EnrollmentStatsController extends Controller
                     ->where('last_attempt_at', '>=', $start)
                     ->where('last_attempt_at', '<=', $end)->where('status', 'utc')->count();
 
-            $data[$practice->id]['rejected'] = Enrollee
+            $data[$practice->id]['hard_declined'] = Enrollee
                 ::where('practice_id', $practice->id)
                     ->where('last_attempt_at', '>=', $start)
-                    ->where('last_attempt_at', '<=', $end)->where('status', 'rejected')->count();
+                    ->where('last_attempt_at', '<=', $end)
+                    ->where('status', 'rejected')
+                    ->count();
+
+            $data[$practice->id]['soft_declined'] = Enrollee
+                ::where('practice_id', $practice->id)
+                    ->where('last_attempt_at', '>=', $start)
+                    ->where('last_attempt_at', '<=', $end)
+                    ->where('status', 'soft_rejected')
+                    ->count();
 
             $total_time = Enrollee
                 ::where('practice_id', $practice->id)
@@ -255,7 +264,7 @@ class EnrollmentStatsController extends Controller
                     continue;
                 }
 
-                $enroller = CareAmbassador::find($enrollerId);
+                $enroller = CareAmbassador::where('user_id', $enrollerId)->first();
                 $data[$practice->id]['total_cost'] += number_format($enroller->hourly_rate * $time / 3600, 2);
             }
 

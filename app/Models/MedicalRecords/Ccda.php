@@ -95,10 +95,10 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  */
 class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
 {
-    use BelongsToPatientUser,
-        HasMediaTrait,
-        TransformableTrait,
-        SoftDeletes;
+    use BelongsToPatientUser;
+    use HasMediaTrait;
+    use SoftDeletes;
+    use TransformableTrait;
     const API = 'api';
 
     //define sources here

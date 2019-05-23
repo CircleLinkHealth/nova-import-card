@@ -7,10 +7,10 @@
 namespace App\Repositories;
 
 use App\Exceptions\InvalidArgumentException;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
-use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
 class PatientWriteRepository
@@ -82,17 +82,24 @@ class PatientWriteRepository
     /**
      * Updates the patient's call info based on the status of the last call.
      *
-     * @param Patient $patient
-     * @param $successfulLastCall
+     * @param Patient     $patient
+     * @param bool        $successfulLastCall
+     * @param bool        $isCallBack
+     * @param Carbon|null $forDate
      *
      * @return \Illuminate\Database\Eloquent\Model|PatientMonthlySummary|static|null
      */
     public function updateCallLogs(
         Patient $patient,
-        bool $successfulLastCall
+        bool $successfulLastCall,
+        bool $isCallBack = false,
+        Carbon $forDate = null
     ) {
+        if ( ! $forDate) {
+            $forDate = Carbon::now();
+        }
         // get record for month
-        $day_start = Carbon::parse(Carbon::now()->firstOfMonth())->format('Y-m-d');
+        $day_start = Carbon::parse($forDate->firstOfMonth())->format('Y-m-d');
         $record    = PatientMonthlySummary::where('patient_id', $patient->user_id)
             ->where('month_year', $day_start)
             ->first();
@@ -103,14 +110,17 @@ class PatientWriteRepository
             $successful_call_increment = 1;
             // reset call attempts back to 0
             $patient->no_call_attempts_since_last_success = 0;
-        } else {
+        } elseif ( ! $isCallBack) {
             $patient->no_call_attempts_since_last_success = ($patient->no_call_attempts_since_last_success + 1);
 
             if (0 === $patient->no_call_attempts_since_last_success % 5 && optional($record)->no_of_successful_calls < 1) {
                 $patient->ccm_status = Patient::UNREACHABLE;
             }
         }
-        $patient->save();
+
+        if ($patient->isDirty()) {
+            $patient->save();
+        }
 
         // Determine whether to add to record or not
         if ( ! $record) {

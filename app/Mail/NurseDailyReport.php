@@ -14,7 +14,8 @@ use Illuminate\Queue\SerializesModels;
 
 class NurseDailyReport extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * The data passed to the view.

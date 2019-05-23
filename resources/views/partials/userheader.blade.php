@@ -197,7 +197,7 @@
                     @include('partials.viewCcdaButton')
                 @endif
                 <div id="header-perform-status-select" class="ccm-status col-xs-offset-3">
-                    @if(Route::is('patient.note.create'))
+                    @if(Route::is('patient.note.create') || Route::is('patient.note.edit'))
                         <li class="inline-block">
                             <select id="status" name="status" class="selectpickerX dropdownValid form-control" data-size="2"
                                     style="width: 135px">
@@ -222,7 +222,7 @@
                     @endif
                     <br/>
                 </div>
-                @if(Route::is('patient.note.create'))
+                @if(Route::is('patient.note.create') || Route::is('patient.note.edit'))
                     <div id="header-withdrawn-reason" class="hidden" style="padding-top: 10px;">
 
                         <div class="col-md-12" style="padding-right: 0 !important;">{!! Form::label('withdrawn_reason', 'Withdrawn Reason: ') !!}</div>

@@ -12,8 +12,10 @@ use App\Events\UpdateUserLoginInfo;
 use App\Events\UpdateUserSessionInfo;
 use App\Listeners\CreateAndHandlePdfReport;
 use App\Listeners\LogFailedNotification;
+use App\Listeners\PatientContactWindowUpdated;
 use App\Listeners\UpdateCarePlanStatus;
 use App\Listeners\UserLoggedOut;
+use CircleLinkHealth\Customer\Events\PatientContactWindowUpdatedEvent;
 use Illuminate\Auth\Events\Authenticated;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
@@ -45,6 +47,9 @@ class CpmEventServiceProvider extends ServiceProvider
             UserLoggedOut::class,
         ],
         MessageSending::class => [
+        ],
+        PatientContactWindowUpdatedEvent::class => [
+            PatientContactWindowUpdated::class,
         ],
         NotificationFailed::class => [
             LogFailedNotification::class,

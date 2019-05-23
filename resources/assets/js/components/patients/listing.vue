@@ -26,6 +26,10 @@
             <template slot="program" slot-scope="props">
                 <div>{{ props.row.program_name }}</div>
             </template>
+            <template slot="filter__program">
+                <div>
+                </div>
+            </template>
             <template slot="ccmStatus" slot-scope="props">
                 <div>
                     {{
@@ -71,6 +75,9 @@
             </template>
             <template slot="h__withdrawnReason" slot-scope="props">
                 Withdrawn Reason
+            </template>
+            <template slot="withdrawnReason" slot-scope="props">
+                <div class="withdrawn-reason-column"><span :title="props.row.withdrawnReason">{{ props.row.withdrawnReason }}</span></div>
             </template>
             <template slot="h__dob" slot-scope="props">
                 Date of Birth
@@ -607,6 +614,12 @@
         white-space: nowrap;
     }
 
+    .withdrawn-reason-column {
+        max-width: 250px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
 </style>
 
 <style scoped>

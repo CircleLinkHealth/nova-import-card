@@ -7,8 +7,8 @@
 namespace App\Console\Commands;
 
 use App\Services\ActivityService;
-use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Console\Command;
 
 class RecalculateCcmTime extends Command
