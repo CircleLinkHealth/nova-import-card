@@ -69,8 +69,6 @@ class EmailRNDailyReport extends Command
                     $q->whereIn('id', $userIds);
                 }
             )
-            //trying this out instead of passing variables through Kernel
-            ->whereIn('id', [11321, 8151, 1920])
             ->whereHas(
                 'nurseInfo',
                 function ($info) {

@@ -9,10 +9,9 @@ namespace App\Mail;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class NurseDailyReport extends Mailable
+class NurseDailyReportToDeprecate
 {
     use Queueable;
     use SerializesModels;
@@ -60,7 +59,7 @@ class NurseDailyReport extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.nurseDailyReport')
+        return $this->view('emails.nurseDailyReportToDeprecate')
             ->with($this->data)
             ->with(['date' => $this->date])
             ->to($this->nurse->email)
