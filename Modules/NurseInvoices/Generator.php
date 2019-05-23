@@ -38,7 +38,7 @@ class Generator
      */
     private $sendToCareCoaches;
 
-    public function __construct(array $nurseUserIds, Carbon $startDate, Carbon $endDate, $sendToCareCoaches)
+    public function __construct(array $nurseUserIds, Carbon $startDate, Carbon $endDate, $sendToCareCoaches = false)
     {
         $this->pdfService        = app(PdfService::class);
         $this->startDate         = $startDate;
@@ -82,7 +82,10 @@ class Generator
                         }
 
                         $viewModel = $this->createViewModel($user, $nurseAggregatedTotalTime, $variablePayMap);
-                        $invoices->push($this->createPdf($viewModel));
+                        $pdf = $this->createPdf($viewModel);
+                        $this->forwardToCareCoach($viewModel, $pdf);
+
+                        $invoices->push($pdf);
                     }
                 );
             }
@@ -121,17 +124,9 @@ class Generator
             ]
         );
 
-        if ($this->sendToCareCoaches) {
-            $viewModel->user->notify(
-                new NurseInvoiceCreated($link, "{$this->startDate->englishMonth} {$this->startDate->year}")
-            );
-            $viewModel->user->addMedia($pdfPath)->toMediaCollection(
-                "monthly_invoice_{$this->startDate->year}_{$this->startDate->month}"
-            );
-        }
-
         return
             [
+                'pdf_path'      => $pdfPath,
                 'nurse_user_id' => $viewModel->user->id,
                 'name'          => $viewModel->user->getFullName(),
                 'email'         => $viewModel->user->email,
@@ -164,6 +159,18 @@ class Generator
         );
     }
 
+    private function forwardToCareCoach(Invoice $viewModel, $pdf)
+    {
+        if ($this->sendToCareCoaches) {
+            $viewModel->user->notify(
+                new NurseInvoiceCreated($pdf['link'], "{$this->startDate->englishMonth} {$this->startDate->year}")
+            );
+            $viewModel->user->addMedia($pdf['pdf_path'])->toMediaCollection(
+                "monthly_invoice_{$this->startDate->year}_{$this->startDate->month}"
+            );
+        }
+    }
+
     /**
      * Fetch necessary CareCoach data to create the invoices.
      *
@@ -174,42 +181,42 @@ class Generator
         return User::withTrashed()
             ->careCoaches()
             ->with(
-                [
-                    'nurseBonuses' => function ($q) {
-                        $q->whereBetween('date', [$this->startDate, $this->endDate]);
-                    },
-                    'nurseInfo',
-                ]
+                       [
+                           'nurseBonuses' => function ($q) {
+                               $q->whereBetween('date', [$this->startDate, $this->endDate]);
+                           },
+                           'nurseInfo',
+                       ]
                    )
             ->has('nurseInfo')
             ->when(
-                is_array($this->nurseUserIds) && ! empty($this->nurseUserIds),
-                function ($q) {
-                    $q->whereIn('id', $this->nurseUserIds);
-                }
+                       is_array($this->nurseUserIds) && ! empty($this->nurseUserIds),
+                       function ($q) {
+                           $q->whereIn('id', $this->nurseUserIds);
+                       }
                    )
             ->when(
-                empty($this->nurseUserIds),
-                function ($q) {
-                    $q->whereHas(
-                        'pageTimersAsProvider',
-                        function ($s) {
-                            $s->whereBetween(
-                                'start_time',
-                                [
-                                    $this->startDate->copy()->startOfDay(),
-                                    $this->endDate->copy()->endOfDay(),
-                                ]
+                       empty($this->nurseUserIds),
+                       function ($q) {
+                           $q->whereHas(
+                               'pageTimersAsProvider',
+                               function ($s) {
+                                   $s->whereBetween(
+                                       'start_time',
+                                       [
+                                           $this->startDate->copy()->startOfDay(),
+                                           $this->endDate->copy()->endOfDay(),
+                                       ]
                                    );
-                        }
+                               }
                            )
-                        ->whereHas(
-                            'nurseInfo',
-                            function ($s) {
-                                $s->where('is_demo', false);
-                            }
+                               ->whereHas(
+                                 'nurseInfo',
+                                 function ($s) {
+                                     $s->where('is_demo', false);
+                                 }
                              );
-                }
+                       }
                    );
     }
 }

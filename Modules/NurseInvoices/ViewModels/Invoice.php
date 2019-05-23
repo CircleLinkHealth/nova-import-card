@@ -18,7 +18,7 @@ class Invoice extends ViewModel
     /**
      * @var Collection
      */
-    public $itemizedData;
+    public $aggregatedTotalTime;
     /**
      * @var string
      */
@@ -107,21 +107,21 @@ class Invoice extends ViewModel
         Collection $aggregatedTotalTime,
         Collection $variablePayMap
     ) {
-        $this->user            = $user;
-        $this->startDate       = $startDate;
-        $this->endDate         = $endDate;
-        $this->itemizedData    = $aggregatedTotalTime->flatten();
-        $this->variablePay     = (bool) $user->nurseInfo->is_variable_rate;
-        $this->totalSystemTime = $this->getTotalSystemTime();
-        $this->bonus           = $this->getBonus($user->nurseBonuses);
-        $this->extraTime       = $this->getAddedDuration($user->nurseBonuses);
+        $this->user                = $user;
+        $this->startDate           = $startDate;
+        $this->endDate             = $endDate;
+        $this->aggregatedTotalTime = $aggregatedTotalTime->flatten();
+        $this->variablePay         = (bool) $user->nurseInfo->is_variable_rate;
+        $this->totalSystemTime     = $this->getTotalSystemTime();
+        $this->bonus               = $this->getBonus($user->nurseBonuses);
+        $this->extraTime           = $this->getAddedDuration($user->nurseBonuses);
 
         if ($this->variablePay) {
             $variablePaySummary = $variablePayMap->first(
                 function ($value, $key) use ($user) {
                     return $key === $user->nurseInfo->id;
                 }
-            ) ?? collect();
+                ) ?? collect();
             $this->variablePaySummary = $variablePaySummary->flatten();
         }
 
@@ -169,7 +169,7 @@ class Invoice extends ViewModel
 
     public function getTotalSystemTime()
     {
-        return (int) $this->itemizedData
+        return (int) $this->aggregatedTotalTime
             ->where('is_billable', false)
             ->sum('total_time');
     }
@@ -192,7 +192,7 @@ class Invoice extends ViewModel
         foreach ($period as $date) {
             $dateStr = $date->toDateString();
 
-            $dataForDay = $this->itemizedData->first(
+            $dataForDay = $this->aggregatedTotalTime->first(
                 function ($value) use ($dateStr) {
                     return 0 == $value->is_billable && $value->date == $dateStr;
                 }
@@ -326,7 +326,7 @@ class Invoice extends ViewModel
             $this->amountPayable = $this->fixedRatePay;
         } else {
             $this->variableRatePay = $this->totalTimeAfterCcm() * $this->user->nurseInfo->low_rate
-                + $this->totalTimeTowardsCcm() * $this->user->nurseInfo->high_rate;
+                                     + $this->totalTimeTowardsCcm() * $this->user->nurseInfo->high_rate;
             if ($this->fixedRatePay > $this->variableRatePay) {
                 $this->amountPayable = $this->fixedRatePay;
                 $this->variablePay   = false;
