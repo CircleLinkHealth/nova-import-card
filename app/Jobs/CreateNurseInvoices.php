@@ -38,11 +38,7 @@ class CreateNurseInvoices implements ShouldQueue
     /**
      * @var int
      */
-    protected $extraTime;
-    /**
-     * @var string
-     */
-    protected $note;
+    protected $nurseExtras;
     /**
      * @var array
      */
@@ -52,41 +48,49 @@ class CreateNurseInvoices implements ShouldQueue
      */
     protected $requestedBy;
     /**
+     * @var bool
+     */
+    protected $sendToCareCoaches;
+    /**
      * @var Carbon
      */
     protected $startDate;
-    /**
-     * @var bool
-     */
-    protected $variablePay;
 
     /**
      * Create a new job instance.
      *
-     * @param array  $nurseUserIds
      * @param Carbon $startDate
      * @param Carbon $endDate
+     * @param array  $nurseUserIds
      * @param int    $requestedBy
-     * @param bool   $variablePay
-     * @param int    $extraTime
-     * @param string $note
+     * @param bool   $sendToCareCoaches
      */
     public function __construct(
-        array $nurseUserIds,
         Carbon $startDate,
         Carbon $endDate,
-        int $requestedBy = null,
-        bool $variablePay = false,
-        int $extraTime = 0,
-        string $note = ''
+        array $nurseUserIds,
+        bool $sendToCareCoaches = false,
+        int $requestedBy = null
     ) {
-        $this->nurseUserIds = $nurseUserIds;
-        $this->startDate    = $startDate->startOfDay();
-        $this->endDate      = $endDate->endOfDay();
-        $this->requestedBy  = $requestedBy;
-        $this->variablePay  = $variablePay;
-        $this->extraTime    = $extraTime;
-        $this->note         = $note;
+        $this->nurseUserIds      = $nurseUserIds;
+        $this->startDate         = $startDate->startOfDay();
+        $this->endDate           = $endDate->endOfDay();
+        $this->requestedBy       = $requestedBy;
+        $this->sendToCareCoaches = $sendToCareCoaches;
+    }
+
+    public function getAddedDuration($nurseExtras)
+    {
+        return $nurseExtras
+            ->where('unit', 'minutes')
+            ->sum('value');
+    }
+
+    public function getBonus($nurseExtras)
+    {
+        return $nurseExtras
+            ->where('unit', 'usd')
+            ->sum('value');
     }
 
     /**
@@ -96,21 +100,7 @@ class CreateNurseInvoices implements ShouldQueue
      */
     public function handle(PdfService $pdfService)
     {
-        $start = microtime(true);
-
-        $nurseUsers = $this->nurseUsers();
-
-        //time to run: 6.6966331005096
-//        $start1 = microtime(true);
-//        $systemTimeMap = $this->totalTimeMap();
-//        $end1 = microtime(true) - $start1;
-
-        //time to run: 0.07391095161438
-//        $start2              = microtime(true);
-        $nurseSystemTimeMap = $this->totalTimeMapNoView();
-//        $end2                = microtime(true) - $start2;
-
-        $invoices = $this->generatePdfInvoices($nurseUsers, $nurseSystemTimeMap, $pdfService);
+        $invoices = $this->generatePdfInvoices($pdfService);
 
         if ($invoices->isEmpty()) {
             \Log::info('Invoices not generated due to no data for selected nurses and range.');
@@ -134,35 +124,42 @@ class CreateNurseInvoices implements ShouldQueue
             $viewModel->toArray(),
             storage_path("download/${name}.pdf"),
             [
-                'margin-top'       => '8',
-                'margin-left'      => '8',
-                'margin-bottom'    => '8',
-                'margin-right'     => '6',
-                'footer-right'     => 'Page [page] of [toPage]',
-                'footer-left'      => 'report generated on '.Carbon::now()->format('m-d-Y').' at '.Carbon::now()->format('H:iA'),
+                'margin-top'    => '6',
+                'margin-left'   => '6',
+                'margin-bottom' => '6',
+                'margin-right'  => '6',
+                'footer-right'  => 'Page [page] of [toPage]',
+                'footer-left'   => 'report generated on '.Carbon::now()->format('m-d-Y').' at '.Carbon::now(
+                    )->format(
+                        'H:iA'
+                    ),
                 'footer-font-size' => '6',
             ]
         );
 
-        if ( ! $this->requestedBy) {
-            //if the report was not requested by anybody, it was called from the command. In this case we want to send the invoice to the nurses
-            $viewModel->user->notify(new NurseInvoiceCreated($link, "{$this->startDate->englishMonth} {$this->startDate->year}"));
-            $viewModel->user->addMedia($pdfPath)->toMediaCollection("monthly_invoice_{$this->startDate->year}_{$this->startDate->month}");
+        if ($this->sendToCareCoaches) {
+            $viewModel->user->notify(
+                new NurseInvoiceCreated($link, "{$this->startDate->englishMonth} {$this->startDate->year}")
+            );
+            $viewModel->user->addMedia($pdfPath)->toMediaCollection(
+                "monthly_invoice_{$this->startDate->year}_{$this->startDate->month}"
+            );
         }
 
-        return [
-            'nurse_user_id' => $viewModel->user->id,
-            'name'          => $viewModel->user->getFullName(),
-            'email'         => $viewModel->user->email,
-            'link'          => $link,
-            'date_start'    => presentDate($this->startDate),
-            'date_end'      => presentDate($this->endDate),
-            'email_body'    => [
-                'name'       => $viewModel->user->getFullName(),
-                'total_time' => $viewModel->systemTimeInHours(),
-                'payout'     => $viewModel->invoiceAmount(),
-            ],
-        ];
+        return
+            [
+                'nurse_user_id' => $viewModel->user->id,
+                'name'          => $viewModel->user->getFullName(),
+                'email'         => $viewModel->user->email,
+                'link'          => $link,
+                'date_start'    => presentDate($this->startDate),
+                'date_end'      => presentDate($this->endDate),
+                'email_body'    => [
+                    'name'       => $viewModel->user->getFullName(),
+                    'total_time' => $viewModel->systemTimeInHours(),
+                    'payout'     => $viewModel->invoiceAmount(),
+                ],
+            ];
     }
 
     /**
@@ -179,11 +176,13 @@ class CreateNurseInvoices implements ShouldQueue
         $userId = $itemizedData->first()->first()->user_id;
         $user   = $nurseUsers->firstWhere('id', '=', $userId);
 
+        $isVariablePay = (bool) $user->nurseInfo->is_variable_rate;
+
         if ( ! $user) {
             throw new \Exception("User `$userId` not found");
         }
 
-        if ($this->variablePay) {
+        if ($isVariablePay) {
             $variablePaySummary = $variablePayMap->first(
                 function ($value, $key) use ($user) {
                     return $key === $user->nurseInfo->id;
@@ -196,9 +195,9 @@ class CreateNurseInvoices implements ShouldQueue
             $this->startDate,
             $this->endDate,
             $itemizedData,
-            $this->extraTime,
-            $this->note,
-            $this->variablePay,
+            $this->getBonus($user->nurseBonuses),
+            $this->getAddedDuration($user->nurseBonuses),
+            $isVariablePay,
             $variablePaySummary ?? collect()
         );
     }
@@ -206,31 +205,36 @@ class CreateNurseInvoices implements ShouldQueue
     /**
      * @param Collection $nurseUsers
      * @param Collection $nurseSystemTimeMap
-     * @param bool       $sendToNurses
      * @param PdfService $pdfService
      *
      * @return Collection
      */
-    private function generatePdfInvoices(Collection $nurseUsers, Collection $nurseSystemTimeMap, PdfService $pdfService)
+    private function generatePdfInvoices(PdfService $pdfService)
     {
-        if ($this->variablePay) {
-            $variablePayMap = $this->variablePayMap($nurseUsers->pluck('nurseInfo.id')->all());
-        } else {
-            $variablePayMap = collect();
-        }
+        $invoices = collect();
 
-        return $nurseSystemTimeMap->transform(
-            function ($itemizedData) use ($nurseUsers, $variablePayMap) {
-                return $this->createViewModel($itemizedData, $nurseUsers, $variablePayMap);
-            }
-        )->map(
-            function ($viewModel) use ($pdfService) {
-                return $this->createPdf($viewModel, $pdfService);
+        $this->nurseUsers()->chunk(
+            20,
+            function ($nurseUsers) use (&$invoices, $pdfService) {
+                $nurseSystemTimeMap = $this->totalTimeMapNoView($nurseUsers->pluck('id')->all());
+                $variablePayMap = $this->variablePayMap(
+                    $nurseUsers->where('nurseInfo.is_variable_rate', true)->pluck('nurseInfo.id')->all()
+                );
+
+                $nurseSystemTimeMap->each(
+                    function ($itemizedData) use ($nurseUsers, $variablePayMap, $pdfService, $invoices) {
+                        $viewModel = $this->createViewModel($itemizedData, $nurseUsers, $variablePayMap);
+                        $invoices->push($this->createPdf($viewModel, $pdfService));
+                    }
+                );
             }
         );
+
+        return $invoices;
     }
 
     /**
+     * @param array  $nurseUserIds
      * @param string $table
      * @param string $dateTimeField
      * @param Carbon $start
@@ -240,6 +244,7 @@ class CreateNurseInvoices implements ShouldQueue
      * @return \Illuminate\Database\Query\Builder
      */
     private function itemizedActivitiesQuery(
+        array $nurseUserIds,
         string $table,
         string $dateTimeField,
         Carbon $start,
@@ -255,7 +260,7 @@ class CreateNurseInvoices implements ShouldQueue
                           ? \DB::raw('TRUE as is_billable')
                           : \DB::raw('FALSE as is_billable')
                   )
-            ->whereIn('provider_id', $this->nurseUserIds)
+            ->whereIn('provider_id', $nurseUserIds)
             ->whereBetween(
                 $dateTimeField,
                 [
@@ -272,21 +277,56 @@ class CreateNurseInvoices implements ShouldQueue
     }
 
     /**
-     * @return Collection|null
+     * @return mixed
      */
     private function nurseUsers()
     {
         return User::withTrashed()
-            ->ofType('care-center')
-            ->with('nurseInfo')
+            ->careCoaches()
+            ->with(
+                [
+                    'nurseBonuses' => function ($q) {
+                        $q->whereBetween('date', [$this->startDate, $this->endDate]);
+                    },
+                    'nurseInfo',
+                ]
+                   )
             ->has('nurseInfo')
-            ->whereIn('id', $this->nurseUserIds)
-            ->get();
+            ->when(
+                is_array($this->nurseUserIds) && ! empty($this->nurseUserIds),
+                function ($q) {
+                    $q->whereIn('id', $this->nurseUserIds);
+                }
+                   )
+            ->when(
+                empty($this->nurseUserIds),
+                function ($q) {
+                    $q->whereHas(
+                               'pageTimersAsProvider',
+                               function ($s) {
+                                   $s->whereBetween(
+                                       'start_time',
+                                       [
+                                           $this->startDate->copy()->startOfDay(),
+                                           $this->endDate->copy()->endOfDay(),
+                                       ]
+                                   );
+                               }
+                           )
+                        ->whereHas(
+                                   'nurseInfo',
+                                   function ($s) {
+                                       $s->where('is_demo', false);
+                                   }
+                             );
+                }
+                   );
     }
 
-    private function offlineSystemTime()
+    private function offlineSystemTime(array $nurseUserIds)
     {
         return $this->itemizedActivitiesQuery(
+            $nurseUserIds,
             (new Activity())->getTable(),
             'performed_at',
             $this->startDate,
@@ -343,9 +383,10 @@ class CreateNurseInvoices implements ShouldQueue
         return $linkToView;
     }
 
-    private function systemTimeFromPageTimer()
+    private function systemTimeFromPageTimer(array $nurseUserIds)
     {
         return $this->itemizedActivitiesQuery(
+            $nurseUserIds,
             (new PageTimer())->getTable(),
             'start_time',
             $this->startDate,
@@ -353,9 +394,10 @@ class CreateNurseInvoices implements ShouldQueue
         );
     }
 
-    private function totalBillableTimeMap()
+    private function totalBillableTimeMap(array $nurseUserIds)
     {
         return $this->itemizedActivitiesQuery(
+            $nurseUserIds,
             (new Activity())->getTable(),
             'performed_at',
             $this->startDate,
@@ -381,15 +423,17 @@ class CreateNurseInvoices implements ShouldQueue
     }
 
     /**
+     * @param array $nurseUserIds
+     *
      * @return Collection
      */
-    private function totalTimeMapNoView()
+    private function totalTimeMapNoView(array $nurseUserIds)
     {
         return \DB::query()
             ->fromSub(
-                $this->systemTimeFromPageTimer()
-                    ->unionAll($this->offlineSystemTime())
-                    ->unionAll($this->totalBillableTimeMap()),
+                $this->systemTimeFromPageTimer($nurseUserIds)
+                    ->unionAll($this->offlineSystemTime($nurseUserIds))
+                    ->unionAll($this->totalBillableTimeMap($nurseUserIds)),
                 'activities'
                   )
             ->select(

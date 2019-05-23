@@ -720,7 +720,8 @@
                 M.FormSelect.init($('select'));
                 M.Dropdown.init($('.dropdown-trigger'), {
                     alignment: 'right',
-                    coverTrigger: false
+                    coverTrigger: false,
+                    closeOnClick: false
                 });
 
                 if (self.hasTips) {

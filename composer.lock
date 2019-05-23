@@ -4,8 +4,58 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5a2c6ebbc8d585c40710f745f210dce2",
+    "content-hash": "b83b13ddd833ec56010273c3759c5300",
     "packages": [
+        {
+            "name": "alexbowers/nova-prepopulate-searchable",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/alexbowers/nova-prepopulate-searchable.git",
+                "reference": "e4b7d0a19190689cfb312dafd979bd73c42274d2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/alexbowers/nova-prepopulate-searchable/zipball/e4b7d0a19190689cfb312dafd979bd73c42274d2",
+                "reference": "e4b7d0a19190689cfb312dafd979bd73c42274d2",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/nova": ">=1.0.13",
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AlexBowers\\NovaPrepopulateSearchable\\ToolServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AlexBowers\\NovaPrepopulateSearchable\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alex Bowers",
+                    "email": "bowersbros@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A tool to allow BelongsTo searchable fields to be pre-populated with data",
+            "homepage": "https://github.com/alexbowers/nova-prepopulate-searchable",
+            "keywords": [
+                "laravel",
+                "nova"
+            ],
+            "time": "2018-09-06T20:24:04+00:00"
+        },
         {
             "name": "algolia/algoliasearch-client-php",
             "version": "2.2.6",
@@ -408,16 +458,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.94.0",
+            "version": "3.94.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "fcc8593b3da8465d1181c73689117d13101a1c9a"
+                "reference": "96fd506d4000cc8f3909154e2dd1e4180835941e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/fcc8593b3da8465d1181c73689117d13101a1c9a",
-                "reference": "fcc8593b3da8465d1181c73689117d13101a1c9a",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/96fd506d4000cc8f3909154e2dd1e4180835941e",
+                "reference": "96fd506d4000cc8f3909154e2dd1e4180835941e",
                 "shasum": ""
             },
             "require": {
@@ -487,7 +537,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2019-05-20T18:14:09+00:00"
+            "time": "2019-05-22T18:11:35+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -613,7 +663,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "806f0a35cd26319c417fe99743b1ebaefc3db604"
+                "reference": "215642d87ef23e8ff914e961400f67238346ad2f"
             },
             "require": {
                 "venturecraft/revisionable": "dev-master"
@@ -638,7 +688,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-05-21T14:02:17+00:00"
+            "time": "2019-05-22T16:00:36+00:00"
         },
         {
             "name": "circlelinkhealth/customer",
@@ -646,7 +696,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "7186560db2c86b3314832deb656c24dc1ef1743e"
+                "reference": "ac7df3ba56b88aff6b30462012736a3577380377"
             },
             "require": {
                 "circlelinkhealth/core": "dev-master",
@@ -678,7 +728,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-05-21T14:01:09+00:00"
+            "time": "2019-05-22T22:32:00+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
@@ -721,7 +771,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "c9a3194ab40343e2e007843476ad35f2f1d97342"
+                "reference": "ec4bbb78f2452ebb640bb7af9c5bf410e8bef122"
             },
             "require": {
                 "circlelinkhealth/customer": "dev-master"
@@ -746,7 +796,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-05-21T14:02:52+00:00"
+            "time": "2019-05-22T16:00:35+00:00"
         },
         {
             "name": "circlelinkhealth/twofa",
@@ -754,7 +804,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "0f6e783e0e86ce9e443c9544460032af74b82ddc"
+                "reference": "dcfbc025260f81580c19535be850ce121164037a"
             },
             "require": {
                 "authy/php": "^3.0",
@@ -780,7 +830,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-05-21T14:02:52+00:00"
+            "time": "2019-05-22T16:00:35+00:00"
         },
         {
             "name": "composer/ca-bundle",
@@ -1342,16 +1392,16 @@
         },
         {
             "name": "egulias/email-validator",
-            "version": "2.1.7",
+            "version": "2.1.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/egulias/EmailValidator.git",
-                "reference": "709f21f92707308cdf8f9bcfa1af4cb26586521e"
+                "reference": "c26463ff9241f27907112fbcd0c86fa670cfef98"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/709f21f92707308cdf8f9bcfa1af4cb26586521e",
-                "reference": "709f21f92707308cdf8f9bcfa1af4cb26586521e",
+                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/c26463ff9241f27907112fbcd0c86fa670cfef98",
+                "reference": "c26463ff9241f27907112fbcd0c86fa670cfef98",
                 "shasum": ""
             },
             "require": {
@@ -1395,7 +1445,7 @@
                 "validation",
                 "validator"
             ],
-            "time": "2018-12-04T22:38:24+00:00"
+            "time": "2019-05-16T22:02:54+00:00"
         },
         {
             "name": "erusev/parsedown",
@@ -1542,6 +1592,52 @@
             "description": "A simple library to encode and decode JSON Web Tokens (JWT) in PHP. Should conform to the current spec.",
             "homepage": "https://github.com/firebase/php-jwt",
             "time": "2017-06-27T22:17:23+00:00"
+        },
+        {
+            "name": "fourstacks/nova-checkboxes",
+            "version": "v0.1.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fourstacks/nova-checkboxes.git",
+                "reference": "56f7d67cdc7e8327c350a9fa5e91689e8c0dd9d9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fourstacks/nova-checkboxes/zipball/56f7d67cdc7e8327c350a9fa5e91689e8c0dd9d9",
+                "reference": "56f7d67cdc7e8327c350a9fa5e91689e8c0dd9d9",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "require-dev": {
+                "laravel/nova": "^1.0",
+                "orchestra/testbench": "3.7.*",
+                "phpunit/phpunit": "^7.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Fourstacks\\NovaCheckboxes\\FieldServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Fourstacks\\NovaCheckboxes\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova field.",
+            "keywords": [
+                "laravel",
+                "nova"
+            ],
+            "time": "2019-03-08T07:46:14+00:00"
         },
         {
             "name": "fzaninotto/faker",
@@ -2342,16 +2438,16 @@
         },
         {
             "name": "jaybizzle/crawler-detect",
-            "version": "v1.2.81",
+            "version": "v1.2.82",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JayBizzle/Crawler-Detect.git",
-                "reference": "ffb1880f8e9610569d3bc70dc90bf07db311471d"
+                "reference": "48522d4b3495ac8eef2a7298f128f35d7ea3f49b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/ffb1880f8e9610569d3bc70dc90bf07db311471d",
-                "reference": "ffb1880f8e9610569d3bc70dc90bf07db311471d",
+                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/48522d4b3495ac8eef2a7298f128f35d7ea3f49b",
+                "reference": "48522d4b3495ac8eef2a7298f128f35d7ea3f49b",
                 "shasum": ""
             },
             "require": {
@@ -2387,7 +2483,7 @@
                 "crawlerdetect",
                 "php crawler detect"
             ],
-            "time": "2019-04-23T20:02:21+00:00"
+            "time": "2019-05-21T20:51:49+00:00"
         },
         {
             "name": "jenssegers/agent",
@@ -3596,32 +3692,29 @@
         },
         {
             "name": "lcobucci/jwt",
-            "version": "3.2.5",
+            "version": "3.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lcobucci/jwt.git",
-                "reference": "82be04b4753f8b7693b62852b7eab30f97524f9b"
+                "reference": "8866a58fa866f6872f2a6ea0e04ad56480f0f440"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lcobucci/jwt/zipball/82be04b4753f8b7693b62852b7eab30f97524f9b",
-                "reference": "82be04b4753f8b7693b62852b7eab30f97524f9b",
+                "url": "https://api.github.com/repos/lcobucci/jwt/zipball/8866a58fa866f6872f2a6ea0e04ad56480f0f440",
+                "reference": "8866a58fa866f6872f2a6ea0e04ad56480f0f440",
                 "shasum": ""
             },
             "require": {
+                "ext-mbstring": "*",
                 "ext-openssl": "*",
-                "php": ">=5.5"
+                "php": "^5.6 || ^7.0"
             },
             "require-dev": {
-                "mdanter/ecc": "~0.3.1",
                 "mikey179/vfsstream": "~1.5",
                 "phpmd/phpmd": "~2.2",
                 "phpunit/php-invoker": "~1.1",
-                "phpunit/phpunit": "~4.5",
+                "phpunit/phpunit": "^5.7 || ^7.3",
                 "squizlabs/php_codesniffer": "~2.3"
-            },
-            "suggest": {
-                "mdanter/ecc": "Required to use Elliptic Curves based algorithms."
             },
             "type": "library",
             "extra": {
@@ -3650,7 +3743,7 @@
                 "JWS",
                 "jwt"
             ],
-            "time": "2018-11-11T12:22:26+00:00"
+            "time": "2019-05-22T09:44:23+00:00"
         },
         {
             "name": "league/event",
@@ -8935,6 +9028,42 @@
             "time": "2017-11-27T11:13:29+00:00"
         },
         {
+            "name": "titasgailius/search-relations",
+            "version": "1.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/TitasGailius/nova-search-relations.git",
+                "reference": "1e7408a678b9258537cb15ceb58a56016501243a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/TitasGailius/nova-search-relations/zipball/1e7408a678b9258537cb15ceb58a56016501243a",
+                "reference": "1e7408a678b9258537cb15ceb58a56016501243a",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Titasgailius\\SearchRelations\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova tool.",
+            "keywords": [
+                "laravel",
+                "nova",
+                "relations",
+                "search"
+            ],
+            "time": "2018-12-18T18:06:27+00:00"
+        },
+        {
             "name": "twilio/sdk",
             "version": "5.7.0",
             "source": {
@@ -12531,16 +12660,16 @@
         },
         {
             "name": "swagger-api/swagger-ui",
-            "version": "v3.22.1",
+            "version": "v3.22.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swagger-api/swagger-ui.git",
-                "reference": "c38bf85e34ee46b2ad399b25c4c73668dc0d7e1d"
+                "reference": "54c045fd472a740e7ae3d26148708455fa6358b4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/c38bf85e34ee46b2ad399b25c4c73668dc0d7e1d",
-                "reference": "c38bf85e34ee46b2ad399b25c4c73668dc0d7e1d",
+                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/54c045fd472a740e7ae3d26148708455fa6358b4",
+                "reference": "54c045fd472a740e7ae3d26148708455fa6358b4",
                 "shasum": ""
             },
             "type": "library",
@@ -12584,7 +12713,7 @@
                 "swagger",
                 "ui"
             ],
-            "time": "2019-04-13T01:40:36+00:00"
+            "time": "2019-05-22T01:36:53+00:00"
         },
         {
             "name": "symfony/dom-crawler",

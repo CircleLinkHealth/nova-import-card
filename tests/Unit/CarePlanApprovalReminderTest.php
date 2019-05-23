@@ -22,6 +22,7 @@ class CarePlanApprovalReminderTest extends TestCase
 {
     use CarePlanHelpers;
     use UserHelpers;
+
     const CLH_TEST_DM_ADDRESS = 'circlelinkhealth@test.directproject.net';
 
     private $directMail;

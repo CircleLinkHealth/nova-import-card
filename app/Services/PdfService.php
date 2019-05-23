@@ -7,6 +7,7 @@
 namespace App\Services;
 
 use App\Contracts\HtmlToPdfService;
+use App\Exceptions\FileNotFoundException;
 use Carbon\Carbon;
 use LynX39\LaraPdfMerger\PdfManage;
 
@@ -86,7 +87,6 @@ class PdfService
 
         $pdf = $this->htmlToPdfService
             ->loadView($view, $args);
-
         if ( ! empty($options)) {
             foreach ($options as $key => $value) {
                 $pdf = $pdf->setOption($key, $value);
@@ -108,6 +108,10 @@ class PdfService
                     storage_path("patient/pdf-careplans/{$args['pdfCareplan']->filename}"),
                 ]
             );
+        }
+
+        if ( ! file_exists($outputFullPath)) {
+            throw new FileNotFoundException("File not found at `$outputFullPath`. Seems like PDF was not generated.");
         }
 
         return $outputFullPath;

@@ -170,6 +170,8 @@ class Enrollee extends BaseModel
 
     /**
      * status = rejected.
+     *
+     * (a.k.a hard rejected/declined)
      */
     const REJECTED = 'rejected';
 

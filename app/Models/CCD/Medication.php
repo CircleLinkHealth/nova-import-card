@@ -14,6 +14,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * App\Models\CCD\Medication.
  *
  * @property int                                         $id
+ * @property bool|null                                   $active
  * @property int|null                                    $medication_import_id
  * @property int|null                                    $ccda_id
  * @property int                                         $patient_id
@@ -58,6 +59,7 @@ use CircleLinkHealth\Customer\Entities\User;
 class Medication extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $fillable = [
+        'active',
         'ccda_id',
         'vendor_id',
         'ccd_medication_log_id',
