@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ece641e95ae95fc71c43dc5ee531bfef",
+    "content-hash": "b42a17da6dc5400cb2cfeb3ac2570592",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -2277,6 +2277,47 @@
                 "wkhtmltopdf"
             ],
             "time": "2018-01-15T06:57:33+00:00"
+        },
+        {
+            "name": "hubertnnn/laravel-nova-field-dynamic-select",
+            "version": "0.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hubertnnn/laravel-nova-field-dynamic-select.git",
+                "reference": "5deb4142725fe7be7947d45a6fb4d70b64c7f660"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hubertnnn/laravel-nova-field-dynamic-select/zipball/5deb4142725fe7be7947d45a6fb4d70b64c7f660",
+                "reference": "5deb4142725fe7be7947d45a6fb4d70b64c7f660",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Hubertnnn\\LaravelNova\\Fields\\DynamicSelect\\FieldServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Hubertnnn\\LaravelNova\\Fields\\DynamicSelect\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova field.",
+            "keywords": [
+                "laravel",
+                "nova"
+            ],
+            "time": "2019-03-14T12:01:21+00:00"
         },
         {
             "name": "intervention/image",
@@ -9177,7 +9218,7 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "git@github.com:michalisantoniou6/revisionable.git",
+                "url": "https://github.com/VentureCraft/revisionable.git",
                 "reference": "2f4340355b7ec02e8d9c07102c25edf7477c1188"
             },
             "require": {
@@ -9215,7 +9256,6 @@
                 "issues": "https://github.com/VentureCraft/revisionable/issues",
                 "source": "https://github.com/VentureCraft/revisionable"
             },
-            "abandoned": true,
             "time": "2018-08-06T23:22:33+00:00"
         },
         {
@@ -13305,7 +13345,6 @@
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
         "xethron/migrations-generator": 20,
-        "venturecraft/revisionable": 20,
         "michalisantoniou6/laravel-cerberus": 20
     },
     "prefer-stable": true,
