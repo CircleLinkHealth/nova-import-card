@@ -124,29 +124,6 @@
                                    v-model="enrolleeData.tertiary_insurance"/>
                         </div>
                     </div>
-                    <div class="form-row col-md-12">
-                        <hr>
-                        <h4 class="form-group col-md-12">Provider Info</h4>
-                        <hr>
-                        <div class="form-group col-md-6">
-                            <label for="provider-pronunciation">Provider Pronunciation:</label>
-                            <input type="text" class="form-control" id="provider-pronunciation"
-                                   v-model="enrolleeData.provider_pronunciation"/>
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label for="provider-sex">Provider Sex</label>
-                            <input type="text" class="form-control" id="provider-sex"
-                                   v-model="enrolleeData.provider_sex"/>
-                        </div>
-                    </div>
-                    <div class="form-row col-md-12">
-                        <hr>
-                        <div class="form-group col-md-6">
-                            <label for="last-office-visit-at">Provider Sex</label>
-                            <input type="date" class="form-control" id="last-office-visit-at"
-                                   v-model="enrolleeData.last_office_visit_at"/>
-                        </div>
-                    </div>
                 </div>
             </template>
         </template>
@@ -244,9 +221,6 @@
                 this.enrolleeData.primary_insurance = enrollee.primary_insurance;
                 this.enrolleeData.secondary_insurance = enrollee.secondary_insurance;
                 this.enrolleeData.tertiary_insurance = enrollee.tertiary_insurance;
-                this.enrolleeData.provider_pronunciation = enrollee.provider_pronunciation;
-                this.enrolleeData.provider_sex = enrollee.provider_sex;
-                this.enrolleeData.last_office_visit_at = enrollee.last_office_visit_at;
             });
         }
     }

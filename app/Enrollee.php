@@ -282,10 +282,6 @@ class Enrollee extends BaseModel
         'cpm_problem_2',
 
         'requested_callback',
-
-        'provider_pronunciation',
-        'provider_sex',
-        'last_office_visit_at',
     ];
 
     protected $table = 'enrollees';
@@ -423,6 +419,15 @@ class Enrollee extends BaseModel
     public function provider()
     {
         return $this->belongsTo(User::class, 'provider_id');
+    }
+
+    public function getProviderInfo(){
+
+        if (! $this->provider){
+            return null;
+        }
+
+        return $this->provider->providerInfo;
     }
 
     public function scopeToCall($query)

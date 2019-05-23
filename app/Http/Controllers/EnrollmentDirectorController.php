@@ -78,9 +78,6 @@ class EnrollmentDirectorController extends Controller
                 'primary_insurance'      => $request->input('primary_insurance'),
                 'secondary_insurance'    => $request->input('secondary_insurance'),
                 'tertiary_insurance'     => $request->input('tertiary_insurance'),
-                'provider_pronunciation' => $request->input('provider_pronunciation'),
-                'provider_sex'           => $request->input('provider_sex'),
-                'last_office_visit_at'   => $request->input('last_office_visit_at'),
             ]);
 
         return response()->json([], 200);

@@ -532,6 +532,7 @@
     const userFullName = window.userFullName;
     const providerFullName = window.providerFullName;
     const report = window.report;
+    const providerInfo = window.providerInfo;
 
     export default {
         name: 'enrollment-dashboard',
@@ -643,13 +644,13 @@
                 return this.utc_reason === 'requested callback';
             },
             provider_pronunciation: function(){
-                return enrollee.provider_pronunciation ? enrollee.provider_pronunciation : 'N/A';
+                return providerInfo ? (providerInfo.pronunciation ? providerInfo.pronunciation : 'N/A') : 'N/A';
             },
             provider_sex: function(){
-                return enrollee.provider_sex ? enrollee.provider_sex : 'N/A';
+                return providerInfo ? (providerInfo.sex ? providerInfo.sex : 'N/A') : 'N/A';
             },
             last_office_visit_at: function(){
-                return enrollee.last_office_visit_at ? enrollee.last_office_visit_at : 'N/A';
+                return enrollee.last_encounter ? enrollee.last_encounter: 'N/A';
             }
         },
         data: function () {

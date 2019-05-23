@@ -48,9 +48,6 @@ class EditEnrolleeData extends FormRequest
             'primary_insurance'      => 'required',
             'secondary_insurance'    => 'nullable',
             'tertiary_insurance'     => 'nullable',
-            'provider_pronunciation' => 'nullable',
-            'provider_sex'           => 'nullable',
-            'last_office_visit_at'   => 'nullable|date',
         ];
     }
 }
