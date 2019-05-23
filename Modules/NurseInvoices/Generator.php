@@ -82,6 +82,11 @@ class Generator
                         }
 
                         $viewModel = $this->createViewModel($user, $nurseAggregatedTotalTime, $variablePayMap);
+
+                        /**
+                         * @todo: Antonis stores invoice data here
+                         * $viewModel->toArray()
+                         */
                         $pdf = $this->createPdf($viewModel);
                         $this->forwardToCareCoach($viewModel, $pdf);
 
@@ -181,24 +186,24 @@ class Generator
         return User::withTrashed()
             ->careCoaches()
             ->with(
-                       [
-                           'nurseBonuses' => function ($q) {
-                               $q->whereBetween('date', [$this->startDate, $this->endDate]);
-                           },
-                           'nurseInfo',
-                       ]
+                [
+                    'nurseBonuses' => function ($q) {
+                        $q->whereBetween('date', [$this->startDate, $this->endDate]);
+                    },
+                    'nurseInfo',
+                ]
                    )
             ->has('nurseInfo')
             ->when(
-                       is_array($this->nurseUserIds) && ! empty($this->nurseUserIds),
-                       function ($q) {
-                           $q->whereIn('id', $this->nurseUserIds);
-                       }
+                is_array($this->nurseUserIds) && ! empty($this->nurseUserIds),
+                function ($q) {
+                    $q->whereIn('id', $this->nurseUserIds);
+                }
                    )
             ->when(
-                       empty($this->nurseUserIds),
-                       function ($q) {
-                           $q->whereHas(
+                empty($this->nurseUserIds),
+                function ($q) {
+                    $q->whereHas(
                                'pageTimersAsProvider',
                                function ($s) {
                                    $s->whereBetween(
@@ -210,13 +215,13 @@ class Generator
                                    );
                                }
                            )
-                               ->whereHas(
-                                 'nurseInfo',
-                                 function ($s) {
-                                     $s->where('is_demo', false);
-                                 }
+                        ->whereHas(
+                                   'nurseInfo',
+                                   function ($s) {
+                                       $s->where('is_demo', false);
+                                   }
                              );
-                       }
+                }
                    );
     }
 }
