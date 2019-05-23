@@ -24,6 +24,6 @@ class NurseInvoice extends Model
 
     public function disputes()
     {
-        return $this->morphMany(Dispute::class, 'disputable');
+        return $this->morphTo(Dispute::class, 'disputable');
     }
 }
