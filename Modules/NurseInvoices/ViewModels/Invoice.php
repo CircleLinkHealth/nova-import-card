@@ -19,14 +19,9 @@ class Invoice extends ViewModel
      * @var Collection
      */
     public $aggregatedTotalTime;
-    /**
-     * @var string
-     */
-    public $note;
-    /**
-     * @var User
-     */
-    public $user;
+    public $nurseFullName;
+    public $nurseHighRate;
+    public $nurseLowRate;
     /**
      * @var bool
      */
@@ -39,6 +34,8 @@ class Invoice extends ViewModel
      * @var int
      */
     protected $extraTime;
+
+    protected $ignore = ['user'];
     /**
      * @var Carbon
      */
@@ -81,7 +78,10 @@ class Invoice extends ViewModel
      * @var int|null
      */
     private $totalTimeTowardsCcm;
-
+    /**
+     * @var User
+     */
+    private $user;
     /**
      * @var float the total pay with variable rate algorithm
      */
@@ -93,12 +93,8 @@ class Invoice extends ViewModel
      * @param User       $user
      * @param Carbon     $startDate
      * @param Carbon     $endDate
-     * @param Collection $itemizedData
-     * @param int        $bonus
-     * @param int        $addedTime
-     * @param string     $note
-     * @param bool       $variablePay
-     * @param Collection $variablePaySummary
+     * @param Collection $aggregatedTotalTime
+     * @param Collection $variablePayMap
      */
     public function __construct(
         User $user,
@@ -115,6 +111,9 @@ class Invoice extends ViewModel
         $this->totalSystemTime     = $this->getTotalSystemTime();
         $this->bonus               = $this->getBonus($user->nurseBonuses);
         $this->extraTime           = $this->getAddedDuration($user->nurseBonuses);
+        $this->nurseHighRate       = $user->nurseInfo->high_rate;
+        $this->nurseLowRate        = $user->nurseInfo->low_rate;
+        $this->nurseFullName       = $user->getFullName();
 
         if ($this->variablePay) {
             $variablePaySummary = $variablePayMap->first(
@@ -153,20 +152,6 @@ class Invoice extends ViewModel
         return $this->endDate->format(self::DATE_FORMAT);
     }
 
-    public function getAddedDuration($nurseExtras)
-    {
-        return $nurseExtras
-            ->where('unit', 'minutes')
-            ->sum('value');
-    }
-
-    public function getBonus($nurseExtras)
-    {
-        return $nurseExtras
-            ->where('unit', 'usd')
-            ->sum('value');
-    }
-
     public function getTotalSystemTime()
     {
         return (int) $this->aggregatedTotalTime
@@ -179,12 +164,37 @@ class Invoice extends ViewModel
         return 0 != $this->extraTime;
     }
 
-    public function invoiceAmount()
+    public function hourlySalary()
     {
         return "\${$this->amountPayable}";
     }
 
-    public function invoiceTable()
+    public function startDate()
+    {
+        return $this->startDate->format(self::DATE_FORMAT);
+    }
+
+    public function systemTimeInHours()
+    {
+        if (is_null($this->systemTimeInHours)) {
+            if (1 > $this->totalSystemTime) {
+                $this->systemTimeInHours = 0;
+            } elseif ($this->totalSystemTime <= 1800) {
+                $this->systemTimeInHours = 0.5;
+            } else {
+                $this->systemTimeInHours = ceil($this->totalSystemTime / 3600);
+            }
+        }
+
+        return $this->systemTimeInHours;
+    }
+
+    public function systemTimeInMinutes()
+    {
+        return $this->systemTimeInHours() * 60;
+    }
+
+    public function timePerDay()
     {
         $table  = collect();
         $period = CarbonPeriod::between($this->startDate, $this->endDate);
@@ -242,31 +252,6 @@ class Invoice extends ViewModel
         return $table;
     }
 
-    public function startDate()
-    {
-        return $this->startDate->format(self::DATE_FORMAT);
-    }
-
-    public function systemTimeInHours()
-    {
-        if (is_null($this->systemTimeInHours)) {
-            if (1 > $this->totalSystemTime) {
-                $this->systemTimeInHours = 0;
-            } elseif ($this->totalSystemTime <= 1800) {
-                $this->systemTimeInHours = 0.5;
-            } else {
-                $this->systemTimeInHours = ceil($this->totalSystemTime / 3600);
-            }
-        }
-
-        return $this->systemTimeInHours;
-    }
-
-    public function systemTimeInMinutes()
-    {
-        return $this->systemTimeInHours() * 60;
-    }
-
     public function totalBillableRate()
     {
         $fixedRateMessage = "\${$this->fixedRatePay} (Fixed Rate: \${$this->user->nurseInfo->hourly_rate}/hr).";
@@ -317,6 +302,25 @@ class Invoice extends ViewModel
         }
 
         return $this->totalTimeTowardsCcm;
+    }
+
+    public function user()
+    {
+        return $this->user;
+    }
+
+    private function getAddedDuration($nurseExtras)
+    {
+        return $nurseExtras
+            ->where('unit', 'minutes')
+            ->sum('value');
+    }
+
+    private function getBonus($nurseExtras)
+    {
+        return $nurseExtras
+            ->where('unit', 'usd')
+            ->sum('value');
     }
 
     private function setPayableAmount()

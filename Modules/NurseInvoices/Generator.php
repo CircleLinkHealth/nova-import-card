@@ -108,7 +108,7 @@ class Generator
      */
     private function createPdf(Invoice $viewModel)
     {
-        $name = trim($viewModel->user->getFullName()).'-'.Carbon::now()->toDateString();
+        $name = trim($viewModel->nurseFullName).'-'.Carbon::now()->toDateString();
         $link = $name.'.pdf';
 
         $pdfPath = $this->pdfService->createPdfFromView(
@@ -132,16 +132,16 @@ class Generator
         return
             [
                 'pdf_path'      => $pdfPath,
-                'nurse_user_id' => $viewModel->user->id,
-                'name'          => $viewModel->user->getFullName(),
-                'email'         => $viewModel->user->email,
+                'nurse_user_id' => $viewModel->user()->id,
+                'name'          => $viewModel->user()->getFullName(),
+                'email'         => $viewModel->user()->email,
                 'link'          => $link,
                 'date_start'    => presentDate($this->startDate),
                 'date_end'      => presentDate($this->endDate),
                 'email_body'    => [
-                    'name'       => $viewModel->user->getFullName(),
+                    'name'       => $viewModel->user()->getFullName(),
                     'total_time' => $viewModel->systemTimeInHours(),
-                    'payout'     => $viewModel->invoiceAmount(),
+                    'payout'     => $viewModel->hourlySalary(),
                 ],
             ];
     }
@@ -167,10 +167,10 @@ class Generator
     private function forwardToCareCoach(Invoice $viewModel, $pdf)
     {
         if ($this->sendToCareCoaches) {
-            $viewModel->user->notify(
+            $viewModel->user()->notify(
                 new NurseInvoiceCreated($pdf['link'], "{$this->startDate->englishMonth} {$this->startDate->year}")
             );
-            $viewModel->user->addMedia($pdf['pdf_path'])->toMediaCollection(
+            $viewModel->user()->addMedia($pdf['pdf_path'])->toMediaCollection(
                 "monthly_invoice_{$this->startDate->year}_{$this->startDate->month}"
             );
         }

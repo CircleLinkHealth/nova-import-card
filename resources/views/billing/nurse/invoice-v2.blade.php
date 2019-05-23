@@ -10,7 +10,7 @@
 <div class="page-header">
     <h1>CircleLink Health
         <small>
-            Time Report for <b>{{$user->getFullName()}}</b> from {{$startDate}} to {{$endDate}}
+            Time Report for <b>{{$nurseFullName}}</b> from {{$startDate}} to {{$endDate}}
         </small>
     </h1>
 </div>
@@ -47,8 +47,8 @@
 
         <th style="width: 25%">Total Hours</th>
         @if($variablePay)
-            <th style="width: 25%">CCM Hours (${{$user->nurseInfo->high_rate}}/Hour)</th>
-            <th style="width: 25%">CCM Hours (${{$user->nurseInfo->low_rate}}/Hour)</th>
+            <th style="width: 25%">CCM Hours (${{$nurseHighRate}}/Hour)</th>
+            <th style="width: 25%">CCM Hours (${{$nurseLowRate}}/Hour)</th>
         @endif
     </tr>
 
@@ -68,7 +68,7 @@
         @endif
     </tr>
 
-    @foreach($invoiceTable as $date => $row)
+    @foreach($timePerDay as $date => $row)
         <tr>
             <td><b>{{$date}}</b></td>
 
