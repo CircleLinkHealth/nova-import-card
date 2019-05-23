@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Services\CareCoaches\Invoices;
+namespace CircleLinkHealth\NurseInvoices;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
@@ -56,10 +56,10 @@ class VariablePayCalculator
         return NurseCareRateLog::whereIn('nurse_id', $this->nurseInfoIds)
             ->whereBetween('created_at', [$this->startDate, $this->endDate])
             ->select(
-                                   \DB::raw('SUM(increment) as total_time'),
-                                   'ccm_type',
-                                   \DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d') as date"),
-                                   'nurse_id'
+                \DB::raw('SUM(increment) as total_time'),
+                'ccm_type',
+                \DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d') as date"),
+                'nurse_id'
                                )
             ->groupBy('nurse_id', 'date', 'ccm_type')
             ->get()

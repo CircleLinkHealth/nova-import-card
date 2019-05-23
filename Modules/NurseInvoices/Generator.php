@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Services\CareCoaches\Invoices;
+namespace CircleLinkHealth\NurseInvoices;
 
 use App\Notifications\NurseInvoiceCreated;
 use App\Services\PdfService;
@@ -219,22 +219,22 @@ class Generator
                 empty($this->nurseUserIds),
                 function ($q) {
                     $q->whereHas(
-                               'pageTimersAsProvider',
-                               function ($s) {
-                                   $s->whereBetween(
+                        'pageTimersAsProvider',
+                        function ($s) {
+                            $s->whereBetween(
                                        'start_time',
                                        [
                                            $this->startDate->copy()->startOfDay(),
                                            $this->endDate->copy()->endOfDay(),
                                        ]
                                    );
-                               }
+                        }
                            )
                         ->whereHas(
-                                   'nurseInfo',
-                                   function ($s) {
-                                       $s->where('is_demo', false);
-                                   }
+                            'nurseInfo',
+                            function ($s) {
+                                $s->where('is_demo', false);
+                            }
                              );
                 }
                    );
