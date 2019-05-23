@@ -27,13 +27,13 @@ class CreateNurseInvoices extends Migration
             $table->increments('id');
             $table->unsignedInteger('nurse_info_id');
             $table->date('month_year');
-            $table->dateTime('sent_to_accountant');
             $table->json('invoice_data');
+            $table->dateTime('sent_to_accountant');
             $table->timestamps();
 
             $table->foreign('nurse_info_id')
                 ->references('id')
-                ->on('nurseInfo')
+                ->on('nurse_info')
                 ->onUpdate('cascade');
         });
     }
