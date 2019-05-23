@@ -73,6 +73,11 @@ class ProviderInfo extends Resource
         return false;
     }
 
+    public function authorizedToForceDelete(Request $request)
+    {
+        return false;
+    }
+
     public function authorizedToUpdate(Request $request)
     {
         return true;
