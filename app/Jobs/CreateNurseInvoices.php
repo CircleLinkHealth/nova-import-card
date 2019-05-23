@@ -124,9 +124,9 @@ class CreateNurseInvoices implements ShouldQueue
             $viewModel->toArray(),
             storage_path("download/${name}.pdf"),
             [
-                'margin-top'    => '8',
-                'margin-left'   => '8',
-                'margin-bottom' => '8',
+                'margin-top'    => '6',
+                'margin-left'   => '6',
+                'margin-bottom' => '6',
                 'margin-right'  => '6',
                 'footer-right'  => 'Page [page] of [toPage]',
                 'footer-left'   => 'report generated on '.Carbon::now()->format('m-d-Y').' at '.Carbon::now(
@@ -253,20 +253,20 @@ class CreateNurseInvoices implements ShouldQueue
     ) {
         return \DB::table($table)
             ->select(
-                      \DB::raw('SUM(duration) as total_time'),
-                      \DB::raw("DATE_FORMAT($dateTimeField, '%Y-%m-%d') as date"),
-                      'provider_id as user_id',
-                      $isBillable
+                \DB::raw('SUM(duration) as total_time'),
+                \DB::raw("DATE_FORMAT($dateTimeField, '%Y-%m-%d') as date"),
+                'provider_id as user_id',
+                $isBillable
                           ? \DB::raw('TRUE as is_billable')
                           : \DB::raw('FALSE as is_billable')
                   )
             ->whereIn('provider_id', $nurseUserIds)
             ->whereBetween(
-                      $dateTimeField,
-                      [
-                          $start,
-                          $end,
-                      ]
+                $dateTimeField,
+                [
+                    $start,
+                    $end,
+                ]
                   )->groupBy('date', 'user_id');
     }
 
@@ -284,24 +284,24 @@ class CreateNurseInvoices implements ShouldQueue
         return User::withTrashed()
             ->careCoaches()
             ->with(
-                       [
-                           'nurseBonuses' => function ($q) {
-                               $q->whereBetween('date', [$this->startDate, $this->endDate]);
-                           },
-                           'nurseInfo',
-                       ]
+                [
+                    'nurseBonuses' => function ($q) {
+                        $q->whereBetween('date', [$this->startDate, $this->endDate]);
+                    },
+                    'nurseInfo',
+                ]
                    )
             ->has('nurseInfo')
             ->when(
-                       is_array($this->nurseUserIds) && ! empty($this->nurseUserIds),
-                       function ($q) {
-                           $q->whereIn('id', $this->nurseUserIds);
-                       }
+                is_array($this->nurseUserIds) && ! empty($this->nurseUserIds),
+                function ($q) {
+                    $q->whereIn('id', $this->nurseUserIds);
+                }
                    )
             ->when(
-                       empty($this->nurseUserIds),
-                       function ($q) {
-                           $q->whereHas(
+                empty($this->nurseUserIds),
+                function ($q) {
+                    $q->whereHas(
                                'pageTimersAsProvider',
                                function ($s) {
                                    $s->whereBetween(
@@ -313,13 +313,13 @@ class CreateNurseInvoices implements ShouldQueue
                                    );
                                }
                            )
-                               ->whereHas(
-                                 'nurseInfo',
-                                 function ($s) {
-                                     $s->where('is_demo', false);
-                                 }
+                        ->whereHas(
+                                   'nurseInfo',
+                                   function ($s) {
+                                       $s->where('is_demo', false);
+                                   }
                              );
-                       }
+                }
                    );
     }
 
@@ -410,11 +410,11 @@ class CreateNurseInvoices implements ShouldQueue
     {
         return TimeTrackedPerDayView::whereIn('user_id', $this->nurseUserIds)
             ->whereBetween(
-                                        'date',
-                                        [
-                                            $this->startDate->toDateString(),
-                                            $this->endDate->toDateString(),
-                                        ]
+                'date',
+                [
+                    $this->startDate->toDateString(),
+                    $this->endDate->toDateString(),
+                ]
                                     )
             ->groupBy('date', 'user_id', 'is_billable')
             ->get()
@@ -431,16 +431,16 @@ class CreateNurseInvoices implements ShouldQueue
     {
         return \DB::query()
             ->fromSub(
-                      $this->systemTimeFromPageTimer($nurseUserIds)
-                          ->unionAll($this->offlineSystemTime($nurseUserIds))
-                          ->unionAll($this->totalBillableTimeMap($nurseUserIds)),
-                      'activities'
+                $this->systemTimeFromPageTimer($nurseUserIds)
+                    ->unionAll($this->offlineSystemTime($nurseUserIds))
+                    ->unionAll($this->totalBillableTimeMap($nurseUserIds)),
+                'activities'
                   )
             ->select(
-                      \DB::raw('SUM(total_time) as total_time'),
-                      'date',
-                      'user_id',
-                      'is_billable'
+                \DB::raw('SUM(total_time) as total_time'),
+                'date',
+                'user_id',
+                'is_billable'
                   )
             ->groupBy('user_id', 'date', 'is_billable')
             ->get()
@@ -458,10 +458,10 @@ class CreateNurseInvoices implements ShouldQueue
         return NurseCareRateLog::whereIn('nurse_id', $nurseInfoIds)
             ->whereBetween('created_at', [$this->startDate, $this->endDate])
             ->select(
-                                   \DB::raw('SUM(increment) as total_time'),
-                                   'ccm_type',
-                                   \DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d') as date"),
-                                   'nurse_id'
+                \DB::raw('SUM(increment) as total_time'),
+                'ccm_type',
+                \DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d') as date"),
+                'nurse_id'
                                )
             ->groupBy('nurse_id', 'date', 'ccm_type')
             ->get()
