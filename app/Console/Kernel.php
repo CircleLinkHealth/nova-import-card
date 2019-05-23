@@ -13,7 +13,6 @@ use App\Console\Commands\Athena\GetCcds;
 use App\Console\Commands\AttachBillableProblemsToLastMonthSummary;
 use App\Console\Commands\CareplanEnrollmentAdminNotification;
 use App\Console\Commands\CheckEmrDirectInbox;
-use App\Console\Commands\CollectInvoicableNurses;
 use App\Console\Commands\DeleteProcessedFiles;
 use App\Console\Commands\DownloadTwilioRecordings;
 use App\Console\Commands\EmailRNDailyReport;
