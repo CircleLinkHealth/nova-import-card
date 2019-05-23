@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ece641e95ae95fc71c43dc5ee531bfef",
+    "content-hash": "b42a17da6dc5400cb2cfeb3ac2570592",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -696,7 +696,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "ac7df3ba56b88aff6b30462012736a3577380377"
+                "reference": "5840b57a0f8a067694b6230fdb53eec1de288f15"
             },
             "require": {
                 "circlelinkhealth/core": "dev-master",
@@ -728,7 +728,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-05-22T22:32:00+00:00"
+            "time": "2019-05-23T22:06:20+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
@@ -2277,6 +2277,47 @@
                 "wkhtmltopdf"
             ],
             "time": "2018-01-15T06:57:33+00:00"
+        },
+        {
+            "name": "hubertnnn/laravel-nova-field-dynamic-select",
+            "version": "0.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hubertnnn/laravel-nova-field-dynamic-select.git",
+                "reference": "5deb4142725fe7be7947d45a6fb4d70b64c7f660"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hubertnnn/laravel-nova-field-dynamic-select/zipball/5deb4142725fe7be7947d45a6fb4d70b64c7f660",
+                "reference": "5deb4142725fe7be7947d45a6fb4d70b64c7f660",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Hubertnnn\\LaravelNova\\Fields\\DynamicSelect\\FieldServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Hubertnnn\\LaravelNova\\Fields\\DynamicSelect\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova field.",
+            "keywords": [
+                "laravel",
+                "nova"
+            ],
+            "time": "2019-03-14T12:01:21+00:00"
         },
         {
             "name": "intervention/image",
