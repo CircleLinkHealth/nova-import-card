@@ -9218,7 +9218,7 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "git@github.com:michalisantoniou6/revisionable.git",
+                "url": "https://github.com/VentureCraft/revisionable.git",
                 "reference": "2f4340355b7ec02e8d9c07102c25edf7477c1188"
             },
             "require": {
@@ -9256,7 +9256,6 @@
                 "issues": "https://github.com/VentureCraft/revisionable/issues",
                 "source": "https://github.com/VentureCraft/revisionable"
             },
-            "abandoned": true,
             "time": "2018-08-06T23:22:33+00:00"
         },
         {
@@ -13346,7 +13345,6 @@
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
         "xethron/migrations-generator": 20,
-        "venturecraft/revisionable": 20,
         "michalisantoniou6/laravel-cerberus": 20
     },
     "prefer-stable": true,
