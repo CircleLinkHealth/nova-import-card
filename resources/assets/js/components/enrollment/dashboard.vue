@@ -699,14 +699,20 @@
                 M.Modal.init($('#consented'));
                 M.Modal.init($('#utc'), {
                     onOpenEnd: function () {
-                        M.Datepicker.init($('#soft_decline_callback'), {container: 'body'})
+                        M.Datepicker.init($('#soft_decline_callback'), {
+                            container: 'body',
+                            format: 'yyyy-mm-dd'
+                        })
                     },
                 });
                 M.Modal.init($('#tips'));
 
                 M.Modal.init($('#rejected'), {
                     onOpenEnd: function () {
-                        M.Datepicker.init($('#soft_decline_callback'), {container: 'body'})
+                        M.Datepicker.init($('#soft_decline_callback'), {
+                            container: 'body',
+                            format: 'yyyy-mm-dd'
+                        })
                     },
                     onCloseEnd: function () {
                         //always reset when modal is closed
