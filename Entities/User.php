@@ -35,7 +35,7 @@ use App\Models\EmailSettings;
 use App\Models\MedicalRecords\Ccda;
 use App\Notifications\CarePlanApprovalReminder;
 use App\Notifications\ResetPassword;
-use App\NurseInvoiceExtra;
+use CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra;
 use App\Repositories\Cache\EmptyUserNotificationList;
 use App\Repositories\Cache\UserNotificationList;
 use App\Services\UserService;
