@@ -104,21 +104,27 @@ class Invoice extends ViewModel
         User $user,
         Carbon $startDate,
         Carbon $endDate,
-        Collection $itemizedData,
-        int $bonus,
-        int $addedTime,
-        bool $variablePay,
-        Collection $variablePaySummary
+        Collection $aggregatedTotalTime,
+        Collection $variablePayMap
     ) {
-        $this->user               = $user;
-        $this->startDate          = $startDate;
-        $this->endDate            = $endDate;
-        $this->itemizedData       = $itemizedData->flatten();
-        $this->variablePay        = $variablePay;
-        $this->totalSystemTime    = $this->getTotalSystemTime();
-        $this->variablePaySummary = $variablePaySummary->flatten();
-        $this->bonus              = $bonus;
-        $this->extraTime          = $addedTime;
+        $this->user            = $user;
+        $this->startDate       = $startDate;
+        $this->endDate         = $endDate;
+        $this->itemizedData    = $aggregatedTotalTime->flatten();
+        $this->variablePay     = (bool) $user->nurseInfo->is_variable_rate;
+        $this->totalSystemTime = $this->getTotalSystemTime();
+        $this->bonus           = $this->getBonus($user->nurseBonuses);
+        $this->extraTime       = $this->getAddedDuration($user->nurseBonuses);
+
+        if ($this->variablePay) {
+            $variablePaySummary = $variablePayMap->first(
+                function ($value, $key) use ($user) {
+                    return $key === $user->nurseInfo->id;
+                }
+            ) ?? collect();
+            $this->variablePaySummary = $variablePaySummary->flatten();
+        }
+
         $this->setPayableAmount();
     }
 
@@ -145,6 +151,20 @@ class Invoice extends ViewModel
     public function endDate()
     {
         return $this->endDate->format(self::DATE_FORMAT);
+    }
+
+    public function getAddedDuration($nurseExtras)
+    {
+        return $nurseExtras
+            ->where('unit', 'minutes')
+            ->sum('value');
+    }
+
+    public function getBonus($nurseExtras)
+    {
+        return $nurseExtras
+            ->where('unit', 'usd')
+            ->sum('value');
     }
 
     public function getTotalSystemTime()

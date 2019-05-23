@@ -91,20 +91,6 @@ class Generator
         return $invoices;
     }
 
-    public function getAddedDuration($nurseExtras)
-    {
-        return $nurseExtras
-            ->where('unit', 'minutes')
-            ->sum('value');
-    }
-
-    public function getBonus($nurseExtras)
-    {
-        return $nurseExtras
-            ->where('unit', 'usd')
-            ->sum('value');
-    }
-
     /**
      * @param Invoice $viewModel
      *
@@ -162,32 +148,19 @@ class Generator
 
     /**
      * @param User       $nurse
-     * @param Collection $itemizedData
+     * @param Collection $aggregatedTotalTime
      * @param Collection $variablePayMap
      *
      * @return Invoice
      */
-    private function createViewModel(User $nurse, Collection $itemizedData, Collection $variablePayMap)
+    private function createViewModel(User $nurse, Collection $aggregatedTotalTime, Collection $variablePayMap)
     {
-        $isVariablePay = (bool) $nurse->nurseInfo->is_variable_rate;
-
-        if ($isVariablePay) {
-            $variablePaySummary = $variablePayMap->first(
-                function ($value, $key) use ($nurse) {
-                    return $key === $nurse->nurseInfo->id;
-                }
-            );
-        }
-
         return new Invoice(
             $nurse,
             $this->startDate,
             $this->endDate,
-            $itemizedData,
-            $this->getBonus($nurse->nurseBonuses),
-            $this->getAddedDuration($nurse->nurseBonuses),
-            $isVariablePay,
-            $variablePaySummary ?? collect()
+            $aggregatedTotalTime,
+            $variablePayMap
         );
     }
 
