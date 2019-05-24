@@ -33,7 +33,7 @@ class CreateNurseInvoices extends Migration
 
             $table->foreign('nurse_info_id')
                 ->references('id')
-                ->on('nurseInfo')
+                ->on('nurse_info')
                 ->onUpdate('cascade');
         });
     }
