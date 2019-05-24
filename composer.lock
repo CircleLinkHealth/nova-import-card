@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b83b13ddd833ec56010273c3759c5300",
+    "content-hash": "219b6eeacf37666d22214cd3540cc302",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -458,16 +458,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.94.2",
+            "version": "3.94.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "96fd506d4000cc8f3909154e2dd1e4180835941e"
+                "reference": "402a7e30c4ad979ca264079cd224984840ce6b37"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/96fd506d4000cc8f3909154e2dd1e4180835941e",
-                "reference": "96fd506d4000cc8f3909154e2dd1e4180835941e",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/402a7e30c4ad979ca264079cd224984840ce6b37",
+                "reference": "402a7e30c4ad979ca264079cd224984840ce6b37",
                 "shasum": ""
             },
             "require": {
@@ -537,7 +537,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2019-05-22T18:11:35+00:00"
+            "time": "2019-05-23T18:07:25+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -663,7 +663,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "215642d87ef23e8ff914e961400f67238346ad2f"
+                "reference": "d740c04847e920138be2c609334e6a760f7f8093"
             },
             "require": {
                 "venturecraft/revisionable": "dev-master"
@@ -688,7 +688,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-05-22T16:00:36+00:00"
+            "time": "2019-05-24T01:30:17+00:00"
         },
         {
             "name": "circlelinkhealth/customer",
@@ -696,7 +696,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "ac7df3ba56b88aff6b30462012736a3577380377"
+                "reference": "e112e0ac55a0a6c9d8c25857f2be32967db44b49"
             },
             "require": {
                 "circlelinkhealth/core": "dev-master",
@@ -728,7 +728,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-05-22T22:32:00+00:00"
+            "time": "2019-05-23T23:43:11+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
@@ -2277,6 +2277,47 @@
                 "wkhtmltopdf"
             ],
             "time": "2018-01-15T06:57:33+00:00"
+        },
+        {
+            "name": "hubertnnn/laravel-nova-field-dynamic-select",
+            "version": "0.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hubertnnn/laravel-nova-field-dynamic-select.git",
+                "reference": "5deb4142725fe7be7947d45a6fb4d70b64c7f660"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hubertnnn/laravel-nova-field-dynamic-select/zipball/5deb4142725fe7be7947d45a6fb4d70b64c7f660",
+                "reference": "5deb4142725fe7be7947d45a6fb4d70b64c7f660",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Hubertnnn\\LaravelNova\\Fields\\DynamicSelect\\FieldServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Hubertnnn\\LaravelNova\\Fields\\DynamicSelect\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova field.",
+            "keywords": [
+                "laravel",
+                "nova"
+            ],
+            "time": "2019-03-14T12:01:21+00:00"
         },
         {
             "name": "intervention/image",
@@ -9177,7 +9218,7 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "git@github.com:michalisantoniou6/revisionable.git",
+                "url": "git@github.com:CircleLinkHealth/revisionable.git",
                 "reference": "2f4340355b7ec02e8d9c07102c25edf7477c1188"
             },
             "require": {

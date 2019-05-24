@@ -296,7 +296,7 @@
                         </blockquote>
                         <div class="col s12 m3">
                             <label for="days[]" class="label">Day</label>
-                            <select name="days[]" id="days[]" multiple>
+                            <select  class="do-not-close" name="days[]" id="days[]" multiple>
                                 <option disabled selected>Days:</option>
                                 <option value="1">Monday</option>
                                 <option value="2">Tuesday</option>
@@ -307,7 +307,7 @@
                         </div>
                         <div class="col s12 m3">
                             <label for="times[]" class="label">Times</label>
-                            <select name="times[]" id="times[]" multiple>
+                            <select class="do-not-close" name="times[]" id="times[]" multiple>
                                 <option disabled selected>Times:</option>
                                 <option value="10:00-12:00">10AM - Noon</option>
                                 <option value="12:00-15:00">Noon - 3PM</option>
@@ -380,7 +380,7 @@
                     <div class="row">
                         <div class="col s12 m12">
                             <label for="utc-reason" class="label">Reason:</label>
-                            <select v-model="utc_reason" name="reason" id="utc-reason" required>
+                            <select class="auto-close" v-model="utc_reason" name="reason" id="utc-reason" required>
                                 <option value="voicemail">Left A Voicemail</option>
                                 <option value="disconnected">Disconnected Number</option>
                                 <option value="requested callback">Requested Call At Other Time</option>
@@ -430,7 +430,7 @@
                     <div class="row">
                         <div class="col s12 m12">
                             <label for="reason" class="label">What reason did the Patient convey?</label>
-                            <select name="reason" id="reason" required>
+                            <select class="auto-close" name="reason" id="reason" required>
                                 <option value="Worried about co-pay">Worried about co-pay</option>
                                 <option value="Doesn’t trust medicare">Doesn’t trust medicare</option>
                                 <option value="Doesn’t need help with Health">Doesn’t need help with Health</option>
@@ -697,10 +697,23 @@
             $(document).ready(function () {
 
                 M.Modal.init($('#consented'));
-                M.Modal.init($('#utc'));
+                M.Modal.init($('#utc'), {
+                    onOpenEnd: function () {
+                        M.Datepicker.init($('#soft_decline_callback'), {
+                            container: 'body',
+                            format: 'yyyy-mm-dd'
+                        })
+                    },
+                });
                 M.Modal.init($('#tips'));
 
                 M.Modal.init($('#rejected'), {
+                    onOpenEnd: function () {
+                        M.Datepicker.init($('#soft_decline_callback'), {
+                            container: 'body',
+                            format: 'yyyy-mm-dd'
+                        })
+                    },
                     onCloseEnd: function () {
                         //always reset when modal is closed
                         self.isSoftDecline = false;
@@ -708,7 +721,14 @@
                 });
 
                 M.FormSelect.init($('select'));
-                M.Dropdown.init($('.dropdown-trigger'), {
+
+                M.Dropdown.init($('.auto-close'), {
+                    alignment: 'right',
+                    coverTrigger: false,
+                    closeOnClick: true
+                });
+
+                M.Dropdown.init($('.do-not-close'), {
                     alignment: 'right',
                     coverTrigger: false,
                     closeOnClick: false
