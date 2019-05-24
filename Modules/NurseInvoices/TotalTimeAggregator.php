@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Services\CareCoaches\Invoices;
+namespace CircleLinkHealth\NurseInvoices;
 
 use App\TimeTrackedPerDayView;
 use Carbon\Carbon;
@@ -49,16 +49,16 @@ class TotalTimeAggregator
     {
         return \DB::query()
             ->fromSub(
-                      $this->systemTimeFromPageTimer($this->userIds)
-                          ->unionAll($this->offlineSystemTime($this->userIds))
-                          ->unionAll($this->totalBillableTimeMap($this->userIds)),
-                      'activities'
+                $this->systemTimeFromPageTimer($this->userIds)
+                    ->unionAll($this->offlineSystemTime($this->userIds))
+                    ->unionAll($this->totalBillableTimeMap($this->userIds)),
+                'activities'
                   )
             ->select(
-                      \DB::raw('SUM(total_time) as total_time'),
-                      'date',
-                      'user_id',
-                      'is_billable'
+                \DB::raw('SUM(total_time) as total_time'),
+                'date',
+                'user_id',
+                'is_billable'
                   )
             ->groupBy('user_id', 'date', 'is_billable')
             ->get()
@@ -100,20 +100,20 @@ class TotalTimeAggregator
     ) {
         return \DB::table($table)
             ->select(
-                      \DB::raw('SUM(duration) as total_time'),
-                      \DB::raw("DATE_FORMAT($dateTimeField, '%Y-%m-%d') as date"),
-                      'provider_id as user_id',
-                      $isBillable
+                \DB::raw('SUM(duration) as total_time'),
+                \DB::raw("DATE_FORMAT($dateTimeField, '%Y-%m-%d') as date"),
+                'provider_id as user_id',
+                $isBillable
                           ? \DB::raw('TRUE as is_billable')
                           : \DB::raw('FALSE as is_billable')
                   )
             ->whereIn('provider_id', $nurseUserIds)
             ->whereBetween(
-                      $dateTimeField,
-                      [
-                          $start,
-                          $end,
-                      ]
+                $dateTimeField,
+                [
+                    $start,
+                    $end,
+                ]
                   )->groupBy('date', 'user_id');
     }
 
@@ -155,11 +155,11 @@ class TotalTimeAggregator
     {
         return TimeTrackedPerDayView::whereIn('user_id', $this->userIds)
             ->whereBetween(
-                                        'date',
-                                        [
-                                            $this->startDate->toDateString(),
-                                            $this->endDate->toDateString(),
-                                        ]
+                'date',
+                [
+                    $this->startDate->toDateString(),
+                    $this->endDate->toDateString(),
+                ]
                                     )
             ->groupBy('date', 'user_id', 'is_billable')
             ->get()
