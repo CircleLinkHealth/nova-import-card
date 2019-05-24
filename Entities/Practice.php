@@ -601,8 +601,8 @@ class Practice extends BaseModel implements HasMedia
     public function toSearchableArray()
     {
         return [
-            'name',
-            'display_name'
+            'name' => $this->name,
+            'display_name' => $this->display_name,
         ];
     }
 
