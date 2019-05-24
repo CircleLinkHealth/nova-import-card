@@ -48,13 +48,13 @@ class EnrollmentDirectorController extends Controller
         )
             ->get()
             ->map(function ($e) use ($request) {
-                $e->care_ambassador_user_id = $request->input('ambassadorId');
+                    $e->care_ambassador_user_id = $request->input('ambassadorId');
 
-                if (Enrollee::SOFT_REJECTED != $e->status) {
-                    $e->status = Enrollee::TO_CALL;
-                }
-                $e->save();
-            });
+                    if (Enrollee::SOFT_REJECTED != $e->status) {
+                        $e->status = Enrollee::TO_CALL;
+                    }
+                    $e->save();
+                });
 
         return response()->json([], 200);
     }
@@ -65,19 +65,19 @@ class EnrollmentDirectorController extends Controller
 
         Enrollee::where('id', $request->input('id'))
             ->update([
-                'first_name'          => $request->input('first_name'),
-                'last_name'           => $request->input('last_name'),
-                'lang'                => $request->input('lang'),
-                'status'              => $request->input('status'),
-                'address'             => $request->input('address'),
-                'address_2'           => $request->input('address_2'),
-                'primary_phone'       => $phones['primary_phone'],
-                'home_phone'          => $phones['home_phone'],
-                'other_phone'         => $phones['other_phone'],
-                'cell_phone'          => $phones['cell_phone'],
-                'primary_insurance'   => $request->input('primary_insurance'),
-                'secondary_insurance' => $request->input('secondary_insurance'),
-                'tertiary_insurance'  => $request->input('tertiary_insurance'),
+                'first_name'             => $request->input('first_name'),
+                'last_name'              => $request->input('last_name'),
+                'lang'                   => $request->input('lang'),
+                'status'                 => $request->input('status'),
+                'address'                => $request->input('address'),
+                'address_2'              => $request->input('address_2'),
+                'primary_phone'          => $phones['primary_phone'],
+                'home_phone'             => $phones['home_phone'],
+                'other_phone'            => $phones['other_phone'],
+                'cell_phone'             => $phones['cell_phone'],
+                'primary_insurance'      => $request->input('primary_insurance'),
+                'secondary_insurance'    => $request->input('secondary_insurance'),
+                'tertiary_insurance'     => $request->input('tertiary_insurance'),
             ]);
 
         return response()->json([], 200);
