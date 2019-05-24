@@ -6,10 +6,13 @@
 
 namespace CircleLinkHealth\NurseInvoices\Entities;
 
+use CircleLinkHealth\NurseInvoices\Traits\Disputable;
 use Illuminate\Database\Eloquent\Model;
 
 class NurseInvoice extends Model
 {
+    use Disputable;
+
     protected $casts = [
         'month_year'   => 'date',
         'invoice_data' => ' array',
@@ -18,12 +21,7 @@ class NurseInvoice extends Model
     protected $fillable = [
         'nurse_info_id',
         'month_year',
-        'sent_to_accountant',
+        'sent_to_accountant_at',
         'invoice_data',
     ];
-
-    public function disputes()
-    {
-        return $this->morphTo(Dispute::class, 'disputable');
-    }
 }

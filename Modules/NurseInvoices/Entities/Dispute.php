@@ -15,6 +15,7 @@ class Dispute extends Model
         'user_id',
         'reason',
         'resolved_at',
+        'resolved_by',
         'resolution_note',
     ];
 
