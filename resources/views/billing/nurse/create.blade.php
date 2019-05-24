@@ -6,7 +6,7 @@
         <script>
             $(document).ready(function () {
                 $(".nurses").select2({
-                    placeholder: 'Select specific Nurses, or click checkbox to the right for all nurses',
+                    placeholder: 'Select specific nurses, or checkbox below',
                     allowClear: true
                 });
             });
@@ -21,7 +21,7 @@
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Nurse Invoice Generator</div>
+                    <div class="panel-heading">Nurse Invoice Generator <span class="pull-right"> <a href="javascript:void(0);" onclick="javascript:introJs().setOption('showProgress', true).start();"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a></span></div>
                     <div class="panel-body">
                         <form class="form-horizontal">
                             {{ csrf_field() }}
@@ -29,8 +29,8 @@
 
                                 <div class="form-group">
                                     <label class="col-md-2 control-label" for="days">
-                                        Nurses<br></label>
-                                    <div class="col-md-6">
+                                        Nurses</label>
+                                    <div class="col-md-6" data-step="1" data-intro="If you want to generate invoices for specific nurses, use this search box to select them.">
                                         <select id="nurses-select" name="nurses[]"
                                                 class="nurses dropdown Valid form-control"
                                                 multiple required>
@@ -41,18 +41,18 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group">
+                                <div class="form-group" data-step="2" data-intro="Alternatively, you can check this box and the system will generate invoices for all nurses who have any system time in the selected date range. Checking this checkbox will clear the search box above.">
                                     <label data-target="#collapseOne" class="col-md-10 col-md-offset-2">
                                         <div class="radio"><input type="checkbox" name="all_selected_nurses"
                                                                   id="selectAll"
                                                                   onclick="disableTextInput()"
                                                                   value="all_selected_nurses"/>
-                                            <label for="selectAll"><span> </span>Select all Nurses who logged in during below range</label>
+                                            <label for="selectAll"><span> </span>Select all nurses who logged in during below range</label>
                                         </div>
                                     </label>
                                 </div>
 
-                                <div class="form-group">
+                                <div class="form-group" data-step="3" data-intro="Invoices will be generated from the beginning of this day (12:00:00am).">
                                     <label class="col-md-2 control-label" for="start_date">From</label>
                                     <div class="col-md-6">
                                         <input class="form-control" type="date"
@@ -62,7 +62,7 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group">
+                                <div class="form-group" data-step="4" data-intro="Until the end of this day (11:59:59pm).">
                                     <label class="col-md-2 control-label" for="end_date">To</label>
                                     <div class="col-md-6">
                                         <input class="form-control" type="date"
@@ -73,7 +73,7 @@
                                 </div>
 
                                 <!-- Button -->
-                                <div class="form-group">
+                                <div class="form-group" data-step="5" data-intro="Once you've finalized your options, click this button. The system will generate invoices in the background and send you an email when done.">
                                     <div class="row" style="padding-left: 12px;">
                                         <label class="col-md-2 control-label" for="end_date"></label>
                                         <div class="col-md-2">

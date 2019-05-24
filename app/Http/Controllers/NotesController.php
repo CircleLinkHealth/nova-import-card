@@ -111,6 +111,10 @@ class NotesController extends Controller
                 ->first();
         }
 
+        if ($existingNote && $existingNote->author_id !== $author_id) {
+            return response('You can only edit notes created by you.', 403);
+        }
+
         //if we are editing a note, no need to fetch tasks
         if ($existingNote && Note::STATUS_COMPLETE === $existingNote->status) {
             $nurse_patient_tasks = [];
@@ -120,15 +124,15 @@ class NotesController extends Controller
                 ->where('inbound_cpm_id', '=', $patientId)
                 ->where('outbound_cpm_id', '=', $author_id)
                 ->select(
-                    [
-                        'id',
-                        'type',
-                        'sub_type',
-                        'attempt_note',
-                        'scheduled_date',
-                        'window_start',
-                        'window_end',
-                    ]
+                                           [
+                                               'id',
+                                               'type',
+                                               'sub_type',
+                                               'attempt_note',
+                                               'scheduled_date',
+                                               'window_start',
+                                               'window_end',
+                                           ]
                                        )
                 ->get();
         }
@@ -136,7 +140,7 @@ class NotesController extends Controller
         $isCareCoach = Auth::user()->isCareCoach();
         $meds        = [];
         if ($isCareCoach && $this->shouldPrePopulateWithMedications($patient)) {
-            $meds = $medicationService->repo()->patientMedicationsList($patientId);
+            $meds = $medicationService->repo()->patientMedicationsList($patientId, true);
         }
 
         $reasons = [
@@ -336,6 +340,7 @@ class NotesController extends Controller
 
         $data['type']         = $note->type;
         $data['id']           = $note->id;
+        $data['author_id']    = $note->author_id;
         $data['performed_at'] = $note->performed_at;
         $provider             = User::find($note->author_id);
         if ($provider) {
@@ -712,10 +717,10 @@ class NotesController extends Controller
     {
         return Practice::whereId($patient->program_id)
             ->where(
-                function ($q) {
-                    $q->where('name', '=', 'phoenix-heart')
-                        ->orWhere('name', '=', 'demo');
-                }
+                           function ($q) {
+                               $q->where('name', '=', 'phoenix-heart')
+                                   ->orWhere('name', '=', 'demo');
+                           }
                        )
             ->exists();
     }

@@ -36,7 +36,7 @@ class NurseController extends Controller
             $nurseUserIds = [];
         }
 
-        CreateNurseInvoices::dispatchNow(
+        CreateNurseInvoices::dispatch(
             $startDate,
             $endDate,
             $nurseUserIds,
