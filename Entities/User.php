@@ -35,7 +35,6 @@ use App\Models\EmailSettings;
 use App\Models\MedicalRecords\Ccda;
 use App\Notifications\CarePlanApprovalReminder;
 use App\Notifications\ResetPassword;
-use App\NurseInvoiceExtra;
 use App\Repositories\Cache\EmptyUserNotificationList;
 use App\Repositories\Cache\UserNotificationList;
 use App\Services\UserService;
@@ -49,6 +48,7 @@ use CircleLinkHealth\Customer\Traits\HasEmrDirectAddress;
 use CircleLinkHealth\Customer\Traits\MakesOrReceivesCalls;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
 use CircleLinkHealth\Customer\Traits\TimezoneTrait;
+use CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
 use DateTime;
@@ -925,6 +925,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         $this->save();
 
         return $this;
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function disputes()
+    {
+        return $this->hasMany(Dispute::class);
     }
 
     /**
@@ -1916,10 +1924,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         return $this->hasMany(Call::class, 'inbound_cpm_id', 'id')
             ->where(
-                function ($q) {
-                    $q->whereNull('type')
-                        ->orWhere('type', '=', 'call');
-                }
+                        function ($q) {
+                            $q->whereNull('type')
+                                ->orWhere('type', '=', 'call');
+                        }
                     );
     }
 
@@ -1933,10 +1941,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->inboundActivities()
             ->where('status', '=', 'scheduled')
             ->when(
-                $after,
-                function ($query) use ($after) {
-                    return $query->where('scheduled_date', '>=', $after->toDateString());
-                }
+                        $after,
+                        function ($query) use ($after) {
+                            return $query->where('scheduled_date', '>=', $after->toDateString());
+                        }
                     )
             ->where('called_date', '=', null);
     }
@@ -1946,10 +1954,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->inboundCalls()
             ->where('status', '=', 'scheduled')
             ->when(
-                $after,
-                function ($query) use ($after) {
-                    return $query->where('scheduled_date', '>=', $after->toDateString());
-                }
+                        $after,
+                        function ($query) use ($after) {
+                            return $query->where('scheduled_date', '>=', $after->toDateString());
+                        }
                     )
             ->where('called_date', '=', null);
     }
@@ -1996,10 +2004,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->ccdProblems()
             ->where('is_monitored', 1)
             ->whereHas(
-                'cpmProblem',
-                function ($cpm) {
-                    return $cpm->where('is_behavioral', 0);
-                }
+                        'cpmProblem',
+                        function ($cpm) {
+                            return $cpm->where('is_behavioral', 0);
+                        }
                     )
             ->exists();
     }
@@ -2125,6 +2133,16 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasMany('App\Note', 'patient_id', 'id');
     }
 
+    /**
+     * Extra time worked, or cash bonuses for Nurses.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function nurseBonuses()
+    {
+        return $this->hasMany(NurseInvoiceExtra::class);
+    }
+
     public function nurseInfo()
     {
         return $this->hasOne(Nurse::class, 'user_id', 'id');
@@ -2144,10 +2162,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         return $this->hasMany(Call::class, 'outbound_cpm_id', 'id')
             ->where(
-                function ($q) {
-                    $q->whereNull('type')
-                        ->orWhere('type', '=', 'call');
-                }
+                        function ($q) {
+                            $q->whereNull('type')
+                                ->orWhere('type', '=', 'call');
+                        }
                     );
     }
 
@@ -2210,23 +2228,23 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->ofType('participant')
             ->whereHas('patientInfo')
             ->with(
-                [
-                    'observations' => function ($query) {
-                        $query->where('obs_key', '!=', 'Outbound');
-                        $query->orderBy('obs_date', 'DESC');
-                        $query->first();
-                    },
-                    'careTeamMembers' => function ($q) {
-                        $q->where('type', '=', CarePerson::BILLING_PROVIDER)
-                            ->with('user');
-                    },
-                    'phoneNumbers' => function ($q) {
-                        $q->where('type', '=', PhoneNumber::HOME);
-                    },
-                    'carePlan.providerApproverUser',
-                    'primaryPractice',
-                    'patientInfo',
-                ]
+                       [
+                           'observations' => function ($query) {
+                               $query->where('obs_key', '!=', 'Outbound');
+                               $query->orderBy('obs_date', 'DESC');
+                               $query->first();
+                           },
+                           'careTeamMembers' => function ($q) {
+                               $q->where('type', '=', CarePerson::BILLING_PROVIDER)
+                                   ->with('user');
+                           },
+                           'phoneNumbers' => function ($q) {
+                               $q->where('type', '=', PhoneNumber::HOME);
+                           },
+                           'carePlan.providerApproverUser',
+                           'primaryPractice',
+                           'patientInfo',
+                       ]
                    )
             ->get();
     }
@@ -2241,24 +2259,24 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->ofType('participant')
             ->whereHas('patientInfo')
             ->whereHas(
-                'carePlan',
-                function ($q) {
-                    $q->whereIn('status', [CarePlan::QA_APPROVED]);
-                }
+                       'carePlan',
+                       function ($q) {
+                           $q->whereIn('status', [CarePlan::QA_APPROVED]);
+                       }
                    )
             ->whereHas(
-                'careTeamMembers',
-                function ($q) use ($approveOwnCarePlans) {
-                    $q->where(
+                       'careTeamMembers',
+                       function ($q) use ($approveOwnCarePlans) {
+                           $q->where(
                                [
                                    ['type', '=', CarePerson::BILLING_PROVIDER],
                                    ['member_user_id', '=', $this->id],
                                ]
                            )
-                        ->when(
-                                   ! $approveOwnCarePlans,
-                                   function ($q) {
-                                       $q->orWhere(
+                               ->when(
+                                 ! $approveOwnCarePlans,
+                                 function ($q) {
+                                     $q->orWhere(
                                          function ($q) {
                                              $q->whereHas(
                                                  'user',
@@ -2268,11 +2286,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                                                          function ($q) {
                                                              $q->where('contactable_id', $this->id)
                                                                  ->orWhereIn(
-                                                                     'name',
-                                                                     [
-                                                                         'forward_careplan_approval_emails_instead_of_provider',
-                                                                         'forward_careplan_approval_emails_in_addition_to_provider',
-                                                                     ]
+                                                                   'name',
+                                                                   [
+                                                                       'forward_careplan_approval_emails_instead_of_provider',
+                                                                       'forward_careplan_approval_emails_in_addition_to_provider',
+                                                                   ]
                                                                );
                                                          }
                                                      );
@@ -2280,22 +2298,22 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                                              );
                                          }
                                      );
-                                   }
+                                 }
                              );
-                }
+                       }
                    )
             ->with('primaryPractice')
             ->with(
-                [
-                    'observations' => function ($query) {
-                        $query->where('obs_key', '!=', 'Outbound');
-                        $query->orderBy('obs_date', 'DESC');
-                        $query->first();
-                    },
-                    'phoneNumbers' => function ($q) {
-                        $q->where('type', '=', PhoneNumber::HOME);
-                    },
-                ]
+                       [
+                           'observations' => function ($query) {
+                               $query->where('obs_key', '!=', 'Outbound');
+                               $query->orderBy('obs_date', 'DESC');
+                               $query->first();
+                           },
+                           'phoneNumbers' => function ($q) {
+                               $q->where('type', '=', PhoneNumber::HOME);
+                           },
+                       ]
                    );
     }
 
@@ -2378,16 +2396,16 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->belongsToMany(Practice::class, 'practice_role_user', 'user_id', 'program_id')
             ->withPivot('role_id')
             ->when(
-                $onlyActive,
-                function ($query) use ($onlyActive) {
-                    return $query->where('active', '=', 1);
-                }
+                        $onlyActive,
+                        function ($query) use ($onlyActive) {
+                            return $query->where('active', '=', 1);
+                        }
                     )
             ->when(
-                $onlyEnrolledPatients,
-                function ($query) use ($onlyEnrolledPatients) {
-                    //$query -> Practice Model
-                    return $query->whereHas(
+                        $onlyEnrolledPatients,
+                        function ($query) use ($onlyEnrolledPatients) {
+                            //$query -> Practice Model
+                            return $query->whereHas(
                                 'patients',
                                 function ($innerQuery) {
                                     //$innerQuery -> User Model
@@ -2400,13 +2418,13 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                                     );
                                 }
                             );
-                }
+                        }
                     )
             ->when(
-                $ofRoleIds,
-                function ($query) use ($ofRoleIds) {
-                    return $query->whereIn('practice_role_user.role_id', $ofRoleIds);
-                }
+                        $ofRoleIds,
+                        function ($query) use ($ofRoleIds) {
+                            return $query->whereIn('practice_role_user.role_id', $ofRoleIds);
+                        }
                     )
             ->withTimestamps();
     }
@@ -2451,23 +2469,23 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->groupBy('cpm_problem_id')
             ->get()
             ->map(
-                function ($problem) use ($billableProblems) {
-                    $problem->billing_code = $problem->icd10Code();
+                                function ($problem) use ($billableProblems) {
+                                    $problem->billing_code = $problem->icd10Code();
 
-                    if ( ! $problem->billing_code) {
-                        return $problem;
-                    }
+                                    if ( ! $problem->billing_code) {
+                                        return $problem;
+                                    }
 
-                    if ($problem->icd10Codes()->exists()) {
-                        $billableProblems->prepend($problem);
+                                    if ($problem->icd10Codes()->exists()) {
+                                        $billableProblems->prepend($problem);
 
-                        return $problem;
-                    }
+                                        return $problem;
+                                    }
 
-                    $billableProblems->push($problem);
+                                    $billableProblems->push($problem);
 
-                    return $problem;
-                }
+                                    return $problem;
+                                }
                             );
 
         return $billableProblems;
@@ -3563,10 +3581,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         return User::ofType('participant')
             ->whereHas(
-                'practices',
-                function ($q) {
-                    $q->whereIn('program_id', $this->viewableProgramIds());
-                }
+                       'practices',
+                       function ($q) {
+                           $q->whereIn('program_id', $this->viewableProgramIds());
+                       }
                    )
             ->pluck('id')
             ->all();
@@ -3616,14 +3634,5 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         );
 
         return $patientIds->pluck('id')->all();
-    }
-    
-    /**
-     * Extra time worked, or cash bonuses for Nurses
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function nurseBonuses() {
-        return $this->hasMany(NurseInvoiceExtra::class);
     }
 }
