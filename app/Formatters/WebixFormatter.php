@@ -66,11 +66,13 @@ class WebixFormatter implements ReportFormatter
                     $result['logged_from'] = 'note_task';
                 }
 
-                $editNoteRoute = route(
-                    'patient.note.edit',
-                    ['patientId' => $note->patient_id, 'noteId' => $note->id]
-                );
-                $result['tags'] .= "<div class=\"label label-warning\"><a href=\"$editNoteRoute\"><span class=\"glyphicon glyphicon-edit\" aria-hidden=\"true\"></span></a></div> ";
+                if ($note->author_id === auth()->id()) {
+                    $editNoteRoute = route(
+                        'patient.note.edit',
+                        ['patientId' => $note->patient_id, 'noteId' => $note->id]
+                    );
+                    $result['tags'] .= "<div class=\"label label-warning\"><a href=\"$editNoteRoute\"><span class=\"glyphicon glyphicon-edit\" aria-hidden=\"true\"></span></a></div> ";
+                }
 
                 if ($note->notifications->count() > 0) {
                     if ($this->noteService->wasForwardedToCareTeam($note)) {
