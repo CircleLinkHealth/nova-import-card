@@ -14,10 +14,10 @@ use App\Console\Commands\AttachBillableProblemsToLastMonthSummary;
 use App\Console\Commands\CareplanEnrollmentAdminNotification;
 use App\Console\Commands\CheckEmrDirectInbox;
 use App\Console\Commands\DeleteProcessedFiles;
-use App\Console\Commands\DownloadTwilioRecordings;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailRNDailyReportToDeprecate;
 use App\Console\Commands\EmailWeeklyReports;
+use App\Console\Commands\GetNursesForInvoices;
 use App\Console\Commands\NursesAndStatesDailyReport;
 use App\Console\Commands\OverwriteNBIImportedData;
 use App\Console\Commands\QueueEligibilityBatchForProcessing;
@@ -30,7 +30,6 @@ use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
 use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
-use App\Console\Commands\SendCareCoachInvoices;
 use App\Console\Commands\SendCarePlanApprovalReminders;
 use App\Console\Commands\TuneScheduledCalls;
 use Illuminate\Console\Scheduling\Schedule;
@@ -86,8 +85,7 @@ class Kernel extends ConsoleKernel
         //$schedule->command(SyncFamilialCalls::class)->dailyAt('00:30');
 
         //Removes All Scheduled Calls for patients that are withdrawn
-        $schedule->command(RemoveScheduledCallsForWithdrawnAndPausedPatients::class)->everyFiveMinutes(
-        )->withoutOverlapping();
+        $schedule->command(RemoveScheduledCallsForWithdrawnAndPausedPatients::class)->everyFiveMinutes()->withoutOverlapping();
 
         $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
             ->weeklyOn(1, '10:00');
@@ -196,5 +194,7 @@ class Kernel extends ConsoleKernel
         $schedule->command(NursesAndStatesDailyReport::class)->dailyAt('00:05');
 
         $schedule->command(OverwriteNBIImportedData::class)->everyTenMinutes();
+
+        $schedule->command(GetNursesForInvoices::class)->everyMinute()/*->monthlyOn('1','00:05')*/;
     }
 }

@@ -11,7 +11,6 @@ use App\Jobs\CreateNurseInvoices;
 use App\Notifications\NurseInvoiceCreated;
 use App\Reports\NurseDailyReport;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;

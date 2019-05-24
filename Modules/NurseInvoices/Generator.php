@@ -10,6 +10,7 @@ use App\Notifications\NurseInvoiceCreated;
 use App\Services\PdfService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\ViewModels\Invoice;
 use Illuminate\Support\Collection;
 
@@ -38,8 +39,12 @@ class Generator
      */
     private $sendToCareCoaches;
 
-    public function __construct(array $nurseUserIds, Carbon $startDate, Carbon $endDate, $sendToCareCoaches = false)
-    {
+    public function __construct(
+        array $nurseUserIds,
+        Carbon $startDate,
+        Carbon $endDate,
+        $sendToCareCoaches = false
+    ) {
         $this->pdfService        = app(PdfService::class);
         $this->startDate         = $startDate;
         $this->endDate           = $endDate;
@@ -82,20 +87,34 @@ class Generator
                         }
 
                         $viewModel = $this->createViewModel($user, $nurseAggregatedTotalTime, $variablePayMap);
-                        /**
-                         * @todo: Antonis stores invoice data here
-                         * $viewModel->toArray()
-                         */
-                        $pdf = $this->createPdf($viewModel);
-                        $this->forwardToCareCoach($viewModel, $pdf);
 
-                        $invoices->push($pdf);
+                        $this->saveInvoiceData($user, $viewModel);
+
+                        /*   $pdf = $this->createPdf($viewModel);
+                           $this->forwardToCareCoach($viewModel, $pdf);
+
+                           $invoices->push($pdf);*/
                     }
                 );
             }
         );
 
-        return $invoices;
+        // return $invoices;
+    }
+
+    /**
+     * @param $user
+     * @param $viewModel
+     */
+    public function saveInvoiceData($user, $viewModel)
+    {
+        NurseInvoice::create(
+            [
+                'nurse_info_id' => $user->nurseInfo->id,
+                'month_year'    => $this->startDate->toDateString(),
+                'invoice_data'  => $viewModel->toArray(),
+            ]
+        );
     }
 
     /**
@@ -120,9 +139,8 @@ class Generator
                 'margin-bottom' => '6',
                 'margin-right'  => '6',
                 'footer-right'  => 'Page [page] of [toPage]',
-                'footer-left'   => 'report generated on '.Carbon::now()->format('m-d-Y').' at '.Carbon::now(
-                    )->format(
-                        'H:iA'
+                'footer-left'   => 'report generated on '.Carbon::now()->format('m-d-Y').' at '.Carbon::now()->format(
+                    'H:iA'
                     ),
                 'footer-font-size' => '6',
             ]
@@ -191,14 +209,14 @@ class Generator
                     },
                     'nurseInfo',
                 ]
-                   )
+            )
             ->has('nurseInfo')
             ->when(
                 is_array($this->nurseUserIds) && ! empty($this->nurseUserIds),
                 function ($q) {
                     $q->whereIn('id', $this->nurseUserIds);
                 }
-                   )
+            )
             ->when(
                 empty($this->nurseUserIds),
                 function ($q) {
@@ -206,21 +224,21 @@ class Generator
                         'pageTimersAsProvider',
                         function ($s) {
                             $s->whereBetween(
-                                       'start_time',
-                                       [
-                                           $this->startDate->copy()->startOfDay(),
-                                           $this->endDate->copy()->endOfDay(),
-                                       ]
-                                   );
+                                'start_time',
+                                [
+                                    $this->startDate->copy()->startOfDay(),
+                                    $this->endDate->copy()->endOfDay(),
+                                ]
+                            );
                         }
-                           )
+                    )
                         ->whereHas(
                             'nurseInfo',
                             function ($s) {
                                 $s->where('is_demo', false);
                             }
-                             );
+                        );
                 }
-                   );
+            );
     }
 }
