@@ -28,7 +28,7 @@
     "repositories": [
         {
             "type": "git",
-            "url": "git@github.com:michalisantoniou6/revisionable.git"
+            "url": "git@github.com:CircleLinkHealth/revisionable.git"
         }
     ]
 }
