@@ -16,6 +16,12 @@ npm run prod
 
 if [ ! -d "vendor" ]; then
   composer install --no-dev --classmap-authoritative --prefer-dist
+
+  # Exit if composer failed
+  if [ $? -ne 0 ]; then
+    echo "Composer failed.";
+    exit 1;
+  fi
 fi
 
 php artisan tickets:store $COMMIT $ENV_NAME $ROLLBACK $USER_NAME $COMMENT $PREVIOUS_COMMIT

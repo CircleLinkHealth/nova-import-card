@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b42a17da6dc5400cb2cfeb3ac2570592",
+    "content-hash": "219b6eeacf37666d22214cd3540cc302",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -663,7 +663,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "215642d87ef23e8ff914e961400f67238346ad2f"
+                "reference": "d740c04847e920138be2c609334e6a760f7f8093"
             },
             "require": {
                 "venturecraft/revisionable": "dev-master"
@@ -688,7 +688,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-05-22T16:00:36+00:00"
+            "time": "2019-05-24T01:30:17+00:00"
         },
         {
             "name": "circlelinkhealth/customer",
@@ -696,7 +696,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "ac7df3ba56b88aff6b30462012736a3577380377"
+                "reference": "e112e0ac55a0a6c9d8c25857f2be32967db44b49"
             },
             "require": {
                 "circlelinkhealth/core": "dev-master",
@@ -728,7 +728,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-05-22T22:32:00+00:00"
+            "time": "2019-05-23T23:43:11+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
@@ -9218,7 +9218,7 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/VentureCraft/revisionable.git",
+                "url": "git@github.com:CircleLinkHealth/revisionable.git",
                 "reference": "2f4340355b7ec02e8d9c07102c25edf7477c1188"
             },
             "require": {
@@ -9256,6 +9256,7 @@
                 "issues": "https://github.com/VentureCraft/revisionable/issues",
                 "source": "https://github.com/VentureCraft/revisionable"
             },
+            "abandoned": true,
             "time": "2018-08-06T23:22:33+00:00"
         },
         {
@@ -13345,6 +13346,7 @@
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
         "xethron/migrations-generator": 20,
+        "venturecraft/revisionable": 20,
         "michalisantoniou6/laravel-cerberus": 20
     },
     "prefer-stable": true,

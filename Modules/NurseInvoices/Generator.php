@@ -111,7 +111,7 @@ class Generator
         $link = $name.'.pdf';
 
         $pdfPath = $this->pdfService->createPdfFromView(
-            'billing.nurse.invoice-v2',
+            'nurseinvoices::invoice-v2',
             $viewModel->toArray(),
             storage_path("download/${name}.pdf"),
             [
