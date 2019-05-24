@@ -221,7 +221,6 @@
                 this.enrolleeData.primary_insurance = enrollee.primary_insurance;
                 this.enrolleeData.secondary_insurance = enrollee.secondary_insurance;
                 this.enrolleeData.tertiary_insurance = enrollee.tertiary_insurance;
-
             });
         }
     }
