@@ -663,7 +663,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "215642d87ef23e8ff914e961400f67238346ad2f"
+                "reference": "d740c04847e920138be2c609334e6a760f7f8093"
             },
             "require": {
                 "venturecraft/revisionable": "dev-master"
@@ -688,7 +688,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-05-22T16:00:36+00:00"
+            "time": "2019-05-24T01:30:17+00:00"
         },
         {
             "name": "circlelinkhealth/customer",
@@ -9218,7 +9218,7 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "git@github.com:michalisantoniou6/revisionable.git",
+                "url": "git@github.com:CircleLinkHealth/revisionable.git",
                 "reference": "2f4340355b7ec02e8d9c07102c25edf7477c1188"
             },
             "require": {
