@@ -82,7 +82,6 @@ class Generator
                         }
 
                         $viewModel = $this->createViewModel($user, $nurseAggregatedTotalTime, $variablePayMap);
-
                         /**
                          * @todo: Antonis stores invoice data here
                          * $viewModel->toArray()
@@ -204,22 +203,22 @@ class Generator
                 empty($this->nurseUserIds),
                 function ($q) {
                     $q->whereHas(
-                               'pageTimersAsProvider',
-                               function ($s) {
-                                   $s->whereBetween(
+                        'pageTimersAsProvider',
+                        function ($s) {
+                            $s->whereBetween(
                                        'start_time',
                                        [
                                            $this->startDate->copy()->startOfDay(),
                                            $this->endDate->copy()->endOfDay(),
                                        ]
                                    );
-                               }
+                        }
                            )
                         ->whereHas(
-                                   'nurseInfo',
-                                   function ($s) {
-                                       $s->where('is_demo', false);
-                                   }
+                            'nurseInfo',
+                            function ($s) {
+                                $s->where('is_demo', false);
+                            }
                              );
                 }
                    );
