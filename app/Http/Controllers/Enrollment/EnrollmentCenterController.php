@@ -98,7 +98,7 @@ class EnrollmentCenterController extends Controller
                 ->toCall()
                 ->where('lang', 'ES')
                 ->orderBy('attempt_count')
-                ->with('practice.enrollmentTips')
+                ->with(['practice.enrollmentTips', 'provider.providerInfo'])
                 ->first();
 
             //if no spanish, get a EN user.
@@ -106,21 +106,21 @@ class EnrollmentCenterController extends Controller
                 $enrollee = Enrollee::where('care_ambassador_user_id', $careAmbassador->user_id)
                     ->toCall()
                     ->orderBy('attempt_count')
-                    ->with('practice.enrollmentTips')
+                    ->with(['practice.enrollmentTips', 'provider.providerInfo'])
                     ->first();
             }
         } else { // auth ambassador doesn't speak ES, get a regular user.
             $enrollee = Enrollee::where('care_ambassador_user_id', $careAmbassador->user_id)
                 ->toCall()
                 ->orderBy('attempt_count')
-                ->with('practice.enrollmentTips')
+                ->with(['practice.enrollmentTips', 'provider.providerInfo'])
                 ->first();
         }
 
         $engagedEnrollee = Enrollee::where('care_ambassador_user_id', $careAmbassador->user_id)
             ->where('status', '=', 'engaged')
             ->orderBy('attempt_count')
-            ->with('practice.enrollmentTips')
+            ->with(['practice.enrollmentTips', 'provider.providerInfo'])
             ->first();
 
         if ($engagedEnrollee) {
