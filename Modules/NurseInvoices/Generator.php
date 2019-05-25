@@ -141,7 +141,7 @@ class Generator
                 'email_body'    => [
                     'name'       => $viewModel->user()->getFullName(),
                     'total_time' => $viewModel->systemTimeInHours(),
-                    'payout'     => $viewModel->hourlySalary(),
+                    'payout'     => $viewModel->invoiceTotalAmount(),
                 ],
             ];
     }
@@ -207,11 +207,11 @@ class Generator
                         'pageTimersAsProvider',
                         function ($s) {
                             $s->whereBetween(
-                                       'start_time',
-                                       [
-                                           $this->startDate->copy()->startOfDay(),
-                                           $this->endDate->copy()->endOfDay(),
-                                       ]
+                                'start_time',
+                                [
+                                    $this->startDate->copy()->startOfDay(),
+                                    $this->endDate->copy()->endOfDay(),
+                                ]
                                    );
                         }
                            )
