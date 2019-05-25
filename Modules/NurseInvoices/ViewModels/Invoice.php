@@ -19,8 +19,13 @@ class Invoice extends ViewModel
      * @var Collection
      */
     public $aggregatedTotalTime;
+    /**
+     * @var bool
+     */
+    public $changedToFixedRateBecauseItYieldedMore = false;
     public $nurseFullName;
     public $nurseHighRate;
+    public $nurseHourlyRate;
     public $nurseLowRate;
     /**
      * @var bool
@@ -35,6 +40,11 @@ class Invoice extends ViewModel
      */
     protected $extraTime;
 
+    /**
+     * Do not make this methods available to classes consuming this ViewModel.
+     *
+     * @var array array
+     */
     protected $ignore = ['user'];
     /**
      * @var Carbon
@@ -50,9 +60,9 @@ class Invoice extends ViewModel
      */
     protected $variablePaySummary;
     /**
-     * @var
+     * @var float
      */
-    private $amountPayable;
+    private $baseSalary;
     /**
      * @var mixed
      */
@@ -108,11 +118,12 @@ class Invoice extends ViewModel
         $this->endDate             = $endDate;
         $this->aggregatedTotalTime = $aggregatedTotalTime->flatten();
         $this->variablePay         = (bool) $user->nurseInfo->is_variable_rate;
-        $this->totalSystemTime     = $this->getTotalSystemTime();
+        $this->totalSystemTime     = $this->totalSystemTimeInSeconds();
         $this->bonus               = $this->getBonus($user->nurseBonuses);
         $this->extraTime           = $this->getAddedDuration($user->nurseBonuses);
         $this->nurseHighRate       = $user->nurseInfo->high_rate;
         $this->nurseLowRate        = $user->nurseInfo->low_rate;
+        $this->nurseHourlyRate     = $user->nurseInfo->hourly_rate;
         $this->nurseFullName       = $user->getFullName();
 
         if ($this->variablePay) {
@@ -124,7 +135,7 @@ class Invoice extends ViewModel
             $this->variablePaySummary = $variablePaySummary->flatten();
         }
 
-        $this->setPayableAmount();
+        $this->determineBaseSalary();
     }
 
     /**
@@ -137,43 +148,114 @@ class Invoice extends ViewModel
         return ceil($this->extraTime / 60);
     }
 
+    /**
+     * PAyable amount due to extra time.
+     *
+     * @return float|int
+     */
     public function addedTimeAmount()
     {
         return $this->addedTime() * $this->user->nurseInfo->hourly_rate;
     }
 
+    /**
+     * Cash bonus total.
+     *
+     * @return float
+     */
     public function bonus()
     {
         return ceil($this->bonus);
     }
 
+    /**
+     * The formatted end date.
+     *
+     * @return string
+     */
     public function endDate()
     {
         return $this->endDate->format(self::DATE_FORMAT);
     }
 
-    public function getTotalSystemTime()
+    /**
+     * Returns base salary using both "fixed rate" and "variable rate".
+     * The 2 salaries are keyed using 'low', and 'high'.
+     *
+     * @return array|string
+     */
+    public function formattedBaseSalary()
     {
-        return (int) $this->aggregatedTotalTime
-            ->where('is_billable', false)
-            ->sum('total_time');
+        $fixedRateMessage = "\${$this->fixedRatePay} (Fixed Rate: \${$this->user->nurseInfo->hourly_rate}/hr).";
+
+        if ( ! $this->variablePay && ! $this->changedToFixedRateBecauseItYieldedMore) {
+            return $fixedRateMessage;
+        }
+        $high_rate = $this->user->nurseInfo->high_rate;
+        $low_rate  = $this->user->nurseInfo->low_rate;
+
+        $variableRateMessage = "\${$this->variableRatePay} (Variable Rates: \$$high_rate/hr or \$$low_rate/hr).";
+
+        if ($this->variableRatePay > $this->fixedRatePay) {
+            $result = [
+                'high' => $variableRateMessage,
+                'low'  => $fixedRateMessage,
+            ];
+        } else {
+            $result = [
+                'high' => $fixedRateMessage,
+                'low'  => $variableRateMessage,
+            ];
+        }
+
+        return $result;
     }
 
+    /**
+     * The formatted payable invoice amount.
+     *
+     * @return string
+     */
+    public function formattedInvoiceTotalAmount()
+    {
+        return '$'.round($this->invoiceTotalAmount(), 2);
+    }
+
+    /**
+     * Does the nurse have added time?
+     *
+     * @return bool
+     */
     public function hasAddedTime()
     {
         return 0 != $this->extraTime;
     }
 
-    public function hourlySalary()
+    /**
+     * The total payable amount of the invoice. It includes all bonuses.
+     *
+     * @return float|int|mixed
+     */
+    public function invoiceTotalAmount()
     {
-        return "\${$this->amountPayable}";
+        return $this->baseSalary + $this->bonus + $this->addedTimeAmount();
     }
 
+    /**
+     * The formatted start date of the invoice.
+     *
+     * @return string
+     */
     public function startDate()
     {
         return $this->startDate->format(self::DATE_FORMAT);
     }
 
+    /**
+     * Total system time in hours.
+     *
+     * @return float|int|null
+     */
     public function systemTimeInHours()
     {
         if (is_null($this->systemTimeInHours)) {
@@ -189,11 +271,21 @@ class Invoice extends ViewModel
         return $this->systemTimeInHours;
     }
 
+    /**
+     * Total system time in minutes.
+     *
+     * @return float|int
+     */
     public function systemTimeInMinutes()
     {
         return $this->systemTimeInHours() * 60;
     }
 
+    /**
+     * An array showing the total time per day.
+     *
+     * @return Collection
+     */
     public function timePerDay()
     {
         $table  = collect();
@@ -252,30 +344,9 @@ class Invoice extends ViewModel
         return $table;
     }
 
-    public function totalBillableRate()
-    {
-        $fixedRateMessage = "\${$this->fixedRatePay} (Fixed Rate: \${$this->user->nurseInfo->hourly_rate}/hr).";
-
-        $high_rate = $this->user->nurseInfo->high_rate;
-        $low_rate  = $this->user->nurseInfo->low_rate;
-
-        $variableRateMessage = "\${$this->variableRatePay} (Variable Rates: \$$high_rate/hr or \$$low_rate/hr).";
-
-        if ($this->variableRatePay > $this->fixedRatePay) {
-            $result = [
-                'high' => $variableRateMessage,
-                'low'  => $fixedRateMessage,
-            ];
-        } else {
-            $result = [
-                'high' => $fixedRateMessage,
-                'low'  => $variableRateMessage,
-            ];
-        }
-
-        return $result;
-    }
-
+    /**
+     * @return float|int|null
+     */
     public function totalTimeAfterCcm()
     {
         if (is_null($this->totalTimeAfterCcm)) {
@@ -290,6 +361,9 @@ class Invoice extends ViewModel
         return $this->totalTimeAfterCcm;
     }
 
+    /**
+     * @return float|int|null
+     */
     public function totalTimeTowardsCcm()
     {
         if (is_null($this->totalTimeTowardsCcm)) {
@@ -304,11 +378,48 @@ class Invoice extends ViewModel
         return $this->totalTimeTowardsCcm;
     }
 
+    /**
+     * The nurse's user model.
+     *
+     * @return User
+     */
     public function user()
     {
         return $this->user;
     }
 
+    /**
+     * Determine base salary by comparing variable rate and fixed rate and choosing the highest.
+     *
+     * @return float|int|mixed
+     */
+    private function determineBaseSalary()
+    {
+        $this->fixedRatePay = $this->systemTimeInHours() * $this->user->nurseInfo->hourly_rate;
+        if ( ! $this->variablePay) {
+            $this->baseSalary = $this->fixedRatePay;
+        } else {
+            $this->variableRatePay = $this->totalTimeAfterCcm() * $this->user->nurseInfo->low_rate
+                                     + $this->totalTimeTowardsCcm() * $this->user->nurseInfo->high_rate;
+            if ($this->fixedRatePay > $this->variableRatePay) {
+                $this->baseSalary                             = $this->fixedRatePay;
+                $this->variablePay                            = false;
+                $this->changedToFixedRateBecauseItYieldedMore = true;
+            } else {
+                $this->baseSalary = $this->variableRatePay;
+            }
+        }
+
+        return $this->baseSalary;
+    }
+
+    /**
+     * Get the sum of nurse extra time in minutes.
+     *
+     * @param $nurseExtras
+     *
+     * @return mixed
+     */
     private function getAddedDuration($nurseExtras)
     {
         return $nurseExtras
@@ -316,6 +427,13 @@ class Invoice extends ViewModel
             ->sum('value');
     }
 
+    /**
+     * Get the sum of the cash bonus in USD($).
+     *
+     * @param $nurseExtras
+     *
+     * @return mixed
+     */
     private function getBonus($nurseExtras)
     {
         return $nurseExtras
@@ -323,23 +441,15 @@ class Invoice extends ViewModel
             ->sum('value');
     }
 
-    private function setPayableAmount()
+    /**
+     * Total system time in seconds.
+     *
+     * @return int
+     */
+    private function totalSystemTimeInSeconds()
     {
-        $this->fixedRatePay = $this->systemTimeInHours() * $this->user->nurseInfo->hourly_rate;
-        if ( ! $this->variablePay) {
-            $this->amountPayable = $this->fixedRatePay;
-        } else {
-            $this->variableRatePay = $this->totalTimeAfterCcm() * $this->user->nurseInfo->low_rate
-                                     + $this->totalTimeTowardsCcm() * $this->user->nurseInfo->high_rate;
-            if ($this->fixedRatePay > $this->variableRatePay) {
-                $this->amountPayable = $this->fixedRatePay;
-                $this->variablePay   = false;
-            } else {
-                $this->amountPayable = $this->variableRatePay;
-            }
-        }
-
-        //Add extratime
-        $this->amountPayable += (ceil($this->extraTime / 60) * $this->user->nurseInfo->hourly_rate) + $this->bonus;
+        return (int) $this->aggregatedTotalTime
+            ->where('is_billable', false)
+            ->sum('total_time');
     }
 }

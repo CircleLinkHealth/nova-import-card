@@ -111,6 +111,10 @@ class NotesController extends Controller
                 ->first();
         }
 
+        if ($existingNote && $existingNote->author_id !== $author_id) {
+            return response('You can only edit notes created by you.', 403);
+        }
+
         //if we are editing a note, no need to fetch tasks
         if ($existingNote && Note::STATUS_COMPLETE === $existingNote->status) {
             $nurse_patient_tasks = [];
@@ -336,6 +340,7 @@ class NotesController extends Controller
 
         $data['type']         = $note->type;
         $data['id']           = $note->id;
+        $data['author_id']    = $note->author_id;
         $data['performed_at'] = $note->performed_at;
         $provider             = User::find($note->author_id);
         if ($provider) {
