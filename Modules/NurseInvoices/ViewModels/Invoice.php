@@ -410,9 +410,6 @@ class Invoice extends ViewModel
             }
         }
 
-        //Add extratime
-        $this->baseSalary += (ceil($this->extraTime / 60) * $this->user->nurseInfo->hourly_rate) + $this->bonus;
-
         return $this->baseSalary;
     }
 
