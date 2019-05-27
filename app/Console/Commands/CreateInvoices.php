@@ -10,7 +10,7 @@ use App\Jobs\CreateNurseInvoices;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
-class GetNursesForInvoices extends Command
+class CreateInvoices extends Command
 {
     /**
      * The console command description.
@@ -23,7 +23,7 @@ class GetNursesForInvoices extends Command
      *
      * @var string
      */
-    protected $signature = 'GetNursesForInvoices';
+    protected $signature = 'nurseInvoices:CreateInvoices';
 
     /**
      * Create a new command instance.

@@ -17,7 +17,7 @@ class ReImportCcdsToGetTranslations extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Commands description';
     /**
      * The name and signature of the console command.
      *

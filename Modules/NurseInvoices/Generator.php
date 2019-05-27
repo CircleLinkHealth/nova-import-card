@@ -89,11 +89,11 @@ class Generator
                         $viewModel = $this->createViewModel($user, $nurseAggregatedTotalTime, $variablePayMap);
 
                         $this->saveInvoiceData($user, $viewModel);
-
-                        /*   $pdf = $this->createPdf($viewModel);
-                           $this->forwardToCareCoach($viewModel, $pdf);
-
-                           $invoices->push($pdf);*/
+//
+//                      $pdf = $this->createPdf($viewModel);
+//                           $this->forwardToCareCoach($viewModel, $pdf);
+//
+//                           $invoices->push($pdf);
                     }
                 );
             }

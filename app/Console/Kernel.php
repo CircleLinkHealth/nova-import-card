@@ -13,11 +13,11 @@ use App\Console\Commands\Athena\GetCcds;
 use App\Console\Commands\AttachBillableProblemsToLastMonthSummary;
 use App\Console\Commands\CareplanEnrollmentAdminNotification;
 use App\Console\Commands\CheckEmrDirectInbox;
+use App\Console\Commands\CreateInvoices;
 use App\Console\Commands\DeleteProcessedFiles;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailRNDailyReportToDeprecate;
 use App\Console\Commands\EmailWeeklyReports;
-use App\Console\Commands\GetNursesForInvoices;
 use App\Console\Commands\NursesAndStatesDailyReport;
 use App\Console\Commands\OverwriteNBIImportedData;
 use App\Console\Commands\QueueEligibilityBatchForProcessing;
@@ -195,6 +195,6 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(OverwriteNBIImportedData::class)->everyTenMinutes();
 
-        $schedule->command(GetNursesForInvoices::class)->everyMinute()/*->monthlyOn('1','00:05')*/;
+        $schedule->command(CreateInvoices::class)->everyMinute()/*->monthlyOn('1','00:05')*/;
     }
 }
