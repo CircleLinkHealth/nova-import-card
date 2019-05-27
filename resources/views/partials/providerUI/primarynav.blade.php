@@ -204,12 +204,14 @@ $user = auth()->user();
                                     </a>
                                 </li>
                                 {{--@todo:make conditional display--}}
-                                <li class="hidden-xs">
-                                    <a href="{{ route('care.center.invoice.review') }}"
-                                       id="offline-activity-time-requests-index-link">
-                                        Review Invoice
-                                    </a>
-                                </li>
+                                @if(auth()->user()->showInvoiceReviewButton())
+                                    <li class="hidden-xs">
+                                        <a href="{{ route('care.center.invoice.review') }}"
+                                           id="offline-activity-time-requests-index-link">
+                                            Review Invoice
+                                        </a>
+                                    </li>
+                                @endif
                             @endif
                             @if ( ! auth()->guest() && $user->hasRole(['administrator', 'administrator-view-only']) && $user->isNotSaas())
                                 <li><a style="color: #47beab"

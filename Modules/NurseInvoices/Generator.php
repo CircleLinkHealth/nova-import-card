@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\NurseInvoices;
 
 use App\Notifications\NurseInvoiceCreated;
+use App\Notifications\NurseInvoiceReady;
 use App\Services\PdfService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
@@ -89,6 +90,7 @@ class Generator
                         $viewModel = $this->createViewModel($user, $nurseAggregatedTotalTime, $variablePayMap);
 
                         $this->saveInvoiceData($user, $viewModel);
+                        $this->sendNotification($user);
 
                         //this part will be implemented
 //                      $pdf = $this->createPdf($viewModel);
@@ -116,6 +118,15 @@ class Generator
                 'invoice_data'  => $viewModel->toArray(),
             ]
         );
+    }
+
+    /**
+     * @param User $user
+     */
+    public function sendNotification(User $user)
+    {
+        $when = Carbon::now()->addHours(8);
+        $user->notify((new NurseInvoiceReady($this->startDate, $user))->delay($when));
     }
 
     /**
