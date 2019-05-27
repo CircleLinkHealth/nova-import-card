@@ -113,6 +113,7 @@ class NurseInvoiceExtras extends Resource
                 ->readonly(true),
 
             Date::make('Date', 'date')
+                ->rules('required')
                 ->sortable(),
 
             Select::make('Unit', 'unit')
@@ -129,6 +130,7 @@ class NurseInvoiceExtras extends Resource
                 ->hideWhenCreating(),
 
             Text::make('Value', 'value')
+                ->rules('required')
                 ->sortable(),
         ];
     }
