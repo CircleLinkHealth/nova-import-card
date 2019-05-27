@@ -950,9 +950,17 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'NotesController@create',
                 'as'   => 'patient.note.create',
             ])->middleware('permission:patient.read');
+            Route::get('edit/{noteId}', [
+                'uses' => 'NotesController@create',
+                'as'   => 'patient.note.edit',
+            ])->middleware('permission:note.create,patient.update,patientSummary.update');
             Route::post('store', [
                 'uses' => 'NotesController@store',
                 'as'   => 'patient.note.store',
+            ])->middleware('permission:note.create,patient.update,patientSummary.update');
+            Route::post('store-draft', [
+                'uses' => 'NotesController@storeDraft',
+                'as'   => 'patient.note.store.draft',
             ])->middleware('permission:note.create,patient.update,patientSummary.update');
             Route::get('{showAll?}', [
                 'uses' => 'NotesController@index',

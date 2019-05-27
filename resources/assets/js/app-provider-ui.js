@@ -69,7 +69,7 @@ const AppointmentsComponent = () => import(/* webpackChunkName: "chunk-careplan"
 const AddTaskModalComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/careplan/modals/add-task.modal');
 const PatientList = () => import(/* webpackChunkName: "chunk-patient-listing" */ './components/patients/listing')
 const DatepickerComponent = () => import(/* webpackChunkName: "chunk-datepicker" */ 'vuejs-datepicker')
-const ImporterTrainerComponent = () => import(/* webpackChunkName: "chunk-importer-trainer" */ './components/Importer/trainer')
+const ImporterTrainerComponent = () => import(/* webpackChunkName: "chunk-importer-trainer" */ './components/importer/trainer')
 const PatientNextCallComponent = () => import(/* webpackChunkName: "chunk-patient-next-call" */ './components/patient-next-call');
 const CallNumberComponent = () => import(/* webpackChunkName: "chunk-call-number" */ './components/call-number');
 const UserAccountSettings = () => import(/* webpackChunkName: "chunk-user-account-settings" */ './components/user-account-settings');

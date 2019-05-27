@@ -8,7 +8,6 @@ namespace App\Nova;
 
 use CircleLinkHealth\Customer\Entities\User as CpmUser;
 use Illuminate\Http\Request;
-use Laravel\Nova\Fields\Gravatar;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\Text;
@@ -35,7 +34,7 @@ class User extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'display_name', 'email',
+        'id', 'display_name', 'email', 'first_name', 'last_name',
     ];
 
     /**
@@ -55,6 +54,21 @@ class User extends Resource
     public function actions(Request $request)
     {
         return [];
+    }
+
+    public static function authorizedToCreate(Request $request)
+    {
+        return false;
+    }
+
+    public function authorizedToDelete(Request $request)
+    {
+        return false;
+    }
+
+    public function authorizedToUpdate(Request $request)
+    {
+        return false;
     }
 
     /**
@@ -81,10 +95,20 @@ class User extends Resource
         return [
             ID::make()->sortable(),
 
-            Gravatar::make(),
-
-            Text::make('Display Name')
+            Text::make('display_name')
                 ->sortable()
+                ->hideWhenCreating()
+                ->hideFromIndex(),
+
+            Text::make('first_name')
+                ->sortable()
+                ->rules('required', 'max:255'),
+
+            Text::make('last_name')
+                ->sortable()
+                ->rules('required', 'max:255'),
+
+            Text::make('suffix')
                 ->rules('required', 'max:255'),
 
             Text::make('Email')
@@ -122,5 +146,15 @@ class User extends Resource
     public function lenses(Request $request)
     {
         return [];
+    }
+
+    /**
+     * Determine if this resource uses Laravel Scout.
+     *
+     * @return bool
+     */
+    public static function usesScout()
+    {
+        return false;
     }
 }

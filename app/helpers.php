@@ -10,6 +10,7 @@ use App\Constants;
 use App\Exceptions\CsvFieldNotFoundException;
 use App\Jobs\SendSlackMessage;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
@@ -127,7 +128,13 @@ if ( ! function_exists('activeNurseNames')) {
     function activeNurseNames()
     {
         return User::ofType('care-center')
-            ->where('user_status', 1)
+            ->with([
+                'nurseInfo' => function ($q) {
+                    $q->where('is_demo', '!=', true);
+                },
+            ])->whereHas('nurseInfo', function ($q) {
+                $q->where('is_demo', '!=', true);
+            })->where('user_status', 1)
             ->pluck('display_name', 'id');
     }
 }
@@ -1267,13 +1274,13 @@ if ( ! function_exists('array_keys_exist')) {
     /**
      * Returns TRUE if the given keys are all set in the array. Each key can be any value possible for an array index.
      *
-     * @see array_key_exists()
-     *
      * @param string[] $keys    keys to check
      * @param array    $array   an array with keys to check
      * @param mixed    $missing reference to a variable that that contains the missing keys
      *
      * @return bool true if all given keys exist in the given array, false if not
+     *
+     * @see array_key_exists()
      */
     function array_keys_exist(array $keys, array $array, &$missing = null)
     {
@@ -1393,11 +1400,14 @@ if ( ! function_exists('calculateWeekdays')) {
     {
         $holidays = DB::table('company_holidays')->get();
 
-        return Carbon::parse($fromDate)->diffInDaysFiltered(function (Carbon $date) use ($holidays) {
-            $matchingHolidays = $holidays->where('holiday_date', $date->toDateString());
+        return Carbon::parse($fromDate)->diffInDaysFiltered(
+            function (Carbon $date) use ($holidays) {
+                $matchingHolidays = $holidays->where('holiday_date', $date->toDateString());
 
-            return ! $date->isWeekend() && ! $matchingHolidays->count() >= 1;
-        }, new Carbon($toDate));
+                return ! $date->isWeekend() && ! $matchingHolidays->count() >= 1;
+            },
+            new Carbon($toDate)
+        );
     }
 }
 

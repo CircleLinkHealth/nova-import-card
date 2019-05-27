@@ -11,6 +11,7 @@ use App\Models\CCD\Allergy;
 use App\Models\CCD\Medication;
 use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmMisc;
+use App\Note;
 use App\Services\CPM\CpmMiscService;
 use App\Services\NoteService;
 use App\Services\ReportsService;
@@ -49,11 +50,28 @@ class WebixFormatter implements ReportFormatter
                     'date_for_sorting' => $note->performed_at,
                     'provider_name'    => $billingProvider,
                     'tags'             => '',
+                    'status'           => $note->status,
                 ];
+
+                if (Note::STATUS_DRAFT === $note->status) {
+                    if (empty($result['type_name'])) {
+                        $result['type_name'] = '<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Draft';
+                    } else {
+                        $result['type_name'] = '<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> '.$result['type_name'];
+                    }
+                }
 
                 //pangratios: add support for task types
                 if ($note->call && 'task' === $note->call->type) {
                     $result['logged_from'] = 'note_task';
+                }
+
+                if ($note->author_id === auth()->id()) {
+                    $editNoteRoute = route(
+                        'patient.note.edit',
+                        ['patientId' => $note->patient_id, 'noteId' => $note->id]
+                    );
+                    $result['tags'] .= "<div class=\"label label-warning\"><a href=\"$editNoteRoute\"><span class=\"glyphicon glyphicon-edit\" aria-hidden=\"true\"></span></a></div> ";
                 }
 
                 if ($note->notifications->count() > 0) {
@@ -215,13 +233,14 @@ class WebixFormatter implements ReportFormatter
         ));
 
         foreach ($users as $user) {
-            $careplanReport[$user->id]['symptoms'] = $user->cpmSymptoms()->get()->pluck('name')->all();
-            $careplanReport[$user->id]['problem']  = $user->cpmProblems()->get()->sortBy('name')->pluck('name')->all(
-            );
-            $careplanReport[$user->id]['problems']    = $cpmProblemService->getProblemsWithInstructionsForUser($user);
-            $careplanReport[$user->id]['lifestyle']   = $user->cpmLifestyles()->get()->pluck('name')->all();
-            $careplanReport[$user->id]['biometrics']  = $user->cpmBiometrics()->get()->pluck('name')->all();
-            $careplanReport[$user->id]['medications'] = $user->cpmMedicationGroups()->get()->pluck('name')->all();
+            $careplanReport[$user->id] = [
+                'symptoms'    => $user->cpmSymptoms()->get()->pluck('name')->all(),
+                'problem'     => $user->cpmProblems()->get()->sortBy('name')->pluck('name')->all(),
+                'problems'    => $cpmProblemService->getProblemsWithInstructionsForUser($user),
+                'lifestyle'   => $user->cpmLifestyles()->get()->pluck('name')->all(),
+                'biometrics'  => $user->cpmBiometrics()->get()->pluck('name')->all(),
+                'medications' => $user->cpmMedicationGroups()->get()->pluck('name')->all(),
+            ];
         }
 
         $other_problems = (new ReportsService())->getInstructionsforOtherProblems($user);

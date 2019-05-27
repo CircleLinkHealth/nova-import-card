@@ -421,6 +421,15 @@ class Enrollee extends BaseModel
         return $this->belongsTo(User::class, 'provider_id');
     }
 
+    public function getProviderInfo(){
+
+        if (! $this->provider){
+            return null;
+        }
+
+        return $this->provider->providerInfo;
+    }
+
     public function scopeToCall($query)
     {
         //@todo add check for where phones are not all null

@@ -29,13 +29,14 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @property \Carbon\Carbon                                                  $created_at
  * @property \Carbon\Carbon                                                  $updated_at
  * @property string                                                          $type
- * @property string                                                          $performed_at
+ * @property \Carbon\Carbon                                                  $performed_at
  * @property int|null                                                        $logger_id
  * @property \App\Models\Addendum[]|\Illuminate\Database\Eloquent\Collection $addendums
  * @property \CircleLinkHealth\Customer\Entities\User                        $author
  * @property \App\Call                                                       $call
  * @property \CircleLinkHealth\Customer\Entities\User                        $patient
  * @property \CircleLinkHealth\Customer\Entities\User                        $program
+ * @property string                                                          $status
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereAuthorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereBody($value)
@@ -69,6 +70,8 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
         IsAddendumable;
     use
         PdfReportTrait;
+    const STATUS_COMPLETE = 'complete';
+    const STATUS_DRAFT    = 'draft';
 
     protected $dates = [
         'performed_at',
@@ -83,6 +86,7 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
         'type',
         'did_medication_recon',
         'performed_at',
+        'status',
     ];
 
     protected $table = 'notes';

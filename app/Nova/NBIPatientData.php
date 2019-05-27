@@ -10,7 +10,6 @@ use App\Models\PatientData\NBI\PatientData;
 use App\Nova\Importers\NBIPatientData as NBIPatientDataImporter;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Date;
-use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 use Sparclex\NovaImportCard\NovaImportCard;
@@ -84,7 +83,6 @@ class NBIPatientData extends Resource
     public function fields(Request $request)
     {
         return [
-            ID::make()->sortable(),
             Text::make('first_name')
                 ->sortable()
                 ->creationRules('required', 'string')
@@ -120,6 +118,14 @@ class NBIPatientData extends Resource
     public function filters(Request $request)
     {
         return [];
+    }
+
+    /**
+     * @return string
+     */
+    public static function label()
+    {
+        return 'NBI Supplemental Data';
     }
 
     /**
