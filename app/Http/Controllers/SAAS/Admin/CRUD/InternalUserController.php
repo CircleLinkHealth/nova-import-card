@@ -84,17 +84,19 @@ class InternalUserController extends Controller
 
     public function index(Request $request)
     {
-        $practices = auth()->user()->practices;
+        $practiceIds = auth()->user()->viewableProgramIds();
 
-        $wpUsers = User::whereHas('practices', function ($q) use ($practices) {
-            $q->whereIn('id', $practices->pluck('id')->all());
+        $wpUsers = User::whereHas('practices', function ($q) use ($practiceIds) {
+            $q->whereIn('id', $practiceIds);
         })->orderBy('id', 'desc');
 
         // FILTERS
         $params = $request->all();
 
         // filter user
-        $users = User::whereIn('id', Auth::user()->viewableUserIds())
+        $users = User::whereHas('practices', function ($q) use ($practiceIds) {
+            $q->whereIn('id', $practiceIds);
+        })
             ->orderBy('display_name')
             ->get()
             ->mapWithKeys(function ($user) {
@@ -146,7 +148,7 @@ class InternalUserController extends Controller
         }
 
         // program filter
-        $programs = Practice::whereIn('id', Auth::user()->viewableProgramIds())
+        $programs = Practice::whereIn('id', $practiceIds)
             ->orderBy('display_name')
             ->get()
             ->pluck('display_name', 'id')

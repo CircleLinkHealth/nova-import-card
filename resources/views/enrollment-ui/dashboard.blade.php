@@ -11,6 +11,7 @@
         window['hasTips'] = @json((!!$enrollee->practice->enrollmentTips));
         window['enrollee'] = @json($enrollee);
         window['providerFullName'] = @json($enrollee->providerFullName);
+        window['providerInfo'] = @json($enrollee->getProviderInfo());
         window['report'] = @json($report);
     </script>
 

@@ -159,7 +159,7 @@ class Generator
                 'email_body'    => [
                     'name'       => $viewModel->user()->getFullName(),
                     'total_time' => $viewModel->systemTimeInHours(),
-                    'payout'     => $viewModel->hourlySalary(),
+                    'payout'     => $viewModel->invoiceTotalAmount(),
                 ],
             ];
     }
