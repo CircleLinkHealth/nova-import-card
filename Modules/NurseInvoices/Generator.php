@@ -124,7 +124,7 @@ class Generator
      * @param User $user
      */
     public function sendNotification(User $user)
-    {
+    {//@todo:delay() doesnt work
         $when = Carbon::now()->addHours(8);
         $user->notify((new NurseInvoiceReady($this->startDate, $user))->delay($when));
     }

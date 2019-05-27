@@ -50,7 +50,5 @@ class CreateInvoices extends Command
             false,
             $requestedBy = null
         );
-
-//        @todo:send mail to nurses
     }
 }

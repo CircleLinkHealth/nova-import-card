@@ -195,6 +195,6 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(OverwriteNBIImportedData::class)->everyTenMinutes();
 
-        $schedule->command(CreateInvoices::class)->monthlyOn('1', '00:05');
+        $schedule->command(CreateInvoices::class)->monthlyOn('1', '00:02');
     }
 }

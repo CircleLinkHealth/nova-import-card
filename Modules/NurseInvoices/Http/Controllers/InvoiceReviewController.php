@@ -9,14 +9,25 @@ namespace CircleLinkHealth\NurseInvoices\Http\Controllers;
 use App\Exceptions\FileNotFoundException;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
+use CircleLinkHealth\NurseInvoices\Entities\Dispute;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class InvoiceReviewController extends Controller
 {
+    /**
+     * @param Request $request
+     */
     public function disputeInvoice(Request $request)
     {
+        $dispute = new Dispute();
+        $dispute->disputable()->create(
+            [//@todo:disputable_type and Id dont get saved
+                'reason'  => $request->input('reason'),
+                'user_id' => auth()->id(),
+            ]
+        );
     }
 
     /**
@@ -56,6 +67,7 @@ class InvoiceReviewController extends Controller
                 'totalTimeTowardsCcm' => $invoiceData['totalTimeTowardsCcm'],
                 'totalTimeAfterCcm'   => $invoiceData['totalTimeAfterCcm'],
                 'timePerDay'          => $invoiceData['timePerDay'],
+                //                @todo:get changedToFixedRateBecauseItYieldedMore.
             ]
         );
     }
