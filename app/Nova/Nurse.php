@@ -107,12 +107,17 @@ class Nurse extends Resource
                 ->hideWhenCreating()
                 ->hideFromIndex()
                 ->sortable(),
+
             Text::make('Name', 'user.display_name')
                 ->hideFromDetail()
                 ->hideWhenCreating()
                 ->readonly(true),
-            Text::make('+ Days Payment', 'pay_interval'),
+
+            Text::make('+ Days Payment', 'pay_interval')
+                ->rules('required'),
+
             Boolean::make('Is Demo?', 'is_demo'),
+
             Boolean::make('Alternative Pay', 'is_variable_rate'),
         ];
     }
