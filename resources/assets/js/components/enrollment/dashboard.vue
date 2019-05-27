@@ -52,12 +52,13 @@
                     <div class="card">
                         <div class="card-content">
                             <ul>
-                                <li class="sidebar-demo-list"><span :title="name"><b>Name:</b>{{name}}</span></li>
+                                <li class="sidebar-demo-list"><span :title="name"><b>Name:</b> {{name}}</span></li>
                                 <li class="sidebar-demo-list"><span :title="lang"><b>Language:</b> {{lang}}</span></li>
-                                <li class="sidebar-demo-list"><span :title="providerFullName"><b>Provider Name:</b>{{providerFullName}}</span>
-                                </li>
-                                <li class="sidebar-demo-list"><span :title="practice_name"><b>Practice Name:</b>{{practice_name}}</span>
-                                </li>
+                                <li class="sidebar-demo-list"><span :title="practice_name"><b>Practice Name:</b> {{practice_name}}</span></li>
+                                <li class="sidebar-demo-list"><span :title="providerFullName"><b>Provider Name:</b> {{providerFullName}}</span></li>
+                                <li class="sidebar-demo-list"><span :title="provider_pronunciation"><b>Provider Pronunciation:</b> {{provider_pronunciation}}</span></li>
+                                <li class="sidebar-demo-list"><span :title="provider_sex"><b>Provider Sex:</b> {{provider_sex}}</span></li>
+                                <li class="sidebar-demo-list"><span :title="last_office_visit_at"><b>Last Office Visit:</b> {{last_office_visit_at}}</span></li>
                             </ul>
                         </div>
                     </div>
@@ -296,7 +297,7 @@
                         </blockquote>
                         <div class="col s12 m3">
                             <label for="days[]" class="label">Day</label>
-                            <select name="days[]" id="days[]" multiple>
+                            <select  class="do-not-close" name="days[]" id="days[]" multiple>
                                 <option disabled selected>Days:</option>
                                 <option value="1">Monday</option>
                                 <option value="2">Tuesday</option>
@@ -307,7 +308,7 @@
                         </div>
                         <div class="col s12 m3">
                             <label for="times[]" class="label">Times</label>
-                            <select name="times[]" id="times[]" multiple>
+                            <select class="do-not-close" name="times[]" id="times[]" multiple>
                                 <option disabled selected>Times:</option>
                                 <option value="10:00-12:00">10AM - Noon</option>
                                 <option value="12:00-15:00">Noon - 3PM</option>
@@ -380,7 +381,7 @@
                     <div class="row">
                         <div class="col s12 m12">
                             <label for="utc-reason" class="label">Reason:</label>
-                            <select v-model="utc_reason" name="reason" id="utc-reason" required>
+                            <select class="auto-close" v-model="utc_reason" name="reason" id="utc-reason" required>
                                 <option value="voicemail">Left A Voicemail</option>
                                 <option value="disconnected">Disconnected Number</option>
                                 <option value="requested callback">Requested Call At Other Time</option>
@@ -430,7 +431,7 @@
                     <div class="row">
                         <div class="col s12 m12">
                             <label for="reason" class="label">What reason did the Patient convey?</label>
-                            <select name="reason" id="reason" required>
+                            <select class="auto-close" name="reason" id="reason" required>
                                 <option value="Worried about co-pay">Worried about co-pay</option>
                                 <option value="Doesn’t trust medicare">Doesn’t trust medicare</option>
                                 <option value="Doesn’t need help with Health">Doesn’t need help with Health</option>
@@ -531,6 +532,7 @@
     const userFullName = window.userFullName;
     const providerFullName = window.providerFullName;
     const report = window.report;
+    const providerInfo = window.providerInfo;
 
     export default {
         name: 'enrollment-dashboard',
@@ -641,6 +643,15 @@
             utc_requested_callback() {
                 return this.utc_reason === 'requested callback';
             },
+            provider_pronunciation: function(){
+                return providerInfo ? (providerInfo.pronunciation ? providerInfo.pronunciation : 'N/A') : 'N/A';
+            },
+            provider_sex: function(){
+                return providerInfo ? (providerInfo.sex ? providerInfo.sex : 'N/A') : 'N/A';
+            },
+            last_office_visit_at: function(){
+                return enrollee.last_encounter ? enrollee.last_encounter: 'N/A';
+            }
         },
         data: function () {
             return {
@@ -697,10 +708,23 @@
             $(document).ready(function () {
 
                 M.Modal.init($('#consented'));
-                M.Modal.init($('#utc'));
+                M.Modal.init($('#utc'), {
+                    onOpenEnd: function () {
+                        M.Datepicker.init($('#soft_decline_callback'), {
+                            container: 'body',
+                            format: 'yyyy-mm-dd'
+                        })
+                    },
+                });
                 M.Modal.init($('#tips'));
 
                 M.Modal.init($('#rejected'), {
+                    onOpenEnd: function () {
+                        M.Datepicker.init($('#soft_decline_callback'), {
+                            container: 'body',
+                            format: 'yyyy-mm-dd'
+                        })
+                    },
                     onCloseEnd: function () {
                         //always reset when modal is closed
                         self.isSoftDecline = false;
@@ -708,7 +732,14 @@
                 });
 
                 M.FormSelect.init($('select'));
-                M.Dropdown.init($('.dropdown-trigger'), {
+
+                M.Dropdown.init($('.auto-close'), {
+                    alignment: 'right',
+                    coverTrigger: false,
+                    closeOnClick: true
+                });
+
+                M.Dropdown.init($('.do-not-close'), {
                     alignment: 'right',
                     coverTrigger: false,
                     closeOnClick: false

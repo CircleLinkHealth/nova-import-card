@@ -17,6 +17,7 @@ use App\View\Composers\FabComposer;
 use App\View\Composers\ProviderUITimerComposer;
 use App\View\Composers\SAAS\Admin\ManageInternalUser;
 use Carbon\Carbon;
+use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesServiceProvider;
 use CircleLinkHealth\Raygun\Providers\RaygunServiceProvider;
 
 return [
@@ -232,6 +233,7 @@ return [
         PragmaRX\Health\ServiceProvider::class,
         TwilioClientServiceProvider::class,
         NovaServiceProvider::class,
+        NurseInvoicesServiceProvider::class,
     ],
 
     /*
