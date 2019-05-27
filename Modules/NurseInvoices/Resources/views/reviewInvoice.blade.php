@@ -6,16 +6,9 @@
     {!! Form::open(array('url' => route('care.center.invoice.dispute'), 'class' => 'form-horizontal')) !!}
 
     <form class="form-horizontal">
-
-
         <div class="form-group">
             <label for="dispute">Dispute Reasons</label>
-            <textarea class="form-control"
-                      name="reason"
-                      placeholder="Type reasons for dispute here"
-                      rows="8"
-                      required>
-                </textarea>
+            <textarea class="form-control" id="dispute" name="reason" placeholder="Type reasons for dispute here" rows="8" required></textarea>
         </div>
 
         <div class="form-group">

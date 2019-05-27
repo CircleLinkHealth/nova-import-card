@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Console\Commands;
+namespace CircleLinkHealth\NurseInvoices\Console\Commands;
 
 use App\Jobs\CreateNurseInvoices;
 use Carbon\Carbon;
@@ -40,8 +40,8 @@ class CreateInvoices extends Command
      */
     public function handle()
     {
-        $startDate = Carbon::now()->subMonth(8)->startOfMonth();
-        $endDate   = Carbon::now()->subMonth(7)->endOfMonth();
+        $startDate = Carbon::now()->subMonth(1)->startOfMonth();
+        $endDate   = Carbon::now()->subMonth(1)->endOfMonth();
 
         CreateNurseInvoices::dispatch(
             $startDate,
@@ -50,5 +50,7 @@ class CreateInvoices extends Command
             false,
             $requestedBy = null
         );
+
+//        @todo:send mail to nurses
     }
 }

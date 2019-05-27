@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\NurseInvoices\Http\Controllers;
 
+use App\Exceptions\FileNotFoundException;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
-use CircleLinkHealth\NurseInvoices\Entities\Dispute;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use Illuminate\Http\Request;
 
@@ -16,23 +16,28 @@ class InvoiceReviewController extends Controller
 {
     public function disputeInvoice(Request $request)
     {
-        $dispute = new Dispute();
-        $dispute->disputable()->create(
-            [
-                'reason'  => $request->input('reason'),
-                'user_id' => auth()->id(),
-            ]
-        );
     }
 
+    /**
+     * @throws FileNotFoundException
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function reviewInvoice()
     {
-        $startDate = Carbon::now()->subMonth(8)->startOfMonth();
+        $startDate = Carbon::now()->subMonth(1)->startOfMonth();
 
-        $invoice = NurseInvoice::where('month_year', $startDate)->ofNurses(auth()->id())
+        $invoice = NurseInvoice::where('month_year', $startDate)
+            ->ofNurses(auth()->id())
             ->first();
 
-        $invoiceData = optional($invoice)->invoice_data;
+        if ( ! empty(optional($invoice)->invoice_data)) {
+            $invoiceData = optional($invoice)->invoice_data;
+        }
+
+        if ( ! $invoiceData) {
+            throw new FileNotFoundException('Invoice data not found');
+        }
 
         return view(
             'nurseinvoices::reviewInvoice',

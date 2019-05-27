@@ -13,7 +13,6 @@ use App\Console\Commands\Athena\GetCcds;
 use App\Console\Commands\AttachBillableProblemsToLastMonthSummary;
 use App\Console\Commands\CareplanEnrollmentAdminNotification;
 use App\Console\Commands\CheckEmrDirectInbox;
-use App\Console\Commands\CreateInvoices;
 use App\Console\Commands\DeleteProcessedFiles;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailRNDailyReportToDeprecate;
@@ -32,6 +31,7 @@ use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
 use App\Console\Commands\SendCarePlanApprovalReminders;
 use App\Console\Commands\TuneScheduledCalls;
+use CircleLinkHealth\NurseInvoices\Console\Commands\CreateInvoices;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Jorijn\LaravelSecurityChecker\Console\SecurityMailCommand;
@@ -195,6 +195,6 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(OverwriteNBIImportedData::class)->everyTenMinutes();
 
-        $schedule->command(CreateInvoices::class)->everyMinute()/*->monthlyOn('1','00:05')*/;
+        $schedule->command(CreateInvoices::class)->monthlyOn('1', '00:05');
     }
 }
