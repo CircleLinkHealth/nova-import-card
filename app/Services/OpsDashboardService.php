@@ -125,11 +125,6 @@ class OpsDashboardService
 
         $allPatients = $enrolledPatients->pluck('id')->unique()->all();
 
-//        $sum = Activity::whereIn('patient_id', $allPatients)
-//                       ->where('performed_at', '>=', $startOfMonth)
-//                       ->where('performed_at', '<=', $date)
-//                       ->sum('duration');
-
         $ccmTimeTotal = [];
         foreach ($enrolledPatients as $patient) {
             if ($patient->patientSummaries->first()) {

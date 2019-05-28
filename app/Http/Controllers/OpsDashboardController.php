@@ -136,7 +136,7 @@ class OpsDashboardController extends Controller
                 'patients' => function ($u) use ($fromDate) {
                     $u->with([
                         'patientSummaries' => function ($s) use ($fromDate) {
-                            $s->where('actor_id', '!=', null)
+                            $s->whereNotNull('actor_id')
                                 ->where('approved', 1)
                                 ->where('month_year', '>=', $fromDate->toDateString());
                         },

@@ -237,12 +237,12 @@ class NursesAndStatesDailyReportService
     {
         $diff = $date->diffInDays($date->copy()->endOfMonth());
 
-        $mutableDate = $date->copy();
+        $mutableDate = $date->copy()->addDay();
         $hours       = [];
         for ($i = $diff; $i > 0; --$i) {
             $holidayForDate = $upcomingHolidays->where('date', $mutableDate->toDateString());
 
-            //we count the hours only if the nurse has not scheduld a holiday for that day.
+            //we count the hours only if the nurse has not scheduled a holiday for that day.
             if ($holidayForDate->isEmpty()) {
                 $hours[] = round(
                     (float) $nurseWindows->where(
