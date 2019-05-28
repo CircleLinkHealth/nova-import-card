@@ -13,12 +13,16 @@ use Illuminate\Notifications\Notification;
 class ResolveDisputeReminder extends Notification
 {
     use Queueable;
+    public $disputes;
 
     /**
      * Create a new notification instance.
+     *
+     * @param $disputes
      */
-    public function __construct()
+    public function __construct($disputes)
     {
+        $this->disputes = $disputes;
     }
 
     /**
@@ -45,8 +49,8 @@ class ResolveDisputeReminder extends Notification
     {
         return (new MailMessage())
             ->subject('Reminder - Resolve Dispute Invoices')
-            ->greeting('Hello,') //@todo:show number here??
-            ->line('There are Invoices (x number) that required to be resolved')
+            ->greeting('Hello,')
+            ->line("There are Invoices {$this->disputes} disputes that required to be resolved")
             ->action('Resolve Disputes', url('/'))
             ->line('Thank you!');
     }

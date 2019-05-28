@@ -6,7 +6,9 @@
 
 namespace CircleLinkHealth\NurseInvoices\Console\Commands;
 
+use App\Notifications\ResolveDisputeReminder;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Entities\Dispute;
 use Illuminate\Console\Command;
 
@@ -46,9 +48,12 @@ class ResolveDispute extends Command
         $disputes = Dispute::whereNull('resolved_at')
             ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
             ->count();
+        // @todo: should be Saras id here.
+
+        $user = User::find(9521);
 
         if (0 !== $disputes) {
-            //@todo: send to sara
+            $user->notify(new ResolveDisputeReminder($disputes));
         }
     }
 }
