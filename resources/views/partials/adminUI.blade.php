@@ -32,10 +32,9 @@
     <link rel="stylesheet"
           href="{{mix('/css/jquery-ui-timepicker-addon.min.css')}}">
 
-    <!-- http://curioussolutions.github.io/DateTimePicker/ -->
-    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.css"/>
-
     <link rel="stylesheet" href="{{mix('/css/bootstrap.min.css')}}">
+
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"/>
 
     <!-- select2 -->
     <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet"/>
@@ -55,6 +54,9 @@
         }
     </style>
     @stack('styles')
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/introjs.min.css" integrity="sha256-/oZ7h/Jkj6AfibN/zTWrCoba0L+QhP9Tf/ZSgyZJCnY=" crossorigin="anonymous" />
+
+
     @include('cpm-module-raygun::partials.real-user-monitoring')
 </head>
 <body>
@@ -188,7 +190,7 @@
 
                                 <li><a href="{{ route('monthly.billing.make') }}">Approve Billable Patients</a></li>
 
-                                <li><a href="{{ route('excel.report.t2') }}">Unreachable Patients (export)</a>
+                                <li><a href="{{ route('excel.report.unreachablePatients') }}">Unreachable Patients (export)</a>
                                 </li>
 
                                 <li>
@@ -255,6 +257,8 @@
                                     </a></li>
                                 <li><a href="{{route('medication-groups-maps.index')}}">Medication Group Map
                                     </a></li>
+                                <li><a href="{{route('report-settings.index')}}">Manage Report Settings
+                                    </a></li>
                             </ul>
                         </li>
 
@@ -294,13 +298,17 @@
                             <li class="dropdown">
                                 <a href="{{url('/jobs/completed')}}">
                                     <span class="badge">{{auth()->user()->cachedNotificationsList()->count()}}</span>
-                                    Jobs Completed
+                                    Jobs Done
                                 </a>
                             </li>
 
                             <li class="dropdown">
+                                <a href="{{ url('/superadmin') }}" target="_blank"
+                                   style=""><i class="glyphicon glyphicon-fire"></i> SuperAdmin</a>
+                            </li>
+                            <li class="dropdown">
                                 <a href="{{ route('patients.dashboard') }}"
-                                   style=""><i class="glyphicon glyphicon-eye-open"></i> Provider UI</a>
+                                   style=""><i class="glyphicon glyphicon-eye-open"></i> Provider</a>
                             </li>
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
@@ -349,6 +357,8 @@
     });
 </script>
 @stack('scripts')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/intro.min.js" integrity="sha256-fOPHmaamqkHPv4QYGxkiSKm7O/3GAJ4554pQXYleoLo=" crossorigin="anonymous"></script>
+
 <div style="clear:both;height:100px;"></div>
 
 {{--Display CPM version number--}}

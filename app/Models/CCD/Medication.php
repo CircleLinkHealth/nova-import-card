@@ -8,12 +8,13 @@ namespace App\Models\CCD;
 
 use App\Importer\Models\ItemLogs\MedicationLog;
 use App\Models\CPM\CpmMedicationGroup;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 /**
  * App\Models\CCD\Medication.
  *
  * @property int                                         $id
+ * @property bool|null                                   $active
  * @property int|null                                    $medication_import_id
  * @property int|null                                    $ccda_id
  * @property int                                         $patient_id
@@ -30,7 +31,7 @@ use App\User;
  * @property \Carbon\Carbon                              $updated_at
  * @property \App\Importer\Models\ItemLogs\MedicationLog $ccdLog
  * @property \App\Models\CPM\CpmMedicationGroup          $cpmMedicationGroup
- * @property \App\User                                   $patient
+ * @property \CircleLinkHealth\Customer\Entities\User    $patient
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Medication whereCcdMedicationLogId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Medication whereCcdaId($value)
@@ -48,10 +49,17 @@ use App\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Medication whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Medication whereVendorId($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Medication newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Medication newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Medication query()
  */
-class Medication extends \App\BaseModel
+class Medication extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $fillable = [
+        'active',
         'ccda_id',
         'vendor_id',
         'ccd_medication_log_id',

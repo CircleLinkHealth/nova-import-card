@@ -40,7 +40,9 @@ class UserCsvResource extends Resource
                '"'.$practice->display_name.'",'.
                '"'.$patient->ccm_status.'",'.
                '"'.optional($careplan)->status.'",'.
+               '"'.$patient->withdrawn_reason.'",'.
                '"'.$patient->birth_date.'",'.
+               '"'.$patient->mrn_number.'",'.
                '"'.$this->getPhone().'",'.
                '"'.($patient->birth_date
                 ? Carbon::parse($patient->birth_date)->age
@@ -58,7 +60,7 @@ class UserCsvResource extends Resource
      *
      * @return string CCM minutes in decimal
      */
-    private function getTimeInDecimals(String $ccmTime = null)
+    private function getTimeInDecimals(string $ccmTime = null)
     {
         if ( ! $ccmTime) {
             return '0.00';

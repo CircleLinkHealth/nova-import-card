@@ -9,7 +9,7 @@ namespace App\CLH\Faker\Patient;
 use App\Models\CCD\Problem as CcdProblem;
 use App\Models\CPM\CpmProblem;
 use App\Models\ProblemCode;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Collection;
 
 class Problem
@@ -17,9 +17,9 @@ class Problem
     /**
      * attaches problems to user.
      *
-     * @param User $patient
+     * @param \CircleLinkHealth\Customer\Entities\User $patient
      *
-     * @return User
+     * @return \CircleLinkHealth\Customer\Entities\User
      */
     public function attachProblemSet(User $patient)
     {

@@ -7,7 +7,7 @@
 namespace App\Console\Commands;
 
 use App\Jobs\GenerateOpsDashboardCSVReport;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Console\Command;
 
 class QueueGenerateOpsDashboardCSVReport extends Command

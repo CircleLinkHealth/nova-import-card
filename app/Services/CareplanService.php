@@ -17,7 +17,7 @@ use App\Services\CPM\CpmMiscService;
 use App\Services\CPM\CpmProblemService;
 use App\Services\CPM\CpmProblemUserService;
 use App\Services\CPM\CpmSymptomService;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 class CareplanService
 {
@@ -37,18 +37,18 @@ class CareplanService
 
     public function __construct(
         CareplanRepository $careplanRepo,
-                                CpmProblemService $cpmService,
-                                CpmProblemUserService $cpmUserService,
-                                CcdProblemService $ccdUserService,
-                                CpmMedicationService $medicationService,
-                                CpmMedicationGroupService $medicationGroupService,
-                                CpmBiometricService $biometricService,
-                                CpmSymptomService $symptomService,
-                                CpmLifestyleService $lifestyleService,
-                                CcdAllergyService $allergyService,
-                                CpmMiscService $miscService,
-                                AppointmentService $appointmentService,
-                                NoteService $noteService
+        CpmProblemService $cpmService,
+        CpmProblemUserService $cpmUserService,
+        CcdProblemService $ccdUserService,
+        CpmMedicationService $medicationService,
+        CpmMedicationGroupService $medicationGroupService,
+        CpmBiometricService $biometricService,
+        CpmSymptomService $symptomService,
+        CpmLifestyleService $lifestyleService,
+        CcdAllergyService $allergyService,
+        CpmMiscService $miscService,
+        AppointmentService $appointmentService,
+        NoteService $noteService
     ) {
         $this->careplanRepo           = $careplanRepo;
         $this->cpmService             = $cpmService;

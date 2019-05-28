@@ -6,20 +6,18 @@
 
 namespace App\Services;
 
-use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
 use App\Call;
-use App\CarePerson;
 use App\CareplanAssessment;
 use App\CLH\Repositories\UserRepository;
 use App\Filters\NoteFilters;
 use App\Note;
-use App\Patient;
-use App\PatientMonthlySummary;
 use App\Repositories\CareplanAssessmentRepository;
 use App\Repositories\NoteRepository;
-use App\User;
 use App\View\MetaTag;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\CarePerson;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\User;
 use Exception;
 use Illuminate\Support\Facades\URL;
 
@@ -61,10 +59,10 @@ class NoteService
             }
 
             return $this->createNoteFromAssessment($this->assessmentRepo->editKeyTreatment(
-                        $userId,
-                        $authorId,
-                        $body
-                    ));
+                $userId,
+                $authorId,
+                $body
+            ));
         }
         throw new Exception('invalid parameters');
     }
@@ -105,6 +103,30 @@ class NoteService
         }
 
         return null;
+    }
+
+    public function editNote(Note $note, $requestInput): Note
+    {
+        if ( ! empty($requestInput['status'])) {
+            $note->status = $requestInput['status'];
+        }
+
+        $note->logger_id = $requestInput['logger_id'];
+        $note->isTCM     = isset($requestInput['tcm'])
+            ? 'true' === $requestInput['tcm']
+            : 0;
+        $note->type                 = $requestInput['type'];
+        $note->body                 = $requestInput['body'];
+        $note->performed_at         = $requestInput['performed_at'];
+        $note->did_medication_recon = isset($requestInput['medication_recon'])
+            ? 'true' === $requestInput['medication_recon']
+            : 0;
+
+        if ($note->isDirty()) {
+            $note->save();
+        }
+
+        return $note;
     }
 
     public function editPatientNote($id, $userId, $authorId, $body, $isTCM, $did_medication_recon, $type = null)
@@ -364,8 +386,7 @@ class NoteService
             'inbound_cpm_id'  => $inbound_id,
             'outbound_cpm_id' => $outbound_id,
 
-            //@todo figure out call times!
-            'called_date' => Carbon::now()->toDateTimeString(),
+            'called_date' => $note->performed_at->toDateTimeString(),
 
             'call_time'  => 0,
             'created_at' => $note->performed_at,
@@ -382,13 +403,13 @@ class NoteService
         $notifyCLH      = $input['notify_circlelink_support'] ?? false;
         $forceNotify    = false;
 
-        if ('true' == $input['tcm']) {
+        if ( ! empty($input['tcm']) && 'true' === $input['tcm']) {
             $notifyCareTeam = $forceNotify = $note->isTCM = true;
         } else {
             $note->isTCM = false;
         }
 
-        if (isset($input['medication_recon'])) {
+        if ( ! empty($input['medication_recon']) && 'medication_recon' === $input['tcm']) {
             $note->did_medication_recon = true;
         } else {
             $note->did_medication_recon = false;
@@ -432,40 +453,6 @@ class NoteService
         }
 
         return $meta_tags;
-    }
-
-    public function updatePatientRecords(
-        Patient $patient,
-        $ccmComplex
-    ) {
-        $date_index = Carbon::now()->firstOfMonth()->toDateString();
-
-        $patientRecord = PatientMonthlySummary::where('patient_id', $patient->user_id)
-            ->where('month_year', $date_index)
-            ->first();
-
-        if (empty($patientRecord)) {
-            //should not need to do that, because there is a command on start of every month
-            //that sets a monthly summary to 0 for each patient
-            $patientRecord = PatientMonthlySummary::updateCCMInfoForPatient(
-                $patient->user_id,
-                0
-            );
-        } else {
-            $patientRecord->is_ccm_complex = 0;
-            $patientRecord->save();
-        }
-
-        if ($ccmComplex) {
-            $patientRecord->is_ccm_complex = 1;
-            $patientRecord->save();
-
-            if ($patient->user->getCcmTime() > 3600 && auth()->user()->nurseInfo) {
-                (new AlternativeCareTimePayableCalculator(auth()->user()->nurseInfo))->adjustPayOnCCMComplexSwitch60Mins();
-            }
-        }
-
-        return $patientRecord;
     }
 
     public function wasForwardedToCareTeam(Note $note)

@@ -6,8 +6,8 @@
 
 namespace App\Services\TimeTracking;
 
-use App\PageTimer;
 use Carbon\Carbon;
+use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Support\Collection;
 
 /**

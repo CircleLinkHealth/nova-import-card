@@ -7,9 +7,9 @@
 namespace App\Jobs;
 
 use App\Notifications\WeeklyPracticeReport;
-use App\Practice;
 use App\Reports\Sales\Practice\SalesByPracticeReport;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -18,7 +18,9 @@ use Illuminate\Support\Facades\Notification;
 
 class EmailWeeklyPracticeReport implements ShouldQueue
 {
-    use InteractsWithQueue, Queueable, SerializesModels;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
     protected $endRange;
 
     protected $practice;
@@ -28,7 +30,7 @@ class EmailWeeklyPracticeReport implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param Practice $practice
+     * @param \CircleLinkHealth\Customer\Entities\Practice $practice
      * @param $startRange
      * @param $endRange
      * @param User|null $tester

@@ -31,7 +31,7 @@
             </div>
             <bhi-switch ref="bhiSwitch" :is-manual-behavioral="info.isManualBehavioral"
                         :user-id="info.providerId" :is-bhi="info.isBehavioral" :is-ccm="info.isCcm"
-                        v-if="!info.noBhiSwitch && (info.isCcm || info.isBehavioral)"></bhi-switch>
+                        v-if="!noLiveCount && !info.noBhiSwitch && (info.isCcm || info.isBehavioral)"></bhi-switch>
 
             <br><br>
             <span :class="{ hidden: showLoader, 'hide-tracker': hideTracker }">
@@ -111,10 +111,10 @@
                 return this.info.monthlyBhiTime && this.info.monthlyBhiTime.length > 0 && this.info.monthlyBhiTime !== zeroTime;
             },
             updateTime() {
-                if (this.info.initSeconds == 0) this.info.initSeconds = Math.ceil(startupTime() / 1000)
-                else this.info.initSeconds = -1
+                if (this.info.initSeconds === 0) this.info.initSeconds = Math.round(startupTime() / 1000);
+                else this.info.initSeconds = -1;
                 this.startCount += 1;
-                console.log('tracker:init-seconds', this.info.initSeconds)
+                console.log('tracker:init-seconds', this.info.initSeconds);
                 if (this.socket.readyState === this.socket.OPEN) {
                     this.socket.send(
                         JSON.stringify({
@@ -172,7 +172,7 @@
                                     self.info.isCcm = data.hasOwnProperty('isCcm') ? data.isCcm : self.info.isCcm
                                     self.info.isBehavioral = data.hasOwnProperty('isBehavioral') ? data.isBehavioral : self.info.isBehavioral
                                 }
-                                console.log(data);
+                                //console.log(data);
                             }
                         }
 
@@ -187,7 +187,7 @@
                             else {
                                 self.startCount = 0;
                             }
-                            console.log("socket connection opened", ev, self.startCount, EventBus.isInFocus)
+                            // console.log("socket connection opened", ev, self.startCount, EventBus.isInFocus)
                             if (EventBus.isInFocus) EventBus.$emit('tracker:start')
                         }
 
@@ -223,6 +223,10 @@
             }
         },
         mounted() {
+
+            // window.addEventListener("unload", () => {
+            //     console.log('window is unloading', this.info.totalTime, this.seconds);
+            // });
 
             this.previousSeconds = this.info.totalTime || 0;
             this.info.initSeconds = 0

@@ -33,10 +33,10 @@
                             </div>
                             <div class="col-sm-12 top-10">
                                 <v-complete placeholder="Enter a Condition" :required="true" v-model="newProblem.name"
-                                            :value="newProblem.name" :limit="15"
-                                            :suggestions="cpmProblemsForAutoComplete"
-                                            :class="{ error: patientHasSelectedProblem }" :threshold="0.9"
-                                            @input="resolveIcd10Code">
+                                        :value="newProblem.name" :limit="15"
+                                        :suggestions="cpmProblemsForAutoComplete"
+                                        :class="{ error: patientHasSelectedProblem }" :threshold="0.8"
+                                        @input="resolveIcd10Code">
                                 </v-complete>
                             </div>
                             <div class="col-sm-6 font-14 top-20">
@@ -66,8 +66,14 @@
                             <form @submit="editCcdProblem">
                                 <div class="row">
                                     <div class="col-sm-12 top-20">
+                                        <div style="margin-bottom: 10px" v-if="selectedProblem.instruction.name !== selectedInstruction">
+                                            <input type="button"
+                                                   class="btn btn-secondary margin-0 instruction-add selected"
+                                                   @click="resetInstructions"
+                                                   value="Change Instructions to original"/>
+                                        </div>
                                         <textarea class="form-control height-200"
-                                                  v-model="selectedProblem.instruction.name"
+                                                  v-model="selectedInstruction"
                                                   placeholder="Enter Instructions"></textarea>
                                         <loader class="absolute" v-if="loaders.addInstruction"></loader>
                                         <div class="font-14 color-blue" v-if="selectedProblem.original_name">
@@ -81,7 +87,7 @@
                                                 <label class="color-red" v-if="selectedProblem.is_monitored">Mapped
                                                     To:</label>
                                                 <select class="form-control" v-model="selectedProblem.cpm_id"
-                                                        v-if="selectedProblem.is_monitored">
+                                                        @change="updateInstructions" v-if="selectedProblem.is_monitored">
                                                     <option :value="null">Selected a Related Condition</option>
                                                     <option v-for="problem in cpmProblemsForSelect" :key="problem.value"
                                                             :value="problem.value">{{problem.label}}
@@ -259,6 +265,22 @@
         methods: {
             select(problem) {
                 this.selectedProblem = problem
+                this.selectedInstruction = problem.instruction.name
+
+            },
+            updateInstructions(event){
+                let cpmProblem = this.cpmProblems.find(problem => {
+                    return problem.id == event.target.value
+                })
+
+                if (cpmProblem.instruction){
+                    this.selectedInstruction = cpmProblem.instruction.name
+                }else{
+                    this.selectedInstruction = null
+                }
+            },
+            resetInstructions(){
+                this.selectedInstruction = this.selectedProblem.instruction.name
             },
             reset() {
                 this.newProblem.name = ''
@@ -279,6 +301,7 @@
                         console.log('care-areas:remove-problems', response.data)
                         this.loaders.removeProblem = false
                         Event.$emit(`care-areas:remove-${this.selectedProblem.type}-problem`, this.selectedProblem.id)
+                        Event.$emit('problems:updated', {})
                         this.selectedProblem = null
                         setImmediate(() => this.checkPatientBehavioralStatus())
                     }).catch(err => {
@@ -303,6 +326,7 @@
                 }).then(response => {
                     console.log('full-conditions:add', response.data)
                     this.loaders.addProblem = false
+                    Event.$emit('problems:updated', {})
                     Event.$emit('full-conditions:add', response.data)
                     this.reset()
                     this.selectedProblem = response.data
@@ -316,14 +340,14 @@
                 e.preventDefault()
                 this.loaders.editProblem = true
                 return this.axios.put(rootUrl(`api/patients/${this.patientId}/problems/ccd/${this.selectedProblem.id}`), {
-                    name: this.selectedProblem.original_name,
                     cpm_problem_id: this.selectedProblem.is_monitored ? this.selectedProblem.cpm_id : null,
                     is_monitored: this.selectedProblem.is_monitored,
                     icd10: this.selectedProblem.icd10,
-                    instruction: this.selectedProblem.instruction.name
+                    instruction: this.selectedInstruction
                 }).then(response => {
                     console.log('full-conditions:edit', response.data)
                     this.loaders.editProblem = false
+                    Event.$emit('problems:updated', {})
                     Event.$emit('full-conditions:edit', response.data)
                     setImmediate(() => this.checkPatientBehavioralStatus())
                 }).catch(err => {
@@ -337,7 +361,7 @@
             },
             getSystemCodes() {
                 return this.axios.get(rootUrl(`api/problems/codes`)).then(response => {
-                    console.log('full-conditions:get-system-codes', response.data)
+                    // console.log('full-conditions:get-system-codes', response.data)
                     this.codes = response.data
                 }).catch(err => {
                     console.error('full-conditions:get-system-codes', err)

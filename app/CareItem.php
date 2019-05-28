@@ -42,8 +42,14 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereTypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem query()
  */
-class CareItem extends \App\BaseModel
+class CareItem extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     /**
      * The attributes that are mass assignable.
@@ -57,31 +63,6 @@ class CareItem extends \App\BaseModel
         'description',
     ];
 
-    /**
-     * The primary key for the model.
-     *
-     * @var string
-     */
-    protected $primaryKey = 'id';
-    /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    protected $table = 'care_items';
-
-    public static function boot()
-    {
-        parent::boot();
-
-        // Automatically delete and item's meta when the item is deleted
-        /*
-        CPRulesItem::deleting(function($CPRulesItem){
-            $CPRulesItem->meta()->delete();
-        });
-        */
-    }
-
     public function carePlans()
     {
         return $this->belongsToMany('App\CarePlan', 'care_plan_care_item', 'item_id', 'plan_id')->withPivot('id');
@@ -91,7 +72,7 @@ class CareItem extends \App\BaseModel
 
     public function children()
     {
-        return $this->hasMany('App\CareItem', 'parent_id');
+        return $this->hasMany(\App\CareItem::class, 'parent_id');
     }
 
     // END ATTRIBUTES
@@ -103,7 +84,7 @@ class CareItem extends \App\BaseModel
 
     public function parents()
     {
-        return $this->belongsTo('App\CareItem', 'parent_id');
+        return $this->belongsTo(\App\CareItem::class, 'parent_id');
     }
 
     public function question() // rules prefix because ->items is a protect class var on parent

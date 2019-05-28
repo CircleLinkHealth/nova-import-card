@@ -9,8 +9,8 @@ namespace App\Jobs;
 use App\Importer\Loggers\Ccda\CcdToLogTranformer;
 use App\Models\MedicalRecords\Ccda;
 use App\Models\PatientData\LGH\LGHInsurance;
-use App\Practice;
 use App\Services\WelcomeCallListGenerator;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -18,7 +18,9 @@ use Illuminate\Queue\SerializesModels;
 
 class LGHDetermineCcdaEnrollmentEligibility implements ShouldQueue
 {
-    use InteractsWithQueue, Queueable, SerializesModels;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
     protected $ccda;
     protected $transformer;
 

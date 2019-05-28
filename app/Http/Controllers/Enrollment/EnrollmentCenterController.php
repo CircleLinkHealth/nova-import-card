@@ -78,7 +78,7 @@ class EnrollmentCenterController extends Controller
 
         $enrollee->save();
 
-        return redirect()->action('Enrollment\EnrollmentCenterController@dashboard');
+        return redirect()->route('enrollment-center.dashboard');
     }
 
     public function dashboard()
@@ -98,7 +98,7 @@ class EnrollmentCenterController extends Controller
                 ->toCall()
                 ->where('lang', 'ES')
                 ->orderBy('attempt_count')
-                ->with('practice.enrollmentTips')
+                ->with(['practice.enrollmentTips', 'provider.providerInfo'])
                 ->first();
 
             //if no spanish, get a EN user.
@@ -106,21 +106,21 @@ class EnrollmentCenterController extends Controller
                 $enrollee = Enrollee::where('care_ambassador_user_id', $careAmbassador->user_id)
                     ->toCall()
                     ->orderBy('attempt_count')
-                    ->with('practice.enrollmentTips')
+                    ->with(['practice.enrollmentTips', 'provider.providerInfo'])
                     ->first();
             }
         } else { // auth ambassador doesn't speak ES, get a regular user.
             $enrollee = Enrollee::where('care_ambassador_user_id', $careAmbassador->user_id)
                 ->toCall()
                 ->orderBy('attempt_count')
-                ->with('practice.enrollmentTips')
+                ->with(['practice.enrollmentTips', 'provider.providerInfo'])
                 ->first();
         }
 
         $engagedEnrollee = Enrollee::where('care_ambassador_user_id', $careAmbassador->user_id)
             ->where('status', '=', 'engaged')
             ->orderBy('attempt_count')
-            ->with('practice.enrollmentTips')
+            ->with(['practice.enrollmentTips', 'provider.providerInfo'])
             ->first();
 
         if ($engagedEnrollee) {
@@ -181,7 +181,7 @@ class EnrollmentCenterController extends Controller
 
         $enrollee->status = $status;
         if ($request->has('soft_decline_callback')) {
-            $enrollee->soft_rejected_callback = $request->input('soft_decline_callback');
+            $enrollee->requested_callback = $request->input('soft_decline_callback');
         }
 
         $enrollee->attempt_count    = $enrollee->attempt_count + 1;
@@ -190,7 +190,7 @@ class EnrollmentCenterController extends Controller
 
         $enrollee->save();
 
-        return redirect()->action('Enrollment\EnrollmentCenterController@dashboard');
+        return redirect()->route('enrollment-center.dashboard');
     }
 
     public function training()
@@ -220,6 +220,9 @@ class EnrollmentCenterController extends Controller
 
         if ('requested callback' == $request->input('reason')) {
             $enrollee->status = 'call_queue';
+            if ($request->has('utc_callback')) {
+                $enrollee->requested_callback = $request->input('utc_callback');
+            }
         } else {
             $enrollee->status = 'utc';
         }
@@ -230,6 +233,6 @@ class EnrollmentCenterController extends Controller
 
         $enrollee->save();
 
-        return redirect()->action('Enrollment\EnrollmentCenterController@dashboard');
+        return redirect()->route('enrollment-center.dashboard');
     }
 }

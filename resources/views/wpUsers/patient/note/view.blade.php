@@ -10,30 +10,35 @@
     ?>
 
     @push('styles')
-    <style type="text/css">
-        div.inline {
-            float: left;
-        }
+        <style type="text/css">
+            div.inline {
+                float: left;
+            }
 
-        .clearBoth {
-            clear: both;
-        }
+            .clearBoth {
+                clear: both;
+            }
 
-        blockquote {
-            padding: 10px 20px;
-            margin: 10px 0 20px;
-            font-size: 17.5px;
-            border-left: 5px solid #50b2e2;
-            line-height: 24px;
-        }
-    </style>
+            blockquote {
+                padding: 10px 20px;
+                margin: 10px 0 20px;
+                font-size: 17.5px;
+                border-left: 5px solid #50b2e2;
+                line-height: 24px;
+            }
+        </style>
     @endpush
 
     <div class="row" style="margin-top:30px;">
-        <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1 col-xs-10 col-xs-offset-1">
+        <div class="main-form-container col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 col-xs-10 col-xs-offset-1">
             <div class="row">
                 <div class="main-form-title col-lg-12">
                     View Note
+                    @if ($note['author_id'] === auth()->id())
+                        &nbsp;<a title="Edit Note"
+                                 href="{{route('patient.note.edit', ['patientId' => $patient->id, 'noteId' => $note['id']])}}"><span
+                                    class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+                    @endif
                 </div>
                 {!! Form::open(array('url' => route('patient.note.send', ['patientId' => $patient->id, 'noteId' => $note['id']]), 'class' => 'form-horizontal')) !!}
 
@@ -114,7 +119,8 @@
                                         <div class="col-sm-12">
                                             @foreach($meta as $tag)
                                                 <h5>
-                                                    <div class="label label-{{$tag->severity}} info" @isset($tag->tooltip) data-tooltip="{{$tag->tooltip}}" @endisset>
+                                                    <div class="label label-{{$tag->severity}}"
+                                                         @isset($tag->tooltip) data-tooltip="{{$tag->tooltip}}" @endisset>
                                                         {{ucwords($tag->title)}}
                                                     </div>
                                                 </h5>
@@ -183,29 +189,29 @@
                                 </div>
 
                                 @push('scripts')
-                                <script>
-                                    $(function () {
-                                        $('[data-toggle="tooltip"]').tooltip()
-                                    });
+                                    <script>
+                                        $(function () {
+                                            $('[data-toggle="tooltip"]').tooltip()
+                                        });
 
-                                    $('.collapse').collapse();
+                                        $('.collapse').collapse();
 
-                                    $("input:checkbox").on('click', function () {
-                                        // in the handler, 'this' refers to the box clicked on
-                                        var $box = $(this);
-                                        if ($box.is(":checked")) {
-                                            // the name of the box is retrieved using the .attr() method
-                                            // as it is assumed and expected to be immutable
-                                            var group = "input:checkbox[name='" + $box.attr("name") + "']";
-                                            // the checked state of the group/box on the other hand will change
-                                            // and the current value is retrieved using .prop() method
-                                            $(group).prop("checked", false);
-                                            $box.prop("checked", true);
-                                        } else {
-                                            $box.prop("checked", false);
-                                        }
-                                    });
-                                </script>
+                                        $("input:checkbox").on('click', function () {
+                                            // in the handler, 'this' refers to the box clicked on
+                                            var $box = $(this);
+                                            if ($box.is(":checked")) {
+                                                // the name of the box is retrieved using the .attr() method
+                                                // as it is assumed and expected to be immutable
+                                                var group = "input:checkbox[name='" + $box.attr("name") + "']";
+                                                // the checked state of the group/box on the other hand will change
+                                                // and the current value is retrieved using .prop() method
+                                                $(group).prop("checked", false);
+                                                $box.prop("checked", true);
+                                            } else {
+                                                $box.prop("checked", false);
+                                            }
+                                        });
+                                    </script>
                                 @endpush
                                 {!! Form::close() !!}
 

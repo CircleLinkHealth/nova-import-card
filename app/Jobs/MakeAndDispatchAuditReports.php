@@ -10,8 +10,8 @@ use App\CLH\Helpers\StringManipulation;
 use App\Contracts\DirectMail;
 use App\Contracts\Efax;
 use App\Reports\PatientDailyAuditReport;
-use App\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -19,7 +19,9 @@ use Illuminate\Queue\SerializesModels;
 
 class MakeAndDispatchAuditReports implements ShouldQueue
 {
-    use InteractsWithQueue, Queueable, SerializesModels;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * @var Carbon
@@ -35,7 +37,7 @@ class MakeAndDispatchAuditReports implements ShouldQueue
      * @var Efax
      */
     protected $eFax;
-    
+
     /**
      * The Patient we are preparing a report for.
      *

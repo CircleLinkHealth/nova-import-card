@@ -1,4 +1,3 @@
-<html lang="en-US">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -34,7 +33,6 @@
     <link href="{{ mix('/css/patientsearch.css') }}" rel="stylesheet">
 
 
-
     <link href="{{ mix('/css/wpstyle.css') }}" rel="stylesheet">
 
     @if (str_contains(Route::getCurrentRoute()->getName(), 'admin'))
@@ -53,8 +51,9 @@
 
 
     @if(!isset($isPdf))
-    <!-- http://curioussolutions.github.io/DateTimePicker/ -->
-        <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.css"/>
+        <link rel="stylesheet" type="text/css"
+              href="//cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"/>
+
         <link rel="stylesheet" href="{{ mix('/webix/codebase/webix.css') }}" type="text/css">
 
         <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
@@ -102,12 +101,27 @@
 <script type="text/javascript" src="{{ mix('compiled/js/issue-688.js') }}"></script>
 
 @stack('scripts')
+
+<script src="{{mix('js/prevent-multiple-submits.js')}}"></script>
 <script>
     $(function () {
-        $('.selectpicker').selectpicker('refresh')
+        try {
+            //bootstrap selectpicker is found in issue-688.js (see webpack.mix.js)
+            $('.selectpicker').selectpicker('refresh');
+        }
+        catch (e) {
+            console.debug(e);
+        }
     });
 </script>
 @endif
+
+@auth
+    @if(!isset($isPdf) && auth()->user()->isAdmin() || auth()->user()->isCareCoach())
+        @include('partials.jira-issue-collector')
+    @endif
+@endauth
+
 </body>
 
 </html>

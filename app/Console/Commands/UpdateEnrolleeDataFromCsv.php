@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\Enrollee;
@@ -11,18 +15,17 @@ use Storage;
 class UpdateEnrolleeDataFromCsv extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'enrollees:updateFromCsv';
-
-    /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Updates enrollee data from CSV containing all enrollees from the English Enrollment Sheet';
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'enrollees:updateFromCsv';
 
     private $googleDrive;
 
@@ -47,18 +50,17 @@ class UpdateEnrolleeDataFromCsv extends Command
 //        $contents = collect(Storage::drive('google')
 //                                   ->listContents('/', true));
         $file = collect(Storage::drive('google')
-                               ->listContents('/', true))
+            ->listContents('/', true))
             ->where('filename', '=', 'English Enrollment Records All Time - Sheet2')
             ->first();
-
 
         if ( ! $file) {
             throw new \Exception('File not found', 500);
         }
 
         $stream = $this->googleDrive->getFilesystemHandle()
-                                    ->getDriver()
-                                    ->readStream($file['path']);
+            ->getDriver()
+            ->readStream($file['path']);
 
         $localDisk  = Storage::disk('local');
         $fileName   = $file['basename'];
@@ -121,18 +123,15 @@ class UpdateEnrolleeDataFromCsv extends Command
                                 }
                             }
                             $e->save();
-                        }
-                    });
+                    }
                 });
+            });
 
         $localDisk->delete($fileName);
-
-
     }
 
     private function setEnrolleeStatus($e, $row)
     {
-
         if (str_contains(strtolower($row['Call_Status']), ['maybe', 'attempt', '3', '2', '1', 'soft'])) {
             if (str_contains($row['Call_Status'], '3')) {
                 $e->attempt_count = 3;

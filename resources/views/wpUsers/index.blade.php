@@ -14,6 +14,10 @@
                 margin-bottom: 5px;
             }
 
+            .withdrawn-input {
+                margin-top: 10px;
+            }
+
             a {
                 cursor: pointer;
             }
@@ -28,12 +32,24 @@
             function onActionChange(e) {
 
                 if (e.target.value === "withdraw") {
-                    $('#withdrawal-note').removeClass('hidden');
+                    $('#withdrawn-reason').removeClass('hidden');
                     $('#select-all-container').removeClass('hidden');
                 }
                 else {
-                    $('#withdrawal-note').addClass('hidden');
+                    $('#withdrawn-reason').addClass('hidden');
+                    $('#withdrawn-reason-other').addClass('hidden');
                     $('#select-all-container').addClass('hidden');
+                }
+
+            }
+
+            function onReasonChange(e){
+
+                if (e.target.value === "Other") {
+                    $('#withdrawn-reason-other').removeClass('hidden');
+                }
+                else {
+                    $('#withdrawn-reason-other').addClass('hidden');
                 }
 
             }
@@ -47,8 +63,8 @@
                     form.submit();
                 }
                 else {
-                    if (form['withdrawal-note-body'].value.length === 0) {
-                        alert('Please type a withdrawal note.')
+                    if (form['withdrawn-reason'].value == 'Other' && form['withdrawn-reason-other'].value.length === 0) {
+                        alert('Please type a withdrawal reason in the textbox. Otherwise, select a different reason from the dropdown.')
                     }
                     else if (confirm('Are you sure?')) {
                         form.submit();
@@ -99,6 +115,10 @@
                 actionSelectEl.on('change', onActionChange);
                 actionSelectEl.change();
 
+                const reasonSelectEl = $('#perform-reason-select');
+                reasonSelectEl.on('change', onReasonChange);
+                reasonSelectEl.change();
+
                 $('#perform-action-submit').on('click', onActionSubmit);
                 $('#select-all-in-page').on('change', selectAllUsers);
                 $('#select-all-matching-filters').on('click', selectAllMatchingFilters);
@@ -123,7 +143,6 @@
                             <div class="pull-right" style="margin:20px;">
                                 <a href="{{ route('admin.users.create', array()) }}" class="btn btn-success">New
                                     User</a>
-                                {{-- <a href="{{ route('admin.users.createQuickPatient', array('primaryProgramId' => '7')) }}" class="btn btn-success">Participant Quick Add (Program 7)</a> --}}
                             </div>
                         </div>
                     @endif
@@ -178,20 +197,38 @@
                                 <option value="delete">Delete</option>
                                 <option value="withdraw" selected>Withdraw</option>
                             </select>
-                            <button id="perform-action-submit"
-                                    type="submit" value="Submit"
-                                    class="btn btn-primary btn-xs"
-                                    style="margin-left:10px;"><i class="glyphicon glyphicon-circle-arrow-right"></i>
-                                Perform Action
-                            </button>
 
-                            <div id="withdrawal-note" class="hidden">
-                                <textarea id="withdrawal-note-body" rows="7" cols="100"
-                                          placeholder="Enter Withdrawal Note..." name="withdrawal-note-body"
+
+                            <div id="withdrawn-reason" class="hidden withdrawn-input">
+                                Select Withdrawn Reason:
+                                <select id="perform-reason-select" name="withdrawn-reason" >
+                                    <option value="No Longer Interested">No Longer Interested</option>
+                                    <option value="Moving out of Area">Moving out of Area</option>
+                                    <option value="New Physician">New Physician</option>
+                                    <option value="Cost / Co-Pay">Cost / Co-Pay</option>
+                                    <option value="Changed Insurance">Changed Insurance</option>
+                                    <option value="Dialysis / End-Stage Renal Disease">Dialysis / End-Stage Renal Disease</option>
+                                    <option value="Expired">Expired</option>
+                                    <option value="Home Health Services">Home Health Services</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div id="withdrawn-reason-other" class="hidden withdrawn-input">
+                                <textarea id="withdrawn-reason-other" rows="5" cols="100"
+                                          placeholder="Enter Withdrawal Reason..." name="withdrawn-reason-other"
                                           required="required" class="form-control"></textarea>
                             </div>
 
-                            <div id="select-all-container" class="hidden">
+                        <div>
+                            <button id="perform-action-submit"
+                                    type="submit" value="Submit"
+                                    class="btn btn-primary btn-xs"
+                                    style="margin-top:10px;"><i class="glyphicon glyphicon-circle-arrow-right"></i>
+                                Perform Action
+                            </button>
+                        </div>
+
+                            <div id="select-all-container" class="hidden withdrawn-input">
 
                                 <input type="checkbox" id="select-all-in-page"/>
                                 <label for="select-all-in-page" id="select-all-in-page-label">Select all</label>

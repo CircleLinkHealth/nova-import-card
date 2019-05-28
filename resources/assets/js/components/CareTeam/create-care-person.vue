@@ -562,6 +562,7 @@
                         Object.assign(this.$data, this.$options.data.apply(this))
 
                         this.clearOpenModal();
+                        this.clearNotifications();
                         this.addNotification({
                             title: "Successfully saved Care Person",
                             text: "",
@@ -580,7 +581,7 @@
         },
 
         methods: Object.assign({},
-            mapActions(['getPatientCareTeam', 'clearOpenModal', 'addNotification', 'updateCarePerson']),
+            mapActions(['getPatientCareTeam', 'clearOpenModal', 'addNotification', 'clearNotifications', 'updateCarePerson']),
             {
                 attachExistingUser(user) {
                     this.newCarePerson.user = user

@@ -28,10 +28,10 @@ class UpdatePracticeStaff extends FormRequest
     public function rules()
     {
         $emailRules = 'required|email';
-        $userId = $this->get('id', null);
+        $userId     = $this->get('id', null);
 
         //CPM-754: if the user is new, make sure we do not have existing user with this email
-        if ($userId && $userId === 'new') {
+        if ($userId && 'new' === $userId) {
             $emailRules .= '|unique:users';
         }
 
@@ -40,6 +40,7 @@ class UpdatePracticeStaff extends FormRequest
             'email'              => $emailRules,
             'first_name'         => 'required',
             'last_name'          => 'required',
+            'suffix'             => 'sometimes',
             'phone_number'       => 'nullable|phone:US',
             'phone_type'         => 'required_with:phone_number',
             'phone_extension'    => 'nullable',

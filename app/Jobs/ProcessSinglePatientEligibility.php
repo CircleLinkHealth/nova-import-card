@@ -8,8 +8,8 @@ namespace App\Jobs;
 
 use App\EligibilityBatch;
 use App\EligibilityJob;
-use App\Practice;
 use App\Services\WelcomeCallListGenerator;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -19,7 +19,10 @@ use Illuminate\Support\Collection;
 
 class ProcessSinglePatientEligibility implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * @var EligibilityBatch
@@ -51,17 +54,17 @@ class ProcessSinglePatientEligibility implements ShouldQueue
     private $patient;
 
     /**
-     * @var Practice
+     * @var \CircleLinkHealth\Customer\Entities\Practice
      */
     private $practice;
 
     /**
      * Create a new job instance.
      *
-     * @param Collection       $patient
-     * @param Practice         $practice
-     * @param EligibilityBatch $batch
-     * @param EligibilityJob   $eligibilityJob
+     * @param Collection                                   $patient
+     * @param \CircleLinkHealth\Customer\Entities\Practice $practice
+     * @param EligibilityBatch                             $batch
+     * @param EligibilityJob                               $eligibilityJob
      */
     public function __construct(
         Collection $patient,

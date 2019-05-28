@@ -47,10 +47,17 @@ use App\Traits\Relationships\BelongsToVendor;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\AllergyLog whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\AllergyLog whereVendorId($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\AllergyLog newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\AllergyLog newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\AllergyLog query()
  */
-class AllergyLog extends \App\BaseModel implements ItemLog
+class AllergyLog extends \CircleLinkHealth\Core\Entities\BaseModel implements ItemLog
 {
-    use BelongsToCcda,
+    use BelongsToCcda;
+    use
         BelongsToVendor;
 
     protected $fillable = [

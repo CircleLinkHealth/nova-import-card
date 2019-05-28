@@ -8,9 +8,9 @@ namespace App\Console\Commands;
 
 use App\Jobs\EmailWeeklyPracticeReport;
 use App\Jobs\EmailWeeklyProviderReport;
-use App\Practice;
-use App\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Console\Command;
 
 class EmailWeeklyReports extends Command

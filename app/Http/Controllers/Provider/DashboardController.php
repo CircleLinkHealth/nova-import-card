@@ -14,13 +14,13 @@ use App\Contracts\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdatePracticeSettingsAndNotifications;
 use App\Http\Resources\SAAS\PracticeChargeableServices;
-use App\Location;
-use App\Practice;
 use App\PracticeEnrollmentTips;
 use App\SafeRequest;
 use App\Services\OnboardingService;
-use App\Settings;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Location;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\Settings;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -62,20 +62,20 @@ class DashboardController extends Controller
         $practiceChargeableRel = $this->primaryPractice->chargeableServices;
 
         $allChargeableServices = ChargeableService::all()
-                                                  ->map(function ($service) use ($practiceChargeableRel) {
-                                                      $existing = $practiceChargeableRel
-                                                          ->where('id', '=', $service->id)
-                                                          ->first();
+            ->map(function ($service) use ($practiceChargeableRel) {
+                $existing = $practiceChargeableRel
+                    ->where('id', '=', $service->id)
+                    ->first();
 
-                                                      $service->is_on = false;
+                $service->is_on = false;
 
-                                                      if ($existing) {
-                                                          $service->amount = $existing->pivot->amount;
-                                                          $service->is_on  = true;
-                                                      }
+                if ($existing) {
+                    $service->amount = $existing->pivot->amount;
+                    $service->is_on = true;
+                }
 
-                                                      return $service;
-                                                  });
+                return $service;
+            });
 
         return view('provider.chargableServices.create', array_merge([
             'practice'           => $this->primaryPractice,
@@ -221,19 +221,17 @@ class DashboardController extends Controller
         $settingsInput = $request->input('settings');
         $errors        = collect();
 
-
-        if (isset($settingsInput['dm_careplan_approval_reminders'])){
-            $providers = $this->primaryPractice->getProviders($this->primaryPractice->id)->filter(function ($p){
-                return !!! $p->emr_direct_address;
+        if (isset($settingsInput['dm_careplan_approval_reminders'])) {
+            $providers = $this->primaryPractice->getProviders($this->primaryPractice->id)->filter(function ($p) {
+                return ! (bool) $p->emr_direct_address;
             });
             $route = route('provider.dashboard.manage.staff', ['practiceSlug' => $this->primaryPractice->name]);
 
-            if ($providers->count() > 0){
+            if ($providers->count() > 0) {
                 $errors->push("You have selected the option to send Care Plan Approval Reminders via DIRECT. 
-<br><br>The following Providers at {$this->primaryPractice->display_name} do not have DIRECT addresses on file: <br>{$providers->implode('display_name', ", <br>")}<br><br>
+<br><br>The following Providers at {$this->primaryPractice->display_name} do not have DIRECT addresses on file: <br>{$providers->implode('display_name', ', <br>')}<br><br>
 Please update their profiles <a href='{$route}'>here</a>.");
             }
-
         }
         if (isset($settingsInput['dm_audit_reports'])) {
             $locationsWithoutDM = collect();
@@ -283,8 +281,6 @@ Please update their profiles <a href='{$route}'>here</a>.");
             unset($settingsInput['note_font_size']);
         }
 
-
-
         $this->primaryPractice->syncSettings(new Settings($settingsInput ?? []));
 
         $invoiceRecipients      = $request->input('invoice_recipients');
@@ -312,13 +308,13 @@ Please update their profiles <a href='{$route}'>here</a>.");
             $update['term_days']    = $request->input('term_days');
             $update['active']       = $request->input('is_active');
 
-            if ((bool)$this->primaryPractice->active && ! (bool)$update['active']) {
+            if ((bool) $this->primaryPractice->active && ! (bool) $update['active']) {
                 $enrolledPatientsExist = User::ofPractice($this->primaryPractice->id)
-                                             ->ofType('participant')
-                                             ->whereHas('patientInfo', function ($q) {
-                                                 $q->enrolled();
-                                             })
-                                             ->exists();
+                    ->ofType('participant')
+                    ->whereHas('patientInfo', function ($q) {
+                        $q->enrolled();
+                    })
+                    ->exists();
 
                 if ($enrolledPatientsExist) {
                     return redirect()
@@ -331,7 +327,6 @@ Please update their profiles <a href='{$route}'>here</a>.");
         }
 
         if ($request->input('outgoing_phone_number')) {
-
             $str         = $request->get('outgoing_phone_number');
             $phoneNumber = $this->getUSPhoneNumber($str);
 
@@ -350,9 +345,9 @@ Please update their profiles <a href='{$route}'>here</a>.");
 
         if ($request->has('primary_location')) {
             Location::whereId($request['primary_location'])
-                    ->update([
-                        'is_primary' => true,
-                    ]);
+                ->update([
+                    'is_primary' => true,
+                ]);
         }
 
         return redirect()
@@ -369,6 +364,31 @@ Please update their profiles <a href='{$route}'>here</a>.");
         return response()->json([
             'message' => "{$primaryPractice->display_name}'s Staff were successfully updated.",
         ]);
+    }
+
+    /**
+     * Returns a US phone number in a simple string format. i.e. +12082014567
+     * Null if not a valid US number.
+     *
+     * @param $str
+     *
+     * @return string|null
+     */
+    private function getUSPhoneNumber($str)
+    {
+        try {
+            $phoneNumberUtil = \libphonenumber\PhoneNumberUtil::getInstance();
+            $phoneNumber     = $phoneNumberUtil->parse($str, 'US');
+            $isValid         = $phoneNumberUtil->isValidNumberForRegion($phoneNumber, 'US');
+
+            if ( ! $isValid) {
+                return null;
+            }
+
+            return '+'.$phoneNumber->getCountryCode().$phoneNumber->getNationalNumber();
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     private function removeEncodedSpecialChars($str)
@@ -388,32 +408,5 @@ Please update their profiles <a href='{$route}'>here</a>.");
     private function removeSuspiciousJsCode($str)
     {
         return preg_replace('/javascript:/', '', $str);
-    }
-
-
-    /**
-     * Returns a US phone number in a simple string format. i.e. +12082014567
-     * Null if not a valid US number
-     *
-     * @param $str
-     *
-     * @return null|string
-     */
-    private function getUSPhoneNumber($str)
-    {
-        try {
-            $phoneNumberUtil = \libphonenumber\PhoneNumberUtil::getInstance();
-            $phoneNumber     = $phoneNumberUtil->parse($str, 'US');
-            $isValid         = $phoneNumberUtil->isValidNumberForRegion($phoneNumber, 'US');
-
-            if (!$isValid) {
-                return null;
-            }
-
-            return '+' . $phoneNumber->getCountryCode() . $phoneNumber->getNationalNumber();
-        } catch (\Exception $e) {
-        return null;
-    }
-
     }
 }

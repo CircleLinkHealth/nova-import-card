@@ -6,7 +6,7 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\PasswordCharacters;
+use CircleLinkHealth\Customer\Rules\PasswordCharacters;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 

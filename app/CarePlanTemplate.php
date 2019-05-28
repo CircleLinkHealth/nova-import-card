@@ -12,6 +12,7 @@ use App\Models\CPM\CpmMedicationGroup;
 use App\Models\CPM\CpmMisc;
 use App\Models\CPM\CpmProblem;
 use App\Models\CPM\CpmSymptom;
+use CircleLinkHealth\Customer\Entities\Practice;
 
 /**
  * App\CarePlanTemplate.
@@ -28,7 +29,7 @@ use App\Models\CPM\CpmSymptom;
  * @property \App\Models\CPM\CpmMisc[]|\Illuminate\Database\Eloquent\Collection            $cpmMiscs
  * @property \App\Models\CPM\CpmProblem[]|\Illuminate\Database\Eloquent\Collection         $cpmProblems
  * @property \App\Models\CPM\CpmSymptom[]|\Illuminate\Database\Eloquent\Collection         $cpmSymptoms
- * @property \App\Practice|null                                                            $program
+ * @property \CircleLinkHealth\Customer\Entities\Practice|null                             $program
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate whereDisplayName($value)
@@ -37,8 +38,14 @@ use App\Models\CPM\CpmSymptom;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate query()
  */
-class CarePlanTemplate extends \App\BaseModel
+class CarePlanTemplate extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     protected $fillable = ['program_id', 'display_name', 'type'];
 

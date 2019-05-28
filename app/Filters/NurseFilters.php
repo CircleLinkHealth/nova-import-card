@@ -6,7 +6,7 @@
 
 namespace App\Filters;
 
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
@@ -57,8 +57,8 @@ class NurseFilters extends QueryFilters
     public function canCallPatient($patientUserId)
     {
         $user = User::with('patientInfo.contactWindows')
-                    ->where('id', $patientUserId)
-                    ->first();
+            ->where('id', $patientUserId)
+            ->first();
 
         return $this->builder->whereHas('user', function ($q) use ($user) {
             return $q->ofPractice($user->program_id);
@@ -108,7 +108,7 @@ class NurseFilters extends QueryFilters
      * Get the states the nurse is licenced in.
      * By default the and operator is selected, which means that only nurses that include all states will be included.
      *
-     * @param string $states Comma delimited State Codes. Example: 'NJ, NY, GA'
+     * @param string $states   Comma delimited State Codes. Example: 'NJ, NY, GA'
      * @param string $operator Can 'and' or 'or'
      *
      * @return Builder
@@ -147,7 +147,7 @@ class NurseFilters extends QueryFilters
     /**
      * Get nurses that are licenced in any of the states provided.
      *
-     * @param string $states Comma delimited State Codes. Example: 'NJ, NY, GA'
+     * @param string $states   Comma delimited State Codes. Example: 'NJ, NY, GA'
      * @param string $operator Can 'and' or 'or'
      *
      * @return Builder
@@ -178,17 +178,17 @@ class NurseFilters extends QueryFilters
     {
         if ($this->request->has('compressed')) {
             return $this->builder->select(['id', 'user_id', 'status'])
-                                 ->with([
-                                     'user'       => function ($q) {
-                                         return $q->select(['id', 'display_name', 'program_id']);
-                                     },
-                                     'states'     => function ($q) {
-                                         return $q->select(['code']);
-                                     },
-                                     'user.roles' => function ($q) {
-                                         return $q->select(['name']);
-                                     },
-                                 ]);
+                ->with([
+                    'user' => function ($q) {
+                        return $q->select(['id', 'display_name', 'program_id']);
+                    },
+                    'states' => function ($q) {
+                        return $q->select(['code']);
+                    },
+                    'user.roles' => function ($q) {
+                        return $q->select(['name']);
+                    },
+                ]);
         }
 
         //we need to send roles down to client to differentiate in-house nurses from clh nurses

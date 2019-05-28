@@ -28,7 +28,7 @@ class ProviderLocationParserTest extends TestCase
     {
         //Assuming Location01 exists
         $this->assertArraySubset(
-            [\App\Location::whereName('Location02')->first()],
+            [\CircleLinkHealth\Customer\Entities\Location::whereName('Location02')->first()],
             $this->getParser()->parse(json_decode($this->workingLocation))
         );
     }

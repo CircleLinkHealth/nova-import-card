@@ -1,6 +1,7 @@
 @extends('partials.providerUI')
 
 @section('title', 'CCDAs')
+@section('activity', 'CCDAs')
 
 @section('content')
     <div class="row">

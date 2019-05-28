@@ -13,7 +13,7 @@
             </p>
         </div>
         <div class="row">
-            <div class="col-sm-12">
+            <div class="col-sm-12" style="width: 90%">
                 <notifications ref="notificationsComponent" name="mark-ineligible-modal"></notifications>
             </div>
         </div>
@@ -65,14 +65,17 @@
                 })
                     .then(resp => {
                         this.loading = false;
+                        Event.$emit('clear-selected-enrollees');
+                        Event.$emit('refresh-table');
                         Event.$emit("modal-mark-ineligible:hide");
-                        this.$parent.$refs.table.refresh();
                     })
                     .catch(err => {
                         this.loading = false;
+                        let errors = err.response.data.errors ? err.response.data.errors : [];
+
                         Event.$emit('notifications-mark-ineligible-modal:create', {
                             noTimeout: true,
-                            text: err.message,
+                            text:  errors,
                             type: 'error'
                         });
                     });

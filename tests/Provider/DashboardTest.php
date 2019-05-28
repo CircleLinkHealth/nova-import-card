@@ -6,8 +6,8 @@
 
 namespace Tests\Provider;
 
-use App\Role;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Role;
+use CircleLinkHealth\Customer\Entities\User;
 use Faker\Factory;
 use Laravel\Dusk\Browser;
 use Tests\DuskTestCase;

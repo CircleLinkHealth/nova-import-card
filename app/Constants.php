@@ -8,6 +8,7 @@ namespace App;
 
 class Constants
 {
+    const CACHE_USER_HAS_CCDA = 'user:{$userId}:has_ccda';
     /**
      * Redis Cache Keys.
      */
@@ -34,9 +35,24 @@ class Constants
      */
     const ICD9 = 'icd_9_code';
 
-    const ICD9_NAME                     = 'ICD-9';
+    const ICD9_NAME = 'ICD-9';
+
+    const MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS = 1200;
+
+    const NOVA_GROUP_CARE_COACHES       = 'Care Coaches';
     const PRACTICE_STAFF_ROLE_NAMES     = ['provider', 'office_admin', 'med_assistant', 'registered-nurse', 'specialist'];
     const SAAS_INTERNAL_USER_ROLE_NAMES = ['saas-admin', 'care-center'];
-    const SNOMED                        = 'snomed_code';
-    const SNOMED_NAME                   = 'SNOMED CT';
+
+    /**
+     * These settings match CLH mail vendor's envelopes.
+     */
+    const SNAPPY_CLH_MAIL_VENDOR_SETTINGS = [
+        'disable-javascript' => true,
+        'margin-top'         => '12',
+        'margin-left'        => '25',
+        'margin-bottom'      => '15',
+        'margin-right'       => '0.75',
+    ];
+    const SNOMED      = 'snomed_code';
+    const SNOMED_NAME = 'SNOMED CT';
 }

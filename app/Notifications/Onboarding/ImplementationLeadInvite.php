@@ -6,7 +6,7 @@
 
 namespace App\Notifications\Onboarding;
 
-use App\Entities\Invite;
+use CircleLinkHealth\Customer\Entities\Invite;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -19,7 +19,7 @@ class ImplementationLeadInvite extends Notification
     /**
      * Create a new notification instance.
      *
-     * @param Invite $invite
+     * @param \CircleLinkHealth\Customer\Database\Migrations\Invite $invite
      */
     public function __construct(Invite $invite)
     {

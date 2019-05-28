@@ -40,10 +40,10 @@ if (false !== strpos($requestUri, 'login')) {
 // set patient vars
 $patientId        = '';
 $patientProgramId = '';
-if (isset($patient) && ! empty($patient) && is_a($patient, App\User::class)) {
+if (isset($patient) && ! empty($patient) && is_a($patient, \CircleLinkHealth\Customer\Entities\User::class)) {
     $patientId        = $patient->id;
     $patientProgramId = $patient->program_id;
-} elseif (isset($patient) && ! empty($patient) && is_a($patient, App\Patient::class)) {
+} elseif (isset($patient) && ! empty($patient) && is_a($patient, \CircleLinkHealth\Customer\Entities\Patient::class)) {
     $patientId        = $patient->user_id;
     $patientProgramId = $patient->user->program_id;
 }

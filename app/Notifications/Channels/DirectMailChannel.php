@@ -7,6 +7,8 @@
 namespace App\Notifications\Channels;
 
 use App\Contracts\DirectMail;
+use App\Exceptions\InvalidTypeException;
+use App\ValueObjects\SimpleNotification;
 use Illuminate\Notifications\Notification;
 
 class DirectMailChannel
@@ -21,50 +23,46 @@ class DirectMailChannel
     /**
      * Send the given notification.
      *
-     * @param mixed $notifiable
+     * @param mixed                                  $notifiable
      * @param \Illuminate\Notifications\Notification $notification
+     *
+     * @throws InvalidTypeException
      */
     public function send($notifiable, Notification $notification)
     {
         if ($notifiable->emr_direct_address) {
-            $data = $this->getParams($notifiable, $notification);
+            $message = $notification->toDirectMail($notifiable);
+
+            $this->throwExceptionIfWrongType($message, $notification);
 
             $this->dm->send(
                 $notifiable->emr_direct_address,
-                $data['filePath'],
-                $data['fileName'],
-                $data['ccdaAttachmentPath'],
-                $data['patient'],
-                $data['body'],
-                $data['subject']);
+                $message->getFilePath(),
+                $message->getFileName(),
+                $message->getCcdaAttachmentPath(),
+                $message->getPatient(),
+                $message->getBody(),
+                $message->getSubject()
+            );
         }
     }
 
-    private function getParams($notifiable, Notification $notification): array
+    /**
+     * Throws an exception if the message is not of type SimpleNotification.
+     *
+     * @param $message
+     * @param $notification
+     *
+     * @throws InvalidTypeException
+     */
+    private function throwExceptionIfWrongType($message, $notification)
     {
-        $data = $notification->toDirectMail($notifiable);
-
-        $filePath = array_key_exists('filePath', $data)
-            ? $data['filePath']
-            : null;
-
-        return [
-            'filePath'           => $filePath,
-            'fileName'           => str_substr_after($filePath, '/'),
-            'ccdaAttachmentPath' => array_key_exists('ccdaAttachmentPath', $data)
-                ? $data['ccdaAttachmentPath']
-                : null,
-            'patient'            => array_key_exists('patient', $data)
-                ? $data['patient']
-                : null,
-            'body'               => array_key_exists('body', $data)
-                ? $data['body']
-                : null,
-            'subject'            => array_key_exists('subject', $data)
-                ? $data['subject']
-                : null,
-        ];
-
-
+        if ( ! is_a($message, SimpleNotification::class)) {
+            throw new InvalidTypeException(
+                'Object of invalid type returned from `'.get_class(
+                    $notification
+                ).'@toDirectMail`. At '.__FILE__.':'.__LINE__
+            );
+        }
     }
 }

@@ -6,13 +6,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Activity;
-use App\Jobs\GenerateNurseInvoice;
+use App\Exports\CareCoachMonthlyReport;
+use App\Jobs\CreateNurseInvoices;
 use App\Notifications\NurseInvoiceCreated;
 use App\Reports\NurseDailyReport;
-use App\User;
 use Carbon\Carbon;
-use Excel;
+use CircleLinkHealth\Customer\Entities\Nurse;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -27,36 +27,26 @@ class NurseController extends Controller
     {
         $input = $request->input();
 
-        $nurseIds = $request->input('nurses');
+        $nurseUserIds = $request->input('nurses');
 
-        $addTime = $request->input('manual_time')
-            ? $request->input('manual_time')
-            : 0;
+        $startDate = Carbon::parse($request->input('start_date'));
+        $endDate   = Carbon::parse($request->input('end_date'));
 
-        $addNotes = $request->input('manual_time_notes')
-            ? $request->input('manual_time_notes')
-            : '';
-
-        $variablePay = isset($input['alternative_pay']);
-
-        if ('download' == $request->input('submit')) {
-            $links = [];
-
-            $startDate = Carbon::parse($request->input('start_date'));
-            $endDate   = Carbon::parse($request->input('end_date'));
-
-            GenerateNurseInvoice::dispatch(
-                $nurseIds,
-                $startDate,
-                $endDate,
-                auth()->user()->id,
-                $variablePay,
-                $addTime,
-                $addNotes
-            )->onQueue('high');
+        if (isset($input['all_selected_nurses'])) {
+            $nurseUserIds = [];
         }
 
-        return 'Waldo is working on compiling the reports you requested. <br> Give it a minute, and then head to '.link_to('/jobs/completed').' and refresh frantically to see a link to the report you requested.';
+        CreateNurseInvoices::dispatch(
+            $startDate,
+            $endDate,
+            $nurseUserIds,
+            false,
+            auth()->user()->id
+        );
+
+        return 'We will send you an email when everything is done. You can always see previous jobs completed at '.link_to(
+            '/jobs/completed'
+            );
     }
 
     public function makeDailyReport()
@@ -101,7 +91,7 @@ class NurseController extends Controller
             $last       = Carbon::now()->lastOfMonth()->endOfDay();
         }
 
-        $nurses = User::ofType('care-center')->has('access_disabled', 0)->get();
+        $nurses = User::ofType('care-center')->where('access_disabled', 0)->get();
         $data   = [];
 
         while ($dayCounter->lte($last)) {
@@ -134,10 +124,13 @@ class NurseController extends Controller
             $dayCounter = $dayCounter->addDays(1);
         }
 
-        return view('admin.reports.allocation', [
-            'data'  => $data,
-            'month' => Carbon::parse($last),
-        ]);
+        return view(
+            'admin.reports.allocation',
+            [
+                'data'  => $data,
+                'month' => Carbon::parse($last),
+            ]
+        );
     }
 
     public function monthlyReport(Request $request)
@@ -146,40 +139,14 @@ class NurseController extends Controller
         if ($request['date']) {
             $date = new Carbon($request['date']);
         }
-
-        $rows = $this->getMonthlyReportRows($date);
+        $report = new CareCoachMonthlyReport($date);
+        $rows   = $report->collection();
 
         if ($request->has('json')) {
             return response()->json($rows);
         }
         if ($request->has('excel')) {
-            return Excel::create('CLH-Nurse-Monthly-Report-'.$date, function ($excel) use ($date, $rows) {
-                // Set the title
-                $excel->setTitle('CLH Nurse Monthly Report - '.$date);
-
-                // Chain the setters
-                $excel->setCreator('CLH System')
-                    ->setCompany('CircleLink Health');
-
-                // Call them separately
-                $excel->setDescription('CLH Call Report - '.$date);
-
-                // Our first sheet
-                $excel->sheet('Sheet 1', function ($sheet) use ($rows) {
-                    $i = 0;
-                    // header
-                    $userColumns = [
-                        'Nurse',
-                        'CCM Time (HH:MM:SS)',
-                    ];
-                    $sheet->appendRow($userColumns);
-
-                    foreach ($rows as $name => $time) {
-                        $columns = [$name, $time];
-                        $sheet->appendRow($columns);
-                    }
-                });
-            })->export('xls');
+            return $report;
         }
 
         $currentPage              = LengthAwarePaginator::resolveCurrentPage();
@@ -206,38 +173,5 @@ class NurseController extends Controller
         }
 
         return redirect()->route('admin.reports.nurse.invoice')->with(['success' => 'yes']);
-    }
-
-    private function getMonthlyReportRows($date)
-    {
-        $fromDate = $date->copy()->startOfMonth()->startOfDay();
-        $toDate   = $date->copy()->endOfMonth()->endOfDay();
-
-        $rows = [];
-
-        $nurses = User::orderBy('id')
-            ->ofType('care-center')
-            ->whereHas('activitiesAsProvider', function ($a) use ($fromDate, $toDate) {
-                $a->where('performed_at', '>=', $fromDate)
-                    ->where('performed_at', '<=', $toDate);
-            })
-            ->chunk(50, function ($nurses) use (&$rows, $fromDate, $toDate) {
-                foreach ($nurses as $nurse) {
-                    $seconds = Activity::where('provider_id', $nurse->id)
-                        ->where(function ($q) use ($fromDate, $toDate) {
-                            $q->where('performed_at', '>=', $fromDate)
-                                ->where('performed_at', '<=', $toDate);
-                        })
-                        ->sum('duration');
-
-                    if (0 == $seconds) {
-                        continue;
-                    }
-
-                    $rows[$nurse->display_name] = gmdate('H:i:s', $seconds);
-                }
-            });
-
-        return collect($rows);
     }
 }

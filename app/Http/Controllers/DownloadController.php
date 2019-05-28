@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Http\Request;
 use Spatie\MediaLibrary\Models\Media;
 
@@ -21,6 +21,10 @@ class DownloadController extends Controller
      */
     public function file($filePath)
     {
+        if (empty($filePath)) {
+            abort(400, 'File to download must be provided.');
+        }
+
         $path = storage_path($filePath);
 
         //try looking in the download folder
@@ -51,7 +55,7 @@ class DownloadController extends Controller
         }
 
         if ( ! file_exists($path)) {
-            return "Could not locate file with name: ${filePath}";
+            return abort(400, "Could not locate file with name: ${filePath}");
         }
 
         $fileName = str_replace('/', '', strrchr($filePath, '/'));

@@ -38,12 +38,16 @@ const CallMgmtApp = () => import(/* webpackChunkName: "chunk-admin" */ './admin/
 const CallMgmtAppV2 = () => import(/* webpackChunkName: "chunk-admin" */ './admin/calls/app-v2')
 const CaDirectorPanel = () => import(/* webpackChunkName: "chunk-admin" */ './admin/ca-director/panel')
 const NurseDailyHours = () => import(/* webpackChunkName: "chunk-admin" */ './components/pages/work-schedule/daily-hours')
-const ImporterTrainerComponent = () => import(/* webpackChunkName: "chunk-importer-trainer" */ './components/Importer/trainer')
+const ImporterTrainerComponent = () => import(/* webpackChunkName: "chunk-importer-trainer" */ './components/importer/trainer')
 const Select2Component = () => import(/* webpackChunkName: "chunk-admin" */ './components/src/select2')
 const TimeTrackerEventsComponent = () => import(/* webpackChunkName: "chunk-time-tracker-events" */ './admin/time-tracker/time-tracker-events')
 const PassportClientsComponent = () => import(/* webpackChunkName: "chunk-admin" */ './components/passport/Clients')
 const PassportAuthorizedClientsComponent = () => import(/* webpackChunkName: "chunk-admin" */ './components/passport/AuthorizedClients')
 const PassportPersonalAccessTokensComponent = () => import(/* webpackChunkName: "chunk-admin" */ './components/passport/PersonalAccessTokens')
+const CpmMedicationGroupsMapsSettings = () => import(/* webpackChunkName: "chunk-admin" */ './admin/cpm-medication-groups-maps-settings')
+const NotificationsComponent = () => import(/* webpackChunkName: "chunk-admin" */ './components/shared/notifications/notifications')
+const LoaderComponent = () => import(/* webpackChunkName: "chunk-admin" */ './components/loader')
+
 
 Vue.use(ClientTable, {}, false)
 Vue.use(ServerTable, {}, false)
@@ -59,6 +63,11 @@ Vue.component('passport-clients', PassportClientsComponent)
 Vue.component('passport-authorized-clients', PassportAuthorizedClientsComponent)
 Vue.component('importer-trainer', ImporterTrainerComponent)
 Vue.component('passport-personal-access-tokens', PassportPersonalAccessTokensComponent)
+Vue.component('cpm-medication-groups-maps-settings', CpmMedicationGroupsMapsSettings)
+Vue.component('notifications', NotificationsComponent);
+Vue.component('loader', LoaderComponent);
+
+
 
 const App = new Vue({
     el: '#app',

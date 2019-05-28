@@ -22,7 +22,7 @@ class PostDeploymentTasks extends Command
      * @var string
      */
     protected $signature = 'deploy:post';
-    
+
     /**
      * Create a new command instance.
      */
@@ -30,7 +30,7 @@ class PostDeploymentTasks extends Command
     {
         parent::__construct();
     }
-    
+
     /**
      * Execute the console command.
      *
@@ -51,21 +51,21 @@ class PostDeploymentTasks extends Command
         )->each(
             function ($command) {
                 if (app()->environment('production') && in_array(
-                        $command,
-                        [
-                            'horizon:terminate',
-                            'queue:restart',
-                        ]
+                    $command,
+                    [
+                        'horizon:terminate',
+                        'queue:restart',
+                    ]
                     )) {
                     //@todo: start using envoyer scripts
                     //Do not run Queue commands on production, as Worker now takes care of Prod jobs
                     return;
                 }
-                
+
                 $this->output->note("Running ${command}");
-                
+
                 \Artisan::call($command);
-                
+
                 $this->output->success("Finished running ${command}");
             }
         );

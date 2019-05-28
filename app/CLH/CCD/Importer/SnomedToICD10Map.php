@@ -19,8 +19,14 @@ namespace App\CLH\CCD\Importer;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToICD10Map whereSnomedCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToICD10Map whereSnomedName($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToICD10Map newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToICD10Map newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToICD10Map query()
  */
-class SnomedToICD10Map extends \App\BaseModel
+class SnomedToICD10Map extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     public $timestamps = false;
     protected $table   = 'snomed_to_icd10_map';

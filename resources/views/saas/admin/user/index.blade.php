@@ -1,11 +1,9 @@
 @extends('partials.providerUI')
 
 @section('title', 'View all Users')
+@section('activity', 'View all Users')
 
 @section('content')
-    @push('scripts')
-    <script type="text/javascript" src="{{ mix('/js/wpUsers/wpUsers.js') }}"></script>
-    @endpush
 
     <div class="container-fluid">
         <div class="row">
@@ -30,7 +28,6 @@
                             <div class="col-md-12">
                                 <div class="pull-left">
                                     <a class="btn btn-info" data-toggle="collapse"
-                                       data-parent="#accordion"
                                        href="#collapseFilter">Toggle Filters</a>
                                 </div>
                             </div>
@@ -146,7 +143,7 @@
                                                             class="glyphicon glyphicon-edit"></i> Edit</a>
                                             @endif
 
-                                            @if(Cerberus::hasPermission('users-edit-all'))
+                                            @if(auth()->user()->hasPermission('user.delete'))
                                                 <a href="{{ route('admin.users.destroy', array('id' => $wpUser->id)) }}"
                                                    onclick="var result = confirm('Are you sure you want to delete?');if (!result) {event.preventDefault();}"
                                                    class="btn btn-danger btn-xs" style="margin-left:10px;"><i

@@ -7,9 +7,7 @@
 namespace App\Models\CPM;
 
 use App\CarePlanTemplate;
-use App\Contracts\Serviceable;
-use App\Services\CPM\CpmBiometricService;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 /**
  * App\Models\CPM\CpmBiometric.
@@ -24,7 +22,7 @@ use App\User;
  * @property \App\Models\CPM\Biometrics\CpmBloodPressure|\App\Models\CPM\Biometrics\CpmBloodSugar|\App\Models\CPM\Biometrics\CpmSmoking|\App\Models\CPM\Biometrics\CpmWeight $info
  * @property \App\CarePlanTemplate[]|\Illuminate\Database\Eloquent\Collection                                                                                                $carePlanTemplates
  * @property \App\Models\CPM\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection                                                                                       $cpmInstructions
- * @property \App\User[]|\Illuminate\Database\Eloquent\Collection                                                                                                            $patient
+ * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection                                                                             $patient
  * @property \App\Models\CPM\CpmBiometricUser[]|\Illuminate\Database\Eloquent\Collection                                                                                     $users
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometric whereCareItemId($value)
@@ -34,8 +32,15 @@ use App\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometric whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometric whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometric newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometric newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometric query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometric whereUnit($value)
  */
-class CpmBiometric extends \App\BaseModel implements Serviceable
+class CpmBiometric extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use Instructable;
 
@@ -66,16 +71,6 @@ class CpmBiometric extends \App\BaseModel implements Serviceable
     public function patient()
     { //I REALLY DON'T THINK THIS IS CORRECT ... RELATIONSHIP should be on "cpm_biometric_id", not "patient_id"
         return $this->belongsToMany(User::class, 'cpm_biometrics_users', 'patient_id');
-    }
-
-    /**
-     * Get this Model's Service Class.
-     *
-     * @return Serviceable
-     */
-    public function service()
-    {
-        return new CpmBiometricService();
     }
 
     /**

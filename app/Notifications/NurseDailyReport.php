@@ -7,8 +7,8 @@
 namespace App\Notifications;
 
 use App\Mail\NurseDailyReport as NurseDailyReportMailable;
-use App\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
@@ -26,7 +26,7 @@ class NurseDailyReport extends Notification
     protected $data;
 
     /**
-     * The date for which the report is being generated
+     * The date for which the report is being generated.
      *
      * @var Carbon
      */
@@ -59,14 +59,14 @@ class NurseDailyReport extends Notification
         return
             [
                 'data' => $this->data,
-                'date' => $this->date->toDateString()
+                'date' => $this->date->toDateString(),
             ];
     }
 
     /**
      * Get the mail representation of the notification.
      *
-     * @param User $notifiable
+     * @param \CircleLinkHealth\Customer\Entities\User $notifiable
      *
      * @return \Illuminate\Notifications\Messages\MailMessage
      */

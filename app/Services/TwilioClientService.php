@@ -7,12 +7,12 @@
 namespace App\Services;
 
 use App\Contracts\Services\TwilioClientable;
-use Symfony\Component\Process\Process;
 use Twilio\Jwt\ClientToken;
 use Twilio\Rest\Client;
 
 class TwilioClientService implements TwilioClientable
 {
+    private const TOKEN_LIFETIME_SECONDS = 7200; //2 hours
     private $capability;
 
     private $client;
@@ -29,19 +29,8 @@ class TwilioClientService implements TwilioClientable
         $this->capability->allowClientOutgoing(config('services.twilio.twiml-app-sid'));
     }
 
-    public function generateCapabilityToken(): string
-    {
-        return $this->capability->generateToken();
-    }
-
-    public function getClient(): Client
-    {
-        return $this->client;
-    }
-
     /**
-     *
-     * Download media from Twilio Cloud
+     * Download media from Twilio Cloud.
      *
      * @param $url
      *
@@ -52,7 +41,7 @@ class TwilioClientService implements TwilioClientable
         $accountSid = config('services.twilio.sid');
         $token      = config('services.twilio.token');
         $path       = 'tmp/twilio-recordings/';
-        $path       = $path . basename($url);
+        $path       = $path.basename($url);
 
         try {
             $c = new \GuzzleHttp\Client();
@@ -82,12 +71,10 @@ class TwilioClientService implements TwilioClientable
                     'mediaUrl'    => null,
                 ];
             }
-
-
         } catch (\Exception $e) {
             return [
                 //make sure code is not 0, 0 means no error
-                'errorCode'   => $e->getCode() === 0
+                'errorCode' => 0 === $e->getCode()
                     ? 1
                     : $e->getTrace(),
                 'errorDetail' => $e->getMessage(),
@@ -103,6 +90,22 @@ class TwilioClientService implements TwilioClientable
     }
 
     /**
+     * Generates new token based on credentials and permissions set
+     * in the constructor.
+     *
+     * @return string
+     */
+    public function generateCapabilityToken(): string
+    {
+        return $this->capability->generateToken(TwilioClientService::TOKEN_LIFETIME_SECONDS);
+    }
+
+    public function getClient(): Client
+    {
+        return $this->client;
+    }
+
+    /**
      * @param $str - an XML string
      *
      * @return \SimpleXMLElement|null - return the parsed xml document or null if cannot be parsed
@@ -110,8 +113,7 @@ class TwilioClientService implements TwilioClientable
     private function parseXMLFromString($str)
     {
         libxml_use_internal_errors(true);
-        $doc = simplexml_load_string($str);
 
-        return $doc;
+        return simplexml_load_string($str);
     }
 }

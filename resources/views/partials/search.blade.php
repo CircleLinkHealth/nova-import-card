@@ -2,7 +2,35 @@
     <input id="patient-search-text-box" class="form-control typeahead form-item-spacing col-md-12" type="text"
            name="users" autofocus="autofocus"
            placeholder="{{ !empty($patient->id) ? $patient->getFullName() : 'Enter a Patient Name, MRN or DOB (mm-dd-yyyy)' }}">
+    <div class="search loader" style="display: none;"></div>
 </div>
+
+@push('styles')
+    <style>
+
+        #bloodhound {
+            position: relative;
+        }
+
+        .search.loader {
+            border: 5px solid #31C6F9;
+            -webkit-animation: spin 1s linear infinite;
+            animation: spin 1s linear infinite;
+            border-top: 5px solid #555;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            position: absolute;
+            right: 20px;
+            top: 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    @endpush
 
 @push('scripts')
     <script>
@@ -40,7 +68,18 @@
 
             searchBox.on('typeahead:selected', function (e, datum) {
                 window.location.href = datum.link;
-                datum.val(datum.name);
+            });
+
+            searchBox.on('typeahead:asyncrequest', function (e, datum) {
+                $('.search.loader').show();
+            });
+
+            searchBox.on('typeahead:asynccancel', function (e, datum) {
+                $('.search.loader').hide();
+            });
+
+            searchBox.on('typeahead:asyncreceive', function (e, datum) {
+                $('.search.loader').hide();
             });
         });
 

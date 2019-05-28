@@ -30,10 +30,6 @@
                         + NEW NOTE
                     </a>
                 </div>
-                <div class="col-sm-6 col-xs-7 pull-right"
-                     style="text-align: right;top: 1px;font-size: 22px;color: #ec683e;">
-                    @include('partials.complex-ccm-badge')
-                </div>
 
                 <div class="main-form-horizontal main-form-primary-horizontal col-md-12 col-xs-12"
                      style="border-top: 3px solid #50b2e2">
@@ -88,12 +84,21 @@
                                                 placeholder: "Filter"
                                             }],
                                             template: function (obj) {
-                                                if (obj.logged_from == "note" || obj.logged_from == "note_task")
-                                                    return "<a href='<?php echo route('patient.note.view', [
-                                                        'patientId' => $patient->id,
-                                                        'noteId'    => '',
-                                                    ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>";
-                                                else if (obj.logged_from == "appointment") {
+                                                if (obj.logged_from === "note" || obj.logged_from === "note_task")
+
+                                                    if (obj.status === "draft") {
+                                                        return "<a href='<?php echo route('patient.note.edit', [
+                                                            'patientId' => $patient->id,
+                                                            'noteId'    => '',
+                                                        ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>";
+                                                    }
+                                                    else {
+                                                        return "<a href='<?php echo route('patient.note.view', [
+                                                            'patientId' => $patient->id,
+                                                            'noteId'    => '',
+                                                        ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>";
+                                                    }
+                                                else if (obj.logged_from === "appointment") {
                                                     return "<a href='<?php echo route('patient.appointment.view', [
                                                         'patientId'     => $patient->id,
                                                         'appointmentId' => '',
@@ -158,11 +163,12 @@
                                                 } else
                                                     return obj.type_name;
                                             },
-                                            fillspace: false,
+                                            fillspace: true,
+                                            adjust: true,
                                             width: 176,
                                             sort: 'string',
                                             tooltip: false,
-                                            moveToFront:true
+                                            moveToFront: true
                                         },
                                         {
                                             id: "performed_at",
@@ -181,6 +187,8 @@
                                     ],
                                     ready: function () {
                                         this.adjustRowHeight("comment");
+                                        //CPM-725: Maximum Call Stack Size exceeded error on low-end machines
+                                        this.config.autoheight = false;
                                     },
                                     /*ready:function(){
                                      this.adjustRowHeight("obs_value");
@@ -250,7 +258,7 @@
                                 </li>
 
                             </div>
-                            @if(auth()->user()->hasRole(['administrator', 'med_assistant', 'provider']))
+                            @if(auth()->user()->hasRole(array_merge(['administrator'], \App\Constants::PRACTICE_STAFF_ROLE_NAMES)) )
 
                                 <input type="button" value="Export as PDF" class="btn btn-primary"
                                        style='margin:15px;'

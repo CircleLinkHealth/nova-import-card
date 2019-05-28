@@ -9,12 +9,13 @@ namespace App\Http\Controllers\SAAS\Admin\CRUD;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SAAS\StoreInternalUser;
 use App\Notifications\SAAS\SendInternalUserSignupInvitation;
-use App\Practice;
-use App\Role;
-use App\User;
 use App\ValueObjects\SAAS\Admin\InternalUser;
 use Auth;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\Role;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
+use Session;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class InternalUserController extends Controller
@@ -52,8 +53,7 @@ class InternalUserController extends Controller
      */
     public function create()
     {
-        $data = $this->userManagementService->getDataForCreateUserPage();
-
+        $data                 = $this->userManagementService->getDataForCreateUserPage();
         $data['submitUrl']    = route('saas-admin.users.store');
         $data['submitMethod'] = 'post';
         $data['titleVerb']    = 'Add';
@@ -74,26 +74,29 @@ class InternalUserController extends Controller
 
         $data['editedUser'] = $this->userManagementService->getUser($userId);
 
-        $data['submitUrl']    = route('saas-admin.users.update', ['userId' => $userId]);
-        $data['submitMethod'] = 'patch';
-        $data['titleVerb']    = 'Edit';
+        $data['submitUrl']      = route('saas-admin.users.update', ['userId' => $userId]);
+        $data['submitMethod']   = 'patch';
+        $data['titleVerb']      = 'Edit';
+        $data['successMessage'] = Session::get('messages');
 
         return view('saas.admin.user.manage', $data);
     }
 
     public function index(Request $request)
     {
-        $practices = auth()->user()->practices;
+        $practiceIds = auth()->user()->viewableProgramIds();
 
-        $wpUsers = User::whereHas('practices', function ($q) use ($practices) {
-            $q->whereIn('id', $practices->pluck('id')->all());
+        $wpUsers = User::whereHas('practices', function ($q) use ($practiceIds) {
+            $q->whereIn('id', $practiceIds);
         })->orderBy('id', 'desc');
 
         // FILTERS
         $params = $request->all();
 
         // filter user
-        $users = User::whereIn('id', Auth::user()->viewableUserIds())
+        $users = User::whereHas('practices', function ($q) use ($practiceIds) {
+            $q->whereIn('id', $practiceIds);
+        })
             ->orderBy('display_name')
             ->get()
             ->mapWithKeys(function ($user) {
@@ -124,7 +127,7 @@ class InternalUserController extends Controller
         ];
 
         $authIsAdmin = auth()->user()->isAdmin();
-        
+
         if ($authIsAdmin) {
             $rolesArray[] = 'administrator';
         }
@@ -145,7 +148,7 @@ class InternalUserController extends Controller
         }
 
         // program filter
-        $programs = Practice::whereIn('id', Auth::user()->viewableProgramIds())
+        $programs = Practice::whereIn('id', $practiceIds)
             ->orderBy('display_name')
             ->get()
             ->pluck('display_name', 'id')

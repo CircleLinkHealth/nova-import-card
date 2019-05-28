@@ -6,7 +6,7 @@
 
 namespace App\Traits\Relationships;
 
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 trait BelongsToPatientUser
 {

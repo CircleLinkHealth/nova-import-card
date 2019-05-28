@@ -97,14 +97,17 @@
                 })
                     .then(resp => {
                         this.loading = false;
+                        Event.$emit('clear-selected-enrollees');
+                        Event.$emit('refresh-table');
                         Event.$emit("modal-select-ca:hide");
-                        this.$parent.$refs.table.refresh();
                     })
                     .catch(err => {
                         this.loading = false;
+                        let errors = err.response.data.errors ? err.response.data.errors : [];
+
                         Event.$emit('notifications-select-ca-modal:create', {
                             noTimeout: true,
-                            text: err.message,
+                            text:  errors,
                             type: 'error'
                         });
                     });

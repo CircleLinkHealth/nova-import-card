@@ -6,7 +6,7 @@
 
 namespace App\Contracts;
 
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 interface DirectMail
 {
@@ -17,12 +17,12 @@ interface DirectMail
 
     /**
      * @param $outboundRecipient
-     * @param null $binaryAttachmentFilePath
-     * @param null $binaryAttachmentFileName
-     * @param null $ccdaAttachmentPath
-     * @param User|null $patient
-     * @param null $body
-     * @param null $subject
+     * @param null                                          $binaryAttachmentFilePath
+     * @param null                                          $binaryAttachmentFileName
+     * @param null                                          $ccdaAttachmentPath
+     * @param \CircleLinkHealth\Customer\Entities\User|null $patient
+     * @param null                                          $body
+     * @param null                                          $subject
      *
      * @return mixed
      */

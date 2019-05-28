@@ -12,7 +12,7 @@ use App\Entities\CcdaRequest;
 use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
 use App\Importer\MedicalRecordEloquent;
 use App\Traits\Relationships\BelongsToPatientUser;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Prettus\Repository\Contracts\Transformable;
@@ -49,7 +49,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  *     $demographicsImports
  * @property \App\Importer\Models\ItemLogs\DocumentLog[]|\Illuminate\Database\Eloquent\Collection   $document
  * @property \App\Importer\Models\ItemLogs\MedicationLog[]|\Illuminate\Database\Eloquent\Collection $medications
- * @property \App\User|null                                                                         $patient
+ * @property \CircleLinkHealth\Customer\Entities\User|null                                          $patient
  * @property \App\Importer\Models\ItemLogs\ProblemLog[]|\Illuminate\Database\Eloquent\Collection    $problems
  * @property \App\Importer\Models\ItemLogs\ProviderLog[]|\Illuminate\Database\Eloquent\Collection   $providers
  * @property \App\Models\MedicalRecords\ImportedMedicalRecord                                       $qaSummary
@@ -79,13 +79,26 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\MedicalRecords\Ccda withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\MedicalRecords\Ccda withoutTrashed()
  * @mixin \Eloquent
+ *
+ * @property int|null                                                                       $direct_mail_message_id
+ * @property int|null                                                                       $batch_id
+ * @property \App\DirectMailMessage                                                         $directMessage
+ * @property \App\Media[]|\Illuminate\Database\Eloquent\Collection                          $media
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda exclude($value = array())
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda whereBatchId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda whereDirectMailMessageId($value)
  */
 class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
 {
-    use BelongsToPatientUser,
-        HasMediaTrait,
-        TransformableTrait,
-        SoftDeletes;
+    use BelongsToPatientUser;
+    use HasMediaTrait;
+    use SoftDeletes;
+    use TransformableTrait;
     const API = 'api';
 
     //define sources here
@@ -138,7 +151,10 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
         }
 
         if ( ! $this->json) {
-            $xml        = $this->getMedia('ccd')->first()->getFile();
+            $xml = $this->getMedia('ccd')->first()->getFile();
+            if ( ! is_string($xml) || strlen($xml) < 1 || false == stripos($xml, '<ClinicalDocument')) {
+                throw new \Exception("CCD appears to be invalid. CCD: `$xml`");
+            }
             $this->json = $this->parseToJson($xml);
             $this->save();
         }
@@ -198,7 +214,7 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
     /**
      * Get the User to whom this record belongs to, if one exists.
      *
-     * @return User
+     * @return \CircleLinkHealth\Customer\Entities\User
      */
     public function getPatient(): User
     {
@@ -238,20 +254,24 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
 
     protected function parseToJson($xml)
     {
+        $id = $this->id ?? '';
+
+        if ( ! is_string($xml) || strlen($xml) < 1 || false == stripos($xml, '<ClinicalDocument')) {
+            throw new \Exception("CCD with ${id} appears to be invalid.");
+        }
+
         $client = new Client([
             'base_uri' => config('services.ccd-parser.base-uri'),
         ]);
 
         $response = $client->request('POST', '/api/parser', [
-            'headers' => ['Content-Type' => 'text/xml'],
+            'headers' => ['Content-Type' => 'text/xml', 'CCDA-ID' => $this->id ?? 'N/A'],
             'body'    => $xml,
         ]);
 
         $responseBody = (string) $response->getBody();
 
         if ( ! in_array($response->getStatusCode(), [200, 201])) {
-            $id = $this->id ?? '';
-
             $data = json_encode([
                 $response->getStatusCode(),
                 $response->getReasonPhrase(),

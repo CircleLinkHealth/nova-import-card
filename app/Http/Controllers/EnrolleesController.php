@@ -10,7 +10,7 @@ use App\EligibilityBatch;
 use App\Enrollee;
 use App\Jobs\ImportConsentedEnrollees;
 use App\Jobs\ImportMedicalRecordsById;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Http\Request;
 
 class EnrolleesController extends Controller
@@ -46,7 +46,7 @@ class EnrolleesController extends Controller
         return [
             'message' => "A job has been scheduled. Imported CCDs should start showing up in ${url} in 5-10 minutes. Importing ".implode(
                 ',',
-                    $ids
+                $ids
             ),
             'type' => 'success',
         ];

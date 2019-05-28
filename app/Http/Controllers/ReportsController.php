@@ -6,14 +6,10 @@
 
 namespace App\Http\Controllers;
 
-use App\CareItem;
 use App\CarePlan;
 use App\Contracts\ReportFormatter;
+use App\Exports\FromArray;
 use App\Http\Requests\GetUnder20MinutesReport;
-use App\Location;
-use App\Models\CPM\CpmProblem;
-use App\PageTimer;
-use App\Practice;
 use App\Repositories\PatientReadRepository;
 use App\Services\CareplanAssessmentService;
 use App\Services\CareplanService;
@@ -21,12 +17,9 @@ use App\Services\CCD\CcdInsurancePolicyService;
 use App\Services\CPM\CpmProblemService;
 use App\Services\PrintPausedPatientLettersService;
 use App\Services\ReportsService;
-use App\User;
 use Carbon\Carbon;
-use DateInterval;
-use DatePeriod;
-use DateTime;
-use Excel;
+use CircleLinkHealth\Customer\Entities\Location;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -76,15 +69,15 @@ class ReportsController extends Controller
         }
 
         $patients = User::intersectPracticesWith(auth()->user())
-                        ->ofType('participant')
-                        ->with('primaryPractice')
-                        ->get();
+            ->ofType('participant')
+            ->with('primaryPractice')
+            ->get();
 
         $u20_patients      = [];
         $billable_patients = [];
 
         // ROLLUP CATEGORIES
-        $CarePlan  = [
+        $CarePlan = [
             'Edit/Modify Care Plan',
             'Initial Care Plan Setup',
             'Care Plan View/Print',
@@ -92,11 +85,11 @@ class ReportsController extends Controller
             'Patient Item Detail Review',
             'Review Care Plan (offline)',
         ];
-        $Progress  = [
+        $Progress = [
             'Review Patient Progress (offline)',
             'Progress Report Review/Print',
         ];
-        $RPM       = [
+        $RPM = [
             'Patient Alerts Review',
             'Patient Overview Review',
             'Biometrics Data Review',
@@ -106,13 +99,13 @@ class ReportsController extends Controller
             'Medications Data Review',
             'Input Observation',
         ];
-        $TCM       = [
+        $TCM = [
             'Test (Scheduling, Communications, etc)',
             'Transitional Care Management Activities',
             'Call to Other Care Team Member',
             'Appointments',
         ];
-        $Other     = [
+        $Other = [
             'other',
             'Medication Reconciliation',
         ];
@@ -138,16 +131,23 @@ class ReportsController extends Controller
             }
             $u20_patients[$act_count]['patient_id'] = $patient->id;
             $acts                                   = DB::table('lv_activities')
-                                                        ->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration'))
-                                                        ->where('patient_id', $patient->id)
-                                                        ->whereBetween('performed_at', [
-                                                            $start,
-                                                            $end,
-                                                        ])
-                                                        ->where('duration', '>', 1200)
-                                                        ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
-                                                        ->orderBy('performed_at', 'desc')
-                                                        ->get();
+                ->select(
+                    DB::raw(
+                        '*,DATE(performed_at),provider_id, type, SUM(duration) as duration'
+                                                            )
+                                                        )
+                ->where('patient_id', $patient->id)
+                ->whereBetween(
+                    'performed_at',
+                    [
+                        $start,
+                        $end,
+                    ]
+                                                        )
+                ->where('duration', '>', 1200)
+                ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+                ->orderBy('performed_at', 'desc')
+                ->get();
 
             foreach ($acts as $activity) {
                 if (in_array($activity->type, $CarePlan)) {
@@ -177,14 +177,14 @@ class ReportsController extends Controller
             ++$act_count;
         }
 
-        $reportData = 'data:' . json_encode(array_values($u20_patients)) . '';
+        $reportData = 'data:'.json_encode(array_values($u20_patients)).'';
 
         $years = [];
         for ($i = 0; $i < 3; ++$i) {
             $years[] = Carbon::now()->subYear($i)->year;
         }
 
-        $months   = [
+        $months = [
             'Jan',
             'Feb',
             'Mar',
@@ -222,7 +222,7 @@ class ReportsController extends Controller
     ) {
         $patient = User::find($patientId);
 
-        $biometrics       = [
+        $biometrics = [
             'Weight',
             'Blood_Sugar',
             'Blood_Pressure',
@@ -240,7 +240,9 @@ class ReportsController extends Controller
             $biometrics_array[$bio_name]['data'] = '';
             if ($value) {
                 foreach ($value as $key => $value) {
-                    $biometrics_array[$bio_name]['data'] .= '{ id:' . $count . ', Week:\'' . $value->day . '\', Reading:' . intval($value->Avg) . '} ,';
+                    $biometrics_array[$bio_name]['data'] .= '{ id:'.$count.', Week:\''.$value->day.'\', Reading:'.intval(
+                        $value->Avg
+                        ).'} ,';
                     ++$count;
                 }
             } else {
@@ -249,466 +251,113 @@ class ReportsController extends Controller
             }//debug($biometrics_array);
         }
 
-        return view('wpUsers.patient.biometric-chart', [
-            'patient'          => $patient,
-            'biometrics_array' => $biometrics_array,
-        ]);
+        return view(
+            'wpUsers.patient.biometric-chart',
+            [
+                'patient'          => $patient,
+                'biometrics_array' => $biometrics_array,
+            ]
+        );
     }
 
-    public function excelReportT1()
-    {
-        // get all users with 1 condition
-        $usersCondition = [];
-        $problems       = [];
-        $cpmProblems    = CpmProblem::all();
-        if ($cpmProblems->count() > 0) {
-            foreach ($cpmProblems as $cpmProblem) {
-                $problems[$cpmProblem->id] = $cpmProblem->name;
-                $problemNames[]            = $cpmProblem->name;
-            }
-        }
-        $careItemNames      = CareItem::whereIn('display_name', $problemNames)->pluck('display_name', 'id')->all();
-        $careItems          = CareItem::whereIn('display_name', $problemNames)->pluck('id')->all();
-        $careItemUserValues = CareItemUserValue::whereIn('care_item_id', $careItems)->where('value', 'Active')->get();
-        if ($careItemUserValues->count() > 0) {
-            foreach ($careItemUserValues as $careItemUserValue) {
-                $usersCondition[$careItemUserValue->user_id] = $careItemNames[$careItemUserValue->care_item_id];
-            }
-        }
-        $date  = date('Y-m-d H:i:s');
-        $users = User::all();
-
-        Excel::create('CLH-Report-' . $date, function ($excel) use (
-            $date,
-            $users,
-            $usersCondition
-        ) {
-            // Set the title
-            $excel->setTitle('CLH Report T1');
-
-            // Chain the setters
-            $excel->setCreator('CLH System')
-                  ->setCompany('CircleLink Health');
-
-            // Call them separately
-            $excel->setDescription('CLH Report T1');
-
-            // Our first sheet
-            $excel->sheet('Sheet 1', function ($sheet) use (
-                $users,
-                $usersCondition
-            ) {
-                $sheet->protect('clhpa$$word', function (\PHPExcel_Worksheet_Protection $protection) {
-                    $protection->setSort(true);
-                });
-                $i = 0;
-                // header
-                $sheet->appendRow([
-                    'id',
-                    'name',
-                    'condition',
-                    'program',
-                ]);
-                foreach ($users as $user) {
-                    if ($i > 2000000) {
-                        continue 1;
-                    }
-
-                    $condition = 'N/A';
-                    if (isset($usersCondition[$user->id])) {
-                        $condition = $usersCondition[$user->id];
-                    }
-                    $programName = 'N/A';
-                    $program     = Practice::find($user->program_id);
-                    if ($program) {
-                        $programName = $program->display_name;
-                    }
-                    $sheet->appendRow([
-                        $user->id,
-                        $user->getFullName(),
-                        $condition,
-                        $programName,
-                    ]);
-                    ++$i;
-                }
-            });
-
-            /*
-            // Our second sheet
-            $excel->sheet('Second sheet', function($sheet) {
-
-            });
-            */
-        })->export('xls');
-    }
-
-    public function excelReportT2()
+    public function excelReportUnreachablePatients()
     {
         $users = $this->patientReadRepository->unreachable()->fetch();
 
-        $date = date('Y-m-d H:i:s');
+        $date     = date('Y-m-d H:i:s');
+        $filename = 'CLH-Report-'.$date.'.xls';
 
-        Excel::create('CLH-Report-' . $date, function ($excel) use (
-            $date,
-            $users
-        ) {
-            // Set the title
-            $excel->setTitle('CLH Report T2');
+        $rows = [];
 
-            // Chain the setters
-            $excel->setCreator('CLH System')
-                  ->setCompany('CircleLink Health');
+        $headings = [
+            'Patient id',
+            'First Name',
+            'Last Name',
+            'Billing Provider',
+            'Phone',
+            'DOB',
+            'CCM Status',
+            'Gender',
+            'Address',
+            'City',
+            'State',
+            'Zip',
+            'CCM Time',
+            'Date Registered',
+            'Date Paused',
+            'Date Withdrawn',
+            'Date Unreachable',
+            'Site',
+            'Caller id',
+            'Location id',
+            'Location Name',
+            'Location Phone',
+            'Location Address',
+            'Location City',
+            'Location State',
+            'Location Zip',
+        ];
 
-            // Call them separately
-            $excel->setDescription('CLH Report T2');
+        foreach ($users as $user) {
+            $billingProvider = User::find($user->getBillingProviderId());
+            //is billingProviderPhone to be used anywhere?
+            if ( ! $billingProvider) {
+                $billingProviderName  = '';
+                $billingProviderPhone = '';
+            } else {
+                $billingProviderName  = $billingProvider->display_name;
+                $billingProviderPhone = $billingProvider->getPhone();
+            }
 
-            // Our first sheet
-            $excel->sheet('Sheet 1', function ($sheet) use (
-                $users
-            ) {
-                $sheet->protect('clhpa$$word', function (\PHPExcel_Worksheet_Protection $protection) {
-                    $protection->setSort(true);
-                });
-                $i = 0;
-                // header
-                $sheet->appendRow([
-                    'Patient id',
-                    'First Name',
-                    'Last Name',
-                    'Billing Provider',
-                    'Phone',
-                    'DOB',
-                    'CCM Status',
-                    'Gender',
-                    'Address',
-                    'City',
-                    'State',
-                    'Zip',
-                    'CCM Time',
-                    'Date Registered',
-                    'Date Paused',
-                    'Date Withdrawn',
-                    'Date Unreachable',
-                    'Site',
-                    'Caller id',
-                    'Location id',
-                    'Location Name',
-                    'Location Phone',
-                    'Location Address',
-                    'Location City',
-                    'Location State',
-                    'Location Zip',
-                ]);
-                foreach ($users as $user) {
-                    if ($i > 2000000) {
-                        continue 1;
-                    }
+            $location = Location::find($user->getPreferredContactLocation());
+            if ( ! $location) {
+                $locationName    = '';
+                $locationPhone   = '';
+                $locationAddress = '';
+                $locationCity    = '';
+                $locationState   = '';
+                $locationZip     = '';
+            } else {
+                $locationName    = $location->name;
+                $locationPhone   = $location->phone;
+                $locationAddress = $location->address_line_1;
+                $locationCity    = $location->city;
+                $locationState   = $location->state;
+                $locationZip     = $location->postal_code;
+            }
 
-                    $billingProvider = User::find($user->getBillingProviderId());
-                    //is billingProviderPhone to be used anywhere?
-                    if ( ! $billingProvider) {
-                        $billingProviderName  = '';
-                        $billingProviderPhone = '';
-                    } else {
-                        $billingProviderName  = $billingProvider->display_name;
-                        $billingProviderPhone = $billingProvider->getPhone();
-                    }
+            $rows[] = [
+                $user->id,
+                $user->getFirstName(),
+                $user->getLastName(),
+                $billingProviderName,
+                $user->getPhone(),
+                $user->dob,
+                $user->getCcmStatus(),
+                $user->getGender(),
+                $user->address,
+                $user->city,
+                $user->state,
+                $user->zip,
+                $user->monthlyTime,
+                $user->patientInfo->user_registered,
+                $user->patientInfo->date_paused,
+                $user->patientInfo->date_withdrawn,
+                $user->patientInfo->date_unreachable,
+                $user->program_id,
+                'Caller id',
+                // provider_phone
+                $user->getPreferredContactLocation(),
+                $locationName,
+                $locationPhone,
+                $locationAddress,
+                $locationCity,
+                $locationState,
+                $locationZip,
+            ];
+        }
 
-                    $location = Location::find($user->getPreferredContactLocation());
-                    if ( ! $location) {
-                        $locationName    = '';
-                        $locationPhone   = '';
-                        $locationAddress = '';
-                        $locationCity    = '';
-                        $locationState   = '';
-                        $locationZip     = '';
-                    } else {
-                        $locationName    = $location->name;
-                        $locationPhone   = $location->phone;
-                        $locationAddress = $location->address_line_1;
-                        $locationCity    = $location->city;
-                        $locationState   = $location->state;
-                        $locationZip     = $location->postal_code;
-                    }
-
-                    $sheet->appendRow([
-                        $user->id,
-                        $user->getFirstName(),
-                        $user->getLastName(),
-                        $billingProviderName,
-                        $user->getPhone(),
-                        $user->dob,
-                        $user->getCcmStatus(),
-                        $user->getGender(),
-                        $user->address,
-                        $user->city,
-                        $user->state,
-                        $user->zip,
-                        $user->monthlyTime,
-                        $user->patientInfo->user_registered,
-                        $user->patientInfo->date_paused,
-                        $user->patientInfo->date_withdrawn,
-                        $user->patientInfo->date_unreachable,
-                        $user->program_id,
-                        'Caller id',
-                        // provider_phone
-                        $user->getPreferredContactLocation(),
-                        $locationName,
-                        $locationPhone,
-                        $locationAddress,
-                        $locationCity,
-                        $locationState,
-                        $locationZip,
-                    ]);
-                    ++$i;
-                }
-            });
-
-            /*
-            // Our second sheet
-            $excel->sheet('Second sheet', function($sheet) {
-
-            });
-            */
-        })->export('xls');
-    }
-
-    public function excelReportT3()
-    {
-        // get all users with paused ccm_status
-        $users = User::with('meta')
-                     ->with('roles')
-                     ->whereHas('roles', function ($q) {
-                         $q->where(function ($query) {
-                             $query->orWhere('name', 'care-center');
-                             $query->orWhere('name', 'no-ccm-care-center');
-                         });
-                     })
-                     ->get();
-
-        $date = date('Y-m-d H:i:s');
-
-        Excel::create('CLH-Report-' . $date, function ($excel) use (
-            $date,
-            $users
-        ) {
-            // Set the title
-            $excel->setTitle('CLH Report T3');
-
-            // Chain the setters
-            $excel->setCreator('CLH System')
-                  ->setCompany('CircleLink Health');
-
-            // Call them separately
-            $excel->setDescription('CLH Report T3');
-
-            // Our first sheet
-            $excel->sheet('Sheet 1', function ($sheet) use (
-                $users
-            ) {
-                $sheet->protect('clhpa$$word', function (\PHPExcel_Worksheet_Protection $protection) {
-                    $protection->setSort(true);
-                });
-                $i = 0;
-                // header
-                $userColumns = ['date'];
-                foreach ($users as $user) {
-                    $userColumns[] = $user->display_name;
-                }
-                $sheet->appendRow($userColumns);
-
-                // get array of dates
-                $a = new DateTime('2016-03-30');
-                $b = new DateTime(date('Y-m-d'));
-
-                // to exclude the end date (so you just get dates between start and end date):
-                // $b->modify('-1 day');
-
-                $period = new DatePeriod($a, new DateInterval('P1D'), $b, DatePeriod::EXCLUDE_START_DATE);
-
-                $sheetRows = []; // so we can reverse after
-
-                foreach ($period as $dt) {
-                    //echo $dt->format('Y-m-d') .'<br />';
-
-                    $rowUserValues = [$dt->format('Y-m-d')];
-                    foreach ($users as $user) {
-                        // get total activity time
-                        $pageTime = PageTimer::whereBetween('start_time', [
-                            $dt->format('Y-m-d') . ' 00:00:01',
-                            $dt->format('Y-m-d') . ' 23:59:59',
-                        ])
-                                             ->where('provider_id', $user->id)
-                                             ->where('activity_type', '!=', '')
-                                             ->sum('duration');
-
-                        $rowUserValues[] = number_format((float)($pageTime / 60), 2, '.', '');
-                    }
-
-                    $sheetRows[] = $rowUserValues;
-                }
-
-                $sheetRows = array_reverse($sheetRows);
-
-                foreach ($sheetRows as $sheetRow) {
-                    $sheet->appendRow($sheetRow);
-                }
-
-                //dd();
-                //dd('done');
-            });
-
-            /*
-            // Our second sheet
-            $excel->sheet('Second sheet', function($sheet) {
-
-            });
-            */
-        })->export('xls');
-    }
-
-    public function excelReportT4()
-    {
-        // get all patients
-        $users = User::with('roles')
-                     ->whereHas('roles', function ($q) {
-                         $q->where('name', 'participant');
-                     })
-                     ->get();
-
-        $date = date('Y-m-d H:i:s');
-
-        Excel::create('CLH-Report-' . $date, function ($excel) use (
-            $date,
-            $users
-        ) {
-            // Set the title
-            $excel->setTitle('CLH Report T4');
-
-            // Chain the setters
-            $excel->setCreator('CLH System')
-                  ->setCompany('CircleLink Health');
-
-            // Call them separately
-            $excel->setDescription('CLH Report T4');
-
-            // Our first sheet
-            $excel->sheet('Sheet 1', function ($sheet) use (
-                $users
-            ) {
-                $sheet->protect('clhpa$$word', function (\PHPExcel_Worksheet_Protection $protection) {
-                    $protection->setSort(true);
-                });
-                $i = 0;
-                // header
-                $sheet->appendRow([
-                    'id',
-                    'Provider',
-                    'Practice',
-                    'CCM Status',
-                    'DOB',
-                    'Phone',
-                    'Registered On',
-                    'CCM',
-                    'Patient Reached',
-                    'Last Entered Note',
-                    'Note Content',
-                    '2nd to last Entered Note',
-                    'Note Content',
-                    '3rd to last Entered Note',
-                    'Note Content',
-                ]);
-
-                foreach ($users as $user) {
-                    if ($i > 2000000) {
-                        continue 1;
-                    }
-
-                    // provider
-                    $billingProvider     = User::find($user->billingProviderID);
-                    $billingProviderName = '';
-                    if ($billingProvider) {
-                        $billingProviderName = $billingProvider->display_name;
-                    }
-
-                    // program
-                    $programName = 'N/A';
-                    $program     = Practice::find($user->program_id);
-                    if ($program) {
-                        $programName = $program->display_name;
-                    }
-
-                    // monthly time
-                    $seconds = $user->curMonthActivityTime;
-                    if ($seconds < 600) {
-                        //continue 1;
-                    }
-                    $H           = floor($seconds / 3600);
-                    $i           = ($seconds / 60) % 60;
-                    $s           = $seconds % 60;
-                    $monthlyTime = sprintf('%03d:%02d', $i, $s);
-
-                    $activity1comment = '';
-                    $activity1status  = '';
-                    $activity1date    = '';
-                    $activity2comment = '';
-                    $activity2status  = '';
-                    $activity2date    = '';
-                    $activity3comment = '';
-                    $activity3status  = '';
-                    $activity3date    = '';
-                    $activities       = $user->notes()
-                                             ->orderBy('performed_at', 'DESC')
-                                             ->limit(3)
-                                             ->get();
-                    if ($activities->count() > 0) {
-                        $a = 0;
-                        foreach ($activities as $activity) {
-                            $comment    = $activity->body;
-                            $callStatus = '';
-                            $call       = $activity->call()->first();
-                            if ($call) {
-                                $callStatus = $call->status;
-                            }
-                            if (0 == $a) {
-                                $activity1comment = $activity->id . ' ' . $comment;
-                                $activity1status  = $callStatus;
-                                $activity1date    = $activity->performed_at;
-                            }
-                            if (1 == $a) {
-                                $activity2comment = $activity->id . ' ' . $comment;
-                                $activity2status  = $callStatus;
-                                $activity2date    = $activity->performed_at;
-                            }
-                            if (2 == $a) {
-                                $activity3comment = $activity->id . ' ' . $comment;
-                                $activity3status  = $callStatus;
-                                $activity3date    = $activity->performed_at;
-                            }
-                            ++$a;
-                        }
-                    }
-                    $sheet->appendRow([
-                        $user->getFullName(),
-                        $billingProviderName,
-                        $programName,
-                        $user->getCcmStatus(),
-                        $user->getBirthDate(),
-                        $user->getPhone(),
-                        $user->getRegistrationDate(),
-                        $monthlyTime,
-                        $activity1status,
-                        $activity1date,
-                        $activity1comment,
-                        $activity2date,
-                        $activity2comment,
-                        $activity3date,
-                        $activity3comment,
-                    ]);
-                    ++$i;
-                }
-            });
-        })->export('xls');
+        return (new FromArray($filename, $rows, $headings))->download($filename);
     }
 
     public function getPausedLettersFile(Request $request)
@@ -770,12 +419,14 @@ class ReportsController extends Controller
             //$first = reset($array);
             if ($value) {
                 foreach ($value as $key => $value) {
-                    $biometrics_array[$bio_name]['unit']    = $this->service->biometricsUnitMapping(str_replace(
-                        '_',
-                        ' ',
-                        $bio_name
-                    ));
-                    $biometrics_array[$bio_name]['target']  = $this->service->getTargetValueForBiometric(
+                    $biometrics_array[$bio_name]['unit'] = $this->service->biometricsUnitMapping(
+                        str_replace(
+                            '_',
+                            ' ',
+                            $bio_name
+                        )
+                    );
+                    $biometrics_array[$bio_name]['target'] = $this->service->getTargetValueForBiometric(
                         $bio_name,
                         $user,
                         false
@@ -784,7 +435,9 @@ class ReportsController extends Controller
                     if (intval($value->Avg) > $biometrics_array[$bio_name]['max']) {
                         $biometrics_array[$bio_name]['max'] = intval($value->Avg);
                     }
-                    $biometrics_array[$bio_name]['data'] .= '{ id:' . $count . ', Week:\'' . $value->day . '\', Reading:' . intval($value->Avg) . '} ,';
+                    $biometrics_array[$bio_name]['data'] .= '{ id:'.$count.', Week:\''.$value->day.'\', Reading:'.intval(
+                        $value->Avg
+                        ).'} ,';
                     ++$count;
                 }
             } else {
@@ -890,7 +543,7 @@ class ReportsController extends Controller
             $patients = $pausedPatients->toJson();
         }
 
-        $url = route('get.paused.letters.file') . '?patientUserIds=';
+        $url = route('get.paused.letters.file').'?patientUserIds=';
 
         return view('patient.printPausedPatientsLetters', compact(['patients', 'url']));
     }
@@ -942,24 +595,34 @@ class ReportsController extends Controller
         }
 
         $patients = User::intersectPracticesWith(auth()->user())
-                        ->ofType('participant')
-                        ->with([
-                            'primaryPractice',
-                            'activities' => function ($q) use ($start, $end) {
-                                $q->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration'))
-                                  ->whereBetween('performed_at', [
-                                      $start,
-                                      $end,
-                                  ])
-                                  ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
-                                  ->orderBy('performed_at', 'desc');
-                            },
-                        ])
-                        ->whereHas('patientSummaries', function ($q) use ($time) {
-                            $q->where('month_year', $time->copy()->startOfMonth()->toDateString())
-                              ->where('total_time', '<', 1200);
-                        })
-                        ->get();
+            ->ofType('participant')
+            ->with(
+                [
+                    'primaryPractice',
+                    'activities' => function ($q) use ($start, $end) {
+                        $q->select(
+                            DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration')
+                        )
+                            ->whereBetween(
+                                'performed_at',
+                                [
+                                    $start,
+                                    $end,
+                                ]
+                          )
+                            ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+                            ->orderBy('performed_at', 'desc');
+                    },
+                ]
+                        )
+            ->whereHas(
+                'patientSummaries',
+                function ($q) use ($time) {
+                    $q->where('month_year', $time->copy()->startOfMonth()->toDateString())
+                        ->where('total_time', '<', 1200);
+                }
+                        )
+            ->get();
 
         $u20_patients = [];
 
@@ -976,7 +639,7 @@ class ReportsController extends Controller
             'Review Patient Progress (offline)',
             'Progress Report Review/Print',
         ];
-        $RPM      = [
+        $RPM = [
             'Patient Alerts Review',
             'Patient Overview Review',
             'Biometrics Data Review',
@@ -986,13 +649,13 @@ class ReportsController extends Controller
             'Medications Data Review',
             'Input Observation',
         ];
-        $TCM      = [
+        $TCM = [
             'Test (Scheduling, Communications, etc)',
             'Transitional Care Management Activities',
             'Call to Other Care Team Member',
             'Appointments',
         ];
-        $Other    = [
+        $Other = [
             'other',
             'Medication Reconciliation',
         ];
@@ -1009,10 +672,12 @@ class ReportsController extends Controller
             $u20_patients[$patient_counter]['colsum_other']    = 0;
             $u20_patients[$patient_counter]['colsum_total']    = 0;
             $u20_patients[$patient_counter]['ccm_status']      = ucwords($patient->getCcmStatus());
-            $u20_patients[$patient_counter]['dob']             = Carbon::parse($patient->getBirthDate())->format('m/d/Y');
-            $u20_patients[$patient_counter]['patient_name']    = $patient->getFullName();
-            $u20_patients[$patient_counter]['patient_id']      = $patient->id;
-            $acts                                              = $patient->activities;
+            $u20_patients[$patient_counter]['dob']             = Carbon::parse($patient->getBirthDate())->format(
+                'm/d/Y'
+            );
+            $u20_patients[$patient_counter]['patient_name'] = $patient->getFullName();
+            $u20_patients[$patient_counter]['patient_id']   = $patient->id;
+            $acts                                           = $patient->activities;
 
             foreach ($acts as $activity) {
                 if (in_array($activity->type, $CarePlan)) {
@@ -1041,14 +706,14 @@ class ReportsController extends Controller
             }
             ++$patient_counter;
         }
-        $reportData = 'data:' . json_encode(array_values($u20_patients)) . '';
+        $reportData = 'data:'.json_encode(array_values($u20_patients)).'';
 
         $years = [];
         for ($i = 0; $i < 3; ++$i) {
             $years[] = Carbon::now()->subYear($i)->year;
         }
 
-        $months   = [
+        $months = [
             'Jan',
             'Feb',
             'Mar',
@@ -1078,6 +743,19 @@ class ReportsController extends Controller
         ];
 
         return view('reports.u20', $data);
+    }
+
+    public function viewCareDocumentsPage(
+        Request $request,
+        $patientId = false
+    ) {
+        if ( ! $patientId) {
+            return 'Patient Not Found..';
+        }
+
+        $patient = User::find($patientId);
+
+        return view('patient.care-docs.index', compact(['patient']));
     }
 
     public function viewPdfCarePlan(
@@ -1142,19 +820,5 @@ class ReportsController extends Controller
                 'careplan'                => $careplanService->careplan($patientId),
             ]
         );
-    }
-
-    public function viewCareDocumentsPage(
-        Request $request,
-        $patientId = false
-    ) {
-        if ( ! $patientId) {
-            return 'Patient Not Found..';
-        }
-
-        $patient = User::find($patientId);
-
-        return view('patient.care-docs.index', compact(['patient']));
-
     }
 }

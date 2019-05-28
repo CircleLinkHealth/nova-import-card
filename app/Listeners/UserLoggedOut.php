@@ -6,8 +6,8 @@
 
 namespace App\Listeners;
 
-use App\PageTimer;
 use Carbon\Carbon;
+use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Auth\Events\Logout;
 
 class UserLoggedOut

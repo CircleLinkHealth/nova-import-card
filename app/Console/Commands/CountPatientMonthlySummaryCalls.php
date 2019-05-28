@@ -6,9 +6,9 @@
 
 namespace App\Console\Commands;
 
-use App\PatientMonthlySummary;
 use App\Repositories\CallRepository;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use Illuminate\Console\Command;
 
 class CountPatientMonthlySummaryCalls extends Command
@@ -68,8 +68,8 @@ class CountPatientMonthlySummaryCalls extends Command
                     $save = false;
 
                     $noOfSuccessfulCalls = $this->callRepository->numberOfSuccessfulCalls(
-                                         $pms->patient_id,
-                                         $date
+                        $pms->patient_id,
+                        $date
                                      );
 
                     if ($noOfSuccessfulCalls != $pms->no_of_successful_calls) {

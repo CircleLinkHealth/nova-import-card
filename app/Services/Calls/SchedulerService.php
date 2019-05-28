@@ -6,22 +6,26 @@
 
 namespace App\Services\Calls;
 
-use App\Activity;
 use App\Algorithms\Calls\SuccessfulHandler;
 use App\Algorithms\Calls\UnsuccessfulHandler;
 use App\Call;
-use App\Family;
 use App\Note;
-use App\Nurse;
-use App\Patient;
 use App\Repositories\PatientWriteRepository;
 use App\Services\NoteService;
-use App\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Family;
+use CircleLinkHealth\Customer\Entities\Nurse;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Illuminate\Support\Facades\Auth;
 
 class SchedulerService
 {
+    const CALL_BACK_TYPE = 'Call Back';
+
+    const CALL_TYPE = 'call';
+
     /**
      * @var NoteService
      */
@@ -43,7 +47,7 @@ class SchedulerService
     {
         return Call::where(function ($q) {
             $q->whereNull('type')
-                ->orWhere('type', '=', 'call');
+                ->orWhere('type', '=', SchedulerService::CALL_TYPE);
         })
             ->where('inbound_cpm_id', $patientId)
             ->where('status', '=', 'scheduled')
@@ -81,7 +85,7 @@ class SchedulerService
 
         $call = Call::where(function ($q) {
             $q->whereNull('type')
-                ->orWhere('type', '=', 'call');
+                ->orWhere('type', '=', SchedulerService::CALL_TYPE);
         })
             ->where('inbound_cpm_id', $patient->id)
             ->whereIn('status', ['reached', 'not reached'])
@@ -107,7 +111,7 @@ class SchedulerService
     {
         $call = Call::where(function ($q) {
             $q->whereNull('type')
-                ->orWhere('type', '=', 'call');
+                ->orWhere('type', '=', SchedulerService::CALL_TYPE);
         })
             ->where(function ($q) use (
                         $patient
@@ -130,13 +134,13 @@ class SchedulerService
      *
      * @param $patientId
      *
-     * @return \Illuminate\Database\Eloquent\Model|object|static|null
+     * @return Call|null
      */
-    public function getTodaysCall($patientId)
+    public function getTodaysCall($patientId): ?Call
     {
         $query = Call::where(function ($q) {
             $q->whereNull('type')
-                ->orWhere('type', '=', 'call');
+                ->orWhere('type', '=', SchedulerService::CALL_TYPE);
         })
             ->where('inbound_cpm_id', $patientId)
             ->where('status', 'scheduled')
@@ -146,7 +150,7 @@ class SchedulerService
         if (0 == $query->count()) {
             $query = Call::where(function ($q) {
                 $q->whereNull('type')
-                    ->orWhere('type', '=', 'call');
+                    ->orWhere('type', '=', SchedulerService::CALL_TYPE);
             })
                 ->where('inbound_cpm_id', $patientId)
                 ->whereNotIn('status', ['reached', 'not reached'])
@@ -167,8 +171,8 @@ class SchedulerService
                                $row
                            ) {
                     $q->where(
-                                   'birth_date',
-                                   Carbon::parse($row['DOB'])->toDateString()
+                        'birth_date',
+                        Carbon::parse($row['DOB'])->toDateString()
                                );
                 })
                 ->first();
@@ -199,7 +203,7 @@ class SchedulerService
             $call = $this->getScheduledCallForPatient($patient);
 
             Call::updateOrCreate([
-                'type'    => 'call',
+                'type'    => SchedulerService::CALL_TYPE,
                 'service' => 'phone',
                 'status'  => 'scheduled',
 
@@ -272,12 +276,12 @@ class SchedulerService
             ? null
             : $nurse_id;
 
-        if (!($date instanceof Carbon)) {
+        if ( ! ($date instanceof Carbon)) {
             $date = Carbon::parse($date);
         }
 
         return Call::create([
-            'type'    => 'call',
+            'type'    => SchedulerService::CALL_TYPE,
             'service' => 'phone',
             'status'  => 'scheduled',
 
@@ -370,7 +374,7 @@ class SchedulerService
                 } else {
                     //fill in some call info:
                     $call = Call::create([
-                        'type'    => 'call',
+                        'type'    => SchedulerService::CALL_TYPE,
                         'service' => 'phone',
                         'status'  => 'scheduled',
 
@@ -488,14 +492,12 @@ class SchedulerService
                             $data = (new SuccessfulHandler(
                                 $patient,
                                 Carbon::parse($last_attempted_time),
-                                $patient->user->isCCMComplex(),
                                 $last_attempted_call
                             ));
                         } else {
                             $data = (new UnsuccessfulHandler(
                                 $patient,
                                 Carbon::parse($last_attempted_time),
-                                $patient->user->isCCMComplex(),
                                 $last_attempted_call
                             ));
                         }
@@ -569,8 +571,6 @@ class SchedulerService
         $noteId,
         $callStatus
     ) {
-        $isComplex = $patient->isCCMComplex();
-
         $scheduled_call = $this->getTodaysCall($patient->id);
 
         $note = Note::find($noteId);
@@ -582,7 +582,8 @@ class SchedulerService
         );
 
         if (Call::IGNORED != $callStatus) {
-            $this->patientWriteRepository->updateCallLogs($patient->patientInfo, Call::REACHED == $callStatus);
+            $isCallBack = null != $scheduled_call && SchedulerService::CALL_BACK_TYPE === $scheduled_call->sub_type;
+            $this->patientWriteRepository->updateCallLogs($patient->patientInfo, Call::REACHED == $callStatus, $isCallBack);
         }
 
         $nextCall = SchedulerService::getNextScheduledCall($patient->id, true);
@@ -596,14 +597,12 @@ class SchedulerService
             $prediction = (new SuccessfulHandler(
                 $patient->patientInfo,
                 Carbon::now(),
-                $isComplex,
                 $previousCall
             ))->handle();
         } else {
             $prediction = (new UnsuccessfulHandler(
                 $patient->patientInfo,
                 Carbon::now(),
-                $isComplex,
                 $previousCall
             ))->handle();
         }

@@ -12,7 +12,7 @@ use App\Repositories\CcdProblemRepository;
 use App\Repositories\ProblemCodeRepository;
 use App\Repositories\UserRepositoryEloquent;
 use App\Services\CPM\CpmInstructionService;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 class CcdProblemService
 {
@@ -58,8 +58,7 @@ class CcdProblemService
 
     public function editPatientCcdProblem(
         $userId,
-        $ccdId,
-        $name,
+        $ccdProblemId,
         $problemCode = null,
         $is_monitored = null,
         $icd10 = null,
@@ -67,8 +66,7 @@ class CcdProblemService
     ) {
         $problem = $this->setupProblem($this->repo()->editPatientCcdProblem(
             $userId,
-            $ccdId,
-            $name,
+            $ccdProblemId,
             $problemCode,
             $is_monitored
         ));
@@ -85,13 +83,13 @@ class CcdProblemService
             $problem['instruction'] = $instructionData;
 
             $this->repo()->model()->where([
-                'id' => $ccdId,
+                'id' => $ccdProblemId,
             ])->update([
                 'cpm_instruction_id' => $instructionData->id,
             ]);
         } else {
             $this->repo()->model()->where([
-                'id' => $ccdId,
+                'id' => $ccdProblemId,
             ])->update([
                 'cpm_instruction_id' => null,
             ]);

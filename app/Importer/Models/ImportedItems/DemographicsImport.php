@@ -8,7 +8,7 @@ namespace App\Importer\Models\ImportedItems;
 
 use App\Importer\Models\ItemLogs\DemographicsLog;
 use App\Traits\Relationships\BelongsToCcda;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 
@@ -48,7 +48,7 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @property string|null                                   $preferred_call_days
  * @property \App\Importer\Models\ItemLogs\DemographicsLog $ccdLog
  * @property \App\Models\MedicalRecords\Ccda               $ccda
- * @property \App\User|null                                $provider
+ * @property \CircleLinkHealth\Customer\Entities\User|null $provider
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\DemographicsImport whereCellPhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\DemographicsImport whereCity($value)
@@ -82,10 +82,17 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\DemographicsImport whereWorkPhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\DemographicsImport whereZip($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\DemographicsImport newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\DemographicsImport newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\DemographicsImport query()
  */
-class DemographicsImport extends \App\BaseModel implements Transformable
+class DemographicsImport extends \CircleLinkHealth\Core\Entities\BaseModel implements Transformable
 {
-    use BelongsToCcda,
+    use BelongsToCcda;
+    use
         TransformableTrait;
 
     protected $fillable = [

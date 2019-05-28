@@ -15,9 +15,9 @@ use App\Importer\Models\ItemLogs\ProblemCodeLog;
 use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Models\MedicalRecords\TabularMedicalRecord;
-use App\Practice;
 use App\Services\Eligibility\Entities\Problem as ProblemEntity;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 
 class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
 {
@@ -31,7 +31,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
     /**
      * The Practice, if it was passed. Null otherwise.
      *
-     * @var Practice
+     * @var \CircleLinkHealth\Customer\Entities\Practice
      */
     protected $practice;
 

@@ -1,5 +1,8 @@
 @extends('partials.providerUI')
 
+@section('title', 'Billable Patient Reports & Invoices')
+@section('activity', 'Billable Patient Reports & Invoices')
+
 @section('content')
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     <div class="container-fluid" style="padding-top: 50px;">

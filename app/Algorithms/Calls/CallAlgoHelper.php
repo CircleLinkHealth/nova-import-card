@@ -7,9 +7,9 @@
 namespace App\Algorithms\Calls;
 
 use App\Call;
-use App\Nurse;
-use App\PatientContactWindow;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Nurse;
+use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 
 trait CallAlgoHelper
 {

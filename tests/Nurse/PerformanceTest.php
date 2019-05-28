@@ -6,9 +6,9 @@
 
 namespace Tests\Nurse;
 
-use App\Activity;
-use App\PageTimer;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
+use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Tests\TestCase;
 
 class PerformanceTest extends TestCase
@@ -28,7 +28,7 @@ class PerformanceTest extends TestCase
 
             $performance = $activityTime / $systemTime;
 
-            $totalTimeInSystemToday = secondsToHMS($systemTime);
+            $totalTimeInSystemOnGivenDate = secondsToHMS($systemTime);
 
             $totalTimeInSystemThisMonthInSeconds = PageTimer::where('provider_id', $nurse->id)
                 ->createdThisMonth()

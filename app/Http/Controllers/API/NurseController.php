@@ -8,7 +8,7 @@ namespace App\Http\Controllers\API;
 
 use App\Filters\NurseFilters;
 use App\Http\Resources\NurseInfo;
-use App\Nurse;
+use CircleLinkHealth\Customer\Entities\Nurse;
 
 class NurseController extends ApiController
 {

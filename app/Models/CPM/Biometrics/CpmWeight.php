@@ -8,19 +8,19 @@ namespace App\Models\CPM\Biometrics;
 
 use App\Contracts\Models\CPM\Biometric;
 use App\Models\CPM\CpmBiometric;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 /**
  * App\Models\CPM\Biometrics\CpmWeight.
  *
- * @property int            $id
- * @property int            $patient_id
- * @property string         $starting
- * @property string         $target
- * @property int            $monitor_changes_for_chf
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property \App\User      $patient
+ * @property int                                      $id
+ * @property int                                      $patient_id
+ * @property string                                   $starting
+ * @property string                                   $target
+ * @property int                                      $monitor_changes_for_chf
+ * @property \Carbon\Carbon                           $created_at
+ * @property \Carbon\Carbon                           $updated_at
+ * @property \CircleLinkHealth\Customer\Entities\User $patient
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmWeight whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmWeight whereId($value)
@@ -30,8 +30,14 @@ use App\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmWeight whereTarget($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmWeight whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmWeight newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmWeight newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmWeight query()
  */
-class CpmWeight extends \App\BaseModel implements Biometric
+class CpmWeight extends \CircleLinkHealth\Core\Entities\BaseModel implements Biometric
 {
     public static $messages = [
         'starting.max' => 'The Starting Weight may not be greater than 999.',

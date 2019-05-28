@@ -229,7 +229,7 @@
                                     'id' => 'instead-of-provider-@{{index}}',
                                     'label' => 'Someone else instead of provider.',
                                     'name' => 'users[@{{index}}][forward_alerts_to][who]',
-                                    'value' => App\User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER,
+                                    'value' => \CircleLinkHealth\Customer\Entities\User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER,
                                     'attributes' => [
                                         'v-model' => 'newUser.forward_alerts_to.who',
                                         'required' => 'required',
@@ -241,7 +241,7 @@
                                 ])
 
                                 <transition>
-                                    <div v-show="newUser.forward_alerts_to.who == '{{App\User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER}}'">
+                                    <div v-show="newUser.forward_alerts_to.who == '{{\CircleLinkHealth\Customer\Entities\User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER}}'">
                                         <br>
                                         <div class="col s12">
                                             @include('provider.partials.clinicalIssuesNotifyUser')
@@ -255,7 +255,7 @@
                                     'id' => 'in-addition-@{{index}}',
                                     'label' => 'Notify others in addition to provider.',
                                     'name' => 'users[@{{index}}][forward_alerts_to][who]',
-                                    'value' => App\User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER,
+                                    'value' => \CircleLinkHealth\Customer\Entities\User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER,
                                     'attributes' => [
                                         'v-model' => 'newUser.forward_alerts_to.who',
                                         'required' => 'required',
@@ -266,7 +266,7 @@
                                     ]
                                 ])
                                 <transition>
-                                    <div v-show="newUser.forward_alerts_to.who == '{{App\User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER}}'">
+                                    <div v-show="newUser.forward_alerts_to.who == '{{\CircleLinkHealth\Customer\Entities\User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER}}'">
                                         <br>
                                         <div class="col s12">
                                             @include('provider.partials.clinicalIssuesNotifyUser')
@@ -307,7 +307,7 @@
                                     'id' => 'cp-emails-instead-of-provider-@{{index}}',
                                     'label' => 'Someone else instead of provider.',
                                     'name' => 'users[@{{index}}][forward_careplan_approval_emails_to][who]',
-                                    'value' => App\User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER,
+                                    'value' => \CircleLinkHealth\Customer\Entities\User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER,
                                     'attributes' => [
                                         'v-model' => 'newUser.forward_careplan_approval_emails_to.who',
                                         'required' => 'required',
@@ -319,7 +319,7 @@
                                 ])
 
                                 <transition>
-                                    <div v-show="newUser.forward_careplan_approval_emails_to.who == '{{App\User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER}}'">
+                                    <div v-show="newUser.forward_careplan_approval_emails_to.who == '{{\CircleLinkHealth\Customer\Entities\User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER}}'">
                                         <br>
                                         <div class="col s12">
                                             @include('provider.partials.forwardCareplanApprovalEmails')
@@ -333,7 +333,7 @@
                                     'id' => 'cp-emails-in-addition-@{{index}}',
                                     'label' => 'Notify others in addition to provider.',
                                     'name' => 'users[@{{index}}][forward_careplan_approval_emails_to][who]',
-                                    'value' => App\User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER,
+                                    'value' => \CircleLinkHealth\Customer\Entities\User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER,
                                     'attributes' => [
                                         'v-model' => 'newUser.forward_careplan_approval_emails_to.who',
                                         'required' => 'required',
@@ -344,7 +344,7 @@
                                     ]
                                 ])
                                 <transition>
-                                    <div v-show="newUser.forward_careplan_approval_emails_to.who == '{{App\User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER}}'">
+                                    <div v-show="newUser.forward_careplan_approval_emails_to.who == '{{\CircleLinkHealth\Customer\Entities\User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER}}'">
                                         <br>
                                         <div class="col s12">
                                             @include('provider.partials.forwardCareplanApprovalEmails')

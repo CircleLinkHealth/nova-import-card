@@ -28,8 +28,8 @@ class CallView extends Resource
             'nurse'                  => $this->nurse,
             'patient_id'             => $this->patient_id,
             'patient'                => $this->patient,
-            'scheduled_date'         => $this->scheduled_date,
-            'last_call'              => $this->last_call,
+            'scheduled_date'         => presentDate($this->scheduled_date, false),
+            'last_call'              => presentDate($this->last_call),
             'ccm_time'               => $this->ccm_time,
             'bhi_time'               => $this->bhi_time,
             'no_of_successful_calls' => $this->no_of_successful_calls,
@@ -42,6 +42,7 @@ class CallView extends Resource
             'is_ccm'                 => $this->is_ccm,
             'is_bhi'                 => $this->is_bhi,
             'billing_provider'       => $this->billing_provider,
+            'ccm_status'             => $this->ccm_status,
         ];
     }
 }

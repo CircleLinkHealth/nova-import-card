@@ -7,7 +7,8 @@
 namespace App\Notifications;
 
 use App\Note;
-use App\User;
+use App\ValueObjects\SimpleNotification;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -18,7 +19,11 @@ class NoteForwarded extends Notification
     public $attachment;
     public $channels = ['database'];
 
+    /**
+     * @var Note
+     */
     public $note;
+
     public $pathToPdf;
 
     /**
@@ -45,20 +50,28 @@ class NoteForwarded extends Notification
     }
 
     /**
+     * Get the body of a DM.
+     *
+     * @return string
+     */
+    public function getDMBody()
+    {
+        $link = $this->note->link();
+
+        $message  = 'Please find attached a forwarded note regarding one of your patients';
+        $lastLine = PHP_EOL.PHP_EOL."The web version of the note can be found at $link";
+
+        return $this->getBody($message, $lastLine);
+    }
+
+    /**
      * Get the body of the email.
      *
      * @return string
      */
-    public function getBody()
+    public function getEmailBody()
     {
-        $message = 'Please click below button to see a forwarded note regarding one of your patients, created on '
-                   .$this->note->performed_at->toFormattedDateString();
-
-        if (auth()->check()) {
-            $message .= ' by '.auth()->user()->getFullName();
-        }
-
-        return $message;
+        return $this->getBody('Please click below button to see a forwarded note regarding one of your patients');
     }
 
     /**
@@ -93,13 +106,14 @@ class NoteForwarded extends Notification
                 : null,
             'sender_email' => optional(auth()->user())->email,
 
-            'receiver_type'  => $notifiable->id,
-            'receiver_id'    => get_class($notifiable),
+            'receiver_type'  => get_class($notifiable),
+            'receiver_id'    => $notifiable->id,
             'receiver_email' => $notifiable->email,
 
-            'body'    => $this->getBody(),
-            'link'    => $this->note->link(),
-            'subject' => $this->getSubject(),
+            'email_body' => $this->getEmailBody(),
+            'dm_body'    => $this->getDMBody(),
+            'link'       => $this->note->link(),
+            'subject'    => $this->getSubject(),
 
             'note_id' => $this->note->id,
 
@@ -120,7 +134,10 @@ class NoteForwarded extends Notification
             return false;
         }
 
-        return $this->toPdf();
+        return (new SimpleNotification())
+            ->setBody($this->getDMBody())
+            ->setSubject($this->getSubject())
+            ->setFilePath($this->toPdf());
     }
 
     /**
@@ -152,24 +169,29 @@ class NoteForwarded extends Notification
         $slugSaasAccountName = strtolower(str_slug($saasAccountName, ''));
 
         $mail = (new MailMessage())
-            ->view('vendor.notifications.email', [
-                'greeting'        => $this->getBody(),
-                'actionText'      => 'View Note',
-                'actionUrl'       => $this->note->link(),
-                'introLines'      => [],
-                'outroLines'      => [],
-                'level'           => '',
-                'saasAccountName' => $saasAccountName,
-            ])
+            ->view(
+                'vendor.notifications.email',
+                [
+                    'greeting'        => $this->getEmailBody(),
+                    'actionText'      => 'View Note',
+                    'actionUrl'       => $this->note->link(),
+                    'introLines'      => [],
+                    'outroLines'      => [],
+                    'level'           => '',
+                    'saasAccountName' => $saasAccountName,
+                ]
+            )
             ->from("no-reply@${slugSaasAccountName}.com", $saasAccountName)
             ->subject($this->getSubject());
 
         if ('circlelink-health' == $notifiable->saasAccount->slug) {
-            return $mail->bcc([
-                'raph@circlelinkhealth.com',
-                'chelsea@circlelinkhealth.com',
-                'sheller@circlelinkhealth.com',
-            ]);
+            return $mail->bcc(
+                [
+                    'raph@circlelinkhealth.com',
+                    'abigail@circlelinkhealth.com',
+                    'sheller@circlelinkhealth.com',
+                ]
+            );
         }
 
         return $mail;
@@ -199,5 +221,31 @@ class NoteForwarded extends Notification
     public function via($notifiable)
     {
         return $this->channels;
+    }
+
+    /**
+     * Factory for message body.
+     *
+     * @param $greeting
+     * @param mixed $lastLine
+     *
+     * @return string
+     */
+    private function getBody($greeting, $lastLine = '')
+    {
+        $message = $greeting.', created on '
+                   .$this->note->performed_at->toFormattedDateString();
+
+        if ($this->note->author) {
+            $message .= ' by '.$this->note->author->getFullName().'.';
+        }
+
+        if (auth()->check()) {
+            $message .= PHP_EOL.PHP_EOL.'The note was forwarded to you by '.auth()->user()->getFullName().'.';
+        }
+
+        $message .= $lastLine;
+
+        return $message;
     }
 }

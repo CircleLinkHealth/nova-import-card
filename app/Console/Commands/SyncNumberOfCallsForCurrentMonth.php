@@ -6,9 +6,9 @@
 
 namespace App\Console\Commands;
 
-use App\PatientMonthlySummary;
 use App\Repositories\PatientSummaryEloquentRepository;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use Illuminate\Console\Command;
 
 class SyncNumberOfCallsForCurrentMonth extends Command
@@ -50,7 +50,7 @@ class SyncNumberOfCallsForCurrentMonth extends Command
     {
         PatientMonthlySummary::whereMonthYear(Carbon::now()->startOfMonth())->chunk(500, function ($summaries) {
             foreach ($summaries as $summary) {
-                $this->patientSummaryEloquentRepository->syncCallCounts($summary);
+                $this->patientSummaryEloquentRepository->syncCallCounts($summary)->save();
             }
         });
     }

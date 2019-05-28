@@ -7,9 +7,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Permission;
-use App\Role;
 use Auth;
+use CircleLinkHealth\Customer\Entities\Permission;
+use CircleLinkHealth\Customer\Entities\Role;
 use Illuminate\Http\Request;
 
 class RoleController extends Controller

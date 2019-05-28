@@ -6,10 +6,10 @@
 
 namespace App\Repositories;
 
-use App\CarePerson;
 use App\Contracts\Repositories\AprimaCcdApiRepository;
 use App\ForeignId;
-use App\Patient;
+use CircleLinkHealth\Customer\Entities\CarePerson;
+use CircleLinkHealth\Customer\Entities\Patient;
 use Illuminate\Support\Facades\DB;
 
 class AprimaCcdApiRepositoryEloquent implements AprimaCcdApiRepository

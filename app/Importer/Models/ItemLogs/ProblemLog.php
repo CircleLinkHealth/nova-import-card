@@ -70,11 +70,19 @@ use App\Traits\Relationships\BelongsToVendor;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemLog whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemLog whereVendorId($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemLog newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemLog newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemLog query()
  */
-class ProblemLog extends \App\BaseModel implements ItemLog, Problem
+class ProblemLog extends \CircleLinkHealth\Core\Entities\BaseModel implements ItemLog, Problem
 {
-    use BelongsToCcda,
-        BelongsToVendor,
+    use BelongsToCcda;
+    use
+        BelongsToVendor;
+    use
         HasProblemCodes;
 
     protected $fillable = [

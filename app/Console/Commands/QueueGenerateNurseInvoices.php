@@ -7,8 +7,8 @@
 namespace App\Console\Commands;
 
 use App\Jobs\GenerateNurseInvoice;
-use App\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Console\Command;
 
 class QueueGenerateNurseInvoices extends Command
@@ -47,6 +47,6 @@ class QueueGenerateNurseInvoices extends Command
             Carbon::now()->endOfMonth(),
             User::ofType('administrator')->pluck('id')->all(),
             true
-        )->onQueue('high');
+        )->onQueue('low');
     }
 }

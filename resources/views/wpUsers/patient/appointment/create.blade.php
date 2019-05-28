@@ -36,7 +36,7 @@
         <div class="col-lg-10 col-lg-offset-1">
             @include('errors.errors')
         </div>
-        <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1">
+        <div class="main-form-container col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
             <div class="row">
                 <div class="main-form-title col-lg-12">
                     New Appointment
@@ -75,7 +75,7 @@
                                         <label for="date">
                                             Appointment Date:
                                         </label>
-                                        <v-datepicker name="date" class="selectpickerX form-control" format="yyyy-MM-dd" placeholder="YYYY-MM-DD" pattern="\d{4}\-\d{2}\-\d{2}" required></v-datepicker>
+                                        <v-datepicker name="date" class="selectpickerX form-control" format="MM-dd-yyyy" placeholder="MM-DD-YYYY" pattern="\d{2}\-\d{2}-\d{4}\" required></v-datepicker>
                                     </div>
                                     <div class="col-sm-12 form-group margin-20">
                                         <label for="time">

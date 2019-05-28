@@ -6,6 +6,43 @@
 
 namespace App;
 
+use CircleLinkHealth\Core\Entities\BaseModel;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
+
+/**
+ * App\EligibilityBatch.
+ *
+ * @property int                                                                            $id
+ * @property int|null                                                                       $initiator_id
+ * @property int|null                                                                       $practice_id
+ * @property string                                                                         $type
+ * @property int                                                                            $status
+ * @property array                                                                          $options
+ * @property array                                                                          $stats
+ * @property \Illuminate\Support\Carbon|null                                                $created_at
+ * @property \Illuminate\Support\Carbon|null                                                $updated_at
+ * @property string|null                                                                    $deleted_at
+ * @property \App\EligibilityJob[]|\Illuminate\Database\Eloquent\Collection                 $eligibilityJobs
+ * @property \CircleLinkHealth\Customer\Entities\User                                       $initiatorUser
+ * @property \CircleLinkHealth\Customer\Entities\Practice|null                              $practice
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityBatch newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityBatch newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityBatch query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityBatch whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityBatch whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityBatch whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityBatch whereInitiatorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityBatch whereOptions($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityBatch wherePracticeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityBatch whereStats($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityBatch whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityBatch whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityBatch whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class EligibilityBatch extends BaseModel
 {
     const ATHENA_API                  = 'athena_csv';

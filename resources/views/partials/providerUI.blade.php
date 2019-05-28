@@ -23,7 +23,7 @@
      * other times, it is an instance of Patient::class
      * We have to make sure that $user is always an instance of User::class by deriving it from $patient.
      */
-    use App\Patient;
+    use CircleLinkHealth\Customer\Entities\Patient;
 
     $user = null;
     if (isset($patient)) {

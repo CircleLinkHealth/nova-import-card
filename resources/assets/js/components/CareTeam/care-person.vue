@@ -124,7 +124,7 @@
         template: '',
 
         props: [
-            //This is an App\CarePerson Object with relationships User and ProviderInfo loaded.
+            //This is an CircleLinkHealth\Customer\Entities\CarePerson Object with relationships User and ProviderInfo loaded.
             'care_person',
         ],
 

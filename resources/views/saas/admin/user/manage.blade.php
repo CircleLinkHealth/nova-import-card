@@ -1,6 +1,7 @@
 @extends('partials.providerUI')
 
 @section('title', 'Internal User')
+@section('activity', 'Internal User')
 
 @section('content')
 
@@ -52,6 +53,9 @@
                                     <div class="col-md-12">
                                         @include('errors.errors')
                                         @include('errors.messages')
+                                        @if(!empty($successMessage))
+                                            <div class="alert alert-success"> {{ $successMessage }}</div>
+                                        @endif
                                     </div>
                                 </div>
 
@@ -158,7 +162,6 @@
                                             </div>
                                         </div>
                                     </div>
-
                                     {!! Form::close() !!}
                                 </div>
                             </div>

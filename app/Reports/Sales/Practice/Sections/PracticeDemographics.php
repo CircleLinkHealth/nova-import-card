@@ -6,10 +6,10 @@
 
 namespace App\Reports\Sales\Practice\Sections;
 
-use App\Practice;
 use App\Reports\Sales\SalesReportSection;
-use App\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 
 class PracticeDemographics extends SalesReportSection
 {

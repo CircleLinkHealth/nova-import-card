@@ -6,8 +6,8 @@
 
 namespace App\Billing\NurseInvoices;
 
-use App\Nurse;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Nurse;
 
 /**
  * Created by PhpStorm.

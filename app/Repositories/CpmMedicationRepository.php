@@ -29,6 +29,7 @@ class CpmMedicationRepository
         }
         $medications = $this->model()->where(['id' => $medication->id]);
         $medications->update([
+            'active'              => $medication->active,
             'name'                => $medication->name,
             'sig'                 => $medication->sig,
             'medication_group_id' => $medication->medication_group_id,
@@ -54,13 +55,16 @@ class CpmMedicationRepository
         ])->paginate();
     }
 
-    public function patientMedicationsList($userId)
+    public function patientMedicationsList($userId, $onlyActive = false)
     {
         return $this
             ->model()
             ->where([
                 'patient_id' => $userId,
             ])
+            ->when($onlyActive, function ($query) {
+                $query->where('active', '=', true);
+            })
             ->select(['name', 'sig'])
             ->get();
     }

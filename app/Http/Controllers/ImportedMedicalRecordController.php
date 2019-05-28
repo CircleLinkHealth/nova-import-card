@@ -6,10 +6,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Location;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
-use App\Practice;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Location;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 use Laracasts\Utilities\JavaScript\JavaScriptFacade as JavaScript;
 

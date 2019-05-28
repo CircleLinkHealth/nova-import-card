@@ -42,7 +42,7 @@
                             <input id='firstName_btn' type='button' class='btn btn-primary' value='Show by First Name'
                                    style='display:none;margin:15px;'
                                    onclick='obs_alerts_dtable.hideColumn("last_name");obs_alerts_dtable.showColumn("first_name");obs_alerts_dtable.sort("#first_name#");this.style.display = "none";getElementById("lastName_btn").style.display = "inline-block";'>
-                            @if(auth()->user()->hasRole(['administrator', 'med_assistant', 'provider']))
+                            @if(auth()->user()->hasRole(array_merge(['administrator'], \App\Constants::PRACTICE_STAFF_ROLE_NAMES)))
                                 <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
                                        onclick="webix.toPDF($$(obs_alerts_dtable), {
         header:'CarePlanManager.com - Patient CarePlan Print List',
@@ -108,7 +108,7 @@
             return a > b ? 1 : (a < b ? -1 : 0);
         }
 
-        function nameCompare(columnValue, filterValue, obj){
+        function nameCompare(columnValue, filterValue, obj) {
             let value = obj.patient_name.toLowerCase();
             filterValue = filterValue.toLowerCase();
             return value.indexOf(filterValue) >= 0
@@ -195,9 +195,10 @@
                 },
 
             ],
-            /*ready:function(){
-            this.adjustRowHeight("obs_value");
-            },*/
+            ready: function () {
+                //CPM-725: Maximum Call Stack Size exceeded error on low-end machines
+                this.config.autoheight = false;
+            },
             pager: {
                 animate: true,
                 container: "paging_container",// the container where the pager controls will be placed into

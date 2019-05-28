@@ -7,9 +7,9 @@
 namespace App\Console\Commands;
 
 use App\AppConfig;
-use App\Patient;
-use App\PatientMonthlySummary;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use Illuminate\Console\Command;
 
 class ResetCcmTime extends Command
@@ -70,7 +70,6 @@ class ResetCcmTime extends Command
                     $newSummary->bhi_time = 0;
                     $newSummary->no_of_calls = 0;
                     $newSummary->no_of_successful_calls = 0;
-                    $newSummary->is_ccm_complex = 0;
                     $newSummary->approved = 0;
                     $newSummary->rejected = 0;
                     $newSummary->actor_id = null;

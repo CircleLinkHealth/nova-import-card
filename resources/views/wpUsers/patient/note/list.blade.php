@@ -1,6 +1,7 @@
 @extends('partials.providerUI')
 
 @section('title', 'All Patient Notes')
+@section('activity', 'All Patient Notes')
 
 @section('content')
 
@@ -165,7 +166,7 @@
                                     obs_alerts_dtable = new webix.ui({
                                         container: "obs_alerts_container",
                                         view: "datatable",
-                                        autoheight: true,
+                                        autoheight: false,
                                         fixedRowHeight: false, rowLineHeight: 25, rowHeight: 25,
                                         scrollX: true,
                                         resizeColumn: true,
@@ -219,7 +220,7 @@
                                                 width: 250,
                                                 sort: 'string',
                                                 tooltip: ['#comment#'],
-                                                fillspace: false,
+                                                fillspace: true,
                                                 template: "<a href='<?php echo route('patient.note.view', [
                                                     'patient' => '#patient_id#',
                                                     'noteId'  => '#id#',
@@ -240,7 +241,10 @@
                                         ],
 
                                         ready: function () {
-                                            this.adjustRowHeight("obs_key");
+                                            this.adjustRowHeight("tags");
+                                            
+                                            //CPM-725: Maximum Call Stack Size exceeded error on low-end machines
+                                            this.config.autoheight = false;
                                         },
 
                                         pager: {
@@ -301,7 +305,7 @@
                                     </li>
                                 </div>
                                 <div class="col-sm-6">
-                                    @if(auth()->user()->hasRole(['administrator', 'med_assistant', 'provider']))
+                                    @if(auth()->user()->hasRole(array_merge(['administrator'], \App\Constants::PRACTICE_STAFF_ROLE_NAMES)))
                                         <input type="button" value="Export as Excel" class="btn btn-primary"
                                                style='margin:15px;'
                                                onclick="webix.toExcel($$(obs_alerts_dtable), {

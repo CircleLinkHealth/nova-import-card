@@ -1,16 +1,23 @@
 @extends('partials.providerUI')
 
-@section('title', 'Create Patient Note')
-@section('activity', 'Patient Note Creation')
+@section('title', empty($note) ? 'Create Patient Note' : 'Edit Patient Note')
+@section('activity', empty($note) ? 'Patient Note Creation' : 'Patient Note Edit')
 
 @section('content')
 
     <?php
-    $userTime = \Carbon\Carbon::now();
+
+    if ( ! empty($note)) {
+        $userTime = $note->performed_at;
+    } else {
+        $userTime = \Carbon\Carbon::now();
+    }
+
     $userTime->setTimezone($userTimeZone);
     $userTimeGMT = \Carbon\Carbon::now()->setTimezone('GMT');
     $userTime    = $userTime->format('Y-m-d\TH:i');
     $userTimeGMT = $userTimeGMT->format('Y-m-d\TH:i');
+
     ?>
 
     @push('styles')
@@ -55,18 +62,39 @@
                 border-color: #353535;
             }
 
+            input[type=checkbox]:disabled + label,
+            input[type=radio]:disabled + label {
+                cursor: default;
+                color: #5b5b5b
+            }
+
+            input[type=radio]:checked:disabled + label span {
+                background: url(../img/ui/radio-active-disabled.png) left top no-repeat;
+            }
+
+            input[type=checkbox]:checked:disabled + label span {
+                background: url(../img/ui/checkbox-active-disabled.png) left top no-repeat;
+            }
+
         </style>
     @endpush
 
     @include('partials.confirm-modal')
 
-    <form id="newNote" method="post" action="{{route('patient.note.store', ['patientId' => $patient->id])}}"
+    <form id="newNote" method="post"
+          action="{{route('patient.note.store', ['patientId' => $patient->id, 'noteId' => !empty($note) ? $note->id : null])}}"
           class="form-horizontal">
         <div class="row" style="margin-top:30px;">
-            <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1 col-xs-10 col-xs-offset-1"
+            <div class="main-form-container col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 col-xs-10 col-xs-offset-1"
                  style="border-bottom: 3px solid #50b2e2;">
                 <div class="row">
-                    <div class="main-form-title col-lg-12"> Record New Note</div>
+                    <div class="main-form-title col-lg-12">
+                        @if (empty($note) || $note->status === 'draft')
+                            Record New Note
+                        @else
+                            Edit Note
+                        @endif
+                    </div>
 
 
                     {{ csrf_field() }}
@@ -77,22 +105,28 @@
                          style=" border-bottom:3px solid #50b2e2;padding: 8px 0px;">
 
                         <div class="col-xs-12" style="">
-                            <div class="col-lg-8 col-xs-4"><input type="text" class="form-control" name="general_comment"
-                                                         id="general_comment"
-                                                         value="{{$patient->patientInfo->general_comment}}"
-                                                         placeholder="{{$patient->patientInfo->general_comment == '' ? 'Enter General Comment...' : $patient->patientInfo->general_comment}}"
-                                                         aria-describedby="sizing-addon2"
-                                                         style="margin: 0 auto; text-align: left; color: #333;">
-                            </div>
-                            <div class="col-sm-4 col-xs-8 pull-right"
-                                 style="text-align: right;top: 9px;font-size: 22px;color: #ec683e;">
-                                @include('partials.complex-ccm-badge')
+                            <div class="col-lg-8 col-xs-4"><input type="text" class="form-control"
+                                                                  name="general_comment"
+                                                                  id="general_comment"
+                                                                  value="{{$patient->patientInfo->general_comment}}"
+                                                                  placeholder="Enter General Comment..."
+                                                                  aria-describedby="sizing-addon2"
+                                                                  style="margin: 0 auto; text-align: left; color: #333;">
                             </div>
                         </div>
                     </div>
 
                     <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12 col-xs-12"
-                         style=" border:0px solid #50b2e2;padding: 10px 35px;">
+                         style=" border:0 solid #50b2e2;padding: 10px 35px;">
+
+                        @if (!empty($note) && $note->status === 'draft')
+                            <div class="col-md-12 text-center">
+                                This is a draft note. Please click Save/Send in order to finalize and create a new
+                                one.
+                            </div>
+                            <br/>
+                            <br/>
+                        @endif
 
                         <div class="col-md-6">
 
@@ -113,7 +147,11 @@
                                                             data-size="10" required>
                                                         <option value=""> Select Topic</option>
                                                         @foreach ($note_types as $note_type)
-                                                            <option value="{{$note_type}}"> {{$note_type}} </option>
+                                                            <option @if (!empty($note) && $note->type === $note_type) selected
+                                                                    @endif
+                                                                    value="{{$note_type}}">
+                                                                {{$note_type}}
+                                                            </option>
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -135,7 +173,7 @@
                                             </div>
                                             <div class="col-sm-12">
                                                 <div class="form-group">
-                                                    <input name="performed_at" type="datetime-local"
+                                                    <input id="performed_at" name="performed_at" type="datetime-local"
                                                            class="selectpickerX form-control"
                                                            data-width="95px" data-size="10" list max="{{$userTime}}"
                                                            value="{{$userTime}}"
@@ -185,6 +223,8 @@
                                                 <label id="phone-label">
                                                     <div>
                                                         <input type="checkbox"
+                                                               @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                               @endif
                                                                id="phone"/>
                                                         <label for="phone">
                                                             <span> </span>Patient Phone Session
@@ -196,6 +236,10 @@
                                                 <label id="task-label" style="display: none;">
                                                     <div>
                                                         <input type="checkbox"
+                                                               @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                               @endif
+                                                               @if (!empty($call) && !empty($call->sub_type)) checked
+                                                               @endif
                                                                id="task"/>
                                                         <label for="task">
                                                             <span> </span>Associate with Task
@@ -210,6 +254,10 @@
                                                         @foreach($tasks as $task)
                                                             <div class="radio">
                                                                 <input type="radio"
+                                                                       @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                                       @endif
+                                                                       @if (!empty($call) && $call->sub_type === $task->sub_type) checked
+                                                                       @endif
                                                                        class="tasks-radio"
                                                                        name="task_id"
                                                                        value="{{$task->id}}"
@@ -225,19 +273,52 @@
                                                     </div>
                                                 </div>
                                             @endif
+                                        <!-- if editing a complete note and call is a task-->
+                                            @if(!empty($call) && !empty($call->sub_type))
+                                                <div class="col-sm-12" id="tasks-container" style="display: none;">
+                                                    <div class="multi-input-wrapper"
+                                                         style="padding-bottom: 3px">
+                                                        <div class="radio">
+                                                            <input type="radio"
+                                                                   disabled
+                                                                   class="tasks-radio"
+                                                                   name="task_id"
+                                                                   value="{{$call->id}}"
+                                                                   id="{{$call->id}}"/>
+                                                            <label for="{{$call->id}}">
+                                                                <span> </span>{{$call->sub_type}}
+                                                                ; {{!empty($call->attempt_note) ? $call->attempt_note . ',' : ''}}
+                                                                due {{$call->window_end}}
+                                                                on {{$call->scheduled_date}}
+                                                            </label>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            @endif
                                             <div class="col-sm-12">
                                                 <div class="panel-group" id="accordion" style="margin-bottom: 2px">
                                                     <div id="collapseOne" class="panel-collapse collapse in"
                                                          style="display: none;">
                                                         <div class="multi-input-wrapper">
                                                             <div class="radio-inline"><input type="radio"
+                                                                                             @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                                                             @endif
+                                                                                             @if (!empty($call) && !$call->is_cpm_outbound) checked
+                                                                                             @endif
                                                                                              name="phone"
                                                                                              value="inbound"
+                                                                                             class="phone-radios"
                                                                                              id="Inbound"/><label
                                                                         for="Inbound"><span> </span>Inbound</label>
                                                             </div>
                                                             <div class="radio-inline"><input type="radio"
+                                                                                             @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                                                             @endif
+                                                                                             @if (!empty($call) && $call->is_cpm_outbound) checked
+                                                                                             @endif
                                                                                              name="phone"
+                                                                                             class="phone-radios"
                                                                                              value="outbound"
                                                                                              id="Outbound"/><label
                                                                         for="Outbound"><span> </span>Outbound</label>
@@ -252,6 +333,11 @@
                                                          style="padding-bottom: 3px; display: none">
                                                         <div class="radio">
                                                             <input type="radio"
+                                                                   @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                                   @endif
+                                                                   @if (!empty($call) && $call->status === \App\Call::NOT_REACHED) checked
+                                                                   @endif
+                                                                   class="call-status-radio"
                                                                    name="call_status"
                                                                    value="not reached"
                                                                    id="not-reached"/>
@@ -261,7 +347,12 @@
                                                         </div>
                                                         <div class="radio">
                                                             <input type="radio"
+                                                                   @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                                   @endif
+                                                                   @if (!empty($call) && $call->status === \App\Call::REACHED) checked
+                                                                   @endif
                                                                    name="call_status"
+                                                                   class="call-status-radio"
                                                                    value="reached"
                                                                    id="reached"/>
                                                             <label for="reached">
@@ -271,7 +362,12 @@
                                                         <!-- CPM-165 Ability for RN to mark unsuccessful call but NOT count towards an attempt -->
                                                         <div class="radio">
                                                             <input type="radio"
+                                                                   @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                                   @endif
+                                                                   @if (!empty($call) && $call->status === \App\Call::IGNORED) checked
+                                                                   @endif
                                                                    name="call_status"
+                                                                   class="call-status-radio"
                                                                    value="ignored"
                                                                    id="ignored"/>
                                                             <label for="ignored">
@@ -285,6 +381,10 @@
                                                         <div>
                                                             <div class="radio">
                                                                 <input type="checkbox"
+                                                                       @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                                       @endif
+                                                                       @if (!empty($call) && $call->status === \App\Call::WELCOME) checked
+                                                                       @endif
                                                                        name="welcome_call"
                                                                        value="welcome_call"
                                                                        id="welcome_call"/>
@@ -297,6 +397,10 @@
                                                         <div>
                                                             <div class="radio">
                                                                 <input type="checkbox"
+                                                                       @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                                       @endif
+                                                                       @if (!empty($call) && $call->status === \App\Call::OTHER) checked
+                                                                       @endif
                                                                        name="other_call"
                                                                        value="other_call"
                                                                        id="other_call"/>
@@ -309,8 +413,11 @@
                                                         </div>
                                                     </div>
                                                 @endif
-                                                <div class="other-radios multi-input-wrapper" style="padding-top: 3px; display: none">
+                                                <div class="other-radios multi-input-wrapper"
+                                                     style="padding-top: 3px; display: none">
                                                     <div><input type="checkbox"
+                                                                @if (!empty($note) && $note->did_medication_recon) checked
+                                                                @endif
                                                                 name="medication_recon"
                                                                 value="true"
                                                                 id="medication_recon"/>
@@ -320,6 +427,8 @@
                                                     </div>
                                                     <input type="hidden" name="tcm" value="hospital">
                                                     <div><input type="checkbox"
+                                                                @if (!empty($note) && $note->isTCM) checked
+                                                                @endif
                                                                 name="tcm"
                                                                 value="true"
                                                                 id="tcm"/>
@@ -335,9 +444,8 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="form-block col-md-12">
-                            <div class="row">
+                            <div class="row col-md-12">
 
                                 <div class="new-note-item">
                                     <!-- Enter Note -->
@@ -346,6 +454,7 @@
                                             <persistent-textarea storage-key="notes:{{$patient->id}}:add" id="note"
                                                                  class-name="form-control" :rows="10" :cols="100"
                                                                  placeholder="Enter Note..."
+                                                                 value="{{ !empty($note) ? $note->body : '' }}"
                                                                  name="body" :required="true"></persistent-textarea>
                                             <br>
                                         </div>
@@ -362,8 +471,9 @@
 
                                     <!-- Hidden Fields -->
                                     <div class="form-group col-sm-4">
-                                        <input type="hidden" name="patient_id" value="{{$patient->id}}">
-                                        <input type="hidden" name="logger_id" value="{{Auth::user()->id}}">
+                                        <input type="hidden" name="patient_id" id="patient_id" value="{{$patient->id}}">
+                                        <input type="hidden" name="logger_id" id="logger_id"
+                                               value="{{Auth::user()->id}}">
                                         <input type="hidden" name="author_id" value="{{Auth::user()->id}}">
                                         <input type="hidden" name="programId" id="programId" value="{{$program_id}}">
                                         <input type="hidden" name="task_status" id="task_status" value="">
@@ -384,9 +494,11 @@
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
+        </div>
         </div>
     </form>
 
@@ -440,11 +552,15 @@
     @push('scripts')
         <script>
 
+
             const userIsCCMCountable = @json(auth()->user()->isCCMCountable());
             const taskTypeToTopicMap = @json($task_types_to_topics);
             const noteTypesMap = @json($note_types);
             const patientNurseTasks = @json($tasks);
             const medications = @json($medications);
+            const isEditingCompleteTask = @json(!empty($call) && !empty($call->sub_type));
+            const editingTaskType = isEditingCompleteTask ? @json(optional($call)->sub_type) : undefined;
+            const disableAutoSave = @json(!empty($note) && $note->status == \App\Note::STATUS_COMPLETE);
 
             const MEDICATIONS_SEPARATOR = '------------------------------';
 
@@ -500,7 +616,7 @@
                             $("#Outbound").prop("checked", true);
                         }
                         else {
-                            if (patientNurseTasks.length) {
+                            if (isEditingCompleteTask || patientNurseTasks.length) {
                                 $('#task-label').show();
                             }
                             $('#collapseOne').hide();
@@ -526,12 +642,8 @@
                 }
 
                 $('#phone').change(phoneSessionChange);
-
-                phoneSessionChange({
-                    currentTarget: {
-                        checked: $('#phone').is(':checked')
-                    }
-                });
+                $('#phone').prop('checked', @json(!empty($call) && empty($call->sub_type)));
+                $('#phone').trigger('change');
 
                 function associateWithTaskChange(e) {
                     if (!e) {
@@ -560,16 +672,16 @@
 
                         //if there is a task selected, select it as note topic
                         if ($('.tasks-radio').prop('checked')) {
-                            $('.tasks-radio').change();
+                            $('.tasks-radio').trigger('change');
                         }
 
                         selectList.prop("disabled", true);
                         $('#tasks-container').show();
 
                         //if only one task, just select it
-                        if (patientNurseTasks.length === 1) {
+                        if (isEditingCompleteTask || patientNurseTasks.length === 1) {
                             $('.tasks-radio').prop('checked', true);
-                            $('.tasks-radio').change();
+                            $('.tasks-radio').trigger('change');
                         }
                     }
                     else {
@@ -591,26 +703,32 @@
                         }
 
                         selectList.prop("disabled", false);
+                        $('.call-status-radios').hide();
                         $('#tasks-container').hide();
                     }
                 }
 
-                if (!patientNurseTasks.length) {
-                    $('#task-label').hide();
-                }
-                else {
+                $('.tasks-radio').change(onTaskSelected);
+
+                if (patientNurseTasks.length || isEditingCompleteTask) {
                     $('#task-label').show();
                     $('#task').change(associateWithTaskChange);
+                    if (isEditingCompleteTask) {
+                        $('#task').trigger('change');
+                    }
+                }
+                else {
+                    $('#task-label').hide();
                 }
 
                 function onTaskSelected(e) {
                     //get id of task
-                    const task = patientNurseTasks.find(x => x.id === +e.currentTarget.value);
+                    const task = editingTaskType ? {sub_type: editingTaskType} : patientNurseTasks.find(x => x.id === +e.currentTarget.value);
                     if (!task) {
                         return;
                     }
 
-                    if (task.sub_type === 'Call Back') {
+                    if (!editingTaskType && task.sub_type === 'Call Back') {
                         $('.call-status-radios').show();
                     }
                     else {
@@ -620,8 +738,6 @@
                     const selectList = $('#activityKey');
                     selectList.val(taskTypeToTopicMap[task.sub_type]);
                 }
-
-                $('.tasks-radio').change(onTaskSelected);
 
                 function tcmChange(e) {
                     if (e) {
@@ -646,12 +762,8 @@
                 }
 
                 $('#tcm').change(tcmChange);
-
-                tcmChange({
-                    currentTarget: {
-                        checked: $('#tcm').is(':checked')
-                    }
-                });
+                $('#tcm').prop('checked', @json(!empty($note) && $note->isTCM));
+                $('#tcm').trigger('change');
 
                 $('#newNote').submit(function (e) {
                     e.preventDefault();
@@ -686,7 +798,7 @@
                         return;
                     }
 
-                    if (isAssociatedWithTask) {
+                    if (isAssociatedWithTask && !isEditingCompleteTask) {
                         showTaskCompletedModal();
                         return;
                     }
@@ -695,13 +807,15 @@
                     const CHARACTERS_THRESHOLD = 100;
                     let showModal = false;
                     const noteBody = form['body'].value;
-                    const noteBodyWithoutMeds = noteBody.substring(0, noteBody.indexOf(MEDICATIONS_SEPARATOR)).trim();
+                    const noteBodyWithoutMeds = getNoteBodyExcludingMedications(noteBody);
 
                     //CPM-182:
                     // if time more than 90 seconds
                     // and (is not phone session, or phone session but not success)
 
-                    if ((Date.now() - startDate) >= SECONDS_THRESHOLD || noteBodyWithoutMeds.length > CHARACTERS_THRESHOLD) {
+                    //CPM-880:
+                    // show modal only for ccm countable users
+                    if (userIsCCMCountable && ((Date.now() - startDate) >= SECONDS_THRESHOLD || noteBodyWithoutMeds.length > CHARACTERS_THRESHOLD)) {
 
                         if (!isPhoneSession || !callIsSuccess) {
                             showModal = true;
@@ -740,24 +854,93 @@
 
                     submitted = true;
 
-                    //what is this?
-                    $.get('/api/test').always(function (response) {
-                        if (response.status == 200 || response.message == 'clh') {
-                            var key = 'notes:{{$patient->id}}:add'
-                            window.sessionStorage.removeItem(key)
-                        }
-                        //when we associate a note with task, we disable the note topic
-                        //we have to enable it back before posting to server,
-                        //otherwise its value will not reach the server
-                        $('#activityKey').prop("disabled", false);
-                        form.submit();
-                    });
+                    var key = 'notes:{{$patient->id}}:add';
+                    window.sessionStorage.removeItem(key);
+                    //when we associate a note with task, we disable the note topic
+                    //we have to enable it back before posting to server,
+                    //otherwise its value will not reach the server
+                    $('#activityKey').prop("disabled", false);
+                    form.submit();
                 }
 
                 function showTaskCompletedModal() {
                     $('#confirm-task-completed').modal('show');
                 }
             });
+
+            /*
+            //no need since we have auto save now
+            window.addEventListener('beforeunload', (event) => {
+
+                if (submitted) {
+                    return;
+                }
+
+                const noteBody = $('#note').val();
+                const trimmed = getNoteBodyExcludingMedications(noteBody);
+
+                if (trimmed.length) {
+                    if (!confirm()) {
+                        // Cancel the event as stated by the standard.
+                        event.preventDefault();
+                        // Chrome requires returnValue to be set.
+                        event.returnValue = '';
+                    }
+                }
+
+            });
+            */
+
+            function getNoteBodyExcludingMedications(noteBody) {
+                return noteBody.substring(0, noteBody.indexOf(MEDICATIONS_SEPARATOR)).trim();
+            }
+
+            /* 2 minutes */
+            const AUTO_SAVE_INTERVAL = 1000 * 60 * 2;
+
+            let noteId = null;
+
+            @if (! empty($note))
+                noteId = '{{$note->id}}';
+                    @endif
+
+            const saveDraftUrl = '{{route('patient.note.store.draft', ['patientId' => $patient->id])}}';
+            const saveDraft = () => {
+                window.axios
+                    .post(saveDraftUrl, {
+                        patient_id: $('#patient_id').val(),
+                        note_id: noteId,
+                        type: $('#activityKey').val(),
+                        general_comment: $('#general_comment').val(),
+                        performed_at: $('#performed_at').val(),
+                        author_id: $('#author_id').val(),
+                        task_id: $('.tasks-radio:checked').val(),
+                        phone: $('.phone-radios:checked').val(),
+                        call_status: $('.call-status-radio:checked').val(),
+                        welcome_call: $('#welcome_call').is(":checked"),
+                        other_call: $('#other_call').is(":checked"),
+                        medication_recon: $('#medication_recon').is(":checked"),
+                        tcm: $('#tcm').is(":checked"),
+                        body: $('#note').val(),
+                        logger_id: $('#logger_id').val(),
+                        programId: $('#programId').val(),
+                        task_status: $('#task_status').val()
+                    })
+                    .then((response, status) => {
+                        if (response.data && response.data.note_id) {
+                            noteId = response.data.note_id;
+                        }
+                        setTimeout(() => saveDraft(), AUTO_SAVE_INTERVAL);
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        setTimeout(() => saveDraft(), AUTO_SAVE_INTERVAL);
+                    });
+            };
+
+            if (!disableAutoSave) {
+                setTimeout(() => saveDraft(), AUTO_SAVE_INTERVAL);
+            }
 
         </script>
     @endpush

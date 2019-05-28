@@ -6,7 +6,7 @@
 
 namespace App\Http\Resources;
 
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Resources\Json\Resource;
 
 class ApprovableBillablePatient extends Resource

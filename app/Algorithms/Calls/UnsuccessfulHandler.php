@@ -8,8 +8,8 @@ namespace App\Algorithms\Calls;
 
 use App\Call;
 use App\Contracts\CallHandler;
-use App\Patient;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Patient;
 
 //READ ME
 /*
@@ -38,7 +38,6 @@ class UnsuccessfulHandler implements CallHandler
     use CallAlgoHelper;
     private $attemptNote;
     private $ccmTime;
-    private $isComplex;
 
     //debug vars
     private $logic;
@@ -57,7 +56,6 @@ class UnsuccessfulHandler implements CallHandler
     public function __construct(
         Patient $calledPatient,
         Carbon $initTime,
-        $isComplex,
         $previousCall
     ) {
         $this->week         = $initTime->weekOfMonth;
@@ -67,30 +65,18 @@ class UnsuccessfulHandler implements CallHandler
         $this->logic        = '';
         $this->attemptNote  = '';
         $this->prediction   = [];
-        $this->isComplex    = $isComplex;
         $this->prevCall     = $previousCall;
     }
 
     public function createSchedulerInfoString()
     {
-        $status                      = '<span style="color: red">unsuccessfully</span>';
-        $this->prediction['complex'] = $this->isComplex;
+        $status = '<span style="color: red">unsuccessfully</span>';
 
         return
             'You just called '.$this->patient->user->getFullName()
             .' '.$status.' in <b>week '
             .$this->week.'. </b> <br/> <br/> <b>'
             .'Please confirm or amend the above next predicted call time. </b>';
-    }
-
-    public function getComplexPatientOffset(
-        $ccmTime,
-        $week
-    ) {
-        //always the next window.
-        $this->logic = 'Next Window';
-
-        return $this->nextCallDate->addWeekday();
     }
 
     public function getPatientOffset(
@@ -232,11 +218,7 @@ class UnsuccessfulHandler implements CallHandler
     public function handle()
     {
         //Calculate the next date before which we can call patient
-        if ($this->isComplex) {
-            $this->getComplexPatientOffset($this->ccmTime, $this->week);
-        } else {
-            $this->getPatientOffset($this->ccmTime, $this->week);
-        }
+        $this->getPatientOffset($this->ccmTime, $this->week);
 
         //get the next call date based on patient preferences
         $this->getNextWindow();

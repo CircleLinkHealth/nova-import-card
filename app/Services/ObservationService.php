@@ -9,7 +9,7 @@ namespace App\Services;
 use App\Comment;
 use App\Observation;
 use App\ObservationMeta;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use DateTime;
 use DateTimeZone;
 
@@ -17,14 +17,14 @@ class ObservationService
 {
     public function storeObservationFromApp(
         $userId,
-                                            $parentId,
-                                            $obsValue,
-                                            $obsDate,
-                                            $obsMessageId,
-                                            $obsKey,
-                                            $timezone,
-                                            $source = 'manual_input',
-                                            $isStartingObs = 'N'
+        $parentId,
+        $obsValue,
+        $obsDate,
+        $obsMessageId,
+        $obsKey,
+        $timezone,
+        $source = 'manual_input',
+        $isStartingObs = 'N'
     ) {
         // get user
         $wpUser = User::find($userId);

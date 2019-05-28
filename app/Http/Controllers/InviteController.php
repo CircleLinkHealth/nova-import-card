@@ -6,10 +6,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Entities\Invite;
 use App\Notifications\Onboarding\ImplementationLeadInvite;
-use App\Role;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Invite;
+use CircleLinkHealth\Customer\Entities\Role;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 
 class InviteController extends Controller

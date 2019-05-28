@@ -6,9 +6,9 @@
 
 namespace App\Services\SAAS\Admin;
 
-use App\Role;
-use App\User;
 use App\ValueObjects\SAAS\Admin\InternalUser;
+use CircleLinkHealth\Customer\Entities\Role;
+use CircleLinkHealth\Customer\Entities\User;
 
 class UserManagementService
 {
@@ -55,9 +55,7 @@ class UserManagementService
     }
 
     /**
-     * @param $args
-     *
-     * @throws \Exception
+     * @param InternalUser $internalUser
      *
      * @return $this|\Illuminate\Database\Eloquent\Model
      */

@@ -6,9 +6,9 @@
 
 namespace App\Providers;
 
-use App\Contracts\AuthyApiable;
-use App\Decorators\AuthyResponseLogger;
 use Authy\AuthyApi;
+use CircleLinkHealth\TwoFA\Contracts\AuthyApiable;
+use CircleLinkHealth\TwoFA\Decorators\AuthyResponseLogger;
 use Illuminate\Support\ServiceProvider;
 
 class AuthyServiceProvider extends ServiceProvider

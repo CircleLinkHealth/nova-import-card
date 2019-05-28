@@ -67,7 +67,7 @@ return [
     |
     */
 
-    'user' => 'App\User',
+    'user' => 'CircleLinkHealth\Customer\Entities\User',
 
     /*
     |--------------------------------------------------------------------------

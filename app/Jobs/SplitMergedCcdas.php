@@ -15,7 +15,9 @@ use Illuminate\Queue\SerializesModels;
 
 class SplitMergedCcdas implements ShouldQueue
 {
-    use InteractsWithQueue, Queueable, SerializesModels;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * @var string

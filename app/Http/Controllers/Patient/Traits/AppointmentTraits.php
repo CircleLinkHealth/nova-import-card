@@ -6,8 +6,10 @@
 
 namespace App\Http\Controllers\Patient\Traits;
 
-use App\Appointment;
+use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Appointment;
 use Illuminate\Http\Request;
+use Validator;
 
 trait AppointmentTraits
 {
@@ -19,8 +21,18 @@ trait AppointmentTraits
         $appointment->author_id   = auth()->user()->id;
         $appointment->type        = $request->input('type');
         $appointment->provider_id = $request->input('provider_id');
-        $appointment->date        = $request->input('date');
         $appointment->time        = $request->input('time');
+
+        $date      = $request->input('date');
+        $validator = Validator::make(['date' => $date], ['date' => 'date_format:m-d-Y|required']);
+
+        if ($validator->fails()) {
+            return $this->badRequest("Date `$date` is invalid.");
+        }
+
+        $carbonDate        = Carbon::createFromFormat('m-d-Y', $date);
+        $appointment->date = $carbonDate->toDateString();
+
         if ($userId && $appointment->author_id && $appointment->type && $appointment->comment) {
             return response()->json($this->appointmentService->repo()->create($appointment));
         }

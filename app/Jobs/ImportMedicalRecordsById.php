@@ -7,7 +7,7 @@
 namespace App\Jobs;
 
 use App\Models\MedicalRecords\Ccda;
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -16,7 +16,10 @@ use Illuminate\Queue\SerializesModels;
 
 class ImportMedicalRecordsById implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * @var array

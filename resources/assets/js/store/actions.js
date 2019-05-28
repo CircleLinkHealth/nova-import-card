@@ -13,6 +13,10 @@ export const removeNotification = ({commit}, notification) => {
     commit('REMOVE_NOTIFICATION', notification);
 }
 
+export const clearNotifications = ({commit}) => {
+    commit('CLEAR_NOTIFICATIONS');
+}
+
 export const clearOpenModal = ({commit}) => {
     commit('CLEAR_OPEN_MODAL');
 }

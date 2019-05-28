@@ -5,7 +5,7 @@ use Illuminate\Support\Collection;
 use App\CarePlan;
 use App\CareplanAssessment;
 use App\Note;
-use App\Patient;
+use CircleLinkHealth\Customer\Entities\Patient;
 
 /**
 * Seeder to create the four test patients Raph needs to test the G0506 flow

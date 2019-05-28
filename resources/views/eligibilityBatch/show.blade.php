@@ -138,7 +138,9 @@
                                 <h4>Records not processed due to invalid data</h4>
 
                                 @foreach($batch->options['errors'] as $error)
-                                    <p>Row {{$error['row_number']}}: {{$error['message']}}</p>
+                                    @if (is_array($error) && array_keys_exist(['row_number', 'message'], $error))
+                                        <p>Row {{$error['row_number']}}: {{$error['message']}}</p>
+                                    @endif
                                 @endforeach
                             @endif
                         </div>

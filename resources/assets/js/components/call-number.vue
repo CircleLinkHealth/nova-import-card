@@ -17,7 +17,12 @@
                 If you would like to make another call, please click on 'Open Calls Page' again.
             </strong>
         </div>
-        <div>{{log}}</div>
+        <div :class="hasError ? 'error-logs' : ''">{{log}}</div>
+        <div v-if="hasError" style="display: none">
+            <button class="btn btn-circle btn-warning" @click="initTwilio">
+                Retry
+            </button>
+        </div>
         <div class="warning-logs" v-show="warningEvents.length > 0">
             We have detected poor call quality conditions. You may experience degraded call quality.
         </div>
@@ -38,7 +43,7 @@
                     <div class="col-xs-3 no-padding" style="padding-left: 2px; padding-right: 2px"
                          v-if="dropdownNumber !== 'patientUnlisted'">
                         <button class="btn btn-circle" @click="togglePatientCallMessage(selectedPatientNumber)"
-                                :disabled="invalidPatientUnlistedNumber || closeCountdown > 0 || (!onPhone[selectedPatientNumber] && isCurrentlyOnPhone)"
+                                :disabled="!ready || invalidPatientUnlistedNumber || closeCountdown > 0 || (!onPhone[selectedPatientNumber] && isCurrentlyOnPhone)"
                                 :class="onPhone[selectedPatientNumber] ? 'btn-danger': 'btn-success'">
                             <i class="fa fa-fw fa-phone"
                                :class="onPhone[selectedPatientNumber] ? 'fa-close': 'fa-phone'"></i>
@@ -76,7 +81,7 @@
 
                     <div class="col-xs-3 no-padding" style="margin-top: 4px; padding-left: 2px; padding-right: 2px">
                         <button class="btn btn-circle" @click="togglePatientCallMessage(selectedPatientNumber)"
-                                :disabled="invalidPatientUnlistedNumber || closeCountdown > 0 || (!onPhone[selectedPatientNumber] && isCurrentlyOnPhone)"
+                                :disabled="!ready || invalidPatientUnlistedNumber || closeCountdown > 0 || (!onPhone[selectedPatientNumber] && isCurrentlyOnPhone)"
                                 :class="onPhone[selectedPatientNumber] ? 'btn-danger': 'btn-success'">
                             <i class="fa fa-fw fa-phone"
                                :class="onPhone[selectedPatientNumber] ? 'fa-close': 'fa-phone'"></i>
@@ -108,7 +113,7 @@
                     </div>
                     <div class="col-xs-3 no-padding" style="margin-top: 4px; padding-left: 2px; padding-right: 2px">
                         <button class="btn btn-circle" @click="toggleOtherCallMessage(clinicalEscalationNumber)"
-                                :disabled="!clinicalEscalationNumber || clinicalEscalationNumber.length === 0
+                                :disabled="!ready || !clinicalEscalationNumber || clinicalEscalationNumber.length === 0
                                                                      || (!allowConference && !onPhone[clinicalEscalationNumber] && isCurrentlyOnPhone)
                                                                      || (allowConference && !onPhone[clinicalEscalationNumber] && isCurrentlyOnConference)
                                                                      || closeCountdown > 0"
@@ -143,7 +148,7 @@
                                        class="form-control" type="tel"
                                        title="10-digit US Phone Number" placeholder="1234567890"
                                        v-model="otherUnlistedNumber"
-                                       :disabled="onPhone[otherUnlistedNumber] || isCurrentlyOnConference"/>
+                                       :disabled="!ready || onPhone[otherUnlistedNumber] || isCurrentlyOnConference"/>
                             </template>
                             <template v-else>
                                 <input name="other-number"
@@ -151,7 +156,7 @@
                                        class="form-control" type="tel"
                                        title="10-digit US Phone Number" placeholder="1234567890"
                                        v-model="otherUnlistedNumber"
-                                       :disabled="onPhone[otherUnlistedNumber] || isCurrentlyOnConference"/>
+                                       :disabled="!ready || onPhone[otherUnlistedNumber] || isCurrentlyOnConference"/>
                             </template>
 
                         </div>
@@ -205,6 +210,14 @@
             loader: LoaderComponent,
         },
         props: {
+            cpmToken: {
+                type: String,
+                default: ''
+            },
+            cpmCallerUrl: {
+                type: String,
+                default: ''
+            },
             debug: {
                 type: Boolean,
                 default: false
@@ -245,12 +258,14 @@
                         "* {zero} # {backspace} {accept}"
                     ]
                 },
+                ready: false,
                 waiting: false,
                 waitingForConference: false,
                 queuedNumbersForConference: [],
                 addedNumbersInConference: [],
                 muted: {},
                 onPhone: {},
+                hasError: false,
                 log: 'Initializing',
                 warningEvents: [],
                 endCallWindowCloseDelay: 5,
@@ -297,6 +312,18 @@
             }
         },
         methods: {
+
+            getUrl: function (path) {
+                if (this.cpmCallerUrl && this.cpmCallerUrl.length > 0) {
+                    if (this.cpmCallerUrl[this.cpmCallerUrl.length - 1] === "/") {
+                        return this.cpmCallerUrl + path;
+                    }
+                    else {
+                        return this.cpmCallerUrl + "/" + path;
+                    }
+                }
+                return rootUrl(path);
+            },
 
             numpadChanged: function (allInput, lastInput) {
 
@@ -427,11 +454,11 @@
                         if (isCurrentlyOnConference) {
                             this.log = `Hanging up call to ${number}`;
                             this.axios
-                                .post(rootUrl('twilio/call/end'), {
+                                .post(this.getUrl(`twilio/call/end?cpm-token=${this.cpmToken}`), {
                                     CallSid: this.callSids[number],
                                     InboundUserId: this.inboundUserId,
                                     OutboundUserId: this.outboundUserId,
-                                })
+                                }, {withCredentials: true})
                                 .then(resp => {
 
                                 })
@@ -471,11 +498,11 @@
             },
             createConference: function () {
                 this.waitingForConference = true;
-                this.axios.post(rootUrl(`twilio/call/js-create-conference`),
+                this.axios.post(this.getUrl(`twilio/call/js-create-conference?cpm-token=${this.cpmToken}`),
                     {
                         'inbound_user_id': this.inboundUserId,
                         'outbound_user_id': this.outboundUserId,
-                    })
+                    }, {withCredentials: true})
                     .then(resp => {
 
                         if (resp.data.errors) {
@@ -497,11 +524,11 @@
                     return;
                 }
 
-                this.axios.post(rootUrl(`twilio/call/get-conference-info`),
+                this.axios.post(this.getUrl(`twilio/call/get-conference-info?cpm-token=${this.cpmToken}`),
                     {
                         'inbound_user_id': this.inboundUserId,
                         'outbound_user_id': this.outboundUserId,
-                    })
+                    }, {withCredentials: true})
                     .then(resp => {
 
                         if (resp.data.errors) {
@@ -628,7 +655,7 @@
                 const {number, isUnlisted, isCallToPatient} = this.queuedNumbersForConference.pop();
                 this.addedNumbersInConference.push({number, date: Date.now()});
                 this.axios
-                    .post(rootUrl('twilio/call/join-conference'), this.getTwimlAppRequest(number, isUnlisted, isCallToPatient))
+                    .post(this.getUrl(`twilio/call/join-conference?cpm-token=${this.cpmToken}`), this.getTwimlAppRequest(number, isUnlisted, isCallToPatient), {withCredentials: true})
                     .then(resp => {
                         console.log(resp.data);
                         if (resp && resp.data && resp.data.call_sid) {
@@ -695,18 +722,22 @@
                 }, 1000);
             },
             twilioOffline: function () {
+                self.ready = false;
                 self.waiting = true;
             },
             twilioOnline: function () {
+                self.ready = true;
                 self.waiting = false;
             },
             initTwilio: function () {
-                const url = rootUrl(`twilio/token`);
+                const url = this.getUrl(`twilio/token?cpm-token=${this.cpmToken}`);
 
+                self.log = "Fetching token from server";
+                self.ready = false;
                 self.waiting = true;
-                self.axios.get(url)
+                self.axios.get(url, {withCredentials: true})
                     .then(response => {
-                        self.log = 'Initializing';
+                        self.log = 'Initializing Twilio';
                         self.device = new Twilio.Device(response.data.token, {
                             closeProtection: true, //show warning when closing the page with active call - NOT WORKING
                             debug: true,
@@ -768,7 +799,9 @@
                     })
                     .catch(error => {
                         console.log(error);
+                        self.hasError = true;
                         self.log = 'There was an error. Please refresh the page. If the issue persists please let CLH know via slack.';
+                        self.ready = false;
                         self.waiting = false;
                     });
             },
@@ -919,6 +952,10 @@
         color: #a98e11;
         margin-top: 4px;
         margin-bottom: 4px;
+    }
+
+    .error-logs {
+        color: red;
     }
 
     .vue-touch-keyboard {

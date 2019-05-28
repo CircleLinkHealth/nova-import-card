@@ -8,7 +8,8 @@ namespace App\Notifications;
 
 use App\CarePlan;
 use App\Note;
-use App\User;
+use App\ValueObjects\SimpleNotification;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -119,7 +120,10 @@ class CarePlanProviderApproved extends Notification
             return false;
         }
 
-        return $this->toPdf();
+        return (new SimpleNotification())
+            ->setBody($this->getBody())
+            ->setSubject($this->getSubject())
+            ->setFilePath($this->toPdf());
     }
 
     /**
@@ -166,7 +170,7 @@ class CarePlanProviderApproved extends Notification
         if ('circlelink-health' == $notifiable->saasAccount->slug) {
             return $mail->bcc([
                 'raph@circlelinkhealth.com',
-                'chelsea@circlelinkhealth.com',
+                'abigail@circlelinkhealth.com',
                 'sheller@circlelinkhealth.com',
             ]);
         }

@@ -6,8 +6,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Family;
-use App\Patient;
+use CircleLinkHealth\Customer\Entities\Family;
+use CircleLinkHealth\Customer\Entities\Patient;
 use Illuminate\Http\Request;
 
 class FamilyController extends Controller

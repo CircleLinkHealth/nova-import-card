@@ -6,7 +6,7 @@
 
 namespace App\Transformers;
 
-use App\Location;
+use CircleLinkHealth\Customer\Entities\Location;
 use League\Fractal\TransformerAbstract;
 
 /**

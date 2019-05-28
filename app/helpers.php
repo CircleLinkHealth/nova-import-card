@@ -9,13 +9,30 @@ use App\CarePlanTemplate;
 use App\Constants;
 use App\Exceptions\CsvFieldNotFoundException;
 use App\Jobs\SendSlackMessage;
-use App\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Nurse;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Collection;
+
+if ( ! function_exists('abort_if_str_contains_unsafe_characters')) {
+    function abort_if_str_contains_unsafe_characters(string $string)
+    {
+        if (str_contains_unsafe_characters($string)) {
+            abort(404);
+        }
+    }
+}
+
+if ( ! function_exists('str_contains_unsafe_characters')) {
+    function str_contains_unsafe_characters(string $string)
+    {
+        return str_contains($string, ['<', '>', '&', '=']);
+    }
+}
 
 if ( ! function_exists('parseIds')) {
     /**
@@ -57,6 +74,32 @@ if ( ! function_exists('parseIds')) {
     }
 }
 
+if ( ! function_exists('safeStartOfMonthQuery')) {
+    /**
+     * Return a start of month query compadible with both sqlite and mysql.
+     *
+     * @return string
+     */
+    function safeStartOfMonthQuery()
+    {
+        return 'mysql' === config('database.connections')[config('database.default')]['driver']
+            ? "DATE_ADD(DATE_ADD(LAST_DAY(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')), INTERVAL 1 DAY), INTERVAL - 1 MONTH)"
+            : "date('now','start of month')"; //sqlite
+    }
+}
+
+if ( ! function_exists('isOnSqlite')) {
+    /**
+     * Is the app running on sqlite?
+     *
+     * @return bool
+     */
+    function isOnSqlite()
+    {
+        return 'sqlite' === strtolower(config('database.default'));
+    }
+}
+
 if ( ! function_exists('str_substr_after')) {
     /**
      * Get the substring after the given character.
@@ -85,7 +128,13 @@ if ( ! function_exists('activeNurseNames')) {
     function activeNurseNames()
     {
         return User::ofType('care-center')
-            ->where('user_status', 1)
+            ->with([
+                'nurseInfo' => function ($q) {
+                    $q->where('is_demo', '!=', true);
+                },
+            ])->whereHas('nurseInfo', function ($q) {
+                $q->where('is_demo', '!=', true);
+            })->where('user_status', 1)
             ->pluck('display_name', 'id');
     }
 }
@@ -425,33 +474,32 @@ if ( ! function_exists('carbonGetNext')) {
     /**
      * Get carbon instance of the next $day.
      *
-     * @param $day
+     * @param string      $day
+     * @param Carbon|null $fromDate
      *
      * @return Carbon|false
      */
-    function carbonGetNext($day = 'monday')
+    function carbonGetNext($day = 'monday', Carbon $fromDate = null)
     {
         if ( ! is_numeric($day)) {
             $dayOfWeek = clhToCarbonDayOfWeek(dayNameToClhDayOfWeek($day));
-            $dayName   = $day;
         }
 
         if (is_numeric($day)) {
             $dayOfWeek = clhToCarbonDayOfWeek($day);
-            $dayName   = clhDayOfWeekToDayName($day);
         }
 
         if ( ! isset($dayOfWeek)) {
             return false;
         }
 
-        $now = Carbon::now();
+        $now = $fromDate->copy() ?? Carbon::now();
 
         if ($now->dayOfWeek == $dayOfWeek) {
             return $now;
         }
 
-        return $now->parse("next ${dayName}");
+        return $now->next($dayOfWeek);
     }
 }
 
@@ -963,33 +1011,34 @@ if ( ! function_exists('validProblemName')) {
     function validProblemName($name)
     {
         return ! str_contains(
-                strtolower($name),
-                [
-                    'screening',
-                    'history',
-                    'scan',
-                    'immunization',
-                    'immunisation',
-                    'injection',
-                    'vaccine',
-                    'vaccination',
-                    'vaccin',
-                    'screen',
-                    'follow up',
-                    'followup',
-                    'labs',
-                    'f/u',
-                    'mo fu',
-                    'fu on',
-                    'fu from',
-                    'm fu',
-                    'counsel',
-                    'adverse effect drug',
-                    'counseling',
-                    'new pt',
-                    'hx',
-                    'prediabetes',
-                ]
+            strtolower($name),
+            [
+                'screening',
+                'history',
+                'scan',
+                'immunization',
+                'immunisation',
+                'injection',
+                'vaccine',
+                'vaccination',
+                'vaccin',
+                'screen',
+                'follow up',
+                'followup',
+                'labs',
+                'f/u',
+                'mo fu',
+                'fu on',
+                'fu from',
+                'm fu',
+                'counsel',
+                'adverse effect drug',
+                'counseling',
+                'new pt',
+                'hx',
+                'prediabetes',
+                'check',
+            ]
             ) && ! in_array(
                 strtolower($name),
                 [
@@ -1225,13 +1274,13 @@ if ( ! function_exists('array_keys_exist')) {
     /**
      * Returns TRUE if the given keys are all set in the array. Each key can be any value possible for an array index.
      *
-     * @see array_key_exists()
-     *
      * @param string[] $keys    keys to check
      * @param array    $array   an array with keys to check
      * @param mixed    $missing reference to a variable that that contains the missing keys
      *
      * @return bool true if all given keys exist in the given array, false if not
+     *
+     * @see array_key_exists()
      */
     function array_keys_exist(array $keys, array $array, &$missing = null)
     {
@@ -1308,6 +1357,99 @@ if ( ! function_exists('tryDropForeignKey')) {
 if ( ! function_exists('isProductionEnv')) {
     function isProductionEnv()
     {
-        return in_array(config('app.env'), ['production', 'worker']);
+        return config('app.is_production_env');
+    }
+}
+
+if ( ! function_exists('presentDate')) {
+    function presentDate($date, bool $withTime = true)
+    {
+        if ( ! is_a($date, Carbon::class)) {
+            $validator = Validator::make(['date' => $date], ['date' => 'date']);
+
+            if ($validator->fails()) {
+                return 'N/A';
+            }
+
+            $carbonDate = Carbon::parse($date);
+        } else {
+            $carbonDate = $date;
+        }
+
+        if ($carbonDate->year < 1) {
+            return 'N/A';
+        }
+
+        return $withTime
+            ? $carbonDate->format('Y-m-d h:iA')
+            : $carbonDate->format('Y-m-d');
+    }
+}
+
+if ( ! function_exists('calculateWeekdays')) {
+    /**
+     * Returns the number of working days for the date range given.
+     * Accounts for weekends and holidays.
+     *
+     * @param $fromDate
+     * @param $toDate
+     *
+     * @return int
+     */
+    function calculateWeekdays($fromDate, $toDate)
+    {
+        $holidays = DB::table('company_holidays')->get();
+
+        return Carbon::parse($fromDate)->diffInDaysFiltered(
+            function (Carbon $date) use ($holidays) {
+                $matchingHolidays = $holidays->where('holiday_date', $date->toDateString());
+
+                return ! $date->isWeekend() && ! $matchingHolidays->count() >= 1;
+            },
+            new Carbon($toDate)
+        );
+    }
+}
+
+if ( ! function_exists('array_orderby')) {
+    /**
+     * @return mixed
+     */
+    function array_orderby()
+    {
+        $args = func_get_args();
+        $data = array_shift($args);
+        foreach ($args as $n => $field) {
+            if (is_string($field)) {
+                $tmp = [];
+                foreach ($data as $key => $row) {
+                    $tmp[$key] = $row[$field];
+                }
+                $args[$n] = $tmp;
+            }
+        }
+        $args[] = &$data;
+        call_user_func_array('array_multisort', $args);
+
+        return array_pop($args);
+    }
+}
+
+if ( ! function_exists('incrementInvoiceNo')) {
+    /**
+     * @return mixed
+     */
+    function incrementInvoiceNo()
+    {
+        $num = AppConfig::where('config_key', 'billing_invoice_count')
+            ->firstOrFail();
+
+        $current = $num->config_value;
+
+        $num->config_value = $current + 1;
+
+        $num->save();
+
+        return $current;
     }
 }

@@ -29,12 +29,8 @@ use App\Repositories\PracticeRepositoryEloquent;
 use App\Repositories\PrettusUserRepositoryEloquent;
 use App\Services\SnappyPdfWrapper;
 use DB;
-use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use Illuminate\Notifications\Channels\DatabaseChannel;
-use Illuminate\Notifications\DatabaseNotification;
-use Illuminate\Notifications\HasDatabaseNotifications;
-use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Dusk\DuskServiceProvider;
@@ -54,6 +50,16 @@ class AppServiceProvider extends ServiceProvider
         //need to set trusted hosts before request is passed on to our routers
         Request::setTrustedHosts(config('trustedhosts.hosts'));
 
+        /*
+         * If PHP cannot write in default /tmp directory, SwiftMailer fails.
+         * To overcome this, set SwiftMailer to use storage_path('tmp').
+         */
+        if (class_exists('Swift_Preferences')) {
+            \Swift_Preferences::getInstance()->setTempDir(storage_path('tmp'));
+        } else {
+            \Log::warning('Class Swift_Preferences does not exist.');
+        }
+
         Horizon::auth(
             function ($request) {
                 return optional(auth()->user())->isAdmin();
@@ -68,16 +74,33 @@ class AppServiceProvider extends ServiceProvider
                 }
             }
         );
-    
-        QueryBuilder::macro('toRawSql', function(){
-            return array_reduce($this->getBindings(), function($sql, $binding){
-                return preg_replace('/\?/', is_numeric($binding) ? $binding : "'".$binding."'" , $sql, 1);
-            }, $this->toSql());
-        });
-    
-        EloquentBuilder::macro('toRawSql', function(){
-            return ($this->getQuery()->toRawSql());
-        });
+
+        QueryBuilder::macro(
+            'toRawSql',
+            function () {
+                return array_reduce(
+                    $this->getBindings(),
+                    function ($sql, $binding) {
+                        return preg_replace(
+                            '/\?/',
+                            is_numeric($binding)
+                                                ? $binding
+                                                : "'".$binding."'",
+                            $sql,
+                            1
+                        );
+                    },
+                    $this->toSql()
+                );
+            }
+        );
+
+        EloquentBuilder::macro(
+            'toRawSql',
+            function () {
+                return $this->getQuery()->toRawSql();
+            }
+        );
     }
 
     /**
@@ -89,15 +112,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //Bind database notification classes to local
-        $this->app->bind(DatabaseChannel::class, \App\Notifications\Channels\DatabaseChannel::class);
-        $this->app->bind(DatabaseNotification::class, \App\DatabaseNotification::class);
-        $this->app->bind(HasDatabaseNotifications::class, \App\Notifications\HasDatabaseNotifications::class);
-        $this->app->bind(Notifiable::class, \App\Notifications\Notifiable::class);
         $this->app->bind(
             HtmlToPdfService::class,
             function () {
-                return $this->app->make(SnappyPdfWrapper::class);
+                return $this->app->make(SnappyPdfWrapper::class)
+                    ->setTemporaryFolder(storage_path('tmp'));
             }
         );
 

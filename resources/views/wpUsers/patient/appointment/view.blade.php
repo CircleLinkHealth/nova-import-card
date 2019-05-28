@@ -6,8 +6,6 @@
 @section('content')
 
     @push('scripts')
-        <script type="text/javascript" src="{{ mix('/js/patient/observation-create.js') }}"></script>
-
         <script>
             $(function () {
                 $(".provider").select2();
@@ -31,7 +29,7 @@
         <div class="col-lg-10 col-lg-offset-1">
             @include('errors.errors')
         </div>
-        <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1">
+        <div class="main-form-container col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
             <div class="row">
                 <div class="main-form-title col-lg-12">
                     View Appointment

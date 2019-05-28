@@ -6,8 +6,8 @@
 
 namespace App\Repositories\Eloquent;
 
-use App\Activity;
 use Carbon\Carbon;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
 
 class ActivityRepository
 {

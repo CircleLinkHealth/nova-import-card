@@ -9,8 +9,8 @@ namespace App\Reports\Sales\Provider\Sections;
 use App\Reports\Sales\ProviderReportable;
 use App\Reports\Sales\SalesReportSection;
 use App\Reports\Sales\StatsHelper;
-use App\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\User;
 
 class FinancialSummary extends SalesReportSection
 {

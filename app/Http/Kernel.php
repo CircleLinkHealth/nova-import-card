@@ -8,23 +8,22 @@ namespace App\Http;
 
 use App\Http\Middleware\ACL\ProviderDashboardACL;
 use App\Http\Middleware\AprimaCcdApiAuthAdapter;
-use App\Http\Middleware\AuthyMiddleware;
 use App\Http\Middleware\CheckCarePlanMode;
+use App\Http\Middleware\CheckForMaintenanceMode;
 use App\Http\Middleware\CheckOnboardingInvite;
 use App\Http\Middleware\CheckWebSocketServer;
-use App\Http\Middleware\DisableDebugbar;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\LogoutIfAccessDisabled;
 use App\Http\Middleware\PatientProgramSecurity;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Http\Middleware\TrustProxies;
 use App\Http\Middleware\VerifyCsrfToken;
+use CircleLinkHealth\TwoFA\Http\Middleware\AuthyMiddleware;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
 use Illuminate\Auth\Middleware\Authorize;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
-use Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode;
 use Illuminate\Http\Middleware\FrameGuard;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Routing\Middleware\ThrottleRequests;
@@ -34,6 +33,8 @@ use Laravel\Passport\Http\Middleware\CreateFreshApiToken;
 use Michalisantoniou6\Cerberus\Middleware\CerberusAbility;
 use Michalisantoniou6\Cerberus\Middleware\CerberusPermission;
 use Michalisantoniou6\Cerberus\Middleware\CerberusRole;
+use Spatie\ResponseCache\Middlewares\CacheResponse;
+use Spatie\ResponseCache\Middlewares\DoNotCacheResponse;
 
 class Kernel extends HttpKernel
 {
@@ -64,6 +65,7 @@ class Kernel extends HttpKernel
             LogoutIfAccessDisabled::class,
             CreateFreshApiToken::class,
             AuthyMiddleware::class,
+            //CacheResponse::class,
         ],
         'sessions' => [
             StartSession::class,
@@ -98,5 +100,6 @@ class Kernel extends HttpKernel
         'role'                       => CerberusRole::class,
         'verify.invite'              => CheckOnboardingInvite::class,
         'check.careplan.mode'        => CheckCarePlanMode::class,
+        'doNotCacheResponse'         => DoNotCacheResponse::class,
     ];
 }

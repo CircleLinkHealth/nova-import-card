@@ -6,7 +6,7 @@
 
 namespace App\Events;
 
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Queue\SerializesModels;
 
 class CarePlanWasApproved extends Event

@@ -1,20 +1,22 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\Contracts\Services\TwilioClientable;
-use App\SaasAccount;
+use CircleLinkHealth\Customer\Entities\SaasAccount;
 use Illuminate\Console\Command;
 use Twilio\Rest\Api\V2010\Account\RecordingInstance;
 
 class DownloadTwilioRecordings extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
+     * @var TwilioClientable
      */
-    protected $signature = 'twilio:download-recordings';
+    public $twilioService;
 
     /**
      * The console command description.
@@ -22,6 +24,12 @@ class DownloadTwilioRecordings extends Command
      * @var string
      */
     protected $description = 'Download recordings from Twilio and store them on CPM Storage. It then deletes them from Twilio.';
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'twilio:download-recordings';
 
     /**
      * Create a new command instance.
@@ -33,11 +41,6 @@ class DownloadTwilioRecordings extends Command
         parent::__construct();
         $this->twilioService = $twilioClientService;
     }
-
-    /**
-     * @var TwilioClientable
-     */
-    public $twilioService;
 
     /**
      * Execute the console command.
@@ -56,19 +59,17 @@ class DownloadTwilioRecordings extends Command
         $this->info('Done');
     }
 
-    private function downloadAndDelete(RecordingInstance $recording)
+    private function delete($recordingSid)
     {
-        $success = $this->download($recording);
-        if ($success) {
-            $this->delete($recording->sid);
-        }
+        $client = $this->twilioService->getClient();
+        $client->recordings($recordingSid)->delete();
     }
 
     private function download(RecordingInstance $recording): bool
     {
         $ext    = '.mp3';
         $mp3Url = str_replace_last('.json', $ext, $recording->uri);
-        $url    = 'https://api.twilio.com' . $mp3Url;
+        $url    = 'https://api.twilio.com'.$mp3Url;
         $result = $this->twilioService->downloadMedia($url);
         if ($result && $result['errorDetail']) {
             $this->sendFailedDownloadToSlack($recording->sid, $result['errorCode'], $result['errorDetail']);
@@ -78,17 +79,19 @@ class DownloadTwilioRecordings extends Command
         }
         $pathOnDisk   = $result['mediaUrl'];
         $uploadResult = SaasAccount::whereSlug('circlelink-health')
-                                   ->first()
-                                   ->addMedia($pathOnDisk)
-                                   ->toMediaCollection('twilio-recordings');
+            ->first()
+            ->addMedia($pathOnDisk)
+            ->toMediaCollection('twilio-recordings');
 
         return $uploadResult->wasRecentlyCreated;
     }
 
-    private function delete($recordingSid)
+    private function downloadAndDelete(RecordingInstance $recording)
     {
-        $client = $this->twilioService->getClient();
-        $client->recordings($recordingSid)->delete();
+        $success = $this->download($recording);
+        if ($success) {
+            $this->delete($recording->sid);
+        }
     }
 
     private function sendFailedDownloadToSlack($recordingSid, $errorCode, $errorDetail)

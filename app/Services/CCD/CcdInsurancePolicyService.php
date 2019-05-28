@@ -6,7 +6,7 @@
 
 namespace App\Services\CCD;
 
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 /**
  * Created by PhpStorm.

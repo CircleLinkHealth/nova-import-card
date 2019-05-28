@@ -7,9 +7,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Rules\PasswordCharacters;
-use App\User;
-use App\UserPasswordsHistory;
+use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Entities\UserPasswordsHistory;
+use CircleLinkHealth\Customer\Rules\PasswordCharacters;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\Request;
 
@@ -38,7 +38,7 @@ class ResetPasswordController extends Controller
     protected $redirectTo = '/home';
 
     /**
-     * @var \App\User
+     * @var \CircleLinkHealth\Customer\Entities\User
      */
     private $userToReset;
 
@@ -113,7 +113,7 @@ class ResetPasswordController extends Controller
      *
      * @param string $email
      *
-     * @return \App\User|null
+     * @return \CircleLinkHealth\Customer\Entities\User|null
      */
     private function getUserToReset(string $email)
     {

@@ -7,13 +7,13 @@
 namespace Tests\Helpers;
 
 use App\CarePlan;
-use App\Location;
 use App\Models\CPM\CpmProblem;
-use App\Patient;
-use App\Practice;
-use App\Role;
-use App\SaasAccount;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Location;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\Role;
+use CircleLinkHealth\Customer\Entities\SaasAccount;
 use Faker\Factory;
 
 trait SetupTestCustomerTrait
@@ -23,7 +23,7 @@ trait SetupTestCustomerTrait
     /**
      * @param Practice $practice
      *
-     * @return \App\User
+     * @return \CircleLinkHealth\Customer\Entities\User
      */
     public function createAdmin(Practice $practice)
     {
@@ -64,7 +64,7 @@ trait SetupTestCustomerTrait
      * @param Practice $practice
      * @param mixed    $providerId
      *
-     * @return \App\User
+     * @return \CircleLinkHealth\Customer\Entities\User
      */
     public function createPatient(Practice $practice, $providerId)
     {
@@ -104,11 +104,12 @@ trait SetupTestCustomerTrait
             });
 
         //careplan
-        $patient->carePlan()->create([
+        $patient->carePlan()->updateOrCreate([
             'mode'                  => CarePlan::WEB,
             'care_plan_template_id' => 1,
-            'status'                => CarePlan::PROVIDER_APPROVED,
-            'provider_date'         => Carbon::now(),
+        ], [
+            'status'        => CarePlan::PROVIDER_APPROVED,
+            'provider_date' => Carbon::now(),
         ]);
 
         //activities
@@ -195,7 +196,7 @@ trait SetupTestCustomerTrait
     /**
      * @param Practice $practice
      *
-     * @return \App\User
+     * @return \CircleLinkHealth\Customer\Entities\User
      */
     public function createProvider(Practice $practice)
     {

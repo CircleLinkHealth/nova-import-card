@@ -8,39 +8,40 @@ namespace App\Http\Controllers\API;
 
 use App\Filters\UserFilters;
 use App\Http\Controllers\Controller;
-use App\Location;
-use App\Practice;
-use App\Role;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Location;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\Role;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 class PracticeController extends Controller
 {
     public function allPracticesWithLocationsAndStaff()
     {
         $practicesCollection = Practice::with('locations.providers')
-                                       ->get([
-                                           'id',
-                                           'display_name',
-                                       ]);
+            ->get([
+                'id',
+                'display_name',
+            ]);
 
         //fixing up the data for vue. basically keying locations and providers by id
         $practices = $practicesCollection->keyBy('id')
-                                         ->map(function ($practice) {
-                                             return [
-                                                 'id'           => $practice->id,
-                                                 'display_name' => $practice->display_name,
-                                                 'locations'    => $practice->locations->map(function ($loc) {
-                                                     //is there no better way to do this?
-                                                     $loc = new Collection($loc);
+            ->map(function ($practice) {
+                return [
+                    'id'           => $practice->id,
+                    'display_name' => $practice->display_name,
+                    'locations'    => $practice->locations->map(function ($loc) {
+                        //is there no better way to do this?
+                        $loc = new Collection($loc);
 
-                                                     $loc['providers'] = collect($loc['providers'])->keyBy('id');
+                        $loc['providers'] = collect($loc['providers'])->keyBy('id');
 
-                                                     return $loc;
-                                                 })->keyBy('id'),
-                                             ];
-                                         });
+                        return $loc;
+                    })->keyBy('id'),
+                ];
+            });
 
         return response()->json($practices->all());
     }
@@ -61,7 +62,7 @@ class PracticeController extends Controller
                     ];
                 })->toArray();
         });
-        $providers           = $providersCollection->toArray();
+        $providers = $providersCollection->toArray();
         if (isset($providers) && sizeof($providers) > 0) {
             return response()->json($providers[0]);
         }
@@ -72,52 +73,52 @@ class PracticeController extends Controller
     public function getNurses($practiceId)
     {
         $nurses = User::ofType(['care-center', 'care-center-external'])
-                      ->whereHas('nurseInfo', function ($q) {
-                          $q->where([
-                              'status' => 'active',
-                          ]);
-                      })
-                      ->ofPractice($practiceId)
-                      ->with(['nurseInfo.states', 'roles'])
-                      ->get([
-                          'id',
-                          'first_name',
-                          'last_name',
-                          'suffix',
-                          'city',
-                          'state',
-                      ])
-                      ->map(function ($nurse) use ($practiceId) {
-                          $info   = $nurse->nurseInfo;
-                          $states = (
-                          $info
+            ->whereHas('nurseInfo', function ($q) {
+                $q->where([
+                    'status' => 'active',
+                ]);
+            })
+            ->ofPractice($practiceId)
+            ->with(['nurseInfo.states', 'roles'])
+            ->get([
+                'id',
+                'first_name',
+                'last_name',
+                'suffix',
+                'city',
+                'state',
+            ])
+            ->map(function ($nurse) use ($practiceId) {
+                $info = $nurse->nurseInfo;
+                $states = (
+                    $info
                               ? $info->states
                               : new Collection()
                           )
-                              ->map(function ($state) {
-                                  return $state->code;
-                              });
+                    ->map(function ($state) {
+                        return $state->code;
+                    });
 
-                          if ($nurse->state && ! $states->contains($nurse->state)) {
-                              $states->push($nurse->state);
-                          }
+                if ($nurse->state && ! $states->contains($nurse->state)) {
+                    $states->push($nurse->state);
+                }
 
-                          return [
-                              'id'         => $nurse->id,
-                              'roles'      => $nurse->rolesInPractice($practiceId)
-                                                    ->map(function ($r) {
-                                                        return $r->name;
-                                                    }),
-                              'first_name' => $nurse->getFirstName(),
-                              'last_name'  => $nurse->getLastName(),
-                              'suffix'     => $nurse->getSuffix(),
-                              'full_name'  => $nurse->display_name ?? ($nurse->getFullName()),
-                              'city'       => $nurse->city,
-                              'state'      => $nurse->state,
-                              'states'     => $states,
-                          ];
-                      })
-                      ->toArray();
+                return [
+                    'id'    => $nurse->id,
+                    'roles' => $nurse->rolesInPractice($practiceId)
+                        ->map(function ($r) {
+                            return $r->name;
+                        }),
+                    'first_name' => $nurse->getFirstName(),
+                    'last_name'  => $nurse->getLastName(),
+                    'suffix'     => $nurse->getSuffix(),
+                    'full_name'  => $nurse->display_name ?? ($nurse->getFullName()),
+                    'city'       => $nurse->city,
+                    'state'      => $nurse->state,
+                    'states'     => $states,
+                ];
+            })
+            ->toArray();
 
         return response()->json($nurses);
     }
@@ -192,20 +193,35 @@ class PracticeController extends Controller
 
     /**
      * get list of available practices.
+     * If called from admin pages, we have to fetch practices that user has admin rights to
+     * If called from provider pages, we fetch all practices a user can view.
      */
-    public function getPractices()
+    public function getPractices(Request $request)
     {
-        $user                = auth()->user();
-        $roleIds             = $user->isAdmin()
-            ? null
-            : Role::getIdsFromNames(['software-only']);
-        $practicesCollection = auth()->user()
-                                     ->practices(true, false, $roleIds)
-                                     ->with('locations')
-                                     ->get([
-                                         'id',
-                                         'display_name',
-                                     ]);
+        //HTTP_REFERER is not always set by web servers, so we use the param in admin pages on client side
+        $practicesIAmAdmin = $request->input('admin-only', false);
+        if ( ! $practicesIAmAdmin
+             && isset($_SERVER['HTTP_REFERER'])
+             && Str::contains($_SERVER['HTTP_REFERER'], '/admin/')) {
+            $practicesIAmAdmin = true;
+        }
+        $user = auth()->user();
+
+        if ($practicesIAmAdmin) {
+            $roleIds = $user->isAdmin()
+                ? null
+                : Role::getIdsFromNames(['software-only']);
+        } else {
+            $roleIds = null;
+        }
+
+        $practicesCollection = $user
+            ->practices(true, false, $roleIds)
+            ->with('locations')
+            ->get([
+                'id',
+                'display_name',
+            ]);
 
         $practices = $practicesCollection
             ->map(function ($practice) {

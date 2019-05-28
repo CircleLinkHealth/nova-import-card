@@ -231,6 +231,7 @@
             selectedPatientIsInDraftMode: false,
             nursesForSelect: [],
             patientsForSelect: [],
+            skipRefreshingPatients: false //used when patient is already selected
 
         };
     }
@@ -394,13 +395,17 @@
                 if (practice) {
 
                     //reset selected patient only if practice is different
-                    if (this.actions[actionIndex].data.practiceId !== practice.value) {
+                    if (this.actions[actionIndex].data.practiceId !== practice.value && !this.actions[actionIndex].skipRefreshingPatients) {
                         this.actions[actionIndex].selectedPatientData = UNASSIGNED_VALUE;
                     }
                     //always reset selected nurse
                     this.actions[actionIndex].selectedNurseData = UNASSIGNED_VALUE;
 
                     this.actions[actionIndex].data.practiceId = practice.value;
+
+                    //in case skip was set, we reset
+                    this.actions[actionIndex].skipRefreshingPatients = false;
+
                     return Promise.all([this.getPatients(actionIndex), this.getNurses(actionIndex)])
                 }
                 return Promise.resolve([])
@@ -419,7 +424,7 @@
             getPractices(actionIndex) {
                 this.loaders.practices = true;
                 return this.cache()
-                    .get(rootUrl(`api/practices`))
+                    .get(rootUrl(`api/practices?admin-only=true`))
                     .then(response => {
                         this.loaders.practices = false;
                         console.log('add-action:practices', response);
@@ -456,7 +461,7 @@
             getUnscheduledPatients(actionIndex) {
                 this.loaders.patients = true
                 const practice_addendum = this.actions[actionIndex].data.practiceId ? `practices/${this.actions[actionIndex].data.practiceId}/` : '';
-                return this.axios.get(rootUrl(`api/${practice_addendum}patients/without-scheduled-calls`)).then(response => {
+                return this.axios.get(rootUrl(`api/${practice_addendum}patients/without-scheduled-activities`)).then(response => {
                     this.loaders.patients = false;
                     const pagination = response.data;
                     console.log('add-action:patients:unscheduled', pagination);
@@ -741,7 +746,12 @@
             Event.$on('add-action-modals:set', (data) => {
                 if (data) {
                     if (data.practiceId) {
-                        // this.setPractice(data.practiceId)
+                        this.actions[this.actions.length - 1].skipRefreshingPatients = true;
+                        this.actions[this.actions.length - 1].data.patientId = data.practiceId;
+                        this.actions[this.actions.length - 1].selectedPracticeData = {
+                            label: data.practiceName,
+                            value: data.practiceId
+                        };
                     }
                     if (data.patientId) {
                         console.log(data);
@@ -750,8 +760,6 @@
                             label: data.patientName,
                             value: data.patientId
                         };
-                        this.actions[this.actions.length - 1].selectedPatientData.label = data.patientName
-                        this.actions[this.actions.length - 1].selectedPatientData.value = data.patientId
                     }
                 }
             })

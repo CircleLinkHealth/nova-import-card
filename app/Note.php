@@ -7,13 +7,14 @@
 namespace App;
 
 use App\Contracts\PdfReport;
-use App\Filters\Filterable;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\Channels\FaxChannel;
 use App\Notifications\NoteForwarded;
 use App\Traits\IsAddendumable;
 use App\Traits\PdfReportTrait;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Filters\Filterable;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
@@ -28,13 +29,14 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @property \Carbon\Carbon                                                  $created_at
  * @property \Carbon\Carbon                                                  $updated_at
  * @property string                                                          $type
- * @property string                                                          $performed_at
+ * @property \Carbon\Carbon                                                  $performed_at
  * @property int|null                                                        $logger_id
  * @property \App\Models\Addendum[]|\Illuminate\Database\Eloquent\Collection $addendums
- * @property \App\User                                                       $author
+ * @property \CircleLinkHealth\Customer\Entities\User                        $author
  * @property \App\Call                                                       $call
- * @property \App\User                                                       $patient
- * @property \App\User                                                       $program
+ * @property \CircleLinkHealth\Customer\Entities\User                        $patient
+ * @property \CircleLinkHealth\Customer\Entities\User                        $program
+ * @property string                                                          $status
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereAuthorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereBody($value)
@@ -48,11 +50,28 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property \CircleLinkHealth\Customer\Entities\User|null                                  $logger
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note emergency($yes = true)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note filter(\App\Filters\QueryFilters $filters)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note forwarded(\Carbon\Carbon $from = null, \Carbon\Carbon $to = null, $excludePatientSupport = true)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note forwardedTo($notifiableType, $notifiableId, \Carbon\Carbon $from = null, \Carbon\Carbon $to = null)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note patientPractice($practiceId)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note query()
  */
-class Note extends \App\BaseModel implements PdfReport
+class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfReport
 {
-    use Filterable, IsAddendumable,
+    use Filterable;
+    use
+        IsAddendumable;
+    use
         PdfReportTrait;
+    const STATUS_COMPLETE = 'complete';
+    const STATUS_DRAFT    = 'draft';
 
     protected $dates = [
         'performed_at',
@@ -67,6 +86,7 @@ class Note extends \App\BaseModel implements PdfReport
         'type',
         'did_medication_recon',
         'performed_at',
+        'status',
     ];
 
     protected $table = 'notes';
@@ -99,7 +119,7 @@ class Note extends \App\BaseModel implements PdfReport
 
         $cpmSettings = $this->patient->primaryPractice->cpmSettings();
 
-        if ($notifyCareteam && $cpmSettings->email_note_was_forwarded) {
+        if ($notifyCareteam) {
             $recipients = $this->patient->getCareTeamReceivesAlerts();
 
             if ($force) {
@@ -111,27 +131,35 @@ class Note extends \App\BaseModel implements PdfReport
             $recipients->push(User::find(948));
         }
 
-        $recipients->unique()
-            ->values()
-            ->map(function ($carePersonUser) {
-                optional($carePersonUser)->notify(new NoteForwarded($this, ['mail']));
-            });
-
-        $channels = [];
+        $channelsForLocation = [];
 
         if ($cpmSettings->efax_pdf_notes) {
-            $channels[] = FaxChannel::class;
+            $channelsForLocation[] = FaxChannel::class;
         }
 
         if ($cpmSettings->dm_pdf_notes) {
-            $channels[] = DirectMailChannel::class;
+            $channelsForLocation[] = DirectMailChannel::class;
         }
 
-        if ( ! $notifyCareteam || empty($channels)) {
+        $channelsForUsers = $channelsForLocation;
+
+        if ($cpmSettings->email_note_was_forwarded) {
+            $channelsForUsers[] = 'mail';
+        }
+
+        // Notify Users
+        $recipients->unique()
+            ->values()
+            ->map(function ($carePersonUser) use ($channelsForUsers) {
+                optional($carePersonUser)->notify(new NoteForwarded($this, $channelsForUsers));
+            });
+
+        if ( ! $notifyCareteam || empty($channelsForLocation)) {
             return;
         }
 
-        optional($this->patient->patientInfo->location)->notify(new NoteForwarded($this, $channels));
+        // Notify location
+        optional($this->patient->patientInfo->location)->notify(new NoteForwarded($this, $channelsForLocation));
     }
 
     public function link()
@@ -154,7 +182,7 @@ class Note extends \App\BaseModel implements PdfReport
      */
     public function notifications()
     {
-        return $this->morphMany(DatabaseNotification::class, 'attachment')
+        return $this->morphMany(\CircleLinkHealth\Core\Entities\DatabaseNotification::class, 'attachment')
             ->orderBy('created_at', 'desc');
     }
 
@@ -165,7 +193,7 @@ class Note extends \App\BaseModel implements PdfReport
 
     public function program()
     {
-        return $this->belongsTo('App\User', 'author_id', 'id');
+        return $this->belongsTo('CircleLinkHealth\Customer\Entities\User', 'author_id', 'id');
     }
 
     /**

@@ -7,9 +7,9 @@
 namespace App\Jobs;
 
 use App\Notifications\WeeklyProviderReport;
-use App\Practice;
 use App\Reports\Sales\Provider\SalesByProviderReport;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -17,7 +17,9 @@ use Illuminate\Queue\SerializesModels;
 
 class EmailWeeklyProviderReport implements ShouldQueue
 {
-    use InteractsWithQueue, Queueable, SerializesModels;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
     protected $endRange;
 
     protected $practice;
@@ -48,10 +50,10 @@ class EmailWeeklyProviderReport implements ShouldQueue
         //handle providers
         foreach ($providers_for_practice as $provider) {
             $providerData = (new SalesByProviderReport(
-                    $provider,
-                    SalesByProviderReport::SECTIONS,
-                    $this->startRange->copy(),
-                    $this->endRange->copy()
+                $provider,
+                SalesByProviderReport::SECTIONS,
+                $this->startRange->copy(),
+                $this->endRange->copy()
                 ))
                 ->data(true);
 

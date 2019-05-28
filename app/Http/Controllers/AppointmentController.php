@@ -6,9 +6,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Appointment;
-use App\User;
+use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Appointment;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
+use Validator;
 
 class AppointmentController extends Controller
 {
@@ -50,12 +52,20 @@ class AppointmentController extends Controller
 
         $providerId = 'null' != $input['provider'] ? $input['provider'] : null;
 
+        $validator = Validator::make(['date' => $input['date']], ['date' => 'date_format:m-d-Y|required']);
+
+        if ($validator->fails()) {
+            return 'Invalid date.';
+        }
+
+        $carbonDate = Carbon::createFromFormat('m-d-Y', $input['date']);
+
         $data = Appointment::create([
             'patient_id'    => $input['patientId'],
             'author_id'     => auth()->user()->id,
             'type'          => $input['appointment_type'],
             'provider_id'   => $providerId,
-            'date'          => $input['date'],
+            'date'          => $carbonDate->toDateString(),
             'time'          => $input['time'],
             'comment'       => $input['comment'],
             'was_completed' => $was_completed,
@@ -63,7 +73,7 @@ class AppointmentController extends Controller
 
         return redirect()->route('patient.note.index', ['patient' => $input['patientId']])->with(
             'messages',
-            ['Successfully Created Note']
+            ['Successfully Stored Appointment']
         );
     }
 

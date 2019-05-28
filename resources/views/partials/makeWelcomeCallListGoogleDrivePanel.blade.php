@@ -7,7 +7,7 @@
                     <div class="form-group">
                         <select name="practiceName" class="col-sm-12 form-control select2" required>
                             <option value="" disabled selected>Select Practice</option>
-                            @foreach(App\Practice::active()->orderBy('display_name')->get() as $practice)
+                            @foreach(CircleLinkHealth\Customer\Entities\Practice::active()->orderBy('display_name')->get() as $practice)
                                 <option value="{{$practice->name}}">{{$practice->display_name}}</option>
                             @endforeach
                         </select>

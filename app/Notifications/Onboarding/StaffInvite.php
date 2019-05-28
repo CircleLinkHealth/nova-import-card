@@ -6,9 +6,9 @@
 
 namespace App\Notifications\Onboarding;
 
-use App\Entities\Invite;
-use App\Practice;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Invite;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;

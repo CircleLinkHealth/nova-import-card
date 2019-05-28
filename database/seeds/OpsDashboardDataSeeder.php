@@ -4,9 +4,9 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Patient;
-use App\Practice;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
@@ -56,7 +56,7 @@ class OpsDashboardDataSeeder extends Seeder
                 $summary->save();
             }
         }
-//        $sum = new \App\PatientMonthlySummary();
+//        $sum = new \CircleLinkHealth\Customer\Entities\PatientMonthlySummary();
 //        $sum->createCallReportsForCurrentMonth();
 
 

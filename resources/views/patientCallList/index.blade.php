@@ -1,7 +1,7 @@
 @extends('partials.providerUI')
 
-@section('title', 'Patient Listing')
-@section('activity', '')
+@section('title', 'Patient Call List')
+@section('activity', 'Patient Call List')
 
 <?php
 function formatTime($time)
@@ -26,29 +26,51 @@ function formatTime($time)
             .red {
                 color: #ba1d18;
             }
+
+            .bold-row {
+                font-weight: 900;
+                color:#888888;
+                text-shadow: 1px 0 #888888;
+                letter-spacing:1px;
+            }
+
         </style>
     @endpush
     @push('scripts')
         <script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
         <script>
             $(document).ready(function () {
-                $('#cpmEditableTable').DataTable({
-                    "order": [[2, "asc"], [3, "asc"]],
+
+                const table = $('#cpmEditableTable');
+                table.DataTable({
+                    "order": [],
                     "iDisplayLength": 100,
                     scrollX: true,
                     fixedHeader: true
                 });
 
-                $('.patientNameLink').click(function () {
-                    callId = $(this).attr('call-id');
-                    if (callId && $("#attemptNoteCall" + callId).length) {
-                        $("#attemptNoteCall" + callId).modal();
-                        return false;
-                    }
-                    return true;
-                });
+                function addClickListener() {
+                    const row = $('.patientNameLink');
+                    row.click(function () {
+                        const callId = $(this).attr('call-id');
 
-                $('.patientNameLink').tooltip({boundary: 'window'});
+                        const noteModal = $("#attemptNoteCall" + callId);
+                        if (callId && noteModal.length) {
+                            noteModal.modal();
+                            return false;
+                        }
+                        return true;
+                    });
+
+                    row.tooltip({boundary: 'window'});
+                }
+
+                addClickListener();
+
+                //make sure we add the click listener when we change the page
+                table.on('page.dt', function () {
+                    setTimeout(addClickListener, 500);
+                })
 
             });
         </script>
@@ -59,7 +81,7 @@ function formatTime($time)
         <div class="main-form-container col-lg-10 col-lg-offset-1 col-md-10 col-md-offset-1">
             <div class="row">
                 <div class="main-form-title col-lg-12">
-                    Patient Activities
+                    Scheduled Activities
                 </div>
                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
 
@@ -146,12 +168,16 @@ function formatTime($time)
                                                     $curTime = \Carbon\Carbon::now();
                                                     $curDate = $curTime->toDateString();
                                                     $curTime = $curTime->toTimeString();
-                                                    $rowBg = '';
+                                                    $rowBg   = '';
+                                                    $boldRow = '';
                                                     if ($call->scheduled_date == $curDate && $call->call_time_end < $curTime) {
                                                         $rowBg = 'background-color: rgba(255, 0, 0, 0.4);';
                                                     }
+                                                    if ('Call Back' === $call->type) {
+                                                        $boldRow = 'bold-row';
+                                                    }
                                                     ?>
-                                                    <tr style="{{ $rowBg }}">
+                                                    <tr class="{{$boldRow}}" style="{{ $rowBg }}">
                                                         <td class="vert-align" style="text-align:center">
                                                             @if(empty($call->type) || $call->type === 'call')
                                                                 <i class="fas fa-phone"></i>
@@ -181,19 +207,21 @@ function formatTime($time)
                                                             </a>
                                                         </td>
                                                         <td class="{{ \Carbon\Carbon::parse($call->scheduled_date)->lessThan(\Carbon\Carbon::today()) ? 'red' : '' }}">
-                                                            {{ $call->scheduled_date }}
+                                                            {{ presentDate($call->scheduled_date, false) }}
                                                         </td>
                                                         <td>{{ $call->call_time_start }}</td>
                                                         <td>{{ $call->call_time_end }}</td>
                                                         <td>
-                                                            <?php
-                                                            $dateTime = new DateTime();
-                                                            $dateTime->setTimeZone(new DateTimeZone($call->timezone));
-                                                            echo '<span style="font-weight:bold;color:green;">' . $dateTime->format('T') . '</a>';
-                                                            ?>
+                                                            @if($call->timezone)
+                                                                <?php
+                                                                $dateTime = new DateTime();
+                                                                $dateTime->setTimeZone(new DateTimeZone($call->timezone));
+                                                                echo '<span style="font-weight:bold;color:green;">'.$dateTime->format('T').'</a>';
+                                                                ?>
+                                                            @endif
                                                         </td>
                                                         <td>
-                                                            {{ $call->last_call }}
+                                                            {{ presentDate($call->last_call) }}
                                                         </td>
                                                         <td>
                                                             @if( isset($call->ccm_time))

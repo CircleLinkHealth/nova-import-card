@@ -6,13 +6,13 @@
 
 namespace App\Http\Controllers\API;
 
-use App\CarePerson;
 use App\CLH\Facades\StringManipulation;
 use App\Http\Controllers\Controller;
-use App\PhoneNumber;
-use App\Practice;
-use App\ProviderInfo;
-use App\User;
+use CircleLinkHealth\Customer\Entities\CarePerson;
+use CircleLinkHealth\Customer\Entities\PhoneNumber;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\ProviderInfo;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 use InvalidArgumentException;
 
@@ -137,9 +137,9 @@ class CareTeamController extends Controller
                 $type = $member->type;
 
                 if ($member->user->practice($patient->primaryPractice->id) && ! in_array(
-                                      $member->type,
-                                          [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
-                                  )) {
+                    $member->type,
+                    [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
+                                      )) {
                     $formattedType = $member->user->practiceOrGlobalRole()->display_name.' (Internal)';
                 }
 
@@ -312,8 +312,8 @@ class CareTeamController extends Controller
 
         if ($providerUser->practice($patient->primaryPractice->id) && ! in_array(
             $type,
-                [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
-        )) {
+            [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
+            )) {
             $type = $providerUser->practiceOrGlobalRole()->display_name.' (Internal)';
         }
 

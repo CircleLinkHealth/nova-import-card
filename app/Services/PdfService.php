@@ -7,6 +7,7 @@
 namespace App\Services;
 
 use App\Contracts\HtmlToPdfService;
+use App\Exceptions\FileNotFoundException;
 use Carbon\Carbon;
 use LynX39\LaraPdfMerger\PdfManage;
 
@@ -61,9 +62,11 @@ class PdfService
      * @param null  $outputFullPath
      * @param array $options
      *
+     * @throws \Exception
+     *
      * @return string|null
      */
-    public function createPdfFromView($view, array $args, array $options = [], $outputFullPath = null)
+    public function createPdfFromView($view, array $args, $outputFullPath = null, array $options = [])
     {
         if ( ! $outputFullPath) {
             $outputFullPath = $this->randomFileFullPath();
@@ -83,26 +86,32 @@ class PdfService
 //            $pdf->setOption('javascript-delay', 400);
 
         $pdf = $this->htmlToPdfService
-            ->loadView($view, $args)
-            ->setOption('footer-center', 'Page [page]')
-            ->setOption('margin-top', '12')
-            ->setOption('margin-left', '25')
-            ->setOption('margin-bottom', '15')
-            ->setOption('margin-right', '0.75');
-
+            ->loadView($view, $args);
         if ( ! empty($options)) {
             foreach ($options as $key => $value) {
                 $pdf = $pdf->setOption($key, $value);
             }
+        } else {
+            $pdf->setOption('footer-center', 'Page [page]')
+                ->setOption('margin-top', '8')
+                ->setOption('margin-left', '8')
+                ->setOption('margin-bottom', '8')
+                ->setOption('margin-right', '8');
         }
 
         $pdf = $pdf->save($outputFullPath, true);
 
         if ( ! $args['generatePdfCareplan']) {
-            $outputFullPath = $this->mergeFiles([
-                $outputFullPath,
-                storage_path("patient/pdf-careplans/{$args['pdfCareplan']->filename}"),
-            ]);
+            $outputFullPath = $this->mergeFiles(
+                [
+                    $outputFullPath,
+                    storage_path("patient/pdf-careplans/{$args['pdfCareplan']->filename}"),
+                ]
+            );
+        }
+
+        if ( ! file_exists($outputFullPath)) {
+            throw new FileNotFoundException("File not found at `$outputFullPath`. Seems like PDF was not generated.");
         }
 
         return $outputFullPath;

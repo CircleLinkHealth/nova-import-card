@@ -6,6 +6,8 @@
 
 namespace App;
 
+use CircleLinkHealth\Customer\Entities\User;
+
 /**
  * App\ObservationMeta.
  *
@@ -32,8 +34,14 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereProgramId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta query()
  */
-class ObservationMeta extends \App\BaseModel
+class ObservationMeta extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     /**
      * The attributes that are mass assignable.

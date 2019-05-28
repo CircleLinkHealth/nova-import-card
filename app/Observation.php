@@ -7,7 +7,60 @@
 namespace App;
 
 use App\Services\DatamonitorService;
+use CircleLinkHealth\Core\Entities\BaseModel;
+use CircleLinkHealth\Customer\Entities\User;
 
+/**
+ * App\Observation.
+ *
+ * @property int                                                                            $id
+ * @property string                                                                         $obs_date
+ * @property string                                                                         $obs_date_gmt
+ * @property int                                                                            $comment_id
+ * @property int                                                                            $sequence_id
+ * @property string                                                                         $obs_message_id
+ * @property int                                                                            $user_id
+ * @property string                                                                         $obs_method
+ * @property string                                                                         $obs_key
+ * @property string                                                                         $obs_value
+ * @property string                                                                         $obs_unit
+ * @property int                                                                            $program_id
+ * @property int                                                                            $legacy_obs_id
+ * @property \Illuminate\Support\Carbon                                                     $created_at
+ * @property \Illuminate\Support\Carbon                                                     $updated_at
+ * @property \App\Comment                                                                   $comment
+ * @property mixed                                                                          $alert_level
+ * @property mixed                                                                          $alert_log
+ * @property mixed                                                                          $alert_sort_weight
+ * @property mixed                                                                          $alert_status_change
+ * @property mixed                                                                          $alert_status_history
+ * @property mixed                                                                          $starting_observation
+ * @property mixed                                                                          $timezone
+ * @property \App\ObservationMeta[]|\Illuminate\Database\Eloquent\Collection                $meta
+ * @property \App\CPRulesQuestions                                                          $question
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \CircleLinkHealth\Customer\Entities\User                                       $user
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereCommentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereLegacyObsId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsDateGmt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsKey($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsMessageId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsMethod($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsUnit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereObsValue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereProgramId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereSequenceId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereUserId($value)
+ * @mixin \Eloquent
+ */
 class Observation extends BaseModel
 {
     protected $dates = ['deleted_at'];
@@ -257,6 +310,6 @@ class Observation extends BaseModel
 
     public function user()
     {
-        return $this->belongsTo('App\User', 'user_id', 'id');
+        return $this->belongsTo('CircleLinkHealth\Customer\Entities\User', 'user_id', 'id');
     }
 }

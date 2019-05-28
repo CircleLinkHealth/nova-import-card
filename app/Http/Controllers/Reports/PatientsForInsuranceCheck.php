@@ -6,10 +6,10 @@
 
 namespace App\Http\Controllers\Reports;
 
+use App\Exports\FromArray;
 use App\Http\Controllers\Controller;
-use App\User;
 use Carbon\Carbon;
-use Maatwebsite\Excel\Facades\Excel;
+use CircleLinkHealth\Customer\Entities\User;
 
 class PatientsForInsuranceCheck extends Controller
 {
@@ -38,14 +38,8 @@ class PatientsForInsuranceCheck extends Controller
                 ];
             });
 
-        Excel::create("{$date->toDateString()} - Patients For Insurance Check", function ($excel) use (
-            $users
-        ) {
-            $excel->sheet('Patients', function ($sheet) use (
-                $users
-            ) {
-                $sheet->fromArray($users);
-            });
-        })->export('xls');
+        $fileName = "{$date->toDateString()} - Patients For Insurance Check.xls";
+
+        return (new FromArray($fileName, $users->all()))->download($fileName);
     }
 }

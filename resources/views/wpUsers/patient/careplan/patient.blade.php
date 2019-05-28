@@ -108,8 +108,9 @@ $user_info = [];
                                                         </div>
                                                         <span class="help-block">{{ $errors->first('preferred_contact_language') }}</span>
                                                     </div>
-                                                    <div class="form-group form-item form-item-spacing col-sm-12 col-lg-5 {{ $errors->first('mrn_number') ? 'has-error' : '' }}">
-                                                        <label class="sr-only" for="mrn_number">MRN</label>
+                                                    <div class="col-sm-12  col-lg-5{{ $errors->first('mrn_number') ? 'has-error' : '' }}">
+                                                        <label for="mrn_number">MRN<span
+                                                                    class="attention">*</span>:</label>
                                                         <input type="text" class="form-control" name="mrn_number"
                                                                id="mrn_number" placeholder="MRN *"
                                                                value="{{ (old('mrn_number') ? old('mrn_number') : ($patient->getMRN() ? $patient->getMRN() : '')) }}">
@@ -120,6 +121,7 @@ $user_info = [];
                                             <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('birth_date') ? 'has-error' : '' }}">
                                                 <label for="birth_date">Date Of Birth<span
                                                             class="attention">*</span>:</label>
+
                                                 <v-datepicker name="birth_date" class="selectpickerX form-control"
                                                               format="yyyy-MM-dd"
                                                               placeholder="YYYY-MM-DD"
@@ -308,8 +310,7 @@ $user_info = [];
                                                 @endif
                                                 <input type=hidden name=program_id value="{{ $programId }}">
                                                 <div class="form-group form-item form-item-spacing col-lg-12 col-sm-12 col-xs-12 {{ $errors->first('program') ? 'has-error' : '' }}">
-                                                    {!! Form::label('preferred_contact_location', 'Preferred Office Location  *:
-        :') !!}
+                                                    {!! Form::label('preferred_contact_location', 'Preferred Office Location  *:') !!}
                                                     {!! Form::select('preferred_contact_location', $locations, $patient->getPreferredContactLocation(), ['class' => 'form-control select-picker'/*, 'style' => 'width:90;'*/]) !!}
                                                 </div>
                                             @else
@@ -352,11 +353,24 @@ $user_info = [];
                                             <input type=hidden name=status
                                                    value="{{ (old('status') ? old('status') : ($patient->status)) }}">
 
-                                            @if(auth()->user()->isAdmin() || auth()->user()->hasRole('provider'))
+                                            @if(auth()->user()->hasPermission('change-patient-enrollment-status'))
                                                 <div class="form-group form-item form-item-spacing col-sm-12">
                                                     <div class="row">
                                                         <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Enrollment: ') !!}</div>
-                                                        <div class="col-lg-8">{!! Form::select('ccm_status', [ App\Patient::PAUSED => 'Paused', App\Patient::ENROLLED => 'Enrolled', App\Patient::WITHDRAWN => 'Withdrawn', App\Patient::UNREACHABLE => 'Unreachable' ], $patient->getCcmStatus(), ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
+                                                        <div id="perform-status-select"
+                                                             class="col-lg-8">{!! Form::select('ccm_status', [ CircleLinkHealth\Customer\Entities\Patient::PAUSED => 'Paused', CircleLinkHealth\Customer\Entities\Patient::ENROLLED => 'Enrolled', CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN => 'Withdrawn', CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE => 'Unreachable' ], $patient->getCcmStatus(), ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
+                                                    </div>
+                                                    <div id="withdrawn-reason" class="row hidden"
+                                                         style="margin-top: 20px">
+                                                        <div class="col-lg-12">{!! Form::label('withdrawn_reason', 'Withdrawn Reason: ') !!}</div>
+                                                        <div id="perform-reason-select"
+                                                             class="col-lg-12">{!! Form::select('withdrawn_reason', $withdrawnReasons, ! array_key_exists($patientWithdrawnReason, $withdrawnReasons) && $patientWithdrawnReason != null ? 'Other' : $patientWithdrawnReason, ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
+                                                    </div>
+                                                    <div id="withdrawn-reason-other" class="hidden withdrawn-input">
+                                <textarea id="withdrawn_reason_other" rows="5" cols="100" style="resize: none;"
+                                          placeholder="Enter Withdrawal Reason..." name="withdrawn_reason_other"
+                                          required="required"
+                                          class="form-control">{{! array_key_exists($patientWithdrawnReason, $withdrawnReasons) ? $patientWithdrawnReason : null}}</textarea>
                                                     </div>
                                                 </div>
                                             @else
@@ -372,6 +386,52 @@ $user_info = [];
                                                     </div>
                                                 </div>
                                             @endif
+                                            @push('scripts')
+                                                <script>
+
+                                                    function onStatusChange(e) {
+
+                                                        let ccmStatus = document.getElementById("ccm_status");
+
+                                                        if (ccmStatus.value === "withdrawn") {
+                                                            $('#withdrawn-reason').removeClass('hidden');
+                                                            onReasonChange();
+                                                        } else {
+                                                            $('#withdrawn-reason').addClass('hidden');
+                                                            $('#withdrawn-reason-other').addClass('hidden');
+                                                        }
+
+                                                    }
+
+                                                    function onReasonChange(e) {
+
+                                                        let reason = document.getElementById("withdrawn_reason");
+                                                        let reasonOther = document.getElementById('withdrawn_reason_other');
+
+                                                        if (reason.value === "Other") {
+                                                            $('#withdrawn-reason-other').removeClass('hidden');
+                                                            reasonOther.setAttribute('required', '');
+                                                        } else {
+                                                            $('#withdrawn-reason-other').addClass('hidden');
+                                                            reasonOther.removeAttribute('required');
+                                                        }
+
+                                                    }
+
+                                                    $('document').ready(function () {
+
+                                                        const statusSelectEl = $('#perform-status-select');
+                                                        statusSelectEl.on('change', onStatusChange);
+                                                        statusSelectEl.change();
+
+                                                        const reasonSelectEl = $('#perform-reason-select');
+                                                        reasonSelectEl.on('change', onReasonChange);
+                                                        reasonSelectEl.change();
+                                                    });
+
+
+                                                </script>
+                                            @endpush
 
 
                                             <br>
@@ -442,3 +502,10 @@ $user_info = [];
 
     {!! Form::close() !!}
 @endsection
+
+<style>
+    .vdp-datepicker input {
+        border: none;
+    }
+</style>
+

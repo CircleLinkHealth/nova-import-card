@@ -1,28 +1,60 @@
-<div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12" style="padding-bottom:9px">
+<div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12" style="padding-bottom:15px">
     <div class="row">
         <div class="col-sm-12 col-xs-12">
+            @push('scripts')
+                <script>
+
+                    function onStatusChange(e){
+
+                        let ccmStatus = document.getElementById("status");
+
+                        if (ccmStatus.value === "withdrawn") {
+                            $('#header-withdrawn-reason').removeClass('hidden');
+                            onReasonChange();
+                            console.log('test');
+                        }
+                        else {
+                            $('#header-withdrawn-reason').addClass('hidden');
+                            $('#header-withdrawn-reason-other').addClass('hidden');
+                        }
+
+                    }
+
+                    function onReasonChange(e){
+
+                        let reason = document.getElementById("withdrawn_reason");
+                        let reasonOther = document.getElementById('withdrawn_reason_other');
+
+                        if (reason.value === "Other") {
+                            $('#header-withdrawn-reason-other').removeClass('hidden');
+                            reasonOther.setAttribute('required', '');
+                        }
+                        else {
+                            $('#header-withdrawn-reason-other').addClass('hidden');
+                            reasonOther.removeAttribute('required');
+                        }
+
+                    }
+
+                    $('document').ready(function () {
+
+                        const statusSelectEl = $('#header-perform-status-select');
+                        statusSelectEl.on('change', onStatusChange);
+                        statusSelectEl.change();
+
+                        const reasonSelectEl = $('#header-perform-reason-select');
+                        reasonSelectEl.on('change', onReasonChange);
+                        reasonSelectEl.change();
+                    });
+
+
+                </script>
+            @endpush
             <div class="col-sm-8" style="line-height: 22px;">
                 <span style="font-size: 30px;"> <a
                             href="{{ route('patient.summary', array('patient' => $patient->id)) }}">
                     {{$patient->getFullName()}}
                     </a> </span>
-                @if($ccm_complex)
-                    <span id="complex_tag"
-                          style="background-color: #ec683e;font-size: 15px; position: relative; top: -7px;"
-                          class="label label-warning">Complex CCM</span>
-                    @push('scripts')
-                        <script>
-                            (function () {
-                                // subscribe to jQuery event to know whether the complex-cscm checkbox value has been changed or not
-                                var $complexSpan = $("#complex_tag");
-                                $(document).on("complex-ccm-form-submit", function (e, status) {
-                                    if (status) $complexSpan.show();
-                                    else $complexSpan.hide();
-                                })
-                            })()
-                        </script>
-                    @endpush
-                @endif
                 <a href="{{ route('patient.demographics.show', array('patient' => $patient->id)) }}"><span
                             class="glyphicon glyphicon-pencil" style="margin-right:3px;"></span></a><br/>
 
@@ -45,10 +77,14 @@
                     @endif
                     <li><span> <b>Practice</b>: {{$patient->primaryProgramName()}} </span></li>
                     @if($patient->getAgentName())
-                        <li class="inline-block"><b>Alternate Contact</b>: <span
+                        <li><b>Alternate Contact</b>: <span
                                     title="{{$patient->getAgentEmail()}}">({{$patient->getAgentRelationship()}}
                                 ) {{$patient->getAgentName()}} {{$patient->getAgentPhone()}}</span></li>
-                        <li class="inline-block"></li>
+                    @endif
+                    @if (!empty($patient->patientInfo->general_comment))
+                    <li>
+                        <b>General comment</b>: {{$patient->patientInfo->general_comment}}
+                    </li>
                     @endif
                     <li>
                         <patient-next-call
@@ -58,7 +94,30 @@
                         </patient-next-call>
                     </li>
                 </ul>
+                <?php
+                $ccdProblemService = app(App\Services\CCD\CcdProblemService::class);
 
+                $ccdProblems = $ccdProblemService->getPatientProblems($patient);
+
+                $ccdMonitoredProblems = $ccdProblems
+                    ->where('is_monitored', 1)
+                    ->unique('name')
+                    ->values();
+                ?>
+                @if(!empty($ccdMonitoredProblems))
+                    <div style="clear:both"></div>
+                    <ul id="user-header-problems-checkboxes" class="person-conditions-list inline-block text-medium col-lg-12 col-md-10 col-xs-8"
+                        style="margin-top: -8px; margin-bottom: 20px !important; margin-left: -20px !important;">
+                        @foreach($ccdMonitoredProblems as $problem)
+                            @if($problem['name'] != 'Diabetes')
+                                <li class="inline-block"><input type="checkbox" id="item27" name="condition27" value="Active"
+                                                                checked="checked" disabled="disabled">
+                                    <label for="condition27"><span> </span>{{$problem['name']}}</label>
+                                </li>
+                            @endif
+                        @endforeach
+                    </ul>
+                @endif
             </div>
             <div class="col-lg-push-0 col-sm-4 col-sm-push-0 col-xs-4 col-xs-push-3" style="line-height: 22px; text-align: right">
 
@@ -134,8 +193,11 @@
 
                 <span class="sometimes-hidden" style="font-size:15px"></span>
 
-                <div class="ccm-status col-xs-offset-3">
-                    @if(Route::is('patient.note.create'))
+                @if(auth()->user()->isAdmin())
+                    @include('partials.viewCcdaButton')
+                @endif
+                <div id="header-perform-status-select" class="ccm-status col-xs-offset-3">
+                    @if(Route::is('patient.note.create') || Route::is('patient.note.edit'))
                         <li class="inline-block">
                             <select id="status" name="status" class="selectpickerX dropdownValid form-control" data-size="2"
                                     style="width: 135px">
@@ -159,57 +221,34 @@
                                 : ucwords($patient->getCcmStatus()); ?></li>
                     @endif
                     <br/>
-                    @if(auth()->user()->hasRole(['administrator']))
-                        @include('partials.viewCcdaButton')
-                    @endif
                 </div>
+                @if(Route::is('patient.note.create') || Route::is('patient.note.edit'))
+                    <div id="header-withdrawn-reason" class="hidden" style="padding-top: 10px;">
 
+                        <div class="col-md-12" style="padding-right: 0 !important;">{!! Form::label('withdrawn_reason', 'Withdrawn Reason: ') !!}</div>
+                        <div class="col-sm-12" style="padding-right: 0 !important;">
+                            <div id="header-perform-reason-select">
+
+                                {!! Form::select('withdrawn_reason', $withdrawnReasons, ! array_key_exists($patientWithdrawnReason, $withdrawnReasons) && $patientWithdrawnReason != null ? 'Other' : $patientWithdrawnReason, ['class' => 'selectpickerX dropdownValid form-control', 'style' => 'width:100%;']) !!}
+
+                            </div>
+                        </div>
+                    </div>
+                    <div id="header-withdrawn-reason-other" class="form-group hidden">
+                        <div class="col-md-12"  style="padding-right: 0 !important;">
+                            <div >
+                                <textarea id="withdrawn_reason_other" rows="1" cols="100" style="resize: none;"
+                                          placeholder="Enter Reason..." name="withdrawn_reason_other"
+                                          required="required" class="form-control">{{! array_key_exists($patientWithdrawnReason, $withdrawnReasons) ? $patientWithdrawnReason : null}}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                @endif
             </div>
 
         </div>
-        <?php
-        $ccdProblemService = app(App\Services\CCD\CcdProblemService::class);
-
-        $ccdProblems = $ccdProblemService->getPatientProblems($patient);
-
-        $ccdMonitoredProblems = $ccdProblems
-            ->where('is_monitored', 1)
-            ->unique('name')
-            ->values();
-        ?>
-        @if(!empty($ccdMonitoredProblems))
-            <div style="clear:both"></div>
-            <ul id="user-header-problems-checkboxes" class="person-conditions-list inline-block text-medium col-lg-12 col-md-10 col-xs-8"
-                style="margin-top: -10px">
-                @foreach($ccdMonitoredProblems as $problem)
-                    @if($problem['name'] != 'Diabetes')
-                        <li class="inline-block"><input type="checkbox" id="item27" name="condition27" value="Active"
-                                                        checked="checked" disabled="disabled">
-                            <label for="condition27"><span> </span>{{$problem['name']}}</label>
-                        </li>
-                    @endif
-                @endforeach
-            </ul>
-        @endif
     </div>
 </div>
-
-<meta name="is_ccm_complex" content="{{$ccm_complex}}">
-
-@push('scripts')
-    <script>
-        $(document).ready(function () {
-
-            if ($('meta[name="is_ccm_complex"]').attr('content')) {
-                $("#complex_tag").show();
-            } else {
-                $("#complex_tag").hide();
-            }
-
-        });
-
-    </script>
-@endpush
 
 @push('styles')
     <style>

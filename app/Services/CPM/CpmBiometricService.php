@@ -9,7 +9,7 @@ namespace App\Services\CPM;
 use App\Contracts\Services\CpmModel;
 use App\Repositories\CpmBiometricRepository;
 use App\Repositories\CpmBiometricUserRepository;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 class CpmBiometricService implements CpmModel
 {

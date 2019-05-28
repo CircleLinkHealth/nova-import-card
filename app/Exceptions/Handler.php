@@ -85,8 +85,6 @@ class Handler extends ExceptionHandler
     /**
      * Report or log an exception.
      *
-     * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
-     *
      * @param \Exception $e
      *
      * @throws Exception
@@ -102,7 +100,7 @@ class Handler extends ExceptionHandler
         }
 
         if ($e instanceof \Illuminate\Database\QueryException) {
-            $errorCode = $e->errorInfo[1];
+            $errorCode = $e->errorInfo[1] ?? null;
             if (1062 == $errorCode) {
                 //do nothing
                 //we don't actually want to terminate the program if we detect duplicates

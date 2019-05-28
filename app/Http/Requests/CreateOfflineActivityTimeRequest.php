@@ -1,8 +1,12 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Requests;
 
-use App\Activity;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -17,7 +21,7 @@ class CreateOfflineActivityTimeRequest extends FormRequest
     {
         return optional(auth()->user())->hasPermission('offlineActivityRequest.create');
     }
-    
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -28,10 +32,10 @@ class CreateOfflineActivityTimeRequest extends FormRequest
         $this->merge(
             [
                 'patient_id'    => $this->route('patientId'),
-                'is_behavioral' => (boolean) $this->input('is_behavioral'),
+                'is_behavioral' => (bool) $this->input('is_behavioral'),
             ]
         );
-        
+
         return [
             'type'             => ['required', Rule::in(Activity::input_activity_types())],
             'duration_minutes' => ['required', 'numeric'],

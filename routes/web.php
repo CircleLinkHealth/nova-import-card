@@ -27,8 +27,6 @@ Route::group(['prefix' => 'algo'], function () {
     Route::get('rescheduler', 'AlgoTestController@algoRescheduler');
 });
 
-Route::get('ajax/patients', 'UserController@getPatients');
-
 Route::post('account/login', 'Patient\PatientController@patientAjaxSearch');
 
 Route::get('/', 'WelcomeController@index', [
@@ -83,11 +81,6 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'download',
     ]);
 
-    Route::get('download', [
-        'uses' => 'DownloadController@postDownloadfile',
-        'as'   => 'post.file.download',
-    ]);
-
     Route::group(['prefix' => 'ehr-report-writer'], function () {
         Route::get('index', [
             'uses' => 'EhrReportWriterController@index',
@@ -115,54 +108,8 @@ Route::group(['middleware' => 'auth'], function () {
         ]);
     });
 
-    Route::group(['prefix' => '2fa'], function () {
-        Route::get('', [
-            'uses' => 'AuthyController@showVerificationTokenForm',
-            'as'   => 'user.2fa.show.token.form',
-        ]);
-    });
-
     // API
     Route::group(['prefix' => 'api'], function () {
-        Route::group(['prefix' => '2fa'], function () {
-            Route::group(['prefix' => 'token'], function () {
-                Route::post('sms', [
-                    'uses' => 'AuthyController@sendTokenViaSms',
-                    'as'   => 'user.2fa.token.sms',
-                ]);
-
-                Route::post('voice', [
-                    'uses' => 'AuthyController@sendTokenViaVoice',
-                    'as'   => 'user.2fa.token.voice',
-                ]);
-
-                Route::post('verify', [
-                    'uses' => 'AuthyController@verifyToken',
-                    'as'   => 'user.2fa.token.verify',
-                ]);
-            });
-            Route::group(['prefix' => 'one-touch-request'], function () {
-                Route::post('create', [
-                    'uses' => 'AuthyController@createOneTouchRequest',
-                    'as'   => 'user.2fa.one-touch-request.create',
-                ]);
-
-                Route::post('check-status', [
-                    'uses' => 'AuthyController@checkOneTouchRequestStatus',
-                    'as'   => 'user.2fa.one-touch-request.check',
-                ]);
-            });
-        });
-
-        Route::group(['prefix' => 'account-settings'], function () {
-            Route::group(['prefix' => '2fa'], function () {
-                Route::post('', [
-                    'uses' => 'AuthyController@store',
-                    'as'   => 'user.2fa.store',
-                ]);
-            });
-        });
-
         Route::group(['prefix' => 'admin'], function () {
             //the new calls route that uses calls-view table
             Route::get('calls-v2', [
@@ -320,9 +267,17 @@ Route::group(['middleware' => 'auth'], function () {
             'prefix'     => 'patients',
             'middleware' => ['patientProgramSecurity'],
         ], function () {
+            /*
+             * deprecated in favor of without-scheduled-activities
             Route::get('without-scheduled-calls', [
                 'uses' => 'API\Admin\CallsController@patientsWithoutScheduledCalls',
                 'as'   => 'patients.without-scheduled-calls',
+            ])->middleware('permission:patient.read,careplan.read,call.read');
+            */
+
+            Route::get('without-scheduled-activities', [
+                'uses' => 'API\Admin\CallsController@patientsWithoutScheduledActivities',
+                'as'   => 'patients.without-scheduled-activities',
             ])->middleware('permission:patient.read,careplan.read,call.read');
 
             Route::get('without-inbound-calls', [
@@ -509,9 +464,17 @@ Route::group(['middleware' => 'auth'], function () {
             )->middleware('permission:patient.read');
             Route::get('{practiceId}/nurses', 'API\PracticeController@getNurses')->middleware('permission:nurse.read');
 
+            /*
+             * deprecated in favor of without-scheduled-activities
             Route::get('{practiceId}/patients/without-scheduled-calls', [
                 'uses' => 'API\Admin\CallsController@patientsWithoutScheduledCalls',
                 'as'   => 'practice.patients.without-scheduled-calls',
+            ])->middleware('permission:patient.read,careplan.read');
+            */
+
+            Route::get('{practiceId}/patients/without-scheduled-activities', [
+                'uses' => 'API\Admin\CallsController@patientsWithoutScheduledActivities',
+                'as'   => 'practice.patients.without-scheduled-activities',
             ])->middleware('permission:patient.read,careplan.read');
 
             Route::get('{practiceId}/patients/without-inbound-calls', [
@@ -987,9 +950,17 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'NotesController@create',
                 'as'   => 'patient.note.create',
             ])->middleware('permission:patient.read');
+            Route::get('edit/{noteId}', [
+                'uses' => 'NotesController@create',
+                'as'   => 'patient.note.edit',
+            ])->middleware('permission:note.create,patient.update,patientSummary.update');
             Route::post('store', [
                 'uses' => 'NotesController@store',
                 'as'   => 'patient.note.store',
+            ])->middleware('permission:note.create,patient.update,patientSummary.update');
+            Route::post('store-draft', [
+                'uses' => 'NotesController@storeDraft',
+                'as'   => 'patient.note.store.draft',
             ])->middleware('permission:note.create,patient.update,patientSummary.update');
             Route::get('{showAll?}', [
                 'uses' => 'NotesController@index',
@@ -1009,11 +980,6 @@ Route::group(['middleware' => 'auth'], function () {
             ])->middleware('permission:addendum.create');
         });
 
-        Route::post('ccm/toggle', [
-            'uses' => 'CCMComplexToggleController@toggle',
-            'as'   => 'patient.ccm.toggle',
-        ])->middleware('permission:patientSummary.update');
-
         Route::get('progress', [
             'uses' => 'ReportsController@index',
             'as'   => 'patient.reports.progress',
@@ -1028,30 +994,6 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'OfflineActivityTimeRequestController@store',
                 'as'   => 'offline-activity-time-requests.store',
             ])->middleware('permission:offlineActivityRequest.create');
-        });
-
-        Route::group(['prefix' => 'activities'], function () {
-            Route::get('create', [
-                'uses' => 'ActivityController@create',
-                'as'   => 'patient.activity.create',
-            ])->middleware('permission:patient.read,offlineActivity.create');
-            Route::post('store', [
-                'uses' => 'ActivityController@store',
-                'as'   => 'patient.activity.store',
-            ])->middleware('permission:activity.create,offlineActivity.create,patientSummary.create,patientSummary.update');
-            Route::get('view/{actId}', [
-                'uses' => 'ActivityController@show',
-                'as'   => 'patient.activity.view',
-            ])->middleware('permission:activity.read,patient.read,provider.read');
-            Route::get('', [
-                'uses' => 'ActivityController@providerUIIndex',
-                'as'   => 'patient.activity.providerUIIndex',
-            ])->middleware('permission:activity.read,patient.read,provider.read');
-
-            Route::get('getCurrent', [
-                'uses' => 'ActivityController@getCurrentForPatient',
-                'as'   => 'patient.activity.get.current.for.patient',
-            ])->middleware('permission:activity.read,patient.read,provider.read');
         });
 
         //call scheduling
@@ -1290,6 +1232,11 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'ca-director.mark-ineligible',
             ]);
 
+            Route::post('/unassign-ca', [
+                'uses' => 'EnrollmentDirectorController@unassignCareAmbassadorFromEnrollees',
+                'as'   => 'ca-director.mark-ineligible',
+            ]);
+
             Route::post('/edit-enrollee', [
                 'uses' => 'EnrollmentDirectorController@editEnrolleeData',
                 'as'   => 'ca-director.edit-enrollee',
@@ -1337,8 +1284,6 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::view('api-clients', 'admin.manage-api-clients');
 
-//        Route::resource('medication-groups-maps', 'MedicationGroupsMapController')->middleware('permission:medicationGroup.read,medicationGroup.create,medicationGroup.delete');
-
         Route::get('medication-groups-maps', [
             'uses' => 'MedicationGroupsMapController@index',
             'as'   => 'medication-groups-maps.index',
@@ -1349,7 +1294,7 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'medication-groups-maps.store',
         ])->middleware('permission:medicationGroup.create');
 
-        Route::delete('medication-groups-maps', [
+        Route::delete('medication-groups-maps/{id}', [
             'uses' => 'MedicationGroupsMapController@destroy',
             'as'   => 'medication-groups-maps.destroy',
         ])->middleware('permission:medicationGroup.delete');
@@ -1567,16 +1512,6 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'CallReportController.exportxlsv2',
             ])->middleware('permission:call.read,note.read,patient.read,patientSummary.read');
 
-            Route::get('provider-usage', [
-                'uses' => 'Admin\Reports\ProviderUsageReportController@index',
-                'as'   => 'ProviderUsageReportController.index',
-            ])->middleware('permission:provider.read,nurse.read');
-
-            Route::get('provider-monthly-usage', [
-                'uses' => 'Admin\Reports\ProviderMonthlyUsageReportController@index',
-                'as'   => 'ProviderMonthlyUsageReportController.index',
-            ])->middleware('permission:provider.read,nurse.read');
-
             Route::group([
                 'prefix' => 'calls-dashboard',
             ], function () {
@@ -1650,16 +1585,39 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses' => 'OpsDashboardController@getPausedPatientList',
                     'as'   => 'OpsDashboard.pausedPatientList',
                 ]);
-//                Route::get('/patient-list/{type}/{date}/{dateType}/{practiceId?}', [
-//                    'uses' => 'OpsDashboardController@getList',
-//                    'as'   => 'OpsDashboard.patientList'
-//                ]);
                 Route::get('/patients-by-practice', [
                     'uses' => 'OpsDashboardController@getPatientsByPractice',
                     'as'   => 'OpsDashboard.patientsByPractice',
                 ]);
             });
         });
+
+        Route::resource('report-settings', 'ReportSettingsController')->names([
+            'index'  => 'report-settings.index',
+            'update' => 'report-settings.update',
+        ]);
+
+        Route::group(
+            [
+                'prefix' => 'report-settings',
+            ],
+            function () {
+                Route::get(
+                    '',
+                    [
+                        'uses' => 'ReportSettingsController@index',
+                        'as'   => 'report-settings.index',
+                    ]
+                );
+                Route::post(
+                    'update',
+                    [
+                        'uses' => 'ReportSettingsController@update',
+                        'as'   => 'report-settings.update',
+                    ]
+                );
+            }
+        );
 
         Route::group([
             'prefix' => 'settings',
@@ -1711,21 +1669,9 @@ Route::group(['middleware' => 'auth'], function () {
         });
 
         // excel reports
-        Route::get('excelReportT1', [
-            'uses' => 'ReportsController@excelReportT1',
-            'as'   => 'excel.report.t1',
-        ])->middleware('permission:excelReport.create');
-        Route::get('excelReportT2', [
-            'uses' => 'ReportsController@excelReportT2',
-            'as'   => 'excel.report.t2',
-        ])->middleware('permission:excelReport.create');
-        Route::get('excelReportT3', [
-            'uses' => 'ReportsController@excelReportT3',
-            'as'   => 'excel.report.t3',
-        ])->middleware('permission:excelReport.create');
-        Route::get('excelReportT4', [
-            'uses' => 'ReportsController@excelReportT4',
-            'as'   => 'excel.report.t4',
+        Route::get('excelReportUnreachablePatients', [
+            'uses' => 'ReportsController@excelReportUnreachablePatients',
+            'as'   => 'excel.report.unreachablePatients',
         ])->middleware('permission:excelReport.create');
 
         // dashboard
@@ -1764,75 +1710,9 @@ Route::group(['middleware' => 'auth'], function () {
             ])->middleware('permission:appConfig.delete');
         });
 
-        // activities
-        Route::group([
-            'middleware' => [
-                'permission:activity.read',
-            ],
-        ], function () {
-            Route::resource('activities', 'ActivityController');
-            Route::get('activities/create', [
-                'uses' => 'ActivityController@create',
-                'as'   => 'admin.activities.create',
-            ]);
-            Route::get('activities/{id}', [
-                'uses' => 'ActivityController@show',
-                'as'   => 'admin.activities.show',
-            ]);
-            Route::get('activities/{id}/edit', [
-                'uses' => 'ActivityController@edit',
-                'as'   => 'admin.activities.edit',
-            ]);
-        });
-
         // users
         Route::group([
         ], function () {
-            Route::get('users', [
-                'uses' => 'UserController@index',
-                'as'   => 'admin.users.index',
-            ])->middleware('permission:user.read,practice.read');
-            Route::post('users', [
-                'uses' => 'UserController@store',
-                'as'   => 'admin.users.store',
-            ])->middleware('permission:user.create');
-            Route::get('users/create', [
-                'uses' => 'UserController@create',
-                'as'   => 'admin.users.create',
-            ])->middleware('permission:user.read,practice.read,location.read,role.read');
-            Route::get('users/doAction', [
-                'uses' => 'UserController@doAction',
-                'as'   => 'admin.users.doAction',
-            ]);
-            Route::get('users/{id}/edit', [
-                'uses' => 'UserController@edit',
-                'as'   => 'admin.users.edit',
-            ])->middleware('permission:user.read,practice.read,location.read,role.read');
-            Route::get('users/{id}/destroy', [
-                'uses' => 'UserController@destroy',
-                'as'   => 'admin.users.destroy',
-            ])->middleware('permission:user.delete');
-            Route::post('users/{id}/edit', [
-                'uses' => 'UserController@update',
-                'as'   => 'admin.users.update',
-            ])->middleware('permission:user.update');
-            Route::get('users/createQuickPatient/{primaryProgramId}', [
-                'uses' => 'UserController@createQuickPatient',
-                'as'   => 'admin.users.createQuickPatient',
-            ])->middleware('permission:patient.read');
-            Route::post('users/createQuickPatient/', [
-                'uses' => 'UserController@storeQuickPatient',
-                'as'   => 'admin.users.storeQuickPatient',
-            ])->middleware('permission:patient.create');
-            Route::get('users/{id}/msgcenter', [
-                'uses' => 'UserController@showMsgCenter',
-                'as'   => 'admin.users.msgCenter',
-            ]);
-            Route::post('users/{id}/msgcenter', [
-                'uses' => 'UserController@showMsgCenter',
-                'as'   => 'admin.users.msgCenterUpdate',
-            ]);
-
             Route::get('calls', [
                 'uses' => 'Admin\PatientCallManagementController@remix',
                 'as'   => 'admin.patientCallManagement.index',
@@ -2132,7 +2012,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     // CARE-CENTER GROUP
     Route::group([
-        'middleware' => ['role:care-center,administrator'],
+        'middleware' => ['permission:has-schedule'],
         'prefix'     => 'care-center',
     ], function () {
         Route::resource('work-schedule', 'CareCenter\WorkScheduleController', [

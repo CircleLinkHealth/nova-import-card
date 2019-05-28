@@ -70,7 +70,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model'  => App\User::class,
+            'model'  => \CircleLinkHealth\Customer\Entities\User::class,
         ],
 
         // 'users' => [
@@ -80,7 +80,7 @@ return [
     ],
 
     //entrust needs this
-    'model' => App\User::class,
+    'model' => \CircleLinkHealth\Customer\Entities\User::class,
     /*
     |--------------------------------------------------------------------------
     | Resetting Passwords
@@ -119,4 +119,6 @@ return [
     */
 
     'two_fa_enabled' => env('TWO_FA_ENABLED', false),
+
+    'force_password_change' => env('FORCE_PASSWORD_CHANGE', true),
 ];

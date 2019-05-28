@@ -6,8 +6,8 @@
 
 namespace App\Repositories;
 
-use App\Patient;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\User;
 
 class OpsDashboardPatientEloquentRepository
 {
@@ -40,8 +40,8 @@ class OpsDashboardPatientEloquentRepository
             ])
                 ->whereHas('patientInfo', function ($patient) {
                     $patient->whereIn(
-                                    'ccm_status',
-                                    [Patient::PAUSED, Patient::WITHDRAWN, Patient::ENROLLED]
+                        'ccm_status',
+                        [Patient::PAUSED, Patient::WITHDRAWN, Patient::ENROLLED]
                                 );
                 })
                 ->get();

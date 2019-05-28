@@ -179,8 +179,9 @@
                     .post(rootUrl('/admin/ca-director/edit-enrollee'), this.enrolleeData)
                     .then(() => {
                         this.loading = false;
+                        Event.$emit('refresh-table');
                         Event.$emit("modal-edit-patient:hide");
-                        this.$parent.$refs.table.refresh();
+
                     })
                     .catch(err => {
                         this.loading = false;
@@ -220,7 +221,6 @@
                 this.enrolleeData.primary_insurance = enrollee.primary_insurance;
                 this.enrolleeData.secondary_insurance = enrollee.secondary_insurance;
                 this.enrolleeData.tertiary_insurance = enrollee.tertiary_insurance;
-
             });
         }
     }

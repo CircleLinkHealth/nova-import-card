@@ -8,9 +8,9 @@ namespace App\Http\Controllers\EditImportedCcda;
 
 use App\Http\Controllers\Controller;
 use App\Importer\Models\ImportedItems\DemographicsImport;
-use App\Location;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
-use App\User;
+use CircleLinkHealth\Customer\Entities\Location;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 
 class DemographicsImportsController extends Controller

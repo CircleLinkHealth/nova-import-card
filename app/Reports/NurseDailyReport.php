@@ -6,10 +6,10 @@
 
 namespace App\Reports;
 
-use App\Activity;
-use App\PageTimer;
-use App\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
+use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 
 class NurseDailyReport
 {
@@ -17,7 +17,7 @@ class NurseDailyReport
     {
         $date = $forDate ?? Carbon::now();
 
-        $nurse_users = User::ofType('care-center')
+        $nurse_users = User::careCoaches()
             ->where('access_disabled', 0)
             ->get();
 

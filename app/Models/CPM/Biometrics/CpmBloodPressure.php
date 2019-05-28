@@ -8,22 +8,22 @@ namespace App\Models\CPM\Biometrics;
 
 use App\Contracts\Models\CPM\Biometric;
 use App\Models\CPM\CpmBiometric;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 /**
  * App\Models\CPM\Biometrics\CpmBloodPressure.
  *
- * @property int            $id
- * @property int            $patient_id
- * @property string         $starting
- * @property string         $target
- * @property string         $systolic_high_alert
- * @property string         $systolic_low_alert
- * @property string         $diastolic_high_alert
- * @property string         $diastolic_low_alert
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property \App\User      $patient
+ * @property int                                      $id
+ * @property int                                      $patient_id
+ * @property string                                   $starting
+ * @property string                                   $target
+ * @property string                                   $systolic_high_alert
+ * @property string                                   $systolic_low_alert
+ * @property string                                   $diastolic_high_alert
+ * @property string                                   $diastolic_low_alert
+ * @property \Carbon\Carbon                           $created_at
+ * @property \Carbon\Carbon                           $updated_at
+ * @property \CircleLinkHealth\Customer\Entities\User $patient
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure whereDiastolicHighAlert($value)
@@ -36,8 +36,14 @@ use App\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure whereTarget($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure query()
  */
-class CpmBloodPressure extends \App\BaseModel implements Biometric
+class CpmBloodPressure extends \CircleLinkHealth\Core\Entities\BaseModel implements Biometric
 {
     public static $messages = [
         'systolic_high_alert.max'  => 'The Systolic Blood Pressure High Alert may not be greater than 999.',

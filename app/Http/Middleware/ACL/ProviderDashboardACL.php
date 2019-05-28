@@ -6,7 +6,7 @@
 
 namespace App\Http\Middleware\ACL;
 
-use App\Practice;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Closure;
 use Illuminate\Support\Facades\Route;
 

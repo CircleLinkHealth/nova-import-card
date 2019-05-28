@@ -6,17 +6,17 @@
 
 namespace App\Models;
 
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 /**
  * App\Models\EmailSettings.
  *
- * @property int                 $id
- * @property int                 $user_id
- * @property string              $frequency
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
- * @property \App\User           $user
+ * @property int                                      $id
+ * @property int                                      $user_id
+ * @property string                                   $frequency
+ * @property \Carbon\Carbon|null                      $created_at
+ * @property \Carbon\Carbon|null                      $updated_at
+ * @property \CircleLinkHealth\Customer\Entities\User $user
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\EmailSettings whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\EmailSettings whereFrequency($value)
@@ -24,8 +24,14 @@ use App\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\EmailSettings whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\EmailSettings whereUserId($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\EmailSettings newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\EmailSettings newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\EmailSettings query()
  */
-class EmailSettings extends \App\BaseModel
+class EmailSettings extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     const DAILY  = 'daily';
     const MWF    = 'm/w/f';

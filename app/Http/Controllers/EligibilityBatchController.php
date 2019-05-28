@@ -9,14 +9,14 @@ namespace App\Http\Controllers;
 use App\EligibilityBatch;
 use App\EligibilityJob;
 use App\Enrollee;
+use App\Exports\FromArray;
 use App\Models\CPM\CpmProblem;
 use App\Models\MedicalRecords\Ccda;
-use App\Practice;
 use App\Services\CCD\ProcessEligibilityService;
 use App\Services\Eligibility\Adapters\JsonMedicalRecordEligibilityJobToCsvAdapter;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class EligibilityBatchController extends Controller
@@ -290,13 +290,9 @@ class EligibilityBatchController extends Controller
     {
         $arr = json_decode(\Cache::get("batch:{$batch->id}:last_consented_enrollee_import"), true);
 
-        $fileName = 'batch_id_'.$batch->id.'_'.Carbon::now()->toAtomString();
+        $fileName = 'batch_id_'.$batch->id.'_'.Carbon::now()->toAtomString().'.xls';
 
-        return Excel::create($fileName, function ($excel) use ($arr) {
-            $excel->sheet('Sheet', function ($sheet) use ($arr) {
-                $sheet->fromArray($arr);
-            });
-        })->download('csv');
+        return (new FromArray($fileName, (array) $arr))->download($fileName);
     }
 
     /**

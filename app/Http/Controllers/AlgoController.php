@@ -8,8 +8,8 @@ namespace App\Http\Controllers;
 
 use App\Algorithms\Calls\SuccessfulHandler;
 use App\Algorithms\Calls\UnsuccessfulHandler;
-use App\Patient;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Patient;
 use Illuminate\Http\Request;
 
 class AlgoController extends Controller

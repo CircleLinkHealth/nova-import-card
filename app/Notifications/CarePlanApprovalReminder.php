@@ -8,7 +8,8 @@ namespace App\Notifications;
 
 use App\Mail\CarePlanApprovalReminder as CarePlanApprovalReminderMailable;
 use App\Notifications\Channels\DirectMailChannel;
-use App\User;
+use App\ValueObjects\SimpleNotification;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Channels\MailChannel;
 use Illuminate\Notifications\Notification;
@@ -17,17 +18,17 @@ use Illuminate\Support\Facades\View;
 class CarePlanApprovalReminder extends Notification
 {
     use Queueable;
-    
+
     /**
      * Create a new notification instance.
      */
     protected $numberOfCareplans;
-    
+
     public function __construct($numberOfCareplans)
     {
         $this->numberOfCareplans = $numberOfCareplans;
     }
-    
+
     /**
      * Get the array representation of the notification.
      *
@@ -42,7 +43,30 @@ class CarePlanApprovalReminder extends Notification
             'numberOfCareplans' => $this->numberOfCareplans,
         ];
     }
-    
+
+    public function toDatabase($notifiable)
+    {
+        return $this->toArray($notifiable);
+    }
+
+    /**
+     * @param User $notifiable
+     *
+     * @throws \Exception
+     *
+     * @return array|bool
+     */
+    public function toDirectMail(User $notifiable): SimpleNotification
+    {
+        if ( ! $notifiable || ! $notifiable->emr_direct_address) {
+            return false;
+        }
+
+        return (new SimpleNotification())
+            ->setSubject("{$this->numberOfCareplans} CircleLink Care Plan(s) for your Approval!")
+            ->setBody($this->directMailBody($notifiable));
+    }
+
     /**
      * Get the mail representation of the notification.
      *
@@ -54,28 +78,34 @@ class CarePlanApprovalReminder extends Notification
     {
         return new CarePlanApprovalReminderMailable($notifiable, $this->numberOfCareplans);
     }
-    
+
     /**
-     * @param User $notifiable
+     * Get the notification's delivery channels.
      *
-     * @return array|bool
-     * @throws \Exception
+     * @param mixed $notifiable
+     *
+     * @return array
      */
-    public function toDirectMail(User $notifiable)
+    public function via($notifiable)
     {
-        if ( ! $notifiable || ! $notifiable->emr_direct_address) {
-            return false;
+        $channels = ['database'];
+        $settings = $notifiable->practiceSettings();
+
+        if ($settings->email_careplan_approval_reminders) {
+            $channels[] = MailChannel::class;
         }
-        
-        return [
-            'body'    => $this->directMailBody($notifiable),
-            'subject' => "{$this->numberOfCareplans} CircleLink Care Plan(s) for your Approval!",
-        ];
+
+        if ($settings->dm_careplan_approval_reminders) {
+            $channels[] = DirectMailChannel::class;
+        }
+
+        return $channels;
     }
-    
+
     /**
-     * @return string
      * @throws \Exception
+     *
+     * @return string
      */
     private function directMailBody(User $notifiable)
     {
@@ -86,30 +116,5 @@ class CarePlanApprovalReminder extends Notification
                 'numberOfCareplans' => $this->numberOfCareplans,
             ]
         );
-    }
-    
-    
-    /**
-     * Get the notification's delivery channels.
-     *
-     *
-     * @param mixed $notifiable
-     *
-     * @return array
-     */
-    public function via($notifiable)
-    {
-        $channels = ['database'];
-        $settings = $notifiable->practiceSettings();
-        
-        if ($settings->email_careplan_approval_reminders) {
-            $channels[] = MailChannel::class;
-        }
-        
-        if ($settings->dm_careplan_approval_reminders) {
-            $channels[] = DirectMailChannel::class;
-        }
-        
-        return $channels;
     }
 }

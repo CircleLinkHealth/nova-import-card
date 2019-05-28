@@ -9,7 +9,7 @@ namespace App\Services\CPM;
 use App\Models\CPM\CpmInstruction;
 use App\Repositories\CpmProblemUserRepository;
 use App\Repositories\UserRepositoryEloquent;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 
 class CpmProblemUserService
 {

@@ -7,7 +7,6 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Symfony\Component\Process\Process;
 
 class OnSuccessfulDeployment extends Command
 {
@@ -22,11 +21,12 @@ class OnSuccessfulDeployment extends Command
      *
      * @var string
      */
-    protected $signature = 'deploy:success {previousRevision    : The revision deployed before the one just deployed.}
-                                           {currentRevision : The revision that was just successfully deployed.}
+    protected $signature = 'deploy:success {currentRevision : The revision that was just successfully deployed.}
                                            {envName : The name of the environment we just deployed to.}
                                            {rollback    : Either 1 or 0 if deployment is a rollback or not.}
                                            {userName    : Name of the user who triggered the deployment.}
+                                           {comment    : Deployment comment or last commit message for automatic deployments.}
+                                           {previousRevision?    : The revision deployed before the one just deployed.}
     ';
 
     /**
@@ -40,6 +40,8 @@ class OnSuccessfulDeployment extends Command
     /**
      * Execute the console command.
      *
+     * @throws \Exception
+     *
      * @return mixed
      */
     public function handle()
@@ -47,94 +49,48 @@ class OnSuccessfulDeployment extends Command
         $lastDeployedRevision  = $this->argument('previousRevision');
         $newlyDeployedRevision = $this->argument('currentRevision');
         $envName               = $this->argument('envName');
-        $isRollback            = $this->argument('rollback');
-        $user                  = $this->argument('userName');
+        $isRollback            = 1 == $this->argument('rollback')
+            ? true
+            : false;
+        $user    = $this->argument('userName');
+        $comment = $this->argument('comment');
 
-        if ( ! file_exists(base_path('.git'))) {
-            $initGit = $this->runCommand(
-                'git init && git remote add origin git@github.com:CircleLinkHealth/app-cpm-web.git && git fetch'
-            );
-        }
-        $jiraTicketNumbers = $this->runCommand(
-            "git log --pretty=oneline $lastDeployedRevision...$newlyDeployedRevision | perl -ne '{ /(CPM)-(\d+)/ && print \"$1-$2\n\" }' | sort | uniq"
-        );
+        $this->info('previousRevision: '.$lastDeployedRevision);
+        $this->info('currentRevision: '.$newlyDeployedRevision);
+        $this->info('envName: '.$envName);
+        $this->info('rollback: '.$isRollback);
+        $this->info('userName: '.$user);
+        $this->info('comment: '.$comment);
 
-        $output = $jiraTicketNumbers->getOutput();
-        $this->info("Output `$output`");
-
-        $jiraTickets = collect(explode("\n", $output))
-            ->filter()
-            ->values()
-            ->sort();
-
-        if ($jiraTickets->isEmpty()) {
-            return;
-        }
-
-        $message = "*$user* deployed work related to the following tickets *$envName*: \n";
-
-        $jiraTickets->each(
-            function ($t) use (&$message) {
-                if ( ! empty($t)) {
-                    $message .= "https://circlelinkhealth.atlassian.net/browse/$t  \n";
-                }
-            }
-            );
-
-        // Uncomment for testing
-//        if (app()->environment(['local'])) {
-//            $channel = '#dev-chat';
-//        }
-
-        if (app()->environment(['test', 'staging'])) {
-            $channel = '#releases-staging';
-        } elseif (app()->environment(['worker', 'production'])) {
-            $channel = '#releases-production';
-        }
-
-        if ( ! isset($channel)) {
-            throw new \Exception('Unable to resolve Slack channel. Check that environment is allowed to run this command.');
-        }
-
-        $loginLink = config('opcache.url');
-        $message .= "\n Login at: $loginLink";
-
-        sendSlackMessage($channel, $message, true);
+        $this->notifySlackOfTicketsDeployed();
     }
 
     /**
-     * @param string $command
-     *
      * @throws \Exception
-     *
-     * @return Process
      */
-    private function runCommand(string $command)
+    private function notifySlackOfTicketsDeployed()
     {
-        $this->info("Running `$command`");
-        $process = new Process($command);
-        $process->run();
+        $filePath = storage_path('jira-tickets-deployed');
 
-        if ( ! $process->isSuccessful()) {
-            throw new \Exception('Failed to execute process.'.$process->getIncrementalErrorOutput());
+        if (file_exists($filePath)) {
+            $contents = json_decode(file_get_contents($filePath), true);
+
+            if (array_key_exists('message', $contents)) {
+                $message = $contents['message'];
+                if (app()->environment(['test', 'staging'])) {
+                    $channel = '#releases-staging';
+                } elseif (app()->environment(['worker', 'production'])) {
+                    $channel = '#releases-production';
+                }
+
+                if ( ! isset($channel)) {
+                    throw new \Exception(
+                        'Unable to resolve Slack channel. Check that environment is allowed to run this command.'
+                    );
+                }
+
+                sendSlackMessage($channel, $message, true);
+            }
         }
-
-        $errors = $process->getErrorOutput();
-
-        $this->info("Errors `{$errors}`");
-
-        if ( ! empty($errors)) {
-            \Log::debug('Errors: '.$errors, ['file' => __FILE__, 'line' => __LINE__]);
-        }
-
-        $output = $process->getOutput();
-
-        $this->info('Output: '.$output);
-
-        if ($output) {
-            \Log::debug('Output: '.$output, ['file' => __FILE__, 'line' => __LINE__]);
-        }
-
-        return $process;
     }
 }

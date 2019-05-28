@@ -14,7 +14,7 @@ return [
     | the role if it is in a different namespace.
     |
     */
-    'role' => 'App\Role',
+    'role' => 'CircleLinkHealth\Customer\Entities\Role',
 
     /*
     |--------------------------------------------------------------------------
@@ -57,7 +57,7 @@ return [
     | Update the User if it is in a different namespace.
     |
     */
-    'user' => 'App\User',
+    'user' => 'CircleLinkHealth\Customer\Entities\User',
 
     /*
     |--------------------------------------------------------------------------
@@ -101,7 +101,7 @@ return [
     | Update the permission if it is in a different namespace.
     |
     */
-    'permission' => 'App\Permission',
+    'permission' => 'CircleLinkHealth\Customer\Entities\Permission',
 
     /*
     |--------------------------------------------------------------------------
@@ -145,7 +145,7 @@ return [
     | Update the permission if it is in a different namespace.
     |
     */
-    'site' => 'App\Practice',
+    'site' => 'CircleLinkHealth\Customer\Entities\Practice',
 
     /*
     |--------------------------------------------------------------------------

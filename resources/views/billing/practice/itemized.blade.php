@@ -29,21 +29,41 @@
             @foreach($patientData as $data)
 
                 <tr>
-                    <td>{{$data['provider']}}</td>
-                    <td>{{$data['name']}}</td>
-                    <td>{{$data['dob']}}</td>
-                    <td>{{$data['billing_codes']}}</td>
-                    <td>{{$data['ccm_time']}}</td>
-                    <td>{{$data['bhi_time']}}</td>
-                    <td>{{$data['problem1']}}</td>
-                    <td>{{$data['problem1_code']}}</td>
-                    <td>{{$data['problem2']}}</td>
-                    <td>{{$data['problem2_code']}}</td>
-                    <td>{{$data['bhi_problem']}}</td>
-                    <td>{{$data['bhi_code']}}</td>
+                    <td>{{$data->getProvider()}}</td>
+                    <td>{{$data->getName()}}</td>
+                    <td>{{$data->getDob()}}</td>
+                    <td>{{$data->getBillingCodes()}}</td>
+                    <td>{{$data->getCcmTime()}}</td>
+                    <td>{{$data->getBhiTime()}}</td>
+                    <td>{{$data->getProblem1()}}</td>
+                    <td>{{$data->getProblem1Code()}}</td>
+                    <td>{{$data->getProblem2()}}</td>
+                    <td>{{$data->getProblem2Code()}}</td>
+                    <td>{{$data->getBhiProblem()}}</td>
+                    <td>{{$data->getBhiCode()}}</td>
                 </tr>
             @endforeach
         @endif
 
     </table>
+    <br>
+    @if(isset($awvPatientData))
+    <table class="table table-bordered">
+        <tr>
+            <th>Provider Name</th>
+            <th>Patient Name</th>
+            <th>DOB</th>
+            <th>AWV Date</th>
+
+        </tr>
+            @foreach($awvPatientData as $data)
+                <tr>
+                    <td>{{$data->getProvider()}}</td>
+                    <td>{{$data->getName()}}</td>
+                    <td>{{$data->getDob()}}</td>
+                    <td>{{$data->getAwvDate()}}</td>
+                </tr>
+            @endforeach
+    </table>
+    @endif
 </div>

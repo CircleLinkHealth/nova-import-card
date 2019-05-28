@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers;
 
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 
 class ImpersonationController extends Controller

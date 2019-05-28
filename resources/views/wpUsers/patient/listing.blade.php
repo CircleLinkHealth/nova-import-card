@@ -1,7 +1,7 @@
 @extends('partials.providerUI')
 
 @section('title', 'Patient Listing')
-@section('activity', '')
+@section('activity', 'Patient Listing')
 
 @section('content')
     @push('styles')
@@ -35,7 +35,7 @@
                     Patient List
                 </div>
                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12 overflow-scroll">
-                    <patient-list ref="patientList"></patient-list>
+                    <patient-list :show-provider-patients-button="@json(auth()->user()->hasRole('provider'))"ref="patientList"></patient-list>
                 </div>
             </div>
         </div>

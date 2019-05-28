@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -25,7 +29,7 @@ class GetUnder20MinutesReport extends FormRequest
     public function rules()
     {
         return [
-            'selectYear' => 'sometimes|filled|integer|min:2000|max:2100',
+            'selectYear'  => 'sometimes|filled|integer|min:2000|max:2100',
             'selectMonth' => 'sometimes|filled|integer|min:1|max:12',
         ];
     }

@@ -81,7 +81,7 @@
             getBaseGoals() {
                 return this.axios.get(rootUrl(`api/biometrics`)).then(response => {
                     this.baseGoals = response.data
-                    console.log('health-goals:get-base-goals', this.baseGoals)
+                    // console.log('health-goals:get-base-goals', this.baseGoals)
                     return this.baseGoals
                 }).catch(err => {
                     console.error('health-goals:get-base-goals', err)
@@ -90,7 +90,7 @@
             getGoals() {
                 return this.axios.get(rootUrl(`api/patients/${this.patientId}/biometrics`)).then(response => {
                     const goals = response.data.map(this.setupGoal)
-                    console.log('health-goals:get-goals', goals)
+                    // console.log('health-goals:get-goals', goals)
                     return goals
                 }).catch(err => {
                     console.error('health-goals:get-goals', err)
@@ -103,7 +103,7 @@
                 this.loaders.getNote = true
                 return this.axios.get(rootUrl(`api/patients/${this.patientId}/notes?type=${NoteTypes.Biometrics}`)).then(response => {
                     this.note = ((response.data || {}).data || [])[0] || this.note
-                    console.log('health-goals:notes', this.note)
+                    // console.log('health-goals:notes', this.note)
                     this.loaders.getNote = false
                 }).catch(err => {
                     console.error('health-goals:notes', err)
@@ -143,7 +143,7 @@
             textarea.addEventListener('input', autoGrow)
             
             this.note = this.careplan().healthGoalNote || this.note
-            console.log('patient-note', this.note)
+            // console.log('patient-note', this.note)
             setTimeout(() => autoGrow.call(textarea), 500)
 
             this.baseGoals = this.careplan().baseHealthGoals
@@ -151,6 +151,7 @@
                         return this.setupGoal(goals.find(g => g.id === baseGoal.id) || baseGoal)
                     })
 
+            Event.$on('problems:updated', this.getGoals.bind(this))
             Event.$on('health-goals:goals', (goals) => {
                 this.goals = goals
             })

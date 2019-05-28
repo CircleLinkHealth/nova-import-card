@@ -9,11 +9,11 @@ namespace App\Http\Controllers\Admin\CRUD;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateSaasAccount;
 use App\Notifications\SAAS\SendInternalUserSignupInvitation;
-use App\Practice;
-use App\Role;
-use App\SaasAccount;
 use App\Services\SAAS\Admin\UserManagementService;
 use App\ValueObjects\SAAS\Admin\InternalUser;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\Role;
+use CircleLinkHealth\Customer\Entities\SaasAccount;
 use Illuminate\Http\Request;
 
 class SaasAccountController extends Controller

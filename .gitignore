@@ -4,6 +4,7 @@
 .idea/
 .env
 _ide_helper.php
+_ide_helper_models.php
 /public/compiled/
 /public/mix-manifest.json
 launch.json
@@ -20,4 +21,5 @@ public/*.js.map
 /tests/Browser/
 /coverage/
 .php_cs.cache
-
+CLHPackages/
+.phpunit.result.cache

@@ -4,8 +4,8 @@
 @section('activity', 'Progress Report Review/Print')
 
 <?php
-$today = \Carbon\Carbon::now()->toFormattedDateString();
-$provider = App\User::find($patient->getBillingProviderId());
+$today    = \Carbon\Carbon::now()->toFormattedDateString();
+$provider = \CircleLinkHealth\Customer\Entities\User::find($patient->getBillingProviderId());
 
 function trim_bp($bp)
 {
@@ -105,7 +105,7 @@ if (isset($patient)) {
                                     </span>
                                 </span>
                         </div>
-                        @if(auth()->user()->hasRole(['administrator', 'med_assistant', 'provider']))
+                        @if(auth()->user()->hasRole(array_merge(['administrator'], \App\Constants::PRACTICE_STAFF_ROLE_NAMES)))
                             <div class="col-xs-12 text-right hidden-print">
                                 <span class="btn btn-group text-right">
                                     <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button"
@@ -178,11 +178,11 @@ if (isset($patient)) {
                 @if($value['data'] != '')
                     <?php
 
-                    $read = explode('/', $value['reading']);
-                    $goal = explode('/', $key);
+                    $read        = explode('/', $value['reading']);
+                    $goal        = explode('/', $key);
                     $yaxis_start = '';
-                    $yaxis_end = '';
-                    $yaxis_step = 'step:10,';
+                    $yaxis_end   = '';
+                    $yaxis_step  = 'step:10,';
                     if ('Blood_Sugar' == $key) {
                         $yaxis_start = 'start:40,';
                         $yaxis_step  = 'step:20,';
@@ -190,7 +190,7 @@ if (isset($patient)) {
                         $yaxis_start = 'start:80,';
                     } elseif ('Weight' == $key) {
                         $yaxis_start = 'start:80,';
-                        $yaxis_step  = 'step: ' . round(($value['max'] - 80) / 4, -1) . ',';
+                        $yaxis_step  = 'step: '.round(($value['max'] - 80) / 4, -1).',';
                     }
                     ?>
 
@@ -205,16 +205,16 @@ if (isset($patient)) {
                                     <div class="col-xs-3 text-center" style="Zoom:75%">
                                         <div class="patient-summary__info {{strtolower($value['status'])}}">
                             <span><i class="icon--<?php if ('Weight' == $key) {
-                                    if ('increased' == strtolower($value['status'])) {
-                                        echo trim('grey-up');
-                                    } elseif ('decreased' == strtolower($value['status'])) {
-                                        echo trim('grey-down');
-                                    } else {
-                                        echo trim('unchanged');
-                                    }
-                                } else {
-                                    echo trim(strtolower($value['status']));
-                                } ?>"> </i></span>{{abs($value['change'])}}
+                        if ('increased' == strtolower($value['status'])) {
+                            echo trim('grey-up');
+                        } elseif ('decreased' == strtolower($value['status'])) {
+                            echo trim('grey-down');
+                        } else {
+                            echo trim('unchanged');
+                        }
+                    } else {
+                        echo trim(strtolower($value['status']));
+                    } ?>"> </i></span>{{abs($value['change'])}}
                                             <span class="patient-summary__metrics">{{trim($value['unit'])}}</span>
                                         </div>
                                         <div class="patient-summary__info__legend">
@@ -243,45 +243,7 @@ if (isset($patient)) {
                             </div>
                             <div class="col-xs-12 col-sm-4 col-sm-pull-2 col-xs-pull-2">
                                 <div class="patient-summary__info__graph">
-                                    <div id="chartDiv-mg/dL" style="width:360px;height:160px;margin:1px;"></div>
-
-                                    <script>
-
-                                        webix.ui({
-                                            view: "chart",
-                                            container: "chartDiv-mg/dL",
-                                            type: "line",
-                                            value: "#Reading#",
-                                            radius: 0,
-                                            borderless: true,
-                                            padding: {
-                                                left: 40,
-                                                top: 0,
-                                                bottom: 45,
-                                                right: 0
-                                            },
-                                            preset: 'simple',
-                                            xAxis: {
-                                                template: "#Week#",
-                                                step: 2,
-                                                title: "Week"
-                                            },
-                                            yAxis: {
-                                                start: 40, step: 20,                                                // title: "Reading",
-                                                template: function (obj) {
-                                                    return (obj % 10 ? "" : obj)
-                                                }
-                                            },
-                                            tooltip: {
-                                                template: "#Reading#"
-                                            },
-                                            eventRadius: 10,
-                                            data: [
-                                                {!! $value['data'] !!}
-
-                                            ]
-                                        });
-                                    </script>
+                                    <div id="chartDiv-key-{{$loop->index}}" style="width:360px;height:160px;margin:1px;"></div>
                                 </div>
                             </div>
                         </div>
@@ -347,4 +309,49 @@ if (isset($patient)) {
         </section>
     </div>
     </div>
+    @push('scripts')
+        <script>
+
+            function createWebixChart(elemId, data) {
+                webix.ui({
+                    view: "chart",
+                    container: elemId,
+                    type: "line",
+                    value: "#Reading#",
+                    radius: 0,
+                    borderless: true,
+                    padding: {
+                        left: 40,
+                        top: 0,
+                        bottom: 45,
+                        right: 0
+                    },
+                    preset: 'simple',
+                    xAxis: {
+                        template: "#Week#",
+                        step: 2,
+                        title: "Week"
+                    },
+                    yAxis: {
+                        start: 40, step: 20,                                                // title: "Reading",
+                        template: function (obj) {
+                            return (obj % 10 ? "" : obj)
+                        }
+                    },
+                    tooltip: {
+                        template: "#Reading#"
+                    },
+                    eventRadius: 10,
+                    data: data
+                });
+            }
+
+            @foreach($tracking_biometrics as $key => $value)
+            @if($value['data'] != '')
+                createWebixChart('chartDiv-key-{{$loop->index}}', [{!! $value['data'] !!}]);
+            @endif
+            @endforeach
+
+        </script>
+    @endpush
 @stop

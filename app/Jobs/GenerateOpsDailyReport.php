@@ -6,10 +6,10 @@
 
 namespace App\Jobs;
 
-use App\Practice;
-use App\SaasAccount;
 use App\Services\OpsDashboardService;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\SaasAccount;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -18,7 +18,10 @@ use Illuminate\Queue\SerializesModels;
 
 class GenerateOpsDailyReport implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * The number of times the job may be attempted.
@@ -102,7 +105,7 @@ class GenerateOpsDailyReport implements ShouldQueue
                                 ->where(
                                     'created_at',
                                     '>=',
-                                  $this->fromDate
+                                    $this->fromDate
                                 );
                         },
                     ]);

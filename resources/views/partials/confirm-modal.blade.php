@@ -47,12 +47,8 @@
                 </p>
             </div>
             <div class="modal-footer">
-                <button type="button" name="confirm" id="complex_confirm" class="btn btn-primary"
-                        data-dismiss="modal">Confirm
-                </button>
-                <button type="button" name="cancel" id="complex_cancel" class="btn btn-danger"
-                        data-dismiss="modal">Cancel
-                </button>
+                <button type="button" name="confirm" class="btn btn-primary" data-dismiss="modal">Confirm</button>
+                <button type="button" name="cancel" class="btn btn-danger" data-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>

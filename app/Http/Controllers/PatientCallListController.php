@@ -52,8 +52,7 @@ class PatientCallListController extends Controller
             $calls->where('status', '=', $filterStatus);
         }
 
-        $calls->orderBy('scheduled_date', 'asc');
-        $calls->orderBy('call_time_start', 'asc');
+        $calls->orderByRaw('FIELD(type, "Call Back") desc, scheduled_date asc, call_time_start asc, call_time_end asc');
 
         $calls = $calls->get();
 

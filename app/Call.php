@@ -6,38 +6,41 @@
 
 namespace App;
 
-use App\Filters\Filterable;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\BaseModel;
+use CircleLinkHealth\Core\Filters\Filterable;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
+use CircleLinkHealth\Customer\Entities\User;
 
 /**
  * App\Call.
  *
- * @property int            $id
- * @property int|null       $note_id
- * @property string|null    $type
- * @property string|null    $sub_type
- * @property string         $service
- * @property string         $status
- * @property string         $inbound_phone_number
- * @property string         $outbound_phone_number
- * @property int            $inbound_cpm_id
- * @property int|null       $outbound_cpm_id
- * @property int|null       $call_time
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property int            $is_cpm_outbound
- * @property string         $window_start
- * @property string         $window_end
- * @property string         $scheduled_date
- * @property string|null    $called_date
- * @property string         $attempt_note
- * @property string|null    $scheduler
- * @property bool           $is_from_care_center
- * @property bool is_manual
- * @property \App\User|null                                                                 $schedulerUser
- * @property \App\User                                                                      $inboundUser
+ * @property int                                                                            $id
+ * @property int|null                                                                       $note_id
+ * @property string|null                                                                    $type
+ * @property string|null                                                                    $sub_type
+ * @property string                                                                         $service
+ * @property string                                                                         $status
+ * @property string                                                                         $inbound_phone_number
+ * @property string                                                                         $outbound_phone_number
+ * @property int                                                                            $inbound_cpm_id
+ * @property int|null                                                                       $outbound_cpm_id
+ * @property int|null                                                                       $call_time
+ * @property \Carbon\Carbon                                                                 $created_at
+ * @property \Carbon\Carbon                                                                 $updated_at
+ * @property int                                                                            $is_cpm_outbound
+ * @property string                                                                         $window_start
+ * @property string                                                                         $window_end
+ * @property string                                                                         $scheduled_date
+ * @property string|null                                                                    $called_date
+ * @property string                                                                         $attempt_note
+ * @property string|null                                                                    $scheduler
+ * @property bool                                                                           $is_from_care_center
+ * @property bool                                                                           $is_manual
+ * @property \CircleLinkHealth\Customer\Entities\User|null                                  $schedulerUser
+ * @property \CircleLinkHealth\Customer\Entities\User                                       $inboundUser
  * @property \App\Note|null                                                                 $note
- * @property \App\User|null                                                                 $outboundUser
+ * @property \CircleLinkHealth\Customer\Entities\User|null                                  $outboundUser
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereAttemptNote($value)
@@ -59,6 +62,17 @@ use Carbon\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereWindowEnd($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereWindowStart($value)
  * @mixin \Eloquent
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call filter(\App\Filters\QueryFilters $filters)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call ofMonth(\Carbon\Carbon $monthYear)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call ofStatus($status)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call scheduled()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereIsManual($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereSubType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereType($value)
  */
 class Call extends BaseModel
 {
@@ -71,8 +85,12 @@ class Call extends BaseModel
     //patient was not reached
     const NOT_REACHED = 'not reached';
 
+    const OTHER = 'other call';
+
     //patient was reached
     const REACHED = 'reached';
+
+    const WELCOME = 'welcome call';
 
     protected $appends = ['is_from_care_center'];
 

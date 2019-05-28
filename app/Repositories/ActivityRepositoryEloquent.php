@@ -6,10 +6,10 @@
 
 namespace App\Repositories;
 
-use App\Activity;
 use App\CcmTimeApiLog;
 use App\Contracts\Repositories\ActivityRepository;
-use App\User;
+use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Illuminate\Support\Facades\DB;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
