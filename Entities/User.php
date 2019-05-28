@@ -48,6 +48,7 @@ use CircleLinkHealth\Customer\Traits\HasEmrDirectAddress;
 use CircleLinkHealth\Customer\Traits\MakesOrReceivesCalls;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
 use CircleLinkHealth\Customer\Traits\TimezoneTrait;
+use CircleLinkHealth\NurseInvoices\Entities\Dispute;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
