@@ -454,6 +454,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             && $now <= $fourthOfMonth) {
             return true;
         }
+
         return false;
 
 

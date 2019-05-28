@@ -9,32 +9,33 @@ namespace CircleLinkHealth\Customer\Entities;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Customer\Traits\MakesOrReceivesCalls;
+use CircleLinkHealth\NurseInvoices\Entities\Dispute;
 
 /**
  * CircleLinkHealth\Customer\Entities\Nurse.
  *
- * @property int $id
- * @property int $user_id
- * @property string $status
- * @property string $license
- * @property int $hourly_rate
- * @property string $billing_type
- * @property int $low_rate
- * @property int $high_rate
- * @property int $spanish
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
- * @property int $isNLC
- * @property \CircleLinkHealth\Customer\Entities\NurseCareRateLog[]|\Illuminate\Database\Eloquent\Collection $careRateLogs
- * @property mixed $holidays_this_week
- * @property mixed $upcoming_holiday_dates
- * @property \CircleLinkHealth\Customer\Entities\Holiday[]|\Illuminate\Database\Eloquent\Collection $holidays
- * @property \CircleLinkHealth\Customer\Entities\State[]|\Illuminate\Database\Eloquent\Collection $states
+ * @property int                                                                                                $id
+ * @property int                                                                                                $user_id
+ * @property string                                                                                             $status
+ * @property string                                                                                             $license
+ * @property int                                                                                                $hourly_rate
+ * @property string                                                                                             $billing_type
+ * @property int                                                                                                $low_rate
+ * @property int                                                                                                $high_rate
+ * @property int                                                                                                $spanish
+ * @property \Carbon\Carbon|null                                                                                $created_at
+ * @property \Carbon\Carbon|null                                                                                $updated_at
+ * @property int                                                                                                $isNLC
+ * @property \CircleLinkHealth\Customer\Entities\NurseCareRateLog[]|\Illuminate\Database\Eloquent\Collection    $careRateLogs
+ * @property mixed                                                                                              $holidays_this_week
+ * @property mixed                                                                                              $upcoming_holiday_dates
+ * @property \CircleLinkHealth\Customer\Entities\Holiday[]|\Illuminate\Database\Eloquent\Collection             $holidays
+ * @property \CircleLinkHealth\Customer\Entities\State[]|\Illuminate\Database\Eloquent\Collection               $states
  * @property \CircleLinkHealth\Customer\Entities\NurseMonthlySummary[]|\Illuminate\Database\Eloquent\Collection $summary
- * @property \CircleLinkHealth\Customer\Entities\Holiday[]|\Illuminate\Database\Eloquent\Collection $upcomingHolidays
- * @property \CircleLinkHealth\Customer\Entities\User $user
- * @property \CircleLinkHealth\Customer\Entities\NurseContactWindow[]|\Illuminate\Database\Eloquent\Collection $windows
- * @property \CircleLinkHealth\Customer\Entities\WorkHours[]|\Illuminate\Database\Eloquent\Collection $workhourables
+ * @property \CircleLinkHealth\Customer\Entities\Holiday[]|\Illuminate\Database\Eloquent\Collection             $upcomingHolidays
+ * @property \CircleLinkHealth\Customer\Entities\User                                                           $user
+ * @property \CircleLinkHealth\Customer\Entities\NurseContactWindow[]|\Illuminate\Database\Eloquent\Collection  $windows
+ * @property \CircleLinkHealth\Customer\Entities\WorkHours[]|\Illuminate\Database\Eloquent\Collection           $workhourables
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereBillingType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereCreatedAt($value)
@@ -65,12 +66,12 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
     //nurse mapping for import csv
     public static $nurseMap = [
         'Patricia' => 1920,
-        'Katie' => 2159,
-        'Lydia' => 1755,
-        'Sue' => 1877,
-        'Monique' => 2332,
-        'Erin' => 2398,
-        'Kerri' => 2012,
+        'Katie'    => 2159,
+        'Lydia'    => 1755,
+        'Sue'      => 1877,
+        'Monique'  => 2332,
+        'Erin'     => 2398,
+        'Kerri'    => 2012,
     ];
 
     protected $fillable = [
@@ -129,11 +130,11 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
             }
         }
 
-        if (!$result) {
+        if ( ! $result) {
             $result = $weeklySchedule->first()[0];
         }
 
-        if (!$result) {
+        if ( ! $result) {
             return false;
         }
 
