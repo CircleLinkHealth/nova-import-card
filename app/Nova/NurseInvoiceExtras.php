@@ -120,7 +120,7 @@ class NurseInvoiceExtras extends Resource
                 ->options([
                     'minutes' => 'Minutes',
                     'usd'     => '$',
-                ]),
+                ])->rules('required'),
 
             Text::make('unit')
                 ->sortable()
