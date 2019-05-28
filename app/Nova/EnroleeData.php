@@ -11,7 +11,6 @@ use App\Nova\Importers\EnroleeData as EnroleeDataImporter;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Date;
-use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 use Sparclex\NovaImportCard\NovaImportCard;
@@ -87,42 +86,40 @@ class EnroleeData extends Resource
     public function fields(Request $request)
     {
         return [
-            ID::make()->sortable(),
-
             BelongsTo::make('Provider', 'provider', User::class)
                 ->sortable(),
 
-            Text::make('first_name')
+            Text::make('First Name')
                 ->sortable()
                 ->creationRules('required', 'string')
                 ->updateRules('string'),
 
-            Text::make('last_name')
+            Text::make('Last Name')
                 ->sortable()
                 ->creationRules('required', 'string')
                 ->updateRules('string'),
 
-            Text::make('address')
+            Text::make('Address')
                 ->sortable()
                 ->creationRules('required', 'string')
                 ->updateRules('string'),
 
-            Number::make('mrn')
+            Number::make('MRN')
                 ->sortable()
                 ->creationRules('required', 'integer')
                 ->updateRules('integer'),
 
-            Date::make('dob')
+            Date::make('DOB')
                 ->sortable()
                 ->format('MM/DD/YYYY')->creationRules('required', 'date')
                 ->updateRules('date'),
 
-            Text::make('primary_insurance')
+            Text::make('Primary Insurance')
                 ->sortable()
                 ->creationRules('required', 'string')
                 ->updateRules('string'),
 
-            Text::make('secondary_insurance')
+            Text::make('Secondary Insurance')
                 ->sortable()
                 ->creationRules('string')
                 ->updateRules('string'),
@@ -139,6 +136,14 @@ class EnroleeData extends Resource
     public function filters(Request $request)
     {
         return [];
+    }
+
+    /**
+     * @return string
+     */
+    public static function label()
+    {
+        return 'Patients To Enroll';
     }
 
     /**

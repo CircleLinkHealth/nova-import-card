@@ -743,7 +743,7 @@ class NotesController extends Controller
         //UPDATE USER INFO CHANGES
         $info = $patient->patientInfo;
 
-        if (isset($input['status'])) {
+        if (isset($input['status']) && in_array($input['status'], [Patient::ENROLLED, Patient::WITHDRAWN, Patient::PAUSED])) {
             $info->ccm_status = $input['status'];
 
             if ('withdrawn' == $input['status']) {
