@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Notifications\NurseDailyReport;
+use App\Notifications\NurseDailyReportToDeprecate;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
@@ -141,7 +141,7 @@ class EmailRNDailyReportToDeprecate extends Command
                                 : null,
                         ];
 
-                        $nurse->notify(new NurseDailyReport($data, $date));
+                        $nurse->notify(new NurseDailyReportToDeprecate($data, $date));
 
                         $emailsSent[] = [
                             'nurse' => $nurse->getFullName(),
