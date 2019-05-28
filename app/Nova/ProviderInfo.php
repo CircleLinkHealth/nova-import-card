@@ -6,6 +6,7 @@
 
 namespace App\Nova;
 
+use CircleLinkHealth\Customer\Entities\ProviderInfo as ProviderInfoModel;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Text;
@@ -20,7 +21,7 @@ class ProviderInfo extends Resource
      *
      * @var string
      */
-    public static $model = 'CircleLinkHealth\Customer\Entities\ProviderInfo';
+    public static $model = ProviderInfoModel::class;
 
     /**
      * The columns that should be searched.

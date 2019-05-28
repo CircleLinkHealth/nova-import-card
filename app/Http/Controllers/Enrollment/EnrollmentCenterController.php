@@ -78,7 +78,7 @@ class EnrollmentCenterController extends Controller
 
         $enrollee->save();
 
-        return redirect()->action('Enrollment\EnrollmentCenterController@dashboard');
+        return redirect()->route('enrollment-center.dashboard');
     }
 
     public function dashboard()
@@ -190,7 +190,7 @@ class EnrollmentCenterController extends Controller
 
         $enrollee->save();
 
-        return redirect()->action('Enrollment\EnrollmentCenterController@dashboard');
+        return redirect()->route('enrollment-center.dashboard');
     }
 
     public function training()
@@ -233,6 +233,6 @@ class EnrollmentCenterController extends Controller
 
         $enrollee->save();
 
-        return redirect()->action('Enrollment\EnrollmentCenterController@dashboard');
+        return redirect()->route('enrollment-center.dashboard');
     }
 }

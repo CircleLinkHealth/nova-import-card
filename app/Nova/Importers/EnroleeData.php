@@ -7,8 +7,8 @@
 namespace App\Nova\Importers;
 
 use App\Enrollee;
+use App\Search\PracticeByName;
 use App\Search\ProviderByName;
-use CircleLinkHealth\Customer\Entities\Practice;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
@@ -56,11 +56,7 @@ class EnroleeData implements OnEachRow, WithChunkReading, WithValidation, WithHe
 
         $provider = ProviderByName::first($row['provider']);
 
-        if ( ! $provider) {
-            return;
-        }
-
-        $row['provider_id'] = $provider->id;
+        $row['provider_id'] = optional($provider)->id;
         $row['practice_id'] = optional($this->practice)->id;
 
         Enrollee::updateOrCreate(
@@ -83,7 +79,7 @@ class EnroleeData implements OnEachRow, WithChunkReading, WithValidation, WithHe
         if ($fileName) {
             $array = explode('.', $fileName);
 
-            $practice = Practice::search($array[0])->first();
+            $practice = PracticeByName::first($array[0]);
 
             if ( ! $practice) {
                 throw new \Exception('Practice not found. Please make sure that the file name is a valid Practice name.', 500);

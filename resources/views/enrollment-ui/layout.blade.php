@@ -62,8 +62,8 @@
 
 <script>
     $(document).ready(function () {
-        $('.dropdown-trigger').dropdown({
-            coverTrigger: false
+        M.Dropdown.init($('.dropdown-trigger'), {
+            coverTrigger: false,
         });
     });
 </script>
