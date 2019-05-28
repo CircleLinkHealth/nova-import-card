@@ -45,7 +45,7 @@ class ResolveDisputeReminder extends Notification
     {
         return (new MailMessage())
             ->subject('Reminder - Resolve Dispute Invoices')
-            ->greeting('Hello,') //@todo:show number here?
+            ->greeting('Hello,') //@todo:show number here??
             ->line('There are Invoices (x number) that required to be resolved')
             ->action('Resolve Disputes', url('/'))
             ->line('Thank you!');
