@@ -9,7 +9,6 @@ namespace CircleLinkHealth\NurseInvoices\Http\Controllers;
 use App\Exceptions\FileNotFoundException;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
-use CircleLinkHealth\NurseInvoices\Entities\Dispute;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -21,13 +20,17 @@ class InvoiceReviewController extends Controller
      */
     public function disputeInvoice(Request $request)
     {
-        $dispute = new Dispute();
-        $dispute->disputable()->create(
-            [
-                'reason'  => $request->input('reason'),
-                'user_id' => auth()->id(),
-            ]
-        );
+        $id     = $request->input('invoiceId');
+        $reason = $request->input('reason');
+
+        NurseInvoice::find($id)
+            ->disputes()
+            ->create(
+                [
+                    'reason'  => $reason,
+                    'user_id' => auth()->id(),
+                ]
+            );
     }
 
     /**
@@ -38,7 +41,8 @@ class InvoiceReviewController extends Controller
     public function reviewInvoice()
     {
         $startDate = Carbon::now()->subMonth(1)->startOfMonth();
-        $invoice   = NurseInvoice::where('month_year', $startDate)
+
+        $invoice = NurseInvoice::where('month_year', $startDate)
             ->ofNurses(auth()->id())
             ->first();
 
@@ -71,6 +75,7 @@ class InvoiceReviewController extends Controller
                 'formattedInvoiceTotalAmount'            => $invoiceData['formattedInvoiceTotalAmount'],
                 'nurseHourlyRate'                        => $invoiceData['nurseHourlyRate'],
                 'changedToFixedRateBecauseItYieldedMore' => $invoiceData['changedToFixedRateBecauseItYieldedMore'],
+                'invoiceId'                              => $invoice->id,
             ]
         );
     }

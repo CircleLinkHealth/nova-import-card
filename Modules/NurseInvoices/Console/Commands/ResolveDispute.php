@@ -43,7 +43,7 @@ class ResolveDispute extends Command
         $startOfMonth = Carbon::now()->startOfMonth();
         $endOfMonth   = Carbon::now()->endOfMonth();
 
-        $disputes = Dispute::where('resolved_at', null)
+        $disputes = Dispute::whereNull('resolved_at')
             ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
             ->count();
 

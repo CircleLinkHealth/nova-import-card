@@ -28,6 +28,11 @@ class NurseInvoice extends Model
         'invoice_data',
     ];
 
+    public function disputes()
+    {
+        return $this->morphMany(Dispute::class, 'disputable');
+    }
+
     public function nurse()
     {
         return $this->belongsTo(Nurse::class, 'nurse_info_id');
