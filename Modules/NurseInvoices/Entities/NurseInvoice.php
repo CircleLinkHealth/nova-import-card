@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\NurseInvoices\Entities;
 
+use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\NurseInvoices\Traits\Disputable;
 use CircleLinkHealth\NurseInvoices\Traits\Nursable;
 use Illuminate\Database\Eloquent\Model;
@@ -26,4 +27,9 @@ class NurseInvoice extends Model
         'sent_to_accountant_at',
         'invoice_data',
     ];
+
+    public function nurse()
+    {
+        return $this->belongsTo(Nurse::class, 'nurse_info_id');
+    }
 }

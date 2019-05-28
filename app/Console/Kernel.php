@@ -31,7 +31,10 @@ use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
 use App\Console\Commands\SendCarePlanApprovalReminders;
 use App\Console\Commands\TuneScheduledCalls;
-use CircleLinkHealth\NurseInvoices\Console\Commands\CreateInvoices;
+use Carbon\Carbon;
+use CircleLinkHealth\NurseInvoices\Console\Commands\Create;
+use CircleLinkHealth\NurseInvoices\Console\Commands\Reminder;
+use CircleLinkHealth\NurseInvoices\Console\Commands\ResolveDispute;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Jorijn\LaravelSecurityChecker\Console\SecurityMailCommand;
@@ -195,6 +198,21 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(OverwriteNBIImportedData::class)->everyTenMinutes();
 
-        $schedule->command(CreateInvoices::class)->monthlyOn('1', '00:02');
+        $schedule->command(Create::class)->monthlyOn(1, '00:02');
+
+        $schedule->command(Reminder::class)->monthlyOn(3, '16:00');
+
+        $schedule->command(ResolveDispute::class)->dailyAt('02:00')->skip(function () {
+            $now = Carbon::now();
+            $startOfMonth = Carbon::now()->startOfMonth();
+            $fifthOfMonth = Carbon::now()->startOfMonth()->addDays(5);
+
+            if ($now > $startOfMonth
+                && $now < $fifthOfMonth) {
+                return true;
+            }
+
+            return false;
+        });
     }
 }

@@ -6,24 +6,24 @@
 
 namespace CircleLinkHealth\NurseInvoices\Console\Commands;
 
-use App\Jobs\CreateNurseInvoices;
 use Carbon\Carbon;
+use CircleLinkHealth\NurseInvoices\Entities\Dispute;
 use Illuminate\Console\Command;
 
-class CreateInvoices extends Command
+class ResolveDispute extends Command
 {
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Collect Nurses for last month to prepare invoices';
+    protected $description = 'Resolve Dispute Reminder';
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'nurseInvoices:CreateInvoices';
+    protected $signature = 'nurseinvoice:resolveDispute';
 
     /**
      * Create a new command instance.
@@ -40,15 +40,15 @@ class CreateInvoices extends Command
      */
     public function handle()
     {
-        $startDate = Carbon::now()->subMonth(1)->startOfMonth();
-        $endDate   = Carbon::now()->subMonth(1)->endOfMonth();
+        $startOfMonth = Carbon::now()->startOfMonth();
+        $endOfMonth   = Carbon::now()->endOfMonth();
 
-        CreateNurseInvoices::dispatch(
-            $startDate,
-            $endDate,
-            $nurseUserIds = [],
-            false,
-            $requestedBy = null
-        );
+        $disputes = Dispute::where('resolved_at', null)
+            ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
+            ->count();
+
+        if (0 !== $disputes) {
+            //@todo: send to sara
+        }
     }
 }

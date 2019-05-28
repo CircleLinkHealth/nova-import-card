@@ -90,6 +90,8 @@ class Generator
                         $viewModel = $this->createViewModel($user, $nurseAggregatedTotalTime, $variablePayMap);
 
                         $this->saveInvoiceData($user, $viewModel);
+
+                        //@todo: should extract this to a service
                         $this->sendNotification($user);
 
                         //this part will be implemented
@@ -111,10 +113,12 @@ class Generator
      */
     public function saveInvoiceData($user, $viewModel)
     {
-        NurseInvoice::create(
+        NurseInvoice::updateOrCreate(
+            [
+                'month_year' => $this->startDate->toDateString(),
+            ],
             [
                 'nurse_info_id' => $user->nurseInfo->id,
-                'month_year'    => $this->startDate->toDateString(),
                 'invoice_data'  => $viewModel->toArray(),
             ]
         );

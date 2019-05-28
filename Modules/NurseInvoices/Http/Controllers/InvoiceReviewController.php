@@ -23,7 +23,7 @@ class InvoiceReviewController extends Controller
     {
         $dispute = new Dispute();
         $dispute->disputable()->create(
-            [//@todo:disputable_type and Id dont get saved
+            [
                 'reason'  => $request->input('reason'),
                 'user_id' => auth()->id(),
             ]
@@ -51,23 +51,26 @@ class InvoiceReviewController extends Controller
         return view(
             'nurseinvoices::reviewInvoice',
             [
-                'nurseFullName'       => $invoiceData['nurseFullName'],
-                'startDate'           => $invoiceData['startDate'],
-                'endDate'             => $invoiceData['endDate'],
-                'hasAddedTime'        => $invoiceData['hasAddedTime'],
-                'addedTime'           => $invoiceData['addedTime'],
-                'addedTimeAmount'     => $invoiceData['addedTimeAmount'],
-                'bonus'               => $invoiceData['bonus'],
-                'totalBillableRate'   => $invoiceData['totalBillableRate'],
-                'variablePay'         => $invoiceData['variablePay'],
-                'nurseHighRate'       => $invoiceData['nurseHighRate'],
-                'nurseLowRate'        => $invoiceData['nurseLowRate'],
-                'systemTimeInMinutes' => $invoiceData['systemTimeInMinutes'],
-                'systemTimeInHours'   => $invoiceData['systemTimeInHours'],
-                'totalTimeTowardsCcm' => $invoiceData['totalTimeTowardsCcm'],
-                'totalTimeAfterCcm'   => $invoiceData['totalTimeAfterCcm'],
-                'timePerDay'          => $invoiceData['timePerDay'],
-                //                @todo:get changedToFixedRateBecauseItYieldedMore.
+                'nurseFullName'                          => $invoiceData['nurseFullName'],
+                'startDate'                              => $invoiceData['startDate'],
+                'endDate'                                => $invoiceData['endDate'],
+                'hasAddedTime'                           => $invoiceData['hasAddedTime'],
+                'addedTime'                              => $invoiceData['addedTime'],
+                'addedTimeAmount'                        => $invoiceData['addedTimeAmount'],
+                'bonus'                                  => $invoiceData['bonus'],
+                'formattedBaseSalary'                    => $invoiceData['formattedBaseSalary'],
+                'variablePay'                            => $invoiceData['variablePay'],
+                'nurseHighRate'                          => $invoiceData['nurseHighRate'],
+                'nurseLowRate'                           => $invoiceData['nurseLowRate'],
+                'systemTimeInMinutes'                    => $invoiceData['systemTimeInMinutes'],
+                'systemTimeInHours'                      => $invoiceData['systemTimeInHours'],
+                'totalTimeTowardsCcm'                    => $invoiceData['totalTimeTowardsCcm'],
+                'totalTimeAfterCcm'                      => $invoiceData['totalTimeAfterCcm'],
+                'timePerDay'                             => $invoiceData['timePerDay'],
+                'invoiceTotalAmount'                     => $invoiceData['invoiceTotalAmount'],
+                'formattedInvoiceTotalAmount'            => $invoiceData['formattedInvoiceTotalAmount'],
+                'nurseHourlyRate'                        => $invoiceData['nurseHourlyRate'],
+                'changedToFixedRateBecauseItYieldedMore' => $invoiceData['changedToFixedRateBecauseItYieldedMore'],
             ]
         );
     }
