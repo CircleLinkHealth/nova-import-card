@@ -743,10 +743,10 @@ class NotesController extends Controller
         //UPDATE USER INFO CHANGES
         $info = $patient->patientInfo;
 
-        if (isset($input['status']) && in_array($input['status'], [Patient::ENROLLED, Patient::WITHDRAWN, Patient::PAUSED])) {
-            $info->ccm_status = $input['status'];
+        if (isset($input['ccm_status']) && in_array($input['ccm_status'], [Patient::ENROLLED, Patient::WITHDRAWN, Patient::PAUSED])) {
+            $info->ccm_status = $input['ccm_status'];
 
-            if ('withdrawn' == $input['status']) {
+            if ('withdrawn' == $input['ccm_status']) {
                 $withdrawnReason = $input['withdrawn_reason'];
                 if ('Other' == $withdrawnReason) {
                     $withdrawnReason = $input['withdrawn_reason_other'];
@@ -765,7 +765,9 @@ class NotesController extends Controller
             $info->preferred_calls_per_month = $input['frequency'];
         }
 
-        $info->save();
+        if ($info->isDirty()) {
+            $info->save();
+        }
 
         return $info;
     }
