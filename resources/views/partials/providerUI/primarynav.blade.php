@@ -204,7 +204,7 @@ $user = auth()->user();
                                     </a>
                                 </li>
                                 {{--@todo:make conditional display--}}
-                                @if(auth()->user()->showInvoiceReviewButton())
+                                @if(auth()->user()->shouldShowInvoiceReviewButton())
                                     <li class="hidden-xs">
                                         <a href="{{ route('care.center.invoice.review') }}"
                                            id="offline-activity-time-requests-index-link">
