@@ -780,16 +780,17 @@ if ( ! function_exists('getAppConfig')) {
      * Returns the AppConfig value for the given key.
      *
      * @param string $key
+     * @param null   $default
      *
      * @return string|null
      */
-    function getAppConfig(string $key)
+    function getAppConfig(string $key, $default = null)
     {
         $conf = AppConfig::whereConfigKey($key)->first();
 
         return $conf
             ? $conf->config_value
-            : null;
+            : $default;
     }
 }
 
