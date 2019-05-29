@@ -257,4 +257,16 @@
     .modal-medications .dropdown.v-select.form-control {
         padding: 0;
     }
+
+    .v-select .dropdown-toggle{
+        border: none;
+    }
+
+    .v-select .selected-tag{
+        display: block;
+    }
+
+    .v-select .vs__actions{
+        padding-bottom: 1%;
+    }
 </style>
