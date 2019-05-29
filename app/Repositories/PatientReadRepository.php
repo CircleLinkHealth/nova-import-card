@@ -44,6 +44,8 @@ class PatientReadRepository
         $shouldSetDefaultRows = false;
         $filtersInput         = $filters->filters();
 
+        $showPracticePatients = $filtersInput['showPracticePatients'] ?? null;
+
         $users = $this->model()
             ->with([
                 'carePlan',
@@ -57,7 +59,7 @@ class PatientReadRepository
                 },
             ])
             ->when(
-                auth()->user()->hasRole('provider') && 'false' == $filtersInput['showPracticePatients'],
+                auth()->user()->hasRole('provider') && 'false' == $showPracticePatients,
                 function ($query) {
                     $query->whereHas('careTeamMembers', function ($subQuery) {
                         $subQuery->where('member_user_id', auth()->user()->id)

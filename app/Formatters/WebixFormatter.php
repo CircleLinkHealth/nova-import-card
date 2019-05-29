@@ -42,6 +42,7 @@ class WebixFormatter implements ReportFormatter
             function ($note) use ($patient, $billingProvider) {
                 $result = [
                     'id'               => $note->id,
+                    'logger_id'        => $note->author_id,
                     'logger_name'      => $note->author->getFullName(),
                     'comment'          => $note->body,
                     'logged_from'      => 'note',
