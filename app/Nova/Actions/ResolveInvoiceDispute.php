@@ -6,6 +6,7 @@
 
 namespace App\Nova\Actions;
 
+use App\Notifications\ReviewInvoice;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -53,7 +54,8 @@ class ResolveInvoiceDispute extends Action
                     'is_resolved'     => true,
                 ]
             );
-            //@todo: send email to nurses
+
+            $model->notify(new ReviewInvoice($startDate = null));
         }
     }
 }
