@@ -12,18 +12,26 @@ PREVIOUS_REVISION=$6
 # Create a shared storage directory and symlink it to the project root
 if [ ! -d "$SHARED/storage" ]; then
   mkdir -p $SHARED/storage
-  mv storage/* $SHARED/storage/
-  chmod -R 775 $SHARED/storage
-  chmod -R g+s $SHARED/storage
+  echo "created $SHARED/storage"
 fi
 
-if [ ! -d "$RELEASE/storage" ]; then
-    mkdir storage
+if [ -d "$RELEASE/storage" ]; then
+    cd $RELEASE/storage
+    rm -rf app debugbar download exports framework logs patient pdfs
+    cd $RELEASE
+
+    mv $RELEASE/storage/* $SHARED/storage/
+    echo "ran mv $RELEASE/storage/* $SHARED/storage/"
+
+    chmod -R 775 $SHARED/storage
+    chmod -R g+s $SHARED/storage
+
+    rm -rf storage
 fi
 
 if [ ! -L "$RELEASE/storage" ]; then
     ln -s $SHARED/storage $RELEASE/storage
-    echo "$RELEASE/storage symlinked to $SHARED/storage"
+    echo "symlinked $RELEASE/storage to $SHARED/storage"
 fi
 
 # Run migrations
