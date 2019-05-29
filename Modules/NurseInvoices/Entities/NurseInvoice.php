@@ -37,4 +37,9 @@ class NurseInvoice extends Model
     {
         return $this->belongsTo(Nurse::class, 'nurse_info_id');
     }
+
+    public function scopeUndisputed($builder)
+    {
+        return $builder->doesntHave('disputes');
+    }
 }

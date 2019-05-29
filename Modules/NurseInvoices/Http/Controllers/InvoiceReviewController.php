@@ -10,6 +10,7 @@ use App\Exceptions\FileNotFoundException;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
+use CircleLinkHealth\NurseInvoices\Http\Requests\StoreNurseInvoiceDispute;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -18,12 +19,12 @@ class InvoiceReviewController extends Controller
     /**
      * @param Request $request
      */
-    public function disputeInvoice(Request $request)
+    public function disputeInvoice(StoreNurseInvoiceDispute $request)
     {
         $id     = $request->input('invoiceId');
         $reason = $request->input('reason');
 
-        NurseInvoice::find($id)
+        NurseInvoice::findOrFail($id)
             ->disputes()
             ->create(
                 [
@@ -31,6 +32,11 @@ class InvoiceReviewController extends Controller
                     'user_id' => auth()->id(),
                 ]
             );
+
+        //@todo: wip. put in nurse invoice service class
+        \Cache::tags(['shouldShowInvoiceReviewButton'])->forget('nurse_invoice_show_approve:user_id:'.auth()->id());
+
+        return $this->ok();
     }
 
     /**
@@ -43,6 +49,7 @@ class InvoiceReviewController extends Controller
         $startDate = Carbon::now()->subMonth(1)->startOfMonth();
 
         $invoice = NurseInvoice::where('month_year', $startDate)
+            ->undisputed()
             ->ofNurses(auth()->id())
             ->first();
 
