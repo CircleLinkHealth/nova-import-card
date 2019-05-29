@@ -11,12 +11,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Dispute extends Model
 {
+    protected $casts = [
+        'is_resolved' => 'boolean',
+    ];
     protected $fillable = [
         'user_id',
         'reason',
         'resolved_at',
         'resolved_by',
         'resolution_note',
+        'is_resolved',
     ];
 
     public function disputable()

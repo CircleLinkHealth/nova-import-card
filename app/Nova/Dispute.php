@@ -6,10 +6,10 @@
 
 namespace App\Nova;
 
+use App\Nova\Actions\DisputeInvoices;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
-use Laravel\Nova\Fields\Trix;
 
 class Dispute extends Resource
 {
@@ -45,7 +45,39 @@ class Dispute extends Resource
      */
     public function actions(Request $request)
     {
-        return [];
+        return [
+            new DisputeInvoices(),
+        ];
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return bool
+     */
+    public static function authorizedToCreate(Request $request)
+    {
+        return false;
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return bool
+     */
+    public function authorizedToDelete(Request $request)
+    {
+        return true;
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return bool
+     */
+    public function authorizedToUpdate(Request $request)
+    {
+        return true;
     }
 
     /**
@@ -72,10 +104,9 @@ class Dispute extends Resource
         return [
             ID::make()->sortable(),
             Text::make('Nurse', 'user.display_name')->readonly(true),
-            Text::make('reason')->readonly(true),
-            Text::make('resolved_at')->readonly(true),
-            Text::make('resolved_by')->readonly(true),
-            Trix::make('resolution_note'),
+            Text::make('reason')->hideWhenUpdating(),
+            Text::make('resolved_at')->hideWhenUpdating(),
+            Text::make('resolved_by')->hideWhenUpdating(),
         ];
     }
 

@@ -203,16 +203,14 @@ class Kernel extends ConsoleKernel
         $schedule->command(Reminder::class)->monthlyOn(3, '16:00');
 
         $schedule->command(ResolveDispute::class)->dailyAt('02:00')->skip(function () {
-            $now = Carbon::now();
-            $startOfMonth = Carbon::now()->startOfMonth();
-            $fifthOfMonth = Carbon::now()->startOfMonth()->addDays(5);
+            $currentDateTime = Carbon::now();
+            $disputeStart = Carbon::now()->startOfMonth();
+            $disputeEnd = $disputeStart->addDays(5);
 
-            if ($now > $startOfMonth
-                && $now < $fifthOfMonth) {
+            if ($currentDateTime->gte($disputeStart)
+                && $currentDateTime->lte($disputeEnd)) {
                 return true;
             }
-
-            return false;
         });
     }
 }
