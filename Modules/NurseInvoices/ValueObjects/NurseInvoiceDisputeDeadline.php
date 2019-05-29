@@ -106,7 +106,7 @@ class NurseInvoiceDisputeDeadline
             $deadline,
             [
                 'day'  => 'required|numeric|min:1|max:31',
-                'time' => 'required|date_format:H:iA',
+                'time' => 'required|date_format:"h:iA"',
             ]
         );
     }
