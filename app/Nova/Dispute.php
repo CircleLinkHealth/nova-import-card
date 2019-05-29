@@ -72,7 +72,7 @@ class Dispute extends Resource
      */
     public function authorizedToDelete(Request $request)
     {
-        return true;
+        return false;
     }
 
     /**
@@ -82,7 +82,7 @@ class Dispute extends Resource
      */
     public function authorizedToUpdate(Request $request)
     {
-        return true;
+        return false;
     }
 
     /**
