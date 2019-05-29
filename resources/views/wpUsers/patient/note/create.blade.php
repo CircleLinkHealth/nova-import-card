@@ -847,6 +847,11 @@
 
                 function confirmSubmitForm() {
 
+                    if (isSavingDraft) {
+                        setTimeout(() => confirmSubmitForm(), 500);
+                        return;
+                    }
+
                     //CPM-91 and CPM-437 double submitting notes
                     if (submitted) {
                         return;
@@ -860,6 +865,14 @@
                     //we have to enable it back before posting to server,
                     //otherwise its value will not reach the server
                     $('#activityKey').prop("disabled", false);
+
+                    if (noteId) {
+                        $('<input />').attr('type', 'hidden')
+                            .attr('name', "noteId")
+                            .attr('value', noteId)
+                            .appendTo(form);
+                    }
+
                     form.submit();
                 }
 
@@ -895,6 +908,9 @@
                 return noteBody.substring(0, noteBody.indexOf(MEDICATIONS_SEPARATOR)).trim();
             }
 
+
+            let isSavingDraft = false;
+
             /* 2 minutes */
             const AUTO_SAVE_INTERVAL = 1000 * 60 * 2;
 
@@ -906,6 +922,7 @@
 
             const saveDraftUrl = '{{route('patient.note.store.draft', ['patientId' => $patient->id])}}';
             const saveDraft = () => {
+                isSavingDraft = true;
                 window.axios
                     .post(saveDraftUrl, {
                         patient_id: $('#patient_id').val(),
@@ -927,12 +944,14 @@
                         task_status: $('#task_status').val()
                     })
                     .then((response, status) => {
+                        isSavingDraft = false;
                         if (response.data && response.data.note_id) {
                             noteId = response.data.note_id;
                         }
                         setTimeout(() => saveDraft(), AUTO_SAVE_INTERVAL);
                     })
                     .catch(err => {
+                        isSavingDraft = false;
                         console.error(err);
                         setTimeout(() => saveDraft(), AUTO_SAVE_INTERVAL);
                     });
