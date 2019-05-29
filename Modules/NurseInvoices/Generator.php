@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\NurseInvoices;
 
 use App\Notifications\NurseInvoiceCreated;
-use App\Notifications\NurseInvoiceReady;
+use App\Notifications\ReviewInvoice;
 use App\Services\PdfService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
@@ -130,7 +130,7 @@ class Generator
     public function sendNotification(User $user)
     {//@todo:delay() doesnt work
         $when = Carbon::now()->addHours(8);
-        $user->notify((new NurseInvoiceReady($this->startDate, $user))->delay($when));
+        $user->notify((new ReviewInvoice($this->startDate, $user))->delay($when));
     }
 
     /**

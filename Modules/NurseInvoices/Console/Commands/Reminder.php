@@ -43,7 +43,7 @@ class Reminder extends Command
     {
         $month = Carbon::now()->subMonth(1)->startOfMonth();
 
-        NurseInvoice::with('nurse')
+        NurseInvoice::with('nurse.user')
             ->where('month_year', $month)
             ->chunk(20, function ($invoices) {
                 foreach ($invoices as $invoice) {

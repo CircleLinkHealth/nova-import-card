@@ -6,13 +6,18 @@
 
 namespace App\Nova;
 
-use App\Nova\Actions\DisputeInvoices;
+use App\Nova\Actions\ResolveInvoiceDispute;
 use Illuminate\Http\Request;
-use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 
 class Dispute extends Resource
 {
+    /**
+     * The logical group associated with the resource.
+     *
+     * @var string
+     */
+    public static $group = \App\Constants::NOVA_GROUP_CARE_COACHES;
     /**
      * The model the resource corresponds to.
      *
@@ -46,7 +51,7 @@ class Dispute extends Resource
     public function actions(Request $request)
     {
         return [
-            new DisputeInvoices(),
+            new ResolveInvoiceDispute(),
         ];
     }
 
@@ -102,7 +107,6 @@ class Dispute extends Resource
     public function fields(Request $request)
     {
         return [
-            ID::make()->sortable(),
             Text::make('Nurse', 'user.display_name')->readonly(true),
             Text::make('reason')->hideWhenUpdating(),
             Text::make('resolved_at')->hideWhenUpdating(),
