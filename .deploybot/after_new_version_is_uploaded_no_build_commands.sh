@@ -20,8 +20,10 @@ if [ -d "$RELEASE/storage" ]; then
     rm -rf app debugbar download exports framework logs patient pdfs
     cd $RELEASE
 
-    mv $RELEASE/storage/* $SHARED/storage/
-    echo "ran mv $RELEASE/storage/* $SHARED/storage/"
+    echo "running rsync -avu $RELEASE/storage/ $SHARED/storage"
+    BASE="/cryptdata/var/deploy/deploybot"; RELEASES="$BASE/releases"; RELEASE="$RELEASES/1559085778"; SHARED="$BASE/shared"; CACHE="$BASE/deploy-cache"
+    rsync -avu $RELEASE/storage/ $SHARED/storage
+    echo "ran rsync -avu $RELEASE/storage/ $SHARED/storage"
 
     chmod -R 775 $SHARED/storage
     chmod -R g+s $SHARED/storage
