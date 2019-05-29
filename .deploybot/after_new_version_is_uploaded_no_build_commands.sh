@@ -21,8 +21,10 @@ if [ -d "$RELEASE/storage" ]; then
     cd $RELEASE
 
     echo "running rsync -avu $RELEASE/storage/ $SHARED/storage"
-    BASE="/cryptdata/var/deploy/deploybot"; RELEASES="$BASE/releases"; RELEASE="$RELEASES/1559085778"; SHARED="$BASE/shared"; CACHE="$BASE/deploy-cache"
+
+    # sync release storage files to shared storage
     rsync -avu $RELEASE/storage/ $SHARED/storage
+
     echo "ran rsync -avu $RELEASE/storage/ $SHARED/storage"
 
     chmod -R 775 $SHARED/storage
@@ -35,6 +37,9 @@ if [ ! -L "$RELEASE/storage" ]; then
     ln -s $SHARED/storage $RELEASE/storage
     echo "symlinked $RELEASE/storage to $SHARED/storage"
 fi
+
+# laravel needs these to run, and git does not clone empty folders
+mkdir -p $RELEASE/storage/framework/{sessions,views,cache}
 
 # Run migrations
 php artisan migrate --force
