@@ -51,6 +51,7 @@ use CircleLinkHealth\Customer\Traits\TimezoneTrait;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\Entities\Dispute;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra;
+use CircleLinkHealth\NurseInvoices\ValueObjects\NurseInvoiceDisputeDeadline;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
 use DateTime;
@@ -442,18 +443,17 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      *
      * @return bool
      */
-    public function shouldShowInvoiceReviewButton()
+    public function shouldShowInvoiceReviewButton() :bool
     {
         $now = Carbon::now();
-        $reviewStart = Carbon::now()->startOfMonth();
-        $reviewEnd = $reviewStart->copy()->addDays(2)->endOfDay();
-        $invoice = NurseInvoice::where('month_year', $reviewStart->subMonth(1))
+        $invoiceMonth = $now->copy()->subMonth();
+        $disputeSubmissionDeadline = NurseInvoiceDisputeDeadline::forInvoiceOfMonth($invoiceMonth);
+        
+        $invoice = NurseInvoice::where('month_year', $invoiceMonth)
             ->ofNurses(auth()->id())
             ->exists();
 
-        return $invoice
-            && $now->gte($reviewStart)
-            && $now->lte($reviewEnd);
+        return $invoice && $now->lte($disputeSubmissionDeadline);
     }
 
     public function activities()
