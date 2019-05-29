@@ -9,6 +9,7 @@ namespace CircleLinkHealth\Customer\Entities;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Customer\Traits\MakesOrReceivesCalls;
+use CircleLinkHealth\NurseInvoices\Entities\Dispute;
 
 /**
  * CircleLinkHealth\Customer\Entities\Nurse.
