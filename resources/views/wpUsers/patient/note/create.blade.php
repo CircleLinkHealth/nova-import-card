@@ -868,7 +868,7 @@
 
                     if (noteId) {
                         $('<input />').attr('type', 'hidden')
-                            .attr('name', "note_id")
+                            .attr('name', "noteId")
                             .attr('value', noteId)
                             .appendTo(form);
                     }
