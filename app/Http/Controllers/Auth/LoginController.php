@@ -32,7 +32,7 @@ class LoginController extends Controller
         login as traitLogin;
     }
 
-    const MIN_PASSWORD_CHANGE_IN_DAYS = 180;
+    const MIN_PASSWORD_CHANGE_IN_DAYS = 1870;
 
     /**
      * Throttle logon for this many minutes after $maxAttempts failed login attempts.
