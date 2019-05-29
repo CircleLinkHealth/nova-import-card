@@ -16,10 +16,6 @@ if [ ! -d "$SHARED/storage" ]; then
 fi
 
 if [ -d "$RELEASE/storage" ]; then
-    cd $RELEASE/storage
-    rm -rf app debugbar download exports framework logs patient pdfs
-    cd $RELEASE
-
     echo "running rsync -avu $RELEASE/storage/ $SHARED/storage"
 
     # sync release storage files to shared storage
@@ -39,7 +35,7 @@ if [ ! -L "$RELEASE/storage" ]; then
 fi
 
 # laravel needs these to run, and git does not clone empty folders
-mkdir -p $RELEASE/storage/framework/{sessions,views,cache}
+mkdir -p $RELEASE/storage/framework/{framework,sessions,views,cache}
 
 # Run migrations
 php artisan migrate --force
@@ -60,4 +56,5 @@ php artisan version:show --format=compact --suppress-app-name | cat <(echo -n "A
 php artisan deploy:post
 
 # Clear response cache
-php artisan responsecache:clear
+# CAUTION: This command will log users out
+# php artisan responsecache:clear
