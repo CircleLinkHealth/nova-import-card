@@ -10,14 +10,14 @@ use App\Jobs\CreateNurseInvoices;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
-class Create extends Command
+class GenerateMonthlyInvoicesForNonDemoNurses extends Command
 {
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Collect Nurses for last month to prepare invoices';
+    protected $description = 'Generate invoices for nurses who worked last month.';
     /**
      * The name and signature of the console command.
      *

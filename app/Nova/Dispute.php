@@ -8,7 +8,6 @@ namespace App\Nova;
 
 use App\Nova\Actions\DisputeInvoices;
 use Illuminate\Http\Request;
-use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 
 class Dispute extends Resource
@@ -102,7 +101,6 @@ class Dispute extends Resource
     public function fields(Request $request)
     {
         return [
-            ID::make()->sortable(),
             Text::make('Nurse', 'user.display_name')->readonly(true),
             Text::make('reason')->hideWhenUpdating(),
             Text::make('resolved_at')->hideWhenUpdating(),

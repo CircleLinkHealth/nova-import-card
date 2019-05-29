@@ -6,12 +6,13 @@
 
 namespace App\Notifications;
 
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class NurseInvoiceReady extends Notification implements ShouldQueue
+class ReviewInvoice extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -22,12 +23,10 @@ class NurseInvoiceReady extends Notification implements ShouldQueue
      * Create a new notification instance.
      *
      * @param mixed $startDate
-     * @param mixed $user
      */
-    public function __construct($startDate, $user)
+    public function __construct(Carbon $startDate)
     {
         $this->startDate = $startDate;
-        $this->user      = $user;
     }
 
     /**
@@ -53,11 +52,11 @@ class NurseInvoiceReady extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         return (new MailMessage())
-            ->subject('Invoice Generated')
-            ->greeting("Hello, {$notifiable->first_name}")
-            ->line("Click below button to review your invoice for {$this->startDate->format('F Y')}")
-            ->action('Review Here', url(route('care.center.invoice.review')))
-            ->line('Thank you for using our application!');
+            ->subject("Review {$this->startDate->format('F Y')} Invoice")
+            ->greeting("Hello {$notifiable->first_name},")
+            ->line('Thank you for using CarePlan Manager for providing care!')
+            ->line("Please click below button to review your invoice for  {$this->startDate->format('F Y')}")
+            ->action('Review Here', url(route('care.center.invoice.review')));
     }
 
     /**

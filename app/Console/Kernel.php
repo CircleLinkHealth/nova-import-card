@@ -32,9 +32,9 @@ use App\Console\Commands\ResetPatients;
 use App\Console\Commands\SendCarePlanApprovalReminders;
 use App\Console\Commands\TuneScheduledCalls;
 use Carbon\Carbon;
-use CircleLinkHealth\NurseInvoices\Console\Commands\Create;
+use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
 use CircleLinkHealth\NurseInvoices\Console\Commands\Reminder;
-use CircleLinkHealth\NurseInvoices\Console\Commands\ResolveDispute;
+use CircleLinkHealth\NurseInvoices\Console\Commands\SendResolveInvoiceDisputeReminder;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Jorijn\LaravelSecurityChecker\Console\SecurityMailCommand;
@@ -198,11 +198,11 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(OverwriteNBIImportedData::class)->everyTenMinutes();
 
-        $schedule->command(Create::class)->monthlyOn(1, '00:02');
+        $schedule->command(GenerateMonthlyInvoicesForNonDemoNurses::class)->monthlyOn(1, '00:02');
 
         $schedule->command(Reminder::class)->monthlyOn(3, '16:00');
 
-        $schedule->command(ResolveDispute::class)->dailyAt('02:00')->skip(function () {
+        $schedule->command(SendResolveInvoiceDisputeReminder::class)->dailyAt('02:00')->skip(function () {
             $currentDateTime = Carbon::now();
             $disputeStart = Carbon::now()->startOfMonth();
             $disputeEnd = $disputeStart->addDays(5);

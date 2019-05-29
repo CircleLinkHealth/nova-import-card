@@ -13,6 +13,12 @@ use Illuminate\Notifications\Notification;
 class ResolveDisputeReminder extends Notification
 {
     use Queueable;
+
+    /**
+     * Count of invoices required to be resolved.
+     *
+     * @var
+     */
     public $disputes;
 
     /**

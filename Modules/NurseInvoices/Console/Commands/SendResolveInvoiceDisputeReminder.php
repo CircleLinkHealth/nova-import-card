@@ -12,7 +12,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Entities\Dispute;
 use Illuminate\Console\Command;
 
-class ResolveDispute extends Command
+class SendResolveInvoiceDisputeReminder extends Command
 {
     /**
      * The console command description.
@@ -50,9 +50,8 @@ class ResolveDispute extends Command
             ->count();
         // @todo: should be Saras id here.
 
-        $user = User::find(9521);
-
         if (0 !== $disputes) {
+            $user = User::find(9521);
             $user->notify(new ResolveDisputeReminder($disputes));
         }
 
