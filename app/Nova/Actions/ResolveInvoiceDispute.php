@@ -29,7 +29,7 @@ class ResolveInvoiceDispute extends Action
     public function fields()
     {
         return [
-            Text::make('resolution_note'),
+            Text::make('Resolution Note', 'resolution_note'),
         ];
     }
 

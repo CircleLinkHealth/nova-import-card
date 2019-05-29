@@ -8,6 +8,7 @@ namespace App\Nova;
 
 use App\Nova\Actions\ResolveInvoiceDispute;
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Text;
 
 class Dispute extends Resource
@@ -109,6 +110,7 @@ class Dispute extends Resource
         return [
             Text::make('Nurse', 'user.display_name')->readonly(true),
             Text::make('reason')->hideWhenUpdating(),
+            Boolean::make('Is Resolved', 'is_resolved')->hideWhenUpdating(),
             Text::make('resolved_at')->hideWhenUpdating(),
             Text::make('resolved_by')->hideWhenUpdating(),
         ];
