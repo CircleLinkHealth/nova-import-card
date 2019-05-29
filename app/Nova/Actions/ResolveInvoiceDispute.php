@@ -15,7 +15,7 @@ use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
 use Laravel\Nova\Fields\Text;
 
-class DisputeInvoices extends Action
+class ResolveInvoiceDispute extends Action
 {
     use InteractsWithQueue;
     use Queueable;
