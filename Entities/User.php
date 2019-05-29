@@ -3529,15 +3529,16 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function shouldShowInvoiceReviewButton(): bool
     {
-        $now                       = Carbon::now();
-        $invoiceMonth              = $now->copy()->subMonth();
-        $disputeSubmissionDeadline = NurseInvoiceDisputeDeadline::forInvoiceOfMonth($invoiceMonth);
+        return Cache::tags(['shouldShowInvoiceReviewButton'])->remember("nurse:user_id:$this->id", 30, function () {
+            $now = Carbon::now();
+            $invoiceMonth = $now->copy()->startOfMonth()->subMonth();
 
-        $invoice = NurseInvoice::where('month_year', $invoiceMonth)
-            ->ofNurses(auth()->id())
-            ->exists();
+            $invoice = NurseInvoice::where('month_year', $invoiceMonth)
+                ->ofNurses(auth()->id())
+                ->exists();
 
-        return $invoice && $now->lte($disputeSubmissionDeadline);
+            return $invoice && $now->lte(NurseInvoiceDisputeDeadline::forInvoiceOfMonth($invoiceMonth));
+        });
     }
 
     /**
