@@ -89,16 +89,15 @@ class Generator
 
                         $viewModel = $this->createViewModel($user, $nurseAggregatedTotalTime, $variablePayMap);
 
-                        $this->saveInvoiceData($user, $viewModel);
+                        $invoice = $this->saveInvoiceData($user, $viewModel);
 
-                        //@todo: should extract this to a service
                         $this->sendNotification($user);
 
                         //this part will be implemented
 //                      $pdf = $this->createPdf($viewModel);
-//                           $this->forwardToCareCoach($viewModel, $pdf);
+//                      $this->forwardToCareCoach($viewModel, $pdf);
 //
-//                           $invoices->push($pdf);
+                        $invoices->push($invoice);
                     }
                 );
             }
@@ -113,7 +112,7 @@ class Generator
      */
     public function saveInvoiceData($user, $viewModel)
     {
-        NurseInvoice::updateOrCreate(
+        return NurseInvoice::updateOrCreate(
             [
                 'month_year' => $this->startDate->toDateString(),
             ],

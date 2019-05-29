@@ -54,29 +54,7 @@ class InvoiceReviewController extends Controller
 
         return view(
             'nurseinvoices::reviewInvoice',
-            [
-                'nurseFullName'                          => $invoiceData['nurseFullName'],
-                'startDate'                              => $invoiceData['startDate'],
-                'endDate'                                => $invoiceData['endDate'],
-                'hasAddedTime'                           => $invoiceData['hasAddedTime'],
-                'addedTime'                              => $invoiceData['addedTime'],
-                'addedTimeAmount'                        => $invoiceData['addedTimeAmount'],
-                'bonus'                                  => $invoiceData['bonus'],
-                'formattedBaseSalary'                    => $invoiceData['formattedBaseSalary'],
-                'variablePay'                            => $invoiceData['variablePay'],
-                'nurseHighRate'                          => $invoiceData['nurseHighRate'],
-                'nurseLowRate'                           => $invoiceData['nurseLowRate'],
-                'systemTimeInMinutes'                    => $invoiceData['systemTimeInMinutes'],
-                'systemTimeInHours'                      => $invoiceData['systemTimeInHours'],
-                'totalTimeTowardsCcm'                    => $invoiceData['totalTimeTowardsCcm'],
-                'totalTimeAfterCcm'                      => $invoiceData['totalTimeAfterCcm'],
-                'timePerDay'                             => $invoiceData['timePerDay'],
-                'invoiceTotalAmount'                     => $invoiceData['invoiceTotalAmount'],
-                'formattedInvoiceTotalAmount'            => $invoiceData['formattedInvoiceTotalAmount'],
-                'nurseHourlyRate'                        => $invoiceData['nurseHourlyRate'],
-                'changedToFixedRateBecauseItYieldedMore' => $invoiceData['changedToFixedRateBecauseItYieldedMore'],
-                'invoiceId'                              => $invoice->id,
-            ]
+            array_merge(['invoiceId' => $invoice->id], $invoiceData)
         );
     }
 }
