@@ -56,6 +56,6 @@ class ResolveDispute extends Command
             $user->notify(new ResolveDisputeReminder($disputes));
         }
 
-        //@todo:send invoices to accountant if there are no unresolved disputes
+        //@todo:send invoices to accountant if there are no unresolved disputes.
     }
 }
