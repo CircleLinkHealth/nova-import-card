@@ -437,27 +437,22 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     }
 
     /**
+     * Determines if current time is within invoice review period
      *
      * @return bool
      */
-    public function showInvoiceReviewButton()
+    public function shouldShowInvoiceReviewButton()
     {
         $now = Carbon::now();
-        $startOfMonth = Carbon::now()->startOfMonth()->subMonth(1);
-        $fourthOfMonth = Carbon::now()->startOfMonth()->addDays(4);
-        $invoice = NurseInvoice::where('month_year', $startOfMonth->subMonth(1))
+        $reviewStart = Carbon::now()->startOfMonth();
+        $reviewEnd = $reviewStart->copy()->addDays(2)->endOfDay();
+        $invoice = NurseInvoice::where('month_year', $reviewStart->subMonth(1))
             ->ofNurses(auth()->id())
-            ->first();
+            ->exists();
 
-        if ($invoice
-            && $now >= $startOfMonth
-            && $now <= $fourthOfMonth) {
-            return true;
-        }
-
-        return false;
-
-
+        return $invoice
+            && $now->gte($reviewStart)
+            && $now->lte($reviewEnd);
     }
 
     public function activities()
