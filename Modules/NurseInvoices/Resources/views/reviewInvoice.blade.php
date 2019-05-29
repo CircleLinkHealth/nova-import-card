@@ -1,9 +1,10 @@
-@extends('partials.adminUI')
+@extends('partials.providerUI')
 
-<div class="container">
-    @include('nurseinvoices::invoice-v2')
+@section('content')
+    <div class="container">
+        @include('nurseinvoices::invoice-v2')
 
-    {!! Form::open(array('url' => route('care.center.invoice.dispute'))) !!}
+        {!! Form::open(['url' => route('care.center.invoice.dispute')]) !!}
 
         <div class="form-group">
             <label for="dispute">Dispute Reasons</label>
@@ -18,7 +19,5 @@
         </div>
 
         {!! Form::close() !!}
-
-
-
-</div>
+    </div>
+@endsection
