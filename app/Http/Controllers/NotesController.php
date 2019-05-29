@@ -501,7 +501,7 @@ class NotesController extends Controller
                     return redirect()->route('patient.note.index', ['patient' => $patientId])->with(
                         'messages',
                         [
-                            $editingNoteId
+                            $noteIsAlreadyComplete
                                 ? 'Successfully Edited Note'
                                 : 'Successfully Created Note',
                         ]
@@ -620,7 +620,7 @@ class NotesController extends Controller
         return redirect()->route('patient.note.index', ['patient' => $patientId])->with(
             'messages',
             [
-                $editingNoteId
+                $noteIsAlreadyComplete
                     ? 'Successfully Edited Note'
                     : 'Successfully Created Note',
             ]
