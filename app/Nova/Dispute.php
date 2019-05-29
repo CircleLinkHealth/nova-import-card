@@ -8,6 +8,7 @@ namespace App\Nova;
 
 use App\Nova\Actions\ResolveInvoiceDispute;
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Text;
 
@@ -108,9 +109,9 @@ class Dispute extends Resource
     public function fields(Request $request)
     {
         return [
-            Text::make('Nurse', 'user.display_name')->readonly(true),
+            BelongsTo::make('Care Coach', 'user', CareCoachUser::class)->hideWhenUpdating()->readonly(),
             Text::make('reason')->hideWhenUpdating(),
-            Boolean::make('Is Resolved', 'is_resolved')->hideWhenUpdating(),
+            Boolean::make('Is Resolved?', 'is_resolved')->hideWhenUpdating(),
             Text::make('resolved_at')->hideWhenUpdating(),
             Text::make('resolved_by')->hideWhenUpdating(),
         ];
@@ -126,6 +127,11 @@ class Dispute extends Resource
     public function filters(Request $request)
     {
         return [];
+    }
+
+    public static function label()
+    {
+        return 'Invoice Disputes';
     }
 
     /**
