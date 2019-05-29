@@ -16,12 +16,12 @@ if [ ! -d "$SHARED/storage" ]; then
 fi
 
 if [ -d "$RELEASE/storage" ]; then
-    cd $RELEASE/storage
-    rm -rf app debugbar download exports framework logs patient pdfs
-    cd $RELEASE
+    echo "running rsync -avu $RELEASE/storage/ $SHARED/storage"
 
-    mv $RELEASE/storage/* $SHARED/storage/
-    echo "ran mv $RELEASE/storage/* $SHARED/storage/"
+    # sync release storage files to shared storage
+    rsync -avu $RELEASE/storage/ $SHARED/storage
+
+    echo "ran rsync -avu $RELEASE/storage/ $SHARED/storage"
 
     chmod -R 775 $SHARED/storage
     chmod -R g+s $SHARED/storage
@@ -33,6 +33,9 @@ if [ ! -L "$RELEASE/storage" ]; then
     ln -s $SHARED/storage $RELEASE/storage
     echo "symlinked $RELEASE/storage to $SHARED/storage"
 fi
+
+# laravel needs these to run, and git does not clone empty folders
+mkdir -p $RELEASE/storage/framework/{framework,sessions,views,cache}
 
 # Run migrations
 php artisan migrate --force
@@ -53,4 +56,5 @@ php artisan version:show --format=compact --suppress-app-name | cat <(echo -n "A
 php artisan deploy:post
 
 # Clear response cache
-php artisan responsecache:clear
+# CAUTION: This command will log users out
+# php artisan responsecache:clear

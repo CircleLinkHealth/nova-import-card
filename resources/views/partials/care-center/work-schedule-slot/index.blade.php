@@ -38,34 +38,26 @@
 
                 @foreach(weekDays() as $index => $day)
                     <td>
-                        @if (in_array($day, $holidaysThisWeek))
-                            <div class="list-group-item text-center" style="padding: 2px;">
-                                <b>
-                                    HOLIDAY!
-                                </b>
-                            </div>
-                        @else
-                            @foreach($windows as $window)
-                                @if (strcasecmp(clhDayOfWeekToDayName($window->day_of_week), $day) == 0)
-                                    <div class="list-group-item text-center" style="padding: 2px;">
-                                        <b>
-                                            {{ Carbon\Carbon::parse($window->window_time_start)->format('h:i a') }}
-                                        </b> -
-                                        <b>
-                                            {{ Carbon\Carbon::parse($window->window_time_end)->format('h:i a') }}
-                                        </b>
+                        @foreach($windows as $window)
+                            @if (strcasecmp(clhDayOfWeekToDayName($window->day_of_week), $day) == 0)
+                                <div class="list-group-item text-center" style="padding: 2px;">
+                                    <b>
+                                        {{ Carbon\Carbon::parse($window->window_time_start)->format('h:i a') }}
+                                    </b> -
+                                    <b>
+                                        {{ Carbon\Carbon::parse($window->window_time_end)->format('h:i a') }}
+                                    </b>
 
-                                        &nbsp;
+                                    &nbsp;
 
-                                        <a href="{{ route('care.center.work.schedule.destroy', $window->id) }}"
-                                           onclick="return confirm('Are you sure you want to delete this slot?')"
-                                           id="delete-window-{{$window->id}}">
-                                            <i class="glyphicon glyphicon-trash"></i>
-                                        </a>
-                                    </div>
-                                @endif
-                            @endforeach
-                        @endif
+                                    <a href="{{ route('care.center.work.schedule.destroy', $window->id) }}"
+                                       onclick="return confirm('Are you sure you want to delete this slot?')"
+                                       id="delete-window-{{$window->id}}">
+                                        <i class="glyphicon glyphicon-trash"></i>
+                                    </a>
+                                </div>
+                            @endif
+                        @endforeach
                     </td>
                 @endforeach
             </tr>
