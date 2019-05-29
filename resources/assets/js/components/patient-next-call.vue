@@ -190,4 +190,5 @@
     .light-background {
         background-color: rgba(71, 191, 171, 0.2);
     }
+
 </style>

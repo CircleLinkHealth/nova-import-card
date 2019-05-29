@@ -5,6 +5,10 @@
 
 @section('content')
 
+    <script>
+        const myUserId = @json(auth()->id());
+    </script>
+
     @include('partials.confirm-modal')
 
     <div class="col-lg-8 col-lg-offset-2">
@@ -86,7 +90,7 @@
                                             template: function (obj) {
                                                 if (obj.logged_from === "note" || obj.logged_from === "note_task")
 
-                                                    if (obj.status === "draft") {
+                                                    if (obj.logger_id === myUserId && obj.status === "draft") {
                                                         return "<a href='<?php echo route('patient.note.edit', [
                                                             'patientId' => $patient->id,
                                                             'noteId'    => '',
