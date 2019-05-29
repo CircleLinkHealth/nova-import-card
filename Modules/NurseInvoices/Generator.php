@@ -104,7 +104,7 @@ class Generator
             }
         );
 
-//         return $invoices;
+        return $invoices;
     }
 
     /**
