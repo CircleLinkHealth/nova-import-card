@@ -129,7 +129,7 @@ class Generator
     public function sendNotification(User $user)
     {//@todo:delay() doesnt work
         $when = Carbon::now()->addHours(8);
-        $user->notify((new ReviewInvoice($this->startDate, $user))->delay($when));
+        $user->notify((new ReviewInvoice($this->startDate))->delay($when));
     }
 
     /**

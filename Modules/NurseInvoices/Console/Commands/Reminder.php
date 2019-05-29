@@ -41,7 +41,7 @@ class Reminder extends Command
      */
     public function handle()
     {
-        $month = Carbon::now()->subMonth(1)->startOfMonth();
+        $month = Carbon::now()->subMonth()->startOfMonth();
 
         NurseInvoice::with('nurse.user')
             ->where('month_year', $month)

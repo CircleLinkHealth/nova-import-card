@@ -7,6 +7,7 @@
 namespace App\Nova\Actions;
 
 use App\Notifications\ReviewInvoice;
+use App\Nova\User;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -39,12 +40,14 @@ class ResolveInvoiceDispute extends Action
      *
      * @param \Laravel\Nova\Fields\ActionFields $fields
      * @param \Illuminate\Support\Collection    $models
+     * @param User                              $user
      *
      * @return mixed
      */
     public function handle(ActionFields $fields, Collection $models)
     {
         $resolvedDateTime = Carbon::now();
+        $startDate        = $resolvedDateTime->copy()->subMonth()->startOfMonth();
         foreach ($models as $model) {
             $model->update(
                 [
@@ -54,8 +57,8 @@ class ResolveInvoiceDispute extends Action
                     'is_resolved'     => true,
                 ]
             );
-
-            $model->notify(new ReviewInvoice($startDate = null));
+            //will come back to this
+           // $model->notify(new ReviewInvoice($startDate));
         }
     }
 }

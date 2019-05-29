@@ -39,7 +39,7 @@ class InvoiceReminder extends Notification
      *
      * @param mixed $notifiable
      *
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @return MailMessage
      */
     public function toMail($notifiable)
     {
@@ -48,7 +48,7 @@ class InvoiceReminder extends Notification
             ->greeting('Hello,')
             ->line('Invoice Review Period will end in 30hrs, please take some time to review your Invoice if you havent done it already')
             ->action('Review Here', url(route('care.center.invoice.review')))
-            ->line('Thank you for using our application!');
+            ->line('Thank you for using CarePlan Manager for providing care!');
     }
 
     /**
