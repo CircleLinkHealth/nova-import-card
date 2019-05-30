@@ -11,12 +11,25 @@ use Carbon\Carbon;
 class NurseInvoiceDisputeDeadline
 {
     /**
+     * Default deadline day of month number.
+     *
+     * @var string
+     */
+    const DEFAULT_NURSE_INVOICE_DISPUTE_SUBMISSION_DEADLINE_DAY = 3;
+    /**
      * The default deadline for nurses to submit invoice disputes.
      * The format is '{DAY} {HOUR}:{MINUTES}{AM/PM}'.
      *
      * @var string
      */
-    const DEFAULT_NURSE_INVOICE_DISPUTE_SUBMISSION_DEADLINE_DAY_AND_TIME = '3 11:59PM';
+    const DEFAULT_NURSE_INVOICE_DISPUTE_SUBMISSION_DEADLINE_DAY_AND_TIME = self::DEFAULT_NURSE_INVOICE_DISPUTE_SUBMISSION_DEADLINE_DAY.' '.self::DEFAULT_NURSE_INVOICE_DISPUTE_SUBMISSION_DEADLINE_TIME;
+
+    /**
+     * Default deadline hour of day '{HOUR}:{MINUTES}{AM/PM}'.
+     *
+     * @var string
+     */
+    const DEFAULT_NURSE_INVOICE_DISPUTE_SUBMISSION_DEADLINE_TIME = '11:59PM';
     /**
      * The key name for storing the deadline for nurses to submit disputes for monthly invoices.
      *

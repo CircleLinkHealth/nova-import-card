@@ -35,6 +35,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendDisputeReminder;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendResolveInvoiceDisputeReminder;
+use CircleLinkHealth\NurseInvoices\ValueObjects\NurseInvoiceDisputeDeadline;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Jorijn\LaravelSecurityChecker\Console\SecurityMailCommand;
@@ -200,7 +201,8 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(GenerateMonthlyInvoicesForNonDemoNurses::class)->monthlyOn(1, '00:30');
 
-        $schedule->command(SendDisputeReminder::class)->monthlyOn(3, '16:00');
+        //@todo: make this pickup user defined deadline
+        $schedule->command(SendDisputeReminder::class)->monthlyOn(NurseInvoiceDisputeDeadline::DEFAULT_NURSE_INVOICE_DISPUTE_SUBMISSION_DEADLINE_DAY - 1, '12:00');
 
         $schedule->command(SendResolveInvoiceDisputeReminder::class)->dailyAt('02:00')->skip(function () {
             $currentDateTime = Carbon::now();
