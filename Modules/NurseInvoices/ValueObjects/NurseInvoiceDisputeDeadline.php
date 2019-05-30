@@ -31,11 +31,7 @@ class NurseInvoiceDisputeDeadline
      */
     public static function forInvoiceOfMonth(Carbon $invoiceMonth)
     {
-        $static = new static();
-
-        $deadline = $static->deadline();
-
-        return $invoiceMonth->copy()->addMonth()->day($deadline['day'])->setTimeFromTimeString($deadline['time']);
+        return (new static())->calculateDeadline($invoiceMonth);
     }
 
     /**
@@ -57,6 +53,26 @@ class NurseInvoiceDisputeDeadline
             'day'  => $deadline[0] ?? null,
             'time' => $deadline[1] ?? null,
         ];
+    }
+
+    /**
+     * @param Carbon $invoiceMonth
+     *
+     * @return Carbon
+     */
+    private function calculateDeadline(Carbon $invoiceMonth)
+    {
+        $deadline = $this->deadline();
+
+        $reviewMonth = $invoiceMonth->copy()->addMonth();
+
+        //If the deadline is set to a day that does not exist in this month, use last day of month.
+        //Example: deadline is set to 31st of the month, but month is April, which has 30 days
+        if (($lastDayOfMonth = $reviewMonth->copy()->endOfMonth()->day) < $deadline['day']) {
+            $deadline['day'] = $lastDayOfMonth;
+        }
+
+        return $reviewMonth->day($deadline['day'])->setTimeFromTimeString($deadline['time']);
     }
 
     /**

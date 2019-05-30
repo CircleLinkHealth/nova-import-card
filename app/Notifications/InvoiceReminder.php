@@ -17,16 +17,22 @@ class InvoiceReminder extends Notification
     /**
      * @var Carbon
      */
-    protected $deadline;
+    public $deadline;
+    /**
+     * @var Carbon
+     */
+    public $invoiceMonth;
 
     /**
      * Create a new notification instance.
      *
      * @param Carbon $deadline
+     * @param Carbon $invoiceMonth
      */
-    public function __construct(Carbon $deadline)
+    public function __construct(Carbon $deadline, Carbon $invoiceMonth)
     {
-        $this->deadline = $deadline;
+        $this->deadline     = $deadline;
+        $this->invoiceMonth = $invoiceMonth;
     }
 
     /**
@@ -52,9 +58,10 @@ class InvoiceReminder extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage())
-            ->subject('Reminder to review your invoice')
+            ->subject('Last chance to review your invoice')
             ->greeting("Hello {$notifiable->first_name},")
-            ->line("We would like to inform you that the deadline to submit a dispute for your invoice is on {$this->deadline->format('m-d-Y')} at {$this->deadline->format('h:iA T')}.")
+            ->line("We would like to inform you that the deadline to submit a dispute for your invoice for {$this->invoiceMonth->format('F Y')} is on {$this->deadline->format('m-d-Y')} at {$this->deadline->format('h:iA T')}.")
+            ->line('Please take some time to review your invoice, in case you haven\'t yet.')
             ->action('Review Invoice', url(route('care.center.invoice.review')))
             ->line('Thank you for using CarePlan Manager for providing care!');
     }

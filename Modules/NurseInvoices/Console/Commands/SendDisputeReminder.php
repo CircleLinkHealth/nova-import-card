@@ -56,29 +56,29 @@ class SendDisputeReminder extends Command
 
         NurseInvoice::with('nurse.user')
             ->when(
-                        ! empty($userIds),
-                        function ($q) use ($userIds) {
-                            $q->whereHas(
+                ! empty($userIds),
+                function ($q) use ($userIds) {
+                    $q->whereHas(
                                 'nurse.user',
                                 function ($q) use ($userIds) {
                                     $q->whereIn('id', $userIds);
                                 }
                             );
-                        }
+                }
                     )
             ->where('month_year', $month)
             ->undisputed()
             ->chunk(
-                        20,
-                        function ($invoices) use ($deadline) {
-                            foreach ($invoices as $invoice) {
-                                $tz = $invoice->nurse->user->timezone ?? 'America/New_York';
+                20,
+                function ($invoices) use ($deadline, $month) {
+                    foreach ($invoices as $invoice) {
+                        $tz = $invoice->nurse->user->timezone ?? 'America/New_York';
 
-                                $this->warn("Sending notification to {$invoice->nurse->user->getFullName()}");
-                                $invoice->nurse->user->notify(new InvoiceReminder($deadline->copy()->setTimezone($tz)));
-                                $this->info("Sent notification to {$invoice->nurse->user->getFullName()}");
-                            }
-                        }
+                        $this->warn("Sending notification to {$invoice->nurse->user->getFullName()}");
+                        $invoice->nurse->user->notify(new InvoiceReminder($deadline->copy()->setTimezone($tz), $month));
+                        $this->info("Sent notification to {$invoice->nurse->user->getFullName()}");
+                    }
+                }
                     );
 
         $this->info('Command finished!');
