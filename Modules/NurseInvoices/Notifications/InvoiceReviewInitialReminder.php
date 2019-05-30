@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Notifications;
+namespace CircleLinkHealth\NurseInvoices\Notifications;
 
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -12,7 +12,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class ReviewInvoice extends Notification implements ShouldQueue
+class InvoiceReviewInitialReminder extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -55,8 +55,8 @@ class ReviewInvoice extends Notification implements ShouldQueue
             ->subject("Review {$this->startDate->format('F Y')} Invoice")
             ->greeting("Hello {$notifiable->first_name},")
             ->line('Thank you for using CarePlan Manager for providing care!')
-            ->line("Please click below button to review your invoice for  {$this->startDate->format('F Y')}")
-            ->action('Review Here', url(route('care.center.invoice.review')));
+            ->line("Please click below button to review your invoice for {$this->startDate->format('F Y')}")
+            ->action('Review Invoice', url(route('care.center.invoice.review')));
     }
 
     /**

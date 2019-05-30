@@ -7,11 +7,11 @@
 namespace CircleLinkHealth\NurseInvoices;
 
 use App\Notifications\NurseInvoiceCreated;
-use App\Notifications\ReviewInvoice;
 use App\Services\PdfService;
 use App\Services\SaveInvoicesService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\NurseInvoices\Notifications\InvoiceReviewInitialReminder;
 use CircleLinkHealth\NurseInvoices\ViewModels\Invoice;
 use Illuminate\Support\Collection;
 
@@ -63,7 +63,7 @@ class Generator
     /**
      * @return Collection
      */
-    public function generate()
+    public function createAndNotifyNurses()
     {
         $invoices = collect();
 
@@ -98,7 +98,7 @@ class Generator
 
                         $invoice = $this->saveInvoices->saveInvoiceData($user, $viewModel, $this->startDate);
 
-                        $this->sendNotification($user);
+                        $this->notifyNurse($user);
 
                         //this part will be implemented
 //                      $pdf = $this->createPdf($viewModel);
@@ -116,10 +116,9 @@ class Generator
     /**
      * @param User $user
      */
-    public function sendNotification(User $user)
-    {//@todo:delay() doesnt work
-        $when = Carbon::now()->addHours(8);
-        $user->notify((new ReviewInvoice($this->startDate))->delay($when));
+    public function notifyNurse(User $user)
+    {
+        $user->notify((new InvoiceReviewInitialReminder($this->startDate))->delay(now()->addHours(8)));
     }
 
     /**

@@ -81,7 +81,7 @@ class CreateNurseInvoices implements ShouldQueue
     public function handle()
     {
         $generator = new Generator($this->nurseUserIds, $this->startDate, $this->endDate, $this->sendToCareCoaches);
-        $invoices  = $generator->generate();
+        $invoices  = $generator->createAndNotifyNurses();
 
         if ($invoices->isEmpty()) {
             \Log::info('Invoices not generated due to no data for selected nurses and range.');
