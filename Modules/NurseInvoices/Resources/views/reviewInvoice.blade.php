@@ -34,7 +34,9 @@
                         @endif
                     </div>
                 @else
-                    <dispute-nurse-invoice invoice-id="{{$invoiceId}}"></dispute-nurse-invoice>
+                    @if (auth()->user()->shouldShowInvoiceReviewButton())
+                        <dispute-nurse-invoice invoice-id="{{$invoiceId}}"></dispute-nurse-invoice>
+                    @endif
                 @endisset
             </div>
         </div>

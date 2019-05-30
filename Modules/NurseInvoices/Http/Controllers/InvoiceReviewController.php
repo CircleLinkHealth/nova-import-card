@@ -33,9 +33,6 @@ class InvoiceReviewController extends Controller
                 ]
             );
 
-        //@todo: wip. put in nurse invoice service class
-        \Cache::tags(['shouldShowInvoiceReviewButton'])->forget('nurse_invoice_show_approve:user_id:'.auth()->id());
-
         return $this->ok();
     }
 
