@@ -9,6 +9,7 @@ namespace CircleLinkHealth\NurseInvoices\Console\Commands;
 use App\Notifications\InvoiceReminder;
 use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
+use CircleLinkHealth\NurseInvoices\ValueObjects\NurseInvoiceDisputeDeadline;
 use Illuminate\Console\Command;
 
 class SendDisputeReminder extends Command
@@ -51,26 +52,35 @@ class SendDisputeReminder extends Command
 
         $userIds = (array) $this->argument('userIds') ?? [];
 
+        $deadline = NurseInvoiceDisputeDeadline::forInvoiceOfMonth($month);
+
         NurseInvoice::with('nurse.user')
             ->when(
-                ! empty($userIds),
-                function ($q) use ($userIds) {
-                    $q->whereHas(
-                            'nurse.user',
-                            function ($q) use ($userIds) {
-                                $q->whereIn('id', $userIds);
-                            }
-                        );
-                }
+                        ! empty($userIds),
+                        function ($q) use ($userIds) {
+                            $q->whereHas(
+                                'nurse.user',
+                                function ($q) use ($userIds) {
+                                    $q->whereIn('id', $userIds);
+                                }
+                            );
+                        }
                     )
             ->where('month_year', $month)
+            ->undisputed()
             ->chunk(
-                20,
-                function ($invoices) {
-                    foreach ($invoices as $invoice) {
-                        $invoice->nurse->user->notify(new InvoiceReminder());
-                    }
-                }
+                        20,
+                        function ($invoices) use ($deadline) {
+                            foreach ($invoices as $invoice) {
+                                $tz = $invoice->nurse->user->timezone ?? 'America/New_York';
+
+                                $this->warn("Sending notification to {$invoice->nurse->user->getFullName()}");
+                                $invoice->nurse->user->notify(new InvoiceReminder($deadline->copy()->setTimezone($tz)));
+                                $this->info("Sent notification to {$invoice->nurse->user->getFullName()}");
+                            }
+                        }
                     );
+
+        $this->info('Command finished!');
     }
 }

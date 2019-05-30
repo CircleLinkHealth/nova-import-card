@@ -6,6 +6,7 @@
 
 namespace App\Notifications;
 
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -13,12 +14,19 @@ use Illuminate\Notifications\Notification;
 class InvoiceReminder extends Notification
 {
     use Queueable;
+    /**
+     * @var Carbon
+     */
+    protected $deadline;
 
     /**
      * Create a new notification instance.
+     *
+     * @param Carbon $deadline
      */
-    public function __construct()
+    public function __construct(Carbon $deadline)
     {
+        $this->deadline = $deadline;
     }
 
     /**
@@ -44,10 +52,10 @@ class InvoiceReminder extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage())
-            ->subject('Reminder - Invoice Review')
-            ->greeting('Hello,')
-            ->line('Invoice Review Period will end in 30hrs, please take some time to review your Invoice if you havent done it already')
-            ->action('Review Here', url(route('care.center.invoice.review')))
+            ->subject('Reminder to review your invoice')
+            ->greeting("Hello {$notifiable->first_name},")
+            ->line("We would like to inform you that the deadline to submit a dispute for your invoice is on {$this->deadline->format('m-d-Y')} at {$this->deadline->format('h:iA T')}.")
+            ->action('Review Invoice', url(route('care.center.invoice.review')))
             ->line('Thank you for using CarePlan Manager for providing care!');
     }
 
