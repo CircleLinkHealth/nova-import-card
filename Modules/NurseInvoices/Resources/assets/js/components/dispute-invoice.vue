@@ -1,25 +1,49 @@
 <template>
     <div>
         <div v-if="!showBanner">
-            <div class="form-group" :class="{'has-error':errors.has('reason')}">
-                <label for="dispute"><h3>Dispute Invoice</h3></label>
-                <textarea class="form-control" id="dispute" v-model="reason"
-                          placeholder="Type reasons for dispute here" rows="8" required>
-            </textarea>
-                <span class="help-block">{{errors.get('reason')}}</span>
+
+            <div class="text-right">
+                <div class="btn-container">
+                    <button class="btn btn-default" @click="showDisputeForm = ! showDisputeForm">
+                        Toggle Dispute Form
+                    </button>
+                </div>
+
+                <div class="btn-container">
+                    <button class="btn btn-success" @click="submitApproval" :disabled="loaders.approve">
+                        Approve Invoice
+                        <span class="loader-right">
+                        <loader v-show="loaders.approve"></loader>
+                    </span>
+                    </button>
+                </div>
             </div>
 
-            <div class="form-group text-right">
-                <button id="submit" class="btn btn-danger" @click="submitForm" :disabled="isLoading">
-                    Dispute Invoice
-                    <span class="loader-right">
-                    <loader v-show="isLoading"></loader>
-                </span>
-                </button>
+            <div v-if="showDisputeForm">
+                <div class="form-group" :class="{'has-error':errors.has('reason')}">
+                    <label for="dispute"><h3>Dispute Invoice</h3></label>
+                    <textarea class="form-control" id="dispute" v-model="reason"
+                              placeholder="Type reasons for dispute here" rows="8" required>
+                    </textarea>
+                    <span class="help-block">{{errors.get('reason')}}</span>
+                </div>
+
+                <div class="form-group text-right">
+                    <div class="btn-container">
+                        <button class="btn btn-danger" @click="submitDispute" :disabled="loaders.dispute">
+                            Dispute Invoice
+                            <span class="loader-right">
+                                <loader v-show="loaders.dispute"></loader>
+                            </span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
         <div v-else>
-            <div class="col-md-12 alert alert-success">Your dispute has been submitted. We'll get back to you as soon as possible.</div>
+            <div class="col-md-12 alert alert-success">
+                <h4>{{bannerText}}</h4>
+            </div>
         </div>
     </div>
 </template>
@@ -42,22 +66,21 @@
         },
         data() {
             return {
-                isLoading: false,
+                loaders: {
+                    approve: false,
+                    dispute: false,
+                },
                 errors: new Errors(),
                 reason: null,
-                showBanner: false
+                showDisputeForm: false,
+                showBanner: false,
+                bannerText: '',
             }
         },
         methods: {
-            startLoader() {
-                this.isLoading = true;
-            },
-            stopLoader() {
-                this.isLoading = false;
-            },
-            submitForm() {
+            submitDispute() {
                 let self = this;
-                this.startLoader();
+                self.loaders.dispute = true;
 
                 return this.axios.post(rootUrl('nurseinvoices/dispute'), {
                     reason: this.reason,
@@ -65,12 +88,33 @@
                 })
                     .then((response, status) => {
                         if (response) {
-                            console.log(response);
+                            self.loaders.dispute = false;
+                            self.bannerText = 'Your dispute has been submitted. We\'ll get back to you as soon as possible.';
+                            self.showDisputeForm = false;
 
-                            this.success()
+                            self.success()
                         }
                     }).catch(err => {
-                        this.stopLoader();
+                        self.loaders.dispute = false;
+                        this.errors.setErrors(err.response.data.errors ? err.response.data.errors : []);
+                    });
+            },
+            submitApproval() {
+                let self = this;
+                self.loaders.approve = true;
+
+                return this.axios.post(rootUrl('nurseinvoices/approve'), {
+                    invoiceId: this.invoiceId,
+                })
+                    .then((response, status) => {
+                        if (response) {
+                            self.loaders.approve = false;
+                            self.bannerText = 'Thank you for approving the invoice!';
+
+                            self.success()
+                        }
+                    }).catch(err => {
+                        self.loaders.approve = false;
                         this.errors.setErrors(err.response.data.errors ? err.response.data.errors : []);
                     });
             },
@@ -88,8 +132,14 @@
         margin: 2px 0 0 7px;
         float: right;
     }
+
     .loader {
         width: 15px;
         height: 15px;
+    }
+
+    .btn-container {
+        display: inline-block;
+        padding-left: 2%;
     }
 </style>

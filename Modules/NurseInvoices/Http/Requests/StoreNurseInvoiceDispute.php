@@ -30,10 +30,15 @@ class StoreNurseInvoiceDispute extends FormRequest
     public function rules()
     {
         return [
-            'invoiceId' => ['required', Rule::exists((new NurseInvoice())->getTable(), 'id')->where(function ($query) {
-                $query->where('nurse_info_id', optional(\Auth::user()->nurseInfo)->id);
-            })],
-            'reason' => 'required|string|min:10',
+            'invoiceId' => $this->invoiceIdRules(),
+            'reason'    => 'required|string|min:10',
         ];
+    }
+
+    protected function invoiceIdRules()
+    {
+        return ['required', Rule::exists((new NurseInvoice())->getTable(), 'id')->where(function ($query) {
+            $query->where('nurse_info_id', optional(\Auth::user()->nurseInfo)->id);
+        })];
     }
 }

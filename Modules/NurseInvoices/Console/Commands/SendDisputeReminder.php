@@ -59,15 +59,16 @@ class SendDisputeReminder extends Command
                 ! empty($userIds),
                 function ($q) use ($userIds) {
                     $q->whereHas(
-                                'nurse.user',
-                                function ($q) use ($userIds) {
-                                    $q->whereIn('id', $userIds);
-                                }
+                        'nurse.user',
+                        function ($q) use ($userIds) {
+                            $q->whereIn('id', $userIds);
+                        }
                             );
                 }
                     )
             ->where('month_year', $month)
             ->undisputed()
+            ->notApproved()
             ->chunk(
                 20,
                 function ($invoices) use ($deadline, $month) {

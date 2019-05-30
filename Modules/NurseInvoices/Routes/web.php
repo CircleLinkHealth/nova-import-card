@@ -16,4 +16,9 @@ Route::prefix('nurseinvoices')->middleware(['permission:has-schedule'])->group(f
         'uses' => 'InvoiceReviewController@disputeInvoice',
         'as'   => 'care.center.invoice.dispute',
     ]);
+
+    Route::post('approve', [
+        'uses' => 'InvoiceReviewController@approveInvoice',
+        'as'   => 'care.center.invoice.approve',
+    ]);
 });
