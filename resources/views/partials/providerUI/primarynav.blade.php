@@ -206,7 +206,7 @@ $user = auth()->user();
                                 <li class="hidden-xs">
                                     <a href="{{ route('care.center.invoice.review') }}"
                                        id="offline-activity-time-requests-index-link">
-                                        Invoice
+                                        Hours/Pay Invoice
                                     </a>
                                 </li>
                             @endif
