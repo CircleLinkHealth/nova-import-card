@@ -23,7 +23,7 @@ class GenerateMonthlyInvoicesForNonDemoNurses extends Command
      *
      * @var string
      */
-    protected $signature = 'nurseinvoices:create';
+    protected $signature = 'nurseinvoices:create {month? : Month to generate the invoice for in YYYY-MM format. Defaults to previous month.} {userIds?* : Space separated. Leave empty to send to all}';
 
     /**
      * Create a new command instance.
@@ -40,15 +40,35 @@ class GenerateMonthlyInvoicesForNonDemoNurses extends Command
      */
     public function handle()
     {
-        $startDate = Carbon::now()->subMonth()->startOfMonth();
-        $endDate   = $startDate->copy()->endOfMonth();
+        $month = $this->argument('month') ?? null;
+
+        if ($month) {
+            $month = Carbon::createFromFormat('Y-m', $month);
+        } else {
+            $month = Carbon::now()->subMonth();
+        }
+
+        $start = $month->startOfMonth();
+        $end   = $month->copy()->endOfMonth();
+
+        $userIds = (array) $this->argument('userIds') ?? [];
 
         CreateNurseInvoices::dispatch(
-            $startDate,
-            $endDate,
-            $nurseUserIds = [],
+            $start,
+            $end,
+            $userIds,
             false,
             $requestedBy = null
+        );
+
+        $this->info('Command dispatched!');
+
+        $forNurses = empty($userIds)
+            ? 'all nurses.'
+            : 'nurses with user IDs '.implode(', ', $userIds);
+
+        $this->info(
+            "Will create invoices for {$month->format('Y-m')}, for $forNurses."
         );
     }
 }

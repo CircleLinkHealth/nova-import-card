@@ -128,13 +128,18 @@ if ( ! function_exists('activeNurseNames')) {
     function activeNurseNames()
     {
         return User::ofType('care-center')
-            ->with([
-                'nurseInfo' => function ($q) {
-                    $q->where('is_demo', '!=', true);
-                },
-            ])->whereHas('nurseInfo', function ($q) {
-                $q->where('is_demo', '!=', true);
-            })->where('user_status', 1)
+            ->with(
+                       [
+                           'nurseInfo' => function ($q) {
+                               $q->where('is_demo', '!=', true);
+                           },
+                       ]
+                   )->whereHas(
+                       'nurseInfo',
+                       function ($q) {
+                           $q->where('is_demo', '!=', true);
+                       }
+            )->where('user_status', 1)
             ->pluck('display_name', 'id');
     }
 }
@@ -1363,8 +1368,25 @@ if ( ! function_exists('isProductionEnv')) {
 }
 
 if ( ! function_exists('presentDate')) {
-    function presentDate($date, bool $withTime = true)
+    /**
+     * Use this function to have a single presentation layer for all user facing dates in CPM.
+     *
+     * Due to the fact that we don't have a way to sort dates m-d-Y dates in tables yet, we are using $forceHumanForm so that developers can choose when to "force" m-d-Y format.
+     *
+     * @param $date
+     * @param bool $withTime
+     * @param bool $withTimezone
+     * @param bool $forceHumanForm
+     *
+     * @return string
+     */
+    function presentDate($date, bool $withTime = true, bool $withTimezone = false, bool $forceHumanForm = false)
     {
+        $dateFormat = 'Y-m-d';
+        $timeFormat = $withTimezone
+            ? 'h:iA T'
+            : 'h:iA';
+
         if ( ! is_a($date, Carbon::class)) {
             $validator = Validator::make(['date' => $date], ['date' => 'date']);
 
@@ -1381,9 +1403,13 @@ if ( ! function_exists('presentDate')) {
             return 'N/A';
         }
 
+        if ($forceHumanForm) {
+            $dateFormat = 'm-d-Y';
+        }
+
         return $withTime
-            ? $carbonDate->format('Y-m-d h:iA')
-            : $carbonDate->format('Y-m-d');
+            ? $carbonDate->format("$dateFormat $timeFormat")
+            : $carbonDate->format($dateFormat);
     }
 }
 

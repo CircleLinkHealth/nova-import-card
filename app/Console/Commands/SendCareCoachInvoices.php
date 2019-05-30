@@ -24,7 +24,7 @@ class SendCareCoachInvoices extends Command
      *
      * @var string
      */
-    protected $signature = 'nurses:send-invoices {--variable-time : Use Variable Time pay algorithm.} {month? : Month to send the invoice for in YYYY-MM format. Defaults to previous month.} {userIds?* : Space separated. Leave empty to send to all}';
+    protected $signature = 'nurses:send-invoices {--variable-time : Use Variable Time pay algorithm.} {month? : Month to send the invoice for in YYYY-MM format. Defaults to 2 months ago.} {userIds?* : Space separated. Leave empty to send to all}';
 
     /**
      * Create a new command instance.

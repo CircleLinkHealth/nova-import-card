@@ -35,7 +35,7 @@ class NurseInvoiceDisputeDeadline
 
         $deadline = $static->deadline();
 
-        return $invoiceMonth->addMonth()->day($deadline['day'])->setTimeFromTimeString($deadline['time']);
+        return $invoiceMonth->copy()->addMonth()->day($deadline['day'])->setTimeFromTimeString($deadline['time']);
     }
 
     /**
