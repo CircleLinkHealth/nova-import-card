@@ -6,9 +6,14 @@
 
 namespace App\Exports;
 
+use Illuminate\Support\Collection;
+
 class GenerateNurseInvoiceCsv
 {
-    public function csv()
+    /**
+     * @return Collection
+     */
+    public function collection()
     {
     }
 }
