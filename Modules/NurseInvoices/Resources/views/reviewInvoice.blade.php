@@ -4,7 +4,7 @@
 @section('activity', 'reviewInvoice')
 
 @section('content')
-    <div class="container">
+    <div class="container" style="padding-bottom: 10%;">
         <div class="row">
             <div class="col-md-12">
                 @empty($invoice->id)

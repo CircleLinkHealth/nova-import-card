@@ -1,11 +1,10 @@
 <template>
     <div>
         <div v-if="!showBanner">
-
             <div class="text-right">
                 <div class="btn-container">
                     <button class="btn btn-default" @click="showDisputeForm = ! showDisputeForm">
-                        Toggle Dispute Form
+                        {{showDisputeForm ? 'Hide' : 'Show'}} Dispute Form
                     </button>
                 </div>
 
