@@ -9,9 +9,9 @@ namespace CircleLinkHealth\NurseInvoices;
 use App\Notifications\NurseInvoiceCreated;
 use App\Notifications\ReviewInvoice;
 use App\Services\PdfService;
+use App\Services\SaveInvoicesService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\ViewModels\Invoice;
 use Illuminate\Support\Collection;
 
@@ -21,21 +21,27 @@ class Generator
      * @var Carbon
      */
     protected $endDate;
+
     /**
      * @var array
      */
     protected $nurseUserIds;
+
     /**
      * @var PdfService
      */
     protected $pdfService;
+
+    /**
+     * @var \Illuminate\Foundation\Application|mixed|SaveInvoicesService
+     */
+    protected $saveInvoices;
+
     /**
      * @var Carbon
      */
     protected $startDate;
     /**
-     * @todo: deprecate
-     *
      * @var bool
      */
     private $sendToCareCoaches;
@@ -46,6 +52,7 @@ class Generator
         Carbon $endDate,
         $sendToCareCoaches = false
     ) {
+        $this->saveInvoices      = app(SaveInvoicesService::class);
         $this->pdfService        = app(PdfService::class);
         $this->startDate         = $startDate;
         $this->endDate           = $endDate;
@@ -89,7 +96,7 @@ class Generator
 
                         $viewModel = $this->createViewModel($user, $nurseAggregatedTotalTime, $variablePayMap);
 
-                        $invoice = $this->saveInvoiceData($user, $viewModel);
+                        $invoice = $this->saveInvoices->saveInvoiceData($user, $viewModel, $this->startDate);
 
                         $this->sendNotification($user);
 
@@ -104,25 +111,6 @@ class Generator
         );
 
         return $invoices;
-    }
-
-    /**
-     * @param $user
-     * @param $viewModel
-     *
-     * @return
-     */
-    public function saveInvoiceData($user, $viewModel)
-    {
-        return NurseInvoice::updateOrCreate(
-            [
-                'month_year' => $this->startDate->toDateString(),
-            ],
-            [
-                'nurse_info_id' => $user->nurseInfo->id,
-                'invoice_data'  => $viewModel->toArray(),
-            ]
-        );
     }
 
     /**
