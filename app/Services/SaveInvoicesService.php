@@ -22,11 +22,11 @@ class SaveInvoicesService
     {
         return NurseInvoice::updateOrCreate(
             [
-                'month_year' => $startDate,
+                'month_year'    => $startDate,
+                'nurse_info_id' => $user->nurseInfo->id,
             ],
             [
-                'nurse_info_id' => $user->nurseInfo->id,
-                'invoice_data'  => $viewModel->toArray(),
+                'invoice_data' => $viewModel->toArray(),
             ]
         );
     }
