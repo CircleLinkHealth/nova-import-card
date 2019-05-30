@@ -3534,6 +3534,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
         $invoice = NurseInvoice::where('month_year', $invoiceMonth)
             ->undisputed()
+            ->notApproved()
             ->ofNurses(auth()->id())
             ->exists();
 
