@@ -28,7 +28,7 @@
                                 <h5>CLH Message:</h5>
                             </div>
                             <div class="col-md-12">
-                                <p>{{$dispute->reasolution_note}}</p>
+                                <p>{{$dispute->resolution_note}}</p>
                                 <p>written by {{optional($dispute->resolver)->getFullName()}}</p>
                             </div>
                         @endif
