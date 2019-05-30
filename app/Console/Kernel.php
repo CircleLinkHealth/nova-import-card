@@ -35,7 +35,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendDisputeReminder;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendResolveInvoiceDisputeReminder;
-use CircleLinkHealth\NurseInvoices\ValueObjects\NurseInvoiceDisputeDeadline;
+use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Jorijn\LaravelSecurityChecker\Console\SecurityMailCommand;

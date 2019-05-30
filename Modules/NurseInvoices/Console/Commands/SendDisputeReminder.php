@@ -9,7 +9,7 @@ namespace CircleLinkHealth\NurseInvoices\Console\Commands;
 use App\Notifications\InvoiceReminder;
 use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
-use CircleLinkHealth\NurseInvoices\ValueObjects\NurseInvoiceDisputeDeadline;
+use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use Illuminate\Console\Command;
 
 class SendDisputeReminder extends Command
@@ -59,15 +59,16 @@ class SendDisputeReminder extends Command
                 ! empty($userIds),
                 function ($q) use ($userIds) {
                     $q->whereHas(
-                                'nurse.user',
-                                function ($q) use ($userIds) {
-                                    $q->whereIn('id', $userIds);
-                                }
+                        'nurse.user',
+                        function ($q) use ($userIds) {
+                            $q->whereIn('id', $userIds);
+                        }
                             );
                 }
                     )
             ->where('month_year', $month)
             ->undisputed()
+            ->notApproved()
             ->chunk(
                 20,
                 function ($invoices) use ($deadline, $month) {

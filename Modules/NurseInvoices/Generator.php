@@ -44,20 +44,35 @@ class Generator
     /**
      * @var bool
      */
+    protected $storeInvoicesForNurseReview;
+    /**
+     * @var bool
+     */
     private $sendToCareCoaches;
 
+    /**
+     * Generator constructor.
+     *
+     * @param array  $nurseUserIds
+     * @param Carbon $startDate
+     * @param Carbon $endDate
+     * @param bool   $sendToCareCoaches
+     * @param bool   $storeInvoicesForNurseReview
+     */
     public function __construct(
         array $nurseUserIds,
         Carbon $startDate,
         Carbon $endDate,
-        $sendToCareCoaches = false
+        $sendToCareCoaches = false,
+        $storeInvoicesForNurseReview = false
     ) {
-        $this->saveInvoices      = app(SaveInvoicesService::class);
-        $this->pdfService        = app(PdfService::class);
-        $this->startDate         = $startDate;
-        $this->endDate           = $endDate;
-        $this->sendToCareCoaches = $sendToCareCoaches;
-        $this->nurseUserIds      = $nurseUserIds;
+        $this->saveInvoices                = app(SaveInvoicesService::class);
+        $this->pdfService                  = app(PdfService::class);
+        $this->startDate                   = $startDate;
+        $this->endDate                     = $endDate;
+        $this->sendToCareCoaches           = $sendToCareCoaches;
+        $this->nurseUserIds                = $nurseUserIds;
+        $this->storeInvoicesForNurseReview = $storeInvoicesForNurseReview;
     }
 
     /**
@@ -96,14 +111,14 @@ class Generator
 
                         $viewModel = $this->createViewModel($user, $nurseAggregatedTotalTime, $variablePayMap);
 
-                        $invoice = $this->saveInvoices->saveInvoiceData($user, $viewModel, $this->startDate);
+                        if ($this->storeInvoicesForNurseReview) {
+                            $invoice = $this->saveInvoices->saveInvoiceData($user, $viewModel, $this->startDate);
+                            $this->notifyNurse($user);
+                        } else {
+                            $invoice = $this->createPdf($viewModel);
+                            $this->forwardToCareCoach($viewModel, $invoice);
+                        }
 
-                        $this->notifyNurse($user);
-
-                        //this part will be implemented
-//                      $pdf = $this->createPdf($viewModel);
-//                      $this->forwardToCareCoach($viewModel, $pdf);
-//
                         $invoices->push($invoice);
                     }
                 );
@@ -143,8 +158,9 @@ class Generator
                 'margin-bottom' => '6',
                 'margin-right'  => '6',
                 'footer-right'  => 'Page [page] of [toPage]',
-                'footer-left'   => 'report generated on '.Carbon::now()->format('m-d-Y').' at '.Carbon::now()->format(
-                    'H:iA'
+                'footer-left'   => 'report generated on '.Carbon::now()->format('m-d-Y').' at '.Carbon::now(
+                    )->format(
+                        'H:iA'
                     ),
                 'footer-font-size' => '6',
             ]
@@ -207,42 +223,42 @@ class Generator
         return User::withTrashed()
             ->careCoaches()
             ->with(
-                [
-                    'nurseBonuses' => function ($q) {
-                        $q->whereBetween('date', [$this->startDate, $this->endDate]);
-                    },
-                    'nurseInfo',
-                ]
-            )
+                       [
+                           'nurseBonuses' => function ($q) {
+                               $q->whereBetween('date', [$this->startDate, $this->endDate]);
+                           },
+                           'nurseInfo',
+                       ]
+                   )
             ->has('nurseInfo')
             ->when(
-                is_array($this->nurseUserIds) && ! empty($this->nurseUserIds),
-                function ($q) {
-                    $q->whereIn('id', $this->nurseUserIds);
-                }
-            )
+                       is_array($this->nurseUserIds) && ! empty($this->nurseUserIds),
+                       function ($q) {
+                           $q->whereIn('id', $this->nurseUserIds);
+                       }
+                   )
             ->when(
-                empty($this->nurseUserIds),
-                function ($q) {
-                    $q->whereHas(
-                        'pageTimersAsProvider',
-                        function ($s) {
-                            $s->whereBetween(
-                                'start_time',
-                                [
-                                    $this->startDate->copy()->startOfDay(),
-                                    $this->endDate->copy()->endOfDay(),
-                                ]
-                            );
-                        }
-                    )
-                        ->whereHas(
-                            'nurseInfo',
-                            function ($s) {
-                                $s->where('is_demo', false);
-                            }
-                        );
-                }
-            );
+                       empty($this->nurseUserIds),
+                       function ($q) {
+                           $q->whereHas(
+                               'pageTimersAsProvider',
+                               function ($s) {
+                                   $s->whereBetween(
+                                       'start_time',
+                                       [
+                                           $this->startDate->copy()->startOfDay(),
+                                           $this->endDate->copy()->endOfDay(),
+                                       ]
+                                   );
+                               }
+                           )
+                               ->whereHas(
+                                 'nurseInfo',
+                                 function ($s) {
+                                     $s->where('is_demo', false);
+                                 }
+                             );
+                       }
+                   );
     }
 }

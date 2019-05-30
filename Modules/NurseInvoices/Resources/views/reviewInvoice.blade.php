@@ -4,7 +4,7 @@
 @section('activity', 'reviewInvoice')
 
 @section('content')
-    <div class="container">
+    <div class="container" style="padding-bottom: 10%;">
         <div class="row">
             <div class="col-md-12">
                 @empty($invoice->id)
@@ -45,6 +45,12 @@
                 @else
                     @if (auth()->user()->shouldShowInvoiceReviewButton())
                         <dispute-nurse-invoice invoice-id="{{$invoiceId}}"></dispute-nurse-invoice>
+                    @elseif ($invoice->is_nurse_approved)
+                        <div class="row">
+                            <div class="col-md-12 alert alert-success">
+                                <h4>You approved this invoice on {{presentDate($invoice->nurse_approved_at, true, true, true)}}</h4>
+                            </div>
+                        </div>
                     @endif
                 @endisset
             </div>

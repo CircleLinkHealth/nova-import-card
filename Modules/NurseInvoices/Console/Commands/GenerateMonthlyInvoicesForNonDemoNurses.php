@@ -58,7 +58,8 @@ class GenerateMonthlyInvoicesForNonDemoNurses extends Command
             $end,
             $userIds,
             false,
-            $requestedBy = null
+            $requestedBy = null,
+            true
         );
 
         $this->info('Command dispatched!');

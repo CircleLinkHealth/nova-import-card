@@ -5,7 +5,7 @@
  */
 
 use App\AppConfig;
-use CircleLinkHealth\NurseInvoices\ValueObjects\NurseInvoiceDisputeDeadline;
+use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 

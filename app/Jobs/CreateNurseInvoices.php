@@ -49,6 +49,10 @@ class CreateNurseInvoices implements ShouldQueue
      * @var Carbon
      */
     protected $startDate;
+    /**
+     * @var bool
+     */
+    protected $storeInvoicesForNurseReview;
 
     /**
      * Create a new job instance.
@@ -56,21 +60,24 @@ class CreateNurseInvoices implements ShouldQueue
      * @param Carbon $startDate
      * @param Carbon $endDate
      * @param array  $nurseUserIds
-     * @param int    $requestedBy
      * @param bool   $sendToCareCoaches
+     * @param int    $requestedBy
+     * @param bool   $storeInvoicesForNurseReview
      */
     public function __construct(
         Carbon $startDate,
         Carbon $endDate,
         array $nurseUserIds,
         bool $sendToCareCoaches = false,
-        int $requestedBy = null
+        int $requestedBy = null,
+        $storeInvoicesForNurseReview = false
     ) {
-        $this->nurseUserIds      = $nurseUserIds;
-        $this->startDate         = $startDate->startOfDay();
-        $this->endDate           = $endDate->endOfDay();
-        $this->requestedBy       = $requestedBy;
-        $this->sendToCareCoaches = $sendToCareCoaches;
+        $this->nurseUserIds                = $nurseUserIds;
+        $this->startDate                   = $startDate->startOfDay();
+        $this->endDate                     = $endDate->endOfDay();
+        $this->requestedBy                 = $requestedBy;
+        $this->sendToCareCoaches           = $sendToCareCoaches;
+        $this->storeInvoicesForNurseReview = $storeInvoicesForNurseReview;
     }
 
     /**
@@ -80,7 +87,7 @@ class CreateNurseInvoices implements ShouldQueue
      */
     public function handle()
     {
-        $generator = new Generator($this->nurseUserIds, $this->startDate, $this->endDate, $this->sendToCareCoaches);
+        $generator = new Generator($this->nurseUserIds, $this->startDate, $this->endDate, $this->sendToCareCoaches, $this->storeInvoicesForNurseReview);
         $invoices  = $generator->createAndNotifyNurses();
 
         if ($invoices->isEmpty()) {
