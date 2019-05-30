@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\NurseInvoices\Console\Commands;
 
-use App\Exports\GenerateNurseInvoiceCsv;
+use App\Exports\NurseInvoiceCsv;
 use App\Notifications\ResolveDisputeReminder;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
@@ -54,8 +54,9 @@ class SendResolveInvoiceDisputeReminder extends Command
             // @todo: should be Saras id here.
             $user = User::find(9521);
             $user->notify(new ResolveDisputeReminder($disputes));
+        } else {
+            NurseInvoiceCsv::dispatch($startOfMonth)
+                ->onQueue('high');
         }
-
-        GenerateNurseInvoiceCsv::class;
     }
 }

@@ -7,7 +7,9 @@
 namespace App\Http\Controllers;
 
 use App\Exports\CareCoachMonthlyReport;
+use App\Exports\NurseInvoiceCsv;
 use App\Jobs\CreateNurseInvoices;
+use App\Jobs\GenerateNurseMonthlyInvoiceCsv;
 use App\Notifications\NurseInvoiceCreated;
 use App\Reports\NurseDailyReport;
 use Carbon\Carbon;
@@ -30,6 +32,9 @@ class NurseController extends Controller
 
         $startDate = Carbon::parse($request->input('start_date'));
         $endDate   = Carbon::parse($request->input('end_date'));
+
+        GenerateNurseMonthlyInvoiceCsv::dispatch($startDate)
+            ->onQueue('high');
 
         if (isset($input['all_selected_nurses'])) {
             $nurseUserIds = [];
