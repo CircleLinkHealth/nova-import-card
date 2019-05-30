@@ -1,5 +1,8 @@
 @extends('partials.providerUI')
 
+@section('title', 'reviewInvoice')
+@section('activity', 'reviewInvoice')
+
 @section('content')
     <div class="container">
         <div class="row">

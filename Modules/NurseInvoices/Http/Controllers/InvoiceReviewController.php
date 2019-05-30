@@ -6,11 +6,12 @@
 
 namespace CircleLinkHealth\NurseInvoices\Http\Controllers;
 
-use App\Exceptions\FileNotFoundException;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\Http\Requests\StoreNurseInvoiceDispute;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -18,6 +19,8 @@ class InvoiceReviewController extends Controller
 {
     /**
      * @param Request $request
+     *
+     * @return JsonResponse
      */
     public function disputeInvoice(StoreNurseInvoiceDispute $request)
     {
@@ -37,13 +40,11 @@ class InvoiceReviewController extends Controller
     }
 
     /**
-     * @throws FileNotFoundException
-     *
-     * @return \Illuminate\Contracts\View\Factory|View
+     * @return Factory|View
      */
     public function reviewInvoice()
     {
-        $startDate = Carbon::now()->subMonth(1)->startOfMonth();
+        $startDate = Carbon::now()->subMonth()->startOfMonth();
 
         $invoice = NurseInvoice::where('month_year', $startDate)
             ->with(['dispute.resolver'])
