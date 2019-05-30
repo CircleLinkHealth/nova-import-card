@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\NurseInvoices\Console\Commands;
 
+use App\Exports\GenerateNurseInvoiceCsv;
 use App\Notifications\ResolveDisputeReminder;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
@@ -55,6 +56,6 @@ class SendResolveInvoiceDisputeReminder extends Command
             $user->notify(new ResolveDisputeReminder($disputes));
         }
 
-        //@todo:send invoices(pdf) to accountant if there are no unresolved disputes.
+        GenerateNurseInvoiceCsv::class;
     }
 }
