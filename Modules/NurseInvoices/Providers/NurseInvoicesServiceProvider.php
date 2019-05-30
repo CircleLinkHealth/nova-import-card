@@ -6,6 +6,9 @@
 
 namespace CircleLinkHealth\NurseInvoices\Providers;
 
+use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
+use CircleLinkHealth\NurseInvoices\Console\Commands\SendDisputeReminder;
+use CircleLinkHealth\NurseInvoices\Console\Commands\SendResolveInvoiceDisputeReminder;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\ServiceProvider;
 
@@ -46,6 +49,11 @@ class NurseInvoicesServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register(RouteServiceProvider::class);
+        $this->commands([
+            GenerateMonthlyInvoicesForNonDemoNurses::class,
+            SendDisputeReminder::class,
+            SendResolveInvoiceDisputeReminder::class,
+        ]);
     }
 
     /**

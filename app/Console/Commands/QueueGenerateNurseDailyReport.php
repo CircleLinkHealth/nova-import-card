@@ -19,7 +19,7 @@ class QueueGenerateNurseDailyReport extends Command
      */
     protected $description = 'Generates a csv of nurse daily report.';
     /**
-     * Command name
+     * Commands name
      * forDate: in the format of YYYY-MM-DD.
      *
      * @var string

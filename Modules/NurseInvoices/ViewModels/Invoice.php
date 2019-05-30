@@ -400,7 +400,7 @@ class Invoice extends ViewModel
             $this->baseSalary = $this->fixedRatePay;
         } else {
             $this->variableRatePay = $this->totalTimeAfterCcm() * $this->user->nurseInfo->low_rate
-                                     + $this->totalTimeTowardsCcm() * $this->user->nurseInfo->high_rate;
+                + $this->totalTimeTowardsCcm() * $this->user->nurseInfo->high_rate;
             if ($this->fixedRatePay > $this->variableRatePay) {
                 $this->baseSalary                             = $this->fixedRatePay;
                 $this->variablePay                            = false;

@@ -14,7 +14,6 @@ use App\Console\Commands\AttachBillableProblemsToLastMonthSummary;
 use App\Console\Commands\CareplanEnrollmentAdminNotification;
 use App\Console\Commands\CheckEmrDirectInbox;
 use App\Console\Commands\DeleteProcessedFiles;
-use App\Console\Commands\DownloadTwilioRecordings;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailRNDailyReportToDeprecate;
 use App\Console\Commands\EmailWeeklyReports;
@@ -30,9 +29,13 @@ use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
 use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
-use App\Console\Commands\SendCareCoachInvoices;
 use App\Console\Commands\SendCarePlanApprovalReminders;
 use App\Console\Commands\TuneScheduledCalls;
+use Carbon\Carbon;
+use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
+use CircleLinkHealth\NurseInvoices\Console\Commands\SendDisputeReminder;
+use CircleLinkHealth\NurseInvoices\Console\Commands\SendResolveInvoiceDisputeReminder;
+use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Jorijn\LaravelSecurityChecker\Console\SecurityMailCommand;
@@ -86,8 +89,7 @@ class Kernel extends ConsoleKernel
         //$schedule->command(SyncFamilialCalls::class)->dailyAt('00:30');
 
         //Removes All Scheduled Calls for patients that are withdrawn
-        $schedule->command(RemoveScheduledCallsForWithdrawnAndPausedPatients::class)->everyFiveMinutes(
-        )->withoutOverlapping();
+        $schedule->command(RemoveScheduledCallsForWithdrawnAndPausedPatients::class)->everyFiveMinutes()->withoutOverlapping();
 
         $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
             ->weeklyOn(1, '10:00');
@@ -196,5 +198,21 @@ class Kernel extends ConsoleKernel
         $schedule->command(NursesAndStatesDailyReport::class)->dailyAt('00:05');
 
         $schedule->command(OverwriteNBIImportedData::class)->everyTenMinutes();
+
+        $schedule->command(GenerateMonthlyInvoicesForNonDemoNurses::class)->monthlyOn(1, '00:30');
+
+        //@todo: make this pickup user defined deadline
+        $schedule->command(SendDisputeReminder::class)->monthlyOn(NurseInvoiceDisputeDeadline::DEFAULT_NURSE_INVOICE_DISPUTE_SUBMISSION_DEADLINE_DAY - 1, '12:00');
+
+        $schedule->command(SendResolveInvoiceDisputeReminder::class)->dailyAt('02:00')->skip(function () {
+            $currentDateTime = Carbon::now();
+            $disputeStart = Carbon::now()->startOfMonth();
+            $disputeEnd = $disputeStart->addDays(5);
+
+            if ($currentDateTime->gte($disputeStart)
+                && $currentDateTime->lte($disputeEnd)) {
+                return true;
+            }
+        });
     }
 }

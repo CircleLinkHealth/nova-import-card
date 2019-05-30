@@ -1,8 +1,8 @@
 <template>
     <div>
-        <vue-dropzone ref="vueDropzone" id="dropzone" param-name="file" 
-            :url="dzOptions.url" 
-            :headers="dzOptions.headers" 
+        <vue-dropzone ref="vueDropzone" id="dropzone" param-name="file"
+            :url="dzOptions.url"
+            :headers="dzOptions.headers"
             :upload-multiple="true"
             :max-file-size-in-m-b="30"
             :accepted-file-types="dzOptions.acceptedFileTypes"/>
@@ -23,7 +23,7 @@
             return {
                 dzOptions: {
                     url: rootUrl('api/ccd-importer/imported-medical-records?json'),
-                    headers: { 
+                    headers: {
                         'X-CSRF-TOKEN': csrfToken()
                     },
                     acceptedFileTypes: 'text/xml,application/xml,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -41,5 +41,5 @@
 </script>
 
 <style>
-    
+
 </style>

@@ -401,6 +401,15 @@ class Enrollee extends BaseModel
         return optional($this->provider)->getFullName();
     }
 
+    public function getProviderInfo()
+    {
+        if ( ! $this->provider) {
+            return null;
+        }
+
+        return $this->provider->providerInfo;
+    }
+
     public function name()
     {
         return "{$this->first_name} {$this->last_name}";
@@ -419,15 +428,6 @@ class Enrollee extends BaseModel
     public function provider()
     {
         return $this->belongsTo(User::class, 'provider_id');
-    }
-
-    public function getProviderInfo(){
-
-        if (! $this->provider){
-            return null;
-        }
-
-        return $this->provider->providerInfo;
     }
 
     public function scopeToCall($query)
