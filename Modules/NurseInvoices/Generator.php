@@ -8,9 +8,9 @@ namespace CircleLinkHealth\NurseInvoices;
 
 use App\Notifications\NurseInvoiceCreated;
 use App\Services\PdfService;
-use App\Services\SaveInvoicesService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\Notifications\InvoiceReviewInitialReminder;
 use CircleLinkHealth\NurseInvoices\ViewModels\Invoice;
 use Illuminate\Support\Collection;
@@ -66,7 +66,6 @@ class Generator
         $sendToCareCoaches = false,
         $storeInvoicesForNurseReview = false
     ) {
-        $this->saveInvoices                = app(SaveInvoicesService::class);
         $this->pdfService                  = app(PdfService::class);
         $this->startDate                   = $startDate;
         $this->endDate                     = $endDate;
@@ -112,7 +111,7 @@ class Generator
                         $viewModel = $this->createViewModel($user, $nurseAggregatedTotalTime, $variablePayMap);
 
                         if ($this->storeInvoicesForNurseReview) {
-                            $invoice = $this->saveInvoices->saveInvoiceData($user, $viewModel, $this->startDate);
+                            $invoice = $this->saveInvoiceData($user->nurseInfo->id, $viewModel, $this->startDate);
                             $this->notifyNurse($user);
                         } else {
                             $invoice = $this->createPdf($viewModel);
@@ -260,5 +259,25 @@ class Generator
                              );
                        }
                    );
+    }
+    
+    /**
+     * @param $nurseInfoId
+     * @param $viewModel
+     * @param Carbon $startDate
+     *
+     * @return mixed
+     */
+    private function saveInvoiceData($nurseInfoId, $viewModel, Carbon $startDate)
+    {
+        return NurseInvoice::updateOrCreate(
+            [
+                'month_year'    => $startDate,
+                'nurse_info_id' => $nurseInfoId,
+            ],
+            [
+                'invoice_data' => $viewModel->toArray(),
+            ]
+        );
     }
 }
