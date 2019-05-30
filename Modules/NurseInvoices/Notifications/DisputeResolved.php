@@ -57,7 +57,7 @@ class DisputeResolved extends Notification
             ->subject('Your invoice dispute has been resolved')
             ->greeting("Hello {$notifiable->first_name},")
             ->line('We would like to inform  you that your invoice dispute has been resolved. Please see below message from CircleLink Health:')
-            ->line($this->dispute->resolution_note)
+            ->line('"'.$this->dispute->resolution_note.'"')
             ->action('See Invoice', url(route('care.center.invoice.review')));
     }
 

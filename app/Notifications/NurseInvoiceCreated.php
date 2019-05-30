@@ -69,7 +69,7 @@ class NurseInvoiceCreated extends Notification
             ->greeting("Hi {$notifiable->getFullName()},")
             ->line('Thanks for your efforts at CircleLink Health!')
             ->line('Attached please find a time receipt and calculation of fees payable to you for subject line hours.')
-            ->line('Please let us know any questions or concerns. We’d like to initiate funds transfer to you in the next day or two.')
+            ->line('Please let us know any questions or concerns. Funds will be transferred to you in the next few days.')
             ->attach(storage_path("download/{$this->link}"), [
                 'as'   => "$this->month Invoice.pdf",
                 'mime' => 'application/pdf',

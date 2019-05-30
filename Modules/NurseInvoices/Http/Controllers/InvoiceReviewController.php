@@ -9,6 +9,7 @@ namespace CircleLinkHealth\NurseInvoices\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
+use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use CircleLinkHealth\NurseInvoices\Http\Requests\StoreNurseInvoiceApproval;
 use CircleLinkHealth\NurseInvoices\Http\Requests\StoreNurseInvoiceDispute;
 use Illuminate\Contracts\View\Factory;
@@ -49,11 +50,11 @@ class InvoiceReviewController extends Controller
         NurseInvoice::findOrFail($id)
             ->dispute()
             ->create(
-                [
-                    'reason'  => $reason,
-                    'user_id' => auth()->id(),
-                ]
-            );
+                        [
+                            'reason'  => $reason,
+                            'user_id' => auth()->id(),
+                        ]
+                    );
 
         return $this->ok();
     }
@@ -61,7 +62,7 @@ class InvoiceReviewController extends Controller
     /**
      * @return Factory|View
      */
-    public function reviewInvoice()
+    public function reviewInvoice(Request $request)
     {
         $startDate = Carbon::now()->subMonth()->startOfMonth();
 
@@ -71,10 +72,24 @@ class InvoiceReviewController extends Controller
             ->firstOrNew([]);
 
         $invoiceData = $invoice->invoice_data ?? [];
+        $args        = array_merge(
+            [
+                'invoiceId'             => $invoice->id,
+                'dispute'               => $invoice->dispute,
+                'invoice'               => $invoice,
+                'shouldShowDisputeForm' => auth()->user()->shouldShowInvoiceReviewButton(),
+                'disputeDeadline'       => NurseInvoiceDisputeDeadline::forInvoiceOfMonth($startDate)->setTimezone(auth()->user()->timezone),
+            ],
+            $invoiceData
+        );
+
+        if ('web' === $request->input('view')) {
+            return view('nurseinvoices::invoice-v2', $args);
+        }
 
         return view(
             'nurseinvoices::reviewInvoice',
-            array_merge(['invoiceId' => $invoice->id, 'dispute' => $invoice->dispute, 'invoice' => $invoice], $invoiceData)
+            $args
         );
     }
 }

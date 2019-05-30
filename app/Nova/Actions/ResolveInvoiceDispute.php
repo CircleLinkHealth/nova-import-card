@@ -7,6 +7,8 @@
 namespace App\Nova\Actions;
 
 use Carbon\Carbon;
+use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
+use CircleLinkHealth\NurseInvoices\Generator;
 use CircleLinkHealth\NurseInvoices\Notifications\DisputeResolved;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -55,10 +57,18 @@ class ResolveInvoiceDispute extends Action
                 ]
             );
 
+            $this->regenerateInvoice($model->disputable);
             optional($model->user()->first())->notify(new DisputeResolved($model));
             $this->markAsFinished($model);
         }
 
         return Action::message('Dispute(s) resolved!');
+    }
+
+    private function regenerateInvoice(NurseInvoice $invoice)
+    {
+        $invoice->load(['nurse.user']);
+        $generator = new Generator([$invoice->nurse->user_id], $invoice->month_year->copy()->startOfMonth(), $invoice->month_year->copy()->endOfMonth(), false, true);
+        $invoices  = $generator->createAndNotifyNurses();
     }
 }

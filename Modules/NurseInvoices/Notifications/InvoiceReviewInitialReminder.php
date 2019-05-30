@@ -52,7 +52,7 @@ class InvoiceReviewInitialReminder extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         return (new MailMessage())
-            ->subject("Review {$this->startDate->format('F Y')} Invoice")
+            ->subject("Your {$this->startDate->format('F Y')} Invoice from CircleLink Health")
             ->greeting("Hello {$notifiable->first_name},")
             ->line('Thank you for using CarePlan Manager for providing care!')
             ->line("Please click below button to review your invoice for {$this->startDate->format('F Y')}")

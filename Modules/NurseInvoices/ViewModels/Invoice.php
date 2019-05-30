@@ -20,6 +20,10 @@ class Invoice extends ViewModel
      */
     public $aggregatedTotalTime;
     /**
+     * @var float
+     */
+    public $baseSalary;
+    /**
      * @var bool
      */
     public $changedToFixedRateBecauseItYieldedMore = false;
@@ -59,10 +63,6 @@ class Invoice extends ViewModel
      * @var Collection
      */
     protected $variablePaySummary;
-    /**
-     * @var float
-     */
-    private $baseSalary;
     /**
      * @var mixed
      */
