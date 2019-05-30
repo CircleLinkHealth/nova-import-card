@@ -13,7 +13,7 @@
                 @isset($dispute)
                     <div class="alert alert-{{$dispute->is_resolved ? 'success' : 'warning'}}">
                         <div class="col-md-12">
-                            <h3>Dispute Status: <b>{{$dispute->is_resolved ? 'Closed' : 'Open'}}</b></h3>
+                            <h3>Dispute Status: <b>{{$dispute->is_resolved ? 'Resolved' : 'Open'}}</b></h3>
                         </div>
 
                         <div class="col-md-12">
