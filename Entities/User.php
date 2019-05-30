@@ -51,7 +51,7 @@ use CircleLinkHealth\Customer\Traits\TimezoneTrait;
 use CircleLinkHealth\NurseInvoices\Entities\Dispute;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra;
-use CircleLinkHealth\NurseInvoices\ValueObjects\NurseInvoiceDisputeDeadline;
+use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
 use DateTime;
