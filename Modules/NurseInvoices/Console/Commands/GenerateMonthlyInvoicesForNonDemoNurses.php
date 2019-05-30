@@ -65,10 +65,10 @@ class GenerateMonthlyInvoicesForNonDemoNurses extends Command
 
         $forNurses = empty($userIds)
             ? 'all nurses.'
-            : 'nurses with user IDs '.$this->argument('userIds');
+            : 'nurses with user IDs '.implode(', ', $userIds);
 
         $this->info(
-            "Will create invoices for {$month->format('Y-m')}, for $forNurses"
+            "Will create invoices for {$month->format('Y-m')}, for $forNurses."
         );
     }
 }
