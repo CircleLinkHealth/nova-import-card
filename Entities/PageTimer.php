@@ -25,7 +25,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $url_full
  * @property string|null $url_short
  * @property string $activity_type
- * @property string $title
+ * @property string $title Title is actually route name or uri
  * @property string $query_string
  * @property int $program_id
  * @property string|null $ip_addr
