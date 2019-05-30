@@ -61,7 +61,7 @@ class InvoiceReviewController extends Controller
     /**
      * @return Factory|View
      */
-    public function reviewInvoice()
+    public function reviewInvoice(Request $request)
     {
         $startDate = Carbon::now()->subMonth()->startOfMonth();
 
@@ -71,10 +71,15 @@ class InvoiceReviewController extends Controller
             ->firstOrNew([]);
 
         $invoiceData = $invoice->invoice_data ?? [];
+        $args        = array_merge(['invoiceId' => $invoice->id, 'dispute' => $invoice->dispute, 'invoice' => $invoice], $invoiceData);
+
+        if ('web' === $request->input('view')) {
+            return view('nurseinvoices::invoice-v2', $args);
+        }
 
         return view(
             'nurseinvoices::reviewInvoice',
-            array_merge(['invoiceId' => $invoice->id, 'dispute' => $invoice->dispute, 'invoice' => $invoice], $invoiceData)
+            $args
         );
     }
 }
