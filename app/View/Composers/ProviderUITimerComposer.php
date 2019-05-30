@@ -28,7 +28,11 @@ class ProviderUITimerComposer extends ServiceProvider
                 $activity = 'Undefined';
             }
 
-            $title = Route::currentRouteName();
+            $route = Route::current();
+            $routeName = $route->getName();
+
+            //fall back to uri if route name is null
+            $title = empty($routeName) ? $route->uri : $routeName;
 
             $ipAddr = Request::ip();
 
