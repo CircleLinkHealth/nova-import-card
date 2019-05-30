@@ -50,10 +50,10 @@ class InvoiceReviewController extends Controller
         NurseInvoice::findOrFail($id)
             ->dispute()
             ->create(
-                        [
-                            'reason'  => $reason,
-                            'user_id' => auth()->id(),
-                        ]
+                [
+                    'reason'  => $reason,
+                    'user_id' => auth()->id(),
+                ]
                     );
 
         return $this->ok();

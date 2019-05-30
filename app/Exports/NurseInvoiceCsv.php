@@ -26,6 +26,7 @@ class NurseInvoiceCsv implements FromCollection, Responsable
     public function __construct(Carbon $date)
     {
         $this->date = $date;
+        //todo: why do i have to call collection() method to work?
         $this->collection();
     }
 
@@ -34,9 +35,22 @@ class NurseInvoiceCsv implements FromCollection, Responsable
      */
     public function collection()
     {
-        $x = NurseInvoice::with('nurse.user')
+        $invoices = NurseInvoice::with('nurse.user')
             ->where('month_year', $this->date)
             ->get();
+
+        $invoicesData = collect();
+        foreach ($invoices as $invoice) {
+            $data[$invoice->nurse->user->id] = [
+                'name'         => $invoice->nurse->user->display_name,
+                'month'        => $this->date->format('F Y'),
+                'baseSalary'   => $invoice->invoice_data['formattedInvoiceTotalAmount'],
+                'bonuses'      => $invoice->invoice_data['bonus'],
+                'totalPayable' => $invoice->invoice_data['invoiceTotalAmount'],
+            ];
+        }
+
+        return $invoicesData;
     }
 
     /**
