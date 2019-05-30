@@ -40,8 +40,8 @@ class GenerateMonthlyInvoicesForNonDemoNurses extends Command
      */
     public function handle()
     {
-        $startDate = Carbon::now()->subMonth(1)->startOfMonth();
-        $endDate   = Carbon::now()->subMonth(1)->endOfMonth();
+        $startDate = Carbon::now()->subMonth()->startOfMonth();
+        $endDate   = $startDate->copy()->endOfMonth();
 
         CreateNurseInvoices::dispatch(
             $startDate,

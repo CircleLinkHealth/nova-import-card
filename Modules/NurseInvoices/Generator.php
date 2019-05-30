@@ -109,6 +109,8 @@ class Generator
     /**
      * @param $user
      * @param $viewModel
+     *
+     * @return
      */
     public function saveInvoiceData($user, $viewModel)
     {
