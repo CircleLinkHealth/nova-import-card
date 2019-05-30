@@ -23,6 +23,12 @@
     .text-bold-invoice {
         font-weight: bold;
     }
+
+    .invoice-page-header {
+        padding-bottom: 9px;
+        margin: -10px 0 20px;
+        border-bottom: 1px solid #eee;
+    }
 </style>
 {{--HACK! Duplicating css both in @push, and in <style> above so it works both with PDF, and web--}}
 @push('styles')
@@ -49,10 +55,16 @@
         .text-bold-invoice {
             font-weight: bold;
         }
+
+        .invoice-page-header {
+            padding-bottom: 9px;
+            margin: -10px 0 20px;
+            border-bottom: 1px solid #eee;
+        }
     </style>
 @endpush
 
-<div class="page-header">
+<div class="invoice-page-header">
     <h1>CircleLink Health
         <small>
             Time Report for <b>{{$nurseFullName}}</b> from {{$startDate}} to {{$endDate}}
@@ -77,7 +89,7 @@
                 <td>${{$baseSalary}}</td>
                 <td>
                     @if($changedToFixedRateBecauseItYieldedMore)
-                        <span>Highest Total Used:</span>
+                        <span>Highest Total Pay Used:</span>
                     @endif
                     @if(is_array($formattedBaseSalary))
                         <span class="display-inline-block">{{$formattedBaseSalary['high']}}</span>
