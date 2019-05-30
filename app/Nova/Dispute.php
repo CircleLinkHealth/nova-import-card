@@ -53,7 +53,11 @@ class Dispute extends Resource
     public function actions(Request $request)
     {
         return [
-            new ResolveInvoiceDispute(),
+            (new ResolveInvoiceDispute())->canRun(function ($request) {
+                return $request->user()->isAdmin();
+            })->canSee(function ($request) {
+                return $request->user()->isAdmin();
+            }),
         ];
     }
 
