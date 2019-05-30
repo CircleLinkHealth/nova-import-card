@@ -54,17 +54,8 @@ class WebixFormatter implements ReportFormatter
                     'status'           => $note->status,
                 ];
 
-                if (Note::STATUS_DRAFT === $note->status) {
-                    if (empty($result['type_name'])) {
-                        $result['type_name'] = '<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Draft';
-                    } else {
-                        $result['type_name'] = '<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> '.$result['type_name'];
-                    }
-                }
-
-                //pangratios: add support for task types
-                if ($note->call && 'task' === $note->call->type) {
-                    $result['logged_from'] = 'note_task';
+                if (empty($result['type_name'])) {
+                    $result['type_name'] = 'NA';
                 }
 
                 if ($note->author_id === auth()->id()) {
@@ -72,7 +63,18 @@ class WebixFormatter implements ReportFormatter
                         'patient.note.edit',
                         ['patientId' => $note->patient_id, 'noteId' => $note->id]
                     );
-                    $result['tags'] .= "<div class=\"label label-warning\"><a href=\"$editNoteRoute\"><span class=\"glyphicon glyphicon-edit\" aria-hidden=\"true\"></span></a></div> ";
+                    if (Note::STATUS_DRAFT === $note->status) {
+                        $result['tags'] .= "<a href=\"$editNoteRoute\"><span>draft</span></a> ";
+                    } else {
+                        $result['tags'] .= "<div style='margin-top: 5px; font-size: 80%'><a href=\"$editNoteRoute\"><span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\"></span></a></div> ";
+                    }
+                } elseif (Note::STATUS_DRAFT === $note->status) {
+                    $result['tags'] .= '<span>draft</span> ';
+                }
+
+                //pangratios: add support for task types
+                if ($note->call && 'task' === $note->call->type) {
+                    $result['logged_from'] = 'note_task';
                 }
 
                 if ($note->notifications->count() > 0) {
