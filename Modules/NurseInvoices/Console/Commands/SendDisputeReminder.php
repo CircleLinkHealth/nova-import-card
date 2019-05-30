@@ -9,7 +9,7 @@ namespace CircleLinkHealth\NurseInvoices\Console\Commands;
 use App\Notifications\InvoiceReminder;
 use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
-use CircleLinkHealth\NurseInvoices\ValueObjects\NurseInvoiceDisputeDeadline;
+use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use Illuminate\Console\Command;
 
 class SendDisputeReminder extends Command
