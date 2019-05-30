@@ -6,8 +6,8 @@
 
 namespace App\Nova\Actions;
 
-use App\Notifications\ReviewInvoice;
 use Carbon\Carbon;
+use CircleLinkHealth\NurseInvoices\Notifications\DisputeResolved;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -54,8 +54,9 @@ class ResolveInvoiceDispute extends Action
                     'is_resolved'     => true,
                 ]
             );
-            //@tod: wip.
-//            $model->notify(new ReviewInvoice($startDate = null));
+
+            optional($model->user()->first())->notify(new DisputeResolved($model));
+            $this->markAsFinished($model);
         }
 
         return Action::message('Dispute(s) resolved!');

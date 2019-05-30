@@ -25,7 +25,7 @@ class InvoiceReviewController extends Controller
         $reason = $request->input('reason');
 
         NurseInvoice::findOrFail($id)
-            ->disputes()
+            ->dispute()
             ->create(
                 [
                     'reason'  => $reason,
