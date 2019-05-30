@@ -33,7 +33,7 @@ use App\Console\Commands\SendCarePlanApprovalReminders;
 use App\Console\Commands\TuneScheduledCalls;
 use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
-use CircleLinkHealth\NurseInvoices\Console\Commands\Reminder;
+use CircleLinkHealth\NurseInvoices\Console\Commands\SendDisputeReminder;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendResolveInvoiceDisputeReminder;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -200,7 +200,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(GenerateMonthlyInvoicesForNonDemoNurses::class)->monthlyOn(1, '00:02');
 
-        $schedule->command(Reminder::class)->monthlyOn(3, '16:00');
+        $schedule->command(SendDisputeReminder::class)->monthlyOn(3, '16:00');
 
         $schedule->command(SendResolveInvoiceDisputeReminder::class)->dailyAt('02:00')->skip(function () {
             $currentDateTime = Carbon::now();
