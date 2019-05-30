@@ -4,7 +4,13 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                @include('nurseinvoices::invoice-v2')
+                @empty($invoice->id)
+                    <div class="alert alert-default" style="margin-top: 50px;">
+                        <h4>Your invoice is not ready yet. You will receive an email once it has been generated.</h4>
+                    </div>
+                @else
+                    @include('nurseinvoices::invoice-v2')
+                @endempty
             </div>
         </div>
 

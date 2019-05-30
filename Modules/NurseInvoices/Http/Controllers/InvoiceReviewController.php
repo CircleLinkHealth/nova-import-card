@@ -48,13 +48,9 @@ class InvoiceReviewController extends Controller
         $invoice = NurseInvoice::where('month_year', $startDate)
             ->with(['dispute.resolver'])
             ->ofNurses(auth()->id())
-            ->first();
+            ->firstOrNew([]);
 
-        $invoiceData = optional($invoice)->invoice_data;
-
-        if ( ! $invoiceData) {
-            throw new FileNotFoundException('Invoice data not found');
-        }
+        $invoiceData = $invoice->invoice_data ?? [];
 
         return view(
             'nurseinvoices::reviewInvoice',
