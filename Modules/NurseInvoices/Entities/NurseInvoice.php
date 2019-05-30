@@ -28,9 +28,9 @@ class NurseInvoice extends Model
         'invoice_data',
     ];
 
-    public function disputes()
+    public function dispute()
     {
-        return $this->morphMany(Dispute::class, 'disputable');
+        return $this->morphOne(Dispute::class, 'disputable');
     }
 
     public function nurse()
@@ -40,6 +40,6 @@ class NurseInvoice extends Model
 
     public function scopeUndisputed($builder)
     {
-        return $builder->doesntHave('disputes');
+        return $builder->doesntHave('dispute');
     }
 }

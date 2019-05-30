@@ -49,7 +49,7 @@ class InvoiceReviewController extends Controller
         $startDate = Carbon::now()->subMonth(1)->startOfMonth();
 
         $invoice = NurseInvoice::where('month_year', $startDate)
-            ->undisputed()
+            ->with(['dispute.resolver'])
             ->ofNurses(auth()->id())
             ->first();
 
@@ -61,7 +61,7 @@ class InvoiceReviewController extends Controller
 
         return view(
             'nurseinvoices::reviewInvoice',
-            array_merge(['invoiceId' => $invoice->id], $invoiceData)
+            array_merge(['invoiceId' => $invoice->id, 'dispute' => $invoice->dispute, 'invoice' => $invoice], $invoiceData)
         );
     }
 }

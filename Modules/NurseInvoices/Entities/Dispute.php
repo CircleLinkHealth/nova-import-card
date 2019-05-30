@@ -28,6 +28,11 @@ class Dispute extends Model
         return $this->morphTo();
     }
 
+    public function resolver()
+    {
+        return $this->belongsTo(User::class, 'resolved_by');
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

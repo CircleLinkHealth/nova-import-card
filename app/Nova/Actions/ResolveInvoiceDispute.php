@@ -54,8 +54,10 @@ class ResolveInvoiceDispute extends Action
                     'is_resolved'     => true,
                 ]
             );
-
-            $model->notify(new ReviewInvoice($startDate = null));
+            //@tod: wip.
+//            $model->notify(new ReviewInvoice($startDate = null));
         }
+
+        return Action::message('Dispute(s) resolved!');
     }
 }
