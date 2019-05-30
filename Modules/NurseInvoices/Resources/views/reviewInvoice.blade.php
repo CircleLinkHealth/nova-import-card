@@ -5,6 +5,16 @@
 
 @section('content')
     <div class="container" style="padding-bottom: 10%;">
+        @if ($shouldShowDisputeForm)
+            <div class="row">
+                <div class="col-md-12">
+                    <h4 class="pull-right alert alert-warning">Invoices auto-approve unless disputed by the {{$disputeDeadline->format('jS')}} of the
+                        month at
+                        {{$disputeDeadline->format('h:iA T')}}.</h4>
+                </div>
+            </div>
+        @endif
+
         <div class="row">
             <div class="col-md-12">
                 @empty($invoice->id)
@@ -16,6 +26,16 @@
                 @endempty
             </div>
         </div>
+
+        @if ($shouldShowDisputeForm)
+            <div class="row">
+                <div class="col-md-12">
+                    <h4 class="pull-right alert alert-warning">Invoices auto-approve unless disputed by the {{$disputeDeadline->format('jS')}} of the
+                        month at
+                        {{$disputeDeadline->format('h:iA T')}}.</h4>
+                </div>
+            </div>
+        @endif
 
         <div class="row">
             <div class="col-md-12">
@@ -43,12 +63,13 @@
                         @endif
                     </div>
                 @else
-                    @if (auth()->user()->shouldShowInvoiceReviewButton())
+                    @if ($shouldShowDisputeForm)
                         <dispute-nurse-invoice invoice-id="{{$invoiceId}}"></dispute-nurse-invoice>
                     @elseif ($invoice->is_nurse_approved)
                         <div class="row">
                             <div class="col-md-12 alert alert-success">
-                                <h4>You approved this invoice on {{presentDate($invoice->nurse_approved_at, true, true, true)}}</h4>
+                                <h4>You approved this invoice
+                                    on {{presentDate($invoice->nurse_approved_at->setTimezone(auth()->user()->timezone), true, true, true)}}</h4>
                             </div>
                         </div>
                     @endif
