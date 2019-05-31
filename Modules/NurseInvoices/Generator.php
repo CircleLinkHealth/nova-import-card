@@ -11,7 +11,6 @@ use App\Services\PdfService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
-use CircleLinkHealth\NurseInvoices\Notifications\InvoiceReviewInitialReminder;
 use CircleLinkHealth\NurseInvoices\ViewModels\Invoice;
 use Illuminate\Support\Collection;
 
@@ -112,7 +111,6 @@ class Generator
 
                         if ($this->storeInvoicesForNurseReview) {
                             $invoice = $this->saveInvoiceData($user->nurseInfo->id, $viewModel, $this->startDate);
-                            $this->notifyNurse($user);
                         } else {
                             $invoice = $this->createPdf($viewModel);
                             $this->forwardToCareCoach($viewModel, $invoice);
@@ -125,14 +123,6 @@ class Generator
         );
 
         return $invoices;
-    }
-
-    /**
-     * @param User $user
-     */
-    public function notifyNurse(User $user)
-    {
-        $user->notify((new InvoiceReviewInitialReminder($this->startDate))->delay(now()->addHours(8)));
     }
 
     /**
@@ -222,24 +212,24 @@ class Generator
         return User::withTrashed()
             ->careCoaches()
             ->with(
-                       [
-                           'nurseBonuses' => function ($q) {
-                               $q->whereBetween('date', [$this->startDate, $this->endDate]);
-                           },
-                           'nurseInfo',
-                       ]
+                [
+                    'nurseBonuses' => function ($q) {
+                        $q->whereBetween('date', [$this->startDate, $this->endDate]);
+                    },
+                    'nurseInfo',
+                ]
                    )
             ->has('nurseInfo')
             ->when(
-                       is_array($this->nurseUserIds) && ! empty($this->nurseUserIds),
-                       function ($q) {
-                           $q->whereIn('id', $this->nurseUserIds);
-                       }
+                is_array($this->nurseUserIds) && ! empty($this->nurseUserIds),
+                function ($q) {
+                    $q->whereIn('id', $this->nurseUserIds);
+                }
                    )
             ->when(
-                       empty($this->nurseUserIds),
-                       function ($q) {
-                           $q->whereHas(
+                empty($this->nurseUserIds),
+                function ($q) {
+                    $q->whereHas(
                                'pageTimersAsProvider',
                                function ($s) {
                                    $s->whereBetween(
@@ -251,16 +241,16 @@ class Generator
                                    );
                                }
                            )
-                               ->whereHas(
-                                 'nurseInfo',
-                                 function ($s) {
-                                     $s->where('is_demo', false);
-                                 }
+                        ->whereHas(
+                                   'nurseInfo',
+                                   function ($s) {
+                                       $s->where('is_demo', false);
+                                   }
                              );
-                       }
+                }
                    );
     }
-    
+
     /**
      * @param $nurseInfoId
      * @param $viewModel

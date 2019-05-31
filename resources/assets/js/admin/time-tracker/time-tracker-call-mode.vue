@@ -49,7 +49,7 @@
         data() {
             return {
                 buttonClass: 'btn-primary',
-                buttonText: "Open Calls Page",
+                buttonText: "Make Call",
                 isCallPageOpen: false,
                 callMode: null,
                 loaders: {
@@ -82,7 +82,7 @@
             endCall(e) {
                 self.isCallPageOpen = false;
                 self.buttonClass = 'btn-primary';
-                self.buttonText = "Open Calls Page";
+                self.buttonText = "Make Call";
                 sendRequest("end_call", null)
                     .then(msg => {
                     })
@@ -140,7 +140,7 @@
 
                 registerHandler("calls_page_closed", (msg) => {
                     self.buttonClass = 'btn-primary';
-                    self.buttonText = `Open Calls Page`;
+                    self.buttonText = `Make Call`;
                     self.isCallPageOpen = false;
                     return Promise.resolve({});
                 });

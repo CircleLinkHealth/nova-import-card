@@ -7,11 +7,15 @@
 namespace CircleLinkHealth\NurseInvoices\Console\Commands;
 
 use App\Jobs\CreateNurseInvoices;
-use Carbon\Carbon;
+use CircleLinkHealth\NurseInvoices\Traits\DryRunnable;
+use CircleLinkHealth\NurseInvoices\Traits\TakesMonthAndUsersAsInputArguments;
 use Illuminate\Console\Command;
 
 class GenerateMonthlyInvoicesForNonDemoNurses extends Command
 {
+    use DryRunnable;
+    use TakesMonthAndUsersAsInputArguments;
+
     /**
      * The console command description.
      *
@@ -23,35 +27,23 @@ class GenerateMonthlyInvoicesForNonDemoNurses extends Command
      *
      * @var string
      */
-    protected $signature = 'nurseinvoices:create {month? : Month to generate the invoice for in YYYY-MM format. Defaults to previous month.} {userIds?* : Space separated. Leave empty to send to all}';
-
-    /**
-     * Create a new command instance.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
+    protected $name = 'nurseinvoices:create';
 
     /**
      * Execute the console command.
+     *
+     * @throws \Illuminate\Validation\ValidationException
      *
      * @return mixed
      */
     public function handle()
     {
-        $month = $this->argument('month') ?? null;
-
-        if ($month) {
-            $month = Carbon::createFromFormat('Y-m', $month);
-        } else {
-            $month = Carbon::now()->subMonth();
-        }
+        $month = $this->month();
 
         $start = $month->startOfMonth();
-        $end   = $month->copy()->endOfMonth();
+        $end   = $month->endOfMonth();
 
-        $userIds = (array) $this->argument('userIds') ?? [];
+        $userIds = $this->usersIds();
 
         CreateNurseInvoices::dispatch(
             $start,

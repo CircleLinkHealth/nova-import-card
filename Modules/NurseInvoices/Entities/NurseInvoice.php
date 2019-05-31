@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\NurseInvoices\Entities;
 
+use App\Traits\NotificationAttachable;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\NurseInvoices\Traits\Disputable;
 use CircleLinkHealth\NurseInvoices\Traits\Nursable;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 class NurseInvoice extends Model
 {
     use Disputable;
+    use NotificationAttachable;
     use Nursable;
 
     protected $casts = [

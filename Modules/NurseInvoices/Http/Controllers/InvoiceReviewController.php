@@ -71,20 +71,22 @@ class InvoiceReviewController extends Controller
             ->ofNurses(auth()->id())
             ->firstOrNew([]);
 
+        $deadline    = new NurseInvoiceDisputeDeadline($startDate);
         $invoiceData = $invoice->invoice_data ?? [];
         $args        = array_merge(
             [
-                'invoiceId'             => $invoice->id,
-                'dispute'               => $invoice->dispute,
-                'invoice'               => $invoice,
-                'shouldShowDisputeForm' => auth()->user()->shouldShowInvoiceReviewButton(),
-                'disputeDeadline'       => NurseInvoiceDisputeDeadline::forInvoiceOfMonth($startDate)->setTimezone(auth()->user()->timezone),
+                'invoiceId'              => $invoice->id,
+                'dispute'                => $invoice->dispute,
+                'invoice'                => $invoice,
+                'shouldShowDisputeForm'  => auth()->user()->shouldShowInvoiceReviewButton(),
+                'disputeDeadline'        => $deadline->deadline()->setTimezone(auth()->user()->timezone),
+                'disputeDeadlineWarning' => $deadline->warning(),
             ],
             $invoiceData
         );
 
         if ('web' === $request->input('view')) {
-            return view('nurseinvoices::invoice-v2', $args);
+            return view('nurseinvoices::invoice-v2', array_merge($args, ['isPdf' => true]));
         }
 
         return view(
