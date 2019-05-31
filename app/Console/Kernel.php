@@ -134,8 +134,6 @@ class Kernel extends ConsoleKernel
         $schedule->command(AttachBillableProblemsToLastMonthSummary::class)
             ->cron('30 0 1 * *');
 
-//        $schedule->command(SendCareCoachApprovedMonthlyInvoices::class)->dailyAt('8:30');
-
 //        $schedule->command('lgh:importInsurance')
 //            ->dailyAt('05:00');
 
@@ -211,5 +209,7 @@ class Kernel extends ConsoleKernel
                 return true;
             }
         });
+
+        //        $schedule->command(SendCareCoachApprovedMonthlyInvoices::class)->dailyAt('8:30');
     }
 }
