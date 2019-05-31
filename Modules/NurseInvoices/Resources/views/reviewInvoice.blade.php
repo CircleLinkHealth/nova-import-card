@@ -11,12 +11,12 @@
             intro.setOptions({
                 showProgress: true
             }).onbeforechange(function () {
-                if (this._currentStep === 5) {
+                if (this._currentStep === 4) {
                     let el = document.getElementById('toggle-invoice-dispute-form');
 
                     if (el && el.innerText.includes('Show')) {
                         el.click();
-                        sleep(100);
+
                     }
                 }
             });
