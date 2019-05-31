@@ -9,7 +9,7 @@ namespace CircleLinkHealth\NurseInvoices\Providers;
 use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendDisputeReminder;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendResolveInvoiceDisputeReminder;
-use CircleLinkHealth\NurseInvoices\Console\NotifyNursesToReviewInvoice;
+use CircleLinkHealth\NurseInvoices\Console\SendMonthlyNurseInvoiceFAN;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\ServiceProvider;
 
@@ -53,7 +53,7 @@ class NurseInvoicesServiceProvider extends ServiceProvider
 
         $this->commands([
             GenerateMonthlyInvoicesForNonDemoNurses::class,
-            NotifyNursesToReviewInvoice::class,
+            SendMonthlyNurseInvoiceFAN::class,
             SendDisputeReminder::class,
             SendResolveInvoiceDisputeReminder::class,
         ]);

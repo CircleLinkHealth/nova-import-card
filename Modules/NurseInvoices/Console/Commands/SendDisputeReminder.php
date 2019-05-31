@@ -84,7 +84,7 @@ class SendDisputeReminder extends Command
     private function deadline()
     {
         if ( ! $this->deadlineInstance) {
-            $this->deadlineInstance = NurseInvoiceDisputeDeadline::forInvoice($this->month());
+            $this->deadlineInstance = NurseInvoiceDisputeDeadline::for($this->month());
         }
 
         return $this->deadlineInstance->copy();

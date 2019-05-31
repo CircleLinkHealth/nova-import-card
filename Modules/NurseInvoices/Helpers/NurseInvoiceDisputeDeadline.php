@@ -78,7 +78,7 @@ class NurseInvoiceDisputeDeadline
      *
      * @return Carbon
      */
-    public static function forInvoice(Carbon $invoiceMonth)
+    public static function for(Carbon $invoiceMonth)
     {
         return (new static($invoiceMonth))->deadline();
     }
