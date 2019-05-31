@@ -48,6 +48,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        /*
+         * If the current date is the 31st of the month, Carbon::now()->subMonth() will go back to the 31st of the previous month.
+         * If the previous month does not have 31 days, `$startDate = Carbon::now()->subMonth()->startOfMonth();` jumps to the first day of the current month(!?!).
+         *
+         * To fix this, we could use: `Carbon::useMonthsOverflow(false);`
+         *
+         * More info here: briannesbitt/Carbon#37, briannesbitt/Carbon#710
+         */
+        Carbon::useMonthsOverflow(false);
+
         //need to set trusted hosts before request is passed on to our routers
         Request::setTrustedHosts(config('trustedhosts.hosts'));
 
@@ -102,16 +112,6 @@ class AppServiceProvider extends ServiceProvider
                 return $this->getQuery()->toRawSql();
             }
         );
-
-        /*
-         * If the current date is the 31st of the month, Carbon::now()->subMonth() will go back to the 31st of the previous month.
-         * If the previous month does not have 31 days, `$startDate = Carbon::now()->subMonth()->startOfMonth();` jumps to the first day of the current month(!?!).
-         *
-         * To fix this, we could use: `Carbon::useMonthsOverflow(false);`
-         *
-         * More info here: briannesbitt/Carbon#37, briannesbitt/Carbon#710
-         */
-        Carbon::useMonthsOverflow(false);
     }
 
     /**
