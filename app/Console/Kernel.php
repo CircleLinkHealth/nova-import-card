@@ -198,8 +198,8 @@ class Kernel extends ConsoleKernel
         $schedule->command(GenerateMonthlyInvoicesForNonDemoNurses::class)->monthlyOn(1, '00:30');
         $schedule->command(SendMonthlyNurseInvoiceFAN::class)->monthlyOn(1, '08:30');
 
-        //@todo: make this pickup user defined deadline
-        $schedule->command(SendDisputeReminder::class)->monthlyOn(NurseInvoiceDisputeDeadline::DEFAULT_NURSE_INVOICE_DISPUTE_SUBMISSION_DEADLINE_DAY - 1, '12:00');
+        $deadline = NurseInvoiceDisputeDeadline::for(Carbon::now());
+        $schedule->command(SendDisputeReminder::class)->monthlyOn($deadline->day, $deadline->format('H:i'));
 
         $schedule->command(SendResolveInvoiceDisputeReminder::class)->dailyAt('02:00')->skip(function () {
             $currentDateTime = Carbon::now();
