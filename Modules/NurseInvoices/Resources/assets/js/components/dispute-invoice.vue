@@ -3,7 +3,7 @@
         <div v-if="!showBanner">
             <div class="text-right">
                 <div class="btn-container" data-step="5" data-intro="If you'd like to dispute the invoice, please click 'Show Dispute Form' and then click 'Next' to continue with the tour.">
-                    <button class="btn btn-default" @click="showDisputeForm = ! showDisputeForm">
+                    <button id="toggle-invoice-dispute-form" class="btn btn-default" @click="showDisputeForm = ! showDisputeForm">
                         {{showDisputeForm ? 'Hide' : 'Show'}} Dispute Form
                     </button>
                 </div>

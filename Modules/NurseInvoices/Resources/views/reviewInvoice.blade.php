@@ -3,14 +3,36 @@
 @section('title', 'reviewInvoice')
 @section('activity', 'reviewInvoice')
 
+@push('scripts')
+    <script>
+        function startIntro() {
+            let intro = introJs();
+
+            intro.setOptions({
+                showProgress: true
+            }).onbeforechange(function () {
+                if (this._currentStep === 5) {
+                    let el = document.getElementById('toggle-invoice-dispute-form');
+
+                    if (el && el.innerText.includes('Show')) {
+                        el.click();
+                        sleep(100);
+                    }
+                }
+            });
+            intro.start();
+        }
+    </script>
+@endpush
+
 @section('content')
     <div class="container" style="padding-bottom: 10%;">
         @include('nurseinvoices::dispute-deadline-warning')
 
         <div class="tutorial-button">
-            <a href="javascript:void(0);"
-                                         onclick="javascript:introJs().setOption('showProgress', true).start();"><span
-                            class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a>
+            <a href="javascript:void(0);" onclick="startIntro();">
+                <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+            </a>
         </div>
 
         <div class="row">
@@ -22,7 +44,7 @@
                 @else
                     <div data-step="1"
                          data-intro="This is your last month's invoice. It is generated monthly, on the first day of the month. You will receive an email as soon as it is created with a link to this page. You will have a few days to approve or dispute the invoice. Click 'Next' to find out more.">
-                    @include('nurseinvoices::invoice-v2')
+                        @include('nurseinvoices::invoice-v2')
                     </div>
                 @endempty
             </div>
