@@ -8,6 +8,7 @@ namespace CircleLinkHealth\NurseInvoices\Notifications;
 
 use App\Contracts\HasAttachment;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
+use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Model;
@@ -73,7 +74,8 @@ class InvoiceReviewInitialReminder extends Notification implements ShouldQueue, 
             ->greeting("Hello {$notifiable->first_name},")
             ->line('Thank you for using CarePlan Manager for providing care!')
             ->line("Please click below button to review your invoice for $month")
-            ->action('Review Invoice', url(route('care.center.invoice.review')));
+            ->action('Review Invoice', url(route('care.center.invoice.review')))
+            ->line((new NurseInvoiceDisputeDeadline($this->attachment->month_year))->warning());
     }
 
     /**
