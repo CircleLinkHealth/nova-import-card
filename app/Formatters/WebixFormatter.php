@@ -54,17 +54,8 @@ class WebixFormatter implements ReportFormatter
                     'status'           => $note->status,
                 ];
 
-                if (Note::STATUS_DRAFT === $note->status) {
-                    if (empty($result['type_name'])) {
-                        $result['type_name'] = '<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Draft';
-                    } else {
-                        $result['type_name'] = '<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> '.$result['type_name'];
-                    }
-                }
-
-                //pangratios: add support for task types
-                if ($note->call && 'task' === $note->call->type) {
-                    $result['logged_from'] = 'note_task';
+                if (empty($result['type_name'])) {
+                    $result['type_name'] = 'NA';
                 }
 
                 if ($note->author_id === auth()->id()) {
@@ -72,27 +63,38 @@ class WebixFormatter implements ReportFormatter
                         'patient.note.edit',
                         ['patientId' => $note->patient_id, 'noteId' => $note->id]
                     );
-                    $result['tags'] .= "<div class=\"label label-warning\"><a href=\"$editNoteRoute\"><span class=\"glyphicon glyphicon-edit\" aria-hidden=\"true\"></span></a></div> ";
+                    if (Note::STATUS_DRAFT === $note->status) {
+                        $result['tags'] .= "<div style='display: inline;'><a href='$editNoteRoute'><span class='glyphicon glyphicon-pencil' style='position: relative; top: 1px' aria-hidden=\"true\"></span> <span>Draft</span></a></div> ";
+                    } else {
+                        $result['tags'] .= "<div style='display: inline; position: relative; top: 3px;'><a href='$editNoteRoute'><span class='glyphicon glyphicon-pencil' aria-hidden='true'></span></a></div> ";
+                    }
+                } elseif (Note::STATUS_DRAFT === $note->status) {
+                    $result['tags'] .= '<div style="display: inline"><span>Draft</span></div> ';
+                }
+
+                //pangratios: add support for task types
+                if ($note->call && 'task' === $note->call->type) {
+                    $result['logged_from'] = 'note_task';
                 }
 
                 if ($note->notifications->count() > 0) {
                     if ($this->noteService->wasForwardedToCareTeam($note)) {
-                        $result['tags'] .= '<div class="label label-warning"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
+                        $result['tags'] .= '<div class="label label-warning" style="top: -2px; position: relative;"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
                     }
                 }
 
                 if ($note->call && 'reached' == $note->call->status) {
-                    $result['tags'] .= '<div class="label label-info"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span></div> ';
+                    $result['tags'] .= '<div class="label label-info" style="top: -2px; position: relative;"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span></div> ';
                 }
 
                 if ($note->isTCM) {
-                    $result['tags'] .= '<div class="label label-danger"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span></div> ';
+                    $result['tags'] .= '<div class="label label-danger" style="top: -2px; position: relative;"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span></div> ';
                 }
 
                 $was_seen = $this->noteService->wasSeenByBillingProvider($note);
 
                 if ($was_seen) {
-                    $result['tags'] .= '<div class="label label-success"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></div> ';
+                    $result['tags'] .= '<div class="label label-success" style="top: -2px; position: relative;"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></div> ';
                 }
 
                 return $result;
