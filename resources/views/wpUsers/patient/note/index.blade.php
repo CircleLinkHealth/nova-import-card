@@ -5,9 +5,11 @@
 
 @section('content')
 
-    <script>
-        const myUserId = @json(auth()->id());
-    </script>
+    @push('scripts')
+        <script>
+            const myUserId = @json(auth()->id());
+        </script>
+    @endpush
 
     @include('partials.confirm-modal')
 
