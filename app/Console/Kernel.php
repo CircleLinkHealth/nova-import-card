@@ -199,16 +199,17 @@ class Kernel extends ConsoleKernel
         $sendReminderAt = NurseInvoiceDisputeDeadline::for(Carbon::now()->subMonth())->subHours(36);
         $schedule->command(SendMonthlyNurseInvoiceLAN::class)->monthlyOn($sendReminderAt->day, $sendReminderAt->format('H:i'));
 
-        $schedule->command(SendResolveInvoiceDisputeReminder::class)->dailyAt('02:00')->skip(function () {
-            $currentDateTime = Carbon::now();
-            $disputeStart = Carbon::now()->startOfMonth();
-            $disputeEnd = $disputeStart->addDays(5);
-
-            if ($currentDateTime->gte($disputeStart)
-                && $currentDateTime->lte($disputeEnd)) {
-                return true;
-            }
-        });
+        //@todo: Antonis finishes this command
+//        $schedule->command(SendResolveInvoiceDisputeReminder::class)->dailyAt('02:00')->skip(function () {
+//            $currentDateTime = Carbon::now();
+//            $disputeStart = Carbon::now()->startOfMonth();
+//            $disputeEnd = $disputeStart->addDays(5);
+//
+//            if ($currentDateTime->gte($disputeStart)
+//                && $currentDateTime->lte($disputeEnd)) {
+//                return true;
+//            }
+//        });
 
         //        $schedule->command(SendCareCoachApprovedMonthlyInvoices::class)->dailyAt('8:30');
     }
