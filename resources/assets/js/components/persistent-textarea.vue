@@ -35,17 +35,20 @@
         },
         methods: {
             changeTextArea() {
-                sstor.add(this.storageKey, this.text)
+                sstor.add(this.storageKey, this.text);
                 this.$emit('input', this.text)
             }
         },
         mounted() {
-            if (this.value && this.value.length) {
+
+            const localVal = sstor.get(this.storageKey) || '';
+
+            if (this.value && this.value.length > localVal.length) {
                 sstor.remove(this.storageKey);
                 this.changeTextArea();
             }
             else {
-                this.text = sstor.get(this.storageKey)
+                this.text = localVal;
             }
         }
     }
