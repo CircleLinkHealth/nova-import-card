@@ -3538,7 +3538,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->ofNurses(auth()->id())
             ->exists();
 
-        return $invoice && $now->lte(NurseInvoiceDisputeDeadline::forInvoice($invoiceMonth));
+        return $invoice && $now->lte(NurseInvoiceDisputeDeadline::for($invoiceMonth));
     }
 
     /**
