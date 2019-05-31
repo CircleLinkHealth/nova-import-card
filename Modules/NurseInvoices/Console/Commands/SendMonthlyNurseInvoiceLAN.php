@@ -13,7 +13,7 @@ use CircleLinkHealth\NurseInvoices\Traits\DryRunnable;
 use CircleLinkHealth\NurseInvoices\Traits\TakesMonthAndUsersAsInputArguments;
 use Illuminate\Console\Command;
 
-class SendDisputeReminder extends Command
+class SendMonthlyNurseInvoiceLAN extends Command
 {
     use DryRunnable;
     use TakesMonthAndUsersAsInputArguments;
