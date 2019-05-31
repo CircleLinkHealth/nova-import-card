@@ -28,6 +28,7 @@ use App\Repositories\LocationRepositoryEloquent;
 use App\Repositories\PracticeRepositoryEloquent;
 use App\Repositories\PrettusUserRepositoryEloquent;
 use App\Services\SnappyPdfWrapper;
+use Carbon\Carbon;
 use DB;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
@@ -101,6 +102,16 @@ class AppServiceProvider extends ServiceProvider
                 return $this->getQuery()->toRawSql();
             }
         );
+
+        /*
+         * If the current date is the 31st of the month, Carbon::now()->subMonth() will go back to the 31st of the previous month.
+         * If the previous month does not have 31 days, `$startDate = Carbon::now()->subMonth()->startOfMonth();` jumps to the first day of the current month(!?!).
+         *
+         * To fix this, we could use: `Carbon::useMonthsOverflow(false);`
+         *
+         * More info here: briannesbitt/Carbon#37, briannesbitt/Carbon#710
+         */
+        Carbon::useMonthsOverflow(false);
     }
 
     /**
