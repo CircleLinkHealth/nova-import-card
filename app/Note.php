@@ -11,11 +11,11 @@ use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\Channels\FaxChannel;
 use App\Notifications\NoteForwarded;
 use App\Traits\IsAddendumable;
+use App\Traits\NotificationAttachable;
 use App\Traits\PdfReportTrait;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Customer\Entities\User;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
  * App\Note.
@@ -66,10 +66,9 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfReport
 {
     use Filterable;
-    use
-        IsAddendumable;
-    use
-        PdfReportTrait;
+    use IsAddendumable;
+    use NotificationAttachable;
+    use PdfReportTrait;
     const STATUS_COMPLETE = 'complete';
     const STATUS_DRAFT    = 'draft';
 
@@ -173,17 +172,6 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
     public function logger()
     {
         return $this->belongsTo(User::class, 'logger_id')->withTrashed();
-    }
-
-    /**
-     * Returns the notifications that included this note as an attachment.
-     *
-     * @return MorphMany
-     */
-    public function notifications()
-    {
-        return $this->morphMany(\CircleLinkHealth\Core\Entities\DatabaseNotification::class, 'attachment')
-            ->orderBy('created_at', 'desc');
     }
 
     public function patient()
