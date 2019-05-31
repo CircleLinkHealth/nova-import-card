@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\NurseInvoices\Traits;
 
 use Carbon\Carbon;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\Console\Input\InputArgument;
 
 trait TakesMonthAndUsersAsInputArguments
@@ -16,7 +17,7 @@ trait TakesMonthAndUsersAsInputArguments
      *
      * @var Carbon|null
      */
-    public $monthInstance;
+    protected $dateInstance;
 
     /**
      * The default month, if no argument is passed.
@@ -33,13 +34,11 @@ trait TakesMonthAndUsersAsInputArguments
      */
     public function month()
     {
-        if ( ! $this->monthInstance) {
-            $input = $this->argument('month') ?? null;
-
-            $this->monthInstance = $input ? Carbon::createFromFormat('Y-m', $input)->startOfMonth() : $this->defaultMonth();
+        if ( ! $this->dateInstance) {
+            $this->initDateInstance();
         }
 
-        return $this->monthInstance;
+        return $this->dateInstance;
     }
 
     /**
@@ -51,6 +50,33 @@ trait TakesMonthAndUsersAsInputArguments
     }
 
     /**
+     * @return string
+     */
+    protected function dateFormat()
+    {
+        return 'Y-m-d';
+    }
+
+    /**
+     * Get a validator instance for date.
+     *
+     * @param $input
+     *
+     * @return \Illuminate\Validation\Validator
+     */
+    protected function dateValidator($input)
+    {
+        return \Validator::make(
+            [
+                'date' => $input,
+            ],
+            [
+                'date' => 'required|date_format:'.$this->dateFormat(),
+            ]
+        );
+    }
+
+    /**
      * Get the console command arguments.
      *
      * @return array
@@ -58,8 +84,38 @@ trait TakesMonthAndUsersAsInputArguments
     protected function getArguments()
     {
         return [
-            ['month', InputArgument::OPTIONAL, 'Month to generate the invoice for in YYYY-MM format. Defaults to previous month.'],
-            ['userIds', InputArgument::IS_ARRAY|InputArgument::OPTIONAL, 'Users to run the command for. Leave empty to send to all.'],
+            [
+                'month',
+                InputArgument::OPTIONAL,
+                'Month to generate the invoice for in YYYY-MM format. Defaults to previous month.',
+            ],
+            [
+                'userIds',
+                InputArgument::IS_ARRAY|InputArgument::OPTIONAL,
+                'Users to run the command for. Leave empty to send to all.',
+            ],
         ];
+    }
+
+    /**
+     * Initialize the date instance either from input, or using default month.
+     */
+    protected function initDateInstance()
+    {
+        $input = $this->argument('month');
+
+        if ( ! $input) {
+            $this->dateInstance = $this->defaultMonth();
+
+            return;
+        }
+
+        $validator = $this->dateValidator($input);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+
+        $this->dateInstance = Carbon::createFromFormat('Y-m-d', $input);
     }
 }
