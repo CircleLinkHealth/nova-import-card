@@ -9,7 +9,8 @@
             let intro = introJs();
 
             intro.setOptions({
-                showProgress: true
+                showProgress: true,
+                showBullets: false
             }).onbeforechange(function () {
                 if (this._currentStep === 4) {
                     let el = document.getElementById('toggle-invoice-dispute-form');
@@ -94,7 +95,7 @@
     </div>
 
     <script type="text/javascript"
-            src="https://circlelinkhealth.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/-t2ekke/b/11/a44af77267a987a660377e5c46e0fb64/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=721240a8"></script>
+                src="https://circlelinkhealth.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/-t2ekke/b/11/a44af77267a987a660377e5c46e0fb64/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=721240a8"></script>
 @endsection
 
 @push('styles')
