@@ -91,7 +91,7 @@ trait TakesMonthAndUsersAsInputArguments
             [
                 'month',
                 InputArgument::OPTIONAL,
-                'Month to generate the invoice for in YYYY-MM format. Defaults to previous month.',
+                'Month to generate the invoice for in "Y-m-d": format. Defaults to previous month.',
             ],
             [
                 'userIds',
