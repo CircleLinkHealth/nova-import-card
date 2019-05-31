@@ -11,9 +11,16 @@ use Symfony\Component\Console\Input\InputArgument;
 
 trait TakesMonthAndUsersAsInputArguments
 {
+    /**
+     * Store the Carbon instance of month here.
+     *
+     * @var Carbon|null
+     */
     public $monthInstance;
 
     /**
+     * The default month, if no argument is passed.
+     *
      * @return Carbon
      */
     public function defaultMonth()
