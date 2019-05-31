@@ -2,13 +2,13 @@
     <div>
         <div v-if="!showBanner">
             <div class="text-right">
-                <div class="btn-container">
+                <div class="btn-container" data-step="5" data-intro="If you'd like to dispute the invoice, please click 'Show Dispute Form' and then click 'Next' to continue with the tour.">
                     <button class="btn btn-default" @click="showDisputeForm = ! showDisputeForm">
                         {{showDisputeForm ? 'Hide' : 'Show'}} Dispute Form
                     </button>
                 </div>
 
-                <div class="btn-container">
+                <div class="btn-container" data-step="4" data-intro="If you agree with the invoice, click this button and you're done!">
                     <button class="btn btn-success" @click="submitApproval" :disabled="loaders.approve">
                         Approve Invoice
                         <span class="loader-right">
@@ -18,8 +18,8 @@
                 </div>
             </div>
 
-            <div v-if="showDisputeForm">
-                <div class="form-group" :class="{'has-error':errors.has('reason')}">
+            <div v-show="showDisputeForm">
+                <div class="form-group" :class="{'has-error':errors.has('reason')}" data-step="6" data-intro="Write a short message explaining which parts of this invoice you are disputing.">
                     <label for="dispute"><h3>Dispute Invoice</h3></label>
                     <textarea class="form-control" id="dispute" v-model="reason"
                               placeholder="Type reasons for dispute here" rows="8" required>
@@ -28,7 +28,7 @@
                 </div>
 
                 <div class="form-group text-right">
-                    <div class="btn-container">
+                    <div class="btn-container" data-step="7" data-intro="Click 'Dispute Invoice' and you're done! You may come back to this page to check the status of your dispute. We will also send you an email once the dispute has been resolved.">
                         <button class="btn btn-danger" @click="submitDispute" :disabled="loaders.dispute">
                             Dispute Invoice
                             <span class="loader-right">

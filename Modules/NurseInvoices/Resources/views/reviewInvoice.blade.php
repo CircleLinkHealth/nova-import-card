@@ -8,12 +8,17 @@
         @if ($shouldShowDisputeForm)
             <div class="row">
                 <div class="col-md-12">
-                    <h4 class="pull-right alert alert-warning">Invoices auto-approve unless disputed by the {{$disputeDeadline->format('jS')}} of the
+                    <h4 class="pull-right alert alert-warning">Invoices auto-approve unless disputed by
+                        the {{$disputeDeadline->format('jS')}} of the
                         month at
                         {{$disputeDeadline->format('h:iA T')}}.</h4>
                 </div>
             </div>
         @endif
+
+        <span class="pull-right"> <a href="javascript:void(0);"
+                                     onclick="javascript:introJs().setOption('showProgress', true).start();"><span
+                        class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a></span>
 
         <div class="row">
             <div class="col-md-12">
@@ -22,7 +27,10 @@
                         <h4>Your invoice is not ready yet. You will receive an email once it has been generated.</h4>
                     </div>
                 @else
+                    <div data-step="1"
+                         data-intro="This is your last month's invoice. It is generated monthly, on the first day of the month. You will receive an email as soon as it is created with a link to this page. You will have a few days to approve or dispute the invoice. Click 'Next' to find out more.">
                     @include('nurseinvoices::invoice-v2')
+                    </div>
                 @endempty
             </div>
         </div>
@@ -30,7 +38,8 @@
         @if ($shouldShowDisputeForm)
             <div class="row">
                 <div class="col-md-12">
-                    <h4 class="pull-right alert alert-warning">Invoices auto-approve unless disputed by the {{$disputeDeadline->format('jS')}} of the
+                    <h4 class="pull-right alert alert-warning">Invoices auto-approve unless disputed by
+                        the {{$disputeDeadline->format('jS')}} of the
                         month at
                         {{$disputeDeadline->format('h:iA T')}}.</h4>
                 </div>
@@ -77,4 +86,7 @@
             </div>
         </div>
     </div>
+
+    <script type="text/javascript"
+            src="https://circlelinkhealth.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/-t2ekke/b/11/a44af77267a987a660377e5c46e0fb64/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=721240a8"></script>
 @endsection

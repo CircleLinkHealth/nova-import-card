@@ -74,7 +74,7 @@
 
 
 <div class="row">
-    <div class="col-md-10">
+    <div class="col-md-10" data-step="2" data-intro="The top part of the invoice shows a breakdown of your pay.">
         <table class="table borderless-table-invoices table-hover">
             <thead>
             <tr class="borderless-table-invoices">
@@ -131,7 +131,7 @@
 <div class="row">
     <div class="col-md-12">
         <table class="table table-bordered table-hover">
-            <tr>
+            <tr data-step="3" data-intro="This table shows how much time the system recorded for you per day.">
                 <th style="width: 25%">Date</th>
                 @if(!$variablePay)
                     <th style="width: 25%">Minutes</th>
