@@ -30,6 +30,10 @@ trait TakesMonthAndUsersAsInputArguments
     }
 
     /**
+     * Returns the month instance.
+     *
+     * @throws ValidationException
+     *
      * @return Carbon
      */
     public function month()
@@ -38,7 +42,7 @@ trait TakesMonthAndUsersAsInputArguments
             $this->initDateInstance();
         }
 
-        return $this->dateInstance;
+        return $this->dateInstance->copy();
     }
 
     /**
