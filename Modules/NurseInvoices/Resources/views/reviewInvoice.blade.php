@@ -7,9 +7,11 @@
     <div class="container" style="padding-bottom: 10%;">
         @include('nurseinvoices::dispute-deadline-warning')
 
-        <span class="pull-right"> <a href="javascript:void(0);"
-                                     onclick="javascript:introJs().setOption('showProgress', true).start();"><span
-                        class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a></span>
+        <div class="tutorial-button">
+            <a href="javascript:void(0);"
+                                         onclick="javascript:introJs().setOption('showProgress', true).start();"><span
+                            class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a>
+        </div>
 
         <div class="row">
             <div class="col-md-12">
@@ -72,3 +74,14 @@
     <script type="text/javascript"
             src="https://circlelinkhealth.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/-t2ekke/b/11/a44af77267a987a660377e5c46e0fb64/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=721240a8"></script>
 @endsection
+
+@push('styles')
+    <style>
+        .tutorial-button {
+            font-size: 70px;
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+        }
+    </style>
+@endpush
