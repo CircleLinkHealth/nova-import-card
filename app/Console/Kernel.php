@@ -35,6 +35,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendDisputeReminder;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendResolveInvoiceDisputeReminder;
+use CircleLinkHealth\NurseInvoices\Console\SendMonthlyNurseInvoiceFAN;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -133,12 +134,7 @@ class Kernel extends ConsoleKernel
         $schedule->command(AttachBillableProblemsToLastMonthSummary::class)
             ->cron('30 0 1 * *');
 
-//        $schedule->command(
-//            SendCareCoachInvoices::class,
-//            [
-//                '--variable-time' => true,
-//            ]
-//        )->monthlyOn(1, '5:0');
+//        $schedule->command(SendCareCoachApprovedMonthlyInvoices::class)->dailyAt('8:30');
 
 //        $schedule->command('lgh:importInsurance')
 //            ->dailyAt('05:00');
@@ -193,13 +189,14 @@ class Kernel extends ConsoleKernel
 //            $schedule->command(BackupCommand::class)->daily()->at('02:00');
 //        }
 
-        $schedule->command(SecurityMailCommand::class)
-            ->weekly();
+        $schedule->command(SecurityMailCommand::class)->weekly();
+
         $schedule->command(NursesAndStatesDailyReport::class)->dailyAt('00:05');
 
         $schedule->command(OverwriteNBIImportedData::class)->everyTenMinutes();
 
         $schedule->command(GenerateMonthlyInvoicesForNonDemoNurses::class)->monthlyOn(1, '00:30');
+        $schedule->command(SendMonthlyNurseInvoiceFAN::class)->monthlyOn(1, '08:30');
 
         //@todo: make this pickup user defined deadline
         $schedule->command(SendDisputeReminder::class)->monthlyOn(NurseInvoiceDisputeDeadline::DEFAULT_NURSE_INVOICE_DISPUTE_SUBMISSION_DEADLINE_DAY - 1, '12:00');

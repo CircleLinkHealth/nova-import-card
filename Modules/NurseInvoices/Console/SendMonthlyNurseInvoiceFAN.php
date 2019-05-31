@@ -12,7 +12,7 @@ use CircleLinkHealth\NurseInvoices\Traits\DryRunnable;
 use CircleLinkHealth\NurseInvoices\Traits\TakesMonthAndUsersAsInputArguments;
 use Illuminate\Console\Command;
 
-class NotifyNursesToReviewInvoice extends Command
+class SendMonthlyNurseInvoiceFAN extends Command
 {
     use DryRunnable;
     use TakesMonthAndUsersAsInputArguments;
