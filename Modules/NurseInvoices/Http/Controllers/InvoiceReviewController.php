@@ -50,10 +50,10 @@ class InvoiceReviewController extends Controller
         NurseInvoice::findOrFail($id)
             ->dispute()
             ->create(
-                        [
-                            'reason'  => $reason,
-                            'user_id' => auth()->id(),
-                        ]
+                [
+                    'reason'  => $reason,
+                    'user_id' => auth()->id(),
+                ]
                     );
 
         return $this->ok();
@@ -86,7 +86,7 @@ class InvoiceReviewController extends Controller
         );
 
         if ('web' === $request->input('view')) {
-            return view('nurseinvoices::invoice-v2', $args);
+            return view('nurseinvoices::invoice-v2', array_merge($args, ['isPdf' => true]));
         }
 
         return view(
