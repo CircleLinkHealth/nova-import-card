@@ -43,4 +43,21 @@ class AppConfig extends \CircleLinkHealth\Core\Entities\BaseModel
      * @var string
      */
     protected $table = 'app_config';
+
+    /**
+     * Returns the AppConfig value for the given key.
+     *
+     * @param string $key
+     * @param null   $default
+     *
+     * @return string|null
+     */
+    public static function pull(string $key, $default = null)
+    {
+        $conf = static::whereConfigKey($key)->first();
+
+        return $conf
+            ? $conf->config_value
+            : $default;
+    }
 }

@@ -129,11 +129,11 @@ if ( ! function_exists('activeNurseNames')) {
     {
         return User::ofType('care-center')
             ->with(
-                       [
-                           'nurseInfo' => function ($q) {
-                               $q->where('is_demo', '!=', true);
-                           },
-                       ]
+                [
+                    'nurseInfo' => function ($q) {
+                        $q->where('is_demo', '!=', true);
+                    },
+                ]
                    )->whereHas(
                        'nurseInfo',
                        function ($q) {
@@ -774,28 +774,7 @@ if ( ! function_exists('defaultCarePlanTemplate')) {
      */
     function getDefaultCarePlanTemplate(): ?CarePlanTemplate
     {
-        $id = getAppConfig('default_care_plan_template_id');
-
-        return CarePlanTemplate::findOrFail($id);
-    }
-}
-
-if ( ! function_exists('getAppConfig')) {
-    /**
-     * Returns the AppConfig value for the given key.
-     *
-     * @param string $key
-     * @param null   $default
-     *
-     * @return string|null
-     */
-    function getAppConfig(string $key, $default = null)
-    {
-        $conf = AppConfig::whereConfigKey($key)->first();
-
-        return $conf
-            ? $conf->config_value
-            : $default;
+        return CarePlanTemplate::findOrFail(AppConfig::pull('default_care_plan_template_id'));
     }
 }
 

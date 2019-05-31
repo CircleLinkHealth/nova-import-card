@@ -80,6 +80,13 @@ class NurseInvoiceDisputeDeadline
      */
     public static function for(Carbon $invoiceMonth)
     {
+        if (app()->environment('testing')) {
+            //throws exceptions it table does not exist
+            //is a problem for CI
+            //config is cached, so I chose this instead of checking if table exists
+            return Carbon::now();
+        }
+
         return (new static($invoiceMonth))->deadline();
     }
 
@@ -116,7 +123,7 @@ class NurseInvoiceDisputeDeadline
     {
         $deadline = explode(
             ' ',
-            getAppConfig(
+            \App\AppConfig::pull(
                 self::NURSE_INVOICE_DISPUTE_SUBMISSION_DEADLINE_KEY,
                 self::DEFAULT_NURSE_INVOICE_DISPUTE_SUBMISSION_DEADLINE_DAY_AND_TIME
             )
