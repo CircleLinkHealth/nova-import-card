@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\NurseInvoices\Traits;
 
+use App\Exceptions\InvalidArgumentException;
 use Carbon\Carbon;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\Console\Input\InputArgument;
@@ -117,7 +118,7 @@ trait TakesMonthAndUsersAsInputArguments
         $validator = $this->dateValidator($input);
 
         if ($validator->fails()) {
-            throw new ValidationException($validator);
+            throw new InvalidArgumentException($validator->messages()->first());
         }
 
         $this->dateInstance = Carbon::createFromFormat('Y-m-d', $input)->startOfDay();
