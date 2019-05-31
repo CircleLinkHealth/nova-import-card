@@ -15,7 +15,7 @@ class StoreRelease extends Command
     use RunsCommands;
 
     // The environment on which builds happen
-    const BUILD_ENV = 'staging';
+    const BUILD_ENV = 'test';
 
     /**
      * The console command description.
