@@ -50,10 +50,10 @@ class InvoiceReviewController extends Controller
         NurseInvoice::findOrFail($id)
             ->dispute()
             ->create(
-                [
-                    'reason'  => $reason,
-                    'user_id' => auth()->id(),
-                ]
+                        [
+                            'reason'  => $reason,
+                            'user_id' => auth()->id(),
+                        ]
                     );
 
         return $this->ok();
@@ -71,14 +71,16 @@ class InvoiceReviewController extends Controller
             ->ofNurses(auth()->id())
             ->firstOrNew([]);
 
+        $deadline    = new NurseInvoiceDisputeDeadline($startDate);
         $invoiceData = $invoice->invoice_data ?? [];
         $args        = array_merge(
             [
-                'invoiceId'             => $invoice->id,
-                'dispute'               => $invoice->dispute,
-                'invoice'               => $invoice,
-                'shouldShowDisputeForm' => auth()->user()->shouldShowInvoiceReviewButton(),
-                'disputeDeadline'       => NurseInvoiceDisputeDeadline::forInvoiceOfMonth($startDate)->setTimezone(auth()->user()->timezone),
+                'invoiceId'              => $invoice->id,
+                'dispute'                => $invoice->dispute,
+                'invoice'                => $invoice,
+                'shouldShowDisputeForm'  => auth()->user()->shouldShowInvoiceReviewButton(),
+                'disputeDeadline'        => $deadline->deadline()->setTimezone(auth()->user()->timezone),
+                'disputeDeadlineWarning' => $deadline->warning(),
             ],
             $invoiceData
         );
