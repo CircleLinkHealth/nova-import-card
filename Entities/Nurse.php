@@ -6,10 +6,10 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
+use App\Billing\NurseInvoices\NurseInvoice;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Customer\Traits\MakesOrReceivesCalls;
-use CircleLinkHealth\NurseInvoices\Entities\Dispute;
 
 /**
  * CircleLinkHealth\Customer\Entities\Nurse.
@@ -205,6 +205,11 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+    
+    public function invoices()
+    {
+        return $this->hasMany(NurseInvoice::class);
     }
 
     public function weeklySchedule()
