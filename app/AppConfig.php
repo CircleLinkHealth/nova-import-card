@@ -30,21 +30,12 @@ namespace App;
  */
 class AppConfig extends \CircleLinkHealth\Core\Entities\BaseModel
 {
-    public $timestamps = true;
-
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = ['config_key', 'config_value'];
-
-    /**
-     * The primary key for the model.
-     *
-     * @var string
-     */
-    protected $primaryKey = 'id';
 
     /**
      * The database table used by the model.

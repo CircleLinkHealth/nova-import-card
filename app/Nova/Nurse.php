@@ -44,7 +44,7 @@ class Nurse extends Resource
      * @var array
      */
     public static $searchRelations = [
-        'user' => ['display_name'],
+        'user' => ['display_name', 'first_name', 'last_name'],
     ];
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -107,16 +107,10 @@ class Nurse extends Resource
     public function fields(Request $request)
     {
         return [
-            BelongsTo::make('user')
+            BelongsTo::make('Care Coach', 'user', CareCoachUser::class)
                 ->hideWhenUpdating()
                 ->hideWhenCreating()
-                ->hideFromIndex()
-                ->sortable(),
-
-            Text::make('Name', 'user.display_name')
-                ->hideFromDetail()
-                ->hideWhenCreating()
-                ->readonly(true),
+                ->readonly(),
 
             Text::make('+ Days Payment', 'pay_interval')
                 ->rules('required'),

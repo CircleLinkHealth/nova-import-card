@@ -10,6 +10,8 @@ use App\Notifications\NurseInvoiceCreated;
 use App\Services\PdfService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
+use CircleLinkHealth\NurseInvoices\Notifications\InvoiceReviewInitialReminder;
 use CircleLinkHealth\NurseInvoices\ViewModels\Invoice;
 use Illuminate\Support\Collection;
 
@@ -19,38 +21,63 @@ class Generator
      * @var Carbon
      */
     protected $endDate;
+
     /**
      * @var array
      */
     protected $nurseUserIds;
+
     /**
      * @var PdfService
      */
     protected $pdfService;
+
+    /**
+     * @var \Illuminate\Foundation\Application|mixed|SaveInvoicesService
+     */
+    protected $saveInvoices;
+
     /**
      * @var Carbon
      */
     protected $startDate;
     /**
-     * @todo: deprecate
-     *
+     * @var bool
+     */
+    protected $storeInvoicesForNurseReview;
+    /**
      * @var bool
      */
     private $sendToCareCoaches;
 
-    public function __construct(array $nurseUserIds, Carbon $startDate, Carbon $endDate, $sendToCareCoaches = false)
-    {
-        $this->pdfService        = app(PdfService::class);
-        $this->startDate         = $startDate;
-        $this->endDate           = $endDate;
-        $this->sendToCareCoaches = $sendToCareCoaches;
-        $this->nurseUserIds      = $nurseUserIds;
+    /**
+     * Generator constructor.
+     *
+     * @param array  $nurseUserIds
+     * @param Carbon $startDate
+     * @param Carbon $endDate
+     * @param bool   $sendToCareCoaches
+     * @param bool   $storeInvoicesForNurseReview
+     */
+    public function __construct(
+        array $nurseUserIds,
+        Carbon $startDate,
+        Carbon $endDate,
+        $sendToCareCoaches = false,
+        $storeInvoicesForNurseReview = false
+    ) {
+        $this->pdfService                  = app(PdfService::class);
+        $this->startDate                   = $startDate;
+        $this->endDate                     = $endDate;
+        $this->sendToCareCoaches           = $sendToCareCoaches;
+        $this->nurseUserIds                = $nurseUserIds;
+        $this->storeInvoicesForNurseReview = $storeInvoicesForNurseReview;
     }
 
     /**
      * @return Collection
      */
-    public function generate()
+    public function createAndNotifyNurses()
     {
         $invoices = collect();
 
@@ -83,20 +110,29 @@ class Generator
 
                         $viewModel = $this->createViewModel($user, $nurseAggregatedTotalTime, $variablePayMap);
 
-                        /**
-                         * @todo: Antonis stores invoice data here
-                         * $viewModel->toArray()
-                         */
-                        $pdf = $this->createPdf($viewModel);
-                        $this->forwardToCareCoach($viewModel, $pdf);
+                        if ($this->storeInvoicesForNurseReview) {
+                            $invoice = $this->saveInvoiceData($user->nurseInfo->id, $viewModel, $this->startDate);
+                            $this->notifyNurse($user);
+                        } else {
+                            $invoice = $this->createPdf($viewModel);
+                            $this->forwardToCareCoach($viewModel, $invoice);
+                        }
 
-                        $invoices->push($pdf);
+                        $invoices->push($invoice);
                     }
                 );
             }
         );
 
         return $invoices;
+    }
+
+    /**
+     * @param User $user
+     */
+    public function notifyNurse(User $user)
+    {
+        $user->notify((new InvoiceReviewInitialReminder($this->startDate))->delay(now()->addHours(8)));
     }
 
     /**
@@ -186,42 +222,62 @@ class Generator
         return User::withTrashed()
             ->careCoaches()
             ->with(
-                [
-                    'nurseBonuses' => function ($q) {
-                        $q->whereBetween('date', [$this->startDate, $this->endDate]);
-                    },
-                    'nurseInfo',
-                ]
+                       [
+                           'nurseBonuses' => function ($q) {
+                               $q->whereBetween('date', [$this->startDate, $this->endDate]);
+                           },
+                           'nurseInfo',
+                       ]
                    )
             ->has('nurseInfo')
             ->when(
-                is_array($this->nurseUserIds) && ! empty($this->nurseUserIds),
-                function ($q) {
-                    $q->whereIn('id', $this->nurseUserIds);
-                }
+                       is_array($this->nurseUserIds) && ! empty($this->nurseUserIds),
+                       function ($q) {
+                           $q->whereIn('id', $this->nurseUserIds);
+                       }
                    )
             ->when(
-                empty($this->nurseUserIds),
-                function ($q) {
-                    $q->whereHas(
-                        'pageTimersAsProvider',
-                        function ($s) {
-                            $s->whereBetween(
-                                'start_time',
-                                [
-                                    $this->startDate->copy()->startOfDay(),
-                                    $this->endDate->copy()->endOfDay(),
-                                ]
+                       empty($this->nurseUserIds),
+                       function ($q) {
+                           $q->whereHas(
+                               'pageTimersAsProvider',
+                               function ($s) {
+                                   $s->whereBetween(
+                                       'start_time',
+                                       [
+                                           $this->startDate->copy()->startOfDay(),
+                                           $this->endDate->copy()->endOfDay(),
+                                       ]
                                    );
-                        }
+                               }
                            )
-                        ->whereHas(
-                            'nurseInfo',
-                            function ($s) {
-                                $s->where('is_demo', false);
-                            }
+                               ->whereHas(
+                                 'nurseInfo',
+                                 function ($s) {
+                                     $s->where('is_demo', false);
+                                 }
                              );
-                }
+                       }
                    );
+    }
+    
+    /**
+     * @param $nurseInfoId
+     * @param $viewModel
+     * @param Carbon $startDate
+     *
+     * @return mixed
+     */
+    private function saveInvoiceData($nurseInfoId, $viewModel, Carbon $startDate)
+    {
+        return NurseInvoice::updateOrCreate(
+            [
+                'month_year'    => $startDate,
+                'nurse_info_id' => $nurseInfoId,
+            ],
+            [
+                'invoice_data' => $viewModel->toArray(),
+            ]
+        );
     }
 }
