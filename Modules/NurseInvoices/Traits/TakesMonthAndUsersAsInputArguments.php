@@ -120,6 +120,6 @@ trait TakesMonthAndUsersAsInputArguments
             throw new ValidationException($validator);
         }
 
-        $this->dateInstance = Carbon::createFromFormat('Y-m-d', $input);
+        $this->dateInstance = Carbon::createFromFormat('Y-m-d', $input)->startOfDay();
     }
 }

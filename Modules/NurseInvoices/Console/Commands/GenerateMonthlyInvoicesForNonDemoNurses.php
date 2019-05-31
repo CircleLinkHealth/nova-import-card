@@ -38,10 +38,8 @@ class GenerateMonthlyInvoicesForNonDemoNurses extends Command
      */
     public function handle()
     {
-        $month = $this->month();
-
-        $start = $month->startOfMonth();
-        $end   = $month->endOfMonth();
+        $start = $this->month()->startOfMonth();
+        $end   = $this->month()->endOfMonth();
 
         $userIds = $this->usersIds();
 
@@ -61,7 +59,7 @@ class GenerateMonthlyInvoicesForNonDemoNurses extends Command
             : 'nurses with user IDs '.implode(', ', $userIds);
 
         $this->info(
-            "Will create invoices for {$month->format('Y-m')}, for $forNurses."
+            "Will create invoices for {$this->month()->format('Y-m')}, for $forNurses."
         );
     }
 }
