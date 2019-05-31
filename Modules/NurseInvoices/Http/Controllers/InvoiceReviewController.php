@@ -50,10 +50,10 @@ class InvoiceReviewController extends Controller
         NurseInvoice::findOrFail($id)
             ->dispute()
             ->create(
-                        [
-                            'reason'  => $reason,
-                            'user_id' => auth()->id(),
-                        ]
+                [
+                    'reason'  => $reason,
+                    'user_id' => auth()->id(),
+                ]
                     );
 
         return $this->ok();
@@ -64,7 +64,7 @@ class InvoiceReviewController extends Controller
      */
     public function reviewInvoice(Request $request)
     {
-        $startDate = Carbon::now()->subMonth()->startOfMonth();
+        $startDate = Carbon::now()->startOfMonth()->subMonth();
 
         $invoice = NurseInvoice::where('month_year', $startDate)
             ->with(['dispute.resolver'])
