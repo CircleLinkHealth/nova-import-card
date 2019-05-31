@@ -56,7 +56,7 @@ trait DryRunnable
     protected function getOptions()
     {
         return [
-            ['dry-run', 'dry', InputOption::VALUE_NONE, 'Dry run. Defaults to false.', null],
+            ['dry-run', 'd', InputOption::VALUE_NONE, 'Dry run. Defaults to false.', null],
         ];
     }
 }
