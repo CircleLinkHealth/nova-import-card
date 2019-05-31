@@ -5,16 +5,7 @@
 
 @section('content')
     <div class="container" style="padding-bottom: 10%;">
-        @if ($shouldShowDisputeForm)
-            <div class="row">
-                <div class="col-md-12">
-                    <h4 class="pull-right alert alert-warning">Invoices auto-approve unless disputed by
-                        the {{$disputeDeadline->format('jS')}} of the
-                        month at
-                        {{$disputeDeadline->format('h:iA T')}}.</h4>
-                </div>
-            </div>
-        @endif
+        @include('nurseinvoices::dispute-deadline-warning')
 
         <span class="pull-right"> <a href="javascript:void(0);"
                                      onclick="javascript:introJs().setOption('showProgress', true).start();"><span
@@ -35,16 +26,7 @@
             </div>
         </div>
 
-        @if ($shouldShowDisputeForm)
-            <div class="row">
-                <div class="col-md-12">
-                    <h4 class="pull-right alert alert-warning">Invoices auto-approve unless disputed by
-                        the {{$disputeDeadline->format('jS')}} of the
-                        month at
-                        {{$disputeDeadline->format('h:iA T')}}.</h4>
-                </div>
-            </div>
-        @endif
+        @include('nurseinvoices::dispute-deadline-warning')
 
         <div class="row">
             <div class="col-md-12">
