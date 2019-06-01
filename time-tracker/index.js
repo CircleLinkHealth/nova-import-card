@@ -1,6 +1,7 @@
-const { EventEmitter } = require('events')
-const { validateInfo } = require('./utils.fn')
+const {EventEmitter} = require('events')
+const {validateInfo} = require('./utils.fn')
 const TimeTrackerUser = require('./time-tracker.user')
+const raygunClient = require('../logger/raygun').getRaygun();
 
 function TimeTracker($emitter = new EventEmitter()) {
     const users = {}
@@ -16,14 +17,16 @@ function TimeTracker($emitter = new EventEmitter()) {
         const key = this.key(info)
 
         if (info.activity === '') {
-            info.activity = 'unknown'
+            info.activity = 'unknown';
+            //pass userId as the `request`, which is the to the user() of the raygun client
+            reportError(new Error('activity has no name'), info, {userId: info.providerId});
         }
 
         return users[key] = users[key] || this.create(info)
     }
 
     this.create = (info) => {
-        
+
         this.validateInfo(info)
 
         return new TimeTrackerUser(info, $emitter)
@@ -34,7 +37,7 @@ function TimeTracker($emitter = new EventEmitter()) {
     }
 
     this.remove = (info) => {
-        
+
         this.validateInfo(info)
 
         const key = this.key(info)
@@ -43,9 +46,9 @@ function TimeTracker($emitter = new EventEmitter()) {
     }
 
     this.exists = (info) => {
-        
+
         this.validateInfo(info)
-        
+
         const key = this.key(info)
 
         return !!users[key]
@@ -53,6 +56,16 @@ function TimeTracker($emitter = new EventEmitter()) {
 
     this.keys = () => {
         return Object.keys(users)
+    }
+}
+
+function reportError(error, customData, request, onDone) {
+    if (raygunClient) {
+        raygunClient.send(error, customData, onDone ? onDone : function () {
+        }, request);
+    }
+    else {
+        console.error(error.message, customData);
     }
 }
 

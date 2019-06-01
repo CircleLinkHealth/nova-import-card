@@ -5,12 +5,13 @@
  */
 
 require('dotenv').config();
-
 var app = require('../app');
 var debug = require('debug')('sockets-demo:server');
 var http = require('http');
 var https = require('https');
 var fs = require('fs');
+var raygunClient = require('../logger/raygun').getRaygun();
+
 
 var raygunClient;
 if (process.env.RAYGUN_API_KEY) {
