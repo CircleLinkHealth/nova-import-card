@@ -57,7 +57,7 @@ class ResolveDisputeReminder extends Notification
             ->subject('Reminder - Resolve Dispute Invoices')
             ->greeting('Hello,')
             ->line("There are {$this->disputes} Invoices disputes that required to be resolved")
-            ->action('Resolve Disputes', url('/'))
+            ->action('Resolve Disputes', url('superadmin/resources/disputes'))
             ->line('Thank you!');
     }
 
