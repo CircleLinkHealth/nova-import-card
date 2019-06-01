@@ -4,11 +4,7 @@
  * Module dependencies.
  */
 
-console.log('raygun api key', process.env.RAYGUN_API_KEY);
-
 require('dotenv').config();
-
-console.log('raygun api key', process.env.RAYGUN_API_KEY);
 
 var app = require('../app');
 var debug = require('debug')('sockets-demo:server');

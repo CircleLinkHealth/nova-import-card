@@ -18,7 +18,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 else {
     router.get('/', (req, res) => {
-        res.send({env: process.env.NODE_ENV, message: 'Time Tracker', uptime: Math.floor(process.uptime())})
+        res.send({message: 'Time Tracker', uptime: Math.floor(process.uptime())})
     })
 }
 
