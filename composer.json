@@ -75,6 +75,7 @@
     "circlelinkhealth/raygun": "dev-master",
     "circlelinkhealth/timetracking": "dev-master",
     "circlelinkhealth/twofa": "dev-master",
+    "dillingham/nova-button": "^1.0",
     "doctrine/dbal": "~2.3",
     "fideloper/proxy": "^4.0",
     "fourstacks/nova-checkboxes": "^0.1.5",
