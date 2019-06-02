@@ -7,7 +7,9 @@
 namespace App\Jobs;
 
 use App\Exports\NurseInvoiceCsv;
+use App\Notifications\SendMonthlyInvoicesToAccountant;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -36,6 +38,12 @@ class GenerateNurseMonthlyInvoiceCsv implements ShouldQueue
      */
     public function handle()
     {
-        new NurseInvoiceCsv($this->date);
+        $media = (new NurseInvoiceCsv($this->date))->collection();
+
+        //return (new NurseInvoiceCsv($this->date))->download('invoices', \Maatwebsite\Excel\Excel::CSV);
+
+        $user = User::find(9521);
+
+        $user->notify(new SendMonthlyInvoicesToAccountant($this->date, $media));
     }
 }
