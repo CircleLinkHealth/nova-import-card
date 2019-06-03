@@ -134,6 +134,7 @@ use CircleLinkHealth\Customer\Entities\Patient;
                     "monthlyTime": '{{$monthlyTime}}',
                     "monthlyBhiTime": '{{$monthlyBhiTime}}',
                     "wsUrl": "{{ config('services.ws.url') }}",
+                    "wsUrlFailOver": "{{ config('services.ws.url-fail-over') }}",
                     "programId": '{{$patientProgramId}}',
                     "urlFull": '{{Request::url()}}',
                     "urlShort": '{{$urlShort}}',
