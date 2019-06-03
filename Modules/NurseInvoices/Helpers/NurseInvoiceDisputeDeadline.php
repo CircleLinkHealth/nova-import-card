@@ -63,7 +63,7 @@ class NurseInvoiceDisputeDeadline
     public function deadline()
     {
         if ($this->deadline) {
-            return $this->deadline;
+            return $this->deadline->copy();
         }
 
         return \Cache::remember($this->getCacheKey(), self::CACHE_FOR_MINUTES, function () {
