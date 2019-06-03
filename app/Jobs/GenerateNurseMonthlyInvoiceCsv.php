@@ -6,6 +6,7 @@
 
 namespace App\Jobs;
 
+use App\AppConfig;
 use App\Exports\NurseInvoiceCsv;
 use App\Notifications\SendMonthlyInvoicesToAccountant;
 use Carbon\Carbon;
@@ -16,6 +17,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Notification;
 
 class GenerateNurseMonthlyInvoiceCsv implements ShouldQueue
 {
@@ -23,6 +25,7 @@ class GenerateNurseMonthlyInvoiceCsv implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+    const RECEIVES_NURSE_INVOICES_CSV = 'receives_nurse_invoices_csv';
 
     /**
      * @var Carbon
@@ -46,10 +49,23 @@ class GenerateNurseMonthlyInvoiceCsv implements ShouldQueue
     {
         $csvInvoices = (new NurseInvoiceCsv($this->date))
             ->storeAndAttachMediaTo(SaasAccount::whereSlug('circlelink-health')->firstOrFail());
-        //@todo: accountant's mail.
 
-        $accountant = User::find(9521);
+        $usersToSendCsv = $this->usersToSendCsv();
 
-        $accountant->notify(new SendMonthlyInvoicesToAccountant($this->date, $csvInvoices));
+        Notification::send($usersToSendCsv, new SendMonthlyInvoicesToAccountant($this->date, $csvInvoices));
+    }
+
+    public function usersToSendCsv()
+    {//i want to export this and use it in "SendResolveInvoiceDisputeReminder" also by changing the "config_key" to search
+        $getEmails = [];
+        AppConfig::where('config_key', '=', self::RECEIVES_NURSE_INVOICES_CSV)
+            ->select('config_value')->chunk(20, function ($emails) use (&$getEmails) {
+                foreach ($emails as $email) {
+                    dd($email);
+                    $getEmails[] = $email->config_value;
+                }
+            });
+        //will this query slow things down?
+        return User::whereIn('email', $getEmails)->get();
     }
 }

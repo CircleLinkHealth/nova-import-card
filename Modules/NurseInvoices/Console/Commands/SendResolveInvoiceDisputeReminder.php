@@ -6,15 +6,19 @@
 
 namespace CircleLinkHealth\NurseInvoices\Console\Commands;
 
+use App\AppConfig;
 use App\Jobs\GenerateNurseMonthlyInvoiceCsv;
 use App\Notifications\ResolveDisputeReminder;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Entities\Dispute;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Notification;
 
 class SendResolveInvoiceDisputeReminder extends Command
 {
+    const NURSE_DISPUTES_MANAGER = 'nurse_invoice_dispute_manager';
+
     /**
      * The console command description.
      *
@@ -56,16 +60,26 @@ class SendResolveInvoiceDisputeReminder extends Command
             ->count();
 
         if (0 !== $disputes && isProductionEnv()) {
-            $sara = User::whereEmail('sheller@circlelinkhealth.com')->first();
+            $usersToSendEmail = $this->usersToSendEmail();
 
-            if ($sara) {
-                $sara->notify(new ResolveDisputeReminder($disputes));
-            }
-
-            //send invoices csv to accountant
-            //@todo:should i move this to a controller or sercice class?
-            GenerateNurseMonthlyInvoiceCsv::dispatch($month)
-                ->onQueue('high');
+            Notification::send($usersToSendEmail, new ResolveDisputeReminder($disputes));
         }
+        //@todo:should i move this to a controller or sercice class?
+        GenerateNurseMonthlyInvoiceCsv::dispatch($month)
+            ->onQueue('high');
+    }
+
+    public function usersToSendEmail()
+    {
+        $getEmails = [];
+
+        AppConfig::where('config_key', '=', self::NURSE_DISPUTES_MANAGER)
+            ->select('config_value')->chunk(20, function ($emails) use (&$getEmails) {
+                foreach ($emails as $email) {
+                    $getEmails[] = $email->config_value;
+                }
+            });
+
+        return User::whereIn('email', $getEmails)->get();
     }
 }
