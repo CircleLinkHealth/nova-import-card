@@ -51,10 +51,10 @@ class InvoiceReviewController extends Controller
         NurseInvoice::findOrFail($id)
             ->dispute()
             ->create(
-                        [
-                            'reason'  => $reason,
-                            'user_id' => auth()->id(),
-                        ]
+                [
+                    'reason'  => $reason,
+                    'user_id' => auth()->id(),
+                ]
                     );
 
         return $this->ok();
@@ -100,7 +100,7 @@ class InvoiceReviewController extends Controller
     {
         $auth = auth()->user();
 
-        $invoice = NurseInvoice::find($invoiceId)
+        $invoice = NurseInvoice::where('id', $invoiceId)
             ->with(['dispute.resolver'])
             ->where('nurse_info_id', $nurseInfoId)
             ->firstOrFail();
