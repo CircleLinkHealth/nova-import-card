@@ -86,6 +86,8 @@
                 showTimer: true,
                 showLoader: true,
                 callMode: false,
+                wsUrl: null,
+                wsUrlFailOver: null,
             }
         },
         components: {
@@ -139,7 +141,7 @@
                     const self = this; //a way to keep the context
                     self.socketReloadCount = (self.socketReloadCount || 0) + 1;
                     this.socket = this.socket || (function () {
-                        const socket = new WebSocket(self.info.wsUrl);
+                        const socket = new WebSocket(self.wsUrl);
 
                         socket.onmessage = (res) => {
                             if (res.data) {
@@ -196,8 +198,15 @@
                             self.socket = null;
                             EventBus.$emit("tracker:stop");
                             self.startCount = 0;
-                            self.info.initSeconds = self.seconds
-                            console.log(self.info.totalTime, self.seconds)
+                            self.info.initSeconds = self.seconds;
+                            console.log(self.info.totalTime, self.seconds);
+
+                            //switch url and fail over url and try again
+                            if (self.wsUrlFailOver) {
+                                const temp = self.wsUrl;
+                                self.wsUrl = self.wsUrlFailOver;
+                                self.wsUrlFailOver = temp;
+                            }
 
                             setTimeout(self.createSocket.bind(self), 3000);
                         }
@@ -211,7 +220,7 @@
                                 overwrite: true
                             });
 
-                            console.error('socket-error:', err)
+                            console.error('socket-error:', err, self.info)
                         };
 
                         return socket;
@@ -227,6 +236,9 @@
             // window.addEventListener("unload", () => {
             //     console.log('window is unloading', this.info.totalTime, this.seconds);
             // });
+
+            this.wsUrl = this.info.wsUrl;
+            this.wsUrlFailOver = this.info.wsUrlFailOver;
 
             this.previousSeconds = this.info.totalTime || 0;
             this.info.initSeconds = 0
@@ -265,6 +277,7 @@
                         if (this.socket && this.socket.readyState === WebSocket.OPEN) {
                             if (this.startCount === 0) this.updateTime();
                             this.state = STATE.ENTER
+                            //this.info.startTime = getCarbonDateTimeStringInServerTimezone(new Date());
                             this.socket.send(JSON.stringify({message: STATE.ENTER, info: this.info}))
                         }
                     }
