@@ -59,9 +59,10 @@ return [
     ],
 
     'ws' => [
-        'server-url' => env('WS_SERVER_URL'),
-        'url'        => env('WS_URL'),
-        'root'       => env('WS_ROOT'),
+        'server-url'    => env('WS_SERVER_URL'),
+        'url'           => env('WS_URL'),
+        'url-fail-over' => env('WS_URL_FAIL_OVER'),
+        'root'          => env('WS_ROOT'),
     ],
 
     'time-tracker' => [

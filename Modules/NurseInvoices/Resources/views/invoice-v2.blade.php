@@ -1,4 +1,6 @@
-<link href="{{asset('/css/bootstrap.min.css')}}" rel="stylesheet">
+@if(isset($isPdf))
+    <link href="{{asset('/css/bootstrap.min.css')}}" rel="stylesheet">
+@endif
 
 <style>
     body {
@@ -33,6 +35,14 @@
 {{--HACK! Duplicating css both in @push, and in <style> above so it works both with PDF, and web--}}
 @push('styles')
     <style>
+        h1 {
+            font-size: 36px;
+        }
+
+        body, h1, h2, h3, h4, h5, h6 {
+            font-family: "Arial", serif !important;
+        }
+
         body {
             background: #fff;
             color: #333;

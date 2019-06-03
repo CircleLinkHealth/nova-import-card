@@ -11,7 +11,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Console\Command;
 
-class SendCareCoachInvoices extends Command
+class SendCareCoachApprovedMonthlyInvoices extends Command
 {
     /**
      * The console command description.

@@ -203,12 +203,14 @@ $user = auth()->user();
                                         Work Schedule
                                     </a>
                                 </li>
-                                <li class="hidden-xs">
-                                    <a href="{{ route('care.center.invoice.review') }}"
-                                       id="offline-activity-time-requests-index-link">
-                                        Hours/Pay Invoice
-                                    </a>
-                                </li>
+                                @if(!isProductionEnv() || (isProductionEnv() && Carbon\Carbon::now()->gte(Carbon\Carbon::create(2019,6,1,1,0,0))))
+                                    <li class="hidden-xs">
+                                        <a href="{{ route('care.center.invoice.review') }}"
+                                           id="offline-activity-time-requests-index-link">
+                                            Hours/Pay Invoice
+                                        </a>
+                                    </li>
+                                @endif
                             @endif
                             @if ( ! auth()->guest() && $user->hasRole(['administrator', 'administrator-view-only']) && $user->isNotSaas())
                                 <li><a style="color: #47beab"

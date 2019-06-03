@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
+use CircleLinkHealth\NurseInvoices\Http\Requests\ShowNurseInvoice;
 use CircleLinkHealth\NurseInvoices\Http\Requests\StoreNurseInvoiceApproval;
 use CircleLinkHealth\NurseInvoices\Http\Requests\StoreNurseInvoiceDispute;
 use Illuminate\Contracts\View\Factory;
@@ -71,20 +72,55 @@ class InvoiceReviewController extends Controller
             ->ofNurses(auth()->id())
             ->firstOrNew([]);
 
+        $deadline    = new NurseInvoiceDisputeDeadline($startDate);
         $invoiceData = $invoice->invoice_data ?? [];
         $args        = array_merge(
             [
-                'invoiceId'             => $invoice->id,
-                'dispute'               => $invoice->dispute,
-                'invoice'               => $invoice,
-                'shouldShowDisputeForm' => auth()->user()->shouldShowInvoiceReviewButton(),
-                'disputeDeadline'       => NurseInvoiceDisputeDeadline::forInvoiceOfMonth($startDate)->setTimezone(auth()->user()->timezone),
+                'invoiceId'              => $invoice->id,
+                'dispute'                => $invoice->dispute,
+                'invoice'                => $invoice,
+                'shouldShowDisputeForm'  => auth()->user()->shouldShowInvoiceReviewButton(),
+                'disputeDeadline'        => $deadline->deadline()->setTimezone(auth()->user()->timezone),
+                'disputeDeadlineWarning' => $deadline->warning(),
             ],
             $invoiceData
         );
 
         if ('web' === $request->input('view')) {
-            return view('nurseinvoices::invoice-v2', $args);
+            return view('nurseinvoices::invoice-v2', array_merge($args, ['isPdf' => true]));
+        }
+
+        return view(
+            'nurseinvoices::reviewInvoice',
+            $args
+        );
+    }
+
+    public function show(ShowNurseInvoice $request, $nurseInfoId, $invoiceId)
+    {
+        $auth = auth()->user();
+
+        $invoice = NurseInvoice::where('id', $invoiceId)
+            ->with(['dispute.resolver'])
+            ->where('nurse_info_id', $nurseInfoId)
+            ->firstOrFail();
+
+        $deadline    = new NurseInvoiceDisputeDeadline($invoice->month_year);
+        $invoiceData = $invoice->invoice_data ?? [];
+        $args        = array_merge(
+            [
+                'invoiceId'              => $invoice->id,
+                'dispute'                => $invoice->dispute,
+                'invoice'                => $invoice,
+                'shouldShowDisputeForm'  => $auth->isAdmin() ? false : $auth->shouldShowInvoiceReviewButton(),
+                'disputeDeadline'        => $deadline->deadline()->setTimezone($auth->timezone),
+                'disputeDeadlineWarning' => $deadline->warning(),
+            ],
+            $invoiceData
+        );
+
+        if ('web' === $request->input('view')) {
+            return view('nurseinvoices::invoice-v2', array_merge($args, ['isPdf' => true]));
         }
 
         return view(

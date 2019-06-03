@@ -14,7 +14,7 @@
             </strong>
             <br/>
             <strong>
-                If you would like to make another call, please click on 'Open Calls Page' again.
+                If you would like to make another call, please click on 'Make Call' again.
             </strong>
         </div>
         <div :class="hasError ? 'error-logs' : ''">{{log}}</div>
