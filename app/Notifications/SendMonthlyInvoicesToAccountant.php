@@ -53,9 +53,8 @@ class SendMonthlyInvoicesToAccountant extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage())
-            ->attachData($this->media, 'Nurse_Invoices_Csv_June 2019.csv') //will dynamic this
+            ->attachData($this->media->getFile(), "Nurse_Invoices_Csv_{$this->date->format('F Y')}.csv")
             ->line('The introduction to the notification.')
-            ->action('Notification Action', url('/'))
             ->line('Thank you for using our application!');
     }
 

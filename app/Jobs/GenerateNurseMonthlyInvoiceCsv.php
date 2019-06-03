@@ -9,6 +9,7 @@ namespace App\Jobs;
 use App\Exports\NurseInvoiceCsv;
 use App\Notifications\SendMonthlyInvoicesToAccountant;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -23,6 +24,9 @@ class GenerateNurseMonthlyInvoiceCsv implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    /**
+     * @var Carbon
+     */
     public $date;
 
     /**
@@ -40,7 +44,7 @@ class GenerateNurseMonthlyInvoiceCsv implements ShouldQueue
      */
     public function handle()
     {
-        $media = (new NurseInvoiceCsv($this->date))->collection();
+        $media = (new NurseInvoiceCsv($this->date))->storeAndAttachMediaTo(SaasAccount::whereSlug('circlelink-health')->firstOrFail());
 
         $user = User::find(9521);
 

@@ -10,12 +10,11 @@ use App\Traits\AttachableAsMedia;
 use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use Illuminate\Contracts\Support\Responsable;
-use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\Exportable;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class NurseInvoiceCsv implements FromCollection, Responsable, WithHeadings
+class NurseInvoiceCsv implements FromArray, Responsable, WithHeadings
 {
     use AttachableAsMedia;
     use Exportable;
@@ -41,15 +40,15 @@ class NurseInvoiceCsv implements FromCollection, Responsable, WithHeadings
     }
 
     /**
-     * @return Collection
+     * @return array
      */
-    public function collection()
+    public function array(): array
     {
         $invoices = NurseInvoice::with('nurse.user')
             ->where('month_year', $this->date)
             ->get();
 
-        $invoicesData = collect();
+        $invoicesData = [];
         foreach ($invoices as $invoice) {
             $invoicesData[] = [
                 'name'         => $invoice->nurse->user->display_name,
@@ -106,23 +105,11 @@ class NurseInvoiceCsv implements FromCollection, Responsable, WithHeadings
         return $this;
     }
 
-    /**
-     * @param $invoicesData
-     *
-     * @return Collection
-     */
-    private function row($invoicesData): Collection
+    public function storeAndAttachMediaTo($model)
     {
-        foreach ($invoicesData as $invoiceData) {
-            return collect(
-                [
-                    'Name'                 => $invoiceData['name'],
-                    'Month/Year'           => $invoiceData['month'],
-                    'Base Salary'          => $invoiceData['baseSalary'],
-                    'Bonuses'              => $invoiceData['bonuses'],
-                    'Total payable amount' => $invoiceData['totalPayable'],
-                ]
-            );
-        }
+        $filepath = 'exports/'.$this->getFilename();
+        $this->store($filepath, 'storage');
+
+        return $this->attachMediaTo($model, storage_path($filepath), "nurse_monthly_invoice_for_{$this->date->format('F Y')}");
     }
 }
