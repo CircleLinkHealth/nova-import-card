@@ -239,7 +239,7 @@ class Generator
                                            $this->endDate->copy()->endOfDay(),
                                        ]
                                    );
-                               }
+                        }
                            )
                         ->whereHas(
                                    'nurseInfo',
