@@ -88,6 +88,8 @@
                 callMode: false,
                 wsUrl: null,
                 wsUrlFailOver: null,
+                connectedOnce: false,
+                connectionLossTimestamp: null
             }
         },
         components: {
@@ -112,9 +114,29 @@
                 const zeroTime = "00:00:00";
                 return this.info.monthlyBhiTime && this.info.monthlyBhiTime.length > 0 && this.info.monthlyBhiTime !== zeroTime;
             },
+            timeSinceLastConnection() {
+                return Math.round((new Date() - this.connectionLossTimestamp) / 1000);
+            },
             updateTime() {
-                if (this.info.initSeconds === 0) this.info.initSeconds = Math.round(startupTime() / 1000);
-                else this.info.initSeconds = -1;
+                if (this.info.initSeconds === 0) {
+
+                    //console.log("last connection time", this.timeSinceLastConnection());
+                    //console.log("startup time", startupTime() / 1000);
+
+                    if (!this.connectedOnce) {
+                        this.connectedOnce = true;
+                        this.info.initSeconds = Math.round(startupTime() / 1000);
+                    }
+                    else if (this.connectionLossTimestamp != null) {
+                        this.info.initSeconds = this.timeSinceLastConnection();
+                    }
+
+                }
+                //else {
+                // why -1 ?
+                // see socket.onclose
+                //this.info.initSeconds = -1;
+                //}
                 this.startCount += 1;
                 console.log('tracker:init-seconds', this.info.initSeconds);
                 if (this.socket.readyState === this.socket.OPEN) {
@@ -194,11 +216,17 @@
                         }
 
                         socket.onclose = (ev) => {
-                            console.warn("socket connection has closed", ev)
+                            console.warn("socket connection has closed", ev);
+                            self.connectionLossTimestamp = new Date();
                             self.socket = null;
                             EventBus.$emit("tracker:stop");
                             self.startCount = 0;
-                            self.info.initSeconds = self.seconds;
+                            self.info.initSeconds = 0;
+
+                            //this used to set initSeconds to anything other than 0, which resulted to -1 in updateTime()
+                            //cannot think a reason why.
+                            //self.info.initSeconds = self.seconds;
+
                             console.log(self.info.totalTime, self.seconds);
 
                             //switch url and fail over url and try again
