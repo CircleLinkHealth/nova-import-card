@@ -61,7 +61,6 @@ class GenerateNurseMonthlyInvoiceCsv implements ShouldQueue
         AppConfig::where('config_key', '=', self::RECEIVES_NURSE_INVOICES_CSV)
             ->select('config_value')->chunk(20, function ($emails) use (&$getEmails) {
                 foreach ($emails as $email) {
-                    dd($email);
                     $getEmails[] = $email->config_value;
                 }
             });
