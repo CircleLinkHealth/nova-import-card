@@ -40,6 +40,8 @@ class NurseInvoiceCsv implements FromArray, Responsable, WithHeadings
     }
 
     /**
+     * Collect all invoices for given date from nurse_invoices table.
+     *
      * @return array
      */
     public function array(): array
@@ -53,9 +55,9 @@ class NurseInvoiceCsv implements FromArray, Responsable, WithHeadings
             $invoicesData[] = [
                 'name'         => $invoice->nurse->user->display_name,
                 'month'        => $this->date->format('F Y'),
-                'baseSalary'   => $invoice->invoice_data['formattedInvoiceTotalAmount'],
+                'baseSalary'   => $invoice->invoice_data['baseSalary'],
                 'bonuses'      => $invoice->invoice_data['bonus'],
-                'totalPayable' => $invoice->invoice_data['invoiceTotalAmount'], //@todo:get the correct value here
+                'totalPayable' => $invoice->invoice_data['invoiceTotalAmount'],
             ];
         }
 
@@ -108,8 +110,9 @@ class NurseInvoiceCsv implements FromArray, Responsable, WithHeadings
     public function storeAndAttachMediaTo($model)
     {
         $filepath = 'exports/'.$this->getFilename();
+
         $this->store($filepath, 'storage');
 
-        return $this->attachMediaTo($model, storage_path($filepath), "nurse_monthly_invoice_for_{$this->date->format('F Y')}");
+        return $this->attachMediaTo($model, storage_path($filepath), "nurse_monthly_invoices_for_{$this->date->format('F Y')}");
     }
 }

@@ -32,11 +32,11 @@ class GenerateNurseMonthlyInvoiceCsv implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param Carbon $startOfMonth
+     * @param Carbon $month
      */
-    public function __construct(Carbon $startOfMonth)
+    public function __construct(Carbon $month)
     {
-        $this->date = $startOfMonth;
+        $this->date = $month;
     }
 
     /**
@@ -44,10 +44,12 @@ class GenerateNurseMonthlyInvoiceCsv implements ShouldQueue
      */
     public function handle()
     {
-        $media = (new NurseInvoiceCsv($this->date))->storeAndAttachMediaTo(SaasAccount::whereSlug('circlelink-health')->firstOrFail());
+        $csvInvoices = (new NurseInvoiceCsv($this->date))
+            ->storeAndAttachMediaTo(SaasAccount::whereSlug('circlelink-health')->firstOrFail());
+        //@todo: accountant's mail.
 
-        $user = User::find(9521);
+        $accountant = User::find(9521);
 
-        $user->notify(new SendMonthlyInvoicesToAccountant($this->date, $media));
+        $accountant->notify(new SendMonthlyInvoicesToAccountant($this->date, $csvInvoices));
     }
 }

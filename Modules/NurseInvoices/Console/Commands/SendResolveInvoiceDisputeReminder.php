@@ -26,7 +26,7 @@ class SendResolveInvoiceDisputeReminder extends Command
      *
      * @var string
      */
-    protected $signature = 'nurseinvoice:resolveDispute';
+    protected $signature = 'nurseinvoice:resolveDispute {month? : Invoices for month for in YYYY-MM format. Defaults to previous month.}';
 
     /**
      * Create a new command instance.
@@ -43,20 +43,28 @@ class SendResolveInvoiceDisputeReminder extends Command
      */
     public function handle()
     {
-        $startOfMonth = Carbon::now()->startOfMonth();
-        $endOfMonth   = $startOfMonth->copy()->endOfMonth();
-        //@todo:ask Michalis ..
+        $month = $this->argument('month') ?? null;
+
+        if ($month) {
+            $month = Carbon::createFromFormat('Y-m', $month)->startOfMonth();
+        } else {
+            $month = Carbon::now()->subMonth()->startOfMonth();
+        }
+
         $disputes = Dispute::whereNull('resolved_at')
-            ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
+            ->where('month_year', $month)
             ->count();
 
-        if (0 !== $disputes) {
-            // @todo: should be Saras id here.
+        if (0 !== $disputes && isProductionEnv()) {
+            $sara = User::whereEmail('sheller@circlelinkhealth.com')->first();
 
-            $user = User::find(9521);
-            $user->notify(new ResolveDisputeReminder($disputes));
-        } else {
-            GenerateNurseMonthlyInvoiceCsv::dispatch($startOfMonth)
+            if ($sara) {
+                $sara->notify(new ResolveDisputeReminder($disputes));
+            }
+
+            //send invoices csv to accountant
+            //@todo:should i move this to a controller or sercice class?
+            GenerateNurseMonthlyInvoiceCsv::dispatch($month)
                 ->onQueue('high');
         }
     }

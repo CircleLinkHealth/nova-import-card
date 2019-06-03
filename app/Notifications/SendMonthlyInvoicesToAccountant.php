@@ -14,20 +14,26 @@ use Illuminate\Notifications\Notification;
 class SendMonthlyInvoicesToAccountant extends Notification
 {
     use Queueable;
+    /**
+     * @var mixed
+     */
+    public $csvInvoices;
 
+    /**
+     * @var Carbon
+     */
     public $date;
-    public $media;
 
     /**
      * Create a new notification instance.
      *
      * @param Carbon $date
-     * @param mixed  $media
+     * @param mixed  $csvInvoices
      */
-    public function __construct(Carbon $date, $media)
+    public function __construct(Carbon $date, $csvInvoices)
     {
-        $this->date  = $date;
-        $this->media = $media;
+        $this->date        = $date;
+        $this->csvInvoices = $csvInvoices;
     }
 
     /**
@@ -48,14 +54,15 @@ class SendMonthlyInvoicesToAccountant extends Notification
      *
      * @param mixed $notifiable
      *
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @return MailMessage
      */
     public function toMail($notifiable)
     {
         return (new MailMessage())
-            ->attachData($this->media->getFile(), "Nurse_Invoices_Csv_{$this->date->format('F Y')}.csv")
-            ->line('The introduction to the notification.')
-            ->line('Thank you for using our application!');
+            ->greeting('Hello,')
+            ->line("Please check attachment for: {$this->date->format('F Y')} Nurse Invoices")
+            ->attachData($this->csvInvoices->getFile(), "Nurse_Invoices_Csv_{$this->date->format('F Y')}.csv")
+            ->line('Thank you!');
     }
 
     /**
@@ -67,6 +74,6 @@ class SendMonthlyInvoicesToAccountant extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail', 'database'];
+        return ['mail'];
     }
 }
