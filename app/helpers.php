@@ -1481,25 +1481,3 @@ if ( ! function_exists('minutesToHhMm')) {
         return sprintf('%02d:%02d', $H, $i);
     }
 }
-
-if ( ! function_exists('minutesToHhMmSs')) {
-    /**
-     * @param $minutes
-     *
-     * @return string
-     */
-    function minutesToHhMmSs($minutes)
-    {
-        $H = $inHours = 0;
-
-        if ($minutes >= 60) {
-            $inHours = $minutes / 60;
-            $minutes = $minutes - ($inHours * 60);
-            $H       = floor($inHours);
-        }
-
-        $i = ceil($minutes % 60);
-
-        return sprintf('%02d:%02d', $H, $i);
-    }
-}
