@@ -24,9 +24,20 @@ class NurseInvoiceCsv implements FromCollection, Responsable, WithHeadings
      */
     protected $date;
 
+    /**
+     * @var
+     */
+    protected $filename;
+
+    /**
+     * NurseInvoiceCsv constructor.
+     *
+     * @param Carbon $date
+     */
     public function __construct(Carbon $date)
     {
         $this->date = $date;
+        $this->setFilename();
     }
 
     /**
@@ -40,7 +51,7 @@ class NurseInvoiceCsv implements FromCollection, Responsable, WithHeadings
 
         $invoicesData = collect();
         foreach ($invoices as $invoice) {
-            $invoicesData[$invoice->nurse->user->id] = [
+            $invoicesData[] = [
                 'name'         => $invoice->nurse->user->display_name,
                 'month'        => $this->date->format('F Y'),
                 'baseSalary'   => $invoice->invoice_data['formattedInvoiceTotalAmount'],
@@ -49,7 +60,15 @@ class NurseInvoiceCsv implements FromCollection, Responsable, WithHeadings
             ];
         }
 
-        return $this->row($invoicesData);
+        return $invoicesData;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFilename(): string
+    {
+        return $this->filename;
     }
 
     /**
@@ -67,15 +86,24 @@ class NurseInvoiceCsv implements FromCollection, Responsable, WithHeadings
     }
 
     /**
-     * Create an HTTP response that represents the object.
+     * @param string $filename
      *
-     * @param \Illuminate\Http\Request $request
-     *
-     * @return \Illuminate\Http\Response
+     * @return NurseInvoiceCsv
      */
-    public function toResponse($request)
+    public function setFilename(string $filename = null): NurseInvoiceCsv
     {
-        // TODO: Implement toResponse() method.
+        if ( ! $filename) {
+            $dateString = $this->date->format('F Y');
+            $filename   = 'Nurse_Invoices_Csv';
+
+            $this->filename = "{$filename}_{$dateString}.csv";
+
+            return $this;
+        }
+
+        $this->filename = $filename;
+
+        return $this;
     }
 
     /**
@@ -85,14 +113,16 @@ class NurseInvoiceCsv implements FromCollection, Responsable, WithHeadings
      */
     private function row($invoicesData): Collection
     {
-        return collect(
-            [
-                'Name'                 => $invoicesData[9521]['name'],
-                'Month/Year'           => $invoicesData[9521]['month'],
-                'Base Salary'          => $invoicesData[9521]['baseSalary'],
-                'Bonuses'              => $invoicesData[9521]['bonuses'],
-                'Total payable amount' => $invoicesData[9521]['totalPayable'],
-            ]
-        );
+        foreach ($invoicesData as $invoiceData) {
+            return collect(
+                [
+                    'Name'                 => $invoiceData['name'],
+                    'Month/Year'           => $invoiceData['month'],
+                    'Base Salary'          => $invoiceData['baseSalary'],
+                    'Bonuses'              => $invoiceData['bonuses'],
+                    'Total payable amount' => $invoiceData['totalPayable'],
+                ]
+            );
+        }
     }
 }

@@ -21,8 +21,8 @@ class SendMonthlyInvoicesToAccountant extends Notification
     /**
      * Create a new notification instance.
      *
-     * @param mixed $date
-     * @param mixed $media
+     * @param Carbon $date
+     * @param mixed  $media
      */
     public function __construct(Carbon $date, $media)
     {
@@ -53,7 +53,7 @@ class SendMonthlyInvoicesToAccountant extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage())
-            ->attach($this->media)
+            ->attachData($this->media, 'Nurse_Invoices_Csv_June 2019.csv') //will dynamic this
             ->line('The introduction to the notification.')
             ->action('Notification Action', url('/'))
             ->line('Thank you for using our application!');

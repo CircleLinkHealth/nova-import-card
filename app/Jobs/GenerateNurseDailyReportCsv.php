@@ -48,7 +48,7 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
     public function handle(NotificationService $notificationService)
     {
         $media = (new NurseDailyReport($this->date))->storeAndAttachMediaTo(SaasAccount::whereSlug('circlelink-health')->firstOrFail());
-        dd($media);
+
         $link = $media->getUrl();
 
         $notificationService->notifyAdmins(

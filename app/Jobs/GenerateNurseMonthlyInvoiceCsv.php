@@ -27,6 +27,8 @@ class GenerateNurseMonthlyInvoiceCsv implements ShouldQueue
 
     /**
      * Create a new job instance.
+     *
+     * @param Carbon $startOfMonth
      */
     public function __construct(Carbon $startOfMonth)
     {
@@ -39,8 +41,6 @@ class GenerateNurseMonthlyInvoiceCsv implements ShouldQueue
     public function handle()
     {
         $media = (new NurseInvoiceCsv($this->date))->collection();
-
-        //return (new NurseInvoiceCsv($this->date))->download('invoices', \Maatwebsite\Excel\Excel::CSV);
 
         $user = User::find(9521);
 
