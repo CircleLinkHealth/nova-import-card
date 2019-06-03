@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Text;
+use NovaButton\Button;
 
 class Dispute extends Resource
 {
@@ -42,6 +43,7 @@ class Dispute extends Resource
      * @var string
      */
     public static $title = 'id';
+    public static $with  = 'disputable';
 
     /**
      * Get the actions available for the resource.
@@ -114,6 +116,7 @@ class Dispute extends Resource
     {
         return [
             BelongsTo::make('Care Coach', 'user', CareCoachUser::class)->hideWhenUpdating()->readonly(),
+            Button::make('View Invoice')->link(route('nurseinvoices.show', [$this->disputable->nurse_info_id, $this->disputable->id]), '_blank')->style('info'),
             Text::make('reason')->hideWhenUpdating(),
             Boolean::make('Is Resolved?', 'is_resolved')->hideWhenUpdating(),
             Text::make('resolved_at')->hideWhenUpdating(),
