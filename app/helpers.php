@@ -1459,3 +1459,19 @@ if ( ! function_exists('incrementInvoiceNo')) {
         return $current;
     }
 }
+
+if ( ! function_exists('minutesToHhMm')) {
+    /**
+     * @param $minutes
+     *
+     * @return string
+     */
+    function minutesToHhMm($minutes)
+    {
+        $inHours = $minutes / 60;
+        $H       = floor($inHours);
+        $i       = floor($minutes - $inHours);
+
+        return sprintf('%02d:%02d', $H, $i);
+    }
+}
