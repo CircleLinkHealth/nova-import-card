@@ -6,29 +6,28 @@
 
 namespace App\Notifications;
 
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class ResolveDisputeReminder extends Notification
+class SendMonthlyInvoicesToAccountant extends Notification
 {
     use Queueable;
 
-    /**
-     * Count of invoices required to be resolved.
-     *
-     * @var
-     */
-    public $disputes;
+    public $date;
+    public $media;
 
     /**
      * Create a new notification instance.
      *
-     * @param $disputes
+     * @param Carbon $date
+     * @param mixed  $media
      */
-    public function __construct($disputes)
+    public function __construct(Carbon $date, $media)
     {
-        $this->disputes = $disputes;
+        $this->date  = $date;
+        $this->media = $media;
     }
 
     /**
@@ -54,11 +53,10 @@ class ResolveDisputeReminder extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage())
-            ->subject('Reminder - Resolve Dispute Invoices')
-            ->greeting('Hello,')
-            ->line("There are {$this->disputes} Invoices disputes that required to be resolved")
-            ->action('Resolve Disputes', url('superadmin/resources/disputes'))
-            ->line('Thank you!');
+            ->attachData($this->media, 'Nurse_Invoices_Csv_June 2019.csv') //will dynamic this
+            ->line('The introduction to the notification.')
+            ->action('Notification Action', url('/'))
+            ->line('Thank you for using our application!');
     }
 
     /**
@@ -70,6 +68,6 @@ class ResolveDisputeReminder extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 }
