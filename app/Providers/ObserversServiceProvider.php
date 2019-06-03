@@ -6,6 +6,7 @@
 
 namespace App\Providers;
 
+use App\AppConfig;
 use App\Call;
 use App\CarePlan;
 use App\CarePlanTemplate;
@@ -13,6 +14,7 @@ use App\EligibilityBatch;
 use App\Models\CCD\Medication;
 use App\Models\CCD\Problem;
 use App\Models\ProblemCode;
+use App\Observers\AppConfigObserver;
 use App\Observers\CallObserver;
 use App\Observers\CarePlanObserver;
 use App\Observers\CarePlanTemplateObserver;
@@ -47,6 +49,7 @@ class ObserversServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        AppConfig::observe(AppConfigObserver::class);
         CarePlan::observe(CarePlanObserver::class);
         CarePlanTemplate::observe(CarePlanTemplateObserver::class);
         EligibilityBatch::observe(EligibilityBatchObserver::class);

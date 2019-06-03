@@ -3,22 +3,40 @@
 @section('title', 'reviewInvoice')
 @section('activity', 'reviewInvoice')
 
+@push('scripts')
+    <script>
+        function startIntro() {
+            let intro = introJs();
+
+            intro.setOptions({
+                showProgress: true,
+                showBullets: false
+            }).onbeforechange(function () {
+                if (this._currentStep === 4) {
+                    let el = document.getElementById('toggle-invoice-dispute-form');
+
+                    if (el && el.innerText.includes('Show')) {
+                        el.click();
+
+                    }
+                }
+            });
+            intro.start();
+        }
+    </script>
+@endpush
+
 @section('content')
     <div class="container" style="padding-bottom: 10%;">
-        @if ($shouldShowDisputeForm)
-            <div class="row">
-                <div class="col-md-12">
-                    <h4 class="pull-right alert alert-warning">Invoices auto-approve unless disputed by
-                        the {{$disputeDeadline->format('jS')}} of the
-                        month at
-                        {{$disputeDeadline->format('h:iA T')}}.</h4>
-                </div>
+        @include('nurseinvoices::dispute-deadline-warning')
+
+        @if($invoice->id)
+            <div class="tutorial-button">
+                <a href="javascript:void(0);" onclick="startIntro();">
+                    <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+                </a>
             </div>
         @endif
-
-        <span class="pull-right"> <a href="javascript:void(0);"
-                                     onclick="javascript:introJs().setOption('showProgress', true).start();"><span
-                        class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a></span>
 
         <div class="row">
             <div class="col-md-12">
@@ -29,22 +47,13 @@
                 @else
                     <div data-step="1"
                          data-intro="This is your last month's invoice. It is generated monthly, on the first day of the month. You will receive an email as soon as it is created with a link to this page. You will have a few days to approve or dispute the invoice. Click 'Next' to find out more.">
-                    @include('nurseinvoices::invoice-v2')
+                        @include('nurseinvoices::invoice-v2')
                     </div>
                 @endempty
             </div>
         </div>
 
-        @if ($shouldShowDisputeForm)
-            <div class="row">
-                <div class="col-md-12">
-                    <h4 class="pull-right alert alert-warning">Invoices auto-approve unless disputed by
-                        the {{$disputeDeadline->format('jS')}} of the
-                        month at
-                        {{$disputeDeadline->format('h:iA T')}}.</h4>
-                </div>
-            </div>
-        @endif
+        @include('nurseinvoices::dispute-deadline-warning')
 
         <div class="row">
             <div class="col-md-12">
@@ -90,3 +99,14 @@
     <script type="text/javascript"
             src="https://circlelinkhealth.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/-t2ekke/b/11/a44af77267a987a660377e5c46e0fb64/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=721240a8"></script>
 @endsection
+
+@push('styles')
+    <style>
+        .tutorial-button {
+            font-size: 70px;
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+        }
+    </style>
+@endpush
