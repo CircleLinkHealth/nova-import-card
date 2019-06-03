@@ -114,11 +114,13 @@ class Dispute extends Resource
      */
     public function fields(Request $request)
     {
+        $disputable = optional($this->disputable);
+
         return [
             BelongsTo::make('Care Coach', 'user', CareCoachUser::class)->hideWhenUpdating()->readonly(),
-            Button::make('View Invoice')->link(route('nurseinvoices.show', [$this->disputable->nurse_info_id, $this->disputable->id]), '_blank')->style('info'),
-            Text::make('reason')->hideWhenUpdating(),
+            Button::make('View Invoice')->link(route('nurseinvoices.admin.show', [$disputable->nurse_info_id, $disputable->id]), '_blank')->style('info'),
             Boolean::make('Is Resolved?', 'is_resolved')->hideWhenUpdating(),
+            Text::make('reason')->hideWhenUpdating(),
             Text::make('resolved_at')->hideWhenUpdating(),
             Text::make('resolved_by')->hideWhenUpdating(),
         ];

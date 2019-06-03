@@ -7,9 +7,8 @@
 namespace CircleLinkHealth\NurseInvoices\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class ShowNurseInvoice extends FormRequest
+class AdminShowNurseInvoice extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -18,7 +17,7 @@ class ShowNurseInvoice extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return auth()->user()->isAdmin();
     }
 
     /**
@@ -29,12 +28,6 @@ class ShowNurseInvoice extends FormRequest
     public function rules()
     {
         return [
-            'invoice_id' => [
-                'required',
-                Rule::exists('nurse_invoices', 'id')->where(function ($query) {
-                    $query->where('nurse_info_id', auth()->user()->nurseInfo->id);
-                }),
-            ],
         ];
     }
 }

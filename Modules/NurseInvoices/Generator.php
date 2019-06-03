@@ -138,7 +138,7 @@ class Generator
         $link = $name.'.pdf';
 
         $pdfPath = $this->pdfService->createPdfFromView(
-            'nurseinvoices::invoice-v2',
+            'nurseinvoices::invoice-v3',
             $viewModel->toArray(),
             storage_path("download/${name}.pdf"),
             [
@@ -230,9 +230,9 @@ class Generator
                 empty($this->nurseUserIds),
                 function ($q) {
                     $q->whereHas(
-                               'pageTimersAsProvider',
-                               function ($s) {
-                                   $s->whereBetween(
+                        'pageTimersAsProvider',
+                        function ($s) {
+                            $s->whereBetween(
                                        'start_time',
                                        [
                                            $this->startDate->copy()->startOfDay(),
@@ -242,10 +242,10 @@ class Generator
                         }
                            )
                         ->whereHas(
-                                   'nurseInfo',
-                                   function ($s) {
-                                       $s->where('is_demo', false);
-                                   }
+                            'nurseInfo',
+                            function ($s) {
+                                $s->where('is_demo', false);
+                            }
                              );
                 }
                    );

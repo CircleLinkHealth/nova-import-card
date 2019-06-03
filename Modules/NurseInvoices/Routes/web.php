@@ -20,10 +20,15 @@ Route::prefix('nurseinvoices')->middleware(['auth'])->group(function () {
             'uses' => 'InvoiceReviewController@approveInvoice',
             'as'   => 'care.center.invoice.approve',
         ]);
+
+        Route::post('invoice', [
+            'uses' => 'InvoiceReviewController@show',
+            'as'   => 'nurseinvoices.show',
+        ]);
     });
 
-    Route::get('nurse/{nurse_info_id}/invoice/{invoice_id}', [
-        'uses' => 'InvoiceReviewController@show',
-        'as'   => 'nurseinvoices.show',
+    Route::get('nurse/{nurse_info_id}/invoice/{invoice_id?}', [
+        'uses' => 'InvoiceReviewController@adminShow',
+        'as'   => 'nurseinvoices.admin.show',
     ]);
 });
