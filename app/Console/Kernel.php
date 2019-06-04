@@ -210,11 +210,6 @@ class Kernel extends ConsoleKernel
             $currentDateTime = Carbon::now();
             $disputeStart = Carbon::now()->startOfMonth();
             $disputeEnd = $disputeStart->addDays(5);
-
-            //is this what we need? We changed many things in the process and im i bit confused.
-            //The description on ticket says after
-            //5th day of month every day. I beleive we changed that to this?
-
             if ($currentDateTime->gte($disputeStart)
                 && $currentDateTime->lte($disputeEnd)) {
                 return true;
