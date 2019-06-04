@@ -11,7 +11,6 @@ use App\Services\PdfService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
-use CircleLinkHealth\NurseInvoices\Notifications\InvoiceReviewInitialReminder;
 use CircleLinkHealth\NurseInvoices\ViewModels\Invoice;
 use Illuminate\Support\Collection;
 
@@ -112,7 +111,6 @@ class Generator
 
                         if ($this->storeInvoicesForNurseReview) {
                             $invoice = $this->saveInvoiceData($user->nurseInfo->id, $viewModel, $this->startDate);
-                            $this->notifyNurse($user);
                         } else {
                             $invoice = $this->createPdf($viewModel);
                             $this->forwardToCareCoach($viewModel, $invoice);
@@ -125,14 +123,6 @@ class Generator
         );
 
         return $invoices;
-    }
-
-    /**
-     * @param User $user
-     */
-    public function notifyNurse(User $user)
-    {
-        $user->notify((new InvoiceReviewInitialReminder($this->startDate))->delay(now()->addHours(8)));
     }
 
     /**
