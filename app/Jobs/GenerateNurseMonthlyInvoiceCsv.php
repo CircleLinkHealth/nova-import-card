@@ -67,10 +67,11 @@ class GenerateNurseMonthlyInvoiceCsv implements ShouldQueue
 
     public function sendCsvInvoicesTo($csvInvoices)
     {
+        $sendNotifAt  = Carbon::now()->addHour(7);
         $csvReceivers = $this->csvReceivers();
         foreach ($csvReceivers as $csvReceiver) {
             Notification::route('mail', $csvReceiver)
-                ->notify(new SendMonthlyInvoicesToAccountant($this->date, $csvInvoices));
+                ->notify((new SendMonthlyInvoicesToAccountant($this->date, $csvInvoices))->delay($sendNotifAt));
         }
     }
 }

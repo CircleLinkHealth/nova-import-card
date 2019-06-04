@@ -9,6 +9,7 @@ namespace CircleLinkHealth\NurseInvoices\Console\Commands;
 use App\AppConfig;
 use App\Jobs\GenerateNurseMonthlyInvoiceCsv;
 use App\Notifications\ResolveDisputeReminder;
+use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\Traits\DryRunnable;
 use CircleLinkHealth\NurseInvoices\Traits\TakesMonthAndUsersAsInputArguments;
@@ -74,11 +75,12 @@ class SendResolveInvoiceDisputeReminder extends Command
 
     public function sendNotificationsTo($disputesCount)
     {
+        $sendNotifAt       = Carbon::now()->addHour(7);
         $emailsToSendNotif = $this->emailsToSendNotif();
 
         foreach ($emailsToSendNotif as $email) {
             Notification::route('mail', $email)
-                ->notify(new ResolveDisputeReminder($disputesCount));
+                ->notify((new ResolveDisputeReminder($disputesCount))->delay($sendNotifAt));
         }
     }
 
