@@ -11,6 +11,7 @@ use App\Services\PdfService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
+use CircleLinkHealth\NurseInvoices\Notifications\InvoiceReviewInitialReminder;
 use CircleLinkHealth\NurseInvoices\ViewModels\Invoice;
 use Illuminate\Support\Collection;
 
@@ -111,6 +112,7 @@ class Generator
 
                         if ($this->storeInvoicesForNurseReview) {
                             $invoice = $this->saveInvoiceData($user->nurseInfo->id, $viewModel, $this->startDate);
+                            $this->notifyNurse($user);
                         } else {
                             $invoice = $this->createPdf($viewModel);
                             $this->forwardToCareCoach($viewModel, $invoice);
@@ -123,6 +125,14 @@ class Generator
         );
 
         return $invoices;
+    }
+
+    /**
+     * @param User $user
+     */
+    public function notifyNurse(User $user)
+    {
+        $user->notify((new InvoiceReviewInitialReminder($this->startDate))->delay(now()->addHours(8)));
     }
 
     /**
@@ -147,9 +157,8 @@ class Generator
                 'margin-bottom' => '6',
                 'margin-right'  => '6',
                 'footer-right'  => 'Page [page] of [toPage]',
-                'footer-left'   => 'report generated on '.Carbon::now()->format('m-d-Y').' at '.Carbon::now(
-                    )->format(
-                        'H:iA'
+                'footer-left'   => 'report generated on '.Carbon::now()->format('m-d-Y').' at '.Carbon::now()->format(
+                    'H:iA'
                     ),
                 'footer-font-size' => '6',
             ]
@@ -218,14 +227,14 @@ class Generator
                     },
                     'nurseInfo',
                 ]
-                   )
+            )
             ->has('nurseInfo')
             ->when(
                 is_array($this->nurseUserIds) && ! empty($this->nurseUserIds),
                 function ($q) {
                     $q->whereIn('id', $this->nurseUserIds);
                 }
-                   )
+            )
             ->when(
                 empty($this->nurseUserIds),
                 function ($q) {
@@ -233,14 +242,14 @@ class Generator
                         'pageTimersAsProvider',
                         function ($s) {
                             $s->whereBetween(
-                                       'start_time',
-                                       [
-                                           $this->startDate->copy()->startOfDay(),
-                                           $this->endDate->copy()->endOfDay(),
-                                       ]
+                                'start_time',
+                                [
+                                    $this->startDate->copy()->startOfDay(),
+                                    $this->endDate->copy()->endOfDay(),
+                                ]
                                    );
                         }
-                           )
+                    )
                         ->whereHas(
                             'nurseInfo',
                             function ($s) {
@@ -248,7 +257,7 @@ class Generator
                             }
                              );
                 }
-                   );
+            );
     }
 
     /**

@@ -6,15 +6,19 @@
 
 namespace CircleLinkHealth\NurseInvoices\Console\Commands;
 
+use App\AppConfig;
 use App\Jobs\GenerateNurseMonthlyInvoiceCsv;
 use App\Notifications\ResolveDisputeReminder;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Entities\Dispute;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Notification;
 
 class SendResolveInvoiceDisputeReminder extends Command
 {
+    const NURSE_DISPUTES_MANAGER = 'nurse_invoice_dispute_manager';
+
     /**
      * The console command description.
      *
@@ -26,7 +30,7 @@ class SendResolveInvoiceDisputeReminder extends Command
      *
      * @var string
      */
-    protected $signature = 'nurseinvoice:resolveDispute';
+    protected $signature = 'nurseinvoice:resolveDispute {month? : Invoices for month for in YYYY-MM format. Defaults to previous month.}';
 
     /**
      * Create a new command instance.
@@ -43,21 +47,39 @@ class SendResolveInvoiceDisputeReminder extends Command
      */
     public function handle()
     {
-        $startOfMonth = Carbon::now()->startOfMonth();
-        $endOfMonth   = $startOfMonth->copy()->endOfMonth();
-        //@todo:ask Michalis ..
+        $month = $this->argument('month') ?? null;
+
+        if ($month) {
+            $month = Carbon::createFromFormat('Y-m', $month)->startOfMonth();
+        } else {
+            $month = Carbon::now()->subMonth()->startOfMonth();
+        }
+
         $disputes = Dispute::whereNull('resolved_at')
-            ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
+            ->where('month_year', $month)
             ->count();
 
-        if (0 !== $disputes) {
-            // @todo: should be Saras id here.
+        if (0 !== $disputes && isProductionEnv()) {
+            $usersToSendEmail = $this->usersToSendEmail();
 
-            $user = User::find(9521);
-            $user->notify(new ResolveDisputeReminder($disputes));
-        } else {
-            GenerateNurseMonthlyInvoiceCsv::dispatch($startOfMonth)
-                ->onQueue('high');
+            Notification::send($usersToSendEmail, new ResolveDisputeReminder($disputes));
         }
+        //@todo:should i move this to a controller or sercice class?
+        GenerateNurseMonthlyInvoiceCsv::dispatch($month)
+            ->onQueue('high');
+    }
+
+    public function usersToSendEmail()
+    {
+        $getEmails = [];
+
+        AppConfig::where('config_key', '=', self::NURSE_DISPUTES_MANAGER)
+            ->select('config_value')->chunk(20, function ($emails) use (&$getEmails) {
+                foreach ($emails as $email) {
+                    $getEmails[] = $email->config_value;
+                }
+            });
+
+        return User::whereIn('email', $getEmails)->get();
     }
 }
