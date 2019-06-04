@@ -1478,6 +1478,12 @@ if ( ! function_exists('minutesToHhMm')) {
 
         $i = round($minutes);
 
+        //If 59 minutes rounds up to 60 we wnat to add an hour
+        if (60 == $i) {
+            $i = 0;
+            ++$H;
+        }
+
         return sprintf('%02d:%02d', $H, $i);
     }
 }
