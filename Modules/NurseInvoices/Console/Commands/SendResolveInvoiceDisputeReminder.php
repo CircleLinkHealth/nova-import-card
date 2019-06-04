@@ -11,7 +11,7 @@ use App\Jobs\GenerateNurseMonthlyInvoiceCsv;
 use App\Notifications\ResolveDisputeReminder;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\NurseInvoices\Entities\Dispute;
+use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Notification;
 
@@ -55,18 +55,24 @@ class SendResolveInvoiceDisputeReminder extends Command
             $month = Carbon::now()->subMonth()->startOfMonth();
         }
 
-        $disputes = Dispute::whereNull('resolved_at')
-            ->where('month_year', $month)
+        $this->info('Run command for month: '.$month->toDateString());
+
+        $disputesCount = NurseInvoice::where('month_year', $month)
+            ->whereHas('dispute', function ($q) use ($month) {
+                $q->whereNull('resolved_at');
+            })
             ->count();
 
-        if (0 !== $disputes && isProductionEnv()) {
+        if (0 !== $disputesCount && isProductionEnv()) {
             $usersToSendEmail = $this->usersToSendEmail();
 
-            Notification::send($usersToSendEmail, new ResolveDisputeReminder($disputes));
+            Notification::send($usersToSendEmail, new ResolveDisputeReminder($disputesCount));
         }
         //@todo:should i move this to a controller or sercice class?
         GenerateNurseMonthlyInvoiceCsv::dispatch($month)
             ->onQueue('high');
+
+        $this->info('Command finished');
     }
 
     public function usersToSendEmail()
@@ -77,6 +83,7 @@ class SendResolveInvoiceDisputeReminder extends Command
             ->select('config_value')->chunk(20, function ($emails) use (&$getEmails) {
                 foreach ($emails as $email) {
                     $getEmails[] = $email->config_value;
+                    $this->info('Will email'.$email->config_value);
                 }
             });
 
