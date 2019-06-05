@@ -210,7 +210,10 @@ class Kernel extends ConsoleKernel
         $schedule->command(SendResolveInvoiceDisputeReminder::class)->dailyAt('02:00')
             ->skip(function () use ($lastDayToResolveDisputesAt) {
                 $today = Carbon::now();
-                $disputeStartDate = $lastDayToResolveDisputesAt->startOfMonth();
+                $disputeStartDate = $lastDayToResolveDisputesAt
+                    ->startOfMonth()
+                    ->startOfDay()
+                    ->addMinutes(515); //that's 08:35
                 $disputeEndDate = $lastDayToResolveDisputesAt;
 
                 if ($today->gte($disputeStartDate)

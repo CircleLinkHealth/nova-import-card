@@ -75,7 +75,7 @@ class SendResolveInvoiceDisputeReminder extends Command
 
     public function sendNotificationsTo($disputesCount)
     {
-        $sendNotifAt       = Carbon::now()->addHour(7);
+        $sendNotifAt       = Carbon::now()->addHours(7);
         $emailsToSendNotif = $this->emailsToSendNotif();
 
         foreach ($emailsToSendNotif as $email) {
