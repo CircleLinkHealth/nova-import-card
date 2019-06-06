@@ -148,24 +148,24 @@
                                             sort: 'string'
                                         },
                                         {
-                                            id: "comment",
-                                            header: ["Preview"],
+                                            id: "summary",
+                                            header: ["Summary"],
                                             template: function (obj) {
-                                                if (obj.logged_from == "note" || obj.logged_from == "note_task")
+                                                if (obj.logged_from === "note" || obj.logged_from === "note_task")
                                                     return "<a href='<?php echo route('patient.note.view', [
                                                         'patientId' => $patient->id,
                                                         'noteId'    => '',
-                                                    ]); ?>/" + obj.id + "' title='" + obj.comment + "'>" + obj.comment + "</a>";
-                                                else if (obj.logged_from == "manual_input" || obj.logged_from == "activity") {
+                                                    ]); ?>/" + obj.id + "' title='" + obj.summary + "'>" + obj.summary + "</a>";
+                                                else if (obj.logged_from === "manual_input" || obj.logged_from === "activity") {
                                                     return "<a href='<?php echo route('patient.activity.view', [
                                                         'patientId' => $patient->id,
                                                         'actId'     => '',
-                                                    ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
-                                                } else if (obj.logged_from == "appointment") {
+                                                    ]); ?>/" + obj.id + "'>" + obj.summary + "</a>"
+                                                } else if (obj.logged_from === "appointment") {
                                                     return "<a href='<?php echo route('patient.appointment.view', [
                                                         'patientId'     => $patient->id,
                                                         'appointmentId' => '',
-                                                    ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
+                                                    ]); ?>/" + obj.id + "'>" + obj.summary + "</a>"
                                                 } else
                                                     return obj.type_name;
                                             },
@@ -276,7 +276,7 @@
                                                columns:{
                                                'performed_at':       { header:'Date/Time', width: 200, template: webix.template('#performed_at#') },
                                                'logger_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#logger_name#')},
-                                               'comment':             { header:'Note Contents',    width:200, sort:'string', template: webix.template('#comment#')}
+                                               'summary':             { header:'Note Summary',    width:200, sort:'string', template: webix.template('#summary#')}
 
                                                }});">
 
@@ -291,7 +291,7 @@
                                                columns:{
                                                'performed_at':       { header:'Date/Time', width: 110, template: webix.template('#performed_at#') },
                                                'logger_name':             { header:'Author Name',    width:75, sort:'string', template: webix.template('#logger_name#')},
-                                               'comment':             { header:'Note Contents',    width:400, sort:'string', template: webix.template('#comment#')}
+                                               'summary':             { header:'Note Summary',    width:400, sort:'string', template: webix.template('#summary#')}
 
                                                }});">
                             @endif

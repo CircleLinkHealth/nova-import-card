@@ -39,11 +39,12 @@ class WebixFormatter implements ReportFormatter
         $billingProvider = $patient->getBillingProviderName();
 
         $notes = $patient->notes->sortByDesc('id')->map(
-            function ($note) use ($patient, $billingProvider) {
+            function (Note $note) use ($patient, $billingProvider) {
                 $result = [
                     'id'               => $note->id,
                     'logger_id'        => $note->author_id,
                     'logger_name'      => $note->author->getFullName(),
+                    'summary'          => $note->summary,
                     'comment'          => $note->body,
                     'logged_from'      => 'note',
                     'type_name'        => $note->type,

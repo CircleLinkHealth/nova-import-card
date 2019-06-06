@@ -37,7 +37,8 @@
                 {!! Form::open(array('url' => route('patient.note.listing'), 'method' => 'GET', 'class' => 'form-horizontal', 'style' => 'margin-right: 10px')) !!}
                 <div style="clear:both"></div>
                 <ul class="person-conditions-list inline-block pull-left">
-                    <li class="inline-block col-lg-push-0 col-xs-push-3"><input type="checkbox" id="mail_filter" name="mail_filter" value="true"
+                    <li class="inline-block col-lg-push-0 col-xs-push-3"><input type="checkbox" id="mail_filter"
+                                                                                name="mail_filter" value="true"
                         @if(isset($input['mail_filter']))
                             {{'checked'}}
                                 @endif>
@@ -76,7 +77,8 @@
                         <button type="submit" id="find" class="btn btn-primary">Go</button>
                         <br>
                         <div style="padding-top: 10px">
-                            <select name="getNotesFor[]" id="getNotesFor" data-placeholder="Select Practice or Provider" multiple="" class="provider-select" data-width="200px"
+                            <select name="getNotesFor[]" id="getNotesFor" data-placeholder="Select Practice or Provider"
+                                    multiple="" class="provider-select" data-width="200px"
                                     data-size="10" style="display: none;" @if(! auth()->user()->isAdmin()  &&
                                                           ! auth()->user()->isCareCoach())
                                     required
@@ -84,15 +86,17 @@
                                 <optgroup label="All Providers at Practice">
                                     @foreach($practices as $key => $value)
 
-                                        <option value="practice:{{$key}}" @if(isset($input['getNotesFor']) && in_array("practice:{$key}", $input['getNotesFor']))
-                                        selected  @endif>{{$value}}</option>
+                                        <option value="practice:{{$key}}"
+                                                @if(isset($input['getNotesFor']) && in_array("practice:{$key}", $input['getNotesFor']))
+                                                selected @endif>{{$value}}</option>
 
                                     @endforeach
                                 </optgroup>
                                 <optgroup label="Provider">
                                     @foreach($providers as $key => $value)
-                                            <option value="provider:{{$key}}"  @if(isset($input['getNotesFor']) && in_array("provider:{$key}", $input['getNotesFor']))
-                                                    selected @endif>{{$value}}</option>
+                                        <option value="provider:{{$key}}"
+                                                @if(isset($input['getNotesFor']) && in_array("provider:{$key}", $input['getNotesFor']))
+                                                selected @endif>{{$value}}</option>
 
                                     @endforeach
                                 </optgroup>
@@ -215,6 +219,18 @@
                                                 sort: 'string'
                                             },
                                             {
+                                                id: "summary",
+                                                header: ["Summary", {content: "textFilter", placeholder: "Filter"}],
+                                                width: 250,
+                                                sort: 'string',
+                                                tooltip: ['#summary#'],
+                                                fillspace: true,
+                                                template: "<a href='<?php echo route('patient.note.view', [
+                                                    'patient' => '#patient_id#',
+                                                    'noteId'  => '#id#',
+                                                ]); ?>'>#summary#</a>"
+                                            },
+                                            {
                                                 id: "comment",
                                                 header: ["Preview", {content: "textFilter", placeholder: "Filter"}],
                                                 width: 250,
@@ -242,7 +258,7 @@
 
                                         ready: function () {
                                             this.adjustRowHeight("tags");
-                                            
+
                                             //CPM-725: Maximum Call Stack Size exceeded error on low-end machines
                                             this.config.autoheight = false;
                                         },
@@ -259,6 +275,7 @@
                                     });
 
 
+                                    obs_alerts_dtable.hideColumn("comment");
                                     obs_alerts_dtable.hideColumn("program_name");
 
                                     webix.event(window, "resize", function () {
@@ -315,6 +332,7 @@
                                                        columns:{
                                                        'patient_name':       { header:'Patient Name', width: 200, template: webix.template('#patient_name#') },
                                                        'author_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#author_name#')},
+                                                       'summary':             { header:'Summary',    width:200, sort:'string', template: webix.template('#summary#')},
                                                        'comment':             { header:'Preview',    width:200, sort:'string', template: webix.template('#comment#')},
                                                        'type':             { header:'Type',    width:200, sort:'string', template: webix.template('#type#')},
                                                        'date':             { header:'Performed',    width:200, sort:'string', template: webix.template('#date#')},
@@ -329,6 +347,7 @@
                                                        columns:{
                                                        'patient_name':       { header:'Patient Name', width: 200, template: webix.template('#patient_name#') },
                                                        'author_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#author_name#')},
+                                                       'summary':             { header:'Summary',    width:200, sort:'string', template: webix.template('#summary#')},
                                                        'comment':             { header:'Preview',    width:200, sort:'string', template: webix.template('#comment#')},
                                                        'type':             { header:'Type',    width:200, sort:'string', template: webix.template('#type#')},
                                                        'date':             { header:'Performed',    width:200, sort:'string', template: webix.template('#date#')},
