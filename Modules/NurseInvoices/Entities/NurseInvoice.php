@@ -15,9 +15,10 @@ use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\NurseInvoices\Traits\Disputable;
 use CircleLinkHealth\NurseInvoices\Traits\Nursable;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
-class NurseInvoice extends Model implements Pdfable
+class NurseInvoice extends Model implements HasMedia, Pdfable
 {
     use Disputable;
     use HasMediaTrait;

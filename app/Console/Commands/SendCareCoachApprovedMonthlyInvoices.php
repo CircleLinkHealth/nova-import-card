@@ -8,6 +8,7 @@ namespace App\Console\Commands;
 
 use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
+use CircleLinkHealth\NurseInvoices\Notifications\InvoiceBeforePayment;
 use CircleLinkHealth\NurseInvoices\Traits\DryRunnable;
 use CircleLinkHealth\NurseInvoices\Traits\TakesMonthAndUsersAsInputArguments;
 use Illuminate\Console\Command;
@@ -82,11 +83,14 @@ class SendCareCoachApprovedMonthlyInvoices extends Command
 
         $this->invoices()->chunk(20, function ($invoices) use ($sent) {
             foreach ($invoices as $invoice) {
-                $this->warn("Preparing and sending for: {$invoice->nurseInfo->user->getFullNameWithId()}");
+                $user = $invoice->nurseInfo->user;
+
+                $this->warn("Preparing and sending for: {$user->getFullNameWithId()}");
 
                 if ( ! $this->isDryRun()) {
                     $media = $invoice->toPdfAndStoreAsMedia();
-                    $sent->push($invoice->nurseInfo->user);
+                    $user->notify(new InvoiceBeforePayment($invoice, $media));
+                    $sent->push($user);
                 }
 
                 $this->warn("Sent invoice to: {$invoice->nurseInfo->user->getFullNameWithId()}");
