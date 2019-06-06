@@ -6,15 +6,22 @@
 
 namespace CircleLinkHealth\NurseInvoices\Entities;
 
+use App\AppConfig;
+use App\Contracts\Pdfable;
+use App\Services\PdfService;
 use App\Traits\NotificationAttachable;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\NurseInvoices\Traits\Disputable;
 use CircleLinkHealth\NurseInvoices\Traits\Nursable;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia\HasMedia;
+use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
-class NurseInvoice extends Model
+class NurseInvoice extends Model implements HasMedia, Pdfable
 {
     use Disputable;
+    use HasMediaTrait;
     use NotificationAttachable;
     use Nursable;
 
@@ -62,5 +69,51 @@ class NurseInvoice extends Model
     public function scopeUndisputed($builder)
     {
         return $builder->doesntHave('dispute');
+    }
+
+    /**
+     * Create a PDF of this resource and return the path to it.
+     *
+     * @param mixed|null $scale
+     *
+     * @return string
+     */
+    public function toPdf($scale = null): string
+    {
+        $invoiceData = $this->invoice_data ?? [];
+
+        if ( ! $invoiceData) {
+            return null;
+        }
+
+        $name = trim($invoiceData['nurseFullName']).'-'.Carbon::now()->toDateString();
+        $link = $name.'.pdf';
+
+        return app(PdfService::class)->createPdfFromView(
+            'nurseinvoices::invoice-'.AppConfig::pull('invoice_view_version', 'v2'),
+            $invoiceData,
+            storage_path("download/${name}.pdf"),
+            [
+                'margin-top'    => '6',
+                'margin-left'   => '6',
+                'margin-bottom' => '6',
+                'margin-right'  => '6',
+                'footer-right'  => 'Page [page] of [toPage]',
+                'footer-left'   => 'report generated on '.Carbon::now()->format('m-d-Y').' at '.Carbon::now()->format(
+                    'H:iA'
+                    ),
+                'footer-font-size' => '6',
+            ]
+        );
+    }
+
+    /**
+     * @return \Spatie\MediaLibrary\Models\Media
+     */
+    public function toPdfAndStoreAsMedia()
+    {
+        return $this->addMedia($this->toPdf())->toMediaCollection(
+            "monthly_invoice_{$this->month_year->year}_{$this->month_year->month}"
+        );
     }
 }
