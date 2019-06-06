@@ -8,6 +8,7 @@ namespace CircleLinkHealth\NurseInvoices\Entities;
 
 use App\AppConfig;
 use App\Contracts\Pdfable;
+use App\Services\PdfService;
 use App\Traits\NotificationAttachable;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Nurse;
@@ -87,7 +88,7 @@ class NurseInvoice extends Model implements Pdfable
         $name = trim($invoiceData['nurseFullName']).'-'.Carbon::now()->toDateString();
         $link = $name.'.pdf';
 
-        return $this->pdfService->createPdfFromView(
+        return app(PdfService::class)->createPdfFromView(
             'nurseinvoices::invoice-'.AppConfig::pull('invoice_view_version', 'v2'),
             $invoiceData,
             storage_path("download/${name}.pdf"),
