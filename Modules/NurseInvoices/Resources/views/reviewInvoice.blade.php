@@ -70,7 +70,7 @@
                 @else
                     <div data-step="1"
                          data-intro="This is your last month's invoice. It is generated monthly, on the first day of the month. You will receive an email as soon as it is created with a link to this page. You will have a few days to approve or dispute the invoice. Click 'Next' to find out more.">
-                        @include('nurseinvoices::invoice-v3')
+                        @include('nurseinvoices::invoice-'.AppConfig::pull('invoice_view_version', 'v2'))
                     </div>
                 @endempty
             </div>

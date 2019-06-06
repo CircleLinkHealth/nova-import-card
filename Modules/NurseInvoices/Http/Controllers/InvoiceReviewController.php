@@ -134,7 +134,7 @@ class InvoiceReviewController extends Controller
         );
 
         if ('web' === $request->input('view')) {
-            return view('nurseinvoices::invoice-v3', array_merge($args, ['isPdf' => true]));
+            return view('nurseinvoices::invoice-'.AppConfig::pull('invoice_view_version', 'v2'), array_merge($args, ['isPdf' => true]));
         }
 
         return view(
