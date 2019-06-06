@@ -239,7 +239,7 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
         //
         //NOTE: Not sure about this. What if we introduce a static function that performs this query once?
         //
-        $companyHolidays = CompanyHoliday::where('date', '>=', Carbon::now()->format('Y-m-d'))
+        $companyHolidays = CompanyHoliday::where('holiday_date', '>=', Carbon::now()->format('Y-m-d'))
                                          ->get()
                                          ->map(function (CompanyHoliday $h) {
                                              $nurseHoliday                = new Holiday();
