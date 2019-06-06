@@ -11,7 +11,6 @@ use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\Traits\DryRunnable;
 use CircleLinkHealth\NurseInvoices\Traits\TakesMonthAndUsersAsInputArguments;
 use Illuminate\Console\Command;
-use Symfony\Component\Console\Input\InputOption;
 
 class SendCareCoachApprovedMonthlyInvoices extends Command
 {
@@ -70,16 +69,6 @@ class SendCareCoachApprovedMonthlyInvoices extends Command
         }
 
         $this->info('All done!');
-    }
-
-    /**
-     * @return array
-     */
-    protected function getOptions()
-    {
-        return array_merge($this->traitGetOptions(), [
-            ['variable-time', 'a', InputOption::VALUE_NONE, 'Use Variable Time pay algorithm. Defaults to false.', null],
-        ]);
     }
 
     /**
