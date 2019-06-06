@@ -572,7 +572,7 @@ class NotesController extends Controller
                             null
                         );
 
-                        $this->patientRepo->updateCallLogs($patient->patientInfo, true, $note->performed_at);
+                        $this->patientRepo->updateCallLogs($patient->patientInfo, true, false, $note->performed_at);
 
                         $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s');
                         $info->save();
