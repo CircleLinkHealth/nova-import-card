@@ -11,7 +11,6 @@ use App\Exports\NurseInvoiceCsv;
 use App\Notifications\SendMonthlyInvoicesToAccountant;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
-use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -42,6 +41,19 @@ class GenerateNurseMonthlyInvoiceCsv implements ShouldQueue
         $this->date = $month;
     }
 
+    public function csvReceivers()
+    {
+        $getEmails = [];
+        AppConfig::where('config_key', '=', self::RECEIVES_NURSE_INVOICES_CSV)
+            ->select('config_value')->chunk(20, function ($emails) use (&$getEmails) {
+                foreach ($emails as $email) {
+                    $getEmails[] = $email->config_value;
+                }
+            });
+
+        return $getEmails;
+    }
+
     /**
      * Execute the job.
      */
@@ -50,21 +62,16 @@ class GenerateNurseMonthlyInvoiceCsv implements ShouldQueue
         $csvInvoices = (new NurseInvoiceCsv($this->date))
             ->storeAndAttachMediaTo(SaasAccount::whereSlug('circlelink-health')->firstOrFail());
 
-        $usersToSendCsv = $this->usersToSendCsv();
-
-        Notification::send($usersToSendCsv, new SendMonthlyInvoicesToAccountant($this->date, $csvInvoices));
+        $this->sendCsvInvoicesTo($csvInvoices);
     }
 
-    public function usersToSendCsv()
-    {//i want to export this and use it in "SendResolveInvoiceDisputeReminder" also by changing the "config_key" to search
-        $getEmails = [];
-        AppConfig::where('config_key', '=', self::RECEIVES_NURSE_INVOICES_CSV)
-            ->select('config_value')->chunk(20, function ($emails) use (&$getEmails) {
-                foreach ($emails as $email) {
-                    $getEmails[] = $email->config_value;
-                }
-            });
-        //will this query slow things down?
-        return User::whereIn('email', $getEmails)->get();
+    public function sendCsvInvoicesTo($csvInvoices)
+    {
+        $sendNotifAt  = Carbon::now()->addHours(7);
+        $csvReceivers = $this->csvReceivers();
+        foreach ($csvReceivers as $csvReceiver) {
+            Notification::route('mail', $csvReceiver)
+                ->notify((new SendMonthlyInvoicesToAccountant($this->date, $csvInvoices))->delay($sendNotifAt));
+        }
     }
 }
