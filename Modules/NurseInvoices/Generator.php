@@ -111,65 +111,14 @@ class Generator
 
                         if ($this->storeInvoicesForNurseReview) {
                             $invoice = $this->saveInvoiceData($user->nurseInfo->id, $viewModel, $this->startDate);
-                        } else {
-                            $invoice = $this->createPdf($viewModel);
-                            $this->forwardToCareCoach($viewModel, $invoice);
+                            $invoices->push($invoice);
                         }
-
-                        $invoices->push($invoice);
                     }
                 );
             }
         );
 
         return $invoices;
-    }
-
-    /**
-     * @param Invoice $viewModel
-     *
-     * @throws \Exception
-     *
-     * @return array
-     */
-    private function createPdf(Invoice $viewModel)
-    {
-        $name = trim($viewModel->nurseFullName).'-'.Carbon::now()->toDateString();
-        $link = $name.'.pdf';
-
-        $pdfPath = $this->pdfService->createPdfFromView(
-            'nurseinvoices::invoice-v2',
-            $viewModel->toArray(),
-            storage_path("download/${name}.pdf"),
-            [
-                'margin-top'    => '6',
-                'margin-left'   => '6',
-                'margin-bottom' => '6',
-                'margin-right'  => '6',
-                'footer-right'  => 'Page [page] of [toPage]',
-                'footer-left'   => 'report generated on '.Carbon::now()->format('m-d-Y').' at '.Carbon::now(
-                    )->format(
-                        'H:iA'
-                    ),
-                'footer-font-size' => '6',
-            ]
-        );
-
-        return
-            [
-                'pdf_path'      => $pdfPath,
-                'nurse_user_id' => $viewModel->user()->id,
-                'name'          => $viewModel->user()->getFullName(),
-                'email'         => $viewModel->user()->email,
-                'link'          => $link,
-                'date_start'    => presentDate($this->startDate),
-                'date_end'      => presentDate($this->endDate),
-                'email_body'    => [
-                    'name'       => $viewModel->user()->getFullName(),
-                    'total_time' => $viewModel->systemTimeInHours(),
-                    'payout'     => $viewModel->invoiceTotalAmount(),
-                ],
-            ];
     }
 
     /**
@@ -218,37 +167,37 @@ class Generator
                     },
                     'nurseInfo',
                 ]
-                   )
+            )
             ->has('nurseInfo')
             ->when(
                 is_array($this->nurseUserIds) && ! empty($this->nurseUserIds),
                 function ($q) {
                     $q->whereIn('id', $this->nurseUserIds);
                 }
-                   )
+            )
             ->when(
                 empty($this->nurseUserIds),
                 function ($q) {
                     $q->whereHas(
-                               'pageTimersAsProvider',
-                               function ($s) {
-                                   $s->whereBetween(
-                                       'start_time',
-                                       [
-                                           $this->startDate->copy()->startOfDay(),
-                                           $this->endDate->copy()->endOfDay(),
-                                       ]
+                        'pageTimersAsProvider',
+                        function ($s) {
+                            $s->whereBetween(
+                                'start_time',
+                                [
+                                    $this->startDate->copy()->startOfDay(),
+                                    $this->endDate->copy()->endOfDay(),
+                                ]
                                    );
-                               }
-                           )
+                        }
+                    )
                         ->whereHas(
-                                   'nurseInfo',
-                                   function ($s) {
-                                       $s->where('is_demo', false);
-                                   }
+                            'nurseInfo',
+                            function ($s) {
+                                $s->where('is_demo', false);
+                            }
                              );
                 }
-                   );
+            );
     }
 
     /**

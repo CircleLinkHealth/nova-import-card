@@ -134,6 +134,13 @@ class Kernel extends ConsoleKernel
         $schedule->command(AttachBillableProblemsToLastMonthSummary::class)
             ->cron('30 0 1 * *');
 
+//        $schedule->command(
+//            SendCareCoachInvoices::class,
+//            [
+//                '--variable-time' => true,
+//            ]
+//        )->monthlyOn(1, '5:0');
+
 //        $schedule->command('lgh:importInsurance')
 //            ->dailyAt('05:00');
 
@@ -199,18 +206,21 @@ class Kernel extends ConsoleKernel
         $sendReminderAt = NurseInvoiceDisputeDeadline::for(Carbon::now()->subMonth())->subHours(36);
         $schedule->command(SendMonthlyNurseInvoiceLAN::class)->monthlyOn($sendReminderAt->day, $sendReminderAt->format('H:i'));
 
-        //@todo: Antonis finishes this command
-//        $schedule->command(SendResolveInvoiceDisputeReminder::class)->dailyAt('02:00')->skip(function () {
-//            $currentDateTime = Carbon::now();
-//            $disputeStart = Carbon::now()->startOfMonth();
-//            $disputeEnd = $disputeStart->addDays(5);
-//
-//            if ($currentDateTime->gte($disputeStart)
-//                && $currentDateTime->lte($disputeEnd)) {
-//                return true;
-//            }
-//        });
+        $lastDayToResolveDisputesAt = NurseInvoiceDisputeDeadline::for(Carbon::now()->subMonth())->addDays(2);
+        $schedule->command(SendResolveInvoiceDisputeReminder::class)->dailyAt('02:00')
+            ->skip(function () use ($lastDayToResolveDisputesAt) {
+                $today = Carbon::now();
+                $disputeStartDate = $lastDayToResolveDisputesAt
+                    ->startOfMonth()
+                    ->startOfDay()
+                    ->addMinutes(515); //that's 08:35
+                $disputeEndDate = $lastDayToResolveDisputesAt;
 
+                if ($today->gte($disputeStartDate)
+                && $today->lte($disputeEndDate)) {
+                    return true;
+                }
+            });
         //        $schedule->command(SendCareCoachApprovedMonthlyInvoices::class)->dailyAt('8:30');
     }
 }

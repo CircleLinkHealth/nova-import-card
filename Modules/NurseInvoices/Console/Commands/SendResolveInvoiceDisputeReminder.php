@@ -6,15 +6,23 @@
 
 namespace CircleLinkHealth\NurseInvoices\Console\Commands;
 
-use App\Exports\GenerateNurseInvoiceCsv;
+use App\AppConfig;
+use App\Jobs\GenerateNurseMonthlyInvoiceCsv;
 use App\Notifications\ResolveDisputeReminder;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\NurseInvoices\Entities\Dispute;
+use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
+use CircleLinkHealth\NurseInvoices\Traits\DryRunnable;
+use CircleLinkHealth\NurseInvoices\Traits\TakesMonthAndUsersAsInputArguments;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Notification;
 
 class SendResolveInvoiceDisputeReminder extends Command
 {
+    use DryRunnable;
+    use TakesMonthAndUsersAsInputArguments;
+
+    const NURSE_DISPUTES_MANAGER = 'nurse_invoice_dispute_manager';
+
     /**
      * The console command description.
      *
@@ -28,12 +36,18 @@ class SendResolveInvoiceDisputeReminder extends Command
      */
     protected $signature = 'nurseinvoice:resolveDispute';
 
-    /**
-     * Create a new command instance.
-     */
-    public function __construct()
+    public function emailsToSendNotif()
     {
-        parent::__construct();
+        $getEmails = [];
+        AppConfig::where('config_key', '=', self::NURSE_DISPUTES_MANAGER)
+            ->select('config_value')->chunk(20, function ($emails) use (&$getEmails) {
+                foreach ($emails as $email) {
+                    $getEmails[] = $email->config_value;
+                    $this->info('Will email'.$email->config_value);
+                }
+            });
+
+        return $getEmails;
     }
 
     /**
@@ -43,19 +57,39 @@ class SendResolveInvoiceDisputeReminder extends Command
      */
     public function handle()
     {
-        $startOfMonth = Carbon::now()->startOfMonth();
-        $endOfMonth   = $startOfMonth->copy()->endOfMonth();
+        $month = $this->month();
 
-        $disputes = Dispute::whereNull('resolved_at')
-            ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
-            ->count();
+        $this->info('Run command for month: '.$month->toDateString());
 
-        if (0 !== $disputes) {
-            // @todo: should be Saras id here.
-            $user = User::find(9521);
-            $user->notify(new ResolveDisputeReminder($disputes));
+        $disputesCount = $this->unresolvedDisputesCount($month);
+
+        if (0 !== $disputesCount && isProductionEnv()) {
+            $this->sendNotificationsTo($disputesCount);
         }
 
-        GenerateNurseInvoiceCsv::class;
+        GenerateNurseMonthlyInvoiceCsv::dispatch($month)
+            ->onQueue('high');
+
+        $this->info('Command finished');
+    }
+
+    public function sendNotificationsTo($disputesCount)
+    {
+        $sendNotifAt       = Carbon::now()->addHours(7);
+        $emailsToSendNotif = $this->emailsToSendNotif();
+
+        foreach ($emailsToSendNotif as $email) {
+            Notification::route('mail', $email)
+                ->notify((new ResolveDisputeReminder($disputesCount))->delay($sendNotifAt));
+        }
+    }
+
+    public function unresolvedDisputesCount($month)
+    {
+        return NurseInvoice::where('month_year', $month)
+            ->whereHas('dispute', function ($q) use ($month) {
+                $q->whereNull('resolved_at');
+            })
+            ->count();
     }
 }

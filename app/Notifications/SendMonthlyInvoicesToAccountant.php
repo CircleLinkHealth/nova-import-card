@@ -6,29 +6,34 @@
 
 namespace App\Notifications;
 
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class ResolveDisputeReminder extends Notification
+class SendMonthlyInvoicesToAccountant extends Notification
 {
     use Queueable;
+    /**
+     * @var mixed
+     */
+    public $csvInvoices;
 
     /**
-     * Count of invoices required to be resolved.
-     *
-     * @var
+     * @var Carbon
      */
-    public $disputes;
+    public $date;
 
     /**
      * Create a new notification instance.
      *
-     * @param $disputes
+     * @param Carbon $date
+     * @param mixed  $csvInvoices
      */
-    public function __construct($disputes)
+    public function __construct(Carbon $date, $csvInvoices)
     {
-        $this->disputes = $disputes;
+        $this->date        = $date;
+        $this->csvInvoices = $csvInvoices;
     }
 
     /**
@@ -49,15 +54,14 @@ class ResolveDisputeReminder extends Notification
      *
      * @param mixed $notifiable
      *
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @return MailMessage
      */
     public function toMail($notifiable)
     {
         return (new MailMessage())
-            ->subject('Reminder - Resolve Dispute Invoices')
             ->greeting('Hello,')
-            ->line("There are {$this->disputes} Invoices disputes that required to be resolved")
-            ->action('Resolve Disputes', url('superadmin/resources/disputes'))
+            ->line("Please check attachment for: {$this->date->format('F Y')} Nurse Invoices")
+            ->attachData($this->csvInvoices->getFile(), "Nurse_Invoices_Csv_{$this->date->format('F Y')}.csv")
             ->line('Thank you!');
     }
 

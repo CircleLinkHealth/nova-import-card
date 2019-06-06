@@ -30,12 +30,35 @@
     <div class="container" style="padding-bottom: 10%;">
         @include('nurseinvoices::dispute-deadline-warning')
 
-        @if($invoice->id)
-            <div class="tutorial-button">
-                <a href="javascript:void(0);" onclick="startIntro();">
-                    <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
-                </a>
+        @if($invoice->id && !auth()->user()->isAdmin())
+            <div class="row" style="padding-top: 20px;">
+                <div class="col-md-12">
+                    <div class="pull-right">
+                        <form method="post" action="{{route('nurseinvoices.show')}}" class="form-inline">
+                            {{csrf_field()}}
+
+                            <div class="form-group">
+                                <select name="invoice_id"
+                                        class="form-control dropdown select2 inline-block invoice-month-dropdown">
+                                    @foreach($monthInvoiceMap as $id => $month)
+                                        <option value="{{$id}}" {{$id === $invoiceId ? 'selected' : ''}}>{{$month->format('F Y')}}</option>
+                                    @endforeach
+                                </select>
+
+                                <input type="submit" class="btn btn-info inline-block" value="View Invoice"/>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
+
+            @if ($shouldShowDisputeForm)
+                <div class="tutorial-button">
+                    <a href="javascript:void(0);" onclick="startIntro();">
+                        <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+                    </a>
+                </div>
+            @endif
         @endif
 
         <div class="row">
@@ -47,7 +70,7 @@
                 @else
                     <div data-step="1"
                          data-intro="This is your last month's invoice. It is generated monthly, on the first day of the month. You will receive an email as soon as it is created with a link to this page. You will have a few days to approve or dispute the invoice. Click 'Next' to find out more.">
-                        @include('nurseinvoices::invoice-v2')
+                        @include('nurseinvoices::invoice-'.AppConfig::pull('invoice_view_version', 'v2'))
                     </div>
                 @endempty
             </div>
@@ -107,6 +130,11 @@
             position: fixed;
             bottom: 40px;
             right: 40px;
+        }
+
+        .invoice-month-dropdown {
+            margin-right: 15px;
+            min-width: 140px;
         }
     </style>
 @endpush
