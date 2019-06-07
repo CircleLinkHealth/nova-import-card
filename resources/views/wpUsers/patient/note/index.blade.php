@@ -148,15 +148,14 @@
                                             sort: 'string'
                                         },
                                         {
-                                            id: "preview",
+                                            id: "comment",
                                             header: ["Preview"],
                                             template: function (obj) {
                                                 if (obj.logged_from === "note" || obj.logged_from === "note_task") {
-                                                    const text = (obj.summary && obj.summary.length ? obj.summary : obj.comment);
                                                     return "<a href='<?php echo route('patient.note.view', [
                                                         'patientId' => $patient->id,
                                                         'noteId'    => '',
-                                                    ]); ?>/" + obj.id + "' title='" + text + "'>" + text + "</a>";
+                                                    ]); ?>/" + obj.id + "' title='" + obj.comment + "'>" + obj.comment + "</a>";
                                                 }
                                                 else if (obj.logged_from === "manual_input" || obj.logged_from === "activity") {
                                                     return "<a href='<?php echo route('patient.activity.view', [
@@ -194,7 +193,7 @@
                                         },
                                     ],
                                     ready: function () {
-                                        this.adjustRowHeight("preview");
+                                        this.adjustRowHeight("comment");
                                         //CPM-725: Maximum Call Stack Size exceeded error on low-end machines
                                         this.config.autoheight = false;
                                     },
@@ -278,7 +277,7 @@
                                                columns:{
                                                'performed_at':       { header:'Date/Time', width: 200, template: webix.template('#performed_at#') },
                                                'logger_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#logger_name#')},
-                                               'preview':             { header:'Note Contents',    width:200, sort:'string', template: webix.template('#preview#')}
+                                               'comment':             { header:'Note Contents',    width:200, sort:'string', template: webix.template('#comment#')}
 
                                                }});">
 
@@ -293,7 +292,7 @@
                                                columns:{
                                                'performed_at':       { header:'Date/Time', width: 110, template: webix.template('#performed_at#') },
                                                'logger_name':             { header:'Author Name',    width:75, sort:'string', template: webix.template('#logger_name#')},
-                                               'preview':             { header:'Note Contents',    width:400, sort:'string', template: webix.template('#preview#')}
+                                               'comment':             { header:'Note Contents',    width:400, sort:'string', template: webix.template('#comment#')}
 
                                                }});">
                             @endif
