@@ -151,21 +151,23 @@
                                             id: "summary",
                                             header: ["Summary"],
                                             template: function (obj) {
-                                                if (obj.logged_from === "note" || obj.logged_from === "note_task")
+                                                if (obj.logged_from === "note" || obj.logged_from === "note_task") {
+                                                    const text = (obj.summary && obj.summary.length ? obj.summary : obj.comment);
                                                     return "<a href='<?php echo route('patient.note.view', [
                                                         'patientId' => $patient->id,
                                                         'noteId'    => '',
-                                                    ]); ?>/" + obj.id + "' title='" + obj.summary + "'>" + obj.summary + "</a>";
+                                                    ]); ?>/" + obj.id + "' title='" + text + "'>" + text + "</a>";
+                                                }
                                                 else if (obj.logged_from === "manual_input" || obj.logged_from === "activity") {
                                                     return "<a href='<?php echo route('patient.activity.view', [
                                                         'patientId' => $patient->id,
                                                         'actId'     => '',
-                                                    ]); ?>/" + obj.id + "'>" + obj.summary + "</a>"
+                                                    ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
                                                 } else if (obj.logged_from === "appointment") {
                                                     return "<a href='<?php echo route('patient.appointment.view', [
                                                         'patientId'     => $patient->id,
                                                         'appointmentId' => '',
-                                                    ]); ?>/" + obj.id + "'>" + obj.summary + "</a>"
+                                                    ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
                                                 } else
                                                     return obj.type_name;
                                             },
