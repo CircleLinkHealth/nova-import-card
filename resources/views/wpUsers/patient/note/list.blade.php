@@ -170,7 +170,7 @@
                                     obs_alerts_dtable = new webix.ui({
                                         container: "obs_alerts_container",
                                         view: "datatable",
-                                        autoheight: false,
+                                        autoheight: true,
                                         fixedRowHeight: false, rowLineHeight: 25, rowHeight: 25,
                                         scrollX: true,
                                         resizeColumn: true,
