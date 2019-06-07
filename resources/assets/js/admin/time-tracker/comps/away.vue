@@ -11,7 +11,7 @@
                         We haven’t heard from you in a while 😢. Were you working on something related to CPM while you were idle?
                     </div>
                     <div class="col-sm-12" v-else>
-                        We haven’t heard from you in a while 😢. Are you still around?
+                        We haven’t heard from you in a while 😢. Are you still working?
                     </div>
                 </div>
             </template>
