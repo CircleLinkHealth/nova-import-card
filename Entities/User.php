@@ -574,6 +574,35 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         }
     }
 
+    /**
+     * Attach Role(s) to a User for a specific practice.
+     *
+     * @param $roles
+     * @param $practiceId
+     *
+     * @return bool
+     */
+    public function attachRoleForPractice($roles, $practiceId)
+    {
+        try {
+            $this->attachRoleForSite($roles, $practiceId);
+
+            return true;
+        } catch (\Exception $e) {
+            //check if this is a mysql exception for unique key constraint
+            if ($e instanceof \Illuminate\Database\QueryException) {
+                $errorCode = $e->errorInfo[1];
+                if (1062 == $errorCode) {
+                    //do nothing
+                    //we don't actually want to terminate the program if we detect duplicates
+                    //we just don't wanna add the row again
+                }
+            }
+        }
+
+        return false;
+    }
+
     public function authyUser()
     {
         return $this->hasOne(AuthyUser::class);
