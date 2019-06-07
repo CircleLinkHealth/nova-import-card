@@ -160,8 +160,8 @@ class PatientCareplanController extends Controller
             $letter = true;
         }
 
-        //$users = explode(',', $request['users']);
-        $users = ['326'];
+        $users = explode(',', $request['users']);
+
         if ($request->input('final')) {
             foreach ($users as $userId) {
                 $careplanService->repo()->approve($userId, auth()->user()->id);
@@ -294,6 +294,8 @@ class PatientCareplanController extends Controller
         return redirect()->route('patient.pdf.careplan.print', ['patientId' => $cp->user_id]);
     }
 
+    //Show Patient Careplan Print List  (URL: /manage-patients/careplan-print-list)
+
     /**
      * Change CarePlan Mode to Web.
      *
@@ -317,8 +319,6 @@ class PatientCareplanController extends Controller
     ) {
         return $this->storeOrUpdateDemographics($request);
     }
-
-    //Show Patient Careplan Print List  (URL: /manage-patients/careplan-print-list)
 
     private function editOrCreateDemographics(
         Request $request,
