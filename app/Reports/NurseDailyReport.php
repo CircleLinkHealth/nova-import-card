@@ -6,6 +6,7 @@
 
 namespace App\Reports;
 
+use App\Constants;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
@@ -69,7 +70,7 @@ class NurseDailyReport
 
             $diff = $carbon_now->diffInSeconds($carbon_last_act);
 
-            if ($diff <= 1200) {
+            if ($diff <= Constants::MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS) {
                 $nurses[$i]['lessThan20MinsAgo'] = true;
             }
 
