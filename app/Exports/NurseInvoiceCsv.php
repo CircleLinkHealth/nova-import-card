@@ -66,7 +66,7 @@ class NurseInvoiceCsv implements FromArray, Responsable, WithHeadings
                 'month'        => $this->date->format('F Y'),
                 'baseFees'     => $invoice->invoice_data['baseSalary'],
                 'bonuses'      => $invoice->invoice_data['bonus'],
-                'extraTime'    => $invoice->invoice_data['addedTime'],
+                'extraTime'    => $invoice->invoice_data['addedTimeAmount'],
                 'totalPayable' => $invoice->invoice_data['invoiceTotalAmount'],
             ];
         }
