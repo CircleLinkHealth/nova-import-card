@@ -46,8 +46,17 @@ class NurseInvoiceCsv implements FromArray, Responsable, WithHeadings
      */
     public function array(): array
     {
-        $invoices = NurseInvoice::with('nurse.user')
+        $invoices = NurseInvoice::with(
+            [
+                'nurse.user' => function ($q) {
+                    $q->withTrashed();
+                },
+            ]
+        )
             ->where('month_year', $this->date)
+            ->whereHas('nurse.user', function ($q) {
+                $q->withTrashed();
+            })
             ->get();
 
         $invoicesData = [];
@@ -113,6 +122,10 @@ class NurseInvoiceCsv implements FromArray, Responsable, WithHeadings
 
         $this->store($filepath, 'storage');
 
-        return $this->attachMediaTo($model, storage_path($filepath), "nurse_monthly_invoices_for_{$this->date->format('F Y')}");
+        return $this->attachMediaTo(
+            $model,
+            storage_path($filepath),
+            "nurse_monthly_invoices_for_{$this->date->format('F Y')}"
+        );
     }
 }

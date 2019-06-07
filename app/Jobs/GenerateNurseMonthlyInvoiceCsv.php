@@ -39,6 +39,7 @@ class GenerateNurseMonthlyInvoiceCsv implements ShouldQueue
     public function __construct(Carbon $month)
     {
         $this->date = $month;
+        $this->date->startOfMonth();
     }
 
     public function csvReceivers()
