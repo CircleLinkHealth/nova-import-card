@@ -148,8 +148,8 @@
                                             sort: 'string'
                                         },
                                         {
-                                            id: "summary",
-                                            header: ["Summary"],
+                                            id: "preview",
+                                            header: ["Preview"],
                                             template: function (obj) {
                                                 if (obj.logged_from === "note" || obj.logged_from === "note_task") {
                                                     const text = (obj.summary && obj.summary.length ? obj.summary : obj.comment);
@@ -194,7 +194,7 @@
                                         },
                                     ],
                                     ready: function () {
-                                        this.adjustRowHeight("comment");
+                                        this.adjustRowHeight("preview");
                                         //CPM-725: Maximum Call Stack Size exceeded error on low-end machines
                                         this.config.autoheight = false;
                                     },
@@ -278,7 +278,7 @@
                                                columns:{
                                                'performed_at':       { header:'Date/Time', width: 200, template: webix.template('#performed_at#') },
                                                'logger_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#logger_name#')},
-                                               'summary':             { header:'Note Summary',    width:200, sort:'string', template: webix.template('#summary#')}
+                                               'preview':             { header:'Note Contents',    width:200, sort:'string', template: webix.template('#preview#')}
 
                                                }});">
 
@@ -293,7 +293,7 @@
                                                columns:{
                                                'performed_at':       { header:'Date/Time', width: 110, template: webix.template('#performed_at#') },
                                                'logger_name':             { header:'Author Name',    width:75, sort:'string', template: webix.template('#logger_name#')},
-                                               'summary':             { header:'Note Summary',    width:400, sort:'string', template: webix.template('#summary#')}
+                                               'preview':             { header:'Note Contents',    width:400, sort:'string', template: webix.template('#preview#')}
 
                                                }});">
                             @endif
