@@ -64,6 +64,13 @@ class NursesAndStatesDailyReportService
                             ]
                         );
                     },
+                    'outboundCalls' => function ($q) use ($date) {
+                        $q->where('scheduled_date', '=', $date->toDateString())
+                            ->orWhere([
+                                ['called_date', '>=', $date->copy()->startOfDay()],
+                                ['called_date', '<=', $date->copy()->endOfDay()],
+                            ]);
+                    },
                 ]
             )
             ->whereHas(
@@ -73,6 +80,16 @@ class NursesAndStatesDailyReportService
                     // ->where('is_demo', false); //remember Raph asking to exclude demo nurses...
                 }
             )
+//            ->whereHas(
+//                'outboundCalls',
+//                function ($q) use ($date) {
+//                    $q->where('scheduled_date', '=', $date->toDateString())
+//                        ->orWhere([
+//                            ['called_date', '>=', $date->copy()->startOfDay()],
+//                            ['called_date', '<=', $date->copy()->endOfDay()],
+//                        ]);
+//                }
+//            )
             ->chunk(
                 10,
                 function ($nurses) use (&$data, $date) {
@@ -160,10 +177,13 @@ class NursesAndStatesDailyReportService
                 ),
                 2
             ),
-            'scheduledCalls'                 => $nurse->nurseInfo->countScheduledCallsFor($date),
-            'actualCalls'                    => $nurse->nurseInfo->countCompletedCallsFor($date),
-            'successful'                     => $nurse->nurseInfo->countSuccessfulCallsFor($date),
-            'unsuccessful'                   => $nurse->nurseInfo->countUnsuccessfulCallsFor($date),
+            'scheduledCalls' => $nurse->outboundCalls->count(),
+            'actualCalls'    => $nurse->outboundCalls->whereIn(
+                'status',
+                ['reached', 'not reached']
+            )->count(),
+            'successful'                     => $nurse->outboundCalls->where('status', '=', 'reached')->count(),
+            'unsuccessful'                   => $nurse->outboundCalls->where('status', '=', 'not reached')->count(),
             'totalMonthSystemTimeSeconds'    => $this->getTotalMonthSystemTimeSeconds($nurse, $date),
             'uniquePatientsAssignedForMonth' => $patientsForMonth->count(),
         ];
@@ -427,12 +447,12 @@ class NursesAndStatesDailyReportService
                 \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
                 \DB::raw(
                     'GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60 as patient_time'
-                      ),
+                ),
                 \DB::raw(
                     "({$this->timeGoal} - (GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60)) as patient_time_left"
-                      ),
+                ),
                 'no_of_successful_calls as successful_calls'
-                  )
+            )
             ->leftJoin('users', 'users.id', '=', 'calls.inbound_cpm_id')
             ->leftJoin('patient_monthly_summaries', 'users.id', '=', 'patient_monthly_summaries.patient_id')
             ->whereRaw(
@@ -451,7 +471,7 @@ DATE(calls.called_date)<=DATE('{$date->toDateString()}')
 AND (calls.type IS NULL OR calls.type='call') 
 AND calls.outbound_cpm_id = {$nurse->id} AND
 DATE(patient_monthly_summaries.month_year) = DATE('{$date->copy()->startOfMonth()->toDateString()}')"
-                  )
+            )
             ->get();
     }
 
@@ -616,8 +636,8 @@ DATE(patient_monthly_summaries.month_year) = DATE('{$date->copy()->startOfMonth(
     /**
      * @param $day
      *
-     * @throws FileNotFoundException
      * @throws \Exception
+     * @throws FileNotFoundException
      *
      * @return mixed
      */
