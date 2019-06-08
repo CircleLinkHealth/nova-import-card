@@ -199,6 +199,7 @@ class NursesAndStatesDailyReportService
             $date
         );
         $data['surplusShortfallHours'] = $data['hoursCommittedRestOfMonth'] - $data['caseLoadNeededToComplete'];
+
         //only for EmailRNDailyReport
         $data['nextUpcomingWindow'] = optional($nurse->nurseInfo->firstWindowAfter($date->copy()))->toArray();
 
@@ -224,7 +225,7 @@ class NursesAndStatesDailyReportService
                     (float) (100 * (
                         (floatval($this->successfulCallsMultiplier) * $data['successful']) + (floatval(
                             $this->unsuccessfulCallsMultiplier
-                                ) * $data['unsuccessful'])
+                                                                                                  ) * $data['unsuccessful'])
                         ) / $data['actualHours'])
                 )
             )
@@ -281,7 +282,7 @@ class NursesAndStatesDailyReportService
                 ->isNotEmpty();
 
             //we count the hours only if the nurse has not scheduled a holiday for that day.
-            if ($isHolidayForDate) {
+            if ( ! $isHolidayForDate) {
                 $hours[] = $nurseWindows
                     ->where('day_of_week', carbonToClhDayOfWeek($mutableDate->dayOfWeek))
                     ->sum(function (NurseContactWindow $window) {
@@ -363,7 +364,7 @@ class NursesAndStatesDailyReportService
                 ->where('date', $mutableDate->format('Y-m-d'))
                 ->isNotEmpty();
 
-            if ($isHolidayForDate) {
+            if ( ! $isHolidayForDate) {
                 $isInWindow = $nurseWindows
                     ->where('day_of_week', carbonToClhDayOfWeek($mutableDate->dayOfWeek))
                     ->isNotEmpty();
@@ -379,7 +380,8 @@ class NursesAndStatesDailyReportService
     }
 
     /**
-     * = (average hours worked per committed day during last 10 sessions that care coach committed to) * (number of workdays that RN committed to left in month).
+     * = (average hours worked per committed day during last 10 sessions that care coach committed to) * (number of
+     * workdays that RN committed to left in month).
      *
      * @param User   $nurse
      * @param Carbon $date
@@ -415,7 +417,11 @@ class NursesAndStatesDailyReportService
         $avgSeconds   = $totalSeconds / $committedDays->count();
         $avgHours     = $avgSeconds / 3600;
 
-        $noOfDays = $this->getNumberOfDaysCommittedRestOfMonth($nurse->nurseInfo, $date);
+        $noOfDays = $this->getNumberOfDaysCommittedRestOfMonth(
+            $nurseWindows,
+            $nurse->nurseInfo->upcomingHolidays(),
+            $date
+        );
 
         return (float) ($noOfDays * $avgHours);
     }
@@ -446,13 +452,13 @@ class NursesAndStatesDailyReportService
             ->select(
                 \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
                 \DB::raw(
-                    'GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60 as patient_time'
-                ),
+                          'GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60 as patient_time'
+                      ),
                 \DB::raw(
-                    "({$this->timeGoal} - (GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60)) as patient_time_left"
-                ),
+                          "({$this->timeGoal} - (GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60)) as patient_time_left"
+                      ),
                 'no_of_successful_calls as successful_calls'
-            )
+                  )
             ->leftJoin('users', 'users.id', '=', 'calls.inbound_cpm_id')
             ->leftJoin('patient_monthly_summaries', 'users.id', '=', 'patient_monthly_summaries.patient_id')
             ->whereRaw(
