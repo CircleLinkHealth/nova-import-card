@@ -1,7 +1,7 @@
 @extends('partials.providerUI')
 
-@section('title', 'reviewInvoice')
-@section('activity', 'reviewInvoice')
+@section('title', 'Review Invoice')
+@section('activity', 'Review Invoice')
 
 @push('scripts')
     <script>
@@ -30,7 +30,7 @@
     <div class="container" style="padding-bottom: 10%;">
         @include('nurseinvoices::dispute-deadline-warning')
 
-        @if($invoice->id && !auth()->user()->isAdmin())
+        @if($monthInvoiceMap->isNotEmpty() && !auth()->user()->isAdmin())
             <div class="row" style="padding-top: 20px;">
                 <div class="col-md-12">
                     <div class="pull-right">
