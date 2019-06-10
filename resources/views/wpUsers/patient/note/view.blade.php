@@ -34,11 +34,6 @@
             <div class="row">
                 <div class="main-form-title col-lg-12">
                     View Note
-                    @if ($note['author_id'] === auth()->id())
-                        &nbsp;<a title="Edit Note"
-                                 href="{{route('patient.note.edit', ['patientId' => $patient->id, 'noteId' => $note['id']])}}"><span
-                                    class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
-                    @endif
                 </div>
                 {!! Form::open(array('url' => route('patient.note.send', ['patientId' => $patient->id, 'noteId' => $note['id']]), 'class' => 'form-horizontal')) !!}
 

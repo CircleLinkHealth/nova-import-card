@@ -1,13 +1,16 @@
 <template>
-    <modal name="inactivity" class-name="i-modal" :no-footer="true" 
-            cancel-text="No" ok-text="Yes" :info="inactivityModalInfo" :no-wrapper-close="true">
+    <modal name="inactivity" class-name="i-modal" :no-footer="true"
+           cancel-text="No" ok-text="Yes" :info="inactivityModalInfo" :no-wrapper-close="true">
         <template slot="title">
             You have gone idle ...
         </template>
         <template slot-scope="props">
             <div class="row">
-                <div class="col-sm-12">
-                    We haven’t heard from you in a while 😢. Were you working on a specific patient while we were idle?
+                <div class="col-sm-12" v-if="showGenericModal">
+                    We haven’t heard from you in a while 😢. Are you still working?
+                </div>
+                <div class="col-sm-12" v-else>
+                    We haven’t heard from you in a while 😢. Were you working on a specific patient while you were idle?
                 </div>
             </div>
         </template>
@@ -16,14 +19,14 @@
 
 <script>
     import EventBus from '../event-bus'
-    import { Event } from 'vue-tables-2'
+    import {Event} from 'vue-tables-2'
     import Modal from '../../../common/modal'
-    import { rootUrl } from '../../../../app.config'
 
     export default {
         name: 'inactivity-modal',
         data() {
             return {
+                showGenericModal: false,
                 inactivityModalInfo: {
                     cancelHandler: (e) => {
                         EventBus.$emit('modal-inactivity:hide')
@@ -42,9 +45,11 @@
             'modal': Modal
         },
         mounted() {
-            EventBus.$on('modal-inactivity:show', (obj) => Event.$emit('modal-inactivity:show', obj))
-            EventBus.$on('modal-inactivity:hide', () => Event.$emit('modal-inactivity:hide'))
-            Event.$on('modal-inactivity:close', () => EventBus.$emit('modal-inactivity:close'))
+            EventBus.$on('modal-inactivity:show', (obj) => Event.$emit('modal-inactivity:show', obj));
+            EventBus.$on('modal-inactivity:hide', () => Event.$emit('modal-inactivity:hide'));
+            Event.$on('modal-inactivity:close', () => EventBus.$emit('modal-inactivity:close'));
+
+            this.showGenericModal = !timeTrackerInfo || +(timeTrackerInfo.patientId) === 0;
         }
     }
 </script>
