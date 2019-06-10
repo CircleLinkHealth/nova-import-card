@@ -9550,7 +9550,7 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/VentureCraft/revisionable.git",
+                "url": "git@github.com:CircleLinkHealth/revisionable.git",
                 "reference": "9d035e9cdb54bd9b88fc45caf9b8cdbf71816994"
             },
             "require": {
@@ -9598,6 +9598,7 @@
                 "issues": "https://github.com/VentureCraft/revisionable/issues",
                 "source": "https://github.com/VentureCraft/revisionable"
             },
+            "abandoned": true,
             "time": "2019-05-28T19:31:36+00:00"
         },
         {
@@ -13849,12 +13850,13 @@
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
         "xethron/migrations-generator": 20,
+        "venturecraft/revisionable": 20,
         "michalisantoniou6/laravel-cerberus": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=7.2.0",
+        "php": ">=5.4.0",
         "ext-bcmath": "*",
         "ext-dom": "*",
         "ext-json": "*",
