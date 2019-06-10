@@ -80,16 +80,6 @@ class NursesAndStatesDailyReportService
                     // ->where('is_demo', false); //remember Raph asking to exclude demo nurses...
                 }
             )
-//            ->whereHas(
-//                'outboundCalls',
-//                function ($q) use ($date) {
-//                    $q->where('scheduled_date', '=', $date->toDateString())
-//                        ->orWhere([
-//                            ['called_date', '>=', $date->copy()->startOfDay()],
-//                            ['called_date', '<=', $date->copy()->endOfDay()],
-//                        ]);
-//                }
-//            )
             ->chunk(
                 10,
                 function ($nurses) use (&$data, $date) {
