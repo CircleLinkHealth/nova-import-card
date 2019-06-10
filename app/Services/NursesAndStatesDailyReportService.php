@@ -65,11 +65,8 @@ class NursesAndStatesDailyReportService
                         );
                     },
                     'outboundCalls' => function ($q) use ($date) {
-                        $q->where('scheduled_date', '=', $date->toDateString())
-                            ->orWhere([
-                                ['called_date', '>=', $date->copy()->startOfDay()],
-                                ['called_date', '<=', $date->copy()->endOfDay()],
-                            ]);
+                        $q->whereBetween('called_date', [$date->copy()->startOfDay(), $date->copy()->endOfDay()])
+                            ->orWhere('scheduled_date', $date->toDateString());
                     },
                 ]
             )
@@ -77,7 +74,6 @@ class NursesAndStatesDailyReportService
                 'nurseInfo',
                 function ($info) {
                     $info->where('status', 'active');
-                    // ->where('is_demo', false); //remember Raph asking to exclude demo nurses...
                 }
             )
             ->chunk(
@@ -156,7 +152,7 @@ class NursesAndStatesDailyReportService
             'nurse_full_name' => $nurse->getFullName(),
             'systemTime'      => $systemTime,
             'actualHours'     => round((float) ($systemTime / 3600), 1),
-            'committedHours'  => round(
+            'committedHours'  => $nurse->nurseInfo->isOnHoliday($date) ? 0 : round(
                 (float) $nurseWindows->where(
                     'day_of_week',
                     carbonToClhDayOfWeek($date->dayOfWeek)
@@ -443,12 +439,12 @@ class NursesAndStatesDailyReportService
                 \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
                 \DB::raw(
                     'GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60 as patient_time'
-                ),
+                      ),
                 \DB::raw(
                     "({$this->timeGoal} - (GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60)) as patient_time_left"
-                ),
+                      ),
                 'no_of_successful_calls as successful_calls'
-            )
+                  )
             ->leftJoin('users', 'users.id', '=', 'calls.inbound_cpm_id')
             ->leftJoin('patient_monthly_summaries', 'users.id', '=', 'patient_monthly_summaries.patient_id')
             ->whereRaw(
@@ -595,9 +591,6 @@ DATE(patient_monthly_summaries.month_year) = DATE('{$date->copy()->startOfMonth(
      * / total # of patients assigned to Care Coach.
      *
      * @param mixed $patients
-     * @param $nurse
-     *
-     * @return float|int
      */
     public function percentageCaseLoadComplete($patients)
     {
