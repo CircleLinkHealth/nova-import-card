@@ -23,17 +23,14 @@
     }
 
     .zui-table {
-        border: none;
-        border-right: solid 1px #DDEFEF;
         border-collapse: separate;
         border-spacing: 0;
-        font: normal 13px Arial, sans-serif;
         margin-left: 10%;
     }
 
     .zui-table thead th {
-        background-color: #DDEFEF;
-        border: none;
+        background-color: #f5f5f5;
+        border-top: double;
         color: #336B6B;
         padding: 7px;
         text-align: center;
@@ -64,13 +61,12 @@
     }
 
     .zui-table .zui-sticky-col {
-        border-left: solid 2px #DDEFEF;
-        border-right: solid 2px #DDEFEF;
-        margin-right: 10%;
+        border-left: solid 1px #000000;
+        border-right: solid 1px #000000;
         left: 0;
         position: absolute;
         top: auto;
-        width: 20%;
+        width: 267px;
     }
 
     .red{
@@ -80,5 +76,8 @@
     .green{
         color: green;
     }
+.heading-rows{
+
+}
 
 </style>

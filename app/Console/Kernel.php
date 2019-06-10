@@ -206,21 +206,22 @@ class Kernel extends ConsoleKernel
         $sendReminderAt = NurseInvoiceDisputeDeadline::for(Carbon::now()->subMonth())->subHours(36);
         $schedule->command(SendMonthlyNurseInvoiceLAN::class)->monthlyOn($sendReminderAt->day, $sendReminderAt->format('H:i'));
 
-        $lastDayToResolveDisputesAt = NurseInvoiceDisputeDeadline::for(Carbon::now()->subMonth())->addDays(2);
-        $schedule->command(SendResolveInvoiceDisputeReminder::class)->dailyAt('02:00')
-            ->skip(function () use ($lastDayToResolveDisputesAt) {
-                $today = Carbon::now();
-                $disputeStartDate = $lastDayToResolveDisputesAt
-                    ->startOfMonth()
-                    ->startOfDay()
-                    ->addMinutes(515); //that's 08:35
-                $disputeEndDate = $lastDayToResolveDisputesAt;
-
-                if ($today->gte($disputeStartDate)
-                && $today->lte($disputeEndDate)) {
-                    return true;
-                }
-            });
+//        @todo: enable after testing a bit more
+//        $lastDayToResolveDisputesAt = NurseInvoiceDisputeDeadline::for(Carbon::now()->subMonth())->addDays(2);
+//        $schedule->command(SendResolveInvoiceDisputeReminder::class)->dailyAt('02:00')
+//            ->skip(function () use ($lastDayToResolveDisputesAt) {
+//                $today = Carbon::now();
+//                $disputeStartDate = $lastDayToResolveDisputesAt
+//                    ->startOfMonth()
+//                    ->startOfDay()
+//                    ->addMinutes(515); //that's 08:35
+//                $disputeEndDate = $lastDayToResolveDisputesAt;
+//
+//                if ($today->gte($disputeStartDate)
+//                && $today->lte($disputeEndDate)) {
+//                    return true;
+//                }
+//            });
         //        $schedule->command(SendCareCoachApprovedMonthlyInvoices::class)->dailyAt('8:30');
     }
 }

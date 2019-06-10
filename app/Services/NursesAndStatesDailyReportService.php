@@ -225,7 +225,7 @@ class NursesAndStatesDailyReportService
                     (float) (100 * (
                         (floatval($this->successfulCallsMultiplier) * $data['successful']) + (floatval(
                             $this->unsuccessfulCallsMultiplier
-                                                                                                  ) * $data['unsuccessful'])
+                                ) * $data['unsuccessful'])
                         ) / $data['actualHours'])
                 )
             )
@@ -446,19 +446,19 @@ class NursesAndStatesDailyReportService
         )->sum('billable_duration');
     }
 
-    public function getUniquePatientsAssignedForNurseForMonth($nurse, $date)
+    public function getUniquePatientsAssignedForNurseForMonth($nurse, Carbon $date)
     {
         return \DB::table('calls')
             ->select(
                 \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
                 \DB::raw(
-                          'GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60 as patient_time'
-                      ),
+                    'GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60 as patient_time'
+                ),
                 \DB::raw(
-                          "({$this->timeGoal} - (GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60)) as patient_time_left"
-                      ),
+                    "({$this->timeGoal} - (GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60)) as patient_time_left"
+                ),
                 'no_of_successful_calls as successful_calls'
-                  )
+            )
             ->leftJoin('users', 'users.id', '=', 'calls.inbound_cpm_id')
             ->leftJoin('patient_monthly_summaries', 'users.id', '=', 'patient_monthly_summaries.patient_id')
             ->whereRaw(
@@ -605,6 +605,9 @@ DATE(patient_monthly_summaries.month_year) = DATE('{$date->copy()->startOfMonth(
      * / total # of patients assigned to Care Coach.
      *
      * @param mixed $patients
+     * @param $nurse
+     *
+     * @return float|int
      */
     public function percentageCaseLoadComplete($patients)
     {
