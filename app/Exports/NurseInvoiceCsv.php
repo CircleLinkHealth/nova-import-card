@@ -46,8 +46,17 @@ class NurseInvoiceCsv implements FromArray, Responsable, WithHeadings
      */
     public function array(): array
     {
-        $invoices = NurseInvoice::with('nurse.user')
+        $invoices = NurseInvoice::with(
+            [
+                'nurse.user' => function ($q) {
+                    $q->withTrashed();
+                },
+            ]
+        )
             ->where('month_year', $this->date)
+            ->whereHas('nurse.user', function ($q) {
+                $q->withTrashed();
+            })
             ->get();
 
         $invoicesData = [];
@@ -55,8 +64,9 @@ class NurseInvoiceCsv implements FromArray, Responsable, WithHeadings
             $invoicesData[] = [
                 'name'         => $invoice->nurse->user->display_name,
                 'month'        => $this->date->format('F Y'),
-                'baseSalary'   => $invoice->invoice_data['baseSalary'],
+                'baseFees'     => $invoice->invoice_data['baseSalary'],
                 'bonuses'      => $invoice->invoice_data['bonus'],
+                'extraTime'    => $invoice->invoice_data['addedTimeAmount'],
                 'totalPayable' => $invoice->invoice_data['invoiceTotalAmount'],
             ];
         }
@@ -80,8 +90,9 @@ class NurseInvoiceCsv implements FromArray, Responsable, WithHeadings
         return [
             'Name',
             'Month/Year',
-            'Base Salary',
+            'Base Fees',
             'Bonuses',
+            'Extra Time Fees',
             'Total payable amount',
         ];
     }
@@ -113,6 +124,10 @@ class NurseInvoiceCsv implements FromArray, Responsable, WithHeadings
 
         $this->store($filepath, 'storage');
 
-        return $this->attachMediaTo($model, storage_path($filepath), "nurse_monthly_invoices_for_{$this->date->format('F Y')}");
+        return $this->attachMediaTo(
+            $model,
+            storage_path($filepath),
+            "nurse_monthly_invoices_for_{$this->date->format('F Y')}"
+        );
     }
 }

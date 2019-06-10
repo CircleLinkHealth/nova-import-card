@@ -110,7 +110,7 @@ class SendCareCoachApprovedMonthlyInvoices extends Command
         return NurseInvoice::where('month_year', $this->month())->when(
             ! empty($this->usersIds()),
             function ($q) {
-                $q->ofNurses($this->usersIds())->withTrashed();
+                $q->ofNurses($this->usersIds());
             }
         )
             ->whereHas(
