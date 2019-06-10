@@ -74,8 +74,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel implements ImportedMedicalRecordInterface
 {
     use MedicalRecordIdAndTypeTrait;
-    use
-        SoftDeletes;
+    use SoftDeletes;
 
     /**
      * An option in validation_checks.
