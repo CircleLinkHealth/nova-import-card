@@ -48,6 +48,7 @@ class NoteRepository
                 'type'       => $note->type,
             ]);
             $savedNote->update([
+                'summary'              => $note->summary,
                 'body'                 => $note->body,
                 'isTCM'                => $note->isTCM,
                 'logger_id'            => $note->logger_id,
@@ -71,7 +72,12 @@ class NoteRepository
     {
         if ($note && $note->id && $this->exists($note->id)) {
             $notes = $this->model()->where(['id' => $note->id]);
-            $notes->update(['body' => $note->body, 'isTCM' => $note->isTCM ?? 0, 'did_medication_recon' => $note->did_medication_recon]);
+            $notes->update([
+                'body'                 => $note->body,
+                'summary'              => $note->summary,
+                'isTCM'                => $note->isTCM ?? 0,
+                'did_medication_recon' => $note->did_medication_recon,
+            ]);
 
             return $notes->first();
         }

@@ -474,16 +474,16 @@ class UserRepository
         foreach ($practices as $practiceId) {
             if ( ! empty($params->get('role'))) {
                 $user->detachRolesForSite([], $practiceId);
-                $user->attachRoleForSite($params->get('role'), $practiceId);
+                $user->attachRoleForPractice($params->get('role'), $practiceId);
             }
 
             if ( ! empty($params->get('roles'))) {
                 $user->detachRolesForSite([], $practiceId);
                 // support if one role is passed in as a string
                 if ( ! is_array($params->get('roles'))) {
-                    $user->attachRoleForSite($params->get('roles'), $practiceId);
+                    $user->attachRoleForPractice($params->get('roles'), $practiceId);
                 } else {
-                    $user->attachRolesForSite($params->get('roles'), $practiceId);
+                    $user->attachRoleForPractice($params->get('roles'), $practiceId);
                 }
             }
         }
