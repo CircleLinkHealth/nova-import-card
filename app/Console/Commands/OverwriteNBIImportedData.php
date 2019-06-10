@@ -44,11 +44,16 @@ class OverwriteNBIImportedData extends Command
      */
     public function handle()
     {
-        \App\Models\MedicalRecords\ImportedMedicalRecord::whereNull('patient_id')->whereNull('billing_provider_id')->get()->each(
+        $result = \App\Models\MedicalRecords\ImportedMedicalRecord::whereNull('patient_id')->whereNull('billing_provider_id')->get()->map(
             function ($imr) {
-                return $this->lookupAndReplacePatientData($imr);
+                return [
+                    'imr_id'       => $imr->id,
+                    'was_replaced' => $this->lookupAndReplacePatientData($imr),
+                ];
             }
         );
+
+        $this->table(['imr_id', 'was_replaced'], $result->all());
     }
 
     /**
