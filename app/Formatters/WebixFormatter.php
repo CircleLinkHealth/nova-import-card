@@ -58,18 +58,16 @@ class WebixFormatter implements ReportFormatter
                     $result['type_name'] = 'NA';
                 }
 
-                if ($note->author_id === auth()->id()) {
-                    $editNoteRoute = route(
-                        'patient.note.edit',
-                        ['patientId' => $note->patient_id, 'noteId' => $note->id]
-                    );
-                    if (Note::STATUS_DRAFT === $note->status) {
+                if (Note::STATUS_DRAFT === $note->status) {
+                    if ($note->author_id === auth()->id()) {
+                        $editNoteRoute = route(
+                            'patient.note.edit',
+                            ['patientId' => $note->patient_id, 'noteId' => $note->id]
+                        );
                         $result['tags'] .= "<div style='display: inline;'><a href='$editNoteRoute'><span class='glyphicon glyphicon-pencil' style='position: relative; top: 1px' aria-hidden=\"true\"></span> <span>Draft</span></a></div> ";
                     } else {
-                        $result['tags'] .= "<div style='display: inline; position: relative; top: 3px;'><a href='$editNoteRoute'><span class='glyphicon glyphicon-pencil' aria-hidden='true'></span></a></div> ";
+                        $result['tags'] .= '<div style="display: inline"><span>Draft</span></div> ';
                     }
-                } elseif (Note::STATUS_DRAFT === $note->status) {
-                    $result['tags'] .= '<div style="display: inline"><span>Draft</span></div> ';
                 }
 
                 //pangratios: add support for task types

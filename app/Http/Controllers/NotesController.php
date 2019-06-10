@@ -115,6 +115,10 @@ class NotesController extends Controller
             return response('You can only edit notes created by you.', 403);
         }
 
+        if ($existingNote && Note::STATUS_COMPLETE === $existingNote->status) {
+            return response('You can only edit DRAFT notes.', 401);
+        }
+
         //if we are editing a note, no need to fetch tasks
         if ($existingNote && Note::STATUS_COMPLETE === $existingNote->status) {
             $nurse_patient_tasks = [];
@@ -426,8 +430,17 @@ class NotesController extends Controller
         $noteIsAlreadyComplete = false;
         if ($editingNoteId) {
             $note                  = Note::findOrFail($editingNoteId);
-            $noteIsAlreadyComplete = 'complete' === $note->status;
-            $note                  = $this->service->editNote($note, $input);
+            $noteIsAlreadyComplete = Note::STATUS_COMPLETE === $note->status;
+
+            //CPM-1061 Notes cannot be editable (to be NCQA compliant)
+            if ($noteIsAlreadyComplete) {
+                return redirect()
+                    ->back()
+                    ->withErrors(['Cannot edit note. Please use create addendum to make corrections.'])
+                    ->withInput();
+            }
+
+            $note = $this->service->editNote($note, $input);
         } else {
             $note = $this->service->storeNote($input);
         }
@@ -684,6 +697,9 @@ class NotesController extends Controller
             $note = Note::find($noteId);
             if ( ! $note) {
                 return response()->json(['error' => "could not find note with id $noteId"]);
+            }
+            if (Note::STATUS_COMPLETE === $note->status) {
+                return response()->json(['error' => "cannot edit note with status 'complete': $noteId"]);
             }
             $note = $this->service->editNote($note, $input);
         } else {
