@@ -145,12 +145,13 @@ class PdfService
         }
 
         $pdf = new PdfManage();
-
+        $pdf->init();
         foreach ($filesWithFullPath as $file) {
             $pdf->addPDF($file, 'all');
         }
 
-        $pdf->merge('file', $outputFullPath, 'P');
+        $pdf->merge('P');
+        $pdf->save($outputFullPath);
 
         return $outputFullPath;
     }

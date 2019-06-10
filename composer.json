@@ -38,6 +38,10 @@
     },
     {
       "type": "git",
+      "url": "git@github.com:CircleLinkHealth/lara-pdf-merger.git"
+    },
+    {
+      "type": "git",
       "url": "git@github.com:CircleLinkHealth/module-two-fa.git"
     },
     {
