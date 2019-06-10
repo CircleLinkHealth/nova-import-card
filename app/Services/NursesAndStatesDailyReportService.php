@@ -152,17 +152,19 @@ class NursesAndStatesDailyReportService
             'nurse_full_name' => $nurse->getFullName(),
             'systemTime'      => $systemTime,
             'actualHours'     => round((float) ($systemTime / 3600), 2),
-            'committedHours'  => $nurse->nurseInfo->isOnHoliday($date) ? 0 : round(
-                (float) $nurseWindows->where(
-                    'day_of_week',
-                    carbonToClhDayOfWeek($date->dayOfWeek)
-                )->sum(
-                    function ($window) {
-                        return $window->numberOfHoursCommitted();
-                    }
+            'committedHours'  => $nurse->nurseInfo->isOnHoliday($date)
+                ? 0
+                : round(
+                    (float) $nurseWindows->where(
+                        'day_of_week',
+                        carbonToClhDayOfWeek($date->dayOfWeek)
+                    )->sum(
+                        function ($window) {
+                            return $window->numberOfHoursCommitted();
+                        }
+                    ),
+                    2
                 ),
-                2
-            ),
             'scheduledCalls' => $nurse->outboundCalls->count(),
             'actualCalls'    => $nurse->outboundCalls->whereIn(
                 'status',
@@ -213,7 +215,7 @@ class NursesAndStatesDailyReportService
                 round(
                     (float) (100 * (
                         (floatval($this->successfulCallsMultiplier) * $data['successful']) + (floatval(
-                            $this->unsuccessfulCallsMultiplier
+                                $this->unsuccessfulCallsMultiplier
                                                                                                   ) * $data['unsuccessful'])
                         ) / $data['actualHours'])
                 )
@@ -298,8 +300,12 @@ class NursesAndStatesDailyReportService
      *
      * @return Collection of Carbon dates
      */
-    public function getLastCommittedDays(Nurse $nurseInfo, Collection $nurseWindows, Carbon $date, $numberOfDays = self::LAST_COMMITTED_DAYS_TO_GO_BACK)
-    {
+    public function getLastCommittedDays(
+        Nurse $nurseInfo,
+        Collection $nurseWindows,
+        Carbon $date,
+        $numberOfDays = self::LAST_COMMITTED_DAYS_TO_GO_BACK
+    ) {
         if ($numberOfDays > NursesAndStatesDailyReportService::MAX_COMMITTED_DAYS_TO_GO_BACK) {
             throw new \Exception('numberOfDays must not exceed MAX_COMMITTED_DAYS_TO_GO_BACK');
         }
@@ -342,8 +348,11 @@ class NursesAndStatesDailyReportService
      *
      * @return int
      */
-    public function getNumberOfDaysCommittedRestOfMonth(Collection $nurseWindows, Collection $upcomingHolidays, Carbon $date)
-    {
+    public function getNumberOfDaysCommittedRestOfMonth(
+        Collection $nurseWindows,
+        Collection $upcomingHolidays,
+        Carbon $date
+    ) {
         $diff = $date->diffInDays($date->copy()->endOfMonth());
 
         $mutableDate = $date->copy()->addDay();
@@ -391,8 +400,8 @@ class NursesAndStatesDailyReportService
                 NursesAndStatesDailyReportService::LAST_COMMITTED_DAYS_TO_GO_BACK
             )
                 ->sortBy(function ($date) {
-                    return $date;
-                });
+                                      return $date;
+                                  });
         } catch (\Exception $e) {
             //todo: Log exception
         }
@@ -439,19 +448,19 @@ class NursesAndStatesDailyReportService
     {
         return \DB::table('calls')
             ->select(
-                \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
-                \DB::raw(
-                    'GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60 as patient_time'
+                      \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
+                      \DB::raw(
+                          'GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60 as patient_time'
                       ),
-                \DB::raw(
-                    "({$this->timeGoal} - (GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60)) as patient_time_left"
+                      \DB::raw(
+                          "({$this->timeGoal} - (GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60)) as patient_time_left"
                       ),
-                'no_of_successful_calls as successful_calls'
+                      'no_of_successful_calls as successful_calls'
                   )
             ->leftJoin('users', 'users.id', '=', 'calls.inbound_cpm_id')
             ->leftJoin('patient_monthly_summaries', 'users.id', '=', 'patient_monthly_summaries.patient_id')
             ->whereRaw(
-                "(
+                      "(
 (
 DATE(calls.scheduled_date) >= DATE('{$date->copy()->startOfMonth()->toDateString()}')
 AND
