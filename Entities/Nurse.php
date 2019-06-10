@@ -156,7 +156,7 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
 
     public function getHolidaysThisWeekAttribute()
     {
-        $holidaysThisWeek = $this->upcomingHolidays()
+        $holidaysThisWeek = $this->upcomingHolidaysFrom(Carbon::today())
                                  ->map(function ($holiday) {
                                      if ($holiday->date->lte(Carbon::now()->endOfWeek()) && $holiday->date->gte(Carbon::now()->startOfWeek())) {
                                          return clhDayOfWeekToDayName(carbonToClhDayOfWeek($holiday->date->dayOfWeek));
@@ -168,7 +168,7 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
 
     public function getUpcomingHolidayDatesAttribute()
     {
-        return $this->upcomingHolidays()
+        return $this->upcomingHolidays(Carbon::today())
                     ->sortBy(function ($item) {
                         return Carbon::createFromFormat(
                             'Y-m-d',
@@ -228,28 +228,19 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
     }
 
     /**
-     * NOTE: this is not a relation anymore (so you cannot use in `->with()`. It's a plain function.
-     *
      * Upcoming days the Nurse is taking off.
+     * NOTE: Company holidays included. Those entries do not have an `id`.
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function upcomingHolidays()
+    public function upcomingHolidaysFrom(Carbon $date = null)
     {
-        //
-        //NOTE: Not sure about this. What if we introduce a static function that performs this query once?
-        //
-        $companyHolidays = CompanyHoliday::where('holiday_date', '>=', Carbon::now()->format('Y-m-d'))
-                                         ->get()
-                                         ->map(function (CompanyHoliday $h) {
-                                             $nurseHoliday                = new Holiday();
-                                             $nurseHoliday->date          = $h->holiday_date;
-                                             $nurseHoliday->nurse_info_id = $this->id;
+        if ( ! $date) {
+            $date = Carbon::today();
+        }
 
-                                             return $nurseHoliday;
-                                         });
-
-        $nurseHolidays = $this->holidays()->where('date', '>=', Carbon::now()->format('Y-m-d'));
+        $companyHolidays = $this->companyHolidaysFrom($date);
+        $nurseHolidays   = $this->holidays()->where('date', '>=', $date->format('Y-m-d'));
 
         //todo: check does this remove duplicates?
         return $companyHolidays->merge($nurseHolidays);
@@ -289,5 +280,45 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
     public function workhourables()
     {
         return $this->morphMany(WorkHours::class, 'workhourable');
+    }
+
+    /**
+     * @var array A cache variable to make sure the query to db happens once during the lifetime of the process
+     */
+    private $companyHolidaysCache = [];
+
+    /**
+     * Get company holidays from a date
+     *
+     * @param Carbon|null $date
+     *
+     * @return \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection
+     */
+    private function companyHolidaysFrom(Carbon $date = null)
+    {
+
+        if ( ! $date) {
+            $date = Carbon::today();
+        }
+
+        $dateStr = $date->format('Y-m-d');
+
+        if (isset($this->companyHolidays[$dateStr])) {
+            return $this->companyHolidays[$dateStr];
+        }
+
+        $companyHolidays = CompanyHoliday::where('holiday_date', '>=', $dateStr)
+                                         ->get()
+                                         ->map(function (CompanyHoliday $h) {
+                                             $nurseHoliday                = new Holiday();
+                                             $nurseHoliday->date          = $h->holiday_date;
+                                             $nurseHoliday->nurse_info_id = $this->id;
+
+                                             return $nurseHoliday;
+                                         });
+
+        $this->companyHolidaysCache[$dateStr] = $companyHolidays;
+
+        return $companyHolidays;
     }
 }
