@@ -298,7 +298,7 @@ class NursesAndStatesDailyReportService
      *
      * @return Collection of Carbon dates
      */
-    public function getLastCommittedDays(Nurse $nurseInfo, $nurseWindows, Carbon $date, $numberOfDays = self::LAST_COMMITTED_DAYS_TO_GO_BACK)
+    public function getLastCommittedDays(Nurse $nurseInfo, Collection $nurseWindows, Carbon $date, $numberOfDays = self::LAST_COMMITTED_DAYS_TO_GO_BACK)
     {
         if ($numberOfDays > NursesAndStatesDailyReportService::MAX_COMMITTED_DAYS_TO_GO_BACK) {
             throw new \Exception('numberOfDays must not exceed MAX_COMMITTED_DAYS_TO_GO_BACK');
@@ -342,7 +342,7 @@ class NursesAndStatesDailyReportService
      *
      * @return int
      */
-    public function getNumberOfDaysCommittedRestOfMonth($nurseWindows, $upcomingHolidays, Carbon $date)
+    public function getNumberOfDaysCommittedRestOfMonth(Collection $nurseWindows, Collection $upcomingHolidays, Carbon $date)
     {
         $diff = $date->diffInDays($date->copy()->endOfMonth());
 
@@ -441,10 +441,10 @@ class NursesAndStatesDailyReportService
             ->select(
                 \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
                 \DB::raw(
-                          'GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60 as patient_time'
+                    'GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60 as patient_time'
                       ),
                 \DB::raw(
-                          "({$this->timeGoal} - (GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60)) as patient_time_left"
+                    "({$this->timeGoal} - (GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60)) as patient_time_left"
                       ),
                 'no_of_successful_calls as successful_calls'
                   )
