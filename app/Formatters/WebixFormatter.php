@@ -39,12 +39,12 @@ class WebixFormatter implements ReportFormatter
         $billingProvider = $patient->getBillingProviderName();
 
         $notes = $patient->notes->sortByDesc('id')->map(
-            function ($note) use ($patient, $billingProvider) {
+            function (Note $note) use ($patient, $billingProvider) {
                 $result = [
                     'id'               => $note->id,
                     'logger_id'        => $note->author_id,
                     'logger_name'      => $note->author->getFullName(),
-                    'comment'          => $note->body,
+                    'comment'          => $note->summary ?? $note->body,
                     'logged_from'      => 'note',
                     'type_name'        => $note->type,
                     'performed_at'     => presentDate($note->performed_at, false),
@@ -58,18 +58,16 @@ class WebixFormatter implements ReportFormatter
                     $result['type_name'] = 'NA';
                 }
 
-                if ($note->author_id === auth()->id()) {
-                    $editNoteRoute = route(
-                        'patient.note.edit',
-                        ['patientId' => $note->patient_id, 'noteId' => $note->id]
-                    );
-                    if (Note::STATUS_DRAFT === $note->status) {
+                if (Note::STATUS_DRAFT === $note->status) {
+                    if ($note->author_id === auth()->id()) {
+                        $editNoteRoute = route(
+                            'patient.note.edit',
+                            ['patientId' => $note->patient_id, 'noteId' => $note->id]
+                        );
                         $result['tags'] .= "<div style='display: inline;'><a href='$editNoteRoute'><span class='glyphicon glyphicon-pencil' style='position: relative; top: 1px' aria-hidden=\"true\"></span> <span>Draft</span></a></div> ";
                     } else {
-                        $result['tags'] .= "<div style='display: inline; position: relative; top: 3px;'><a href='$editNoteRoute'><span class='glyphicon glyphicon-pencil' aria-hidden='true'></span></a></div> ";
+                        $result['tags'] .= '<div style="display: inline"><span>Draft</span></div> ';
                     }
-                } elseif (Note::STATUS_DRAFT === $note->status) {
-                    $result['tags'] .= '<div style="display: inline"><span>Draft</span></div> ';
                 }
 
                 //pangratios: add support for task types
@@ -196,6 +194,7 @@ class WebixFormatter implements ReportFormatter
             $formatted_notes[$count]['type'] = $note->type;
 
             //Body
+            $formatted_notes[$count]['summary'] = $note->summary ?? $note->body;
             $formatted_notes[$count]['comment'] = $note->body;
 
             $formatted_notes[$count]['date'] = Carbon::parse($note->performed_at)->format('Y-m-d');
