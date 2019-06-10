@@ -46,6 +46,8 @@ class OverwriteNBIImportedData extends Command
     {
         $result = \App\Models\MedicalRecords\ImportedMedicalRecord::whereNull('patient_id')->whereNull('billing_provider_id')->get()->map(
             function ($imr) {
+                $this->info("Checking ImportedMedicalRecord id: $imr->id");
+
                 return [
                     'imr_id'       => $imr->id,
                     'was_replaced' => $this->lookupAndReplacePatientData($imr),
@@ -87,8 +89,12 @@ class OverwriteNBIImportedData extends Command
             ];
 
             if ($datas->provider) {
-                $imr->billing_provider_id = $map[strtoupper($datas->provider)];
+                $term = strtoupper($datas->provider);
+                $this->warn("Searching for provider with term `$term`");
+                $imr->billing_provider_id = $map[$term] ?? null;
+                $this->warn("Provider result: {$imr->billing_provider_id}");
             }
+
             $imr->practice_id = 201;
             $imr->location_id = 971;
             $imr->save();
