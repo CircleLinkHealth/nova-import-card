@@ -28,12 +28,22 @@ trait NoteTraits
     public function editNote($userId, $id, Request $request)
     {
         $body                 = $request->input('body');
+        $summary              = $request->input('summary');
         $author_id            = auth()->user()->id;
         $isTCM                = $request->input('isTCM') ?? 0;
         $type                 = $request->input('type');
         $did_medication_recon = $request->input('did_medication_recon') ?? 0;
         if ($userId && ($id || $type) && $author_id) {
-            return $this->noteService->editPatientNote($id, $userId, $author_id, $body, $isTCM, $did_medication_recon, $type);
+            return $this->noteService->editPatientNote(
+                $id,
+                $userId,
+                $author_id,
+                $body,
+                $isTCM,
+                $did_medication_recon,
+                $type,
+                $summary
+            );
         }
 
         return $this->badRequest('"userId", "author_id" and "noteId" are is important');
