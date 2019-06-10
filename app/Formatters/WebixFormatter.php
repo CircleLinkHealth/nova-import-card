@@ -39,12 +39,12 @@ class WebixFormatter implements ReportFormatter
         $billingProvider = $patient->getBillingProviderName();
 
         $notes = $patient->notes->sortByDesc('id')->map(
-            function ($note) use ($patient, $billingProvider) {
+            function (Note $note) use ($patient, $billingProvider) {
                 $result = [
                     'id'               => $note->id,
                     'logger_id'        => $note->author_id,
                     'logger_name'      => $note->author->getFullName(),
-                    'comment'          => $note->body,
+                    'comment'          => $note->summary ?? $note->body,
                     'logged_from'      => 'note',
                     'type_name'        => $note->type,
                     'performed_at'     => presentDate($note->performed_at, false),
@@ -194,6 +194,7 @@ class WebixFormatter implements ReportFormatter
             $formatted_notes[$count]['type'] = $note->type;
 
             //Body
+            $formatted_notes[$count]['summary'] = $note->summary ?? $note->body;
             $formatted_notes[$count]['comment'] = $note->body;
 
             $formatted_notes[$count]['date'] = Carbon::parse($note->performed_at)->format('Y-m-d');

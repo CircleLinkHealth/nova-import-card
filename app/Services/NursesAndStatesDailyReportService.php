@@ -64,16 +64,13 @@ class NursesAndStatesDailyReportService
                             ]
                         );
                     },
-                    'outboundCalls' => function ($q) use ($date) {
-                        $q->whereBetween('called_date', [$date->copy()->startOfDay(), $date->copy()->endOfDay()])
-                            ->orWhere('scheduled_date', $date->toDateString());
-                    },
                 ]
             )
             ->whereHas(
                 'nurseInfo',
                 function ($info) {
                     $info->where('status', 'active');
+                    // ->where('is_demo', false); //remember Raph asking to exclude demo nurses...
                 }
             )
             ->chunk(
@@ -151,7 +148,7 @@ class NursesAndStatesDailyReportService
             'nurse_id'        => $nurse->id,
             'nurse_full_name' => $nurse->getFullName(),
             'systemTime'      => $systemTime,
-            'actualHours'     => round((float) ($systemTime / 3600), 2),
+            'actualHours'     => round((float) ($systemTime / 3600), 1),
             'committedHours'  => $nurse->nurseInfo->isOnHoliday($date)
                 ? 0
                 : round(
@@ -165,16 +162,10 @@ class NursesAndStatesDailyReportService
                     ),
                     2
                 ),
-            'scheduledCalls' => $nurse->outboundCalls->count(),
-            'actualCalls'    => $nurse->outboundCalls->whereIn(
-                'status',
-                ['reached', 'not reached', 'dropped']
-            )->count(),
-            'successful'   => $nurse->outboundCalls->where('status', 'reached')->count(),
-            'unsuccessful' => $nurse->outboundCalls->whereIn(
-                'status',
-                ['not reached', 'dropped']
-            )->count(),
+            'scheduledCalls'                 => $nurse->nurseInfo->countScheduledCallsFor($date),
+            'actualCalls'                    => $nurse->nurseInfo->countCompletedCallsFor($date),
+            'successful'                     => $nurse->nurseInfo->countSuccessfulCallsFor($date),
+            'unsuccessful'                   => $nurse->nurseInfo->countUnsuccessfulCallsFor($date),
             'totalMonthSystemTimeSeconds'    => $this->getTotalMonthSystemTimeSeconds($nurse, $date),
             'uniquePatientsAssignedForMonth' => $patientsForMonth->count(),
         ];
@@ -190,7 +181,6 @@ class NursesAndStatesDailyReportService
             $date
         );
         $data['surplusShortfallHours'] = $data['hoursCommittedRestOfMonth'] - $data['caseLoadNeededToComplete'];
-
         //only for EmailRNDailyReport
         $data['nextUpcomingWindow'] = optional($nurse->nurseInfo->firstWindowAfter($date->copy()))->toArray();
 
@@ -215,8 +205,8 @@ class NursesAndStatesDailyReportService
                 round(
                     (float) (100 * (
                         (floatval($this->successfulCallsMultiplier) * $data['successful']) + (floatval(
-                                $this->unsuccessfulCallsMultiplier
-                                                                                                  ) * $data['unsuccessful'])
+                            $this->unsuccessfulCallsMultiplier
+                                ) * $data['unsuccessful'])
                         ) / $data['actualHours'])
                 )
             )
@@ -400,8 +390,8 @@ class NursesAndStatesDailyReportService
                 NursesAndStatesDailyReportService::LAST_COMMITTED_DAYS_TO_GO_BACK
             )
                 ->sortBy(function ($date) {
-                                      return $date;
-                                  });
+                    return $date;
+                });
         } catch (\Exception $e) {
             //todo: Log exception
         }
@@ -448,19 +438,19 @@ class NursesAndStatesDailyReportService
     {
         return \DB::table('calls')
             ->select(
-                      \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
-                      \DB::raw(
+                \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
+                \DB::raw(
                           'GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60 as patient_time'
                       ),
-                      \DB::raw(
+                \DB::raw(
                           "({$this->timeGoal} - (GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60)) as patient_time_left"
                       ),
-                      'no_of_successful_calls as successful_calls'
+                'no_of_successful_calls as successful_calls'
                   )
             ->leftJoin('users', 'users.id', '=', 'calls.inbound_cpm_id')
             ->leftJoin('patient_monthly_summaries', 'users.id', '=', 'patient_monthly_summaries.patient_id')
             ->whereRaw(
-                      "(
+                "(
 (
 DATE(calls.scheduled_date) >= DATE('{$date->copy()->startOfMonth()->toDateString()}')
 AND
@@ -608,11 +598,9 @@ DATE(patient_monthly_summaries.month_year) = DATE('{$date->copy()->startOfMonth(
     {
         return 0 !== $patients->count()
             ? round(
-                ($patients->where('patient_time', '>=', 20)->where(
-                    'successful_calls',
-                    '>=',
-                    1
-                    )->count() / $patients->count()) * 100,
+                ($patients->where('patient_time', '>=', 20)
+                    ->where('successful_calls', '>=', 1)
+                    ->count()) / $patients->count() * 100,
                 2
             )
             : 0;
@@ -647,7 +635,7 @@ DATE(patient_monthly_summaries.month_year) = DATE('{$date->copy()->startOfMonth(
      *
      * @return mixed
      */
-    public function showDataFromS3($day)
+    public function showDataFromS3(Carbon $day)
     {
         if ($day->lte($this->getLimitDate())) {
             throw new FileNotFoundException('No reports exists before this date');
