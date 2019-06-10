@@ -1913,8 +1913,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
         $cacheKey = str_replace('{$userId}', $this->id, Constants::CACHE_USER_HAS_CCDA);
 
-        return Cache::rememberForever(
+        return Cache::remember(
             $cacheKey,
+            10,
             function () {
                 return $this->ccdas()->exists();
             }
