@@ -128,15 +128,15 @@ class NotesController extends Controller
                 ->where('inbound_cpm_id', '=', $patientId)
                 ->where('outbound_cpm_id', '=', $author_id)
                 ->select(
-                    [
-                        'id',
-                        'type',
-                        'sub_type',
-                        'attempt_note',
-                        'scheduled_date',
-                        'window_start',
-                        'window_end',
-                    ]
+                                           [
+                                               'id',
+                                               'type',
+                                               'sub_type',
+                                               'attempt_note',
+                                               'scheduled_date',
+                                               'window_start',
+                                               'window_end',
+                                           ]
                                        )
                 ->get();
         }
@@ -487,7 +487,7 @@ class NotesController extends Controller
 
                         //took this from below :)
                         if (auth()->user()->hasRole('provider')) {
-                            $this->patientRepo->updateCallLogs($patient->patientInfo, true, $note->performed_at);
+                            $this->patientRepo->updateCallLogs($patient->patientInfo, true, true, $note->performed_at);
                         }
                     } else {
                         $call->status = 'done';
@@ -585,7 +585,7 @@ class NotesController extends Controller
                             null
                         );
 
-                        $this->patientRepo->updateCallLogs($patient->patientInfo, true, $note->performed_at);
+                        $this->patientRepo->updateCallLogs($patient->patientInfo, true, false, $note->performed_at);
 
                         $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s');
                         $info->save();
@@ -733,10 +733,10 @@ class NotesController extends Controller
     {
         return Practice::whereId($patient->program_id)
             ->where(
-                function ($q) {
-                    $q->where('name', '=', 'phoenix-heart')
-                        ->orWhere('name', '=', 'demo');
-                }
+                           function ($q) {
+                               $q->where('name', '=', 'phoenix-heart')
+                                   ->orWhere('name', '=', 'demo');
+                           }
                        )
             ->exists();
     }
