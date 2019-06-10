@@ -7,10 +7,10 @@
         <template slot-scope="props">
             <div class="row">
                 <div class="col-sm-12" v-if="showGenericModal">
-                    We haven’t heard from you in a while 😢. Were you working on something related to CPM while you were idle?
+                    We haven’t heard from you in a while 😢. Are you still working?
                 </div>
                 <div class="col-sm-12" v-else>
-                    We haven’t heard from you in a while 😢. Are you still working?
+                    We haven’t heard from you in a while 😢. Were you working on a specific patient while you were idle?
                 </div>
             </div>
         </template>
