@@ -74,6 +74,7 @@ class NursesAndStatesDailyReportService
                 'nurseInfo',
                 function ($info) {
                     $info->where('status', 'active');
+                    // ->where('is_demo', false); //remember Raph asking to exclude demo nurses...
                 }
             )
             ->chunk(
@@ -152,17 +153,19 @@ class NursesAndStatesDailyReportService
             'nurse_full_name' => $nurse->getFullName(),
             'systemTime'      => $systemTime,
             'actualHours'     => round((float) ($systemTime / 3600), 1),
-            'committedHours'  => $nurse->nurseInfo->isOnHoliday($date) ? 0 : round(
-                (float) $nurseWindows->where(
-                    'day_of_week',
-                    carbonToClhDayOfWeek($date->dayOfWeek)
-                )->sum(
-                    function ($window) {
-                        return $window->numberOfHoursCommitted();
-                    }
+            'committedHours'  => $nurse->nurseInfo->isOnHoliday($date)
+                ? 0
+                : round(
+                    (float) $nurseWindows->where(
+                        'day_of_week',
+                        carbonToClhDayOfWeek($date->dayOfWeek)
+                    )->sum(
+                        function ($window) {
+                            return $window->numberOfHoursCommitted();
+                        }
+                    ),
+                    2
                 ),
-                2
-            ),
             'scheduledCalls' => $nurse->outboundCalls->count(),
             'actualCalls'    => $nurse->outboundCalls->whereIn(
                 'status',
@@ -185,7 +188,6 @@ class NursesAndStatesDailyReportService
             $date
         );
         $data['surplusShortfallHours'] = $data['hoursCommittedRestOfMonth'] - $data['caseLoadNeededToComplete'];
-
         //only for EmailRNDailyReport
         $data['nextUpcomingWindow'] = optional($nurse->nurseInfo->firstWindowAfter($date->copy()))->toArray();
 
@@ -295,8 +297,12 @@ class NursesAndStatesDailyReportService
      *
      * @return Collection of Carbon dates
      */
-    public function getLastCommittedDays(Nurse $nurseInfo, $nurseWindows, Carbon $date, $numberOfDays = 10)
-    {
+    public function getLastCommittedDays(
+        Nurse $nurseInfo,
+        Collection $nurseWindows,
+        Carbon $date,
+        $numberOfDays = self::LAST_COMMITTED_DAYS_TO_GO_BACK
+    ) {
         if ($numberOfDays > NursesAndStatesDailyReportService::MAX_COMMITTED_DAYS_TO_GO_BACK) {
             throw new \Exception('numberOfDays must not exceed MAX_COMMITTED_DAYS_TO_GO_BACK');
         }
@@ -339,8 +345,11 @@ class NursesAndStatesDailyReportService
      *
      * @return int
      */
-    public function getNumberOfDaysCommittedRestOfMonth($nurseWindows, $upcomingHolidays, Carbon $date)
-    {
+    public function getNumberOfDaysCommittedRestOfMonth(
+        Collection $nurseWindows,
+        Collection $upcomingHolidays,
+        Carbon $date
+    ) {
         $diff = $date->diffInDays($date->copy()->endOfMonth());
 
         $mutableDate = $date->copy()->addDay();
@@ -432,7 +441,7 @@ class NursesAndStatesDailyReportService
         )->sum('billable_duration');
     }
 
-    public function getUniquePatientsAssignedForNurseForMonth($nurse, Carbon $date)
+    public function getUniquePatientsAssignedForNurseForMonth($nurse, $date)
     {
         return \DB::table('calls')
             ->select(
@@ -463,7 +472,7 @@ DATE(calls.called_date)<=DATE('{$date->toDateString()}')
 AND (calls.type IS NULL OR calls.type='call') 
 AND calls.outbound_cpm_id = {$nurse->id} AND
 DATE(patient_monthly_summaries.month_year) = DATE('{$date->copy()->startOfMonth()->toDateString()}')"
-            )
+                  )
             ->get();
     }
 
@@ -628,8 +637,8 @@ DATE(patient_monthly_summaries.month_year) = DATE('{$date->copy()->startOfMonth(
     /**
      * @param $day
      *
-     * @throws \Exception
      * @throws FileNotFoundException
+     * @throws \Exception
      *
      * @return mixed
      */

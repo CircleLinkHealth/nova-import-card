@@ -7,8 +7,11 @@
             </template>
             <template slot-scope="props">
                 <div class="row">
-                    <div class="col-sm-12">
-                        We haven’t heard from you in a while 😢. Were you working on a specific patient while we were idle?
+                    <div class="col-sm-12" v-if="showGenericModal">
+                        We haven’t heard from you in a while 😢. Are you still working?
+                    </div>
+                    <div class="col-sm-12" v-else>
+                        We haven’t heard from you in a while 😢. Were you working on a specific patient while you were idle?
                     </div>
                 </div>
             </template>
@@ -29,6 +32,7 @@
         },
         data() {
             return {
+                showGenericModal: false,
                 startTime: null,
                 endTime: null,
                 awayModalInfo: {
@@ -59,6 +63,8 @@
             EventBus.$on('modal-away:show', (obj) => Event.$emit('modal-away:show', obj))
             EventBus.$on('modal-away:hide', () => Event.$emit('modal-away:hide'))
             Event.$on('modal-away:close', () => EventBus.$emit('modal-away:close'))
+
+            this.showGenericModal = !timeTrackerInfo || +(timeTrackerInfo.patientId) === 0;
         }
     }
 </script>

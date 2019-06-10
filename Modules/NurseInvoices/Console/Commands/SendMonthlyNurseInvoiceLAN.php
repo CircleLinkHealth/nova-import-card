@@ -64,7 +64,7 @@ class SendMonthlyNurseInvoiceLAN extends Command
         return NurseInvoice::with('nurse.user')
             ->has('nurse.user')
             ->when(
-                ! empty($userIds),
+                ! empty($this->usersIds()),
                 function ($q) {
                     $q->whereHas('nurse.user', function ($q) {
                         $q->whereIn('id', $this->usersIds());

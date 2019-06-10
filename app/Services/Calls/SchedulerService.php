@@ -93,6 +93,7 @@ class SchedulerService
             ->where('called_date', '<', Carbon::today()->startOfDay()->toDateTimeString())
             ->orderBy('called_date', 'desc')
             ->first();
+
         /*
         $call = Call
             ::where('inbound_cpm_id', $patient->id)
@@ -171,8 +172,8 @@ class SchedulerService
                                $row
                            ) {
                     $q->where(
-                        'birth_date',
-                        Carbon::parse($row['DOB'])->toDateString()
+                                   'birth_date',
+                                   Carbon::parse($row['DOB'])->toDateString()
                                );
                 })
                 ->first();
@@ -583,7 +584,11 @@ class SchedulerService
 
         if (Call::IGNORED != $callStatus) {
             $isCallBack = null != $scheduled_call && SchedulerService::CALL_BACK_TYPE === $scheduled_call->sub_type;
-            $this->patientWriteRepository->updateCallLogs($patient->patientInfo, Call::REACHED == $callStatus, $isCallBack);
+            $this->patientWriteRepository->updateCallLogs(
+                $patient->patientInfo,
+                Call::REACHED == $callStatus,
+                $isCallBack
+            );
         }
 
         $nextCall = SchedulerService::getNextScheduledCall($patient->id, true);

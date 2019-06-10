@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fc2c2707c948796ba40a8cbaa7d5af41",
+    "content-hash": "085057a353a3cb87a9e5e188ba928ddd",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -696,7 +696,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "699ca421f2d704926d0835c4b612c9bd2b3ad000"
+                "reference": "6b62f99d482f271d616662797d356861aa27c500"
             },
             "require": {
                 "circlelinkhealth/core": "dev-master",
@@ -728,7 +728,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-05-31T18:40:09+00:00"
+            "time": "2019-06-07T19:12:50+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
