@@ -144,3 +144,9 @@
     {!! Form::close() !!}
 
 @endsection
+
+<style>
+    .vdp-datepicker *{
+        border:none;
+    }
+</style>

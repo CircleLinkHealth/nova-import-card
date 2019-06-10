@@ -20,6 +20,10 @@ class Invoice extends ViewModel
      */
     public $aggregatedTotalTime;
     /**
+     * @var float
+     */
+    public $baseSalary;
+    /**
      * @var bool
      */
     public $changedToFixedRateBecauseItYieldedMore = false;
@@ -59,10 +63,6 @@ class Invoice extends ViewModel
      * @var Collection
      */
     protected $variablePaySummary;
-    /**
-     * @var float
-     */
-    private $baseSalary;
     /**
      * @var mixed
      */
@@ -125,6 +125,7 @@ class Invoice extends ViewModel
         $this->nurseLowRate        = $user->nurseInfo->low_rate;
         $this->nurseHourlyRate     = $user->nurseInfo->hourly_rate;
         $this->nurseFullName       = $user->getFullName();
+        $this->variablePaySummary  = collect();
 
         if ($this->variablePay) {
             $variablePaySummary = $variablePayMap->first(
@@ -194,7 +195,7 @@ class Invoice extends ViewModel
         $high_rate = $this->user->nurseInfo->high_rate;
         $low_rate  = $this->user->nurseInfo->low_rate;
 
-        $variableRateMessage = "\${$this->variableRatePay} (Variable Rates: \$$high_rate/hr or \$$low_rate/hr).";
+        $variableRateMessage = "\${$this->variableRatePay} (Variable Rate: \$$high_rate/hr or \$$low_rate/hr).";
 
         if ($this->variableRatePay > $this->fixedRatePay) {
             $result = [
@@ -219,6 +220,16 @@ class Invoice extends ViewModel
     public function formattedInvoiceTotalAmount()
     {
         return '$'.round($this->invoiceTotalAmount(), 2);
+    }
+
+    /**
+     * Formatted system time in hh:mm.
+     *
+     * @return string
+     */
+    public function formattedSystemTime()
+    {
+        return minutesToHhMm($this->systemTimeInMinutes());
     }
 
     /**
@@ -300,17 +311,12 @@ class Invoice extends ViewModel
                 }
             );
 
-            $hours = $dataForDay
-                ? round($dataForDay->total_time / 3600, 1)
-                : 0;
-
             $minutes = $dataForDay
                 ? round($dataForDay->total_time / 60, 2)
                 : 0;
 
             $row = [
-                'hours'   => $hours,
-                'minutes' => $minutes,
+                'formatted_time' => minutesToHhMm($minutes),
             ];
 
             if ($this->variablePay) {
@@ -403,7 +409,6 @@ class Invoice extends ViewModel
                                      + $this->totalTimeTowardsCcm() * $this->user->nurseInfo->high_rate;
             if ($this->fixedRatePay > $this->variableRatePay) {
                 $this->baseSalary                             = $this->fixedRatePay;
-                $this->variablePay                            = false;
                 $this->changedToFixedRateBecauseItYieldedMore = true;
             } else {
                 $this->baseSalary = $this->variableRatePay;

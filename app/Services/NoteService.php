@@ -16,7 +16,6 @@ use App\Repositories\NoteRepository;
 use App\View\MetaTag;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
-use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use Exception;
 use Illuminate\Support\Facades\URL;
@@ -116,6 +115,7 @@ class NoteService
             ? 'true' === $requestInput['tcm']
             : 0;
         $note->type                 = $requestInput['type'];
+        $note->summary              = $requestInput['summary'];
         $note->body                 = $requestInput['body'];
         $note->performed_at         = $requestInput['performed_at'];
         $note->did_medication_recon = isset($requestInput['medication_recon'])
@@ -129,8 +129,16 @@ class NoteService
         return $note;
     }
 
-    public function editPatientNote($id, $userId, $authorId, $body, $isTCM, $did_medication_recon, $type = null)
-    {
+    public function editPatientNote(
+        $id,
+        $userId,
+        $authorId,
+        $body,
+        $isTCM,
+        $did_medication_recon,
+        $type = null,
+        $summary = null
+    ) {
         if ( ! $type) {
             if ( ! $id) {
                 throw new Exception('$id is required');
@@ -149,6 +157,10 @@ class NoteService
             $note->body                 = $body;
             $note->isTCM                = $isTCM;
             $note->did_medication_recon = $did_medication_recon;
+
+            if ($summary) {
+                $note->summary = $summary;
+            }
 
             return $this->repo()->edit($note);
         }

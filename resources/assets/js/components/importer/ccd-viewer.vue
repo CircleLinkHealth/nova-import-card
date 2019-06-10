@@ -268,7 +268,7 @@
                         record.loaders.update = false
                         console.error('ccd-viewer:update-record')
                     })
-                } 
+                }
                 console.log('update-record', record)
             },
             getRecords() {
@@ -318,7 +318,7 @@
                         console.error('ccd-viewer:delete-one', err)
                     })
                 }
-            }, 
+            },
             deleteMultiple() {
                 if (confirm('Multiple: Are you sure you want to delete these records?')) {
                     return Promise.all(this.tableData.filter(record => record.selected).map(record => this.deleteOne(record.id, true))).then(responses => {
@@ -352,14 +352,14 @@
                                 console.log('submit-one', record, response.data)
                                 if (((response.data || [])[0] || {}).completed) {
                                     const patient = (((response.data || [])[0] || {}).patient || {})
-                                    EventBus.$emit('notifications:create', { 
-                                        message: `Patient Created (${patient.id}): ${patient.display_name}`, 
+                                    EventBus.$emit('notifications:create', {
+                                        message: `Patient Created (${patient.id}): ${patient.display_name}`,
                                         href: rootUrl(`manage-patients/${patient.id}/view-careplan`),
                                         noTimeout: true
                                     })
                                 }
                                 else {
-                                    EventBus.$emit('notifications:create', { 
+                                    EventBus.$emit('notifications:create', {
                                         message: `Error when creating patient ${record.Name}`,
                                         type: 'warning',
                                         noTimeout: true
@@ -438,7 +438,7 @@
                     const newRecords = records.filter(record => !oldRecords.find(row => row.id == record.id))
 
                     newRecords.filter(row => !!row.duplicate_id).distinct(row => row.duplicate_id).map(row => {
-                        EventBus.$emit('notifications:create', { 
+                        EventBus.$emit('notifications:create', {
                             message: `Imported Patient "${row.Name}" is a possible duplicate of`,
                             link: {
                                 href: rootUrl(`manage-patients/${row.duplicate_id}/view-careplan`),

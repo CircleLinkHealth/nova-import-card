@@ -128,13 +128,18 @@ if ( ! function_exists('activeNurseNames')) {
     function activeNurseNames()
     {
         return User::ofType('care-center')
-            ->with([
-                'nurseInfo' => function ($q) {
-                    $q->where('is_demo', '!=', true);
-                },
-            ])->whereHas('nurseInfo', function ($q) {
-                $q->where('is_demo', '!=', true);
-            })->where('user_status', 1)
+            ->with(
+                [
+                    'nurseInfo' => function ($q) {
+                        $q->where('is_demo', '!=', true);
+                    },
+                ]
+                   )->whereHas(
+                       'nurseInfo',
+                       function ($q) {
+                           $q->where('is_demo', '!=', true);
+                       }
+            )->where('user_status', 1)
             ->pluck('display_name', 'id');
     }
 }
@@ -769,27 +774,7 @@ if ( ! function_exists('defaultCarePlanTemplate')) {
      */
     function getDefaultCarePlanTemplate(): ?CarePlanTemplate
     {
-        $id = getAppConfig('default_care_plan_template_id');
-
-        return CarePlanTemplate::findOrFail($id);
-    }
-}
-
-if ( ! function_exists('getAppConfig')) {
-    /**
-     * Returns the AppConfig value for the given key.
-     *
-     * @param string $key
-     *
-     * @return string|null
-     */
-    function getAppConfig(string $key)
-    {
-        $conf = AppConfig::whereConfigKey($key)->first();
-
-        return $conf
-            ? $conf->config_value
-            : null;
+        return CarePlanTemplate::findOrFail(AppConfig::pull('default_care_plan_template_id'));
     }
 }
 
@@ -1362,8 +1347,25 @@ if ( ! function_exists('isProductionEnv')) {
 }
 
 if ( ! function_exists('presentDate')) {
-    function presentDate($date, bool $withTime = true)
+    /**
+     * Use this function to have a single presentation layer for all user facing dates in CPM.
+     *
+     * Due to the fact that we don't have a way to sort dates m-d-Y dates in tables yet, we are using $forceHumanForm so that developers can choose when to "force" m-d-Y format.
+     *
+     * @param $date
+     * @param bool $withTime
+     * @param bool $withTimezone
+     * @param bool $forceHumanForm
+     *
+     * @return string
+     */
+    function presentDate($date, bool $withTime = true, bool $withTimezone = false, bool $forceHumanForm = false)
     {
+        $dateFormat = 'Y-m-d';
+        $timeFormat = $withTimezone
+            ? 'h:iA T'
+            : 'h:iA';
+
         if ( ! is_a($date, Carbon::class)) {
             $validator = Validator::make(['date' => $date], ['date' => 'date']);
 
@@ -1380,9 +1382,13 @@ if ( ! function_exists('presentDate')) {
             return 'N/A';
         }
 
+        if ($forceHumanForm) {
+            $dateFormat = 'm-d-Y';
+        }
+
         return $withTime
-            ? $carbonDate->format('Y-m-d h:iA')
-            : $carbonDate->format('Y-m-d');
+            ? $carbonDate->format("$dateFormat $timeFormat")
+            : $carbonDate->format($dateFormat);
     }
 }
 
@@ -1451,5 +1457,33 @@ if ( ! function_exists('incrementInvoiceNo')) {
         $num->save();
 
         return $current;
+    }
+}
+
+if ( ! function_exists('minutesToHhMm')) {
+    /**
+     * @param $minutes
+     *
+     * @return string
+     */
+    function minutesToHhMm($minutes)
+    {
+        $H = $inHours = 0;
+
+        if ($minutes >= 60) {
+            $inHours = $minutes / 60;
+            $minutes = $minutes - ($inHours * 60);
+            $H       = floor($inHours);
+        }
+
+        $i = round($minutes);
+
+        //If 59 minutes rounds up to 60 we wnat to add an hour
+        if (60 == $i) {
+            $i = 0;
+            ++$H;
+        }
+
+        return sprintf('%02d:%02d', $H, $i);
     }
 }

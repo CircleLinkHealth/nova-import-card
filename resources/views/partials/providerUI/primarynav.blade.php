@@ -78,7 +78,8 @@ $user = auth()->user();
                     @endif
                     @if($user->hasRole('saas-admin') || $user->isAdmin() || $user->hasRole('saas-admin-view-only'))
                         <li class="dropdown-toggle">
-                            <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button" aria-expanded="false">
+                            <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
+                                 aria-expanded="false">
                                 Users <span class="caret text-white"></span>
                             </div>
                             <ul class="dropdown-menu" role="menu" style="background: white !important;">
@@ -139,21 +140,26 @@ $user = auth()->user();
                     @endif
 
                     <li>
-                        <a href="{{ route('patients.dashboard') }}" class="text-white"><i class="top-nav-item-icon glyphicon glyphicon-home"></i>Home</a>
+                        <a href="{{ route('patients.dashboard') }}" class="text-white"><i
+                                    class="top-nav-item-icon glyphicon glyphicon-home"></i>Home</a>
                     </li>
 
                     <li>
-                        <a href="{{ route('patients.listing') }}" class="text-white"><i class="top-nav-item-icon glyphicon glyphicon-user"></i>Patient List</a>
+                        <a href="{{ route('patients.listing') }}" class="text-white"><i
+                                    class="top-nav-item-icon glyphicon glyphicon-user"></i>Patient List</a>
                     </li>
 
                     @role('care-center')
                     <li>
-                        <a href="{{ route('patientCallList.index') }}" class="text-white"><i class="top-nav-item-icon glyphicon glyphicon-earphone"></i>Activities</a>
+                        <a href="{{ route('patientCallList.index') }}" class="text-white"><i
+                                    class="top-nav-item-icon glyphicon glyphicon-earphone"></i>Activities</a>
                     </li>
                     @endrole
 
                     <li class="dropdown">
-                        <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button" aria-expanded="false"><i class="top-nav-item-icon glyphicon glyphicon-list-alt"></i>Reports<span class="caret text-white"></span></div>
+                        <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
+                             aria-expanded="false"><i class="top-nav-item-icon glyphicon glyphicon-list-alt"></i>Reports<span
+                                    class="caret text-white"></span></div>
 
                         <ul class="dropdown-menu" role="menu" style="background: white !important;">
                             @role('administrator')
@@ -197,6 +203,14 @@ $user = auth()->user();
                                         Work Schedule
                                     </a>
                                 </li>
+                                @if(!isProductionEnv() || (isProductionEnv() && Carbon\Carbon::now()->gte(Carbon\Carbon::create(2019,6,1,1,0,0))))
+                                    <li class="hidden-xs">
+                                        <a href="{{ route('care.center.invoice.review') }}"
+                                           id="offline-activity-time-requests-index-link">
+                                            Hours/Pay Invoice
+                                        </a>
+                                    </li>
+                                @endif
                             @endif
                             @if ( ! auth()->guest() && $user->hasRole(['administrator', 'administrator-view-only']) && $user->isNotSaas())
                                 <li><a style="color: #47beab"

@@ -6,7 +6,7 @@
 
                     function onStatusChange(e){
 
-                        let ccmStatus = document.getElementById("status");
+                        let ccmStatus = document.getElementById("ccm_status");
 
                         if (ccmStatus.value === "withdrawn") {
                             $('#header-withdrawn-reason').removeClass('hidden');
@@ -199,7 +199,7 @@
                 <div id="header-perform-status-select" class="ccm-status col-xs-offset-3">
                     @if(Route::is('patient.note.create') || Route::is('patient.note.edit'))
                         <li class="inline-block">
-                            <select id="status" name="status" class="selectpickerX dropdownValid form-control" data-size="2"
+                            <select id="ccm_status" name="ccm_status" class="selectpickerX dropdownValid form-control" data-size="2"
                                     style="width: 135px">
                                 <option style="color: #47beab"
                                         value="enrolled" {{$patient->getCcmStatus() == 'enrolled' ? 'selected' : ''}}>
@@ -215,7 +215,7 @@
                             </select>
                         </li>
                     @else
-                        <li style="font-size: 18px" id="status"
+                        <li style="font-size: 18px" id="ccm_status"
                             class="inline-block col-xs-pull-1 {{$patient->getCcmStatus()}}"><?= (empty($patient->getCcmStatus()))
                                 ? 'N/A'
                                 : ucwords($patient->getCcmStatus()); ?></li>

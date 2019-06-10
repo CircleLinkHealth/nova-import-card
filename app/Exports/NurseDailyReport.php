@@ -134,8 +134,9 @@ class NurseDailyReport implements FromCollection, Responsable, WithHeadings
         if ( ! $filename) {
             $dateString = $this->date->toDateTimeString();
             $filename   = 'Nurse_Daily_Report';
+            $now        = now()->toDateTimeString();
 
-            $this->filename = "{$filename}_{$dateString}.xls";
+            $this->filename = "{$filename}_{$dateString}_created_at_{$now}.xls";
 
             return $this;
         }

@@ -5,6 +5,12 @@
 
 @section('content')
 
+    @push('scripts')
+        <script>
+            const myUserId = @json(auth()->id());
+        </script>
+    @endpush
+
     @include('partials.confirm-modal')
 
     <div class="col-lg-8 col-lg-offset-2">
@@ -86,7 +92,7 @@
                                             template: function (obj) {
                                                 if (obj.logged_from === "note" || obj.logged_from === "note_task")
 
-                                                    if (obj.status === "draft") {
+                                                    if (obj.logger_id === myUserId && obj.status === "draft") {
                                                         return "<a href='<?php echo route('patient.note.edit', [
                                                             'patientId' => $patient->id,
                                                             'noteId'    => '',
@@ -145,17 +151,18 @@
                                             id: "comment",
                                             header: ["Preview"],
                                             template: function (obj) {
-                                                if (obj.logged_from == "note" || obj.logged_from == "note_task")
+                                                if (obj.logged_from === "note" || obj.logged_from === "note_task") {
                                                     return "<a href='<?php echo route('patient.note.view', [
                                                         'patientId' => $patient->id,
                                                         'noteId'    => '',
                                                     ]); ?>/" + obj.id + "' title='" + obj.comment + "'>" + obj.comment + "</a>";
-                                                else if (obj.logged_from == "manual_input" || obj.logged_from == "activity") {
+                                                }
+                                                else if (obj.logged_from === "manual_input" || obj.logged_from === "activity") {
                                                     return "<a href='<?php echo route('patient.activity.view', [
                                                         'patientId' => $patient->id,
                                                         'actId'     => '',
                                                     ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
-                                                } else if (obj.logged_from == "appointment") {
+                                                } else if (obj.logged_from === "appointment") {
                                                     return "<a href='<?php echo route('patient.appointment.view', [
                                                         'patientId'     => $patient->id,
                                                         'appointmentId' => '',

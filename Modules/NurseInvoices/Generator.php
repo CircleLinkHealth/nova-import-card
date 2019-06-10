@@ -10,6 +10,7 @@ use App\Notifications\NurseInvoiceCreated;
 use App\Services\PdfService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\ViewModels\Invoice;
 use Illuminate\Support\Collection;
 
@@ -19,38 +20,63 @@ class Generator
      * @var Carbon
      */
     protected $endDate;
+
     /**
      * @var array
      */
     protected $nurseUserIds;
+
     /**
      * @var PdfService
      */
     protected $pdfService;
+
+    /**
+     * @var \Illuminate\Foundation\Application|mixed|SaveInvoicesService
+     */
+    protected $saveInvoices;
+
     /**
      * @var Carbon
      */
     protected $startDate;
     /**
-     * @todo: deprecate
-     *
+     * @var bool
+     */
+    protected $storeInvoicesForNurseReview;
+    /**
      * @var bool
      */
     private $sendToCareCoaches;
 
-    public function __construct(array $nurseUserIds, Carbon $startDate, Carbon $endDate, $sendToCareCoaches = false)
-    {
-        $this->pdfService        = app(PdfService::class);
-        $this->startDate         = $startDate;
-        $this->endDate           = $endDate;
-        $this->sendToCareCoaches = $sendToCareCoaches;
-        $this->nurseUserIds      = $nurseUserIds;
+    /**
+     * Generator constructor.
+     *
+     * @param array  $nurseUserIds
+     * @param Carbon $startDate
+     * @param Carbon $endDate
+     * @param bool   $sendToCareCoaches
+     * @param bool   $storeInvoicesForNurseReview
+     */
+    public function __construct(
+        array $nurseUserIds,
+        Carbon $startDate,
+        Carbon $endDate,
+        $sendToCareCoaches = false,
+        $storeInvoicesForNurseReview = false
+    ) {
+        $this->pdfService                  = app(PdfService::class);
+        $this->startDate                   = $startDate;
+        $this->endDate                     = $endDate;
+        $this->sendToCareCoaches           = $sendToCareCoaches;
+        $this->nurseUserIds                = $nurseUserIds;
+        $this->storeInvoicesForNurseReview = $storeInvoicesForNurseReview;
     }
 
     /**
      * @return Collection
      */
-    public function generate()
+    public function createAndNotifyNurses()
     {
         $invoices = collect();
 
@@ -83,67 +109,16 @@ class Generator
 
                         $viewModel = $this->createViewModel($user, $nurseAggregatedTotalTime, $variablePayMap);
 
-                        /**
-                         * @todo: Antonis stores invoice data here
-                         * $viewModel->toArray()
-                         */
-                        $pdf = $this->createPdf($viewModel);
-                        $this->forwardToCareCoach($viewModel, $pdf);
-
-                        $invoices->push($pdf);
+                        if ($this->storeInvoicesForNurseReview) {
+                            $invoice = $this->saveInvoiceData($user->nurseInfo->id, $viewModel, $this->startDate);
+                            $invoices->push($invoice);
+                        }
                     }
                 );
             }
         );
 
         return $invoices;
-    }
-
-    /**
-     * @param Invoice $viewModel
-     *
-     * @throws \Exception
-     *
-     * @return array
-     */
-    private function createPdf(Invoice $viewModel)
-    {
-        $name = trim($viewModel->nurseFullName).'-'.Carbon::now()->toDateString();
-        $link = $name.'.pdf';
-
-        $pdfPath = $this->pdfService->createPdfFromView(
-            'nurseinvoices::invoice-v2',
-            $viewModel->toArray(),
-            storage_path("download/${name}.pdf"),
-            [
-                'margin-top'    => '6',
-                'margin-left'   => '6',
-                'margin-bottom' => '6',
-                'margin-right'  => '6',
-                'footer-right'  => 'Page [page] of [toPage]',
-                'footer-left'   => 'report generated on '.Carbon::now()->format('m-d-Y').' at '.Carbon::now(
-                    )->format(
-                        'H:iA'
-                    ),
-                'footer-font-size' => '6',
-            ]
-        );
-
-        return
-            [
-                'pdf_path'      => $pdfPath,
-                'nurse_user_id' => $viewModel->user()->id,
-                'name'          => $viewModel->user()->getFullName(),
-                'email'         => $viewModel->user()->email,
-                'link'          => $link,
-                'date_start'    => presentDate($this->startDate),
-                'date_end'      => presentDate($this->endDate),
-                'email_body'    => [
-                    'name'       => $viewModel->user()->getFullName(),
-                    'total_time' => $viewModel->systemTimeInHours(),
-                    'payout'     => $viewModel->invoiceTotalAmount(),
-                ],
-            ];
     }
 
     /**
@@ -192,14 +167,14 @@ class Generator
                     },
                     'nurseInfo',
                 ]
-                   )
+            )
             ->has('nurseInfo')
             ->when(
                 is_array($this->nurseUserIds) && ! empty($this->nurseUserIds),
                 function ($q) {
                     $q->whereIn('id', $this->nurseUserIds);
                 }
-                   )
+            )
             ->when(
                 empty($this->nurseUserIds),
                 function ($q) {
@@ -214,7 +189,7 @@ class Generator
                                 ]
                                    );
                         }
-                           )
+                    )
                         ->whereHas(
                             'nurseInfo',
                             function ($s) {
@@ -222,6 +197,26 @@ class Generator
                             }
                              );
                 }
-                   );
+            );
+    }
+
+    /**
+     * @param $nurseInfoId
+     * @param $viewModel
+     * @param Carbon $startDate
+     *
+     * @return mixed
+     */
+    private function saveInvoiceData($nurseInfoId, $viewModel, Carbon $startDate)
+    {
+        return NurseInvoice::updateOrCreate(
+            [
+                'month_year'    => $startDate,
+                'nurse_info_id' => $nurseInfoId,
+            ],
+            [
+                'invoice_data' => $viewModel->toArray(),
+            ]
+        );
     }
 }

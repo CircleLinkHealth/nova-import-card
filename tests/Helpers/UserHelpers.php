@@ -104,7 +104,7 @@ trait UserHelpers
         if ('participant' == $roleName) {
             $user->carePlan()->updateOrCreate(
                 [
-                    'care_plan_template_id' => getAppConfig('default_care_plan_template_id'),
+                    'care_plan_template_id' => \App\AppConfig::pull('default_care_plan_template_id'),
                 ],
                 [
                     'status' => 'draft',

@@ -2,8 +2,6 @@
 use CircleLinkHealth\Customer\Entities\Patient;
 
 ?>
-<input type="hidden" name="activityName" id="activityName" value="@yield('activity')">
-
 @if (isset($useOldTimeTracker) && $useOldTimeTracker)
     @include('partials.providerUIOldTimer')
 
@@ -115,6 +113,8 @@ use CircleLinkHealth\Customer\Entities\Patient;
                     return `${getYear(serverDateTimeObj)}-${getMonth(serverDateTimeObj)}-${getDate(serverDateTimeObj)} ${getTime(serverDateTimeObj)}`;
                 }
 
+                var activityName = '@yield("activity")';
+
                 var timeTrackerInfo = {
                     "patientId": '{{$patientId}}' === '' ? '0' : '{{$patientId}}',
                     "providerId": '{{Auth::user()->id}}',
@@ -134,11 +134,12 @@ use CircleLinkHealth\Customer\Entities\Patient;
                     "monthlyTime": '{{$monthlyTime}}',
                     "monthlyBhiTime": '{{$monthlyBhiTime}}',
                     "wsUrl": "{{ config('services.ws.url') }}",
+                    "wsUrlFailOver": "{{ config('services.ws.url-fail-over') }}",
                     "programId": '{{$patientProgramId}}',
                     "urlFull": '{{Request::url()}}',
                     "urlShort": '{{$urlShort}}',
                     "ipAddr": '{{$ipAddr}}',
-                    "activity": (document.getElementById('activityName') || {value: ''}).value,
+                    "activity": activityName,
                     "title": '{{$title}}',
                     "submitUrl": '{{route("api.pagetracking")}}',
                     "timeSyncUrl": '{{route("api.get.time.patients")}}',

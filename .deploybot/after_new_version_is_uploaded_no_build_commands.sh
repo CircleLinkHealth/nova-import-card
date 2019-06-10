@@ -12,19 +12,30 @@ PREVIOUS_REVISION=$6
 # Create a shared storage directory and symlink it to the project root
 if [ ! -d "$SHARED/storage" ]; then
   mkdir -p $SHARED/storage
-  mv storage/* $SHARED/storage/
-  chmod -R 775 $SHARED/storage
-  chmod -R g+s $SHARED/storage
+  echo "created $SHARED/storage"
 fi
 
-if [ ! -d "$RELEASE/storage" ]; then
-    mkdir storage
+if [ -d "$RELEASE/storage" ]; then
+    echo "running rsync -avu $RELEASE/storage/ $SHARED/storage"
+
+    # sync release storage files to shared storage
+    rsync -avu $RELEASE/storage/ $SHARED/storage
+
+    echo "ran rsync -avu $RELEASE/storage/ $SHARED/storage"
+
+    chmod -R 775 $SHARED/storage
+    chmod -R g+s $SHARED/storage
+
+    rm -rf storage
 fi
 
 if [ ! -L "$RELEASE/storage" ]; then
     ln -s $SHARED/storage $RELEASE/storage
-    echo "$RELEASE/storage symlinked to $SHARED/storage"
+    echo "symlinked $RELEASE/storage to $SHARED/storage"
 fi
+
+# laravel needs these to run, and git does not clone empty folders
+mkdir -p $RELEASE/storage/framework/{framework,sessions,views,cache}
 
 # Run migrations
 php artisan migrate --force
@@ -45,4 +56,5 @@ php artisan version:show --format=compact --suppress-app-name | cat <(echo -n "A
 php artisan deploy:post
 
 # Clear response cache
-php artisan responsecache:clear
+# CAUTION: This command will log users out
+# php artisan responsecache:clear

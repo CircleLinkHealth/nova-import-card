@@ -34,11 +34,6 @@
             <div class="row">
                 <div class="main-form-title col-lg-12">
                     View Note
-                    @if ($note['author_id'] === auth()->id())
-                        &nbsp;<a title="Edit Note"
-                                 href="{{route('patient.note.edit', ['patientId' => $patient->id, 'noteId' => $note['id']])}}"><span
-                                    class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
-                    @endif
                 </div>
                 {!! Form::open(array('url' => route('patient.note.send', ['patientId' => $patient->id, 'noteId' => $note['id']]), 'class' => 'form-horizontal')) !!}
 
@@ -155,7 +150,18 @@
                             <div class="new-note-item">
                                 <div class="form-group">
                                     <div class="col-sm-12">
+                                        <label for="meta[1][meta_value]">
+                                            Communication to Practice
+                                        </label>
+                                        <textarea id="note" class="form-control" rows="3"
+                                                  name="summary"
+                                                  readonly>{{trim($note['summary'])}}</textarea> <br/>
+                                    </div>
+                                    <div class="col-sm-12">
                                         <input type="hidden" name="meta[1][meta_key]" value="comment">
+                                        <label for="meta[1][meta_value]">
+                                            Full Note
+                                        </label>
                                         <textarea id="note" class="form-control" rows="10"
                                                   name="meta[1][meta_value]"
                                                   readonly>{{trim($note['comment'])}}</textarea> <br/>

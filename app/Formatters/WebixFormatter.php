@@ -39,11 +39,12 @@ class WebixFormatter implements ReportFormatter
         $billingProvider = $patient->getBillingProviderName();
 
         $notes = $patient->notes->sortByDesc('id')->map(
-            function ($note) use ($patient, $billingProvider) {
+            function (Note $note) use ($patient, $billingProvider) {
                 $result = [
                     'id'               => $note->id,
+                    'logger_id'        => $note->author_id,
                     'logger_name'      => $note->author->getFullName(),
-                    'comment'          => $note->body,
+                    'comment'          => $note->summary ?? $note->body,
                     'logged_from'      => 'note',
                     'type_name'        => $note->type,
                     'performed_at'     => presentDate($note->performed_at, false),
@@ -53,11 +54,19 @@ class WebixFormatter implements ReportFormatter
                     'status'           => $note->status,
                 ];
 
+                if (empty($result['type_name'])) {
+                    $result['type_name'] = 'NA';
+                }
+
                 if (Note::STATUS_DRAFT === $note->status) {
-                    if (empty($result['type_name'])) {
-                        $result['type_name'] = '<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Draft';
+                    if ($note->author_id === auth()->id()) {
+                        $editNoteRoute = route(
+                            'patient.note.edit',
+                            ['patientId' => $note->patient_id, 'noteId' => $note->id]
+                        );
+                        $result['tags'] .= "<div style='display: inline;'><a href='$editNoteRoute'><span class='glyphicon glyphicon-pencil' style='position: relative; top: 1px' aria-hidden=\"true\"></span> <span>Draft</span></a></div> ";
                     } else {
-                        $result['type_name'] = '<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> '.$result['type_name'];
+                        $result['tags'] .= '<div style="display: inline"><span>Draft</span></div> ';
                     }
                 }
 
@@ -66,32 +75,24 @@ class WebixFormatter implements ReportFormatter
                     $result['logged_from'] = 'note_task';
                 }
 
-                if ($note->author_id === auth()->id()) {
-                    $editNoteRoute = route(
-                        'patient.note.edit',
-                        ['patientId' => $note->patient_id, 'noteId' => $note->id]
-                    );
-                    $result['tags'] .= "<div class=\"label label-warning\"><a href=\"$editNoteRoute\"><span class=\"glyphicon glyphicon-edit\" aria-hidden=\"true\"></span></a></div> ";
-                }
-
                 if ($note->notifications->count() > 0) {
                     if ($this->noteService->wasForwardedToCareTeam($note)) {
-                        $result['tags'] .= '<div class="label label-warning"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
+                        $result['tags'] .= '<div class="label label-warning" style="top: -2px; position: relative;"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
                     }
                 }
 
                 if ($note->call && 'reached' == $note->call->status) {
-                    $result['tags'] .= '<div class="label label-info"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span></div> ';
+                    $result['tags'] .= '<div class="label label-info" style="top: -2px; position: relative;"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span></div> ';
                 }
 
                 if ($note->isTCM) {
-                    $result['tags'] .= '<div class="label label-danger"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span></div> ';
+                    $result['tags'] .= '<div class="label label-danger" style="top: -2px; position: relative;"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span></div> ';
                 }
 
                 $was_seen = $this->noteService->wasSeenByBillingProvider($note);
 
                 if ($was_seen) {
-                    $result['tags'] .= '<div class="label label-success"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></div> ';
+                    $result['tags'] .= '<div class="label label-success" style="top: -2px; position: relative;"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></div> ';
                 }
 
                 return $result;
@@ -193,6 +194,7 @@ class WebixFormatter implements ReportFormatter
             $formatted_notes[$count]['type'] = $note->type;
 
             //Body
+            $formatted_notes[$count]['summary'] = $note->summary ?? $note->body;
             $formatted_notes[$count]['comment'] = $note->body;
 
             $formatted_notes[$count]['date'] = Carbon::parse($note->performed_at)->format('Y-m-d');

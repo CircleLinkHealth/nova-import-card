@@ -77,6 +77,7 @@ const AuthyPerform2FA = () => import(/* webpackChunkName: "chunk-authy-perform-2
 const CcdUploader = () => import(/* webpackChunkName: "chunk-ccd-uploader" */ './components/importer/ccd-upload');
 const CcdViewer = () => import(/* webpackChunkName: "chunk-ccd-viewer" */ './components/importer/ccd-viewer');
 const CallMgmtAppV2 = () => import(/* webpackChunkName: "chunk-admin" */ './admin/calls/app-v2')
+const DisputeNurseInvoice = () => import(/* webpackChunkName: "chunk-nurse" */ '../../../Modules/NurseInvoices/Resources/assets/js/components/dispute-invoice')
 
 import EventBus from './admin/time-tracker/comps/event-bus'
 import {BindWindowFocusChange, BindWindowVisibilityChange} from './admin/time-tracker/events/window.event'
@@ -125,6 +126,7 @@ Vue.component('authy-perform-2fa', AuthyPerform2FA);
 Vue.component('ccd-upload', CcdUploader);
 Vue.component('ccd-viewer', CcdViewer);
 Vue.component('call-mgmt-app-v2', CallMgmtAppV2);
+Vue.component('dispute-nurse-invoice', DisputeNurseInvoice);
 
 const App = new Vue({
     el: '#app',

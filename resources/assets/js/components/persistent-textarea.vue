@@ -1,10 +1,30 @@
 <template>
-    <textarea v-model="text" :id="id" :class="className" :rows="rows" :cols="cols" 
-            :placeholder="placeholder" :name="name" :required="required" @change="changeTextArea"></textarea>
+    <div>
+        <template v-if="maxChars > 0">
+            <div>
+                <textarea v-model="text" :id="id" :class="className" :rows="rows" :cols="cols"
+                          :maxlength="maxChars"
+                          :placeholder="placeholder" :name="name" :required="required" @change="changeTextArea">
+                </textarea>
+                <div class="character-counter">
+                    <span>
+                        {{charCount}} / {{maxChars}} characters
+                    </span>
+                </div>
+            </div>
+        </template>
+
+        <template v-else>
+            <textarea v-model="text" :id="id" :class="className" :rows="rows" :cols="cols"
+                      :placeholder="placeholder" :name="name" :required="required" @change="changeTextArea">
+            </textarea>
+        </template>
+
+    </div>
 </template>
 
 <script>
-    import { sstor } from '../stor'
+    import {sstor} from '../stor'
 
     export default {
         name: 'persistent-textarea',
@@ -13,11 +33,20 @@
                 text: this.value
             }
         },
+        computed: {
+            charCount() {
+                return this.text.length;
+            }
+        },
         props: {
             id: String,
             className: String,
             name: String,
             value: String,
+            maxChars: {
+                type: Number,
+                default: 0
+            },
             storageKey: {
                 type: String,
                 required: true
@@ -35,22 +64,29 @@
         },
         methods: {
             changeTextArea() {
-                sstor.add(this.storageKey, this.text)
+                sstor.add(this.storageKey, this.text);
                 this.$emit('input', this.text)
             }
         },
         mounted() {
-            if (this.value && this.value.length) {
+
+            const localVal = sstor.get(this.storageKey) || '';
+
+            if (this.value && this.value.length > localVal.length) {
                 sstor.remove(this.storageKey);
                 this.changeTextArea();
             }
             else {
-                this.text = sstor.get(this.storageKey)
+                this.text = localVal;
             }
         }
     }
 </script>
 
 <style>
-    
+    .character-counter {
+        text-align: right;
+        margin-top: 3px;
+    }
+
 </style>
