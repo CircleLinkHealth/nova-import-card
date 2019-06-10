@@ -6,13 +6,22 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\CreateNurseInvoices;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
+use CircleLinkHealth\NurseInvoices\Notifications\InvoiceBeforePayment;
+use CircleLinkHealth\NurseInvoices\Traits\DryRunnable;
+use CircleLinkHealth\NurseInvoices\Traits\TakesMonthAndUsersAsInputArguments;
 use Illuminate\Console\Command;
 
 class SendCareCoachApprovedMonthlyInvoices extends Command
 {
+    use DryRunnable {
+        getOptions as traitGetOptions;
+    }
+    use TakesMonthAndUsersAsInputArguments {
+        getArguments as traitGetArgs;
+    }
+
     /**
      * The console command description.
      *
@@ -24,73 +33,93 @@ class SendCareCoachApprovedMonthlyInvoices extends Command
      *
      * @var string
      */
-    protected $signature = 'nurses:send-invoices {--variable-time : Use Variable Time pay algorithm.} {month? : Month to send the invoice for in YYYY-MM format. Defaults to 2 months ago.} {userIds?* : Space separated. Leave empty to send to all}';
+    protected $name = 'nurses:send-invoices';
 
     /**
-     * Create a new command instance.
+     * The default month, if no argument is passed.
+     *
+     * @return Carbon
      */
-    public function __construct()
+    public function defaultMonth()
     {
-        parent::__construct();
+        return Carbon::now()->subMonths(2)->startOfMonth();
     }
 
     /**
      * Execute the console command.
      *
+     * @throws \Illuminate\Validation\ValidationException
+     *
      * @return mixed
      */
     public function handle()
     {
-        $month = $this->argument('month') ?? null;
+        $this->info('Running command for '.$this->month()->toDateString());
 
-        if ($month) {
-            $month = Carbon::createFromFormat('Y-m', $month);
-        } else {
-            $month = Carbon::now()->subMonths(2);
+        $sent = $this->createAndSendInvoices();
+
+        if ($sent->isNotEmpty()) {
+            $this->table(
+                ['name', 'id'],
+                $sent->map(
+                    function ($u) {
+                        return [$u->getFullName(), $u->id];
+                    }
+                )
+            );
         }
-
-        $start = $month->startOfMonth();
-        $end   = $month->copy()->endOfMonth();
-
-        $userIds = (array) $this->argument('userIds') ?? null;
-
-        $users = User::ofType('care-center')
-            ->whereHas(
-                'pageTimersAsProvider',
-                function ($q) use ($start, $end) {
-                    $q->whereBetween('start_time', [$start, $end]);
-                }
-                     )->when(
-                         ! empty($userIds),
-                         function ($q) use ($userIds) {
-                             $q->whereIn('id', $userIds);
-                         }
-            )->get();
-
-        if ($users->isEmpty()) {
-            $this->info('Could not find Users with page activity within the given dates.');
-
-            return;
-        }
-
-        $this->info("Sending invoices to Nurses below for {$start->englishMonth}, {$start->year}");
-
-        $this->table(
-            ['name', 'id'],
-            $users->map(
-                function ($u) {
-                    return [$u->getFullName(), $u->id];
-                }
-            )
-        );
-
-        CreateNurseInvoices::dispatch(
-            $start,
-            $end,
-            $users->pluck('id')->all(),
-            true
-        );
 
         $this->info('All done!');
+    }
+
+    /**
+     * @throws \Illuminate\Validation\ValidationException
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    private function createAndSendInvoices()
+    {
+        $sent = collect();
+
+        $this->invoices()->chunk(20, function ($invoices) use ($sent) {
+            foreach ($invoices as $invoice) {
+                $user = $invoice->nurseInfo->user;
+
+                $this->warn("Preparing and sending for: {$user->getFullNameWithId()}");
+
+                if ( ! $this->isDryRun()) {
+                    $media = $invoice->toPdfAndStoreAsMedia();
+                    $user->notify(new InvoiceBeforePayment($invoice, $media));
+                    $sent->push($user);
+                }
+
+                $this->warn("Sent invoice to: {$invoice->nurseInfo->user->getFullNameWithId()}");
+            }
+        });
+
+        return $sent;
+    }
+
+    /**
+     * @throws \Illuminate\Validation\ValidationException
+     *
+     * @return mixed
+     */
+    private function invoices()
+    {
+        return NurseInvoice::where('month_year', $this->month())->when(
+            ! empty($this->usersIds()),
+            function ($q) {
+                $q->ofNurses($this->usersIds());
+            }
+        )
+            ->whereHas(
+                'nurseInfo.user',
+                function ($q) {
+                    $q->ofType('care-center');
+                }
+            )->with(['nurseInfo.user' => function ($q) {
+                $q->withTrashed();
+            }]);
     }
 }
