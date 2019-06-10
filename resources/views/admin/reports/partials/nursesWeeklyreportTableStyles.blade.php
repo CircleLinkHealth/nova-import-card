@@ -69,15 +69,13 @@
         width: 267px;
     }
 
-    .red{
+    .red {
         color: red;
     }
 
-    .green{
+    .green {
         color: green;
     }
-.heading-rows{
 
-}
 
 </style>
