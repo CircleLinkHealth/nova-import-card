@@ -23,6 +23,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property int                                                             $id
  * @property int                                                             $patient_id
  * @property int                                                             $author_id
+ * @property string                                                          $summary
  * @property string                                                          $body
  * @property int                                                             $isTCM
  * @property int                                                             $did_medication_recon
@@ -80,6 +81,7 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
         'patient_id',
         'author_id',
         'logger_id',
+        'summary',
         'body',
         'isTCM',
         'type',

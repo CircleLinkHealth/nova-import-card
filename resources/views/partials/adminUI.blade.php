@@ -132,8 +132,8 @@
                                             Report</a></li>
                                     <li><a href="{{ route('admin.reports.nurse.monthly') }}">Monthly
                                             Report</a></li>
-                                    <li><a href="{{ route('admin.reports.nurse.invoice') }}">
-                                            Invoices</a></li>
+                                    {{--<li><a href="{{ route('admin.reports.nurse.invoice') }}">--}}
+                                            {{--Invoices</a></li>--}}
                                     <li><a href="{{ route('admin.reports.nurse.allocation') }}">
                                             Allocation</a></li>
 
