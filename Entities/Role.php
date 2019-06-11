@@ -11,14 +11,15 @@ use Michalisantoniou6\Cerberus\CerberusRole;
 /**
  * CircleLinkHealth\Customer\Entities\Role.
  *
- * @property int $id
- * @property string $name
- * @property string|null $display_name
- * @property string|null $description
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property int                                                                                       $id
+ * @property string                                                                                    $name
+ * @property string|null                                                                               $display_name
+ * @property string|null                                                                               $description
+ * @property \Carbon\Carbon                                                                            $created_at
+ * @property \Carbon\Carbon                                                                            $updated_at
  * @property \CircleLinkHealth\Customer\Entities\Permission[]|\Illuminate\Database\Eloquent\Collection $perms
- * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection $users
+ * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection       $users
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereDisplayName($value)
@@ -26,6 +27,7 @@ use Michalisantoniou6\Cerberus\CerberusRole;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Role newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Role newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Role query()
@@ -40,18 +42,18 @@ class Role extends CerberusRole
     ];
 
     /**
+     * Cache roles for 24 Hours.
+     *
+     * @var int
+     */
+    private const CACHE_ROLES_MINUTES = 1440;
+
+    /**
      * The database table used by the model.
      *
      * @var string
      */
     protected $table = 'lv_roles';
-
-    /**
-     * Cache roles for 24 Hours
-     *
-     * @var integer
-     */
-    private const CACHE_ROLES_MINUTES = 1440;
 
     /**
      * Get the IDs of Roles from names.
@@ -69,8 +71,8 @@ class Role extends CerberusRole
                 return Role::all();
             }
         )
-                     ->whereIn('name', $roleNames)
-                     ->pluck('id')
-                     ->all();
+            ->whereIn('name', $roleNames)
+            ->pluck('id')
+            ->all();
     }
 }

@@ -183,7 +183,7 @@ class UserController extends Controller
             }
             if ('withdraw' == $action) {
                 $withdrawnReason = $params->get('withdrawn-reason');
-                if ($withdrawnReason == 'Other') {
+                if ('Other' == $withdrawnReason) {
                     $withdrawnReason = $params->get('withdrawn-reason-other');
                 }
                 $this->withdrawUsers($users, $withdrawnReason);
@@ -250,7 +250,7 @@ class UserController extends Controller
                 if ('impersonate' == $params['action']) {
                     Auth::login($id);
 
-                    return redirect()->route('/', [])->with('messages', ['Logged in as user ' . $id]);
+                    return redirect()->route('/', [])->with('messages', ['Logged in as user '.$id]);
                 }
             }
         }
@@ -373,14 +373,14 @@ class UserController extends Controller
 
         // filter user
         $users = User::whereIn('id', Auth::user()->viewableUserIds())
-                     ->orderBy('id', 'desc')
-                     ->get()
-                     ->mapWithKeys(function ($user) {
+            ->orderBy('id', 'desc')
+            ->get()
+            ->mapWithKeys(function ($user) {
                          return [
                              $user->id => "{$user->getFirstName()} {$user->getLastName()} ({$user->id})",
                          ];
                      })
-                     ->all();
+            ->all();
 
         $filterUser = 'all';
 
@@ -393,8 +393,8 @@ class UserController extends Controller
 
         // role filter
         $roles = Role::all()
-                     ->pluck('display_name', 'name')
-                     ->all();
+            ->pluck('display_name', 'name')
+            ->all();
 
         $filterRole = 'all';
 
@@ -407,10 +407,10 @@ class UserController extends Controller
 
         // program filter
         $programs = Practice::orderBy('id', 'desc')
-                            ->whereIn('id', Auth::user()->viewableProgramIds())
-                            ->get()
-                            ->pluck('display_name', 'id')
-                            ->all();
+            ->whereIn('id', Auth::user()->viewableProgramIds())
+            ->get()
+            ->pluck('display_name', 'id')
+            ->all();
 
         $filterProgram = 'all';
 
@@ -521,7 +521,7 @@ class UserController extends Controller
 
         return redirect()->route('admin.users.edit', [$wpUser->id])->with(
             'messages',
-            ['successfully created new user - ' . $wpUser->id]
+            ['successfully created new user - '.$wpUser->id]
         );
     }
 
@@ -536,7 +536,7 @@ class UserController extends Controller
 
         return redirect()->route('admin.users.edit', [$wpUser->id])->with(
             'messages',
-            ['successfully created new user - ' . $wpUser->id]
+            ['successfully created new user - '.$wpUser->id]
         );
     }
 
@@ -607,29 +607,29 @@ class UserController extends Controller
         }
 
         return $wpUsers->whereIn('id', Auth::user()->viewableUserIds())
-                       ->select('id')
-                       ->get();
+            ->select('id')
+            ->get();
     }
 
-    private function withdrawUsers($userIds, String $withdrawnReason)
+    private function withdrawUsers($userIds, string $withdrawnReason)
     {
         //need to make sure that we are creating notes for participants
         //and withdrawn patients that are not already withdrawn
         $participantIds = User::ofType('participant')
-                              ->whereHas('patientInfo', function ($query) {
+            ->whereHas('patientInfo', function ($query) {
                                   $query->where('ccm_status', '!=', 'withdrawn');
                               })
-                              ->whereIn('id', $userIds)
-                              ->select(['id'])
-                              ->pluck('id')
-                              ->all();
+            ->whereIn('id', $userIds)
+            ->select(['id'])
+            ->pluck('id')
+            ->all();
 
         Patient::whereIn('user_id', $participantIds)
-               ->update([
-                   'ccm_status'        => 'withdrawn',
-                   'withdrawn_reason' => $withdrawnReason,
-                   'date_withdrawn'    => Carbon::now()->toDateTimeString(),
-               ]);
+            ->update([
+                'ccm_status'       => 'withdrawn',
+                'withdrawn_reason' => $withdrawnReason,
+                'date_withdrawn'   => Carbon::now()->toDateTimeString(),
+            ]);
 
         $authorId = auth()->id();
 

@@ -6,10 +6,10 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
-use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Customer\Traits\MakesOrReceivesCalls;
+use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 
 /**
  * CircleLinkHealth\Customer\Entities\Nurse.
@@ -177,7 +177,7 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
     {
         return $this->hasMany(Holiday::class, 'nurse_info_id', 'id');
     }
-    
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */

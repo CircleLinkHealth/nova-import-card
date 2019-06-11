@@ -7,20 +7,20 @@
 namespace CircleLinkHealth\Customer\Entities;
 
 use CircleLinkHealth\TimeTracking\Entities\Activity;
-use CircleLinkHealth\Customer\Entities\Nurse;
 
 /**
  * CircleLinkHealth\Customer\Entities\NurseCareRateLog.
  *
- * @property int                 $id
- * @property int                 $nurse_id
- * @property int|null            $activity_id
- * @property string              $ccm_type
- * @property int                 $increment
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
- * @property \CircleLinkHealth\TimeTracking\Entities\Activity|null  $activity
- * @property \CircleLinkHealth\Customer\Entities\Nurse          $nurse
+ * @property int                                                   $id
+ * @property int                                                   $nurse_id
+ * @property int|null                                              $activity_id
+ * @property string                                                $ccm_type
+ * @property int                                                   $increment
+ * @property \Carbon\Carbon|null                                   $created_at
+ * @property \Carbon\Carbon|null                                   $updated_at
+ * @property \CircleLinkHealth\TimeTracking\Entities\Activity|null $activity
+ * @property \CircleLinkHealth\Customer\Entities\Nurse             $nurse
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseCareRateLog whereActivityId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseCareRateLog whereCcmType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseCareRateLog whereCreatedAt($value)
@@ -29,7 +29,9 @@ use CircleLinkHealth\Customer\Entities\Nurse;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseCareRateLog whereNurseId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseCareRateLog whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseCareRateLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseCareRateLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseCareRateLog query()

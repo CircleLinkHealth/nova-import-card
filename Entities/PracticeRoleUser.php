@@ -9,17 +9,17 @@ namespace CircleLinkHealth\Customer\Entities;
 use CircleLinkHealth\Core\Entities\BaseModel;
 
 /**
- * Class PracticeRoleUser
+ * Class PracticeRoleUser.
  *
- * @package App
- * @property integer $program_id
- * @property integer $user_id
- * @property integer $role_id
- * @property int|null $has_admin_rights
- * @property int|null $send_billing_reports
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property int                                                                            $program_id
+ * @property int                                                                            $user_id
+ * @property int                                                                            $role_id
+ * @property int|null                                                                       $has_admin_rights
+ * @property int|null                                                                       $send_billing_reports
+ * @property \Illuminate\Support\Carbon|null                                                $created_at
+ * @property \Illuminate\Support\Carbon|null                                                $updated_at
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PracticeRoleUser newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PracticeRoleUser newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PracticeRoleUser query()

@@ -13,12 +13,11 @@ use CircleLinkHealth\Customer\Entities\PatientContactWindow;
  */
 class PatientContactWindowUpdatedEvent
 {
-    
     /**
-     * @var PatientContactWindow[] $window
+     * @var PatientContactWindow[]
      */
     public $windows;
-    
+
     public function __construct(iterable $windows)
     {
         $this->windows = $windows;
