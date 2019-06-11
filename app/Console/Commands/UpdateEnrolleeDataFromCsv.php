@@ -97,7 +97,7 @@ class UpdateEnrolleeDataFromCsv extends Command
         Enrollee::whereIn('id', $csv->pluck('Eligible_Patient_ID')->toArray())
             ->orWhereIn('eligibility_job_id', $csv->pluck('Eligibility_Job_ID')->toArray())
             ->chunk(200, function ($enrollees) use (&$csv) {
-                $enrollees->each(function ($e) use ($csv) {
+                $enrollees->each(function (Enrollee $e) use ($csv) {
                     $row = $csv->filter(function ($row) use ($e) {
                         //We need either the enrollee id, or the eligibility job id
                         if (array_key_exists('Eligible_Patient_ID', $row)) {
@@ -109,10 +109,6 @@ class UpdateEnrolleeDataFromCsv extends Command
 
                         return false;
                     })->first();
-
-                    //in case we have the same patient but with different call status or call dates, we want to forget the one we update, because we are using ->first() above.
-                    //also this will help with memory
-                    $csv->forget($row);
 
                     if ($row) {
                         $e = $this->setEnrolleeStatus($e, $row);
@@ -128,6 +124,9 @@ class UpdateEnrolleeDataFromCsv extends Command
                         }
                         $e->save();
                     }
+                    //in case we have the same patient but with different call status or call dates, we want to forget the one we update, because we are using ->first() above.
+                    //also this will help with memory
+                    $csv->forget($row);
                 });
             });
 
