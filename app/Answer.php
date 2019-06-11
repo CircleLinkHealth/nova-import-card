@@ -28,7 +28,6 @@ class Answer extends BaseModel
         'value' => 'array',
     ];
 
-
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');

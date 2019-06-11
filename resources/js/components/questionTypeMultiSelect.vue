@@ -1,13 +1,15 @@
 <template>
     <div>
         <div class="row">
-            <div class="checkbox-dropdown col-lg-4" v-for="answer in previousQuestionAnswers">
-                {{answer.name}}
-                <div v-for="checkBoxOption in multiSelectOptions">
+            <div v-for="(answer, index) in lastQuestionAnswer">
+                <label>{{answer.name}}</label>
+                <div v-for="(checkBoxOption, index) in multiSelectOptions">
                     <label>
                         <input class="multi-select"
                                type="checkbox"
-                               name="checkboxTypeAnswer">
+                               name="checkboxTypeAnswer"
+                               v-model="checkedAnswers[checkBoxOption]"
+                               @click="handleClick()">
                         {{checkBoxOption}}
                     </label>
                 </div>
@@ -21,34 +23,79 @@
 
     export default {
         name: "questionTypeMultiSelect",
-        props: ['question', 'userId', 'surveyInstanceId'],
+        props: ['question', 'questions', 'userId', 'surveyInstanceId', 'surveyAnswers'],
         components: {},
 
         data() {
             return {
-                checkBoxValues: this.question.type.question_type_answers[0].value,
+                checkBoxValues: this.question.type.question_type_answers,
                 checkBoxOptions: [],
                 multiSelectOptions: [],
-                previousQuestionAnswers: [
-                    {
-                        name: 'Colorectal Cancer'
-                    },
-                    {
-                        name: 'Depression'
-                    }
-                ],
+                lastQuestionAnswer: [],
+                checkedAnswers: [],
+
             }
         },
         computed: {
             placeHolder() {
                 return this.checkBoxOptions[0].placeholder
+            },
+
+            lastQuestionOrderNumber() {
+                const lastQuestionOrder = this.checkBoxOptions[0].import_answers_from_question.question_order;
+                this.lastQuestionAnswers(lastQuestionOrder);
+                return lastQuestionOrder;
             }
+
+
         },
 
-        methods: {
-            dropdown() {
+        methods: {//@todo:fix this
+            lastQuestionAnswers(lastQuestionOrder) {
+                const id = this.questions.filter(function (q) {
+                    return q.pivot.order === lastQuestionOrder && q.pivot.sub_order === null;
+                })[0].pivot.question_id;
 
+                const lastAnswerValues = this.surveyAnswers.filter(function (q) {
+                    return q.id === id;
+                })[0].value;
+
+                this.lastQuestionAnswer.push(...JSON.parse(lastAnswerValues));
             },
+            handleClick() {
+                this.handleAnswers();
+            },
+            handleAnswers() {
+                const answer = [];
+                for (let j = 0; j < this.checkedAnswers.length; j++) {
+                    const val = this.checkedAnswers[j];
+                    const q = this.multiSelectOptions.find(x => x.value === val);
+                    answer.push({[q.options.key]: val});
+                }
+
+
+                var answerData = JSON.stringify(answer);
+
+                axios.post('/save-answer', {
+                    user_id: this.userId,
+                    survey_instance_id: this.surveyInstanceId[0],
+                    question_id: this.question.id,
+                    question_type_answer_id: this.questionTypeAnswerId,
+                    value: answerData,
+                })
+                    .then(function (response) {
+                        console.log(response);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            }
+
+
+        },
+        mounted() {
+
+
         },
 
         created() {

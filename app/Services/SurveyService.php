@@ -44,8 +44,7 @@ class SurveyService
     }
 
     public function updateOrCreateAnswer($input)
-    {
-        //update or create the answer
+    {//update or create the answer
         $answer = Answer::updateOrCreate([
             'user_id'            => $input['user_id'],
             'survey_instance_id' => $input['survey_instance_id'],

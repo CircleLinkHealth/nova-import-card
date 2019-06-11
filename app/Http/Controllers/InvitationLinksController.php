@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\SurveyAuthBeforeLoginRequest;
 use App\Http\Requests\SurveyAuthLoginRequest;
 use App\InvitationLink;
+use App\Question;
 use App\Services\SurveyInvitationLinksService;
 use App\Services\SurveyService;
 use Illuminate\Http\Request;
@@ -47,7 +47,6 @@ class InvitationLinksController extends Controller
         $userId      = $request->get('id');
         $url         = $this->service->createAndSaveUrl($userId);
         $phoneNumber = $this->service->getPatientPhoneNumberById($userId);
-        dd($phoneNumber);
         $this->sendSms($phoneNumber, $url);
 
         return 'invitation has been sent';
@@ -104,7 +103,7 @@ class InvitationLinksController extends Controller
             return 'Name does not exists in our DB';
         }
         $userId       = $invitationLink->patientInfo->user_id;
-        $surveyId = $invitationLink->survey_id;
+        $surveyId     = $invitationLink->survey_id;
         $urlUpdatedAt = $invitationLink->updated_at;
         $isExpiredUrl = $invitationLink->is_manually_expired;
         $today        = now();
@@ -115,10 +114,9 @@ class InvitationLinksController extends Controller
 
             return view('surveyUrlAuth.resendUrl', compact('userId'));
         }
-
         $surveyData = $this->surveyService->getSurveyData($userId, $surveyId);
 
-        return view('surveyQuestionnaire.surveyQuestions', compact('urlToken','surveyData'));
+        return view('surveyQuestionnaire.surveyQuestions', compact('ordered', 'surveyData'));
     }
 
 }

@@ -20,7 +20,13 @@
                     will also reach out shortly. Thanks!
                 </div>
 
-                <a class="btn btn-primary" @click="showQuestions">Start</a>
+                <div v-if="this.lastQuestionAnswered !== null">
+                    <a class="btn btn-primary" @click="showQuestions">Start</a>
+                </div>
+
+                <div v-if="this.lastQuestionAnswered !== null">
+                    <a class="btn btn-primary" @click="scrollToLastQuestion">Continue</a>
+                </div>
 
                 <div class="by-circlelink">
                     ⚡️ by CircleLink Health
@@ -34,17 +40,17 @@
                     <div class="questions-body" v-show="showSubQuestionNew(index)"><!--data-aos="fade-up"-->
 
                         <div class="questions-title">
-                            {{question.id}}{{'.'}} {{question.body}}
+                            {{question.pivot.order}}{{question.pivot.sub_order}}{{'.'}} {{question.body}}
                         </div>
                         <br>
                         <!--Questions Answer Type-->
                         <div class="question-answer-type">
-                            <question-type-text
+                         <!--   <question-type-text
                                     :question="question"
                                     :userId="userId"
                                     :surveyInstanceId="surveyInstanceId"
                                     v-if="question.type.type === 'text'">
-                            </question-type-text>
+                            </question-type-text>-->
 
                             <question-type-checkbox
                                     :question="question"
@@ -54,7 +60,9 @@
                             </question-type-checkbox>
 
                             <question-type-muti-select
+                                    :questions="questions"
                                     :question="question"
+                                    :surveyAnswers="surveyAnswers"
                                     :userId="userId"
                                     :surveyInstanceId="surveyInstanceId"
                                     v-if="question.type.type === 'multi_select'">
@@ -85,6 +93,9 @@
                     </div>
                 </div>
             </div>
+
+        </div>
+        <div class="call-assistance">
             <call-assistance v-if="callAssistance" @closeCallAssistanceModal="hideCallHelp"></call-assistance>
         </div>
         <!--bottom-navbar-->
@@ -119,7 +130,7 @@
                     </div>
                 </div>
                 <!--scroll buttons-->
-                <div class="row">
+                <div v-show="!welcomeStage" class="row">
                     <div class="scroll-buttons col-lg-2">
                         <button type="button"
                                 id="scroll-down"
@@ -197,6 +208,9 @@
                 userId: this.surveydata.id,
                 surveyInstanceId: [],
                 questionIndexAnswers: [],
+                surveyInstanceId: [],
+                questionIndexAnswers: [],
+                surveyAnswers: [],
             }
         },
         computed: {
@@ -206,16 +220,21 @@
                 });
             },
 
+            lastQuestionAnswered() {
+                return this.surveydata.survey_instances[0].pivot.last_question_answered_id;
+            },
+
             questionsOrder() {
                 return this.questions.flatMap(function (q) {
-                    return q.pivot.order;
+                    return q.pivot.order + q.pivot.sub_order;
                 });
 
             },
 
             totalQuestions() {
                 return this.questions.length - this.subQuestions.length;
-            }
+            },
+
         },
 
         methods: {
@@ -233,7 +252,12 @@
                 this.questionsStage = true;
                 this.welcomeStage = false;
             },
-
+            scrollToLastQuestion() {
+                this.questionsStage = true;
+                this.welcomeStage = false;
+                //@todo:check this again - i dont like it
+                this.questionIndex = this.lastQuestionAnswered - 1;
+            },
             scrollDown() {
 
             },
@@ -272,9 +296,9 @@
                         && q.related_question_expected_answer === answerVal
                 });
 
-                if (conditions.length !== 0) {
-                    this.showSubQuestion(conditions);
-                }
+                /* if (conditions.length !== 0) {
+                       this.showSubQuestionNew(conditions);
+                   }*/
                 this.questionIndex++;
                 this.updateProgressBar();
             },
@@ -321,9 +345,11 @@
             });
             const questions = questionsData.filter(question => !question.optional);
             const subQuestions = questionsData.filter(question => question.optional);
-
             this.questions.push(...questionsData);
             this.subQuestions.push(...subQuestions);
+
+            const surveyAnswers = this.surveydata.answers;
+            this.surveyAnswers.push(...surveyAnswers);
         },
 
     }
@@ -488,6 +514,7 @@
 
     .call-assistance {
         padding-left: 3%;
+        position: absolute;
     }
 
     .btn-default {
@@ -504,6 +531,4 @@
         margin-left: -25%;
         margin-top: 7%;
     }
-
-
 </style>

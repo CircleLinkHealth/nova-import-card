@@ -1,16 +1,33 @@
 <template>
     <div>
         <!--question without sub_parts-->
-        <div v-if="!questionHasSubParts">
-            <input
-                    type="text"
-                    class="text-field"
-                    name="textTypeAnswer[]"
-                    v-model="inputHasText"
-                    :placeholder="this.questionPlaceHolder"
-                    @change="onInput">
+        <div v-if="!questionHasSubParts"
+             v-for="(placeholder, index) in placeholderForSingleQuestion">
+            <input type="text"
+                   class="text-field"
+                   name="textTypeAnswer[]"
+                   v-model="inputHasText[index]"
+                   :placeholder="placeholder"
+                   @change="onInput()">
         </div>
-
+        <!--add single input fields button-->
+        <div v-for="extraFieldButtonName in extraFieldButtonNames">
+            <div v-if="canAddInputFields && !questionHasSubParts">
+                <button type="button"
+                        @click="addInputField(extraFieldButtonName.placeholder)"
+                        class="btn-add-field">
+                    {{extraFieldButtonName.add_extra_answer_text}}
+                </button>
+            </div>
+            <!--add remove input fields button-->
+            <div v-if="canRemoveInputFields && !questionHasSubParts">
+                <button type="button"
+                        @click="removeSingleInputFields()"
+                        class="btn-primary">
+                    {{extraFieldButtonName.remove_extra_answer_text}}
+                </button>
+            </div>
+        </div>
         <br>
         <!--question with sub_parts-->
         <div class="row">
@@ -20,39 +37,38 @@
                 <input type="text"
                        class="text-field"
                        name="textTypeAnswer[]"
-                       v-model="inputHasText[subPart.title]"
+                       v-model="inputHasText[index]"
                        :placeholder="subPart.placeholder"
                        @change="onInput">
-
-
-                <div v-for="extraFieldButtonName in extraFieldButtonNames">
-                    <div v-if="canAddInputFields">
-                        <button type="button"
-                                @click="addInputFields(subPart.title, subPart.placeholder)"
-                                class="btn-add-field">
-                            {{extraFieldButtonName.add_extra_answer_text}}
-                        </button>
-                    </div>
-
-                    <div v-if="canRemoveInputFields">
-                        <button type="button"
-                                @click="removeInputFields(index)"
-                                class="btn-primary">
-                            {{extraFieldButtonName.remove_extra_answer_text}}
-                        </button>
-                    </div>
+            </div>
+            <!--add input fields button-->
+            <div v-for="extraFieldButtonName in extraFieldButtonNames">
+                <div v-if="canAddInputFields && questionHasSubParts">
+                    <button type="button"
+                            @click="addInputFields(extraFieldButtonName.sub_parts)"
+                            class="btn-add-field">
+                        {{extraFieldButtonName.add_extra_answer_text}}
+                    </button>
+                </div>
+                <!--remove input fields button-->
+                <div v-if="canRemoveInputFields && questionHasSubParts">
+                    <button type="button"
+                            @click="removeInputFields()"
+                            class="btn-primary">
+                        {{extraFieldButtonName.remove_extra_answer_text}}
+                    </button>
                 </div>
             </div>
         </div>
-        <!--add input fields button-->
+
 
         <!--next button-->
-        <div v-if="inputHasText >'1'">
+        <div v-if="hasTypedInTwoFields || hasTypedTwoCharacters">
             <button class="next-btn"
                     name="text"
                     id="text"
                     type="submit"
-                    @click="handleAnswer(inputHasText)">Next
+                    @click="handleAnswer()">Next
             </button>
         </div>
     </div>
@@ -64,11 +80,8 @@
 
     export default {
         name: "questionTypeText",
-        props: ['question', 'userId', 'surveyInstanceId'],
+        props: ['question', 'userId', 'surveyInstanceId', 'isActive'],
 
-        mounted() {
-
-        },
 
         data() {
             return {
@@ -78,11 +91,32 @@
                 extraFieldButtonNames: [],
                 canRemoveInputFields: false,
                 canAddInputFields: false,
+                showNextButton: false,
+                placeholderForSingleQuestion: [],
             }
         },
+
         computed: {
+            hasTypedInTwoFields() {
+                return this.inputHasText.length > 1;
+            },
+
+            hasTypedTwoCharacters() {
+                var text = this.inputHasText;
+                const length = text.map(q => q.length);
+                return length > 1 === true;
+            },
+
             hasAnswerType() {
                 return this.question.type.question_type_answers.length !== 0;
+            },
+
+            questionTypeAnswerId() {
+                if (this.hasAnswerType) {
+                    return this.question.type.question_type_answers[0].id;
+                } else {
+                    return 0;
+                }
             },
 
             questionHasSubParts() {
@@ -92,7 +126,7 @@
                 return false;
             },
 
-            questionHasPlaceHolder() {
+            questionHasPlaceHolderInSubParts() {
                 if (this.questionHasSubParts) {
                     const placeholder = this.questionOptions[0].sub_parts.map(q => q.placeholder);
                     if (placeholder) {
@@ -102,11 +136,14 @@
                 return false;
             },
 
-            questionPlaceHolder() {
-                if (this.questionHasPlaceHolder) {
-                    return this.questionOptions[0].sub_parts.map(q => q.placeholder);
+            questionHasPlaceHolderInOptions() {
+                if (!this.questionHasPlaceHolderInSubParts && this.questionOptions.length !== 0) {
+                    const placeholder = this.questionOptions[0].placeholder;
+                    if (placeholder) {
+                        return true;
+                    }
                 }
-                return '';
+                return false;
             },
 
             addInputFieldsButtonName() {
@@ -124,42 +161,99 @@
                 return '';
             },
 
+            conditions() {
+                if (this.hasTypedInTwoFields && this.questionHasSubParts) {
+                    return true;
+                } else {
+                    if (this.hasTypedTwoCharacters && !this.questionHasSubParts) {
+                        return true;
+                    }
+                }
+            }
+
+        },
+
+        mounted() {
+            /*get placeholder for single question input*/
+            if (this.questionHasPlaceHolderInSubParts && !this.questionHasPlaceHolderInOptions) {
+                const placeholder = this.questionOptions[0].sub_parts.map(q => q.placeholder);
+                this.placeholderForSingleQuestion.push(...placeholder);
+            }
+            if (this.questionHasPlaceHolderInOptions) {
+                const placeholder2 = this.questionOptions[0].placeholder;
+                this.placeholderForSingleQuestion.push(placeholder2);
+            }
         },
 
         methods: {
             onInput() {
                 EventBus.$emit('handleTextType');
             },
+            addInputField(placeholder) {
+                this.placeholderForSingleQuestion.push(placeholder);
+                this.canRemoveInputFields = true;
+            },
 
-            addInputFields(label, placeholder, index) {
-                this.subParts.push({
-                    title: label,
-                    placeholder: placeholder
-                });
+            addInputFields(extraFieldSubParts) {
+                const subParts = extraFieldSubParts.map(q => q);
+                for (let j = 0; j < subParts.length; j++) {
+                    const subPart = subParts[j];
+                    this.subParts.push({
+                        title: subPart.title,
+                        placeholder: subPart.placeholder,
+                        key: subPart.key
+                    });
+                }
 
                 this.canRemoveInputFields = true;
-                //this.canAddInputFields = false;
+
+            },
+            /*@todo:delete answer also*/
+            removeInputFields(index) {//index is undefined. if it is defined it doesn't work. Can anyone clarify pls?
+                this.subParts.splice(index, 2);
             },
 
-            removeInputFields(index) {
-                // this.delete(this.subParts, index);
-                this.subParts.splice(index, 1);
+            removeSingleInputFields(index) {
+                this.placeholderForSingleQuestion.splice(index, 1)
             },
 
-            handleAnswer(answerVal) {
+            handleAnswer() {
+                if (this.subParts.length === 0) {
+                    var answer = [];
+                    for (let j = 0; j < this.inputHasText.length; j++) {
+                        var values = {
+                            name: this.inputHasText[j]
+                        };
+                        answer.push(values);
+                    }
 
-                var answer = [{
-                    value_1: answerVal,
-                }];
+                } else {
+                    const keys = [];
+                    var answer = [];
+                    for (let j = 0; j < this.inputHasText.length; j++) {
+                        const q = this.subParts[j];
+                        keys.push(q.key);
 
+                        const result = this.inputHasText.reduce(function (result, value, index) {
+                            result[keys[index]] = value;
+                            return result;
+                        }, {});
+
+                        answer.push(result);
+                    }
+
+
+                    console.log(answer);
+
+                }
                 var answerData = JSON.stringify(answer);
 
                 axios.post('/save-answer', {
                     user_id: this.userId,
                     survey_instance_id: this.surveyInstanceId[0],
                     question_id: this.question.id,
-                    question_type_answer_id: 0,
-                    value_1: answerData,
+                    question_type_answer_id: this.questionTypeAnswerId,
+                    value: answerData,
                 })
                     .then(function (response) {
                         console.log(response);
@@ -184,9 +278,10 @@
                 const subQuestions = this.questionOptions[0].sub_parts;
                 this.subParts.push(...subQuestions);
             }
+
             /*sets canAddInputField data*/
             if (this.hasAnswerType) {
-                return this.questionOptions[0].allow_multiple === true ? this.canAddInputFields = true : '';
+                return this.questionOptions[0].allow_multiple === true ? this.canAddInputFields = true : this.canAddInputFields = false;
             }
             return false;
         },
