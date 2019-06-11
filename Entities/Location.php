@@ -13,33 +13,34 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * CircleLinkHealth\Customer\Entities\Location.
  *
- * @property int $id
- * @property int $practice_id
- * @property int $is_primary
- * @property string|null $external_department_id
- * @property string $name
- * @property string $phone
- * @property string|null $clinical_escalation_phone
- * @property string|null $fax
- * @property string $address_line_1
- * @property string|null $address_line_2
- * @property string $city
- * @property string $state
- * @property string|null $timezone
- * @property string $postal_code
- * @property string|null $ehr_login
- * @property string|null $ehr_password
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property string|null $deleted_at
- * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection $clinicalEmergencyContact
+ * @property int                                                                                             $id
+ * @property int                                                                                             $practice_id
+ * @property int                                                                                             $is_primary
+ * @property string|null                                                                                     $external_department_id
+ * @property string                                                                                          $name
+ * @property string                                                                                          $phone
+ * @property string|null                                                                                     $clinical_escalation_phone
+ * @property string|null                                                                                     $fax
+ * @property string                                                                                          $address_line_1
+ * @property string|null                                                                                     $address_line_2
+ * @property string                                                                                          $city
+ * @property string                                                                                          $state
+ * @property string|null                                                                                     $timezone
+ * @property string                                                                                          $postal_code
+ * @property string|null                                                                                     $ehr_login
+ * @property string|null                                                                                     $ehr_password
+ * @property \Carbon\Carbon                                                                                  $created_at
+ * @property \Carbon\Carbon                                                                                  $updated_at
+ * @property string|null                                                                                     $deleted_at
+ * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection             $clinicalEmergencyContact
  * @property \CircleLinkHealth\Customer\Entities\EmrDirectAddress[]|\Illuminate\Database\Eloquent\Collection $emrDirect
- * @property mixed $emr_direct_address
- * @property \App\Location $parent
- * @property \CircleLinkHealth\Customer\Entities\Practice $practice
- * @property \CircleLinkHealth\Customer\Entities\Practice $program
- * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection $providers
- * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection $user
+ * @property mixed                                                                                           $emr_direct_address
+ * @property \App\Location                                                                                   $parent
+ * @property \CircleLinkHealth\Customer\Entities\Practice                                                    $practice
+ * @property \CircleLinkHealth\Customer\Entities\Practice                                                    $program
+ * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection             $providers
+ * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection             $user
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\Location onlyTrashed()
  * @method static bool|null restore()
@@ -64,8 +65,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\Location withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Location withoutTrashed()
  * @mixin \Eloquent
- * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\CircleLinkHealth\Core\Entities\DatabaseNotification[] $notifications
- * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[]                                  $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Location newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Location newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Location query()
@@ -73,8 +76,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Location extends \CircleLinkHealth\Core\Entities\BaseModel
 {
-    use HasEmrDirectAddress,
-        Notifiable,
+    use HasEmrDirectAddress;
+    use
+        Notifiable;
+    use
         SoftDeletes;
 
     //Aprima's constant location id.
@@ -105,8 +110,8 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
     public function clinicalEmergencyContact()
     {
         return $this->morphToMany(User::class, 'contactable', 'contacts')
-                    ->withPivot('name')
-                    ->withTimestamps();
+            ->withPivot('name')
+            ->withTimestamps();
     }
 
     public static function getAllNodes()
@@ -189,7 +194,7 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
     public function providers()
     {
         return $this->belongsToMany(User::class)
-                    ->ofType('provider');
+            ->ofType('provider');
     }
 
     public function routeNotificationForMail()

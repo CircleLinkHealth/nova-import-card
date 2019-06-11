@@ -7,26 +7,25 @@
 namespace CircleLinkHealth\Customer\Entities;
 
 use CircleLinkHealth\Core\Entities\BaseModel;
-use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
 /**
- * CircleLinkHealth\Customer\Entities\SaasAccount
+ * CircleLinkHealth\Customer\Entities\SaasAccount.
  *
- * @property int $id
- * @property string $name
- * @property string $slug
- * @property string|null $logo_path
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\Media[] $media
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\Practice[] $practices
- * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\User[] $users
+ * @property int                                                                                     $id
+ * @property string                                                                                  $name
+ * @property string                                                                                  $slug
+ * @property string|null                                                                             $logo_path
+ * @property \Illuminate\Support\Carbon|null                                                         $created_at
+ * @property \Illuminate\Support\Carbon|null                                                         $updated_at
+ * @property string|null                                                                             $deleted_at
+ * @property \CircleLinkHealth\Customer\Entities\Media[]|\Illuminate\Database\Eloquent\Collection    $media
+ * @property \CircleLinkHealth\Customer\Entities\Practice[]|\Illuminate\Database\Eloquent\Collection $practices
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[]          $revisionHistory
+ * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection     $users
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount newQuery()
@@ -46,7 +45,8 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  */
 class SaasAccount extends BaseModel implements HasMedia
 {
-    use HasMediaTrait,
+    use HasMediaTrait;
+    use
         SoftDeletes;
 
     protected $fillable = [

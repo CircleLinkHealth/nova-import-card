@@ -4,11 +4,9 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-
 
 class CreateEhrsTable extends Migration
 {
@@ -19,7 +17,7 @@ class CreateEhrsTable extends Migration
     {
         Schema::drop('ehrs');
     }
-    
+
     /**
      * Run the migrations.
      */

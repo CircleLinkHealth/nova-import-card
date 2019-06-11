@@ -6,26 +6,25 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
-use CircleLinkHealth\Customer\Entities\User;
-
 /**
  * CircleLinkHealth\Customer\Entities\Appointment.
  *
- * @property int                 $id
- * @property int                 $patient_id
- * @property int                 $author_id
- * @property int|null            $provider_id
- * @property string              $date
- * @property string              $time
- * @property string              $status
- * @property string              $comment
- * @property int                 $was_completed
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
- * @property string              $type
- * @property \CircleLinkHealth\Customer\Entities\User           $author
- * @property \CircleLinkHealth\Customer\Entities\User           $patient
- * @property \CircleLinkHealth\Customer\Entities\User|null      $provider
+ * @property int                                           $id
+ * @property int                                           $patient_id
+ * @property int                                           $author_id
+ * @property int|null                                      $provider_id
+ * @property string                                        $date
+ * @property string                                        $time
+ * @property string                                        $status
+ * @property string                                        $comment
+ * @property int                                           $was_completed
+ * @property \Carbon\Carbon|null                           $created_at
+ * @property \Carbon\Carbon|null                           $updated_at
+ * @property string                                        $type
+ * @property \CircleLinkHealth\Customer\Entities\User      $author
+ * @property \CircleLinkHealth\Customer\Entities\User      $patient
+ * @property \CircleLinkHealth\Customer\Entities\User|null $provider
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Appointment whereAuthorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Appointment whereComment($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Appointment whereCreatedAt($value)
@@ -39,7 +38,9 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Appointment whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Appointment whereWasCompleted($value)
  * @mixin \Eloquent
- * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Appointment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Appointment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Appointment query()

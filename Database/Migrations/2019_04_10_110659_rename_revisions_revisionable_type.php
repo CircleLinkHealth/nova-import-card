@@ -1,143 +1,15 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 
 class RenameRevisionsRevisionableType extends Migration
 {
     /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        \DB::table('revisions')
-                ->where('revisionable_type', 'App\Appointment')
-                ->update(
-                    [
-                        'revisionable_type' => 'CircleLinkHealth\Customer\Entities\Appointment',
-                    ]
-                );
-
-        \DB::table('revisions')
-           ->where('revisionable_type', 'App\CarePerson')
-           ->update(
-               [
-                   'revisionable_type' => 'CircleLinkHealth\Customer\Entities\CarePerson',
-               ]
-           );
-
-        \DB::table('revisions')
-           ->where('revisionable_type', 'App\EmrDirectAddress')
-           ->update(
-               [
-                   'revisionable_type' => 'CircleLinkHealth\Customer\Entities\EmrDirectAddress',
-               ]
-           );
-
-        \DB::table('revisions')
-                ->where('revisionable_type', 'App\Family')
-                ->update(
-                    [
-                        'revisionable_type' => 'CircleLinkHealth\Customer\Entities\Family',
-                    ]
-                );
-
-        \DB::table('revisions')
-           ->where('revisionable_type', 'App\Location')
-           ->update(
-               [
-                   'revisionable_type' => 'CircleLinkHealth\Customer\Entities\Location',
-               ]
-           );
-
-        \DB::table('revisions')
-           ->where('revisionable_type', 'App\Models\Holiday')
-           ->update(
-               [
-                   'revisionable_type' => 'CircleLinkHealth\Customer\Entities\Holiday',
-               ]
-           );
-
-        \DB::table('revisions')
-           ->where('revisionable_type', 'App\Models\WorkHours')
-           ->update(
-               [
-                   'revisionable_type' => 'CircleLinkHealth\Customer\Entities\WorkHours',
-               ]
-           );
-
-        \DB::table('revisions')
-           ->where('revisionable_type', 'App\Nurse')
-           ->update(
-               [
-                   'revisionable_type' => 'CircleLinkHealth\Customer\Entities\Nurse',
-               ]
-           );
-
-        \DB::table('revisions')
-           ->where('revisionable_type', 'App\NurseCareRateLog')
-           ->update(
-               [
-                   'revisionable_type' => 'CircleLinkHealth\Customer\Entities\NurseCareRateLog',
-               ]
-           );
-
-        \DB::table('revisions')
-           ->where('revisionable_type', 'App\NurseContactWindow')
-           ->update(
-               [
-                   'revisionable_type' => 'CircleLinkHealth\Customer\Entities\NurseContactWindow',
-               ]
-           );
-
-        \DB::table('revisions')
-           ->where('revisionable_type', 'App\NurseMonthlySummary')
-           ->update(
-               [
-                   'revisionable_type' => 'CircleLinkHealth\Customer\Entities\NurseMonthlySummary',
-               ]
-           );
-
-        \DB::table('revisions')
-           ->where('revisionable_type', 'App\Patient')
-           ->update(
-               [
-                   'revisionable_type' => 'CircleLinkHealth\Customer\Entities\Patient',
-               ]
-           );
-
-        \DB::table('revisions')
-           ->where('revisionable_type', 'App\PatientContactWindow')
-           ->update(
-               [
-                   'revisionable_type' => 'CircleLinkHealth\Customer\Entities\PatientContactWindow',
-               ]
-           );
-
-        \DB::table('revisions')
-           ->where('revisionable_type', 'App\PatientMonthlySummary')
-           ->update(
-               [
-                   'revisionable_type' => 'CircleLinkHealth\Customer\Entities\PatientMonthlySummary',
-               ]
-           );
-
-        \DB::table('revisions')
-           ->where('revisionable_type', 'App\PhoneNumber')
-           ->update(
-               [
-                   'revisionable_type' => 'CircleLinkHealth\Customer\Entities\PhoneNumber',
-               ]
-           );
-    }
-
-    /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
@@ -159,5 +31,131 @@ class RenameRevisionsRevisionableType extends Migration
 //        CircleLinkHealth\TimeTracking\Entities\Activity
 //        CircleLinkHealth\TimeTracking\Entities\ActivityMeta
 //        CircleLinkHealth\TimeTracking\Entities\PageTimer
+    }
+
+    /**
+     * Run the migrations.
+     */
+    public function up()
+    {
+        \DB::table('revisions')
+            ->where('revisionable_type', 'App\Appointment')
+            ->update(
+                    [
+                        'revisionable_type' => 'CircleLinkHealth\Customer\Entities\Appointment',
+                    ]
+                );
+
+        \DB::table('revisions')
+            ->where('revisionable_type', 'App\CarePerson')
+            ->update(
+               [
+                   'revisionable_type' => 'CircleLinkHealth\Customer\Entities\CarePerson',
+               ]
+           );
+
+        \DB::table('revisions')
+            ->where('revisionable_type', 'App\EmrDirectAddress')
+            ->update(
+               [
+                   'revisionable_type' => 'CircleLinkHealth\Customer\Entities\EmrDirectAddress',
+               ]
+           );
+
+        \DB::table('revisions')
+            ->where('revisionable_type', 'App\Family')
+            ->update(
+                    [
+                        'revisionable_type' => 'CircleLinkHealth\Customer\Entities\Family',
+                    ]
+                );
+
+        \DB::table('revisions')
+            ->where('revisionable_type', 'App\Location')
+            ->update(
+               [
+                   'revisionable_type' => 'CircleLinkHealth\Customer\Entities\Location',
+               ]
+           );
+
+        \DB::table('revisions')
+            ->where('revisionable_type', 'App\Models\Holiday')
+            ->update(
+               [
+                   'revisionable_type' => 'CircleLinkHealth\Customer\Entities\Holiday',
+               ]
+           );
+
+        \DB::table('revisions')
+            ->where('revisionable_type', 'App\Models\WorkHours')
+            ->update(
+               [
+                   'revisionable_type' => 'CircleLinkHealth\Customer\Entities\WorkHours',
+               ]
+           );
+
+        \DB::table('revisions')
+            ->where('revisionable_type', 'App\Nurse')
+            ->update(
+               [
+                   'revisionable_type' => 'CircleLinkHealth\Customer\Entities\Nurse',
+               ]
+           );
+
+        \DB::table('revisions')
+            ->where('revisionable_type', 'App\NurseCareRateLog')
+            ->update(
+               [
+                   'revisionable_type' => 'CircleLinkHealth\Customer\Entities\NurseCareRateLog',
+               ]
+           );
+
+        \DB::table('revisions')
+            ->where('revisionable_type', 'App\NurseContactWindow')
+            ->update(
+               [
+                   'revisionable_type' => 'CircleLinkHealth\Customer\Entities\NurseContactWindow',
+               ]
+           );
+
+        \DB::table('revisions')
+            ->where('revisionable_type', 'App\NurseMonthlySummary')
+            ->update(
+               [
+                   'revisionable_type' => 'CircleLinkHealth\Customer\Entities\NurseMonthlySummary',
+               ]
+           );
+
+        \DB::table('revisions')
+            ->where('revisionable_type', 'App\Patient')
+            ->update(
+               [
+                   'revisionable_type' => 'CircleLinkHealth\Customer\Entities\Patient',
+               ]
+           );
+
+        \DB::table('revisions')
+            ->where('revisionable_type', 'App\PatientContactWindow')
+            ->update(
+               [
+                   'revisionable_type' => 'CircleLinkHealth\Customer\Entities\PatientContactWindow',
+               ]
+           );
+
+        \DB::table('revisions')
+            ->where('revisionable_type', 'App\PatientMonthlySummary')
+            ->update(
+               [
+                   'revisionable_type' => 'CircleLinkHealth\Customer\Entities\PatientMonthlySummary',
+               ]
+           );
+
+        \DB::table('revisions')
+            ->where('revisionable_type', 'App\PhoneNumber')
+            ->update(
+               [
+                   'revisionable_type' => 'CircleLinkHealth\Customer\Entities\PhoneNumber',
+               ]
+           );
     }
 }

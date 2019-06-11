@@ -216,7 +216,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'role.read',
                     'offlineActivity.create',
                     'change-patient-enrollment-status',
-                    'vitals-survey-complete'
+                    'vitals-survey-complete',
                 ],
             ],
             [
@@ -557,7 +557,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'addendum.read',
                     'role.read',
                     'offlineActivity.create',
-                    'vitals-survey-complete'
+                    'vitals-survey-complete',
                 ],
             ],
             [
@@ -872,7 +872,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'role.read',
                     'offlineActivity.create',
                     'change-patient-enrollment-status',
-                    'vitals-survey-complete'
+                    'vitals-survey-complete',
                 ],
             ],
             [
@@ -994,7 +994,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'offlineActivityRequest.read',
                     'has-schedule',
                     'change-patient-enrollment-status',
-                    'vitals-survey-complete'
+                    'vitals-survey-complete',
                 ],
             ],
             [
@@ -1115,7 +1115,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'offlineActivityRequest.create',
                     'offlineActivityRequest.read',
                     'has-schedule',
-                    'vitals-survey-complete'
+                    'vitals-survey-complete',
                 ],
             ],
             [

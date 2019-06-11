@@ -6,8 +6,6 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
-use CircleLinkHealth\Customer\Entities\Nurse;
-
 /**
  * CircleLinkHealth\Customer\Entities\NurseMonthlySummary.
  *
@@ -20,6 +18,7 @@ use CircleLinkHealth\Customer\Entities\Nurse;
  * @property int|null            $no_of_successful_calls
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseMonthlySummary whereAccruedAfterCcm($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseMonthlySummary whereAccruedTowardsCcm($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseMonthlySummary whereCreatedAt($value)
@@ -30,13 +29,18 @@ use CircleLinkHealth\Customer\Entities\Nurse;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseMonthlySummary whereNurseId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseMonthlySummary whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseMonthlySummary newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseMonthlySummary newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseMonthlySummary query()
  */
 class NurseMonthlySummary extends \CircleLinkHealth\Core\Entities\BaseModel
 {
+    protected $dates = [
+        'month_year',
+    ];
     protected $fillable = [
         'nurse_id',
         'month_year',
@@ -44,10 +48,6 @@ class NurseMonthlySummary extends \CircleLinkHealth\Core\Entities\BaseModel
         'accrued_towards_ccm',
         'no_of_calls',
         'no_of_successful_calls',
-    ];
-    
-    protected $dates = [
-        'month_year',
     ];
 
     public function nurse()

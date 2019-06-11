@@ -1,53 +1,51 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 
 class ChangeWorkHoursTableNamespace extends Migration
 {
     /**
-     * Run the migrations.
-     *
-     * @return void
+     * Reverse the migrations.
      */
-    public function up()
+    public function down()
     {
         \DB::table('work_hours')
-           ->select('workhourable_type')
-           ->groupBy('workhourable_type')
-           ->pluck('workhourable_type')
-           ->each(
+            ->select('workhourable_type')
+            ->groupBy('workhourable_type')
+            ->pluck('workhourable_type')
+            ->each(
                function ($type) {
                    \DB::table('work_hours')
-                      ->where('workhourable_type', $type)
-                      ->update(
+                       ->where('workhourable_type', $type)
+                       ->update(
                           [
-                              'workhourable_type' => str_replace('App', 'CircleLinkHealth\Customer\Entities', $type),
+                              'workhourable_type' => str_replace('CircleLinkHealth\Customer\Entities', 'App', $type),
                           ]
                       );
                }
            );
     }
-    
+
     /**
-     * Reverse the migrations.
-     *
-     * @return void
+     * Run the migrations.
      */
-    public function down()
+    public function up()
     {
         \DB::table('work_hours')
-           ->select('workhourable_type')
-           ->groupBy('workhourable_type')
-           ->pluck('workhourable_type')
-           ->each(
+            ->select('workhourable_type')
+            ->groupBy('workhourable_type')
+            ->pluck('workhourable_type')
+            ->each(
                function ($type) {
                    \DB::table('work_hours')
-                      ->where('workhourable_type', $type)
-                      ->update(
+                       ->where('workhourable_type', $type)
+                       ->update(
                           [
-                              'workhourable_type' => str_replace('CircleLinkHealth\Customer\Entities', 'App', $type),
+                              'workhourable_type' => str_replace('App', 'CircleLinkHealth\Customer\Entities', $type),
                           ]
                       );
                }
