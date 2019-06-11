@@ -108,7 +108,9 @@ class UpdateEnrolleeDataFromCsv extends Command
                         }
 
                         return false;
-                    })->first();
+                    })
+                              //use last to get the last row for that patient from the csv (latest updates for that patient)
+                        ->last();
 
                     if ($row) {
                         $e = $this->setEnrolleeStatus($e, $row);
@@ -124,9 +126,6 @@ class UpdateEnrolleeDataFromCsv extends Command
                         }
                         $e->save();
                     }
-                    //in case we have the same patient but with different call status or call dates, we want to forget the one we update, because we are using ->first() above.
-                    //also this will help with memory
-                    $csv->forget($row);
                 });
             });
 
