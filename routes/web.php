@@ -12,6 +12,8 @@
 */
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
@@ -30,4 +32,4 @@ Route::post('survey-login', 'InvitationLinksController@surveyLoginAuth')->name('
 Route::post('resend-link/{user}', 'InvitationLinksController@resendUrl')->name('resendUrl');
 Route::post('save-answer', 'SurveyController@storeAnswer')->name('saveSurveyAnswer');
 Route::get('get-previous-answer', 'SurveyController@getPreviousAnswer')->name('getPreviousAnswer');
-Route::get('get-ppp-data', 'PersonalizedPreventionPlanController@getPppDataForUser')->name('getPppDataForUser');
+Route::get('get-ppp-data/{userId}', 'PersonalizedPreventionPlanController@getPppDataForUser')->name('getPppDataForUser');
