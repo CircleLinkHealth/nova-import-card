@@ -7,35 +7,37 @@ use App\Answer;
 use App\Events\SurveyInstancePivotSaved;
 use App\SurveyInstance;
 use App\User;
+use Illuminate\Database\Query\Builder;
 
 class SurveyService
 {
     public function getSurveyData($patientId, $surveyId)
     {
-        $patientWithSurveyData = User::with([
-            'surveyInstances' => function ($instance) use ($surveyId) {
-                $instance->current()
-                         ->wherePivot('survey_id', $surveyId)
-                         ->with([
-                             'survey',
-                             'questions' => function ($question) {
-                                 $question->with(['questionGroup', 'type.questionTypeAnswers']);
-                             },
-                         ]);
+        $patientWithSurveyData = User
+            ::with([
+                'surveyInstances' => function (Builder $instance) use ($surveyId) {
+                    $instance->current()
+                             ->wherePivot('survey_id', $surveyId)
+                             ->with([
+                                 'survey',
+                                 'questions' => function (Builder $question) {
+                                     $question->with(['questionGroup', 'type.questionTypeAnswers']);
+                                 },
+                             ]);
 
-            },
-            'answers',
-        ])
-                                     ->whereHas('surveys', function ($survey) use ($surveyId) {
-                                         $survey->where('survey_id', $surveyId)
-                                                ->where('status', '!=', SurveyInstance::COMPLETED);
-                                     })
-                                     ->whereHas('surveyInstances', function ($instance) use ($surveyId) {
-                                         $instance->where('users_surveys.survey_id', $surveyId);
-                                         $instance->current();
-                                     })
-                                     ->where('id', $patientId)
-                                     ->first();
+                },
+                'answers',
+            ])
+            ->whereHas('surveys', function (Builder $survey) use ($surveyId) {
+                $survey->where('survey_id', $surveyId)
+                       ->where('status', '!=', SurveyInstance::COMPLETED);
+            })
+            ->whereHas('surveyInstances', function (Builder $instance) use ($surveyId) {
+                $instance->where('users_surveys.survey_id', $surveyId);
+                $instance->current();
+            })
+            ->where('id', $patientId)
+            ->first();
 
         return $patientWithSurveyData;
 
@@ -52,7 +54,7 @@ class SurveyService
             'question_type_answer_id' => array_key_exists('question_type_answer_id', $input)
                 ? $input['question_type_answer_id']
                 : null,
-            'value'                 => $input['value'],
+            'value'                   => $input['value'],
         ]);
 
         if ( ! $answer) {

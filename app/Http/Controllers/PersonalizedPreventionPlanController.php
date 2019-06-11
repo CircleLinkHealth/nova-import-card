@@ -15,20 +15,23 @@ class PersonalizedPreventionPlanController extends Controller
         $this->service = $service;
     }
 
-    public function getPppDataForUser(Request $request)
-    {//id 9784 is just for testing. Will the provider review & edit the PPP and then send it or it will be sent automatically?
-        $patientPppData = PersonalizedPreventionPlan::where('patient_id', 9784)
+    public function getPppDataForUser(Request $request, $userId)
+    {
+        //Will the provider review & edit the PPP and then send it or it will be sent automatically?
+        $patientPppData = PersonalizedPreventionPlan::where('patient_id', $userId)
                                                     ->with('patient.patientInfo')
                                                     ->first();
 
         if ( ! $patientPppData) {
-            //with message
-            return redirect()->back();
+            return redirect()
+                ->withErrors(["message" => "Could not find report for user id[$userId]"])
+                ->back();
         }
         $patient = $patientPppData->patient;
         if ( ! $patient) {
-            //bad data
-            return redirect()->back();
+            return redirect()
+                ->withErrors(["message" => "There was an error"])
+                ->back();
         }
 
         $personalizedHealthAdvices = $this->service->prepareRecommendations($patientPppData);
