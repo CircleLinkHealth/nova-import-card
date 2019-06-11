@@ -17,6 +17,27 @@ use Carbon\Carbon;
 trait DateScopesTrait
 {
     /**
+     * Scope a query to only include activities created in the month given month. Defaults to created_at field, but a different field
+     * may be specified.
+     *
+     * @param $builder
+     * @param Carbon $date
+     * @param string $field
+     */
+    public function scopeCreatedInMonth(
+        $builder,
+        Carbon $date,
+        $field = 'created_at'
+    ) {
+        $builder->where(function ($q) use (
+            $field, $date
+        ) {
+            $q->where($field, '>=', $date->copy()->startOfMonth()->toDateTimeString())
+                ->where($field, '<=', $date->copy()->endOfMonth()->toDateTimeString());
+        });
+    }
+
+    /**
      * Scope a query to only include activities created on a day. Defaults to created_at field, but a different field may
      * be specified.
      *
@@ -49,27 +70,6 @@ trait DateScopesTrait
         $field = 'created_at'
     ) {
         $builder->createdInMonth(Carbon::now(), $field);
-    }
-    
-    /**
-     * Scope a query to only include activities created in the month given month. Defaults to created_at field, but a different field
-     * may be specified.
-     *
-     * @param $builder
-     * @param Carbon $date
-     * @param string $field
-     */
-    public function scopeCreatedInMonth(
-        $builder,
-        Carbon $date,
-        $field = 'created_at'
-    ) {
-        $builder->where(function ($q) use (
-            $field, $date
-        ) {
-            $q->where($field, '>=', $date->copy()->startOfMonth()->toDateTimeString())
-              ->where($field, '<=', $date->copy()->endOfMonth()->toDateTimeString());
-        });
     }
 
     /**

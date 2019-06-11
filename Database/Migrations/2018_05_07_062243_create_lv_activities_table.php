@@ -17,7 +17,7 @@ class CreateLvActivitiesTable extends Migration
     {
         Schema::drop('lv_activities');
     }
-    
+
     /**
      * Run the migrations.
      */

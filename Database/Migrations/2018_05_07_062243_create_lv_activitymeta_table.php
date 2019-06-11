@@ -17,7 +17,7 @@ class CreateLvActivitymetaTable extends Migration
     {
         Schema::drop('lv_activitymeta');
     }
-    
+
     /**
      * Run the migrations.
      */

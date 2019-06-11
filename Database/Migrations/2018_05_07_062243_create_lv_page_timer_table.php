@@ -17,7 +17,7 @@ class CreateLvPageTimerTable extends Migration
     {
         Schema::drop('lv_page_timer');
     }
-    
+
     /**
      * Run the migrations.
      */

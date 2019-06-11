@@ -6,18 +6,17 @@
 
 namespace CircleLinkHealth\TimeTracking\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use CircleLinkHealth\TimeTracking\Entities\Activity;
-use CircleLinkHealth\TimeTracking\Entities\ActivityMeta;
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\ShowPatientActivities;
 use App\Reports\PatientDailyAuditReport;
 use App\Services\ActivityService;
-use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
+use CircleLinkHealth\TimeTracking\Entities\ActivityMeta;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Log;
 
@@ -194,11 +193,11 @@ class ActivityController extends Controller
     ) {
         $patient = User::findOrFail($patientId);
         $act     = Activity::findOrFail($actId);
-        
+
         if ($act->patient_id !== $patient->id) {
-            abort(400, "Not found");
+            abort(400, 'Not found');
         }
-        
+
         //Set up note pack for view
         $activity                  = [];
         $messages                  = \Session::get('messages');

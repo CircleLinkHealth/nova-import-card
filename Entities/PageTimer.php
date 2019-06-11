@@ -6,39 +6,40 @@
 
 namespace CircleLinkHealth\TimeTracking\Entities;
 
-use CircleLinkHealth\TimeTracking\Traits\DateScopesTrait;
 use Carbon\Carbon;
+use CircleLinkHealth\TimeTracking\Traits\DateScopesTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * CircleLinkHealth\TimeTracking\Entities\PageTimer.
  *
- * @property int $id
- * @property int $billable_duration
- * @property int $duration
- * @property string|null $duration_unit
- * @property int $patient_id
- * @property int $provider_id
- * @property string $start_time
- * @property string $end_time
- * @property string|null $redirect_to
- * @property string|null $url_full
- * @property string|null $url_short
- * @property string $activity_type
- * @property string $title Title is actually route name or uri
- * @property string $query_string
- * @property int $program_id
- * @property string|null $ip_addr
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property string|null $processed
- * @property string|null $rule_params
- * @property int|null $rule_id
- * @property \Carbon\Carbon|null $deleted_at
- * @property string|null $user_agent
+ * @property int                                                                                         $id
+ * @property int                                                                                         $billable_duration
+ * @property int                                                                                         $duration
+ * @property string|null                                                                                 $duration_unit
+ * @property int                                                                                         $patient_id
+ * @property int                                                                                         $provider_id
+ * @property string                                                                                      $start_time
+ * @property string                                                                                      $end_time
+ * @property string|null                                                                                 $redirect_to
+ * @property string|null                                                                                 $url_full
+ * @property string|null                                                                                 $url_short
+ * @property string                                                                                      $activity_type
+ * @property string                                                                                      $title             Title is actually route name or uri
+ * @property string                                                                                      $query_string
+ * @property int                                                                                         $program_id
+ * @property string|null                                                                                 $ip_addr
+ * @property \Carbon\Carbon                                                                              $created_at
+ * @property \Carbon\Carbon                                                                              $updated_at
+ * @property string|null                                                                                 $processed
+ * @property string|null                                                                                 $rule_params
+ * @property int|null                                                                                    $rule_id
+ * @property \Carbon\Carbon|null                                                                         $deleted_at
+ * @property string|null                                                                                 $user_agent
  * @property \CircleLinkHealth\TimeTracking\Entities\Activity[]|\Illuminate\Database\Eloquent\Collection $activities
- * @property \CircleLinkHealth\Customer\Entities\User $logger
- * @property \CircleLinkHealth\Customer\Entities\User $patient
+ * @property \CircleLinkHealth\Customer\Entities\User                                                    $logger
+ * @property \CircleLinkHealth\Customer\Entities\User                                                    $patient
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|PageTimer createdThisMonth($field = 'created_at')
  * @method static \Illuminate\Database\Eloquent\Builder|PageTimer createdOn(Carbon $date, $field = 'created_at')
  * @method static \Illuminate\Database\Eloquent\Builder|PageTimer createdToday($field = 'created_at')
@@ -74,8 +75,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|PageTimer withTrashed()
  * @method static \Illuminate\Database\Query\Builder|PageTimer withoutTrashed()
  * @mixin \Eloquent
- * @property-read \CircleLinkHealth\TimeTracking\Entities\Activity $activity
- * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @property \CircleLinkHealth\TimeTracking\Entities\Activity                               $activity
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\PageTimer
  *     createdInMonth(\Carbon\Carbon $date, $field = 'created_at')
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\PageTimer
@@ -85,7 +88,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class PageTimer extends \CircleLinkHealth\Core\Entities\BaseModel
 {
-    use DateScopesTrait, SoftDeletes;
+    use DateScopesTrait;
+    use SoftDeletes;
 
     protected $dates = ['deleted_at', 'start_time', 'end_time'];
 

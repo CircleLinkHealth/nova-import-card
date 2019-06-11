@@ -6,13 +6,13 @@
 
 namespace CircleLinkHealth\TimeTracking\Entities;
 
-use CircleLinkHealth\Core\Entities\BaseModel;
 use App\CcmTimeApiLog;
-use CircleLinkHealth\TimeTracking\Traits\DateScopesTrait;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\TimeTracking\Traits\DateScopesTrait;
 use Illuminate\Support\Facades\DB;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
@@ -20,33 +20,34 @@ use Prettus\Repository\Traits\TransformableTrait;
 /**
  * CircleLinkHealth\TimeTracking\Entities\Activity.
  *
- * @property int $id
- * @property string|null $type
- * @property int $duration
- * @property string|null $duration_unit
- * @property int $patient_id
- * @property int $provider_id
- * @property int $logger_id
- * @property int $comment_id
- * @property bool $is_behavioral
- * @property int|null $sequence_id
- * @property string $obs_message_id
- * @property string $logged_from
- * @property string $performed_at
- * @property string $performed_at_gmt
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property int                 $id
+ * @property string|null         $type
+ * @property int                 $duration
+ * @property string|null         $duration_unit
+ * @property int                 $patient_id
+ * @property int                 $provider_id
+ * @property int                 $logger_id
+ * @property int                 $comment_id
+ * @property bool                $is_behavioral
+ * @property int|null            $sequence_id
+ * @property string              $obs_message_id
+ * @property string              $logged_from
+ * @property string              $performed_at
+ * @property string              $performed_at_gmt
+ * @property \Carbon\Carbon      $created_at
+ * @property \Carbon\Carbon      $updated_at
  * @property \Carbon\Carbon|null $deleted_at
- * @property int|null $page_timer_id
+ * @property int|null            $page_timer_id
  * @property \CircleLinkHealth\Customer\Entities\NurseCareRateLog[]|\Illuminate\Database\Eloquent\Collection
  *     $careRateLogs
- * @property \App\CcmTimeApiLog $ccmApiTimeSentLog
- * @property mixed $performed_at_year_month
+ * @property \App\CcmTimeApiLog                                                                              $ccmApiTimeSentLog
+ * @property mixed                                                                                           $performed_at_year_month
  * @property \CircleLinkHealth\TimeTracking\Entities\ActivityMeta[]|\Illuminate\Database\Eloquent\Collection $meta
- * @property \CircleLinkHealth\TimeTracking\Entities\PageTimer $pageTime
- * @property \CircleLinkHealth\Customer\Entities\User $patient
- * @property \CircleLinkHealth\Customer\Entities\User $provider
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \CircleLinkHealth\TimeTracking\Entities\PageTimer                                               $pageTime
+ * @property \CircleLinkHealth\Customer\Entities\User                                                        $patient
+ * @property \CircleLinkHealth\Customer\Entities\User                                                        $provider
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[]                  $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|Activity
  *     createdBy(\CircleLinkHealth\Customer\Entities\User $user)
  * @method static \Illuminate\Database\Eloquent\Builder|Activity createdThisMonth($field = 'created_at')
@@ -71,6 +72,7 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\Activity
  *     createdInMonth(\Carbon\Carbon $date, $field = 'created_at')
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\Activity
@@ -82,7 +84,8 @@ use Prettus\Repository\Traits\TransformableTrait;
  */
 class Activity extends BaseModel implements Transformable
 {
-    use DateScopesTrait, TransformableTrait;
+    use DateScopesTrait;
+    use TransformableTrait;
 
     protected $appends = ['performed_at_year_month'];
 
@@ -174,9 +177,9 @@ class Activity extends BaseModel implements Transformable
      * Returns activity data used to build reports.
      *
      * @param array $months
-     * @param int $timeLessThan
+     * @param int   $timeLessThan
      * @param array $patientIds
-     * @param bool $range
+     * @param bool  $range
      *
      * @return bool
      */
@@ -200,10 +203,10 @@ class Activity extends BaseModel implements Transformable
                 $timeLessThan
             ) {
                 $subQuery->select('patient_id')
-                         ->from(with(new Activity())->getTable())
-                         ->groupBy('patient_id')
+                    ->from(with(new Activity())->getTable())
+                    ->groupBy('patient_id')
                     //->having(DB::raw('SUM(duration)'), '<', $timeLessThan)
-                         ->get();
+                    ->get();
             })
             ->with('patient')
             ->orderBy('performed_at', 'asc')
@@ -268,7 +271,7 @@ class Activity extends BaseModel implements Transformable
         User $user
     ) {
         $builder->where('provider_id', $user->id)
-                ->orWhere('logger_id', $user->id);
+            ->orWhere('logger_id', $user->id);
     }
 
     public static function task_types_to_topics()
@@ -289,9 +292,9 @@ class Activity extends BaseModel implements Transformable
         $format = false
     ) {
         $raw = Activity::where('patient_id', $p->user_id)
-                       ->where('performed_at', '>', $month->firstOfMonth()->startOfMonth()->toDateTimeString())
-                       ->where('performed_at', '<', $month->lastOfMonth()->endOfDay()->toDateTimeString())
-                       ->sum('duration');
+            ->where('performed_at', '>', $month->firstOfMonth()->startOfMonth()->toDateTimeString())
+            ->where('performed_at', '<', $month->lastOfMonth()->endOfDay()->toDateTimeString())
+            ->sum('duration');
 
         if ($format) {
             return round($raw / 60, 2);

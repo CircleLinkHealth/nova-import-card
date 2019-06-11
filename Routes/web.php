@@ -1,24 +1,15 @@
 <?php
 
 /*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
 Route::group(['middleware' => 'auth'], function () {
-
     // **** PATIENTS (/manage-patients/{patientId}/)
     Route::group([
         'prefix'     => 'manage-patients/{patientId}',
         'middleware' => ['patientProgramSecurity', 'checkWebSocketServer'],
     ], function () {
-
         Route::group(['prefix' => 'activities'], function () {
             Route::get('create', [
                 'uses' => 'ActivityController@create',
@@ -42,8 +33,5 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'patient.activity.get.current.for.patient',
             ])->middleware('permission:activity.read,patient.read,provider.read');
         });
-
     });
-
-
 });

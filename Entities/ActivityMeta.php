@@ -11,16 +11,17 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * CircleLinkHealth\TimeTracking\Entities\ActivityMeta.
  *
- * @property int                 $id
- * @property int                 $activity_id
- * @property int                 $comment_id
- * @property string              $message_id
- * @property string|null         $meta_key
- * @property string              $meta_value
- * @property \Carbon\Carbon      $created_at
- * @property \Carbon\Carbon      $updated_at
- * @property \Carbon\Carbon|null $deleted_at
- * @property \CircleLinkHealth\TimeTracking\Entities\Activity       $activity
+ * @property int                                              $id
+ * @property int                                              $activity_id
+ * @property int                                              $comment_id
+ * @property string                                           $message_id
+ * @property string|null                                      $meta_key
+ * @property string                                           $meta_value
+ * @property \Carbon\Carbon                                   $created_at
+ * @property \Carbon\Carbon                                   $updated_at
+ * @property \Carbon\Carbon|null                              $deleted_at
+ * @property \CircleLinkHealth\TimeTracking\Entities\Activity $activity
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\ActivityMeta onlyTrashed()
  * @method static bool|null restore()
@@ -36,7 +37,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\ActivityMeta withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\ActivityMeta withoutTrashed()
  * @mixin \Eloquent
- * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\ActivityMeta newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\ActivityMeta newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\ActivityMeta query()
