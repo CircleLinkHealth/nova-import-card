@@ -9,6 +9,7 @@ namespace App\Services\CCD;
 use App\EligibilityBatch;
 use App\EligibilityJob;
 use App\Enrollee;
+use App\Exceptions\FileNotFoundException;
 use App\Importer\Loggers\Allergy\NumberedAllergyFields;
 use App\Importer\Loggers\Medication\NumberedMedicationFields;
 use App\Importer\Loggers\Problem\NumberedProblemFields;
@@ -88,6 +89,10 @@ class ProcessEligibilityService
      */
     public function createEligibilityJobFromCsvBatch(EligibilityBatch $batch, $patientListCsvFilePath)
     {
+        if ( ! file_exists($patientListCsvFilePath)) {
+            throw new FileNotFoundException();
+        }
+
         return iterateCsv(
             $patientListCsvFilePath,
             function ($row) use ($batch) {

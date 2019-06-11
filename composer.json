@@ -191,7 +191,7 @@
       "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner WrapperRunner -p8"
     ],
     "test": [
-      "export COMPOSER_PROCESS_TIMEOUT=600 && ./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner SqliteRunner -p4"
+      "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner SqliteRunner -p8"
     ],
     "integration": [
       "./vendor/bin/paratest ./tests/integration --stop-on-failure --colors --runner SqliteRunner -p4"
