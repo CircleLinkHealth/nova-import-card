@@ -198,7 +198,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(NursesAndStatesDailyReport::class)->dailyAt('00:05');
 
-        $schedule->command(OverwriteNBIImportedData::class)->everyTenMinutes();
+        $schedule->command(OverwriteNBIImportedData::class)->everyFiveMinutes();
 
         $schedule->command(GenerateMonthlyInvoicesForNonDemoNurses::class)->monthlyOn(1, '00:30');
         $schedule->command(SendMonthlyNurseInvoiceFAN::class)->monthlyOn(1, '08:30');

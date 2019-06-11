@@ -74,8 +74,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel implements ImportedMedicalRecordInterface
 {
     use MedicalRecordIdAndTypeTrait;
-    use
-        SoftDeletes;
+    use SoftDeletes;
 
     /**
      * An option in validation_checks.
@@ -85,11 +84,16 @@ class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel im
      * An option in validation_checks.
      */
     const CHECK_HAS_AT_LEAST_2_CCM_CONDITIONS = 'has_at_least_2_ccm_conditions';
-
     /**
      * An option in validation_checks.
      */
     const CHECK_HAS_MEDICARE = 'has_medicare';
+    /**
+     * An option in validation_checks.
+     * Indicates whether or not this patient's data was overwritten from additional data we received from the practice.
+     * Currently this only applies to NBI.
+     */
+    const WAS_NBI_OVERWRITTEN = 'was_nbi_overwritten';
 
     protected $casts = [
         'validation_checks' => 'array',
