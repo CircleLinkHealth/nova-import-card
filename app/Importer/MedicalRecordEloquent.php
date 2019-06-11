@@ -13,6 +13,7 @@ namespace App\Importer;
  * Time: 4:05 PM
  */
 
+use App\Console\Commands\OverwriteNBIImportedData;
 use App\Contracts\Importer\MedicalRecord\MedicalRecord;
 use App\Importer\Predictors\HistoricBillingProviderPredictor;
 use App\Importer\Predictors\HistoricLocationPredictor;
@@ -338,11 +339,13 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
         $hasAtLeast2CcmConditions = $this->hasAtLeast2CcmConditions();
         $hasAtLeast1BhiCondition  = $this->hasAtLeast1BhiCondition();
         $hasMedicare              = $this->hasMedicare();
+        $wasNBIOverwritten        = app(OverwriteNBIImportedData::class)->lookupAndReplacePatientData($this->importedMedicalRecord);
 
         $this->importedMedicalRecord->validation_checks = [
             ImportedMedicalRecord::CHECK_HAS_AT_LEAST_2_CCM_CONDITIONS => $hasAtLeast2CcmConditions,
             ImportedMedicalRecord::CHECK_HAS_AT_LEAST_1_BHI_CONDITION  => $hasAtLeast1BhiCondition,
             ImportedMedicalRecord::CHECK_HAS_MEDICARE                  => $hasMedicare,
+            ImportedMedicalRecord::WAS_NBI_OVERWRITTEN                 => $wasNBIOverwritten,
         ];
 
         $this->importedMedicalRecord->save();
