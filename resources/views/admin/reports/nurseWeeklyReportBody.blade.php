@@ -67,7 +67,7 @@
                 <td style="font-weight: bolder"><span
                             class="{{$totalTdClass}}">{{$totalsForDay->has('surplusShortfallHours') ? $totalsForDay['surplusShortfallHours'] : 'N/A'}}</span>
                 </td>
-                <td style="font-weight: bolder; border-right: solid 2px #000000;">{{$totalsForDay->has('caseLoadComplete') ? $totalsForDay['caseLoadComplete'] : 'N/A'}}
+                <td style="font-weight: bolder;">{{$totalsForDay->has('caseLoadComplete') ? $totalsForDay['caseLoadComplete'] : 'N/A'}}
                     %
                 </td>
             @endforeach

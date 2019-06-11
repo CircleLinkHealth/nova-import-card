@@ -1,12 +1,12 @@
 <tr>
     {{--Fill's empty space--}}
-    <th colspan="12" class="zui-sticky-col"><br></th>
+    <th colspan="12"><br></th>
     @foreach($days as $weekDay)
-        <th colspan="12" style="border-right: solid 2px #000000;" class="heading-rows">{{$weekDay->format('l F jS Y')}}</th>
+        <th colspan="12">{{$weekDay->format('l F jS Y')}}</th>
     @endforeach
 </tr>
 <tr>
-    <th class="zui-sticky-col"><br>Name</th>
+    <th><br>Name</th>
     @foreach($days as $weekDay)
         <th><br>Assigned Calls</th>
         <th><br>Actual Calls</th>
@@ -22,3 +22,4 @@
         <th style="border-right: solid 2px #000000;"><br>% Case Load Complete</th>
     @endforeach
 </tr>
+

@@ -1826,6 +1826,11 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'admin.reports.nurse.daily.data',
         ])->middleware('permission:nurseReport.create');
 
+        Route::get('reports/nurse/weekly/data', [
+            'uses' => 'NursesWeeklyRepController@nurseMetricsWeeklyData',
+            'as'   => 'admin.reports.nurse.weekly.data',
+        ])->middleware('permission:nurseReport.create');
+
         Route::get('reports/nurse/allocation', [
             'uses' => 'NurseController@monthlyOverview',
             'as'   => 'admin.reports.nurse.allocation',
@@ -1837,7 +1842,7 @@ Route::group(['middleware' => 'auth'], function () {
         ])->middleware('permission:nurseReport.create');
 
         Route::get('reports/nurse/weekly', [
-            'uses' => 'NursesWeeklyRepController@index',
+            'uses' => 'NursesWeeklyRepController@nurseMetricsWeeklyDashboard',
             'as'   => 'admin.reports.nurse.weekly',
         ])->middleware('permission:nurseReport.read');
         //STATS
