@@ -6,11 +6,11 @@
 
 namespace CircleLinkHealth\TwoFA\Decorators;
 
-use CircleLinkHealth\TwoFA\Contracts\AuthyApiable;
 use Authy\AuthyApi;
 use Authy\AuthyResponse;
 use Authy\AuthyUser;
 use Carbon\Carbon;
+use CircleLinkHealth\TwoFA\Contracts\AuthyApiable;
 use Illuminate\Support\Facades\Route;
 use Storage;
 

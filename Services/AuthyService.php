@@ -6,10 +6,10 @@
 
 namespace CircleLinkHealth\TwoFA\Services;
 
-use CircleLinkHealth\TwoFA\Entities\AuthyUser;
-use CircleLinkHealth\TwoFA\Contracts\AuthyApiable;
-use CircleLinkHealth\Customer\Entities\User;
 use Authy\AuthyUser as AuthyApiUser;
+use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\TwoFA\Contracts\AuthyApiable;
+use CircleLinkHealth\TwoFA\Entities\AuthyUser;
 
 class AuthyService
 {
@@ -52,7 +52,7 @@ class AuthyService
      * Create approval request.
      *
      * @param \CircleLinkHealth\TwoFA\Entities\AuthyUser $authyUser
-     * @param User      $user
+     * @param User                                       $user
      *
      * @return \Authy\AuthyResponse
      */
@@ -84,7 +84,7 @@ class AuthyService
      * Register a User with Authy.
      *
      * @param \CircleLinkHealth\TwoFA\Entities\AuthyUser $authyUser
-     * @param \CircleLinkHealth\Customer\Entities\User      $user
+     * @param \CircleLinkHealth\Customer\Entities\User   $user
      *
      * @return AuthyApiUser
      */

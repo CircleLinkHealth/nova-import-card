@@ -1,25 +1,29 @@
 <?php
 
-Route::middleware('auth')->group(function() {
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+Route::middleware('auth')->group(function () {
     Route::group(['prefix' => '2fa'], function () {
         Route::get('', [
             'uses' => 'AuthyController@showVerificationTokenForm',
             'as'   => 'user.2fa.show.token.form',
         ]);
     });
-    
+
     Route::group(['prefix' => 'api/2fa'], function () {
         Route::group(['prefix' => 'token'], function () {
             Route::post('sms', [
                 'uses' => 'AuthyController@sendTokenViaSms',
                 'as'   => 'user.2fa.token.sms',
             ]);
-            
+
             Route::post('voice', [
                 'uses' => 'AuthyController@sendTokenViaVoice',
                 'as'   => 'user.2fa.token.voice',
             ]);
-            
+
             Route::post('verify', [
                 'uses' => 'AuthyController@verifyToken',
                 'as'   => 'user.2fa.token.verify',
@@ -30,14 +34,14 @@ Route::middleware('auth')->group(function() {
                 'uses' => 'AuthyController@createOneTouchRequest',
                 'as'   => 'user.2fa.one-touch-request.create',
             ]);
-            
+
             Route::post('check-status', [
                 'uses' => 'AuthyController@checkOneTouchRequestStatus',
                 'as'   => 'user.2fa.one-touch-request.check',
             ]);
         });
     });
-    
+
     Route::group(['prefix' => 'api/account-settings'], function () {
         Route::group(['prefix' => '2fa'], function () {
             Route::post('', [
