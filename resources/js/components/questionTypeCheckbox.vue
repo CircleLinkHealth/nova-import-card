@@ -14,33 +14,36 @@
             </div>
 
             <checkbox-custom-type-cancer
-                    :cancerInputData="cancerInputData"
-                    v-if="cancerCustomInput">
+                :cancerInputData="cancerInputData"
+                v-if="cancerCustomInput">
             </checkbox-custom-type-cancer>
 
             <checkbox-custom-type-eye-problems
-                    :eyeProblemsInputData="eyeProblemsInputData"
-                    v-if="eyeProblemsCustomInput">
+                :eyeProblemsInputData="eyeProblemsInputData"
+                v-if="eyeProblemsCustomInput">
             </checkbox-custom-type-eye-problems>
 
             <checkbox-custom-type-std
-                    :stdProblemsInputData="stdProblemsInputData"
-                    v-if="stdCustomInput">
+                :stdProblemsInputData="stdProblemsInputData"
+                v-if="stdCustomInput">
             </checkbox-custom-type-std>
+
             <!--next button-->
-            <div v-if="showNextButton">
-                <button class="next-btn"
-                        name="text"
-                        id="text"
-                        type="submit"
-                        @click="handleAnswers">Next
-                </button>
-            </div>
+            <mdbBtn v-show="isActive"
+                    color="primary"
+                    class="next-btn"
+                    :disabled="checkedAnswers.length === 0"
+                    @click="handleAnswers">
+                {{isLastQuestion ? 'Complete' : 'Next'}}
+                <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
+            </mdbBtn>
         </div>
     </div>
 </template>
 
 <script>
+
+    import {mdbBtn} from "mdbvue";
 
     import CheckboxCustomTypeCancer from "./checkboxCustomTypeCancer";
     import {EventBus} from "../event-bus";
@@ -49,8 +52,9 @@
 
     export default {
         name: "questionTypeCheckbox",
-        props: ['question', 'userId', 'surveyInstanceId'],
+        props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting'],
         components: {
+            'mdb-btn': mdbBtn,
             CheckboxCustomTypeStd,
             CheckboxCustomTypeEyeProblems,
             'checkbox-custom-type-cancer': CheckboxCustomTypeCancer
@@ -59,7 +63,6 @@
         data() {
             return {
                 checkBoxValues: this.question.type.question_type_answers,
-                showNextButton: false,
                 checkedAnswers: [],
                 questionOptions: [],
                 showDifferentInput: false,
@@ -83,7 +86,7 @@
                 if (this.hasAnswerType) {
                     return this.checkBoxValues[0].id;
                 } else {
-                    return 0;
+                    return undefined;
                 }
             },
 
@@ -113,10 +116,6 @@
         },
 
         methods: {
-            handleClick(answerValue) {
-                this.showNextButton = true;
-
-            },
 
             handleAnswers() {//@todo: also save text answers types
                 const answer = [];
@@ -131,24 +130,9 @@
 
                 }
 
-                var answerData = JSON.stringify(answer);
-
-                axios.post('/save-answer', {
-                    user_id: this.userId,
-                    survey_instance_id: this.surveyInstanceId[0],
-                    question_id: this.question.id,
-                    question_type_answer_id: this.questionTypeAnswerId,
-                    value: answerData,
-                })
-                    .then(function (response) {
-                        console.log(response);
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
+                this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer).then(() => {
+                });
             },
-
-
         },
 
         mounted() {

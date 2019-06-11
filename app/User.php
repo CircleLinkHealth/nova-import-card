@@ -2,9 +2,19 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Collection;
+
 /**
- * @property mixed surveyInstances
- * @property mixed answers
+ * Class User
+ * @package App
+ *
+ * @property-read SurveyInstance[]|Collection surveyInstances
+ * @property-read Survey[]|Collection surveys
+ * @property-read Answer[]|Collection answers
+ * @property-read ProviderReport[]|Collection providerReports
+ * @property-read InvitationLink url
+ * @property-read PersonalizedPreventionPlan personalizedPreventionPlan
+ *
  */
 class User extends \CircleLinkHealth\Customer\Entities\User
 {
@@ -39,7 +49,8 @@ class User extends \CircleLinkHealth\Customer\Entities\User
         return $this->hasMany(Answer::class, 'user_id');
     }
 
-    public function providerReports(){
+    public function providerReports()
+    {
         return $this->hasMany(ProviderReport::class, 'patient_id');
     }
 
@@ -48,23 +59,27 @@ class User extends \CircleLinkHealth\Customer\Entities\User
         return $this->surveys->unique('id');
     }
 
-    public function getHRAInstances(){
-        return $this->surveyInstances()->whereHas('survey', function ($survey){
+    public function getHRAInstances()
+    {
+        return $this->surveyInstances()->whereHas('survey', function ($survey) {
             $survey->HRA();
         })->get();
     }
 
-    public function getVitalsInstances(){
-        return $this->surveyInstances()->whereHas('survey', function ($survey){
+    public function getVitalsInstances()
+    {
+        return $this->surveyInstances()->whereHas('survey', function ($survey) {
             $survey->vitals();
         })->get();
     }
 
-    public function getSurveyInstancesBySurveyId($surveyId){
+    public function getSurveyInstancesBySurveyId($surveyId)
+    {
         return $this->surveyInstances()->where('users_surveys.survey_id', $surveyId)->get();
     }
 
-    public function personalizedPreventionPlan() {
-        return $this->hasOne(PersonalizedPreventionPlan::class, 'patient_id');
+    public function personalizedPreventionPlan()
+    {
+        return $this->hasOne(PersonalizedPreventionPlan::class, 'user_id');
     }
 }

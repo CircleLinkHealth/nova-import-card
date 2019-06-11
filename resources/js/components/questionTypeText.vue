@@ -39,6 +39,7 @@
                        name="textTypeAnswer[]"
                        v-model="inputHasText[index]"
                        :placeholder="subPart.placeholder"
+                       :disabled="!isActive"
                        @change="onInput">
             </div>
             <!--add input fields button-->
@@ -61,26 +62,39 @@
             </div>
         </div>
 
+        <br>
 
         <!--next button-->
-        <div v-if="hasTypedInTwoFields || hasTypedTwoCharacters">
-            <button class="next-btn"
-                    name="text"
-                    id="text"
-                    type="submit"
-                    @click="handleAnswer()">Next
-            </button>
+        <div :class="isLastQuestion ? 'text-center' : 'text-left'">
+            <mdbBtn v-show="isActive"
+                    color="primary"
+                    class="next-btn"
+                    name="number"
+                    id="number"
+                    :disabled="!hasTypedTwoNumbers"
+                    @click="handleAnswer()">
+                {{isLastQuestion ? 'Complete' : 'Next'}}
+                <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
+            </mdbBtn>
         </div>
+
+
     </div>
 </template>
 
 <script>
 
-    import {EventBus} from "../event-bus";
+    import {mdbBtn} from 'mdbvue';
+    import {library} from '@fortawesome/fontawesome-svg-core';
+    import {faSpinner} from '@fortawesome/free-solid-svg-icons';
+    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
+
+    library.add(faSpinner);
 
     export default {
         name: "questionTypeText",
-        props: ['question', 'userId', 'surveyInstanceId', 'isActive'],
+        props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting'],
+        components: {mdbBtn, FontAwesomeIcon},
 
 
         data() {
@@ -91,12 +105,14 @@
                 extraFieldButtonNames: [],
                 canRemoveInputFields: false,
                 canAddInputFields: false,
-                showNextButton: false,
                 placeholderForSingleQuestion: [],
             }
         },
-
         computed: {
+            hasTypedTwoNumbers() {
+                return this.inputHasText.length > 1;
+            },
+
             hasTypedInTwoFields() {
                 return this.inputHasText.length > 1;
             },
@@ -115,7 +131,7 @@
                 if (this.hasAnswerType) {
                     return this.question.type.question_type_answers[0].id;
                 } else {
-                    return 0;
+                    return undefined;
                 }
             },
 
@@ -186,9 +202,7 @@
         },
 
         methods: {
-            onInput() {
-                EventBus.$emit('handleTextType');
-            },
+
             addInputField(placeholder) {
                 this.placeholderForSingleQuestion.push(placeholder);
                 this.canRemoveInputFields = true;
@@ -246,21 +260,9 @@
                     console.log(answer);
 
                 }
-                var answerData = JSON.stringify(answer);
 
-                axios.post('/save-answer', {
-                    user_id: this.userId,
-                    survey_instance_id: this.surveyInstanceId[0],
-                    question_id: this.question.id,
-                    question_type_answer_id: this.questionTypeAnswerId,
-                    value: answerData,
-                })
-                    .then(function (response) {
-                        console.log(response);
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
+                this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer).then(() => {
+                });
             }
         },
 
@@ -289,13 +291,6 @@
 </script>
 
 <style scoped>
-    .next-btn {
-        width: 120px;
-        height: 40px;
-        border-radius: 5px;
-        border: solid 1px #4aa5d2;
-        background-color: #50b2e2;
-    }
 
     .btn-add-field {
         width: 271px;

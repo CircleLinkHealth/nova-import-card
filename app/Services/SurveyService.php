@@ -11,7 +11,7 @@ use Illuminate\Database\Query\Builder;
 
 class SurveyService
 {
-    public function getSurveyData($patientId, $surveyId)
+    public static function getSurveyData($patientId, $surveyId)
     {
         $patientWithSurveyData = User
             ::with([
@@ -39,12 +39,20 @@ class SurveyService
             ->where('id', $patientId)
             ->first();
 
+
         return $patientWithSurveyData;
 
     }
 
-    public function updateOrCreateAnswer($input)
-    {//update or create the answer
+    /**
+     * Update or create an answer for a survey
+     *
+     * @param $input
+     *
+     * @return bool|string false if could not create/update answer, string for new survey status
+     */
+    public static function updateOrCreateAnswer($input)
+    {
         $answer = Answer::updateOrCreate([
             'user_id'            => $input['user_id'],
             'survey_instance_id' => $input['survey_instance_id'],
@@ -60,11 +68,18 @@ class SurveyService
             return false;
         }
 
-        return $this->updateSurveyInstanceStatus($input);
+        return SurveyService::updateSurveyInstanceStatus($input);
 
     }
 
-    private function updateSurveyInstanceStatus($input)
+    /**
+     * Update the status of a survey based on answered questions
+     *
+     * @param $input
+     *
+     * @return string Status of survey
+     */
+    public static function updateSurveyInstanceStatus($input)
     {
         $user = User::with([
             'surveyInstances' => function ($instance) use ($input) {

@@ -1,14 +1,232 @@
-
 // Fonts
 @import url('https://fonts.googleapis.com/css?family=Nunito');
-
 // Variables
 @import 'variables';
 
-// Bootstrap
-@import '~bootstrap/scss/bootstrap';
+$primary-color: #50b2e2;
+
+@import "~bootstrap-css-only/css/bootstrap.min.css";
+
+@import "~mdbvue/build/scss/mdb";
+
+/**
+Add global CSS here
+ */
+
+* {
+    padding: 0;
+    margin: 0;
+}
+
+html, body, #app {
+    min-height: 100% !important;
+    height: 100%;
+}
+
+.main-container {
+    padding: 10px;
+    height: 100%;
+}
+
+.survey-container {
+    background-color: #f2f6f9;
+    border: 1px solid #808080;
+    width: 100%;
+    height: 100%;
+    overflow-y: hidden;
+}
+
+.by-circlelink {
+    font-family: Poppins, serif;
+    font-size: 10px;
+    font-weight: 600;
+    margin-top: 20px;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 0.56px;
+    color: $primary-color;
+}
+
+.progress {
+    width: 100%;
+    margin-top: 2px;
+    height: 5px;
+    border-radius: 5px;
+    border: solid 1px #d2e8f3;
+    background-color: #a7d9f1;
+}
+
+@media (min-width: 519px) {
+    .by-circlelink {
+        font-size: 18px;
+        letter-spacing: 1px;
+    }
+    .progress {
+        margin-top: 9px;
+        height: 10px;
+    }
+}
+
+.progress-bar {
+    background-color: $primary-color !important;
+}
 
 .navbar-laravel {
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.next-btn {
+    font-size: 18px;
+    font-family: Poppins, serif;
+    font-weight: 500;
+    font-style: normal;
+    font-stretch: normal;
+    padding: 6px 40px;
+    line-height: normal;
+    letter-spacing: 1px;
+    color: #ffffff;
+    text-transform: none;
+    height: 40px;
+    border-radius: 5px;
+    border: solid 1px #4aa5d2;
+    background-color: $primary-color;
+    margin: 0;
+}
+
+.questions-box {
+    padding-top: 5%;
+    padding-left: 9%;
+}
+
+.practice-title {
+    font-family: Poppins, serif;
+    font-size: 18px;
+    letter-spacing: 1.5px;
+    text-align: center;
+    margin-top: 20px;
+    color: $primary-color;
+}
+
+.practice-title .text-style-1 {
+    font-weight: 600;
+}
+
+.survey-main-title {
+    font-family: Poppins, serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.67px;
+    text-align: center;
+    margin-top: 30px;
+    color: #1a1a1a;
+}
+
+.survey-sub-welcome-text {
+    font-family: Poppins, serif;
+    font-size: 10px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 0.56px;
+    text-align: left;
+    margin-top: 10px;
+    margin-left: 5%;
+    margin-right: 5%;
+    color: #1a1a1a;
+}
+
+@media (min-width: 519px) {
+    .survey-main-title {
+        font-size: 24px;
+        letter-spacing: 1.5px;
+    }
+
+    .survey-sub-welcome-text {
+        margin-top: 25px;
+        font-size: 18px;
+        letter-spacing: 1px;
+    }
+}
+
+.questions-title {
+    width: 83%;
+    height: 100%;
+    font-family: Poppins, serif;
+    font-size: 14px;
+    font-weight: 500;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 1.3px;
+    color: #1a1a1a;
+}
+
+@media (min-width: 519px) {
+    .questions-title {
+        font-size: 24px;
+        letter-spacing: 0.78px;
+    }
+}
+
+.question-answer-type {
+    width: 83%;
+    height: 100%;
+    font-family: Poppins, serif;
+    font-size: initial;
+    font-weight: 500;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 1.3px;
+    color: #1a1a1a;
+}
+
+.welcome-icon-container {
+    margin: auto;
+    text-align: center;
+}
+
+.welcome-icon {
+    width: 190px;
+}
+
+.btn-start-container {
+    text-align: center;
+}
+
+.btn-start {
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-top: 30px;
+    font-family: Poppins, serif;
+    font-size: 10px;
+    font-weight: 500;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 0.6px;
+    text-align: center;
+    border-radius: 5px;
+}
+
+@media (min-width: 519px) {
+    .btn-start {
+        padding-left: 65px;
+        padding-right: 65px;
+        margin-top: 60px;
+        margin-bottom: 20px;
+        font-size: 18px;
+        letter-spacing: 1px;
+    }
+}
+
+.no-padding {
+    padding: 0;
+}
+
+.hidden {
+    display: none;
 }

@@ -9,6 +9,7 @@
                                type="checkbox"
                                name="checkboxTypeAnswer"
                                v-model="checkedAnswers[checkBoxOption]"
+                               :disabled="!isActive"
                                @click="handleClick()">
                         {{checkBoxOption}}
                     </label>
@@ -23,7 +24,7 @@
 
     export default {
         name: "questionTypeMultiSelect",
-        props: ['question', 'questions', 'userId', 'surveyInstanceId', 'surveyAnswers'],
+        props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting', 'questions', 'surveyAnswers'],
         components: {},
 
         data() {
