@@ -6,10 +6,10 @@
 
 namespace CircleLinkHealth\Core\Traits;
 
-use CircleLinkHealth\Core\Traits\HasDatabaseNotifications;
 use Illuminate\Notifications\RoutesNotifications;
 
 trait Notifiable
 {
-    use HasDatabaseNotifications, RoutesNotifications;
+    use HasDatabaseNotifications;
+    use RoutesNotifications;
 }
