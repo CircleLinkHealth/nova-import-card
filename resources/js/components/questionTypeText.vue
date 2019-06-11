@@ -111,7 +111,7 @@
         computed: {
             hasTypedTwoNumbers() {
                 return this.inputHasText.length > 1;
-            }
+            },
 
             hasTypedInTwoFields() {
                 return this.inputHasText.length > 1;

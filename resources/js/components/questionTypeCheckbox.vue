@@ -14,19 +14,20 @@
             </div>
 
             <checkbox-custom-type-cancer
-                    :cancerInputData="cancerInputData"
-                    v-if="cancerCustomInput">
+                :cancerInputData="cancerInputData"
+                v-if="cancerCustomInput">
             </checkbox-custom-type-cancer>
 
             <checkbox-custom-type-eye-problems
-                    :eyeProblemsInputData="eyeProblemsInputData"
-                    v-if="eyeProblemsCustomInput">
+                :eyeProblemsInputData="eyeProblemsInputData"
+                v-if="eyeProblemsCustomInput">
             </checkbox-custom-type-eye-problems>
 
             <checkbox-custom-type-std
-                    :stdProblemsInputData="stdProblemsInputData"
-                    v-if="stdCustomInput">
+                :stdProblemsInputData="stdProblemsInputData"
+                v-if="stdCustomInput">
             </checkbox-custom-type-std>
+
             <!--next button-->
             <mdbBtn v-show="isActive"
                     color="primary"
@@ -53,7 +54,7 @@
         name: "questionTypeCheckbox",
         props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting'],
         components: {
-            'mdb-btn': mdbBtn
+            'mdb-btn': mdbBtn,
             CheckboxCustomTypeStd,
             CheckboxCustomTypeEyeProblems,
             'checkbox-custom-type-cancer': CheckboxCustomTypeCancer
@@ -129,7 +130,8 @@
 
                 }
 
-                this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer).then(() => {});
+                this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer).then(() => {
+                });
             },
         },
 
