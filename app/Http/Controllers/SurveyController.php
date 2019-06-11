@@ -34,6 +34,7 @@ class SurveyController extends Controller
     public function storeAnswer(/*StoreAnswer*/
         Request $request
     ) {
+
         $answer = $this->service->updateOrCreateAnswer($request->input());
 
         if ( ! $answer) {
@@ -47,9 +48,14 @@ class SurveyController extends Controller
 
     }
 
-    public function getPreviousAnswer()
+    public function getPreviousAnswer($questionId, $userId)
     {
-        $previousQuestionAnswer = Answer::where('question_id', '26')->get();
-        dd($previousQuestionAnswer);
+        $previousQuestionAnswer = Answer::where('question_id', $questionId)
+                                        ->where('user_id', $userId)->first();
+
+        return response()->json([
+            'success'                => true,
+            'previousQuestionAnswer' => $previousQuestionAnswer->value,
+        ], 200);
     }
 }

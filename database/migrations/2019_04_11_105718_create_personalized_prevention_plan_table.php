@@ -15,13 +15,7 @@ class CreatePersonalizedPreventionPlanTable extends Migration
     {
         Schema::create('personalized_prevention_plan', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('display_name');
-            $table->date('birth_date');
-            $table->string('address');
-            $table->string('city');
-            $table->string('state');
-            $table->unsignedInteger('user_id');
-            $table->string('billing_provider');
+            $table->unsignedInteger('patient_id');
             $table->json('hra_answers');
             $table->json('vitals_answers');
             $table->json('answers_for_eval');

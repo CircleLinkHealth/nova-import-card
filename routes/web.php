@@ -11,6 +11,10 @@
 |
 */
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -45,7 +49,7 @@ Route::post('save-answer', 'SurveyController@storeAnswer')
 Route::get('get-previous-answer', 'SurveyController@getPreviousAnswer')
     ->name('getPreviousAnswer');
 
-Route::get('get-ppp-data', 'PersonalizedPreventionPlanController@getPppDataForUser')
+Route::get('get-ppp-data/{userId}', 'PersonalizedPreventionPlanController@getPppDataForUser')
     ->name('getPppDataForUser');
 
 Route::group([
