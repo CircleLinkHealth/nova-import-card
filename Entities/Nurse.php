@@ -168,7 +168,7 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
 
     public function getUpcomingHolidayDatesAttribute()
     {
-        return $this->upcomingHolidays(Carbon::today())
+        return $this->upcomingHolidaysFrom(Carbon::today())
                     ->sortBy(function ($item) {
                         return Carbon::createFromFormat(
                             'Y-m-d',
