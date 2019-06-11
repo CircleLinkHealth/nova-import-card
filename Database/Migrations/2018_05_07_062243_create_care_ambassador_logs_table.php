@@ -8,7 +8,6 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-
 class CreateCareAmbassadorLogsTable extends Migration
 {
     /**
@@ -18,7 +17,7 @@ class CreateCareAmbassadorLogsTable extends Migration
     {
         Schema::drop('care_ambassador_logs');
     }
-    
+
     /**
      * Run the migrations.
      */

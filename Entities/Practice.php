@@ -258,12 +258,12 @@ class Practice extends BaseModel implements HasMedia
             ::where('user_status', 1)
                 ->whereProgramId($this->id)
                 ->whereHas(
-                'roles',
-                function ($q) use (
+                    'roles',
+                    function ($q) use (
                     $role
                 ) {
-                    $q->whereName($role);
-                }
+                        $q->whereName($role);
+                    }
             )
                 ->count();
     }
@@ -288,41 +288,41 @@ class Practice extends BaseModel implements HasMedia
                 $billable = User::ofType('participant')
                     ->ofPractice($this->id)
                     ->whereHas(
-                                    'patientAWVSummaries',
-                                    function ($query) use ($chargeableServiceCode, $month) {
-                                        $query->where('is_billable', true)
-                                            ->where('month_year', $month->toDateString());
-                                        //@todo: adjust for subsequent visit
+                        'patientAWVSummaries',
+                        function ($query) use ($chargeableServiceCode, $month) {
+                            $query->where('is_billable', true)
+                                ->where('month_year', $month->toDateString());
+                            //@todo: adjust for subsequent visit
 //                            ->when($chargeableServiceCode == 'AWV: G0439');
-                                    }
+                        }
                                 )
                     ->count() ?? 0;
             } else {
                 $billable = User::ofType('participant')
                     ->ofPractice($this->id)
                     ->whereHas(
-                                    'patientSummaries',
-                                    function ($query) use ($chargeableServiceId, $isSoftwareOnly, $month) {
-                                        $query->whereHas(
+                        'patientSummaries',
+                        function ($query) use ($chargeableServiceId, $isSoftwareOnly, $month) {
+                            $query->whereHas(
                                             'chargeableServices',
                                             function ($query) use ($chargeableServiceId) {
                                                 $query->where('id', $chargeableServiceId);
                                             }
                                         )
-                                            ->where('month_year', $month->toDateString())
-                                            ->where('approved', '=', true)
-                                            ->when(
-                                                  ! $isSoftwareOnly,
-                                                  function ($q) {
-                                                      $q->whereDoesntHave(
+                                ->where('month_year', $month->toDateString())
+                                ->where('approved', '=', true)
+                                ->when(
+                                                ! $isSoftwareOnly,
+                                                function ($q) {
+                                                    $q->whereDoesntHave(
                                                           'chargeableServices',
                                                           function ($query) {
                                                               $query->where('code', 'Software-Only');
                                                           }
                                                       );
-                                                  }
+                                                }
                                               );
-                                    }
+                        }
                                 )
                     ->count() ?? 0;
             }
@@ -330,11 +330,11 @@ class Practice extends BaseModel implements HasMedia
             $billable = User::ofType('participant')
                 ->ofPractice($this->id)
                 ->whereHas(
-                                'patientSummaries',
-                                function ($query) use ($month) {
-                                    $query->where('month_year', $month->toDateString())
-                                        ->where('approved', '=', true);
-                                }
+                    'patientSummaries',
+                    function ($query) use ($month) {
+                        $query->where('month_year', $month->toDateString())
+                            ->where('approved', '=', true);
+                    }
                             )
                 ->count() ?? 0;
         }
@@ -374,60 +374,60 @@ class Practice extends BaseModel implements HasMedia
         $patients = User::orderBy('first_name', 'asc')
             ->ofType('participant')
             ->with(
-                            [
-                                'patientSummaries' => function ($q) use ($month) {
-                                    $q
-                                        ->with(['billableBhiProblems'])
-                                        ->where('month_year', $month->toDateString())
-                                        ->where('approved', '=', true);
-                                },
-                                'billingProvider',
-                            ]
+                [
+                    'patientSummaries' => function ($q) use ($month) {
+                        $q
+                            ->with(['billableBhiProblems'])
+                            ->where('month_year', $month->toDateString())
+                            ->where('approved', '=', true);
+                    },
+                    'billingProvider',
+                ]
                         )
             ->whereProgramId($this->id)
             ->whereHas(
-                            'patientSummaries',
-                            function ($query) use ($month) {
-                                $query->where('month_year', $month->toDateString())
-                                    ->where('approved', '=', true);
-                            }
+                'patientSummaries',
+                function ($query) use ($month) {
+                    $query->where('month_year', $month->toDateString())
+                        ->where('approved', '=', true);
+                }
                         )
             ->chunk(
-                            500,
-                            function ($patients) use (&$data, $repo, $month) {
-                                foreach ($patients as $u) {
-                                    $summary = $u->patientSummaries->first();
+                500,
+                function ($patients) use (&$data, $repo, $month) {
+                    foreach ($patients as $u) {
+                        $summary = $u->patientSummaries->first();
 
-                                    if ( ! $repo->hasBillableProblemsNameAndCode($summary)) {
-                                        $summary = $repo->fillBillableProblemsNameAndCode($summary);
-                                        $summary->save();
-                                    }
+                        if ( ! $repo->hasBillableProblemsNameAndCode($summary)) {
+                            $summary = $repo->fillBillableProblemsNameAndCode($summary);
+                            $summary->save();
+                        }
 
-                                    $patientData = new PatientReportData();
-                                    $patientData->setCcmTime(round($summary->ccm_time / 60, 2));
-                                    $patientData->setBhiTime(round($summary->bhi_time / 60, 2));
-                                    $patientData->setName($u->getFullName());
-                                    $patientData->setDob($u->getBirthDate());
-                                    $patientData->setPractice($u->program_id);
-                                    $patientData->setProvider($u->getBillingProviderName());
-                                    $patientData->setBillingCodes($u->billingCodes($month));
+                        $patientData = new PatientReportData();
+                        $patientData->setCcmTime(round($summary->ccm_time / 60, 2));
+                        $patientData->setBhiTime(round($summary->bhi_time / 60, 2));
+                        $patientData->setName($u->getFullName());
+                        $patientData->setDob($u->getBirthDate());
+                        $patientData->setPractice($u->program_id);
+                        $patientData->setProvider($u->getBillingProviderName());
+                        $patientData->setBillingCodes($u->billingCodes($month));
 
-                                    $patientData->setProblem1Code($summary->billable_problem1_code);
-                                    $patientData->setProblem1($summary->billable_problem1);
+                        $patientData->setProblem1Code($summary->billable_problem1_code);
+                        $patientData->setProblem1($summary->billable_problem1);
 
-                                    $patientData->setProblem2Code($summary->billable_problem2_code);
-                                    $patientData->setProblem2($summary->billable_problem2);
+                        $patientData->setProblem2Code($summary->billable_problem2_code);
+                        $patientData->setProblem2($summary->billable_problem2);
 
-                                    $patientData->setBhiCode(
+                        $patientData->setBhiCode(
                                         optional(optional($summary->billableProblems->first())->pivot)->icd_10_code
                                     );
-                                    $patientData->setBhiProblem(
+                        $patientData->setBhiProblem(
                                         optional(optional($summary->billableProblems->first())->pivot)->name
                                     );
 
-                                    $data['patientData'][$u->id] = $patientData;
-                                }
-                            }
+                        $data['patientData'][$u->id] = $patientData;
+                    }
+                }
                         );
 
         $data['patientData'] = array_key_exists('patientData', $data)
@@ -441,37 +441,37 @@ class Practice extends BaseModel implements HasMedia
         $awvPatients = User::ofType('participant')
             ->ofPractice($this->id)
             ->whereHas(
-                               'patientAWVSummaries',
-                               function ($query) use ($month) {
-                                   $query->where('is_billable', true)
-                                       ->where('month_year', $month->toDateString());
-                               }
+                'patientAWVSummaries',
+                function ($query) use ($month) {
+                    $query->where('is_billable', true)
+                        ->where('month_year', $month->toDateString());
+                }
                            )
             ->with(
-                               [
-                                   'patientAWVSummaries' => function ($q) use ($month) {
-                                       $q->where('is_billable', true)
-                                           ->where('month_year', $month->toDateString());
-                                   },
-                                   'billingProvider',
-                               ]
+                [
+                    'patientAWVSummaries' => function ($q) use ($month) {
+                        $q->where('is_billable', true)
+                            ->where('month_year', $month->toDateString());
+                    },
+                    'billingProvider',
+                ]
                            )
             ->chunk(
-                               100,
-                               function ($patients) use (&$data) {
-                                   foreach ($patients as $u) {
-                                       $summary = $u->patientAWVSummaries->first();
+                100,
+                function ($patients) use (&$data) {
+                    foreach ($patients as $u) {
+                        $summary = $u->patientAWVSummaries->first();
 
-                                       $patientData = new PatientReportData();
-                                       $patientData->setName($u->getFullName());
-                                       $patientData->setDob($u->getBirthDate());
-                                       $patientData->setPractice($u->program_id);
-                                       $patientData->setProvider($u->getBillingProviderName());
-                                       $patientData->setAwvDate($summary->completed_at);
+                        $patientData = new PatientReportData();
+                        $patientData->setName($u->getFullName());
+                        $patientData->setDob($u->getBirthDate());
+                        $patientData->setPractice($u->program_id);
+                        $patientData->setProvider($u->getBillingProviderName());
+                        $patientData->setAwvDate($summary->completed_at);
 
-                                       $data['awvPatientData'][$u->id] = $patientData;
-                                   }
-                               }
+                        $data['awvPatientData'][$u->id] = $patientData;
+                    }
+                }
                            );
 
         $data['awvPatientData'] = array_key_exists('awvPatientData', $data)
@@ -640,10 +640,10 @@ class Practice extends BaseModel implements HasMedia
                         ]
                     )
                         ->whereHas(
-                          'patientInfo',
-                          function ($patient) {
-                              $patient->where('ccm_status', Patient::ENROLLED);
-                          }
+                            'patientInfo',
+                            function ($patient) {
+                                $patient->where('ccm_status', Patient::ENROLLED);
+                            }
                       );
                 },
             ]

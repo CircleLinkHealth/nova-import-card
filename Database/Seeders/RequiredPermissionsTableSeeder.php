@@ -22,77 +22,77 @@ class RequiredPermissionsTableSeeder extends Seeder
         $perms = [];
 
         foreach ($this->resources() as $entityModel) {
-            $crud = $this->crudPermission($entityModel);
+            $crud  = $this->crudPermission($entityModel);
             $perms = array_merge($perms, $crud);
         }
 
         $old = [
             [
-                'name' => 'users-view-all',
+                'name'         => 'users-view-all',
                 'display_name' => 'Users - View All',
             ],
             [
-                'name' => 'users-view-self',
+                'name'         => 'users-view-self',
                 'display_name' => 'Users - view self',
             ],
             [
-                'name' => 'admin-access',
+                'name'         => 'admin-access',
                 'display_name' => 'Admin Access',
-                'description' => 'Grand access to CLH Admin dashboard. This is a legacy permission, so it may not work. Avoid using it unless you know what you are doing.',
+                'description'  => 'Grand access to CLH Admin dashboard. This is a legacy permission, so it may not work. Avoid using it unless you know what you are doing.',
             ],
             [
-                'name' => 'post-ccd-to-api',
+                'name'         => 'post-ccd-to-api',
                 'display_name' => 'POST CCDs to API',
-                'description' => 'Can POST CCDs to our API. This is a legacy permission, so it may not work. Avoid using it unless you know what you are doing.',
+                'description'  => 'Can POST CCDs to our API. This is a legacy permission, so it may not work. Avoid using it unless you know what you are doing.',
             ],
             [
-                'name' => 'ccd-import',
+                'name'         => 'ccd-import',
                 'display_name' => 'Import CCDs',
-                'description' => 'Can use the CCD Importer.',
+                'description'  => 'Can use the CCD Importer.',
             ],
             [
-                'name' => 'use-onboarding',
+                'name'         => 'use-onboarding',
                 'display_name' => 'Use Onboarding without a code',
-                'description' => 'Can use Onboarding to set up a Practice.',
+                'description'  => 'Can use Onboarding to set up a Practice.',
             ],
             [
-                'name' => 'care-plan-approve',
+                'name'         => 'care-plan-approve',
                 'display_name' => 'Approve all Careplans for a given Practice.',
-                'description' => 'Can approve CarePlans with status qa_approved. Changes the CarePlan status to provider_approved.',
+                'description'  => 'Can approve CarePlans with status qa_approved. Changes the CarePlan status to provider_approved.',
             ],
             [
-                'name' => 'care-plan-qa-approve',
+                'name'         => 'care-plan-qa-approve',
                 'display_name' => 'CLH Approve Careplan',
-                'description' => 'Can approve CarePlans with status draft. Changes the CarePlan status to qa_approved.',
+                'description'  => 'Can approve CarePlans with status draft. Changes the CarePlan status to qa_approved.',
             ],
             [
-                'name' => 'users-edit-self',
+                'name'         => 'users-edit-self',
                 'display_name' => 'Users - Edit self',
             ],
             [
-                'name' => 'note.send',
+                'name'         => 'note.send',
                 'display_name' => 'Note - Send',
             ],
             [
-                'name' => 'legacy-bhi-consent-decision.create',
-                'display_name' => 'BHI Eligible Patients who consented before ' . Patient::DATE_CONSENT_INCLUDES_BHI . ' to consent separately for BHI, as it was not listed in CLH Terms and Conditions before that date. Legacy BHI consent is stored as a note with type `' . Patient::BHI_CONSENT_NOTE_TYPE . '``. Legacy BHI rejection is stored as a note with type `' . Patient::BHI_REJECTION_NOTE_TYPE . '``. This permission allows to store a consent or rejection for BHI.',
+                'name'         => 'legacy-bhi-consent-decision.create',
+                'display_name' => 'BHI Eligible Patients who consented before '.Patient::DATE_CONSENT_INCLUDES_BHI.' to consent separately for BHI, as it was not listed in CLH Terms and Conditions before that date. Legacy BHI consent is stored as a note with type `'.Patient::BHI_CONSENT_NOTE_TYPE.'``. Legacy BHI rejection is stored as a note with type `'.Patient::BHI_REJECTION_NOTE_TYPE.'``. This permission allows to store a consent or rejection for BHI.',
             ],
             [
-                'name' => 'practice-admin',
+                'name'         => 'practice-admin',
                 'display_name' => 'Admin access for privileged users of practice',
             ],
             [
-                'name' => 'change-patient-enrollment-status',
+                'name'         => 'change-patient-enrollment-status',
                 'display_name' => 'Allows user to change patient enrollment status e.g. to enrolled, withdrawn etc.',
             ],
             [
-                'name' => 'has-schedule',
+                'name'         => 'has-schedule',
                 'display_name' => 'Allows user to view schedule, scheduled activities and work-schedule. ',
             ],
             [
-                'name' => 'vitals-survey-complete',
-                'display_name' => 'Allows user to complete the AWV Vitals Survey'
-            ]
+                'name'         => 'vitals-survey-complete',
+                'display_name' => 'Allows user to complete the AWV Vitals Survey',
+            ],
         ];
 
         return array_merge($perms, $old);
@@ -121,24 +121,24 @@ class RequiredPermissionsTableSeeder extends Seeder
     {
         return [
             [
-                'name' => "$resource.create",
-                'display_name' => ucfirst($resource) . ' - ' . 'Create',
-                'description' => "Create a $resource.",
+                'name'         => "$resource.create",
+                'display_name' => ucfirst($resource).' - '.'Create',
+                'description'  => "Create a $resource.",
             ],
             [
-                'name' => "$resource.read",
-                'display_name' => ucfirst($resource) . ' - ' . 'Read',
-                'description' => "Read a $resource.",
+                'name'         => "$resource.read",
+                'display_name' => ucfirst($resource).' - '.'Read',
+                'description'  => "Read a $resource.",
             ],
             [
-                'name' => "$resource.update",
-                'display_name' => ucfirst($resource) . ' - ' . 'Update',
-                'description' => "Update a $resource.",
+                'name'         => "$resource.update",
+                'display_name' => ucfirst($resource).' - '.'Update',
+                'description'  => "Update a $resource.",
             ],
             [
-                'name' => "$resource.delete",
-                'display_name' => ucfirst($resource) . ' - ' . 'Delete',
-                'description' => "Delete a $resource.",
+                'name'         => "$resource.delete",
+                'display_name' => ucfirst($resource).' - '.'Delete',
+                'description'  => "Delete a $resource.",
             ],
         ];
     }

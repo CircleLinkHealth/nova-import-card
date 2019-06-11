@@ -7,19 +7,19 @@
 namespace CircleLinkHealth\Customer\Entities;
 
 use CircleLinkHealth\Core\Entities\BaseModel;
-use CircleLinkHealth\Customer\Entities\User;
 
 /**
  * CircleLinkHealth\Customer\Entities\CarePerson.
  *
- * @property int            $id
- * @property int            $alert
- * @property int            $user_id
- * @property int            $member_user_id
- * @property string         $type
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property \CircleLinkHealth\Customer\Entities\User      $user
+ * @property int                                      $id
+ * @property int                                      $alert
+ * @property int                                      $user_id
+ * @property int                                      $member_user_id
+ * @property string                                   $type
+ * @property \Carbon\Carbon                           $created_at
+ * @property \Carbon\Carbon                           $updated_at
+ * @property \CircleLinkHealth\Customer\Entities\User $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePerson whereAlert($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePerson whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePerson whereId($value)
@@ -28,7 +28,9 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePerson whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePerson whereUserId($value)
  * @mixin \Eloquent
- * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\CarePerson newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\CarePerson newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\CarePerson query()

@@ -27,6 +27,7 @@ namespace CircleLinkHealth\Customer\Entities;
  * @property \Carbon\Carbon|null                           $created_at
  * @property \Carbon\Carbon|null                           $updated_at
  * @property \Eloquent|\Illuminate\Database\Eloquent\Model $settingsable
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Settings whereAutoApproveCareplans($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Settings whereCareplanMode($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Settings whereCreatedAt($value)
@@ -46,14 +47,16 @@ namespace CircleLinkHealth\Customer\Entities;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Settings whereSettingsableType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Settings whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property int $dm_careplan_approval_reminders
- * @property float|null $note_font_size
- * @property string $bill_to
- * @property int $api_auto_pull
- * @property int|null $default_chargeable_service_id
- * @property int $twilio_enabled
- * @property int $twilio_recordings_enabled
- * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @property int                                                                            $dm_careplan_approval_reminders
+ * @property float|null                                                                     $note_font_size
+ * @property string                                                                         $bill_to
+ * @property int                                                                            $api_auto_pull
+ * @property int|null                                                                       $default_chargeable_service_id
+ * @property int                                                                            $twilio_enabled
+ * @property int                                                                            $twilio_recordings_enabled
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Settings newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Settings newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Settings query()

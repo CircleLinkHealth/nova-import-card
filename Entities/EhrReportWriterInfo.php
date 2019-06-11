@@ -6,19 +6,19 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
-use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Model;
 use Storage;
 
 /**
- * CircleLinkHealth\Customer\Entities\EhrReportWriterInfo
+ * CircleLinkHealth\Customer\Entities\EhrReportWriterInfo.
  *
- * @property int $id
- * @property int $user_id
- * @property string|null $google_drive_folder_path
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \CircleLinkHealth\Customer\Entities\User $user
+ * @property int                                      $id
+ * @property int                                      $user_id
+ * @property string|null                              $google_drive_folder_path
+ * @property \Illuminate\Support\Carbon|null          $created_at
+ * @property \Illuminate\Support\Carbon|null          $updated_at
+ * @property \CircleLinkHealth\Customer\Entities\User $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\EhrReportWriterInfo newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\EhrReportWriterInfo newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\EhrReportWriterInfo query()

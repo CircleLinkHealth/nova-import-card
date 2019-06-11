@@ -1,15 +1,24 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class ChangeDefaultsToZero extends Migration
 {
     /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+    }
+
+    /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -17,25 +26,15 @@ class ChangeDefaultsToZero extends Migration
             'nurse_monthly_summaries',
             function (Blueprint $table) {
                 $table->integer('no_of_calls')
-                      ->nullable(false)
-                      ->default(0)
-                      ->change();
-                
+                    ->nullable(false)
+                    ->default(0)
+                    ->change();
+
                 $table->integer('no_of_successful_calls')
-                      ->default(0)
-                      ->nullable(false)
-                      ->change();
+                    ->default(0)
+                    ->nullable(false)
+                    ->change();
             }
         );
-    }
-    
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        //
     }
 }

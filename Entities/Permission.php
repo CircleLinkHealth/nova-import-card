@@ -11,13 +11,14 @@ use Michalisantoniou6\Cerberus\CerberusPermission;
 /**
  * CircleLinkHealth\Customer\Entities\Permission.
  *
- * @property int                                                  $id
- * @property string                                               $name
- * @property string|null                                          $display_name
- * @property string|null                                          $description
- * @property \Carbon\Carbon                                       $created_at
- * @property \Carbon\Carbon                                       $updated_at
+ * @property int                                                                                 $id
+ * @property string                                                                              $name
+ * @property string|null                                                                         $display_name
+ * @property string|null                                                                         $description
+ * @property \Carbon\Carbon                                                                      $created_at
+ * @property \Carbon\Carbon                                                                      $updated_at
  * @property \CircleLinkHealth\Customer\Entities\Role[]|\Illuminate\Database\Eloquent\Collection $roles
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Permission whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Permission whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Permission whereDisplayName($value)
@@ -25,7 +26,9 @@ use Michalisantoniou6\Cerberus\CerberusPermission;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Permission whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Permission whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\User[] $users
+ *
+ * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection $users
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Permission newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Permission newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Permission query()
