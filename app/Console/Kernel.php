@@ -21,7 +21,6 @@ use App\Console\Commands\NursesAndStatesDailyReport;
 use App\Console\Commands\OverwriteNBIImportedData;
 use App\Console\Commands\QueueEligibilityBatchForProcessing;
 use App\Console\Commands\QueueGenerateNurseDailyReport;
-use App\Console\Commands\QueueGenerateNurseInvoices;
 use App\Console\Commands\QueueGenerateOpsDailyReport;
 use App\Console\Commands\QueueResetAssignedCareAmbassadorsFromEnrollees;
 use App\Console\Commands\QueueSendApprovedCareplanSlackNotification;
@@ -34,7 +33,6 @@ use App\Console\Commands\TuneScheduledCalls;
 use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendMonthlyNurseInvoiceLAN;
-use CircleLinkHealth\NurseInvoices\Console\Commands\SendResolveInvoiceDisputeReminder;
 use CircleLinkHealth\NurseInvoices\Console\SendMonthlyNurseInvoiceFAN;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use Illuminate\Console\Scheduling\Schedule;
@@ -143,10 +141,6 @@ class Kernel extends ConsoleKernel
 
 //        $schedule->command('lgh:importInsurance')
 //            ->dailyAt('05:00');
-
-        $schedule->command(QueueGenerateNurseInvoices::class)
-            ->dailyAt('23:40')
-            ->withoutOverlapping();
 
         $schedule->command(QueueGenerateNurseDailyReport::class)
             ->dailyAt('23:45')
