@@ -97,37 +97,37 @@ class UpdateEnrolleeDataFromCsv extends Command
         Enrollee::whereIn('id', $csv->pluck('Eligible_Patient_ID')->toArray())
             ->orWhereIn('eligibility_job_id', $csv->pluck('Eligibility_Job_ID')->toArray())
             ->chunk(200, function ($enrollees) use (&$csv) {
-                $enrollees->each(function (Enrollee $e) use ($csv) {
-                    $row = $csv->filter(function ($row) use ($e) {
-                        //We need either the enrollee id, or the eligibility job id
-                        if (array_key_exists('Eligible_Patient_ID', $row)) {
-                            return $row['Eligible_Patient_ID'] == $e->id;
-                        }
-                        if (array_key_exists('Eligibility_Job_ID', $row)) {
-                            return $row['Eligibility_Job_ID'] == $e->eligibility_job_id;
-                        }
+                    $enrollees->each(function (Enrollee $e) use ($csv) {
+                        $row = $csv->filter(function ($row) use ($e) {
+                            //We need either the enrollee id, or the eligibility job id
+                            if (array_key_exists('Eligible_Patient_ID', $row)) {
+                                return $row['Eligible_Patient_ID'] == $e->id;
+                            }
+                            if (array_key_exists('Eligibility_Job_ID', $row)) {
+                                return $row['Eligibility_Job_ID'] == $e->eligibility_job_id;
+                            }
 
-                        return false;
-                    })
-                              //use last to get the last row for that patient from the csv (latest updates for that patient)
-                        ->last();
+                            return false;
+                        })
+                            //use last to get the last row for that patient from the csv (latest updates for that patient)
+                            ->last();
 
-                    if ($row) {
-                        $e = $this->setEnrolleeStatus($e, $row);
-                        if (array_key_exists('Call_Date', $row) && ! empty($row['Call_Date'])) {
-                            $date = preg_split("/[.|\/]/", $row['Call_Date']);
-                            if (3 == count($date)) {
-                                try {
-                                    $e->last_attempt_at = Carbon::parse("{$date[0]}/{$date[1]}/{$date[2]}");
-                                } catch (\Exception $exception) {
-                                    //do nothing, date provided in csv is invalid
+                        if ($row) {
+                            $e = $this->setEnrolleeStatus($e, $row);
+                            if (array_key_exists('Call_Date', $row) && ! empty($row['Call_Date'])) {
+                                $date = preg_split("/[.|\/]/", $row['Call_Date']);
+                                if (3 == count($date)) {
+                                    try {
+                                        $e->last_attempt_at = Carbon::parse("{$date[0]}/{$date[1]}/{$date[2]}");
+                                    } catch (\Exception $exception) {
+                                        //do nothing, date provided in csv is invalid
+                                    }
                                 }
                             }
+                            $e->save();
                         }
-                        $e->save();
-                    }
+                    });
                 });
-            });
 
         $localDisk->delete($fileName);
     }
