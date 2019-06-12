@@ -64,6 +64,10 @@ class NursesAndStatesDailyReportService
                             ]
                         );
                     },
+                    'outboundCalls' => function ($q) use ($date) {
+                        $q->whereBetween('called_date', [$date->copy()->startOfDay(), $date->copy()->endOfDay()])
+                            ->orWhere('scheduled_date', $date->toDateString());
+                    },
                 ]
             )
             ->whereHas(
@@ -181,6 +185,7 @@ class NursesAndStatesDailyReportService
             $date
         );
         $data['surplusShortfallHours'] = $data['hoursCommittedRestOfMonth'] - $data['caseLoadNeededToComplete'];
+
         //only for EmailRNDailyReport
         $data['nextUpcomingWindow'] = optional($nurse->nurseInfo->firstWindowAfter($date->copy()))->toArray();
 
