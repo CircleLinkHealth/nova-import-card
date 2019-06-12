@@ -184,7 +184,7 @@ class NursesAndStatesDailyReportService
         $data['caseLoadNeededToComplete']  = $this->estHoursToCompleteCaseLoadMonth($patientsForMonth);
         $data['hoursCommittedRestOfMonth'] = $this->getHoursCommittedRestOfMonth(
             $nurseWindows,
-            $nurse->nurseInfo->upcomingHolidays(),
+            $nurse->nurseInfo->upcomingHolidaysFrom($date),
             $date
         );
         $data['surplusShortfallHours'] = $data['hoursCommittedRestOfMonth'] - $data['caseLoadNeededToComplete'];
@@ -415,7 +415,7 @@ class NursesAndStatesDailyReportService
 
         $noOfDays = $this->getNumberOfDaysCommittedRestOfMonth(
             $nurseWindows,
-            $nurse->nurseInfo->upcomingHolidays(),
+            $nurse->nurseInfo->upcomingHolidaysFrom($date),
             $date
         );
 
