@@ -700,7 +700,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function calls()
     {
-        return $this->outboundCalls();
+        return $this->outboundCalls;
     }
 
     public function canApproveCarePlans()
