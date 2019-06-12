@@ -1,49 +1,54 @@
 <template>
     <div>
         <!--question without sub_parts-->
-        <div v-if="!questionHasSubParts"
-             v-for="(placeholder, index) in placeholderForSingleQuestion">
-            <input type="text"
-                   class="text-field"
-                   name="textTypeAnswer[]"
-                   v-model="inputHasText[index]"
-                   :placeholder="placeholder"
-                   @change="onInput()">
-        </div>
-        <!--add single input fields button-->
-        <div v-for="extraFieldButtonName in extraFieldButtonNames">
-            <div v-if="canAddInputFields && !questionHasSubParts">
-                <button type="button"
-                        @click="addInputField(extraFieldButtonName.placeholder)"
-                        class="btn-add-field">
-                    {{extraFieldButtonName.add_extra_answer_text}}
-                </button>
-            </div>
-            <!--add remove input fields button-->
-            <div v-if="canRemoveInputFields && !questionHasSubParts">
-                <button type="button"
-                        @click="removeSingleInputFields()"
-                        class="btn-primary">
-                    {{extraFieldButtonName.remove_extra_answer_text}}
-                </button>
-            </div>
-        </div>
-        <br>
-        <!--question with sub_parts-->
-        <div class="row">
-            <div v-if="questionHasSubParts"
-                 v-for="(subPart, index) in subParts" :key="index" style="margin-left: 15%;">
-                <label class="label" v-if="questionHasSubParts">{{subPart.title}}</label><br>
+        <template v-if="!questionHasSubParts">
+
+            <div v-for="(placeholder, index) in placeholderForSingleQuestion">
                 <input type="text"
                        class="text-field"
-                       name="textTypeAnswer[]"
                        v-model="inputHasText[index]"
-                       :placeholder="subPart.placeholder"
-                       @change="onInput">
+                       :placeholder="placeholder">
+            </div>
+
+            <!--add single input fields button-->
+            <div v-for="extraFieldButtonName in extraFieldButtonNames">
+                <div v-if="canAddInputFields">
+                    <button type="button"
+                            @click="addInputField(extraFieldButtonName.placeholder)"
+                            class="btn-add-field">
+                        {{extraFieldButtonName.add_extra_answer_text}}
+                    </button>
+                </div>
+                <!--add remove input fields button-->
+                <div v-if="canRemoveInputFields">
+                    <button type="button"
+                            @click="removeSingleInputFields()"
+                            class="btn-primary">
+                        {{extraFieldButtonName.remove_extra_answer_text}}
+                    </button>
+                </div>
+            </div>
+
+        </template>
+        <template v-else>
+
+            <!--question with sub_parts-->
+            <div class="row">
+                <div v-for="(subPartArr, index) in subParts">
+                    <div v-for="(subPart, innerIndex) in subPartArr" :key="innerIndex" style="margin-left: 15%;">
+                        <label class="label">{{subPart.title}}</label><br>
+                        <input type="text"
+                               class="text-field"
+                               v-model="subPart.value"
+                               :placeholder="subPart.placeholder"
+                               :disabled="!isActive">
+                    </div>
+                </div>
             </div>
             <!--add input fields button-->
             <div v-for="extraFieldButtonName in extraFieldButtonNames">
-                <div v-if="canAddInputFields && questionHasSubParts">
+                <div v-if="canAddInputFields">
+
                     <button type="button"
                             @click="addInputFields(extraFieldButtonName.sub_parts)"
                             class="btn-add-field">
@@ -51,7 +56,7 @@
                     </button>
                 </div>
                 <!--remove input fields button-->
-                <div v-if="canRemoveInputFields && questionHasSubParts">
+                <div v-if="canRemoveInputFields">
                     <button type="button"
                             @click="removeInputFields()"
                             class="btn-primary">
@@ -59,28 +64,41 @@
                     </button>
                 </div>
             </div>
-        </div>
 
+        </template>
+
+        <br>
+        <!---->
 
         <!--next button-->
-        <div v-if="hasTypedInTwoFields || hasTypedTwoCharacters">
-            <button class="next-btn"
-                    name="text"
-                    id="text"
-                    type="submit"
-                    @click="handleAnswer()">Next
-            </button>
+        <div :class="isLastQuestion ? 'text-center' : 'text-left'">
+            <mdbBtn v-show="isActive"
+                    color="primary"
+                    class="next-btn"
+                    name="number"
+                    id="number"
+                    :disabled="!hasTypedInTwoFields"
+                    @click="handleAnswer()">
+                {{isLastQuestion ? 'Complete' : 'Next'}}
+                <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
+            </mdbBtn>
         </div>
     </div>
 </template>
 
 <script>
 
-    import {EventBus} from "../event-bus";
+    import {mdbBtn} from 'mdbvue';
+    import {library} from '@fortawesome/fontawesome-svg-core';
+    import {faSpinner} from '@fortawesome/free-solid-svg-icons';
+    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
+
+    library.add(faSpinner);
 
     export default {
         name: "questionTypeText",
-        props: ['question', 'userId', 'surveyInstanceId', 'isActive'],
+        props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting'],
+        components: {mdbBtn, FontAwesomeIcon},
 
 
         data() {
@@ -95,8 +113,11 @@
                 placeholderForSingleQuestion: [],
             }
         },
-
         computed: {
+            hasTypedTwoNumbers() {
+                return this.inputHasText.length > 1;
+            },
+
             hasTypedInTwoFields() {
                 return this.inputHasText.length > 1;
             },
@@ -115,7 +136,7 @@
                 if (this.hasAnswerType) {
                     return this.question.type.question_type_answers[0].id;
                 } else {
-                    return 0;
+                    return undefined;
                 }
             },
 
@@ -186,15 +207,22 @@
         },
 
         methods: {
-            onInput() {
-                EventBus.$emit('handleTextType');
-            },
+
             addInputField(placeholder) {
                 this.placeholderForSingleQuestion.push(placeholder);
                 this.canRemoveInputFields = true;
             },
 
             addInputFields(extraFieldSubParts) {
+
+                const subQuestions = extraFieldSubParts;
+                // this.subParts.push(...subQuestions);
+                const fields = subQuestions.map(x => {
+                    return Object.assign({}, x, {value: ''});
+                });
+                this.subParts.push(fields);
+
+                /*
                 const subParts = extraFieldSubParts.map(q => q);
                 for (let j = 0; j < subParts.length; j++) {
                     const subPart = subParts[j];
@@ -204,13 +232,15 @@
                         key: subPart.key
                     });
                 }
+                */
 
                 this.canRemoveInputFields = true;
 
             },
             /*@todo:delete answer also*/
             removeInputFields(index) {//index is undefined. if it is defined it doesn't work. Can anyone clarify pls?
-                this.subParts.splice(index, 2);
+                // this.subParts.splice(index, 2);
+                this.subParts.splice(index, 1);
             },
 
             removeSingleInputFields(index) {
@@ -218,49 +248,26 @@
             },
 
             handleAnswer() {
+                const answer = [];
                 if (this.subParts.length === 0) {
-                    var answer = [];
                     for (let j = 0; j < this.inputHasText.length; j++) {
                         var values = {
                             name: this.inputHasText[j]
                         };
                         answer.push(values);
                     }
-
                 } else {
-                    const keys = [];
-                    var answer = [];
-                    for (let j = 0; j < this.inputHasText.length; j++) {
-                        const q = this.subParts[j];
-                        keys.push(q.key);
-
-                        const result = this.inputHasText.reduce(function (result, value, index) {
-                            result[keys[index]] = value;
-                            return result;
-                        }, {});
-
-                        answer.push(result);
-                    }
-
-
-                    console.log(answer);
-
-                }
-                var answerData = JSON.stringify(answer);
-
-                axios.post('/save-answer', {
-                    user_id: this.userId,
-                    survey_instance_id: this.surveyInstanceId[0],
-                    question_id: this.question.id,
-                    question_type_answer_id: this.questionTypeAnswerId,
-                    value: answerData,
-                })
-                    .then(function (response) {
-                        console.log(response);
+                    this.subParts.forEach(subPart => {
+                        //arr => [{key, value}, {key, value}]
+                        const obj = {};
+                        subPart.forEach(p => {
+                            obj[p.key] = p.value;
+                        });
+                        answer.push(obj);
                     })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
+                }
+
+                this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer);
             }
         },
 
@@ -275,8 +282,7 @@
 
             /*sets subQuestions data*/
             if (this.questionHasSubParts) {
-                const subQuestions = this.questionOptions[0].sub_parts;
-                this.subParts.push(...subQuestions);
+                this.addInputFields(this.questionOptions[0].sub_parts);
             }
 
             /*sets canAddInputField data*/
@@ -331,5 +337,21 @@
         line-height: normal;
         letter-spacing: 1.3px;
         color: #1a1a1a;
+    }
+
+    .btn-primary {
+        background-color: #50b2e2;
+        border-color: #4aa5d2;
+    }
+
+    .btn-primary.disabled {
+        opacity: 50%;
+        background-color: #50b2e2;
+        border-color: #4aa5d2;
+    }
+
+    .fa, .fas {
+        color: #50b2e2;
+        font-weight: unset;
     }
 </style>

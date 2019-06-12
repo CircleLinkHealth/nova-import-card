@@ -7,6 +7,7 @@
                     class="number-field"
                     name="numberTypeAnswer[]"
                     v-model="inputNumber"
+                    :disabled="!isActive"
                     :placeholder="this.questionPlaceHolder">
         </div>
         <br>
@@ -15,33 +16,52 @@
             <div v-for="(subPart, index) in questionSubParts" :key="index">
                 <input type="number"
                        class="number-field"
+                       :class="subPartsStyle"
                        name="numberTypeAnswer[]"
                        v-model="inputNumber[index]"
+                       :disabled="!isActive"
                        :placeholder="subPart.placeholder">
+                <span
+                        v-if="questionSubPartsSeparator === 'dash' && index !== questionSubParts.length - 1">
+                    &nbsp;/&nbsp;
+                </span>
+
+                <span
+                        v-if="questionSubPartsSeparator === '' && index !== questionSubParts.length - 1">
+                    &nbsp;
+                </span>
             </div>
 
         </div>
 
         <!--next button-->
-        <div v-if="hasTypedTwoNumbers">
-            <button class="next-btn"
-                    name="number"
-                    id="number"
-                    type="submit"
-                    @click="handleAnswer()">Next
-            </button>
-
-        </div>
+        <br>
+        <mdbBtn v-show="isActive"
+                color="primary"
+                class="next-btn"
+                name="number"
+                id="number"
+                :disabled="!hasTypedTwoNumbers"
+                @click="handleAnswer()">
+            {{isLastQuestion ? 'Complete' : 'Next'}}
+            <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
+        </mdbBtn>
     </div>
 </template>
 
 <script>
-    import {EventBus} from "../event-bus";
-    /* import {saveAnswer} from "../save-answer";*/
+
+    import {mdbBtn} from "mdbvue";
+    import {library} from '@fortawesome/fontawesome-svg-core';
+    import {faSpinner} from '@fortawesome/free-solid-svg-icons';
+    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
+    library.add(faSpinner);
+
 
     export default {
         name: "questionTypeNumber",
-        props: ['question', 'userId', 'surveyInstanceId'],
+        props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting'],
+        components: {mdbBtn, FontAwesomeIcon},
 
         mounted() {
             console.log('Component mounted.')
@@ -56,6 +76,10 @@
             }
         },
         computed: {
+            subPartsStyle() {
+                return 'parts-' + this.questionSubParts.length;
+            },
+
             hasTypedTwoNumbers() {
                 return this.inputNumber.length > 1 ? this.showNextButton = true : this.showNextButton = false;
             },
@@ -68,22 +92,26 @@
                 if (this.hasAnswerType) {
                     return this.question.type.question_type_answers[0].id;
                 } else {
-                    return 0;
+                    return undefined;
                 }
             },
 
             questionHasSubParts() {
                 if (this.hasAnswerType) {
-                    return this.questionOptions[0].hasOwnProperty('sub_parts');
+                    return this.questionOptions[0].hasOwnProperty('sub_parts') || this.questionOptions[0].hasOwnProperty('sub-parts');
                 }
                 return false;
             },
 
             questionSubParts() {
                 if (this.questionHasSubParts) {
-                    return this.questionOptions[0].sub_parts;
+                    return this.questionOptions[0].sub_parts || this.questionOptions[0]["sub-parts"];
                 }
-                return '';
+                return [];
+            },
+
+            questionSubPartsSeparator() {
+                return this.questionOptions[0].separate_sub_parts_with || '';
             },
 
             questionHasPlaceHolder() {
@@ -104,6 +132,10 @@
 
         methods: {
             handleAnswer() {
+                if (!this.hasTypedTwoNumbers) {
+                    return;
+                }
+
                 const inputVal = this.inputNumber;
                 const keys = this.keys;
                 if (keys.length !== 0) {
@@ -117,30 +149,21 @@
                         value: inputVal
                     };
                 }
-                var answerData = JSON.stringify(answer);
 
-                axios.post('/save-answer', {
-                    user_id: this.userId,
-                    survey_instance_id: this.surveyInstanceId[0],
-                    question_id: this.question.id,
-                    question_type_answer_id: this.questionTypeAnswerId,
-                    value: answerData,
-                })
-                    .then(function (response) {
-                        console.log(response);
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
-                EventBus.$emit('handleNumberType');
+                /*EventBus.$emit('handleNumberType');*/
+                this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer);
             }
         },
         created() {
             const questionOptions = this.question.type.question_type_answers.map(q => q.options);
             this.questionOptions.push(...questionOptions);
 
-            if (this.questionSubParts !== '') {
-                const keys = this.questionOptions[0].sub_parts.map(q => q.key);
+            if (this.question.answer) {
+                this.inputNumber = this.question.answer.value.value;
+            }
+
+            if (this.questionSubParts.length > 1) {
+                const keys = (this.questionOptions[0].sub_parts || this.questionOptions[0]["sub-parts"]).map(q => q.key);
                 this.keys.push(...keys);
             }
         },
@@ -148,14 +171,15 @@
 </script>
 
 <style scoped>
-    .next-btn {
-        width: 120px;
-        height: 40px;
-        border-radius: 5px;
-        border: solid 1px #4aa5d2;
+    .btn-primary {
         background-color: #50b2e2;
+        border-color: #4aa5d2;
     }
-
+    .btn-primary.disabled {
+        opacity: 50%;
+        background-color: #50b2e2;
+        border-color: #4aa5d2;
+    }
     .number-field {
         border: none;
         border-bottom: solid 1px rgba(0, 0, 0, 0.1);
@@ -163,5 +187,8 @@
         outline: 0;
         width: 300px;
         height: 30px;
+    }
+    .number-field.parts-2 {
+        width: 120px;
     }
 </style>

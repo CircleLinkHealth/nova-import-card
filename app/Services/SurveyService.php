@@ -7,22 +7,24 @@ use App\Answer;
 use App\Events\SurveyInstancePivotSaved;
 use App\SurveyInstance;
 use App\User;
+use Illuminate\Database\Query\Builder;
 use Carbon\Carbon;
 
 class SurveyService
 {
-    public function getSurveyData($patientId, $surveyId)
+    public static function getSurveyData($patientId, $surveyId)
     {
-        $patientWithSurveyData = User::with([
-            'surveyInstances' => function ($instance) use ($surveyId) {
-                $instance->current()
-                         ->wherePivot('survey_id', $surveyId)
-                         ->with([
-                             'survey',
-                             'questions' => function ($question) {
-                                 $question->with(['questionGroup', 'type.questionTypeAnswers']);
-                             },
-                         ]);
+        $patientWithSurveyData = User
+            ::with([
+                'surveyInstances' => function (Builder $instance) use ($surveyId) {
+                    $instance->current()
+                             ->wherePivot('survey_id', $surveyId)
+                             ->with([
+                                 'survey',
+                                 'questions' => function (Builder $question) {
+                                     $question->with(['questionGroup', 'type.questionTypeAnswers']);
+                                 },
+                             ]);
 
             },
             'answers',
@@ -47,8 +49,15 @@ class SurveyService
 
     }
 
-    public function updateOrCreateAnswer($input)
-    {//update or create the answer
+    /**
+     * Update or create an answer for a survey
+     *
+     * @param $input
+     *
+     * @return bool|string false if could not create/update answer, string for new survey status
+     */
+    public static function updateOrCreateAnswer($input)
+    {
         $answer = Answer::updateOrCreate([
             'user_id'            => $input['user_id'],
             'survey_instance_id' => $input['survey_instance_id'],
@@ -57,18 +66,25 @@ class SurveyService
             'question_type_answer_id' => array_key_exists('question_type_answer_id', $input)
                 ? $input['question_type_answer_id']
                 : null,
-            'value'                 => $input['value'],
+            'value'                   => $input['value'],
         ]);
 
         if ( ! $answer) {
             return false;
         }
 
-        return $this->updateSurveyInstanceStatus($input);
+        return SurveyService::updateSurveyInstanceStatus($input);
 
     }
 
-    private function updateSurveyInstanceStatus($input)
+    /**
+     * Update the status of a survey based on answered questions
+     *
+     * @param $input
+     *
+     * @return string Status of survey
+     */
+    public static function updateSurveyInstanceStatus($input)
     {
         $user = User::with([
             'surveyInstances' => function ($instance) use ($input) {

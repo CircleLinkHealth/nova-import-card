@@ -16,14 +16,9 @@ class Answer extends BaseModel
         'survey_instance_id',
         'question_id',
         'question_type_answer_id',
-        'value'
+        'value',
     ];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
     protected $casts = [
         'value' => 'array',
     ];
