@@ -458,16 +458,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.100.1",
+            "version": "3.100.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "0ae18bb40836e9599bdbd6a65b292329bc83df64"
+                "reference": "c08969c6bf828910fc868d882bcd55ea5d9f97f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/0ae18bb40836e9599bdbd6a65b292329bc83df64",
-                "reference": "0ae18bb40836e9599bdbd6a65b292329bc83df64",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/c08969c6bf828910fc868d882bcd55ea5d9f97f7",
+                "reference": "c08969c6bf828910fc868d882bcd55ea5d9f97f7",
                 "shasum": ""
             },
             "require": {
@@ -537,7 +537,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2019-06-11T18:32:05+00:00"
+            "time": "2019-06-12T18:09:10+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -696,7 +696,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "17798c6571d97692b502b5bf5e7252e6c6159973"
+                "reference": "0c56254edb200eb364d32956bbe0f24bcccfb51c"
             },
             "require": {
                 "circlelinkhealth/core": "dev-master",
@@ -729,7 +729,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-06-12T12:30:09+00:00"
+            "time": "2019-06-12T18:27:23+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
