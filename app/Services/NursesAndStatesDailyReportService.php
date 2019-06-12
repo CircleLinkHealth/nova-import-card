@@ -64,6 +64,10 @@ class NursesAndStatesDailyReportService
                             ]
                         );
                     },
+                    'outboundCalls' => function ($q) use ($date) {
+                        $q->whereBetween('called_date', [$date->copy()->startOfDay(), $date->copy()->endOfDay()])
+                            ->orWhere('scheduled_date', $date->toDateString());
+                    },
                 ]
             )
             ->whereHas(
@@ -162,10 +166,13 @@ class NursesAndStatesDailyReportService
                     ),
                     2
                 ),
-            'scheduledCalls'                 => $nurse->nurseInfo->countScheduledCallsFor($date),
-            'actualCalls'                    => $nurse->nurseInfo->countCompletedCallsFor($date),
-            'successful'                     => $nurse->nurseInfo->countSuccessfulCallsFor($date),
-            'unsuccessful'                   => $nurse->nurseInfo->countUnsuccessfulCallsFor($date),
+            'scheduledCalls' => $nurse->outboundCalls->count(),
+            'actualCalls'    => $nurse->outboundCalls->whereIn(
+                'status',
+                ['reached', 'not reached']
+            )->count(),
+            'successful'                     => $nurse->outboundCalls->where('status', '=', 'reached')->count(),
+            'unsuccessful'                   => $nurse->outboundCalls->where('status', '=', 'not reached')->count(),
             'totalMonthSystemTimeSeconds'    => $this->getTotalMonthSystemTimeSeconds($nurse, $date),
             'uniquePatientsAssignedForMonth' => $patientsForMonth->count(),
         ];
@@ -181,6 +188,7 @@ class NursesAndStatesDailyReportService
             $date
         );
         $data['surplusShortfallHours'] = $data['hoursCommittedRestOfMonth'] - $data['caseLoadNeededToComplete'];
+
         //only for EmailRNDailyReport
         $data['nextUpcomingWindow'] = optional($nurse->nurseInfo->firstWindowAfter($date->copy()))->toArray();
 
