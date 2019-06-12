@@ -98,11 +98,6 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
      */
     private $companyHolidaysCache = [];
 
-    public function calls()
-    {
-        return $this->user->calls();
-    }
-
     public function callStatsForRange(Carbon $start, Carbon $end)
     {
     }
