@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreVitalsAnswer;
 use App\Services\VitalsSurveyService;
 use App\User;
+use Auth;
 
 class VitalsSurveyController extends Controller
 {
@@ -30,8 +31,7 @@ class VitalsSurveyController extends Controller
 
         if (!empty($patient->regularDoctorUser())) {
             $doctorsName = $patient->regularDoctorUser()->getFullName();
-        }
-        else if (!empty($patient->billingProviderUser())) {
+        } else if (!empty($patient->billingProviderUser())) {
             $doctorsName = $patient->billingProviderUser()->getFullName();
         }
 
@@ -57,6 +57,14 @@ class VitalsSurveyController extends Controller
             throw new \Error("Survey not found for patient " . $patientId);
         }
 
+        if (!Auth::check()) {
+            return redirect()->route('survey.vitals.welcome', ['practiceId' => $practiceId, 'patientId' => $patientId]);
+        }
+
+        if (!Auth::user()->hasPermissionForSite('vitals-survey-complete', $practiceId)) {
+            return redirect()->route('survey.vitals.not.authorized', ['practiceId' => $practiceId, 'patientId' => $patientId]);
+        }
+
         return view('survey.vitals.index', [
             'data' => $userWithSurveyData->toArray(),
         ]);
@@ -74,12 +82,12 @@ class VitalsSurveyController extends Controller
     {
         $answer = $this->service->updateOrCreateAnswer($request);
 
-        if ( ! $answer) {
+        if (!$answer) {
             return response()->json(['errors' => 'Answer was not created'], 400);
         }
 
         return response()->json([
-            'created'       => true,
+            'created' => true,
             'survey_status' => $answer,
         ], 200);
 

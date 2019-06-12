@@ -10,4 +10,5 @@ class Patient extends \CircleLinkHealth\Customer\Entities\Patient
     {
         return $this->hasMany(InvitationLink::class, 'patient_info_id');
     }
+
 }

@@ -14,18 +14,18 @@ class StoreVitalsAnswer extends FormRequest
      */
     public function authorize()
     {
-        return true;
-//        if ( ! Auth::check()) {
-//            return false;
-//        }
-//
-//        $practiceId = $this->get('practice_id', null);
-//
-//        if (empty($practiceId)) {
-//            return false;
-//        }
-//
-//        return Auth::user()->hasPermissionForSite('vitals-survey-complete', $practiceId);
+        //user should already be authenticated to reach here
+        if (!Auth::check()) {
+            return false;
+        }
+
+        $practiceId = $this->get('practice_id', null);
+
+        if (empty($practiceId)) {
+            return false;
+        }
+
+        return Auth::user()->hasPermissionForSite('vitals-survey-complete', $practiceId);
     }
 
     /**
@@ -36,12 +36,12 @@ class StoreVitalsAnswer extends FormRequest
     public function rules()
     {
         return [
-            'practice_id'             => 'required|integer|exists:practices,id',
-            'patient_id'              => 'required|integer|exists:users,id',
-            'survey_instance_id'      => 'required|integer|exists:survey_instances,id',
-            'question_id'             => 'required|integer|exists:questions,id',
+            'practice_id' => 'required|integer|exists:practices,id',
+            'patient_id' => 'required|integer|exists:users,id',
+            'survey_instance_id' => 'required|integer|exists:survey_instances,id',
+            'question_id' => 'required|integer|exists:questions,id',
             'question_type_answer_id' => 'sometimes|integer|exists:question_types_answers,id',
-            'value'                   => 'required',
+            'value' => 'required',
         ];
     }
 }

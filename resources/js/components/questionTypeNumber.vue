@@ -92,22 +92,26 @@
                 if (this.hasAnswerType) {
                     return this.question.type.question_type_answers[0].id;
                 } else {
-                    return 0;
+                    return undefined;
                 }
             },
 
             questionHasSubParts() {
                 if (this.hasAnswerType) {
-                    return this.questionOptions[0].hasOwnProperty('sub_parts');
+                    return this.questionOptions[0].hasOwnProperty('sub_parts') || this.questionOptions[0].hasOwnProperty('sub-parts');
                 }
                 return false;
             },
 
             questionSubParts() {
                 if (this.questionHasSubParts) {
-                    return this.questionOptions[0].sub_parts;
+                    return this.questionOptions[0].sub_parts || this.questionOptions[0]["sub-parts"];
                 }
-                return '';
+                return [];
+            },
+
+            questionSubPartsSeparator() {
+                return this.questionOptions[0].separate_sub_parts_with || '';
             },
 
             questionHasPlaceHolder() {
@@ -122,10 +126,6 @@
                     return this.questionOptions[0].placeholder;
                 }
                 return '';
-            },
-
-            questionSubPartsSeparator() {
-                return this.questionOptions[0].separate_sub_parts_with || '';
             },
 
         },

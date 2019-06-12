@@ -2,15 +2,12 @@
 
 namespace App;
 
-class PersonalizedPreventionPlan extends \CircleLinkHealth\Core\Entities\BaseModel
+use CircleLinkHealth\Core\Entities\BaseModel;
+
+class PersonalizedPreventionPlan extends BaseModel
 {
     protected $fillable = [
-        'user_id',
-        'display_name',
-        'birth_date',
-        'address',
-        'billing_provider',
-        'rec_task_title',
+        'patient_id',
         'hra_answers',
         'vitals_answers',
         'answers_for_eval',
@@ -22,10 +19,11 @@ class PersonalizedPreventionPlan extends \CircleLinkHealth\Core\Entities\BaseMod
         'answers_for_eval' => 'array',
 
     ];
+
     protected $table = 'personalized_prevention_plan';
 
     public function patient()
     {
-        return $this->belongsTo(User::class, 'patient_id');
+        return $this->belongsTo(User::class);
     }
 }

@@ -4,12 +4,10 @@ namespace App\Http\Controllers;
 
 use App\PersonalizedPreventionPlan;
 use App\Services\PersonalizedPreventionPlanPrepareData;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class PersonalizedPreventionPlanController extends Controller
 {
-    protected $patient;
     protected $service;
 
     public function __construct(PersonalizedPreventionPlanPrepareData $service)
@@ -17,32 +15,27 @@ class PersonalizedPreventionPlanController extends Controller
         $this->service = $service;
     }
 
-    public function getPppDataForUser(Request $request)
+    public function getPppDataForUser(Request $request, $userId)
     {
-        $patientPppData = PersonalizedPreventionPlan::with('patient.patientInfo')->find(34);
+        //Will the provider review & edit the PPP and then send it or it will be sent automatically?
+        $patientPppData = PersonalizedPreventionPlan::where('patient_id', $userId)
+                                                    ->with('patient.patientInfo')
+                                                    ->first();
 
         if ( ! $patientPppData) {
-            //with message
-            return redirect()->back();
+            return redirect()
+                ->withErrors(["message" => "Could not find report for user id[$userId]"])
+                ->back();
         }
         $patient = $patientPppData->patient;
-        /*     if ( ! $patient) {
-              //bad data
-              return redirect()->back();
-          }*/
-
-        $birthDate  = new Carbon($patientPppData->birth_date);
-        $age        = now()->diff($birthDate)->y;
-        $reportData = $this->service->prepareRecommendations($patientPppData);
-
-        $recommendationTasks = [];
-        foreach ($reportData['recommendation_tasks'] as $tasks) {
-            $recommendationTasks[$tasks['title']] = $tasks;
+        if ( ! $patient) {
+            return redirect()
+                ->withErrors(["message" => "There was an error"])
+                ->back();
         }
 
+        $personalizedHealthAdvices = $this->service->prepareRecommendations($patientPppData);
 
-dd($recommendationTasks);
-        return view('personalizedPreventionPlan', compact('recommendationTasks', 'reportData', 'age'));
-
+        return view('personalizedPreventionPlan', compact('personalizedHealthAdvices', 'patient', 'patientPppData'));
     }
 }

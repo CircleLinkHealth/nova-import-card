@@ -82,7 +82,7 @@
                 if (this.checkBoxValues.length > 0 && this.hasAnswerType) {
                     return this.checkBoxValues[0].id;
                 } else {
-                    return 0;
+                    return undefined;
                 }
             },
 
