@@ -485,7 +485,7 @@ class SurveySeeder extends Seeder
                         'related_question_expected_answer' => 'Yes',
                     ],
                 ],
-                'question_type'         => QuestionType::RADIO,
+                'question_type'         => QuestionType::CHECKBOX,
                 'question_type_answers' => [
                     [
                         'type_answer_body' => 'This Year',
@@ -494,6 +494,7 @@ class SurveySeeder extends Seeder
                         'options' => [
                             'placeholder' => 'Other, ex. 10',
                             'answer_type' => 'text',
+                            'allow_single_custom_input' => true
                         ],
                     ],
                 ],
@@ -509,7 +510,7 @@ class SurveySeeder extends Seeder
                         'related_question_expected_answer' => 'Yes',
                     ],
                 ],
-                'question_type'         => QuestionType::RADIO,
+                'question_type'         => QuestionType::CHECKBOX,
                 'question_type_answers' => [
                     [
                         'type_answer_body' => 'This Year',
@@ -518,6 +519,7 @@ class SurveySeeder extends Seeder
                         'options' => [
                             'placeholder' => 'Other, ex: 10 years ago',
                             'answer_type' => 'text',
+                            'allow_single_custom_input' => true
                         ],
                     ],
                 ],

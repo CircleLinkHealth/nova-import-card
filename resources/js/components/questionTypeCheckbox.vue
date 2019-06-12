@@ -1,79 +1,75 @@
 <template>
-    <div class="row">
-        <div class="custom-checkbox">
+
+    <div class="custom-checkbox">
+        <div class="row">
             <div v-for="(checkBox, index) in checkBoxValues">
-                <label>
+                <label v-show="checkBox.value !== null">
                     <input class="checkbox checkbox-info checkbox-circle"
                            type="checkbox"
-                           name="checkboxTypeAnswer"
-                           :value="checkBox.value"
-                           v-model="checkedAnswers"
-                           @click="handleClick(checkBox.value)"> <span style="padding-left:1%">{{checkBox.value}}</span>
-                </label>
+                           v-model="checkBox.checked"> <span
+                        style="padding-left:1%">{{checkBox.value}}</span>
+                </label> <br>
 
+                <div v-if="hasCustomInputAndIsChecked(checkBox) || hasCustomInputSingleCase(checkBox)">
+                    <input class="text-field"
+                           :type="getCustomInputType(checkBox)"
+                           v-model="checkBox.customInput"
+                           :disabled="answerChecked && isSingleCustomInput"
+                           :placeholder="getCustomInputPlaceholder(checkBox)">
+                </div>
             </div>
 
-            <checkbox-custom-type-cancer
-                :cancerInputData="cancerInputData"
-                v-if="cancerCustomInput">
-            </checkbox-custom-type-cancer>
-
-            <checkbox-custom-type-eye-problems
-                :eyeProblemsInputData="eyeProblemsInputData"
-                v-if="eyeProblemsCustomInput">
-            </checkbox-custom-type-eye-problems>
-
-            <checkbox-custom-type-std
-                :stdProblemsInputData="stdProblemsInputData"
-                v-if="stdCustomInput">
-            </checkbox-custom-type-std>
-
-            <!--next button-->
-            <mdbBtn v-show="isActive"
-                    color="primary"
-                    class="next-btn"
-                    :disabled="checkedAnswers.length === 0"
-                    @click="handleAnswers">
-                {{isLastQuestion ? 'Complete' : 'Next'}}
-                <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
-            </mdbBtn>
         </div>
+        <!--next button-->
+        <mdbBtn v-show="isActive"
+                color="primary"
+                class="next-btn"
+                :disabled="!answerChecked"
+                @click="handleAnswers">
+            {{isLastQuestion ? 'Complete' : 'Next'}}
+            <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
+        </mdbBtn>
     </div>
+
 </template>
 
 <script>
 
-    import {mdbBtn} from "mdbvue";
-
     import CheckboxCustomTypeCancer from "./checkboxCustomTypeCancer";
-    import {EventBus} from "../event-bus";
     import CheckboxCustomTypeEyeProblems from "./checkboxCustomTypeEyeProblems";
     import CheckboxCustomTypeStd from "./checkboxCustomTypeStd";
+    import {mdbBtn} from "mdbvue";
+    import {library} from '@fortawesome/fontawesome-svg-core';
+    import {faSpinner} from '@fortawesome/free-solid-svg-icons';
+    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 
+    library.add(faSpinner);
     export default {
         name: "questionTypeCheckbox",
         props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting'],
         components: {
-            'mdb-btn': mdbBtn,
             CheckboxCustomTypeStd,
             CheckboxCustomTypeEyeProblems,
-            'checkbox-custom-type-cancer': CheckboxCustomTypeCancer
+            CheckboxCustomTypeCancer,
+            mdbBtn,
+            FontAwesomeIcon
         },
 
         data() {
             return {
-                checkBoxValues: this.question.type.question_type_answers,
+                checkBoxValues: [],
+                showNextButton: false,
                 checkedAnswers: [],
                 questionOptions: [],
                 showDifferentInput: false,
                 questionsWithCustomInput: [],
-                customInputHasText: [],
                 cancerInputData: [],
                 eyeProblemsInputData: [],
                 stdProblemsInputData: [],
                 cancerTypeAnswer: [],
                 eyeProblemsTypeAnswer: [],
                 stdProblemsTypeAnswer: [],
+                sex: false,
             }
         },
         computed: {
@@ -83,73 +79,87 @@
             },
 
             questionTypeAnswerId() {
-                if (this.hasAnswerType) {
+                if (this.checkBoxValues.length > 0 && this.hasAnswerType) {
                     return this.checkBoxValues[0].id;
                 } else {
                     return undefined;
                 }
             },
 
-            /* checkCustomInputs() {
-                 //@todo:unfinished-issues:need to check foreach key if value = true.then check each value and act
-                 //or maybe just dont...
-                 const questionsCustomValue = this.questionsWithCustomInput.map(q => q.value);
-                 var check = [];
-                 for (let j = 0; j < questionsCustomValue.length; j++) {
-                     const val = questionsCustomValue[j];
-                     const q = this.checkedAnswers.includes(val);
-                     check.push({[val]: q});
-                 }
-                 return check;
-             },*/
+            answerChecked() {
+                return this.checkBoxValues.filter(q => q.checked === true).length > 0
+                    || this.checkBoxValues.filter(q => q.customInput.length > 0).length > 0;
+            },
 
-            cancerCustomInput() {
-                return this.checkedAnswers.includes('Cancer');
+            disableCheckBox() {
+                return this.checkBoxValues.filter(q => q.customInput.length > 0).length > 0;
             },
-            stdCustomInput() {
-                return this.checkedAnswers.includes('Sexually Transmitted Disease/Infection');
-            },
-            eyeProblemsCustomInput() {
-                return this.checkedAnswers.includes('Eye Problems');
+
+            isSingleCustomInput() {
+                return this.checkBoxValues.filter(q => q.options && !!q.options.allow_single_custom_input).length > 0;
             },
 
         },
 
         methods: {
-
-            handleAnswers() {//@todo: also save text answers types
-                const answer = [];
-                for (let j = 0; j < this.checkedAnswers.length; j++) {
-                    const val = this.checkedAnswers[j];
-                    const q = this.checkBoxValues.find(x => x.value === val);
-                    if (!this.questionOptions) {
-                        answer.push({[q.options.key]: val});
-                    } else {
-                        answer.push({name: val})
-                    }
-
-                }
-
-                this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer).then(() => {
-                });
+            hasCustomInputSingleCase(checkBox) {
+                return checkBox.options && !!checkBox.options.allow_single_custom_input;
             },
-        },
 
-        mounted() {
-            EventBus.$on('cancerInputValue', (answerVal) => {
-                this.cancerTypeAnswer.push(answerVal);
-            });
+            getCustomInputType(checkBox) {
+                if (checkBox.options !== null) {
+                    return checkBox.options.answer_type
+                }
+                return "text";
+            },
 
-            EventBus.$on('eyesProblemInputValue', (answerVal) => {
-                this.eyeProblemsTypeAnswer.push(answerVal);
-            });
+            getCustomInputPlaceholder(checkBox) {
+                if (checkBox.options !== null) {
+                    return checkBox.options.placeholder
+                }
+                return '';
+            },
 
-            EventBus.$on('sdtProblemInputValue', (answerVal) => {
-                this.stdProblemsTypeAnswer.push(answerVal);
-            });
+            hasCustomInputAndIsChecked(checkBox) {
+                return checkBox.options && !!checkBox.options.allow_custom_input && checkBox.checked;
+            },
+
+
+            /* handleClick(answerValue) {
+                 this.showNextButton = true;
+
+             },*/
+
+            handleAnswers() {
+                const answer = [];
+                const checkedCheckBoxes = this.checkBoxValues.filter(q => q.checked === true);
+                checkedCheckBoxes.forEach(checkBox => {
+                    const obj = {};
+                    if (checkBox.options === null) { //there are cases where checkBox doesnt have options.
+                        answer.push({name: checkBox.value})
+                    } else if (checkBox.customInput !== null) {
+                        const obj = {
+                            [checkBox.options.key]: checkBox.value,
+                            type: checkBox.customInput
+                        };
+                        answer.push(obj);
+                    } else {
+                        obj[checkBox.options.key] = checkBox.value;
+                        answer.push(obj);
+                    }
+                });
+                this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer);
+            },
+
+
         },
 
         created() {
+
+            this.checkBoxValues = this.question.type.question_type_answers.map(x => {
+                return Object.assign({}, x, {checked: false, customInput: ''});
+            });
+
             const x = this.checkBoxValues.filter(checkBoxValue => checkBoxValue.options !== null)
                 .filter(checkBox => checkBox.options.hasOwnProperty('allow_custom_input'));
             this.questionsWithCustomInput.push(...x);
@@ -180,14 +190,24 @@
     }
 
     .custom-checkbox label {
-        width: 450px;
-        height: 50px;
+        width: 420px;
+        height: 55px;
         border-radius: 5px;
         border: solid 1px #f2f2f2;
         background-color: #ffffff;
-        padding-top: 2%;
-        padding-left: 7%;
+        padding-top: 3%;
+        padding-left: 5%;
     }
 
+    .btn-primary {
+        background-color: #50b2e2;
+        border-color: #4aa5d2;
+    }
+
+    .btn-primary.disabled {
+        opacity: 50%;
+        background-color: #50b2e2;
+        border-color: #4aa5d2;
+    }
 
 </style>

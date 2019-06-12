@@ -3,17 +3,17 @@
         <!--question without sub_parts-->
         <div v-if="!questionHasSubParts">
             <input
-                type="number"
-                class="number-field"
-                name="numberTypeAnswer[]"
-                v-model="inputNumber"
-                :disabled="!isActive"
-                :placeholder="this.questionPlaceHolder">
+                    type="number"
+                    class="number-field"
+                    name="numberTypeAnswer[]"
+                    v-model="inputNumber"
+                    :disabled="!isActive"
+                    :placeholder="this.questionPlaceHolder">
         </div>
-
+        <br>
         <!--question with sub_parts-->
-        <div v-if="questionHasSubParts">
-            <div v-for="(subPart, index) in questionSubParts" :key="index" style="display: inline">
+        <div v-if="questionHasSubParts" class="row">
+            <div v-for="(subPart, index) in questionSubParts" :key="index">
                 <input type="number"
                        class="number-field"
                        :class="subPartsStyle"
@@ -21,21 +21,21 @@
                        v-model="inputNumber[index]"
                        :disabled="!isActive"
                        :placeholder="subPart.placeholder">
-
                 <span
-                    v-if="questionSubPartsSeparator === 'dash' && index !== questionSubParts.length - 1">
+                        v-if="questionSubPartsSeparator === 'dash' && index !== questionSubParts.length - 1">
                     &nbsp;/&nbsp;
                 </span>
 
                 <span
-                    v-if="questionSubPartsSeparator === '' && index !== questionSubParts.length - 1">
+                        v-if="questionSubPartsSeparator === '' && index !== questionSubParts.length - 1">
                     &nbsp;
                 </span>
             </div>
+
         </div>
 
+        <!--next button-->
         <br>
-
         <mdbBtn v-show="isActive"
                 color="primary"
                 class="next-btn"
@@ -46,22 +46,22 @@
             {{isLastQuestion ? 'Complete' : 'Next'}}
             <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
         </mdbBtn>
-
     </div>
 </template>
 
 <script>
+
     import {mdbBtn} from "mdbvue";
     import {library} from '@fortawesome/fontawesome-svg-core';
     import {faSpinner} from '@fortawesome/free-solid-svg-icons';
     import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
-
     library.add(faSpinner);
+
 
     export default {
         name: "questionTypeNumber",
-        components: {mdbBtn, FontAwesomeIcon},
         props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting'],
+        components: {mdbBtn, FontAwesomeIcon},
 
         mounted() {
             console.log('Component mounted.')
@@ -71,17 +71,17 @@
             return {
                 inputNumber: [],
                 questionOptions: [],
+                showNextButton: false,
                 keys: [],
             }
         },
         computed: {
-
             subPartsStyle() {
                 return 'parts-' + this.questionSubParts.length;
             },
 
             hasTypedTwoNumbers() {
-                return this.isActive && this.inputNumber.length > 1;
+                return this.inputNumber.length > 1 ? this.showNextButton = true : this.showNextButton = false;
             },
 
             hasAnswerType() {
@@ -132,17 +132,26 @@
 
         methods: {
             handleAnswer() {
-
                 if (!this.hasTypedTwoNumbers) {
                     return;
                 }
 
-                const answer = {
-                    value: this.inputNumber,
-                };
+                const inputVal = this.inputNumber;
+                const keys = this.keys;
+                if (keys.length !== 0) {
+                    var answer = inputVal.reduce(function (result, field, index) {
+                        result[keys[index]] = field;
+                        return result;
+                    }, {});
 
-                this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer).then(() => {
-                });
+                } else {
+                    var answer = {
+                        value: inputVal
+                    };
+                }
+
+                /*EventBus.$emit('handleNumberType');*/
+                this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer);
             }
         },
         created() {
@@ -162,18 +171,15 @@
 </script>
 
 <style scoped>
-
     .btn-primary {
         background-color: #50b2e2;
         border-color: #4aa5d2;
     }
-
     .btn-primary.disabled {
         opacity: 50%;
         background-color: #50b2e2;
         border-color: #4aa5d2;
     }
-
     .number-field {
         border: none;
         border-bottom: solid 1px rgba(0, 0, 0, 0.1);
@@ -182,7 +188,6 @@
         width: 300px;
         height: 30px;
     }
-
     .number-field.parts-2 {
         width: 120px;
     }

@@ -8,7 +8,7 @@
                         <input class="multi-select"
                                type="checkbox"
                                name="checkboxTypeAnswer"
-                               v-model="checkedAnswers[checkBoxOption]"
+                               v-model="checkedAnswers[index]"
                                :disabled="!isActive"
                                @click="handleClick()">
                         {{checkBoxOption}}
@@ -41,12 +41,19 @@
             placeHolder() {
                 return this.checkBoxOptions[0].placeholder
             },
-
             lastQuestionOrderNumber() {
                 const lastQuestionOrder = this.checkBoxOptions[0].import_answers_from_question.question_order;
                 this.lastQuestionAnswers(lastQuestionOrder);
                 return lastQuestionOrder;
-            }
+            },
+
+            questionTypeAnswerId() {
+                if (this.hasAnswerType) {
+                    return this.question.type.question_type_answers[0].id;
+                } else {
+                    return 0;
+                }
+            },
 
 
         },
@@ -73,23 +80,7 @@
                     const q = this.multiSelectOptions.find(x => x.value === val);
                     answer.push({[q.options.key]: val});
                 }
-
-
-                var answerData = JSON.stringify(answer);
-
-                axios.post('/save-answer', {
-                    user_id: this.userId,
-                    survey_instance_id: this.surveyInstanceId[0],
-                    question_id: this.question.id,
-                    question_type_answer_id: this.questionTypeAnswerId,
-                    value: answerData,
-                })
-                    .then(function (response) {
-                        console.log(response);
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
+                this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer);
             }
 
 
@@ -101,11 +92,10 @@
 
         created() {
             const options = this.question.type.question_type_answers.map(q => q.options);
-            const multiSelect = options.flatMap(q => q.multi_select_options);
-
             this.checkBoxOptions.push(...options);
-            this.multiSelectOptions.push(...multiSelect);
 
+            const multiSelect = options.flatMap(q => q.multi_select_options);
+            this.multiSelectOptions.push(...multiSelect);
 
         },
     }
