@@ -12,12 +12,12 @@
 
     <label for="new-addendum-body"></label>
     <textarea id="new-addendum-body" class="form-control" rows="4" name="addendum-body" required
-              placeholder="Type an addendum here."></textarea>
+              placeholder="Discuss/amend here..."></textarea>
 
     <div class="text-right">
         <button form="create-addendum" type="submit"
                 class="btn btn-success btn-lg form-item--button form-item-spacing">
-            Add Addendum
+            Amendment/Discussion
         </button>
     </div>
 </form>
