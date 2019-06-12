@@ -83,8 +83,7 @@ class GeneratePersonalizedPreventionPlanService
                 ],
                 [
                     'display_name'     => $this->patient->display_name,
-                    'birth_date'       => /*$patient->patientInfo->birth_date*/
-                        $birthDate,
+                    'birth_date'       => $this->patient->birth_date,
                     'address'          => $this->patient->address,
                     'city'             => $this->patient->city,
                     'state'            => $this->patient->state,
