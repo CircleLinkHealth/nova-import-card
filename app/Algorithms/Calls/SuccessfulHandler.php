@@ -57,7 +57,7 @@ class SuccessfulHandler implements CallHandler
     public function __construct(
         Patient $calledPatient,
         Carbon $initTime,
-        $previousCall
+        $previousCall = null
     ) {
         $this->week         = $initTime->weekOfMonth;
         $this->patient      = $calledPatient;
