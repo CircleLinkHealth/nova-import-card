@@ -8,6 +8,7 @@ use App\Events\SurveyInstancePivotSaved;
 use App\SurveyInstance;
 use App\User;
 use Illuminate\Database\Query\Builder;
+use Carbon\Carbon;
 
 class SurveyService
 {
@@ -25,20 +26,24 @@ class SurveyService
                                  },
                              ]);
 
-                },
-                'answers',
-            ])
-            ->whereHas('surveys', function (Builder $survey) use ($surveyId) {
-                $survey->where('survey_id', $surveyId)
-                       ->where('status', '!=', SurveyInstance::COMPLETED);
-            })
-            ->whereHas('surveyInstances', function (Builder $instance) use ($surveyId) {
-                $instance->where('users_surveys.survey_id', $surveyId);
-                $instance->current();
-            })
-            ->where('id', $patientId)
-            ->first();
+            },
+            'answers',
+            'patientAWVSummaries' => function ($summary) {
+                $summary->where('month_year', Carbon::now()->startOfMonth());
+            }
+        ])
+                                     ->whereHas('surveys', function ($survey) use ($surveyId) {
+                                         $survey->where('survey_id', $surveyId)
+                                                ->where('status', '!=', SurveyInstance::COMPLETED);
+                                     })
+                                     ->whereHas('surveyInstances', function ($instance) use ($surveyId) {
+                                         $instance->where('users_surveys.survey_id', $surveyId);
+                                         $instance->current();
+                                     })
+                                     ->where('id', $patientId)
+                                     ->first();
 
+        $this->updateOrCreatePatientAWVSummary($patientWithSurveyData);
 
         return $patientWithSurveyData;
 
@@ -117,6 +122,27 @@ class SurveyService
         event(new SurveyInstancePivotSaved($instance));
 
         return $instance->pivot->status;
+    }
+
+    private function updateOrCreatePatientAWVSummary($patient){
+
+        $date = Carbon::now();
+
+        $summary = $patient->patientAWVSummaries->first();
+        if (! $summary){
+            $patient->patientAWVSummaries()->create([
+                'month_year' => $date->copy()->startOfMonth(),
+                'initial_visit' => $date
+            ]);
+
+            return;
+        }
+
+        $summary->update([
+            'subsequent_visit' => $date
+        ]);
+
+        return;
     }
 
 }

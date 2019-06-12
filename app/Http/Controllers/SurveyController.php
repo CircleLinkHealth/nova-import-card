@@ -18,7 +18,7 @@ class SurveyController extends Controller
 
     public function getSurvey(GetSurvey $request)
     {
-        //change auth user id
+        //change auth user id - what if provider logs in for vitals?
         $userWithSurveyData = $this->service->getSurveyData(auth()->user()->id, $request->survey_id);
         if ( ! $userWithSurveyData) {
             return response()->json(['errors' => 'Data not found'], 400);

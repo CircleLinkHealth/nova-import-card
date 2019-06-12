@@ -69,22 +69,24 @@ class GeneratePersonalizedPreventionPlanService
         $this->hraQuestions    = $this->hraInstance->questions;
         $this->vitalsQuestions = $this->vitalsInstance->questions;
 
-        $this->hraAnswers    = $patient->answers->where('survey_instance_id', $this->hraInstance->id);
-        $this->vitalsAnswers = $patient->answers->where('survey_instance_id', $this->vitalsInstance->id);
-
-        //@todo:remove this after done testing
-        $this->generateData($patient);
+//        //@todo::remove this when done dev
+//        $this->generateData($patient);
     }
 
-    public function generateData($patient)
+    public function generateData()
     {
         $patientPppData = $this->patient
             ->personalizedPreventionPlan()
             ->updateOrCreate(
                 [
-                    'patient_id' => $patient->id,
+                    'user_id' => $this->patient->id,
                 ],
                 [
+                    'display_name'     => $this->patient->display_name,
+                    'birth_date'       => $this->patient->birth_date,
+                    'address'          => $this->patient->address,
+                    'city'             => $this->patient->city,
+                    'state'            => $this->patient->state,
                     'hra_answers'      => $this->hraAnswers,
                     'vitals_answers'   => $this->vitalsAnswers,
                     'answers_for_eval' => $this->getAnswersToEvaluate(),
