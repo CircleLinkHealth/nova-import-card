@@ -166,10 +166,10 @@ class NursesAndStatesDailyReportService
                     ),
                     2
                 ),
-            'scheduledCalls'                 => $nurse->nurseInfo->countScheduledCallsFor($date),
-            'actualCalls'                    => $nurse->nurseInfo->countCompletedCallsFor($date),
-            'successful'                     => $nurse->nurseInfo->countSuccessfulCallsFor($date),
-            'unsuccessful'                   => $nurse->nurseInfo->countUnsuccessfulCallsFor($date),
+            'scheduledCalls'                 => $nurse->countScheduledCallsFor($date),
+            'actualCalls'                    => $nurse->countCompletedCallsFor($date),
+            'successful'                     => $nurse->countSuccessfulCallsFor($date),
+            'unsuccessful'                   => $nurse->countUnsuccessfulCallsFor($date),
             'totalMonthSystemTimeSeconds'    => $this->getTotalMonthSystemTimeSeconds($nurse, $date),
             'uniquePatientsAssignedForMonth' => $patientsForMonth->count(),
         ];
