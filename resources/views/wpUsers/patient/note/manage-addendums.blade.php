@@ -1,5 +1,6 @@
 <div>
     @if(!$note['addendums']->isEmpty())
+        <h5 style="font-weight: bold;">Amendments/Discussion:</h5>
         @foreach($note['addendums'] as $addendum)
             @include('wpUsers.patient.note.addendum')
         @endforeach
