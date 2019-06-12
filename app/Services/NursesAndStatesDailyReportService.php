@@ -166,13 +166,10 @@ class NursesAndStatesDailyReportService
                     ),
                     2
                 ),
-            'scheduledCalls' => $nurse->outboundCalls->count(),
-            'actualCalls'    => $nurse->outboundCalls->whereIn(
-                'status',
-                ['reached', 'not reached']
-            )->count(),
-            'successful'                     => $nurse->outboundCalls->where('status', '=', 'reached')->count(),
-            'unsuccessful'                   => $nurse->outboundCalls->where('status', '=', 'not reached')->count(),
+            'scheduledCalls'                 => $nurse->nurseInfo->countScheduledCallsFor($date),
+            'actualCalls'                    => $nurse->nurseInfo->countCompletedCallsFor($date),
+            'successful'                     => $nurse->nurseInfo->countSuccessfulCallsFor($date),
+            'unsuccessful'                   => $nurse->nurseInfo->countUnsuccessfulCallsFor($date),
             'totalMonthSystemTimeSeconds'    => $this->getTotalMonthSystemTimeSeconds($nurse, $date),
             'uniquePatientsAssignedForMonth' => $patientsForMonth->count(),
         ];
