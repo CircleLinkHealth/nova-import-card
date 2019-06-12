@@ -107,17 +107,17 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
         return \CircleLinkHealth\TimeTracking\Entities\Activity::where('provider_id', $nurse->user_id)
             ->where('patient_id', $patient->user_id)
             ->where(function ($q) {
-                                                                   $q->where(
+                $q->where(
                                                                        'created_at',
                                                                        '>=',
                                                                        Carbon::now()->startOfMonth()
                                                                    )
-                                                                       ->where(
-                                                                         'updated_at',
-                                                                         '<=',
-                                                                         Carbon::now()->endOfMonth()
+                    ->where(
+                                                                           'updated_at',
+                                                                           '<=',
+                                                                           Carbon::now()->endOfMonth()
                                                                      );
-                                                               })
+            })
             ->sum('duration');
     }
 
@@ -158,10 +158,10 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
     {
         $holidaysThisWeek = $this->upcomingHolidaysFrom(Carbon::today())
             ->map(function ($holiday) {
-                                     if ($holiday->date->lte(Carbon::now()->endOfWeek()) && $holiday->date->gte(Carbon::now()->startOfWeek())) {
-                                         return clhDayOfWeekToDayName(carbonToClhDayOfWeek($holiday->date->dayOfWeek));
-                                     }
-                                 });
+                if ($holiday->date->lte(Carbon::now()->endOfWeek()) && $holiday->date->gte(Carbon::now()->startOfWeek())) {
+                    return clhDayOfWeekToDayName(carbonToClhDayOfWeek($holiday->date->dayOfWeek));
+                }
+            });
 
         return array_filter($holidaysThisWeek->all());
     }
@@ -170,11 +170,11 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
     {
         return $this->upcomingHolidaysFrom(Carbon::today())
             ->sortBy(function ($item) {
-                        return Carbon::createFromFormat(
+                return Carbon::createFromFormat(
                             'Y-m-d',
                             "{$item->date->format('Y-m-d')}"
                         );
-                    });
+            });
     }
 
     /**
@@ -303,12 +303,12 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
         $companyHolidays = CompanyHoliday::where('holiday_date', '>=', $dateStr)
             ->get()
             ->map(function (CompanyHoliday $h) {
-                                             $nurseHoliday = new Holiday();
-                                             $nurseHoliday->date = $h->holiday_date;
-                                             $nurseHoliday->nurse_info_id = $this->id;
+                $nurseHoliday = new Holiday();
+                $nurseHoliday->date = $h->holiday_date;
+                $nurseHoliday->nurse_info_id = $this->id;
 
-                                             return $nurseHoliday;
-                                         });
+                return $nurseHoliday;
+            });
 
         $this->companyHolidaysCache[$dateStr] = $companyHolidays;
 
