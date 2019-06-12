@@ -37,9 +37,6 @@ Vue.component('vitals-survey-welcome', VitalsSurveyWelcome);
 import $ from 'jquery';
 window.$ = $;
 
-import $ from 'jquery';
-window.$ = $;
-
 import 'lodash';
 import 'popper.js';
 
