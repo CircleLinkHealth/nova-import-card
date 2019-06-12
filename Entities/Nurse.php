@@ -100,7 +100,11 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
 
     public function calls()
     {
-        return $this->user->calls();
+        if ($this->relationLoaded('user')) {
+            return $this->user->calls();
+        }
+    
+        return $this->user()->firstOrFail()->calls();
     }
 
     public function callStatsForRange(Carbon $start, Carbon $end)
