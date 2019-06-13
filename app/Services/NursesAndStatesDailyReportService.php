@@ -106,6 +106,17 @@ class NursesAndStatesDailyReportService
         return round($patients->where('patient_time', '<', 20)->sum('patient_time_left') / 60, 1);
     }
 
+    public function getAggregatedTime(User $nurse): int
+    {
+        $aggregateObject = $this->nurseSystemTimeMap->map(function ($item) use ($nurse) {
+            return $item->first()->where('user_id', $nurse->id)->where('is_billable', 1)->first();
+        })->filter()->first();
+
+        return $aggregateObject
+            ? (int) $aggregateObject->total_time
+            : 0;
+    }
+
     /**
      * @param $nurse
      * @param $date
@@ -142,12 +153,9 @@ class NursesAndStatesDailyReportService
      *
      * @return Collection
      */
-    public function getDataForNurse(User $nurse, Carbon $date)
+    public function getDataForNurse(User $nurse, Carbon $date): Collection
     {
-        $systemTime = (int) $this->nurseSystemTimeMap->map(function ($date) use ($nurse) {
-            return $date->first()->where('user_id', $nurse->id)->where('is_billable', 1)->first();
-        })->filter()->first()->total_time;
-
+        $systemTime       = $this->getAggregatedTime($nurse);
         $patientsForMonth = $this->getUniquePatientsAssignedForNurseForMonth($nurse, $date);
         $nurseWindows     = $nurse->nurseInfo->windows;
 
