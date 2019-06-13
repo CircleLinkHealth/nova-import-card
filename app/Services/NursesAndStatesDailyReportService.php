@@ -73,8 +73,11 @@ class NursesAndStatesDailyReportService
             ->whereHas(
                 'nurseInfo',
                 function ($info) {
-                    $info->where('status', 'active');
-                    // ->where('is_demo', false); //remember Raph asking to exclude demo nurses...
+                    $info->where('status', 'active')
+                        //remember Raph asking to exclude demo nurses (still keeping for test environments)
+                        ->when(app()->environment(['production', 'worker']), function ($info) {
+                        $info->where('is_demo', false);
+                    });
                 }
             )
             ->chunk(
