@@ -18,7 +18,7 @@
     <div class="text-right">
         <button form="create-addendum" type="submit"
                 class="btn btn-success btn-lg form-item--button form-item-spacing">
-            Submit / Save
+            Post
         </button>
     </div>
 </form>
