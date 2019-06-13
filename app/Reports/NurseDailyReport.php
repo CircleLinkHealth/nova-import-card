@@ -9,7 +9,7 @@ namespace App\Reports;
 use App\Constants;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\TimeTracking\Entities\Activity;
+use CircleLinkHealth\NurseInvoices\TotalTimeAggregator;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 
 class NurseDailyReport
@@ -21,6 +21,12 @@ class NurseDailyReport
         $nurse_users = User::careCoaches()
             ->where('access_disabled', 0)
             ->get();
+
+        $nurseSystemTimeMap = TotalTimeAggregator::get(
+            $nurse_users->pluck('id')->all(),
+            $date->copy()->startOfDay(),
+            $date->copy()->endOfDay()
+        );
 
         $nurses = [];
 
@@ -43,9 +49,13 @@ class NurseDailyReport
             $nurses[$i]['# Completed Calls Today']  = $nurse->countCompletedCallsFor($date);
             $nurses[$i]['# Successful Calls Today'] = $nurse->countSuccessfulCallsFor($date);
 
-            $activity_time = Activity::where('provider_id', $nurse->id)
-                ->createdOn($date)
-                ->sum('duration');
+            $aggregateObject = $nurseSystemTimeMap->map(function ($item) use ($nurse) {
+                return $item->first()->where('user_id', $nurse->id)->where('is_billable', 1)->first();
+            })->filter()->first();
+
+            $activity_time = $aggregateObject
+                ? (int) $aggregateObject->total_time
+                : 0;
 
             $H1                      = floor($activity_time / 3600);
             $m1                      = ($activity_time / 60) % 60;
