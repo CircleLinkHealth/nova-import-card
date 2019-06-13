@@ -166,13 +166,10 @@ class NursesAndStatesDailyReportService
                     ),
                     2
                 ),
-            'scheduledCalls' => $nurse->outboundCalls->count(),
-            'actualCalls'    => $nurse->outboundCalls->whereIn(
-                'status',
-                ['reached', 'not reached']
-            )->count(),
-            'successful'                     => $nurse->outboundCalls->where('status', '=', 'reached')->count(),
-            'unsuccessful'                   => $nurse->outboundCalls->where('status', '=', 'not reached')->count(),
+            'scheduledCalls'                 => $nurse->countScheduledCallsFor($date),
+            'actualCalls'                    => $nurse->countCompletedCallsFor($date),
+            'successful'                     => $nurse->countSuccessfulCallsFor($date),
+            'unsuccessful'                   => $nurse->countUnsuccessfulCallsFor($date),
             'totalMonthSystemTimeSeconds'    => $this->getTotalMonthSystemTimeSeconds($nurse, $date),
             'uniquePatientsAssignedForMonth' => $patientsForMonth->count(),
         ];
@@ -184,7 +181,7 @@ class NursesAndStatesDailyReportService
         $data['caseLoadNeededToComplete']  = $this->estHoursToCompleteCaseLoadMonth($patientsForMonth);
         $data['hoursCommittedRestOfMonth'] = $this->getHoursCommittedRestOfMonth(
             $nurseWindows,
-            $nurse->nurseInfo->upcomingHolidays(),
+            $nurse->nurseInfo->upcomingHolidaysFrom($date),
             $date
         );
         $data['surplusShortfallHours'] = $data['hoursCommittedRestOfMonth'] - $data['caseLoadNeededToComplete'];
@@ -415,7 +412,7 @@ class NursesAndStatesDailyReportService
 
         $noOfDays = $this->getNumberOfDaysCommittedRestOfMonth(
             $nurseWindows,
-            $nurse->nurseInfo->upcomingHolidays(),
+            $nurse->nurseInfo->upcomingHolidaysFrom($date),
             $date
         );
 
