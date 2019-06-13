@@ -13,6 +13,7 @@ use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\NurseInvoices\TotalTimeAggregator;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Support\Collection;
@@ -22,6 +23,8 @@ class NursesAndStatesDailyReportService
 {
     const LAST_COMMITTED_DAYS_TO_GO_BACK = 10;
     const MAX_COMMITTED_DAYS_TO_GO_BACK  = 30;
+
+    protected $nurseSystemTimeMap;
 
     protected $successfulCallsMultiplier;
 
@@ -56,18 +59,6 @@ class NursesAndStatesDailyReportService
                             ]
                         );
                     },
-                    'pageTimersAsProvider' => function ($q) use ($date) {
-                        $q->where(
-                            [
-                                ['start_time', '>=', $date->copy()->startOfDay()],
-                                ['end_time', '<=', $date->copy()->endOfDay()],
-                            ]
-                        );
-                    },
-                    'outboundCalls' => function ($q) use ($date) {
-                        $q->whereBetween('called_date', [$date->copy()->startOfDay(), $date->copy()->endOfDay()])
-                            ->orWhere('scheduled_date', $date->toDateString());
-                    },
                 ]
             )
             ->whereHas(
@@ -76,13 +67,19 @@ class NursesAndStatesDailyReportService
                     $info->where('status', 'active')
                         //remember Raph asking to exclude demo nurses (still keeping for test environments)
                         ->when(app()->environment(['production', 'worker']), function ($info) {
-                        $info->where('is_demo', false);
-                    });
+                             $info->where('is_demo', false);
+                         });
                 }
             )
             ->chunk(
                 10,
                 function ($nurses) use (&$data, $date) {
+                    $this->nurseSystemTimeMap = TotalTimeAggregator::get(
+                        $nurses->pluck('id')->all(),
+                        $date->copy()->startOfDay(),
+                        $date->copy()->endOfDay()
+                    );
+
                     foreach ($nurses as $nurse) {
                         $data[] = $this->getDataForNurse($nurse, $date);
                     }
@@ -147,7 +144,10 @@ class NursesAndStatesDailyReportService
      */
     public function getDataForNurse(User $nurse, Carbon $date)
     {
-        $systemTime       = $nurse->pageTimersAsProvider->sum('billable_duration');
+        $systemTime = (int) $this->nurseSystemTimeMap->map(function ($date) use ($nurse) {
+            return $date->first()->where('user_id', $nurse->id)->where('is_billable', 1)->first();
+        })->filter()->first()->total_time;
+
         $patientsForMonth = $this->getUniquePatientsAssignedForNurseForMonth($nurse, $date);
         $nurseWindows     = $nurse->nurseInfo->windows;
 
@@ -213,8 +213,8 @@ class NursesAndStatesDailyReportService
                 round(
                     (float) (100 * (
                         (floatval($this->successfulCallsMultiplier) * $data['successful']) + (floatval(
-                            $this->unsuccessfulCallsMultiplier
-                                ) * $data['unsuccessful'])
+                                $this->unsuccessfulCallsMultiplier
+                                                                                                  ) * $data['unsuccessful'])
                         ) / $data['actualHours'])
                 )
             )
@@ -398,8 +398,8 @@ class NursesAndStatesDailyReportService
                 NursesAndStatesDailyReportService::LAST_COMMITTED_DAYS_TO_GO_BACK
             )
                 ->sortBy(function ($date) {
-                    return $date;
-                });
+                                      return $date;
+                                  });
         } catch (\Exception $e) {
             //todo: Log exception
         }
@@ -446,19 +446,19 @@ class NursesAndStatesDailyReportService
     {
         return \DB::table('calls')
             ->select(
-                \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
-                \DB::raw(
-                    'GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60 as patient_time'
+                      \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
+                      \DB::raw(
+                          'GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60 as patient_time'
                       ),
-                \DB::raw(
-                    "({$this->timeGoal} - (GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60)) as patient_time_left"
+                      \DB::raw(
+                          "({$this->timeGoal} - (GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60)) as patient_time_left"
                       ),
-                'no_of_successful_calls as successful_calls'
+                      'no_of_successful_calls as successful_calls'
                   )
             ->leftJoin('users', 'users.id', '=', 'calls.inbound_cpm_id')
             ->leftJoin('patient_monthly_summaries', 'users.id', '=', 'patient_monthly_summaries.patient_id')
             ->whereRaw(
-                "(
+                      "(
 (
 DATE(calls.scheduled_date) >= DATE('{$date->copy()->startOfMonth()->toDateString()}')
 AND
