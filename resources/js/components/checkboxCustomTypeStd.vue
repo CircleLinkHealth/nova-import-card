@@ -11,9 +11,6 @@
 </template>
 
 <script>
-
-    import {EventBus} from "../event-bus";
-
     export default {
         name: "checkboxCustomTypeStd",
         props: ['stdProblemsInputData'],
@@ -30,7 +27,7 @@
 
         methods: {
             handleAnswer() {
-                EventBus.$emit('sdtProblemInputValue', this.sdtProblemInputHasText)
+                //EventBus.$emit('sdtProblemInputValue', this.sdtProblemInputHasText)
             }
         }
     }

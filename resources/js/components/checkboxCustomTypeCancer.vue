@@ -11,8 +11,6 @@
 </template>
 
 <script>
-    import {EventBus} from "../event-bus";
-
     export default {
         name: "checkboxCustomTypeCancer",
         props: ['cancerInputData'],
@@ -32,7 +30,7 @@
 
         methods: {
             handleAnswer() {
-                EventBus.$emit('cancerInputValue', this.cancerInputHasText,)
+                //EventBus.$emit('cancerInputValue', this.cancerInputHasText,)
             }
         }
     }

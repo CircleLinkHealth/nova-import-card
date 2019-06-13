@@ -11,8 +11,6 @@
 </template>
 
 <script>
-    import {EventBus} from "../event-bus";
-
     export default {
         name: "checkboxCustomTypeEyeProblems",
 
@@ -30,7 +28,7 @@
 
         methods: {
             handleAnswer() {
-                EventBus.$emit('eyesProblemInputValue', this.eyesProblemInputHasText)
+                //EventBus.$emit('eyesProblemInputValue', this.eyesProblemInputHasText)
             }
         }
     }
