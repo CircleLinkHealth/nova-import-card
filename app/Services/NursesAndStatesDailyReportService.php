@@ -24,6 +24,8 @@ class NursesAndStatesDailyReportService
     const LAST_COMMITTED_DAYS_TO_GO_BACK = 10;
     const MAX_COMMITTED_DAYS_TO_GO_BACK  = 30;
 
+    protected $avgHoursWorkedLast10Sessions;
+
     protected $nurseSystemTimeMap;
 
     protected $successfulCallsMultiplier;
@@ -201,6 +203,10 @@ class NursesAndStatesDailyReportService
         $data['nextUpcomingWindow'] = optional($nurse->nurseInfo->firstWindowAfter($date->copy()))->toArray();
 
         $data['projectedHoursLeftInMoth'] = $this->getProjectedHoursLeftInMonth($nurse, $date->copy()) ?? 'NA';
+
+        $data['avgHoursWorkedLast10Sessions'] = $this->avgHoursWorkedLast10Sessions;
+
+        //TODO: to be added -> unsuccessful calls avg. time
 
         return collect($data);
     }
@@ -416,10 +422,10 @@ class NursesAndStatesDailyReportService
             return null;
         }
 
-        $first        = $committedDays->first();
-        $totalSeconds = $this->getTotalSecondsInSystemSince($nurse, $first);
-        $avgSeconds   = $totalSeconds / $committedDays->count();
-        $avgHours     = $avgSeconds / 3600;
+        $first                              = $committedDays->first();
+        $totalSeconds                       = $this->getTotalSecondsInSystemSince($nurse, $first);
+        $avgSeconds                         = $totalSeconds / $committedDays->count();
+        $this->avgHoursWorkedLast10Sessions = $avgSeconds / 3600;
 
         $noOfDays = $this->getNumberOfDaysCommittedRestOfMonth(
             $nurseWindows,
@@ -427,7 +433,7 @@ class NursesAndStatesDailyReportService
             $date
         );
 
-        return (float) ($noOfDays * $avgHours);
+        return (float) ($noOfDays * $this->avgHoursWorkedLast10Sessions);
     }
 
     public function getTotalMonthSystemTimeSeconds($nurse, $date)

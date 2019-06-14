@@ -177,6 +177,7 @@ class EmailRNDailyReport extends Command
             'surplusShortfallHours',
             'nextUpcomingWindow',
             'projectedHoursLeftInMoth',
+            'avgHoursWorkedLast10Sessions',
         ], $report);
     }
 }
