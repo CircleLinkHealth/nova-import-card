@@ -32,6 +32,40 @@ class NursesWeeklyRepController extends Controller
     }
 
     /**
+     * @param Collection $nurses
+     * @param mixed      $reportPerDay
+     *
+     * @return array
+     */
+    //this is not used yet
+//    public function getNursesDailyTotals(Collection $nurses)
+//    {
+//        $nurseDailyTotals = [];
+//        $n                = 0;
+//        $totals           = $nurses->only('totals');
+//        foreach ($totals as $total => $totalsPerDay) {
+//            foreach ($totalsPerDay as $totalsForDay) {
+//                $nurseDailyTotals[$n]['scheduledCallsSum']         = $totalsForDay['scheduledCallsSum'];
+//                $nurseDailyTotals[$n]['actualCallsSum']            = $totalsForDay['actualCallsSum'];
+//                $nurseDailyTotals[$n]['successfulCallsSum']        = $totalsForDay['successfulCallsSum'];
+//                $nurseDailyTotals[$n]['unsuccessfulCallsSum']      = $totalsForDay['unsuccessfulCallsSum'];
+//                $nurseDailyTotals[$n]['actualHoursSum']            = $totalsForDay['actualHoursSum'];
+//                $nurseDailyTotals[$n]['committedHoursSum']         = $totalsForDay['committedHoursSum'];
+//                $nurseDailyTotals[$n]['completionRate']            = $totalsForDay->has('completionRate') ? $totalsForDay['completionRate'] : 'N/A';
+//                $nurseDailyTotals[$n]['efficiencyIndex']           = $totalsForDay->has('efficiencyIndex') ? $totalsForDay['efficiencyIndex'] : 'N/A';
+//                $nurseDailyTotals[$n]['caseLoadNeededToComplete']  = $totalsForDay->has('caseLoadNeededToComplete') ? $totalsForDay['caseLoadNeededToComplete'] : 'N/A';
+//                $nurseDailyTotals[$n]['hoursCommittedRestOfMonth'] = $totalsForDay->has('hoursCommittedRestOfMonth') ? $totalsForDay['hoursCommittedRestOfMonth'] : 'N/A';
+//                $nurseDailyTotals[$n]['surplusShortfallHours']     = $totalsForDay->has('surplusShortfallHours') ? $totalsForDay['surplusShortfallHours'] : 'N/A';
+//                $nurseDailyTotals[$n]['caseLoadComplete']          = $totalsForDay->has('caseLoadComplete') ? $totalsForDay['caseLoadComplete'] : 'N/A';
+//
+//                ++$n;
+//            }
+//        }
+//
+//        return $nurseDailyTotals;
+//    }
+
+    /**
      * @param $reportPerDay
      *
      * @return string
@@ -107,7 +141,8 @@ class NursesWeeklyRepController extends Controller
         $nurseDailyData = [];
         $n              = 0;
         foreach ($data as $name => $report) {
-            foreach ($report as $reportPerDay) {
+            foreach ($report as $day => $reportPerDay) {
+                $nurseDailyData[$n]['weekDay']                   = Carbon::parse($day)->copy()->format('l F jS Y');
                 $nurseDailyData[$n]['name']                      = $reportPerDay['nurse_full_name'];
                 $nurseDailyData[$n]['actualHours']               = $reportPerDay['actualHours'];
                 $nurseDailyData[$n]['committedHours']            = $reportPerDay['committedHours'];
@@ -127,39 +162,6 @@ class NursesWeeklyRepController extends Controller
 
         return $nurseDailyData;
     }
-
-    /**
-     * @param Collection $nurses
-     *
-     * @return array
-     */
-    //this is not used yet
-//    public function getNursesDailyTotals(Collection $nurses)
-//    {
-//        $nurseDailyTotals = [];
-//        $n                = 0;
-//        $totals           = $nurses->only('totals');
-//        foreach ($totals as $total => $totalsPerDay) {
-//            foreach ($totalsPerDay as $totalsForDay) {
-//                $nurseDailyTotals[$n]['scheduledCallsSum']         = $totalsForDay['scheduledCallsSum'];
-//                $nurseDailyTotals[$n]['actualCallsSum']            = $totalsForDay['actualCallsSum'];
-//                $nurseDailyTotals[$n]['successfulCallsSum']        = $totalsForDay['successfulCallsSum'];
-//                $nurseDailyTotals[$n]['unsuccessfulCallsSum']      = $totalsForDay['unsuccessfulCallsSum'];
-//                $nurseDailyTotals[$n]['actualHoursSum']            = $totalsForDay['actualHoursSum'];
-//                $nurseDailyTotals[$n]['committedHoursSum']         = $totalsForDay['committedHoursSum'];
-//                $nurseDailyTotals[$n]['completionRate']            = $totalsForDay->has('completionRate') ? $totalsForDay['completionRate'] : 'N/A';
-//                $nurseDailyTotals[$n]['efficiencyIndex']           = $totalsForDay->has('efficiencyIndex') ? $totalsForDay['efficiencyIndex'] : 'N/A';
-//                $nurseDailyTotals[$n]['caseLoadNeededToComplete']  = $totalsForDay->has('caseLoadNeededToComplete') ? $totalsForDay['caseLoadNeededToComplete'] : 'N/A';
-//                $nurseDailyTotals[$n]['hoursCommittedRestOfMonth'] = $totalsForDay->has('hoursCommittedRestOfMonth') ? $totalsForDay['hoursCommittedRestOfMonth'] : 'N/A';
-//                $nurseDailyTotals[$n]['surplusShortfallHours']     = $totalsForDay->has('surplusShortfallHours') ? $totalsForDay['surplusShortfallHours'] : 'N/A';
-//                $nurseDailyTotals[$n]['caseLoadComplete']          = $totalsForDay->has('caseLoadComplete') ? $totalsForDay['caseLoadComplete'] : 'N/A';
-//
-//                ++$n;
-//            }
-//        }
-//
-//        return $nurseDailyTotals;
-//    }
 
     /**
      * @param Request $request

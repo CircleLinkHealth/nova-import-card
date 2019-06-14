@@ -43,7 +43,43 @@
     @push('scripts')
         <script>
             $(function () {
+                //choose which column to use for grouping (col.13 = weekDays)
+                //thinking to make this dynamic
+                var groupColumn = 13;
                 $('#nurse_weekly').DataTable({
+                    "columnDefs": [
+                        {"visible": false, "targets": groupColumn}
+                    ],
+                    "order": [[groupColumn, 'asc']],
+                    "displayLength": 100,
+                    "drawCallback": function (settings) {
+                        var api = this.api();
+                        var rows = api.rows({page: 'current'}).nodes();
+                        var last = null;
+
+                        api.column(groupColumn, {page: 'current'}).data().each(function (group, i) {
+                            if (last !== group) {
+                                $(rows).eq(i).before(
+                                    '<tr class="group"><td colspan="13">' + group + '</td></tr>'
+                                );
+
+                                last = group;
+                            }
+                        });
+
+                        // Order by the grouping column
+                        $('#nurse_weekly tbody').on('click', 'tr.group', function () {
+                            var currentOrder = table.order()[0];
+                            if (currentOrder[0] === groupColumn && currentOrder[1] === 'asc') {
+                                table.order([groupColumn, 'desc']).draw();
+                            } else {
+                                table.order([groupColumn, 'asc']).draw();
+                            }
+                        });
+                    },
+                    scrollX: "100%",
+                    scrollCollapse: true,
+                    paging: false,
                     processing: true,
                     serverSide: false,
                     ajax: {
@@ -67,6 +103,8 @@
                         {data: 'hoursCommittedRestOfMonth', name: 'hoursCommittedRestOfMonth'},
                         {data: 'surplusShortfallHours', name: 'surplusShortfallHours'},
                         {data: 'caseLoadComplete', name: 'caseLoadComplete'},
+                        //weekDays column is hidden from table view and used only for grouping data by day of week
+                        {data: 'weekDay', name: 'weekDay'},
                     ],
                 });
             });
@@ -75,3 +113,10 @@
         <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
     @endpush
 @stop
+
+<style>
+    tr.group,
+    tr.group:hover {
+        background-color: #71cc85 !important;
+    }
+</style>
