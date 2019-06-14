@@ -18,16 +18,16 @@
 
                             <div class="panel-heading">Nurse Performance Report</div>
 
+                            <div class="calendar-date" style="padding-left: 2%;">
+                                @include('admin.reports.nursesWeeklyReportForm')
+                            </div>
+
                             <div class="dates">
                                 {{$startOfWeek->format('l F jS')}} - {{max($days)->format('l F jS Y')}}
                             </div>
 
-                            <div class="calendar-date">
-                                @include('admin.reports.nursesWeeklyReportForm')
-                            </div>
-
                             <div class="panel-body">
-                                <table class="table table-striped" id="nurse_weekly">
+                                <table class="table table-hover" id="nurse_weekly">
                                     <thead>
                                     @include('admin.reports.nurseWeeklyReportHeadings')
                                     </thead>
@@ -48,7 +48,10 @@
                 var groupColumn = 13;
                 $('#nurse_weekly').DataTable({
                     "columnDefs": [
-                        {"visible": false, "targets": groupColumn}
+                        {
+                            "visible": false,
+                            "targets": groupColumn,
+                        }
                     ],
                     "order": [[groupColumn, 'asc']],
                     "displayLength": 100,
@@ -69,19 +72,24 @@
 
                         // Order by the grouping column
                         $('#nurse_weekly tbody').on('click', 'tr.group', function () {
-                            var currentOrder = table.order()[0];
-                            if (currentOrder[0] === groupColumn && currentOrder[1] === 'asc') {
-                                table.order([groupColumn, 'desc']).draw();
-                            } else {
-                                table.order([groupColumn, 'asc']).draw();
-                            }
-                        });
+                                var currentOrder = table.order()[0];
+                                if (currentOrder[0] === groupColumn && currentOrder[1] === 'asc') {
+                                    table.order([groupColumn, 'desc']).draw();
+                                } else {
+                                    table.order([groupColumn, 'asc']).draw();
+                                }
+                            },
+                        );
                     },
+                    deferRender: true,
+                    scrollY: "100%",
                     scrollX: "100%",
-                    scrollCollapse: true,
-                    paging: false,
+                    scrollCollapse: false,
                     processing: true,
                     serverSide: false,
+                    fixedColumns: true,
+
+
                     ajax: {
                         "url": '{!! route('admin.reports.nurse.weekly.data') !!}',
                         "type": "GET",
@@ -111,6 +119,7 @@
 
         </script>
         <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+        <script src="//cdn.datatables.net/fixedcolumns/3.2.6/js/dataTables.fixedColumns.min.js"></script>
     @endpush
 @stop
 
@@ -118,5 +127,26 @@
     tr.group,
     tr.group:hover {
         background-color: #71cc85 !important;
+    }
+
+    th, td {
+        white-space: nowrap;
+    }
+
+    div.dataTables_wrapper {
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    .panel-default>.panel-heading{
+        text-align: center;
+        font-weight: bold;
+        font-size: large;
+    }
+
+    .dates{
+        font-size: large;
+        text-align: center;
+        font-weight: bold;
     }
 </style>
