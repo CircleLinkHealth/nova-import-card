@@ -275,6 +275,7 @@
                 latestQuestionAnsweredIndex: -1,
                 progress: 0,
                 totalQuestions: 0, //does not include sub-questions
+                totalQuestionWithSubQuestions: 0,
                 patientId: -1,
                 practiceId: -1,
                 patientName: '',
@@ -287,7 +288,7 @@
             },
             canScrollDown() {
                 return this.stage === "survey"
-                    && this.currentQuestionIndex < this.totalQuestions
+                    && this.currentQuestionIndex < this.totalQuestionWithSubQuestions
                     && this.latestQuestionAnsweredIndex >= this.currentQuestionIndex;
             },
             progressPercentage() {
@@ -373,7 +374,7 @@
 
                         //increment progress only if question was not answered before
                         const incrementProgress = typeof q.answer === "undefined";
-                        q.answer = answer;
+                        q.answer = {value: answer};
 
                         this.goToNextQuestion(incrementProgress)
                             .then(() => {
@@ -491,6 +492,7 @@
                 this.currentQuestionIndex = this.latestQuestionAnsweredIndex + 1;
             }
 
+            this.totalQuestionWithSubQuestions = this.questions.length;
             this.totalQuestions = _.uniqBy(this.questions, (elem) => {
                 return elem.pivot.order;
             }).length;

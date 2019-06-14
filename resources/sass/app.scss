@@ -227,6 +227,11 @@ html, body, #app {
     padding: 0;
 }
 
+.no-margin-side {
+    margin-left: 0;
+    margin-right: 0;
+}
+
 .hidden {
     display: none;
 }
