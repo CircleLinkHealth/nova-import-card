@@ -252,6 +252,23 @@
 
 @push('styles')
     <style>
+
+        input[type=checkbox]:disabled + label,
+        input[type=radio]:disabled + label {
+            cursor: default;
+            color: #5b5b5b
+        }
+
+        input[type=radio]:checked:disabled + label span {
+            cursor: default;
+            background: url(../img/ui/radio-active-disabled.png) left top no-repeat;
+        }
+
+        input[type=checkbox]:checked:disabled + label span {
+            cursor: default;
+            background: url(../img/ui/checkbox-active-disabled.png) left top no-repeat;
+        }
+
         .color-grey {
             color: #7b7d81;
         }

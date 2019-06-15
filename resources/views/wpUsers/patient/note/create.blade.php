@@ -61,21 +61,6 @@
                 background-color: #5b5b5b;
                 border-color: #353535;
             }
-
-            input[type=checkbox]:disabled + label,
-            input[type=radio]:disabled + label {
-                cursor: default;
-                color: #5b5b5b
-            }
-
-            input[type=radio]:checked:disabled + label span {
-                background: url(../img/ui/radio-active-disabled.png) left top no-repeat;
-            }
-
-            input[type=checkbox]:checked:disabled + label span {
-                background: url(../img/ui/checkbox-active-disabled.png) left top no-repeat;
-            }
-
         </style>
     @endpush
 

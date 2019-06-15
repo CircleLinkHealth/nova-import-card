@@ -35,13 +35,15 @@ class TotalTimeAggregator
     }
 
     /**
-     * Aggregates system time from Activities, PageTimer, and Offline Activities.
+     * Aggregates "billable (ccm) time" and "non billable system time" from Activities, PageTimer, and Offline Activities.
+     * "billable (ccm) time" is time associated with a patient. CLH can bill insurance companies for that time (this is where our revenue comes from).
+     * "system time" is the time a nurse spends in the system, which is not associated with a patient. CLH cannot bill insurances for that time.
      *
      * Returns a collection where each item has the following fields:
      *  total_time
      *  date
      *  user_id
-     *  is_billable
+     *  is_billable : 1 for "billable (ccm) time", and 0 for "system time"
      *
      * @return Collection
      */
@@ -81,6 +83,8 @@ class TotalTimeAggregator
     }
 
     /**
+     * A helper method to construct queries for tables Activities and PageTimer.
+     *
      * @param array  $nurseUserIds
      * @param string $table
      * @param string $dateTimeField
@@ -117,6 +121,13 @@ class TotalTimeAggregator
                   )->groupBy('date', 'user_id');
     }
 
+    /**
+     * Query to get offline time as "non billable" so we can add it to "system time" sum to compensate the nurse.
+     *
+     * @param array $nurseUserIds
+     *
+     * @return \Illuminate\Database\Query\Builder
+     */
     private function offlineSystemTime(array $nurseUserIds)
     {
         return $this->itemizedActivitiesQuery(
@@ -124,10 +135,18 @@ class TotalTimeAggregator
             (new Activity())->getTable(),
             'performed_at',
             $this->startDate,
-            $this->endDate
+            $this->endDate,
+            false
         )->where('logged_from', 'manual_input');
     }
 
+    /**
+     * Query to get system time ("non billable"). This is non-patient related time the nurse spends in the system.
+     *
+     * @param array $nurseUserIds
+     *
+     * @return \Illuminate\Database\Query\Builder
+     */
     private function systemTimeFromPageTimer(array $nurseUserIds)
     {
         return $this->itemizedActivitiesQuery(
@@ -135,10 +154,18 @@ class TotalTimeAggregator
             (new PageTimer())->getTable(),
             'start_time',
             $this->startDate,
-            $this->endDate
+            $this->endDate,
+            false
         );
     }
 
+    /**
+     * Query to get billable (ccm) time. This is time a nurse spends working on a patient.
+     *
+     * @param array $nurseUserIds
+     *
+     * @return \Illuminate\Database\Query\Builder
+     */
     private function totalBillableTimeMap(array $nurseUserIds)
     {
         return $this->itemizedActivitiesQuery(

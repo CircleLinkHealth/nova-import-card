@@ -53,6 +53,8 @@ class NursesAndStatesDailyReport extends Command
             $date = Carbon::yesterday()->startOfDay();
         }
 
+        $this->warn('Running for '.$date->toDateTimeString());
+
         $data = $this->service->collectData($date);
 
         $fileName = "nurses-and-states-daily-report-{$date->toDateString()}.json";
