@@ -32,7 +32,8 @@
                         <!-- @todo: this is not working exactly as expected so im keepin one element true and i ll get back-->
                         <mdb-btn v-show="true"
                                  color="primary" class="btn-start" @click="showQuestions">
-                            <span>Start</span>
+                            <span v-if="progress === 0">Start</span>
+                            <span v-else>Continue</span>
                         </mdb-btn>
 
                         <!-- <mdb-btn v-show="lastQuestionAnswered === null"
@@ -257,7 +258,6 @@
                 userId: this.surveyData.id,
                 surveyInstanceId: null,
                 questionIndexAnswers: [],
-                surveyAnswers: [],
                 conditionsLength: 0,
                 latestQuestionAnsweredIndex: -1,
                 currentQuestionIndex: 0,
@@ -266,7 +266,9 @@
                 waiting: false,
                 practiceId: null,
                 practiceName: null,
-                doctorsLastName: null
+                doctorsLastName: null,
+                totalQuestions: 0,
+                totalQuestionWithSubQuestions: 0
             }
         },
 
@@ -285,10 +287,6 @@
                 return this.questions.flatMap(function (q) {
                     return q.pivot.order + q.pivot.sub_order;
                 });
-            },
-
-            totalQuestions() {
-                return this.questions.length - this.subQuestions.length;
             },
 
             canScrollUp() {
@@ -528,6 +526,10 @@
                 });
             },
 
+            hasAnsweredAllOfOrder(order) {
+                const questions = this.questions.filter(q => q.pivot.order === order);
+                return questions.every(q => q.answer !== undefined);
+            }
 
         },
         mounted() {
@@ -549,8 +551,33 @@
             this.questions.push(...questionsData);
             this.subQuestions.push(...subQuestions);
 
-            const surveyAnswers = this.surveyData.answers;
-            this.surveyAnswers.push(...surveyAnswers);
+            if (this.surveyData.answers && this.surveyData.answers.length) {
+                this.surveyData.answers.forEach(a => {
+                    const q = this.questions.find(q => q.id === a.question_id);
+                    if (q) {
+                        q.answer = a;
+                        if (q.pivot.sub_order === null || this.hasAnsweredAllOfOrder(q.pivot.order)) {
+                            this.progress = this.progress + 1;
+                        }
+                    }
+                });
+            }
+
+            if (typeof this.surveyData.survey_instances[0].pivot.last_question_answered_id !== "undefined") {
+                const lastQuestionAnsweredId = this.surveyData.survey_instances[0].pivot.last_question_answered_id;
+                const index = this.questions.findIndex(q => q.id === lastQuestionAnsweredId);
+                this.latestQuestionAnsweredIndex = index;
+                this.currentQuestionIndex = this.latestQuestionAnsweredIndex + 1;
+            }
+
+            this.totalQuestionWithSubQuestions = this.questions.length;
+            this.totalQuestions = _.uniqBy(this.questions, (elem) => {
+                return elem.pivot.order;
+            }).length;
+
+            if (this.surveyData.answers && this.surveyData.answers.length === this.questions.length) {
+                this.stage = "complete";
+            }
         },
 
     }
