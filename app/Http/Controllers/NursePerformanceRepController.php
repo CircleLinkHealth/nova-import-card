@@ -113,8 +113,8 @@ class NursePerformanceRepController extends Controller
      */
     public function getNursePerformanceData(Request $request)
     {
-        $startDate      = new Carbon($request['start_date']);
-        $endDate        = new Carbon($request['end_date']);
+        $startDate      = Carbon::parse($request['start_date']);
+        $endDate        = Carbon::parse($request['end_date']);
         $days           = $this->getDaysBetweenPeriodRange($startDate, $endDate);
         $nurses         = $this->service->manipulateData($days);
         $nurseDailyData = $this->getNursesDailyData($nurses);

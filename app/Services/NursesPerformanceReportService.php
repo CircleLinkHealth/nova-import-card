@@ -662,11 +662,16 @@ DATE(patient_monthly_summaries.month_year) = DATE('{$date->copy()->startOfMonth(
             ->getFile();
 
         if ( ! $json) {
-            throw new \Exception("File does not exist for: '{$day->toDateString()}'", 400);
+            return response()->json([
+                'message' => "File does not exist for: '{$day->toDateString()}'",
+            ], 400);
         }
         if ( ! is_json($json)) {
-            throw new \Exception('File retrieved is not in json format.', 500);
+            return response()->json([
+                'message' => 'File retrieved is not in json format.',
+            ], 400);
         }
+
         return collect(json_decode($json, true));
     }
 }

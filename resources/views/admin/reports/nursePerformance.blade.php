@@ -42,11 +42,11 @@
 
     @push('scripts')
         <script>
+
             $(function () {
-                //choose which column to use for grouping (col.13 = weekDays)
-                //thinking to make this dynamic
                 var groupColumn = 1;
                 $('#nurse_weekly').DataTable({
+
                     "columnDefs": [
                         {
                             // "visible": false,
@@ -59,8 +59,8 @@
                     scrollX: "100%",
                     scrollCollapse: false,
                     processing: true,
-                    serverSide: false,
-                    paging:false,
+                    serverSide: true,
+                    paging: false,
                     fixedColumns: {
                         leftColumns: 2,
                     },
@@ -72,6 +72,9 @@
                         "data": function (d) {
                             d.start_date = '{{$startDate}}';
                             d.end_date = '{{$endDate}}';
+                        },
+                        "error": function (){
+                            alert("File does not exist for: '{{$startDate->format('l F jS')}}'")
                         }
                     },
                     columns: [
@@ -89,7 +92,9 @@
                         {data: 'hoursCommittedRestOfMonth', name: 'hoursCommittedRestOfMonth'},
                         {data: 'surplusShortfallHours', name: 'surplusShortfallHours'},
                         {data: 'caseLoadComplete', name: 'caseLoadComplete'},
+
                     ],
+
                 });
             });
 
@@ -134,7 +139,8 @@
     .DTFC_LeftHeadWrapper {
         background-color: #ffffff;
     }
-    .left_columns_border{
+
+    .left_columns_border {
         border-right: solid 1px #000000;
     }
 </style>
