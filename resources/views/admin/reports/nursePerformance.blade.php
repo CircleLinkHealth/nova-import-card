@@ -11,7 +11,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-10 col-md-offset-1">
+            <div class="col-md-12 col-lg-12">
                 <div class="row">
                     <div class="col-md-12">
                         <div class="panel panel-default">
@@ -19,17 +19,17 @@
                             <div class="panel-heading">Nurse Performance Report</div>
 
                             <div class="calendar-date" style="padding-left: 2%;">
-                                @include('admin.reports.nursesWeeklyReportForm')
+                                @include('admin.reports.nursesPerformanceForm')
                             </div>
 
                             <div class="dates">
-                                {{$startOfWeek->format('l F jS')}} - {{max($days)->format('l F jS Y')}}
+                                {{$startDate->format('l F jS')}} - {{$endDate->format('l F jS Y')}}
                             </div>
 
                             <div class="panel-body">
-                                <table class="table table-hover" id="nurse_weekly">
+                                <table class="table table-hover" id="nurse_weekly" style="width: 100%">
                                     <thead>
-                                    @include('admin.reports.nurseWeeklyReportHeadings')
+                                    @include('admin.reports.nursePerformanceReportHeadings')
                                     </thead>
                                 </table>
                             </div>
@@ -45,60 +45,38 @@
             $(function () {
                 //choose which column to use for grouping (col.13 = weekDays)
                 //thinking to make this dynamic
-                var groupColumn = 13;
+                var groupColumn = 1;
                 $('#nurse_weekly').DataTable({
                     "columnDefs": [
                         {
-                            "visible": false,
+                            // "visible": false,
                             "targets": groupColumn,
+                            className: 'left_columns_border'
                         }
                     ],
-                    "order": [[groupColumn, 'asc']],
-                    "displayLength": 100,
-                    "drawCallback": function (settings) {
-                        var api = this.api();
-                        var rows = api.rows({page: 'current'}).nodes();
-                        var last = null;
-
-                        api.column(groupColumn, {page: 'current'}).data().each(function (group, i) {
-                            if (last !== group) {
-                                $(rows).eq(i).before(
-                                    '<tr class="group"><td colspan="13">' + group + '</td></tr>'
-                                );
-
-                                last = group;
-                            }
-                        });
-
-                        // Order by the grouping column
-                        $('#nurse_weekly tbody').on('click', 'tr.group', function () {
-                                var currentOrder = table.order()[0];
-                                if (currentOrder[0] === groupColumn && currentOrder[1] === 'asc') {
-                                    table.order([groupColumn, 'desc']).draw();
-                                } else {
-                                    table.order([groupColumn, 'asc']).draw();
-                                }
-                            },
-                        );
-                    },
                     deferRender: true,
-                    scrollY: "100%",
+                    scrollY: "95%",
                     scrollX: "100%",
                     scrollCollapse: false,
                     processing: true,
                     serverSide: false,
-                    fixedColumns: true,
-
+                    paging:false,
+                    fixedColumns: {
+                        leftColumns: 2,
+                    },
+                    orderFixed: [1, 'asc'],
 
                     ajax: {
-                        "url": '{!! route('admin.reports.nurse.weekly.data') !!}',
+                        "url": '{!! route('admin.reports.nurse.performance.data') !!}',
                         "type": "GET",
                         "data": function (d) {
-                            d.date = '{{$date}}'
+                            d.start_date = '{{$startDate}}';
+                            d.end_date = '{{$endDate}}';
                         }
                     },
                     columns: [
                         {data: 'name', name: 'name'},
+                        {data: 'weekDay', name: 'weekDay'},
                         {data: 'scheduledCalls', name: 'scheduledCalls'},
                         {data: 'actualCalls', name: 'actualCalls'},
                         {data: 'successful', name: 'successful'},
@@ -111,8 +89,6 @@
                         {data: 'hoursCommittedRestOfMonth', name: 'hoursCommittedRestOfMonth'},
                         {data: 'surplusShortfallHours', name: 'surplusShortfallHours'},
                         {data: 'caseLoadComplete', name: 'caseLoadComplete'},
-                        //weekDays column is hidden from table view and used only for grouping data by day of week
-                        {data: 'weekDay', name: 'weekDay'},
                     ],
                 });
             });
@@ -129,6 +105,23 @@
         background-color: #71cc85 !important;
     }
 
+    div.dataTables_wrapper {
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    .panel-default > .panel-heading {
+        text-align: center;
+        font-weight: bold;
+        font-size: large;
+    }
+
+    .dates {
+        font-size: large;
+        text-align: center;
+        font-weight: bold;
+    }
+
     th, td {
         white-space: nowrap;
     }
@@ -138,15 +131,10 @@
         margin: 0 auto;
     }
 
-    .panel-default>.panel-heading{
-        text-align: center;
-        font-weight: bold;
-        font-size: large;
+    .DTFC_LeftHeadWrapper {
+        background-color: #ffffff;
     }
-
-    .dates{
-        font-size: large;
-        text-align: center;
-        font-weight: bold;
+    .left_columns_border{
+        border-right: solid 1px #000000;
     }
 </style>

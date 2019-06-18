@@ -18,7 +18,7 @@ use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
-class NursesAndStatesDailyReportService
+class NursesPerformanceReportService
 {
     const LAST_COMMITTED_DAYS_TO_GO_BACK = 10;
     const MAX_COMMITTED_DAYS_TO_GO_BACK  = 30;
@@ -73,8 +73,8 @@ class NursesAndStatesDailyReportService
             ->whereHas(
                 'nurseInfo',
                 function ($info) {
-                    $info->where('status', 'active');
-                    // ->where('is_demo', false); //remember Raph asking to exclude demo nurses...
+                    $info->where('status', 'active')
+                        ->where('is_demo', false);
                 }
             )
             ->chunk(
@@ -301,7 +301,7 @@ class NursesAndStatesDailyReportService
         Carbon $date,
         $numberOfDays = self::LAST_COMMITTED_DAYS_TO_GO_BACK
     ) {
-        if ($numberOfDays > NursesAndStatesDailyReportService::MAX_COMMITTED_DAYS_TO_GO_BACK) {
+        if ($numberOfDays > NursesPerformanceReportService::MAX_COMMITTED_DAYS_TO_GO_BACK) {
             throw new \Exception('numberOfDays must not exceed MAX_COMMITTED_DAYS_TO_GO_BACK');
         }
 
@@ -310,7 +310,7 @@ class NursesAndStatesDailyReportService
         $committedDays = collect();
         $mutableDate   = $date->copy();
         $loopCount     = 0;
-        while ($committedDays->count() < $numberOfDays && $loopCount < NursesAndStatesDailyReportService::MAX_COMMITTED_DAYS_TO_GO_BACK) {
+        while ($committedDays->count() < $numberOfDays && $loopCount < NursesPerformanceReportService::MAX_COMMITTED_DAYS_TO_GO_BACK) {
             // @var NurseContactWindow
             $window = $nurseWindows
                 ->where('day_of_week', carbonToClhDayOfWeek($mutableDate->dayOfWeek))
@@ -392,7 +392,7 @@ class NursesAndStatesDailyReportService
                 $nurseInfo,
                 $nurseWindows,
                 $date,
-                NursesAndStatesDailyReportService::LAST_COMMITTED_DAYS_TO_GO_BACK
+                NursesPerformanceReportService::LAST_COMMITTED_DAYS_TO_GO_BACK
             )
                 ->sortBy(function ($date) {
                     return $date;
@@ -642,8 +642,8 @@ DATE(patient_monthly_summaries.month_year) = DATE('{$date->copy()->startOfMonth(
     /**
      * @param $day
      *
-     * @throws \Exception
      * @throws FileNotFoundException
+     * @throws \Exception
      *
      * @return mixed
      */
@@ -662,12 +662,11 @@ DATE(patient_monthly_summaries.month_year) = DATE('{$date->copy()->startOfMonth(
             ->getFile();
 
         if ( ! $json) {
-            throw new \Exception('File does not exist for selected date.', 400);
+            throw new \Exception("File does not exist for: '{$day->toDateString()}'", 400);
         }
         if ( ! is_json($json)) {
             throw new \Exception('File retrieved is not in json format.', 500);
         }
-
         return collect(json_decode($json, true));
     }
 }

@@ -1,5 +1,6 @@
 <tr>
         <th>Name</th>
+        <th>Day</th>
         <th>Assigned Calls</th>
         <th>Actual Calls</th>
         <th>Successful Calls</th>
@@ -12,6 +13,6 @@
         <th>Hrs Committed Rest of Month</th>
         <th>Hrs Deficit or Surplus</th>
         <th>% Case Load Complete</th>
-        <th>Day</th>
+
 </tr>
 
