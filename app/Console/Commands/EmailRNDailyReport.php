@@ -125,7 +125,7 @@ class EmailRNDailyReport extends Command
                             'caseLoadNeededToComplete'     => $reportDataForNurse['caseLoadNeededToComplete'],
                             'hoursCommittedRestOfMonth'    => $reportDataForNurse['hoursCommittedRestOfMonth'],
                             'surplusShortfallHours'        => $reportDataForNurse['surplusShortfallHours'],
-                            'projectedHoursLeftInMoth'     => $reportDataForNurse['projectedHoursLeftInMoth'],
+                            'projectedHoursLeftInMonth'    => $reportDataForNurse['projectedHoursLeftInMonth'],
                             'totalEarningsThisMonth'       => $totalEarningsThisMonth,
                             'totalTimeInSystemOnGivenDate' => $totalTimeInSystemOnGivenDate,
                             'totalTimeInSystemThisMonth'   => $totalTimeInSystemThisMonth,
@@ -176,7 +176,7 @@ class EmailRNDailyReport extends Command
             'hoursCommittedRestOfMonth',
             'surplusShortfallHours',
             'nextUpcomingWindow',
-            'projectedHoursLeftInMoth',
+            'projectedHoursLeftInMonth',
             'avgHoursWorkedLast10Sessions',
         ], $report);
     }
