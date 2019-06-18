@@ -45,11 +45,13 @@ trait TimezoneTrait
 
     public function resolveTimezoneToGMT($date)
     {
-        if (is_string($date)) {
-            $date = Carbon::parse($date);
-        }
-        $date = $date->timezone('America/New_York');
+        if (! is_null($date)){
+            if (is_string($date)) {
+                $date = Carbon::parse($date);
+            }
+            $date = $date->timezone('America/New_York');
 
-        return $date->format('Y-m-d H:i:s');
+            return $date->format('Y-m-d H:i:s');
+        }
     }
 }
