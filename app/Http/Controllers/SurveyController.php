@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Answer;
+use App\Http\Requests\StoreAnswer;
 use App\Services\SurveyService;
 use Auth;
-use Illuminate\Http\Request;
 
 class SurveyController extends Controller
 {
@@ -38,12 +38,12 @@ class SurveyController extends Controller
         ]);
     }
 
-    //i have disabled storeAnswer since we are not using any auth scaffolding yet
-    public function storeAnswer(/*StoreAnswer*/
-        Request $request
-    ) {
+    public function storeAnswer(StoreAnswer $request)
+    {
+        $input            = $request->all();
+        $input['user_id'] = $input['patient_id'];
 
-        $answer = $this->service->updateOrCreateAnswer($request->input());
+        $answer = $this->service->updateOrCreateAnswer($input);
 
         if ( ! $answer) {
             return response()->json(['errors' => 'Answer was not created'], 400);

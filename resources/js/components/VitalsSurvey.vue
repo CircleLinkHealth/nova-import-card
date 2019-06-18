@@ -396,7 +396,10 @@
                         console.log(error);
                         this.waiting = false;
 
-                        if (error.response && error.response.data) {
+                        if (error.response && error.response.status === 404) {
+                            this.error = "Not Found [404]";
+                        }
+                        else if (error.response && error.response.data) {
                             const errors = [error.response.data.message];
                             Object.keys(error.response.data.errors || []).forEach(e => {
                                 errors.push(error.response.data.errors[e]);

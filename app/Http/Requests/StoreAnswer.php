@@ -14,6 +14,7 @@ class StoreAnswer extends FormRequest
      */
     public function authorize()
     {
+        //user should already be authenticated to reach here
         return Auth::check();
     }
 
@@ -25,11 +26,12 @@ class StoreAnswer extends FormRequest
     public function rules()
     {
         return [
-            'user_id'                 => 'required|integer|exists:users,id',
+            'practice_id'             => 'required|integer|exists:practices,id',
+            'patient_id'              => 'required|integer|exists:users,id',
             'survey_instance_id'      => 'required|integer|exists:survey_instances,id',
             'question_id'             => 'required|integer|exists:questions,id',
             'question_type_answer_id' => 'sometimes|integer|exists:question_types_answers,id',
-            'value'                 => 'required',
+            'value'                   => 'required',
         ];
     }
 }

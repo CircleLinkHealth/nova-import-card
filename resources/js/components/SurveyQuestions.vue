@@ -70,64 +70,64 @@
                         <!--Questions Answer Type-->
                         <div class="question-answer-type">
                             <question-type-text
-                                    :question="question"
-                                    :is-active="currentQuestionIndex === index"
-                                    :on-done-func="postAnswerAndGoToNext"
-                                    :waiting="waiting"
-                                    v-if="question.type.type === 'text'">
+                                :question="question"
+                                :is-active="currentQuestionIndex === index"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :waiting="waiting"
+                                v-if="question.type.type === 'text'">
                             </question-type-text>
 
                             <question-type-checkbox
-                                    :question="question"
-                                    :is-active="currentQuestionIndex === index"
-                                    :is-subquestion="isSubQuestion(question)"
-                                    :get-all-questions-func="getAllQuestions"
-                                    :on-done-func="postAnswerAndGoToNext"
-                                    :is-last-question="isLastQuestion(question)"
-                                    :waiting="waiting"
-                                    v-if="question.type.type === 'checkbox'">
+                                :question="question"
+                                :is-active="currentQuestionIndex === index"
+                                :is-subquestion="isSubQuestion(question)"
+                                :get-all-questions-func="getAllQuestions"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :is-last-question="isLastQuestion(question)"
+                                :waiting="waiting"
+                                v-if="question.type.type === 'checkbox'">
                             </question-type-checkbox>
 
                             <question-type-muti-select
-                                    :question="question"
-                                    :is-active="currentQuestionIndex === index"
-                                    :is-subquestion="isSubQuestion(question)"
-                                    :get-all-questions-func="getAllQuestions"
-                                    :on-done-func="postAnswerAndGoToNext"
-                                    :is-last-question="isLastQuestion(question)"
-                                    :waiting="waiting"
-                                    v-if="question.type.type === 'multi_select'">
+                                :question="question"
+                                :is-active="currentQuestionIndex === index"
+                                :is-subquestion="isSubQuestion(question)"
+                                :get-all-questions-func="getAllQuestions"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :is-last-question="isLastQuestion(question)"
+                                :waiting="waiting"
+                                v-if="question.type.type === 'multi_select'">
                             </question-type-muti-select>
 
                             <question-type-range
-                                    v-if="question.type.type === 'range'">
+                                v-if="question.type.type === 'range'">
                             </question-type-range>
 
                             <question-type-number
-                                    :question="question"
-                                    :is-active="currentQuestionIndex === index"
-                                    :is-subquestion="isSubQuestion(question)"
-                                    :get-all-questions-func="getAllQuestions"
-                                    :on-done-func="postAnswerAndGoToNext"
-                                    :is-last-question="isLastQuestion(question)"
-                                    :waiting="waiting"
-                                    v-if="question.type.type === 'number'">
+                                :question="question"
+                                :is-active="currentQuestionIndex === index"
+                                :is-subquestion="isSubQuestion(question)"
+                                :get-all-questions-func="getAllQuestions"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :is-last-question="isLastQuestion(question)"
+                                :waiting="waiting"
+                                v-if="question.type.type === 'number'">
                             </question-type-number>
 
                             <question-type-radio
-                                    :question="question"
-                                    :is-active="currentQuestionIndex === index"
-                                    :is-subquestion="isSubQuestion(question)"
-                                    :style-horizontal="false"
-                                    :get-all-questions-func="getAllQuestions"
-                                    :on-done-func="postAnswerAndGoToNext"
-                                    :is-last-question="isLastQuestion(question)"
-                                    :waiting="waiting"
-                                    v-if="question.type.type === 'radio'">
+                                :question="question"
+                                :is-active="currentQuestionIndex === index"
+                                :is-subquestion="isSubQuestion(question)"
+                                :style-horizontal="false"
+                                :get-all-questions-func="getAllQuestions"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :is-last-question="isLastQuestion(question)"
+                                :waiting="waiting"
+                                v-if="question.type.type === 'radio'">
                             </question-type-radio>
 
                             <question-type-date
-                                    v-if="question.type.type === 'date'">
+                                v-if="question.type.type === 'date'">
                             </question-type-date>
                         </div>
                     </div>
@@ -145,7 +145,7 @@
 
 
         <!--bottom-navbar-->
-<!--@todo: this is the call assistance modal. needs some styling and setup twilio-->
+        <!--@todo: this is the call assistance modal. needs some styling and setup twilio-->
         <!--&lt;!&ndash;phone assistance&ndash;&gt;
         <div class="row">
             <div v-if="showPhoneButton" class="call-assistance col-lg-1">
@@ -190,16 +190,16 @@
                         <div class="col text-right">
 
                             <mdb-btn
-                                    color="primary"
-                                    @click="scrollDown"
-                                    :disabled="!canScrollDown">
+                                color="primary"
+                                @click="scrollDown"
+                                :disabled="!canScrollDown">
                                 <i class="fas fa-angle-down"></i>
                             </mdb-btn>
 
                             <mdb-btn
-                                    color="primary"
-                                    @click="scrollUp"
-                                    :disabled="!canScrollUp">
+                                color="primary"
+                                @click="scrollUp"
+                                :disabled="!canScrollUp">
                                 <i class="fas fa-angle-up"></i>
                             </mdb-btn>
 
@@ -221,7 +221,6 @@
     import questionTypeRadio from "./questionTypeRadio";
     import questionTypeDate from "./questionTypeDate";
     import callAssistance from "./callAssistance";
-    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
     import questionTypeMultiSelect from "./questionTypeMultiSelect";
 
 
@@ -431,8 +430,9 @@
                 this.error = null;
                 this.waiting = true;
 
-                axios.post('/save-answer', {
-                    user_id: this.userId,
+                axios.post(`/survey/hra/${this.practiceId}/${this.userId}/save-answer`, {
+                    patient_id: this.userId,
+                    practice_id: this.practiceId,
                     survey_instance_id: this.surveyInstanceId,
                     question_id: questionId,
                     question_type_answer_id: questionTypeAnswerId,
@@ -469,7 +469,10 @@
                         console.log(error);
                         this.waiting = false;
 
-                        if (error.response && error.response.data) {
+                        if (error.response && error.response.status === 404) {
+                            this.error = "Not Found [404]";
+                        }
+                        else if (error.response && error.response.data) {
                             const errors = [error.response.data.message];
                             Object.keys(error.response.data.errors || []).forEach(e => {
                                 errors.push(error.response.data.errors[e]);

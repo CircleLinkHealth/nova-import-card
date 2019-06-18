@@ -144,6 +144,9 @@ class SurveyService
 
     private static function updateOrCreatePatientAWVSummary($patient)
     {
+        if (!$patient) {
+            return;
+        }
 
         $date = Carbon::now();
 
