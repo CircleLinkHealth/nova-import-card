@@ -13,6 +13,5 @@
         <th>Hrs Committed Rest of Month</th>
         <th>Hrs Deficit or Surplus</th>
         <th>% Case Load Complete</th>
-
 </tr>
 

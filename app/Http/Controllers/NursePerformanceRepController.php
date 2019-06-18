@@ -66,41 +66,6 @@ class NursePerformanceRepController extends Controller
     }
 
     /**
-     * @param Collection $nurses
-     * @param mixed      $reportPerDay
-     * @param mixed      $dates
-     *
-     * @return array
-     */
-    //this is not used yet
-//    public function getNursesDailyTotals(Collection $nurses)
-//    {
-//        $nurseDailyTotals = [];
-//        $n                = 0;
-//        $totals           = $nurses->only('totals');
-//        foreach ($totals as $total => $totalsPerDay) {
-//            foreach ($totalsPerDay as $totalsForDay) {
-//                $nurseDailyTotals[$n]['scheduledCallsSum']         = $totalsForDay['scheduledCallsSum'];
-//                $nurseDailyTotals[$n]['actualCallsSum']            = $totalsForDay['actualCallsSum'];
-//                $nurseDailyTotals[$n]['successfulCallsSum']        = $totalsForDay['successfulCallsSum'];
-//                $nurseDailyTotals[$n]['unsuccessfulCallsSum']      = $totalsForDay['unsuccessfulCallsSum'];
-//                $nurseDailyTotals[$n]['actualHoursSum']            = $totalsForDay['actualHoursSum'];
-//                $nurseDailyTotals[$n]['committedHoursSum']         = $totalsForDay['committedHoursSum'];
-//                $nurseDailyTotals[$n]['completionRate']            = $totalsForDay->has('completionRate') ? $totalsForDay['completionRate'] : 'N/A';
-//                $nurseDailyTotals[$n]['efficiencyIndex']           = $totalsForDay->has('efficiencyIndex') ? $totalsForDay['efficiencyIndex'] : 'N/A';
-//                $nurseDailyTotals[$n]['caseLoadNeededToComplete']  = $totalsForDay->has('caseLoadNeededToComplete') ? $totalsForDay['caseLoadNeededToComplete'] : 'N/A';
-//                $nurseDailyTotals[$n]['hoursCommittedRestOfMonth'] = $totalsForDay->has('hoursCommittedRestOfMonth') ? $totalsForDay['hoursCommittedRestOfMonth'] : 'N/A';
-//                $nurseDailyTotals[$n]['surplusShortfallHours']     = $totalsForDay->has('surplusShortfallHours') ? $totalsForDay['surplusShortfallHours'] : 'N/A';
-//                $nurseDailyTotals[$n]['caseLoadComplete']          = $totalsForDay->has('caseLoadComplete') ? $totalsForDay['caseLoadComplete'] : 'N/A';
-//
-//                ++$n;
-//            }
-//        }
-//
-//        return $nurseDailyTotals;
-//    }
-
-    /**
      * Gets input date and collects days from that date back to beginning of that week.
      *
      * @param Carbon $startDate
@@ -148,11 +113,9 @@ class NursePerformanceRepController extends Controller
      */
     public function getNursePerformanceData(Request $request)
     {
-        $startDate = new Carbon($request['start_date']);
-        $endDate   = new Carbon($request['end_date']);
-        $days      = $this->getDaysBetweenPeriodRange($startDate, $endDate);
-
-        //data are returned in 2 arrays. {Data} and the {Totals of data}.
+        $startDate      = new Carbon($request['start_date']);
+        $endDate        = new Carbon($request['end_date']);
+        $days           = $this->getDaysBetweenPeriodRange($startDate, $endDate);
         $nurses         = $this->service->manipulateData($days);
         $nurseDailyData = $this->getNursesDailyData($nurses);
 //        $nurseDailyTotals = $this->getNursesDailyTotals($nurses);
@@ -167,7 +130,7 @@ class NursePerformanceRepController extends Controller
      */
     public function getNursesDailyData(Collection $nurses)
     {
-        $data = $nurses->forget('totals');
+        $data = $nurses->except('totals');
         //@todo:one level of indendetion
         $nurseDailyData = [];
         $n              = 0;
@@ -192,6 +155,40 @@ class NursePerformanceRepController extends Controller
         }
 
         return $nurseDailyData;
+    }
+
+    /**
+     * @param Collection $nurses
+     * @param mixed      $reportPerDay
+     * @param mixed      $dates
+     *
+     * @return array
+     */
+    public function getNursesDailyTotals(Collection $nurses)
+    {
+        $nurseDailyTotals = [];
+        $n                = 0;
+        $totals           = $nurses->only('totals');
+        foreach ($totals as $total => $totalsPerDay) {
+            foreach ($totalsPerDay as $totalsForDay) {
+                $nurseDailyTotals[$n]['scheduledCallsSum']         = $totalsForDay['scheduledCallsSum'];
+                $nurseDailyTotals[$n]['actualCallsSum']            = $totalsForDay['actualCallsSum'];
+                $nurseDailyTotals[$n]['successfulCallsSum']        = $totalsForDay['successfulCallsSum'];
+                $nurseDailyTotals[$n]['unsuccessfulCallsSum']      = $totalsForDay['unsuccessfulCallsSum'];
+                $nurseDailyTotals[$n]['actualHoursSum']            = $totalsForDay['actualHoursSum'];
+                $nurseDailyTotals[$n]['committedHoursSum']         = $totalsForDay['committedHoursSum'];
+                $nurseDailyTotals[$n]['completionRate']            = $totalsForDay->has('completionRate') ? $totalsForDay['completionRate'] : 'N/A';
+                $nurseDailyTotals[$n]['efficiencyIndex']           = $totalsForDay->has('efficiencyIndex') ? $totalsForDay['efficiencyIndex'] : 'N/A';
+                $nurseDailyTotals[$n]['caseLoadNeededToComplete']  = $totalsForDay->has('caseLoadNeededToComplete') ? $totalsForDay['caseLoadNeededToComplete'] : 'N/A';
+                $nurseDailyTotals[$n]['hoursCommittedRestOfMonth'] = $totalsForDay->has('hoursCommittedRestOfMonth') ? $totalsForDay['hoursCommittedRestOfMonth'] : 'N/A';
+                $nurseDailyTotals[$n]['surplusShortfallHours']     = $totalsForDay->has('surplusShortfallHours') ? $totalsForDay['surplusShortfallHours'] : 'N/A';
+                $nurseDailyTotals[$n]['caseLoadComplete']          = $totalsForDay->has('caseLoadComplete') ? $totalsForDay['caseLoadComplete'] : 'N/A';
+
+                ++$n;
+            }
+        }
+
+        return $nurseDailyTotals;
     }
 
     /**
@@ -245,7 +242,7 @@ class NursePerformanceRepController extends Controller
      */
     public function nurseMetricsPerformanceData(Request $request)
     {
-        return datatables()->collection(collect($this->getNursePerformanceData($request)))->make(true);
+        return datatables()->collection($this->getNursePerformanceData($request))->make(true);
     }
 
     /**
