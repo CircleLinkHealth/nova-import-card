@@ -66,35 +66,6 @@ class NursePerformanceRepController extends Controller
     }
 
     /**
-     * Gets input date and collects days from that date back to beginning of that week.
-     *
-     * @param Carbon $startDate
-     * @param Carbon $endDate
-     *
-     * @return array
-     */
-    public function getDaysBetweenPeriodRange(Carbon $startDate, Carbon $endDate)
-    {
-        $days = [];
-        for ($date = $startDate; $date->lte($endDate); $date->addDay()) {
-            $days[] = $date->copy();
-        }
-
-        return $days;
-    }
-
-    /**
-     * @param $reportPerDay
-     *
-     * @return string
-     */
-    public function getEfficiencyIndex($reportPerDay)
-    {
-        return array_key_exists('efficiencyIndex', $reportPerDay)
-            ? $reportPerDay['efficiencyIndex'] : 'N/A';
-    }
-
-    /**
      * @param Collection $nurses
      * @param mixed      $reportPerDay
      * @param mixed      $dates
@@ -128,6 +99,35 @@ class NursePerformanceRepController extends Controller
 //
 //        return $nurseDailyTotals;
 //    }
+
+    /**
+     * Gets input date and collects days from that date back to beginning of that week.
+     *
+     * @param Carbon $startDate
+     * @param Carbon $endDate
+     *
+     * @return array
+     */
+    public function getDaysBetweenPeriodRange(Carbon $startDate, Carbon $endDate)
+    {
+        $days = [];
+        for ($date = $startDate; $date->lte($endDate); $date->addDay()) {
+            $days[] = $date->copy();
+        }
+
+        return $days;
+    }
+
+    /**
+     * @param $reportPerDay
+     *
+     * @return string
+     */
+    public function getEfficiencyIndex($reportPerDay)
+    {
+        return array_key_exists('efficiencyIndex', $reportPerDay)
+            ? $reportPerDay['efficiencyIndex'] : 'N/A';
+    }
 
     /**
      * @param $dates
@@ -255,16 +255,17 @@ class NursePerformanceRepController extends Controller
      * @return array|RedirectResponse
      */
     public function setDates(Request $request, Carbon $yesterdayDate)
-    {
-        if ($request->has('start_date') && $request->has('end_date')) {
-            $requestStartDate = new Carbon($request['start_date']);
-            $requestEndDate   = new Carbon($request['end_date']);
-            $startDate        = $requestStartDate->copy();
-            $endDate          = $requestEndDate->copy();
-        } else {//how to avoid else here?
-            $endDate   = $yesterdayDate->copy()->endOfDay();
-            $startDate = $yesterdayDate->copy()->startOfDay();
-        }
+    {//set dates
+        $request->has('start_date') && $request->has('end_date')
+            ? [
+                $startDate = Carbon::parse($request['start_date']),
+                $endDate = Carbon::parse($request['end_date']),
+            ]
+            :
+            [
+                $endDate = $yesterdayDate->copy()->endOfDay(),
+                $startDate = $yesterdayDate->copy()->startOfDay(),
+            ];
 
         if ($endDate->gte(today()->startOfDay())) {
             $messages['errors'][] = 'Please input a past date';
