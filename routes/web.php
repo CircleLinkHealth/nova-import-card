@@ -35,18 +35,15 @@ Route::post('send-invitation-link', 'InvitationLinksController@createSendInvitat
 Route::get('login-survey/{user}/{survey}', 'InvitationLinksController@surveyLoginForm')
      ->name('loginSurvey');
 
-//fixme: thoughts: the surveys should be accessible from a url, so the POST here should redirect to a route, and not return a view
 Route::post('survey-login', 'InvitationLinksController@surveyLoginAuth')
      ->name('surveyLoginAuth');
 
 Route::post('resend-link/{user}', 'InvitationLinksController@resendUrl')
      ->name('resendUrl');
 
-Route::post('save-answer', 'SurveyController@storeAnswer')
-     ->name('saveSurveyAnswer');
-
-Route::get('get-previous-answer', 'SurveyController@getPreviousAnswer')
-     ->name('getPreviousAnswer');
+//don't like this, why is it here?
+//Route::get('get-previous-answer', 'SurveyController@getPreviousAnswer')
+//     ->name('getPreviousAnswer');
 
 Route::get('get-ppp-data/{userId}', 'PersonalizedPreventionPlanController@getPppDataForUser')
      ->name('getPppDataForUser');
@@ -59,7 +56,16 @@ Route::group([
     Route::group([
         'prefix' => 'hra',
     ], function () {
-        //fixme: add HRA routes here
+
+        Route::get('{practiceId}/{patientId}/{surveyId}', [
+            'uses' => 'SurveyController@getSurvey',
+            'as'   => 'survey.hra',
+        ]);
+
+        Route::post('{practiceId}/{patientId}/save-answer', [
+            'uses' => 'SurveyController@storeAnswer',
+            'as'   => 'survey.hra.store.answer',
+        ]);
     });
 
     Route::group([

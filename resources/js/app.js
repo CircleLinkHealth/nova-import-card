@@ -24,7 +24,9 @@ window.Vue = require('vue');
 import VitalsSurvey from './components/VitalsSurvey';
 import VitalsSurveyNotAuthorized from './components/VitalsSurveyNotAuthorized';
 import VitalsSurveyWelcome from './components/VitalsSurveyWelcome';
+import SurveyQuestions from './components/SurveyQuestions';
 
+Vue.component('survey-questions', SurveyQuestions);
 Vue.component('vitals-survey', VitalsSurvey);
 Vue.component('vitals-survey-not-authorized', VitalsSurveyNotAuthorized);
 Vue.component('vitals-survey-welcome', VitalsSurveyWelcome);

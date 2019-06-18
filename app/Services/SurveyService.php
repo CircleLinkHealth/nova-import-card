@@ -13,8 +13,24 @@ class SurveyService
 {
     public static function getSurveyData($patientId, $surveyId)
     {
+        //fixme: merge this with query below
+        $user = User::with([
+            'surveyInstances' => function ($instance) use ($surveyId) {
+                $instance->current()
+                         ->wherePivot('survey_id', $surveyId);
+            },
+        ])->find($patientId);
+
+        if ( ! $user || $user->surveyInstances->isEmpty()) {
+            return null;
+        }
+
+        $surveyInstanceId = $user->surveyInstances->first()->id;
+
         $patientWithSurveyData = User
             ::with([
+                'billingProvider.user',
+                'primaryPractice',
                 'surveyInstances'     => function ($instance) use ($surveyId) {
                     $instance->current()
                              ->wherePivot('survey_id', $surveyId)
@@ -26,7 +42,9 @@ class SurveyService
                              ]);
 
                 },
-                'answers',
+                'answers'             => function ($answer) use ($surveyInstanceId) {
+                    $answer->where('survey_instance_id', $surveyInstanceId);
+                },
                 'patientAWVSummaries' => function ($summary) {
                     $summary->where('month_year', Carbon::now()->startOfMonth());
                 },

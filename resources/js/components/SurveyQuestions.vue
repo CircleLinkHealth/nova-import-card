@@ -4,8 +4,11 @@
         <div class="survey-container" :class="stage === 'complete' ? 'max' : ''">
             <template v-if="stage === 'welcome'">
                 <div class="practice-title">
-                    <label id="title">[Practice Name]
-                        Dr. [doctor last name]’s Office</label>
+                    <label id="title">
+                        <strong>{{practiceName}}</strong>
+                        <br/>
+                        Dr. {{doctorsLastName}}’s Office
+                    </label>
                 </div>
                 <div class="card-body">
                     <img src="https://drive.google.com/uc?export=view&id=14yPR6Z8coudiAzEMTSVQK80BVyZjjqVg"
@@ -223,7 +226,7 @@
 
 
     export default {
-        props: ['surveydata'],
+        props: ['surveyData'],
 
         components: {
             'mdb-btn': mdbBtn,
@@ -252,8 +255,8 @@
                 shouldShowQuestion: false,
                 questionIndex: 0,
                 progressCount: 0,
-                userId: this.surveydata.id,
-                surveyInstanceId: [],
+                userId: this.surveyData.id,
+                surveyInstanceId: null,
                 questionIndexAnswers: [],
                 surveyAnswers: [],
                 conditionsLength: 0,
@@ -262,7 +265,9 @@
                 error: null,
                 progress: 0,
                 waiting: false,
-
+                practiceId: null,
+                practiceName: null,
+                doctorsLastName: null
             }
         },
 
@@ -274,7 +279,7 @@
             },
 
             lastQuestionAnswered() {
-                return this.surveydata.survey_instances[0].pivot.last_question_answered_id;
+                return this.surveyData.survey_instances[0].pivot.last_question_answered_id;
             },
 
             questionsOrder() {
@@ -428,7 +433,7 @@
 
                 axios.post('/save-answer', {
                     user_id: this.userId,
-                    survey_instance_id: this.surveyInstanceId[0],
+                    survey_instance_id: this.surveyInstanceId,
                     question_id: questionId,
                     question_type_answer_id: questionTypeAnswerId,
                     value: answer,
@@ -523,12 +528,16 @@
 
         },
         mounted() {
-
-            const surveyInstanceId = this.surveydata.survey_instances.map(q => q.id);
-            this.surveyInstanceId.push(...surveyInstanceId);
         },
         created() {
-            const questionsData = this.surveydata.survey_instances[0].questions.map(function (q) {
+
+            this.practiceId = this.surveyData.primary_practice.id;
+            this.practiceName = this.surveyData.primary_practice.display_name;
+            this.doctorsLastName = this.surveyData.billing_provider[0].user.last_name;
+
+            this.surveyInstanceId = this.surveyData.survey_instances[0].id
+
+            const questionsData = this.surveyData.survey_instances[0].questions.map(function (q) {
                 const result = Object.assign(q, {answer_types: [q.answer_type]});
                 return result;
             });
@@ -537,7 +546,7 @@
             this.questions.push(...questionsData);
             this.subQuestions.push(...subQuestions);
 
-            const surveyAnswers = this.surveydata.answers;
+            const surveyAnswers = this.surveyData.answers;
             this.surveyAnswers.push(...surveyAnswers);
         },
 

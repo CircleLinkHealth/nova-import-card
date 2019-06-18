@@ -14,7 +14,7 @@
                     </div>
                     <div class="align-items-center">
                         <div class="survey-sub-welcome-text">
-                            Here is the form to fill out (Patient’s Name) Vitals. Once completed, a PPP will be
+                            Here is the form to fill out {{patientName}}'s Vitals. Once completed, a PPP will be
                             generated
                             for both the patient and practice, as well as a Provider Report for the doctor to evaluate.
                         </div>

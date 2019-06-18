@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SurveyAuthLoginRequest;
 use App\InvitationLink;
-use App\Question;
 use App\Services\SurveyInvitationLinksService;
 use App\Services\SurveyService;
 use Illuminate\Http\Request;
@@ -86,6 +85,7 @@ class InvitationLinksController extends Controller
     {
         $this->service->createAndSaveUrl($userId);
 
+        //fixme: show a success page
         return 'New link is on its way';
     }
 
@@ -97,9 +97,11 @@ class InvitationLinksController extends Controller
                                         ->firstOrFail();
 
         if ($invitationLink->patientInfo->birth_date != $request->input('birth_date')) {
+            //fixme: redirect back with errors
             return 'Date of birth is wrong';
         }
         if ($invitationLink->patientInfo->user->display_name != $request->input('name')) {
+            //fixme: redirect back with errors
             return 'Name does not exists in our DB';
         }
         $userId       = $invitationLink->patientInfo->user_id;
@@ -111,12 +113,16 @@ class InvitationLinksController extends Controller
 
         if ($isExpiredUrl || $urlUpdatedAt->diffInDays($today) > $expireRange) {
             $invitationLink->where('is_manually_expired', '=', 0)->update(['is_manually_expired' => true]);
-
+            //fixme: should redirect
             return view('surveyUrlAuth.resendUrl', compact('userId'));
         }
-        $surveyData = $this->surveyService->getSurveyData($userId, $surveyId);
 
-        return view('surveyQuestionnaire.surveyQuestions', compact('ordered', 'surveyData'));
+        return redirect()->route('survey.hra',
+            [
+                'practiceId' => $invitationLink->patientInfo->user->program_id,
+                'patientId'  => $userId,
+                'surveyId'   => $surveyId,
+            ]);
     }
 
 }
