@@ -118,7 +118,6 @@ class NursePerformanceRepController extends Controller
         $days           = $this->getDaysBetweenPeriodRange($startDate, $endDate);
         $nurses         = $this->service->manipulateData($days);
         $nurseDailyData = $this->getNursesDailyData($nurses);
-//        $nurseDailyTotals = $this->getNursesDailyTotals($nurses);
 
         return collect($nurseDailyData);
     }
@@ -153,14 +152,19 @@ class NursePerformanceRepController extends Controller
                 ++$n;
             }
         }
+//        $nurseDailyData['totals'] = $this->getNursesDailyTotals($nurses);
 
         return $nurseDailyData;
+//        return collect(
+//            [
+//                'nurseMetrics' => $nurseDailyData,
+//                'totals'       => $nurseDailyData['totals'],
+//            ]
+//        );
     }
 
     /**
      * @param Collection $nurses
-     * @param mixed      $reportPerDay
-     * @param mixed      $dates
      *
      * @return array
      */
@@ -252,9 +256,10 @@ class NursePerformanceRepController extends Controller
      * @return array|RedirectResponse
      */
     public function setDates(Request $request, Carbon $yesterdayDate)
-    {//set dates
+    {
         $request->has('start_date') && $request->has('end_date')
-            ? [
+            ?
+            [
                 $startDate = Carbon::parse($request['start_date']),
                 $endDate = Carbon::parse($request['end_date']),
             ]
@@ -264,11 +269,7 @@ class NursePerformanceRepController extends Controller
                 $startDate = $yesterdayDate->copy()->startOfDay(),
             ];
 
-        if ($endDate->gte(today()->startOfDay())) {
-            $messages['errors'][] = 'Please input a past date';
-
-            return redirect()->back()->withErrors($messages);
-        }
+        $this->validateInputDate($startDate, $endDate);
 
         return [
             'startDate' => $startDate,
@@ -285,5 +286,20 @@ class NursePerformanceRepController extends Controller
     {
         return array_key_exists('surplusShortfallHours', $reportPerDay)
             ? $reportPerDay['surplusShortfallHours'] : 'N/A';
+    }
+
+    /**
+     * @param Carbon $startDate
+     * @param Carbon $endDate
+     *
+     * @return RedirectResponse
+     */
+    public function validateInputDate(Carbon $startDate, Carbon $endDate)
+    {
+        if ($endDate->gte(today()->startOfDay()) || $startDate->gte(today()->startOfDay())) {
+            $messages['errors'][] = 'Please input a past date';
+
+            return redirect()->back()->withErrors($messages);
+        }
     }
 }

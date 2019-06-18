@@ -46,10 +46,8 @@
             $(function () {
                 var groupColumn = 1;
                 $('#nurse_weekly').DataTable({
-
                     "columnDefs": [
                         {
-                            // "visible": false,
                             "targets": groupColumn,
                             className: 'left_columns_border'
                         }
@@ -67,33 +65,36 @@
                     orderFixed: [1, 'asc'],
 
                     ajax: {
-                        "url": '{!! route('admin.reports.nurse.performance.data') !!}',
-                        "type": "GET",
-                        "data": function (d) {
+                        url: '{!! route('admin.reports.nurse.performance.data') !!}',
+                        type: "GET",
+                        data: function (d) {
                             d.start_date = '{{$startDate}}';
                             d.end_date = '{{$endDate}}';
                         },
-                        "error": function (){
+                        error: function () {
+                            //not always shows accurate response.
                             alert("File does not exist for: '{{$startDate->format('l F jS')}}'")
-                        }
-                    },
-                    columns: [
-                        {data: 'name', name: 'name'},
-                        {data: 'weekDay', name: 'weekDay'},
-                        {data: 'scheduledCalls', name: 'scheduledCalls'},
-                        {data: 'actualCalls', name: 'actualCalls'},
-                        {data: 'successful', name: 'successful'},
-                        {data: 'unsuccessful', name: 'unsuccessful'},
-                        {data: 'actualHours', name: 'actualHours'},
-                        {data: 'committedHours', name: 'committedHours'},
-                        {data: 'completionRate', name: 'completionRate'},
-                        {data: 'efficiencyIndex', name: 'efficiencyIndex'},
-                        {data: 'caseLoadNeededToComplete', name: 'caseLoadNeededToComplete'},
-                        {data: 'hoursCommittedRestOfMonth', name: 'hoursCommittedRestOfMonth'},
-                        {data: 'surplusShortfallHours', name: 'surplusShortfallHours'},
-                        {data: 'caseLoadComplete', name: 'caseLoadComplete'},
+                        },
 
-                    ],
+                    },
+                    columns:
+                        [
+                            {data: 'name', name: 'name'},
+                            {data: 'weekDay', name: 'weekDay'},
+                            {data: 'scheduledCalls', name: 'scheduledCalls'},
+                            {data: 'actualCalls', name: 'actualCalls'},
+                            {data: 'successful', name: 'successful'},
+                            {data: 'unsuccessful', name: 'unsuccessful'},
+                            {data: 'actualHours', name: 'actualHours'},
+                            {data: 'committedHours', name: 'committedHours'},
+                            {data: 'completionRate', name: 'completionRate'},
+                            {data: 'efficiencyIndex', name: 'efficiencyIndex'},
+                            {data: 'caseLoadNeededToComplete', name: 'caseLoadNeededToComplete'},
+                            {data: 'hoursCommittedRestOfMonth', name: 'hoursCommittedRestOfMonth'},
+                            {data: 'surplusShortfallHours', name: 'surplusShortfallHours'},
+                            {data: 'caseLoadComplete', name: 'caseLoadComplete'}
+                        ],
+
 
                 });
             });
