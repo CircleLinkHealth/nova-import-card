@@ -69,8 +69,8 @@ class NursesAndStatesDailyReportService
                     $info->where('status', 'active')
                         //remember Raph asking to exclude demo nurses (still keeping for test environments)
                         ->when(app()->environment(['production', 'worker']), function ($info) {
-                             $info->where('is_demo', false);
-                         });
+                            $info->where('is_demo', false);
+                        });
                 }
             )
             ->chunk(
@@ -165,7 +165,7 @@ class NursesAndStatesDailyReportService
             'nurse_full_name' => $nurse->getFullName(),
             'systemTime'      => $systemTime,
             'actualHours'     => round((float) ($systemTime / 3600), 1),
-            'committedHours'  => $nurse->nurseInfo->isOnHoliday($date)
+            'committedHours'  => $nurse->nurseInfo->isOnHoliday($date, $this->companyHolidays)
                 ? 0
                 : $nurse->nurseInfo->getHoursCommittedForCarbonDate($date),
             'scheduledCalls'                 => $nurse->countScheduledCallsFor($date),
@@ -233,7 +233,7 @@ class NursesAndStatesDailyReportService
                 round(
                     (float) (100 * (
                         (floatval($this->successfulCallsMultiplier) * $data['successful']) + (floatval(
-                                $this->unsuccessfulCallsMultiplier
+                            $this->unsuccessfulCallsMultiplier
                                                                                                   ) * $data['unsuccessful'])
                         ) / $data['actualHours'])
                 )
@@ -335,11 +335,13 @@ class NursesAndStatesDailyReportService
                 ->where('day_of_week', carbonToClhDayOfWeek($mutableDate->dayOfWeek))
                 ->first();
 
-            if ($window && ! $nurseInfo->isOnHoliday($date, $this->companyHolidays)) {
-                $committedDays->push($date);
+            if ($window && ! $nurseInfo->isOnHoliday($mutableDate, $this->companyHolidays)) {
+                //pushing date as a string, because if we leave it as carbon, it gets mutated within the collection, resulting in all entries to be the same date.
+                $committedDays->push($mutableDate->toDateTimeString());
             }
 
             ++$loopCount;
+            $mutableDate->subDay();
         }
 
         return $committedDays;
@@ -414,11 +416,10 @@ class NursesAndStatesDailyReportService
                 NursesAndStatesDailyReportService::LAST_COMMITTED_DAYS_TO_GO_BACK
             )
                 ->sortBy(function ($date) {
-                                      return $date;
-                                  });
+                    return $date;
+                });
         } catch (\Exception $e) {
-            //todo: fix exception
-            \Log::error('');
+            \Log::error("{$e->getMessage()}");
         }
 
         if ($committedDays->isEmpty()) {
@@ -426,7 +427,7 @@ class NursesAndStatesDailyReportService
         }
 
         $first                              = $committedDays->first();
-        $totalSeconds                       = $this->getTotalSecondsInSystemSince($nurse, $first);
+        $totalSeconds                       = $this->getTotalSecondsInSystemSince($nurse, Carbon::parse($first));
         $avgSeconds                         = $totalSeconds / $committedDays->count();
         $this->avgHoursWorkedLast10Sessions = $avgSeconds / 3600;
 
@@ -463,19 +464,19 @@ class NursesAndStatesDailyReportService
     {
         return \DB::table('calls')
             ->select(
-                      \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
-                      \DB::raw(
+                \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
+                \DB::raw(
                           'GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60 as patient_time'
                       ),
-                      \DB::raw(
+                \DB::raw(
                           "({$this->timeGoal} - (GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60)) as patient_time_left"
                       ),
-                      'no_of_successful_calls as successful_calls'
+                'no_of_successful_calls as successful_calls'
                   )
             ->leftJoin('users', 'users.id', '=', 'calls.inbound_cpm_id')
             ->leftJoin('patient_monthly_summaries', 'users.id', '=', 'patient_monthly_summaries.patient_id')
             ->whereRaw(
-                      "(
+                "(
 (
 DATE(calls.scheduled_date) >= DATE('{$date->copy()->startOfMonth()->toDateString()}')
 AND
