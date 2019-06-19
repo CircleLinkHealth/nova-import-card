@@ -399,6 +399,9 @@
                         if (error.response && error.response.status === 404) {
                             this.error = "Not Found [404]";
                         }
+                        else if (error.response && error.response.status === 419) {
+                            this.error = "Not Authenticated [419]";
+                        }
                         else if (error.response && error.response.data) {
                             const errors = [error.response.data.message];
                             Object.keys(error.response.data.errors || []).forEach(e => {

@@ -41,7 +41,7 @@
                 class="next-btn"
                 name="number"
                 id="number"
-                :disabled="!hasTypedTwoNumbers"
+                :disabled="!hasAnyInput"
                 @click="handleAnswer()">
             {{isLastQuestion ? 'Complete' : 'Next'}}
             <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
@@ -81,8 +81,8 @@
                 return 'parts-' + this.questionSubParts.length;
             },
 
-            hasTypedTwoNumbers() {
-                return this.inputNumbers[0].length > 1 ? this.showNextButton = true : this.showNextButton = false;
+            hasAnyInput() {
+                return this.inputNumbers[0].length > 0 ? this.showNextButton = true : this.showNextButton = false;
             },
 
             hasAnswerType() {
@@ -133,7 +133,7 @@
 
         methods: {
             handleAnswer() {
-                if (!this.hasTypedTwoNumbers) {
+                if (!this.hasAnyInput) {
                     return;
                 }
 
