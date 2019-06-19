@@ -273,6 +273,7 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
     }
 
     /**
+     *
      * Contact Windows (Schedule).
      * These are the time-frames per day of the week that the nurse scheduled to work.
      * These are not the 'hours commited' per day.
