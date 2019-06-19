@@ -152,15 +152,8 @@ class NursePerformanceRepController extends Controller
                 ++$n;
             }
         }
-//        $nurseDailyData['totals'] = $this->getNursesDailyTotals($nurses);
 
         return $nurseDailyData;
-//        return collect(
-//            [
-//                'nurseMetrics' => $nurseDailyData,
-//                'totals'       => $nurseDailyData['totals'],
-//            ]
-//        );
     }
 
     /**
@@ -187,7 +180,6 @@ class NursePerformanceRepController extends Controller
                 $nurseDailyTotals[$n]['hoursCommittedRestOfMonth'] = $totalsForDay->has('hoursCommittedRestOfMonth') ? $totalsForDay['hoursCommittedRestOfMonth'] : 'N/A';
                 $nurseDailyTotals[$n]['surplusShortfallHours']     = $totalsForDay->has('surplusShortfallHours') ? $totalsForDay['surplusShortfallHours'] : 'N/A';
                 $nurseDailyTotals[$n]['caseLoadComplete']          = $totalsForDay->has('caseLoadComplete') ? $totalsForDay['caseLoadComplete'] : 'N/A';
-
                 ++$n;
             }
         }
