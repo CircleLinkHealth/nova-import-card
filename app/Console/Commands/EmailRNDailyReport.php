@@ -110,13 +110,6 @@ class EmailRNDailyReport extends Command
 
                         $nextUpcomingWindow = $reportDataForNurse['nextUpcomingWindow'];
 
-                        if ($nextUpcomingWindow) {
-                            $carbonDate = Carbon::parse($nextUpcomingWindow['date']);
-                            $nextUpcomingWindowLabel = clhDayOfWeekToDayName(
-                                $nextUpcomingWindow['day_of_week']
-                                                       )." {$carbonDate->format('m/d/Y')}";
-                        }
-
                         $data = [
                             'name'                         => $nurse->getFullName(),
                             'completionRate'               => $reportDataForNurse['completionRate'],
@@ -126,12 +119,12 @@ class EmailRNDailyReport extends Command
                             'hoursCommittedRestOfMonth'    => $reportDataForNurse['hoursCommittedRestOfMonth'],
                             'surplusShortfallHours'        => $reportDataForNurse['surplusShortfallHours'],
                             'projectedHoursLeftInMonth'    => $reportDataForNurse['projectedHoursLeftInMonth'],
+                            'avgHoursWorkedLast10Sessions' => $reportDataForNurse['avgHoursWorkedLast10Sessions'],
                             'totalEarningsThisMonth'       => $totalEarningsThisMonth,
                             'totalTimeInSystemOnGivenDate' => $totalTimeInSystemOnGivenDate,
                             'totalTimeInSystemThisMonth'   => $totalTimeInSystemThisMonth,
-                            'nextWindowCarbonDate'         => $carbonDate ?? null,
-                            'nextUpcomingWindowLabel'      => $nextUpcomingWindowLabel ?? null,
-                            'totalHours'                   => $reportDataForNurse['committedHours'],
+                            'nextUpcomingWindowLabel'      => $reportDataForNurse['nextUpcomingWindowLabel'],
+                            'totalHours'                   => $reportDataForNurse['totalHours'],
                             'windowStart'                  => $nextUpcomingWindow
                                 ? Carbon::parse($nextUpcomingWindow['window_time_start'])->format('g:i A T')
                                 : null,

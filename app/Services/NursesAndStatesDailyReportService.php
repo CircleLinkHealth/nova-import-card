@@ -10,7 +10,6 @@ use App\Exceptions\FileNotFoundException;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CompanyHoliday;
 use CircleLinkHealth\Customer\Entities\Nurse;
-use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\TotalTimeAggregator;
@@ -58,6 +57,7 @@ class NursesAndStatesDailyReportService
                             [
                                 'windows',
                                 'holidays',
+                                'workhourables',
                             ]
                         );
                     },
@@ -69,8 +69,8 @@ class NursesAndStatesDailyReportService
                     $info->where('status', 'active')
                         //remember Raph asking to exclude demo nurses (still keeping for test environments)
                         ->when(app()->environment(['production', 'worker']), function ($info) {
-                            $info->where('is_demo', false);
-                        });
+                             $info->where('is_demo', false);
+                         });
                 }
             )
             ->chunk(
@@ -159,7 +159,6 @@ class NursesAndStatesDailyReportService
     {
         $systemTime       = $this->getAggregatedTime($nurse);
         $patientsForMonth = $this->getUniquePatientsAssignedForNurseForMonth($nurse, $date);
-        $nurseWindows     = $nurse->nurseInfo->windows;
 
         $data = [
             'nurse_id'        => $nurse->id,
@@ -168,17 +167,7 @@ class NursesAndStatesDailyReportService
             'actualHours'     => round((float) ($systemTime / 3600), 1),
             'committedHours'  => $nurse->nurseInfo->isOnHoliday($date)
                 ? 0
-                : round(
-                    (float) $nurseWindows->where(
-                        'day_of_week',
-                        carbonToClhDayOfWeek($date->dayOfWeek)
-                    )->sum(
-                        function ($window) {
-                            return $window->numberOfHoursCommitted();
-                        }
-                    ),
-                    2
-                ),
+                : $nurse->nurseInfo->getHoursCommittedForCarbonDate($date),
             'scheduledCalls'                 => $nurse->countScheduledCallsFor($date),
             'actualCalls'                    => $nurse->countCompletedCallsFor($date),
             'successful'                     => $nurse->countSuccessfulCallsFor($date),
@@ -193,20 +182,37 @@ class NursesAndStatesDailyReportService
         $data['caseLoadComplete']          = $this->percentageCaseLoadComplete($patientsForMonth);
         $data['caseLoadNeededToComplete']  = $this->estHoursToCompleteCaseLoadMonth($patientsForMonth);
         $data['hoursCommittedRestOfMonth'] = $this->getHoursCommittedRestOfMonth(
-            $nurseWindows,
+            $nurse,
             $nurse->nurseInfo->upcomingHolidaysFrom($date),
             $date
         );
-        $data['surplusShortfallHours'] = $data['hoursCommittedRestOfMonth'] - $data['caseLoadNeededToComplete'];
 
         //only for EmailRNDailyReport
-        $data['nextUpcomingWindow'] = optional($nurse->nurseInfo->firstWindowAfter($date->copy()))->toArray();
+        $nextUpcomingWindow = $nurse->nurseInfo->firstWindowAfter(Carbon::now());
 
-        $data['projectedHoursLeftInMonth'] = $this->getProjectedHoursLeftInMonth($nurse, $date->copy()) ?? 'NA';
+        if ($nextUpcomingWindow) {
+            $carbonDate              = Carbon::parse($nextUpcomingWindow->date);
+            $nextUpcomingWindowLabel = clhDayOfWeekToDayName(
+                $nextUpcomingWindow->day_of_week
+                                       )." {$carbonDate->format('m/d/Y')}";
+        }
+
+        $workHours  = $nurse->nurseInfo->workhourables->first();
+        $totalHours = $workHours && $nextUpcomingWindow
+            ? (string) $workHours->{strtolower(
+                clhDayOfWeekToDayName($nextUpcomingWindow->day_of_week)
+            )}
+            : null;
+
+        $data['nextUpcomingWindow']      = $nextUpcomingWindow;
+        $data['totalHours']              = $totalHours;
+        $data['nextUpcomingWindowLabel'] = $nextUpcomingWindowLabel ?? null;
+
+        $data['projectedHoursLeftInMonth'] = $this->getProjectedHoursLeftInMonth($nurse, $date->copy()) ?? 0;
 
         $data['avgHoursWorkedLast10Sessions'] = $this->avgHoursWorkedLast10Sessions;
 
-        //TODO: to be added -> unsuccessful calls avg. time
+        $data['surplusShortfallHours'] = $data['projectedHoursLeftInMonth'] - $data['caseLoadNeededToComplete'];
 
         return collect($data);
     }
@@ -227,7 +233,7 @@ class NursesAndStatesDailyReportService
                 round(
                     (float) (100 * (
                         (floatval($this->successfulCallsMultiplier) * $data['successful']) + (floatval(
-                            $this->unsuccessfulCallsMultiplier
+                                $this->unsuccessfulCallsMultiplier
                                                                                                   ) * $data['unsuccessful'])
                         ) / $data['actualHours'])
                 )
@@ -273,7 +279,7 @@ class NursesAndStatesDailyReportService
      *
      * @return int
      */
-    public function getHoursCommittedRestOfMonth($nurseWindows, $upcomingHolidays, Carbon $date)
+    public function getHoursCommittedRestOfMonth(User $nurse, $upcomingHolidays, Carbon $date)
     {
         $diff = $date->diffInDays($date->copy()->endOfMonth());
 
@@ -286,11 +292,7 @@ class NursesAndStatesDailyReportService
 
             //we count the hours only if the nurse has not scheduled a holiday for that day.
             if ( ! $isHolidayForDate) {
-                $hours[] = $nurseWindows
-                    ->where('day_of_week', carbonToClhDayOfWeek($mutableDate->dayOfWeek))
-                    ->sum(function (NurseContactWindow $window) {
-                        return $window->numberOfHoursCommitted();
-                    });
+                $hours[] = $nurse->nurseInfo->getHoursCommittedForCarbonDate($date);
             }
 
             $mutableDate->addDay();
@@ -412,10 +414,11 @@ class NursesAndStatesDailyReportService
                 NursesAndStatesDailyReportService::LAST_COMMITTED_DAYS_TO_GO_BACK
             )
                 ->sortBy(function ($date) {
-                    return $date;
-                });
+                                      return $date;
+                                  });
         } catch (\Exception $e) {
-            //todo: Log exception
+            //todo: fix exception
+            \Log::error('');
         }
 
         if ($committedDays->isEmpty()) {
@@ -460,19 +463,19 @@ class NursesAndStatesDailyReportService
     {
         return \DB::table('calls')
             ->select(
-                \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
-                \DB::raw(
+                      \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
+                      \DB::raw(
                           'GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60 as patient_time'
                       ),
-                \DB::raw(
+                      \DB::raw(
                           "({$this->timeGoal} - (GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60)) as patient_time_left"
                       ),
-                'no_of_successful_calls as successful_calls'
+                      'no_of_successful_calls as successful_calls'
                   )
             ->leftJoin('users', 'users.id', '=', 'calls.inbound_cpm_id')
             ->leftJoin('patient_monthly_summaries', 'users.id', '=', 'patient_monthly_summaries.patient_id')
             ->whereRaw(
-                "(
+                      "(
 (
 DATE(calls.scheduled_date) >= DATE('{$date->copy()->startOfMonth()->toDateString()}')
 AND
