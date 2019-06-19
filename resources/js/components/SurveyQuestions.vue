@@ -454,9 +454,9 @@
                                 //to previous question. If these lines are commented out, the `go to previous`
                                 //does not work!
                                 //NOTE
-                                this.currentQuestionIndex = this.currentQuestionIndex + 1;
+                                this.currentQuestionIndex = this.currentQuestionIndex - 1;
                                 this.$nextTick().then(() => {
-                                    this.currentQuestionIndex = this.currentQuestionIndex - 1;
+                                    this.currentQuestionIndex = this.currentQuestionIndex + 1;
                                 });
                             });
 
@@ -838,6 +838,5 @@
         font-weight: normal;
         color: #1a1a1a;
     }
-
 
 </style>

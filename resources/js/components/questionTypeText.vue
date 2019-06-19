@@ -10,6 +10,8 @@
                        :placeholder="placeholder">
             </div>
 
+            <br/>
+
             <!--add single input fields button-->
             <div v-for="extraFieldButtonName in extraFieldButtonNames">
                 <div v-if="canAddInputFields">
@@ -20,7 +22,7 @@
                     </button>
                 </div>
                 <!--add remove input fields button-->
-                <div v-if="canRemoveInputFields">
+                <div v-if="placeholderForSingleQuestion.length > 1">
                     <button type="button"
                             @click="removeSingleInputFields()"
                             class="btn-primary">
@@ -33,37 +35,46 @@
         <template v-else>
 
             <!--question with sub_parts-->
-            <div class="row">
-                <div v-for="(subPartArr, index) in subParts">
-                    <div v-for="(subPart, innerIndex) in subPartArr" :key="innerIndex" style="margin-left: 15%;">
-                        <label class="label">{{subPart.title}}</label><br>
-                        <input type="text"
-                               class="text-field"
-                               v-model="subPart.value"
-                               :placeholder="subPart.placeholder"
-                               :disabled="!isActive">
-                    </div>
+            <div class="row"
+                 v-for="(subPartArr, index) in subParts">
+                <div v-for="(subPart, innerIndex) in subPartArr"
+                     :class="subPartsClass"
+                     :key="innerIndex">
+                    <label class="label">{{subPart.title}}</label><br>
+                    <input type="text"
+                           class="text-field"
+                           v-model="subPart.value"
+                           :placeholder="subPart.placeholder"
+                           :disabled="!isActive">
                 </div>
-            </div>
-            <!--add input fields button-->
-            <div v-for="extraFieldButtonName in extraFieldButtonNames">
-                <div v-if="canAddInputFields">
 
-                    <button type="button"
-                            @click="addInputFields(extraFieldButtonName.sub_parts)"
-                            class="btn-add-field">
-                        {{extraFieldButtonName.add_extra_answer_text}}
-                    </button>
-                </div>
                 <!--remove input fields button-->
-                <div v-if="canRemoveInputFields">
-                    <button type="button"
-                            @click="removeInputFields()"
-                            class="btn-primary">
+                <div v-if="subParts.length > 1"
+                     class="col-md-12"
+                     v-for="extraFieldButtonName in extraFieldButtonNames">
+                    <span @click="removeInputFields(index)"
+                          class="button-text-only remove">
                         {{extraFieldButtonName.remove_extra_answer_text}}
-                    </button>
+                    </span>
+                </div>
+
+                <br/>
+                <br/>
+            </div>
+
+            <br/>
+
+            <!--add input fields button-->
+            <div class="row" v-if="canAddInputFields">
+                <div v-for="extraFieldButtonName in extraFieldButtonNames"
+                     class="col-md-12">
+                    <span class="button-text-only"
+                          @click="addInputFields(extraFieldButtonName.sub_parts)">
+                        {{extraFieldButtonName.add_extra_answer_text}}
+                    </span>
                 </div>
             </div>
+
 
         </template>
 
@@ -77,7 +88,7 @@
                     class="next-btn"
                     name="number"
                     id="number"
-                    :disabled="!hasTypedInTwoFields"
+                    :disabled="!(hasTypedInTwoFields || hasTypedInSubParts)"
                     @click="handleAnswer()">
                 {{isLastQuestion ? 'Complete' : 'Next'}}
                 <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
@@ -106,8 +117,8 @@
                 inputHasText: [],
                 questionOptions: [],
                 subParts: [],
+                subPartsClass: 'col-md-6',
                 extraFieldButtonNames: [],
-                canRemoveInputFields: false,
                 canAddInputFields: false,
                 showNextButton: false,
                 placeholderForSingleQuestion: [],
@@ -120,6 +131,10 @@
 
             hasTypedInTwoFields() {
                 return this.inputHasText.length > 1;
+            },
+
+            hasTypedInSubParts() {
+                return this.subParts.length && this.subParts[0][0].value.length > 1 && this.subParts[0][1].value.length > 1;
             },
 
             hasTypedTwoCharacters() {
@@ -210,36 +225,29 @@
 
             addInputField(placeholder) {
                 this.placeholderForSingleQuestion.push(placeholder);
-                this.canRemoveInputFields = true;
             },
 
-            addInputFields(extraFieldSubParts) {
+            addInputFields(extraFieldSubParts, values) {
 
-                const subQuestions = extraFieldSubParts;
-                // this.subParts.push(...subQuestions);
-                const fields = subQuestions.map(x => {
-                    return Object.assign({}, x, {value: ''});
-                });
-                this.subParts.push(fields);
-
-                /*
-                const subParts = extraFieldSubParts.map(q => q);
-                for (let j = 0; j < subParts.length; j++) {
-                    const subPart = subParts[j];
-                    this.subParts.push({
-                        title: subPart.title,
-                        placeholder: subPart.placeholder,
-                        key: subPart.key
+                if (values) {
+                    values.forEach((v) => {
+                        const fields = extraFieldSubParts.map((x) => {
+                            return Object.assign({}, x, {value: v[x.key] || ''});
+                        });
+                        this.subParts.push(fields);
                     });
-                }
-                */
 
-                this.canRemoveInputFields = true;
+                }
+                else {
+                    const fields = extraFieldSubParts.map((x) => {
+                        return Object.assign({}, x, {value: ''});
+                    });
+                    this.subParts.push(fields);
+                }
 
             },
-            /*@todo:delete answer also*/
-            removeInputFields(index) {//index is undefined. if it is defined it doesn't work. Can anyone clarify pls?
-                // this.subParts.splice(index, 2);
+
+            removeInputFields(index) {
                 this.subParts.splice(index, 1);
             },
 
@@ -286,36 +294,23 @@
             }
 
             /*sets canAddInputField data*/
-            if (this.hasAnswerType) {
-                return this.questionOptions[0].allow_multiple === true ? this.canAddInputFields = true : this.canAddInputFields = false;
+            this.canAddInputFields = this.hasAnswerType && this.questionOptions[0].allow_multiple;
+
+            if (this.question.answer && this.question.answer.value) {
+                if (this.questionHasSubParts) {
+                    this.subParts = [];
+                    this.addInputFields(this.questionOptions[0].sub_parts, this.question.answer.value);
+                }
+                else {
+                    //todo
+                }
             }
-            return false;
+
         },
     }
 </script>
 
 <style scoped>
-    .next-btn {
-        width: 120px;
-        height: 40px;
-        border-radius: 5px;
-        border: solid 1px #4aa5d2;
-        background-color: #50b2e2;
-    }
-
-    .btn-add-field {
-        width: 271px;
-        height: 40px;
-        font-family: Poppins;
-        font-size: 24px;
-        font-weight: 500;
-        font-style: normal;
-        font-stretch: normal;
-        line-height: normal;
-        letter-spacing: 1.3px;
-        color: #50b2e2;
-
-    }
 
     .text-field {
         border: none;
@@ -329,7 +324,7 @@
     .label {
         width: 64px;
         height: 40px;
-        font-family: Poppins;
+        font-family: Poppins, serif;
         font-size: 20px;
         font-weight: 500;
         font-style: normal;
@@ -353,5 +348,21 @@
     .fa, .fas {
         color: #50b2e2;
         font-weight: unset;
+    }
+
+    span.button-text-only {
+        cursor: pointer;
+        font-family: Poppins, serif;
+        font-size: 24px;
+        font-weight: 500;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: normal;
+        letter-spacing: 1.33px;
+        color: #50b2e2;
+    }
+
+    span.button-text-only.remove {
+        color: #ff6e6e;
     }
 </style>

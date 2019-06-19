@@ -2,13 +2,17 @@
 
     <div class="custom-checkbox">
         <div class="row">
-            <div v-for="(checkBox, index) in checkBoxValues">
-                <label v-show="checkBox.value !== null">
+            <div v-for="(checkBox, index) in checkBoxValues" class="col-md-6">
+                <label v-show="checkBox.value !== null" :for="checkBox.id">
                     <input class="checkbox checkbox-info checkbox-circle"
                            type="checkbox"
-                           v-model="checkBox.checked"> <span
-                        style="padding-left:1%">{{checkBox.value}}</span>
-                </label> <br>
+                           :id="checkBox.id"
+                           :name="checkBox.id"
+                           v-model="checkBox.checked">
+                    <span style="padding-left:1%">{{checkBox.value}}</span>
+                </label>
+
+                <br/>
 
                 <div v-if="hasCustomInputAndIsChecked(checkBox) || hasCustomInputSingleCase(checkBox)">
                     <input class="text-field"
@@ -181,13 +185,6 @@
 </script>
 
 <style scoped>
-    .next-btn {
-        width: 120px;
-        height: 40px;
-        border-radius: 5px;
-        border: solid 1px #4aa5d2;
-        background-color: #50b2e2;
-    }
 
     .custom-checkbox label {
         width: 420px;
@@ -197,6 +194,15 @@
         background-color: #ffffff;
         padding-top: 3%;
         padding-left: 5%;
+    }
+
+    .custom-checkbox label:hover {
+        border-color: #4aa5d2;
+    }
+
+    .custom-checkbox input:checked + label {
+        background-color: #4aa5d2 !important;
+        color: #ffffff !important;
     }
 
     .btn-primary {
