@@ -46,12 +46,22 @@
         <script>
             $(function () {
                 var columnForBorder = 1;
-                var columnsForTextFormating = [1,2,3,4,5,6,7,8,9,10,11,12,13,14];
+                var columnsForTextFormating = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 
                 $('#nurse_metrics').DataTable({
                     "rowCallback": function (row, data) {
                         if (data.name === "Z - Totals for:") {
-                            $('td:eq(0)', row).css('background-color', '#21F6C4');
+                            $('td:eq(0)', row).css(
+                                {
+                                    'background-color': '#32C132',
+                                }
+                            );
+                        }
+
+                        if (data.surplusShortfallHours < 0) {
+                            $('td:eq(13)', row).css('color', '#FA5353');
+                        } else {
+                            $('td:eq(13)', row).css('color', '#32C132');
                         }
                     },
                     "columnDefs": [
