@@ -7,7 +7,7 @@
 namespace App\Console\Commands;
 
 use App\Notifications\NurseDailyReport;
-use App\Services\NursesAndStatesDailyReportService;
+use App\Services\NursesPerformanceReportService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Console\Command;
@@ -34,7 +34,7 @@ class EmailRNDailyReport extends Command
     /**
      * Create a new command instance.
      */
-    public function __construct(NursesAndStatesDailyReportService $service)
+    public function __construct(NursesPerformanceReportService $service)
     {
         parent::__construct();
 
