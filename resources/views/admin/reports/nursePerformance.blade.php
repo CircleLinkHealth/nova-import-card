@@ -133,11 +133,6 @@
 @stop
 
 <style>
-    tr.group,
-    tr.group:hover {
-        background-color: #71cc85 !important;
-    }
-
     div.dataTables_wrapper {
         width: 100%;
         margin: 0 auto;
