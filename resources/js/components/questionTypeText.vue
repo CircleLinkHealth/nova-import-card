@@ -115,6 +115,8 @@
     library.add(faPlusCircle);
     library.add(faMinusCircle);
 
+    const SINGLE_INPUT_KEY_NAME = "name";
+
     export default {
         name: "questionTypeText",
         props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting'],
@@ -199,21 +201,12 @@
         },
 
         mounted() {
-            /*get placeholder for single question input*/
-            if (this.questionHasPlaceHolderInSubParts && !this.questionHasPlaceHolderInOptions) {
-                const placeholder = this.questionOptions[0].sub_parts.map(q => q.placeholder);
-                this.placeholderForSingleQuestion.push(...placeholder);
-            }
-            if (this.questionHasPlaceHolderInOptions) {
-                const placeholder2 = this.questionOptions[0].placeholder;
-                this.placeholderForSingleQuestion.push(placeholder2);
-            }
         },
 
         methods: {
 
-            addInputField(placeholder) {
-                this.inputHasText.push("");
+            addInputField(placeholder, value) {
+                this.inputHasText.push(value || "");
                 this.placeholderForSingleQuestion.push(placeholder);
             },
 
@@ -250,9 +243,8 @@
                 const answer = [];
                 if (this.subParts.length === 0) {
                     for (let j = 0; j < this.inputHasText.length; j++) {
-                        var values = {
-                            name: this.inputHasText[j]
-                        };
+                        const values = {};
+                        values[SINGLE_INPUT_KEY_NAME] = this.inputHasText[j];
                         answer.push(values);
                     }
                 } else {
@@ -293,7 +285,25 @@
                     this.addInputFields(this.questionOptions[0].sub_parts, this.question.answer.value);
                 }
                 else {
-                    //todo
+                    let placeholder = "";
+                    if (this.extraFieldButtonNames && this.extraFieldButtonNames.length) {
+                        placeholder = this.extraFieldButtonNames[0].placeholder;
+                    }
+
+                    this.question.answer.value.forEach(answer => {
+                        this.addInputField(placeholder, answer[SINGLE_INPUT_KEY_NAME]);
+                    });
+                }
+            }
+            else {
+                /*get placeholder for single question input*/
+                if (this.questionHasPlaceHolderInSubParts && !this.questionHasPlaceHolderInOptions) {
+                    const placeholder = this.questionOptions[0].sub_parts.map(q => q.placeholder);
+                    placeholder.forEach(p => this.addInputField(p));
+                }
+                if (this.questionHasPlaceHolderInOptions) {
+                    const placeholder2 = this.questionOptions[0].placeholder;
+                    this.addInputField(placeholder2);
                 }
             }
 
