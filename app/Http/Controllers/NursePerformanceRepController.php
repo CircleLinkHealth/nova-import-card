@@ -37,7 +37,7 @@ class NursePerformanceRepController extends Controller
      *
      * @return string
      */
-    public function getCaseLoadComplete($reportPerDay)
+    public function caseLoadComplete($reportPerDay)
     {
         return array_key_exists('caseLoadComplete', $reportPerDay)
             ? $reportPerDay['caseLoadComplete'] : 'N/A';
@@ -48,7 +48,7 @@ class NursePerformanceRepController extends Controller
      *
      * @return string
      */
-    public function getCaseLoadNeededToComplete($reportPerDay)
+    public function caseLoadNeededToComplete($reportPerDay)
     {
         return array_key_exists('caseLoadNeededToComplete', $reportPerDay)
             ? $reportPerDay['caseLoadNeededToComplete'] : 'N/A';
@@ -59,10 +59,21 @@ class NursePerformanceRepController extends Controller
      *
      * @return string
      */
-    public function getCompletionRate($reportPerDay)
+    public function completionRate($reportPerDay)
     {
         return array_key_exists('completionRate', $reportPerDay)
             ? $reportPerDay['completionRate'] : 'N/A';
+    }
+
+    /**
+     * @param $reportPerDay
+     *
+     * @return string
+     */
+    public function efficiencyIndex($reportPerDay)
+    {
+        return array_key_exists('efficiencyIndex', $reportPerDay)
+            ? $reportPerDay['efficiencyIndex'] : 'N/A';
     }
 
     /**
@@ -84,17 +95,6 @@ class NursePerformanceRepController extends Controller
     }
 
     /**
-     * @param $reportPerDay
-     *
-     * @return string
-     */
-    public function getEfficiencyIndex($reportPerDay)
-    {
-        return array_key_exists('efficiencyIndex', $reportPerDay)
-            ? $reportPerDay['efficiencyIndex'] : 'N/A';
-    }
-
-    /**
      * @param $dates
      *
      * @return mixed
@@ -109,82 +109,16 @@ class NursePerformanceRepController extends Controller
      *
      * @throws \Exception
      *
-     * @return Collection
+     * @return array
      */
     public function getNursePerformanceData(Request $request)
     {
-        $startDate      = Carbon::parse($request['start_date']);
-        $endDate        = Carbon::parse($request['end_date']);
-        $days           = $this->getDaysBetweenPeriodRange($startDate, $endDate);
-        $nurses         = $this->service->manipulateData($days);
-        $nurseDailyData = $this->getNursesDailyData($nurses);
+        $startDate = Carbon::parse($request['start_date']);
+        $endDate   = Carbon::parse($request['end_date']);
+        $days      = $this->getDaysBetweenPeriodRange($startDate, $endDate);
+        $nurses    = $this->service->manipulateData($days);
 
-        return collect($nurseDailyData);
-    }
-
-    /**
-     * @param Collection $nurses
-     *
-     * @return array
-     */
-    public function getNursesDailyData(Collection $nurses)
-    {
-        $data = $nurses->except('totals');
-        //@todo:one level of indendetion
-        $nurseDailyData = [];
-        $n              = 0;
-        foreach ($data as $name => $report) {
-            foreach ($report as $day => $reportPerDay) {
-                $nurseDailyData[$n]['weekDay']                   = Carbon::parse($day)->copy()->format('D jS');
-                $nurseDailyData[$n]['name']                      = $reportPerDay['nurse_full_name'];
-                $nurseDailyData[$n]['actualHours']               = $reportPerDay['actualHours'];
-                $nurseDailyData[$n]['committedHours']            = $reportPerDay['committedHours'];
-                $nurseDailyData[$n]['scheduledCalls']            = $reportPerDay['scheduledCalls'];
-                $nurseDailyData[$n]['actualCalls']               = $reportPerDay['actualCalls'];
-                $nurseDailyData[$n]['successful']                = $reportPerDay['successful'];
-                $nurseDailyData[$n]['unsuccessful']              = $reportPerDay['unsuccessful'];
-                $nurseDailyData[$n]['completionRate']            = $this->getCompletionRate($reportPerDay);
-                $nurseDailyData[$n]['efficiencyIndex']           = $this->getEfficiencyIndex($reportPerDay);
-                $nurseDailyData[$n]['caseLoadComplete']          = $this->getCaseLoadComplete($reportPerDay);
-                $nurseDailyData[$n]['caseLoadNeededToComplete']  = $this->getCaseLoadNeededToComplete($reportPerDay);
-                $nurseDailyData[$n]['hoursCommittedRestOfMonth'] = $this->hoursCommittedRestOfMonth($reportPerDay);
-                $nurseDailyData[$n]['surplusShortfallHours']     = $this->surplusShortfallHours($reportPerDay);
-                ++$n;
-            }
-        }
-
-        return $nurseDailyData;
-    }
-
-    /**
-     * @param Collection $nurses
-     *
-     * @return array
-     */
-    public function getNursesDailyTotals(Collection $nurses)
-    {
-        $nurseDailyTotals = [];
-        $n                = 0;
-        $totals           = $nurses->only('totals');
-        foreach ($totals as $total => $totalsPerDay) {
-            foreach ($totalsPerDay as $totalsForDay) {
-                $nurseDailyTotals[$n]['scheduledCallsSum']         = $totalsForDay['scheduledCallsSum'];
-                $nurseDailyTotals[$n]['actualCallsSum']            = $totalsForDay['actualCallsSum'];
-                $nurseDailyTotals[$n]['successfulCallsSum']        = $totalsForDay['successfulCallsSum'];
-                $nurseDailyTotals[$n]['unsuccessfulCallsSum']      = $totalsForDay['unsuccessfulCallsSum'];
-                $nurseDailyTotals[$n]['actualHoursSum']            = $totalsForDay['actualHoursSum'];
-                $nurseDailyTotals[$n]['committedHoursSum']         = $totalsForDay['committedHoursSum'];
-                $nurseDailyTotals[$n]['completionRate']            = $totalsForDay->has('completionRate') ? $totalsForDay['completionRate'] : 'N/A';
-                $nurseDailyTotals[$n]['efficiencyIndex']           = $totalsForDay->has('efficiencyIndex') ? $totalsForDay['efficiencyIndex'] : 'N/A';
-                $nurseDailyTotals[$n]['caseLoadNeededToComplete']  = $totalsForDay->has('caseLoadNeededToComplete') ? $totalsForDay['caseLoadNeededToComplete'] : 'N/A';
-                $nurseDailyTotals[$n]['hoursCommittedRestOfMonth'] = $totalsForDay->has('hoursCommittedRestOfMonth') ? $totalsForDay['hoursCommittedRestOfMonth'] : 'N/A';
-                $nurseDailyTotals[$n]['surplusShortfallHours']     = $totalsForDay->has('surplusShortfallHours') ? $totalsForDay['surplusShortfallHours'] : 'N/A';
-                $nurseDailyTotals[$n]['caseLoadComplete']          = $totalsForDay->has('caseLoadComplete') ? $totalsForDay['caseLoadComplete'] : 'N/A';
-                ++$n;
-            }
-        }
-
-        return $nurseDailyTotals;
+        return $this->nursesDataForView($nurses);
     }
 
     /**
@@ -239,6 +173,38 @@ class NursePerformanceRepController extends Controller
     public function nurseMetricsPerformanceData(Request $request)
     {
         return datatables()->collection($this->getNursePerformanceData($request))->make(true);
+    }
+
+    /**
+     * @param Collection $nurses
+     *
+     * @return array
+     */
+    public function nursesDataForView(Collection $nurses)
+    {
+        //@todo:one level of indendetion
+        $nurseDailyData = [];
+        $n              = 0;
+        foreach ($nurses as $name => $report) {
+            foreach ($report as $day => $reportPerDay) {
+                $nurseDailyData[$n]['weekDay']                   = Carbon::parse($day)->copy()->format('D jS');
+                $nurseDailyData[$n]['name']                      = $reportPerDay['nurse_full_name'];
+                $nurseDailyData[$n]['actualHours']               = $reportPerDay['actualHours'];
+                $nurseDailyData[$n]['committedHours']            = $reportPerDay['committedHours'];
+                $nurseDailyData[$n]['scheduledCalls']            = $reportPerDay['scheduledCalls'];
+                $nurseDailyData[$n]['actualCalls']               = $reportPerDay['actualCalls'];
+                $nurseDailyData[$n]['successful']                = $reportPerDay['successful'];
+                $nurseDailyData[$n]['unsuccessful']              = $reportPerDay['unsuccessful'];
+                $nurseDailyData[$n]['completionRate']            = $this->completionRate($reportPerDay);
+                $nurseDailyData[$n]['efficiencyIndex']           = $this->efficiencyIndex($reportPerDay);
+                $nurseDailyData[$n]['caseLoadComplete']          = $this->caseLoadComplete($reportPerDay);
+                $nurseDailyData[$n]['caseLoadNeededToComplete']  = $this->caseLoadNeededToComplete($reportPerDay);
+                $nurseDailyData[$n]['hoursCommittedRestOfMonth'] = $this->hoursCommittedRestOfMonth($reportPerDay);
+                $nurseDailyData[$n]['surplusShortfallHours']     = $this->surplusShortfallHours($reportPerDay);
+                ++$n;
+            }
+        }
+        return $nurseDailyData;
     }
 
     /**
