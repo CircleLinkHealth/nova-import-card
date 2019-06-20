@@ -75,9 +75,11 @@ class NursesAndStatesDailyReportService
             ->chunk(
                 50,
                 function ($nurses) use (&$data, $date) {
-                    $aggregatedTime = app(AggregatedTotalTimePerNurse::class, [$nurses->pluck('id')->all(),
+                    $aggregatedTime = app(AggregatedTotalTimePerNurse::class, [
+                        $nurses->pluck('id')->all(),
                         $date->copy()->startOfDay(),
-                        $date->copy()->endOfDay(), ]);
+                        $date->copy()->endOfDay(),
+                    ]);
 
                     foreach ($nurses as $nurse) {
                         $data[] = $this->getDataForNurse($nurse, $date, $aggregatedTime->totalCcmTime($nurse->id));
