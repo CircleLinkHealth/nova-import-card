@@ -199,12 +199,25 @@ class NursePerformanceRepController extends Controller
                 $nurseDailyData[$n]['efficiencyIndex']           = $this->efficiencyIndex($reportPerDay);
                 $nurseDailyData[$n]['caseLoadComplete']          = $this->caseLoadComplete($reportPerDay);
                 $nurseDailyData[$n]['caseLoadNeededToComplete']  = $this->caseLoadNeededToComplete($reportPerDay);
+                $nurseDailyData[$n]['projectedHoursLeftInMonth'] = $this->projectedHoursLeftInMonth($reportPerDay);
                 $nurseDailyData[$n]['hoursCommittedRestOfMonth'] = $this->hoursCommittedRestOfMonth($reportPerDay);
                 $nurseDailyData[$n]['surplusShortfallHours']     = $this->surplusShortfallHours($reportPerDay);
                 ++$n;
             }
         }
+
         return $nurseDailyData;
+    }
+
+    /**
+     * @param $reportPerDay
+     *
+     * @return string
+     */
+    public function projectedHoursLeftInMonth($reportPerDay)
+    {
+        return array_key_exists('projectedHoursLeftInMonth', $reportPerDay)
+            ? $reportPerDay['projectedHoursLeftInMonth'] : 'N/A';
     }
 
     /**

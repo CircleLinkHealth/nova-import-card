@@ -68,10 +68,10 @@ class NursesPerformanceReportService
                 'nurseInfo',
                 function ($info) {
                     $info->where('status', 'active')
-                        //remember Raph asking to exclude demo nurses (still keeping for test environments)
+                        //(still keeping for test environments)
                         ->when(app()->environment(['production', 'worker']), function ($info) {
-                             $info->where('is_demo', false);
-                         });
+                            $info->where('is_demo', false);
+                        });
                 }
             )
             ->chunk(
@@ -408,8 +408,8 @@ class NursesPerformanceReportService
                 NursesPerformanceReportService::LAST_COMMITTED_DAYS_TO_GO_BACK
             )
                 ->sortBy(function ($date) {
-                                      return $date;
-                                  });
+                    return $date;
+                });
         } catch (\Exception $e) {
             \Log::error("{$e->getMessage()}");
         }
@@ -462,19 +462,19 @@ class NursesPerformanceReportService
     {
         return \DB::table('calls')
             ->select(
-                      \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
-                      \DB::raw(
-                          'GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60 as patient_time'
+                \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
+                \DB::raw(
+                    'GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60 as patient_time'
                 ),
-                      \DB::raw(
-                          "({$this->timeGoal} - (GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60)) as patient_time_left"
+                \DB::raw(
+                    "({$this->timeGoal} - (GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60)) as patient_time_left"
                 ),
-                      'no_of_successful_calls as successful_calls'
+                'no_of_successful_calls as successful_calls'
             )
             ->leftJoin('users', 'users.id', '=', 'calls.inbound_cpm_id')
             ->leftJoin('patient_monthly_summaries', 'users.id', '=', 'patient_monthly_summaries.patient_id')
             ->whereRaw(
-                      "(
+                "(
 (
 DATE(calls.scheduled_date) >= DATE('{$date->copy()->startOfMonth()->toDateString()}')
 AND
@@ -570,6 +570,7 @@ DATE(patient_monthly_summaries.month_year) = DATE('{$date->copy()->startOfMonth(
                 'efficiencyIndex'           => number_format($reportPerDay->avg('efficiencyIndex'), '2'),
                 'caseLoadComplete'          => number_format($reportPerDay->avg('caseLoadComplete'), '2'),
                 'caseLoadNeededToComplete'  => $reportPerDay->sum('caseLoadNeededToComplete'),
+                'projectedHoursLeftInMonth' => number_format($reportPerDay->sum('projectedHoursLeftInMonth'), '2'),
                 'hoursCommittedRestOfMonth' => $reportPerDay->sum('hoursCommittedRestOfMonth'),
                 'surplusShortfallHours'     => $reportPerDay->sum('surplusShortfallHours'),
             ];
@@ -655,6 +656,7 @@ DATE(patient_monthly_summaries.month_year) = DATE('{$date->copy()->startOfMonth(
                     'completionRate'            => $totalsForDay['completionRate'] ?? 'N/A',
                     'efficiencyIndex'           => $totalsForDay['efficiencyIndex'] ?? 'N/A',
                     'caseLoadNeededToComplete'  => $totalsForDay['caseLoadNeededToComplete'] ?? 'N/A',
+                    'projectedHoursLeftInMonth' => $totalsForDay['projectedHoursLeftInMonth'] ?? 'N/A',
                     'hoursCommittedRestOfMonth' => $totalsForDay['hoursCommittedRestOfMonth'] ?? 'N/A',
                     'surplusShortfallHours'     => $totalsForDay['surplusShortfallHours'] ?? 'N/A',
                     'caseLoadComplete'          => $totalsForDay['caseLoadComplete'] ?? 'N/A',

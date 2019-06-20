@@ -10,6 +10,7 @@
         <th>Attendance/Calls Completion Rate</th>
         <th>Efficiency Index</th>
         <th>Est. Hrs to Complete Case Load</th>
+        <th>Projected Hrs. Left In Month</th>
         <th>Hrs Committed Rest of Month</th>
         <th>Hrs Deficit or Surplus</th>
         <th>% Case Load Complete</th>

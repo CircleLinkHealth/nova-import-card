@@ -46,7 +46,7 @@
         <script>
             $(function () {
                 var columnForBorder = 1;
-                var columnsForTextFormating = [1,2,3,4,5,6,7,8,9,10,11,12,13];
+                var columnsForTextFormating = [1,2,3,4,5,6,7,8,9,10,11,12,13,14];
 
                 $('#nurse_metrics').DataTable({
                     "rowCallback": function (row, data) {
@@ -106,6 +106,7 @@
                             {data: 'completionRate', name: 'completionRate'},
                             {data: 'efficiencyIndex', name: 'efficiencyIndex'},
                             {data: 'caseLoadNeededToComplete', name: 'caseLoadNeededToComplete'},
+                            {data: 'projectedHoursLeftInMonth', name: 'projectedHoursLeftInMonth'},
                             {data: 'hoursCommittedRestOfMonth', name: 'hoursCommittedRestOfMonth'},
                             {data: 'surplusShortfallHours', name: 'surplusShortfallHours'},
                             {data: 'caseLoadComplete', name: 'caseLoadComplete'},
