@@ -1,7 +1,7 @@
 <template>
 
     <div class="custom-checkbox">
-        <div class="row">
+        <div class="row no-gutters checkboxes">
             <div v-for="(checkBox, index) in checkBoxValues" class="col-md-6">
                 <label v-show="checkBox.value !== null" :for="checkBox.id">
                     <input class="checkbox checkbox-info checkbox-circle"
@@ -9,7 +9,7 @@
                            :id="checkBox.id"
                            :name="checkBox.id"
                            v-model="checkBox.checked">
-                    <span style="padding-left:1%">{{checkBox.value}}</span>
+                    <span>{{checkBox.value}}</span>
                 </label>
 
                 <br/>
@@ -20,11 +20,16 @@
                            v-model="checkBox.customInput"
                            :disabled="answerChecked && isSingleCustomInput"
                            :placeholder="getCustomInputPlaceholder(checkBox)">
+
+                    <br/>
+                    <br/>
                 </div>
             </div>
 
         </div>
-        <!--next button-->
+
+        <br/>
+
         <mdbBtn v-show="isActive"
                 color="primary"
                 class="next-btn"
@@ -91,8 +96,12 @@
             },
 
             answerChecked() {
-                return this.checkBoxValues.filter(q => q.checked === true).length > 0
-                    || this.checkBoxValues.filter(q => q.customInput.length > 0).length > 0;
+                if (this.hasAnyCustomInputNotFilled()) {
+                    return false;
+                }
+                else {
+                    return this.checkBoxValues.filter(q => q.checked === true).length > 0;
+                }
             },
 
             disableCheckBox() {
@@ -126,6 +135,12 @@
 
             hasCustomInputAndIsChecked(checkBox) {
                 return checkBox.options && !!checkBox.options.allow_custom_input && checkBox.checked;
+            },
+
+            hasAnyCustomInputNotFilled() {
+                return this.checkBoxValues.some(c => {
+                    return this.hasCustomInputAndIsChecked(c) && (c.customInput == null || c.customInput.length === 0);
+                });
             },
 
 
@@ -186,24 +201,59 @@
 
 <style scoped>
 
-    .custom-checkbox label {
-        width: 420px;
+    .custom-checkbox {
+        height: 100%;
+    }
+
+    .checkboxes {
+        overflow-y: auto;
+        height: 100%;
+        max-height: calc(100% - 165px);
+    }
+
+    .checkboxes label {
+        width: 100%;
         height: 55px;
         border-radius: 5px;
         border: solid 1px #f2f2f2;
         background-color: #ffffff;
-        padding-top: 3%;
-        padding-left: 5%;
+        padding-top: 15px;
+        padding-left: 10px;
     }
 
-    .custom-checkbox label:hover {
+    .checkboxes label:hover {
         border-color: #4aa5d2;
     }
 
-    .custom-checkbox input:checked + label {
-        background-color: #4aa5d2 !important;
-        color: #ffffff !important;
+    .checkboxes label > span {
+        /*padding-left: 3px;*/
     }
+
+    /*** custom checkboxes ***/
+    .checkboxes input[type=checkbox] {
+        position: absolute;
+        left: -999px;
+    }
+
+    /* to hide the checkbox itself */
+    .checkboxes label input[type=checkbox] + span:before {
+        background-color: #FFFFFF;
+        color: #50b2e2;
+        font-family: FontAwesome, serif;
+        display: inline-block;
+        content: "\f10c";
+        letter-spacing: 5px;
+        position: relative;
+        font-size: 1.3em;
+        top: 2px;
+    }
+
+    /* space between checkbox and label */
+    .checkboxes label input[type=checkbox]:checked + span:before {
+        content: "\f058";
+    }
+
+    /* allow space for check mark */
 
     .btn-primary {
         background-color: #50b2e2;
@@ -213,6 +263,19 @@
     .btn-primary.disabled {
         opacity: 50%;
         background-color: #50b2e2;
+        border-color: #4aa5d2;
+    }
+
+    .text-field {
+        border: none;
+        border-bottom: solid 1px rgba(0, 0, 0, 0.1);
+        background-color: transparent;
+        outline: 0;
+        width: 300px;
+        height: 30px;
+    }
+
+    .text-field:active, .text-field:focus {
         border-color: #4aa5d2;
     }
 
