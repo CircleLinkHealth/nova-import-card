@@ -44,14 +44,24 @@
 
     @push('scripts')
         <script>
-
             $(function () {
-                var groupColumn = 1;
+                var columnForBorder = 1;
+                var columnsForTextFormating = [1,2,3,4,5,6,7,8,9,10,11,12,13];
                 $('#nurse_metrics').DataTable({
+                    "rowCallback": function (row, data) {
+                        if (data.name === "Z - Totals for:") {
+                            $('td:eq(0)', row).css('background-color', '#21F6C4');
+                        }
+                    },
                     "columnDefs": [
                         {
-                            "targets": groupColumn,
-                            className: 'left_columns_border'
+                            className: 'left_columns_border',
+                            targets: columnForBorder,
+                        },
+
+                        {
+                            className: 'dt-center',
+                            targets: columnsForTextFormating
                         }
                     ],
                     deferRender: true,
@@ -61,10 +71,12 @@
                     processing: true,
                     serverSide: true,
                     paging: false,
+                    //fixed columns disables ability to sort data on demand. Can we fix this?
                     fixedColumns: {
                         leftColumns: 2,
                     },
                     orderFixed: [1, 'asc'],
+
                     ajax: {
                         url: '{!! route('admin.reports.nurse.performance.data') !!}',
                         type: "GET",
@@ -78,6 +90,7 @@
                         },
 
                     },
+
 
                     columns:
                         [
