@@ -11619,7 +11619,7 @@ body,
 }
 
 .questions-body {
-  height: 100%;
+  height: calc(100% - 50px);
 }
 
 .questions-title {
@@ -11643,7 +11643,7 @@ body,
 
 .question-answer-type {
   width: 83%;
-  height: 100%;
+  height: calc(100% - 90px);
   font-size: initial;
   font-weight: 500;
   font-style: normal;

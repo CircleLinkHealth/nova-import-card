@@ -186,6 +186,25 @@
             const options = this.checkBoxValues.filter(checkBoxValue => checkBoxValue.options !== null).map(checkBoxValue => checkBoxValue.options);
             this.questionOptions.push(...options);
 
+            if (this.question.answer && this.question.answer.value) {
+                if (Array.isArray(this.question.answer.value)) {
+                    this.question.answer.value.forEach(answer => {
+                        const cv = this.checkBoxValues.find(c => c.value === answer.name);
+                        if (!cv) {
+                            return;
+                        }
+
+                        cv.checked = true;
+                        if (answer.type) {
+                            cv.customInput = answer.type;
+                        }
+                    });
+                }
+                else {
+                    //todo
+                }
+            }
+
             const cancerTypeInputData = this.questionsWithCustomInput.filter(q => q.value === 'Cancer').map(q => q.options);
             this.cancerInputData.push(...cancerTypeInputData);
 
@@ -208,7 +227,7 @@
     .checkboxes {
         overflow-y: auto;
         height: 100%;
-        max-height: calc(100% - 165px);
+        max-height: calc(100% - 80px);
     }
 
     .checkboxes label {
@@ -271,7 +290,7 @@
         border-bottom: solid 1px rgba(0, 0, 0, 0.1);
         background-color: transparent;
         outline: 0;
-        width: 300px;
+        width: 100%;
         height: 30px;
     }
 

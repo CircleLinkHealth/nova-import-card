@@ -3,31 +3,38 @@
         <!--question without sub_parts-->
         <template v-if="!questionHasSubParts">
 
-            <div v-for="(placeholder, index) in placeholderForSingleQuestion">
-                <input type="text"
-                       class="text-field"
-                       v-model="inputHasText[index]"
-                       :placeholder="placeholder">
+            <div v-for="(placeholder, index) in placeholderForSingleQuestion"
+                 class="row">
+                <div class="col-md-12">
+                    <input type="text"
+                           class="text-field"
+                           v-model="inputHasText[index]"
+                           :placeholder="placeholder"/>
+                </div>
+                <!--remove input fields button-->
+                <div v-if="placeholderForSingleQuestion.length > 1"
+                     class="col-md-12"
+                     v-for="extraFieldButtonName in extraFieldButtonNames">
+                    <span @click="removeSingleInputFields(index)"
+                          class="button-text-only remove">
+                        <font-awesome-icon icon="minus-circle"/> {{extraFieldButtonName.remove_extra_answer_text}}
+                    </span>
+                </div>
+
+                <br/>
+                <br/>
             </div>
 
             <br/>
 
             <!--add single input fields button-->
-            <div v-for="extraFieldButtonName in extraFieldButtonNames">
-                <div v-if="canAddInputFields">
-                    <button type="button"
-                            @click="addInputField(extraFieldButtonName.placeholder)"
-                            class="btn-add-field">
-                        {{extraFieldButtonName.add_extra_answer_text}}
-                    </button>
-                </div>
-                <!--add remove input fields button-->
-                <div v-if="placeholderForSingleQuestion.length > 1">
-                    <button type="button"
-                            @click="removeSingleInputFields()"
-                            class="btn-primary">
-                        {{extraFieldButtonName.remove_extra_answer_text}}
-                    </button>
+            <div class="row" v-if="canAddInputFields">
+                <div v-for="extraFieldButtonName in extraFieldButtonNames"
+                     class="col-md-12">
+                    <span class="button-text-only"
+                          @click="addInputField(extraFieldButtonName.placeholder)">
+                          <font-awesome-icon icon="plus-circle"/> {{extraFieldButtonName.add_extra_answer_text}}
+                    </span>
                 </div>
             </div>
 
@@ -54,7 +61,7 @@
                      v-for="extraFieldButtonName in extraFieldButtonNames">
                     <span @click="removeInputFields(index)"
                           class="button-text-only remove">
-                        {{extraFieldButtonName.remove_extra_answer_text}}
+                        <font-awesome-icon icon="minus-circle"/> {{extraFieldButtonName.remove_extra_answer_text}}
                     </span>
                 </div>
 
@@ -70,7 +77,7 @@
                      class="col-md-12">
                     <span class="button-text-only"
                           @click="addInputFields(extraFieldButtonName.sub_parts)">
-                        {{extraFieldButtonName.add_extra_answer_text}}
+                          <font-awesome-icon icon="plus-circle"/> {{extraFieldButtonName.add_extra_answer_text}}
                     </span>
                 </div>
             </div>
@@ -88,7 +95,7 @@
                     class="next-btn"
                     name="number"
                     id="number"
-                    :disabled="!(hasTypedInTwoFields || hasTypedInSubParts)"
+                    :disabled="!(hasTypedInAllInputs || hasTypedInSubParts)"
                     @click="handleAnswer()">
                 {{isLastQuestion ? 'Complete' : 'Next'}}
                 <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
@@ -101,10 +108,12 @@
 
     import {mdbBtn} from 'mdbvue';
     import {library} from '@fortawesome/fontawesome-svg-core';
-    import {faSpinner} from '@fortawesome/free-solid-svg-icons';
+    import {faMinusCircle, faPlusCircle, faSpinner} from '@fortawesome/free-solid-svg-icons';
     import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 
     library.add(faSpinner);
+    library.add(faPlusCircle);
+    library.add(faMinusCircle);
 
     export default {
         name: "questionTypeText",
@@ -125,22 +134,12 @@
             }
         },
         computed: {
-            hasTypedTwoNumbers() {
-                return this.inputHasText.length > 1;
-            },
-
-            hasTypedInTwoFields() {
-                return this.inputHasText.length > 1;
+            hasTypedInAllInputs() {
+                return this.inputHasText.length > 0 && this.inputHasText.every(t => t.length > 0);
             },
 
             hasTypedInSubParts() {
-                return this.subParts.length && this.subParts[0][0].value.length > 1 && this.subParts[0][1].value.length > 1;
-            },
-
-            hasTypedTwoCharacters() {
-                var text = this.inputHasText;
-                const length = text.map(q => q.length);
-                return length > 1 === true;
+                return this.subParts.length && this.subParts[0][0].value.length > 0 && this.subParts[0][1].value.length > 0;
             },
 
             hasAnswerType() {
@@ -197,16 +196,6 @@
                 return '';
             },
 
-            conditions() {
-                if (this.hasTypedInTwoFields && this.questionHasSubParts) {
-                    return true;
-                } else {
-                    if (this.hasTypedTwoCharacters && !this.questionHasSubParts) {
-                        return true;
-                    }
-                }
-            }
-
         },
 
         mounted() {
@@ -224,6 +213,7 @@
         methods: {
 
             addInputField(placeholder) {
+                this.inputHasText.push("");
                 this.placeholderForSingleQuestion.push(placeholder);
             },
 
@@ -252,7 +242,8 @@
             },
 
             removeSingleInputFields(index) {
-                this.placeholderForSingleQuestion.splice(index, 1)
+                this.placeholderForSingleQuestion.splice(index, 1);
+                this.inputHasText.splice(index, 1);
             },
 
             handleAnswer() {
@@ -348,6 +339,19 @@
     .fa, .fas {
         color: #50b2e2;
         font-weight: unset;
+    }
+
+    .text-field {
+        border: none;
+        border-bottom: solid 1px rgba(0, 0, 0, 0.1);
+        background-color: transparent;
+        outline: 0;
+        width: 100%;
+        height: 30px;
+    }
+
+    .text-field:active, .text-field:focus {
+        border-color: #4aa5d2;
     }
 
     span.button-text-only {
