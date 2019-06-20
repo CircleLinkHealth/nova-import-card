@@ -47,6 +47,7 @@
             $(function () {
                 var columnForBorder = 1;
                 var columnsForTextFormating = [1,2,3,4,5,6,7,8,9,10,11,12,13];
+
                 $('#nurse_metrics').DataTable({
                     "rowCallback": function (row, data) {
                         if (data.name === "Z - Totals for:") {
