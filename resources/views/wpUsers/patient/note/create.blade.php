@@ -433,22 +433,6 @@
                             <div class="row col-md-12">
 
                                 <div class="new-note-item">
-
-                                    <div class="form-group">
-                                        <label for="summary">
-                                            Communication to Practice
-                                        </label>
-                                        <div class="col-sm-12">
-                                            <persistent-textarea storage-key="notes-summaries:{{$patient->id}}:add" id="summary"
-                                                                 class-name="form-control" :rows="3" :cols="100"
-                                                                 :max-chars="280"
-                                                                 placeholder="Enter Note..."
-                                                                 value="{{ !empty($note) ? $note->summary : '' }}"
-                                                                 name="summary" :required="true"></persistent-textarea>
-                                            <br>
-                                        </div>
-                                    </div>
-
                                     <!-- Enter Note -->
                                     <div class="form-group">
                                         <label for="body">
