@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\NurseInvoices;
 
-use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
 class AggregatedTotalTimePerNurse
@@ -26,13 +25,11 @@ class AggregatedTotalTimePerNurse
     protected $aggregator;
 
     /**
-     * @param array  $userIds
-     * @param Carbon $startDate
-     * @param Carbon $endDate
+     * @param TotalTimeAggregator $aggregator
      */
-    public function __construct($userIds, Carbon $startDate, Carbon $endDate)
+    public function __construct(TotalTimeAggregator $aggregator)
     {
-        $this->aggregator = new TotalTimeAggregator(parseIds($userIds), $startDate, $endDate);
+        $this->aggregator = $aggregator;
     }
 
     /**

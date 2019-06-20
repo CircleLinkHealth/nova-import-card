@@ -75,11 +75,9 @@ class NursesAndStatesDailyReportService
             ->chunk(
                 50,
                 function ($nurses) use (&$data, $date) {
-                    $aggregatedTime = new AggregatedTotalTimePerNurse(
-                        $nurses->pluck('id')->all(),
+                    $aggregatedTime = app(AggregatedTotalTimePerNurse::class, [$nurses->pluck('id')->all(),
                         $date->copy()->startOfDay(),
-                        $date->copy()->endOfDay()
-                    );
+                        $date->copy()->endOfDay(), ]);
 
                     foreach ($nurses as $nurse) {
                         $data[] = $this->getDataForNurse($nurse, $date, $aggregatedTime->totalCcmTime($nurse->id));
@@ -453,10 +451,10 @@ class NursesAndStatesDailyReportService
             ->select(
                 \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
                 \DB::raw(
-                          'GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60 as patient_time'
+                    'GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60 as patient_time'
                       ),
                 \DB::raw(
-                          "({$this->timeGoal} - (GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60)) as patient_time_left"
+                    "({$this->timeGoal} - (GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60)) as patient_time_left"
                       ),
                 'no_of_successful_calls as successful_calls'
                   )
