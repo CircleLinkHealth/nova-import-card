@@ -762,6 +762,12 @@
                     e.preventDefault();
                     form = this;
 
+                    const summaryTextField = $('.text-area-summary');
+                    if (summaryTextField.length > 0 && summaryTextField.is(":required") && summaryTextField.val().trim().length === 0) {
+                        alert('Please enter a summary for this note.');
+                        return;
+                    }
+
                     const isAssociatedWithTask = $('#task').is(':checked');
                     const callHasTask = $('.tasks-radio').is(':checked');
 
@@ -913,7 +919,7 @@
 
             @if (! empty($note))
                 noteId = '{{$note->id}}';
-            @endif
+                    @endif
 
             const saveDraftUrl = '{{route('patient.note.store.draft', ['patientId' => $patient->id])}}';
             const saveDraft = () => {
