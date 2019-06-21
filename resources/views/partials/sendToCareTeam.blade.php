@@ -43,7 +43,7 @@
                                              class-name="form-control" :rows="3" :cols="100"
                                              :max-chars="280"
                                              placeholder="Enter Note Summary..."
-                                             value="{{ !empty($note) ? $note->summary : '' }}"
+                                             value="{{ optional($note)->summary ?? '' }}"
                                              name="summary"></persistent-textarea>
                         <br>
                     </div>
