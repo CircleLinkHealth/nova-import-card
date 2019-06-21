@@ -36,7 +36,7 @@
 
                 <div class="form-group load-hidden">
                     <label for="summary">
-                        Summary
+                        Communication to Practice
                     </label>
                     <div class="col-sm-12">
                         <persistent-textarea ref="summaryInput" storage-key="notes-summaries:{{$patient->id}}:add" id="summary"
