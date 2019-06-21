@@ -69,8 +69,8 @@ class NursesAndStatesDailyReportService
                     $info->where('status', 'active')
                         //remember Raph asking to exclude demo nurses (still keeping for test environments)
                         ->when(app()->environment(['production', 'worker']), function ($info) {
-                             $info->where('is_demo', false);
-                         });
+                            $info->where('is_demo', false);
+                        });
                 }
             )
             ->chunk(
@@ -202,7 +202,7 @@ class NursesAndStatesDailyReportService
         //only for EmailRNDailyReport
         $data['nextUpcomingWindow'] = optional($nurse->nurseInfo->firstWindowAfter($date->copy()))->toArray();
 
-        $data['projectedHoursLeftInMoth'] = $this->getProjectedHoursLeftInMonth($nurse, $date->copy()) ?? 'NA';
+        $data['projectedHoursLeftInMonth'] = $this->getProjectedHoursLeftInMonth($nurse, $date->copy()) ?? 'NA';
 
         $data['avgHoursWorkedLast10Sessions'] = $this->avgHoursWorkedLast10Sessions;
 
@@ -227,7 +227,7 @@ class NursesAndStatesDailyReportService
                 round(
                     (float) (100 * (
                         (floatval($this->successfulCallsMultiplier) * $data['successful']) + (floatval(
-                                $this->unsuccessfulCallsMultiplier
+                            $this->unsuccessfulCallsMultiplier
                                                                                                   ) * $data['unsuccessful'])
                         ) / $data['actualHours'])
                 )
@@ -412,8 +412,8 @@ class NursesAndStatesDailyReportService
                 NursesAndStatesDailyReportService::LAST_COMMITTED_DAYS_TO_GO_BACK
             )
                 ->sortBy(function ($date) {
-                                      return $date;
-                                  });
+                    return $date;
+                });
         } catch (\Exception $e) {
             //todo: Log exception
         }
@@ -460,19 +460,19 @@ class NursesAndStatesDailyReportService
     {
         return \DB::table('calls')
             ->select(
-                      \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
-                      \DB::raw(
+                \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
+                \DB::raw(
                           'GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60 as patient_time'
                       ),
-                      \DB::raw(
+                \DB::raw(
                           "({$this->timeGoal} - (GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60)) as patient_time_left"
                       ),
-                      'no_of_successful_calls as successful_calls'
+                'no_of_successful_calls as successful_calls'
                   )
             ->leftJoin('users', 'users.id', '=', 'calls.inbound_cpm_id')
             ->leftJoin('patient_monthly_summaries', 'users.id', '=', 'patient_monthly_summaries.patient_id')
             ->whereRaw(
-                      "(
+                "(
 (
 DATE(calls.scheduled_date) >= DATE('{$date->copy()->startOfMonth()->toDateString()}')
 AND
