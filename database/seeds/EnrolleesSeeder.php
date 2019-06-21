@@ -14,6 +14,6 @@ class EnrolleesSeeder extends Seeder
      */
     public function run()
     {
-        factory(Enrollee::class, 10)->create();
+        factory(Enrollee::class, 100)->create();
     }
 }
