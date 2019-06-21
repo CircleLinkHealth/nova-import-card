@@ -94,8 +94,8 @@ class UpdateEnrolleeDataFromCsv extends Command
 
         Enrollee::whereIn('id', $csv->pluck('Eligible_Patient_ID')->toArray())
             ->orWhereIn('eligibility_job_id', $csv->pluck('Eligibility_Job_ID')->toArray())
-            ->chunk(200, function ($enrollees) use ($csv) {
-                $enrollees->map(function ($e) use ($csv) {
+            ->chunk(200, function ($enrollees) use (&$csv) {
+                $enrollees->each(function (Enrollee $e) use ($csv) {
                     $row = $csv->filter(function ($row) use ($e) {
                         //We need either the enrollee id, or the eligibility job id
                         if (array_key_exists('Eligible_Patient_ID', $row)) {
@@ -106,13 +106,22 @@ class UpdateEnrolleeDataFromCsv extends Command
                         }
 
                         return false;
-                    })->first();
+                    })
+                            //use last to get the last row for that patient from the csv (latest updates for that patient)
+                        ->last();
 
                     if ($row) {
                         $e = $this->setEnrolleeStatus($e, $row);
-                        if (array_key_exists('Call_Date', $row)) {
+                        if (array_key_exists('Call_Date', $row) && ! empty($row['Call_Date'])) {
+                            //this is a hack helping us parse dates from the csv that combine dots and dashes. It makes alot of assumptions that in other cases may be wrong. Fix if needed.
                             $date = preg_split("/[.|\/]/", $row['Call_Date']);
-                            $e->last_attempt_at = Carbon::parse("{$date[0]}/{$date[1]}/{$date[2]}");
+                            if (3 == count($date)) {
+                                try {
+                                    $e->last_attempt_at = Carbon::parse("{$date[0]}/{$date[1]}/{$date[2]}");
+                                } catch (\Exception $exception) {
+                                    //do nothing, date provided in csv is invalid
+                                }
+                            }
                         }
                         $e->save();
                     }
