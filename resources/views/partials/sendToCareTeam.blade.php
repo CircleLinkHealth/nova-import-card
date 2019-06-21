@@ -40,7 +40,7 @@
                     </label>
                     <div class="col-sm-12">
                         <persistent-textarea ref="summaryInput" storage-key="notes-summaries:{{$patient->id}}:add" id="summary"
-                                             class-name="form-control" :rows="3" :cols="100"
+                                             class-name="form-control text-area-summary" :rows="3" :cols="100"
                                              :max-chars="280"
                                              placeholder="Enter Note Summary..."
                                              value="{{ optional($note)->summary ?? '' }}"
