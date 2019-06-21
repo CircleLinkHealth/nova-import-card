@@ -132,14 +132,6 @@ class PdfService
         array $filesWithFullPath,
         $outputFullPath = null
     ) {
-        /*
-         * We cannot run shell_exec() on the saas server.
-         * @todo: Figure out how to merge pages without relying on shell_exec
-         */
-        if (auth()->user()->isSaas()) {
-            return false;
-        }
-
         if ( ! $outputFullPath) {
             $outputFullPath = $this->randomFileFullPath();
         }

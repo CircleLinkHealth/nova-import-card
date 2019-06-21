@@ -645,9 +645,10 @@
                     // $("#Outbound").prop("checked", true);
                 }
 
-                $('#phone').change(phoneSessionChange);
-                $('#phone').prop('checked', @json(!empty($call) && empty($call->sub_type)));
-                $('#phone').trigger('change');
+                let phoneEl = $('#phone');
+                phoneEl.change(phoneSessionChange);
+                phoneEl.prop('checked', @json(!empty($call) && empty($call->sub_type)));
+                phoneEl.trigger('change');
 
                 function associateWithTaskChange(e) {
                     if (!e) {
@@ -744,20 +745,23 @@
                 }
 
                 function tcmChange(e) {
+                    let notifyCareteamEl = $('#notify-careteam');
+                    let whoIsNotifiedEl = $('#who-is-notified');
+
                     if (e) {
                         if (e.currentTarget.checked) {
-                            $('#notify-careteam').prop("checked", true);
-                            $('#notify-careteam').prop("disabled", true);
+                            notifyCareteamEl.prop("checked", true);
+                            notifyCareteamEl.prop("disabled", true);
 
                             @empty($notifies_text)
-                            $('#who-is-notified').text("{{optional($patient->billingProviderUser())->getFullName()}}");
+                            whoIsNotifiedEl.text("{{optional($patient->billingProviderUser())->getFullName()}}");
                             @endempty
                         }
                         else {
-                            $('#notify-careteam').prop("checked", false);
-                            $('#notify-careteam').prop("disabled", false);
+                            notifyCareteamEl.prop("checked", false);
+                            notifyCareteamEl.prop("disabled", false);
 
-                            $('#who-is-notified').text("{{$notifies_text}}");
+                            whoIsNotifiedEl.text("{{$notifies_text}}");
                         }
                     }
                     else {
@@ -765,9 +769,10 @@
                     }
                 }
 
-                $('#tcm').change(tcmChange);
-                $('#tcm').prop('checked', @json(!empty($note) && $note->isTCM));
-                $('#tcm').trigger('change');
+                let tcmEl = $('#tcm');
+                tcmEl.change(tcmChange);
+                tcmEl.prop('checked', @json(!empty($note) && $note->isTCM));
+                tcmEl.trigger('change');
 
                 $('#newNote').submit(function (e) {
                     e.preventDefault();
@@ -924,7 +929,7 @@
 
             @if (! empty($note))
                 noteId = '{{$note->id}}';
-                    @endif
+            @endif
 
             const saveDraftUrl = '{{route('patient.note.store.draft', ['patientId' => $patient->id])}}';
             const saveDraft = () => {
@@ -967,7 +972,6 @@
             if (!disableAutoSave) {
                 setTimeout(() => saveDraft(), AUTO_SAVE_INTERVAL);
             }
-
         </script>
     @endpush
 @endsection
