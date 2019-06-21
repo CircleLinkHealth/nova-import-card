@@ -196,15 +196,12 @@ class NursesPerformanceReportService
             )}
             : null;
 
-        $data['nextUpcomingWindow']      = $nextUpcomingWindow;
-        $data['totalHours']              = $totalHours;
-        $data['nextUpcomingWindowLabel'] = $nextUpcomingWindowLabel ?? null;
-
-        $data['projectedHoursLeftInMonth'] = $this->getProjectedHoursLeftInMonth($nurse, $date->copy()) ?? 0;
-
+        $data['nextUpcomingWindow']           = $nextUpcomingWindow;
+        $data['totalHours']                   = $totalHours;
+        $data['nextUpcomingWindowLabel']      = $nextUpcomingWindowLabel ?? null;
+        $data['projectedHoursLeftInMonth']    = $this->getProjectedHoursLeftInMonth($nurse, $date->copy()) ?? 0;
         $data['avgHoursWorkedLast10Sessions'] = $this->avgHoursWorkedLast10Sessions;
-
-        $data['surplusShortfallHours'] = $data['projectedHoursLeftInMonth'] - $data['caseLoadNeededToComplete'];
+        $data['surplusShortfallHours']        = $data['projectedHoursLeftInMonth'] - $data['caseLoadNeededToComplete'];
 
         return collect($data);
     }
