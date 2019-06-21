@@ -117,7 +117,7 @@ class UserRepository
 
         //Add Email Notification
         $sendTo = ['patientsupport@circlelinkhealth.com'];
-        if (app()->environment('production')) {
+        if (isProductionEnv()) {
             $this->adminEmailNotify($user, $sendTo);
         }
         $user->push();

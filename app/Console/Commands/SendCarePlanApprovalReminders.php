@@ -89,7 +89,7 @@ class SendCarePlanApprovalReminders extends Command
                 }
             });
 
-        if ( ! app()->environment(['local', 'staging']) && $recipientsWithNoDMAddresses->isNotEmpty()) {
+        if (isProductionEnv() && $recipientsWithNoDMAddresses->isNotEmpty()) {
             sendSlackMessage(
                 '#implementations',
                 "We were not able to send Care Plan Approval Notifications via DIRECT to these providers because no DIRECT addresses were found.\n{$recipientsWithNoDMAddresses->implode(",\n")}"

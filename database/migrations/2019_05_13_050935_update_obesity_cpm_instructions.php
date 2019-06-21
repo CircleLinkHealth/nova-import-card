@@ -13,7 +13,7 @@ class UpdateObesityCpmInstructions extends Migration
      */
     public function down()
     {
-        if ( ! app()->environment(['testing'])) {
+        if ( ! isUnitTestingEnv()) {
             Artisan::call('db:seed', [
                 '--class' => CpmProblemsTableSeeder::class,
             ]);

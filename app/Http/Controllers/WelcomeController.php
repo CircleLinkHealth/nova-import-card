@@ -63,7 +63,7 @@ class WelcomeController extends Controller
         }
 
         if ($user->hasRole('ehr-report-writer')) {
-            if ( ! app()->environment('production')) {
+            if ( ! isProductionEnv()) {
                 return \App::call('App\Http\Controllers\EhrReportWriterController@index');
             }
 

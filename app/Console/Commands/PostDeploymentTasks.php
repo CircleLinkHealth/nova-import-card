@@ -50,7 +50,7 @@ class PostDeploymentTasks extends Command
             ]
         )->each(
             function ($command) {
-                if (app()->environment('production') && in_array(
+                if ( ! isQueueWorkerEnv() && in_array(
                     $command,
                     [
                         'horizon:terminate',

@@ -22,7 +22,7 @@
                                     {{--</ul>--}}
                                 </span>
                             </div>
-                            @if(app()->environment() != 'production')
+                            @if(isProductionEnv())
                                 @if(!empty($logic))
                                     <div class="col-sm-12"><br>
                                         <span style="font-size: 1.1em;"><b>Logic:</b> {{$logic}}

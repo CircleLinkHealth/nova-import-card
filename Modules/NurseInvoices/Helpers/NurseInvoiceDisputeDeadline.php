@@ -62,7 +62,7 @@ class NurseInvoiceDisputeDeadline
      */
     public function deadline()
     {
-        if (app()->environment('testing')) {
+        if (isUnitTestingEnv()) {
             //throws exceptions it table does not exist
             //is a problem for CI
             //config is cached, so I chose this instead of checking if table exists
@@ -88,7 +88,7 @@ class NurseInvoiceDisputeDeadline
      */
     public static function for(Carbon $invoiceMonth)
     {
-        if (app()->environment('testing')) {
+        if (isUnitTestingEnv()) {
             //throws exceptions it table does not exist
             //is a problem for CI
             //config is cached, so I chose this instead of checking if table exists

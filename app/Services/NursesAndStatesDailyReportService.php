@@ -68,7 +68,7 @@ class NursesAndStatesDailyReportService
                 function ($info) {
                     $info->where('status', 'active')
                         //remember Raph asking to exclude demo nurses (still keeping for test environments)
-                        ->when(app()->environment(['production', 'worker']), function ($info) {
+                        ->when(isProductionEnv(), function ($info) {
                             $info->where('is_demo', false);
                         });
                 }
@@ -462,10 +462,10 @@ class NursesAndStatesDailyReportService
             ->select(
                 \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
                 \DB::raw(
-                          'GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60 as patient_time'
+                    'GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60 as patient_time'
                       ),
                 \DB::raw(
-                          "({$this->timeGoal} - (GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60)) as patient_time_left"
+                    "({$this->timeGoal} - (GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60)) as patient_time_left"
                       ),
                 'no_of_successful_calls as successful_calls'
                   )

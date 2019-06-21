@@ -82,7 +82,7 @@ class GetPatientIdFromLastYearAppointments extends Command
             throw new InvalidArgumentException('Start date cannot be greater than end date.', 422);
         }
 
-        if (app()->environment('worker')) {
+        if (isProductionEnv()) {
             sendSlackMessage(
                 '#background-tasks',
                 "Getting patient ids from the appointments from Athena, for practice_athena_id: ${athenaPracticeId}. \n"

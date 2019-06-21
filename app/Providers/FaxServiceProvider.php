@@ -28,7 +28,7 @@ class FaxServiceProvider extends ServiceProvider
         $this->app->bind(Efax::class, function () {
             $config = config('phaxio');
 
-            $mode = (app()->environment('production') || app()->environment('worker') || app()->environment('staging'))
+            $mode = isProductionEnv()
                 ? 'production'
                 : 'test';
 

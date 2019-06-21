@@ -137,7 +137,7 @@ class GenerateOpsDailyReport implements ShouldQueue
         $saved = file_put_contents($path, json_encode($data));
 
         if ( ! $saved) {
-            if (app()->environment('worker')) {
+            if (isProductionEnv()) {
                 sendSlackMessage(
                     '#callcenter_ops',
                     "Daily Call Center Operations Report for {$this->date->toDateString()} could not be created. \n"
@@ -149,7 +149,7 @@ class GenerateOpsDailyReport implements ShouldQueue
             ->addMedia($path)
             ->toMediaCollection("ops-daily-report-{$this->date->toDateString()}.json");
 
-        if (app()->environment('worker')) {
+        if (isProductionEnv()) {
             sendSlackMessage(
                 '#callcenter_ops',
                 "Daily Call Center Operations Report for {$this->date->toDateString()} created. \n"

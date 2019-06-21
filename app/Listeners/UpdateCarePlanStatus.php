@@ -59,7 +59,7 @@ class UpdateCarePlanStatus
             $user->carePlan->forward();
             event(new PdfableCreated($user->carePlan));
 
-            if (app()->environment(['worker', 'production', 'staging'])) {
+            if (isProductionEnv()) {
                 sendSlackMessage(
                     '#careplanprintstatus',
                     "Dr.{$approver->getFullName()} approved {$user->id}'s care plan.\n"

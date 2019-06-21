@@ -93,7 +93,7 @@ class AutoPullEnrolleesFromAthena extends Command
         }
 
         if (0 == $practices->count()) {
-            if (app()->environment('worker')) {
+            if (isProductionEnv()) {
                 sendSlackMessage(
                     ' #parse_enroll_import',
                     "No Practices with checked 'api-auto-pull' setting were found for the weekly Athena Data Pull."
