@@ -53,7 +53,7 @@ class TimeTrackingServiceProvider extends ServiceProvider
      */
     public function registerFactories()
     {
-        if ( ! app()->environment('production')) {
+        if ( ! isProductionEnv()) {
             app(Factory::class)->load(__DIR__.'/../Database/factories');
         }
     }
