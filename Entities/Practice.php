@@ -602,7 +602,7 @@ class Practice extends BaseModel implements HasMedia
 
     public function scopeActiveBillable($q)
     {
-        if (app()->environment(['local', 'staging', 'testing'])) {
+        if (!isProductionEnv()) {
             return $q->whereActive(1);
         }
 
