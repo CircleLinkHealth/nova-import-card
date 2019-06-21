@@ -17,7 +17,7 @@ use App\Console\Commands\DeleteProcessedFiles;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailRNDailyReportToDeprecate;
 use App\Console\Commands\EmailWeeklyReports;
-use App\Console\Commands\NursesAndStatesDailyReport;
+use App\Console\Commands\NursesPerformanceDailyReport;
 use App\Console\Commands\OverwriteNBIImportedData;
 use App\Console\Commands\QueueEligibilityBatchForProcessing;
 use App\Console\Commands\QueueGenerateNurseDailyReport;
@@ -190,7 +190,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(SecurityMailCommand::class)->weekly()->onOneServer();
 
-        $schedule->command(NursesAndStatesDailyReport::class)->dailyAt('00:05')->onOneServer();
+        $schedule->command(NursesPerformanceDailyReport::class)->dailyAt('00:05')->onOneServer();
 
         $schedule->command(OverwriteNBIImportedData::class)->everyFiveMinutes()->onOneServer();
 
