@@ -78,7 +78,7 @@ class AggregatedTotalTimePerNurse
      */
     private function time($billable, $nurseId)
     {
-        $nurseObject = $this->aggregatedTimeCollection()->where('is_billable', $billable)->where('user_id', $nurseId);
+        $nurseObject = $this->aggregatedTimeCollection()->where('is_billable', $billable)->where('user_id', $nurseId)->first();
 
         return $nurseObject
             ? (int) $nurseObject->total_time
