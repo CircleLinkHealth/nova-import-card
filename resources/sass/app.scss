@@ -11,6 +11,8 @@ $primary-color: #50b2e2;
 
 @import "~font-awesome/css/font-awesome.min.css";
 
+@import "~vue-select/dist/vue-select.css";
+
 /**
 Add global CSS here
  */
@@ -241,4 +243,53 @@ html, body, #app {
 
 .hidden {
     display: none;
+}
+
+.scroll-container {
+    height: 100%;
+}
+
+.scrollable {
+    overflow-y: auto;
+    height: 100%;
+    max-height: calc(100% - 80px);
+}
+
+.select-dropdown ::placeholder {
+    color: #d5dadd !important;
+}
+
+.select-dropdown.active ::placeholder {
+    color: #1a1a1a !important;
+}
+
+.select-dropdown .vs__dropdown-toggle,
+.select-dropdown .vs__dropdown-menu {
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid #d5dadd;
+}
+
+.select-dropdown .vs__dropdown-option:before {
+    color: #50b2e2;
+    font-family: FontAwesome, serif;
+    display: inline-block;
+    content: "\f10c";
+    letter-spacing: 5px;
+    position: relative;
+    font-size: 1.3em;
+    top: 2px;
+}
+
+.select-dropdown .vs__dropdown-option.vs__dropdown-option--selected {
+    color: #50b2e2;
+}
+
+.select-dropdown .vs__dropdown-option.vs__dropdown-option--selected:before {
+    content: "\f058";
+}
+
+.select-dropdown .vs__dropdown-option--highlight {
+    background: transparent;
+    color: #50b2e2;
 }

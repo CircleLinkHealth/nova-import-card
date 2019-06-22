@@ -1,124 +1,166 @@
 <template>
-    <div>
-        <div class="row">
-            <div v-for="(answer, index) in lastQuestionAnswer">
-                <label>{{answer.name}}</label>
-                <div v-for="(checkBoxOption, index) in multiSelectOptions">
-                    <label>
-                        <input class="multi-select"
-                               type="checkbox"
-                               name="checkboxTypeAnswer"
-                               v-model="checkedAnswers[index]"
-                               :disabled="!isActive"
-                               @click="handleClick()">
-                        {{checkBoxOption}}
-                    </label>
+    <div class="scroll-container">
+        <div class="row no-gutters scrollable">
+            <div class="col-md-6 no-gutters select-container"
+                 @click="onSelectClick(index)"
+                 v-for="(select, index) in selectBoxes">
+                <div class="col-md-12 select-title" :class="{active: select.active}">
+                    {{select.key}}
+                </div>
+                <div class="col-md-12 select-dropdown" :class="{active: select.active}">
+                    <vue-select multiple @input="function (val) {onOptionSelected(select, val)}"
+                                :value="select.selected"
+                                :close-on-select="false"
+                                :options="select.options"
+                                :placeholder="select.placeholder"/>
                 </div>
             </div>
         </div>
+
+        <br/>
+
+        <mdbBtn v-show="isActive"
+                color="primary"
+                class="next-btn"
+                :disabled="!hasSelections"
+                @click="handleAnswer">
+            {{isLastQuestion ? 'Complete' : 'Next'}}
+            <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
+        </mdbBtn>
+
     </div>
 
 </template>
 
 <script>
 
+    import {mdbBtn} from 'mdbvue';
+    import {library} from '@fortawesome/fontawesome-svg-core';
+    import {faSpinner} from '@fortawesome/free-solid-svg-icons';
+    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
+    import vueSelect from 'vue-select';
+
+    library.add(faSpinner);
+
     export default {
         name: "questionTypeMultiSelect",
-        props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting', 'questions', 'surveyAnswers'],
-        components: {},
+        props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting', 'getAllQuestionsFunc'],
+        components: {FontAwesomeIcon, vueSelect, mdbBtn},
 
         data() {
             return {
-                checkBoxValues: this.question.type.question_type_answers,
-                checkBoxOptions: [],
-                multiSelectOptions: [],
-                lastQuestionAnswer: [],
-                checkedAnswers: [],
-
+                options: null,
+                selectBoxes: [],
             }
         },
         computed: {
-            placeHolder() {
-                return this.checkBoxOptions[0].placeholder
-            },
-            lastQuestionOrderNumber() {
-                const lastQuestionOrder = this.checkBoxOptions[0].import_answers_from_question.question_order;
-                this.lastQuestionAnswers(lastQuestionOrder);
-                return lastQuestionOrder;
-            },
 
-            questionTypeAnswerId() {
-                if (this.hasAnswerType) {
-                    return this.question.type.question_type_answers[0].id;
-                } else {
-                    return 0;
-                }
-            },
-
+            hasSelections() {
+                return this.selectBoxes.every(s => s.selected.length > 0);
+            }
 
         },
 
-        methods: {//@todo:fix this
-            lastQuestionAnswers(lastQuestionOrder) {
-                const id = this.questions.filter(function (q) {
-                    return q.pivot.order === lastQuestionOrder && q.pivot.sub_order === null;
-                })[0].pivot.question_id;
+        methods: {
 
-                const lastAnswerValues = this.surveyAnswers.filter(function (q) {
-                    return q.id === id;
-                })[0].value;
+            onOptionSelected(select, value) {
+                select.selected = value;
+            },
 
-                this.lastQuestionAnswer.push(...JSON.parse(lastAnswerValues));
+            onSelectClick(index) {
+                this.selectBoxes.forEach((s, i) => {
+                    s.active = index === i;
+                });
             },
-            handleClick() {
-                this.handleAnswers();
-            },
-            handleAnswers() {
-                const answer = [];
-                for (let j = 0; j < this.checkedAnswers.length; j++) {
-                    const val = this.checkedAnswers[j];
-                    const q = this.multiSelectOptions.find(x => x.value === val);
-                    answer.push({[q.options.key]: val});
+
+            handleAnswer() {
+                const key = this.options[0].key;
+                const selectKey = this.options[0].multi_select_key;
+                let questionTypeAnswerId = 0;
+                if (this.question.type && this.question.type.question_type_answers && this.question.type.question_type_answers.length) {
+                    questionTypeAnswerId = this.question.type.question_type_answers[0].id;
                 }
-                this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer);
+                const answer = {value: []};
+                this.selectBoxes.forEach(s => {
+                    const result = {};
+                    result[key] = s.key;
+                    result[selectKey] = s.selected;
+                    answer.value.push(result);
+                });
+                this.onDoneFunc(this.question.id, questionTypeAnswerId, answer);
             }
-
 
         },
         mounted() {
+            this.options = this.question.type.question_type_answers.map(q => q.options);
 
+            const shouldImportCheckboxValuesFromOtherAnswer = this.options.length && this.options[0].import_answers_from_question;
+            if (shouldImportCheckboxValuesFromOtherAnswer) {
+                const questionOrder = this.options[0].import_answers_from_question.question_order;
+                const questions = this.getAllQuestionsFunc();
+                const targetQuestion = questions.find(q => q.pivot.order === questionOrder);
+                //should never happen
+                if (!targetQuestion.answer) {
+                    targetQuestion.answer = {value: []};
+                }
+
+                const selectOptions = this.options[0].multi_select_options;
+                const placeholder = this.options[0].placeholder;
+
+                if (this.question.answer && this.question.answer.value) {
+                    const key = this.options[0].key;
+                    const selectKey = this.options[0].multi_select_key;
+                    this.selectBoxes = this.question.answer.value.value.map(v => {
+                        return {key: v[key], options: selectOptions, placeholder, active: false, selected: v[selectKey]};
+                    });
+                }
+                else {
+                    this.selectBoxes = targetQuestion.answer.value.map(v => {
+                        return {key: v.name, options: selectOptions, placeholder, active: false, selected: []};
+                    });
+                }
+
+
+            }
+            else {
+                //todo
+            }
 
         },
 
         created() {
-            const options = this.question.type.question_type_answers.map(q => q.options);
-            this.checkBoxOptions.push(...options);
-
-            const multiSelect = options.flatMap(q => q.multi_select_options);
-            this.multiSelectOptions.push(...multiSelect);
-
         },
     }
 </script>
 
 <style scoped>
-    .checkbox-dropdown {
-        width: 500px;
-        height: 350px;
-        border: solid 1px #f2f2f2;
-        background-color: #ffffff;
+
+    .select-container {
+        margin-bottom: 30px;
     }
 
-    .checkbox-dropdown label {
-        /*  width: 54px;
-          height: 29px;
-          font-family: Poppins;
-          font-size: 16px;
-          font-weight: 400;
-          font-style: normal;
-          font-stretch: normal;
-          line-height: normal;
-          letter-spacing: 1px;
-          color: #1a1a1a;*/
+    .select-container:nth-child(odd) {
+        padding-right: 20px;
     }
+
+    .select-container:nth-child(even) {
+        padding-left: 20px;
+    }
+
+    .select-title {
+        font-family: Poppins, serif;
+        font-size: 24px;
+        font-weight: 500;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: normal;
+        letter-spacing: 1.33px;
+        color: #d5dadd;
+        margin-bottom: 20px;
+    }
+
+    .select-title.active {
+        color: #1a1a1a;
+    }
+
 </style>
