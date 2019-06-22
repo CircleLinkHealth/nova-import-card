@@ -80,12 +80,12 @@
                 if (this.question.type && this.question.type.question_type_answers && this.question.type.question_type_answers.length) {
                     questionTypeAnswerId = this.question.type.question_type_answers[0].id;
                 }
-                const answer = {value: []};
+                const answer = [];
                 this.selectBoxes.forEach(s => {
                     const result = {};
                     result[key] = s.key;
                     result[selectKey] = s.selected;
-                    answer.value.push(result);
+                    answer.push(result);
                 });
                 this.onDoneFunc(this.question.id, questionTypeAnswerId, answer);
             }
@@ -107,19 +107,20 @@
                 const selectOptions = this.options[0].multi_select_options;
                 const placeholder = this.options[0].placeholder;
 
-                if (this.question.answer && this.question.answer.value) {
-                    const key = this.options[0].key;
-                    const selectKey = this.options[0].multi_select_key;
-                    this.selectBoxes = this.question.answer.value.value.map(v => {
-                        return {key: v[key], options: selectOptions, placeholder, active: false, selected: v[selectKey]};
-                    });
-                }
-                else {
-                    this.selectBoxes = targetQuestion.answer.value.map(v => {
-                        return {key: v.name, options: selectOptions, placeholder, active: false, selected: []};
-                    });
-                }
+                const key = this.options[0].key;
+                const selectKey = this.options[0].multi_select_key;
 
+                this.selectBoxes = targetQuestion.answer.value.map(v => {
+
+                    let selected = [];
+                    if (this.question.answer && this.question.answer.value) {
+                        const valueFromServer = this.question.answer.value.find(x => x[key] === v[key]);
+                        if (valueFromServer) {
+                            selected = valueFromServer[selectKey];
+                        }
+                    }
+                    return {key: v[key], options: selectOptions, placeholder, active: false, selected};
+                });
 
             }
             else {

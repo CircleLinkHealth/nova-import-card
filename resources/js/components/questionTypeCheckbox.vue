@@ -96,6 +96,10 @@
             },
 
             answerChecked() {
+                if (this.question.optional) {
+                    return true;
+                }
+
                 if (this.hasAnyCustomInputNotFilled()) {
                     return false;
                 }

@@ -11713,7 +11713,6 @@ body,
 
 .scrollable {
   overflow-y: auto;
-  height: 100%;
   max-height: calc(100% - 80px);
 }
 

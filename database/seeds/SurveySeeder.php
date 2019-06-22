@@ -492,9 +492,9 @@ class SurveySeeder extends Seeder
                     ],
                     [
                         'options' => [
-                            'placeholder' => 'Other, ex. 10',
-                            'answer_type' => 'text',
-                            'allow_single_custom_input' => true
+                            'placeholder'               => 'Other, ex. 10',
+                            'answer_type'               => 'text',
+                            'allow_single_custom_input' => true,
                         ],
                     ],
                 ],
@@ -517,9 +517,9 @@ class SurveySeeder extends Seeder
                     ],
                     [
                         'options' => [
-                            'placeholder' => 'Other, ex: 10 years ago',
-                            'answer_type' => 'text',
-                            'allow_single_custom_input' => true
+                            'placeholder'               => 'Other, ex: 10 years ago',
+                            'answer_type'               => 'text',
+                            'allow_single_custom_input' => true,
                         ],
                     ],
                 ],
@@ -903,6 +903,7 @@ class SurveySeeder extends Seeder
                 'order'                 => 18,
                 'question_body'         => 'Please check to indicate if you have ever had any of the following conditions in your family?',
                 'question_type'         => QuestionType::CHECKBOX,
+                'optional'              => true,
                 'question_type_answers' => [
                     [
                         'type_answer_body' => 'Alcoholism or Drug Use',
@@ -974,8 +975,8 @@ class SurveySeeder extends Seeder
                                 'Child',
                             ],
                             'placeholder'                  => 'Choose individuals here...',
-                            'multi_select_key' => 'family',
-                            'key' => 'name',
+                            'multi_select_key'             => 'family',
+                            'key'                          => 'name',
 
                         ],
                     ],
@@ -992,17 +993,17 @@ class SurveySeeder extends Seeder
                                 [
                                     'title'       => 'Reason for Visit',
                                     'placeholder' => 'Type response here...',
-                                    'key' => 'reason'
+                                    'key'         => 'reason',
                                 ],
                                 [
                                     'title'       => 'Location',
                                     'placeholder' => 'Type response here...',
-                                    'key' => 'location'
+                                    'key'         => 'location',
                                 ],
                                 [
                                     'title'       => 'Year',
                                     'placeholder' => 'Type response here...',
-                                    'key' => 'year'
+                                    'key'         => 'year',
                                 ],
                             ],
                             'allow_multiple'           => true,
@@ -1055,7 +1056,7 @@ class SurveySeeder extends Seeder
                             'allow_multiple'           => true,
                             'add_extra_answer_text'    => 'Add additional response',
                             'remove_extra_answer_text' => 'Remove response',
-                            'key' => 'name'
+                            'key'                      => 'name',
                         ],
                     ],
                 ],
@@ -1534,22 +1535,22 @@ class SurveySeeder extends Seeder
                             'sub_parts'                => [
                                 [
                                     'title'       => 'Provider Name',
-                                    'key' => 'provider_name',
+                                    'key'         => 'provider_name',
                                     'placeholder' => 'Type response here...',
                                 ],
                                 [
                                     'title'       => 'Specialty',
-                                    'key'       => 'specialty',
+                                    'key'         => 'specialty',
                                     'placeholder' => 'Type response here...',
                                 ],
                                 [
                                     'title'       => 'Location',
-                                    'key'           => 'location',
+                                    'key'         => 'location',
                                     'placeholder' => 'Type response here...',
                                 ],
                                 [
                                     'title'       => 'Phone Number',
-                                    'key'       => 'phone_number',
+                                    'key'         => 'phone_number',
                                     'placeholder' => '(123) 456 7890',
                                 ],
                             ],
