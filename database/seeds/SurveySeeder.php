@@ -770,6 +770,7 @@ class SurveySeeder extends Seeder
                 'order'                 => 16,
                 'question_body'         => 'Please check/uncheck if you have ever had the following conditions:',
                 'question_type'         => QuestionType::CHECKBOX,
+                'optional'              => true,
                 'question_type_answers' => [
                     [
                         'type_answer_body' => 'Arrhythmia',
@@ -888,6 +889,7 @@ class SurveySeeder extends Seeder
                 'order'                 => 17,
                 'question_body'         => 'If you have any medical problems or serious injuries that were not listed above, please describe them here',
                 'question_type'         => QuestionType::TEXT,
+                'optional'              => true,
                 'question_type_answers' => [
                     [
                         'options' => [
@@ -1105,8 +1107,9 @@ class SurveySeeder extends Seeder
             ],
             [
                 'order'                 => 23,
-                'question_body'         => 'Please check to indicate if you have ever had diffuculty/needed help performing any of the following tasks:',
+                'question_body'         => 'Please check to indicate if you have ever had difficulty/needed help performing any of the following tasks:',
                 'question_type'         => QuestionType::CHECKBOX,
+                'optional'              => true,
                 'question_type_answers' => [
                     [
                         'type_answer_body' => 'Standing from a sitting position',
@@ -1143,7 +1146,7 @@ class SurveySeeder extends Seeder
             [
                 'order'                => 23,
                 'sub_order'            => 'a',
-                'question_body'        => 'If you anseered yes to any of the above, do you have someone who can assist you?',
+                'question_body'        => 'If you answered yes to any of the above, do you have someone who can assist you?',
                 'question_type'        => QuestionType::RADIO,
                 'optional'             => true,
                 'conditions'           => [

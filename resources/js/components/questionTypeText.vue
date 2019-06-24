@@ -295,7 +295,7 @@
             /*sets canAddInputField data*/
             this.canAddInputFields = this.hasAnswerType && this.questionOptions[0].allow_multiple;
 
-            this.singleTitle = this.questionOptions[0].title;
+            this.singleTitle = this.questionOptions && this.questionOptions.length && this.questionOptions[0].title;
 
             if (this.question.answer && this.question.answer.value) {
                 if (this.questionHasSubParts) {
