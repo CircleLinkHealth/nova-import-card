@@ -44,7 +44,7 @@ class WebixFormatter implements ReportFormatter
                     'id'               => $note->id,
                     'logger_id'        => $note->author_id,
                     'logger_name'      => $note->author->getFullName(),
-                    'comment'          => $note->summary ?? $note->body,
+                    'comment'          => empty($note->summary) ? $note->body : $note->summary,
                     'logged_from'      => 'note',
                     'type_name'        => $note->type,
                     'performed_at'     => presentDate($note->performed_at, false),
