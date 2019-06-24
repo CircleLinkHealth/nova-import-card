@@ -2209,7 +2209,7 @@ Route::group([
         'middleware' => 'verify.invite',
         'uses'       => 'Provider\OnboardingController@getCreateInvitedUser',
         'as'         => 'get.onboarding.create.invited.user',
-    ])->middleware('permission:provider.read');
+    ]);
 
     Route::get('create-practice-lead-user/{code?}', [
         'middleware' => 'verify.invite',
@@ -2220,7 +2220,7 @@ Route::group([
     Route::post('store-invited-user', [
         'uses' => 'Provider\OnboardingController@postStoreInvitedUser',
         'as'   => 'get.onboarding.store.invited.user',
-    ])->middleware('permission:provider.update,provider.create,invite.delete');
+    ]);
 
     Route::post('store-practice-lead-user', [
         'uses' => 'Provider\OnboardingController@postStorePracticeLeadUser',
