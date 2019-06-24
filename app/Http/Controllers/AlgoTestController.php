@@ -10,7 +10,7 @@ class AlgoTestController extends Controller
 {
     public function algoCleaner()
     {
-        if ('production' == app()->environment()) {
+        if (isProductionEnv()) {
             return 'Sorry, this cannot be run on the production environment.';
         }
 
@@ -19,7 +19,7 @@ class AlgoTestController extends Controller
 
     public function algoFamily()
     {
-        if ('production' == app()->environment()) {
+        if (isProductionEnv()) {
             return 'Sorry, this cannot be run on the production environment.';
         }
 
@@ -28,7 +28,7 @@ class AlgoTestController extends Controller
 
     public function algoRescheduler()
     {
-        if ('production' == app()->environment()) {
+        if (isProductionEnv()) {
             return 'Sorry, this cannot be run on the production environment.';
         }
 
@@ -37,7 +37,7 @@ class AlgoTestController extends Controller
 
     public function algoTuner()
     {
-        if ('production' == app()->environment()) {
+        if (isProductionEnv()) {
             return 'Sorry, this cannot be run on the production environment.';
         }
 

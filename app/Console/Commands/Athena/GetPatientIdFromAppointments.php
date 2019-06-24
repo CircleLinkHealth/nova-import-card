@@ -57,7 +57,7 @@ class GetPatientIdFromAppointments extends Command
 
         //loop to getPatientIds from each practice found
         foreach ($practices as $practice) {
-            if (app()->environment('worker')) {
+            if (isProductionEnv()) {
                 sendSlackMessage(
                     '#background-tasks',
                     "Getting patient ids from the appointments from Athena, for practice: {$practice->display_name}. \n"

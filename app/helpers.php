@@ -154,7 +154,7 @@ if ( ! function_exists('sendSlackMessage')) {
      */
     function sendSlackMessage($to, $message, $force = false)
     {
-        if ( ! $force && ! in_array(app()->environment(), ['production', 'worker'])) {
+        if ( ! $force && ! isProductionEnv()) {
             return;
         }
 
@@ -1200,7 +1200,7 @@ if ( ! function_exists('read_file_using_generator')) {
 if ( ! function_exists('getEhrReportWritersFolderUrl')) {
     function getEhrReportWritersFolderUrl()
     {
-        if (app()->environment(['production', 'worker'])) {
+        if (isProductionEnv()) {
             return 'https://drive.google.com/drive/folders/1NMMNIZKKicOVDNEUjXf6ayAjRbBbFAgh';
         }
 
@@ -1336,13 +1336,6 @@ if ( ! function_exists('tryDropForeignKey')) {
         }
 
         return true;
-    }
-}
-
-if ( ! function_exists('isProductionEnv')) {
-    function isProductionEnv()
-    {
-        return config('app.is_production_env');
     }
 }
 

@@ -61,7 +61,7 @@ class NursesPerformanceDailyReport extends Command
         $path     = storage_path($fileName);
         $saved    = file_put_contents($path, json_encode($data));
 
-        if ( ! $saved && app()->environment('worker')) {
+        if ( ! $saved && isProductionEnv()) {
             sendSlackMessage(
                 '#callcenter_ops',
                 "Nurses And States dashboard report {$date->toDateString()} could not be created. \n"
@@ -75,7 +75,7 @@ class NursesPerformanceDailyReport extends Command
             ->addMedia($path)
             ->toMediaCollection($fileName);
 
-        if (app()->environment('worker')) {
+        if (isProductionEnv()) {
             sendSlackMessage(
                 '#callcenter_ops',
                 "Nurses weekly calls and work hours report {$date->toDateString()} created. \n"

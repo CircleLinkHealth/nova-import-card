@@ -310,7 +310,7 @@ class CarePlan extends BaseModel implements PdfReport
          * The error happens at random.
          * Below fixes it.
          */
-        if (app()->environment('testing')) {
+        if (isUnitTestingEnv()) {
             return public_path('assets/pdf/sample-note.pdf');
         }
 

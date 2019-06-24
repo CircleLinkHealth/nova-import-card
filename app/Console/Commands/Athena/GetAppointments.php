@@ -55,7 +55,7 @@ class GetAppointments extends Command
         $startDate = $endDate->copy()->subWeeks(2);
 
         foreach ($practices as $practice) {
-            if (app()->environment('worker')) {
+            if (isProductionEnv()) {
                 sendSlackMessage(
                     '#background-tasks',
                     "Getting appointments from Athena for practice: {$practice->display_name}. \n"

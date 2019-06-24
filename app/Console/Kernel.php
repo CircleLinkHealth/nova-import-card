@@ -183,7 +183,7 @@ class Kernel extends ConsoleKernel
 //                 ->withoutOverlapping()->onOneServer();
 
 //        Disable backup till we fix the issue of it not running
-//        if (app()->environment('worker')) {
+//        if (isProductionEnv()) {
 //            $schedule->command(CleanupCommand::class)->daily()->at('01:00')->onOneServer();
 //            $schedule->command(BackupCommand::class)->daily()->at('02:00')->onOneServer();
 //        }

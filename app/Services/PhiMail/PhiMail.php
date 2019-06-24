@@ -204,7 +204,7 @@ class PhiMail implements DirectMail
             // If more than one recipient was specified, then each would have an entry.
             $srList = $this->connector->send();
 
-            if (app()->environment('worker')) {
+            if (isProductionEnv()) {
                 //Report to Slack
                 foreach ($srList as $sr) {
                     $status = $sr->succeeded

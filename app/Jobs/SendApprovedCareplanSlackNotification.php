@@ -45,7 +45,7 @@ class SendApprovedCareplanSlackNotification implements ShouldQueue
             ->get();
 
         if ($careplans->isEmpty()) {
-            if (app()->environment(['worker', 'production'])) {
+            if (isProductionEnv()) {
                 sendSlackMessage('#careplanprintstatus', '0 Care Plan(s) have been approved today.');
             }
         } else {
@@ -57,7 +57,7 @@ class SendApprovedCareplanSlackNotification implements ShouldQueue
             $message = "{$careplans->count()} Care Plan(s) have been approved today by the following doctor(s): {$providers->implode(', ')}. 
                     \n {$careplans->where('first_printed', null)->count()} Approved Care Plan(s) have not yet been printed.";
 
-            if (app()->environment('staging')) {
+            if ( ! isProductionEnv()) {
                 $message = "(This is a test from staging) ${message}";
             }
 

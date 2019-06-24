@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "085057a353a3cb87a9e5e188ba928ddd",
+    "content-hash": "9b3693d83d08323142780e67565a4355",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -458,16 +458,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.100.2",
+            "version": "3.100.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "c08969c6bf828910fc868d882bcd55ea5d9f97f7"
+                "reference": "d4abc59e6fb3407fc66e241886092251a23423e0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/c08969c6bf828910fc868d882bcd55ea5d9f97f7",
-                "reference": "c08969c6bf828910fc868d882bcd55ea5d9f97f7",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/d4abc59e6fb3407fc66e241886092251a23423e0",
+                "reference": "d4abc59e6fb3407fc66e241886092251a23423e0",
                 "shasum": ""
             },
             "require": {
@@ -537,7 +537,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2019-06-12T18:09:10+00:00"
+            "time": "2019-06-20T18:11:43+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -602,16 +602,16 @@
         },
         {
             "name": "cakephp/chronos",
-            "version": "1.2.7",
+            "version": "1.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/chronos.git",
-                "reference": "c981a911149151d5eceefccf1980f4554fc42619"
+                "reference": "0292f06e8cc23fc82f0574889da2d8bf27b613c1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/chronos/zipball/c981a911149151d5eceefccf1980f4554fc42619",
-                "reference": "c981a911149151d5eceefccf1980f4554fc42619",
+                "url": "https://api.github.com/repos/cakephp/chronos/zipball/0292f06e8cc23fc82f0574889da2d8bf27b613c1",
+                "reference": "0292f06e8cc23fc82f0574889da2d8bf27b613c1",
                 "shasum": ""
             },
             "require": {
@@ -655,7 +655,7 @@
                 "datetime",
                 "time"
             ],
-            "time": "2019-06-06T07:08:18+00:00"
+            "time": "2019-06-17T15:19:18+00:00"
         },
         {
             "name": "circlelinkhealth/core",
@@ -663,7 +663,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "14fadf572f27d15eb89d946c718c4b7c90983c41"
+                "reference": "82fea4fe4c20464b8018534b70b3844a8c39773a"
             },
             "require": {
                 "venturecraft/revisionable": "dev-master"
@@ -688,7 +688,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-06-11T11:57:53+00:00"
+            "time": "2019-06-21T12:17:37+00:00"
         },
         {
             "name": "circlelinkhealth/customer",
@@ -696,7 +696,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "9f5221c0bb11ac8263931c8c501a15b6131c2607"
+                "reference": "9206312f230329d2cbac9fc2986a4f36cca64d3c"
             },
             "require": {
                 "circlelinkhealth/core": "dev-master",
@@ -729,7 +729,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-06-12T22:36:07+00:00"
+            "time": "2019-06-21T12:17:36+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
@@ -772,7 +772,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "ae0124998ef5f82ebefa3c5453a26df3e61aa84e"
+                "reference": "ff9d70e0e98c83bb6a78075d82a0f9b048a00a6b"
             },
             "require": {
                 "circlelinkhealth/customer": "dev-master"
@@ -797,7 +797,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-06-11T11:57:52+00:00"
+            "time": "2019-06-21T12:17:36+00:00"
         },
         {
             "name": "circlelinkhealth/twofa",
@@ -805,7 +805,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "5d8c3d997aa91e7c1b9b07180df452ba856ff1e7"
+                "reference": "67ff7168823449a48b8873e1c3f4eed3bebbbb4a"
             },
             "require": {
                 "authy/php": "^3.0",
@@ -831,7 +831,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-06-11T11:57:53+00:00"
+            "time": "2019-06-21T12:17:37+00:00"
         },
         {
             "name": "composer/ca-bundle",
@@ -888,6 +888,55 @@
                 "tls"
             ],
             "time": "2019-01-28T09:30:10+00:00"
+        },
+        {
+            "name": "daltcore/lara-pdf-merger",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/lara-pdf-merger.git",
+                "reference": "799db60b4fcc71a0bd00b8c5d630131668f9918d"
+            },
+            "require": {
+                "php": ">=5.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "LynX39\\LaraPdfMerger": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Musso",
+                    "email": "lynx@deltaaskii.com",
+                    "homepage": "https://github.com/LynX39"
+                },
+                {
+                    "name": "Ramon Smit",
+                    "email": "rsmit@daltcore.com",
+                    "homepage": "https://github.com/daltcore"
+                },
+                {
+                    "name": "Marouan Sami",
+                    "email": "sami.marwen.isetcom@gmail.com",
+                    "homepage": "https://github.com/MarwenSami"
+                }
+            ],
+            "homepage": "https://github.com/MarwenSami/lara-pdf-merger",
+            "keywords": [
+                "duplex merge",
+                "laravel",
+                "manage",
+                "merge",
+                "merger",
+                "paginate",
+                "pdf"
+            ],
+            "time": "2019-06-07T16:37:27+00:00"
         },
         {
             "name": "defuse/php-encryption",
@@ -1795,16 +1844,16 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "8.10.13",
+            "version": "8.10.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "660a6153fd1e5c25613e57115db27be87052c452"
+                "reference": "fd2d002edce2c21c49877a95c3d2058dac0e5cc3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/660a6153fd1e5c25613e57115db27be87052c452",
-                "reference": "660a6153fd1e5c25613e57115db27be87052c452",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/fd2d002edce2c21c49877a95c3d2058dac0e5cc3",
+                "reference": "fd2d002edce2c21c49877a95c3d2058dac0e5cc3",
                 "shasum": ""
             },
             "require": {
@@ -1859,7 +1908,7 @@
                 "phonenumber",
                 "validation"
             ],
-            "time": "2019-05-30T07:28:51+00:00"
+            "time": "2019-06-19T10:54:35+00:00"
         },
         {
             "name": "giggsey/locale",
@@ -1971,16 +2020,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.102",
+            "version": "v0.103",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "82274e12b08c6828ebcc45a6bc01adbac63de8e9"
+                "reference": "01f9ada6e0f37515419cbf457144ccefee70e522"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/82274e12b08c6828ebcc45a6bc01adbac63de8e9",
-                "reference": "82274e12b08c6828ebcc45a6bc01adbac63de8e9",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/01f9ada6e0f37515419cbf457144ccefee70e522",
+                "reference": "01f9ada6e0f37515419cbf457144ccefee70e522",
                 "shasum": ""
             },
             "require": {
@@ -2004,7 +2053,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2019-06-09T00:23:19+00:00"
+            "time": "2019-06-16T00:23:11+00:00"
         },
         {
             "name": "google/auth",
@@ -2282,17 +2331,11 @@
         },
         {
             "name": "h4cc/wkhtmltopdf-amd64",
-            "version": "0.12.4",
+            "version": "0.12.5",
             "source": {
                 "type": "git",
-                "url": "https://github.com/h4cc/wkhtmltopdf-amd64.git",
-                "reference": "4e2ab2d032a5d7fbe2a741de8b10b8989523c95b"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/h4cc/wkhtmltopdf-amd64/zipball/4e2ab2d032a5d7fbe2a741de8b10b8989523c95b",
-                "reference": "4e2ab2d032a5d7fbe2a741de8b10b8989523c95b",
-                "shasum": ""
+                "url": "git@github.com:CircleLinkHealth/wkhtmltopdf-amd64.git",
+                "reference": "ebdb1fbf4315c302f24ad16047c7cb396abb25e0"
             },
             "bin": [
                 "bin/wkhtmltopdf-amd64"
@@ -2303,7 +2346,6 @@
                     "h4cc\\WKHTMLToPDF\\": ""
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "LGPL Version 3"
             ],
@@ -2323,7 +2365,7 @@
                 "thumbnail",
                 "wkhtmltopdf"
             ],
-            "time": "2018-01-15T06:57:33+00:00"
+            "time": "2019-01-03T21:08:37+00:00"
         },
         {
             "name": "hubertnnn/laravel-nova-field-dynamic-select",
@@ -2526,16 +2568,16 @@
         },
         {
             "name": "jaybizzle/crawler-detect",
-            "version": "v1.2.83",
+            "version": "v1.2.84",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JayBizzle/Crawler-Detect.git",
-                "reference": "80f1357b431c605745eeb901fe4c32c8f25a5c52"
+                "reference": "b7f35477a56609dd0d753c07ada912b66af3df01"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/80f1357b431c605745eeb901fe4c32c8f25a5c52",
-                "reference": "80f1357b431c605745eeb901fe4c32c8f25a5c52",
+                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/b7f35477a56609dd0d753c07ada912b66af3df01",
+                "reference": "b7f35477a56609dd0d753c07ada912b66af3df01",
                 "shasum": ""
             },
             "require": {
@@ -2571,7 +2613,7 @@
                 "crawlerdetect",
                 "php crawler detect"
             ],
-            "time": "2019-06-04T19:56:51+00:00"
+            "time": "2019-06-14T21:10:21+00:00"
         },
         {
             "name": "jenssegers/agent",
@@ -3433,20 +3475,21 @@
         },
         {
             "name": "laravel/nova",
-            "version": "v2.0.5",
+            "version": "v2.0.6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:laravel/nova.git",
-                "reference": "bba766e6f8f3ecff8d1e8728ff647006f242f6ef"
+                "reference": "2803cb3cce6290f65949b96f0ef0503f7af56d79"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-bba766e6f8f3ecff8d1e8728ff647006f242f6ef-zip-729ee5.zip",
-                "reference": "bba766e6f8f3ecff8d1e8728ff647006f242f6ef",
-                "shasum": "92ee6106c9fb5dd83f2bcdfb51393ca4cb43532c"
+                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-2803cb3cce6290f65949b96f0ef0503f7af56d79-zip-c75772.zip",
+                "reference": "2803cb3cce6290f65949b96f0ef0503f7af56d79",
+                "shasum": "6522e4e54e9a2ac4e39e3ad291a1db3697f7ad40"
             },
             "require": {
                 "cakephp/chronos": "^1.0",
+                "doctrine/dbal": "^2.9",
                 "illuminate/support": "^5.7.15 | 5.8.*",
                 "moontoast/math": "^1.1",
                 "php": ">=7.1.0",
@@ -3498,7 +3541,7 @@
                 "admin",
                 "laravel"
             ],
-            "time": "2019-05-15T19:21:43+00:00"
+            "time": "2019-06-10T17:21:49+00:00"
         },
         {
             "name": "laravel/passport",
@@ -3930,16 +3973,16 @@
         },
         {
             "name": "league/flysystem",
-            "version": "1.0.52",
+            "version": "1.0.53",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "c5a5097156387970e6f0ccfcdf03f752856f3391"
+                "reference": "08e12b7628f035600634a5e76d95b5eb66cea674"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/c5a5097156387970e6f0ccfcdf03f752856f3391",
-                "reference": "c5a5097156387970e6f0ccfcdf03f752856f3391",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/08e12b7628f035600634a5e76d95b5eb66cea674",
+                "reference": "08e12b7628f035600634a5e76d95b5eb66cea674",
                 "shasum": ""
             },
             "require": {
@@ -4010,7 +4053,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2019-05-20T20:21:14+00:00"
+            "time": "2019-06-18T20:09:29+00:00"
         },
         {
             "name": "league/flysystem-aws-s3-v3",
@@ -4308,73 +4351,17 @@
             "time": "2019-05-05T09:22:01+00:00"
         },
         {
-            "name": "lynx39/lara-pdf-merger",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/deltaaskii/lara-pdf-merger.git",
-                "reference": "04e4b38df0a9564f3ad0b21c0bc05d4a3510ef43"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/deltaaskii/lara-pdf-merger/zipball/04e4b38df0a9564f3ad0b21c0bc05d4a3510ef43",
-                "reference": "04e4b38df0a9564f3ad0b21c0bc05d4a3510ef43",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.4"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "LynX39\\LaraPdfMerger": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Michael Musso",
-                    "email": "lynx@deltaaskii.com",
-                    "homepage": "https://github.com/LynX39"
-                },
-                {
-                    "name": "Ramon Smit",
-                    "email": "rsmit@daltcore.com",
-                    "homepage": "https://github.com/daltcore"
-                },
-                {
-                    "name": "Marouan Sami",
-                    "email": "sami.marwen.isetcom@gmail.com",
-                    "homepage": "https://github.com/MarwenSami"
-                }
-            ],
-            "homepage": "https://github.com/MarwenSami/lara-pdf-merger",
-            "keywords": [
-                "duplex merge",
-                "laravel",
-                "manage",
-                "merge",
-                "merger",
-                "paginate",
-                "pdf"
-            ],
-            "time": "2019-05-09T07:32:38+00:00"
-        },
-        {
             "name": "maatwebsite/excel",
-            "version": "3.1.13",
+            "version": "3.1.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Maatwebsite/Laravel-Excel.git",
-                "reference": "d79ee01175c6a5e93f2a873dcda1b755b7570076"
+                "reference": "002dad9fa08ac19902dded3ca3c2cafa0de399a7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Maatwebsite/Laravel-Excel/zipball/d79ee01175c6a5e93f2a873dcda1b755b7570076",
-                "reference": "d79ee01175c6a5e93f2a873dcda1b755b7570076",
+                "url": "https://api.github.com/repos/Maatwebsite/Laravel-Excel/zipball/002dad9fa08ac19902dded3ca3c2cafa0de399a7",
+                "reference": "002dad9fa08ac19902dded3ca3c2cafa0de399a7",
                 "shasum": ""
             },
             "require": {
@@ -4429,7 +4416,7 @@
                 "php",
                 "phpspreadsheet"
             ],
-            "time": "2019-05-08T12:05:59+00:00"
+            "time": "2019-06-19T11:52:55+00:00"
         },
         {
             "name": "maennchen/zipstream-php",
@@ -5828,16 +5815,16 @@
         },
         {
             "name": "phpseclib/phpseclib",
-            "version": "2.0.17",
+            "version": "2.0.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "3ca5b88d582c69178c8d01fd9d02b94e15042bb8"
+                "reference": "d2085db7b7394baa071a69c8f9159723c250f2ba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/3ca5b88d582c69178c8d01fd9d02b94e15042bb8",
-                "reference": "3ca5b88d582c69178c8d01fd9d02b94e15042bb8",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/d2085db7b7394baa071a69c8f9159723c250f2ba",
+                "reference": "d2085db7b7394baa071a69c8f9159723c250f2ba",
                 "shasum": ""
             },
             "require": {
@@ -5916,7 +5903,7 @@
                 "x.509",
                 "x509"
             ],
-            "time": "2019-05-26T20:38:34+00:00"
+            "time": "2019-06-20T03:34:11+00:00"
         },
         {
             "name": "phpunit/php-timer",
@@ -8074,16 +8061,16 @@
         },
         {
             "name": "symfony/event-dispatcher-contracts",
-            "version": "v1.1.1",
+            "version": "v1.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/event-dispatcher-contracts.git",
-                "reference": "8fa2cf2177083dd59cf8e44ea4b6541764fbda69"
+                "reference": "c61766f4440ca687de1084a5c00b08e167a2575c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/event-dispatcher-contracts/zipball/8fa2cf2177083dd59cf8e44ea4b6541764fbda69",
-                "reference": "8fa2cf2177083dd59cf8e44ea4b6541764fbda69",
+                "url": "https://api.github.com/repos/symfony/event-dispatcher-contracts/zipball/c61766f4440ca687de1084a5c00b08e167a2575c",
+                "reference": "c61766f4440ca687de1084a5c00b08e167a2575c",
                 "shasum": ""
             },
             "require": {
@@ -8128,7 +8115,7 @@
                 "interoperability",
                 "standards"
             ],
-            "time": "2019-05-22T12:23:29+00:00"
+            "time": "2019-06-20T06:46:26+00:00"
         },
         {
             "name": "symfony/finder",
@@ -9036,23 +9023,23 @@
         },
         {
             "name": "symfony/service-contracts",
-            "version": "v1.1.2",
+            "version": "v1.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/service-contracts.git",
-                "reference": "191afdcb5804db960d26d8566b7e9a2843cab3a0"
+                "reference": "f391a00de78ec7ec8cf5cdcdae59ec7b883edb8d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/service-contracts/zipball/191afdcb5804db960d26d8566b7e9a2843cab3a0",
-                "reference": "191afdcb5804db960d26d8566b7e9a2843cab3a0",
+                "url": "https://api.github.com/repos/symfony/service-contracts/zipball/f391a00de78ec7ec8cf5cdcdae59ec7b883edb8d",
+                "reference": "f391a00de78ec7ec8cf5cdcdae59ec7b883edb8d",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.1.3"
+                "php": "^7.1.3",
+                "psr/container": "^1.0"
             },
             "suggest": {
-                "psr/container": "",
                 "symfony/service-implementation": ""
             },
             "type": "library",
@@ -9090,7 +9077,7 @@
                 "interoperability",
                 "standards"
             ],
-            "time": "2019-05-28T07:50:59+00:00"
+            "time": "2019-06-13T11:15:36+00:00"
         },
         {
             "name": "symfony/translation",
@@ -9170,16 +9157,16 @@
         },
         {
             "name": "symfony/translation-contracts",
-            "version": "v1.1.2",
+            "version": "v1.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/translation-contracts.git",
-                "reference": "93597ce975d91c52ebfaca1253343cd9ccb7916d"
+                "reference": "cb4b18ad7b92a26e83b65dde940fab78339e6f3c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/translation-contracts/zipball/93597ce975d91c52ebfaca1253343cd9ccb7916d",
-                "reference": "93597ce975d91c52ebfaca1253343cd9ccb7916d",
+                "url": "https://api.github.com/repos/symfony/translation-contracts/zipball/cb4b18ad7b92a26e83b65dde940fab78339e6f3c",
+                "reference": "cb4b18ad7b92a26e83b65dde940fab78339e6f3c",
                 "shasum": ""
             },
             "require": {
@@ -9223,7 +9210,7 @@
                 "interoperability",
                 "standards"
             ],
-            "time": "2019-05-27T08:16:38+00:00"
+            "time": "2019-06-13T11:15:36+00:00"
         },
         {
             "name": "symfony/var-dumper",
@@ -10846,16 +10833,16 @@
         },
         {
             "name": "facebook/webdriver",
-            "version": "1.7.0",
+            "version": "1.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/facebook/php-webdriver.git",
-                "reference": "9a52b1ac036743c31bc127fd7f2f4710e2bc968a"
+                "reference": "e43de70f3c7166169d0f14a374505392734160e5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/facebook/php-webdriver/zipball/9a52b1ac036743c31bc127fd7f2f4710e2bc968a",
-                "reference": "9a52b1ac036743c31bc127fd7f2f4710e2bc968a",
+                "url": "https://api.github.com/repos/facebook/php-webdriver/zipball/e43de70f3c7166169d0f14a374505392734160e5",
+                "reference": "e43de70f3c7166169d0f14a374505392734160e5",
                 "shasum": ""
             },
             "require": {
@@ -10902,20 +10889,20 @@
                 "selenium",
                 "webdriver"
             ],
-            "time": "2019-06-10T14:32:25+00:00"
+            "time": "2019-06-13T08:02:18+00:00"
         },
         {
             "name": "filp/whoops",
-            "version": "2.3.1",
+            "version": "2.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filp/whoops.git",
-                "reference": "bc0fd11bc455cc20ee4b5edabc63ebbf859324c7"
+                "reference": "a28d5cef33627c069a2bd8fbb35ebe1a54881d35"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filp/whoops/zipball/bc0fd11bc455cc20ee4b5edabc63ebbf859324c7",
-                "reference": "bc0fd11bc455cc20ee4b5edabc63ebbf859324c7",
+                "url": "https://api.github.com/repos/filp/whoops/zipball/a28d5cef33627c069a2bd8fbb35ebe1a54881d35",
+                "reference": "a28d5cef33627c069a2bd8fbb35ebe1a54881d35",
                 "shasum": ""
             },
             "require": {
@@ -10963,7 +10950,7 @@
                 "throwable",
                 "whoops"
             ],
-            "time": "2018-10-23T09:00:00+00:00"
+            "time": "2019-06-21T09:00:00+00:00"
         },
         {
             "name": "friendsofphp/php-cs-fixer",
@@ -12008,16 +11995,16 @@
         },
         {
             "name": "phpspec/prophecy",
-            "version": "1.8.0",
+            "version": "1.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
-                "reference": "4ba436b55987b4bf311cb7c6ba82aa528aac0a06"
+                "reference": "1927e75f4ed19131ec9bcc3b002e07fb1173ee76"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/4ba436b55987b4bf311cb7c6ba82aa528aac0a06",
-                "reference": "4ba436b55987b4bf311cb7c6ba82aa528aac0a06",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/1927e75f4ed19131ec9bcc3b002e07fb1173ee76",
+                "reference": "1927e75f4ed19131ec9bcc3b002e07fb1173ee76",
                 "shasum": ""
             },
             "require": {
@@ -12038,8 +12025,8 @@
                 }
             },
             "autoload": {
-                "psr-0": {
-                    "Prophecy\\": "src/"
+                "psr-4": {
+                    "Prophecy\\": "src/Prophecy"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -12067,7 +12054,7 @@
                 "spy",
                 "stub"
             ],
-            "time": "2018-08-05T17:53:17+00:00"
+            "time": "2019-06-13T12:50:23+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -12274,16 +12261,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "7.5.12",
+            "version": "7.5.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "9ba59817745b0fe0c1a5a3032dfd4a6d2994ad1c"
+                "reference": "b9278591caa8630127f96c63b598712b699e671c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/9ba59817745b0fe0c1a5a3032dfd4a6d2994ad1c",
-                "reference": "9ba59817745b0fe0c1a5a3032dfd4a6d2994ad1c",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/b9278591caa8630127f96c63b598712b699e671c",
+                "reference": "b9278591caa8630127f96c63b598712b699e671c",
                 "shasum": ""
             },
             "require": {
@@ -12354,7 +12341,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2019-05-28T11:59:40+00:00"
+            "time": "2019-06-19T12:01:51+00:00"
         },
         {
             "name": "react/event-loop",
@@ -13493,16 +13480,16 @@
         },
         {
             "name": "theseer/tokenizer",
-            "version": "1.1.2",
+            "version": "1.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/theseer/tokenizer.git",
-                "reference": "1c42705be2b6c1de5904f8afacef5895cab44bf8"
+                "reference": "11336f6f84e16a720dae9d8e6ed5019efa85a0f9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/theseer/tokenizer/zipball/1c42705be2b6c1de5904f8afacef5895cab44bf8",
-                "reference": "1c42705be2b6c1de5904f8afacef5895cab44bf8",
+                "url": "https://api.github.com/repos/theseer/tokenizer/zipball/11336f6f84e16a720dae9d8e6ed5019efa85a0f9",
+                "reference": "11336f6f84e16a720dae9d8e6ed5019efa85a0f9",
                 "shasum": ""
             },
             "require": {
@@ -13529,7 +13516,7 @@
                 }
             ],
             "description": "A small library for converting tokenized PHP source code into XML and potentially other formats",
-            "time": "2019-04-04T09:56:43+00:00"
+            "time": "2019-06-13T22:48:21+00:00"
         },
         {
             "name": "webmozart/assert",
@@ -13806,7 +13793,7 @@
         "circlelinkhealth/raygun": 20,
         "circlelinkhealth/timetracking": 20,
         "circlelinkhealth/twofa": 20,
-        "lynx39/lara-pdf-merger": 20,
+        "daltcore/lara-pdf-merger": 20,
         "prettus/l5-repository": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,

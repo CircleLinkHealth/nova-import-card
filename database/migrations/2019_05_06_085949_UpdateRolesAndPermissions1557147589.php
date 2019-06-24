@@ -21,7 +21,7 @@ class UpdateRolesAndPermissions1557147589 extends Migration
      */
     public function up()
     {
-        if ( ! app()->environment(['testing'])) {
+        if ( ! isUnitTestingEnv()) {
             Artisan::call('db:seed', [
                 '--class' => RequiredRolesPermissionsSeeder::class,
             ]);

@@ -77,9 +77,9 @@ class OnSuccessfulDeployment extends Command
 
             if (array_key_exists('message', $contents)) {
                 $message = $contents['message'];
-                if (app()->environment(['test', 'staging'])) {
+                if ( ! isProductionEnv()) {
                     $channel = '#releases-staging';
-                } elseif (app()->environment(['worker', 'production'])) {
+                } else {
                     $channel = '#releases-production';
                 }
 

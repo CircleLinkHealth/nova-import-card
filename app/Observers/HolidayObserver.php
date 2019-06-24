@@ -21,7 +21,7 @@ class HolidayObserver
      */
     public function created(Holiday $holiday)
     {
-        if ( ! app()->environment('production')) {
+        if ( ! isProductionEnv()) {
             return;
         }
 
@@ -49,7 +49,7 @@ class HolidayObserver
      */
     public function deleted(Holiday $holiday)
     {
-        if ( ! app()->environment('production')) {
+        if ( ! isProductionEnv()) {
             return;
         }
 

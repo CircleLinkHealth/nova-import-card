@@ -72,7 +72,7 @@ class CreateAndPostPdfCareplan
 
                 ImportCcda::dispatch($ccda)->onQueue('low');
 
-                if (app()->environment('worker')) {
+                if (isProductionEnv()) {
                     $link = route('import.ccd.remix');
 
                     sendSlackMessage(

@@ -393,7 +393,7 @@ class CcdApiController extends Controller
 
             $ccdObj->import();
         } catch (\Exception $e) {
-            if (app()->environment('production')) {
+            if (isProductionEnv()) {
                 $this->notifyAdmins(
                     $user,
                     $ccdObj,
@@ -407,7 +407,7 @@ class CcdApiController extends Controller
             return response()->json(['message' => 'CCD uploaded successfully.'], 201);
         }
 
-        if (app()->environment('production')) {
+        if (isProductionEnv()) {
             $this->notifyAdmins($user, $ccdObj, $providerJsonStr, 'well');
         }
 

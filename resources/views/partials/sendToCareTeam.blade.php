@@ -33,8 +33,49 @@
                     <div style="display: inline-block; text-indent: 3px;">{{ $note_channels_text }}</div>
                     )
                 </label>
+
+                <div class="form-group load-hidden">
+                    <label for="summary">
+                        Communication to Practice
+                    </label>
+                    <div class="col-sm-12">
+                        <persistent-textarea ref="summaryInput" storage-key="notes-summaries:{{$patient->id}}:add" id="summary"
+                                             class-name="form-control text-area-summary" :rows="3" :cols="100"
+                                             :max-chars="280"
+                                             placeholder="Enter Note Summary..."
+                                             value="{{ optional($note)->summary ?? '' }}"
+                                             name="summary"></persistent-textarea>
+                        <br>
+                    </div>
+                </div>
             @endempty
         @endempty
 
     </div>
 </div>
+
+@push('styles')
+    <style>
+        .load-hidden {
+            display: none;
+        }
+    </style>
+@endpush
+
+@push('scripts')
+    <script>
+        (function ($) {
+            //hacky way to display summary input required when notify-careteam is checked, and also make summary required
+            $('#notify-careteam').change(function (e) {
+                Vue.config.silent = true;
+
+                App.$refs.summaryInput.$props.required = e.currentTarget.checked;
+                $('.load-hidden').toggle()
+
+                App.$refs.summaryInput.$forceUpdate();
+
+                Vue.config.silent = false;
+            });
+        })(jQuery);
+    </script>
+@endpush

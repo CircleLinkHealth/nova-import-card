@@ -1,5 +1,5 @@
 {{--Google Analytics--}}
-@if(app()->environment('production'))
+@if(isProductionEnv())
     <script>
         (function (i, s, o, g, r, a, m) {
             i['GoogleAnalyticsObject'] = r;

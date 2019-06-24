@@ -433,22 +433,6 @@
                             <div class="row col-md-12">
 
                                 <div class="new-note-item">
-
-                                    <div class="form-group">
-                                        <label for="summary">
-                                            Communication to Practice
-                                        </label>
-                                        <div class="col-sm-12">
-                                            <persistent-textarea storage-key="notes-summaries:{{$patient->id}}:add" id="summary"
-                                                                 class-name="form-control" :rows="3" :cols="100"
-                                                                 :max-chars="280"
-                                                                 placeholder="Enter Note..."
-                                                                 value="{{ !empty($note) ? $note->summary : '' }}"
-                                                                 name="summary" :required="true"></persistent-textarea>
-                                            <br>
-                                        </div>
-                                    </div>
-
                                     <!-- Enter Note -->
                                     <div class="form-group">
                                         <label for="body">
@@ -645,9 +629,10 @@
                     // $("#Outbound").prop("checked", true);
                 }
 
-                $('#phone').change(phoneSessionChange);
-                $('#phone').prop('checked', @json(!empty($call) && empty($call->sub_type)));
-                $('#phone').trigger('change');
+                let phoneEl = $('#phone');
+                phoneEl.change(phoneSessionChange);
+                phoneEl.prop('checked', @json(!empty($call) && empty($call->sub_type)));
+                phoneEl.trigger('change');
 
                 function associateWithTaskChange(e) {
                     if (!e) {
@@ -744,20 +729,23 @@
                 }
 
                 function tcmChange(e) {
+                    let notifyCareteamEl = $('#notify-careteam');
+                    let whoIsNotifiedEl = $('#who-is-notified');
+
                     if (e) {
                         if (e.currentTarget.checked) {
-                            $('#notify-careteam').prop("checked", true);
-                            $('#notify-careteam').prop("disabled", true);
+                            notifyCareteamEl.prop("checked", true);
+                            notifyCareteamEl.prop("disabled", true);
 
                             @empty($notifies_text)
-                            $('#who-is-notified').text("{{optional($patient->billingProviderUser())->getFullName()}}");
+                            whoIsNotifiedEl.text("{{optional($patient->billingProviderUser())->getFullName()}}");
                             @endempty
                         }
                         else {
-                            $('#notify-careteam').prop("checked", false);
-                            $('#notify-careteam').prop("disabled", false);
+                            notifyCareteamEl.prop("checked", false);
+                            notifyCareteamEl.prop("disabled", false);
 
-                            $('#who-is-notified').text("{{$notifies_text}}");
+                            whoIsNotifiedEl.text("{{$notifies_text}}");
                         }
                     }
                     else {
@@ -765,13 +753,20 @@
                     }
                 }
 
-                $('#tcm').change(tcmChange);
-                $('#tcm').prop('checked', @json(!empty($note) && $note->isTCM));
-                $('#tcm').trigger('change');
+                let tcmEl = $('#tcm');
+                tcmEl.change(tcmChange);
+                tcmEl.prop('checked', @json(!empty($note) && $note->isTCM));
+                tcmEl.trigger('change');
 
                 $('#newNote').submit(function (e) {
                     e.preventDefault();
                     form = this;
+
+                    const summaryTextField = $('.text-area-summary');
+                    if (summaryTextField.length > 0 && summaryTextField.is(":required") && summaryTextField.val().trim().length === 0) {
+                        alert('Please enter a summary for this note.');
+                        return;
+                    }
 
                     const isAssociatedWithTask = $('#task').is(':checked');
                     const callHasTask = $('.tasks-radio').is(':checked');
@@ -967,7 +962,6 @@
             if (!disableAutoSave) {
                 setTimeout(() => saveDraft(), AUTO_SAVE_INTERVAL);
             }
-
         </script>
     @endpush
 @endsection
