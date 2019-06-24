@@ -249,7 +249,7 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
         }
 
         $companyHolidays = $this->companyHolidaysFrom($date);
-        $nurseHolidays   = $this->holidays()->where('date', '>=', $date->format('Y-m-d'));
+        $nurseHolidays   = $this->holidays->where('date', '>=', $date->format('Y-m-d'));
 
         return $companyHolidays->merge($nurseHolidays)->unique();
     }
