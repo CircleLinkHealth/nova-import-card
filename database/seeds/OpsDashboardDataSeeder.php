@@ -4,10 +4,10 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
 class OpsDashboardDataSeeder extends Seeder
@@ -34,7 +34,7 @@ class OpsDashboardDataSeeder extends Seeder
             'Alerts Review',
         ]);
 
-        $patients = User::with(['patientInfo', 'patientSummaries' => function ($s) use ($date){
+        $patients = User::with(['patientInfo', 'patientSummaries' => function ($s) use ($date) {
             $s->where('month_year', '=', $date->copy()->startOfMonth()->toDateString());
         }])
             ->whereHas('patientInfo', function ($p) {
@@ -48,9 +48,9 @@ class OpsDashboardDataSeeder extends Seeder
             $p->save();
         }
 
-        foreach($patients as $patient){
+        foreach ($patients as $patient) {
             $summary = $patient->patientSummaries()->first();
-            if ($summary){
+            if ($summary) {
                 $summary->ccm_time = $activityDuration->random();
                 $summary->bhi_time = $activityDuration->random();
                 $summary->save();
@@ -58,8 +58,6 @@ class OpsDashboardDataSeeder extends Seeder
         }
 //        $sum = new \CircleLinkHealth\Customer\Entities\PatientMonthlySummary();
 //        $sum->createCallReportsForCurrentMonth();
-
-
 
         //create ccm time from activities
 //        foreach ($patients as $patient) {

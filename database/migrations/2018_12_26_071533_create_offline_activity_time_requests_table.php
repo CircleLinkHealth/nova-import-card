@@ -1,15 +1,25 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateOfflineActivityTimeRequestsTable extends Migration
 {
     /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        Schema::dropIfExists('offline_activity_time_requests');
+    }
+
+    /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -18,50 +28,40 @@ class CreateOfflineActivityTimeRequestsTable extends Migration
             function (Blueprint $table) {
                 $table->increments('id');
                 $table->boolean('is_approved')
-                      ->nullable();
+                    ->nullable();
                 $table->boolean('is_behavioral');
                 $table->string('type')
-                      ->nullable();
+                    ->nullable();
                 $table->integer('duration_seconds')
-                      ->unsigned();
+                    ->unsigned();
                 $table->integer('patient_id')
-                      ->unsigned();
+                    ->unsigned();
                 $table->integer('requester_id')
-                      ->unsigned();
+                    ->unsigned();
                 $table->integer('activity_id')
-                      ->nullable()
-                      ->unsigned();
+                    ->nullable()
+                    ->unsigned();
                 $table->dateTime('performed_at')
-                      ->nullable();
+                    ->nullable();
                 $table->longText('comment')->nullable();
                 $table->timestamps();
                 $table->softDeletes();
-                
+
                 $table->foreign('patient_id')
-                      ->references('id')
-                      ->on('users')
-                      ->onUpdate('cascade');
-                
+                    ->references('id')
+                    ->on('users')
+                    ->onUpdate('cascade');
+
                 $table->foreign('requester_id')
-                      ->references('id')
-                      ->on('users')
-                      ->onUpdate('cascade');
-                
+                    ->references('id')
+                    ->on('users')
+                    ->onUpdate('cascade');
+
                 $table->foreign('activity_id')
-                      ->references('id')
-                      ->on('lv_activities')
-                      ->onUpdate('cascade');
+                    ->references('id')
+                    ->on('lv_activities')
+                    ->onUpdate('cascade');
             }
         );
-    }
-    
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::dropIfExists('offline_activity_time_requests');
     }
 }

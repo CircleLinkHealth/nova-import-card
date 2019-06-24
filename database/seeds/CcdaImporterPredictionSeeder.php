@@ -21,7 +21,7 @@ class CcdaImporterPredictionSeeder extends Seeder
                 if ($ccda->patient_id) {
                     $patient = User::withTrashed()->find($ccda->patient_id);
 
-                    if (!$patient) {
+                    if ( ! $patient) {
                         continue;
                     }
 

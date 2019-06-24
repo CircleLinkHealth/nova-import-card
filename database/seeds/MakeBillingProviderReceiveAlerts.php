@@ -15,7 +15,7 @@ class MakeBillingProviderReceiveAlerts extends Seeder
     public function run()
     {
         foreach (User::ofType('participant')->get() as $user) {
-            if (!$user->primaryPractice) {
+            if ( ! $user->primaryPractice) {
                 continue;
             }
 
