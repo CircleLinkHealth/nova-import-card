@@ -1,15 +1,23 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 
 class ModifyEnrolleesViewTable extends Migration
 {
     /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        //to revert change we need to first run the migration to change care_ambassador_user_id to care_ambassador_id
+    }
+
+    /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -36,16 +44,5 @@ AND NOT (LOWER(e.primary_insurance) IN (SELECT name FROM enrollee_custom_filters
 e.secondary_insurance IS NULL AND
 e.tertiary_insurance IS NULL); 
         ");
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        //to revert change we need to first run the migration to change care_ambassador_user_id to care_ambassador_id
-
     }
 }

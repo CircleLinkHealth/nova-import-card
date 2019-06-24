@@ -25,7 +25,7 @@ class AddIsBhiToPageTimer extends Migration
      */
     public function up()
     {
-        if (!Schema::hasColumn('lv_page_timer', 'is_behavioral')) {
+        if ( ! Schema::hasColumn('lv_page_timer', 'is_behavioral')) {
             Schema::table('lv_page_timer', function (Blueprint $table) {
                 $table->boolean('is_behavioral')->after('provider_id')->nullable();
             });

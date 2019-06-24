@@ -320,7 +320,7 @@ class AddNewDefaultCarePlanTemplate extends Seeder
         $defaultCarePlan = getDefaultCarePlanTemplate();
 
         CpmProblem::get()->map(function ($cpmProblem) use ($defaultCarePlan) {
-            if (!in_array($cpmProblem->id, $defaultCarePlan->cpmProblems->pluck('id')->all())) {
+            if ( ! in_array($cpmProblem->id, $defaultCarePlan->cpmProblems->pluck('id')->all())) {
                 $defaultCarePlan->cpmProblems()->attach($cpmProblem, [
                     'has_instruction' => true,
                     'page'            => 1,

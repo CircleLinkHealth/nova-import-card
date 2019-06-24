@@ -32,10 +32,6 @@ class WebixFormatter implements ReportFormatter
 
     public function formatDataForNotesAndOfflineActivitiesReport($patient)
     {
-        $formatted_data = collect();
-        $count          = 0;
-
-        $task_types      = Activity::task_types_to_topics();
         $billingProvider = $patient->getBillingProviderName();
 
         $notes = $patient->notes->sortByDesc('id')->map(
