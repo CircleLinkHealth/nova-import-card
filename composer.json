@@ -20,7 +20,10 @@
     "autoload": {
         "psr-4": {
             "CircleLinkHealth\\Core\\": ""
-        }
+        },
+        "files": [
+            "helpers.php"
+        ]
     },
     "require": {
         "venturecraft/revisionable": "dev-master"
