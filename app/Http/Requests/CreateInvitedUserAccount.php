@@ -44,7 +44,7 @@ class CreateInvitedUserAccount extends FormRequest
                 'min:8',
                 new PasswordCharacters(),
             ],
-            'code' => 'required|filled',
+            'code' => 'required|filled|exists:invites,code',
         ];
     }
 }
