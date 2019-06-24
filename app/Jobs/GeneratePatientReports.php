@@ -5,7 +5,6 @@ namespace App\Jobs;
 use App\Notifications\SendReport;
 use App\Services\GeneratePersonalizedPreventionPlanService;
 use App\Services\GenerateProviderReportService;
-use App\Services\GetSurveyAnswersForEvaluation;
 use App\Services\PersonalizedPreventionPlanPrepareData;
 use App\Services\ProviderReportService;
 use App\User;
@@ -90,27 +89,27 @@ class GeneratePatientReports implements ShouldQueue
 
 
         $billingProvider = $patient->billingProviderUser();
-        $settings = $patient->practiceSettings();
+        $settings        = $patient->practiceSettings();
 
         $channels = [];
 
-        if ($settings){
-            if ($settings->dm_awv_reports){
+        if ($settings) {
+            if ($settings->dm_awv_reports) {
                 //need to import related classes to Customer
 //                $channels[] = DirectMailChannel::class;
             }
-            if ($settings->efax_awv_reports){
+            if ($settings->efax_awv_reports) {
                 //need to import related classes to Customer
 //                $channels[] = EfaxChannel::class;
             }
-            if ($settings->email_awv_reports){
+            if ($settings->email_awv_reports) {
                 $channels[] = MailChannel::class;
             }
         }
 
         if ($billingProvider) {
             $billingProvider->notify(new SendReport($patient, $providerReport, 'Provider Report', $channels));
-            $billingProvider->notify(new SendReport($patient, $pppReport,'PPP', $channels));
+            $billingProvider->notify(new SendReport($patient, $pppReport, 'PPP', $channels));
         }
 
         $summary = $patient->patientAWVSummaries->first();
@@ -119,7 +118,7 @@ class GeneratePatientReports implements ShouldQueue
             $summary->update([
                 'is_billable'  => true,
                 'completed_at' => Carbon::now(),
-                'month_year' => Carbon::now()->startOfMonth()->toDateString()
+                'month_year'   => Carbon::now()->startOfMonth()->toDateString(),
             ]);
         }
     }
@@ -144,7 +143,7 @@ class GeneratePatientReports implements ShouldQueue
 
     private function uploadPPP($ppp, $patient)
     {
-        $pppFormattedData = (new PersonalizedPreventionPlanPrepareData(new GetSurveyAnswersForEvaluation()))->prepareRecommendations($ppp);
+        $pppFormattedData = (new PersonalizedPreventionPlanPrepareData())->prepareRecommendations($ppp);
 
         $recommendationTasks = [];
         foreach ($pppFormattedData['recommendation_tasks'] as $tasks) {

@@ -6,7 +6,6 @@ namespace App\Services;
 use App\Survey;
 use App\SurveyInstance;
 use App\User;
-use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
 class GeneratePersonalizedPreventionPlanService
@@ -47,21 +46,14 @@ class GeneratePersonalizedPreventionPlanService
     protected $vitalsAnswers;
 
     /**
-     * @var Carbon
-     */
-    protected $date;
-
-
-    /**
      * GeneratePersonalizedPreventionPlanService constructor.
      *
      * @param User $patient
      * @param $date
      */
-    public function __construct($patient, $date)
+    public function __construct($patient)
     {
         $this->patient = $patient;
-        $this->date    = Carbon::parse($date);
 
         $this->hraInstance    = $this->patient->surveyInstances->where('survey.name', Survey::HRA)->first();
         $this->vitalsInstance = $this->patient->surveyInstances->where('survey.name', Survey::VITALS)->first();
@@ -147,9 +139,9 @@ class GeneratePersonalizedPreventionPlanService
             'osteoporosis_screening'         => $this->answerForHraQuestionWithOrder(41),
             'domestic_violence_screen'       => $this->answerForHraQuestionWithOrder(42),
             /*this should be OrderId 43 according to excel sheet*/
-            'medical_attonery' => $this->answerForHraQuestionWithOrder(44),
+            'medical_attorney'               => $this->answerForHraQuestionWithOrder(44),
             /*this should be OrderId 44 according to excel sheet*/
-            'living_will' => $this->answerForHraQuestionWithOrder(45),
+            'living_will'                    => $this->answerForHraQuestionWithOrder(45),
         ];
 
         return $answers;

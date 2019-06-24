@@ -11,7 +11,6 @@
 |
 */
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -22,45 +21,51 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')
-    ->name('home');
+     ->name('home');
 
 Route::get('/provider-report', 'ProviderReportController@getProviderReport');
 
 Route::get('enter-patient-form', 'InvitationLinksController@enterPatientForm')
-    ->name('enterPatientForm');
+     ->name('enterPatientForm');
 
 Route::post('send-invitation-link', 'InvitationLinksController@createSendInvitationUrl')
-    ->name('createSendInvitationUrl');
+     ->name('createSendInvitationUrl');
 
 //this is a signed route
 Route::get('login-survey/{user}/{survey}', 'InvitationLinksController@surveyLoginForm')
-    ->name('loginSurvey');
+     ->name('loginSurvey');
 
-//fixme: thoughts: the surveys should be accessible from a url, so the POST here should redirect to a route, and not return a view
 Route::post('survey-login', 'InvitationLinksController@surveyLoginAuth')
-    ->name('surveyLoginAuth');
+     ->name('surveyLoginAuth');
 
 Route::post('resend-link/{user}', 'InvitationLinksController@resendUrl')
-    ->name('resendUrl');
+     ->name('resendUrl');
 
-Route::post('save-answer', 'SurveyController@storeAnswer')
-    ->name('saveSurveyAnswer');
-
-Route::get('get-previous-answer', 'SurveyController@getPreviousAnswer')
-    ->name('getPreviousAnswer');
+//don't like this, why is it here?
+//Route::get('get-previous-answer', 'SurveyController@getPreviousAnswer')
+//     ->name('getPreviousAnswer');
 
 Route::get('get-ppp-data/{userId}', 'PersonalizedPreventionPlanController@getPppDataForUser')
-    ->name('getPppDataForUser');
+     ->name('getPppDataForUser');
 
 Route::group([
-    'prefix' => 'survey',
+    'prefix'     => 'survey',
     'middleware' => ['auth'],
 ], function () {
 
     Route::group([
         'prefix' => 'hra',
     ], function () {
-        //fixme: add HRA routes here
+
+        Route::get('{practiceId}/{patientId}/{surveyId}', [
+            'uses' => 'SurveyController@getSurvey',
+            'as'   => 'survey.hra',
+        ]);
+
+        Route::post('{practiceId}/{patientId}/save-answer', [
+            'uses' => 'SurveyController@storeAnswer',
+            'as'   => 'survey.hra.store.answer',
+        ]);
     });
 
     Route::group([
@@ -69,29 +74,29 @@ Route::group([
 
         Route::get('{practiceId}/{patientId}/welcome', [
             'uses' => 'VitalsSurveyController@showWelcome',
-            'as' => 'survey.vitals.welcome',
+            'as'   => 'survey.vitals.welcome',
         ]);
 
         Route::get('{practiceId}/{patientId}/not-auth', [
             'uses' => 'VitalsSurveyController@showNotAuthorized',
-            'as' => 'survey.vitals.not.authorized',
+            'as'   => 'survey.vitals.not.authorized',
         ]);
 
         Route::get('{practiceId}/{patientId}', [
             'uses' => 'VitalsSurveyController@getSurvey',
-            'as' => 'survey.vitals',
+            'as'   => 'survey.vitals',
         ]);
 
         Route::post('{practiceId}/{patientId}/save-answer', [
             'uses' => 'VitalsSurveyController@storeAnswer',
-            'as' => 'survey.vitals.store.answer',
+            'as'   => 'survey.vitals.store.answer',
         ]);
 
     });
 });
 
 Route::group([
-    'prefix' => 'reports',
+    'prefix'     => 'reports',
     'middleware' => ['auth'],
 ], function () {
     //fixme: add reports routes here

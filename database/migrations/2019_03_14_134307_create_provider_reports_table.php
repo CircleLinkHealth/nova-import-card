@@ -37,18 +37,7 @@ class CreateProviderReportsTable extends Migration
             $table->string('specific_patient_requests')->nullable();
             $table->timestamps();
 
-           /* $table->foreign('patient_id')->references('id')
-                  ->on('users')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade');
-
-            $table->foreign('hra_instance_id')->references('id')
-                  ->on('survey_instances')
-                  ->onUpdate('cascade');
-
-            $table->foreign('vitals_instance_id')->references('id')
-                  ->on('survey_instances')
-                  ->onUpdate('cascade');
+           /*
 
             $table->unique(['patient_id', 'hra_instance_id', 'vitals_instance_id'],
                 'provider_reports_patient_hra_vitals_unique');*/

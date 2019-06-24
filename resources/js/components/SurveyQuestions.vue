@@ -4,11 +4,14 @@
         <div class="survey-container" :class="stage === 'complete' ? 'max' : ''">
             <template v-if="stage === 'welcome'">
                 <div class="practice-title">
-                    <label id="title">[Practice Name]
-                        Dr. [doctor last name]’s Office</label>
+                    <label id="title">
+                        <strong>{{practiceName}}</strong>
+                        <br/>
+                        Dr. {{doctorsLastName}}’s Office
+                    </label>
                 </div>
                 <div class="card-body">
-                    <img src="https://drive.google.com/uc?export=view&id=14yPR6Z8coudiAzEMTSVQK80BVyZjjqVg"
+                    <img src="../../assets/images/notepad.png"
                          class="welcome-icon" alt="welcome icon">
                     <div class="survey-main-title">
                         <label id="sub-title">Annual Wellness Visit (AWV) Questionnaire</label>
@@ -29,7 +32,8 @@
                         <!-- @todo: this is not working exactly as expected so im keepin one element true and i ll get back-->
                         <mdb-btn v-show="true"
                                  color="primary" class="btn-start" @click="showQuestions">
-                            <span>Start</span>
+                            <span v-if="progress === 0">Start</span>
+                            <span v-else>Continue</span>
                         </mdb-btn>
 
                         <!-- <mdb-btn v-show="lastQuestionAnswered === null"
@@ -53,7 +57,7 @@
             <template v-if="stage === 'survey'">
                 <div class="questions-box question"
                      :id="question.id"
-                     :class="currentQuestionIndex !== index ? 'watermark' : 'active'"
+                     :class="currentQuestionIndex !== index ? (question.conditions && question.conditions.length > 0 ? 'non-visible' : 'watermark') : 'active'"
                      v-show="index >= currentQuestionIndex"
                      v-for="(question, index) in questions">
                     <div class="questions-body">
@@ -67,64 +71,64 @@
                         <!--Questions Answer Type-->
                         <div class="question-answer-type">
                             <question-type-text
-                                    :question="question"
-                                    :is-active="currentQuestionIndex === index"
-                                    :on-done-func="postAnswerAndGoToNext"
-                                    :waiting="waiting"
-                                    v-if="question.type.type === 'text'">
+                                :question="question"
+                                :is-active="currentQuestionIndex === index"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :waiting="waiting"
+                                v-if="question.type.type === 'text'">
                             </question-type-text>
 
                             <question-type-checkbox
-                                    :question="question"
-                                    :is-active="currentQuestionIndex === index"
-                                    :is-subquestion="isSubQuestion(question)"
-                                    :get-all-questions-func="getAllQuestions"
-                                    :on-done-func="postAnswerAndGoToNext"
-                                    :is-last-question="isLastQuestion(question)"
-                                    :waiting="waiting"
-                                    v-if="question.type.type === 'checkbox'">
+                                :question="question"
+                                :is-active="currentQuestionIndex === index"
+                                :is-subquestion="isSubQuestion(question)"
+                                :get-all-questions-func="getAllQuestions"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :is-last-question="isLastQuestion(question)"
+                                :waiting="waiting"
+                                v-if="question.type.type === 'checkbox'">
                             </question-type-checkbox>
 
                             <question-type-muti-select
-                                    :question="question"
-                                    :is-active="currentQuestionIndex === index"
-                                    :is-subquestion="isSubQuestion(question)"
-                                    :get-all-questions-func="getAllQuestions"
-                                    :on-done-func="postAnswerAndGoToNext"
-                                    :is-last-question="isLastQuestion(question)"
-                                    :waiting="waiting"
-                                    v-if="question.type.type === 'multi_select'">
+                                :question="question"
+                                :is-active="currentQuestionIndex === index"
+                                :is-subquestion="isSubQuestion(question)"
+                                :get-all-questions-func="getAllQuestions"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :is-last-question="isLastQuestion(question)"
+                                :waiting="waiting"
+                                v-if="question.type.type === 'multi_select'">
                             </question-type-muti-select>
 
                             <question-type-range
-                                    v-if="question.type.type === 'range'">
+                                v-if="question.type.type === 'range'">
                             </question-type-range>
 
                             <question-type-number
-                                    :question="question"
-                                    :is-active="currentQuestionIndex === index"
-                                    :is-subquestion="isSubQuestion(question)"
-                                    :get-all-questions-func="getAllQuestions"
-                                    :on-done-func="postAnswerAndGoToNext"
-                                    :is-last-question="isLastQuestion(question)"
-                                    :waiting="waiting"
-                                    v-if="question.type.type === 'number'">
+                                :question="question"
+                                :is-active="currentQuestionIndex === index"
+                                :is-subquestion="isSubQuestion(question)"
+                                :get-all-questions-func="getAllQuestions"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :is-last-question="isLastQuestion(question)"
+                                :waiting="waiting"
+                                v-if="question.type.type === 'number'">
                             </question-type-number>
 
                             <question-type-radio
-                                    :question="question"
-                                    :is-active="currentQuestionIndex === index"
-                                    :is-subquestion="isSubQuestion(question)"
-                                    :style-horizontal="false"
-                                    :get-all-questions-func="getAllQuestions"
-                                    :on-done-func="postAnswerAndGoToNext"
-                                    :is-last-question="isLastQuestion(question)"
-                                    :waiting="waiting"
-                                    v-if="question.type.type === 'radio'">
+                                :question="question"
+                                :is-active="currentQuestionIndex === index"
+                                :is-subquestion="isSubQuestion(question)"
+                                :style-horizontal="false"
+                                :get-all-questions-func="getAllQuestions"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :is-last-question="isLastQuestion(question)"
+                                :waiting="waiting"
+                                v-if="question.type.type === 'radio'">
                             </question-type-radio>
 
                             <question-type-date
-                                    v-if="question.type.type === 'date'">
+                                v-if="question.type.type === 'date'">
                             </question-type-date>
                         </div>
                     </div>
@@ -142,7 +146,7 @@
 
 
         <!--bottom-navbar-->
-<!--@todo: this is the call assistance modal. needs some styling and setup twilio-->
+        <!--@todo: this is the call assistance modal. needs some styling and setup twilio-->
         <!--&lt;!&ndash;phone assistance&ndash;&gt;
         <div class="row">
             <div v-if="showPhoneButton" class="call-assistance col-lg-1">
@@ -187,16 +191,16 @@
                         <div class="col text-right">
 
                             <mdb-btn
-                                    color="primary"
-                                    @click="scrollDown"
-                                    :disabled="!canScrollDown">
+                                color="primary"
+                                @click="scrollDown"
+                                :disabled="!canScrollDown">
                                 <i class="fas fa-angle-down"></i>
                             </mdb-btn>
 
                             <mdb-btn
-                                    color="primary"
-                                    @click="scrollUp"
-                                    :disabled="!canScrollUp">
+                                color="primary"
+                                @click="scrollUp"
+                                :disabled="!canScrollUp">
                                 <i class="fas fa-angle-up"></i>
                             </mdb-btn>
 
@@ -218,12 +222,11 @@
     import questionTypeRadio from "./questionTypeRadio";
     import questionTypeDate from "./questionTypeDate";
     import callAssistance from "./callAssistance";
-    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
     import questionTypeMultiSelect from "./questionTypeMultiSelect";
 
 
     export default {
-        props: ['surveydata'],
+        props: ['surveyData'],
 
         components: {
             'mdb-btn': mdbBtn,
@@ -252,17 +255,20 @@
                 shouldShowQuestion: false,
                 questionIndex: 0,
                 progressCount: 0,
-                userId: this.surveydata.id,
-                surveyInstanceId: [],
+                userId: this.surveyData.id,
+                surveyInstanceId: null,
                 questionIndexAnswers: [],
-                surveyAnswers: [],
                 conditionsLength: 0,
                 latestQuestionAnsweredIndex: -1,
                 currentQuestionIndex: 0,
                 error: null,
                 progress: 0,
                 waiting: false,
-
+                practiceId: null,
+                practiceName: null,
+                doctorsLastName: null,
+                totalQuestions: 0,
+                totalQuestionWithSubQuestions: 0
             }
         },
 
@@ -274,7 +280,7 @@
             },
 
             lastQuestionAnswered() {
-                return this.surveydata.survey_instances[0].pivot.last_question_answered_id;
+                return this.surveyData.survey_instances[0].pivot.last_question_answered_id;
             },
 
             questionsOrder() {
@@ -283,12 +289,9 @@
                 });
             },
 
-            totalQuestions() {
-                return this.questions.length - this.subQuestions.length;
-            },
-
             canScrollUp() {
-                return this.currentQuestionIndex > 0;
+                return (this.stage === "survey" || this.stage === "complete")
+                    && this.currentQuestionIndex > 0;
             },
             canScrollDown() {
                 return this.stage === "survey"
@@ -322,8 +325,7 @@
                 }
 
                 this.error = null;
-                this.currentQuestionIndex = this.currentQuestionIndex - 1;
-
+                this.currentQuestionIndex = this.getPreviousQuestionIndex(this.currentQuestionIndex);
             },
 
             scrollDown() {
@@ -334,12 +336,7 @@
                 this.error = null;
                 this.currentQuestionIndex = this.currentQuestionIndex + 1;
             },
-            scrollToLastQuestion() {
-                this.stage = true;
-                this.welcomeStage = false;
-                //@todo:check this again - i dont like it
-                this.questionIndex = this.lastQuestionAnswered - 1;
-            },
+
             isSubQuestion(question) {
                 return question.pivot.sub_order !== null;
             },
@@ -426,23 +423,23 @@
                 this.error = null;
                 this.waiting = true;
 
-                axios.post('/save-answer', {
-                    user_id: this.userId,
-                    survey_instance_id: this.surveyInstanceId[0],
+                axios.post(`/survey/hra/${this.practiceId}/${this.userId}/save-answer`, {
+                    patient_id: this.userId,
+                    practice_id: this.practiceId,
+                    survey_instance_id: this.surveyInstanceId,
                     question_id: questionId,
                     question_type_answer_id: questionTypeAnswerId,
                     value: answer,
 
                 })
                     .then((response) => {
-                        console.log(answer);
                         this.waiting = false;
                         //save the answer in state
                         const q = this.questions.find(x => x.id === questionId);
 
                         //increment progress only if question was not answered before
                         const incrementProgress = typeof q.answer === "undefined";
-                        /* q.answer = answer;*/
+                        q.answer = {value: answer};
 
                         this.goToNextQuestion(incrementProgress)
                             .then(() => {
@@ -453,9 +450,9 @@
                                 //to previous question. If these lines are commented out, the `go to previous`
                                 //does not work!
                                 //NOTE
-                                this.currentQuestionIndex = this.currentQuestionIndex + 1;
+                                this.currentQuestionIndex = this.currentQuestionIndex - 1;
                                 this.$nextTick().then(() => {
-                                    this.currentQuestionIndex = this.currentQuestionIndex - 1;
+                                    this.currentQuestionIndex = this.currentQuestionIndex + 1;
                                 });
                             });
 
@@ -464,7 +461,13 @@
                         console.log(error);
                         this.waiting = false;
 
-                        if (error.response && error.response.data) {
+                        if (error.response && error.response.status === 404) {
+                            this.error = "Not Found [404]";
+                        }
+                        else if (error.response && error.response.status === 419) {
+                            this.error = "Not Authenticated [419]";
+                        }
+                        else if (error.response && error.response.data) {
                             const errors = [error.response.data.message];
                             Object.keys(error.response.data.errors || []).forEach(e => {
                                 errors.push(error.response.data.errors[e]);
@@ -476,12 +479,67 @@
                     });
             },
 
+            getPreviousQuestionIndex(index) {
+                const newIndex = index - 1;
+                const prevQuestion = this.questions[newIndex];
+                if (!prevQuestion) {
+                    return 0;
+                }
+
+                if (prevQuestion.disabled) {
+                    return this.getPreviousQuestionIndex(index - 1);
+                }
+
+                //if we reach here, it means we have not faced this question yet in this session
+                //it might still be disabled though -> think completing questions then refreshing the page
+                //need to check if there are certain conditions that have to be met before showing this question
+                let canGoToPrev = true;
+                if (prevQuestion.conditions && prevQuestion.conditions.length) {
+                    for (let i = 0; i < prevQuestion.conditions.length; i++) {
+                        const q = prevQuestion.conditions[0];
+                        const questions = this.getQuestionsOfOrder(q.related_question_order_number);
+                        if (questions[0].answer.value.value !== q.related_question_expected_answer) {
+                            canGoToPrev = false;
+                            break;
+                        }
+                    }
+                }
+                return canGoToPrev ? newIndex : this.getPreviousQuestionIndex(index - 1);
+            },
+
+            getNextQuestion(index) {
+                const newIndex = index + 1;
+                const nextQuestion = this.questions[newIndex];
+                if (!nextQuestion) {
+                    return null;
+                }
+
+                //need to check if there are certain conditions that have to be met before showing this question
+                if (nextQuestion.conditions && nextQuestion.conditions.length) {
+                    let shouldDisable = false;
+                    for (let i = 0; i < nextQuestion.conditions.length; i++) {
+                        const q = nextQuestion.conditions[0];
+                        const questions = this.getQuestionsOfOrder(q.related_question_order_number);
+                        if (questions[0].answer.value.value !== q.related_question_expected_answer) {
+                            shouldDisable = true;
+                            break;
+                        }
+                    }
+                    nextQuestion.disabled = shouldDisable;
+                }
+
+                return !nextQuestion.disabled ? {
+                    index: newIndex,
+                    question: nextQuestion
+                } : this.getNextQuestion(index + 1);
+            },
+
             goToNextQuestion(incrementProgress) {
 
-                const nextQuestion = this.questions[this.currentQuestionIndex + 1];
+                const next = this.getNextQuestion(this.currentQuestionIndex);
 
                 //survey complete
-                if (!nextQuestion) {
+                if (!next) {
                     this.stage = "complete";
                     this.latestQuestionAnsweredIndex = this.currentQuestionIndex;
                     this.currentQuestionIndex = this.currentQuestionIndex + 1;
@@ -491,12 +549,15 @@
                     return;
                 }
 
+                const nextQuestion = next.question;
+                const nextIndex = next.index;
+
                 return new Promise(resolve => {
                     $('.survey-container').animate({
                         scrollTop: $(`#${nextQuestion.id}`).offset().top
                     }, 519, 'swing', () => {
                         this.latestQuestionAnsweredIndex = this.currentQuestionIndex;
-                        this.currentQuestionIndex = this.currentQuestionIndex + 1;
+                        this.currentQuestionIndex = nextIndex;
                         const answered = this.questions[this.latestQuestionAnsweredIndex];
 
                         //increment progress only if current question is not a sub question
@@ -520,16 +581,29 @@
                 });
             },
 
+            hasAnsweredAllOfOrder(order) {
+                const questions = this.questions.filter(q => q.pivot.order === order);
+                return questions.every(q => q.answer !== undefined);
+            },
+
+            getQuestionsOfOrder(order) {
+                return this.questions.filter(q => q.pivot.order === order);
+            }
 
         },
         mounted() {
-
-            const surveyInstanceId = this.surveydata.survey_instances.map(q => q.id);
-            this.surveyInstanceId.push(...surveyInstanceId);
         },
         created() {
-            const questionsData = this.surveydata.survey_instances[0].questions.map(function (q) {
+
+            this.practiceId = this.surveyData.primary_practice.id;
+            this.practiceName = this.surveyData.primary_practice.display_name;
+            this.doctorsLastName = this.surveyData.billing_provider[0].user.last_name;
+
+            this.surveyInstanceId = this.surveyData.survey_instances[0].id
+
+            const questionsData = this.surveyData.survey_instances[0].questions.map(function (q) {
                 const result = Object.assign(q, {answer_types: [q.answer_type]});
+                result.disabled = false; // we will be disabling based on answers
                 return result;
             });
             const questions = questionsData.filter(question => !question.optional);
@@ -537,8 +611,36 @@
             this.questions.push(...questionsData);
             this.subQuestions.push(...subQuestions);
 
-            const surveyAnswers = this.surveydata.answers;
-            this.surveyAnswers.push(...surveyAnswers);
+            if (this.surveyData.answers && this.surveyData.answers.length) {
+                this.surveyData.answers.forEach(a => {
+                    const q = this.questions.find(q => q.id === a.question_id);
+                    if (q) {
+                        q.answer = a;
+                        if (q.pivot.sub_order === null || this.hasAnsweredAllOfOrder(q.pivot.order)) {
+                            this.progress = this.progress + 1;
+                        }
+                    }
+                });
+            }
+
+            if (typeof this.surveyData.survey_instances[0].pivot.last_question_answered_id !== "undefined") {
+                const lastQuestionAnsweredId = this.surveyData.survey_instances[0].pivot.last_question_answered_id;
+                const index = this.questions.findIndex(q => q.id === lastQuestionAnsweredId);
+                this.latestQuestionAnsweredIndex = index;
+                const next = this.getNextQuestion(index);
+                if (next) {
+                    this.currentQuestionIndex = next.index;
+                }
+            }
+
+            this.totalQuestionWithSubQuestions = this.questions.length;
+            this.totalQuestions = _.uniqBy(this.questions, (elem) => {
+                return elem.pivot.order;
+            }).length;
+
+            if (this.surveyData.answers && this.surveyData.answers.length === this.questions.length) {
+                this.stage = "complete";
+            }
         },
 
     }
@@ -667,6 +769,11 @@
         transition: opacity 0.5s linear;
     }
 
+    .non-visible {
+        opacity: 0.02;
+        transition: opacity 0.5s linear;
+    }
+
     .error {
         color: darkred;
     }
@@ -693,8 +800,7 @@
 
     .welcome-icon {
         width: 108px;
-        margin-left: 490px;
-        margin-top: 20px;
+        margin: auto;
     }
 
     .fa-phone {
@@ -708,8 +814,12 @@
         color: #ffffff;
     }
 
+    .card-body {
+        text-align: center;
+    }
+
     .by-circlelink {
-        font-family: Poppins;
+        font-family: Poppins, serif;
         font-size: 18px;
         font-weight: 600;
         font-style: normal;
@@ -717,7 +827,6 @@
         line-height: normal;
         letter-spacing: 1px;
         margin-top: 10px;
-        margin-left: 38%;
         color: #50b2e2;
     }
 
@@ -725,6 +834,5 @@
         font-weight: normal;
         color: #1a1a1a;
     }
-
 
 </style>

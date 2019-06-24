@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Answer;
-use App\Http\Requests\GetSurvey;
+use App\Http\Requests\StoreAnswer;
 use App\Services\SurveyService;
-use Illuminate\Http\Request;
+use Auth;
 
 class SurveyController extends Controller
 {
@@ -16,26 +16,34 @@ class SurveyController extends Controller
         $this->service = $service;
     }
 
-    public function getSurvey(GetSurvey $request)
+    public function getSurvey($practiceId, $patientId, $surveyId)
     {
-        //change auth user id - what if provider logs in for vitals?
-        $userWithSurveyData = $this->service->getSurveyData(auth()->user()->id, $request->survey_id);
-        if ( ! $userWithSurveyData) {
-            return response()->json(['errors' => 'Data not found'], 400);
+        //no need to have this check here
+        if ( ! Auth::check()) {
+            return redirect()->route('survey.vitals.welcome', ['practiceId' => $practiceId, 'patientId' => $patientId]);
         }
 
-        return response()->json([
-            'success' => true,
-            'data'    => $userWithSurveyData->toArray(),
-        ], 200);
+//        if (!Auth::user()->hasPermissionForSite('vitals-survey-complete', $practiceId)) {
+//            return redirect()->route('survey.vitals.not.authorized', ['practiceId' => $practiceId, 'patientId' => $patientId]);
+//        }
+
+        $surveyData = $this->service->getSurveyData($patientId, $surveyId);
+
+        if ( ! $surveyData) {
+            throw new \Error("Survey not found for patient " . $patientId);
+        }
+
+        return view('survey.hra.index', [
+            'data' => $surveyData->toArray(),
+        ]);
     }
 
-    //i have disabled storeAnswer since we are not using any auth scaffolding yet
-    public function storeAnswer(/*StoreAnswer*/
-        Request $request
-    ) {
+    public function storeAnswer(StoreAnswer $request)
+    {
+        $input            = $request->all();
+        $input['user_id'] = $input['patient_id'];
 
-        $answer = $this->service->updateOrCreateAnswer($request->input());
+        $answer = $this->service->updateOrCreateAnswer($input);
 
         if ( ! $answer) {
             return response()->json(['errors' => 'Answer was not created'], 400);

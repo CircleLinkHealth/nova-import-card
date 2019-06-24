@@ -14,7 +14,7 @@
                     </div>
                     <div class="align-items-center">
                         <div class="survey-sub-welcome-text">
-                            Here is the form to fill out (Patient’s Name) Vitals. Once completed, a PPP will be
+                            Here is the form to fill out {{patientName}}'s Vitals. Once completed, a PPP will be
                             generated
                             for both the patient and practice, as well as a Provider Report for the doctor to evaluate.
                         </div>
@@ -275,6 +275,7 @@
                 latestQuestionAnsweredIndex: -1,
                 progress: 0,
                 totalQuestions: 0, //does not include sub-questions
+                totalQuestionWithSubQuestions: 0,
                 patientId: -1,
                 practiceId: -1,
                 patientName: '',
@@ -287,7 +288,7 @@
             },
             canScrollDown() {
                 return this.stage === "survey"
-                    && this.currentQuestionIndex < this.totalQuestions
+                    && this.currentQuestionIndex < this.totalQuestionWithSubQuestions
                     && this.latestQuestionAnsweredIndex >= this.currentQuestionIndex;
             },
             progressPercentage() {
@@ -373,7 +374,7 @@
 
                         //increment progress only if question was not answered before
                         const incrementProgress = typeof q.answer === "undefined";
-                        q.answer = answer;
+                        q.answer = {value: answer};
 
                         this.goToNextQuestion(incrementProgress)
                             .then(() => {
@@ -395,7 +396,13 @@
                         console.log(error);
                         this.waiting = false;
 
-                        if (error.response && error.response.data) {
+                        if (error.response && error.response.status === 404) {
+                            this.error = "Not Found [404]";
+                        }
+                        else if (error.response && error.response.status === 419) {
+                            this.error = "Not Authenticated [419]";
+                        }
+                        else if (error.response && error.response.data) {
                             const errors = [error.response.data.message];
                             Object.keys(error.response.data.errors || []).forEach(e => {
                                 errors.push(error.response.data.errors[e]);
@@ -491,6 +498,7 @@
                 this.currentQuestionIndex = this.latestQuestionAnsweredIndex + 1;
             }
 
+            this.totalQuestionWithSubQuestions = this.questions.length;
             this.totalQuestions = _.uniqBy(this.questions, (elem) => {
                 return elem.pivot.order;
             }).length;

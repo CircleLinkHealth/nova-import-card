@@ -3,29 +3,38 @@
         <!--question without sub_parts-->
         <template v-if="!questionHasSubParts">
 
-            <div v-for="(placeholder, index) in placeholderForSingleQuestion">
-                <input type="text"
-                       class="text-field"
-                       v-model="inputHasText[index]"
-                       :placeholder="placeholder">
+            <div v-for="(placeholder, index) in placeholderForSingleQuestion"
+                 class="row">
+                <div class="col-md-12">
+                    <input type="text"
+                           class="text-field"
+                           v-model="inputHasText[index]"
+                           :placeholder="placeholder"/>
+                </div>
+                <!--remove input fields button-->
+                <div v-if="placeholderForSingleQuestion.length > 1"
+                     class="col-md-12"
+                     v-for="extraFieldButtonName in extraFieldButtonNames">
+                    <span @click="removeSingleInputFields(index)"
+                          class="button-text-only remove">
+                        <font-awesome-icon icon="minus-circle"/> {{extraFieldButtonName.remove_extra_answer_text}}
+                    </span>
+                </div>
+
+                <br/>
+                <br/>
             </div>
 
+            <br/>
+
             <!--add single input fields button-->
-            <div v-for="extraFieldButtonName in extraFieldButtonNames">
-                <div v-if="canAddInputFields">
-                    <button type="button"
-                            @click="addInputField(extraFieldButtonName.placeholder)"
-                            class="btn-add-field">
-                        {{extraFieldButtonName.add_extra_answer_text}}
-                    </button>
-                </div>
-                <!--add remove input fields button-->
-                <div v-if="canRemoveInputFields">
-                    <button type="button"
-                            @click="removeSingleInputFields()"
-                            class="btn-primary">
-                        {{extraFieldButtonName.remove_extra_answer_text}}
-                    </button>
+            <div class="row" v-if="canAddInputFields">
+                <div v-for="extraFieldButtonName in extraFieldButtonNames"
+                     class="col-md-12">
+                    <span class="button-text-only"
+                          @click="addInputField(extraFieldButtonName.placeholder)">
+                          <font-awesome-icon icon="plus-circle"/> {{extraFieldButtonName.add_extra_answer_text}}
+                    </span>
                 </div>
             </div>
 
@@ -33,37 +42,46 @@
         <template v-else>
 
             <!--question with sub_parts-->
-            <div class="row">
-                <div v-for="(subPartArr, index) in subParts">
-                    <div v-for="(subPart, innerIndex) in subPartArr" :key="innerIndex" style="margin-left: 15%;">
-                        <label class="label">{{subPart.title}}</label><br>
-                        <input type="text"
-                               class="text-field"
-                               v-model="subPart.value"
-                               :placeholder="subPart.placeholder"
-                               :disabled="!isActive">
-                    </div>
+            <div class="row"
+                 v-for="(subPartArr, index) in subParts">
+                <div v-for="(subPart, innerIndex) in subPartArr"
+                     :class="subPartsClass"
+                     :key="innerIndex">
+                    <label class="label">{{subPart.title}}</label><br>
+                    <input type="text"
+                           class="text-field"
+                           v-model="subPart.value"
+                           :placeholder="subPart.placeholder"
+                           :disabled="!isActive">
                 </div>
-            </div>
-            <!--add input fields button-->
-            <div v-for="extraFieldButtonName in extraFieldButtonNames">
-                <div v-if="canAddInputFields">
 
-                    <button type="button"
-                            @click="addInputFields(extraFieldButtonName.sub_parts)"
-                            class="btn-add-field">
-                        {{extraFieldButtonName.add_extra_answer_text}}
-                    </button>
-                </div>
                 <!--remove input fields button-->
-                <div v-if="canRemoveInputFields">
-                    <button type="button"
-                            @click="removeInputFields()"
-                            class="btn-primary">
-                        {{extraFieldButtonName.remove_extra_answer_text}}
-                    </button>
+                <div v-if="subParts.length > 1"
+                     class="col-md-12"
+                     v-for="extraFieldButtonName in extraFieldButtonNames">
+                    <span @click="removeInputFields(index)"
+                          class="button-text-only remove">
+                        <font-awesome-icon icon="minus-circle"/> {{extraFieldButtonName.remove_extra_answer_text}}
+                    </span>
+                </div>
+
+                <br/>
+                <br/>
+            </div>
+
+            <br/>
+
+            <!--add input fields button-->
+            <div class="row" v-if="canAddInputFields">
+                <div v-for="extraFieldButtonName in extraFieldButtonNames"
+                     class="col-md-12">
+                    <span class="button-text-only"
+                          @click="addInputFields(extraFieldButtonName.sub_parts)">
+                          <font-awesome-icon icon="plus-circle"/> {{extraFieldButtonName.add_extra_answer_text}}
+                    </span>
                 </div>
             </div>
+
 
         </template>
 
@@ -77,7 +95,7 @@
                     class="next-btn"
                     name="number"
                     id="number"
-                    :disabled="!hasTypedInTwoFields"
+                    :disabled="!(hasTypedInAllInputs || hasTypedInSubParts)"
                     @click="handleAnswer()">
                 {{isLastQuestion ? 'Complete' : 'Next'}}
                 <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
@@ -90,10 +108,14 @@
 
     import {mdbBtn} from 'mdbvue';
     import {library} from '@fortawesome/fontawesome-svg-core';
-    import {faSpinner} from '@fortawesome/free-solid-svg-icons';
+    import {faMinusCircle, faPlusCircle, faSpinner} from '@fortawesome/free-solid-svg-icons';
     import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 
     library.add(faSpinner);
+    library.add(faPlusCircle);
+    library.add(faMinusCircle);
+
+    const SINGLE_INPUT_KEY_NAME = "name";
 
     export default {
         name: "questionTypeText",
@@ -106,26 +128,20 @@
                 inputHasText: [],
                 questionOptions: [],
                 subParts: [],
+                subPartsClass: 'col-md-6',
                 extraFieldButtonNames: [],
-                canRemoveInputFields: false,
                 canAddInputFields: false,
                 showNextButton: false,
                 placeholderForSingleQuestion: [],
             }
         },
         computed: {
-            hasTypedTwoNumbers() {
-                return this.inputHasText.length > 1;
+            hasTypedInAllInputs() {
+                return this.inputHasText.length > 0 && this.inputHasText.every(t => t.length > 0);
             },
 
-            hasTypedInTwoFields() {
-                return this.inputHasText.length > 1;
-            },
-
-            hasTypedTwoCharacters() {
-                var text = this.inputHasText;
-                const length = text.map(q => q.length);
-                return length > 1 === true;
+            hasTypedInSubParts() {
+                return this.subParts.length && this.subParts[0][0].value.length > 0 && this.subParts[0][1].value.length > 0;
             },
 
             hasAnswerType() {
@@ -182,78 +198,53 @@
                 return '';
             },
 
-            conditions() {
-                if (this.hasTypedInTwoFields && this.questionHasSubParts) {
-                    return true;
-                } else {
-                    if (this.hasTypedTwoCharacters && !this.questionHasSubParts) {
-                        return true;
-                    }
-                }
-            }
-
         },
 
         mounted() {
-            /*get placeholder for single question input*/
-            if (this.questionHasPlaceHolderInSubParts && !this.questionHasPlaceHolderInOptions) {
-                const placeholder = this.questionOptions[0].sub_parts.map(q => q.placeholder);
-                this.placeholderForSingleQuestion.push(...placeholder);
-            }
-            if (this.questionHasPlaceHolderInOptions) {
-                const placeholder2 = this.questionOptions[0].placeholder;
-                this.placeholderForSingleQuestion.push(placeholder2);
-            }
         },
 
         methods: {
 
-            addInputField(placeholder) {
+            addInputField(placeholder, value) {
+                this.inputHasText.push(value || "");
                 this.placeholderForSingleQuestion.push(placeholder);
-                this.canRemoveInputFields = true;
             },
 
-            addInputFields(extraFieldSubParts) {
+            addInputFields(extraFieldSubParts, values) {
 
-                const subQuestions = extraFieldSubParts;
-                // this.subParts.push(...subQuestions);
-                const fields = subQuestions.map(x => {
-                    return Object.assign({}, x, {value: ''});
-                });
-                this.subParts.push(fields);
-
-                /*
-                const subParts = extraFieldSubParts.map(q => q);
-                for (let j = 0; j < subParts.length; j++) {
-                    const subPart = subParts[j];
-                    this.subParts.push({
-                        title: subPart.title,
-                        placeholder: subPart.placeholder,
-                        key: subPart.key
+                if (values) {
+                    values.forEach((v) => {
+                        const fields = extraFieldSubParts.map((x) => {
+                            return Object.assign({}, x, {value: v[x.key] || ''});
+                        });
+                        this.subParts.push(fields);
                     });
-                }
-                */
 
-                this.canRemoveInputFields = true;
+                }
+                else {
+                    const fields = extraFieldSubParts.map((x) => {
+                        return Object.assign({}, x, {value: ''});
+                    });
+                    this.subParts.push(fields);
+                }
 
             },
-            /*@todo:delete answer also*/
-            removeInputFields(index) {//index is undefined. if it is defined it doesn't work. Can anyone clarify pls?
-                // this.subParts.splice(index, 2);
+
+            removeInputFields(index) {
                 this.subParts.splice(index, 1);
             },
 
             removeSingleInputFields(index) {
-                this.placeholderForSingleQuestion.splice(index, 1)
+                this.placeholderForSingleQuestion.splice(index, 1);
+                this.inputHasText.splice(index, 1);
             },
 
             handleAnswer() {
                 const answer = [];
                 if (this.subParts.length === 0) {
                     for (let j = 0; j < this.inputHasText.length; j++) {
-                        var values = {
-                            name: this.inputHasText[j]
-                        };
+                        const values = {};
+                        values[SINGLE_INPUT_KEY_NAME] = this.inputHasText[j];
                         answer.push(values);
                     }
                 } else {
@@ -286,36 +277,41 @@
             }
 
             /*sets canAddInputField data*/
-            if (this.hasAnswerType) {
-                return this.questionOptions[0].allow_multiple === true ? this.canAddInputFields = true : this.canAddInputFields = false;
+            this.canAddInputFields = this.hasAnswerType && this.questionOptions[0].allow_multiple;
+
+            if (this.question.answer && this.question.answer.value) {
+                if (this.questionHasSubParts) {
+                    this.subParts = [];
+                    this.addInputFields(this.questionOptions[0].sub_parts, this.question.answer.value);
+                }
+                else {
+                    let placeholder = "";
+                    if (this.extraFieldButtonNames && this.extraFieldButtonNames.length) {
+                        placeholder = this.extraFieldButtonNames[0].placeholder;
+                    }
+
+                    this.question.answer.value.forEach(answer => {
+                        this.addInputField(placeholder, answer[SINGLE_INPUT_KEY_NAME]);
+                    });
+                }
             }
-            return false;
+            else {
+                /*get placeholder for single question input*/
+                if (this.questionHasPlaceHolderInSubParts && !this.questionHasPlaceHolderInOptions) {
+                    const placeholder = this.questionOptions[0].sub_parts.map(q => q.placeholder);
+                    placeholder.forEach(p => this.addInputField(p));
+                }
+                if (this.questionHasPlaceHolderInOptions) {
+                    const placeholder2 = this.questionOptions[0].placeholder;
+                    this.addInputField(placeholder2);
+                }
+            }
+
         },
     }
 </script>
 
 <style scoped>
-    .next-btn {
-        width: 120px;
-        height: 40px;
-        border-radius: 5px;
-        border: solid 1px #4aa5d2;
-        background-color: #50b2e2;
-    }
-
-    .btn-add-field {
-        width: 271px;
-        height: 40px;
-        font-family: Poppins;
-        font-size: 24px;
-        font-weight: 500;
-        font-style: normal;
-        font-stretch: normal;
-        line-height: normal;
-        letter-spacing: 1.3px;
-        color: #50b2e2;
-
-    }
 
     .text-field {
         border: none;
@@ -329,7 +325,7 @@
     .label {
         width: 64px;
         height: 40px;
-        font-family: Poppins;
+        font-family: Poppins, serif;
         font-size: 20px;
         font-weight: 500;
         font-style: normal;
@@ -353,5 +349,34 @@
     .fa, .fas {
         color: #50b2e2;
         font-weight: unset;
+    }
+
+    .text-field {
+        border: none;
+        border-bottom: solid 1px rgba(0, 0, 0, 0.1);
+        background-color: transparent;
+        outline: 0;
+        width: 100%;
+        height: 30px;
+    }
+
+    .text-field:active, .text-field:focus {
+        border-color: #4aa5d2;
+    }
+
+    span.button-text-only {
+        cursor: pointer;
+        font-family: Poppins, serif;
+        font-size: 24px;
+        font-weight: 500;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: normal;
+        letter-spacing: 1.33px;
+        color: #50b2e2;
+    }
+
+    span.button-text-only.remove {
+        color: #ff6e6e;
     }
 </style>

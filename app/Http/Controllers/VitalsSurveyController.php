@@ -29,9 +29,9 @@ class VitalsSurveyController extends Controller
     {
         $patient = User::with(['regularDoctor', 'billingProvider'])->findOrFail($patientId);
 
-        if (!empty($patient->regularDoctorUser())) {
+        if ( ! empty($patient->regularDoctorUser())) {
             $doctorsName = $patient->regularDoctorUser()->getFullName();
-        } else if (!empty($patient->billingProviderUser())) {
+        } else if ( ! empty($patient->billingProviderUser())) {
             $doctorsName = $patient->billingProviderUser()->getFullName();
         }
 
@@ -51,18 +51,19 @@ class VitalsSurveyController extends Controller
      */
     public function getSurvey($practiceId, $patientId)
     {
-        $userWithSurveyData = $this->service->getSurveyData($patientId);
-
-        if (!$userWithSurveyData) {
-            throw new \Error("Survey not found for patient " . $patientId);
-        }
-
-        if (!Auth::check()) {
+        //no need to have this check here
+        if ( ! Auth::check()) {
             return redirect()->route('survey.vitals.welcome', ['practiceId' => $practiceId, 'patientId' => $patientId]);
         }
 
-        if (!Auth::user()->hasPermissionForSite('vitals-survey-complete', $practiceId)) {
-            return redirect()->route('survey.vitals.not.authorized', ['practiceId' => $practiceId, 'patientId' => $patientId]);
+//        if (!Auth::user()->hasPermissionForSite('vitals-survey-complete', $practiceId)) {
+//            return redirect()->route('survey.vitals.not.authorized', ['practiceId' => $practiceId, 'patientId' => $patientId]);
+//        }
+
+        $userWithSurveyData = $this->service->getSurveyData($patientId);
+
+        if ( ! $userWithSurveyData) {
+            throw new \Error("Survey not found for patient " . $patientId);
         }
 
         return view('survey.vitals.index', [
@@ -82,12 +83,12 @@ class VitalsSurveyController extends Controller
     {
         $answer = $this->service->updateOrCreateAnswer($request);
 
-        if (!$answer) {
+        if ( ! $answer) {
             return response()->json(['errors' => 'Answer was not created'], 400);
         }
 
         return response()->json([
-            'created' => true,
+            'created'       => true,
             'survey_status' => $answer,
         ], 200);
 

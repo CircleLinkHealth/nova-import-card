@@ -6,7 +6,6 @@ namespace App\Services;
 
 use App\Survey;
 use App\User;
-use Carbon\Carbon;
 
 class GenerateProviderReportService
 {
@@ -115,12 +114,12 @@ class GenerateProviderReportService
 
     private function getMedicationHistory()
     {
-        return$this->answerForHraQuestionWithOrder(20);
+        return $this->answerForHraQuestionWithOrder(20);
     }
 
     private function getFamilyMedicalHistory()
     {
-        return  $this->answerForHraQuestionWithOrder(18, 'a');
+        return $this->answerForHraQuestionWithOrder(18, 'a');
     }
 
     private function getImmunizationHistory()
@@ -294,7 +293,9 @@ class GenerateProviderReportService
             return [];
         }
 
-        return array_key_exists('value', $answer->value) ? $answer->value['value'] : $answer->value;
+        return array_key_exists('value', $answer->value)
+            ? $answer->value['value']
+            : $answer->value;
     }
 
 
@@ -308,7 +309,9 @@ class GenerateProviderReportService
             return [];
         }
 
-        return array_key_exists('value', $answer->value) ? $answer->value['value'] : $answer->value;
+        return array_key_exists('value', $answer->value)
+            ? $answer->value['value']
+            : $answer->value;
 
     }
 }

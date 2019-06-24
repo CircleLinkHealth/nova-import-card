@@ -7,7 +7,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 class ProviderReport extends BaseModel
 {
     protected $fillable = [
-        'patient_id',
+        'user_id',
         'hra_instance_id',
         'vitals_instance_id',
         'reason_for_visit',
@@ -51,7 +51,7 @@ class ProviderReport extends BaseModel
 
     public function patient()
     {
-        return $this->belongsTo(User::class, 'patient_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function hraSurveyInstance()
