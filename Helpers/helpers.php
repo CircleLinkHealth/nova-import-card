@@ -8,7 +8,7 @@ if ( ! function_exists('isProductionEnv')) {
      */
     function isProductionEnv()
     {
-        return config('app.is_production_env');
+        return config('core.is_production_env');
     }
 }
 
@@ -20,7 +20,7 @@ if ( ! function_exists('isQueueWorkerEnv')) {
      */
     function isQueueWorkerEnv()
     {
-        return config('app.is_queue_worker_env');
+        return config('core.is_queue_worker_env');
     }
 }
 

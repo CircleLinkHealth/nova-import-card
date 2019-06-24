@@ -22,7 +22,7 @@
             "CircleLinkHealth\\Core\\": ""
         },
         "files": [
-            "helpers.php"
+            "Helpers/helpers.php"
         ]
     },
     "require": {
