@@ -250,16 +250,16 @@
         },
         {
             "name": "appstract/laravel-opcache",
-            "version": "2.0.2",
+            "version": "2.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/appstract/laravel-opcache.git",
-                "reference": "ef41a0f5e6d717317d5434b39add6e17152b620b"
+                "reference": "899ed38246f25da38b40a2eabaa6c9aa41903023"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/appstract/laravel-opcache/zipball/ef41a0f5e6d717317d5434b39add6e17152b620b",
-                "reference": "ef41a0f5e6d717317d5434b39add6e17152b620b",
+                "url": "https://api.github.com/repos/appstract/laravel-opcache/zipball/899ed38246f25da38b40a2eabaa6c9aa41903023",
+                "reference": "899ed38246f25da38b40a2eabaa6c9aa41903023",
                 "shasum": ""
             },
             "require": {
@@ -307,7 +307,7 @@
                 "laravel",
                 "php"
             ],
-            "time": "2018-07-19T12:41:58+00:00"
+            "time": "2019-06-17T19:35:57+00:00"
         },
         {
             "name": "appstract/lush-http",
@@ -458,16 +458,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.100.8",
+            "version": "3.101.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "d4abc59e6fb3407fc66e241886092251a23423e0"
+                "reference": "f10b7089180f7c776606dab2d566697c7abd0045"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/d4abc59e6fb3407fc66e241886092251a23423e0",
-                "reference": "d4abc59e6fb3407fc66e241886092251a23423e0",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/f10b7089180f7c776606dab2d566697c7abd0045",
+                "reference": "f10b7089180f7c776606dab2d566697c7abd0045",
                 "shasum": ""
             },
             "require": {
@@ -537,7 +537,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2019-06-20T18:11:43+00:00"
+            "time": "2019-06-24T18:18:46+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -663,7 +663,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "82fea4fe4c20464b8018534b70b3844a8c39773a"
+                "reference": "1b8e2edba3035555bed0e1a73a54fce4d4278ccc"
             },
             "require": {
                 "venturecraft/revisionable": "dev-master"
@@ -680,7 +680,10 @@
             "autoload": {
                 "psr-4": {
                     "CircleLinkHealth\\Core\\": ""
-                }
+                },
+                "files": [
+                    "helpers.php"
+                ]
             },
             "authors": [
                 {
@@ -688,7 +691,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-06-21T12:17:37+00:00"
+            "time": "2019-06-24T11:47:51+00:00"
         },
         {
             "name": "circlelinkhealth/customer",
@@ -1488,16 +1491,16 @@
         },
         {
             "name": "egulias/email-validator",
-            "version": "2.1.8",
+            "version": "2.1.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/egulias/EmailValidator.git",
-                "reference": "c26463ff9241f27907112fbcd0c86fa670cfef98"
+                "reference": "128cc721d771ec2c46ce59698f4ca42b73f71b25"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/c26463ff9241f27907112fbcd0c86fa670cfef98",
-                "reference": "c26463ff9241f27907112fbcd0c86fa670cfef98",
+                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/128cc721d771ec2c46ce59698f4ca42b73f71b25",
+                "reference": "128cc721d771ec2c46ce59698f4ca42b73f71b25",
                 "shasum": ""
             },
             "require": {
@@ -1541,7 +1544,7 @@
                 "validation",
                 "validator"
             ],
-            "time": "2019-05-16T22:02:54+00:00"
+            "time": "2019-06-23T10:14:27+00:00"
         },
         {
             "name": "erusev/parsedown",
@@ -2020,16 +2023,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.103",
+            "version": "v0.104",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "01f9ada6e0f37515419cbf457144ccefee70e522"
+                "reference": "d41fea99f90d7935bd57cf654bf271072fe584f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/01f9ada6e0f37515419cbf457144ccefee70e522",
-                "reference": "01f9ada6e0f37515419cbf457144ccefee70e522",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/d41fea99f90d7935bd57cf654bf271072fe584f1",
+                "reference": "d41fea99f90d7935bd57cf654bf271072fe584f1",
                 "shasum": ""
             },
             "require": {
@@ -2053,7 +2056,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2019-06-16T00:23:11+00:00"
+            "time": "2019-06-23T00:23:39+00:00"
         },
         {
             "name": "google/auth",
@@ -2410,16 +2413,16 @@
         },
         {
             "name": "intervention/image",
-            "version": "2.4.2",
+            "version": "2.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Intervention/image.git",
-                "reference": "e82d274f786e3d4b866a59b173f42e716f0783eb"
+                "reference": "39eaef720d082ecc54c64bf54541c55f10db546d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Intervention/image/zipball/e82d274f786e3d4b866a59b173f42e716f0783eb",
-                "reference": "e82d274f786e3d4b866a59b173f42e716f0783eb",
+                "url": "https://api.github.com/repos/Intervention/image/zipball/39eaef720d082ecc54c64bf54541c55f10db546d",
+                "reference": "39eaef720d082ecc54c64bf54541c55f10db546d",
                 "shasum": ""
             },
             "require": {
@@ -2476,7 +2479,7 @@
                 "thumbnail",
                 "watermark"
             ],
-            "time": "2018-05-29T14:19:03+00:00"
+            "time": "2019-06-24T14:06:31+00:00"
         },
         {
             "name": "jakub-onderka/php-console-color",
@@ -5815,16 +5818,16 @@
         },
         {
             "name": "phpseclib/phpseclib",
-            "version": "2.0.19",
+            "version": "2.0.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "d2085db7b7394baa071a69c8f9159723c250f2ba"
+                "reference": "d6819a55b05e123db1e881d8b230d57f912126be"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/d2085db7b7394baa071a69c8f9159723c250f2ba",
-                "reference": "d2085db7b7394baa071a69c8f9159723c250f2ba",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/d6819a55b05e123db1e881d8b230d57f912126be",
+                "reference": "d6819a55b05e123db1e881d8b230d57f912126be",
                 "shasum": ""
             },
             "require": {
@@ -5903,7 +5906,7 @@
                 "x.509",
                 "x509"
             ],
-            "time": "2019-06-20T03:34:11+00:00"
+            "time": "2019-06-23T16:33:11+00:00"
         },
         {
             "name": "phpunit/php-timer",
@@ -10893,16 +10896,16 @@
         },
         {
             "name": "filp/whoops",
-            "version": "2.3.2",
+            "version": "2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filp/whoops.git",
-                "reference": "a28d5cef33627c069a2bd8fbb35ebe1a54881d35"
+                "reference": "1a1a1044ad00e285bd2825fac4c3a0443d90ad33"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filp/whoops/zipball/a28d5cef33627c069a2bd8fbb35ebe1a54881d35",
-                "reference": "a28d5cef33627c069a2bd8fbb35ebe1a54881d35",
+                "url": "https://api.github.com/repos/filp/whoops/zipball/1a1a1044ad00e285bd2825fac4c3a0443d90ad33",
+                "reference": "1a1a1044ad00e285bd2825fac4c3a0443d90ad33",
                 "shasum": ""
             },
             "require": {
@@ -10950,7 +10953,7 @@
                 "throwable",
                 "whoops"
             ],
-            "time": "2019-06-21T09:00:00+00:00"
+            "time": "2019-06-23T09:00:00+00:00"
         },
         {
             "name": "friendsofphp/php-cs-fixer",
