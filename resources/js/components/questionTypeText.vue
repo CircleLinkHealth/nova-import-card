@@ -1,92 +1,101 @@
 <template>
-    <div>
-        <!--question without sub_parts-->
-        <template v-if="!questionHasSubParts">
+    <div class="scroll-container">
+        <div class="scrollable">
 
-            <div v-for="(placeholder, index) in placeholderForSingleQuestion"
-                 class="row">
-                <div class="col-md-12">
-                    <input type="text"
-                           class="text-field"
-                           v-model="inputHasText[index]"
-                           :placeholder="placeholder"/>
-                </div>
-                <!--remove input fields button-->
-                <div v-if="placeholderForSingleQuestion.length > 1"
-                     class="col-md-12"
-                     v-for="extraFieldButtonName in extraFieldButtonNames">
-                    <span @click="removeSingleInputFields(index)"
-                          class="button-text-only remove">
-                        <font-awesome-icon icon="minus-circle"/> {{extraFieldButtonName.remove_extra_answer_text}}
-                    </span>
+            <!--question without sub_parts-->
+            <template v-if="!questionHasSubParts">
+
+                <div v-for="(placeholder, index) in placeholderForSingleQuestion"
+                     class="row">
+                    <div class="col-md-12 active">
+                        <label v-if="singleTitle" class="label">{{singleTitle}}</label><br>
+                        <input type="text"
+                               class="text-field"
+                               v-model="inputHasText[index]"
+                               :placeholder="placeholder"/>
+                    </div>
+                    <!--remove input fields button-->
+                    <div v-if="placeholderForSingleQuestion.length > 1"
+                         class="col-md-12"
+                         v-for="extraFieldButtonName in extraFieldButtonNames">
+                        <div @click="removeSingleInputFields(index)"
+                             class="button-text-only remove">
+                            <font-awesome-icon icon="minus-circle"/>
+                            {{extraFieldButtonName.remove_extra_answer_text}}
+                        </div>
+                    </div>
+
+                    <br/>
+                    <br/>
                 </div>
 
                 <br/>
-                <br/>
-            </div>
 
-            <br/>
-
-            <!--add single input fields button-->
-            <div class="row" v-if="canAddInputFields">
-                <div v-for="extraFieldButtonName in extraFieldButtonNames"
-                     class="col-md-12">
+                <!--add single input fields button-->
+                <div class="row" v-if="canAddInputFields">
+                    <div v-for="extraFieldButtonName in extraFieldButtonNames"
+                         class="col-md-12">
                     <span class="button-text-only"
                           @click="addInputField(extraFieldButtonName.placeholder)">
                           <font-awesome-icon icon="plus-circle"/> {{extraFieldButtonName.add_extra_answer_text}}
                     </span>
-                </div>
-            </div>
-
-        </template>
-        <template v-else>
-
-            <!--question with sub_parts-->
-            <div class="row"
-                 v-for="(subPartArr, index) in subParts">
-                <div v-for="(subPart, innerIndex) in subPartArr"
-                     :class="subPartsClass"
-                     :key="innerIndex">
-                    <label class="label">{{subPart.title}}</label><br>
-                    <input type="text"
-                           class="text-field"
-                           v-model="subPart.value"
-                           :placeholder="subPart.placeholder"
-                           :disabled="!isActive">
+                    </div>
                 </div>
 
-                <!--remove input fields button-->
-                <div v-if="subParts.length > 1"
-                     class="col-md-12"
-                     v-for="extraFieldButtonName in extraFieldButtonNames">
-                    <span @click="removeInputFields(index)"
-                          class="button-text-only remove">
-                        <font-awesome-icon icon="minus-circle"/> {{extraFieldButtonName.remove_extra_answer_text}}
-                    </span>
+            </template>
+            <template v-else>
+
+                <!--question with sub_parts-->
+                <!-- css class is like that to cover case of question 19 in HRA -->
+                <div class="row no-gutters"
+                     v-for="(subPartArr, index) in subParts">
+                    <div v-for="(subPart, innerIndex) in subPartArr"
+                         @click="onSubPartClick(index, innerIndex)"
+                         class="sub-part"
+                         :class="{ 'col-md-12': innerIndex === 0,'col-md-6': innerIndex !== 0, 'active': subPart.active }"
+                         :key="innerIndex">
+                        <label class="label">{{subPart.title}}</label><br>
+                        <input type="text"
+                               class="text-field"
+                               v-model="subPart.value"
+                               :placeholder="subPart.placeholder"
+                               :disabled="!isActive">
+                    </div>
+
+                    <!--remove input fields button-->
+                    <div v-if="subParts.length > 1"
+                         class="col-md-12"
+                         v-for="extraFieldButtonName in extraFieldButtonNames">
+                        <div @click="removeInputFields(index)"
+                             class="button-text-only remove">
+                            <font-awesome-icon icon="minus-circle"/>
+                            {{extraFieldButtonName.remove_extra_answer_text}}
+                        </div>
+                    </div>
+
+                    <br/>
+                    <br/>
                 </div>
 
                 <br/>
-                <br/>
-            </div>
 
-            <br/>
-
-            <!--add input fields button-->
-            <div class="row" v-if="canAddInputFields">
-                <div v-for="extraFieldButtonName in extraFieldButtonNames"
-                     class="col-md-12">
+                <!--add input fields button-->
+                <div class="row no-gutters" v-if="canAddInputFields">
+                    <div v-for="extraFieldButtonName in extraFieldButtonNames"
+                         class="col-md-12">
                     <span class="button-text-only"
                           @click="addInputFields(extraFieldButtonName.sub_parts)">
                           <font-awesome-icon icon="plus-circle"/> {{extraFieldButtonName.add_extra_answer_text}}
                     </span>
+                    </div>
                 </div>
-            </div>
 
 
-        </template>
+            </template>
+
+        </div>
 
         <br>
-        <!---->
 
         <!--next button-->
         <div :class="isLastQuestion ? 'text-center' : 'text-left'">
@@ -128,10 +137,10 @@
                 inputHasText: [],
                 questionOptions: [],
                 subParts: [],
-                subPartsClass: 'col-md-6',
                 extraFieldButtonNames: [],
                 canAddInputFields: false,
                 showNextButton: false,
+                singleTitle: undefined,
                 placeholderForSingleQuestion: [],
             }
         },
@@ -205,6 +214,14 @@
 
         methods: {
 
+            onSubPartClick(index, innerIndex) {
+                this.subParts.forEach((coll, i) => {
+                    coll.forEach((s, ii) => {
+                        s.active = index === i && innerIndex === ii;
+                    });
+                });
+            },
+
             addInputField(placeholder, value) {
                 this.inputHasText.push(value || "");
                 this.placeholderForSingleQuestion.push(placeholder);
@@ -215,7 +232,7 @@
                 if (values) {
                     values.forEach((v) => {
                         const fields = extraFieldSubParts.map((x) => {
-                            return Object.assign({}, x, {value: v[x.key] || ''});
+                            return Object.assign({}, x, {value: v[x.key] || '', active: false});
                         });
                         this.subParts.push(fields);
                     });
@@ -223,11 +240,10 @@
                 }
                 else {
                     const fields = extraFieldSubParts.map((x) => {
-                        return Object.assign({}, x, {value: ''});
+                        return Object.assign({}, x, {value: '', active: false});
                     });
                     this.subParts.push(fields);
                 }
-
             },
 
             removeInputFields(index) {
@@ -279,6 +295,8 @@
             /*sets canAddInputField data*/
             this.canAddInputFields = this.hasAnswerType && this.questionOptions[0].allow_multiple;
 
+            this.singleTitle = this.questionOptions[0].title;
+
             if (this.question.answer && this.question.answer.value) {
                 if (this.questionHasSubParts) {
                     this.subParts = [];
@@ -313,25 +331,35 @@
 
 <style scoped>
 
+    .sub-part {
+        margin-bottom: 20px;
+    }
+
     .text-field {
         border: none;
         border-bottom: solid 1px rgba(0, 0, 0, 0.1);
         background-color: transparent;
         outline: 0;
-        width: 300px;
         height: 30px;
     }
 
     .label {
-        width: 64px;
-        height: 40px;
         font-family: Poppins, serif;
-        font-size: 20px;
+        font-size: 24px;
         font-weight: 500;
         font-style: normal;
         font-stretch: normal;
         line-height: normal;
-        letter-spacing: 1.3px;
+        letter-spacing: 1.33px;
+        color: #d5dadd;
+        margin-bottom: 20px;
+    }
+
+    ::placeholder {
+        color: #d5dadd;
+    }
+
+    .active > .label, .active > ::placeholder {
         color: #1a1a1a;
     }
 
@@ -364,7 +392,7 @@
         border-color: #4aa5d2;
     }
 
-    span.button-text-only {
+    .button-text-only {
         cursor: pointer;
         font-family: Poppins, serif;
         font-size: 24px;
@@ -374,9 +402,10 @@
         line-height: normal;
         letter-spacing: 1.33px;
         color: #50b2e2;
+        margin-bottom: 20px;
     }
 
-    span.button-text-only.remove {
+    .button-text-only.remove {
         color: #ff6e6e;
     }
 </style>
