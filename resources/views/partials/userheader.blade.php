@@ -58,7 +58,9 @@
                             class="glyphicon glyphicon-pencil" style="margin-right:3px;"></span></a>
 
                 {{-- red flag.indication patient is BHI eligible--}}
-                @if(isset($patient) && auth()->check() && !isset($isPdf) && auth()->user()->shouldShowBhiFlagFor($patient))
+                @if(isset($patient) && auth()->check()
+                && !isset($isPdf)
+                && auth()->user()->shouldShowBhiFlagFor($patient))
                     <button type="button"
                             class="glyphicon glyphicon-flag red bounce"
                             style="color: red; position: absolute;"
@@ -71,10 +73,7 @@
                         @include('partials.providerUI.bhi-notification-banner', ['user' => $patient])
                     </div>
                 @endif
-                {{--If today is scheduled call day then just show banner--}}
-                @if(isset($patient) && auth()->check() && !isset($isPdf) && auth()->user()->shouldShowBhiBannerIfPatientHasScheduledCallToday($patient))
-                    @include('partials.providerUI.bhi-notification-banner', ['user' => $patient])
-                @endif
+
                 <br/>
 
                 <ul class="inline-block" style="margin-left: -40px; font-size: 16px">
