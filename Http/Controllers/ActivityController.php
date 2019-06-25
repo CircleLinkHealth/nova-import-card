@@ -48,7 +48,7 @@ class ActivityController extends Controller
 
         $patient_name = $patient->getFullName();
 
-        $userTimeZone = $patient->timeZone;
+        $userTimeZone = $patient->timezone;
 
         if (empty($userTimeZone)) {
             $userTimeZone = 'America/New_York';
@@ -225,7 +225,7 @@ class ActivityController extends Controller
 
         $view_data = [
             'activity'      => $activity,
-            'userTimeZone'  => $patient->timeZone,
+            'userTimeZone'  => $patient->timezone,
             'careteam_info' => $careteam_info,
             'patient'       => $patient,
             'program_id'    => $patient->program_id,
