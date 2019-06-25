@@ -502,6 +502,22 @@
                             canGoToPrev = false;
                             break;
                         }
+                        //if no expected answer, we look for any answer, if any
+                        else if (typeof q.related_question_expected_answer === "undefined") {
+                            if (Array.isArray(questions[0].answer.value) && questions[0].answer.value.length === 0) {
+                                canGoToPrev = false;
+                            }
+                            else if (typeof questions[0].answer.value === "string" && questions[0].answer.value.length === 0) {
+                                canGoToPrev = false;
+                            }
+                            else if (questions[0].answer.value.value.length === 0) {
+                                canGoToPrev = false;
+                            }
+
+                            if (!canGoToPrev) {
+                                break;
+                            }
+                        }
                     }
                 }
                 return canGoToPrev ? newIndex : this.getPreviousQuestionIndex(index - 1);
@@ -523,6 +539,22 @@
                         if (questions[0].answer.value.value !== q.related_question_expected_answer) {
                             shouldDisable = true;
                             break;
+                        }
+                        //if no expected answer, we look for any answer, if any
+                        else if (typeof q.related_question_expected_answer === "undefined") {
+                            if (Array.isArray(questions[0].answer.value) && questions[0].answer.value.length === 0) {
+                                shouldDisable = true;
+                            }
+                            else if (typeof questions[0].answer.value === "string" && questions[0].answer.value.length === 0) {
+                                shouldDisable = true;
+                            }
+                            else if (questions[0].answer.value.value.length === 0) {
+                                shouldDisable = true;
+                            }
+
+                            if (!shouldDisable) {
+                                break;
+                            }
                         }
                     }
                     nextQuestion.disabled = shouldDisable;

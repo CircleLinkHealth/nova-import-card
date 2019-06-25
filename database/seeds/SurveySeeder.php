@@ -1155,7 +1155,7 @@ class SurveySeeder extends Seeder
                         //accept any answer
                     ],
                 ],
-                'question_type_ansers' => [
+                'question_type_answers' => [
                     [
                         'type_answer_body' => 'Yes',
                         'options'          => [
@@ -1174,7 +1174,7 @@ class SurveySeeder extends Seeder
                 'order'                => 24,
                 'question_body'        => 'Have you fallen in the past 6 months? (a fall is when the body goes to the ground without being pushed)',
                 'question_type'        => QuestionType::RADIO,
-                'question_type_ansers' => [
+                'question_type_answers' => [
                     [
                         'type_answer_body' => 'Yes',
                         'options'          => [
@@ -1209,7 +1209,7 @@ class SurveySeeder extends Seeder
                 'order'                => 26,
                 'question_body'        => 'Have you had a flu shot this year or are you planning to receive one this year?',
                 'question_type'        => QuestionType::RADIO,
-                'question_type_ansers' => [
+                'question_type_answers' => [
                     [
                         'type_answer_body' => 'Yes',
                         'options'          => [
