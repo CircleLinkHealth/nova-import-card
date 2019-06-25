@@ -51,7 +51,7 @@ class User extends \CircleLinkHealth\Customer\Entities\User
 
     public function providerReports()
     {
-        return $this->hasMany(ProviderReport::class, 'patient_id');
+        return $this->hasMany(ProviderReport::class, 'user_id');
     }
 
     public function getSurveys()

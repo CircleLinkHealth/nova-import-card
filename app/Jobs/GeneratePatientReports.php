@@ -61,15 +61,15 @@ class GeneratePatientReports implements ShouldQueue
             },
             'answers'             => function ($answers) {
                 $answers->whereHas('surveyInstance', function ($instance) {
-                    $instance->forDate($this->date);
+                    $instance->forDate($this->surveyInstanceStartDate);
                 });
             },
             'providerReports'     => function ($report) {
                 $report->whereHas('hraSurveyInstance', function ($instance) {
-                    $instance->forDate($this->date);
+                    $instance->forDate($this->surveyInstanceStartDate);
                 })
                        ->whereHas('vitalsSurveyInstance', function ($instance) {
-                           $instance->forDate($this->date);
+                           $instance->forDate($this->surveyInstanceStartDate);
                        });
             },
             'patientAWVSummaries' => function ($summary) {
@@ -80,6 +80,10 @@ class GeneratePatientReports implements ShouldQueue
 
         $providerReport = (new GenerateProviderReportService($patient))->generateData();
 
+        if ( ! $providerReport) {
+            return;
+        }
+
         $pppReport = (new GeneratePersonalizedPreventionPlanService($patient))->generateData();
 
 
@@ -89,23 +93,27 @@ class GeneratePatientReports implements ShouldQueue
 
 
         $billingProvider = $patient->billingProviderUser();
-        $settings        = $patient->practiceSettings();
 
-        $channels = [];
+        //TODO: Practice breaks on instantiation because we need to move App\Traits\HasChargeableServices from CPM to Customer
+//        $settings        = $patient->practiceSettings();
+//
+//        $channels = [];
+//
+//        if ($settings) {
+//            if ($settings->dm_awv_reports) {
+//                //todo: when Notifications Module is finished
+////                $channels[] = DirectMailChannel::class;
+//            }
+//            if ($settings->efax_awv_reports) {
+//                //todo: when Notifications Module is finished
+////                $channels[] = EfaxChannel::class;
+//            }
+//            if ($settings->email_awv_reports) {
+//                $channels[] = MailChannel::class;
+//            }
+//        }
 
-        if ($settings) {
-            if ($settings->dm_awv_reports) {
-                //need to import related classes to Customer
-//                $channels[] = DirectMailChannel::class;
-            }
-            if ($settings->efax_awv_reports) {
-                //need to import related classes to Customer
-//                $channels[] = EfaxChannel::class;
-            }
-            if ($settings->email_awv_reports) {
-                $channels[] = MailChannel::class;
-            }
-        }
+        $channels[] = MailChannel::class;
 
         if ($billingProvider) {
             $billingProvider->notify(new SendReport($patient, $providerReport, 'Provider Report', $channels));
@@ -143,18 +151,18 @@ class GeneratePatientReports implements ShouldQueue
 
     private function uploadPPP($ppp, $patient)
     {
-        $pppFormattedData = (new PersonalizedPreventionPlanPrepareData())->prepareRecommendations($ppp);
+        $personalizedHealthAdvices = (new PersonalizedPreventionPlanPrepareData())->prepareRecommendations($ppp);
 
-        $recommendationTasks = [];
-        foreach ($pppFormattedData['recommendation_tasks'] as $tasks) {
-            $recommendationTasks[$tasks['title']] = $tasks;
-        }
+//        $recommendationTasks = [];
+//        foreach ($pppFormattedData as $tasks) {
+//            $recommendationTasks[$tasks['title']] = $tasks;
+//        }
 
         $pdf = App::make('dompdf.wrapper');
         $pdf->loadView('personalizedPreventionPlan', [
-            'reportData'          => $pppFormattedData,
-            'age'                 => $patient->getAge(),
-            'recommendationTasks' => $recommendationTasks,
+            'patientPppData'          => $ppp,
+            'patient'             => $patient,
+            'personalizedHealthAdvices' =>$personalizedHealthAdvices,
         ]);
 
 

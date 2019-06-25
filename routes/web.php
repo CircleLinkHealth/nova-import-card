@@ -23,8 +23,6 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')
      ->name('home');
 
-Route::get('/provider-report', 'ProviderReportController@getProviderReport');
-
 Route::get('enter-patient-form', 'InvitationLinksController@enterPatientForm')
      ->name('enterPatientForm');
 
@@ -44,9 +42,6 @@ Route::post('resend-link/{user}', 'InvitationLinksController@resendUrl')
 //don't like this, why is it here?
 //Route::get('get-previous-answer', 'SurveyController@getPreviousAnswer')
 //     ->name('getPreviousAnswer');
-
-Route::get('get-ppp-data/{userId}', 'PersonalizedPreventionPlanController@getPppDataForUser')
-     ->name('getPppDataForUser');
 
 Route::group([
     'prefix'     => 'survey',
@@ -100,4 +95,8 @@ Route::group([
     'middleware' => ['auth'],
 ], function () {
     //fixme: add reports routes here
+    Route::get('/provider-report/{userId}', 'ProviderReportController@getProviderReport')->name('provider-report');
+
+    Route::get('get-ppp-data/{userId}', 'PersonalizedPreventionPlanController@getPppDataForUser')
+         ->name('getPppDataForUser');
 });

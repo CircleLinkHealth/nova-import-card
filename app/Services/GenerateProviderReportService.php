@@ -6,6 +6,8 @@ namespace App\Services;
 
 use App\Survey;
 use App\User;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class GenerateProviderReportService
 {
@@ -43,10 +45,23 @@ class GenerateProviderReportService
     //make possible to edit data on existing report
     public function generateData()
     {
-        $reasonForVisit = 'Initial';
 
-        if ($this->patient->patientAWVSummaries->first()->subsequent_visit !== null) {
-            $reasonForVisit = 'Subsequent';
+        $summary = $this->patient->patientAWVSummaries->first();
+
+        if (! $summary){
+//            Log::error('Patient needs AWV summary for a provider report to be generated');
+//            return false;
+
+            $summary = $this->patient->patientAWVSummaries()->create([
+                'month_year'    => Carbon::now()->startOfMonth(),
+                'is_initial_visit' => 1,
+            ]);
+        }
+
+        $reasonForVisit = 'Subsequent';
+
+        if ($summary->is_initial_visit) {
+            $reasonForVisit = 'Initial';
         }
 
         $report = $this->patient->providerReports()->updateOrCreate(

@@ -45,9 +45,7 @@ class SurveyService
                 'answers'             => function ($answer) use ($surveyInstanceId) {
                     $answer->where('survey_instance_id', $surveyInstanceId);
                 },
-                'patientAWVSummaries' => function ($summary) {
-                    $summary->where('month_year', Carbon::now()->startOfMonth());
-                },
+                'patientAWVSummaries'
             ])
             ->whereHas('surveys', function ($survey) use ($surveyId) {
                 $survey->where('survey_id', $surveyId)
@@ -150,19 +148,18 @@ class SurveyService
 
         $date = Carbon::now();
 
-        $summary = $patient->patientAWVSummaries->first();
+        $isInitial = $patient->patientAWVSummaries->count() === 0;
+
+        $summary = $patient->patientAWVSummaries->where('month_year', $date->copy()->startOfMonth())->first();
+
         if ( ! $summary) {
             $patient->patientAWVSummaries()->create([
                 'month_year'    => $date->copy()->startOfMonth(),
-                'initial_visit' => $date,
+                'is_initial_visit' => $isInitial,
             ]);
 
             return;
         }
-
-        $summary->update([
-            'subsequent_visit' => $date,
-        ]);
 
         return;
     }

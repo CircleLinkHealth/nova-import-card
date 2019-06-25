@@ -15,7 +15,7 @@ class ProviderReportController extends Controller
         $this->service = $service;
     }
 
-    public function getProviderReport(Request $request)
+    public function getProviderReport(Request $request, $userId)
     {
         //Placeholder code to test. We should get patient id, report id OR date OR hra instance id + vitals instance id. Will create request class when we know for sure.
         $report = ProviderReport::with('patient.patientInfo')->first();
