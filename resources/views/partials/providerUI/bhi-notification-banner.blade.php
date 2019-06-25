@@ -32,14 +32,13 @@
 
 {{--@todo:buttons dance all overwhen hover - must fix--}}
                 <div class="options col-md-6">
-
                     {{ Form::open(['url' => route('legacy-bhi.store', [$user->program_id, $user->id]), 'style' => 'display: inline-block;', 'class' => 'legacy-bhi-decision-form']) }}
                     <input type="hidden" name="decision" value="1">
                     <input type="submit"
                            value="Consented"
                            class="alert-success alert"
                            style="margin-left: 25px;"
-                           data-toggle="tooltip"
+{{--                           data-toggle="tooltip"--}}
                            data-placement="top"
                            title="Confirm that the patient has consented to receiving BHI services"
                            onclick="return confirm('Please confirm that the patient has consented to receiving BHI services.')">
@@ -51,7 +50,7 @@
                            value="Not Now"
                            class="alert-warning alert legacy-bhi-consent-not-now-button"
                            style="margin-left: 25px;"
-                           data-toggle="tooltip"
+{{--                           data-toggle="tooltip"--}}
                            data-placement="top"
                            title="Hide this notice until this patient's next scheduled call day"
                            onclick="return confirm('Clicking OK will hide the BHI notice until the next day this patient has a scheduled call.')">
@@ -61,7 +60,7 @@
                     <input type="hidden" name="decision" value="0">
                     <input type="submit" value="Not Consented" class="alert-danger alert"
                            style="margin-left: 25px;"
-                           data-toggle="tooltip"
+{{--                           data-toggle="tooltip"--}}
                            data-placement="top"
                            title="Confirm that the patient has NOT consented to receiving BHI services"
                            onclick="return confirm('Please confirm that the patient has NOT consented to receiving BHI services.')">
@@ -82,7 +81,7 @@
         });
 
         $(function () {
-            $('[data-toggle="tooltip"]').tooltip();
+            $('[data-toggle="tooltip"]').tooltip({container: 'body'});
             $('.close').click(function (e) {
                 $(".modal-mask, .load-hidden-bhi").hide();
             });

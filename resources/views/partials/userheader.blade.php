@@ -62,7 +62,7 @@
                     <button type="button"
                             class="glyphicon glyphicon-flag red bounce"
                             style="color: red; position: absolute;"
-                            data-toggle="tooltip"
+{{--                            data-toggle="tooltip"--}}
                             data-placement="top"
                             title="Patient is eligible for BHI. Click me for more info">
                     </button>
