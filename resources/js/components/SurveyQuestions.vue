@@ -290,7 +290,8 @@
             },
 
             canScrollUp() {
-                return this.currentQuestionIndex > 0;
+                return (this.stage === "survey" || this.stage === "complete")
+                    && this.currentQuestionIndex > 0;
             },
             canScrollDown() {
                 return this.stage === "survey"
@@ -335,12 +336,7 @@
                 this.error = null;
                 this.currentQuestionIndex = this.currentQuestionIndex + 1;
             },
-            scrollToLastQuestion() {
-                this.stage = true;
-                this.welcomeStage = false;
-                //@todo:check this again - i dont like it
-                this.questionIndex = this.lastQuestionAnswered - 1;
-            },
+
             isSubQuestion(question) {
                 return question.pivot.sub_order !== null;
             },

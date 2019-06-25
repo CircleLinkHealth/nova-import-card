@@ -1,7 +1,7 @@
 <template>
 
-    <div class="custom-checkbox">
-        <div class="row no-gutters checkboxes">
+    <div class="scroll-container">
+        <div class="row no-gutters scrollable">
             <div v-for="(checkBox, index) in checkBoxValues" class="col-md-6">
                 <label v-show="checkBox.value !== null" :for="checkBox.id">
                     <input class="checkbox checkbox-info checkbox-circle"
@@ -96,6 +96,10 @@
             },
 
             answerChecked() {
+                if (this.question.optional) {
+                    return true;
+                }
+
                 if (this.hasAnyCustomInputNotFilled()) {
                     return false;
                 }
@@ -230,7 +234,7 @@
         max-height: calc(100% - 80px);
     }
 
-    .checkboxes label {
+    .scrollable label {
         width: 100%;
         height: 55px;
         border-radius: 5px;
@@ -240,22 +244,22 @@
         padding-left: 10px;
     }
 
-    .checkboxes label:hover {
+    .scrollable label:hover {
         border-color: #4aa5d2;
     }
 
-    .checkboxes label > span {
+    .scrollable label > span {
         /*padding-left: 3px;*/
     }
 
     /*** custom checkboxes ***/
-    .checkboxes input[type=checkbox] {
+    .scrollable input[type=checkbox] {
         position: absolute;
         left: -999px;
     }
 
     /* to hide the checkbox itself */
-    .checkboxes label input[type=checkbox] + span:before {
+    .scrollable label input[type=checkbox] + span:before {
         background-color: #FFFFFF;
         color: #50b2e2;
         font-family: FontAwesome, serif;
@@ -268,7 +272,7 @@
     }
 
     /* space between checkbox and label */
-    .checkboxes label input[type=checkbox]:checked + span:before {
+    .scrollable label input[type=checkbox]:checked + span:before {
         content: "\f058";
     }
 

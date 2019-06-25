@@ -65,7 +65,6 @@
         components: {mdbBtn, FontAwesomeIcon},
 
         mounted() {
-            console.log('Component mounted.')
         },
 
         data() {
