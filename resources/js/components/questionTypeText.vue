@@ -104,7 +104,7 @@
                     class="next-btn"
                     name="number"
                     id="number"
-                    :disabled="!(hasTypedInAllInputs || hasTypedInSubParts)"
+                    :disabled="!(isOptional ||hasTypedInAllInputs || hasTypedInSubParts)"
                     @click="handleAnswer()">
                 {{isLastQuestion ? 'Complete' : 'Next'}}
                 <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
@@ -142,6 +142,7 @@
                 showNextButton: false,
                 singleTitle: undefined,
                 placeholderForSingleQuestion: [],
+                isOptional: false
             }
         },
         computed: {
@@ -279,6 +280,9 @@
         },
 
         created() {
+
+            this.isOptional = !!this.question.optional;
+
             const questionOptions = this.question.type.question_type_answers.map(q => q.options);
             this.questionOptions.push(...questionOptions);
 
