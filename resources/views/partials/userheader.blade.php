@@ -56,7 +56,6 @@
 
                 <a href="{{ route('patient.demographics.show', array('patient' => $patient->id)) }}" style="padding-right: 2%;"><span
                             class="glyphicon glyphicon-pencil" style="margin-right:3px;"></span></a>
-
                 {{-- red flag.indication patient is BHI eligible--}}
                 @if(isset($patient) && auth()->check()
                 && !isset($isPdf)
