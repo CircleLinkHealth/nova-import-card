@@ -25,19 +25,28 @@ Add global CSS here
 html, body, #app {
     min-height: 100% !important;
     height: 100%;
+    background-color: #f2f6f9;
 }
 
 .main-container {
-    padding: 10px;
     height: 100%;
 }
 
 .survey-container {
-    background-color: #f2f6f9;
-    border: 1px solid #808080;
     width: 100%;
-    height: 100%;
     overflow-y: hidden;
+    height: calc(100% - 56px);
+}
+
+.survey-container.max {
+    height: 100%;
+    border: 1px solid #808080;
+}
+
+@media (min-width: 519px) {
+    .survey-container {
+        height: calc(100% - 100px);
+    }
 }
 
 .by-circlelink {
@@ -96,13 +105,14 @@ html, body, #app {
     border-radius: 5px;
     border: solid 1px #4aa5d2;
     background-color: $primary-color;
-    margin: 0;
+    margin:0 0 10px 0;
 }
 
 .questions-box {
-    height: 100%;
     padding-top: 5%;
     padding-left: 9%;
+    overflow-y: auto;
+    max-height: 100%;
 }
 
 .practice-title {
@@ -156,14 +166,8 @@ html, body, #app {
     }
 }
 
-.questions-body {
-    //leave some room for the error message
-    height: calc(100% - 50px);
-}
-
 .questions-title {
     width: 83%;
-    //height: 100%;
     font-family: Poppins, serif;
     font-size: 14px;
     font-weight: 500;
@@ -292,4 +296,170 @@ html, body, #app {
 .select-dropdown .vs__dropdown-option--highlight {
     background: transparent;
     color: #50b2e2;
+}
+
+/*.survey-container::-webkit-scrollbar {*/
+/*width: 0 !important*/
+/*}*/
+
+.bottom-navbar {
+    background-color: #ffffff;
+    height: 56px;
+}
+
+@media (min-width: 519px) {
+    .bottom-navbar {
+        height: 100px;
+    }
+}
+
+.scroll-buttons .btn {
+    padding: 0;
+    margin-top: 13px;
+    width: 30px;
+    height: 30px;
+}
+
+.scroll-buttons .btn:first-child {
+    margin-right: 10px;
+}
+
+.scroll-buttons .btn:last-child {
+    margin-right: 20px;
+}
+
+.scroll-buttons .fas {
+    font-size: 15px;
+}
+
+@media (min-width: 519px) {
+    .scroll-buttons .btn {
+        margin-top: 20px;
+        width: 60px;
+        height: 60px;
+    }
+
+    .scroll-buttons .btn:last-child {
+        margin-right: 30px;
+    }
+
+    .scroll-buttons .fas {
+        font-size: 30px;
+    }
+}
+
+/**
+When two rows, we have less margin-top (in the col- screens)
+ */
+.progress-container {
+    margin-top: 8px;
+}
+
+.progress-text {
+    font-family: Poppins, serif;
+    font-size: 10px;
+    font-weight: 500;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 0.56px;
+    text-align: right;
+    color: #1a1a1a;
+    white-space: nowrap;
+}
+
+/**
+When progress text and bar are in one line (col-sm screens)
+ */
+@media (min-width: 519px) {
+    .progress-container {
+        margin-top: 26px;
+    }
+
+    .progress-text {
+        font-size: 18px;
+        letter-spacing: 1px;
+    }
+}
+
+@media (min-width: 766px) {
+    .progress-container {
+        margin-top: 36px;
+    }
+}
+
+.active {
+    opacity: 1;
+    transition: opacity 0.5s linear;
+}
+
+.watermark {
+    opacity: 0.1;
+    transition: opacity 0.5s linear;
+}
+
+.non-visible {
+    opacity: 0.02;
+    transition: opacity 0.5s linear;
+}
+
+.error {
+    color: darkred;
+}
+
+.survey-sub-welcome-text {
+    font-family: Poppins;
+    font-size: 18px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 1px;
+    text-align: center;
+    margin-top: 25px;
+    margin-left: 13%;
+    width: 75%;
+    color: #1a1a1a;
+}
+
+.call-assistance {
+    padding-left: 3%;
+    position: absolute;
+}
+
+.welcome-icon {
+    width: 108px;
+    margin: auto;
+}
+
+.fa-phone {
+    transform: scaleX(-1);
+    color: #ffffff;
+}
+
+.fa-times {
+    width: 20px;
+    height: 20px;
+    color: #ffffff;
+}
+
+.card-body {
+    text-align: center;
+}
+
+.by-circlelink {
+    font-family: Poppins, serif;
+    font-size: 18px;
+    font-weight: 600;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 1px;
+    margin-top: 10px;
+    color: #50b2e2;
+}
+
+.by-circlelink .text-style-1 {
+    font-weight: normal;
+    color: #1a1a1a;
 }
