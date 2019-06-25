@@ -79,6 +79,14 @@ class NurseContactWindow extends \CircleLinkHealth\Core\Entities\BaseModel
             ->get();
     }
 
+
+    /**
+     *
+     * These are not the same with 'Hours Committed' in the Nurse Daily Reports/Emails.
+     * For those see: nurseInfo->workhourables()
+     *
+     * @return int
+     */
     public function numberOfHoursCommitted()
     {
         $start = $this->date->copy()->setTimeFromTimeString($this->window_time_start);
