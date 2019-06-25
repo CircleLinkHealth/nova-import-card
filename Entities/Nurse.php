@@ -249,7 +249,7 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
         }
 
         $companyHolidays = $this->companyHolidaysFrom($date);
-        $nurseHolidays   = $this->holidays()->where('date', '>=', $date->format('Y-m-d'));
+        $nurseHolidays   = $this->holidays->where('date', '>=', $date->format('Y-m-d'));
 
         return $companyHolidays->merge($nurseHolidays)->unique();
     }
@@ -273,6 +273,7 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
     }
 
     /**
+     *
      * Contact Windows (Schedule).
      * These are the time-frames per day of the week that the nurse scheduled to work.
      * These are not the 'hours commited' per day.
