@@ -3524,6 +3524,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     }
 
     /**
+     *
+     * Determines whether to show the BHI banner to the logged in user, for a given patient.
+     *
      * @param User $patient
      * @return bool
      * @throws \Exception
@@ -3534,7 +3537,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     }
 
     /**
-     * Determines wheter to show the BHI banner to the logged in user, for a given patient.
+     * Determines whether to show the BHI banner to the logged in user, for a given patient.
      *
      * @param User $patient
      *
