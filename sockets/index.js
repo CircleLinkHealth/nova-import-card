@@ -318,11 +318,13 @@ module.exports = app => {
                 }
             })
 
-            if (!user.noLiveCount && user.allSockets.length > 0 && user.allSockets.every(ws => !ws.active)) {
+            //CPM-1024 - non-ccm pages are missing time
+            if (/*!user.noLiveCount && */user.allSockets.length > 0 && user.allSockets.every(ws => !ws.active)) {
                 user.inactiveSeconds += 1
             }
 
-            if (!user.noLiveCount && process.env.NODE_ENV !== 'production') {
+            //CPM-1024 - non-ccm pages are missing time
+            if (/*!user.noLiveCount && */process.env.NODE_ENV !== 'production') {
                 console.log(
                     'key:', user.key,
                     'activities:', user.activities.filter(activity => activity.isActive).length,

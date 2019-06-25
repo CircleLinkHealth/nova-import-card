@@ -5,11 +5,11 @@ const validateInfo = (info) => {
 const createActivity = (info) => {
     validateInfo(info)
 
-    return { 
-        name: info.activity || 'unknown', 
+    return {
+        name: info.activity || 'unknown',
         title: info.title || 'unknown',
         duration: 0,
-        url: info.urlFull, 
+        url: info.urlFull,
         url_short: info.urlShort,
         start_time: info.startTime,
         sockets: [],
@@ -30,6 +30,17 @@ const addSeconds = (seconds = 0) => () => {
     return d
 }
 
-module.exports.validateInfo = validateInfo
-module.exports.createActivity = createActivity
-module.exports.addSeconds = addSeconds
+const falsy = /^(?:f(?:alse)?|no?|0+)$/i;
+
+/**
+ * [false, 'false', 'FALSE', '0', 'undefined', 'NaN', 'null'] => false
+ * [true, 'true', 'TRUE', '1'] => true
+ * */
+function parseBool(val) {
+    return !falsy.test(val) && !!val;
+}
+
+module.exports.parseBool = parseBool;
+module.exports.validateInfo = validateInfo;
+module.exports.createActivity = createActivity;
+module.exports.addSeconds = addSeconds;
