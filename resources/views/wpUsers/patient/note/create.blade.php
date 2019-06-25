@@ -4,22 +4,6 @@
 @section('activity', empty($note) ? 'Patient Note Creation' : 'Patient Note Edit')
 
 @section('content')
-
-    <?php
-
-    if ( ! empty($note)) {
-        $userTime = $note->performed_at;
-    } else {
-        $userTime = \Carbon\Carbon::now();
-    }
-
-    $userTime->setTimezone($userTimeZone);
-    $userTimeGMT = \Carbon\Carbon::now()->setTimezone('GMT');
-    $userTime    = $userTime->format('Y-m-d\TH:i');
-    $userTimeGMT = $userTimeGMT->format('Y-m-d\TH:i');
-
-    ?>
-
     @push('styles')
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
               integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"

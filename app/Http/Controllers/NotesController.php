@@ -166,7 +166,10 @@ class NotesController extends Controller
             ? Call::where('note_id', '=', $existingNote->id)->first()
             : null;
 
+        $performedAt = optional($existingNote)->performed_at ?? Carbon::now();
+
         $view_data = [
+            'userTime'               => $performedAt->setTimezone($patient->timezone)->format('Y-m-d\TH:i'),
             'program_id'             => $patient->program_id,
             'patient'                => $patient,
             'patient_name'           => $patient_name,
