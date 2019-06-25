@@ -4,11 +4,6 @@
 @section('activity', 'Patient Note View')
 
 @section('content')
-    <?php
-    $userTime = \Carbon\Carbon::parse($note['performed_at']);
-    $userTime = $userTime->format('Y-m-d\TH:i');
-    ?>
-
     @push('styles')
         <style type="text/css">
             div.inline {

@@ -366,7 +366,8 @@ class NotesController extends Controller
 
         $view_data = [
             'note'               => $data,
-            'userTimeZone'       => $patient->timeZone,
+            'userTime'           => $note->performed_at->setTimezone($patient->timezone)->format('Y-m-d\TH:i'),
+            'userTimeZone'       => $patient->timezone,
             'careteam_info'      => $careteam_info,
             'patient'            => $patient,
             'program_id'         => $patient->program_id,
