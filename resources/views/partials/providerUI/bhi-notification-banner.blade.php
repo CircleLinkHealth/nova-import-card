@@ -31,8 +31,8 @@
                 </div>
 
 {{--@todo:buttons dance all overwhen hover - must fix--}}
-                <div class="options">
-                    <div class="col-md-12">
+                <div class="options col-md-6">
+
                     {{ Form::open(['url' => route('legacy-bhi.store', [$user->program_id, $user->id]), 'style' => 'display: inline-block;', 'class' => 'legacy-bhi-decision-form']) }}
                     <input type="hidden" name="decision" value="1">
                     <input type="submit"
@@ -66,7 +66,7 @@
                            title="Confirm that the patient has NOT consented to receiving BHI services"
                            onclick="return confirm('Please confirm that the patient has NOT consented to receiving BHI services.')">
                     {{ Form::close() }}
-                    </div>
+
                 </div>
             </div>
         </div>
