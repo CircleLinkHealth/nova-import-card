@@ -423,6 +423,8 @@ class NotesController extends Controller
 
         $input = $request->allSafe();
 
+        $patient = User::findOrFail($patientId);
+
         $editingNoteId = ! empty($input['noteId'])
             ? $input['noteId']
             : null;
@@ -433,7 +435,9 @@ class NotesController extends Controller
         if ( ! isset($input['author_id'])) {
             $input['author_id'] = auth()->id();
         }
-        $input['performed_at'] = Carbon::parse($input['performed_at'])->toDateTimeString();
+
+        //performed_at entered in patient's timezone and stored in app's timezone
+        $input['performed_at'] = Carbon::parse($input['performed_at'], $patient->timezone)->setTimezone(config('app.timezone'))->toDateTimeString();
 
         $noteIsAlreadyComplete = false;
         if ($editingNoteId) {
@@ -452,8 +456,6 @@ class NotesController extends Controller
         } else {
             $note = $this->service->storeNote($input);
         }
-
-        $patient = User::findOrFail($patientId);
 
         $info = $this->updatePatientInfo($patient, $input);
         $this->updatePatientCallWindows($info, $input);
