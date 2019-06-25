@@ -1976,18 +1976,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 //        });
     }
 
-    /**
-     * Returns whether the user is a Care Coach (AKA Care Center).
-     * A Care Coach can be employed from CLH ['care-center']
-     * or not ['care-center-external'].
-     *
-     * @return bool
-     */
-    public function isCareCoach()
-    {
-        return $this->hasRole(['care-center', 'care-center-external']);
-    }
-
     public function isCcm()
     {
         return $this->ccdProblems()
@@ -2351,6 +2339,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->primaryPractice->cpmSettings();
     }
 
+    public function primaryPractice()
+    {
+        return $this->belongsTo(Practice::class, 'program_id', 'id');
+    }
+
     /*public function hasScheduledCallThisWeek()
     {
         $weekStart = Carbon::now()->startOfWeek()->toDateString();
@@ -2365,11 +2358,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                    ->whereBetween('scheduled_date', [$weekStart, $weekEnd])
                    ->exists();
     }*/
-
-    public function primaryPractice()
-    {
-        return $this->belongsTo(Practice::class, 'program_id', 'id');
-    }
 
     public function primaryProgramName()
     {
@@ -2414,8 +2402,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $billableProblems;
     }
 
-    // CPM Models
-
     /**
      * Get the regular doctor.
      *
@@ -2425,6 +2411,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         return $this->careTeamMembers()->where('type', '=', CarePerson::REGULAR_DOCTOR);
     }
+
+    // CPM Models
 
     /**
      * Get regular doctor User.
@@ -3021,8 +3009,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return true;
     }
 
-    // MISC, these should be removed eventually
-
     public function setAgentRelationship($value)
     {
         if (!$this->patientInfo) {
@@ -3033,6 +3019,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
         return true;
     }
+
+    // MISC, these should be removed eventually
 
     /**
      * Get Scout index name for the model.
@@ -3533,7 +3521,23 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function shouldShowBhiBannerIfPatientHasScheduledCallToday(User $patient)
     {
-        return $patient->hasScheduledCallToday() && $this->shouldShowBhiFlagFor($patient);
+        return $patient->hasScheduledCallToday()
+            && $this->shouldShowBhiFlagFor($patient)
+            && ($this->isAdmin() || $this->isCareCoach());
+    }
+
+    public function hasScheduledCallToday()
+    {
+        return Call::where(
+            function ($q) {
+                $q->whereNull('type')
+                    ->orWhere('type', '=', 'call');
+            }
+        )
+            ->where('inbound_cpm_id', $this->id)
+            ->where('status', 'scheduled')
+            ->where('scheduled_date', '=', Carbon::today()->format('Y-m-d'))
+            ->exists();
     }
 
     /**
@@ -3551,9 +3555,32 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             && is_a($patient, self::class)
             && $patient->isLegacyBhiEligible()
             && $patient->billingProviderUser()
-                && !Cache::has(
-                    $this->getLegacyBhiNursePatientCacheKey($patient->id)
-                );
+            && !Cache::has(
+                $this->getLegacyBhiNursePatientCacheKey($patient->id)
+            )
+            && ($this->isAdmin() || $this->isCareCoach());
+
+    }
+
+    public function getLegacyBhiNursePatientCacheKey($patientId)
+    {
+        if (!$this->id) {
+            throw new \Exception('User ID not found.');
+        }
+
+        return 'hide_legacy_bhi_banner:' . $this->id . ":${patientId}";
+    }
+
+    /**
+     * Returns whether the user is a Care Coach (AKA Care Center).
+     * A Care Coach can be employed from CLH ['care-center']
+     * or not ['care-center-external'].
+     *
+     * @return bool
+     */
+    public function isCareCoach()
+    {
+        return $this->hasRole(['care-center', 'care-center-external']);
     }
 
     /**
@@ -3573,29 +3600,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->where('id', $this->id)
             ->exists();
 //        });
-    }
-
-    public function hasScheduledCallToday()
-    {
-        return Call::where(
-            function ($q) {
-                $q->whereNull('type')
-                    ->orWhere('type', '=', 'call');
-            }
-        )
-            ->where('inbound_cpm_id', $this->id)
-            ->where('status', 'scheduled')
-            ->where('scheduled_date', '=', Carbon::today()->format('Y-m-d'))
-            ->exists();
-    }
-
-    public function getLegacyBhiNursePatientCacheKey($patientId)
-    {
-        if (!$this->id) {
-            throw new \Exception('User ID not found.');
-        }
-
-        return 'hide_legacy_bhi_banner:' . $this->id . ":${patientId}";
     }
 
     /**
