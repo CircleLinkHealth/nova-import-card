@@ -118,8 +118,8 @@ class GeneratePatientReports implements ShouldQueue
         $billingProvider = $patient->billingProviderUser();
 
         //TODO: Practice breaks on instantiation because we need to move App\Traits\HasChargeableServices from CPM to Customer
-        try{
-            $settings        = $patient->practiceSettings();
+        try {
+            $settings = $patient->practiceSettings();
 
             $channels = [];
 
@@ -136,12 +136,10 @@ class GeneratePatientReports implements ShouldQueue
                     $channels[] = MailChannel::class;
                 }
             }
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             \Log::error($e->getMessage());
             $channels[] = MailChannel::class;
         }
-
-
 
 
         if ($billingProvider) {
