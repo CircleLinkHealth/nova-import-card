@@ -128,4 +128,17 @@ class Settings extends \CircleLinkHealth\Core\Entities\BaseModel
     {
         return $this->morphTo('settingsable', 'settingsable_type', 'settingsable_id');
     }
+
+    /**
+     * Get CPM settings for Practice
+     *
+     * TODO: Hack for AWV
+     *
+     * @param $query
+     * @param $practiceId
+     */
+    public function scopeForPractice($query, $practiceId){
+        $query->where('settingsable_type', 'CircleLinkHealth\Customer\Entities\Practice')
+            ->where('settingsable_id', $practiceId);
+    }
 }
