@@ -334,7 +334,7 @@
                 }
 
                 this.error = null;
-                this.currentQuestionIndex = this.currentQuestionIndex + 1;
+                this.currentQuestionIndex = this.getNextQuestionIndex(this.currentQuestionIndex);
             },
 
             isSubQuestion(question) {
@@ -466,6 +466,8 @@
                         }
                         else if (error.response && error.response.status === 419) {
                             this.error = "Not Authenticated [419]";
+                            //reload the page which will redirect to login
+                            window.location.reload();
                         }
                         else if (error.response && error.response.data) {
                             const errors = [error.response.data.message];
@@ -521,6 +523,46 @@
                     }
                 }
                 return canGoToPrev ? newIndex : this.getPreviousQuestionIndex(index - 1);
+            },
+
+            getNextQuestionIndex(index) {
+                const newIndex = index + 1;
+                const nextQuestion = this.questions[newIndex];
+                if (!nextQuestion) {
+                    return (this.questions.length - 1);
+                }
+
+                //if we reach here, it means we have not faced this question yet in this session
+                //it might still be disabled though -> think completing questions then refreshing the page
+                //need to check if there are certain conditions that have to be met before showing this question
+                let canGoToNext = true;
+                if (nextQuestion.conditions && nextQuestion.conditions.length) {
+                    for (let i = 0; i < nextQuestion.conditions.length; i++) {
+                        const q = nextQuestion.conditions[0];
+                        const questions = this.getQuestionsOfOrder(q.related_question_order_number);
+                        if (questions[0].answer.value.value !== q.related_question_expected_answer) {
+                            canGoToNext = false;
+                            break;
+                        }
+                        //if no expected answer, we look for any answer, if any
+                        else if (typeof q.related_question_expected_answer === "undefined") {
+                            if (Array.isArray(questions[0].answer.value) && questions[0].answer.value.length === 0) {
+                                canGoToNext = false;
+                            }
+                            else if (typeof questions[0].answer.value === "string" && questions[0].answer.value.length === 0) {
+                                canGoToNext = false;
+                            }
+                            else if (questions[0].answer.value.value.length === 0) {
+                                canGoToNext = false;
+                            }
+
+                            if (!canGoToNext) {
+                                break;
+                            }
+                        }
+                    }
+                }
+                return canGoToNext ? newIndex : this.getNextQuestionIndex(index + 1);
             },
 
             getNextQuestion(index) {

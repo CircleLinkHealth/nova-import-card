@@ -6,7 +6,7 @@
             <template v-if="!questionHasSubParts">
 
                 <div v-for="(placeholder, index) in placeholderForSingleQuestion"
-                     class="row">
+                     class="row no-gutters">
                     <div class="col-md-12 active">
                         <label v-if="singleTitle" class="label">{{singleTitle}}</label><br>
                         <input type="text"
@@ -32,7 +32,7 @@
                 <br/>
 
                 <!--add single input fields button-->
-                <div class="row" v-if="canAddInputFields">
+                <div class="row no-gutters" v-if="canAddInputFields">
                     <div v-for="extraFieldButtonName in extraFieldButtonNames"
                          class="col-md-12">
                     <span class="button-text-only"

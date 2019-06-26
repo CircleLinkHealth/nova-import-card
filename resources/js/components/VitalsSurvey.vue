@@ -401,6 +401,8 @@
                         }
                         else if (error.response && error.response.status === 419) {
                             this.error = "Not Authenticated [419]";
+                            //reload the page which will redirect to login
+                            window.location.reload();
                         }
                         else if (error.response && error.response.data) {
                             const errors = [error.response.data.message];

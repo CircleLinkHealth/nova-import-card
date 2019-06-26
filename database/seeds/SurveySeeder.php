@@ -478,14 +478,14 @@ class SurveySeeder extends Seeder
                 'order'                 => 11,
                 'sub_order'             => 'a',
                 'question_body'         => 'How many years ago did you start smoking?',
-                'optional'              => true,
+                'optional'              => false,
                 'conditions'            => [
                     [
                         'related_question_order_number'    => 11,
                         'related_question_expected_answer' => 'Yes',
                     ],
                 ],
-                'question_type'         => QuestionType::CHECKBOX,
+                'question_type'         => QuestionType::RADIO,
                 'question_type_answers' => [
                     [
                         'type_answer_body' => 'This Year',
@@ -503,14 +503,14 @@ class SurveySeeder extends Seeder
                 'order'                 => 11,
                 'sub_order'             => 'b',
                 'question_body'         => 'When was the last time you smoked or used any tobacco products?',
-                'optional'              => true,
+                'optional'              => false,
                 'conditions'            => [
                     [
                         'related_question_order_number'    => 11,
                         'related_question_expected_answer' => 'Yes',
                     ],
                 ],
-                'question_type'         => QuestionType::CHECKBOX,
+                'question_type'         => QuestionType::RADIO,
                 'question_type_answers' => [
                     [
                         'type_answer_body' => 'This Year',
@@ -528,7 +528,7 @@ class SurveySeeder extends Seeder
                 'order'                 => 11,
                 'sub_order'             => 'c',
                 'question_body'         => 'On average, how many packs/day do or did you smoke?',
-                'optional'              => true,
+                'optional'              => false,
                 'conditions'            => [
                     [
                         'related_question_order_number'    => 11,
@@ -555,7 +555,7 @@ class SurveySeeder extends Seeder
                 'order'                 => 11,
                 'sub_order'             => 'd',
                 'question_body'         => 'Are you interested in quitting?',
-                'optional'              => true,
+                'optional'              => false,
                 'conditions'            => [
                     [
                         'related_question_order_number'    => 11,
@@ -959,6 +959,12 @@ class SurveySeeder extends Seeder
                 'sub_order'             => 'a',
                 'question_body'         => 'Who in your family has had:',
                 'question_type'         => QuestionType::MULTI_SELECT,
+                'conditions'           => [
+                    [
+                        'related_question_order_number' => 18,
+                        //accept any answer
+                    ],
+                ],
                 'question_type_answers' => [
                     [
                         'options' => [
