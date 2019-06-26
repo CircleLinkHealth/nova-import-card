@@ -118,25 +118,31 @@ class GeneratePatientReports implements ShouldQueue
         $billingProvider = $patient->billingProviderUser();
 
         //TODO: Practice breaks on instantiation because we need to move App\Traits\HasChargeableServices from CPM to Customer
-//        $settings        = $patient->practiceSettings();
-//
-//        $channels = [];
-//
-//        if ($settings) {
-//            if ($settings->dm_awv_reports) {
-//                //todo: when Notifications Module is finished
-////                $channels[] = DirectMailChannel::class;
-//            }
-//            if ($settings->efax_awv_reports) {
-//                //todo: when Notifications Module is finished
-////                $channels[] = EfaxChannel::class;
-//            }
-//            if ($settings->email_awv_reports) {
-//                $channels[] = MailChannel::class;
-//            }
-//        }
+        try{
+            $settings        = $patient->practiceSettings();
 
-        $channels[] = MailChannel::class;
+            $channels = [];
+
+            if ($settings) {
+                if ($settings->dm_awv_reports) {
+                    //todo: when Notifications Module is finished
+//                $channels[] = DirectMailChannel::class;
+                }
+                if ($settings->efax_awv_reports) {
+                    //todo: when Notifications Module is finished
+//                $channels[] = EfaxChannel::class;
+                }
+                if ($settings->email_awv_reports) {
+                    $channels[] = MailChannel::class;
+                }
+            }
+        }catch (\Exception $e){
+            \Log::error($e->getMessage());
+            $channels[] = MailChannel::class;
+        }
+
+
+
 
         if ($billingProvider) {
             $billingProvider->notify(new SendReport($patient, $providerReport, 'Provider Report', $channels));
