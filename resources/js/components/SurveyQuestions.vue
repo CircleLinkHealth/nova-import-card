@@ -62,6 +62,13 @@
                      v-for="(question, index) in questions">
                     <div class="questions-body">
 
+                        <div v-if="isSubQuestion(question) && shouldShowQuestionGroupTitle(question)"
+                             class="questions-title">
+                            {{getQuestionGroupTitle(question)}}
+                        </div>
+
+                        <br>
+
                         <div class="questions-title">
                             {{getQuestionTitle(question)}}
                         </div>
@@ -344,14 +351,32 @@
             isLastQuestion(question) {
                 return this.questions[this.questions.length - 1].id === question.id;
             },
+
             shouldShowQuestionGroupTitle(question) {
-                return question.pivot.sub_order != null && (question.pivot.sub_order === "a" || question.pivot.sub_order === "1");
+                return question.question_group_id && question.pivot.sub_order != null && (question.pivot.sub_order === "a" || question.pivot.sub_order === "1" || question.pivot.sub_order === "1.");
+            },
+
+            hasQuestionGroupTitle(question) {
+                return question.question_group_id && question.pivot.sub_order != null;
+            },
+
+            getQuestionGroupTitle(question) {
+                return `${question.pivot.order}. ${question.question_group.body}`;
             },
 
             getQuestionTitle(question) {
-                if (this.isSubQuestion(question)) {
-                    return `${question.pivot.order}${question.pivot.sub_order}. ${question.body}`;
+                if (this.hasQuestionGroupTitle(question)) {
+                    let str = `${question.pivot.sub_order}.`;
+                    str = str.replace('..', '.'); //make sure we don't end up with two `..`
+                    return `${str} ${question.body}`;
                 }
+
+                if (this.isSubQuestion(question)) {
+                    let str = `${question.pivot.order}${question.pivot.sub_order}.`;
+                    str = str.replace('..', '.');
+                    return `${str} ${question.body}`;
+                }
+
                 return `${question.pivot.order}. ${question.body}`;
             },
 

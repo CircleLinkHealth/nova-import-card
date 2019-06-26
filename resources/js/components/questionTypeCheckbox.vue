@@ -224,16 +224,6 @@
 
 <style scoped>
 
-    .custom-checkbox {
-        height: 100%;
-    }
-
-    .checkboxes {
-        overflow-y: auto;
-        height: 100%;
-        max-height: calc(100% - 80px);
-    }
-
     .scrollable label {
         width: 100%;
         height: 55px;
@@ -242,6 +232,7 @@
         background-color: #ffffff;
         padding-top: 15px;
         padding-left: 10px;
+        cursor: pointer;
     }
 
     .scrollable label:hover {
