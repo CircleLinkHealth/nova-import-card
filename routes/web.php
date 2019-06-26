@@ -48,6 +48,12 @@ Route::group([
     'middleware' => ['auth'],
 ], function () {
 
+    //can be used by both hra and vitals i think
+    Route::post('{surveyInstanceId}/{userId}/complete-survey', [
+        'uses' => 'SurveyController@setSurveyInstanceStatusToComplete',
+        'as'   => 'survey.complete',
+    ]);
+
     Route::group([
         'prefix' => 'hra',
     ], function () {
@@ -57,10 +63,12 @@ Route::group([
             'as'   => 'survey.hra',
         ]);
 
+        //why are we passing practice id here?
         Route::post('{practiceId}/{patientId}/save-answer', [
             'uses' => 'SurveyController@storeAnswer',
             'as'   => 'survey.hra.store.answer',
         ]);
+
     });
 
     Route::group([
@@ -94,7 +102,7 @@ Route::group([
     'prefix'     => 'reports',
     'middleware' => ['auth'],
 ], function () {
-    //fixme: add reports routes here
+
     Route::get('/provider-report/{userId}', 'ProviderReportController@getProviderReport')->name('provider-report');
 
     Route::get('get-ppp-data/{userId}', 'PersonalizedPreventionPlanController@getPppDataForUser')
