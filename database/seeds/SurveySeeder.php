@@ -647,7 +647,7 @@ class SurveySeeder extends Seeder
                 'order'                 => 13,
                 'sub_order'             => 'a',
                 'question_body'         => 'Which recreational drugs, and how often?',
-                'optional'              => true,
+                'optional'              => false,
                 'conditions'            => [
                     [
                         'related_question_order_number'    => 13,

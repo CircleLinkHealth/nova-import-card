@@ -634,30 +634,13 @@
                         this.currentQuestionIndex = nextIndex;
                         const answered = this.questions[this.latestQuestionAnsweredIndex];
 
-                        //increment progress only if current question is not a sub question
-                        if (answered.pivot.sub_order === null) {
-                            if (incrementProgress) {
-                                this.progress = this.progress + 1;
-                            }
-                        } else {
-                            //if this is the last sub question of a group, increment progress
-
-                            //get all sub questions and sort them (i.e ["a", "b", "c"]
-                            const allSubs = this.questions.filter(q => q.pivot.order === answered.pivot.order).map(q => q.pivot.sub_order).sort();
-                            if (allSubs[allSubs.length - 1] === answered.pivot.sub_order) {
-                                if (incrementProgress) {
-                                    this.progress = this.progress + 1;
-                                }
-                            }
+                        if (incrementProgress && answered.pivot.order !== nextQuestion.pivot.order) {
+                            this.progress = this.progress + 1;
                         }
+
                         resolve();
                     });
                 });
-            },
-
-            hasAnsweredAllOfOrder(order) {
-                const questions = this.questions.filter(q => q.pivot.order === order);
-                return questions.every(q => q.answer !== undefined);
             },
 
             getQuestionsOfOrder(order) {
@@ -686,14 +669,16 @@
             this.subQuestions.push(...subQuestions);
 
             if (this.surveyData.answers && this.surveyData.answers.length) {
-                this.surveyData.answers.forEach(a => {
-                    const q = this.questions.find(q => q.id === a.question_id);
-                    if (q) {
+                let lastOrder = -1;
+                this.questions.forEach(q => {
+                    const a = this.surveyData.answers.find(a => a.question_id === q.id);
+                    if (a) {
                         q.answer = a;
-                        if (q.pivot.sub_order === null || this.hasAnsweredAllOfOrder(q.pivot.order)) {
+                        if (lastOrder !== q.pivot.order) {
                             this.progress = this.progress + 1;
                         }
                     }
+                    lastOrder = q.pivot.order;
                 });
             }
 
