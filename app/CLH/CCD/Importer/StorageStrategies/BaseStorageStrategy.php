@@ -18,7 +18,7 @@ abstract class BaseStorageStrategy
     public function __construct($blogId, User $user)
     {
         $this->blogId             = $blogId;
-        $this->carePlanTemplateId = $user->carePlan->care_plan_template_id ?? AppConfig::pull('default_care_plan_template_id');
+        $this->carePlanTemplateId = optional($user->carePlan)->care_plan_template_id ?? AppConfig::pull('default_care_plan_template_id');
         $this->user               = $user;
     }
 }
