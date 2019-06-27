@@ -887,7 +887,7 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'patient.careplan.assessment.create',
         ])->middleware('permission:note.create,careplanAssessment.update');
 
-        Route::get('approve-careplan/{viewNext?}', [
+        Route::post('approve-careplan/{viewNext?}', [
             'uses' => 'ProviderController@approveCarePlan',
             'as'   => 'patient.careplan.approve',
         ])->middleware('permission:care-plan-approve,care-plan-qa-approve');
