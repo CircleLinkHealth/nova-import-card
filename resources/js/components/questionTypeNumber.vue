@@ -151,7 +151,7 @@
                     };
                 }
 
-                this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer);
+                this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer, this.isLastQuestion);
             }
         },
         created() {

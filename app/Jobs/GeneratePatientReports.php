@@ -53,7 +53,7 @@ class GeneratePatientReports implements ShouldQueue
      */
     public function handle()
     {
-
+        //Retrieve User with data needed for reports
         $patient = User::with([
             'surveyInstances'     => function ($instance) {
                 $instance->with(['survey', 'questions.type.questionTypeAnswers'])
@@ -61,15 +61,15 @@ class GeneratePatientReports implements ShouldQueue
             },
             'answers'             => function ($answers) {
                 $answers->whereHas('surveyInstance', function ($instance) {
-                    $instance->forDate($this->date);
+                    $instance->forDate($this->surveyInstanceStartDate);
                 });
             },
             'providerReports'     => function ($report) {
                 $report->whereHas('hraSurveyInstance', function ($instance) {
-                    $instance->forDate($this->date);
+                    $instance->forDate($this->surveyInstanceStartDate);
                 })
                        ->whereHas('vitalsSurveyInstance', function ($instance) {
-                           $instance->forDate($this->date);
+                           $instance->forDate($this->surveyInstanceStartDate);
                        });
             },
             'patientAWVSummaries' => function ($summary) {
@@ -78,40 +78,78 @@ class GeneratePatientReports implements ShouldQueue
         ])
                        ->findOrFail($this->patientId);
 
+        //Generate Reports
         $providerReport = (new GenerateProviderReportService($patient))->generateData();
+
+        if ( ! $providerReport) {
+            \Log::error("Something went wrong while generating Provider Report for patient with id:{$patient->id} ");
+
+            //todo: send notification to slack? when command stops?
+            return;
+        }
 
         $pppReport = (new GeneratePersonalizedPreventionPlanService($patient))->generateData();
 
+        if ( ! $providerReport) {
+            \Log::error("Something went wrong while generating PPP for patient with id:{$patient->id} ");
 
-        $this->uploadProviderReport($providerReport, $patient);
-
-        $this->uploadPPP($pppReport, $patient);
-
-
-        $billingProvider = $patient->billingProviderUser();
-        $settings        = $patient->practiceSettings();
-
-        $channels = [];
-
-        if ($settings) {
-            if ($settings->dm_awv_reports) {
-                //need to import related classes to Customer
-//                $channels[] = DirectMailChannel::class;
-            }
-            if ($settings->efax_awv_reports) {
-                //need to import related classes to Customer
-//                $channels[] = EfaxChannel::class;
-            }
-            if ($settings->email_awv_reports) {
-                $channels[] = MailChannel::class;
-            }
+            return;
         }
+
+        //Create PDFs for reports and upload the to S3 Media
+        $providerReportUploaded = $this->createAndUploadPdfProviderReport($providerReport, $patient);
+
+        if ( ! $providerReportUploaded) {
+            \Log::error("Something went wrong while uploading Provider Report for patient with id:{$patient->id} ");
+
+            return;
+        }
+
+        $pppUploaded = $this->createAndUploadPdfPPP($pppReport, $patient);
+
+        if ( ! $pppUploaded) {
+            \Log::error("Something went wrong while uploading PPP for patient with id:{$patient->id} ");
+
+            return;
+        }
+
+
+        //Notify Billing Provider
+        $billingProvider = $patient->billingProviderUser();
+
+        //TODO: Practice breaks on instantiation because we need to move App\Traits\HasChargeableServices from CPM to Customer
+        try {
+            $settings = $patient->practiceSettings();
+
+            $channels = [];
+
+            if ($settings) {
+                if ($settings->dm_awv_reports) {
+                    //todo: when Notifications Module is finished
+//                $channels[] = DirectMailChannel::class;
+                }
+                if ($settings->efax_awv_reports) {
+                    //todo: when Notifications Module is finished
+//                $channels[] = EfaxChannel::class;
+                }
+                if ($settings->email_awv_reports) {
+                    $channels[] = MailChannel::class;
+                }
+            }
+        } catch (\Exception $e) {
+            \Log::error($e->getMessage());
+            $channels[] = MailChannel::class;
+        }
+
 
         if ($billingProvider) {
             $billingProvider->notify(new SendReport($patient, $providerReport, 'Provider Report', $channels));
             $billingProvider->notify(new SendReport($patient, $pppReport, 'PPP', $channels));
         }
 
+
+        //Update AWVSummaries
+        //We are updating month_year so that the patient is billable for the month that the surveys have been completed
         $summary = $patient->patientAWVSummaries->first();
 
         if ($summary) {
@@ -123,7 +161,7 @@ class GeneratePatientReports implements ShouldQueue
         }
     }
 
-    private function uploadProviderReport($providerReport, $patient)
+    private function createAndUploadPdfProviderReport($providerReport, $patient)
     {
 
         $providerReportFormattedData = (new ProviderReportService())->formatReportDataForView($providerReport);
@@ -136,25 +174,24 @@ class GeneratePatientReports implements ShouldQueue
 
         $saved = file_put_contents($path, $pdf->output());
 
-        $patient->addMedia($path)
-                ->withCustomProperties(['doc_type' => 'Provider Report'])
-                ->toMediaCollection('patient-care-documents');
+        if ( ! $saved) {
+            return false;
+        }
+
+        return $patient->addMedia($path)
+                       ->withCustomProperties(['doc_type' => 'Provider Report'])
+                       ->toMediaCollection('patient-care-documents');
     }
 
-    private function uploadPPP($ppp, $patient)
+    private function createAndUploadPdfPPP($ppp, $patient)
     {
-        $pppFormattedData = (new PersonalizedPreventionPlanPrepareData())->prepareRecommendations($ppp);
-
-        $recommendationTasks = [];
-        foreach ($pppFormattedData['recommendation_tasks'] as $tasks) {
-            $recommendationTasks[$tasks['title']] = $tasks;
-        }
+        $personalizedHealthAdvices = (new PersonalizedPreventionPlanPrepareData())->prepareRecommendations($ppp);
 
         $pdf = App::make('dompdf.wrapper');
         $pdf->loadView('personalizedPreventionPlan', [
-            'reportData'          => $pppFormattedData,
-            'age'                 => $patient->getAge(),
-            'recommendationTasks' => $recommendationTasks,
+            'patientPppData'            => $ppp,
+            'patient'                   => $patient,
+            'personalizedHealthAdvices' => $personalizedHealthAdvices,
         ]);
 
 
@@ -162,8 +199,12 @@ class GeneratePatientReports implements ShouldQueue
 
         $saved = file_put_contents($path, $pdf->output());
 
-        $patient->addMedia($path)
-                ->withCustomProperties(['doc_type' => 'PPP'])
-                ->toMediaCollection('patient-care-documents');
+        if ( ! $saved) {
+            return false;
+        }
+
+        return $patient->addMedia($path)
+                       ->withCustomProperties(['doc_type' => 'PPP'])
+                       ->toMediaCollection('patient-care-documents');
     }
 }

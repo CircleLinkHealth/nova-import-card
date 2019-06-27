@@ -353,7 +353,7 @@
                 return this.questions;
             },
 
-            postAnswerAndGoToNext(questionId, questionTypeAnswerId, answer) {
+            postAnswerAndGoToNext(questionId, questionTypeAnswerId, answer, isLastQuestion) {
 
                 this.error = null;
                 this.waiting = true;
@@ -366,6 +366,7 @@
                         question_id: questionId,
                         question_type_answer_id: questionTypeAnswerId,
                         value: answer,
+                        survey_complete: isLastQuestion
                     })
                     .then((response) => {
                         this.waiting = false;
@@ -401,6 +402,8 @@
                         }
                         else if (error.response && error.response.status === 419) {
                             this.error = "Not Authenticated [419]";
+                            //reload the page which will redirect to login
+                            window.location.reload();
                         }
                         else if (error.response && error.response.data) {
                             const errors = [error.response.data.message];
@@ -442,22 +445,10 @@
                         this.currentQuestionIndex = this.currentQuestionIndex + 1;
                         const answered = this.questions[this.latestQuestionAnsweredIndex];
 
-                        //increment progress only if current question is not a sub question
-                        if (answered.pivot.sub_order === null) {
-                            if (incrementProgress) {
-                                this.progress = this.progress + 1;
-                            }
-                        } else {
-                            //if this is the last sub question of a group, increment progress
-
-                            //get all sub questions and sort them (i.e ["a", "b", "c"]
-                            const allSubs = this.questions.filter(q => q.pivot.order === answered.pivot.order).map(q => q.pivot.sub_order).sort();
-                            if (allSubs[allSubs.length - 1] === answered.pivot.sub_order) {
-                                if (incrementProgress) {
-                                    this.progress = this.progress + 1;
-                                }
-                            }
+                        if (incrementProgress && answered.pivot.order !== nextQuestion.pivot.order) {
+                            this.progress = this.progress + 1;
                         }
+
                         resolve();
                     });
                 });
@@ -480,14 +471,16 @@
             this.questions = this.data.survey_instances[0].questions.slice(0);
 
             if (this.data.answers && this.data.answers.length) {
-                this.data.answers.forEach(a => {
-                    const q = this.questions.find(q => q.id === a.question_id);
-                    if (q) {
+                let lastOrder = -1;
+                this.questions.forEach(q => {
+                    const a = this.surveyData.answers.find(a => a.question_id === q.id);
+                    if (a) {
                         q.answer = a;
-                        if (q.pivot.sub_order === null || this.hasAnsweredAllOfOrder(q.pivot.order)) {
+                        if (lastOrder !== q.pivot.order) {
                             this.progress = this.progress + 1;
                         }
                     }
+                    lastOrder = q.pivot.order;
                 });
             }
 
@@ -510,131 +503,5 @@
     }
 </script>
 <style lang="scss" scoped>
-
-    $primary-color: #50b2e2;
-
-    .survey-container {
-        border-bottom: none;
-        width: 100%;
-        height: calc(100% - 56px);
-    }
-
-    .survey-container.max {
-        height: 100%;
-        border: 1px solid #808080;
-    }
-
-    @media (min-width: 519px) {
-        .survey-container {
-            height: calc(100% - 100px);
-        }
-    }
-
-    /*.survey-container::-webkit-scrollbar {*/
-    /*width: 0 !important*/
-    /*}*/
-
-    .bottom-navbar {
-        background-color: #ffffff;
-        border-bottom: 1px solid #808080;
-        border-left: 1px solid #808080;
-        border-right: 1px solid #808080;
-        height: 56px;
-    }
-
-    @media (min-width: 519px) {
-        .bottom-navbar {
-            height: 100px;
-        }
-    }
-
-    .scroll-buttons .btn {
-        padding: 0;
-        margin-top: 13px;
-        width: 30px;
-        height: 30px;
-    }
-
-    .scroll-buttons .btn:first-child {
-        margin-right: 10px;
-    }
-
-    .scroll-buttons .btn:last-child {
-        margin-right: 20px;
-    }
-
-    .scroll-buttons .fas {
-        font-size: 15px;
-    }
-
-    @media (min-width: 519px) {
-        .scroll-buttons .btn {
-            margin-top: 20px;
-            width: 60px;
-            height: 60px;
-        }
-
-        .scroll-buttons .btn:last-child {
-            margin-right: 30px;
-        }
-
-        .scroll-buttons .fas {
-            font-size: 30px;
-        }
-    }
-
-    /**
-    When two rows, we have less margin-top (in the col- screens)
-     */
-    .progress-container {
-        margin-top: 8px;
-    }
-
-    .progress-text {
-        font-family: Poppins, serif;
-        font-size: 10px;
-        font-weight: 500;
-        font-style: normal;
-        font-stretch: normal;
-        line-height: normal;
-        letter-spacing: 0.56px;
-        text-align: right;
-        color: #1a1a1a;
-        white-space: nowrap;
-    }
-
-    /**
-    When progress text and bar are in one line (col-sm screens)
-     */
-    @media (min-width: 519px) {
-        .progress-container {
-            margin-top: 26px;
-        }
-
-        .progress-text {
-            font-size: 18px;
-            letter-spacing: 1px;
-        }
-    }
-
-    @media (min-width: 766px) {
-        .progress-container {
-            margin-top: 36px;
-        }
-    }
-
-    .active {
-        opacity: 1;
-        transition: opacity 0.5s linear;
-    }
-
-    .watermark {
-        opacity: 0.1;
-        transition: opacity 0.5s linear;
-    }
-
-    .error {
-        color: darkred;
-    }
 
 </style>

@@ -62,6 +62,13 @@
                      v-for="(question, index) in questions">
                     <div class="questions-body">
 
+                        <div v-if="isSubQuestion(question) && shouldShowQuestionGroupTitle(question)"
+                             class="questions-title">
+                            {{getQuestionGroupTitle(question)}}
+                        </div>
+
+                        <br>
+
                         <div class="questions-title">
                             {{getQuestionTitle(question)}}
                         </div>
@@ -334,7 +341,7 @@
                 }
 
                 this.error = null;
-                this.currentQuestionIndex = this.currentQuestionIndex + 1;
+                this.currentQuestionIndex = this.getNextQuestionIndex(this.currentQuestionIndex);
             },
 
             isSubQuestion(question) {
@@ -344,14 +351,32 @@
             isLastQuestion(question) {
                 return this.questions[this.questions.length - 1].id === question.id;
             },
+
             shouldShowQuestionGroupTitle(question) {
-                return question.pivot.sub_order != null && (question.pivot.sub_order === "a" || question.pivot.sub_order === "1");
+                return question.question_group_id && question.pivot.sub_order != null && (question.pivot.sub_order === "a" || question.pivot.sub_order === "1" || question.pivot.sub_order === "1.");
+            },
+
+            hasQuestionGroupTitle(question) {
+                return question.question_group_id && question.pivot.sub_order != null;
+            },
+
+            getQuestionGroupTitle(question) {
+                return `${question.pivot.order}. ${question.question_group.body}`;
             },
 
             getQuestionTitle(question) {
-                if (this.isSubQuestion(question)) {
-                    return `${question.pivot.order}${question.pivot.sub_order}. ${question.body}`;
+                if (this.hasQuestionGroupTitle(question)) {
+                    let str = `${question.pivot.sub_order}.`;
+                    str = str.replace('..', '.'); //make sure we don't end up with two `..`
+                    return `${str} ${question.body}`;
                 }
+
+                if (this.isSubQuestion(question)) {
+                    let str = `${question.pivot.order}${question.pivot.sub_order}.`;
+                    str = str.replace('..', '.');
+                    return `${str} ${question.body}`;
+                }
+
                 return `${question.pivot.order}. ${question.body}`;
             },
 
@@ -418,7 +443,7 @@
             },*/
 
 
-            postAnswerAndGoToNext(questionId, questionTypeAnswerId, answer) {
+            postAnswerAndGoToNext(questionId, questionTypeAnswerId, answer, isLastQuestion) {
 
                 this.error = null;
                 this.waiting = true;
@@ -430,7 +455,7 @@
                     question_id: questionId,
                     question_type_answer_id: questionTypeAnswerId,
                     value: answer,
-
+                    survey_complete: isLastQuestion
                 })
                     .then((response) => {
                         this.waiting = false;
@@ -466,6 +491,8 @@
                         }
                         else if (error.response && error.response.status === 419) {
                             this.error = "Not Authenticated [419]";
+                            //reload the page which will redirect to login
+                            window.location.reload();
                         }
                         else if (error.response && error.response.data) {
                             const errors = [error.response.data.message];
@@ -502,9 +529,65 @@
                             canGoToPrev = false;
                             break;
                         }
+                        //if no expected answer, we look for any answer, if any
+                        else if (typeof q.related_question_expected_answer === "undefined") {
+                            if (Array.isArray(questions[0].answer.value) && questions[0].answer.value.length === 0) {
+                                canGoToPrev = false;
+                            }
+                            else if (typeof questions[0].answer.value === "string" && questions[0].answer.value.length === 0) {
+                                canGoToPrev = false;
+                            }
+                            else if (questions[0].answer.value.value.length === 0) {
+                                canGoToPrev = false;
+                            }
+
+                            if (!canGoToPrev) {
+                                break;
+                            }
+                        }
                     }
                 }
                 return canGoToPrev ? newIndex : this.getPreviousQuestionIndex(index - 1);
+            },
+
+            getNextQuestionIndex(index) {
+                const newIndex = index + 1;
+                const nextQuestion = this.questions[newIndex];
+                if (!nextQuestion) {
+                    return (this.questions.length - 1);
+                }
+
+                //if we reach here, it means we have not faced this question yet in this session
+                //it might still be disabled though -> think completing questions then refreshing the page
+                //need to check if there are certain conditions that have to be met before showing this question
+                let canGoToNext = true;
+                if (nextQuestion.conditions && nextQuestion.conditions.length) {
+                    for (let i = 0; i < nextQuestion.conditions.length; i++) {
+                        const q = nextQuestion.conditions[0];
+                        const questions = this.getQuestionsOfOrder(q.related_question_order_number);
+                        if (questions[0].answer.value.value !== q.related_question_expected_answer) {
+                            canGoToNext = false;
+                            break;
+                        }
+                        //if no expected answer, we look for any answer, if any
+                        else if (typeof q.related_question_expected_answer === "undefined") {
+                            if (Array.isArray(questions[0].answer.value) && questions[0].answer.value.length === 0) {
+                                canGoToNext = false;
+                            }
+                            else if (typeof questions[0].answer.value === "string" && questions[0].answer.value.length === 0) {
+                                canGoToNext = false;
+                            }
+                            else if (questions[0].answer.value.value.length === 0) {
+                                canGoToNext = false;
+                            }
+
+                            if (!canGoToNext) {
+                                break;
+                            }
+                        }
+                    }
+                }
+                return canGoToNext ? newIndex : this.getNextQuestionIndex(index + 1);
             },
 
             getNextQuestion(index) {
@@ -523,6 +606,22 @@
                         if (questions[0].answer.value.value !== q.related_question_expected_answer) {
                             shouldDisable = true;
                             break;
+                        }
+                        //if no expected answer, we look for any answer, if any
+                        else if (typeof q.related_question_expected_answer === "undefined") {
+                            if (Array.isArray(questions[0].answer.value) && questions[0].answer.value.length === 0) {
+                                shouldDisable = true;
+                            }
+                            else if (typeof questions[0].answer.value === "string" && questions[0].answer.value.length === 0) {
+                                shouldDisable = true;
+                            }
+                            else if (questions[0].answer.value.value.length === 0) {
+                                shouldDisable = true;
+                            }
+
+                            if (!shouldDisable) {
+                                break;
+                            }
                         }
                     }
                     nextQuestion.disabled = shouldDisable;
@@ -560,30 +659,13 @@
                         this.currentQuestionIndex = nextIndex;
                         const answered = this.questions[this.latestQuestionAnsweredIndex];
 
-                        //increment progress only if current question is not a sub question
-                        if (answered.pivot.sub_order === null) {
-                            if (incrementProgress) {
-                                this.progress = this.progress + 1;
-                            }
-                        } else {
-                            //if this is the last sub question of a group, increment progress
-
-                            //get all sub questions and sort them (i.e ["a", "b", "c"]
-                            const allSubs = this.questions.filter(q => q.pivot.order === answered.pivot.order).map(q => q.pivot.sub_order).sort();
-                            if (allSubs[allSubs.length - 1] === answered.pivot.sub_order) {
-                                if (incrementProgress) {
-                                    this.progress = this.progress + 1;
-                                }
-                            }
+                        if (incrementProgress && answered.pivot.order !== nextQuestion.pivot.order) {
+                            this.progress = this.progress + 1;
                         }
+
                         resolve();
                     });
                 });
-            },
-
-            hasAnsweredAllOfOrder(order) {
-                const questions = this.questions.filter(q => q.pivot.order === order);
-                return questions.every(q => q.answer !== undefined);
             },
 
             getQuestionsOfOrder(order) {
@@ -612,14 +694,16 @@
             this.subQuestions.push(...subQuestions);
 
             if (this.surveyData.answers && this.surveyData.answers.length) {
-                this.surveyData.answers.forEach(a => {
-                    const q = this.questions.find(q => q.id === a.question_id);
-                    if (q) {
+                let lastOrder = -1;
+                this.questions.forEach(q => {
+                    const a = this.surveyData.answers.find(a => a.question_id === q.id);
+                    if (a) {
                         q.answer = a;
-                        if (q.pivot.sub_order === null || this.hasAnsweredAllOfOrder(q.pivot.order)) {
+                        if (lastOrder !== q.pivot.order) {
                             this.progress = this.progress + 1;
                         }
                     }
+                    lastOrder = q.pivot.order;
                 });
             }
 
@@ -647,192 +731,5 @@
 </script>
 
 <style lang="scss" scoped>
-    $primary-color: #50b2e2;
-
-    .survey-container {
-        border-bottom: none;
-        width: 100%;
-        height: calc(100% - 56px);
-    }
-
-    .survey-container.max {
-        height: 100%;
-        border: 1px solid #808080;
-    }
-
-    @media (min-width: 519px) {
-        .survey-container {
-            height: calc(100% - 100px);
-        }
-    }
-
-    /*.survey-container::-webkit-scrollbar {*/
-    /*width: 0 !important*/
-    /*}*/
-
-    .bottom-navbar {
-        background-color: #ffffff;
-        border-bottom: 1px solid #808080;
-        border-left: 1px solid #808080;
-        border-right: 1px solid #808080;
-        height: 56px;
-    }
-
-    @media (min-width: 519px) {
-        .bottom-navbar {
-            height: 100px;
-        }
-    }
-
-    .scroll-buttons .btn {
-        padding: 0;
-        margin-top: 13px;
-        width: 30px;
-        height: 30px;
-    }
-
-    .scroll-buttons .btn:first-child {
-        margin-right: 10px;
-    }
-
-    .scroll-buttons .btn:last-child {
-        margin-right: 20px;
-    }
-
-    .scroll-buttons .fas {
-        font-size: 15px;
-    }
-
-    @media (min-width: 519px) {
-        .scroll-buttons .btn {
-            margin-top: 20px;
-            width: 60px;
-            height: 60px;
-        }
-
-        .scroll-buttons .btn:last-child {
-            margin-right: 30px;
-        }
-
-        .scroll-buttons .fas {
-            font-size: 30px;
-        }
-    }
-
-    /**
-    When two rows, we have less margin-top (in the col- screens)
-     */
-    .progress-container {
-        margin-top: 8px;
-    }
-
-    .progress-text {
-        font-family: Poppins, serif;
-        font-size: 10px;
-        font-weight: 500;
-        font-style: normal;
-        font-stretch: normal;
-        line-height: normal;
-        letter-spacing: 0.56px;
-        text-align: right;
-        color: #1a1a1a;
-        white-space: nowrap;
-    }
-
-    /**
-    When progress text and bar are in one line (col-sm screens)
-     */
-    @media (min-width: 519px) {
-        .progress-container {
-            margin-top: 26px;
-        }
-
-        .progress-text {
-            font-size: 18px;
-            letter-spacing: 1px;
-        }
-    }
-
-    @media (min-width: 766px) {
-        .progress-container {
-            margin-top: 36px;
-        }
-    }
-
-    .active {
-        opacity: 1;
-        transition: opacity 0.5s linear;
-    }
-
-    .watermark {
-        opacity: 0.1;
-        transition: opacity 0.5s linear;
-    }
-
-    .non-visible {
-        opacity: 0.02;
-        transition: opacity 0.5s linear;
-    }
-
-    .error {
-        color: darkred;
-    }
-
-    .survey-sub-welcome-text {
-        font-family: Poppins;
-        font-size: 18px;
-        font-weight: normal;
-        font-style: normal;
-        font-stretch: normal;
-        line-height: normal;
-        letter-spacing: 1px;
-        text-align: center;
-        margin-top: 25px;
-        margin-left: 13%;
-        width: 75%;
-        color: #1a1a1a;
-    }
-
-    .call-assistance {
-        padding-left: 3%;
-        position: absolute;
-    }
-
-    .welcome-icon {
-        width: 108px;
-        margin: auto;
-    }
-
-    .fa-phone {
-        transform: scaleX(-1);
-        color: #ffffff;
-    }
-
-    .fa-times {
-        width: 20px;
-        height: 20px;
-        color: #ffffff;
-    }
-
-    .card-body {
-        text-align: center;
-    }
-
-    .by-circlelink {
-        font-family: Poppins, serif;
-        font-size: 18px;
-        font-weight: 600;
-        font-style: normal;
-        font-stretch: normal;
-        line-height: normal;
-        letter-spacing: 1px;
-        margin-top: 10px;
-        color: #50b2e2;
-    }
-
-    .by-circlelink .text-style-1 {
-        font-weight: normal;
-        color: #1a1a1a;
-    }
 
 </style>

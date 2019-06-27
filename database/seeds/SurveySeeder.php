@@ -478,14 +478,14 @@ class SurveySeeder extends Seeder
                 'order'                 => 11,
                 'sub_order'             => 'a',
                 'question_body'         => 'How many years ago did you start smoking?',
-                'optional'              => true,
+                'optional'              => false,
                 'conditions'            => [
                     [
                         'related_question_order_number'    => 11,
                         'related_question_expected_answer' => 'Yes',
                     ],
                 ],
-                'question_type'         => QuestionType::CHECKBOX,
+                'question_type'         => QuestionType::RADIO,
                 'question_type_answers' => [
                     [
                         'type_answer_body' => 'This Year',
@@ -503,14 +503,14 @@ class SurveySeeder extends Seeder
                 'order'                 => 11,
                 'sub_order'             => 'b',
                 'question_body'         => 'When was the last time you smoked or used any tobacco products?',
-                'optional'              => true,
+                'optional'              => false,
                 'conditions'            => [
                     [
                         'related_question_order_number'    => 11,
                         'related_question_expected_answer' => 'Yes',
                     ],
                 ],
-                'question_type'         => QuestionType::CHECKBOX,
+                'question_type'         => QuestionType::RADIO,
                 'question_type_answers' => [
                     [
                         'type_answer_body' => 'This Year',
@@ -528,7 +528,7 @@ class SurveySeeder extends Seeder
                 'order'                 => 11,
                 'sub_order'             => 'c',
                 'question_body'         => 'On average, how many packs/day do or did you smoke?',
-                'optional'              => true,
+                'optional'              => false,
                 'conditions'            => [
                     [
                         'related_question_order_number'    => 11,
@@ -555,7 +555,7 @@ class SurveySeeder extends Seeder
                 'order'                 => 11,
                 'sub_order'             => 'd',
                 'question_body'         => 'Are you interested in quitting?',
-                'optional'              => true,
+                'optional'              => false,
                 'conditions'            => [
                     [
                         'related_question_order_number'    => 11,
@@ -647,7 +647,7 @@ class SurveySeeder extends Seeder
                 'order'                 => 13,
                 'sub_order'             => 'a',
                 'question_body'         => 'Which recreational drugs, and how often?',
-                'optional'              => true,
+                'optional'              => false,
                 'conditions'            => [
                     [
                         'related_question_order_number'    => 13,
@@ -770,6 +770,7 @@ class SurveySeeder extends Seeder
                 'order'                 => 16,
                 'question_body'         => 'Please check/uncheck if you have ever had the following conditions:',
                 'question_type'         => QuestionType::CHECKBOX,
+                'optional'              => true,
                 'question_type_answers' => [
                     [
                         'type_answer_body' => 'Arrhythmia',
@@ -888,6 +889,7 @@ class SurveySeeder extends Seeder
                 'order'                 => 17,
                 'question_body'         => 'If you have any medical problems or serious injuries that were not listed above, please describe them here',
                 'question_type'         => QuestionType::TEXT,
+                'optional'              => true,
                 'question_type_answers' => [
                     [
                         'options' => [
@@ -957,6 +959,12 @@ class SurveySeeder extends Seeder
                 'sub_order'             => 'a',
                 'question_body'         => 'Who in your family has had:',
                 'question_type'         => QuestionType::MULTI_SELECT,
+                'conditions'           => [
+                    [
+                        'related_question_order_number' => 18,
+                        //accept any answer
+                    ],
+                ],
                 'question_type_answers' => [
                     [
                         'options' => [
@@ -1063,7 +1071,7 @@ class SurveySeeder extends Seeder
             ],
             [
                 'order'                 => 22,
-                'sub_order'             => '1.',
+                'sub_order'             => '1',
                 'question_body'         => 'Little interest or pleasure in doing things',
                 'question_group'        => 'Over the past 2 weeks, how often have you been bothered by any of the following problems?',
                 'question_type'         => QuestionType::RADIO,
@@ -1084,7 +1092,7 @@ class SurveySeeder extends Seeder
             ],
             [
                 'order'                 => 22,
-                'sub_order'             => '2.',
+                'sub_order'             => '2',
                 'question_body'         => 'Feeling down, depressed or hopeless',
                 'question_group'        => 'Over the past 2 weeks, how often have you been bothered by any of the following problems?',
                 'question_type'         => QuestionType::RADIO,
@@ -1105,8 +1113,9 @@ class SurveySeeder extends Seeder
             ],
             [
                 'order'                 => 23,
-                'question_body'         => 'Please check to indicate if you have ever had diffuculty/needed help performing any of the following tasks:',
+                'question_body'         => 'Please check to indicate if you have ever had difficulty/needed help performing any of the following tasks:',
                 'question_type'         => QuestionType::CHECKBOX,
+                'optional'              => true,
                 'question_type_answers' => [
                     [
                         'type_answer_body' => 'Standing from a sitting position',
@@ -1143,7 +1152,7 @@ class SurveySeeder extends Seeder
             [
                 'order'                => 23,
                 'sub_order'            => 'a',
-                'question_body'        => 'If you anseered yes to any of the above, do you have someone who can assist you?',
+                'question_body'        => 'If you answered yes to any of the above, do you have someone who can assist you?',
                 'question_type'        => QuestionType::RADIO,
                 'optional'             => true,
                 'conditions'           => [
@@ -1152,7 +1161,7 @@ class SurveySeeder extends Seeder
                         //accept any answer
                     ],
                 ],
-                'question_type_ansers' => [
+                'question_type_answers' => [
                     [
                         'type_answer_body' => 'Yes',
                         'options'          => [
@@ -1171,7 +1180,7 @@ class SurveySeeder extends Seeder
                 'order'                => 24,
                 'question_body'        => 'Have you fallen in the past 6 months? (a fall is when the body goes to the ground without being pushed)',
                 'question_type'        => QuestionType::RADIO,
-                'question_type_ansers' => [
+                'question_type_answers' => [
                     [
                         'type_answer_body' => 'Yes',
                         'options'          => [
@@ -1206,7 +1215,7 @@ class SurveySeeder extends Seeder
                 'order'                => 26,
                 'question_body'        => 'Have you had a flu shot this year or are you planning to receive one this year?',
                 'question_type'        => QuestionType::RADIO,
-                'question_type_ansers' => [
+                'question_type_answers' => [
                     [
                         'type_answer_body' => 'Yes',
                         'options'          => [

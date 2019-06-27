@@ -42,6 +42,7 @@ class StoreVitalsAnswer extends FormRequest
             'question_id'             => 'required|integer|exists:questions,id',
             'question_type_answer_id' => 'sometimes|integer|exists:question_types_answers,id',
             'value'                   => 'required',
+            'survey_complete'         => 'sometimes|boolean',
         ];
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Answer;
 use App\Http\Requests\StoreAnswer;
 use App\Services\SurveyService;
 use Auth;
@@ -54,16 +53,5 @@ class SurveyController extends Controller
             'survey_status' => $answer,
         ], 200);
 
-    }
-
-    public function getPreviousAnswer($questionId, $userId)
-    {
-        $previousQuestionAnswer = Answer::where('question_id', $questionId)
-                                        ->where('user_id', $userId)->first();
-
-        return response()->json([
-            'success'                => true,
-            'previousQuestionAnswer' => $previousQuestionAnswer->value,
-        ], 200);
     }
 }

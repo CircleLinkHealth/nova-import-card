@@ -44,9 +44,6 @@
 
 <script>
 
-    import CheckboxCustomTypeCancer from "./checkboxCustomTypeCancer";
-    import CheckboxCustomTypeEyeProblems from "./checkboxCustomTypeEyeProblems";
-    import CheckboxCustomTypeStd from "./checkboxCustomTypeStd";
     import {mdbBtn} from "mdbvue";
     import {library} from '@fortawesome/fontawesome-svg-core';
     import {faSpinner} from '@fortawesome/free-solid-svg-icons';
@@ -57,9 +54,6 @@
         name: "questionTypeCheckbox",
         props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting'],
         components: {
-            CheckboxCustomTypeStd,
-            CheckboxCustomTypeEyeProblems,
-            CheckboxCustomTypeCancer,
             mdbBtn,
             FontAwesomeIcon
         },
@@ -171,7 +165,7 @@
                         answer.push(obj);
                     }
                 });
-                this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer);
+                this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer, this.isLastQuestion);
             },
 
 
@@ -224,16 +218,6 @@
 
 <style scoped>
 
-    .custom-checkbox {
-        height: 100%;
-    }
-
-    .checkboxes {
-        overflow-y: auto;
-        height: 100%;
-        max-height: calc(100% - 80px);
-    }
-
     .scrollable label {
         width: 100%;
         height: 55px;
@@ -242,6 +226,7 @@
         background-color: #ffffff;
         padding-top: 15px;
         padding-left: 10px;
+        cursor: pointer;
     }
 
     .scrollable label:hover {
