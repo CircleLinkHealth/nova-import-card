@@ -65,6 +65,9 @@ class PatientProgramSecurity
             if ( ! $patient) {
                 return response('Could not locate patient.', 401);
             }
+
+            session()->put(\App\Constants::VIEWING_PATIENT, $patientId);
+
             if ($patientId == $loggedInUser->id && ! $loggedInUser->hasPermission('users-view-self')) {
                 abort(403);
             }

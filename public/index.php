@@ -1,11 +1,10 @@
 <?php
 
-/**
- * Laravel - A PHP Framework For Web Artisans
- *
- * @package  Laravel
- * @author   Taylor Otwell <taylor@laravel.com>
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
+
+use App\Constants;
 
 define('LARAVEL_START', microtime(true));
 
@@ -80,5 +79,8 @@ $response = $kernel->handle(
 );
 
 $response->send();
+
+//Flush viewing patient after we send response
+$flushed = session()->pull(Constants::VIEWING_PATIENT);
 
 $kernel->terminate($request, $response);

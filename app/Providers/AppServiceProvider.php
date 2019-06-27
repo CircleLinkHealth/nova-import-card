@@ -197,8 +197,10 @@ class AppServiceProvider extends ServiceProvider
 
         if (config('responsecache.enabled')) {
             //Clear responsecache every time a model is created, updated, or deleted
-            Event::listen(['eloquent.created: *', 'eloquent.updated: *', 'eloquent.deleted: *'], function ($model) {
-                ResponseCache::clear();
+            Event::listen(['eloquent.created: *', 'eloquent.updated: *', 'eloquent.deleted: *'], function ($event, $model) {
+                if ($userId = session()->pull(\App\Constants::VIEWING_PATIENT, auth()->id())) {
+                    $cleared = \Cache::tags(config('responsecache.cache_tag')."user_$userId")->flush();
+                }
             });
         }
     }
