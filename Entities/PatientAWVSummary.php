@@ -12,9 +12,8 @@ class PatientAWVSummary extends Model
 {
     protected $fillable = [
         'patient_id',
-        'month_year',
-        'initial_visit',
-        'subsequent_visit',
+        'year',
+        'is_initial_visit',
         'is_billable',
         'completed_at',
     ];
