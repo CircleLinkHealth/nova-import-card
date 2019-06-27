@@ -13,7 +13,7 @@ class ProblemCodeSystemRepository
 {
     public function count()
     {
-        return $this->model->select('name', DB::raw('count(*) as total'))->groupBy('name')->pluck('total')->count();
+        return $this->model()->select('name', DB::raw('count(*) as total'))->groupBy('name')->pluck('total')->count();
     }
 
     public function model()
