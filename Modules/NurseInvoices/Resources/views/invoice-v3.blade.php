@@ -166,7 +166,7 @@
                 <tr>
                     <td><b>{{$date}}</b></td>
 
-                    <td>{{--{{$row['formatted_time']}}--}}<nurse-invoice-daily-dispute :formatted-time="{{'800'}}"></nurse-invoice-daily-dispute></td>
+                    <td>{{--{{$row['formatted_time']}}--}}<nurse-invoice-daily-dispute :invoice-data="{{json_encode($row)}}"></nurse-invoice-daily-dispute></td>
 
                     @if($variablePay)
                         <td>{{$row['towards']}}</td>

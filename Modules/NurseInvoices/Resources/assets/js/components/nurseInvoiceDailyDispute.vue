@@ -1,6 +1,14 @@
 <template>
     <div @mouseover="mouseOver" @mouseleave="mouseLeave">
-        {{this.formattedTime}}
+       <span :class="{strike: strikethroughTime}">
+           {{this.formattedTime}}
+       </span>
+
+        <span v-show="disputeRequestedTime"
+        class="dispute-requested-time">
+            {{this.requestedTime}}
+        </span>
+
         <span v-show="editButtonActive"
               @click="handleEdit()"
               aria-hidden="true"
@@ -11,21 +19,24 @@
         <span v-show="showDisputeBox"
               aria-hidden="true"
               class="dispute-box">
-            <input type="text" class="text-box" placeholder="Time in minutes">
+            <input type="text"
+                   class="text-box"
+                   v-model="requestedTime">
 
-            <span class="save">
+            <span class="save"
+                  @click="saveDispute">
                 <i class="glyphicon glyphicon-saved"></i>
             </span>
 
         </span>
 
         <span v-show="showDisputeBox"
-             class="dismiss"
-             @click="dismiss()">
+              class="dismiss"
+              @click="dismiss()">
             <i class="glyphicon glyphicon-remove"></i>
         </span>
 
-        <span v-show="deleteButtonActive"
+        <span v-show="deleteButtonActive && disputeRequestedTime"
               @click="handleDelete()"
               aria-hidden="true"
               class="delete-button">
@@ -36,7 +47,7 @@
 
 <script>
     export default {
-        props: ['formattedTime'],
+        props: ['invoiceData'],
         name: "nurseInvoiceDailyDispute",
 
         data() {
@@ -44,7 +55,15 @@
                 editButtonActive: false,
                 deleteButtonActive: false,
                 showDisputeBox: false,
+                formattedTime: this.invoiceData.formatted_time,
+                requestedTime: '',
+                disputeRequestedTime: false,
+                strikethroughTime:false,
             }
+        },
+
+        computed:{
+
         },
 
         methods: {
@@ -65,12 +84,24 @@
                 this.showDisputeBox = true;
             },
             handleDelete() {
-
+                this.disputeRequestedTime = false;
+                this.strikethroughTime = false;
             },
             dismiss() {
                 this.editButtonActive = false;
-                this.deleteButtonActive = false;
                 this.showDisputeBox = false;
+
+                if (!this.disputeRequestedTime){
+                    this.deleteButtonActive = false;
+                }
+            },
+
+            saveDispute() {
+                if (this.requestedTime.length !== 0){
+                    this.disputeRequestedTime = true;
+                    this.strikethroughTime = true;
+                    this.dismiss();
+                }
             },
 
         },
@@ -80,7 +111,7 @@
 <style scoped>
     .edit-button {
         color: #87cefa;
-        padding-left: 36%;
+        padding-left: 10%;
     }
 
     .delete-button {
@@ -89,7 +120,7 @@
     }
 
     .dispute-box {
-        padding-left: 17%;
+        padding-left: 22%;
     }
 
     .dismiss {
@@ -97,12 +128,22 @@
         padding-left: 2%;
     }
 
-    .save{
+    .save {
         color: #32CD32;
         padding-left: 2%;
     }
-    .text-box{
-        max-width: 48%;
+
+    .text-box {
+        max-width: 17%;
+    }
+
+    .strike{
+        text-decoration: line-through;
+        color: #ff0000;
+    }
+
+    .dispute-requested-time{
+        padding-left: 3%;
     }
 
 </style>
