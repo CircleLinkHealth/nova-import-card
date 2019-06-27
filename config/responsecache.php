@@ -34,6 +34,8 @@ return [
      * Here you may define the cache store that should be used to store
      * requests. This can be the name of any store that is
      * configured in app/config/cache.php
+     *
+     * @CPM We rely on tags to create per user cache, so redis is required.
      */
     'cache_store' => env('RESPONSE_CACHE_DRIVER', 'redis'),
 

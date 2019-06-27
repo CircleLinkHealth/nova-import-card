@@ -31,7 +31,7 @@ class ResponseCacheServiceProvider extends ServiceProvider
             ->give(function (): Repository {
                 $repository = $this->app['cache']->store(config('responsecache.cache_store'));
                 if ( ! empty(config('responsecache.cache_tag'))) {
-                    $userId = request()->route()->parameter('patientId') ?? auth()->id();
+                    $userId = optional(request()->route())->parameter('patientId') ?? auth()->id();
 
                     return $repository->tags(config('responsecache.cache_tag')."user_$userId");
                 }
