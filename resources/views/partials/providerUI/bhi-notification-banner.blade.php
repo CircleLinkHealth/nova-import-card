@@ -30,16 +30,13 @@
                     </div>
                 </div>
 
-{{--@todo:buttons dance all overwhen hover - must fix--}}
                 <div class="options col-md-6">
                     {{ Form::open(['url' => route('legacy-bhi.store', [$user->program_id, $user->id]), 'style' => 'display: inline-block;', 'class' => 'legacy-bhi-decision-form']) }}
                     <input type="hidden" name="decision" value="1">
                     <input type="submit"
                            value="Consented"
-                           class="alert-success alert"
+                           class="alert-success alert with-tooltip"
                            style="margin-left: 25px;"
-{{--                           data-toggle="tooltip"--}}
-                           data-placement="top"
                            title="Confirm that the patient has consented to receiving BHI services"
                            onclick="return confirm('Please confirm that the patient has consented to receiving BHI services.')">
                     {{ Form::close() }}
@@ -48,20 +45,17 @@
                     <input type="hidden" name="decision" value="2">
                     <input type="submit"
                            value="Not Now"
-                           class="alert-warning alert legacy-bhi-consent-not-now-button"
+                           class="alert-warning alert legacy-bhi-consent-not-now-button with-tooltip"
                            style="margin-left: 25px;"
-{{--                           data-toggle="tooltip"--}}
-                           data-placement="top"
                            title="Hide this notice until this patient's next scheduled call day"
                            onclick="return confirm('Clicking OK will hide the BHI notice until the next day this patient has a scheduled call.')">
                     {{ Form::close() }}
 
                     {{ Form::open(['url' => route('legacy-bhi.store', [$user->program_id, $user->id]), 'style' => 'display: inline-block;', 'class' => 'legacy-bhi-decision-form']) }}
                     <input type="hidden" name="decision" value="0">
-                    <input type="submit" value="Not Consented" class="alert-danger alert"
+                    <input type="submit" value="Not Consented"
+                           class="alert-danger alert with-tooltip"
                            style="margin-left: 25px;"
-{{--                           data-toggle="tooltip"--}}
-                           data-placement="top"
                            title="Confirm that the patient has NOT consented to receiving BHI services"
                            onclick="return confirm('Please confirm that the patient has NOT consented to receiving BHI services.')">
                     {{ Form::close() }}
@@ -81,11 +75,36 @@
         });
 
         $(function () {
-            $('[data-toggle="tooltip"]').tooltip({container: 'body'});
             $('.close').click(function (e) {
                 $(".modal-mask, .load-hidden-bhi").hide();
             });
+
+            $('.with-tooltip')
+                .hover(function () {
+                    // Hover over code
+                    var title = $(this).attr('title');
+
+                    $(this)
+                        .data('tipText', title)
+                        .removeAttr('title');
+
+                    $('<p class="custom-tooltip"></p>')
+                        .text(title)
+                        .appendTo('body')
+                        .fadeIn('slow');
+
+                }, function () {
+                    // Hover out code
+                    $(this).attr('title', $(this).data('tipText'));
+                    $('.custom-tooltip').remove();
+                })
+                .mousemove(function (e) {
+                    var mousex = e.pageX + 20; //Get X coordinates
+                    var mousey = e.pageY + 10; //Get Y coordinates
+                    $('.custom-tooltip').css({top: mousey, left: mousex})
+                });
         });
+
     </script>
 @endpush
 
@@ -142,6 +161,18 @@
             position: relative;
             bottom: 5%;
             left: 29%;
+        }
+
+        .custom-tooltip {
+            display: none;
+            z-index: 9999999;
+            position: absolute;
+            border: 1px solid #333;
+            background-color: #161616;
+            border-radius: 5px;
+            padding: 10px;
+            color: #fff;
+            font-size: 12px;
         }
     </style>
 @endpush
