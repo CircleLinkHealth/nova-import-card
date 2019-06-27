@@ -108,9 +108,13 @@ class SurveyService
 
         $instance = $user->surveyInstances->first();
 
-        $instance->pivot->status                    = $isComplete
-            ? SurveyInstance::COMPLETED
-            : SurveyInstance::IN_PROGRESS;
+        //change status only if not completed
+        if ($instance->pivot->status !== SurveyInstance::COMPLETED) {
+            $instance->pivot->status = $isComplete
+                ? SurveyInstance::COMPLETED
+                : SurveyInstance::IN_PROGRESS;
+        }
+
         $instance->pivot->last_question_answered_id = $input['question_id'];
         $instance->pivot->save();
 
