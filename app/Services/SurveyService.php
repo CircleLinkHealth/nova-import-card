@@ -136,11 +136,11 @@ class SurveyService
 
         $isInitial = $patient->patientAWVSummaries->count() === 0;
 
-        $summary = $patient->patientAWVSummaries->where('month_year', $date->copy()->startOfMonth())->first();
+        $summary = $patient->patientAWVSummaries->where('year', $date->year)->first();
 
         if ( ! $summary) {
             $patient->patientAWVSummaries()->create([
-                'month_year'       => $date->copy()->startOfMonth(),
+                'year'       => $date->year,
                 'is_initial_visit' => $isInitial,
             ]);
         }

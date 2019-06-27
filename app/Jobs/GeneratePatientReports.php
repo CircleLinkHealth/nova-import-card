@@ -28,7 +28,7 @@ class GeneratePatientReports implements ShouldQueue
      *
      * @var Carbon
      */
-    protected $surveyInstanceStartDate;
+    protected $instanceYear;
 
     protected $currentDate;
 
@@ -38,11 +38,11 @@ class GeneratePatientReports implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($patientId, $surveyInstanceStartDate)
+    public function __construct($patientId, $instanceYear)
     {
-        $this->surveyInstanceStartDate = Carbon::parse($surveyInstanceStartDate);
-        $this->patientId               = $patientId;
-        $this->currentDate             = Carbon::now();
+        $this->instanceYear = Carbon::parse($instanceYear);
+        $this->patientId    = $patientId;
+        $this->currentDate  = Carbon::now();
 
     }
 
@@ -57,23 +57,23 @@ class GeneratePatientReports implements ShouldQueue
         $patient = User::with([
             'surveyInstances'     => function ($instance) {
                 $instance->with(['survey', 'questions.type.questionTypeAnswers'])
-                         ->forDate($this->surveyInstanceStartDate);
+                         ->forYear($this->instanceYear);
             },
             'answers'             => function ($answers) {
                 $answers->whereHas('surveyInstance', function ($instance) {
-                    $instance->forDate($this->surveyInstanceStartDate);
+                    $instance->forYear($this->instanceYear);
                 });
             },
             'providerReports'     => function ($report) {
                 $report->whereHas('hraSurveyInstance', function ($instance) {
-                    $instance->forDate($this->surveyInstanceStartDate);
+                    $instance->forYear($this->instanceYear);
                 })
                        ->whereHas('vitalsSurveyInstance', function ($instance) {
-                           $instance->forDate($this->surveyInstanceStartDate);
+                           $instance->forYear($this->instanceYear);
                        });
             },
             'patientAWVSummaries' => function ($summary) {
-                $summary->where('month_year', Carbon::now()->startOfMonth());
+                $summary->where('year', Carbon::now()->year);
             },
         ])
                        ->findOrFail($this->patientId);
@@ -149,14 +149,12 @@ class GeneratePatientReports implements ShouldQueue
 
 
         //Update AWVSummaries
-        //We are updating month_year so that the patient is billable for the month that the surveys have been completed
         $summary = $patient->patientAWVSummaries->first();
 
         if ($summary) {
             $summary->update([
                 'is_billable'  => true,
                 'completed_at' => Carbon::now(),
-                'month_year'   => Carbon::now()->startOfMonth()->toDateString(),
             ]);
         }
     }
