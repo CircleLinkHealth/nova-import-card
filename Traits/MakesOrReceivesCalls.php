@@ -153,16 +153,6 @@ trait MakesOrReceivesCalls
             ]);
     }
 
-    public function unsuccessfulCallsFor(Carbon $date)
-     {
-         return $this->calls()
-                     ->where([
-                         ['called_date', '>=', $date->startOfDay()->toDateTimeString()],
-                         ['called_date', '<=', $date->endOfDay()->toDateTimeString()],
-                         ['calls.status', '=', 'not reached'],
-                     ]);
-     }
-
     /**
      * Returns today's successful calls.
      * Successful Call: A call that was placed today and was successful. It does not matter if the call was scheduled
@@ -173,5 +163,15 @@ trait MakesOrReceivesCalls
     public function successfulCallsMadeToday()
     {
         return $this->successfulCallsFor(Carbon::now())->get();
+    }
+
+    public function unsuccessfulCallsFor(Carbon $date)
+    {
+        return $this->calls()
+            ->where([
+                ['called_date', '>=', $date->startOfDay()->toDateTimeString()],
+                ['called_date', '<=', $date->endOfDay()->toDateTimeString()],
+                ['calls.status', '=', 'not reached'],
+            ]);
     }
 }
