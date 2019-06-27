@@ -46,7 +46,7 @@ class FlushUserCacheOnAnyRelatedModelChange
         $relationType = null;
         $userIds      = [];
 
-        $model->{$relation}()->chunk(50, function ($models) use (&$relationType, &$userIds) {
+        $model->{$relation}()->distinct()->chunk(50, function ($models) use (&$relationType, &$userIds) {
             foreach ($models as $model) {
                 if (null === $relationType) {
                     $relationType = get_class($model);
