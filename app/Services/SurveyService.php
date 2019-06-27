@@ -108,6 +108,11 @@ class SurveyService
 
         $instance = $user->surveyInstances->first();
 
+        if (! $instance->start_date ) {
+            $instance->start_date = Carbon::now();
+            $instance->end_date = Carbon::now()->addYear(1);
+        }
+
         //change status only if not completed
         if ($instance->pivot->status !== SurveyInstance::COMPLETED) {
             $instance->pivot->status = $isComplete
