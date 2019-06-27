@@ -18,35 +18,39 @@ class PatientSurveyAnswersSeeder extends Seeder
      */
     public function run()
     {
-        $faker   = Factory::create();
+//        $faker   = Factory::create();
         $date    = Carbon::now();
         $service = new SurveyService();
 
-        $user = User::create([
-            'first_name'           => $faker->name,
-            'last_name'            => $faker->name,
-            'display_name'         => $faker->name,
-            'email'                => $faker->unique()->safeEmail,
-            //'email_verified_at' => now(),
-            'username'             => $faker->userName,
-            'auto_attach_programs' => 1,
-            'password'             => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
-            'remember_token'       => str_random(10),
-            'address'              => $faker->address,
-            'address2'             => $faker->address,
-            'city'                 => $faker->city,
-            'state'                => $faker->city,
-            'zip'                  => $faker->randomNumber(5),
-            'status'               => 'Active',
-            'access_disabled'      => 0,
-        ]);
+//        $user = User::create([
+//            'first_name'           => $faker->name,
+//            'last_name'            => $faker->name,
+//            'display_name'         => $faker->name,
+//            'email'                => $faker->unique()->safeEmail,
+//            //'email_verified_at' => now(),
+//            'username'             => $faker->userName,
+//            'auto_attach_programs' => 1,
+//            'password'             => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
+//            'remember_token'       => str_random(10),
+//            'address'              => $faker->address,
+//            'address2'             => $faker->address,
+//            'city'                 => $faker->city,
+//            'state'                => $faker->city,
+//            'zip'                  => $faker->randomNumber(5),
+//            'status'               => 'Active',
+//            'access_disabled'      => 0,
+//        ]);
+//
+//        $user->patientInfo()->create([
+//             'user_id'         => $user->id,
+//             'birth_date'      => $faker->date('y-m-d'),
+//             'general_comment' => $faker->text,
+//         ]);
 
-        $user->patientInfo()->create([
-             'user_id'         => $user->id,
-             'birth_date'      => $faker->date('y-m-d'),
-             'general_comment' => $faker->text,
-         ]);
+        $user = User::ofType('participant')
+            ->first();
 
+        echo $user->id;
 
         $hraSurvey = Survey::with([
             'instances' => function ($instance) use ($date) {

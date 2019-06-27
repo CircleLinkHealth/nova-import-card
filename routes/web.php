@@ -23,8 +23,6 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')
      ->name('home');
 
-Route::get('/provider-report', 'ProviderReportController@getProviderReport');
-
 Route::get('enter-patient-form', 'InvitationLinksController@enterPatientForm')
      ->name('enterPatientForm');
 
@@ -45,13 +43,16 @@ Route::post('resend-link/{user}', 'InvitationLinksController@resendUrl')
 //Route::get('get-previous-answer', 'SurveyController@getPreviousAnswer')
 //     ->name('getPreviousAnswer');
 
-Route::get('get-ppp-data/{userId}', 'PersonalizedPreventionPlanController@getPppDataForUser')
-     ->name('getPppDataForUser');
-
 Route::group([
     'prefix'     => 'survey',
     'middleware' => ['auth'],
 ], function () {
+
+    //can be used by both hra and vitals i think
+    Route::post('{surveyInstanceId}/{userId}/complete-survey', [
+        'uses' => 'SurveyController@setSurveyInstanceStatusToComplete',
+        'as'   => 'survey.complete',
+    ]);
 
     Route::group([
         'prefix' => 'hra',
@@ -62,10 +63,12 @@ Route::group([
             'as'   => 'survey.hra',
         ]);
 
+        //why are we passing practice id here?
         Route::post('{practiceId}/{patientId}/save-answer', [
             'uses' => 'SurveyController@storeAnswer',
             'as'   => 'survey.hra.store.answer',
         ]);
+
     });
 
     Route::group([
@@ -99,5 +102,9 @@ Route::group([
     'prefix'     => 'reports',
     'middleware' => ['auth'],
 ], function () {
-    //fixme: add reports routes here
+
+    Route::get('/provider-report/{userId}', 'ProviderReportController@getProviderReport')->name('provider-report');
+
+    Route::get('get-ppp-data/{userId}', 'PersonalizedPreventionPlanController@getPppDataForUser')
+         ->name('getPppDataForUser');
 });

@@ -4,7 +4,6 @@ namespace App\Services;
 
 
 use App\Answer;
-use App\Events\SurveyInstancePivotSaved;
 use App\SurveyInstance;
 use App\User;
 use Carbon\Carbon;
@@ -13,25 +12,11 @@ class SurveyService
 {
     public static function getSurveyData($patientId, $surveyId)
     {
-        //fixme: merge this with query below
-        $user = User::with([
-            'surveyInstances' => function ($instance) use ($surveyId) {
-                $instance->current()
-                         ->wherePivot('survey_id', $surveyId);
-            },
-        ])->find($patientId);
-
-        if ( ! $user || $user->surveyInstances->isEmpty()) {
-            return null;
-        }
-
-        $surveyInstanceId = $user->surveyInstances->first()->id;
-
         $patientWithSurveyData = User
             ::with([
                 'billingProvider.user',
                 'primaryPractice',
-                'surveyInstances'     => function ($instance) use ($surveyId) {
+                'surveyInstances' => function ($instance) use ($surveyId) {
                     $instance->current()
                              ->wherePivot('survey_id', $surveyId)
                              ->with([
@@ -42,12 +27,13 @@ class SurveyService
                              ]);
 
                 },
-                'answers'             => function ($answer) use ($surveyInstanceId) {
-                    $answer->where('survey_instance_id', $surveyInstanceId);
+                'answers'         => function ($answer) use ($surveyId) {
+                    $answer->whereHas('surveyInstance', function ($instance) use ($surveyId) {
+                        $instance->where('survey_id', $surveyId)
+                                 ->current();
+                    });
                 },
-                'patientAWVSummaries' => function ($summary) {
-                    $summary->where('month_year', Carbon::now()->startOfMonth());
-                },
+                'patientAWVSummaries',
             ])
             ->whereHas('surveys', function ($survey) use ($surveyId) {
                 $survey->where('survey_id', $surveyId)
@@ -57,8 +43,12 @@ class SurveyService
                 $instance->where('users_surveys.survey_id', $surveyId);
                 $instance->current();
             })
-            ->where('id', $patientId)
-            ->first();
+            ->findOrFail($patientId);
+
+        //todo: trying to sort questions, need to test still
+//        $instance = $patientWithSurveyData->surveyInstances->first();
+//        $instance->questions = sortSurveyQuestions($instance->questions);
+//        $patientWithSurveyData->surveyInstances->prepend($instance);
 
         self::updateOrCreatePatientAWVSummary($patientWithSurveyData);
 
@@ -106,63 +96,41 @@ class SurveyService
         $user = User
             ::with([
                 'surveyInstances' => function ($instance) use ($input) {
-                    $instance
-                        ->where('survey_instances.id', $input['survey_instance_id'])
-                        ->withCount([
-                            'questions' => function ($q) {
-                                $q->notOptional();
-                            },
-                        ]);
+                    $instance->where('survey_instances.id', $input['survey_instance_id']);
                 },
             ])
-            ->withCount([
-                'answers' => function ($a) use ($input) {
-                    $a->where('survey_instance_id', $input['survey_instance_id'])
-                      ->whereHas('question', function ($q) {
-                          $q->notOptional();
-                      });
-                },
-            ])
-            ->where('id', $input['user_id'])
-            ->firstOrFail();
+            ->findOrFail($input['user_id']);
+
 
         $instance = $user->surveyInstances->first();
 
-        if ($instance->questions_count <= $user->answers_count) {
-            $instance->pivot->status = SurveyInstance::COMPLETED;
-        } else {
-            $instance->pivot->status = SurveyInstance::IN_PROGRESS;
-        }
-
+        $instance->pivot->status                    = SurveyInstance::IN_PROGRESS;
         $instance->pivot->last_question_answered_id = $input['question_id'];
         $instance->pivot->save();
-
-        event(new SurveyInstancePivotSaved($instance));
 
         return $instance->pivot->status;
     }
 
     private static function updateOrCreatePatientAWVSummary($patient)
     {
-        if (!$patient) {
+        if ( ! $patient) {
             return;
         }
 
         $date = Carbon::now();
 
-        $summary = $patient->patientAWVSummaries->first();
+        $isInitial = $patient->patientAWVSummaries->count() === 0;
+
+        $summary = $patient->patientAWVSummaries->where('month_year', $date->copy()->startOfMonth())->first();
+
         if ( ! $summary) {
             $patient->patientAWVSummaries()->create([
-                'month_year'    => $date->copy()->startOfMonth(),
-                'initial_visit' => $date,
+                'month_year'       => $date->copy()->startOfMonth(),
+                'is_initial_visit' => $isInitial,
             ]);
 
             return;
         }
-
-        $summary->update([
-            'subsequent_visit' => $date,
-        ]);
 
         return;
     }

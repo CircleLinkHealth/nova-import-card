@@ -1071,7 +1071,7 @@ class SurveySeeder extends Seeder
             ],
             [
                 'order'                 => 22,
-                'sub_order'             => '1.',
+                'sub_order'             => '1',
                 'question_body'         => 'Little interest or pleasure in doing things',
                 'question_group'        => 'Over the past 2 weeks, how often have you been bothered by any of the following problems?',
                 'question_type'         => QuestionType::RADIO,
@@ -1092,7 +1092,7 @@ class SurveySeeder extends Seeder
             ],
             [
                 'order'                 => 22,
-                'sub_order'             => '2.',
+                'sub_order'             => '2',
                 'question_body'         => 'Feeling down, depressed or hopeless',
                 'question_group'        => 'Over the past 2 weeks, how often have you been bothered by any of the following problems?',
                 'question_type'         => QuestionType::RADIO,

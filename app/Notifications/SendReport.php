@@ -112,9 +112,9 @@ class SendReport extends Notification
     private function getActionUrl(){
 
         if ($this->type == 'PPP'){
-            return route('getPppDataForUser');
+            return route('getPppDataForUser', ['userId' => $this->patient->id]);
         }else{
-            return route('patient-report');
+            return route('provider-report', ['userId' => $this->patient->id]);
         }
 
 
