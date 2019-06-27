@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 if ( ! function_exists('isProductionEnv')) {
     /**
      * Returns whether or not this is a Production server, ie. used by real users.
