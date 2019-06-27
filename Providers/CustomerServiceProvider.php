@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Providers;
 
+use CircleLinkHealth\Customer\Console\Commands\CreateOrReplacePatientAWVSurveyInstanceStatusTable;
 use CircleLinkHealth\Customer\Console\Commands\CreateRolesPermissionsMigration;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Notifications\DatabaseNotification;
@@ -59,6 +60,7 @@ class CustomerServiceProvider extends ServiceProvider
 
         $this->commands([
             CreateRolesPermissionsMigration::class,
+            CreateOrReplacePatientAWVSurveyInstanceStatusTable::class
         ]);
     }
 
