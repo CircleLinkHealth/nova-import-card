@@ -44,9 +44,6 @@
 
 <script>
 
-    import CheckboxCustomTypeCancer from "./checkboxCustomTypeCancer";
-    import CheckboxCustomTypeEyeProblems from "./checkboxCustomTypeEyeProblems";
-    import CheckboxCustomTypeStd from "./checkboxCustomTypeStd";
     import {mdbBtn} from "mdbvue";
     import {library} from '@fortawesome/fontawesome-svg-core';
     import {faSpinner} from '@fortawesome/free-solid-svg-icons';
@@ -57,9 +54,6 @@
         name: "questionTypeCheckbox",
         props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting'],
         components: {
-            CheckboxCustomTypeStd,
-            CheckboxCustomTypeEyeProblems,
-            CheckboxCustomTypeCancer,
             mdbBtn,
             FontAwesomeIcon
         },
@@ -171,7 +165,7 @@
                         answer.push(obj);
                     }
                 });
-                this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer);
+                this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer, this.isLastQuestion);
             },
 
 

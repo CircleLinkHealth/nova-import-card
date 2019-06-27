@@ -4,6 +4,7 @@ namespace App\Services;
 
 
 use App\Answer;
+use App\Events\SurveyInstancePivotSaved;
 use App\SurveyInstance;
 use App\User;
 use Carbon\Carbon;
@@ -80,7 +81,9 @@ class SurveyService
             return false;
         }
 
-        return SurveyService::updateSurveyInstanceStatus($input);
+        $isComplete = isset($input['survey_complete']) && $input['survey_complete'];
+
+        return SurveyService::updateSurveyInstanceStatus($input, $isComplete);
 
     }
 
@@ -89,9 +92,11 @@ class SurveyService
      *
      * @param $input
      *
+     * @param $isComplete
+     *
      * @return string Status of survey
      */
-    public static function updateSurveyInstanceStatus($input)
+    public static function updateSurveyInstanceStatus($input, $isComplete)
     {
         $user = User
             ::with([
@@ -101,12 +106,17 @@ class SurveyService
             ])
             ->findOrFail($input['user_id']);
 
-
         $instance = $user->surveyInstances->first();
 
-        $instance->pivot->status                    = SurveyInstance::IN_PROGRESS;
+        $instance->pivot->status                    = $isComplete
+            ? SurveyInstance::COMPLETED
+            : SurveyInstance::IN_PROGRESS;
         $instance->pivot->last_question_answered_id = $input['question_id'];
         $instance->pivot->save();
+
+        if ($isComplete) {
+            event(new SurveyInstancePivotSaved($instance));
+        }
 
         return $instance->pivot->status;
     }
@@ -117,6 +127,7 @@ class SurveyService
             return;
         }
 
+        //fixme: this can break, what if user starts AWV on last day of month and completes next month?
         $date = Carbon::now();
 
         $isInitial = $patient->patientAWVSummaries->count() === 0;
@@ -128,11 +139,6 @@ class SurveyService
                 'month_year'       => $date->copy()->startOfMonth(),
                 'is_initial_visit' => $isInitial,
             ]);
-
-            return;
         }
-
-        return;
     }
-
 }

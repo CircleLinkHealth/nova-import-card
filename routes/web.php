@@ -39,20 +39,10 @@ Route::post('survey-login', 'InvitationLinksController@surveyLoginAuth')
 Route::post('resend-link/{user}', 'InvitationLinksController@resendUrl')
      ->name('resendUrl');
 
-//don't like this, why is it here?
-//Route::get('get-previous-answer', 'SurveyController@getPreviousAnswer')
-//     ->name('getPreviousAnswer');
-
 Route::group([
     'prefix'     => 'survey',
     'middleware' => ['auth'],
 ], function () {
-
-    //can be used by both hra and vitals i think
-    Route::post('{surveyInstanceId}/{userId}/complete-survey', [
-        'uses' => 'SurveyController@setSurveyInstanceStatusToComplete',
-        'as'   => 'survey.complete',
-    ]);
 
     Route::group([
         'prefix' => 'hra',

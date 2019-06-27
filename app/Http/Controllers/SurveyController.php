@@ -2,12 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Answer;
-use App\Events\SurveyInstancePivotSaved;
 use App\Http\Requests\StoreAnswer;
 use App\Services\SurveyService;
-use App\SurveyInstance;
-use App\User;
 use Auth;
 
 class SurveyController extends Controller
@@ -57,39 +53,5 @@ class SurveyController extends Controller
             'survey_status' => $answer,
         ], 200);
 
-    }
-
-    public function getPreviousAnswer($questionId, $userId)
-    {
-        $previousQuestionAnswer = Answer::where('question_id', $questionId)
-                                        ->where('user_id', $userId)->first();
-
-        return response()->json([
-            'success'                => true,
-            'previousQuestionAnswer' => $previousQuestionAnswer->value,
-        ], 200);
-    }
-
-    public function setSurveyInstanceStatusToComplete($surveyInstanceId, $userId)
-    {
-        $user = User::with([
-            'surveyInstances' => function ($instance) use ($surveyInstanceId) {
-                $instance->where('survey_instances.id', $surveyInstanceId);
-            },
-
-        ])
-                    ->findOrFail($userId);
-
-
-        $instance = $user->surveyInstances->first();
-
-        $instance->pivot->status = SurveyInstance::COMPLETED;
-        $instance->pivot->save();
-
-        event(new SurveyInstancePivotSaved($instance));
-
-        return response()->json([
-            'created' => true,
-        ], 200);
     }
 }

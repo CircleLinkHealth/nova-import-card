@@ -87,7 +87,7 @@
                     result[selectKey] = s.selected;
                     answer.push(result);
                 });
-                this.onDoneFunc(this.question.id, questionTypeAnswerId, answer);
+                this.onDoneFunc(this.question.id, questionTypeAnswerId, answer, this.isLastQuestion);
             }
 
         },

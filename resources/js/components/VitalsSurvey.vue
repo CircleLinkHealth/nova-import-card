@@ -353,7 +353,7 @@
                 return this.questions;
             },
 
-            postAnswerAndGoToNext(questionId, questionTypeAnswerId, answer) {
+            postAnswerAndGoToNext(questionId, questionTypeAnswerId, answer, isLastQuestion) {
 
                 this.error = null;
                 this.waiting = true;
@@ -366,6 +366,7 @@
                         question_id: questionId,
                         question_type_answer_id: questionTypeAnswerId,
                         value: answer,
+                        survey_complete: isLastQuestion
                     })
                     .then((response) => {
                         this.waiting = false;
