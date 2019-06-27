@@ -56,6 +56,7 @@
                 deleteButtonActive: false,
                 showDisputeBox: false,
                 formattedTime: this.invoiceData.formatted_time,
+                //    @todo:connect to back end
                 requestedTime: '',
                 disputeRequestedTime: false,
                 strikethroughTime:false,
@@ -86,6 +87,7 @@
             handleDelete() {
                 this.disputeRequestedTime = false;
                 this.strikethroughTime = false;
+            //    @todo:connect to back end
             },
             dismiss() {
                 this.editButtonActive = false;
@@ -97,6 +99,7 @@
             },
 
             saveDispute() {
+                //    @todo:connect to back end
                 if (this.requestedTime.length !== 0){
                     this.disputeRequestedTime = true;
                     this.strikethroughTime = true;
