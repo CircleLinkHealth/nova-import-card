@@ -28,9 +28,9 @@ use App\Repositories\LocationRepositoryEloquent;
 use App\Repositories\PracticeRepositoryEloquent;
 use App\Repositories\PrettusUserRepositoryEloquent;
 use App\Services\SnappyPdfWrapper;
+use App\Spatie\ResponseCache\PerUserCacheInvalidationServiceProvider;
 use Carbon\Carbon;
 use DB;
-use Event;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Facades\Request;
@@ -39,7 +39,6 @@ use Laravel\Dusk\DuskServiceProvider;
 use Laravel\Horizon\Horizon;
 use Orangehill\Iseed\IseedServiceProvider;
 use Queue;
-use Spatie\ResponseCache\Facades\ResponseCache;
 use Way\Generators\GeneratorsServiceProvider;
 use Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider;
 
@@ -196,12 +195,7 @@ class AppServiceProvider extends ServiceProvider
         }
 
         if (config('responsecache.enabled')) {
-            //Clear responsecache every time a model is created, updated, or deleted
-            Event::listen(['eloquent.created: *', 'eloquent.updated: *', 'eloquent.deleted: *'], function ($event, $model) {
-                if ($userId = session()->pull(\App\Constants::VIEWING_PATIENT, auth()->id())) {
-                    $cleared = \Cache::tags(config('responsecache.cache_tag')."user_$userId")->flush();
-                }
-            });
+            $this->app->register(PerUserCacheInvalidationServiceProvider::class);
         }
     }
 }
