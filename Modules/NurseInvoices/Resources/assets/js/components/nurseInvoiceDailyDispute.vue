@@ -11,15 +11,19 @@
         <span v-show="showDisputeBox"
               aria-hidden="true"
               class="dispute-box">
-            <input type="text" placeholder="Time in minutes">
-            <button type="submit">Save</button>
+            <input type="text" class="text-box" placeholder="Time in minutes">
+
+            <span class="save">
+                <i class="glyphicon glyphicon-saved"></i>
+            </span>
+
         </span>
 
-        <div v-show="showDisputeBox"
+        <span v-show="showDisputeBox"
              class="dismiss"
              @click="dismiss()">
             <i class="glyphicon glyphicon-remove"></i>
-        </div>
+        </span>
 
         <span v-show="deleteButtonActive"
               @click="handleDelete()"
@@ -85,10 +89,21 @@
     }
 
     .dispute-box {
+        padding-left: 17%;
+    }
 
-    }
-    .dismiss{
+    .dismiss {
         color: #ff0000;
+        padding-left: 2%;
     }
+
+    .save{
+        color: #32CD32;
+        padding-left: 2%;
+    }
+    .text-box{
+        max-width: 48%;
+    }
+
 </style>
 
