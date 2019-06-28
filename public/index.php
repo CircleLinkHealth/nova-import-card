@@ -76,7 +76,9 @@ $response = $kernel->handle(
     $request = App\SafeRequest::capture()
 );
 
-app('invalidate-cache')->flushCandidates();
+if (config('responsecache.enabled')) {
+    app('invalidate-cache')->flushCandidates();
+}
 
 $response->send();
 
