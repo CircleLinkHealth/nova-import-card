@@ -458,16 +458,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.102.0",
+            "version": "3.103.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "48e02983bcef01ad5ecca6b68cc1d63be99c5d2d"
+                "reference": "77ed156cc323efcc7912941440c622d5f12ffbce"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/48e02983bcef01ad5ecca6b68cc1d63be99c5d2d",
-                "reference": "48e02983bcef01ad5ecca6b68cc1d63be99c5d2d",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/77ed156cc323efcc7912941440c622d5f12ffbce",
+                "reference": "77ed156cc323efcc7912941440c622d5f12ffbce",
                 "shasum": ""
             },
             "require": {
@@ -537,7 +537,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2019-06-26T20:55:45+00:00"
+            "time": "2019-06-27T18:15:25+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -663,7 +663,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "4b90fed7353ed77bf361e55aae7f2b27fbba92ba"
+                "reference": "a2f52ec8c8dfbb58ab418b33af2990346c58348f"
             },
             "require": {
                 "venturecraft/revisionable": "dev-master"
@@ -691,7 +691,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-06-24T21:57:44+00:00"
+            "time": "2019-06-27T22:14:28+00:00"
         },
         {
             "name": "circlelinkhealth/customer",
@@ -699,7 +699,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "a804ac586ca330c772c9baee6d36c305a282abd9"
+                "reference": "814b2736dc43841e984f809b90f57160186e48f3"
             },
             "require": {
                 "circlelinkhealth/core": "dev-master",
@@ -732,7 +732,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-06-24T22:09:42+00:00"
+            "time": "2019-06-27T22:13:24+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
