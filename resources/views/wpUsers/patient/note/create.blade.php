@@ -720,6 +720,7 @@
                         if (e.currentTarget.checked) {
                             notifyCareteamEl.prop("checked", true);
                             notifyCareteamEl.prop("disabled", true);
+                            notifyCareteamEl.trigger('change');
 
                             @empty($notifies_text)
                             whoIsNotifiedEl.text("{{optional($patient->billingProviderUser())->getFullName()}}");
@@ -728,6 +729,7 @@
                         else {
                             notifyCareteamEl.prop("checked", false);
                             notifyCareteamEl.prop("disabled", false);
+                            notifyCareteamEl.trigger('change');
 
                             whoIsNotifiedEl.text("{{$notifies_text}}");
                         }
