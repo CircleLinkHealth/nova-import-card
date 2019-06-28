@@ -45,7 +45,7 @@ trait TimezoneTrait
 
     public function resolveTimezoneToGMT($date)
     {
-        if (! is_null($date)){
+        if ( ! is_null($date)) {
             if (is_string($date)) {
                 $date = Carbon::parse($date);
             }

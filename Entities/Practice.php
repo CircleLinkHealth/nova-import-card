@@ -304,23 +304,23 @@ class Practice extends BaseModel implements HasMedia
                         'patientSummaries',
                         function ($query) use ($chargeableServiceId, $isSoftwareOnly, $month) {
                             $query->whereHas(
-                                            'chargeableServices',
-                                            function ($query) use ($chargeableServiceId) {
-                                                $query->where('id', $chargeableServiceId);
-                                            }
+                                'chargeableServices',
+                                function ($query) use ($chargeableServiceId) {
+                                    $query->where('id', $chargeableServiceId);
+                                }
                                         )
                                 ->where('month_year', $month->toDateString())
                                 ->where('approved', '=', true)
                                 ->when(
-                                                ! $isSoftwareOnly,
-                                                function ($q) {
-                                                    $q->whereDoesntHave(
-                                                          'chargeableServices',
-                                                          function ($query) {
-                                                              $query->where('code', 'Software-Only');
-                                                          }
+                                    ! $isSoftwareOnly,
+                                    function ($q) {
+                                        $q->whereDoesntHave(
+                                                        'chargeableServices',
+                                                        function ($query) {
+                                                            $query->where('code', 'Software-Only');
+                                                        }
                                                       );
-                                                }
+                                    }
                                               );
                         }
                                 )
@@ -419,10 +419,10 @@ class Practice extends BaseModel implements HasMedia
                         $patientData->setProblem2($summary->billable_problem2);
 
                         $patientData->setBhiCode(
-                                        optional(optional($summary->billableProblems->first())->pivot)->icd_10_code
+                            optional(optional($summary->billableProblems->first())->pivot)->icd_10_code
                                     );
                         $patientData->setBhiProblem(
-                                        optional(optional($summary->billableProblems->first())->pivot)->name
+                            optional(optional($summary->billableProblems->first())->pivot)->name
                                     );
 
                         $data['patientData'][$u->id] = $patientData;
@@ -602,7 +602,7 @@ class Practice extends BaseModel implements HasMedia
 
     public function scopeActiveBillable($q)
     {
-        if (!isProductionEnv()) {
+        if ( ! isProductionEnv()) {
             return $q->whereActive(1);
         }
 
