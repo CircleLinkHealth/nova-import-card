@@ -34,11 +34,6 @@
         }
     }
     ?>
-
-    @if(isset($user) && auth()->check() && !isset($isPdf) && auth()->user()->shouldShowLegacyBhiBannerFor($user))
-        @include('partials.providerUI.bhi-notification-banner')
-    @endif
-
     <open-modal></open-modal>
     <notifications ref="globalNotification"></notifications>
 @endsection
