@@ -55,7 +55,7 @@ class OfflineActivityTimeRequestController extends Controller
 
         $patient_name = $patient->getFullName();
 
-        $userTimeZone = $patient->timeZone;
+        $userTimeZone = $patient->timezone;
 
         if (empty($userTimeZone)) {
             $userTimeZone = 'America/New_York';

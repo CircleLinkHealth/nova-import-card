@@ -1,10 +1,7 @@
 <?php
 
-/**
- * Laravel - A PHP Framework For Web Artisans
- *
- * @package  Laravel
- * @author   Taylor Otwell <taylor@laravel.com>
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 define('LARAVEL_START', microtime(true));
@@ -78,6 +75,8 @@ $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
 $response = $kernel->handle(
     $request = App\SafeRequest::capture()
 );
+
+app('invalidate-cache')->flushCandidates();
 
 $response->send();
 

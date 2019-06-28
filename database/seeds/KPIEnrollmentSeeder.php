@@ -4,9 +4,9 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
-use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
 class KPIEnrollmentSeeder extends Seeder
@@ -79,7 +79,7 @@ class KPIEnrollmentSeeder extends Seeder
                 ->where('last_name', $lastName)
                 ->first();
 
-            if (!$user) {
+            if ( ! $user) {
                 $user = User::create([
                     'email'           => "$firstName$lastName@clh.com",
                     'password'        => 'password',
@@ -112,7 +112,7 @@ class KPIEnrollmentSeeder extends Seeder
 
             $practiceId = $this->determinePracticeId($row['customer']);
 
-            if (!$practiceId) {
+            if ( ! $practiceId) {
                 return;
             }
 

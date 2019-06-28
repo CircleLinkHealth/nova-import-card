@@ -164,7 +164,7 @@ class CarePlanProviderApprovalTest extends TestCase
         $this->carePlan->status = CarePlan::QA_APPROVED;
         $this->carePlan->save();
 
-        $response = $this->call('GET', route('patient.careplan.approve', ['patientId' => $this->patient->id]));
+        $response = $this->call('POST', route('patient.careplan.approve', ['patientId' => $this->patient->id]));
 
         $response->assertStatus(302);
         $response->assertRedirect(route('patient.careplan.print', [

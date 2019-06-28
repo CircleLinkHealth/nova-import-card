@@ -7,6 +7,7 @@
 namespace App\Http;
 
 use App\Http\Middleware\ACL\ProviderDashboardACL;
+use App\Http\Middleware\AddResponseOriginal;
 use App\Http\Middleware\AprimaCcdApiAuthAdapter;
 use App\Http\Middleware\CheckCarePlanMode;
 use App\Http\Middleware\CheckForMaintenanceMode;
@@ -56,6 +57,8 @@ class Kernel extends HttpKernel
      */
     protected $middlewareGroups = [
         'web' => [
+            //NOTE: This makes LaravelCaffeineDripMiddleware compatible with CacheResponse
+            AddResponseOriginal::class,
             EncryptCookies::class,
             AddQueuedCookiesToResponse::class,
             StartSession::class,
@@ -65,7 +68,7 @@ class Kernel extends HttpKernel
             LogoutIfAccessDisabled::class,
             CreateFreshApiToken::class,
             AuthyMiddleware::class,
-            //CacheResponse::class,
+            CacheResponse::class,
         ],
         'sessions' => [
             StartSession::class,

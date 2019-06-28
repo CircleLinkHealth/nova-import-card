@@ -15,7 +15,6 @@ class AddPayMethodToNurseInfoTable extends Migration
      */
     public function down()
     {
-        //
     }
 
     /**

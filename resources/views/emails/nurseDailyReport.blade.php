@@ -12,7 +12,7 @@
 
 <ul>
     <li><b>Attendance/calls completion rate:<span style="color: red;">*</span></b>&nbsp;{{$completionRate}}%</li>
-    <li><b>Unsuccessful calls avg. time:</b>&nbsp;//TO BE ADDED (<3min target)</li>
+    <li><b>Efficiency Index (70 - 100 is goal, higher better)<span style="color: red;">**</span>:</b>&nbsp;{{$efficiencyIndex}}</li>
     <li><b>Total time in system on {{$date->englishDayOfWeek}} ({{$date->format('m/d')}}
             ):</b>&nbsp;{{ $totalTimeInSystemOnGivenDate }}</li>
 </ul>
@@ -29,15 +29,15 @@
         <b>Est. hours to complete monthly case load:</b>&nbsp;{{$caseLoadNeededToComplete}} hrs
     </li>
     <li>
-        <b>Avg. hours worked in last 10 sessions:</b> {{$avgHoursWorkedLast10Sessions}} hrs
-    </li>
-    <li>
-        <b>Projected hours left in month<span style="color: red;">**</span></b>&nbsp;{{$projectedHoursLeftInMonth}} hrs
+        <b>Projected hours left in month<span style="color: red;">***</span></b>&nbsp;{{$projectedHoursLeftInMonth}} hrs
     </li>
     <li>
         <b>Hours deficit or surplus:</b>&nbsp;@if($surplusShortfallHours > 0)<span style="color: green">{{$surplusShortfallHours}}
             hrs Surplus</span>@elseif($surplusShortfallHours < 0)<span style="color: red">{{abs($surplusShortfallHours)}}
             hrs Deficit</span>@endif
+    </li>
+    <li>
+        <b>Avg. hours worked in last 10 sessions:</b> {{$avgHoursWorkedLast10Sessions}} hrs
     </li>
     <li>
         <b>Total time in system this month:</b> {{ $totalTimeInSystemThisMonth }}
@@ -77,7 +77,9 @@
 <p><span style="color: red;">*</span> Shows the greater of i) %age of the hours committed that you worked; or ii) %age
     of assigned calls that you completed.</p>
 
-<p><span style="color: red;">**</span> Shows hours left in month based on your average hours per committed session in
+<p><span style="color: red;">**</span> Calculated by comparing your total time in system vs. the time you would have spent if each single successful call took 20 minutes of total CCM time (talk + prep/notes); and unsuccessful calls took 3 minutes of total CCM time.</p>
+
+<p><span style="color: red;">***</span> Shows hours left in month based on your average hours per committed session in
     your last 10 sessions.</p>
 
 </body>

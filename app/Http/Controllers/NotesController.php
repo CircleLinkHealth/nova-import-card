@@ -166,7 +166,10 @@ class NotesController extends Controller
             ? Call::where('note_id', '=', $existingNote->id)->first()
             : null;
 
+        $performedAt = optional($existingNote)->performed_at ?? Carbon::now();
+
         $view_data = [
+            'userTime'               => $performedAt->setTimezone($patient->timezone)->format('Y-m-d\TH:i'),
             'program_id'             => $patient->program_id,
             'patient'                => $patient,
             'patient_name'           => $patient_name,
@@ -366,7 +369,8 @@ class NotesController extends Controller
 
         $view_data = [
             'note'               => $data,
-            'userTimeZone'       => $patient->timeZone,
+            'userTime'           => $note->performed_at->setTimezone($patient->timezone)->format('Y-m-d\TH:i'),
+            'userTimeZone'       => $patient->timezone,
             'careteam_info'      => $careteam_info,
             'patient'            => $patient,
             'program_id'         => $patient->program_id,
@@ -419,6 +423,8 @@ class NotesController extends Controller
 
         $input = $request->allSafe();
 
+        $patient = User::findOrFail($patientId);
+
         $editingNoteId = ! empty($input['noteId'])
             ? $input['noteId']
             : null;
@@ -429,7 +435,9 @@ class NotesController extends Controller
         if ( ! isset($input['author_id'])) {
             $input['author_id'] = auth()->id();
         }
-        $input['performed_at'] = Carbon::parse($input['performed_at'])->toDateTimeString();
+
+        //performed_at entered in patient's timezone and stored in app's timezone
+        $input['performed_at'] = Carbon::parse($input['performed_at'], $patient->timezone)->setTimezone(config('app.timezone'))->toDateTimeString();
 
         $noteIsAlreadyComplete = false;
         if ($editingNoteId) {
@@ -448,8 +456,6 @@ class NotesController extends Controller
         } else {
             $note = $this->service->storeNote($input);
         }
-
-        $patient = User::findOrFail($patientId);
 
         $info = $this->updatePatientInfo($patient, $input);
         $this->updatePatientCallWindows($info, $input);

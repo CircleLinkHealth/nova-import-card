@@ -115,7 +115,7 @@ class NoteService
             ? 'true' === $requestInput['tcm']
             : 0;
         $note->type                 = $requestInput['type'];
-        $note->summary              = $requestInput['summary'];
+        $note->summary              = $requestInput['summary'] ?? null;
         $note->body                 = $requestInput['body'];
         $note->performed_at         = $requestInput['performed_at'];
         $note->did_medication_recon = isset($requestInput['medication_recon'])

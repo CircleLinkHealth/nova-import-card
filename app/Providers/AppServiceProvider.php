@@ -28,6 +28,7 @@ use App\Repositories\LocationRepositoryEloquent;
 use App\Repositories\PracticeRepositoryEloquent;
 use App\Repositories\PrettusUserRepositoryEloquent;
 use App\Services\SnappyPdfWrapper;
+use App\Spatie\ResponseCache\PerUserCacheInvalidationServiceProvider;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
@@ -191,6 +192,10 @@ class AppServiceProvider extends ServiceProvider
             $this->app->register(GeneratorsServiceProvider::class);
             $this->app->register(MigrationsGeneratorServiceProvider::class);
             $this->app->register(DuskServiceProvider::class);
+        }
+
+        if (config('responsecache.enabled')) {
+            $this->app->register(PerUserCacheInvalidationServiceProvider::class);
         }
     }
 }

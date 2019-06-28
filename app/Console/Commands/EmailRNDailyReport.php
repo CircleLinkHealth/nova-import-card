@@ -7,7 +7,7 @@
 namespace App\Console\Commands;
 
 use App\Notifications\NurseDailyReport;
-use App\Services\NursesAndStatesDailyReportService;
+use App\Services\NursesPerformanceReportService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Console\Command;
@@ -34,7 +34,7 @@ class EmailRNDailyReport extends Command
     /**
      * Create a new command instance.
      */
-    public function __construct(NursesAndStatesDailyReportService $service)
+    public function __construct(NursesPerformanceReportService $service)
     {
         parent::__construct();
 
@@ -110,13 +110,6 @@ class EmailRNDailyReport extends Command
 
                         $nextUpcomingWindow = $reportDataForNurse['nextUpcomingWindow'];
 
-                        if ($nextUpcomingWindow) {
-                            $carbonDate = Carbon::parse($nextUpcomingWindow['date']);
-                            $nextUpcomingWindowLabel = clhDayOfWeekToDayName(
-                                $nextUpcomingWindow['day_of_week']
-                                                       )." {$carbonDate->format('m/d/Y')}";
-                        }
-
                         $data = [
                             'name'                         => $nurse->getFullName(),
                             'completionRate'               => $reportDataForNurse['completionRate'],
@@ -130,9 +123,8 @@ class EmailRNDailyReport extends Command
                             'totalEarningsThisMonth'       => $totalEarningsThisMonth,
                             'totalTimeInSystemOnGivenDate' => $totalTimeInSystemOnGivenDate,
                             'totalTimeInSystemThisMonth'   => $totalTimeInSystemThisMonth,
-                            'nextWindowCarbonDate'         => $carbonDate ?? null,
-                            'nextUpcomingWindowLabel'      => $nextUpcomingWindowLabel ?? null,
-                            'totalHours'                   => $reportDataForNurse['committedHours'],
+                            'nextUpcomingWindowLabel'      => $reportDataForNurse['nextUpcomingWindowLabel'],
+                            'totalHours'                   => $reportDataForNurse['totalHours'],
                             'windowStart'                  => $nextUpcomingWindow
                                 ? Carbon::parse($nextUpcomingWindow['window_time_start'])->format('g:i A T')
                                 : null,

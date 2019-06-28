@@ -4,11 +4,6 @@
 @section('activity', 'Patient Note View')
 
 @section('content')
-    <?php
-    $userTime = \Carbon\Carbon::parse($note['performed_at']);
-    $userTime = $userTime->format('Y-m-d\TH:i');
-    ?>
-
     @push('styles')
         <style type="text/css">
             div.inline {
@@ -149,14 +144,6 @@
                         <div class="row">
                             <div class="new-note-item">
                                 <div class="form-group">
-                                    {{--<div class="col-sm-12">--}}
-                                        {{--<label for="meta[1][meta_value]">--}}
-                                            {{--Communication to Practice--}}
-                                        {{--</label>--}}
-                                        {{--<textarea id="note" class="form-control" rows="3"--}}
-                                                  {{--name="summary"--}}
-                                                  {{--readonly>{{trim($note['summary'])}}</textarea> <br/>--}}
-                                    {{--</div>--}}
                                     <div class="col-sm-12">
                                         <input type="hidden" name="meta[1][meta_key]" value="comment">
                                         <label for="meta[1][meta_value]">

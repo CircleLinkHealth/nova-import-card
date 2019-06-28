@@ -91,7 +91,8 @@ class ReportSetting extends Resource
 
             Number::make('Value')
                 ->sortable()
-                ->rules('required', 'max:255'),
+                ->rules('required', 'numeric')
+                ->step('0.001'),
         ];
     }
 

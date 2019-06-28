@@ -106,7 +106,7 @@ class AppointmentController extends Controller
 
         $view_data = [
             'appointment'  => $data,
-            'userTimeZone' => $patient->timeZone,
+            'userTimeZone' => $patient->timezone,
             'patient'      => $patient,
             'program_id'   => $patient->program_id,
         ];
