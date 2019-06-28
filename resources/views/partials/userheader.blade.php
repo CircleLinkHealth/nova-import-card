@@ -4,7 +4,7 @@
             @push('scripts')
                 <script>
 
-                    function onStatusChange(e){
+                    function onStatusChange(e) {
 
                         let ccmStatus = document.getElementById("ccm_status");
 
@@ -12,15 +12,14 @@
                             $('#header-withdrawn-reason').removeClass('hidden');
                             onReasonChange();
                             console.log('test');
-                        }
-                        else {
+                        } else {
                             $('#header-withdrawn-reason').addClass('hidden');
                             $('#header-withdrawn-reason-other').addClass('hidden');
                         }
 
                     }
 
-                    function onReasonChange(e){
+                    function onReasonChange(e) {
 
                         let reason = document.getElementById("withdrawn_reason");
                         let reasonOther = document.getElementById('withdrawn_reason_other');
@@ -28,8 +27,7 @@
                         if (reason.value === "Other") {
                             $('#header-withdrawn-reason-other').removeClass('hidden');
                             reasonOther.setAttribute('required', '');
-                        }
-                        else {
+                        } else {
                             $('#header-withdrawn-reason-other').addClass('hidden');
                             reasonOther.removeAttribute('required');
                         }
@@ -51,12 +49,30 @@
                 </script>
             @endpush
             <div class="col-sm-8" style="line-height: 22px;">
-                <span style="font-size: 30px;"> <a
-                            href="{{ route('patient.summary', array('patient' => $patient->id)) }}">
+                <span style="font-size: 30px;">
+                    <a href="{{ route('patient.summary', array('patient' => $patient->id)) }}">
                     {{$patient->getFullName()}}
                     </a> </span>
-                <a href="{{ route('patient.demographics.show', array('patient' => $patient->id)) }}"><span
-                            class="glyphicon glyphicon-pencil" style="margin-right:3px;"></span></a><br/>
+
+                <a href="{{ route('patient.demographics.show', array('patient' => $patient->id)) }}" style="padding-right: 2%;"><span
+                            class="glyphicon glyphicon-pencil" style="margin-right:3px;"></span></a>
+                {{-- red flag.indication patient is BHI eligible--}}
+                @if(isset($patient) && auth()->check()
+                && !isset($isPdf)
+                && auth()->user()->shouldShowBhiFlagFor($patient))
+                    <button type="button"
+                            class="glyphicon glyphicon-flag red bounce with-tooltip"
+                            style="color: red; position: absolute;"
+                            data-placement="top"
+                            title="Patient is eligible for BHI. Click me for more info">
+                    </button>
+
+                    <div class="load-hidden-bhi" id="bhi-modal">
+                        @include('partials.providerUI.bhi-notification-banner', ['user' => $patient])
+                    </div>
+                @endif
+
+                <br/>
 
                 <ul class="inline-block" style="margin-left: -40px; font-size: 16px">
                     <b>
@@ -82,9 +98,9 @@
                                 ) {{$patient->getAgentName()}} {{$patient->getAgentPhone()}}</span></li>
                     @endif
                     @if (!empty($patient->patientInfo->general_comment))
-                    <li>
-                        <b>General comment</b>: {{$patient->patientInfo->general_comment}}
-                    </li>
+                        <li>
+                            <b>General comment</b>: {{$patient->patientInfo->general_comment}}
+                        </li>
                     @endif
                     <li>
                         <patient-next-call
@@ -106,11 +122,13 @@
                 ?>
                 @if(!empty($ccdMonitoredProblems))
                     <div style="clear:both"></div>
-                    <ul id="user-header-problems-checkboxes" class="person-conditions-list inline-block text-medium col-lg-12 col-md-10 col-xs-8"
+                    <ul id="user-header-problems-checkboxes"
+                        class="person-conditions-list inline-block text-medium col-lg-12 col-md-10 col-xs-8"
                         style="margin-top: -8px; margin-bottom: 20px !important; margin-left: -20px !important;">
                         @foreach($ccdMonitoredProblems as $problem)
                             @if($problem['name'] != 'Diabetes')
-                                <li class="inline-block"><input type="checkbox" id="item27" name="condition27" value="Active"
+                                <li class="inline-block"><input type="checkbox" id="item27" name="condition27"
+                                                                value="Active"
                                                                 checked="checked" disabled="disabled">
                                     <label for="condition27"><span> </span>{{$problem['name']}}</label>
                                 </li>
@@ -119,7 +137,8 @@
                     </ul>
                 @endif
             </div>
-            <div class="col-lg-push-0 col-sm-4 col-sm-push-0 col-xs-4 col-xs-push-3" style="line-height: 22px; text-align: right">
+            <div class="col-lg-push-0 col-sm-4 col-sm-push-0 col-xs-4 col-xs-push-3"
+                 style="line-height: 22px; text-align: right">
 
                 <span style="font-size: 27px;{{$ccm_above ? 'color: #47beab;' : ''}}">
                     <span data-monthly-time="{{$monthlyTime}}" style="color: inherit">
@@ -199,7 +218,8 @@
                 <div id="header-perform-status-select" class="ccm-status col-xs-offset-3">
                     @if(Route::is('patient.note.create') || Route::is('patient.note.edit'))
                         <li class="inline-block">
-                            <select id="ccm_status" name="ccm_status" class="selectpickerX dropdownValid form-control" data-size="2"
+                            <select id="ccm_status" name="ccm_status" class="selectpickerX dropdownValid form-control"
+                                    data-size="2"
                                     style="width: 135px">
                                 <option style="color: #47beab"
                                         value="enrolled" {{$patient->getCcmStatus() == 'enrolled' ? 'selected' : ''}}>
@@ -210,7 +230,8 @@
                                     Withdrawn
                                 </option>
                                 <option class="paused"
-                                        value="paused" {{$patient->getCcmStatus() == 'paused' ? 'selected' : ''}}> Paused
+                                        value="paused" {{$patient->getCcmStatus() == 'paused' ? 'selected' : ''}}>
+                                    Paused
                                 </option>
                             </select>
                         </li>
@@ -225,7 +246,8 @@
                 @if(Route::is('patient.note.create') || Route::is('patient.note.edit'))
                     <div id="header-withdrawn-reason" class="hidden" style="padding-top: 10px;">
 
-                        <div class="col-md-12" style="padding-right: 0 !important;">{!! Form::label('withdrawn_reason', 'Withdrawn Reason: ') !!}</div>
+                        <div class="col-md-12"
+                             style="padding-right: 0 !important;">{!! Form::label('withdrawn_reason', 'Withdrawn Reason: ') !!}</div>
                         <div class="col-sm-12" style="padding-right: 0 !important;">
                             <div id="header-perform-reason-select">
 
@@ -235,11 +257,12 @@
                         </div>
                     </div>
                     <div id="header-withdrawn-reason-other" class="form-group hidden">
-                        <div class="col-md-12"  style="padding-right: 0 !important;">
-                            <div >
+                        <div class="col-md-12" style="padding-right: 0 !important;">
+                            <div>
                                 <textarea id="withdrawn_reason_other" rows="1" cols="100" style="resize: none;"
                                           placeholder="Enter Reason..." name="withdrawn_reason_other"
-                                          required="required" class="form-control">{{! array_key_exists($patientWithdrawnReason, $withdrawnReasons) ? $patientWithdrawnReason : null}}</textarea>
+                                          required="required"
+                                          class="form-control">{{! array_key_exists($patientWithdrawnReason, $withdrawnReasons) ? $patientWithdrawnReason : null}}</textarea>
                             </div>
                         </div>
                     </div>
@@ -249,6 +272,7 @@
         </div>
     </div>
 </div>
+
 
 @push('styles')
     <style>
@@ -272,7 +296,46 @@
         .color-grey {
             color: #7b7d81;
         }
+
+        .load-hidden-bhi {
+            display: none;
+        }
+
+        @-webkit-keyframes bounce {
+            0% {
+                transform: scale(1, 1) translate(0px, 0px);
+            }
+
+            30% {
+                transform: scale(1, 0.8) translate(0px, 10px);
+            }
+
+            75% {
+                transform: scale(1, 1.1) translate(0px, -25px);
+            }
+
+            100% {
+                transform: scale(1, 1) translate(0px, 0px);
+            }
+        }
+
+        .bounce {
+            -webkit-animation: bounce 0.65s 4;
+        }
+
     </style>
+
+@endpush
+
+@push('scripts')
+    <script>
+        (function ($) {
+            $('.glyphicon-flag').click(function (e) {
+                $(".load-hidden-bhi, .modal-mask").show();
+            });
+
+        })(jQuery);
+    </script>
 @endpush
 
 
