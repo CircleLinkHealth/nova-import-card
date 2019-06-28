@@ -138,6 +138,7 @@
     "darkaonline/l5-swagger": "^5.5",
     "filp/whoops": "~2.0",
     "friendsofphp/php-cs-fixer": "^2.13",
+    "jkocik/laravel-profiler": "^1.2",
     "laravel/dusk": "^3.0",
     "mockery/mockery": "0.9.*",
     "nwidart/laravel-modules": "^4.0",

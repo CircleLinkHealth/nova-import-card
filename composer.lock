@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7eba553f6fe3daf78b7daa97ffc7f1e2",
+    "content-hash": "cacb72fab8e27a11d5d75de9d9e8a73d",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -10963,6 +10963,67 @@
                 "test"
             ],
             "time": "2015-05-11T14:41:42+00:00"
+        },
+        {
+            "name": "jkocik/laravel-profiler",
+            "version": "1.2.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jkocik/laravel-profiler.git",
+                "reference": "3521577117e3bc76d9981c08ea915c1086574fe5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jkocik/laravel-profiler/zipball/3521577117e3bc76d9981c08ea915c1086574fe5",
+                "reference": "3521577117e3bc76d9981c08ea915c1086574fe5",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^5.0 || ^6.0",
+                "php": ">=7.1.0"
+            },
+            "require-dev": {
+                "fzaninotto/faker": "^1.8",
+                "laravel/homestead": "^7.3",
+                "mockery/mockery": "^1.0",
+                "php-coveralls/php-coveralls": "^2.1",
+                "php-mock/php-mock": "^2.0",
+                "phpunit/phpunit": "^6.5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "JKocik\\Laravel\\Profiler\\ServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "JKocik\\Laravel\\Profiler\\": "src/"
+                },
+                "files": [
+                    "src/Services/helpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Janusz Kocik",
+                    "email": "janusz.kocik@gmail.com"
+                }
+            ],
+            "description": "Profiler for Laravel framework 5.2+",
+            "homepage": "https://github.com/jkocik/laravel-profiler",
+            "keywords": [
+                "debugbar",
+                "laravel",
+                "profiler"
+            ],
+            "time": "2019-04-14T22:32:46+00:00"
         },
         {
             "name": "jolicode/jolinotif",
