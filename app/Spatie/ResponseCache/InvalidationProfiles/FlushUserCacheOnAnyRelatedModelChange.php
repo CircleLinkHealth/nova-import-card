@@ -13,13 +13,45 @@ use Illuminate\Database\Eloquent\Model;
 
 class FlushUserCacheOnAnyRelatedModelChange
 {
-    public function handle()
+    private $invalidationCandidates = [];
+
+    public function __construct()
+    {
+        $this->registerEloquentEventListener();
+    }
+
+    /**
+     * @param array $invalidationCandidates
+     */
+    public function addInvalidationCandidate(int $userId): void
+    {
+        $this->invalidationCandidates[] = $userId;
+    }
+
+    public function flushCandidates()
+    {
+        foreach (array_unique($this->getInvalidationCandidates()) as $userId) {
+            $cleared[$userId] = $this->flushCache($userId);
+        }
+
+        return $cleared ?? [];
+    }
+
+    /**
+     * @return array
+     */
+    public function getInvalidationCandidates(): array
+    {
+        return $this->invalidationCandidates;
+    }
+
+    public function registerEloquentEventListener()
     {
         //Clear responsecache every time a model is created, updated, or deleted
         Event::listen(['eloquent.created: *', 'eloquent.updated: *', 'eloquent.deleted: *'], function ($event, array $models) {
             foreach ($models as $model) {
                 foreach ($this->userId($model) as $userId) {
-                    $cleared[$userId] = $this->flushCache($userId);
+                    $this->addInvalidationCandidate($userId);
                 }
             }
         });

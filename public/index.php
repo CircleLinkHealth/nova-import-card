@@ -4,8 +4,6 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Constants;
-
 define('LARAVEL_START', microtime(true));
 
 /*
@@ -77,6 +75,8 @@ $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
 $response = $kernel->handle(
     $request = App\SafeRequest::capture()
 );
+
+app('invalidate-cache')->flushCandidates();
 
 $response->send();
 

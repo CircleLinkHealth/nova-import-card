@@ -24,8 +24,7 @@ class PerUserCacheInvalidationServiceProvider extends ServiceProvider
     public function register()
     {
         if (config('responsecache.enabled')) {
-            $flusher = new FlushUserCacheOnAnyRelatedModelChange();
-            $flusher->handle();
+            $this->app->singleton('invalidate-cache', FlushUserCacheOnAnyRelatedModelChange::class);
         }
     }
 }
