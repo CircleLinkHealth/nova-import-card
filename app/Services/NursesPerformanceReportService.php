@@ -196,7 +196,7 @@ class NursesPerformanceReportService
         $data['nextUpcomingWindowLabel']      = $nextUpcomingWindowLabel ?? null;
         $data['projectedHoursLeftInMonth']    = $this->getProjectedHoursLeftInMonth($nurse, $date->copy()) ?? 0;
         $data['avgHoursWorkedLast10Sessions'] = $this->avgHoursWorkedLast10Sessions;
-        $data['surplusShortfallHours']        = $data['projectedHoursLeftInMonth'] - $data['caseLoadNeededToComplete'];
+        $data['surplusShortfallHours']        = $this->surplusShortfallHours($data);
 
         return collect($data);
     }
@@ -421,7 +421,7 @@ class NursesPerformanceReportService
             $date
         );
 
-        return (float) ($noOfDays * $this->avgHoursWorkedLast10Sessions);
+        return round((float) ($noOfDays * $this->avgHoursWorkedLast10Sessions), 2);
     }
 
     /**
@@ -712,5 +712,15 @@ DATE(patient_monthly_summaries.month_year) = DATE('{$date->copy()->startOfMonth(
         }
 
         return collect(json_decode($json, true));
+    }
+
+    /**
+     * @param $data
+     *
+     * @return mixed
+     */
+    public function surplusShortfallHours($data)
+    {
+        return round((float) ($data['projectedHoursLeftInMonth'] - $data['caseLoadNeededToComplete']), 2);
     }
 }
