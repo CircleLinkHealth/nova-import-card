@@ -62,7 +62,7 @@ class AggregatedTotalTimePerNurse
     private function aggregatedTimeCollection()
     {
         if ( ! $this->aggregatedTime) {
-            $this->aggregatedTime = $this->aggregator->aggregate();
+            $this->aggregatedTime = $this->aggregator->aggregate()->flatten();
         }
 
         return $this->aggregatedTime;
