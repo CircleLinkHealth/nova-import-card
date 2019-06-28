@@ -120,7 +120,6 @@
     "rap2hpoutre/laravel-log-viewer": "^0.4.0",
     "seld/jsonlint": "^1.7",
     "sparclex/nova-import-card": "^2.0",
-    "spatie/laravel-backup": "^5.10",
     "spatie/laravel-google-calendar": "^2.0",
     "spatie/laravel-medialibrary": "^7.0.0",
     "spatie/laravel-responsecache": "^5.0",
@@ -225,7 +224,8 @@
   "extra": {
     "laravel": {
       "dont-discover": [
-        "laravel/dusk"
+        "laravel/dusk",
+        "spatie/laravel-responsecache"
       ]
     },
     "merge-plugin": {
