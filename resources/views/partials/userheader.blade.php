@@ -61,9 +61,8 @@
                 && !isset($isPdf)
                 && auth()->user()->shouldShowBhiFlagFor($patient))
                     <button type="button"
-                            class="glyphicon glyphicon-flag red bounce"
+                            class="glyphicon glyphicon-flag red bounce with-tooltip"
                             style="color: red; position: absolute;"
-{{--                            data-toggle="tooltip"--}}
                             data-placement="top"
                             title="Patient is eligible for BHI. Click me for more info">
                     </button>
