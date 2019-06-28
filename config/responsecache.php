@@ -45,6 +45,8 @@ return [
      * items with that tag will be flushed.
      *
      * You may use a string or an array here.
+     *
+     * @CPM We rely on tags to create per user cache, so redis is required.
      */
     'cache_tag' => env('RESPONSE_CACHE_TAG', 'responsecachable'),
 ];
