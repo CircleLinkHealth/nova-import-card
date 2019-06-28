@@ -50,7 +50,7 @@ us.survey_instance_id,
 si.year as year,
 us.status as status
 from users u
-LEFT JOIN users_surveys us ON u.id=us.user_id
+INNER JOIN users_surveys us ON u.id=us.user_id
 LEFT JOIN survey_instances si ON si.id=us.survey_instance_id
 LEFT JOIN surveys s ON s.id=us.survey_id;
       ");
