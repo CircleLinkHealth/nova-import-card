@@ -12,7 +12,7 @@ class CacheAllSuccessfulGetRequests extends \Spatie\ResponseCache\CacheProfiles\
 {
     public function cacheNameSuffix(Request $request): string
     {
-        return session()->get(\App\Constants::VIEWING_PATIENT, parent::cacheNameSuffix($request));
+        return session()->get(\App\Constants::VIEWING_PATIENT, auth()->id());
     }
 
     public function shouldCacheRequest(Request $request): bool

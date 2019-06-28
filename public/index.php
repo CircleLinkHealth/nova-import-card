@@ -80,7 +80,4 @@ $response = $kernel->handle(
 
 $response->send();
 
-//Flush viewing patient after we send response
-$flushed = session()->pull(Constants::VIEWING_PATIENT);
-
 $kernel->terminate($request, $response);
