@@ -15,11 +15,6 @@ class FlushUserCacheOnAnyRelatedModelChange
 {
     private $invalidationCandidates = [];
 
-    public function __construct()
-    {
-        $this->registerEloquentEventListener();
-    }
-
     /**
      * @param array $invalidationCandidates
      */
