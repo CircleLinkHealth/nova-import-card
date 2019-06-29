@@ -76,7 +76,7 @@ $response = $kernel->handle(
     $request = App\SafeRequest::capture()
 );
 
-if (config('responsecache.enabled')) {
+if (config('responsecache.enabled') && ! $request->isMethodCacheable()) {
     app('invalidate-cache')->flushCandidates();
 }
 
