@@ -45,7 +45,7 @@ class ResponseCacheServiceProvider extends ServiceProvider
 
         $this->app->singleton('invalidate-cache', FlushUserCacheOnAnyRelatedModelChange::class);
 
-        if (config('responsecache.enabled')) {
+        if (config('responsecache.enabled') && ! request()->isMethodCacheable()) {
             $this->app->make('invalidate-cache')->registerEloquentEventListener();
         }
 

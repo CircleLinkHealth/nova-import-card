@@ -104,5 +104,6 @@ class Kernel extends HttpKernel
         'verify.invite'              => CheckOnboardingInvite::class,
         'check.careplan.mode'        => CheckCarePlanMode::class,
         'doNotCacheResponse'         => DoNotCacheResponse::class,
+        'cacheResponse'              => CacheResponse::class,
     ];
 }
