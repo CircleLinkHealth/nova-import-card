@@ -19,7 +19,6 @@ use App\Http\Controllers\Patient\Traits\ProviderInfoTraits;
 use App\Http\Controllers\Patient\Traits\SymptomTraits;
 use App\Services\AppointmentService;
 use App\Services\CCD\CcdAllergyService;
-use App\Services\CCD\CcdProblemService;
 use App\Services\CPM\CpmBiometricService;
 use App\Services\CPM\CpmLifestyleService;
 use App\Services\CPM\CpmMedicationGroupService;
