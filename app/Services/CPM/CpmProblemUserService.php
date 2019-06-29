@@ -15,12 +15,10 @@ class CpmProblemUserService
 {
     private $cpmProblemService;
     private $cpmProblemUserRepo;
-    private $userRepo;
 
-    public function __construct(CpmProblemUserRepository $cpmProblemUserRepo, UserRepositoryEloquent $userRepo, CpmProblemService $cpmProblemService)
+    public function __construct(CpmProblemUserRepository $cpmProblemUserRepo, CpmProblemService $cpmProblemService)
     {
         $this->cpmProblemUserRepo = $cpmProblemUserRepo;
-        $this->userRepo           = $userRepo;
         $this->cpmProblemService  = $cpmProblemService;
     }
 
@@ -51,7 +49,7 @@ class CpmProblemUserService
     {
         $user = is_a($userId, User::class)
             ? $userId
-            : $this->userRepo->model()->findOrFail($userId);
+            : User::findOrFail($userId);
 
         $user->loadMissing(['cpmProblems']);
 

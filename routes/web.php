@@ -109,7 +109,7 @@ Route::group(['middleware' => 'auth'], function () {
     });
 
     // API
-    Route::group(['prefix' => 'api'], function () {
+    Route::group(['prefix' => 'api', 'middleware' => ['cacheResponse']], function () {
         Route::group(['prefix' => 'admin'], function () {
             //the new calls route that uses calls-view table
             Route::get('calls-v2', [
@@ -712,7 +712,7 @@ Route::group(['middleware' => 'auth'], function () {
     // **** PATIENTS (/manage-patients/
     Route::group([
         'prefix'     => 'manage-patients/',
-        'middleware' => ['patientProgramSecurity'],
+        'middleware' => ['patientProgramSecurity', 'cacheResponse'],
     ], function () {
         Route::group(['prefix' => 'offline-activity-time-requests'], function () {
             Route::get('', [

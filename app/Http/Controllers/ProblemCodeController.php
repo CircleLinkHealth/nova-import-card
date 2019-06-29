@@ -8,21 +8,10 @@ namespace App\Http\Controllers;
 
 use App\Models\ProblemCode;
 use App\ProblemCodeSystem;
-use App\Services\ProblemCodeService;
 use Illuminate\Http\Request;
 
 class ProblemCodeController extends Controller
 {
-    private $problemCodeService;
-
-    /**
-     * MedicationController constructor.
-     */
-    public function __construct(ProblemCodeService $problemCodeService)
-    {
-        $this->problemCodeService = $problemCodeService;
-    }
-
     /**
      * returns a list of code-systems.
      */
@@ -58,6 +47,6 @@ class ProblemCodeController extends Controller
         $problemCode->resolve();
         $problemCode->save();
 
-        return response()->json($this->problemCodeService->add($problemCode));
+        return response()->json($problemCode);
     }
 }

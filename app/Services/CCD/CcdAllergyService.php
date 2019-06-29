@@ -12,12 +12,10 @@ use App\Repositories\UserRepositoryEloquent;
 class CcdAllergyService
 {
     private $allergyRepo;
-    private $userRepo;
 
-    public function __construct(CcdAllergyRepository $allergyRepo, UserRepositoryEloquent $userRepo)
+    public function __construct(CcdAllergyRepository $allergyRepo)
     {
         $this->allergyRepo = $allergyRepo;
-        $this->userRepo    = $userRepo;
     }
 
     public function addPatientAllergy($userId, $name)

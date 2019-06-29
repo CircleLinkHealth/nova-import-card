@@ -17,6 +17,7 @@ use App\Http\Resources\SAAS\PracticeChargeableServices;
 use App\PracticeEnrollmentTips;
 use App\SafeRequest;
 use App\Services\OnboardingService;
+use CircleLinkHealth\Customer\Entities\Invite;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Settings;
@@ -27,27 +28,16 @@ use Illuminate\Http\Request;
 class DashboardController extends Controller
 {
     protected $invites;
-    protected $locations;
     protected $onboardingService;
-    protected $practices;
     protected $primaryPractice;
-    protected $users;
-
+    protected $practiceSlug;
+    
     public function __construct(
-        InviteRepository $inviteRepository,
-        LocationRepository $locationRepository,
-        PracticeRepository $practiceRepository,
-        UserRepository $userRepository,
-        OnboardingService $onboardingService,
-        Request $request
+        OnboardingService $onboardingService
     ) {
-        $this->invites           = $inviteRepository;
-        $this->locations         = $locationRepository;
-        $this->practices         = $practiceRepository;
-        $this->users             = $userRepository;
         $this->onboardingService = $onboardingService;
 
-        $this->practiceSlug = $request->route('practiceSlug');
+        $this->practiceSlug = request()->route('practiceSlug');
 
         $this->primaryPractice = Practice::whereName($this->practiceSlug)->first();
 
@@ -193,7 +183,7 @@ class DashboardController extends Controller
 
     public function postStoreInvite(Request $request)
     {
-        $invite = $this->invites->create([
+        $invite = Invite::create([
             'inviter_id' => auth()->user()->id,
             'role_id'    => $request->input('role'),
             'email'      => $request->input('email'),

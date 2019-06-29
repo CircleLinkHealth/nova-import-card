@@ -7,9 +7,9 @@
 namespace App\Http\Controllers\CcdApi\Aprima;
 
 use App\CarePlan;
+use App\CcmTimeApiLog;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Contracts\Repositories\AprimaCcdApiRepository;
-use App\Contracts\Repositories\CcdaRepository;
 use App\Contracts\Repositories\CcmTimeApiLogRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\ForeignId;
@@ -20,6 +20,7 @@ use App\Note;
 use App\PatientReports;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use DB;
@@ -30,23 +31,38 @@ class CcdApiController extends Controller
     use ValidatesQAImportOutput;
 
     protected $api;
-    protected $ccda;
     protected $ccmTime;
     private $importer;
     private $users;
 
     public function __construct(
-        CCDImporterRepository $repo,
-        CcdaRepository $ccdaRepository,
-        CcmTimeApiLogRepository $ccmTime,
-        AprimaCcdApiRepository $aprimaCcdApiRepository,
-        UserRepository $users
+        CCDImporterRepository $repo
     ) {
-        $this->ccda     = $ccdaRepository;
-        $this->ccmTime  = $ccmTime;
-        $this->api      = $aprimaCcdApiRepository;
         $this->importer = $repo;
-        $this->users    = $users;
+    }
+    
+    public function getPatientAndProviderIdsByLocationAndForeignSystem($locationId, $foreignSystem)
+    {
+        //Dynamically get all the tables' names since we'll probably change them soon
+        $careTeamTable  = (new CarePerson())->getTable();
+        $foreignIdTable = (new ForeignId())->getTable();
+        $patientTable   = (new Patient())->getTable();
+        
+        return Patient::select(DB::raw("
+                ${patientTable}.mrn_number as patientId,
+                ${patientTable}.user_id as clhPatientUserId,
+                ${foreignIdTable}.foreign_id as providerId,
+                ${careTeamTable}.member_user_id as clhProviderUserId
+                "))
+                      ->where("${patientTable}.preferred_contact_location", $locationId)
+                      ->whereNotNull("${patientTable}.preferred_contact_location")
+                      ->join($careTeamTable, "${careTeamTable}.user_id", '=', "${patientTable}.user_id")
+                      ->where("${careTeamTable}.type", '=', CarePerson::BILLING_PROVIDER)
+                      ->join($foreignIdTable, "${foreignIdTable}.user_id", '=', "${careTeamTable}.member_user_id")
+                      ->where("${foreignIdTable}.system", '=', $foreignSystem)
+                      ->where("${foreignIdTable}.location_id", '=', $locationId)
+                      ->whereNotNull("${foreignIdTable}.foreign_id")
+                      ->get();
     }
 
     public function getApiUserLocation($user)
@@ -124,7 +140,7 @@ class CcdApiController extends Controller
 
         $locationId = $this->getApiUserLocation($user);
 
-        $patientAndProviderIds = $this->api
+        $patientAndProviderIds = $this
             ->getPatientAndProviderIdsByLocationAndForeignSystem($locationId, ForeignId::APRIMA);
 
         foreach ($patientAndProviderIds as $ids) {
@@ -141,7 +157,7 @@ class CcdApiController extends Controller
             }
 
             $careEvents = $activities->map(function ($careEvent) {
-                $this->ccmTime->logSentActivity(['activity_id' => $careEvent->id], ['activity_id' => $careEvent->id]);
+                CcmTimeApiLog::updateOrCreate(['activity_id' => $careEvent->id], ['activity_id' => $careEvent->id]);
 
                 return [
                     'servicePerson'    => $careEvent->servicePerson,
@@ -382,9 +398,7 @@ class CcdApiController extends Controller
 
         if ( ! empty($providerInput['firstName']) && ! empty($providerInput['lastName'])) {
             //Check if the provider exists
-            $provider = $this->users->findWhere([
-                'display_name' => $providerInput['firstName'].' '.$providerInput['lastName'],
-            ]);
+            $provider = User::where('display_name', $providerInput['firstName'].' '.$providerInput['lastName'])->first();
         }
 
         $locationId = $this->getApiUserLocation($user);
@@ -413,7 +427,7 @@ class CcdApiController extends Controller
             return response()->json(['error' => 'Failed to base64_decode CCD.'], 400);
         }
 
-        $ccdObj = $this->ccda->create([
+        $ccdObj = Ccda::create([
             'user_id'   => $user->id,
             'vendor_id' => 1,
             'xml'       => $xml,

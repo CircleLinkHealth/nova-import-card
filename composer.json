@@ -114,8 +114,6 @@
     "pragmarx/health": "^0.9.16",
     "pragmarx/version": "^0.2.8",
     "predis/predis": "^1.1",
-    "prettus/l5-repository": "dev-master",
-    "prettus/laravel-validation": "*",
     "propaganistas/laravel-phone": "^3.0",
     "rap2hpoutre/laravel-log-viewer": "^0.4.0",
     "seld/jsonlint": "^1.7",

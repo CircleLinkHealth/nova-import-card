@@ -10,10 +10,7 @@ use App\Models\CCD\Problem as CcdProblem;
 use App\Models\CPM\CpmProblem;
 use App\Models\ProblemCode;
 use App\Repositories\CcdProblemRepository;
-use App\Repositories\ProblemCodeRepository;
-use App\Repositories\UserRepositoryEloquent;
 use App\Services\CPM\CpmInstructionService;
-use App\Services\ProblemCodeService;
 use CircleLinkHealth\Customer\Entities\User;
 
 class CcdProblemService

@@ -9,7 +9,6 @@ namespace App\Services\CPM;
 use App\Contracts\Services\CpmModel;
 use App\Models\CCD\Problem;
 use App\Repositories\CpmProblemRepository;
-use App\Repositories\UserRepositoryEloquent;
 use CircleLinkHealth\Customer\Entities\User;
 
 class CpmProblemService implements CpmModel
@@ -17,10 +16,9 @@ class CpmProblemService implements CpmModel
     private $problemRepo;
     private $userRepo;
 
-    public function __construct(CpmProblemRepository $problemRepo, UserRepositoryEloquent $userRepo)
+    public function __construct(CpmProblemRepository $problemRepo)
     {
         $this->problemRepo = $problemRepo;
-        $this->userRepo    = $userRepo;
     }
 
     public function all()
@@ -49,29 +47,13 @@ class CpmProblemService implements CpmModel
 
     public function getProblemsWithInstructionsForUser(User $user)
     {
-        $instructions = [];
-
-        //Get all the User's Problems
-        $problems = $user->cpmProblems()->get()->sortBy('name')->values()->all();
-        if ( ! $problems) {
-            return [];
-        }
-
-        //For each problem, extract the instructions and
-        //store in a key value pair
-        foreach ($problems as $problem) {
-            if ( ! $problem) {
-                continue;
-            }
-
-            $instruction = \App\Models\CPM\CpmInstruction::find($problem->pivot->cpm_instruction_id);
-
-            if ($instruction) {
-                $instructions[$problem->name] = $instruction->name;
-            }
-        }
-
-        return $instructions;
+        $user->loadMissing('ccdProblems.cpmInstruction', 'ccdProblems.cpmProblem');
+        
+        $instructions = $user->ccdProblems->where('cpm_problem_id', '!=', null)->unique('cpm_problem_id')->sortBy('cpmProblem.name')->mapWithKeys(function ($problem){
+            return [$problem->cpmProblem->name => $problem->cpmInstruction->name];
+        });
+        
+        return $instructions->all();
     }
 
     public function problem($id)

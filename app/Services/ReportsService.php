@@ -418,50 +418,22 @@ class ReportsService
 
     public function getInstructionsForOtherProblems(User $user)
     {
-        if ( ! $user) {
-            //nullify
-            return 'User not found...';
-        }
+        $user->loadMissing('ccdProblems');
 
-        // Other Conditions / Problem List
-        $ccdProblems = 'No instructions at this time';
-        $problem     = $user->cpmMiscs->where('name', CpmMisc::OTHER_CONDITIONS)->all();
-        if ( ! empty($problem)) {
-            $problems = Problem::where('patient_id', '=', $user->id)->orderBy('name')->get();
-            if ($problems->count() > 0) {
-                $ccdProblems = '';
-                $i           = 0;
-                foreach ($problems as $problem) {
-                    if (empty($problem->name)) {
-                        continue 1;
-                    }
-                    if ($i > 0) {
-                        $ccdProblems .= '<br>';
-                    }
-                    $ccdProblems .= $problem->name;
-                    ++$i;
-                }
+        $ccdProblems = '';
+        $i           = 0;
+        foreach ($user->ccdProblems as $problem) {
+            if (empty($problem->name)) {
+                continue 1;
             }
+            if ($i > 0) {
+                $ccdProblems .= '<br>';
+            }
+            $ccdProblems .= $problem->name;
+            ++$i;
         }
 
         return $ccdProblems;
-        /*
-        $problem = $user->cpmMiscs->where('name',CpmMisc::OTHER_CONDITIONS)->all();
-
-        if(empty($problem)){
-            //https://youtu.be/LloIp0HMJjc?t=19s
-            return '';
-        }
-
-        $instructions = CpmInstruction::find($problem[0]->pivot->cpm_instruction_id);
-
-        if(empty($instructions)){
-            //defualt
-                return 'No instructions at this time';
-        }
-
-        return $instructions->name;
-        */
     }
 
     public function getLifestyleToMonitor(CarePlan $carePlan)

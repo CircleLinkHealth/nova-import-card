@@ -8,23 +8,7 @@ namespace App\Providers;
 
 use App\Contracts\HtmlToPdfService;
 use App\Contracts\ReportFormatter;
-use App\Contracts\Repositories\AprimaCcdApiRepository;
-use App\Contracts\Repositories\CcdaRepository;
-use App\Contracts\Repositories\CcdaRequestRepository;
-use App\Contracts\Repositories\CcmTimeApiLogRepository;
-use App\Contracts\Repositories\InviteRepository;
-use App\Contracts\Repositories\LocationRepository;
-use App\Contracts\Repositories\PracticeRepository;
-use App\Contracts\Repositories\UserRepository;
 use App\Formatters\WebixFormatter;
-use App\Repositories\AprimaCcdApiRepositoryEloquent;
-use App\Repositories\CcdaRepositoryEloquent;
-use App\Repositories\CcdaRequestRepositoryEloquent;
-use App\Repositories\CcmTimeApiLogRepositoryEloquent;
-use App\Repositories\InviteRepositoryEloquent;
-use App\Repositories\LocationRepositoryEloquent;
-use App\Repositories\PracticeRepositoryEloquent;
-use App\Repositories\PrettusUserRepositoryEloquent;
 use App\Services\SnappyPdfWrapper;
 use Carbon\Carbon;
 use DB;
@@ -127,51 +111,6 @@ class AppServiceProvider extends ServiceProvider
                 return $this->app->make(SnappyPdfWrapper::class)
                     ->setTemporaryFolder(storage_path('tmp'));
             }
-        );
-
-        $this->app->bind(
-            CcdaRepository::class,
-            CcdaRepositoryEloquent::class
-        );
-
-        $this->app->bind(
-            CcdaRequestRepository::class,
-            CcdaRequestRepositoryEloquent::class
-        );
-
-        $this->app->bind(
-            CcmTimeApiLogRepository::class,
-            CcmTimeApiLogRepositoryEloquent::class
-        );
-
-        $this->app->bind(
-            AprimaCcdApiRepository::class,
-            AprimaCcdApiRepositoryEloquent::class
-        );
-
-        $this->app->bind(
-            InviteRepository::class,
-            InviteRepositoryEloquent::class
-        );
-
-        $this->app->bind(
-            LocationRepository::class,
-            LocationRepositoryEloquent::class
-        );
-
-        $this->app->bind(
-            PracticeRepository::class,
-            PracticeRepositoryEloquent::class
-        );
-
-        $this->app->bind(
-            \App\CLH\Contracts\Repositories\UserRepository::class,
-            \App\CLH\Repositories\UserRepository::class
-        );
-
-        $this->app->bind(
-            UserRepository::class,
-            PrettusUserRepositoryEloquent::class
         );
 
         $this->app->bind(

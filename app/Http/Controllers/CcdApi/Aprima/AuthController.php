@@ -8,17 +8,11 @@ namespace App\Http\Controllers\CcdApi\Aprima;
 
 use App\Contracts\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
-    protected $user;
-
-    public function __construct(UserRepository $userRepository)
-    {
-        $this->user = $userRepository;
-    }
-
     /**
      * This function will authenticate the user using their username and password and return an access token.
      *
@@ -32,9 +26,7 @@ class AuthController extends Controller
             response()->json(['error' => 'Username and password need to be included on the request.'], 400);
         }
 
-        $user = $this->user->findWhere([
-            'email' => $request->input('username'),
-        ])->first();
+        $user = User::where('email', $request->input('username'))->first();
 
         if (empty($user)) {
             return response()->json(['error' => 'Invalid Credentials.'], 400);

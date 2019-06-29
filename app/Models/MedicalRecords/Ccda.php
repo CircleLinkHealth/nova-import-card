@@ -15,8 +15,7 @@ use App\Traits\Relationships\BelongsToPatientUser;
 use CircleLinkHealth\Customer\Entities\User;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Prettus\Repository\Contracts\Transformable;
-use Prettus\Repository\Traits\TransformableTrait;
+
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
@@ -93,12 +92,11 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda whereBatchId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda whereDirectMailMessageId($value)
  */
-class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
+class Ccda extends MedicalRecordEloquent implements HasMedia
 {
     use BelongsToPatientUser;
     use HasMediaTrait;
     use SoftDeletes;
-    use TransformableTrait;
     const API = 'api';
 
     //define sources here

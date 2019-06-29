@@ -13,28 +13,24 @@ use App\Http\Resources\UserCsvResource;
 use App\Http\Resources\UserSafeResource;
 use App\Repositories\PatientReadRepository;
 use App\Repositories\PatientWriteRepository;
-use App\Repositories\UserRepositoryEloquent;
 use App\Services\CCD\CcdAllergyService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class PatientService
 {
-    private $allergyRepo;
     private $patientReadRepo;
     private $patientRepo;
-    private $userRepo;
 
     public function __construct(
         PatientWriteRepository $patientRepo,
         PatientReadRepository $patientReadRepo,
-        CcdAllergyService $allergyService,
-        UserRepositoryEloquent $userRepo
+        CcdAllergyService $allergyService
     ) {
         $this->patientRepo     = $patientRepo;
-        $this->userRepo        = $userRepo;
         $this->allergyService  = $allergyService;
         $this->patientReadRepo = $patientReadRepo;
     }
@@ -128,7 +124,7 @@ class PatientService
     public function getPatientByUserId(
         $userId
     ) {
-        return optional($this->userRepo->model()->with(['patientInfo'])->find($userId))->patientInfo;
+        return optional(User::with(['patientInfo'])->find($userId))->patientInfo;
     }
 
     public function patients(

@@ -215,7 +215,6 @@ return [
         \Collective\Html\HtmlServiceProvider::class,
         \Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
         \Maatwebsite\Excel\ExcelServiceProvider::class,
-        Prettus\Repository\Providers\RepositoryServiceProvider::class,
         Yajra\DataTables\DataTablesServiceProvider::class,
         Spatie\GoogleCalendar\GoogleCalendarServiceProvider::class,
         ObserversServiceProvider::class,
