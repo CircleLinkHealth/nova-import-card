@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace Tests\Unit;
+namespace Tests\ExternalApi;
 
 use App\Services\AthenaAPI\Calls;
 use App\ValueObjects\Athena\Patient;
