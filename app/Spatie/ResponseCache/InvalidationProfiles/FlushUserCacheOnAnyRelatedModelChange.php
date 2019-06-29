@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class FlushUserCacheOnAnyRelatedModelChange
 {
+    private $cacheTag;
     private $invalidationCandidates = [];
 
     /**
@@ -21,6 +22,32 @@ class FlushUserCacheOnAnyRelatedModelChange
     public function addInvalidationCandidate(int $userId): void
     {
         $this->invalidationCandidates[] = $userId;
+    }
+
+    public function flush($users)
+    {
+        foreach (parseIds($users) as $userId) {
+            $cacheTags[] = $this->getTagForUser($userId);
+        }
+
+        if (empty($cacheTags)) {
+            foreach (\Redis::keys("*{$this->getCacheTag()}*") as $key) {
+                $id = explode(':', explode($this->getCacheTag(), $key)[1] ?? '')[0] ?? '';
+                
+                if (is_numeric($id)) {
+                    $cacheTags[] = $this->getTagForUser($id);
+                }
+            }
+        }
+
+        if ( ! empty($cacheTags)) {
+            $flushed = \Cache::tags($cacheTags)->flush();
+        }
+
+        return [
+            'success' => $flushed ?? empty($cacheTags),
+            'tags'    => $cacheTags ?? [],
+        ];
     }
 
     public function flushCandidates()
@@ -43,13 +70,16 @@ class FlushUserCacheOnAnyRelatedModelChange
     public function registerEloquentEventListener()
     {
         //Clear responsecache every time a model is created, updated, or deleted
-        Event::listen(['eloquent.created: *', 'eloquent.updated: *', 'eloquent.deleted: *'], function ($event, array $models) {
-            foreach ($models as $model) {
-                foreach ($this->userId($model) as $userId) {
-                    $this->addInvalidationCandidate($userId);
+        Event::listen(
+            ['eloquent.created: *', 'eloquent.updated: *', 'eloquent.deleted: *'],
+            function ($event, array $models) {
+                foreach ($models as $model) {
+                    foreach ($this->userId($model) as $userId) {
+                        $this->addInvalidationCandidate($userId);
+                    }
                 }
             }
-        });
+        );
     }
 
     /**
@@ -61,7 +91,21 @@ class FlushUserCacheOnAnyRelatedModelChange
      */
     private function flushCache($userId)
     {
-        return \Cache::tags(config('responsecache.cache_tag')."user_$userId")->flush();
+        return \Cache::tags($this->getTagForUser($userId))->flush();
+    }
+
+    private function getCacheTag()
+    {
+        if ( ! $this->cacheTag) {
+            $this->cacheTag = config('responsecache.cache_tag').'user_';
+        }
+
+        return $this->cacheTag;
+    }
+
+    private function getTagForUser(int $userId)
+    {
+        return $this->getCacheTag().$userId;
     }
 
     private function getUsersFromRelationship(Model $model, string $relation)
@@ -73,25 +117,28 @@ class FlushUserCacheOnAnyRelatedModelChange
         $relationType = null;
         $userIds      = [];
 
-        $model->{$relation}()->distinct()->chunk(50, function ($models) use (&$relationType, &$userIds) {
-            foreach ($models as $model) {
-                if (null === $relationType) {
-                    $relationType = get_class($model);
-                }
-                if ( ! in_array($relationType, [User::class, Patient::class])) {
-                    //break out of chunk closure
-                    return false;
-                }
+        $model->{$relation}()->distinct()->chunk(
+            50,
+            function ($models) use (&$relationType, &$userIds) {
+                foreach ($models as $model) {
+                    if (null === $relationType) {
+                        $relationType = get_class($model);
+                    }
+                    if ( ! in_array($relationType, [User::class, Patient::class])) {
+                        //break out of chunk closure
+                        return false;
+                    }
 
-                if (User::class === $relationType) {
-                    $userIds[] = parseIds($model);
-                }
+                    if (User::class === $relationType) {
+                        $userIds[] = parseIds($model);
+                    }
 
-                if (Patient::class === $relationType && ! empty($model->user_id)) {
-                    $userIds[] = $model->user_id;
+                    if (Patient::class === $relationType && ! empty($model->user_id)) {
+                        $userIds[] = $model->user_id;
+                    }
                 }
             }
-        });
+        );
 
         return array_unique($userIds);
     }

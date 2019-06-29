@@ -6,6 +6,7 @@
 
 namespace App\Spatie\ResponseCache;
 
+use App\Spatie\ResponseCache\InvalidationProfiles\FlushUserCacheOnAnyRelatedModelChange;
 use Illuminate\Cache\Repository;
 use Illuminate\Container\Container;
 use Illuminate\Support\ServiceProvider;
@@ -30,9 +31,10 @@ class ResponseCacheServiceProvider extends ServiceProvider
             ->needs(Repository::class)
             ->give(function (): Repository {
                 $repository = $this->app['cache']->store(config('responsecache.cache_store'));
-                if ( ! empty(config('responsecache.cache_tag'))) {
-                    $userId = optional(request()->route())->parameter('patientId') ?? auth()->id();
 
+                $userId = optional(request()->route())->parameter('patientId') ?? auth()->id();
+
+                if ( ! empty(config('responsecache.cache_tag')) && ! empty($userId)) {
                     return $repository->tags(config('responsecache.cache_tag')."user_$userId");
                 }
 
@@ -40,6 +42,12 @@ class ResponseCacheServiceProvider extends ServiceProvider
             });
 
         $this->app->singleton('responsecache', ResponseCache::class);
+
+        $this->app->singleton('invalidate-cache', FlushUserCacheOnAnyRelatedModelChange::class);
+
+        if (config('responsecache.enabled')) {
+            $this->app->make('invalidate-cache')->registerEloquentEventListener();
+        }
 
         $this->app['command.responsecache:flush'] = $this->app->make(Flush::class);
 

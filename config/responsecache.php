@@ -48,5 +48,5 @@ return [
      *
      * @CPM We rely on tags to create per user cache, so redis is required.
      */
-    'cache_tag' => env('RESPONSE_CACHE_TAG', 'responsecachable'),
+    'cache_tag' => env('RESPONSE_CACHE_TAG', 'cachedcpmresponse'),
 ];

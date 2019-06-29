@@ -57,4 +57,4 @@ php artisan deploy:post
 
 # Clear response cache
 # CAUTION: This command will log users out
-php artisan responsecache:clear
+php artisan user-cache:clear
