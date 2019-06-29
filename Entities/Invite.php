@@ -7,8 +7,6 @@
 namespace CircleLinkHealth\Customer\Entities;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Prettus\Repository\Contracts\Transformable;
-use Prettus\Repository\Traits\TransformableTrait;
 
 /**
  * CircleLinkHealth\Customer\Entities\Invite.
@@ -49,10 +47,9 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Invite newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Invite query()
  */
-class Invite extends \CircleLinkHealth\Core\Entities\BaseModel implements Transformable
+class Invite extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use SoftDeletes;
-    use TransformableTrait;
 
     /**
      * The attributes that should be mutated to dates.
