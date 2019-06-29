@@ -30,24 +30,19 @@ class FlushUserCacheOnAnyRelatedModelChange
             $cacheTags[] = $this->getTagForUser($userId);
         }
 
-        if (empty($cacheTags)) {
-            foreach (\Redis::keys("*{$this->getCacheTag()}*") as $key) {
-                $id = explode(':', explode($this->getCacheTag(), $key)[1] ?? '')[0] ?? '';
-                
-                if (is_numeric($id)) {
-                    $cacheTags[] = $this->getTagForUser($id);
-                }
-            }
-        }
-
         if ( ! empty($cacheTags)) {
             $flushed = \Cache::tags($cacheTags)->flush();
+
+            return [
+                'success' => $flushed ?? empty($cacheTags),
+                'tags'    => $cacheTags ?? [],
+            ];
+        }
+        foreach (\Redis::keys('*responsecache*') as $key) {
+            $cacheTags[$key] = \Redis::del($key);
         }
 
-        return [
-            'success' => $flushed ?? empty($cacheTags),
-            'tags'    => $cacheTags ?? [],
-        ];
+        return $cacheTags ?? [];
     }
 
     public function flushCandidates()

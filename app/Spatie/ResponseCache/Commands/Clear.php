@@ -50,15 +50,27 @@ class Clear extends Command
             $this->info('Cleared following tags:');
         }
 
-        $this->info(implode(PHP_EOL, $output['tags']));
+        if (array_key_exists('success', $output)) {
+            $this->info(implode(PHP_EOL, $output['tags']));
 
-        if ($output['success']) {
-            $this->line('Caches cleared!');
-        } else {
-            $this->error('Caches NOT cleared');
+            if ($output['success']) {
+                $this->line('Caches cleared!');
+            } else {
+                $this->error('Caches NOT cleared');
+            }
+
+            return;
+        }
+
+        foreach ($output as $success => $tag) {
+            if ($success) {
+                $this->line($tag);
+            } else {
+                $this->warn($tag);
+            }
         }
     }
-    
+
     protected function getArguments()
     {
         return [
