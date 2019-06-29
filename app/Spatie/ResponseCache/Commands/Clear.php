@@ -62,7 +62,7 @@ class Clear extends Command
             return;
         }
 
-        foreach ($output as $success => $tag) {
+        foreach ($output as $tag => $success) {
             if ($success) {
                 $this->line($tag);
             } else {
