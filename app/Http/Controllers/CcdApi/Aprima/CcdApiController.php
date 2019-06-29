@@ -8,7 +8,6 @@ namespace App\Http\Controllers\CcdApi\Aprima;
 
 use App\CarePlan;
 use App\CLH\Repositories\CCDImporterRepository;
-use App\Contracts\Repositories\ActivityRepository;
 use App\Contracts\Repositories\AprimaCcdApiRepository;
 use App\Contracts\Repositories\CcdaRepository;
 use App\Contracts\Repositories\CcmTimeApiLogRepository;
@@ -22,12 +21,13 @@ use App\PatientReports;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\TimeTracking\Entities\Activity;
+use DB;
 use Illuminate\Http\Request;
 
 class CcdApiController extends Controller
 {
     use ValidatesQAImportOutput;
-    protected $activities;
 
     protected $api;
     protected $ccda;
@@ -36,19 +36,17 @@ class CcdApiController extends Controller
     private $users;
 
     public function __construct(
-        ActivityRepository $activityRepository,
         CCDImporterRepository $repo,
         CcdaRepository $ccdaRepository,
         CcmTimeApiLogRepository $ccmTime,
         AprimaCcdApiRepository $aprimaCcdApiRepository,
         UserRepository $users
     ) {
-        $this->activities = $activityRepository;
-        $this->ccda       = $ccdaRepository;
-        $this->ccmTime    = $ccmTime;
-        $this->api        = $aprimaCcdApiRepository;
-        $this->importer   = $repo;
-        $this->users      = $users;
+        $this->ccda     = $ccdaRepository;
+        $this->ccmTime  = $ccmTime;
+        $this->api      = $aprimaCcdApiRepository;
+        $this->importer = $repo;
+        $this->users    = $users;
     }
 
     public function getApiUserLocation($user)
@@ -62,6 +60,46 @@ class CcdApiController extends Controller
         }
 
         return $locationId;
+    }
+
+    /**
+     * Get all CCM Activities
+     * Query by ProviderId, PatientId and Dates
+     * Set sendAll to true to return all activities regardless of dates.
+     *
+     * @param $patientId
+     * @param $providerId
+     * @param $startDate
+     * @param $endDate
+     * @param bool $sendAll
+     *
+     * @return mixed
+     */
+    public function getCcmActivities($patientId, $providerId, $startDate, $endDate, $sendAll = false)
+    {
+        //Dynamically get all the tables' names since we'll probably change them soon
+        $activitiesTable = (new Activity())->getTable();
+        $userTable       = (new User())->getTable();
+
+        $activities = Activity::select(DB::raw("
+                ${activitiesTable}.id as id,
+                type as commentString,
+                duration as length,
+                duration_unit as lengthUnit,
+                ${userTable}.display_name as servicePerson,
+                ${activitiesTable}.performed_at as startingDateTime
+                "))
+            ->whereProviderId($providerId)
+            ->wherePatientId($patientId)
+            ->join($userTable, "${userTable}.id", '=', "${activitiesTable}.provider_id")
+            ->whereBetween("${activitiesTable}.performed_at", [
+                $startDate, $endDate,
+            ]);
+        if ( ! $sendAll) {
+            $activities->whereNotIn("${activitiesTable}.id", CcmTimeApiLog::pluck('activity_id')->all());
+        }
+
+        return $activities->get();
     }
 
     public function getCcmTime(Request $request)
@@ -90,7 +128,7 @@ class CcdApiController extends Controller
             ->getPatientAndProviderIdsByLocationAndForeignSystem($locationId, ForeignId::APRIMA);
 
         foreach ($patientAndProviderIds as $ids) {
-            $activities = $this->activities->getCcmActivities(
+            $activities = $this->getCcmActivities(
                 $ids->clhPatientUserId,
                 $ids->clhProviderUserId,
                 $startDate,

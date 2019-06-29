@@ -8,7 +8,6 @@ namespace App\Providers;
 
 use App\Contracts\HtmlToPdfService;
 use App\Contracts\ReportFormatter;
-use App\Contracts\Repositories\ActivityRepository;
 use App\Contracts\Repositories\AprimaCcdApiRepository;
 use App\Contracts\Repositories\CcdaRepository;
 use App\Contracts\Repositories\CcdaRequestRepository;
@@ -18,7 +17,6 @@ use App\Contracts\Repositories\LocationRepository;
 use App\Contracts\Repositories\PracticeRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\Formatters\WebixFormatter;
-use App\Repositories\ActivityRepositoryEloquent;
 use App\Repositories\AprimaCcdApiRepositoryEloquent;
 use App\Repositories\CcdaRepositoryEloquent;
 use App\Repositories\CcdaRequestRepositoryEloquent;
@@ -129,11 +127,6 @@ class AppServiceProvider extends ServiceProvider
                 return $this->app->make(SnappyPdfWrapper::class)
                     ->setTemporaryFolder(storage_path('tmp'));
             }
-        );
-
-        $this->app->bind(
-            ActivityRepository::class,
-            ActivityRepositoryEloquent::class
         );
 
         $this->app->bind(
