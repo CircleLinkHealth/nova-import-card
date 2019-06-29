@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 
-class ApiPatientController extends Controller
+class CcdProblemController extends Controller
 {
     /**
      * @var CcdProblemService
@@ -20,7 +20,7 @@ class ApiPatientController extends Controller
     protected $ccdProblemService;
 
     /**
-     * ApiPatientController constructor.
+     * CcdProblemController constructor.
      *
      * @param CcdProblemService $ccdProblemService
      */

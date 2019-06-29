@@ -16,18 +16,18 @@ Route::group(['prefix' => 'api'], function () {
             function () {
                 Route::prefix('problems')->group(
                     function () {
-                        Route::get('ccd', 'ApiPatientController@show')->middleware('permission:patientProblem.read');
+                        Route::get('ccd', 'CcdProblemController@show')->middleware('permission:patientProblem.read');
                         Route::post(
                             'ccd',
-                            'ApiPatientController@store'
+                            'CcdProblemController@store'
                         )->middleware('permission:patientProblem.create');
                         Route::put(
                             'ccd/{ccdProblemId}',
-                            'ApiPatientController@update'
+                            'CcdProblemController@update'
                         )->middleware('permission:patientProblem.update');
                         Route::delete(
                             'ccd/{ccdProblemId}',
-                            'ApiPatientController@destroy'
+                            'CcdProblemController@destroy'
                         )->middleware('permission:patientProblem.delete');
                     }
                 );
