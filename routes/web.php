@@ -1999,7 +1999,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     // CARE-CENTER GROUP
     Route::group([
-        'middleware' => ['permission:has-schedule'],
+        'middleware' => ['permission:has-schedule', 'doNotCacheResponse'],
         'prefix'     => 'care-center',
     ], function () {
         Route::resource('work-schedule', 'CareCenter\WorkScheduleController', [
