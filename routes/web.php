@@ -314,19 +314,6 @@ Route::group(['middleware' => 'auth'], function () {
                         'cpm/{cpmId}',
                         'PatientController@removeCpmProblem'
                     )->middleware('permission:instruction.delete,patientProblem.delete');
-                    Route::get('ccd', 'PatientController@getCcdProblems')->middleware('permission:patientProblem.read');
-                    Route::post(
-                        'ccd',
-                        'PatientController@addCcdProblem'
-                    )->middleware('permission:patientProblem.create');
-                    Route::put(
-                        'ccd/{ccdId}',
-                        'PatientController@editCcdProblem'
-                    )->middleware('permission:patientProblem.update');
-                    Route::delete(
-                        'ccd/{ccdId}',
-                        'PatientController@removeCcdProblem'
-                    )->middleware('permission:patientProblem.delete');
                 });
 
                 Route::group([
