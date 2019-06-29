@@ -25,7 +25,7 @@ class CpmMedicationRepository
     public function editPatientMedication(Medication $medication)
     {
         if ( ! $medication->id) {
-            throw new Exception('"id" is important');
+            throw new \Exception('"id" is important');
         }
         $medications = $this->model()->where(['id' => $medication->id]);
         $medications->update([

@@ -8,6 +8,7 @@ namespace App\Services\CPM;
 
 use App\Contracts\Services\CpmModel;
 use App\Models\CCD\Problem;
+use App\Models\CPM\CpmProblem;
 use App\Repositories\CpmProblemRepository;
 use CircleLinkHealth\Customer\Entities\User;
 
@@ -23,7 +24,7 @@ class CpmProblemService implements CpmModel
 
     public function all()
     {
-        $problems = $this->repo()->noDiabetesFilter()->get([
+        $problems = $this->noDiabetesFilter()->withLatestCpmInstruction()->withIcd10Codes()->get([
             'id',
             'name',
             'default_icd_10_code',
@@ -58,7 +59,7 @@ class CpmProblemService implements CpmModel
 
     public function problem($id)
     {
-        $problem = $this->repo()->model()->find($id);
+        $problem = CpmProblem::withLatestCpmInstruction()->withIcd10Codes()->find($id);
         if ($problem) {
             return $this->setupProblem($problem);
         }
@@ -68,17 +69,17 @@ class CpmProblemService implements CpmModel
 
     public function problems()
     {
-        $problems = $this->repo()->noDiabetesFilter()->paginate(30);
+        $problems = $this->noDiabetesFilter()->withLatestCpmInstruction()->withIcd10Codes()->paginate(30);
         $problems->getCollection()->transform(function ($value) {
             return $this->setupProblem($value);
         });
 
         return $problems;
     }
-
-    public function repo()
+    
+    public function noDiabetesFilter()
     {
-        return $this->problemRepo;
+        return CpmProblem::where('name', '!=', 'Diabetes');
     }
 
     public function setupProblem($p)
@@ -88,9 +89,10 @@ class CpmProblemService implements CpmModel
             'name'          => $p->name,
             'code'          => $p->default_icd_10_code,
             'is_behavioral' => $p->is_behavioral,
-            'instruction'   => $p->instruction(),
-            'snomeds'       => $p->snomedMaps()->where('icd_10_name', '!=', '')->groupBy('icd_10_name')
-                ->select(['icd_10_code', 'icd_10_name'])->get(),
+            'instruction'   => optional($p->cpmInstructions)->first(),
+            'snomeds'       => $p->snomedMaps->map(function ($snomed){
+                return ['icd_10_code' => $snomed->icd_10_code, 'icd_10_name' => $snomed->icd_10_name];
+            }),
         ];
     }
 

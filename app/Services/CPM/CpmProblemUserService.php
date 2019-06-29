@@ -8,7 +8,6 @@ namespace App\Services\CPM;
 
 use App\Models\CPM\CpmInstruction;
 use App\Repositories\CpmProblemUserRepository;
-use App\Repositories\UserRepositoryEloquent;
 use CircleLinkHealth\Customer\Entities\User;
 
 class CpmProblemUserService
@@ -24,20 +23,20 @@ class CpmProblemUserService
 
     public function addInstructionToProblem($patientId, $cpmProblemId, $instructionId)
     {
-        $cpmProblemUser = $this->repo()->where([
+        $cpmProblemUser = $this->cpmProblemUserRepo->where([
             'patient_id'         => $patientId,
             'cpm_problem_id'     => $cpmProblemId,
             'cpm_instruction_id' => $instructionId,
         ])->first();
         if ( ! $cpmProblemUser) {
-            return $this->repo()->create($patientId, $cpmProblemId, $instructionId);
+            return $this->cpmProblemUserRepo->create($patientId, $cpmProblemId, $instructionId);
         }
-        throw new Exception('a similar instruction->problem relationship already exists');
+        throw new \Exception('a similar instruction->problem relationship already exists');
     }
 
     public function addProblemToPatient($patientId, $cpmProblemId)
     {
-        $problemUser = $this->repo()->create($patientId, $cpmProblemId, null);
+        $problemUser = $this->cpmProblemUserRepo->create($patientId, $cpmProblemId, null);
         if ($problemUser) {
             return $this->cpmProblemService->setupProblem($problemUser->problems()->first());
         }
@@ -66,7 +65,7 @@ class CpmProblemUserService
 
     public function removeInstructionFromProblem($patientId, $cpmProblemId, $instructionId)
     {
-        $this->repo()->where([
+        $this->cpmProblemUserRepo->where([
             'patient_id'         => $patientId,
             'cpm_problem_id'     => $cpmProblemId,
             'cpm_instruction_id' => $instructionId,
@@ -75,11 +74,6 @@ class CpmProblemUserService
 
     public function removeProblemFromPatient($patientId, $cpmProblemId)
     {
-        return $this->repo()->remove($patientId, $cpmProblemId);
-    }
-
-    public function repo()
-    {
-        return $this->cpmProblemUserRepo;
+        return $this->cpmProblemUserRepo->remove($patientId, $cpmProblemId);
     }
 }

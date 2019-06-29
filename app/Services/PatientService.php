@@ -115,12 +115,6 @@ class PatientService
         return (new FromArray($filename, $rows, $headings))->download($filename);
     }
 
-    public function getCcdAllergies(
-        $userId
-    ) {
-        return $this->allergyService->patientAllergies($userId);
-    }
-
     public function getPatientByUserId(
         $userId
     ) {

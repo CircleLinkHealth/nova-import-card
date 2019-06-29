@@ -7,7 +7,6 @@
 namespace App\Services\CCD;
 
 use App\Repositories\CcdAllergyRepository;
-use App\Repositories\UserRepositoryEloquent;
 
 class CcdAllergyService
 {
@@ -20,8 +19,8 @@ class CcdAllergyService
 
     public function addPatientAllergy($userId, $name)
     {
-        if ( ! $this->repo()->patientAllergyExists($userId, $name)) {
-            return $this->setupAllergy($this->repo()->addPatientAllergy($userId, $name));
+        if ( ! $this->allergyRepo->patientAllergyExists($userId, $name)) {
+            return $this->setupAllergy($this->allergyRepo->addPatientAllergy($userId, $name));
         }
 
         return null;
@@ -29,7 +28,7 @@ class CcdAllergyService
 
     public function allergies()
     {
-        $allergies = $this->repo()->allergies();
+        $allergies = $this->allergyRepo->allergies();
         $allergies->getCollection()->transform(function ($value) {
             return $this->setupAllergy($value);
         });
@@ -39,7 +38,7 @@ class CcdAllergyService
 
     public function allergy($id)
     {
-        $allergy = $this->repo()->model()->find($id);
+        $allergy = $this->allergyRepo->model()->find($id);
         if ($allergy) {
             return $this->setupAllergy($allergy);
         }
@@ -49,12 +48,12 @@ class CcdAllergyService
 
     public function deletePatientAllergy($userId, $allergyId)
     {
-        return $this->repo()->deletePatientAllergy($userId, $allergyId);
+        return $this->allergyRepo->deletePatientAllergy($userId, $allergyId);
     }
 
     public function patientAllergies($userId)
     {
-        return $this->repo()->patientAllergies($userId)
+        return $this->allergyRepo->patientAllergies($userId)
             ->unique('allergen_name')
             ->values()
             ->map(function ($a) {
@@ -67,14 +66,9 @@ class CcdAllergyService
             });
     }
 
-    public function repo()
-    {
-        return $this->allergyRepo;
-    }
-
     public function searchAllergies($terms)
     {
-        return $this->repo()->searchAllergies($terms)->map(function ($a) {
+        return $this->allergyRepo->searchAllergies($terms)->map(function ($a) {
             return $this->setupAllergy($a);
         });
     }
@@ -87,9 +81,6 @@ class CcdAllergyService
                 'name'       => $a->allergen_name,
                 'created_at' => $a->created_at->format('c'),
                 'updated_at' => $a->updated_at->format('c'),
-                'patients'   => $this->repo()->patientIds($a->allergen_name)->map(function ($patient) {
-                    return $patient->patient_id;
-                }),
             ];
 
             return $allergy;

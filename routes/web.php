@@ -240,7 +240,6 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('ccd', 'ProblemController@ccdProblems')->middleware('permission:patientProblem.read');
             Route::get('cpm/{cpmId}', 'ProblemController@cpmProblem')->middleware('permission:patientProblem.read');
             Route::get('ccd/{ccdId}', 'ProblemController@ccdProblem')->middleware('permission:patientProblem.read');
-            Route::resource('', 'ProblemController')->middleware('permission:patientProblem.read');
 
             Route::group(['prefix' => 'codes'], function () {
                 Route::get('{id}', 'ProblemCodeController@show')->middleware('permission:patientProblem.read');
@@ -317,17 +316,6 @@ Route::group(['middleware' => 'auth'], function () {
                 });
 
                 Route::group([
-                    'prefix' => 'allergies',
-                ], function () {
-                    Route::get('', 'PatientController@getCcdAllergies')->middleware('permission:allergy.read');
-                    Route::post('', 'PatientController@addCcdAllergies')->middleware('permission:allergy.create');
-                    Route::delete(
-                        '{allergyId}',
-                        'PatientController@deleteCcdAllergy'
-                    )->middleware('permission:allergy.delete');
-                });
-
-                Route::group([
                     'prefix' => 'symptoms',
                 ], function () {
                     Route::get('', 'PatientController@getSymptoms')->middleware('permission:symptom.read');
@@ -370,7 +358,6 @@ Route::group(['middleware' => 'auth'], function () {
                 ], function () {
                     Route::get('', 'PatientController@getProviders')->middleware('permission:provider.read');
                     Route::post('', 'PatientController@addProvider')->middleware('permission:provider.create');
-                    Route::delete('{id}', 'PatientController@removeProvider')->middleware('permission:provider.delete');
                 });
             });
 

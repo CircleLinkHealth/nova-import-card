@@ -27,7 +27,7 @@ class CpmMiscService implements CpmModel
         if ($this->repo()->exists($miscId)) {
             return $this->cpmMiscUserRepo->addMiscToPatient($miscId, $userId);
         }
-        throw new Exception('misc with id "'.$miscId.'" does not exist');
+        throw new \Exception('misc with id "'.$miscId.'" does not exist');
     }
 
     public function editPatientMisc($userId, $miscId, $instructionId)

@@ -7,7 +7,6 @@
 namespace App\Http\Controllers;
 
 use App\Filters\PatientFilters;
-use App\Http\Controllers\Patient\Traits\AllergyTraits;
 use App\Http\Controllers\Patient\Traits\AppointmentTraits;
 use App\Http\Controllers\Patient\Traits\BiometricUserTraits;
 use App\Http\Controllers\Patient\Traits\CpmProblemUserTraits;
@@ -18,7 +17,6 @@ use App\Http\Controllers\Patient\Traits\NoteTraits;
 use App\Http\Controllers\Patient\Traits\ProviderInfoTraits;
 use App\Http\Controllers\Patient\Traits\SymptomTraits;
 use App\Services\AppointmentService;
-use App\Services\CCD\CcdAllergyService;
 use App\Services\CPM\CpmBiometricService;
 use App\Services\CPM\CpmLifestyleService;
 use App\Services\CPM\CpmMedicationGroupService;
@@ -33,8 +31,6 @@ use Illuminate\Http\Request;
 
 class PatientController extends Controller
 {
-    use
-        AllergyTraits;
     use
         AppointmentTraits;
     use
@@ -52,7 +48,6 @@ class PatientController extends Controller
     use ProviderInfoTraits;
     use
         SymptomTraits;
-    private $allergyService;
     private $appointmentService;
     private $biometricUserService;
     private $cpmProblemUserService;
@@ -73,7 +68,6 @@ class PatientController extends Controller
         PatientService $patientService,
         ProviderInfoService $providerService,
         AppointmentService $appointmentService,
-        CcdAllergyService $allergyService,
         CpmProblemUserService $cpmProblemUserService,
         CpmBiometricService $biometricUserService,
         CpmMedicationService $medicationService,
@@ -86,7 +80,6 @@ class PatientController extends Controller
         $this->patientService         = $patientService;
         $this->providerService        = $providerService;
         $this->appointmentService     = $appointmentService;
-        $this->allergyService         = $allergyService;
         $this->cpmProblemUserService  = $cpmProblemUserService;
         $this->biometricUserService   = $biometricUserService;
         $this->medicationService      = $medicationService;

@@ -7,7 +7,6 @@
 namespace App\Formatters;
 
 use App\Contracts\ReportFormatter;
-use App\Models\CCD\Allergy;
 use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmMisc;
 use App\Note;
@@ -228,12 +227,15 @@ class WebixFormatter implements ReportFormatter
 
         foreach ($users as $user) {
             $user->loadMissing([
+                'carePlan',
+                'ccdInsurancePolicies',
+                'ccdAllergies',
+                'ccdMedications',
                 'cpmSymptoms',
                 'cpmProblems',
                 'cpmLifestyles',
                 'cpmBiometrics',
                 'cpmMedicationGroups',
-                'ccdMedications',
             ]);
             $careplanReport[$user->id] = [
                 'symptoms'    => $user->cpmSymptoms->pluck('name')->all(),
@@ -357,13 +359,12 @@ class WebixFormatter implements ReportFormatter
         //Allergies
         $careplanReport[$user->id]['allergies'] = 'No instructions at this time';
 
-        $allergies = Allergy::where('patient_id', '=', $user->id)
-            ->orderBy('allergen_name')
-            ->get()
+        $allergies = $user->ccdAllergies
+            ->sortBy('allergen_name')
             ->unique('allergen_name')
             ->values();
 
-        if ($allergies->count() > 0) {
+        if ($allergies->isNotEmpty()) {
             $careplanReport[$user->id]['allergies'] = '';
             $i                                      = 0;
             foreach ($allergies as $allergy) {

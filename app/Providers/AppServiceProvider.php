@@ -25,6 +25,8 @@ use Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
+    protected $defer = true;
+    
     /**
      * Bootstrap any application services.
      */
@@ -125,5 +127,13 @@ class AppServiceProvider extends ServiceProvider
             $this->app->register(DuskServiceProvider::class);
             $this->app->register(\JKocik\Laravel\Profiler\ServiceProvider::class);
         }
+    }
+    
+    public function provides()
+    {
+        return [
+            HtmlToPdfService::class,
+            ReportFormatter::class,
+        ];
     }
 }

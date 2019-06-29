@@ -784,6 +784,7 @@ class ReportsController extends Controller
         $patient = User::with([
             'carePlan',
             'ccdInsurancePolicies',
+            'ccdAllergies',
             'ccdMedications',
             'cpmSymptoms',
             'cpmProblems',
