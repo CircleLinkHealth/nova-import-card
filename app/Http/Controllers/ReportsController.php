@@ -772,16 +772,25 @@ class ReportsController extends Controller
     }
 
     public function viewPrintCareplan(
-        Request $request,
-        $patientId = false,
         CcdInsurancePolicyService $insurances,
-        CareplanService $careplanService
+        CareplanService $careplanService,
+        Request $request,
+        $patientId = false
     ) {
         if ( ! $patientId) {
             return 'Patient Not Found..';
         }
 
-        $patient = User::with('carePlan')->find($patientId);
+        $patient = User::with([
+            'carePlan',
+            'ccdInsurancePolicies',
+            'ccdMedications',
+            'cpmSymptoms',
+            'cpmProblems',
+            'cpmLifestyles',
+            'cpmBiometrics',
+            'cpmMedicationGroups',
+        ])->findOrFail($patientId);
 
         if (CarePlan::PDF == $patient->getCareplanMode()) {
             return redirect()->route('patient.pdf.careplan.print', ['patientId' => $patientId]);
@@ -799,26 +808,28 @@ class ReportsController extends Controller
 
         $recentSubmission = $request->input('recentSubmission') ?? false;
 
+        $args = [
+            'patient'                 => $patient,
+            'problems'                => $careplan[$patientId]['problems'],
+            'problemNames'            => $careplan[$patientId]['problem'],
+            'biometrics'              => $careplan[$patientId]['bio_data'],
+            'symptoms'                => $careplan[$patientId]['symptoms'],
+            'lifestyle'               => $careplan[$patientId]['lifestyle'],
+            'medications_monitor'     => $careplan[$patientId]['medications'],
+            'taking_medications'      => $careplan[$patientId]['taking_meds'],
+            'allergies'               => $careplan[$patientId]['allergies'],
+            'social'                  => $careplan[$patientId]['social'],
+            'appointments'            => $careplan[$patientId]['appointments'],
+            'other'                   => $careplan[$patientId]['other'],
+            'showInsuranceReviewFlag' => $showInsuranceReviewFlag,
+            'skippedAssessment'       => $skippedAssessment,
+            'recentSubmission'        => $recentSubmission,
+            'careplan'                => $careplanService->careplan($patientId),
+        ];
+
         return view(
             'wpUsers.patient.careplan.print',
-            [
-                'patient'                 => $patient,
-                'problems'                => $careplan[$patientId]['problems'],
-                'problemNames'            => $careplan[$patientId]['problem'],
-                'biometrics'              => $careplan[$patientId]['bio_data'],
-                'symptoms'                => $careplan[$patientId]['symptoms'],
-                'lifestyle'               => $careplan[$patientId]['lifestyle'],
-                'medications_monitor'     => $careplan[$patientId]['medications'],
-                'taking_medications'      => $careplan[$patientId]['taking_meds'],
-                'allergies'               => $careplan[$patientId]['allergies'],
-                'social'                  => $careplan[$patientId]['social'],
-                'appointments'            => $careplan[$patientId]['appointments'],
-                'other'                   => $careplan[$patientId]['other'],
-                'showInsuranceReviewFlag' => $showInsuranceReviewFlag,
-                'skippedAssessment'       => $skippedAssessment,
-                'recentSubmission'        => $recentSubmission,
-                'careplan'                => $careplanService->careplan($patientId),
-            ]
+            $args
         );
     }
 }
