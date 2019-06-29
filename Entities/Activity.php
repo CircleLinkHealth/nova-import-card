@@ -14,8 +14,6 @@ use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Traits\DateScopesTrait;
 use Illuminate\Support\Facades\DB;
-use Prettus\Repository\Contracts\Transformable;
-use Prettus\Repository\Traits\TransformableTrait;
 
 /**
  * CircleLinkHealth\TimeTracking\Entities\Activity.
@@ -82,10 +80,9 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\Activity
  *     whereIsBehavioral($value)
  */
-class Activity extends BaseModel implements Transformable
+class Activity extends BaseModel
 {
     use DateScopesTrait;
-    use TransformableTrait;
 
     protected $appends = ['performed_at_year_month'];
 
