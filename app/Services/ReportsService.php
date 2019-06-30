@@ -7,7 +7,6 @@
 namespace App\Services;
 
 use App\CarePlan;
-use App\Models\CCD\Problem;
 use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmMisc;
 use App\Services\CPM\CpmMiscService;
@@ -332,9 +331,11 @@ class ReportsService
             $careplanReport[$user->id]['bio_data'][$metric]['verb']     = $biometric_values['verb'];
         }
 
+        $miscService = app(CpmMiscService::class);
+
         //Medications List
         if ($user->cpmMiscs->where('name', CpmMisc::MEDICATION_LIST)->first()) {
-            $careplanReport[$user->id]['taking_meds'] = app(CpmMiscService::class)->getMiscWithInstructionsForUser(
+            $careplanReport[$user->id]['taking_meds'] = $miscService->getMiscWithInstructionsForUser(
                 $user,
                 CpmMisc::MEDICATION_LIST
             );
@@ -344,7 +345,7 @@ class ReportsService
 
         //Allergies
         if ($user->cpmMiscs->where('name', CpmMisc::MEDICATION_LIST)->first()) {
-            $careplanReport[$user->id]['allergies'] = app(CpmMiscService::class)->getMiscWithInstructionsForUser(
+            $careplanReport[$user->id]['allergies'] = $miscService->getMiscWithInstructionsForUser(
                 $user,
                 CpmMisc::ALLERGIES
             );
@@ -354,7 +355,7 @@ class ReportsService
 
         //Social Services
         if ($user->cpmMiscs->where('name', CpmMisc::SOCIAL_SERVICES)->first()) {
-            $careplanReport[$user->id]['social'] = app(CpmMiscService::class)->getMiscWithInstructionsForUser(
+            $careplanReport[$user->id]['social'] = $miscService->getMiscWithInstructionsForUser(
                 $user,
                 CpmMisc::SOCIAL_SERVICES
             );
@@ -364,7 +365,7 @@ class ReportsService
 
         //Other
         if ($user->cpmMiscs->where('name', CpmMisc::OTHER)->first()) {
-            $careplanReport[$user->id]['other'] = app(CpmMiscService::class)->getMiscWithInstructionsForUser(
+            $careplanReport[$user->id]['other'] = $miscService->getMiscWithInstructionsForUser(
                 $user,
                 CpmMisc::OTHER
             );
@@ -374,7 +375,7 @@ class ReportsService
 
         //Appointments
         if ($user->cpmMiscs->where('name', CpmMisc::APPOINTMENTS)->first()) {
-            $careplanReport[$user->id]['appointments'] = app(CpmMiscService::class)->getMiscWithInstructionsForUser(
+            $careplanReport[$user->id]['appointments'] = $miscService->getMiscWithInstructionsForUser(
                 $user,
                 CpmMisc::APPOINTMENTS
             );
