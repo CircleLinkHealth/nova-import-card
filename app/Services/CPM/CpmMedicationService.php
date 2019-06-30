@@ -6,9 +6,9 @@
 
 namespace App\Services\CPM;
 
-use App\CLH\Repositories\UserRepository;
 use App\Models\CCD\Medication;
 use App\Repositories\CpmMedicationRepository;
+use CircleLinkHealth\Customer\Entities\User;
 
 class CpmMedicationService
 {
@@ -36,7 +36,7 @@ class CpmMedicationService
         if ( ! $this->repo()->exists($medication->id)) {
             throw new \Exception('no medication exists with id "'.$medication->id.'"');
         }
-        if ($this->repo()->model()->find($medication->id)->patient_id != $medication->patient_id) {
+        if (Medication::find($medication->id)->patient_id != $medication->patient_id) {
             throw new \Exception('user with id "'.$medication->patient_id.'" does own medication with id "'.$medication->id.'"');
         }
 
@@ -45,7 +45,14 @@ class CpmMedicationService
 
     public function medications()
     {
-        return $this->repo()->model()->paginate();
+        return Medication::paginate();
+    }
+
+    public function patientMedicationPaginated(int $userId)
+    {
+        return Medication::where([
+            'patient_id' => $userId,
+        ])->paginate();
     }
 
     public function repo()

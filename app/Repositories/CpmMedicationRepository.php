@@ -48,13 +48,6 @@ class CpmMedicationRepository
         return app(Medication::class);
     }
 
-    public function patientMedication($userId)
-    {
-        return $this->model()->where([
-            'patient_id' => $userId,
-        ])->paginate();
-    }
-
     public function patientMedicationsList($userId, $onlyActive = false)
     {
         return $this

@@ -38,7 +38,7 @@ trait MedicationTraits
     public function getMedication($userId)
     {
         if ($userId) {
-            return $this->medicationService->repo()->patientMedication($userId);
+            return $this->medicationService->patientMedicationPaginated($userId);
         }
 
         return $this->badRequest('"userid" is important');
