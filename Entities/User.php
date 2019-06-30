@@ -29,6 +29,7 @@ use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmLifestyle;
 use App\Models\CPM\CpmMedicationGroup;
 use App\Models\CPM\CpmMisc;
+use App\Models\CPM\CpmMiscUser;
 use App\Models\CPM\CpmProblem;
 use App\Models\CPM\CpmSymptom;
 use App\Models\EmailSettings;
