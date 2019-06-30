@@ -25,28 +25,49 @@ class ProviderInfoService
                    );
     }
 
+    public function list()
+    {
+        $providers = ProviderInfo::whereHas('user', function ($q) {
+            $q->intersectPracticesWith(auth()->user());
+        })
+            ->select(['id', 'user_id', 'specialty'])
+            ->orderBy('id', 'desc')->with(['user' => function ($q) {
+                              $q->select(['id', 'display_name', 'address']);
+                          }])->get()->transform(function ($p) {
+                              return [
+                                  'id'        => $p->id,
+                                  'user_id'   => $p->user_id,
+                                  'specialty' => $p->specialty,
+                                  'name'      => trim(optional($p->user)->display_name ?? ''),
+                                  'address'   => optional($p->user)->address,
+                              ];
+                          });
+
+        return $providers;
+    }
+
+    public function provider($id)
+    {
+        $provider         = ProviderInfo::with('user.locations')->where(['user_id' => $id])->firstOrFail();
+        $providerUser     = $provider->user;
+        $provider['user'] = $this->setupProviderUser($providerUser);
+
+        return $provider;
+    }
+
     public function providers()
     {
         $providers = ProviderInfo::with('user')->orderBy('id', 'desc')->paginate();
         $providers->getCollection()->transform(function ($p) {
             $providerUser = $p->user;
             $p['user'] = $this->setupProviderUser($providerUser);
-        
+
             return $p;
         });
-    
+
         return $providers;
     }
-    
-    public function provider($id)
-    {
-        $provider         = ProviderInfo::with('user.locations')->where(['user_id' => $id])->firstOrFail();
-        $providerUser     = $provider->user;
-        $provider['user'] = $this->setupProviderUser($providerUser);
-        
-        return $provider;
-    }
-    
+
     public function setupProviderUser($providerUser)
     {
         return [
@@ -59,24 +80,5 @@ class ProviderInfoService
             'created_at'   => optional($providerUser->created_at)->format('c') ?? null,
             'updated_at'   => optional($providerUser->updated_at)->format('c') ?? null,
         ];
-    }
-    
-    public function list()
-    {
-        $providers = ProviderInfo::join('users', 'provider_info.user_id', '=', 'users.id')
-                          ->whereHas('user', function ($q) {
-                              $q->intersectPracticesWith(auth()->user());
-                          })
-                          ->orderBy('provider_info.id', 'desc')->with(['user'])->get()->map(function ($p) {
-                return [
-                    'id'        => $p->id,
-                    'user_id'   => $p->user_id,
-                    'specialty' => $p->specialty,
-                    'name'      => trim(optional($p->user)->display_name ?? ''),
-                    'address'   => optional($p->user)->address,
-                ];
-            });
-    
-        return $providers;
     }
 }
