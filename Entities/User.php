@@ -947,6 +947,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->withPivot('cpm_instruction_id')
             ->withTimestamps('created_at', 'updated_at');
     }
+    
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function cpmMiscUserPivot()
+    {
+        return $this->hasMany(CpmMiscUser::class, 'patient_id');
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
