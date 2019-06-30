@@ -52,13 +52,15 @@ class CpmProblemUserService
 
         $user->loadMissing(['cpmProblems']);
 
+        $instructions = CpmInstruction::findMany($user->cpmProblems->pluck('pivot.cpm_instruction_id')->all());
+
         return $user->cpmProblems
-            ->map(function ($p) {
+            ->map(function ($p) use ($instructions) {
                 return [
                     'id'          => $p->id,
                     'name'        => $p->name,
                     'code'        => $p->default_icd_10_code,
-                    'instruction' => CpmInstruction::find($p->pivot->cpm_instruction_id),
+                    'instruction' => $instructions->firstWhere('id', $p->pivot->cpm_instruction_id),
                 ];
             });
     }

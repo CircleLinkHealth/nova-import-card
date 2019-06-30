@@ -786,6 +786,10 @@ class ReportsController extends Controller
             'ccdInsurancePolicies',
             'ccdAllergies',
             'ccdMedications',
+            'ccdProblems.cpmInstruction',
+            'ccdProblems.codes',
+            'cpmMiscUserPivot.cpmInstruction',
+            'cpmMiscUserPivot.cpmMisc',
             'cpmSymptoms',
             'cpmProblems',
             'cpmLifestyles',
@@ -825,7 +829,7 @@ class ReportsController extends Controller
             'showInsuranceReviewFlag' => $showInsuranceReviewFlag,
             'skippedAssessment'       => $skippedAssessment,
             'recentSubmission'        => $recentSubmission,
-            'careplan'                => $careplanService->careplan($patientId),
+            'careplan'                => $careplanService->careplan($patient),
         ];
 
         return view(

@@ -231,7 +231,6 @@ class WebixFormatter implements ReportFormatter
                 'ccdInsurancePolicies',
                 'ccdAllergies',
                 'ccdMedications',
-                'cpmMiscs',
                 'cpmSymptoms',
                 'cpmProblems',
                 'cpmLifestyles',
@@ -383,7 +382,7 @@ class WebixFormatter implements ReportFormatter
         $miscService = app(CpmMiscService::class);
 
         //Social Services
-        if ($user->cpmMiscs->where('name', CpmMisc::SOCIAL_SERVICES)->first()) {
+        if ($user->cpmMiscUserPivot->where('cpmMisc.name', CpmMisc::SOCIAL_SERVICES)->first()) {
             $careplanReport[$user->id]['social'] = $miscService->getMiscWithInstructionsForUser(
                 $user,
                 CpmMisc::SOCIAL_SERVICES
@@ -393,7 +392,7 @@ class WebixFormatter implements ReportFormatter
         }
 
         //Other
-        if ($user->cpmMiscs->where('name', CpmMisc::OTHER)->first()) {
+        if ($user->cpmMiscUserPivot->where('cpmMisc.name', CpmMisc::OTHER)->first()) {
             $careplanReport[$user->id]['other'] = $miscService->getMiscWithInstructionsForUser(
                 $user,
                 CpmMisc::OTHER

@@ -49,12 +49,17 @@ class CpmProblemService implements CpmModel
     public function getProblemsWithInstructionsForUser(User $user)
     {
         $user->loadMissing('ccdProblems.cpmInstruction', 'ccdProblems.cpmProblem');
-        
-        $instructions = $user->ccdProblems->where('cpm_problem_id', '!=', null)->unique('cpm_problem_id')->sortBy('cpmProblem.name')->mapWithKeys(function ($problem){
-            return [$problem->cpmProblem->name => $problem->cpmInstruction->name];
+
+        $instructions = $user->ccdProblems->where('cpm_problem_id', '!=', null)->unique('cpm_problem_id')->sortBy('cpmProblem.name')->mapWithKeys(function ($problem) {
+            return [optional($problem->cpmProblem)->name => optional($problem->cpmInstruction)->name];
         });
-        
+
         return $instructions->all();
+    }
+
+    public function noDiabetesFilter()
+    {
+        return CpmProblem::where('name', '!=', 'Diabetes');
     }
 
     public function problem($id)
@@ -76,11 +81,6 @@ class CpmProblemService implements CpmModel
 
         return $problems;
     }
-    
-    public function noDiabetesFilter()
-    {
-        return CpmProblem::where('name', '!=', 'Diabetes');
-    }
 
     public function setupProblem($p)
     {
@@ -90,7 +90,7 @@ class CpmProblemService implements CpmModel
             'code'          => $p->default_icd_10_code,
             'is_behavioral' => $p->is_behavioral,
             'instruction'   => optional($p->cpmInstructions)->first(),
-            'snomeds'       => $p->snomedMaps->map(function ($snomed){
+            'snomeds'       => $p->snomedMaps->transform(function ($snomed) {
                 return ['icd_10_code' => $snomed->icd_10_code, 'icd_10_name' => $snomed->icd_10_name];
             }),
         ];

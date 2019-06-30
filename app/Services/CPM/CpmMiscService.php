@@ -37,11 +37,12 @@ class CpmMiscService implements CpmModel
 
     public function getMiscWithInstructionsForUser(User $user, $miscName)
     {
-        $misc = $user->cpmMiscs->where('name', $miscName)->first();
+        $user->loadMissing('cpmMiscUserPivot.cpmInstruction', 'cpmMiscUserPivot.cpmMisc');
+        $misc = $user->cpmMiscUserPivot->where('cpmMisc.name', $miscName)->first();
         //For the CPM Misc Item, extract the instruction and
         //store in a key value pair
         if ($misc) {
-            $instruction = \App\Models\CPM\CpmInstruction::find($misc->pivot->cpm_instruction_id);
+            $instruction = $misc->cpmInstruction;
         } else {
             return '';
         }
