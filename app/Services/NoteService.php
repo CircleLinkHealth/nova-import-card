@@ -54,7 +54,7 @@ class NoteService
                 $note->isTCM                = $isTCM;
                 $note->did_medication_recon = $did_medication_recon;
 
-                return $this->repo()->add($note);
+                return $this->noteRepo->add($note);
             }
 
             return $this->createNoteFromAssessment($this->assessmentRepo->editKeyTreatment(
@@ -143,7 +143,7 @@ class NoteService
             if ( ! $id) {
                 throw new \Exception('$id is required');
             }
-            $note = $this->repo()->model()->find($id);
+            $note = Note::find($id);
             if ($note->patient_id != $userId) {
                 throw new \Exception('Note with id "'.$id.'" does not belong to patient with id "'.$userId.'"');
             }
@@ -162,10 +162,29 @@ class NoteService
                 $note->summary = $summary;
             }
 
-            return $this->repo()->edit($note);
+            return $this->noteRepo->edit($note);
         }
 
         return $this->createNoteFromAssessment($this->assessmentRepo->editKeyTreatment($userId, $authorId, $body));
+    }
+
+    /**
+     * Forward the note.
+     *
+     * Force forwards to CareTeam if the patient's in the hospital, ie `if(true === note->isTCM)`
+     *
+     * @param Note $note
+     * @param bool $notifyCareTeam
+     * @param bool $notifyCLH
+     * @param bool $forceNotify
+     */
+    public function forwardNoteIfYouMust(Note $note, $notifyCareTeam = false, $notifyCLH = false, $forceNotify = false)
+    {
+        if ($note->isTCM) {
+            $notifyCareTeam = $forceNotify = true;
+        }
+
+        return $note->forward($notifyCareTeam, $notifyCLH, $forceNotify);
     }
 
     public function getAllForwardedNotesWithRange(
@@ -352,12 +371,7 @@ class NoteService
 
     public function patientNotes($userId, NoteFilters $filters)
     {
-        return $this->repo()->patientNotes($userId, $filters);
-    }
-
-    public function repo()
-    {
-        return $this->noteRepo;
+        return $this->noteRepo->patientNotes($userId, $filters);
     }
 
     public function storeCallForNote(
@@ -405,33 +419,6 @@ class NoteService
 
             'is_cpm_outbound' => $isCpmOutbound,
         ]);
-    }
-
-    public function storeNote($input)
-    {
-        $note = Note::create($input);
-
-        $notifyCareTeam = $input['notify_careteam'] ?? false;
-        $notifyCLH      = $input['notify_circlelink_support'] ?? false;
-        $forceNotify    = false;
-
-        if ( ! empty($input['tcm']) && 'true' === $input['tcm']) {
-            $notifyCareTeam = $forceNotify = $note->isTCM = true;
-        } else {
-            $note->isTCM = false;
-        }
-
-        if ( ! empty($input['medication_recon']) && 'medication_recon' === $input['tcm']) {
-            $note->did_medication_recon = true;
-        } else {
-            $note->did_medication_recon = false;
-        }
-
-        $note->save();
-
-        $note->forward($notifyCareTeam, $notifyCLH, $forceNotify);
-
-        return $note;
     }
 
     public function tags(Note $note)
