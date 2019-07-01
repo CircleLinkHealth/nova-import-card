@@ -7,10 +7,12 @@
 namespace App\Providers;
 
 use App\Events\CarePlanWasApproved;
+use App\Events\NoteFinalSaved;
 use App\Events\PdfableCreated;
 use App\Events\UpdateUserLoginInfo;
 use App\Events\UpdateUserSessionInfo;
 use App\Listeners\CreateAndHandlePdfReport;
+use App\Listeners\ForwardNote;
 use App\Listeners\LogFailedNotification;
 use App\Listeners\PatientContactWindowUpdated;
 use App\Listeners\UpdateCarePlanStatus;
@@ -47,6 +49,9 @@ class CpmEventServiceProvider extends ServiceProvider
             UserLoggedOut::class,
         ],
         MessageSending::class => [
+        ],
+        NoteFinalSaved::class => [
+            ForwardNote::class,
         ],
         NotificationFailed::class => [
             LogFailedNotification::class,
