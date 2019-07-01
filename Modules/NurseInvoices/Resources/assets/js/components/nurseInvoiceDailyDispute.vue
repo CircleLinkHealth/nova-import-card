@@ -90,7 +90,11 @@
             handleDelete() {
                 this.disputeRequestedTime = false;
                 this.strikethroughTime = false;
-                //    @todo:connect to back end
+
+                axios.delete(`/nurseinvoices/delete-dispute/${this.invoiceId}/${this.disputedDay}`, {
+                    'invoiceId': this.invoiceId,
+                    'disputedDay': this.disputedDay,
+                })
             },
             dismiss() {
                 this.editButtonActive = false;

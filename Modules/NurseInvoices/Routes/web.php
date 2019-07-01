@@ -21,6 +21,11 @@ Route::prefix('nurseinvoices')->middleware(['auth'])->group(function () {
             'as'   => 'care.center.invoice.daily.dispute',
         ]);
 
+        Route::delete('delete-dispute/{invoiceId}/{disputedDay}', [
+            'uses' => 'NurseInvoiceDailyDisputesController@deleteDispute',
+            'as'   => 'care.center.delete.invoice.daily.dispute',
+        ]);
+
         Route::post('approve', [
             'uses' => 'InvoiceReviewController@approveInvoice',
             'as'   => 'care.center.invoice.approve',
