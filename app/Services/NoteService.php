@@ -168,6 +168,14 @@ class NoteService
         return $this->createNoteFromAssessment($this->assessmentRepo->editKeyTreatment($userId, $authorId, $body));
     }
 
+    /**
+     * Forward the note.
+     *
+     * @param Note $note
+     * @param bool $notifyCareTeam
+     * @param bool $notifyCLH
+     * @param bool $forceNotify
+     */
     public function forwardNoteIfYouMust(Note $note, $notifyCareTeam = false, $notifyCLH = false, $forceNotify = false)
     {
         if ($note->isTCM) {
@@ -414,11 +422,6 @@ class NoteService
 
             'is_cpm_outbound' => $isCpmOutbound,
         ]);
-    }
-
-    public function storeNote($input)
-    {
-        return Note::create($input);
     }
 
     public function tags(Note $note)

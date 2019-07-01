@@ -454,7 +454,7 @@ class NotesController extends Controller
 
             $note = $this->service->editNote($note, $input);
         } else {
-            $note = $this->service->storeNote($input);
+            $note = Note::create($input);
         }
 
         $info = $this->updatePatientInfo($patient, $input);
@@ -714,7 +714,7 @@ class NotesController extends Controller
             $note = $this->service->editNote($note, $input);
         } else {
             $input['status'] = 'draft';
-            $note            = $this->service->storeNote($input);
+            $note            = Note::create($input);
         }
 
         return response()->json(['message' => 'success', 'note_id' => $note->id]);
