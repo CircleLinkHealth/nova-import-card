@@ -101,14 +101,7 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
 
     //define sources here
     const ATHENA_API = 'athena_api';
-
-    const EMAIL_DOMAIN_TO_VENDOR_MAP = [
-        //Carolina Medical Associates
-        '@direct.novanthealth.org'        => 10,
-        '@test.directproject.net'         => 14,
-        '@direct.welltrackone.com'        => 14,
-        '@treatrelease.direct.aprima.com' => 1,
-    ];
+    
     const EMR_DIRECT   = 'emr_direct';
     const GOOGLE_DRIVE = 'google_drive';
     const IMPORTER     = 'importer';

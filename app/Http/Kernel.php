@@ -8,7 +8,6 @@ namespace App\Http;
 
 use App\Http\Middleware\ACL\ProviderDashboardACL;
 use App\Http\Middleware\AddResponseOriginal;
-use App\Http\Middleware\AprimaCcdApiAuthAdapter;
 use App\Http\Middleware\CheckCarePlanMode;
 use App\Http\Middleware\CheckForMaintenanceMode;
 use App\Http\Middleware\CheckOnboardingInvite;
@@ -93,16 +92,15 @@ class Kernel extends HttpKernel
         'throttle'   => ThrottleRequests::class,
 
         //CLH Middleware
-        'ability'                    => CerberusAbility::class,
-        'aprima.ccdapi.auth.adapter' => AprimaCcdApiAuthAdapter::class,
-        'permission'                 => CerberusPermission::class,
-        'patientProgramSecurity'     => PatientProgramSecurity::class,
-        'checkWebSocketServer'       => CheckWebSocketServer::class,
-        'providerDashboardACL'       => ProviderDashboardACL::class,
-        'role'                       => CerberusRole::class,
-        'verify.invite'              => CheckOnboardingInvite::class,
-        'check.careplan.mode'        => CheckCarePlanMode::class,
-        'doNotCacheResponse'         => DoNotCacheResponse::class,
-        'cacheResponse'              => CacheResponse::class,
+        'ability'                => CerberusAbility::class,
+        'permission'             => CerberusPermission::class,
+        'patientProgramSecurity' => PatientProgramSecurity::class,
+        'checkWebSocketServer'   => CheckWebSocketServer::class,
+        'providerDashboardACL'   => ProviderDashboardACL::class,
+        'role'                   => CerberusRole::class,
+        'verify.invite'          => CheckOnboardingInvite::class,
+        'check.careplan.mode'    => CheckCarePlanMode::class,
+        'doNotCacheResponse'     => DoNotCacheResponse::class,
+        'cacheResponse'          => CacheResponse::class,
     ];
 }
