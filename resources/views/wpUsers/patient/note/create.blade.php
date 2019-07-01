@@ -458,7 +458,7 @@
                                                 <button name="Submit" id="Submit" type="submit" value="Submit"
                                                         form="newNote"
                                                         class="btn btn-primary btn-lg form-item--button form-item-spacing">
-                                                    Save/Send Note
+                                                    Save Note
                                                 </button>
                                             </div>
                                         </div>
