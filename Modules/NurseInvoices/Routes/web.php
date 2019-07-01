@@ -16,6 +16,11 @@ Route::prefix('nurseinvoices')->middleware(['auth'])->group(function () {
             'as'   => 'care.center.invoice.dispute',
         ]);
 
+        Route::post('daily-dispute', [
+            'uses' => 'NurseInvoiceDailyDisputesController@storeSuggestedWorkTime',
+            'as'   => 'care.center.invoice.daily.dispute',
+        ]);
+
         Route::post('approve', [
             'uses' => 'InvoiceReviewController@approveInvoice',
             'as'   => 'care.center.invoice.approve',

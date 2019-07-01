@@ -5,7 +5,7 @@
        </span>
 
         <span v-show="disputeRequestedTime"
-        class="dispute-requested-time">
+              class="dispute-requested-time">
             {{this.requestedTime}}
         </span>
 
@@ -19,9 +19,10 @@
         <span v-show="showDisputeBox"
               aria-hidden="true"
               class="dispute-box">
-            <input type="text"
-                   class="text-box"
-                   v-model="requestedTime">
+                        <input type="text"
+                               class="text-box"
+                               placeholder="hh:mm"
+                               v-model="requestedTime">
 
             <span class="save"
                   @click="saveDispute">
@@ -47,7 +48,11 @@
 
 <script>
     export default {
-        props: ['invoiceData'],
+        props: [
+            'invoiceData',
+            'invoiceId',
+            'disputedDay'
+        ],
         name: "nurseInvoiceDailyDispute",
 
         data() {
@@ -56,16 +61,14 @@
                 deleteButtonActive: false,
                 showDisputeBox: false,
                 formattedTime: this.invoiceData.formatted_time,
-                //    @todo:connect to back end
                 requestedTime: '',
                 disputeRequestedTime: false,
-                strikethroughTime:false,
+                strikethroughTime: false,
             }
         },
 
-        computed:{
+        computed: {},
 
-        },
 
         methods: {
             mouseOver() {
@@ -87,28 +90,53 @@
             handleDelete() {
                 this.disputeRequestedTime = false;
                 this.strikethroughTime = false;
-            //    @todo:connect to back end
+                //    @todo:connect to back end
             },
             dismiss() {
                 this.editButtonActive = false;
                 this.showDisputeBox = false;
 
-                if (!this.disputeRequestedTime){
+                if (!this.disputeRequestedTime) {
                     this.deleteButtonActive = false;
                 }
             },
-
             saveDispute() {
-                //    @todo:connect to back end
-                if (this.requestedTime.length !== 0){
-                    this.disputeRequestedTime = true;
-                    this.strikethroughTime = true;
-                    this.dismiss();
+                //    @todo:add loader
+                if (this.requestedTime.length !== 0) {
+                    axios.post('/nurseinvoices/daily-dispute', {
+                        invoiceId: this.invoiceId,
+                        suggestedFormattedTime: this.requestedTime,
+                        disputedFormattedTime: this.formattedTime,
+                        disputedDay: this.disputedDay,
+                    })
+                        .then((response) => {
+                            console.log(response.data);
+                            this.disputeRequestedTime = true;
+                            this.strikethroughTime = true;
+                            this.dismiss();
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                            if (error.response && error.response.status === 404) {
+                                this.error = "Not Found [404]";
+                            } else if (error.response && error.response.status === 419) {
+                                this.error = "Not Authenticated [419]";
+                            } else if (error.response && error.response.data) {
+                                const errors = [error.response.data.message];
+                                Object.keys(error.response.data.errors || []).forEach(e => {
+                                    errors.push(error.response.data.errors[e]);
+                                });
+                                this.error = errors.join('<br/>');
+                            } else {
+                                this.error = error.message;
+                            }
+                        });
                 }
             },
-
         },
+
     }
+
 </script>
 
 <style scoped>
@@ -123,7 +151,7 @@
     }
 
     .dispute-box {
-        padding-left: 22%;
+        padding-left: 14%;
     }
 
     .dismiss {
@@ -137,15 +165,15 @@
     }
 
     .text-box {
-        max-width: 17%;
+        max-width: 24%;
     }
 
-    .strike{
+    .strike {
         text-decoration: line-through;
         color: #ff0000;
     }
 
-    .dispute-requested-time{
+    .dispute-requested-time {
         padding-left: 3%;
     }
 
