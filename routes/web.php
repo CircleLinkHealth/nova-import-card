@@ -31,7 +31,8 @@ Route::post('send-invitation-link', 'InvitationLinksController@createSendInvitat
 
 //this is a signed route
 Route::get('login-survey/{user}/{survey}', 'InvitationLinksController@surveyLoginForm')
-     ->name('loginSurvey');
+     ->name('loginSurvey')
+    ->middleware('signed');
 
 Route::post('survey-login', 'InvitationLinksController@surveyLoginAuth')
      ->name('surveyLoginAuth');
@@ -114,3 +115,6 @@ Route::group([
     Route::get('get-ppp-data/{userId}', 'PersonalizedPreventionPlanController@getPppDataForUser')
          ->name('getPppDataForUser');
 });
+
+Route::post('twilio/sms/status', 'TwilioController@smsStatusCallback')
+    ->name('twilio.sms.status');

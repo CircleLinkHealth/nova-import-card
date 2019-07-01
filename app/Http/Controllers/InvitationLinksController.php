@@ -6,10 +6,10 @@ use App\Http\Requests\SurveyAuthLoginRequest;
 use App\InvitationLink;
 use App\Services\SurveyInvitationLinksService;
 use App\Services\SurveyService;
+use App\Services\TwilioClientService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Twilio\Exceptions\ConfigurationException;
-use Twilio\Rest\Client;
+use Twilio\Exceptions\TwilioException;
 
 
 class InvitationLinksController extends Controller
@@ -30,7 +30,7 @@ class InvitationLinksController extends Controller
         return view('invitationLink.enterPatientForm');
     }
 
-    public function createSendInvitationUrl(Request $request)
+    public function createSendInvitationUrl(Request $request, TwilioClientService $twilioClientService)
     {
         //@todo:should validate using more conditions
         $validator = Validator::make($request->all(), [
@@ -46,31 +46,31 @@ class InvitationLinksController extends Controller
         $userId      = $request->get('id');
         $url         = $this->service->createAndSaveUrl($userId);
         $phoneNumber = $this->service->getPatientPhoneNumberById($userId);
-        $this->sendSms($phoneNumber, $url);
 
-        return 'invitation has been sent';
+        //todo: need provider name
+        $resp = $this->sendSms($twilioClientService, '....', $phoneNumber, $url);
+
+        if ( ! $resp) {
+            return back()
+                ->withErrors(['message' => 'Could not send SMS'])
+                ->withInput();
+        }
+
+        return back()->with(['message' => 'success']);
     }
 
-    public function sendSms($phoneNumber, $url)
+    public function sendSms(TwilioClientService $twilioService, string $providerName, string $phoneNumber, string $url)
     {
-        $accountSid = env('TWILIO_SID');
-        $authToken  = env('TWILIO_TOKEN');
+        $text = "Dr $providerName has invited you to complete a survey! Please enroll here: $url";
 
         try {
-            $twilio = new Client($accountSid, $authToken);
-        } catch (ConfigurationException $e) {
-
+            $messageId = $twilioService->sendSMS($phoneNumber, $text);
+            //todo: save message id in db
+        } catch (TwilioException $e) {
+            return false;
         }
-        $message = $twilio->messages
-            ->create($phoneNumber,
-                //@todo get outgoing number
-                [
-                    "from" => "+1 646 759 2882",
-                    "body" => "Dr...... has invited you to complete a survey! Please enroll here:" . '' . $url,
-                ]
-            );
 
-        // print($message->sid);
+        return true;
     }
 
 
@@ -113,6 +113,7 @@ class InvitationLinksController extends Controller
 
         if ($isExpiredUrl || $urlUpdatedAt->diffInDays($today) > $expireRange) {
             $invitationLink->where('is_manually_expired', '=', 0)->update(['is_manually_expired' => true]);
+
             //fixme: should redirect
             return view('surveyUrlAuth.resendUrl', compact('userId'));
         }
