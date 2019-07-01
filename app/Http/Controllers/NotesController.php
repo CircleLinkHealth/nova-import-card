@@ -8,6 +8,7 @@ namespace App\Http\Controllers;
 
 use App\Call;
 use App\Contracts\ReportFormatter;
+use App\Events\NoteFinalSaved;
 use App\Http\Requests\NotesReport;
 use App\Note;
 use App\Repositories\PatientWriteRepository;
@@ -454,8 +455,14 @@ class NotesController extends Controller
 
             $note = $this->service->editNote($note, $input);
         } else {
-            $note = $this->service->storeNote($input);
+            $note = Note::create($input);
         }
+
+        event(new NoteFinalSaved($note, [
+            'notifyCareTeam' => $input['notify_careteam'] ?? false,
+            'notifyCLH'      => $input['notify_circlelink_support'] ?? false,
+            'forceNotify'    => false,
+        ]));
 
         $info = $this->updatePatientInfo($patient, $input);
         $this->updatePatientCallWindows($info, $input);
@@ -714,7 +721,7 @@ class NotesController extends Controller
             $note = $this->service->editNote($note, $input);
         } else {
             $input['status'] = 'draft';
-            $note            = $this->service->storeNote($input);
+            $note            = Note::create($input);
         }
 
         return response()->json(['message' => 'success', 'note_id' => $note->id]);
