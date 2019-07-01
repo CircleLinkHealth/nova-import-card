@@ -220,14 +220,6 @@ class RequiredRolesPermissionsSeeder extends Seeder
                 ],
             ],
             [
-                'name'         => 'aprima-api-location',
-                'display_name' => 'API Data Consumer and CCD Vendor.',
-                'description'  => 'This role is JUST FOR APRIMA! Is able to receive PDF Reports and CCM Time from our API. Is able to post CCDs to our API.',
-                'permissions'  => [
-                    'post-ccd-to-api',
-                ],
-            ],
-            [
                 'name'         => 'no-ccm-care-center',
                 'display_name' => 'Non CCM Care Center',
                 'description'  => 'Care Center',
