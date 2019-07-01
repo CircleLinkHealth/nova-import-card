@@ -111,10 +111,10 @@ class InvoiceReviewController extends Controller
 
     private function canBeDisputed(NurseInvoice $invoice, Carbon $deadline)
     {
-        if (! $invoice->month_year) {
+        if ( ! $invoice->month_year) {
             return false;
         }
-        
+
         return null === $invoice->dispute && ! $invoice->is_nurse_approved && Carbon::now()->lte($deadline) && Carbon::now()->gte($invoice->month_year->copy()->addMonth());
     }
 
