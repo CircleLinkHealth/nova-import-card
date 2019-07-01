@@ -35,7 +35,7 @@
     }
     ?>
 
-    @if(isset($user) && auth()->check() && !isset($isPdf) && auth()->user()->shouldShowLegacyBhiBannerFor($user))
+    @if(isset($user) && auth()->check() && !isset($isPdf) && auth()->user()->shouldShowBhiFlagFor($user))
         @include('partials.providerUI.bhi-notification-banner')
     @endif
 
