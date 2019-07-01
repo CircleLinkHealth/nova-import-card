@@ -54,6 +54,10 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
+        if ( ! $this->app->runningInConsole()) {
+            return;
+        }
+        
         $this->load(__DIR__.'/Commands');
 
         if ('local' == $this->app->environment()) {
@@ -70,6 +74,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        if ( ! isQueueWorkerEnv()) {
+            return;
+        }
+        
         $schedule->command('horizon:snapshot')->everyFiveMinutes()->onOneServer();
 
         $schedule->command(DetermineTargetPatientEligibility::class)

@@ -4,23 +4,6 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Providers\AuthyServiceProvider;
-use App\Providers\DirectMailServiceProvider;
-use App\Providers\EmailArrayValidatorServiceProvider;
-use App\Providers\FaxServiceProvider;
-use App\Providers\GoogleDriveServiceProvider;
-use App\Providers\NovaServiceProvider;
-use App\Providers\ObserversServiceProvider;
-use App\Providers\TwilioClientServiceProvider;
-use App\Providers\ViewComposerServiceProvider;
-use App\Spatie\ResponseCache\ResponseCacheServiceProvider;
-use App\View\Composers\FabComposer;
-use App\View\Composers\ProviderUITimerComposer;
-use App\View\Composers\SAAS\Admin\ManageInternalUser;
-use Carbon\Carbon;
-use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesServiceProvider;
-use CircleLinkHealth\Raygun\Providers\RaygunServiceProvider;
-
 return [
     /*
      * Configure the editor you want to use:
@@ -193,46 +176,21 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
 
-        // Application Service Providers...
-        RaygunServiceProvider::class,
-        ResponseCacheServiceProvider::class,
-        Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class,
-        Barryvdh\Snappy\ServiceProvider::class,
+        \App\Providers\RouteServiceProvider::class,
+        \App\Providers\AuthServiceProvider::class,
+        \App\Providers\CpmEventServiceProvider::class,
+        \App\Providers\ObserversServiceProvider::class,
+
+        CircleLinkHealth\Raygun\Providers\RaygunServiceProvider::class,
 
         App\Providers\AppServiceProvider::class,
-        App\Providers\AuthServiceProvider::class,
-        // App\Providers\BroadcastServiceProvider::class,
-        App\Providers\CpmEventServiceProvider::class,
-        App\Providers\RouteServiceProvider::class,
-        FaxServiceProvider::class,
-        DirectMailServiceProvider::class,
 
-        App\Providers\UserMetaParserHelpersServiceProvider::class,
-        App\Providers\StringManipulationServiceProvider::class,
+        App\Spatie\ResponseCache\ResponseCacheServiceProvider::class,
 
-        // CPM Providers
-        \Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
+        App\Providers\DirectMailServiceProvider::class,
+        App\Providers\FaxServiceProvider::class,
+        App\Providers\TwilioClientServiceProvider::class,
         \Collective\Html\HtmlServiceProvider::class,
-        \Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
-        \Maatwebsite\Excel\ExcelServiceProvider::class,
-        Yajra\DataTables\DataTablesServiceProvider::class,
-        Spatie\GoogleCalendar\GoogleCalendarServiceProvider::class,
-        ObserversServiceProvider::class,
-        ViewComposerServiceProvider::class,
-        ProviderUITimerComposer::class,
-        jeremykenedy\Slack\Laravel\ServiceProvider::class,
-        EmailArrayValidatorServiceProvider::class,
-        Propaganistas\LaravelPhone\PhoneServiceProvider::class,
-        Waavi\UrlShortener\UrlShortenerServiceProvider::class,
-        GoogleDriveServiceProvider::class,
-        ManageInternalUser::class,
-        FabComposer::class,
-        LynX39\LaraPdfMerger\PdfMergerServiceProvider::class,
-        AuthyServiceProvider::class,
-        PragmaRX\Health\ServiceProvider::class,
-        TwilioClientServiceProvider::class,
-        NovaServiceProvider::class,
-        NurseInvoicesServiceProvider::class,
     ],
 
     /*
@@ -253,7 +211,7 @@ return [
         'Auth'         => Illuminate\Support\Facades\Auth::class,
         'Blade'        => Illuminate\Support\Facades\Blade::class,
         'Cache'        => Illuminate\Support\Facades\Cache::class,
-        'Carbon'       => Carbon::class,
+        'Carbon'       => Carbon\Carbon::class,
         'Config'       => Illuminate\Support\Facades\Config::class,
         'Cookie'       => Illuminate\Support\Facades\Cookie::class,
         'Crypt'        => Illuminate\Support\Facades\Crypt::class,
@@ -288,11 +246,8 @@ return [
         'Form'           => \Collective\Html\FormFacade::class,
         'Html'           => \Collective\Html\HtmlFacade::class,
         'Image'          => \Barryvdh\Snappy\Facades\SnappyImage::class,
-        'JWTAuth'        => \Tymon\JWTAuth\Facades\JWTAuth::class,
-        'JWTFactory'     => \Tymon\JWTAuth\Facades\JWTFactory::class,
         'PdfMerger'      => LynX39\LaraPdfMerger\Facades\PdfMerger::class,
         'Slack'          => jeremykenedy\Slack\Laravel\Facade::class,
-        'GoogleCalendar' => Spatie\GoogleCalendar\GoogleCalendarFacade::class,
         'Swagger'        => L5Swagger\L5SwaggerServiceProvider::class,
         'UrlShortener'   => Waavi\UrlShortener\Facades\UrlShortener::class,
     ],

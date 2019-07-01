@@ -15,7 +15,6 @@ use App\Traits\Relationships\BelongsToPatientUser;
 use CircleLinkHealth\Customer\Entities\User;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
@@ -101,7 +100,7 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
 
     //define sources here
     const ATHENA_API = 'athena_api';
-    
+
     const EMR_DIRECT   = 'emr_direct';
     const GOOGLE_DRIVE = 'google_drive';
     const IMPORTER     = 'importer';

@@ -1288,9 +1288,6 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'get.paused.letters.file',
         ])->middleware('permission:careplan-pdf.create,careplan-pdf.read,patient.read');
 
-        // LOGGER
-        Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
-
         Route::get('nurses/windows', [
             'uses' => 'CareCenter\WorkScheduleController@getAllNurseSchedules',
             'as'   => 'get.admin.nurse.schedules',
