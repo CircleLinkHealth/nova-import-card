@@ -40,6 +40,22 @@ Route::post('resend-link/{user}', 'InvitationLinksController@resendUrl')
      ->name('resendUrl');
 
 Route::group([
+    'prefix'     => 'manage-patients',
+    'middleware' => ['auth'],
+], function () {
+
+    Route::get('', [
+        'uses' => 'PatientController@index',
+        'as'   => 'patient.list',
+    ]);
+
+    Route::get('list', [
+        'uses' => 'PatientController@getPatientList',
+        'as'   => 'patient.list.ajax',
+    ]);
+});
+
+Route::group([
     'prefix'     => 'survey',
     'middleware' => ['auth'],
 ], function () {

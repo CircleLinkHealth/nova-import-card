@@ -25,11 +25,13 @@ import VitalsSurvey from './components/VitalsSurvey';
 import VitalsSurveyNotAuthorized from './components/VitalsSurveyNotAuthorized';
 import VitalsSurveyWelcome from './components/VitalsSurveyWelcome';
 import SurveyQuestions from './components/SurveyQuestions';
+import PatientList from './components/PatientList';
 
 Vue.component('survey-questions', SurveyQuestions);
 Vue.component('vitals-survey', VitalsSurvey);
 Vue.component('vitals-survey-not-authorized', VitalsSurveyNotAuthorized);
 Vue.component('vitals-survey-welcome', VitalsSurveyWelcome);
+Vue.component('patient-list', PatientList);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

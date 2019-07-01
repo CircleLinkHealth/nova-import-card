@@ -465,3 +465,22 @@ When progress text and bar are in one line (col-sm screens)
     font-weight: normal;
     color: #1a1a1a;
 }
+
+.navbar {
+    background: linear-gradient(to right, #4fb2e2 0, #0170b5 100%);
+    color: #fff !important;
+    border-radius: 0;
+}
+
+a.navbar-title {
+    font-family: "Roboto Slab", Georgia, Times, "Times New Roman", serif;
+    font-weight: 300;
+    font-size: 24px;
+    color: #fafafa;
+    line-height: 0;
+    padding: 11px 11px 11px 0;
+}
+
+a.navbar-title:hover {
+    color: #fafafa;
+}
