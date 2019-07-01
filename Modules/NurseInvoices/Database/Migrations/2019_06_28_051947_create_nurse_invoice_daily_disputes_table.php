@@ -4,6 +4,8 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+namespace Modules\NurseInvoices\Database\Migrations;
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -29,7 +31,7 @@ class CreateNurseInvoiceDailyDisputesTable extends Migration
             $table->string('suggested_formatted_time')->nullable();
             $table->string('disputed_formatted_time')->nullable();
             $table->date('disputed_day')->nullable();
-            $table->enum('status', ['approved', 'rejected', 'pending'])->nullable();
+            $table->boolean('status')->nullable();
             $table->boolean('invalidated')->default(false);
             $table->timestamps();
 
