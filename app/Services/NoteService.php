@@ -168,6 +168,15 @@ class NoteService
         return $this->createNoteFromAssessment($this->assessmentRepo->editKeyTreatment($userId, $authorId, $body));
     }
 
+    public function forwardNoteIfYouMust(Note $note, $notifyCareTeam = false, $notifyCLH = false, $forceNotify = false)
+    {
+        if ($note->isTCM) {
+            $notifyCareTeam = $forceNotify = true;
+        }
+
+        return $note->forward($notifyCareTeam, $notifyCLH, $forceNotify);
+    }
+
     public function getAllForwardedNotesWithRange(
         Carbon $start,
         Carbon $end
@@ -409,29 +418,7 @@ class NoteService
 
     public function storeNote($input)
     {
-        $note = Note::create($input);
-
-        $notifyCareTeam = $input['notify_careteam'] ?? false;
-        $notifyCLH      = $input['notify_circlelink_support'] ?? false;
-        $forceNotify    = false;
-
-        if ( ! empty($input['tcm']) && 'true' === $input['tcm']) {
-            $notifyCareTeam = $forceNotify = $note->isTCM = true;
-        } else {
-            $note->isTCM = false;
-        }
-
-        if ( ! empty($input['medication_recon']) && 'medication_recon' === $input['tcm']) {
-            $note->did_medication_recon = true;
-        } else {
-            $note->did_medication_recon = false;
-        }
-
-        $note->save();
-
-        $note->forward($notifyCareTeam, $notifyCLH, $forceNotify);
-
-        return $note;
+        return Note::create($input);
     }
 
     public function tags(Note $note)
