@@ -54,7 +54,7 @@ class NoteService
                 $note->isTCM                = $isTCM;
                 $note->did_medication_recon = $did_medication_recon;
 
-                return $this->repo()->add($note);
+                return $this->noteRepo->add($note);
             }
 
             return $this->createNoteFromAssessment($this->assessmentRepo->editKeyTreatment(
@@ -143,7 +143,7 @@ class NoteService
             if ( ! $id) {
                 throw new Exception('$id is required');
             }
-            $note = $this->repo()->model()->find($id);
+            $note = Note::find($id);
             if ($note->patient_id != $userId) {
                 throw new Exception('Note with id "'.$id.'" does not belong to patient with id "'.$userId.'"');
             }
@@ -162,7 +162,7 @@ class NoteService
                 $note->summary = $summary;
             }
 
-            return $this->repo()->edit($note);
+            return $this->noteRepo->edit($note);
         }
 
         return $this->createNoteFromAssessment($this->assessmentRepo->editKeyTreatment($userId, $authorId, $body));
@@ -170,6 +170,8 @@ class NoteService
 
     /**
      * Forward the note.
+     *
+     * Force forwards to CareTeam if the patient's in the hospital, ie `if(true === note->isTCM)`
      *
      * @param Note $note
      * @param bool $notifyCareTeam
@@ -369,12 +371,7 @@ class NoteService
 
     public function patientNotes($userId, NoteFilters $filters)
     {
-        return $this->repo()->patientNotes($userId, $filters);
-    }
-
-    public function repo()
-    {
-        return $this->noteRepo;
+        return $this->noteRepo->patientNotes($userId, $filters);
     }
 
     public function storeCallForNote(
