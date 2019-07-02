@@ -4,10 +4,16 @@
            {{this.formattedTime}}
        </span>
 
-        <span v-show="disputeRequestedTime"
+        <span v-show="showLiveRequestedTime"
               class="dispute-requested-time">
-            {{this.requestedTime}}
+            {{this.liveRequestedTime}}
         </span>
+
+        <span v-show="!showLiveRequestedTime"
+              class="dispute-requested-time">
+            {{this.requestedTimeFromDb}}
+        </span>
+
 
         <span v-show="editButtonActive"
               @click="handleEdit()"
@@ -22,7 +28,7 @@
                         <input type="text"
                                class="text-box"
                                placeholder="hh:mm"
-                               v-model="requestedTime">
+                               v-model="liveRequestedTime">
 
             <span class="save"
                   @click="saveDispute">
@@ -37,7 +43,7 @@
             <i class="glyphicon glyphicon-remove"></i>
         </span>
 
-        <span v-show="deleteButtonActive && disputeRequestedTime"
+        <span v-show="showDeleteBtn"
               @click="handleDelete()"
               aria-hidden="true"
               class="delete-button">
@@ -61,22 +67,32 @@
                 deleteButtonActive: false,
                 showDisputeBox: false,
                 formattedTime: this.invoiceData.formatted_time,
-                requestedTime: '',
+                liveRequestedTime: '',
+                requestedTimeFromDb: this.invoiceData.suggestedTime,
                 disputeRequestedTime: false,
                 strikethroughTime: false,
             }
         },
 
-        computed: {},
+        computed: {
+            showLiveRequestedTime() {
+                const requestedTimeFromDbExists = this.requestedTimeFromDb === undefined;
+                return !!(this.liveRequestedTime || requestedTimeFromDbExists);
+            },
 
+            showDeleteBtn(){
+                return !! (this.disputeRequestedTime && this.deleteButtonActive)
+                    || (this.deleteButtonActive
+                    && this.showLiveRequestedTime === false)
+            }
+        },
 
         methods: {
             mouseOver() {
-                if (this.showDisputeBox === false) {
+                if (!this.showDisputeBox) {
                     this.editButtonActive = true;
                     this.deleteButtonActive = true;
                 }
-
             },
             mouseLeave() {
                 this.editButtonActive = false;
@@ -94,7 +110,7 @@
                     'day': this.day,
 
                 })
-                    .then((reposne) => {
+                    .then((resposne) => {
                         this.disputeRequestedTime = false;
                         this.strikethroughTime = false;
                     })
@@ -125,38 +141,40 @@
             },
             saveDispute() {
                 //    @todo:add loader
-                if (this.requestedTime.length !== 0) {
-                    axios.post('/nurseinvoices/daily-dispute', {
-                        invoiceId: this.invoiceId,
-                        suggestedFormattedTime: this.requestedTime,
-                        disputedFormattedTime: this.formattedTime,
-                        disputedDay: this.day,
+                axios.post('/nurseinvoices/daily-dispute', {
+                    invoiceId: this.invoiceId,
+                    suggestedFormattedTime: this.liveRequestedTime,
+                    disputedFormattedTime: this.formattedTime,
+                    disputedDay: this.day,
+                })
+                    .then((response) => {
+                        this.disputeRequestedTime = true;
+                        this.deleteButtonActive = true;
+                        this.strikethroughTime = true;
+                        this.dismiss();
                     })
-                        .then((response) => {
-                            this.disputeRequestedTime = true;
-                            this.strikethroughTime = true;
-                            this.dismiss();
-                        })
-                        .catch((error) => {
-                            console.log(error);
-                            if (error.response && error.response.status === 404) {
-                                this.error = "Not Found [404]";
-                            } else if (error.response && error.response.status === 419) {
-                                this.error = "Not Authenticated [419]";
-                            } else if (error.response && error.response.data) {
-                                const errors = [error.response.data.message];
-                                Object.keys(error.response.data.errors || []).forEach(e => {
-                                    errors.push(error.response.data.errors[e]);
-                                });
-                                this.error = errors.join('<br/>');
-                            } else {
-                                this.error = error.message;
-                            }
-                        });
-                }
+                    .catch((error) => {
+                        console.log(error);
+                        if (error.response && error.response.status === 404) {
+                            this.error = "Not Found [404]";
+                        } else if (error.response && error.response.status === 419) {
+                            this.error = "Not Authenticated [419]";
+                        } else if (error.response && error.response.data) {
+                            const errors = [error.response.data.message];
+                            Object.keys(error.response.data.errors || []).forEach(e => {
+                                errors.push(error.response.data.errors[e]);
+                            });
+                            this.error = errors.join('<br/>');
+                        } else {
+                            this.error = error.message;
+                        }
+                    });
             },
+
+
         },
-        created(){
+
+        created() {
 
         }
 
