@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('styles')
+@push('styles')
     <!-- Styles -->
     <style>
         html, body {
@@ -42,7 +42,7 @@
         }
 
     </style>
-@endsection
+@endpush
 
 @section('content')
     <div class="flex-center position-ref">

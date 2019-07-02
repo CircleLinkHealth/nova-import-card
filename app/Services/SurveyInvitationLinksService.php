@@ -30,11 +30,14 @@ class SurveyInvitationLinksService
 
         $surveyId = $survey->id;
 
-        $url = URL::signedRoute('loginSurvey',
+        //APP_URL must be set correctly in .env for this to work
+        $url = URL::signedRoute('auth.login.signed',
             [
-                'user_id'   => $userId,
-                'survey_id' => $surveyId,
-                'timestamp' => Carbon::now()->timestamp
+                'user'      => $userId,
+                'survey'    => $surveyId,
+
+                //added this so it will generate a new url every time
+                'timestamp' => Carbon::now()->timestamp,
             ]);
 
         $urlToken = $this->parseUrl($url);

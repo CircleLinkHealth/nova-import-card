@@ -22,7 +22,7 @@ class SendInvitationLinkUsingSMS extends Command
      *
      * @var string
      */
-    protected $description = 'Send SMS with invitation link to HRA';
+    protected $description = 'Send SMS with invitation link to HRA.';
 
     /**
      * Create a new command instance.
@@ -46,7 +46,7 @@ class SendInvitationLinkUsingSMS extends Command
     {
         $userId = $this->argument('userId');
 
-        $user   = User
+        $user = User
             ::with([
                 'phoneNumbers',
                 'surveyInstances' => function ($instance) {

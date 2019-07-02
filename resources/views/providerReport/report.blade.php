@@ -1,4 +1,4 @@
-@extends('surveysMaster')
+@extends('layouts.surveysMaster')
 @section('content')
     <link href="{{asset('css/providerReport.css')}}" rel="stylesheet">
     <div class="container report">

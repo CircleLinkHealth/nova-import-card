@@ -22,7 +22,7 @@
     <!-- Styles -->
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
 
-    @yield('styles')
+    @stack('styles')
 </head>
 <body>
 <div id="app">

@@ -24,21 +24,27 @@ Route::get('/home', 'HomeController@index')
      ->name('home');
 
 Route::get('enter-patient-form', 'InvitationLinksController@enterPatientForm')
-     ->name('enterPatientForm');
+     ->name('enter.patient.form');
 
-Route::post('send-invitation-link', 'InvitationLinksController@createSendInvitationUrl')
-     ->name('createSendInvitationUrl');
+Route::group([
+    'prefix' => 'auth',
+], function () {
 
-//this is a signed route
-Route::get('login-survey/{user}/{survey}', 'InvitationLinksController@surveyLoginForm')
-     ->name('loginSurvey')
-    ->middleware('signed');
+    Route::post('send-invitation-link', 'InvitationLinksController@createSendInvitationUrl')
+         ->name('auth.send.signed.url');
 
-Route::post('survey-login', 'InvitationLinksController@surveyLoginAuth')
-     ->name('surveyLoginAuth');
+    Route::post('resend-link/{user}', 'InvitationLinksController@resendUrl')
+         ->name('auth.resend.signed.url');
 
-Route::post('resend-link/{user}', 'InvitationLinksController@resendUrl')
-     ->name('resendUrl');
+    //this is a signed route
+    Route::get('login-survey/{user}/{survey}', 'InvitationLinksController@surveyLoginForm')
+         ->name('auth.login.signed')
+         ->middleware('signed');
+
+    Route::post('login-survey', 'InvitationLinksController@surveyLoginAuth')
+         ->name('auth.login.with.signed');
+
+});
 
 Route::group([
     'prefix'     => 'manage-patients',

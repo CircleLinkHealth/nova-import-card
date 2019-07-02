@@ -70,7 +70,7 @@ class TwilioClientService
      * @return string the message id
      * @throws TwilioException
      */
-    public function sendSMS(int $to, string $text)
+    public function sendSMS(string $to, string $text)
     {
         try {
 

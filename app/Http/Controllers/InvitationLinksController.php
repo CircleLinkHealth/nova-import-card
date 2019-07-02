@@ -7,6 +7,7 @@ use App\InvitationLink;
 use App\Services\SurveyInvitationLinksService;
 use App\Services\SurveyService;
 use App\Services\TwilioClientService;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Twilio\Exceptions\TwilioException;
@@ -78,7 +79,12 @@ class InvitationLinksController extends Controller
     {
         $urlWithToken = $request->getRequestUri();
 
-        return view('surveyUrlAuth.surveyLoginForm', compact('userId', 'urlWithToken'));
+        $user            = User::with(['primaryPractice', 'billingProvider'])->where('id', '=', $userId)->firstOrFail();
+        $practiceName = $user->getPrimaryPracticeName();
+        $doctorsLastName = $user->billingProviderUser()->display_name;
+
+        return view('surveyUrlAuth.surveyLoginForm',
+            compact('userId', 'urlWithToken', 'practiceName', 'doctorsLastName'));
     }
 
     public function resendUrl($userId)
