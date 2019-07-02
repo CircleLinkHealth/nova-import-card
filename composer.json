@@ -53,6 +53,10 @@
       "url": "git@github.com:CircleLinkHealth/module-core.git"
     },
     {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/laravel-responsecache.git"
+    },
+    {
       "type": "composer",
       "url": "https://packagist.org"
     },

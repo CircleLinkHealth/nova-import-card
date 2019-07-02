@@ -34,7 +34,7 @@ if ($keys = $redis->keys("*{$_SERVER['REQUEST_URI']}*")) {
 
         if ($r) {
             try {
-                return (new App\Spatie\ResponseCache\ResponseUnserializer())->unserialize($r)->send();
+                return (new Spatie\ResponseCache\ResponseSerializer())->unserialize($r)->send();
             } catch (Spatie\ResponseCache\Exceptions\CouldNotUnserialize $e) {
             }
         }

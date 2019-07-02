@@ -185,7 +185,7 @@ return [
 
         App\Providers\AppServiceProvider::class,
 
-        App\Spatie\ResponseCache\ResponseCacheServiceProvider::class,
+        Spatie\ResponseCache\ResponseCacheServiceProvider::class,
 
         App\Providers\DirectMailServiceProvider::class,
         App\Providers\FaxServiceProvider::class,
