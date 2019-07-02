@@ -22,6 +22,8 @@ use Queue;
 
 class AppServiceProvider extends ServiceProvider
 {
+    protected $defer = true;
+    
     /**
      * Bootstrap any application services.
      */
@@ -93,6 +95,15 @@ class AppServiceProvider extends ServiceProvider
         );
     }
 
+    public function provides()
+    {
+        return [
+            DevelopmentServiceProvider::class,
+            HtmlToPdfService::class,
+            ReportFormatter::class,
+        ];
+    }
+    
     /**
      * Register any application services.
      *

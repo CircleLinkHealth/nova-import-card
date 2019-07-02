@@ -4,6 +4,12 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+Route::group(['middleware' => ['auth', 'cacheResponse']], function () {
+    Route::get('profiles', 'API\ProfileController@index')->middleware(
+        ['permission:user.read,role.read', 'cacheResponse']
+    );
+});
+
 Route::post('send-sample-fax', 'DemoController@sendSampleEfaxNote');
 
 Route::post('/send-sample-direct-mail', 'DemoController@sendSampleEMRNote');
@@ -107,7 +113,7 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'report-writer.notify',
         ]);
     });
-
+    
     // API
     Route::group(['prefix' => 'api', 'middleware' => ['cacheResponse']], function () {
         Route::group(['prefix' => 'admin'], function () {
@@ -368,9 +374,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('records/delete', 'MedicalRecordImportController@deleteRecords');
         });
     });
-
-    Route::get('profiles', 'API\ProfileController@index')->middleware(['permission:user.read,role.read', 'cacheResponse']);
-
+    
     Route::get('user/{patientId}/care-plan', 'API\PatientCarePlanController@index')->middleware(['permission:careplan.read', 'cacheResponse']);
 
     Route::get('user/{user}/care-team', [
@@ -1132,7 +1136,8 @@ Route::group(['middleware' => 'auth'], function () {
             ])->middleware('permission:ccd-import');
         });
 
-        Route::resource('saas-accounts', 'Admin\CRUD\SaasAccountController')->middleware('permission:saas.create');
+        Route::get('saas-accounts/create', 'Admin\CRUD\SaasAccountController@create')->middleware('permission:saas.create');
+        Route::post('saas-accounts', 'Admin\CRUD\SaasAccountController@store')->middleware('permission:saas.create');
 
         Route::get(
             'eligible-lists/phoenix-heart',
@@ -1542,28 +1547,7 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => '\Lab404\Impersonate\Controllers\ImpersonateController@take',
             'as'   => 'impersonate',
         ]);
-
-        // appConfig
-        Route::group([
-            'middleware' => [
-                'permission:appConfig.read',
-            ],
-        ], function () {
-            Route::resource('appConfig', 'Admin\AppConfigController');
-        });
-
-        Route::group([
-        ], function () {
-            Route::post('appConfig/{id}/edit', [
-                'uses' => 'Admin\AppConfigController@update',
-                'as'   => 'admin.appConfig.update',
-            ])->middleware('permission:appConfig.update');
-            Route::get('appConfig/{id}/destroy', [
-                'uses' => 'Admin\AppConfigController@destroy',
-                'as'   => 'admin.appConfig.destroy',
-            ])->middleware('permission:appConfig.delete');
-        });
-
+        
         // users
         Route::group([
         ], function () {
@@ -1604,53 +1588,6 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('families/{id}/edit', [
                 'uses' => 'FamilyController@update',
                 'as'   => 'admin.families.update',
-            ]);
-        });
-
-        // roles
-        Route::group([
-            'middleware' => [
-                'permission:role.read',
-            ],
-        ], function () {
-            Route::resource(
-                'roles',
-                'Admin\RoleController'
-            )->middleware('permission:user.read,practice.read,location.read');
-        });
-
-        Route::group([
-        ], function () {
-            Route::post('roles/{id}/edit', [
-                'uses' => 'Admin\RoleController@update',
-                'as'   => 'admin.roles.update',
-            ])->middleware('permission:role.update');
-        });
-
-        // permissions
-        Route::group([
-        ], function () {
-            Route::resource(
-                'permissions',
-                'Admin\PermissionController'
-            )->middleware('permission:permission.read,permission.create,permission.update,permission.delete');
-        });
-        Route::get('roles-permissions', [
-            'uses' => 'Admin\PermissionController@makeRoleExcel',
-            'as'   => 'admin.permissions.makeRoleExcel',
-        ]);
-        Route::get('routes-permissions', [
-            'uses' => 'Admin\PermissionController@makeRouteExcel',
-            'as'   => 'admin.permissions.makeRouteExcel',
-        ]);
-        Route::group([
-            'middleware' => [
-                'permission:permission.update',
-            ],
-        ], function () {
-            Route::post('permissions/{id}/edit', [
-                'uses' => 'Admin\PermissionController@update',
-                'as'   => 'admin.permissions.update',
             ]);
         });
 

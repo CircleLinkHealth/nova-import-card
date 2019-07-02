@@ -155,22 +155,6 @@
                             </ul>
                         </li>
 
-                        @if(Cerberus::hasPermission('role.read'))
-                            <li role="presentation" class="dropdown">
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
-                                   aria-expanded="false">
-                                    Roles<span class="caret"></span>
-                                </a>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="{{ route('roles.index') }}">Roles</a></li>
-                                    @if(Cerberus::hasPermission('permission.read'))
-                                        <li><a href="{{ route('permissions.index') }}">Permissions</a>
-                                        </li>
-                                    @endif
-                                </ul>
-                            </li>
-                        @endif
-
                         <li role="presentation" class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                aria-expanded="false">
