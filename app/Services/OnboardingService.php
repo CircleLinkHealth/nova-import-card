@@ -6,10 +6,7 @@
 
 namespace App\Services;
 
-use App\Contracts\Repositories\InviteRepository;
-use App\Contracts\Repositories\LocationRepository;
-use App\Contracts\Repositories\PracticeRepository;
-use App\Facades\StringManipulation;
+use App\CLH\Helpers\StringManipulation;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
@@ -24,6 +21,21 @@ use Validator;
 
 class OnboardingService
 {
+    /**
+     * @var StringManipulation
+     */
+    protected $stringManipulation;
+    
+    /**
+     * OnboardingService constructor.
+     *
+     * @param StringManipulation $stringManipulation
+     */
+    public function __construct(StringManipulation $stringManipulation)
+    {
+        $this->stringManipulation = $stringManipulation;
+    }
+    
     /**
      * Gets existing locations, and outputs them on window.cpm.
      *
@@ -60,8 +72,8 @@ class OnboardingService
                     'postal_code'               => $loc->postal_code,
                     'state'                     => $loc->state,
                     'validated'                 => true,
-                    'phone'                     => StringManipulation::formatPhoneNumber($loc->phone),
-                    'fax'                       => StringManipulation::formatPhoneNumber($loc->fax),
+                    'phone'                     => $this->stringManipulation->formatPhoneNumber($loc->phone),
+                    'fax'                       => $this->stringManipulation->formatPhoneNumber($loc->fax),
                     'emr_direct_address'        => $loc->emr_direct_address,
                     'sameClinicalIssuesContact' => $primaryPractice->same_clinical_contact,
                     'sameEHRLogin'              => $primaryPractice->same_ehr_login,
@@ -229,8 +241,8 @@ class OnboardingService
                     $location = Location::update([
                             'practice_id'    => $primaryPractice->id,
                             'name'           => $newLocation['name'],
-                            'phone'          => StringManipulation::formatPhoneNumberE164($newLocation['phone']),
-                            'fax'            => StringManipulation::formatPhoneNumberE164($newLocation['fax']),
+                            'phone'          => $this->stringManipulation->formatPhoneNumberE164($newLocation['phone']),
+                            'fax'            => $this->stringManipulation->formatPhoneNumberE164($newLocation['fax']),
                             'address_line_1' => $newLocation['address_line_1'],
                             'address_line_2' => $newLocation['address_line_2'] ?? null,
                             'city'           => $newLocation['city'],
@@ -248,8 +260,8 @@ class OnboardingService
                     $args = [
                         'practice_id'    => $primaryPractice->id,
                         'name'           => $newLocation['name'],
-                        'phone'          => StringManipulation::formatPhoneNumberE164($newLocation['phone']),
-                        'fax'            => StringManipulation::formatPhoneNumberE164($newLocation['fax']),
+                        'phone'          => $this->stringManipulation->formatPhoneNumberE164($newLocation['phone']),
+                        'fax'            => $this->stringManipulation->formatPhoneNumberE164($newLocation['fax']),
                         'address_line_1' => $newLocation['address_line_1'],
                         'address_line_2' => $newLocation['address_line_2'],
                         'city'           => $newLocation['city'],

@@ -505,15 +505,19 @@ Route::group(['middleware' => 'auth'], function () {
         'uses' => 'API\CareTeamController@edit',
         'as'   => 'user.care-team.edit',
     ])->middleware(['permission:carePerson.read', 'cacheResponse']);
-
-    Route::resource(
-        'practice.locations',
-        'API\PracticeLocationsController'
-    )->middleware('permission:location.create,location.read,location.update,location.delete');
-    Route::get('practice/{practice}/locations', [
+    
+    Route::get('practice.locations', [
         'uses' => 'API\PracticeLocationsController@index',
         'as'   => 'practice.locations.index',
     ])->middleware('permission:location.read');
+    Route::delete('practice.locations', [
+        'uses' => 'API\PracticeLocationsController@destroy',
+        'as'   => 'practice.locations.destroy',
+    ])->middleware('permission:location.delete');
+    Route::get('practice.locations', [
+        'uses' => 'API\PracticeLocationsController@update',
+        'as'   => 'practice.locations.update',
+    ])->middleware('permission:location.create,location.update');
 
     Route::resource(
         'practice.users',

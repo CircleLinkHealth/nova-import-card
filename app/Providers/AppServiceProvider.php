@@ -22,8 +22,6 @@ use Queue;
 
 class AppServiceProvider extends ServiceProvider
 {
-    protected $defer = true;
-
     /**
      * Bootstrap any application services.
      */
@@ -93,16 +91,6 @@ class AppServiceProvider extends ServiceProvider
                 return $this->getQuery()->toRawSql();
             }
         );
-    }
-
-    public function provides()
-    {
-        return [
-            HtmlToPdfService::class,
-            ReportFormatter::class,
-            'JavaScript',
-            'snappy.pdf', 'snappy.pdf.wrapper', 'snappy.image', 'snappy.image.wrapper',
-        ];
     }
 
     /**

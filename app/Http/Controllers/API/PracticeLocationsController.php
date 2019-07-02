@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers\API;
 
-use App\CLH\Facades\StringManipulation;
+use App\CLH\Helpers\StringManipulation;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdatePracticeLocation;
 use CircleLinkHealth\Customer\Entities\CarePerson;
@@ -25,9 +25,9 @@ class PracticeLocationsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroy($practiceId, $locationId)
+    public function destroy($primaryPracticeId, $locationId)
     {
-        $loc = Location::find($locationId);
+        $loc = Location::wherePracticeId($primaryPracticeId)->find($locationId);
 
         if ($loc) {
             $loc->delete();
@@ -36,7 +36,7 @@ class PracticeLocationsController extends Controller
         return response()->json($loc);
     }
 
-    public function handleClinicalContact(array $clinicalContact, Practice $primaryPractice, Location $location)
+    private function handleClinicalContact(array $clinicalContact, Practice $primaryPractice, Location $location)
     {
         //clean up other contacts
         $location->clinicalEmergencyContact()->sync([]);
@@ -88,7 +88,7 @@ class PracticeLocationsController extends Controller
         return response()->json($existingLocations);
     }
 
-    public function present(Location $loc, Practice $primaryPractice)
+    private function present(Location $loc, Practice $primaryPractice)
     {
         $contactType = $loc->clinicalEmergencyContact->first()->pivot->name ?? null;
         $contactUser = $loc->clinicalEmergencyContact->first() ?? null;
@@ -111,9 +111,9 @@ class PracticeLocationsController extends Controller
             'postal_code'               => $loc->postal_code,
             'state'                     => $loc->state,
             'validated'                 => true,
-            'phone'                     => StringManipulation::formatPhoneNumber($loc->phone),
-            'clinical_escalation_phone' => StringManipulation::formatPhoneNumber($loc->clinical_escalation_phone),
-            'fax'                       => StringManipulation::formatPhoneNumber($loc->fax),
+            'phone'                     => (new StringManipulation())->formatPhoneNumber($loc->phone),
+            'clinical_escalation_phone' => (new StringManipulation())->formatPhoneNumber($loc->clinical_escalation_phone),
+            'fax'                       => (new StringManipulation())->formatPhoneNumber($loc->fax),
             'emr_direct_address'        => $loc->emr_direct_address,
             'sameClinicalIssuesContact' => $primaryPractice->same_clinical_contact,
             'sameEHRLogin'              => $primaryPractice->same_ehr_login,
@@ -146,9 +146,9 @@ class PracticeLocationsController extends Controller
         ], [
             'practice_id'               => $primaryPractice['id'],
             'name'                      => $formData['name'],
-            'phone'                     => StringManipulation::formatPhoneNumberE164($formData['phone']),
-            'clinical_escalation_phone' => StringManipulation::formatPhoneNumberE164($formData['clinical_escalation_phone']),
-            'fax'                       => StringManipulation::formatPhoneNumberE164($formData['fax']),
+            'phone'                     => (new StringManipulation())->formatPhoneNumberE164($formData['phone']),
+            'clinical_escalation_phone' => (new StringManipulation())->formatPhoneNumberE164($formData['clinical_escalation_phone']),
+            'fax'                       => (new StringManipulation())->formatPhoneNumberE164($formData['fax']),
             'address_line_1'            => $formData['address_line_1'],
             'address_line_2'            => $formData['address_line_2'] ?? null,
             'city'                      => $formData['city'],
