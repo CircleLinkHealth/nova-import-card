@@ -53,10 +53,6 @@
       "url": "git@github.com:CircleLinkHealth/module-core.git"
     },
     {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/laravel-responsecache.git"
-    },
-    {
       "type": "composer",
       "url": "https://packagist.org"
     },
@@ -121,7 +117,6 @@
     "sparclex/nova-import-card": "^2.0",
     "spatie/laravel-google-calendar": "^2.0",
     "spatie/laravel-medialibrary": "^7.0.0",
-    "spatie/laravel-responsecache": "^5.0",
     "spatie/laravel-view-models": "^1.1",
     "titasgailius/search-relations": "^1.0",
     "twilio/sdk": "5.7",
@@ -223,8 +218,7 @@
   "extra": {
     "laravel": {
       "dont-discover": [
-        "laravel/dusk",
-        "spatie/laravel-responsecache"
+        "laravel/dusk"
       ]
     },
     "merge-plugin": {

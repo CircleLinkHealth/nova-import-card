@@ -18,6 +18,8 @@ use App\Http\Middleware\PatientProgramSecurity;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Http\Middleware\TrustProxies;
 use App\Http\Middleware\VerifyCsrfToken;
+use CircleLinkHealth\ResponseCache\Middlewares\CacheResponse;
+use CircleLinkHealth\ResponseCache\Middlewares\DoNotCacheResponse;
 use CircleLinkHealth\TwoFA\Http\Middleware\AuthyMiddleware;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
@@ -33,8 +35,6 @@ use Laravel\Passport\Http\Middleware\CreateFreshApiToken;
 use Michalisantoniou6\Cerberus\Middleware\CerberusAbility;
 use Michalisantoniou6\Cerberus\Middleware\CerberusPermission;
 use Michalisantoniou6\Cerberus\Middleware\CerberusRole;
-use Spatie\ResponseCache\Middlewares\CacheResponse;
-use Spatie\ResponseCache\Middlewares\DoNotCacheResponse;
 
 class Kernel extends HttpKernel
 {

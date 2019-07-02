@@ -30,12 +30,12 @@ use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
 use App\Console\Commands\SendCarePlanApprovalReminders;
 use App\Console\Commands\TuneScheduledCalls;
-use Spatie\ResponseCache\Commands\Clear;
 use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendMonthlyNurseInvoiceLAN;
 use CircleLinkHealth\NurseInvoices\Console\SendMonthlyNurseInvoiceFAN;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
+use CircleLinkHealth\ResponseCache\Commands\Clear;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Jorijn\LaravelSecurityChecker\Console\SecurityMailCommand;
@@ -57,7 +57,7 @@ class Kernel extends ConsoleKernel
         if ( ! $this->app->runningInConsole()) {
             return;
         }
-        
+
         $this->load(__DIR__.'/Commands');
 
         if ('local' == $this->app->environment()) {
@@ -77,7 +77,7 @@ class Kernel extends ConsoleKernel
         if ( ! isQueueWorkerEnv()) {
             return;
         }
-        
+
         $schedule->command('horizon:snapshot')->everyFiveMinutes()->onOneServer();
 
         $schedule->command(DetermineTargetPatientEligibility::class)
