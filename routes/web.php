@@ -33,9 +33,6 @@ Route::group([
     Route::post('send-invitation-link', 'InvitationLinksController@createSendInvitationUrl')
          ->name('auth.send.signed.url');
 
-    Route::post('resend-link/{user}', 'InvitationLinksController@resendUrl')
-         ->name('auth.resend.signed.url');
-
     //this is a signed route
     Route::get('login-survey/{user}/{survey}', 'InvitationLinksController@surveyLoginForm')
          ->name('auth.login.signed')

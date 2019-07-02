@@ -1,7 +1,6 @@
 @extends('layouts.surveysMaster')
 @section('content')
     <div class="container main-container">
-
         <div class="survey-container">
             <div class="practice-title">
                 <div id="title">
@@ -20,22 +19,38 @@
                     Before we get started, we just need to verify your identity first.
                 </div>
 
-                <div style="margin-top: 20px;">
-                    <div class="form-group form-group-input">
-                        <label for="full-name" class="full-name">Full Name</label><br>
-                        <input type="text" name="name" style="width: 400px; height: 60px; border-radius: 5px;"
-                               placeholder="Full Name" required>
+                <form method="POST" action="{{route('auth.login.with.signed')}}">
+                    {{csrf_field()}}
+                    <div style="margin-top: 20px;">
+                        <div class="form-group form-group-input">
+                            <label for="full-name" class="full-name">Full Name</label><br>
+                            <input type="text" name="name" style="width: 400px; height: 60px; border-radius: 5px;"
+                                   placeholder="Full Name" required>
+
+                        </div>
+                        <br>
+                        <div class="form-group form-group-input">
+                            <label for="birth-date" class="birth-date">Date of Birth</label>
+                            <input type="date" name="birth_date" style="width: 400px; height: 60px; border-radius: 5px;"
+                                   placeholder="1950-01-15" required>
+
+                        </div>
+                        <br>
+
+                        @if ($errors->any())
+                            <div class="alert alert-danger">
+                                @foreach ($errors->all() as $error)
+                                    <div>{{ $error }}</div>
+                                @endforeach
+                            </div>
+                            <br/>
+                        @endif
+
+                        <input type="hidden" name="url" value="{{$urlWithToken}}">
+                        <button type="submit" class="btn btn-primary">Continue</button>
                     </div>
-                    <br>
-                    <div class="form-group form-group-input">
-                        <label for="birth-date" class="birth-date">Date of Birth</label>
-                        <input type="date" name="birth_date" style="width: 400px; height: 60px; border-radius: 5px;"
-                               placeholder="1950-01-15" required>
-                    </div>
-                    <br>
-                    <input type="hidden" name="url" value="{{$urlWithToken}}">
-                    <button type="submit" class="btn btn-primary">Continue</button>
-                </div>
+
+                </form>
                 <br>
 
                 <div class="by-circlelink">

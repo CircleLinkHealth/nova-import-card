@@ -96,33 +96,29 @@ class InvitationLinksController extends Controller
             compact('userId', 'urlWithToken', 'practiceName', 'doctorsLastName'));
     }
 
-    public function resendUrl($userId)
-    {
-        try {
-            $this->service->createAndSaveUrl($userId, Carbon::now()->year);
-        } catch (\Exception $e) {
-            //fixme: return with error
-        }
-
-        //fixme: return with success
-        return 'New link is on its way';
-    }
-
     public function surveyLoginAuth(SurveyAuthLoginRequest $request)
     {
-        $urlToken       = $this->service->parseUrl($request->input('url'));
+        $urlToken = $this->service->parseUrl($request->input('url'));
+
+        /** @var InvitationLink $invitationLink */
         $invitationLink = InvitationLink::with('patientInfo.user')
                                         ->where('link_token', $urlToken)
                                         ->firstOrFail();
 
         if ($invitationLink->patientInfo->birth_date != $request->input('birth_date')) {
-            //fixme: redirect back with errors
-            return 'Date of birth is wrong';
+            return back()
+                //since this is a login form, we need to send general messages
+                ->withErrors(['message' => 'The data you entered does not match our records.'])
+                ->withInput();
         }
+
         if ($invitationLink->patientInfo->user->display_name != $request->input('name')) {
-            //fixme: redirect back with errors
-            return 'Name does not exists in our DB';
+            return back()
+                //since this is a login form, we need to send general messages
+                ->withErrors(['message' => 'The data you entered does not match our records.'])
+                ->withInput();
         }
+
         $userId       = $invitationLink->patientInfo->user_id;
         $surveyId     = $invitationLink->survey_id;
         $urlUpdatedAt = $invitationLink->updated_at;
@@ -131,10 +127,14 @@ class InvitationLinksController extends Controller
         $expireRange  = InvitationLinksController::LINK_EXPIRES_IN_DAYS;
 
         if ($isExpiredUrl || $urlUpdatedAt->diffInDays($today) > $expireRange) {
-            $invitationLink->where('is_manually_expired', '=', 0)->update(['is_manually_expired' => true]);
 
-            //fixme: should redirect
-            return view('surveyUrlAuth.resendUrl', compact('userId'));
+            if ( ! $isExpiredUrl) {
+                $invitationLink->is_manually_expired = true;
+                $invitationLink->save();
+            }
+
+            return back()
+                ->withErrors(['expired_link' => 'Your link has expired. Please request a new one.']);
         }
 
         return redirect()->route('survey.hra',
