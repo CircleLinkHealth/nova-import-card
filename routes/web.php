@@ -485,9 +485,9 @@ Route::group(['middleware' => 'auth'], function () {
         });
     });
 
-    Route::resource('profiles', 'API\ProfileController')->middleware('permission:user.read,role.read');
+    Route::get('profiles', 'API\ProfileController@index')->middleware(['permission:user.read,role.read', 'cacheResponse']);
 
-    Route::resource('user.care-plan', 'API\PatientCarePlanController')->middleware('permission:careplan.read');
+    Route::get('user.care-plan', 'API\PatientCarePlanController@index')->middleware(['permission:careplan.read', 'cacheResponse']);
 
     Route::get('user/{user}/care-team', [
         'uses' => 'API\CareTeamController@index',
