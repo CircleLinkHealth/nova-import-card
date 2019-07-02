@@ -74,24 +74,24 @@
                 //these are used to force a behavior on an element
                 // eg. show/hide till user refresh so component can load
                 //newly created data from DB.
-                showTillRefresh:true,
-                hideTillRefresh:false,
+                showTillRefresh: true,
+                hideTillRefresh: false,
             }
         },
 
         computed: {
             showLiveRequestedTime() {
                 const requestedTimeFromDbExists = this.requestedTimeFromDb === undefined;
-                return !! this.liveRequestedTime || requestedTimeFromDbExists;
+                return !!this.liveRequestedTime || requestedTimeFromDbExists;
             },
 
-            showDeleteBtn(){
-                return !! (this.disputeRequestedTime && this.deleteButtonActive)
+            showDeleteBtn() {
+                return !!(this.disputeRequestedTime && this.deleteButtonActive)
                     || (this.deleteButtonActive
-                    && this.showLiveRequestedTime === false)
+                        && this.showLiveRequestedTime === false)
             },
 
-            setStrikeThrough(){
+            setStrikeThrough() {
                 return this.showTillRefresh && (this.requestedTimeFromDb === undefined && this.strikethroughTime
                     || this.requestedTimeFromDb !== undefined && !this.strikethroughTime);
 
