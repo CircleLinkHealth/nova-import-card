@@ -487,7 +487,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('profiles', 'API\ProfileController@index')->middleware(['permission:user.read,role.read', 'cacheResponse']);
 
-    Route::get('user.care-plan', 'API\PatientCarePlanController@index')->middleware(['permission:careplan.read', 'cacheResponse']);
+    Route::get('user/{patientId}/care-plan', 'API\PatientCarePlanController@index')->middleware(['permission:careplan.read', 'cacheResponse']);
 
     Route::get('user/{user}/care-team', [
         'uses' => 'API\CareTeamController@index',
@@ -505,11 +505,11 @@ Route::group(['middleware' => 'auth'], function () {
         'uses' => 'API\CareTeamController@edit',
         'as'   => 'user.care-team.edit',
     ])->middleware(['permission:carePerson.read', 'cacheResponse']);
-    
+
     Route::get('practice.locations', [
         'uses' => 'API\PracticeLocationsController@index',
         'as'   => 'practice.locations.index',
-    ])->middleware('permission:location.read');
+    ])->middleware(['permission:location.read', 'cacheResponse']);
     Route::delete('practice.locations', [
         'uses' => 'API\PracticeLocationsController@destroy',
         'as'   => 'practice.locations.destroy',
@@ -826,7 +826,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('summary', [
             'uses' => 'Patient\PatientController@showPatientSummary',
             'as'   => 'patient.summary',
-        ])->middleware('permission:patient.read,patientProblem.read,misc.read,observation.read,patientSummary.read');
+        ])->middleware(['permission:patient.read,patientProblem.read,misc.read,observation.read,patientSummary.read', 'cacheResponse']);
         Route::get('summary-biochart', [
             'uses' => 'ReportsController@biometricsCharts',
             'as'   => 'patient.charts',

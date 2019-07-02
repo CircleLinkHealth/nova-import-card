@@ -9,7 +9,6 @@ namespace App\Repositories;
 use App\Filters\NoteFilters;
 use App\Note;
 use Carbon\Carbon;
-use Exception;
 
 class NoteRepository
 {

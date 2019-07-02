@@ -623,7 +623,7 @@ query;
 
             return [];
         }
-        
+
         $strQS = '';
         if ( ! empty($qstype)) {
             $strQS = " AND qs.qs_type = '{$qstype}' ";

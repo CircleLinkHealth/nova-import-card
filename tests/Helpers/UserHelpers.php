@@ -7,8 +7,8 @@
 namespace Tests\Helpers;
 
 use App\Call;
-use App\CLH\Repositories\UserRepository;
 use App\CLH\Helpers\StringManipulation;
+use App\CLH\Repositories\UserRepository;
 use App\Repositories\PatientWriteRepository;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Nurse;

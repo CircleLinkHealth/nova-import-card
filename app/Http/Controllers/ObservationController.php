@@ -120,7 +120,7 @@ class ObservationController extends Controller
     {
         $observationService = new ObservationService();
         $msgCPRules         = new MsgCPRules();
-        
+
         $input = $request->all();
 
         if (( ! $request->header('Client'))) {

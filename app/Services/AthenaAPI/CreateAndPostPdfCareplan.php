@@ -18,7 +18,7 @@ class CreateAndPostPdfCareplan
 
     public function __construct(Calls $api)
     {
-        $this->api          = $api;
+        $this->api = $api;
     }
 
     public function getAppointments(
@@ -51,31 +51,31 @@ class CreateAndPostPdfCareplan
                         $ccdaRequest->practice_id,
                         $ccdaRequest->department_id
                     );
-    
+
                     if ( ! isset($xmlCcda[0]['ccda'])) {
                         return false;
                     }
-    
+
                     $ccda = Ccda::create([
-                                             'xml'    => $xmlCcda[0]['ccda'],
-                                             'source' => Ccda::ATHENA_API,
-                                         ]);
-    
+                        'xml'    => $xmlCcda[0]['ccda'],
+                        'source' => Ccda::ATHENA_API,
+                    ]);
+
                     $ccdaRequest->ccda_id = $ccda->id;
                     $ccdaRequest->successful_call = true;
                     $ccdaRequest->save();
-    
+
                     ImportCcda::dispatch($ccda)->onQueue('low');
-    
+
                     if (isProductionEnv()) {
                         $link = route('import.ccd.remix');
-        
+
                         sendSlackMessage(
                             '#ccd-file-status',
                             "We received a CCD from Athena. \n Please visit {$link} to import."
                         );
                     }
-    
+
                     return $ccda;
                 }
             });

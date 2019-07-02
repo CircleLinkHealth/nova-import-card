@@ -23,12 +23,12 @@ class ProblemCodeController extends Controller
     public function remove($id)
     {
         abort_if_str_contains_unsafe_characters($id);
-    
+
         $deleted = ProblemCode::where('id', $id)->delete();
-        
+
         return response()->json([
-                                    'message' => $deleted ? 'successful' : 'unsuccesful',
-                                ]);
+            'message' => $deleted ? 'successful' : 'unsuccesful',
+        ]);
     }
 
     public function show($id)

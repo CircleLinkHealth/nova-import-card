@@ -185,7 +185,7 @@ return [
 
         App\Providers\AppServiceProvider::class,
 
-        Spatie\ResponseCache\ResponseCacheServiceProvider::class,
+        CircleLinkHealth\ResponseCache\ResponseCacheServiceProvider::class,
 
         App\Providers\DirectMailServiceProvider::class,
         App\Providers\FaxServiceProvider::class,

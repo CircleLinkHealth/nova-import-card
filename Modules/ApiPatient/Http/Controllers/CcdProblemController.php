@@ -26,7 +26,7 @@ class CcdProblemController extends Controller
     {
         $this->ccdProblemService = $ccdProblemService;
     }
-    
+
     /**
      * Remove the specified resource from storage.
      *
@@ -43,7 +43,7 @@ class CcdProblemController extends Controller
 
         return \response()->json('"userId" and "ccdProblemId" are important', 400);
     }
-    
+
     /**
      * Show the specified resource.
      *
@@ -55,16 +55,16 @@ class CcdProblemController extends Controller
     {
         return \response()->json($this->ccdProblemService->getPatientProblems($userId));
     }
-    
+
     /**
      * Store a newly created resource in storage.
      *
-     * @param mixed $userId
-     *
+     * @param mixed       $userId
      * @param SafeRequest $request
      *
-     * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store($userId, SafeRequest $request)
     {
@@ -78,13 +78,12 @@ class CcdProblemController extends Controller
 
         return \response()->json($this->ccdProblemService->addPatientCcdProblem($ccdProblem));
     }
-    
+
     /**
      * Update the specified resource in storage.
      *
-     * @param mixed $userId
-     * @param mixed $ccdProblemId
-     *
+     * @param mixed       $userId
+     * @param mixed       $ccdProblemId
      * @param SafeRequest $request
      *
      * @return \Illuminate\Http\JsonResponse

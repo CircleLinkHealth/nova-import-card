@@ -31,14 +31,14 @@ class OnboardingController extends Controller
      * @var OnboardingService
      */
     protected $onboardingService;
-    
+
     /**
      * OnboardingController constructor.
      *
-     * @param InviteRepository $inviteRepository
+     * @param InviteRepository   $inviteRepository
      * @param LocationRepository $locationRepository
-     * @param OnboardingService $onboardingService
-     * @param Request $request
+     * @param OnboardingService  $onboardingService
+     * @param Request            $request
      */
     public function __construct(
         OnboardingService $onboardingService,
@@ -202,15 +202,15 @@ class OnboardingController extends Controller
 
         try {
             $this->validate($request, ['name' => 'required|unique:practices,name']);
-            
+
             $practice = Practice::create([
-                    'name'           => str_slug($input['name']),
-                    'user_id'        => $lead->id,
-                    'display_name'   => $input['name'],
-                    'federal_tax_id' => $input['federal_tax_id'],
-                    'active'         => 1,
-                    'term_days'      => 30,
-                ]);
+                'name'           => str_slug($input['name']),
+                'user_id'        => $lead->id,
+                'display_name'   => $input['name'],
+                'federal_tax_id' => $input['federal_tax_id'],
+                'active'         => 1,
+                'term_days'      => 30,
+            ]);
         } catch (ValidationException $e) {
             return redirect()
                 ->back()
@@ -249,9 +249,9 @@ class OnboardingController extends Controller
                     'first_name' => 'required',
                     'last_name'  => 'required',
                     'password'   => 'required|min:8',
-                ]
+                ],
             ]);
-            
+
             $user = new User([
                 'email'          => $input['email'],
                 'first_name'     => $input['firstName'],
@@ -315,7 +315,7 @@ class OnboardingController extends Controller
 
         return view('provider.onboarding.welcome');
     }
-    
+
     private function findPracticeByName($practiceSlug)
     {
         return Practice::where('name', $practiceSlug)->first();

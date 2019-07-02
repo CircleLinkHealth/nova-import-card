@@ -76,14 +76,12 @@ class CcdAllergyService
     public function setupAllergy($a)
     {
         if ($a) {
-            $allergy = [
+            return [
                 'id'         => $a->id,
                 'name'       => $a->allergen_name,
                 'created_at' => $a->created_at->format('c'),
                 'updated_at' => $a->updated_at->format('c'),
             ];
-
-            return $allergy;
         }
 
         return null;

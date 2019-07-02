@@ -17,7 +17,6 @@ use App\View\MetaTag;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\User;
-use Exception;
 use Illuminate\Support\Facades\URL;
 
 class NoteService

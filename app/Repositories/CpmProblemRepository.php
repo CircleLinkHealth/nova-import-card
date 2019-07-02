@@ -14,6 +14,4 @@ class CpmProblemRepository
     {
         return app(CpmProblem::class);
     }
-
-    
 }

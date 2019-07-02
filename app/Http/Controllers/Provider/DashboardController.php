@@ -7,10 +7,6 @@
 namespace App\Http\Controllers\Provider;
 
 use App\ChargeableService;
-use App\Contracts\Repositories\InviteRepository;
-use App\Contracts\Repositories\LocationRepository;
-use App\Contracts\Repositories\PracticeRepository;
-use App\Contracts\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdatePracticeSettingsAndNotifications;
 use App\Http\Resources\SAAS\PracticeChargeableServices;
@@ -29,9 +25,9 @@ class DashboardController extends Controller
 {
     protected $invites;
     protected $onboardingService;
-    protected $primaryPractice;
     protected $practiceSlug;
-    
+    protected $primaryPractice;
+
     public function __construct(
         OnboardingService $onboardingService
     ) {
