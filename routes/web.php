@@ -242,12 +242,10 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('ccd/{ccdId}', 'ProblemController@ccdProblem')->middleware('permission:patientProblem.read');
 
             Route::group(['prefix' => 'codes'], function () {
+                Route::get('', 'ProblemCodeController@index')->middleware('permission:patientProblem.read');
                 Route::get('{id}', 'ProblemCodeController@show')->middleware('permission:patientProblem.read');
                 Route::delete('{id}', 'ProblemCodeController@remove')->middleware('permission:patientProblem.delete');
-                Route::resource(
-                    '',
-                    'ProblemCodeController'
-                )->middleware('permission:patientProblem.read,patientProblem.create,patientProblem.delete');
+                Route::post('', 'ProblemCodeController@store')->middleware('permission:patientProblem.create');
             });
 
             Route::group(['prefix' => 'instructions'], function () {
