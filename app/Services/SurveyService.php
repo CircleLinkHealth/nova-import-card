@@ -108,9 +108,8 @@ class SurveyService
 
         $instance = $user->surveyInstances->first();
 
-        if (! $instance->start_date ) {
-            $instance->start_date = Carbon::now();
-            $instance->end_date = Carbon::now()->addYear(1);
+        if (! $instance->pivot->start_date ) {
+            $instance->pivot->start_date = Carbon::now();
         }
 
         //change status only if not completed
@@ -121,11 +120,14 @@ class SurveyService
         }
 
         $instance->pivot->last_question_answered_id = $input['question_id'];
-        $instance->pivot->save();
+
 
         if ($isComplete) {
+            $instance->pivot->completed_at = Carbon::now();
             event(new SurveyInstancePivotSaved($instance));
         }
+
+        $instance->pivot->save();
 
         return $instance->pivot->status;
     }

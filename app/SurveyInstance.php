@@ -19,8 +19,6 @@ class SurveyInstance extends BaseModel
     protected $fillable = [
         'survey_id',
         'year',
-        'start_date',
-        'end_date',
     ];
 
     public function survey()
@@ -35,6 +33,8 @@ class SurveyInstance extends BaseModel
                         'survey_id',
                         'last_question_answered_id',
                         'status',
+                        'start_date',
+                        'completed_at'
                     ])
                     ->withTimestamps();
     }
@@ -61,14 +61,6 @@ class SurveyInstance extends BaseModel
 
     }
 
-    public function scopeForDate($query, $date)
-    {
-        $date = Carbon::parse($date);
-
-        $query->where('start_date', '<=', $date)
-              ->where('end_date', '>=', $date);
-
-    }
 
     public function scopeForYear($query, $year)
     {

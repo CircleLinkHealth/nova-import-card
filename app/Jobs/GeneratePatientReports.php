@@ -154,7 +154,7 @@ class GeneratePatientReports implements ShouldQueue
         if ($summary) {
             $summary->update([
                 'is_billable'  => true,
-                'completed_at' => Carbon::now(),
+                'billable_at' => Carbon::now(),
             ]);
         }
     }
