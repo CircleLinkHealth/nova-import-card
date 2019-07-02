@@ -15,7 +15,7 @@ class PatientAWVSummary extends Model
         'year',
         'is_initial_visit',
         'is_billable',
-        'completed_at',
+        'billable_at',
     ];
     protected $table = 'patient_awv_summaries';
 

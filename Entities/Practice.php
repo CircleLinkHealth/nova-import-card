@@ -289,9 +289,9 @@ class Practice extends BaseModel implements HasMedia
                                     'patientAWVSummaries',
                                     function ($query) use ($chargeableServiceCode, $month) {
                                         $query->where('is_billable', true)
-                                              ->where('completed_at', '>=',
+                                              ->where('billable_at', '>=',
                                                   $month->copy()->startOfMonth()->startOfDay())
-                                              ->where('completed_at', '<=', $month->copy()->endOfMonth()->endOfDay())
+                                              ->where('billable_at', '<=', $month->copy()->endOfMonth()->endOfDay())
                                               ->when($chargeableServiceCode == 'AWV: G0438', function ($query) {
                                                         $query->where('is_initial_visit', 1);
                                                         })
