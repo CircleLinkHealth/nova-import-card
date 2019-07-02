@@ -34,7 +34,11 @@ if ($keys = $redis->keys("*{$_SERVER['REQUEST_URI']}*")) {
 
         if ($r) {
             try {
-                return (new CircleLinkHealth\ResponseCache\ResponseSerializer())->unserialize($r)->send();
+                $response = (new CircleLinkHealth\ResponseCache\ResponseSerializer())->unserialize($r);
+//                @todo: load session module and replace csrf token
+//                (new \CircleLinkHealth\ResponseCache\Replacers\CsrfTokenReplacer())->replaceInCachedResponse($response);
+                
+                return $response->send();
             } catch (CircleLinkHealth\ResponseCache\Exceptions\CouldNotUnserialize $e) {
             }
         }

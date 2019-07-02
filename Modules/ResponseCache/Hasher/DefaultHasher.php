@@ -4,12 +4,12 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\ResponseCache;
+namespace CircleLinkHealth\ResponseCache\Hasher;
 
 use CircleLinkHealth\ResponseCache\CacheProfiles\CacheProfile;
 use Illuminate\Http\Request;
 
-class RequestHasher
+class DefaultHasher implements RequestHasher
 {
     /** @var \CircleLinkHealth\ResponseCache\CacheProfiles\CacheProfile */
     protected $cacheProfile;

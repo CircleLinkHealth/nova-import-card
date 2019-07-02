@@ -7,8 +7,10 @@
 namespace CircleLinkHealth\ResponseCache\CacheProfiles;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Response;
 
-class CacheAllSuccessfulGetRequests extends CacheAllSuccessfulGetRequestsSpatie
+class CacheAllSuccessfulGetRequests extends BaseCacheProfile
 {
     public function cacheNameSuffix(Request $request): string
     {
@@ -22,5 +24,30 @@ class CacheAllSuccessfulGetRequests extends CacheAllSuccessfulGetRequestsSpatie
         }
 
         return $request->isMethod('get');
+    }
+    
+    public function shouldCacheResponse(Response $response): bool
+    {
+        if (! $this->hasCacheableResponseCode($response)) {
+            return false;
+        }
+        
+        if (! $this->hasCacheableContentType($response)) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    public function hasCacheableResponseCode(Response $response): bool
+    {
+        return $response->isSuccessful() || $response->isRedirection();
+    }
+    
+    public function hasCacheableContentType(Response $response)
+    {
+        $contentType = $response->headers->get('Content-Type', '');
+        
+        return Str::startsWith($contentType, 'text');
     }
 }

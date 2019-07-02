@@ -9,6 +9,7 @@ namespace CircleLinkHealth\ResponseCache;
 use CircleLinkHealth\ResponseCache\CacheProfiles\CacheProfile;
 use CircleLinkHealth\ResponseCache\Commands\Clear;
 use CircleLinkHealth\ResponseCache\Commands\Flush;
+use CircleLinkHealth\ResponseCache\Hasher\RequestHasher;
 use CircleLinkHealth\ResponseCache\InvalidationProfiles\FlushUserCacheOnAnyRelatedModelChange;
 use Illuminate\Cache\Repository;
 use Illuminate\Container\Container;
@@ -28,7 +29,11 @@ class ResponseCacheServiceProvider extends ServiceProvider
         $this->app->bind(CacheProfile::class, function (Container $app) {
             return $app->make(config('responsecache.cache_profile'));
         });
-
+    
+        $this->app->bind(RequestHasher::class, function (Container $app) {
+            return $app->make(config('responsecache.hasher'));
+        });
+        
         $this->app->when(ResponseCacheRepository::class)
             ->needs(Repository::class)
             ->give(function (): Repository {
@@ -51,11 +56,8 @@ class ResponseCacheServiceProvider extends ServiceProvider
             $this->app->make('invalidate-cache')->registerEloquentEventListener();
         }
 
-        $this->app['command.responsecache:flush'] = $this->app->make(Flush::class);
-
         if ($this->app->runningInConsole()) {
             $this->commands([
-                Flush::class,
                 Clear::class,
             ]);
         }

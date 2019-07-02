@@ -40,6 +40,14 @@ return [
     'cache_store' => env('RESPONSE_CACHE_DRIVER', 'redis'),
 
     /*
+     * Here you may define replacers that dynamically replace content from the response.
+     * Each replacer must implement the Replacer interface.
+     */
+    'replacers' => [
+        \CircleLinkHealth\ResponseCache\Replacers\CsrfTokenReplacer::class,
+    ],
+
+    /*
      * If the cache driver you configured supports tags, you may specify a tag name
      * here. All responses will be tagged. When clearing the responsecache only
      * items with that tag will be flushed.
@@ -49,4 +57,10 @@ return [
      * @CPM We rely on tags to create per user cache, so redis is required.
      */
     'cache_tag' => env('RESPONSE_CACHE_TAG', 'cachedcpmresponse'),
+
+    /*
+    * This class is responsible for generating a hash for a request. This hash
+    * is used to look up an cached response.
+    */
+    'hasher' => \CircleLinkHealth\ResponseCache\Hasher\DefaultHasher::class,
 ];

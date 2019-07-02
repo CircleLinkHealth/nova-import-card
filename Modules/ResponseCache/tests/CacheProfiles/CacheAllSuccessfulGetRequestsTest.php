@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\ResponseCache\Test\CacheProfiles;
 
 use Carbon\Carbon;
-use CircleLinkHealth\ResponseCache\CacheProfiles\CacheAllSuccessfulGetRequestsSpatie;
+use CircleLinkHealth\ResponseCache\CacheProfiles\CacheAllSuccessfulGetRequests;
 use CircleLinkHealth\ResponseCache\Test\TestCase;
 use CircleLinkHealth\ResponseCache\Test\User;
 use Illuminate\Http\Request;
@@ -15,14 +15,14 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CacheAllSuccessfulGetRequestsTest extends TestCase
 {
-    /** @var \CircleLinkHealth\ResponseCache\CacheProfiles\CacheAllSuccessfulGetRequestsSpatie */
+    /** @var \CircleLinkHealth\ResponseCache\CacheProfiles\CacheAllSuccessfulGetRequests */
     protected $cacheProfile;
 
     public function setUp()
     {
         parent::setUp();
 
-        $this->cacheProfile = app(CacheAllSuccessfulGetRequestsSpatie::class);
+        $this->cacheProfile = app(CacheAllSuccessfulGetRequests::class);
     }
 
     /** @test */

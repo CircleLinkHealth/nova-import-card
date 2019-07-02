@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\ResponseCache\Test;
 
 use CircleLinkHealth\ResponseCache\CacheProfiles\CacheProfile;
-use CircleLinkHealth\ResponseCache\RequestHasher;
+use CircleLinkHealth\ResponseCache\Hasher\DefaultHasher;
 use Illuminate\Http\Request;
 
 class ResponseHasherTest extends TestCase
@@ -19,7 +19,7 @@ class ResponseHasherTest extends TestCase
      */
     protected $request;
     /**
-     * @var \CircleLinkHealth\ResponseCache\RequestHasher
+     * @var \CircleLinkHealth\ResponseCache\Hasher\DefaultHasher
      */
     protected $requestHasher;
 
@@ -31,7 +31,7 @@ class ResponseHasherTest extends TestCase
 
         $this->request = Request::create('https://spatie.be');
 
-        $this->requestHasher = new RequestHasher($this->cacheProfile);
+        $this->requestHasher = new DefaultHasher($this->cacheProfile);
     }
 
     /** @test */
