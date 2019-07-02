@@ -48,17 +48,17 @@ class GeneratePersonalizedPreventionPlanJob implements ShouldQueue
             ::with([
                 'surveyInstances' => function ($instance) {
                     $instance->with(['survey', 'questions.type.questionTypeAnswers'])
-                             ->forDate($this->date);
+                             ->forYear($this->date);
                 },
                 'answers'         => function ($answers) {
                     $answers->whereHas('surveyInstance', function ($instance) {
-                        $instance->forDate($this->date);
+                        $instance->forYear($this->date);
                     });
                 },
             ])
             ->findOrFail($this->patientId);
 
-        $service = new GeneratePersonalizedPreventionPlanService($patient, $this->date);
-        $service->generateData($patient);
+        $service = new GeneratePersonalizedPreventionPlanService($patient);
+        $service->generateData();
     }
 }

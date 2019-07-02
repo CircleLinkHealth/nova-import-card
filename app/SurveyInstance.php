@@ -18,9 +18,7 @@ class SurveyInstance extends BaseModel
      */
     protected $fillable = [
         'survey_id',
-        'name',
-        'start_date',
-        'end_date',
+        'year',
     ];
 
     public function survey()
@@ -35,6 +33,8 @@ class SurveyInstance extends BaseModel
                         'survey_id',
                         'last_question_answered_id',
                         'status',
+                        'start_date',
+                        'completed_at'
                     ])
                     ->withTimestamps();
     }
@@ -50,8 +50,7 @@ class SurveyInstance extends BaseModel
 
     public function scopeCurrent($query)
     {
-        $query->where('start_date', '<=', Carbon::now())
-              ->where('end_date', '>=', Carbon::now());
+        $query->where('year', Carbon::now()->year);
     }
 
     public function scopeOfSurvey($query, $surveyName)
@@ -62,16 +61,19 @@ class SurveyInstance extends BaseModel
 
     }
 
-    public function scopeForDate($query, $date)
-    {
-        $date = Carbon::parse($date);
 
-        $query->where('start_date', '<=', $date)
-              ->where('end_date', '>=', $date);
+    public function scopeForYear($query, $year)
+    {
+        if (is_a($year, Carbon::class)) {
+            $year = $year->year;
+        }
+
+        $query->where('year', $year);
 
     }
 
-    public function scopeIsCompletedForPatient($query){
+    public function scopeIsCompletedForPatient($query)
+    {
         $query->where('users_surveys.status', SurveyInstance::COMPLETED);
     }
 

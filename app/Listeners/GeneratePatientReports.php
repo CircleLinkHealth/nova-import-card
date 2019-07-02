@@ -35,8 +35,7 @@ class GeneratePatientReports
 
             $patient = User::with([
                 'surveyInstances' => function ($i) use ($instance) {
-                    $i->where('start_date', $instance->start_date)
-                      ->where('end_date', $instance->end_date)
+                    $i->forYear($i->year)
                       ->where('survey_instances.survey_id', '!=', $instance->survey_id)
                       ->where('users_surveys.status', SurveyInstance::COMPLETED);
                 },
@@ -47,7 +46,7 @@ class GeneratePatientReports
 
 
             if ($otherInstance) {
-                GenerateReports::dispatch($patient->id, $instance->start_date)->onQueue('high');
+                GenerateReports::dispatch($patient->id, $instance->year)->onQueue('high');
             }
         }
     }

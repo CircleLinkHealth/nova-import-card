@@ -14,49 +14,31 @@ class PatientSurveyAnswersSeeder extends Seeder
     /**
      * Run the database seeds.
      *
+     * This seeder is currently used for testing.
+     * When the seeder runs it is going to create answers.
+     * SurveyService will automatically update survey_status, and eventually set both instance status to complete,
+     * That will triger the generation of the 2 reports by Jobs/GeneratePatientReports
+     *
      * @return void
      */
     public function run()
     {
-//        $faker   = Factory::create();
         $date    = Carbon::now();
         $service = new SurveyService();
 
-//        $user = User::create([
-//            'first_name'           => $faker->name,
-//            'last_name'            => $faker->name,
-//            'display_name'         => $faker->name,
-//            'email'                => $faker->unique()->safeEmail,
-//            //'email_verified_at' => now(),
-//            'username'             => $faker->userName,
-//            'auto_attach_programs' => 1,
-//            'password'             => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
-//            'remember_token'       => str_random(10),
-//            'address'              => $faker->address,
-//            'address2'             => $faker->address,
-//            'city'                 => $faker->city,
-//            'state'                => $faker->city,
-//            'zip'                  => $faker->randomNumber(5),
-//            'status'               => 'Active',
-//            'access_disabled'      => 0,
-//        ]);
-//
-//        $user->patientInfo()->create([
-//             'user_id'         => $user->id,
-//             'birth_date'      => $faker->date('y-m-d'),
-//             'general_comment' => $faker->text,
-//         ]);
-
         $user = User::ofType('participant')
-            ->first();
+                    ->first();
+
+        if(!$user){
+            $user = $this->createTestUser();
+        }
 
         echo $user->id;
 
         $hraSurvey = Survey::with([
             'instances' => function ($instance) use ($date) {
                 $instance->with('questions')
-                         ->where('start_date', $date->copy()->startOfYear()->toDateString())
-                         ->where('end_Date', $date->copy()->endOfYear()->toDateString());
+                         ->forYear($date->year);
             },
         ])
                            ->where('name', Survey::HRA)->first();
@@ -64,8 +46,7 @@ class PatientSurveyAnswersSeeder extends Seeder
         $vitalsSurvey   = Survey::with([
             'instances' => function ($instance) use ($date) {
                 $instance->with('questions')
-                         ->where('start_date', $date->copy()->startOfYear()->toDateString())
-                         ->where('end_Date', $date->copy()->endOfYear()->toDateString());
+                         ->forYear($date->year);
             },
         ])
                                 ->where('name', Survey::VITALS)->first();
@@ -96,10 +77,10 @@ class PatientSurveyAnswersSeeder extends Seeder
             $question = $this->getQuestionWithOrder($hraInstance, $answerData['order'], $answerData['subOrder']);
 
             $service->updateOrCreateAnswer([
-                'user_id'                 => $user->id,
-                'survey_instance_id'      => $hraInstance->id,
-                'question_id'             => $question->id,
-                'value'                   => $answerData['answer'],
+                'user_id'            => $user->id,
+                'survey_instance_id' => $hraInstance->id,
+                'question_id'        => $question->id,
+                'value'              => $answerData['answer'],
             ]);
         }
 
@@ -109,13 +90,19 @@ class PatientSurveyAnswersSeeder extends Seeder
 
             $question = $this->getQuestionWithOrder($vitalsInstance, $answerData['order'], $answerData['subOrder']);
 
-            $service->updateOrCreateAnswer([
+            $input = [
                 'user_id'            => $user->id,
                 'survey_instance_id' => $vitalsInstance->id,
                 'question_id'        => $question->id,
                 'value'              => $answerData['answer'],
-            ]);
+            ];
+
+            $service->updateOrCreateAnswer($input);
+            //fix to generate reports
+//            $service->updateSurveyInstanceStatus($input, true);
         }
+
+
     }
 
     public function hraAnswerData(): Collection
@@ -679,5 +666,43 @@ class PatientSurveyAnswersSeeder extends Seeder
                 ],
             ],
         ]);
+    }
+
+
+    /**
+     * use this to create test patient, currently not being used
+     *
+     * @return $this|\Illuminate\Database\Eloquent\Model
+     */
+    public function createTestUser(){
+
+        $faker   = Factory::create();
+
+        $user = User::create([
+            'first_name'           => $faker->name,
+            'last_name'            => $faker->name,
+            'display_name'         => $faker->name,
+            'email'                => $faker->unique()->safeEmail,
+            //'email_verified_at' => now(),
+            'username'             => $faker->userName,
+            'auto_attach_programs' => 1,
+            'password'             => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
+            'remember_token'       => str_random(10),
+            'address'              => $faker->address,
+            'address2'             => $faker->address,
+            'city'                 => $faker->city,
+            'state'                => $faker->city,
+            'zip'                  => $faker->randomNumber(5),
+            'status'               => 'Active',
+            'access_disabled'      => 0,
+        ]);
+
+        $user->patientInfo()->create([
+             'user_id'         => $user->id,
+             'birth_date'      => $faker->date('y-m-d'),
+             'general_comment' => $faker->text,
+         ]);
+
+        return $user;
     }
 }
