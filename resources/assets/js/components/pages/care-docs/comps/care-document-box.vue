@@ -9,7 +9,7 @@
                     {{this.docDate}}
                 </div>
                 <div class="col-md-6">
-                    <a style="float: right" :href="viewApi()" target="_blank">View</a>
+                    <a class="isDisabled" style="float: right" :href="viewApi()" target="_blank">View</a>
                 </div>
             </div>
             <div class="col-md-12  panel-section"  style="margin-top: 40px">
@@ -39,11 +39,14 @@
             },
             doc: {
                 type: Object,
-                required: true
+                required: false
             }
         },
         computed: {
             docDate () {
+                if (! this.doc){
+                    return null;
+                }
                 var date = new Date (this.doc.created_at);
                 var year = date.getFullYear();
                 var month = (1 + date.getMonth()).toString();
@@ -55,6 +58,9 @@
         },
         methods: {
             viewApi() {
+                if (! this.doc){
+                    return null;
+                }
                 const query = {
                     file: this.doc
                 };
@@ -100,5 +106,12 @@
         width: 100px;
         max-height: 30px;
         margin: 2px;
+    }
+
+    .isDisabled {
+        color: currentColor;
+        cursor: not-allowed;
+        opacity: 0.5;
+        text-decoration: none;
     }
 </style>
