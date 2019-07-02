@@ -20,6 +20,27 @@ define('LARAVEL_START', microtime(true));
 
 require __DIR__.'/../vendor/autoload.php';
 
+$n = (new Dotenv\Dotenv(__DIR__.'/../', '.redis-creds'))->load();
+
+$redis = new Predis\Client([
+    'host'     => $n[0],
+    'password' => 'NULL' === $n[1] ? null : $n[1],
+    'port'     => $n[2],
+]);
+
+if ($keys = $redis->keys("*{$_SERVER['REQUEST_URI']}*")) {
+    if (is_array($keys) && 1 == count($keys)) {
+        $r = $redis->get($keys[0]);
+
+        if ($r) {
+            try {
+                return (new App\Spatie\ResponseCache\ResponseUnserializer())->unserialize($r)->send();
+            } catch (Spatie\ResponseCache\Exceptions\CouldNotUnserialize $e) {
+            }
+        }
+    }
+}
+
 /*
  |--------------------------------------------------------------------------
  | Blackfire SDK integration
@@ -55,7 +76,11 @@ require __DIR__.'/../vendor/autoload.php';
 |
 */
 
+define('LOAD_APP', microtime(true) - LARAVEL_START);
 $app = require_once __DIR__.'/../bootstrap/app.php';
+
+define('LARAVEL_REQUIRE_APP', microtime(true) - LOAD_APP - LARAVEL_START);
+
 $app->alias('request', 'App\SafeRequest');
 
 /*
@@ -71,14 +96,28 @@ $app->alias('request', 'App\SafeRequest');
 */
 
 $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
+define('LARAVEL_BEFORE_KERNEL', microtime(true) - LARAVEL_REQUIRE_APP - LOAD_APP - LARAVEL_START);
 
 $response = $kernel->handle(
     $request = App\SafeRequest::capture()
 );
 
+define('LARAVEL_AFTER_KERNEL', microtime(true) - LARAVEL_BEFORE_KERNEL - LARAVEL_REQUIRE_APP - LOAD_APP - LARAVEL_START);
+
 if (config('responsecache.enabled') && ! $request->isMethodCacheable()) {
     app('invalidate-cache')->flushCandidates();
 }
+
+define('LARAVEL_AFTER_RESPONCE_CACHE', microtime(true) - LARAVEL_BEFORE_KERNEL - LARAVEL_REQUIRE_APP - LOAD_APP - LARAVEL_START - LARAVEL_AFTER_KERNEL);
+
+//dd([
+//       'LARAVEL_START' => LARAVEL_START,
+//       'LOAD_APP' => LOAD_APP,
+//       'LARAVEL_REQUIRE_APP' => LARAVEL_REQUIRE_APP,
+//       'LARAVEL_BEFORE_KERNEL' => LARAVEL_BEFORE_KERNEL,
+//       'LARAVEL_AFTER_KERNEL' => LARAVEL_AFTER_KERNEL,
+//       'LARAVEL_AFTER_RESPONCE_CACHE' => LARAVEL_AFTER_RESPONCE_CACHE,
+//   ]);
 
 $response->send();
 
