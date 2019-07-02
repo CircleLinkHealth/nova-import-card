@@ -1,15 +1,15 @@
 <template>
     <div @mouseover="mouseOver" @mouseleave="mouseLeave">
-       <span :class="{strike: strikethroughTime}">
+       <span :class="{strike: strikethroughTime || setStrikeThrough}">
            {{this.formattedTime}}
        </span>
 
-        <span v-show="showLiveRequestedTime"
+        <span v-show="showLiveRequestedTime && !hideTillRefresh"
               class="dispute-requested-time">
             {{this.liveRequestedTime}}
         </span>
 
-        <span v-show="!showLiveRequestedTime"
+        <span v-show="!showLiveRequestedTime && !hideTillRefresh"
               class="dispute-requested-time">
             {{this.requestedTimeFromDb}}
         </span>
@@ -43,7 +43,7 @@
             <i class="glyphicon glyphicon-remove"></i>
         </span>
 
-        <span v-show="showDeleteBtn"
+        <span v-show="showDeleteBtn && !hideTillRefresh"
               @click="handleDelete()"
               aria-hidden="true"
               class="delete-button">
@@ -71,19 +71,30 @@
                 requestedTimeFromDb: this.invoiceData.suggestedTime,
                 disputeRequestedTime: false,
                 strikethroughTime: false,
+                //these are used to force a behavior on an element
+                // eg. show/hide till user refresh so component can load
+                //newly created data from DB.
+                showTillRefresh:true,
+                hideTillRefresh:false,
             }
         },
 
         computed: {
             showLiveRequestedTime() {
                 const requestedTimeFromDbExists = this.requestedTimeFromDb === undefined;
-                return !!(this.liveRequestedTime || requestedTimeFromDbExists);
+                return !! this.liveRequestedTime || requestedTimeFromDbExists;
             },
 
             showDeleteBtn(){
                 return !! (this.disputeRequestedTime && this.deleteButtonActive)
                     || (this.deleteButtonActive
                     && this.showLiveRequestedTime === false)
+            },
+
+            setStrikeThrough(){
+                return this.showTillRefresh && (this.requestedTimeFromDb === undefined && this.strikethroughTime
+                    || this.requestedTimeFromDb !== undefined && !this.strikethroughTime);
+
             }
         },
 
@@ -113,6 +124,8 @@
                     .then((resposne) => {
                         this.disputeRequestedTime = false;
                         this.strikethroughTime = false;
+                        this.showTillRefresh = false;
+                        this.hideTillRefresh = true;
                     })
                     .catch((error) => {
                         console.log(error);
@@ -151,6 +164,7 @@
                         this.disputeRequestedTime = true;
                         this.deleteButtonActive = true;
                         this.strikethroughTime = true;
+                        this.showTillRefresh = false;
                         this.dismiss();
                     })
                     .catch((error) => {
