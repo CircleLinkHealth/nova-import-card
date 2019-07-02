@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class RenamePatientIdToUserIdInPersonalizedPreventionPlanTable extends Migration
 {
@@ -16,15 +16,15 @@ class RenamePatientIdToUserIdInPersonalizedPreventionPlanTable extends Migration
         Schema::table('personalized_prevention_plan', function (Blueprint $table) {
             if (Schema::hasColumn('personalized_prevention_plan', 'patient_id')) {
                 $table->renameColumn('patient_id', 'user_id');
-            } else {
+            } else if ( ! Schema::hasColumn('personalized_prevention_plan', 'user_id')) {
                 $table->unsignedInteger('user_id')
                       ->after('id');
-            }
 
-            $table->foreign('user_id')
-                  ->references('id')
-                  ->on('users')
-                  ->onDelete('cascade');
+                $table->foreign('user_id')
+                      ->references('id')
+                      ->on('users')
+                      ->onDelete('cascade');
+            }
 
         });
     }
