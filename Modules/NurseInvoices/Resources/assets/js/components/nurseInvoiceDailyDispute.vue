@@ -2,6 +2,7 @@
     <div @mouseover="mouseOver" @mouseleave="mouseLeave">
        <span :class="{strike: strikethroughTime || setStrikeThrough}">
            {{this.formattedTime}}
+            <loader v-show="loader"></loader>
        </span>
 
         <span v-show="showLiveRequestedTime && !hideTillRefresh"
@@ -50,15 +51,22 @@
            <i class="glyphicon glyphicon-erase"></i> Delete
         </span>
     </div>
+
 </template>
 
 <script>
+    import LoaderComponent from '../../../../../../resources/assets/js/components/loader';
     export default {
         props: [
             'invoiceData',
             'invoiceId',
             'day',
         ],
+
+        components: {
+            'loader': LoaderComponent,
+        },
+
         name: "nurseInvoiceDailyDispute",
 
         data() {
@@ -76,6 +84,7 @@
                 //newly created data from DB.
                 showTillRefresh: true,
                 hideTillRefresh: false,
+                loader:false,
             }
         },
 
@@ -116,6 +125,7 @@
             },
             handleDelete() {
                 //    @todo:add loader
+                this.loader = true;
                 axios.delete(`/nurseinvoices/delete-dispute/${this.invoiceId}/${this.day}`, {
                     'invoiceId': this.invoiceId,
                     'day': this.day,
@@ -126,6 +136,7 @@
                         this.strikethroughTime = false;
                         this.showTillRefresh = false;
                         this.hideTillRefresh = true;
+                        this.loader = false;
                     })
                     .catch((error) => {
                         console.log(error);
@@ -154,6 +165,7 @@
             },
             saveDispute() {
                 //    @todo:add loader
+                this.loader = true;
                 axios.post('/nurseinvoices/daily-dispute', {
                     invoiceId: this.invoiceId,
                     suggestedFormattedTime: this.liveRequestedTime,
@@ -166,6 +178,7 @@
                         this.strikethroughTime = true;
                         this.showTillRefresh = false;
                         this.dismiss();
+                        this.loader = false;
                     })
                     .catch((error) => {
                         console.log(error);
