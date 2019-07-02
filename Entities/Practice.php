@@ -293,11 +293,11 @@ class Practice extends BaseModel implements HasMedia
                                                   $month->copy()->startOfMonth()->startOfDay())
                                               ->where('billable_at', '<=', $month->copy()->endOfMonth()->endOfDay())
                                               ->when($chargeableServiceCode == 'AWV: G0438', function ($query) {
-                                                        $query->where('is_initial_visit', 1);
-                                                        })
+                                                  $query->where('is_initial_visit', 1);
+                                              })
                                               ->when($chargeableServiceCode == 'AWV: G0439', function ($query) {
-                                                        $query->where('is_initial_visit', 0);
-                                                        });
+                                                  $query->where('is_initial_visit', 0);
+                                              });
                                     }
                                 )
                                 ->count() ?? 0;
@@ -448,14 +448,14 @@ class Practice extends BaseModel implements HasMedia
                                'patientAWVSummaries',
                                function ($query) use ($month) {
                                    $query->where('is_billable', true)
-                                         ->where('month_year', $month->toDateString());
+                                         ->where('year', $month->year);
                                }
                            )
                            ->with(
                                [
                                    'patientAWVSummaries' => function ($q) use ($month) {
                                        $q->where('is_billable', true)
-                                         ->where('month_year', $month->toDateString());
+                                         ->where('year', $month->year);
                                    },
                                    'billingProvider',
                                ]
@@ -471,7 +471,7 @@ class Practice extends BaseModel implements HasMedia
                                        $patientData->setDob($u->getBirthDate());
                                        $patientData->setPractice($u->program_id);
                                        $patientData->setProvider($u->getBillingProviderName());
-                                       $patientData->setAwvDate($summary->completed_at);
+                                       $patientData->setAwvDate($summary->billable_at);
 
                                        $data['awvPatientData'][$u->id] = $patientData;
                                    }
