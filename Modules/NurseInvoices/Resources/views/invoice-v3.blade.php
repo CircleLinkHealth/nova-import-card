@@ -169,7 +169,7 @@
                     <td><nurse-invoice-daily-dispute
                                 :invoice-data="{{json_encode($row)}}"
                                 :invoice-id="{{$invoiceId}}"
-                                :disputed-day="{{json_encode(\Carbon\Carbon::parse($date)->copy()->toDateString())}}"
+                                :day="{{json_encode(\Carbon\Carbon::parse($date)->copy()->toDateString())}}"
                         ></nurse-invoice-daily-dispute></td>
 
                     @if($variablePay)

@@ -51,7 +51,7 @@
         props: [
             'invoiceData',
             'invoiceId',
-            'disputedDay'
+            'day',
         ],
         name: "nurseInvoiceDailyDispute",
 
@@ -88,13 +88,32 @@
                 this.showDisputeBox = true;
             },
             handleDelete() {
-                this.disputeRequestedTime = false;
-                this.strikethroughTime = false;
-
-                axios.delete(`/nurseinvoices/delete-dispute/${this.invoiceId}/${this.disputedDay}`, {
+                //    @todo:add loader
+                axios.delete(`/nurseinvoices/delete-dispute/${this.invoiceId}/${this.day}`, {
                     'invoiceId': this.invoiceId,
-                    'disputedDay': this.disputedDay,
+                    'day': this.day,
+
                 })
+                    .then((reposne) => {
+                        this.disputeRequestedTime = false;
+                        this.strikethroughTime = false;
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        if (error.response && error.response.status === 404) {
+                            this.error = "Not Found [404]";
+                        } else if (error.response && error.response.status === 419) {
+                            this.error = "Not Authenticated [419]";
+                        } else if (error.response && error.response.data) {
+                            const errors = [error.response.data.message];
+                            Object.keys(error.response.data.errors || []).forEach(e => {
+                                errors.push(error.response.data.errors[e]);
+                            });
+                            this.error = errors.join('<br/>');
+                        } else {
+                            this.error = error.message;
+                        }
+                    });
             },
             dismiss() {
                 this.editButtonActive = false;
@@ -111,10 +130,9 @@
                         invoiceId: this.invoiceId,
                         suggestedFormattedTime: this.requestedTime,
                         disputedFormattedTime: this.formattedTime,
-                        disputedDay: this.disputedDay,
+                        disputedDay: this.day,
                     })
                         .then((response) => {
-                            console.log(response.data);
                             this.disputeRequestedTime = true;
                             this.strikethroughTime = true;
                             this.dismiss();
@@ -138,6 +156,9 @@
                 }
             },
         },
+        created(){
+
+        }
 
     }
 
