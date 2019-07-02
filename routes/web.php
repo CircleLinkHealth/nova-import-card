@@ -492,7 +492,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('user/{user}/care-team', [
         'uses' => 'API\CareTeamController@index',
         'as'   => 'user.care-team.index',
-    ])->middleware('permission:carePerson.read');
+    ])->middleware(['permission:carePerson.read', 'cacheResponse']);
     Route::delete('user/{user}/care-team/{care_team}', [
         'uses' => 'API\CareTeamController@destroy',
         'as'   => 'user.care-team.destroy',
@@ -504,7 +504,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('user/{user}/care-team/{care_team}/edit', [
         'uses' => 'API\CareTeamController@edit',
         'as'   => 'user.care-team.edit',
-    ])->middleware('permission:carePerson.read');
+    ])->middleware(['permission:carePerson.read', 'cacheResponse']);
 
     Route::resource(
         'practice.locations',
@@ -839,7 +839,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('view-careplan', [
             'uses' => 'ReportsController@viewPrintCareplan',
             'as'   => 'patient.careplan.print',
-        ])->middleware('permission:careplan.read');
+        ])->middleware(['permission:careplan.read', 'cacheResponse']);
 
         Route::get('view-careplan/assessment', [
             'uses' => 'ReportsController@makeAssessment',
@@ -918,11 +918,11 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('create', [
                 'uses' => 'NotesController@create',
                 'as'   => 'patient.note.create',
-            ])->middleware('permission:patient.read');
+            ])->middleware(['permission:patient.read', 'cacheResponse']);
             Route::get('edit/{noteId}', [
                 'uses' => 'NotesController@create',
                 'as'   => 'patient.note.edit',
-            ])->middleware('permission:note.create,patient.update,patientSummary.update');
+            ])->middleware(['permission:note.create,patient.update,patientSummary.update', 'cacheResponse']);
             Route::post('store', [
                 'uses' => 'NotesController@store',
                 'as'   => 'patient.note.store',
@@ -934,11 +934,11 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('{showAll?}', [
                 'uses' => 'NotesController@index',
                 'as'   => 'patient.note.index',
-            ])->middleware('permission:patient.read,provider.read,note.read,appointment.read,activity.read');
+            ])->middleware(['permission:patient.read,provider.read,note.read,appointment.read,activity.read', 'cacheResponse']);
             Route::get('view/{noteId}', [
                 'uses' => 'NotesController@show',
                 'as'   => 'patient.note.view',
-            ])->middleware('permission:patient.read,provider.read,note.read');
+            ])->middleware(['permission:patient.read,provider.read,note.read', 'cacheResponse']);
             Route::post('send/{noteId}', [
                 'uses' => 'NotesController@send',
                 'as'   => 'patient.note.send',
