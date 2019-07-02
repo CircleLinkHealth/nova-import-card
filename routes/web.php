@@ -249,13 +249,10 @@ Route::group(['middleware' => 'auth'], function () {
             });
 
             Route::group(['prefix' => 'instructions'], function () {
-                Route::get('search', 'ProblemInstructionController@search');
-                Route::get(
-                    '{instructionId}',
-                    'ProblemInstructionController@instruction'
-                )->middleware('permission:instruction.read');
+                Route::get('{instructionId}', 'ProblemInstructionController@instruction')->middleware('permission:instruction.read');
                 Route::put('{id}', 'ProblemInstructionController@edit')->middleware('permission:instruction.update');
-                Route::resource('', 'ProblemInstructionController');
+                Route::get('', 'ProblemInstructionController@index')->middleware('permission:instruction.read');
+                Route::post('', 'ProblemInstructionController@store')->middleware('permission:instruction.create');
             });
         });
 
