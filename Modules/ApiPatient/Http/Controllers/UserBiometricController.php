@@ -4,13 +4,30 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Http\Controllers\Patient\Traits;
+namespace CircleLinkHealth\ApiPatient\Http\Controllers;
 
+use App\Services\CPM\CpmBiometricService;
+use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 
-trait BiometricUserTraits
+class UserBiometricController extends Controller
 {
-    public function addBiometric($userId, Request $request)
+    /**
+     * @var CpmBiometricService
+     */
+    protected $biometricUserService;
+    
+    /**
+     * UserBiometricController constructor.
+     *
+     * @param CpmBiometricService $biometricUserService
+     */
+    public function __construct(CpmBiometricService $biometricUserService)
+    {
+        $this->biometricUserService = $biometricUserService;
+    }
+    
+    public function store($userId, Request $request)
     {
         $biometricId             = $request->input('biometric_id');
         $starting                = $request->input('starting');
@@ -60,18 +77,18 @@ trait BiometricUserTraits
                     break;
             }
         } else {
-            return $this->badRequest('"biometric_id" is important');
+            return \response('"biometric_id" is important');
         }
-
+        
         return response()->json($result);
     }
-
-    public function getBiometrics($userId)
+    
+    public function show($userId)
     {
         return response()->json($this->biometricUserService->patientBiometrics($userId));
     }
-
-    public function removeBiometric($userId, $id)
+    
+    public function destroy($userId, $id)
     {
         return response()->json($this->biometricUserService->removePatientBiometric($userId, $id));
     }

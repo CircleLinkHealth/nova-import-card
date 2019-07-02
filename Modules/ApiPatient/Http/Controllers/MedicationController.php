@@ -1,67 +1,82 @@
 <?php
 
-/*
- * This file is part of CarePlan Manager by CircleLink Health.
- */
+namespace CircleLinkHealth\ApiPatient\Http\Controllers;
 
-namespace App\Http\Controllers\Patient\Traits;
-
+use App\Services\CPM\CpmMedicationGroupService;
+use App\Services\CPM\CpmMedicationService;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Routing\Controller;
 
-trait MedicationTraits
+class MedicationController extends Controller
 {
+    /**
+     * @var CpmMedicationService
+     */
+    protected $medicationService;
+    /**
+     * @var CpmMedicationGroupService
+     */
+    protected $medicationGroupService;
+    
+    public function __construct(CpmMedicationService $medicationService, CpmMedicationGroupService $medicationGroupService)
+    {
+        $this->medicationService = $medicationService;
+        $this->medicationGroupService = $medicationGroupService;
+    }
+    
     public function addMedication($userId, Request $request)
     {
         if ($userId) {
             $medication             = $this->retrieveMedication($request);
             $medication->patient_id = $userId;
-
+            
             return $this->medicationService->repo()->addMedicationToPatient($medication);
         }
-
-        return $this->badRequest('"userId" is important');
+        
+        return \response('"userId" is important');
     }
-
+    
     public function editMedication($userId, $id, Request $request)
     {
         if ($userId) {
             $medication             = $this->retrieveMedication($request);
             $medication->id         = $id;
             $medication->patient_id = $userId;
-
+            
             return $this->medicationService->editPatientMedication($medication);
         }
-
-        return $this->badRequest('"userId" is important');
+        
+        return \response('"userId" is important');
     }
-
+    
     public function getMedication($userId)
     {
         if ($userId) {
             return $this->medicationService->patientMedicationPaginated($userId);
         }
-
-        return $this->badRequest('"userid" is important');
+        
+        return \response('"userid" is important');
     }
-
+    
     public function getMedicationGroups($userId)
     {
         if ($userId) {
             return $this->medicationGroupService->repo()->patientGroups($userId);
         }
-
-        return $this->badRequest('"userid" is important');
+        
+        return \response('"userid" is important');
     }
-
+    
     public function removeMedication($userId, $medicationId)
     {
         if ($userId) {
             return $this->medicationService->repo()->removeMedicationFromPatient($medicationId, $userId);
         }
-
-        return $this->badRequest('"userId" is important');
+        
+        return \response('"userId" is important');
     }
-
+    
     public function retrieveMedication(Request $request)
     {
         $medication                        = new \App\Models\CCD\Medication();
@@ -76,7 +91,7 @@ trait MedicationTraits
         $medication->code                  = $request->input('code');
         $medication->code_system           = $request->input('code_system');
         $medication->code_system_name      = $request->input('code_system_name');
-
+        
         return $medication;
     }
 }

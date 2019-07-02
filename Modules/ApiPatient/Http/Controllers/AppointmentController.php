@@ -1,19 +1,34 @@
 <?php
 
-/*
- * This file is part of CarePlan Manager by CircleLink Health.
- */
+namespace CircleLinkHealth\ApiPatient\Http\Controllers;
 
-namespace App\Http\Controllers\Patient\Traits;
-
+use App\Services\AppointmentService;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Routing\Controller;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Appointment;
-use Illuminate\Http\Request;
 use Validator;
 
-trait AppointmentTraits
+class AppointmentController extends Controller
 {
-    public function addAppointment($userId, Request $request)
+    /**
+     * @var AppointmentService
+     */
+    protected $appointmentService;
+    
+    /**
+     * AppointmentController constructor.
+     *
+     * @param AppointmentService $appointmentService
+     */
+    public function __construct(AppointmentService $appointmentService)
+    {
+    
+        $this->appointmentService = $appointmentService;
+    }
+    
+    public function store($userId, Request $request)
     {
         $appointment              = new Appointment();
         $appointment->comment     = $request->input('comment');
@@ -22,30 +37,30 @@ trait AppointmentTraits
         $appointment->type        = $request->input('type');
         $appointment->provider_id = $request->input('provider_id');
         $appointment->time        = $request->input('time');
-
+        
         $date      = $request->input('date');
         $validator = Validator::make(['date' => $date], ['date' => 'date_format:m-d-Y|required']);
-
+        
         if ($validator->fails()) {
-            return $this->badRequest("Date `$date` is invalid.");
+            return \response("Date `$date` is invalid.", 400);
         }
-
+        
         $carbonDate        = Carbon::createFromFormat('m-d-Y', $date);
         $appointment->date = $carbonDate->toDateString();
-
+        
         if ($userId && $appointment->author_id && $appointment->type && $appointment->comment) {
             return response()->json($this->appointmentService->repo()->create($appointment));
         }
-
-        return $this->badRequest('"user_id", "author_id", "type", "comment" and "provider_id" are required');
+        
+        return \response('"user_id", "author_id", "type", "comment" and "provider_id" are required');
     }
-
-    public function getAppointments($userId)
+    
+    public function show($userId)
     {
         return response()->json($this->appointmentService->repo()->patientAppointments($userId));
     }
-
-    public function removeAppointment($userId, $id)
+    
+    public function destroy($userId, $id)
     {
         return response()->json($this->appointmentService->removePatientAppointment($userId, $id));
     }

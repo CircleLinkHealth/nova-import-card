@@ -1,17 +1,26 @@
 <?php
 
-/*
- * This file is part of CarePlan Manager by CircleLink Health.
- */
-
-namespace App\Http\Controllers\Patient\Traits;
+namespace CircleLinkHealth\ApiPatient\Http\Controllers;
 
 use App\Filters\NoteFilters;
+use App\Services\NoteService;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Routing\Controller;
 
-trait NoteTraits
+class NoteController extends Controller
 {
-    public function addNote($userId, Request $request)
+    /**
+     * @var NoteService
+     */
+    protected $noteService;
+    
+    public function __construct(NoteService $noteService)
+    {
+        $this->noteService = $noteService;
+    }
+    
+    public function store($userId, Request $request)
     {
         $body                 = $request->input('body');
         $author_id            = auth()->user()->id;
@@ -21,11 +30,11 @@ trait NoteTraits
         if ($userId && $author_id && ($body || 'Biometrics' == $type)) {
             return $this->noteService->add($userId, $author_id, $body, $type, $isTCM, $did_medication_recon);
         }
-
-        return $this->badRequest('"userId" and "body" and "author_id" are important');
+        
+        return \response('"userId" and "body" and "author_id" are important');
     }
-
-    public function editNote($userId, $id, Request $request)
+    
+    public function update($userId, $id, Request $request)
     {
         $body                 = $request->input('body');
         $summary              = $request->input('summary');
@@ -45,16 +54,16 @@ trait NoteTraits
                 $summary
             );
         }
-
-        return $this->badRequest('"userId", "author_id" and "noteId" are is important');
+        
+        return \response('"userId", "author_id" and "noteId" are is important');
     }
-
-    public function getNotes($userId, NoteFilters $filters)
+    
+    public function show($userId, NoteFilters $filters)
     {
         if ($userId) {
             return $this->noteService->patientNotes($userId, $filters);
         }
-
-        return $this->badRequest('"userId" is important');
+        
+        return \response('"userId" is important');
     }
 }
