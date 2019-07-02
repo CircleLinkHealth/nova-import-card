@@ -2,20 +2,24 @@
 
 namespace App\Console\Commands;
 
+use App\Console\Traits\DryRunnable;
 use App\Services\SurveyInvitationLinksService;
 use App\Services\TwilioClientService;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Twilio\Exceptions\TwilioException;
 
 class SendInvitationLinkUsingSMS extends Command
 {
+    use DryRunnable;
+
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'invite:sms {userId} {phoneNumber?}';
+    protected $signature = 'invite:sms {userId} {phoneNumber?} {forYear?} {{--dry-run}}';
 
     /**
      * The console command description.
@@ -41,6 +45,7 @@ class SendInvitationLinkUsingSMS extends Command
      * @param TwilioClientService $twilioService
      *
      * @return mixed
+     * @throws \Exception
      */
     public function handle(SurveyInvitationLinksService $service, TwilioClientService $twilioService)
     {
@@ -62,7 +67,18 @@ class SendInvitationLinkUsingSMS extends Command
             return;
         }
 
-        $url = $service->createAndSaveUrl($userId);
+        $forYear = $this->argument('forYear');
+        if ( ! $forYear) {
+            $forYear = Carbon::now()->year;
+        }
+
+        try {
+            $url = $service->createAndSaveUrl($userId, $forYear, true);
+        } catch (\Exception $e) {
+            $this->error($e->getMessage());
+
+            return;
+        }
 
         $phoneNumber = $this->argument('phoneNumber');
         if ( ! $phoneNumber) {
@@ -76,8 +92,13 @@ class SendInvitationLinkUsingSMS extends Command
         }
 
         try {
-            $twilioService->sendSMS($phoneNumber, "TEST URL: $url");
+            if ($this->isDryRun()) {
+                $this->info("SMS[$phoneNumber] -> TEST URL: $url");
+            } else {
+                $twilioService->sendSMS($phoneNumber, "TEST URL: $url");
+            }
             $this->info("Done");
+
         } catch (TwilioException $e) {
             $this->error($e->getMessage());
         }

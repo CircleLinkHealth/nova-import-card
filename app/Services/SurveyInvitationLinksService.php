@@ -4,8 +4,8 @@
 namespace App\Services;
 
 use App\InvitationLink;
-use App\Patient;
 use App\Survey;
+use App\SurveyInstance;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\URL;
@@ -14,21 +14,71 @@ class SurveyInvitationLinksService
 {
     const HRA = 'HRA';
 
-    public function createAndSaveUrl($userId)
+    /**
+     * @param $userId
+     * @param string $forYear
+     * @param bool $addUserToSurveyInstance
+     *
+     * @return string
+     * @throws \Exception
+     */
+    public function createAndSaveUrl($userId, string $forYear, bool $addUserToSurveyInstance = false)
     {
-        $patient = Patient::where('user_id', $userId)
-                          ->select('id')
-                          ->firstOrFail();
+        $user = User
+            ::with([
+                'patientInfo',
+                'surveyInstances' => function ($query) {
+                    $query->current();
+                },
+            ])
+            ->where('id', '=', $userId)
+            ->firstOrFail();
 
-        $patientInfoId = $patient->id;
+        if (!$user->patientInfo) {
+            throw new \Exception("missing patient info from user");
+        }
 
+        $patientInfoId = $user->patientInfo->id;
         $this->expireAllPastUrls($patientInfoId);
 
-        $survey = Survey::where('name', $this::HRA)
-                        ->select('id')
-                        ->firstOrFail();
+        if ($user->surveyInstances->isEmpty()) {
 
-        $surveyId = $survey->id;
+            if ( ! $addUserToSurveyInstance) {
+                throw new \Exception("user does not belong to a survey instance");
+            }
+
+            $hraSurvey = Survey
+                ::with([
+                    'instances' => function ($instance) use ($forYear) {
+                        $instance->forYear($forYear);
+                    },
+                ])
+                ->where('name', Survey::HRA)
+                ->firstOrFail();
+
+            if ($hraSurvey->instances->isEmpty()) {
+                throw new \Exception("There is no HRA survey instance for year $forYear");
+            }
+
+            $user->surveys()
+                 ->attach($hraSurvey->id, [
+                     'survey_instance_id' => $hraSurvey->instances->first()->id,
+                     'status'             => SurveyInstance::PENDING,
+                 ]);
+
+            $surveyId = $hraSurvey->id;
+
+        } else {
+
+            /** @var SurveyInstance */
+            $hraSurveyInstance = $user->surveyInstances->first();
+
+            if ($hraSurveyInstance->pivot->status === SurveyInstance::COMPLETED) {
+                throw new \Exception("cannot create invitation link for a completed survey");
+            }
+
+            $surveyId = $hraSurveyInstance->survey_id;
+        }
 
         //APP_URL must be set correctly in .env for this to work
         $url = URL::signedRoute('auth.login.signed',

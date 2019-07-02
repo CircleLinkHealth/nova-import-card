@@ -8,6 +8,7 @@ use App\Services\SurveyInvitationLinksService;
 use App\Services\SurveyService;
 use App\Services\TwilioClientService;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Twilio\Exceptions\TwilioException;
@@ -44,8 +45,16 @@ class InvitationLinksController extends Controller
                 ->withInput();
         }
 
-        $userId      = $request->get('id');
-        $url         = $this->service->createAndSaveUrl($userId);
+        $userId = $request->get('id');
+
+        try {
+            $url = $this->service->createAndSaveUrl($userId, Carbon::now()->year);
+        } catch (\Exception $e) {
+            return back()
+                ->withErrors(['message' => $e->getMessage()])
+                ->withInput();
+        }
+
         $phoneNumber = $this->service->getPatientPhoneNumberById($userId);
 
         //todo: need provider name
@@ -80,7 +89,7 @@ class InvitationLinksController extends Controller
         $urlWithToken = $request->getRequestUri();
 
         $user            = User::with(['primaryPractice', 'billingProvider'])->where('id', '=', $userId)->firstOrFail();
-        $practiceName = $user->getPrimaryPracticeName();
+        $practiceName    = $user->getPrimaryPracticeName();
         $doctorsLastName = $user->billingProviderUser()->display_name;
 
         return view('surveyUrlAuth.surveyLoginForm',
@@ -89,9 +98,13 @@ class InvitationLinksController extends Controller
 
     public function resendUrl($userId)
     {
-        $this->service->createAndSaveUrl($userId);
+        try {
+            $this->service->createAndSaveUrl($userId, Carbon::now()->year);
+        } catch (\Exception $e) {
+            //fixme: return with error
+        }
 
-        //fixme: show a success page
+        //fixme: return with success
         return 'New link is on its way';
     }
 

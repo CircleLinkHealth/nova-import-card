@@ -3,7 +3,16 @@
 namespace App;
 
 use CircleLinkHealth\Core\Entities\BaseModel;
+use Illuminate\Support\Collection;
 
+/**
+ * Class Survey
+ *
+ * @property int id
+ * @property-read SurveyInstance[]|Collection instances
+ *
+ * @package App
+ */
 class Survey extends BaseModel
 {
 
