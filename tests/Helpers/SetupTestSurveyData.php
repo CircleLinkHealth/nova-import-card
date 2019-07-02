@@ -68,19 +68,19 @@ trait SetupTestSurveyData
             $instances = $survey->instances()->createMany([
                 [
                     'survey_id'  => $survey->id,
-                    'name'       => $survey->name . ' ' . $this->date->copy()->subYear(2)->year,
+                    'year'       => $this->date->copy()->subYear(2)->year,
                     'start_date' => $this->date->copy()->subYear(2)->startOfYear()->toDateString(),
                     'end_date'   => $this->date->copy()->subYear(2)->endOfYear()->toDateString(),
                 ],
                 [
                     'survey_id'  => $survey->id,
-                    'name'       => $survey->name . ' ' . $this->date->copy()->subYear(1)->year,
+                    'year'       => $this->date->copy()->subYear(1)->year,
                     'start_date' => $this->date->copy()->subYear(1)->startOfYear()->toDateString(),
                     'end_date'   => $this->date->copy()->subYear(1)->endOfYear()->toDateString(),
                 ],
                 [
                     'survey_id'  => $survey->id,
-                    'name'       => $survey->name . ' ' . $this->date->year,
+                    'year'       => $this->date->year,
                     'start_date' => $this->date->copy()->startOfYear()->toDateString(),
                     'end_date'   => $this->date->copy()->endOfYear()->toDateString(),
                 ],

@@ -108,6 +108,11 @@ class SurveyService
 
         $instance = $user->surveyInstances->first();
 
+        if (! $instance->start_date ) {
+            $instance->start_date = Carbon::now();
+            $instance->end_date = Carbon::now()->addYear(1);
+        }
+
         //change status only if not completed
         if ($instance->pivot->status !== SurveyInstance::COMPLETED) {
             $instance->pivot->status = $isComplete
@@ -136,11 +141,11 @@ class SurveyService
 
         $isInitial = $patient->patientAWVSummaries->count() === 0;
 
-        $summary = $patient->patientAWVSummaries->where('month_year', $date->copy()->startOfMonth())->first();
+        $summary = $patient->patientAWVSummaries->where('year', $date->year)->first();
 
         if ( ! $summary) {
             $patient->patientAWVSummaries()->create([
-                'month_year'       => $date->copy()->startOfMonth(),
+                'year'       => $date->year,
                 'is_initial_visit' => $isInitial,
             ]);
         }
