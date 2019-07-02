@@ -9,7 +9,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use View;
 
-class ViewComposerServiceProvider extends ServiceProvider
+class EligibilityBatchViewComposerServiceProvider extends ServiceProvider
 {
     /**
      * Register bindings in the container.

@@ -191,6 +191,11 @@ return [
         App\Providers\FaxServiceProvider::class,
         App\Providers\TwilioClientServiceProvider::class,
         \Collective\Html\HtmlServiceProvider::class,
+
+        App\View\Composers\ProviderUITimerComposer::class,
+        App\View\Composers\FabComposer::class,
+        App\View\Composers\SAAS\Admin\ManageInternalUser::class,
+        App\Providers\EligibilityBatchViewComposerServiceProvider::class,
     ],
 
     /*
@@ -242,14 +247,14 @@ return [
         'Input'     => Illuminate\Support\Facades\Input::class,
         'Inspiring' => Illuminate\Foundation\Inspiring::class,
 
-        'DataTables'     => Yajra\DataTables\Facades\DataTables::class,
-        'Form'           => \Collective\Html\FormFacade::class,
-        'Html'           => \Collective\Html\HtmlFacade::class,
-        'Image'          => \Barryvdh\Snappy\Facades\SnappyImage::class,
-        'PdfMerger'      => LynX39\LaraPdfMerger\Facades\PdfMerger::class,
-        'Slack'          => jeremykenedy\Slack\Laravel\Facade::class,
-        'Swagger'        => L5Swagger\L5SwaggerServiceProvider::class,
-        'UrlShortener'   => Waavi\UrlShortener\Facades\UrlShortener::class,
+        'DataTables'   => Yajra\DataTables\Facades\DataTables::class,
+        'Form'         => \Collective\Html\FormFacade::class,
+        'Html'         => \Collective\Html\HtmlFacade::class,
+        'Image'        => \Barryvdh\Snappy\Facades\SnappyImage::class,
+        'PdfMerger'    => LynX39\LaraPdfMerger\Facades\PdfMerger::class,
+        'Slack'        => jeremykenedy\Slack\Laravel\Facade::class,
+        'Swagger'      => L5Swagger\L5SwaggerServiceProvider::class,
+        'UrlShortener' => Waavi\UrlShortener\Facades\UrlShortener::class,
     ],
 
     /*

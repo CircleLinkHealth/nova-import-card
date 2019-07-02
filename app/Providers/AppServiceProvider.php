@@ -10,9 +10,6 @@ use App\Contracts\HtmlToPdfService;
 use App\Contracts\ReportFormatter;
 use App\Formatters\WebixFormatter;
 use App\Services\SnappyPdfWrapper;
-use App\View\Composers\FabComposer;
-use App\View\Composers\ProviderUITimerComposer;
-use App\View\Composers\SAAS\Admin\ManageInternalUser;
 use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesServiceProvider;
 use DB;
@@ -119,11 +116,11 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->register(\Maatwebsite\Excel\ExcelServiceProvider::class);
         $this->app->register(\Yajra\DataTables\DataTablesServiceProvider::class);
-    
+
         if ($this->app->environment('local')) {
             DevelopmentServiceProvider::class;
         }
-    
+
         $this->app->bind(
             HtmlToPdfService::class,
             function () {
@@ -131,24 +128,20 @@ class AppServiceProvider extends ServiceProvider
                     ->setTemporaryFolder(storage_path('tmp'));
             }
         );
-    
+
         $this->app->bind(
             ReportFormatter::class,
             WebixFormatter::class
         );
-    
+
         $this->app->register(\Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class);
         $this->app->register(\Barryvdh\Snappy\ServiceProvider::class);
-        
-        $this->app->register(ViewComposerServiceProvider::class);
-        $this->app->register(ProviderUITimerComposer::class);
+
         $this->app->register(\jeremykenedy\Slack\Laravel\ServiceProvider::class);
         $this->app->register(EmailArrayValidatorServiceProvider::class);
         $this->app->register(\Propaganistas\LaravelPhone\PhoneServiceProvider::class);
         $this->app->register(\Waavi\UrlShortener\UrlShortenerServiceProvider::class);
         $this->app->register(GoogleDriveServiceProvider::class);
-        $this->app->register(ManageInternalUser::class);
-        $this->app->register(FabComposer::class);
         $this->app->register(\LynX39\LaraPdfMerger\PdfMergerServiceProvider::class);
         $this->app->register(AuthyServiceProvider::class);
         $this->app->register(\PragmaRX\Health\ServiceProvider::class);
