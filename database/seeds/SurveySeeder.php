@@ -34,9 +34,7 @@ class SurveySeeder extends Seeder
 
         $currentInstance = SurveyInstance::firstOrCreate([
             'survey_id'  => $vitals->id,
-            'name'       => $vitals->name . ' ' . $this->date->year,
-            'start_date' => $this->date->copy()->startOfYear(),
-            'end_date'   => $this->date->copy()->endOfYear(),
+            'year'       => $this->date->year,
         ]);
 
         $questionsData = $this->vitalsQuestionData();
@@ -54,9 +52,7 @@ class SurveySeeder extends Seeder
 
         $currentInstance = SurveyInstance::firstOrCreate([
             'survey_id'  => $hra->id,
-            'name'       => $hra->name . ' ' . $this->date->year,
-            'start_date' => $this->date->copy()->startOfYear(),
-            'end_date'   => $this->date->copy()->endOfYear(),
+            'year'       => $this->date->year,
         ]);
 
         $questionsData = $this->hraQuestionData();
