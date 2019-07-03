@@ -12,8 +12,6 @@ use Illuminate\Support\Facades\URL;
 
 class SurveyInvitationLinksService
 {
-    const HRA = 'HRA';
-
     /**
      * @param $userId
      * @param string $forYear
@@ -28,7 +26,7 @@ class SurveyInvitationLinksService
             ::with([
                 'patientInfo',
                 'surveyInstances' => function ($query) {
-                    $query->current();
+                    $query->ofSurvey(Survey::HRA)->current();
                 },
             ])
             ->where('id', '=', $userId)
