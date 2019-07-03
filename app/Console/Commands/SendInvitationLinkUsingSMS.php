@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Console\Traits\DryRunnable;
 use App\Services\SurveyInvitationLinksService;
 use App\Services\TwilioClientService;
+use App\Survey;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -54,8 +55,11 @@ class SendInvitationLinkUsingSMS extends Command
         $user = User
             ::with([
                 'phoneNumbers',
-                'surveyInstances' => function ($instance) {
-                    $instance->current();
+                'patientInfo',
+                'primaryPractice',
+                'billingProvider',
+                'surveyInstances' => function ($query) {
+                    $query->ofSurvey(Survey::HRA)->current();
                 },
             ])
             ->where('id', '=', $userId)
@@ -73,7 +77,7 @@ class SendInvitationLinkUsingSMS extends Command
         }
 
         try {
-            $url = $service->createAndSaveUrl($userId, $forYear, true);
+            $url = $service->createAndSaveUrl($user, $forYear, true);
         } catch (\Exception $e) {
             $this->error($e->getMessage());
 
@@ -91,11 +95,13 @@ class SendInvitationLinkUsingSMS extends Command
             return;
         }
 
+        $text = $service->getSMSText($user, $url);
+
         try {
             if ($this->isDryRun()) {
-                $this->info("SMS[$phoneNumber] -> TEST URL: $url");
+                $this->info("SMS[$phoneNumber] -> $text");
             } else {
-                $twilioService->sendSMS($phoneNumber, "TEST URL: $url");
+                $twilioService->sendSMS($phoneNumber, $text);
             }
             $this->info("Done");
 

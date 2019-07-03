@@ -7,6 +7,7 @@ use App\InvitationLink;
 use App\Services\SurveyInvitationLinksService;
 use App\Services\SurveyService;
 use App\Services\TwilioClientService;
+use App\Survey;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -46,19 +47,29 @@ class InvitationLinksController extends Controller
         }
 
         $userId = $request->get('id');
+        $user   = User
+            ::with([
+                'phoneNumbers',
+                'patientInfo',
+                'primaryPractice',
+                'billingProvider',
+                'surveyInstances' => function ($query) {
+                    $query->ofSurvey(Survey::HRA)->current();
+                },
+            ])
+            ->where('id', '=', $userId)
+            ->firstOrFail();
 
         try {
-            $url = $this->service->createAndSaveUrl($userId, Carbon::now()->year);
+            $url = $this->service->createAndSaveUrl($user, Carbon::now()->year);
         } catch (\Exception $e) {
             return back()
                 ->withErrors(['message' => $e->getMessage()])
                 ->withInput();
         }
 
-        $phoneNumber = $this->service->getPatientPhoneNumberById($userId);
 
-        //todo: need provider name
-        $resp = $this->sendSms($twilioClientService, '....', $phoneNumber, $url);
+        $resp = $this->sendSms($twilioClientService, $user, $url);
 
         if ( ! $resp) {
             return back()
@@ -69,9 +80,13 @@ class InvitationLinksController extends Controller
         return back()->with(['message' => 'success']);
     }
 
-    public function sendSms(TwilioClientService $twilioService, string $providerName, string $phoneNumber, string $url)
-    {
-        $text = "Dr $providerName has invited you to complete a survey! Please enroll here: $url";
+    public function sendSms(
+        TwilioClientService $twilioService,
+        User $user,
+        string $url
+    ) {
+        $phoneNumber = $user->phoneNumbers->first();
+        $text        = $this->service->getSMSText($user, $url);
 
         try {
             $messageId = $twilioService->sendSMS($phoneNumber, $text);
