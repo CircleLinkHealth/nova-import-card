@@ -50,7 +50,8 @@ class NurseInvoiceDailyDisputesController extends Controller
      */
     public function storeSuggestedWorkTime(StoreSuggestedTime $request)
     {
-        $input         = $request->all();
+        $input = $request->all();
+
         $suggestedTime = $this->service->storeDisputedTime($input);
 
         if ( ! $suggestedTime) {

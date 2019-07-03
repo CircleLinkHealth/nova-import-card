@@ -1,32 +1,44 @@
 <template>
-    <div @mouseover="mouseOver" @mouseleave="mouseLeave">
-       <span :class="{strike: strikethroughTime || setStrikeThrough}">
+    <div>
+        <div @mouseover="mouseOver" @mouseleave="mouseLeave">
+
+            <!--Original Formatted Value from NurseInvoice-->
+            <span :class="{strike: strikethroughTime || setStrikeThrough}">
            {{this.formattedTime}}
             <loader v-show="loader"></loader>
        </span>
 
-        <span v-show="showLiveRequestedTime && !hideTillRefresh"
-              class="dispute-requested-time">
+            <span v-show="showLiveRequestedTime && !hideTillRefresh"
+                  class="dispute-requested-time">
             {{this.liveRequestedTime}}
         </span>
 
-        <span v-show="!showLiveRequestedTime && !hideTillRefresh"
-              class="dispute-requested-time">
+            <span v-show="!showLiveRequestedTime && !hideTillRefresh"
+                  class="dispute-requested-time">
             {{this.requestedTimeFromDb}}
         </span>
 
-
-        <span v-show="editButtonActive"
-              @click="handleEdit()"
-              aria-hidden="true"
-              class="edit-button">
+            <!--Edit Btn-->
+            <span v-show="editButtonActive"
+                  @click="handleEdit()"
+                  aria-hidden="true"
+                  class="edit-button">
            <i class="glyphicon glyphicon-pencil"></i> Edit
         </span>
 
-        <span v-show="showDisputeBox"
-              aria-hidden="true"
-              class="dispute-box">
-                        <input type="text"
+            <!--Delete Btn-->
+            <span v-show="showDeleteBtn && !hideTillRefresh"
+                  @click="handleDelete()"
+                  aria-hidden="true"
+                  class="delete-button">
+           <i class="glyphicon glyphicon-erase"></i> Delete
+        </span>
+
+            <!--Input for new time hh:mm with save & dismiss btn-->
+            <span v-show="showDisputeBox"
+                  aria-hidden="true"
+                  class="dispute-box">
+                        <input type="number"
                                class="text-box"
                                placeholder="hh:mm"
                                v-model="liveRequestedTime">
@@ -36,26 +48,21 @@
                 <i class="glyphicon glyphicon-saved"></i>
             </span>
 
-        </span>
-
-        <span v-show="showDisputeBox"
-              class="dismiss"
-              @click="dismiss()">
+                    <span v-show="showDisputeBox"
+                          class="dismiss"
+                          @click="dismiss()">
             <i class="glyphicon glyphicon-remove"></i>
         </span>
-
-        <span v-show="showDeleteBtn && !hideTillRefresh"
-              @click="handleDelete()"
-              aria-hidden="true"
-              class="delete-button">
-           <i class="glyphicon glyphicon-erase"></i> Delete
-        </span>
+            </span>
+        </div>
     </div>
-
 </template>
 
 <script>
-    import LoaderComponent from '../../../../../../resources/assets/js/components/loader';
+    import LoaderComponent from '../../../../../../resources/assets/js/components/loader'
+    import {mapActions} from 'vuex'
+    import {addNotification} from '../../../../../../resources/assets/js/store/actions'
+
     export default {
         props: [
             'invoiceData',
@@ -65,6 +72,7 @@
 
         components: {
             'loader': LoaderComponent,
+            'addNotification': addNotification,
         },
 
         name: "nurseInvoiceDailyDispute",
@@ -80,11 +88,13 @@
                 disputeRequestedTime: false,
                 strikethroughTime: false,
                 //these are used to force a behavior on an element
-                // eg. show/hide till user refresh so component can load
+                // eg. show/hide till user refreshes page so component can load the
                 //newly created data from DB.
                 showTillRefresh: true,
                 hideTillRefresh: false,
-                loader:false,
+                //
+                loader: false,
+                errors: [],
             }
         },
 
@@ -107,7 +117,7 @@
             }
         },
 
-        methods: {
+        methods: Object.assign(mapActions(['addNotification']), {
             mouseOver() {
                 if (!this.showDisputeBox) {
                     this.editButtonActive = true;
@@ -124,7 +134,6 @@
                 this.showDisputeBox = true;
             },
             handleDelete() {
-                //    @todo:add loader
                 this.loader = true;
                 axios.delete(`/nurseinvoices/delete-dispute/${this.invoiceId}/${this.day}`, {
                     'invoiceId': this.invoiceId,
@@ -137,6 +146,13 @@
                         this.showTillRefresh = false;
                         this.hideTillRefresh = true;
                         this.loader = false;
+
+                        this.addNotification({
+                            title: "Deleted",
+                            text: "Your dispute has been submitted deleted",
+                            type: "info",
+                            timeout: true
+                        });
                     })
                     .catch((error) => {
                         console.log(error);
@@ -144,12 +160,6 @@
                             this.error = "Not Found [404]";
                         } else if (error.response && error.response.status === 419) {
                             this.error = "Not Authenticated [419]";
-                        } else if (error.response && error.response.data) {
-                            const errors = [error.response.data.message];
-                            Object.keys(error.response.data.errors || []).forEach(e => {
-                                errors.push(error.response.data.errors[e]);
-                            });
-                            this.error = errors.join('<br/>');
                         } else {
                             this.error = error.message;
                         }
@@ -164,7 +174,6 @@
                 }
             },
             saveDispute() {
-                //    @todo:add loader
                 this.loader = true;
                 axios.post('/nurseinvoices/daily-dispute', {
                     invoiceId: this.invoiceId,
@@ -173,40 +182,47 @@
                     disputedDay: this.day,
                 })
                     .then((response) => {
-                        this.disputeRequestedTime = true;
                         this.deleteButtonActive = true;
+                        this.disputeRequestedTime = true;
                         this.strikethroughTime = true;
-                        this.showTillRefresh = false;
+                        this.hideTillRefresh = false;
                         this.dismiss();
                         this.loader = false;
+
+                        this.addNotification({
+                            title: "Success!",
+                            text: "Your dispute has been submitted. We\'ll get back to you as soon as possible.",
+                            type: "success",
+                            timeout: true
+                        });
                     })
                     .catch((error) => {
                         console.log(error);
                         if (error.response && error.response.status === 404) {
                             this.error = "Not Found [404]";
-                        } else if (error.response && error.response.status === 419) {
-                            this.error = "Not Authenticated [419]";
-                        } else if (error.response && error.response.data) {
-                            const errors = [error.response.data.message];
-                            Object.keys(error.response.data.errors || []).forEach(e => {
-                                errors.push(error.response.data.errors[e]);
+                        } else if (error.response && error.response.status === 422) {
+                            this.loader = false;
+                            this.errors = error.response.data.errors;
+
+                            this.addNotification({
+                                title: "Warning!",
+                                text: this.errors.suggestedFormattedTime[0],
+                                type: "danger",
+                                timeout: true
                             });
-                            this.error = errors.join('<br/>');
+
                         } else {
                             this.error = error.message;
                         }
                     });
             },
-
-
-        },
+        }),
 
         created() {
 
         }
 
     }
-
 </script>
 
 <style scoped>

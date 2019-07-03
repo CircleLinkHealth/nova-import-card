@@ -21,6 +21,18 @@ class StoreSuggestedTime extends FormRequest
     }
 
     /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'suggestedFormattedTime.required' => "Please input work time value in 'hh:mm' format",
+        ];
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
@@ -28,8 +40,8 @@ class StoreSuggestedTime extends FormRequest
     public function rules()
     {
         return [
-            //            'invoiceId'              => 'required|exists:nurse_invoices,id',
-            //            'suggestedFormattedTime' => 'format',
+            'invoiceId'              => 'required|exists:nurse_invoices,id',
+            'suggestedFormattedTime' => 'required|min:0',
         ];
     }
 }
