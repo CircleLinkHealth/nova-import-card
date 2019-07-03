@@ -29,6 +29,9 @@ class User extends \CircleLinkHealth\Customer\Entities\User
                     ->withPivot([
                         'survey_instance_id',
                         'status',
+                        'last_question_answered_id',
+                        'start_date',
+                        'completed_at'
                     ])
                     ->withTimestamps();
     }
@@ -40,6 +43,8 @@ class User extends \CircleLinkHealth\Customer\Entities\User
                         'survey_id',
                         'last_question_answered_id',
                         'status',
+                        'start_date',
+                        'completed_at'
                     ])
                     ->withTimestamps();
     }

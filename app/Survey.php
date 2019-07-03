@@ -37,6 +37,8 @@ class Survey extends BaseModel
                         'survey_instance_id',
                         'last_question_answered_id',
                         'status',
+                        'start_date',
+                        'completed_at'
                     ])
                     ->withTimestamps();
     }
@@ -47,6 +49,9 @@ class Survey extends BaseModel
                     ->withPivot([
                         'user_id',
                         'status',
+                        'last_question_answered_id',
+                        'start_date',
+                        'completed_at'
                     ])
                     ->withTimestamps();
     }
