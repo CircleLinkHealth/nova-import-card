@@ -6,10 +6,12 @@ use App\Http\Requests\SurveyAuthLoginRequest;
 use App\InvitationLink;
 use App\Services\SurveyInvitationLinksService;
 use App\Services\SurveyService;
+use App\Services\TwilioClientService;
+use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Twilio\Exceptions\ConfigurationException;
-use Twilio\Rest\Client;
+use Twilio\Exceptions\TwilioException;
 
 
 class InvitationLinksController extends Controller
@@ -30,7 +32,7 @@ class InvitationLinksController extends Controller
         return view('invitationLink.enterPatientForm');
     }
 
-    public function createSendInvitationUrl(Request $request)
+    public function createSendInvitationUrl(Request $request, TwilioClientService $twilioClientService)
     {
         //@todo:should validate using more conditions
         $validator = Validator::make($request->all(), [
@@ -43,34 +45,42 @@ class InvitationLinksController extends Controller
                 ->withInput();
         }
 
-        $userId      = $request->get('id');
-        $url         = $this->service->createAndSaveUrl($userId);
-        $phoneNumber = $this->service->getPatientPhoneNumberById($userId);
-        $this->sendSms($phoneNumber, $url);
-
-        return 'invitation has been sent';
-    }
-
-    public function sendSms($phoneNumber, $url)
-    {
-        $accountSid = env('TWILIO_SID');
-        $authToken  = env('TWILIO_TOKEN');
+        $userId = $request->get('id');
 
         try {
-            $twilio = new Client($accountSid, $authToken);
-        } catch (ConfigurationException $e) {
-
+            $url = $this->service->createAndSaveUrl($userId, Carbon::now()->year);
+        } catch (\Exception $e) {
+            return back()
+                ->withErrors(['message' => $e->getMessage()])
+                ->withInput();
         }
-        $message = $twilio->messages
-            ->create($phoneNumber,
-                //@todo get outgoing number
-                [
-                    "from" => "+1 646 759 2882",
-                    "body" => "Dr...... has invited you to complete a survey! Please enroll here:" . '' . $url,
-                ]
-            );
 
-        // print($message->sid);
+        $phoneNumber = $this->service->getPatientPhoneNumberById($userId);
+
+        //todo: need provider name
+        $resp = $this->sendSms($twilioClientService, '....', $phoneNumber, $url);
+
+        if ( ! $resp) {
+            return back()
+                ->withErrors(['message' => 'Could not send SMS'])
+                ->withInput();
+        }
+
+        return back()->with(['message' => 'success']);
+    }
+
+    public function sendSms(TwilioClientService $twilioService, string $providerName, string $phoneNumber, string $url)
+    {
+        $text = "Dr $providerName has invited you to complete a survey! Please enroll here: $url";
+
+        try {
+            $messageId = $twilioService->sendSMS($phoneNumber, $text);
+            //todo: save message id in db
+        } catch (TwilioException $e) {
+            return false;
+        }
+
+        return true;
     }
 
 
@@ -78,32 +88,47 @@ class InvitationLinksController extends Controller
     {
         $urlWithToken = $request->getRequestUri();
 
-        return view('surveyUrlAuth.surveyLoginForm', compact('userId', 'urlWithToken'));
-    }
+        $user            = User::with(['primaryPractice', 'billingProvider'])->where('id', '=', $userId)->firstOrFail();
+        $practiceName    = $user->getPrimaryPracticeName();
+        $doctorsLastName = $user->billingProviderUser()->display_name;
 
-    public function resendUrl($userId)
-    {
-        $this->service->createAndSaveUrl($userId);
-
-        //fixme: show a success page
-        return 'New link is on its way';
+        return view('surveyUrlAuth.surveyLoginForm',
+            compact('userId', 'urlWithToken', 'practiceName', 'doctorsLastName'));
     }
 
     public function surveyLoginAuth(SurveyAuthLoginRequest $request)
     {
-        $urlToken       = $this->service->parseUrl($request->input('url'));
+        $urlToken = $this->service->parseUrl($request->input('url'));
+
+        /** @var InvitationLink $invitationLink */
         $invitationLink = InvitationLink::with('patientInfo.user')
                                         ->where('link_token', $urlToken)
                                         ->firstOrFail();
 
-        if ($invitationLink->patientInfo->birth_date != $request->input('birth_date')) {
-            //fixme: redirect back with errors
-            return 'Date of birth is wrong';
+        $dob = $invitationLink->patientInfo->birth_date;
+        if ( ! ($dob instanceof Carbon)) {
+            $dob = Carbon::parse($dob)->startOfDay();
         }
-        if ($invitationLink->patientInfo->user->display_name != $request->input('name')) {
-            //fixme: redirect back with errors
-            return 'Name does not exists in our DB';
+
+        $inputDob = $request->input('birth_date');
+        if ( ! ($inputDob instanceof Carbon)) {
+            $inputDob = Carbon::parse($dob)->startOfDay();
         }
+
+        if ( ! $dob->equalTo($inputDob)) {
+            return back()
+                //since this is a login form, we need to send general messages
+                ->withErrors(['message' => 'The data you entered does not match our records.'])
+                ->withInput();
+        }
+
+        if (strcasecmp($invitationLink->patientInfo->user->display_name, $request->input('name')) != 0) {
+            return back()
+                //since this is a login form, we need to send general messages
+                ->withErrors(['message' => 'The data you entered does not match our records.'])
+                ->withInput();
+        }
+
         $userId       = $invitationLink->patientInfo->user_id;
         $surveyId     = $invitationLink->survey_id;
         $urlUpdatedAt = $invitationLink->updated_at;
@@ -112,9 +137,14 @@ class InvitationLinksController extends Controller
         $expireRange  = InvitationLinksController::LINK_EXPIRES_IN_DAYS;
 
         if ($isExpiredUrl || $urlUpdatedAt->diffInDays($today) > $expireRange) {
-            $invitationLink->where('is_manually_expired', '=', 0)->update(['is_manually_expired' => true]);
-            //fixme: should redirect
-            return view('surveyUrlAuth.resendUrl', compact('userId'));
+
+            if ( ! $isExpiredUrl) {
+                $invitationLink->is_manually_expired = true;
+                $invitationLink->save();
+            }
+
+            return back()
+                ->withErrors(['expired_link' => 'Your link has expired. Please request a new one.']);
         }
 
         return redirect()->route('survey.hra',

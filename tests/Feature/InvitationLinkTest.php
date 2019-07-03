@@ -20,7 +20,7 @@ class InvitationLinkTest extends TestCase
             'user_id' => 1,
         ]);
 
-        $this->call('POST', route('createSendInvitationUrl'), [
+        $this->call('POST', route('auth.send.signed.url'), [
             'id' => 1,
         ]);
 

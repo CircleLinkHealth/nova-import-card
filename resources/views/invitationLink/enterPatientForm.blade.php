@@ -10,7 +10,7 @@
     </div>
 @endif
 
-<form method="POST" action="{{route('createSendInvitationUrl')}}">
+<form method="POST" action="{{route('auth.send.signed.url')}}">
     {{csrf_field()}}
     Patient's Id: <input type="text" name="id" required><br>
     <input type="submit" value="Submit">
