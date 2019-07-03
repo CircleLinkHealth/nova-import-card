@@ -105,14 +105,24 @@ class InvitationLinksController extends Controller
                                         ->where('link_token', $urlToken)
                                         ->firstOrFail();
 
-        if ($invitationLink->patientInfo->birth_date != $request->input('birth_date')) {
+        $dob = $invitationLink->patientInfo->birth_date;
+        if ( ! ($dob instanceof Carbon)) {
+            $dob = Carbon::parse($dob)->startOfDay();
+        }
+
+        $inputDob = $request->input('birth_date');
+        if ( ! ($inputDob instanceof Carbon)) {
+            $inputDob = Carbon::parse($dob)->startOfDay();
+        }
+
+        if ( ! $dob->equalTo($inputDob)) {
             return back()
                 //since this is a login form, we need to send general messages
                 ->withErrors(['message' => 'The data you entered does not match our records.'])
                 ->withInput();
         }
 
-        if ($invitationLink->patientInfo->user->display_name != $request->input('name')) {
+        if (strcasecmp($invitationLink->patientInfo->user->display_name, $request->input('name')) != 0) {
             return back()
                 //since this is a login form, we need to send general messages
                 ->withErrors(['message' => 'The data you entered does not match our records.'])

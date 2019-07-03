@@ -23,16 +23,20 @@
                     {{csrf_field()}}
                     <div style="margin-top: 20px;">
                         <div class="form-group form-group-input">
-                            <label for="full-name" class="full-name">Full Name</label><br>
-                            <input type="text" name="name" style="width: 400px; height: 60px; border-radius: 5px;"
+                            <label for="full-name" class="full-name">Full Name</label>
+                            <br>
+                            <input type="text" name="name"
+                                   value="{{old('name')}}"
                                    placeholder="Full Name" required>
 
                         </div>
                         <br>
                         <div class="form-group form-group-input">
                             <label for="birth-date" class="birth-date">Date of Birth</label>
-                            <input type="date" name="birth_date" style="width: 400px; height: 60px; border-radius: 5px;"
-                                   placeholder="1950-01-15" required>
+                            <br>
+                            <input type="date" name="birth_date"
+                                   placeholder="1950-01-15" required
+                                   value="{{old('birth_date')}}">
 
                         </div>
                         <br>
@@ -86,6 +90,7 @@
             border-radius: 5px;
             border: solid 1px #f2f2f2;
             background-color: #ffffff;
+            width: 100%;
         }
 
         .survey-container {
