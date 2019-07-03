@@ -3,7 +3,7 @@
         <div @mouseover="mouseOver" @mouseleave="mouseLeave">
 
             <!--Original Formatted Value from NurseInvoice-->
-            <span :class="{strike: strikethroughTime || setStrikeThrough}">
+            <span :class="{strike: strikethroughTime || shouldSetStrikeThroughNow}">
            {{this.formattedTime}}
             <loader v-show="loader"></loader>
        </span>
@@ -32,7 +32,7 @@
             <span v-show="showDisputeBox"
                   aria-hidden="true"
                   class="dispute-box">
-                        <input type="number"
+                        <input type="text"
                                class="text-box"
                                placeholder="hh:mm"
                                v-model="liveRequestedTime">
@@ -108,11 +108,11 @@
             },
 
             showDeleteBtn() {
-                return !! this.deleteButtonActive && (this.userDisputedTime || this.requestedTimeIsVisible)
+                return !!this.deleteButtonActive && (this.userDisputedTime || this.requestedTimeIsVisible)
 
             },
 
-            setStrikeThrough() {
+            shouldSetStrikeThroughNow() {
                 return this.showTillRefresh && (this.requestedTimeFromDb === undefined && this.strikethroughTime
                     || this.requestedTimeFromDb !== undefined && !this.strikethroughTime);
 
@@ -170,7 +170,9 @@
             dismiss() {
                 this.editButtonActive = false;
                 this.showDisputeBox = false;
-
+                // if (this.errors) {
+                //     this.hideTillRefresh = true;
+                // }
                 if (!this.userDisputedTime) {
                     this.deleteButtonActive = false;
                 }

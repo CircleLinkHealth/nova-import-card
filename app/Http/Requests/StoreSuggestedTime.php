@@ -41,7 +41,7 @@ class StoreSuggestedTime extends FormRequest
     {
         return [
             'invoiceId'              => 'required|exists:nurse_invoices,id',
-            'suggestedFormattedTime' => 'required|min:0',
+            'suggestedFormattedTime' => 'required|numeric|max:4',
         ];
     }
 }
