@@ -9,7 +9,6 @@ namespace CircleLinkHealth\NurseInvoices\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreSuggestedTime;
 use App\Services\NurseInvoiceDailyDisputeTimeService;
-use CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceDailyDispute;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Request;
 
@@ -30,12 +29,17 @@ class NurseInvoiceDailyDisputesController extends Controller
         $this->service = $service;
     }
 
-    public function deleteDispute($invoiceId, $disputedDay)
+    /**
+     * Care Coach might decide to delete the dispute.
+     *
+     * @param $invoiceId
+     * @param $disputedDay
+     *
+     * @return JsonResponse
+     */
+    public function deleteSuggestedWorkTime($invoiceId, $disputedDay)
     {
-        NurseInvoiceDailyDispute::where([
-            ['invoice_id', $invoiceId],
-            ['disputed_day', $disputedDay],
-        ])->delete();
+        $this->service->deleteDispute($invoiceId, $disputedDay);
 
         return response()->json([
             'deleted'     => true,

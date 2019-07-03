@@ -11,6 +11,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class NurseInvoiceDailyDisputeTimeService
 {
+    public function deleteDispute($invoiceId, $disputedDay)
+    {
+        NurseInvoiceDailyDispute::where([
+            ['invoice_id', $invoiceId],
+            ['disputed_day', $disputedDay],
+        ])->delete();
+    }
+
     /**
      * @param $input
      *

@@ -22,7 +22,7 @@ Route::prefix('nurseinvoices')->middleware(['auth'])->group(function () {
         ]);
 
         Route::delete('delete-dispute/{invoiceId}/{disputedDay}', [
-            'uses' => 'NurseInvoiceDailyDisputesController@deleteDispute',
+            'uses' => 'NurseInvoiceDailyDisputesController@deleteSuggestedWorkTime',
             'as'   => 'care.center.delete.invoice.daily.dispute',
         ]);
 
