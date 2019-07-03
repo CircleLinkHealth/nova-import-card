@@ -170,6 +170,7 @@ return [
         /*
          * Application Service Providers...
          */
+        CircleLinkHealth\Raygun\Providers\RaygunServiceProvider::class,
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
