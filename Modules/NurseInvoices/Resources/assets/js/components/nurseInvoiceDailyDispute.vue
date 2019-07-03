@@ -7,17 +7,11 @@
            {{this.formattedTime}}
             <loader v-show="loader"></loader>
        </span>
-
-            <span v-show="showLiveRequestedTime && !hideTillRefresh"
+            <!--Requested Time From nurse-->
+            <span v-show="!hideTillRefresh"
                   class="dispute-requested-time">
-            {{this.liveRequestedTime}}
+            {{setRequestedValue}}
         </span>
-
-            <span v-show="!showLiveRequestedTime && !hideTillRefresh"
-                  class="dispute-requested-time">
-            {{this.requestedTimeFromDb}}
-        </span>
-
             <!--Edit Btn-->
             <span v-show="editButtonActive"
                   @click="handleEdit()"
@@ -83,9 +77,10 @@
                 deleteButtonActive: false,
                 showDisputeBox: false,
                 formattedTime: this.invoiceData.formatted_time,
+                requestedTimeToShow: '',
                 liveRequestedTime: '',
                 requestedTimeFromDb: this.invoiceData.suggestedTime,
-                disputeRequestedTime: false,
+                userDisputedTime: false,
                 strikethroughTime: false,
                 //these are used to force a behavior on an element
                 // eg. show/hide till user refreshes page so component can load the
@@ -99,15 +94,22 @@
         },
 
         computed: {
-            showLiveRequestedTime() {
+            requestedTimeIsVisible() {
+                const requestedTimeFromDbExists = this.requestedTimeFromDb !== undefined;
+                const liveRequestedTime = !!this.liveRequestedTime;
+                return liveRequestedTime || requestedTimeFromDbExists;
+            },
+
+            setRequestedValue() {
                 const requestedTimeFromDbExists = this.requestedTimeFromDb === undefined;
-                return !!this.liveRequestedTime || requestedTimeFromDbExists;
+                const liveRequestedTime = !!this.liveRequestedTime;
+
+                return liveRequestedTime || requestedTimeFromDbExists ? this.liveRequestedTime : this.requestedTimeFromDb;
             },
 
             showDeleteBtn() {
-                return !!(this.disputeRequestedTime && this.deleteButtonActive)
-                    || (this.deleteButtonActive
-                        && this.showLiveRequestedTime === false)
+                return !! this.deleteButtonActive && (this.userDisputedTime || this.requestedTimeIsVisible)
+
             },
 
             setStrikeThrough() {
@@ -141,7 +143,7 @@
 
                 })
                     .then((resposne) => {
-                        this.disputeRequestedTime = false;
+                        this.userDisputedTime = false;
                         this.strikethroughTime = false;
                         this.showTillRefresh = false;
                         this.hideTillRefresh = true;
@@ -169,7 +171,7 @@
                 this.editButtonActive = false;
                 this.showDisputeBox = false;
 
-                if (!this.disputeRequestedTime) {
+                if (!this.userDisputedTime) {
                     this.deleteButtonActive = false;
                 }
             },
@@ -183,7 +185,7 @@
                 })
                     .then((response) => {
                         this.deleteButtonActive = true;
-                        this.disputeRequestedTime = true;
+                        this.userDisputedTime = true;
                         this.strikethroughTime = true;
                         this.hideTillRefresh = false;
                         this.dismiss();
@@ -219,6 +221,7 @@
         }),
 
         created() {
+
 
         }
 
