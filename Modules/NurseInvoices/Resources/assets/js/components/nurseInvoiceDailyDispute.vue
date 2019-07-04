@@ -8,7 +8,7 @@
             <loader v-show="loader"></loader>
        </span>
             <!--Requested Time From nurse-->
-            <span v-show="!hideTillRefresh"
+            <span v-show="showTillRefresh"
                   class="dispute-requested-time">
             {{setRequestedValue}}
         </span>
@@ -21,7 +21,7 @@
         </span>
 
             <!--Delete Btn-->
-            <span v-show="showDeleteBtn && !hideTillRefresh"
+            <span v-show="showDeleteBtn && showTillRefresh"
                   @click="handleDelete()"
                   aria-hidden="true"
                   class="delete-button">
@@ -86,10 +86,10 @@
                 // eg. show/hide till user refreshes page so component can load the
                 //newly created data from DB.
                 showTillRefresh: true,
-                hideTillRefresh: false,
                 //
                 loader: false,
                 errors: [],
+                temporaryValue: '',
             }
         },
 
@@ -146,7 +146,9 @@
                         this.userDisputedTime = false;
                         this.strikethroughTime = false;
                         this.showTillRefresh = false;
-                        this.hideTillRefresh = true;
+                        this.requestedTimeFromDb = undefined;
+                        this.liveRequestedTime = '';
+                        this.temporaryValue = '';
                         this.loader = false;
 
                         this.addNotification({
@@ -168,13 +170,36 @@
                     });
             },
             dismiss() {
-                this.editButtonActive = false;
-                this.showDisputeBox = false;
-                // if (this.errors) {
-                //     this.hideTillRefresh = true;
+                if (this.liveRequestedTime.length === 0
+                    && !this.temporaryValue){
+                    this.editButtonActive = false;
+                    this.showDisputeBox = false;
+                }
+                else if(this.liveRequestedTime.length === 0
+                    && this.temporaryValue){
+                    this.liveRequestedTime = this.temporaryValue;
+                    this.editButtonActive = false;
+                    this.showDisputeBox = false;
+                }
+                // else if(this.liveRequestedTime.length === 0
+                //     && this.temporaryValue
+                //     && this.requestedTimeFromDb !== undefined ){
+                //
+                //     this.liveRequestedTime = '';
+                //     this.editButtonActive = false;
+                //     this.showDisputeBox = false;
                 // }
-                if (!this.userDisputedTime) {
-                    this.deleteButtonActive = false;
+                else if (this.liveRequestedTime.length !== 0
+                    && this.temporaryValue) {
+                    this.liveRequestedTime = this.temporaryValue;
+                    this.editButtonActive = false;
+                    this.showDisputeBox = false;
+                }
+                else if (this.liveRequestedTime.length !== 0
+                    && !this.temporaryValue) {
+                    this.liveRequestedTime = this.requestedTimeFromDb;
+                    this.editButtonActive = false;
+                    this.showDisputeBox = false;
                 }
             },
             saveDispute() {
@@ -189,8 +214,10 @@
                         this.deleteButtonActive = true;
                         this.userDisputedTime = true;
                         this.strikethroughTime = true;
-                        this.hideTillRefresh = false;
-                        this.dismiss();
+                        this.showTillRefresh = true;
+                        this.editButtonActive = false;
+                        this.showDisputeBox = false;
+                        this.temporaryValue = this.liveRequestedTime;
                         this.loader = false;
 
                         this.addNotification({
