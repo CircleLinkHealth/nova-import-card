@@ -132,7 +132,7 @@ class SurveyService
         return $instance->pivot->status;
     }
 
-    private static function updateOrCreatePatientAWVSummary($patient)
+    private static function updateOrCreatePatientAWVSummary(User $patient)
     {
         if ( ! $patient) {
             return;

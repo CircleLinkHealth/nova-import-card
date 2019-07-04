@@ -4,7 +4,7 @@
         <div class="survey-container">
             <div class="card-body">
                 <div class="welcome-icon-container">
-                    <img src="../../assets/images/doctors.png"
+                    <img src="../../images/doctors.png"
                          class="welcome-icon" alt="welcome icon">
                 </div>
 
