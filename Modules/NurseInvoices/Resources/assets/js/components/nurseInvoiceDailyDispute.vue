@@ -38,16 +38,23 @@
                                placeholder="hh:mm"
                                v-model="liveRequestedTime">
 
-            <span class="save"
-                  @click="saveDispute">
+            <span class="save">
+                <button v-show="liveRequestedTime"
+                        class="button"
+                        @click="saveDispute"
+                        :class="{disable:disableButton}"
+                        :disabled="disableButton">
                 <i class="glyphicon glyphicon-saved"></i>
-            </span>
+                </button>
 
-                    <span v-show="showDisputeBox"
-                          class="dismiss"
-                          @click="dismiss()">
-            <i class="glyphicon glyphicon-remove"></i>
-        </span>
+            </span>
+                <span class="dismiss">
+                    <button v-show="showDisputeBox"
+                            class="button"
+                            @click="dismiss()">
+                          <i class="glyphicon glyphicon-remove"></i>
+                    </button>
+                </span>
             </span>
         </div>
     </div>
@@ -57,6 +64,7 @@
     import LoaderComponent from '../../../../../../resources/assets/js/components/loader'
     import {mapActions} from 'vuex'
     import {addNotification} from '../../../../../../resources/assets/js/store/actions'
+
 
     export default {
         props: [
@@ -91,6 +99,7 @@
                 loader: false,
                 errors: [],
                 temporaryValue: '',
+
             }
         },
 
@@ -122,11 +131,15 @@
                 const inputValue = this.liveRequestedTime;
                 const formatRule = inputValue.match('(0[0-9]|1[0-9]|2[0-3])(:[0-5][0-9])');
 
-                if (this.liveRequestedTime.length === 0){
+                if (this.liveRequestedTime.length === 0) {
                     return true;
                 }
                 return !!formatRule && this.liveRequestedTime.length <= 5;
             },
+
+            disableButton() {
+                return this.validateTime !== true || this.liveRequestedTime.length === 0;
+            }
         },
 
         methods: Object.assign(mapActions(['addNotification']), {
@@ -279,8 +292,24 @@
         color: #ff0000;
     }
 
+    .button {
+        background-color: Transparent;
+        background-repeat: no-repeat;
+        border: none;
+        cursor: pointer;
+        overflow: hidden;
+        outline: none;
+    }
+
     .dispute-requested-time {
         padding-left: 3%;
+    }
+
+    .disable{
+        background-color: #f4f6f6;
+        color: #d5dbdb;
+        cursor: default;
+        opacity: 0.7;
     }
 
 </style>
