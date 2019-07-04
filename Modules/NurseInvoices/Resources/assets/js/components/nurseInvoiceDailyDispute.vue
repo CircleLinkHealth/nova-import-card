@@ -102,9 +102,9 @@
 
             setRequestedValue() {
                 const requestedTimeFromDbExists = this.requestedTimeFromDb === undefined;
-                const liveRequestedTime = !!this.liveRequestedTime;
+                const temporaryValue = !!this.temporaryValue;
 
-                return liveRequestedTime || requestedTimeFromDbExists ? this.liveRequestedTime : this.requestedTimeFromDb;
+                return temporaryValue || requestedTimeFromDbExists ? this.temporaryValue : this.requestedTimeFromDb;
             },
 
             showDeleteBtn() {
@@ -170,37 +170,8 @@
                     });
             },
             dismiss() {
-                if (this.liveRequestedTime.length === 0
-                    && !this.temporaryValue){
-                    this.editButtonActive = false;
-                    this.showDisputeBox = false;
-                }
-                else if(this.liveRequestedTime.length === 0
-                    && this.temporaryValue){
-                    this.liveRequestedTime = this.temporaryValue;
-                    this.editButtonActive = false;
-                    this.showDisputeBox = false;
-                }
-                // else if(this.liveRequestedTime.length === 0
-                //     && this.temporaryValue
-                //     && this.requestedTimeFromDb !== undefined ){
-                //
-                //     this.liveRequestedTime = '';
-                //     this.editButtonActive = false;
-                //     this.showDisputeBox = false;
-                // }
-                else if (this.liveRequestedTime.length !== 0
-                    && this.temporaryValue) {
-                    this.liveRequestedTime = this.temporaryValue;
-                    this.editButtonActive = false;
-                    this.showDisputeBox = false;
-                }
-                else if (this.liveRequestedTime.length !== 0
-                    && !this.temporaryValue) {
-                    this.liveRequestedTime = this.requestedTimeFromDb;
-                    this.editButtonActive = false;
-                    this.showDisputeBox = false;
-                }
+                this.editButtonActive = false;
+                this.showDisputeBox = false;
             },
             saveDispute() {
                 this.loader = true;
