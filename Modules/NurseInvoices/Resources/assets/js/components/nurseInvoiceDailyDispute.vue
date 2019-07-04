@@ -39,8 +39,7 @@
                                v-model="liveRequestedTime">
 
             <span class="save">
-                <button v-show="liveRequestedTime"
-                        class="button"
+                <button class="button"
                         @click="saveDispute"
                         :class="{disable:disableButton}"
                         :disabled="disableButton">
