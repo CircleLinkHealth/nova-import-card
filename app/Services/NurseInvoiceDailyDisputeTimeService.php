@@ -24,23 +24,24 @@ class NurseInvoiceDailyDisputeTimeService
      *
      * @return bool|Model|NurseInvoiceDailyDispute
      */
-    public function storeDisputedTime($input)
+    public function saveDispute($input)
     {
-        $suggestedTime = NurseInvoiceDailyDispute::updateOrCreate(
+        $suggestedFormattedTime = $input['suggestedFormattedTime'];
+        $disputeSuggestedTime   = NurseInvoiceDailyDispute::updateOrCreate(
             [
                 'invoice_id'   => $input['invoiceId'],
                 'disputed_day' => $input['disputedDay'],
             ],
             [
-                'suggested_formatted_time' => $input['suggestedFormattedTime'],
+                'suggested_formatted_time' => $suggestedFormattedTime,
                 'disputed_formatted_time'  => $input['disputedFormattedTime'],
             ]
         );
 
-        if ( ! $suggestedTime) {
+        if ( ! $disputeSuggestedTime) {
             return false;
         }
 
-        return $suggestedTime;
+        return $disputeSuggestedTime;
     }
 }

@@ -81,8 +81,6 @@
         </small>
     </h1>
 </div>
-
-
 <div class="row">
     <div class="col-md-10" data-step="2" data-intro="The top part of the invoice shows a breakdown of your pay.">
         <table class="table borderless-table-invoices table-hover">

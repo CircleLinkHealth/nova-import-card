@@ -226,6 +226,7 @@
         }
 
     }
+
 </script>
 
 <style scoped>
@@ -255,8 +256,11 @@
 
     .text-box {
         max-width: 24%;
-    }
 
+    }
+    /*.text-box::-webkit-datetime-edit-ampm-field {*/
+    /*    display: none;*/
+    /*}*/
     .strike {
         text-decoration: line-through;
         color: #ff0000;

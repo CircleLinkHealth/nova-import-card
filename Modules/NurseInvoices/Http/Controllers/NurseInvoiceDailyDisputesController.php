@@ -56,15 +56,15 @@ class NurseInvoiceDailyDisputesController extends Controller
     {
         $input = $request->all();
 
-        $suggestedTime = $this->service->storeDisputedTime($input);
+        $disputeSuggestedTime = $this->service->saveDispute($input);
 
-        if ( ! $suggestedTime) {
+        if ( ! $disputeSuggestedTime) {
             return response()->json(['errors' => 'Dispute was not created'], 400);
         }
 
         return response()->json([
             'created' => true,
-            'time'    => $suggestedTime,
+            'time'    => $disputeSuggestedTime,
         ], 200);
     }
 }
