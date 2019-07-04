@@ -34,6 +34,7 @@
                   class="dispute-box">
                         <input type="text"
                                class="text-box"
+                               :class="{validation: !validateTime}"
                                placeholder="hh:mm"
                                v-model="liveRequestedTime">
 
@@ -115,8 +116,17 @@
             shouldSetStrikeThroughNow() {
                 return this.showTillRefresh && (this.requestedTimeFromDb === undefined && this.strikethroughTime
                     || this.requestedTimeFromDb !== undefined && !this.strikethroughTime);
+            },
 
-            }
+            validateTime() {
+                const inputValue = this.liveRequestedTime;
+                const formatRule = inputValue.match('(0[0-9]|1[0-9]|2[0-3])(:[0-5][0-9])');
+
+                if (this.liveRequestedTime.length === 0){
+                    return true;
+                }
+                return !!formatRule && this.liveRequestedTime.length <= 5;
+            },
         },
 
         methods: Object.assign(mapActions(['addNotification']), {
@@ -258,9 +268,12 @@
         max-width: 24%;
 
     }
-    /*.text-box::-webkit-datetime-edit-ampm-field {*/
-    /*    display: none;*/
-    /*}*/
+
+    .validation {
+        border-color: rgba(255, 0, 0, 0.17);
+        background-color: rgba(255, 0, 0, 0.17);
+    }
+
     .strike {
         text-decoration: line-through;
         color: #ff0000;
