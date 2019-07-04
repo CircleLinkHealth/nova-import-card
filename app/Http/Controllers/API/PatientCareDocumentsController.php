@@ -22,27 +22,21 @@ class PatientCareDocumentsController extends Controller
 
     public function downloadCareDocument($id, $mediaId)
     {
-        $mediaItem = Media::where('collection_name', 'patient-care-documents')
-            ->where('model_id', $id)
-            ->whereIn('model_type', ['App\User', 'CircleLinkHealth\Customer\Entities\User'])
-            ->find($mediaId);
+        $mediaItem = $this->getMediaItemById($id, $mediaId);
 
         if ( ! $mediaItem) {
             throw new \Exception('Media for Patient does not exist.', 500);
         }
 
-        return response($mediaItem->getFile(), 200, [
-            'Content-Type'        => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="'.$mediaItem->name.'"',
-        ]);
+        return $this->downloadMedia($mediaItem);
     }
 
     public function getCareDocuments(Request $request, $patientId, $showPast = false)
     {
         $patientAWVStatuses = PatientAWVSurveyInstanceStatus::where('patient_id', $patientId)
             ->when( ! $showPast, function ($query) {
-                                                                $query->where('year', Carbon::now()->year);
-                                                            })
+                $query->where('year', Carbon::now()->year);
+            })
             ->get();
 
         $files = Media::where('collection_name', 'patient-care-documents')
@@ -51,19 +45,19 @@ class PatientCareDocumentsController extends Controller
             ->get()
             ->sortByDesc('created_at')
             ->mapToGroups(function ($item, $key) {
-                          $docType = $item->getCustomProperty('doc_type');
+                $docType = $item->getCustomProperty('doc_type');
 
-                          return [$docType => $item];
-                      })
+                return [$docType => $item];
+            })
             ->reject(function ($value, $key) {
-                          return ! $key;
-                      })
+                return ! $key;
+            })
             //get the latest file from each category
             ->unless('true' == $showPast, function ($files) {
-                          return $files->map(function ($typeGroup) {
-                              return collect([$typeGroup->first()]);
-                          });
-                      });
+                return $files->map(function ($typeGroup) {
+                    return collect([$typeGroup->first()]);
+                });
+            });
 
         return response()->json([
             'files'              => $files->toArray(),
@@ -99,5 +93,27 @@ class PatientCareDocumentsController extends Controller
         }
 
         return response()->json([]);
+    }
+
+    public function viewCareDocument($id, $mediaId)
+    {
+        $mediaItem = $this->getMediaItemById($id, $mediaId);
+
+        if ( ! $mediaItem) {
+            throw new \Exception('Media for Patient does not exist.', 500);
+        }
+
+        return response($mediaItem->getFile(), 200, [
+            'Content-Type'        => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="'.$mediaItem->name.'"',
+        ]);
+    }
+
+    private function getMediaItemById($modelId, $mediaId)
+    {
+        return Media::where('collection_name', 'patient-care-documents')
+            ->where('model_id', $modelId)
+            ->whereIn('model_type', ['App\User', 'CircleLinkHealth\Customer\Entities\User'])
+            ->find($mediaId);
     }
 }

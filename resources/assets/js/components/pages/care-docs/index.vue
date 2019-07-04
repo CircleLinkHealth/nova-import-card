@@ -95,7 +95,7 @@
                                     </button>
                                 </div>
                                 <div v-if="status.vitals_status === 'completed' ">
-                                    <button class="col-md-6 btn btn-success btn-m">
+                                    <button class="col-md-6 btn btn-success btn-m" >
                                         Completed
                                     </button>
                                 </div>
