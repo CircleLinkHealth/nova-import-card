@@ -9,30 +9,25 @@ use App\SurveyInstance;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 
 class SurveyInvitationLinksService
 {
+    const SMS_TEXT_FOR_KNOWN_APPOINTMENT_DATE_TIME = "Hello! Dr. {primaryPhysicianLastName} requests you complete this wellness survey before your scheduled appointment on {date}[“mm/dd/yy”] at {time}[hh:mm am/pm].";
+    const SMS_TEXT_FOR_KNOWN_APPOINTMENT_DATE_ONLY = "Hello! Dr. {primaryPhysicianLastName} requests you complete this wellness survey before your scheduled appointment on {date}[“mm/dd/yy”].";
+    const SMS_TEXT_FOR_UNKNOWN_APPOINTMENT_DATE = "Hello! Dr. {primaryPhysicianLastName} at {practiceName} requests you complete this health survey as soon as you can. Please call {clhNumber} if you have any questions.";
+
     /**
-     * @param $userId
+     * @param User $user
      * @param string $forYear
      * @param bool $addUserToSurveyInstance
      *
      * @return string
      * @throws \Exception
      */
-    public function createAndSaveUrl($userId, string $forYear, bool $addUserToSurveyInstance = false)
+    public function createAndSaveUrl(User $user, string $forYear, bool $addUserToSurveyInstance = false)
     {
-        $user = User
-            ::with([
-                'patientInfo',
-                'surveyInstances' => function ($query) {
-                    $query->ofSurvey(Survey::HRA)->current();
-                },
-            ])
-            ->where('id', '=', $userId)
-            ->firstOrFail();
-
-        if (!$user->patientInfo) {
+        if ( ! $user->patientInfo) {
             throw new \Exception("missing patient info from user");
         }
 
@@ -81,7 +76,7 @@ class SurveyInvitationLinksService
         //APP_URL must be set correctly in .env for this to work
         $url = URL::signedRoute('auth.login.signed',
             [
-                'user'      => $userId,
+                'user'      => $user->id,
                 'survey'    => $surveyId,
 
                 //added this so it will generate a new url every time
@@ -122,18 +117,24 @@ class SurveyInvitationLinksService
         return $urlToken;
     }
 
-    public function getPatientPhoneNumberById($userId)
-    {//im using User model cause eventually this method will accept user-names also.
-        $user = User::with([
-            'phoneNumber' => function ($q) use ($userId) {
-                $q->where('user_id', $userId);
-            },
-        ])
-                    ->where('id', $userId)
-                    ->firstOrFail();
+    /**
+     * @param User $user
+     * @param string $url
+     *
+     * @return string
+     */
+    public function getSMSText(User $user, string $url)
+    {
+        $providerLastName = $user->billingProviderUser()->last_name;
+        $practiceName     = $user->primaryPractice->display_name;
 
-        $phoneNumber = $user->phoneNumber->number;
+        //todo: check if we have known appointment and select appropriate SMS message
+        $text = Str::replaceFirst("{primaryPhysicianLastName}", $providerLastName,
+            self::SMS_TEXT_FOR_UNKNOWN_APPOINTMENT_DATE);
+        $text = Str::replaceFirst("{practiceName}", $practiceName, $text);
+        $text = Str::replaceFirst("{clhNumber}", config('services.twilio.from'), $text);
+        $text = $text . "\n" . $url;
 
-        return $phoneNumber;
+        return $text;
     }
 }
