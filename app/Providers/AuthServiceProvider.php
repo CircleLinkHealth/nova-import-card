@@ -26,7 +26,7 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         Auth::provider('awv', function ($app, array $config) {
-            return new AwvUserProvider();
+            return new AwvUserProvider($app['hash'], $config['model']);
         });
     }
 }

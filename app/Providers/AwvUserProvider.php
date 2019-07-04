@@ -3,69 +3,24 @@
 namespace App\Providers;
 
 use App\InvitationLink;
-use App\User;
+use Illuminate\Auth\EloquentUserProvider;
+use Illuminate\Contracts\Hashing\Hasher as HasherContract;
 use Illuminate\Contracts\Auth\Authenticatable as UserContract;
-use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Support\Carbon;
 
-class AwvUserProvider implements UserProvider
+class AwvUserProvider extends EloquentUserProvider
 {
     const LINK_EXPIRES_IN_DAYS = 14;
 
     /**
      * Create a new AWV user provider.
      *
-     * @return void
+     * @param HasherContract $hasher
+     * @param $model
      */
-    public function __construct()
+    public function __construct(HasherContract $hasher, $model)
     {
-    }
-
-    /**
-     * Retrieve a user by their unique identifier.
-     *
-     * @param  mixed $identifier
-     *
-     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object
-     */
-    public function retrieveById($identifier)
-    {
-        return User::where('id', $identifier)
-                   ->first();
-    }
-
-    /**
-     * Awv Login using name and dob does not support `Remember Me` token
-     *
-     * @param  mixed $identifier
-     * @param  string $token
-     *
-     * @return \Illuminate\Contracts\Auth\Authenticatable|null
-     */
-    public function retrieveByToken($identifier, $token)
-    {
-        return null;
-    }
-
-    /**
-     * Update the "remember me" token for the given user in storage.
-     *
-     * @param  \Illuminate\Contracts\Auth\Authenticatable|\Illuminate\Database\Eloquent\Model $user
-     * @param  string $token
-     *
-     * @return void
-     */
-    public function updateRememberToken(UserContract $user, $token)
-    {
-        $user->setRememberToken($token);
-
-        $timestamps = $user->timestamps;
-
-        $user->timestamps = false;
-
-        $user->save();
-
-        $user->timestamps = $timestamps;
+        parent::__construct($hasher, $model);
     }
 
     /**
@@ -78,6 +33,10 @@ class AwvUserProvider implements UserProvider
     public function retrieveByCredentials(array $credentials)
     {
         //$credentials = [ signed_token, name, dob ]
+
+        if ( ! isset($credentials['signed_token'])) {
+            return parent::retrieveByCredentials($credentials);
+        }
 
         $credentials = $this->sanitizeCredentialsArr($credentials);
         if ( ! $credentials) {
@@ -103,6 +62,10 @@ class AwvUserProvider implements UserProvider
     public function validateCredentials(UserContract $user, array $credentials)
     {
         //$credentials = [ signed_token, name, dob ]
+
+        if ( ! isset($credentials['signed_token'])) {
+            return parent::validateCredentials($user, $credentials);
+        }
 
         $credentials = $this->sanitizeCredentialsArr($credentials);
         if ( ! $credentials) {
