@@ -34,7 +34,7 @@ class AwvUserProvider extends EloquentUserProvider
     {
         //$credentials = [ signed_token, name, dob ]
 
-        if ( ! isset($credentials['signed_token'])) {
+        if ( ! $this->isPatientLogin($credentials)) {
             return parent::retrieveByCredentials($credentials);
         }
 
@@ -63,7 +63,7 @@ class AwvUserProvider extends EloquentUserProvider
     {
         //$credentials = [ signed_token, name, dob ]
 
-        if ( ! isset($credentials['signed_token'])) {
+        if ( ! $this->isPatientLogin($credentials)) {
             return parent::validateCredentials($user, $credentials);
         }
 
@@ -141,5 +141,9 @@ class AwvUserProvider extends EloquentUserProvider
         }
 
         return $invitationLink;
+    }
+
+    private function isPatientLogin(array $credentials): bool {
+        return isset($credentials['signed_token']);
     }
 }
