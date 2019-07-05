@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 class PatientAWVSummary extends Model
 {
     protected $fillable = [
-        'patient_id',
+        'user_id',
         'month_year',
         'initial_visit',
         'subsequent_visit',
@@ -22,6 +22,6 @@ class PatientAWVSummary extends Model
 
     public function patient()
     {
-        return $this->belongsTo(User::class, 'patient_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
