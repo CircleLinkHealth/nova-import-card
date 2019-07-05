@@ -11,7 +11,7 @@
                     </label>
                 </div>
                 <div class="card-body">
-                    <img src="../../assets/images/notepad.png"
+                    <img src="../../images/notepad.png"
                          class="welcome-icon" alt="welcome icon">
                     <div class="survey-main-title">
                         <label id="sub-title">Annual Wellness Visit (AWV) Questionnaire</label>

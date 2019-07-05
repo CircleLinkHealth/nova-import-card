@@ -11,9 +11,6 @@
 |
 */
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
-
 Route::get('/', function () {
     return view('welcome');
 });
@@ -34,11 +31,11 @@ Route::group([
          ->name('auth.send.signed.url');
 
     //this is a signed route
-    Route::get('login-survey/{user}/{survey}', 'InvitationLinksController@surveyLoginForm')
+    Route::get('login-survey/{user}/{survey}', 'Auth\PatientLoginController@showLoginForm')
          ->name('auth.login.signed')
          ->middleware('signed');
 
-    Route::post('login-survey', 'InvitationLinksController@surveyLoginAuth')
+    Route::post('login-survey', 'Auth\PatientLoginController@login')
          ->name('auth.login.with.signed');
 
 });

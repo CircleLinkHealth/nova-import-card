@@ -8,10 +8,12 @@
                     <div class="card-header">Welcome</div>
 
                     <div class="card-body">
-                        You are logged in!
-                        <div class="alert alert-success" role="alert">
+                        <p>
+                            You are logged in!
+                        </p>
+                        <p>
                             Please click the link in the SMS or email you received in order to start the questionnaire.
-                        </div>
+                        </p>
                     </div>
                 </div>
             </div>
