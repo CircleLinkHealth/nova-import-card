@@ -22,10 +22,6 @@
     },
     {
       "type": "git",
-      "url": "git@github.com:subzero10/laravel-raygun.git"
-    },
-    {
-      "type": "git",
       "url": "git@github.com:CircleLinkHealth/opcache-gui.git"
     },
     {
@@ -51,6 +47,10 @@
     {
       "type": "git",
       "url": "git@github.com:CircleLinkHealth/module-core.git"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/module-responsecache.git"
     },
     {
       "type": "composer",
@@ -80,6 +80,7 @@
     "circlelinkhealth/core": "dev-master",
     "circlelinkhealth/customer": "dev-master",
     "circlelinkhealth/raygun": "dev-master",
+    "circlelinkhealth/responsecache": "dev-master",
     "circlelinkhealth/timetracking": "dev-master",
     "circlelinkhealth/twofa": "dev-master",
     "daltcore/lara-pdf-merger": "dev-master",
