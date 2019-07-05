@@ -31,7 +31,7 @@ class ModifyPatientAwvSummariesTable extends Migration
 
             if (! Schema::hasColumn('patient_awv_summaries', 'year')) {
                 $table->unsignedInteger('year')
-                      ->after('patient_id');
+                      ->after('user_id');
             }
 
 
