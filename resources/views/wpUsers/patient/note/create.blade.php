@@ -599,7 +599,7 @@
                         }
 
                         if (window['App']) {
-                            App.$emit('create-note:with-call', e.currentTarget.checked);
+                            window['App'].$emit('create-note:with-call', e.currentTarget.checked);
                         }
                     }
                     else {
