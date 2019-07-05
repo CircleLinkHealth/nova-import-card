@@ -20,7 +20,7 @@ class ModifyPatientAwvSummariesTable extends Migration
             }
 
             if (Schema::hasColumn('patient_awv_summaries', 'initial_visit')) {
-                $table->dropColumn('subsequent_visit');
+                $table->dropColumn('initial_visit');
 
             }
 
@@ -29,8 +29,11 @@ class ModifyPatientAwvSummariesTable extends Migration
 
             }
 
-            $table->unsignedInteger('year')
-                  ->after('patient_id');
+            if (! Schema::hasColumn('patient_awv_summaries', 'year')) {
+                $table->unsignedInteger('year')
+                      ->after('patient_id');
+            }
+
 
             if (! Schema::hasColumn('patient_awv_summaries', 'is_initial_visit')) {
                 $table->boolean('is_initial_visit')->default(0)->after('year');
