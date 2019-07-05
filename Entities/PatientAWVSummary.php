@@ -11,17 +11,16 @@ use Illuminate\Database\Eloquent\Model;
 class PatientAWVSummary extends Model
 {
     protected $fillable = [
-        'user_id',
-        'month_year',
-        'initial_visit',
-        'subsequent_visit',
+        'patient_id',
+        'year',
+        'is_initial_visit',
         'is_billable',
-        'completed_at',
+        'billable_at',
     ];
     protected $table = 'patient_awv_summaries';
 
     public function patient()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'patient_id');
     }
 }
