@@ -276,7 +276,6 @@ class Practice extends BaseModel implements HasMedia
         if ($chargeableServiceId) {
             //if software only exists on summary we bill for that
             //if service is not software only we count summaries that have this chargeableService and NOT software only.
-
             $chargeableServiceCode = ChargeableService::findOrFail($chargeableServiceId)->code;
 
             $isSoftwareOnly = 'Software-Only' == $chargeableServiceCode;
