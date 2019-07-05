@@ -39,7 +39,7 @@ return [
     | Defaults to 'debug'.
     |
     */
-    'logger_notify_level' => env('RAYGUN_CRASH_REPORTING_LOGGER_LEVEL', 'debug'),
+    'logger_notify_level' => env('RAYGUN_CRASH_REPORTING_LOGGER_LEVEL', 'warning'),
     
     /*
     |--------------------------------------------------------------------------
