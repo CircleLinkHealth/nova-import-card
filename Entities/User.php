@@ -13,7 +13,6 @@ use App\CareplanAssessment;
 use App\ChargeableService;
 use App\Constants;
 use App\Exceptions\InvalidArgumentException;
-use App\Facades\StringManipulation;
 use App\ForeignId;
 use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Message;
@@ -29,6 +28,7 @@ use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmLifestyle;
 use App\Models\CPM\CpmMedicationGroup;
 use App\Models\CPM\CpmMisc;
+use App\Models\CPM\CpmMiscUser;
 use App\Models\CPM\CpmProblem;
 use App\Models\CPM\CpmSymptom;
 use App\Models\EmailSettings;
@@ -788,12 +788,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function ccdProblems()
     {
         return $this->hasMany(Problem::class, 'patient_id');
     }
+
+    // CPM Biometrics
 
     public function chargeableServices()
     {
@@ -827,7 +829,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
         return $this->phoneNumbers()->create(
             [
-                'number'     => StringManipulation::formatPhoneNumber($number),
+                'number'     => (new \App\CLH\Helpers\StringManipulation())->formatPhoneNumber($number),
                 'type'       => PhoneNumber::getTypes()[$type] ?? null,
                 'is_primary' => $isPrimary,
                 'extension'  => $extension,
@@ -858,8 +860,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->withPivot('cpm_instruction_id')
             ->withTimestamps('created_at', 'updated_at');
     }
-
-    // CPM Biometrics
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
@@ -905,6 +905,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->belongsToMany(CpmMisc::class, 'cpm_miscs_users', 'patient_id')
             ->withPivot('cpm_instruction_id')
             ->withTimestamps('created_at', 'updated_at');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function cpmMiscUserPivot()
+    {
+        return $this->hasMany(CpmMiscUser::class, 'patient_id');
     }
 
     /**
@@ -1742,6 +1750,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             '';
     }
 
+    // CCD Models
+
     public function getPrefix()
     {
         if ( ! $this->providerInfo) {
@@ -1763,8 +1773,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
         return '';
     }
-
-    // CCD Models
 
     public function getPrimaryPracticeId()
     {
@@ -2225,7 +2233,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function patientAWVSummaries()
     {
-        return $this->hasMany(PatientAWVSummary::class, 'patient_id');
+        return $this->hasMany(PatientAWVSummary::class, 'user_id');
     }
 
     public function patientDemographics()
@@ -2237,21 +2245,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         return $this->hasOne(Patient::class, 'user_id', 'id');
     }
-
-    /*public function hasScheduledCallThisWeek()
-    {
-        $weekStart = Carbon::now()->startOfWeek()->toDateString();
-        $weekEnd = Carbon::now()->endOfWeek()->toDateString();
-
-        return Call::where(function ($q) {
-            $q->whereNull('type')
-              ->orWhere('type', '=', 'call');
-        })
-                   ->where('outbound_cpm_id', $this->id)
-                   ->where('status', 'scheduled')
-                   ->whereBetween('scheduled_date', [$weekStart, $weekEnd])
-                   ->exists();
-    }*/
 
     public function patientList()
     {
@@ -2360,8 +2353,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->whereMonthYear(($date ?? Carbon::now())->startOfMonth())
             ->first();
     }
-
-    // CPM Models
 
     public function phoneNumbers()
     {
@@ -2481,6 +2472,21 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->program_id;
     }
 
+    /*public function hasScheduledCallThisWeek()
+    {
+        $weekStart = Carbon::now()->startOfWeek()->toDateString();
+        $weekEnd = Carbon::now()->endOfWeek()->toDateString();
+
+        return Call::where(function ($q) {
+            $q->whereNull('type')
+              ->orWhere('type', '=', 'call');
+        })
+                   ->where('outbound_cpm_id', $this->id)
+                   ->where('status', 'scheduled')
+                   ->whereBetween('scheduled_date', [$weekStart, $weekEnd])
+                   ->exists();
+    }*/
+
     public function primaryProgramName()
     {
         return $this->primaryPractice->display_name;
@@ -2538,6 +2544,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         return $this->careTeamMembers()->where('type', '=', CarePerson::REGULAR_DOCTOR);
     }
+
+    // CPM Models
 
     /**
      * Get regular doctor User.
@@ -2933,6 +2941,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         $user->save();
     }
 
+    // MISC, these should be removed eventually
+
     /**
      * Get Scout index name for the model.
      *
@@ -3004,8 +3014,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
         return true;
     }
-
-    // MISC, these should be removed eventually
 
     public function setAgentName($value)
     {
@@ -3553,6 +3561,43 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     }
 
     /**
+     * Determines whether to show the BHI banner to the logged in user, for a given patient.
+     *
+     * @param User $patient
+     *
+     * @throws \Exception
+     *
+     * @return bool
+     */
+    public function shouldShowBhiBannerIfPatientHasScheduledCallToday(User $patient)
+    {
+        return $patient->hasScheduledCallToday()
+            && $this->shouldShowBhiFlagFor($patient)
+            && ($this->isAdmin() || $this->isCareCoach());
+    }
+
+    /**
+     * Determines whether to show the BHI banner to the logged in user, for a given patient.
+     *
+     * @param User $patient
+     *
+     * @throws \Exception
+     *
+     * @return bool
+     */
+    public function shouldShowBhiFlagFor(User $patient)
+    {
+        return $this->hasPermissionForSite('legacy-bhi-consent-decision.create', $patient->program_id)
+            && is_a($patient, self::class)
+            && $patient->isLegacyBhiEligible()
+            && $patient->billingProviderUser()
+            && ! Cache::has(
+                $this->getLegacyBhiNursePatientCacheKey($patient->id)
+            )
+            && ($this->isAdmin() || $this->isCareCoach());
+    }
+
+    /**
      * Determines if current time is within invoice review period.
      *
      * @return bool
@@ -3569,26 +3614,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->exists();
 
         return $invoice && $now->lte(NurseInvoiceDisputeDeadline::for($invoiceMonth));
-    }
-
-    /**
-     * Determines wheter to show the BHI banner to the logged in user, for a given patient.
-     *
-     * @param User $patient
-     *
-     * @throws \Exception
-     *
-     * @return bool
-     */
-    public function shouldShowLegacyBhiBannerFor(User $patient)
-    {
-        return $this->hasPermissionForSite('legacy-bhi-consent-decision.create', $patient->program_id)
-            && is_a($patient, self::class)
-            && $patient->isLegacyBhiEligible()
-            && $patient->billingProviderUser()
-            && ($patient->hasScheduledCallToday() && ! Cache::has(
-                $this->getLegacyBhiNursePatientCacheKey($patient->id)
-                ));
     }
 
     /**
