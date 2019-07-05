@@ -102,6 +102,7 @@
         background-color: #5cc0dd;
         border-color:  #5cc0dd;
         font-family: Roboto;
+        padding-left: 20px;
     }
 
 

@@ -155,11 +155,6 @@
                     <care-document-box :doc="doc" :type="'Lab Results'"></care-document-box>
                 </div>
             </div>
-            <div v-else>
-                <div class="col-md-3">
-                 <care-document-box :type="'Lab Results'"></care-document-box>
-                </div>
-            </div>
         </div>
 
 
@@ -345,6 +340,7 @@
         background-color: #5cc0dd;
         border-color: #5cc0dd;
         font-family: Roboto;
+        padding-left: 20px;
     }
 
     h4 {
