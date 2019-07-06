@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\NurseInvoices\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Services\AttachDisputesToTimePerDay;
 use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
@@ -22,6 +23,21 @@ use Illuminate\View\View;
 class InvoiceReviewController extends Controller
 {
     /**
+     * @var AttachDisputesToTimePerDay
+     */
+    private $attachDisputes;
+
+    /**
+     * InvoiceReviewController constructor.
+     *
+     * @param AttachDisputesToTimePerDay $attachDisputes
+     */
+    public function __construct(AttachDisputesToTimePerDay $attachDisputes)
+    {
+        $this->attachDisputes = $attachDisputes;
+    }
+
+    /**
      * @param AdminShowNurseInvoice $request
      * @param $nurseInfoId
      * @param $invoiceId
@@ -35,11 +51,11 @@ class InvoiceReviewController extends Controller
             ->where('nurse_info_id', $nurseInfoId)
             ->firstOrFail();
 
-        return $this->invoice($request, $invoice);
+        return $this->invoice($request, $invoice, []);
     }
 
     /**
-     * @param Request $request
+     * @param StoreNurseInvoiceApproval $request
      *
      * @return JsonResponse
      */
@@ -73,12 +89,14 @@ class InvoiceReviewController extends Controller
                     'reason'  => $reason,
                     'user_id' => auth()->id(),
                 ]
-                    );
+            );
 
         return $this->ok();
     }
 
     /**
+     * @param Request $request
+     *
      * @return Factory|View
      */
     public function reviewInvoice(Request $request)
@@ -86,17 +104,22 @@ class InvoiceReviewController extends Controller
         $startDate = Carbon::now()->startOfMonth()->subMonth();
 
         $invoice = NurseInvoice::where('month_year', $startDate)
-            ->with(['dispute.resolver'])
+            ->with(
+                [
+                    'dispute.resolver',
+                    'dailyDisputes',
+                ]
+            )
             ->ofNurses(auth()->id())
             ->firstOrNew([]);
 
-        return $this->invoice($request, $invoice);
+        $invoiceDataWithDisputes = $this->attachDisputes->putDisputesToTimePerDay($invoice);
+
+        return $this->invoice($request, $invoice, $invoiceDataWithDisputes);
     }
 
     /**
      * @param ShowNurseInvoice $request
-     * @param $nurseInfoId
-     * @param $invoiceId
      *
      * @return Factory|View
      */
@@ -106,7 +129,7 @@ class InvoiceReviewController extends Controller
             ->with(['dispute.resolver'])
             ->firstOrFail();
 
-        return $this->invoice($request, $invoice);
+        return $this->invoice($request, $invoice, []);
     }
 
     private function canBeDisputed(NurseInvoice $invoice, Carbon $deadline)
@@ -114,13 +137,14 @@ class InvoiceReviewController extends Controller
         return null === $invoice->dispute && ! $invoice->is_nurse_approved && Carbon::now()->lte($deadline) && Carbon::now()->gte($invoice->month_year->copy()->addMonth());
     }
 
-    private function invoice(Request $request, NurseInvoice $invoice)
+    private function invoice(Request $request, NurseInvoice $invoice, array $invoiceDataWithDisputes)
     {
         $auth = auth()->user();
 
         $deadline    = new NurseInvoiceDisputeDeadline($invoice->month_year ?? Carbon::now()->subMonth());
-        $invoiceData = $invoice->invoice_data ?? [];
-        $args        = array_merge(
+        $invoiceData = $invoiceDataWithDisputes ?? [];
+
+        $args = array_merge(
             [
                 'invoiceId'              => $invoice->id,
                 'dispute'                => $invoice->dispute,
@@ -137,9 +161,6 @@ class InvoiceReviewController extends Controller
             return view('nurseinvoices::invoice-v3', array_merge($args, ['isPdf' => true]));
         }
 
-        return view(
-            'nurseinvoices::reviewInvoice',
-            $args
-        );
+        return view('nurseinvoices::reviewInvoice', $args);
     }
 }
