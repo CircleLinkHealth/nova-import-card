@@ -4,22 +4,6 @@
 @section('activity', empty($note) ? 'Patient Note Creation' : 'Patient Note Edit')
 
 @section('content')
-
-    <?php
-
-    if ( ! empty($note)) {
-        $userTime = $note->performed_at;
-    } else {
-        $userTime = \Carbon\Carbon::now();
-    }
-
-    $userTime->setTimezone($userTimeZone);
-    $userTimeGMT = \Carbon\Carbon::now()->setTimezone('GMT');
-    $userTime    = $userTime->format('Y-m-d\TH:i');
-    $userTimeGMT = $userTimeGMT->format('Y-m-d\TH:i');
-
-    ?>
-
     @push('styles')
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
               integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
@@ -85,6 +69,11 @@
                     {{ csrf_field() }}
 
                     @include('partials.userheader')
+
+                    {{--If today is scheduled call day then just show banner--}}
+                    @if(isset($patient) && auth()->check() && !isset($isPdf) && auth()->user()->shouldShowBhiBannerIfPatientHasScheduledCallToday($patient))
+                        @include('partials.providerUI.bhi-notification-banner', ['user' => $patient])
+                    @endif
 
                     <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12 col-xs-12"
                          style=" border-bottom:3px solid #50b2e2;padding: 8px 0px;">
@@ -736,6 +725,7 @@
                         if (e.currentTarget.checked) {
                             notifyCareteamEl.prop("checked", true);
                             notifyCareteamEl.prop("disabled", true);
+                            notifyCareteamEl.trigger('change');
 
                             @empty($notifies_text)
                             whoIsNotifiedEl.text("{{optional($patient->billingProviderUser())->getFullName()}}");
@@ -744,6 +734,7 @@
                         else {
                             notifyCareteamEl.prop("checked", false);
                             notifyCareteamEl.prop("disabled", false);
+                            notifyCareteamEl.trigger('change');
 
                             whoIsNotifiedEl.text("{{$notifies_text}}");
                         }

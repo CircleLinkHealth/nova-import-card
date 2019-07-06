@@ -13,6 +13,7 @@ use App\Providers\NovaServiceProvider;
 use App\Providers\ObserversServiceProvider;
 use App\Providers\TwilioClientServiceProvider;
 use App\Providers\ViewComposerServiceProvider;
+use App\Spatie\ResponseCache\ResponseCacheServiceProvider;
 use App\View\Composers\FabComposer;
 use App\View\Composers\ProviderUITimerComposer;
 use App\View\Composers\SAAS\Admin\ManageInternalUser;
@@ -57,9 +58,6 @@ return [
     */
 
     'env' => env('APP_ENV', 'production'),
-
-    'is_production_env'   => env('IS_PRODUCTION_SERVER', false),
-    'is_queue_worker_env' => env('IS_QUEUE_WORKER_SERVER', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -197,6 +195,7 @@ return [
 
         // Application Service Providers...
         RaygunServiceProvider::class,
+        ResponseCacheServiceProvider::class,
         Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class,
         Barryvdh\Snappy\ServiceProvider::class,
 

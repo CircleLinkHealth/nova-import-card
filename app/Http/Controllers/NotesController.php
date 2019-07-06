@@ -8,6 +8,7 @@ namespace App\Http\Controllers;
 
 use App\Call;
 use App\Contracts\ReportFormatter;
+use App\Events\NoteFinalSaved;
 use App\Http\Requests\NotesReport;
 use App\Note;
 use App\Repositories\PatientWriteRepository;
@@ -166,7 +167,10 @@ class NotesController extends Controller
             ? Call::where('note_id', '=', $existingNote->id)->first()
             : null;
 
+        $performedAt = optional($existingNote)->performed_at ?? Carbon::now();
+
         $view_data = [
+            'userTime'               => $performedAt->setTimezone($patient->timezone)->format('Y-m-d\TH:i'),
             'program_id'             => $patient->program_id,
             'patient'                => $patient,
             'patient_name'           => $patient_name,
@@ -366,7 +370,8 @@ class NotesController extends Controller
 
         $view_data = [
             'note'               => $data,
-            'userTimeZone'       => $patient->timeZone,
+            'userTime'           => $note->performed_at->setTimezone($patient->timezone)->format('Y-m-d\TH:i'),
+            'userTimeZone'       => $patient->timezone,
             'careteam_info'      => $careteam_info,
             'patient'            => $patient,
             'program_id'         => $patient->program_id,
@@ -419,6 +424,8 @@ class NotesController extends Controller
 
         $input = $request->allSafe();
 
+        $patient = User::findOrFail($patientId);
+
         $editingNoteId = ! empty($input['noteId'])
             ? $input['noteId']
             : null;
@@ -429,7 +436,9 @@ class NotesController extends Controller
         if ( ! isset($input['author_id'])) {
             $input['author_id'] = auth()->id();
         }
-        $input['performed_at'] = Carbon::parse($input['performed_at'])->toDateTimeString();
+
+        //performed_at entered in patient's timezone and stored in app's timezone
+        $input['performed_at'] = Carbon::parse($input['performed_at'], $patient->timezone)->setTimezone(config('app.timezone'))->toDateTimeString();
 
         $noteIsAlreadyComplete = false;
         if ($editingNoteId) {
@@ -446,10 +455,14 @@ class NotesController extends Controller
 
             $note = $this->service->editNote($note, $input);
         } else {
-            $note = $this->service->storeNote($input);
+            $note = Note::create($input);
         }
 
-        $patient = User::findOrFail($patientId);
+        event(new NoteFinalSaved($note, [
+            'notifyCareTeam' => $input['notify_careteam'] ?? false,
+            'notifyCLH'      => $input['notify_circlelink_support'] ?? false,
+            'forceNotify'    => false,
+        ]));
 
         $info = $this->updatePatientInfo($patient, $input);
         $this->updatePatientCallWindows($info, $input);
@@ -708,7 +721,7 @@ class NotesController extends Controller
             $note = $this->service->editNote($note, $input);
         } else {
             $input['status'] = 'draft';
-            $note            = $this->service->storeNote($input);
+            $note            = Note::create($input);
         }
 
         return response()->json(['message' => 'success', 'note_id' => $note->id]);

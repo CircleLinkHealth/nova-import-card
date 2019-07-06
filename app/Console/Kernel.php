@@ -17,7 +17,7 @@ use App\Console\Commands\DeleteProcessedFiles;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailRNDailyReportToDeprecate;
 use App\Console\Commands\EmailWeeklyReports;
-use App\Console\Commands\NursesAndStatesDailyReport;
+use App\Console\Commands\NursesPerformanceDailyReport;
 use App\Console\Commands\OverwriteNBIImportedData;
 use App\Console\Commands\QueueEligibilityBatchForProcessing;
 use App\Console\Commands\QueueGenerateNurseDailyReport;
@@ -30,6 +30,7 @@ use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
 use App\Console\Commands\SendCarePlanApprovalReminders;
 use App\Console\Commands\TuneScheduledCalls;
+use App\Spatie\ResponseCache\Commands\Clear;
 use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendMonthlyNurseInvoiceLAN;
@@ -45,6 +46,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
+        Clear::class,
     ];
 
     /**
@@ -182,15 +184,9 @@ class Kernel extends ConsoleKernel
 //                 ->everyThirtyMinutes()
 //                 ->withoutOverlapping()->onOneServer();
 
-//        Disable backup till we fix the issue of it not running
-//        if (isProductionEnv()) {
-//            $schedule->command(CleanupCommand::class)->daily()->at('01:00')->onOneServer();
-//            $schedule->command(BackupCommand::class)->daily()->at('02:00')->onOneServer();
-//        }
-
         $schedule->command(SecurityMailCommand::class)->weekly()->onOneServer();
 
-        $schedule->command(NursesAndStatesDailyReport::class)->dailyAt('00:05')->onOneServer();
+        $schedule->command(NursesPerformanceDailyReport::class)->dailyAt('00:05')->onOneServer();
 
         $schedule->command(OverwriteNBIImportedData::class)->everyFiveMinutes()->onOneServer();
 

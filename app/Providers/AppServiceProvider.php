@@ -191,6 +191,7 @@ class AppServiceProvider extends ServiceProvider
             $this->app->register(GeneratorsServiceProvider::class);
             $this->app->register(MigrationsGeneratorServiceProvider::class);
             $this->app->register(DuskServiceProvider::class);
+            $this->app->register(\JKocik\Laravel\Profiler\ServiceProvider::class);
         }
     }
 }

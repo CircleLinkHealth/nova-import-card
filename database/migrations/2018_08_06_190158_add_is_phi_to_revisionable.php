@@ -26,7 +26,7 @@ class AddIsPhiToRevisionable extends Migration
     public function up()
     {
         Schema::table('revisions', function (Blueprint $table) {
-            if (!Schema::hasColumns('revisions', ['is_phi'])) {
+            if ( ! Schema::hasColumns('revisions', ['is_phi'])) {
                 $table->boolean('is_phi')
                     ->default(false)
                     ->after('ip');

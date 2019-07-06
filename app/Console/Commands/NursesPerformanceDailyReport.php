@@ -6,12 +6,12 @@
 
 namespace App\Console\Commands;
 
-use App\Services\NursesAndStatesDailyReportService;
+use App\Services\NursesPerformanceReportService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use Illuminate\Console\Command;
 
-class NursesAndStatesDailyReport extends Command
+class NursesPerformanceDailyReport extends Command
 {
     /**
      * The console command description.
@@ -30,9 +30,9 @@ class NursesAndStatesDailyReport extends Command
     /**
      * Create a new command instance.
      *
-     * @param NursesAndStatesDailyReportService $service
+     * @param NursesPerformanceReportService $service
      */
-    public function __construct(NursesAndStatesDailyReportService $service)
+    public function __construct(NursesPerformanceReportService $service)
     {
         parent::__construct();
         $this->service = $service;

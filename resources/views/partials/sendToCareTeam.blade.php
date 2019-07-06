@@ -39,12 +39,20 @@
                         Communication to Practice
                     </label>
                     <div class="col-sm-12">
-                        <persistent-textarea ref="summaryInput" storage-key="notes-summaries:{{$patient->id}}:add" id="summary"
-                                             class-name="form-control text-area-summary" :rows="3" :cols="100"
-                                             :max-chars="280"
-                                             placeholder="Enter Note Summary..."
-                                             value="{{ optional($note)->summary ?? '' }}"
-                                             name="summary"></persistent-textarea>
+                        @if(Route::is('patient.note.create'))
+                            <persistent-textarea ref="summaryInput" storage-key="notes-summaries:{{$patient->id}}:add"
+                                                 id="summary"
+                                                 class-name="form-control text-area-summary" :rows="3" :cols="100"
+                                                 :max-chars="280"
+                                                 placeholder="Enter Note Summary..."
+                                                 value="{{ optional($note)->summary ?? '' }}"
+                                                 name="summary"></persistent-textarea>
+                        @elseif(isset($note['summary']) && !empty($note['summary']))
+                            <textarea id="note" class="form-control" rows="3"
+                                      name="summary"
+                                      readonly>{{trim($note['summary'])}}
+                            </textarea>
+                        @endif
                         <br>
                     </div>
                 </div>
@@ -64,18 +72,36 @@
 
 @push('scripts')
     <script>
-        (function ($) {
-            //hacky way to display summary input required when notify-careteam is checked, and also make summary required
-            $('#notify-careteam').change(function (e) {
-                Vue.config.silent = true;
+        const isCreateNotePage = @json(Route::is('patient.note.create'));
+        const hasSummary = @json(isset($note['summary']) && !empty($note['summary']));
+        if (isCreateNotePage) {
+            (function ($) {
+                //hacky way to display summary input required when notify-careteam is checked, and also make summary required
+                $('#notify-careteam').change(function (e) {
 
-                App.$refs.summaryInput.$props.required = e.currentTarget.checked;
-                $('.load-hidden').toggle()
+                    //might be called before summaryInput component is created
+                    if (!App.$refs.summaryInput) {
+                        return;
+                    }
 
-                App.$refs.summaryInput.$forceUpdate();
+                    Vue.config.silent = true;
 
-                Vue.config.silent = false;
-            });
-        })(jQuery);
+                    if (e.currentTarget.checked) {
+                        $('.load-hidden').show();
+                    }
+                    else {
+                        $('.load-hidden').hide();
+                    }
+
+                    App.$refs.summaryInput.$props.required = e.currentTarget.checked;
+                    App.$refs.summaryInput.$forceUpdate();
+
+                    Vue.config.silent = false;
+                });
+            })(jQuery);
+        }
+        else if (hasSummary) {
+            $('.load-hidden').show();
+        }
     </script>
 @endpush

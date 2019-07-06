@@ -1,13 +1,22 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 
 class AddNumberOfCallsAndPatientTimezoneToCallsViewTable extends Migration
 {
     /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+    }
+
+    /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -81,14 +90,5 @@ class AddNumberOfCallsAndPatientTimezoneToCallsViewTable extends Migration
         // calls table is now an actions table.
         // we have tasks that may be due in the past
         // assuming that re-scheduler service is dropping past calls, we will only have type `task` that are in the past
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
     }
 }

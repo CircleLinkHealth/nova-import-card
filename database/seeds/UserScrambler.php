@@ -13,7 +13,7 @@ class UserScrambler extends Seeder
     {
         $allUsers = User::all();
 
-        if (!empty($allUsers)) {
+        if ( ! empty($allUsers)) {
             $u = 0;
             foreach ($allUsers as $user) {
                 $role = $user->roles()->first();

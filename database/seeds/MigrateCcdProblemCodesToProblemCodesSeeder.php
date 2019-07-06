@@ -45,8 +45,8 @@ class MigrateCcdProblemCodesToProblemCodesSeeder extends Seeder
             ->get();
 
         foreach ($problems as $p) {
-            if (!$p->code_system_name) {
-                if (!$p->code_system && !$this->getCodeSystemName($p)) {
+            if ( ! $p->code_system_name) {
+                if ( ! $p->code_system && ! $this->getCodeSystemName($p)) {
                     return;
                 }
 

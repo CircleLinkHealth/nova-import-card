@@ -14,25 +14,20 @@ class ProblemCodeRepository
 {
     public function count()
     {
-        return $this->model->select('name', DB::raw('count(*) as total'))->groupBy('name')->pluck('total')->count();
+        return ProblemCode::select('name', DB::raw('count(*) as total'))->groupBy('name')->pluck('total')->count();
     }
 
     public function exists($problem_id, $code_system_id)
     {
-        return (bool) $this->model()->where([
+        return ProblemCode::where([
             'problem_code_system_id' => $code_system_id,
             'problem_id'             => $problem_id,
-        ])->first();
-    }
-
-    public function model()
-    {
-        return app(ProblemCode::class);
+        ])->exists();
     }
 
     public function remove($id)
     {
-        $this->model()->where(['id' => $id])->delete();
+        ProblemCode::where(['id' => $id])->delete();
 
         return [
             'message' => 'successful',
