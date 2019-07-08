@@ -142,6 +142,5 @@ class AppServiceProvider extends ServiceProvider
         $this->app->register(GoogleDriveServiceProvider::class);
         $this->app->register(\LynX39\LaraPdfMerger\PdfMergerServiceProvider::class);
         $this->app->register(AuthyServiceProvider::class);
-        $this->app->register(NovaServiceProvider::class);
     }
 }

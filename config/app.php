@@ -181,6 +181,8 @@ return [
         \App\Providers\CpmEventServiceProvider::class,
         \App\Providers\ObserversServiceProvider::class,
 
+        \App\Providers\NovaServiceProvider::class,
+
         CircleLinkHealth\Raygun\Providers\RaygunServiceProvider::class,
 
         App\Providers\AppServiceProvider::class,
