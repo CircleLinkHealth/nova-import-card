@@ -6,18 +6,30 @@
 
 namespace App\Nova;
 
+use App\Nova\Filters\DailyDisputesStatus;
+use CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceDailyDispute;
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 
 class InvoiceDailyDisputesApproval extends Resource
 {
     /**
+     * The logical group associated with the resource.
+     *
+     * @var string
+     */
+    public static $group = \App\Constants::NOVA_GROUP_CARE_COACHES;
+
+    /**
      * The model the resource corresponds to.
      *
      * @var string
      */
-    public static $model = \CircleLinkHealth\Customer\Entities\NurseInvoiceDailyDispute::class;
+    public static $model = NurseInvoiceDailyDispute::class;
 
     /**
      * The columns that should be searched.
@@ -38,7 +50,7 @@ class InvoiceDailyDisputesApproval extends Resource
     /**
      * Get the actions available for the resource.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
      * @return array
      */
@@ -50,7 +62,7 @@ class InvoiceDailyDisputesApproval extends Resource
     /**
      * Get the cards available for the request.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
      * @return array
      */
@@ -62,7 +74,7 @@ class InvoiceDailyDisputesApproval extends Resource
     /**
      * Get the fields displayed by the resource.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
      * @return array
      */
@@ -71,7 +83,32 @@ class InvoiceDailyDisputesApproval extends Resource
         return [
             ID::make()->sortable(),
 
-            Text::make('suggested_formatted_time')
+            BelongsTo::make('Care Coach', 'nurseInvoice', NurseInvoice::class)
+                ->hideFromIndex(),
+
+            Text::make('Care Coach', 'nurseInvoice.invoice_data.nurseFullName')
+                ->sortable(),
+
+            Date::make('Date', 'disputed_day')
+                ->sortable(),
+
+            Text::make('Time disputed', 'disputed_formatted_time')
+                ->sortable(),
+
+            Text::make('Time Suggested', 'suggested_formatted_time')
+                ->sortable(),
+
+            Select::make('Approve/Disapprove', 'status')
+                ->options(
+                    [
+                        'Approve'    => 'approve',
+                        'Disapprove' => 'disapprove',
+                    ]
+            )->hideFromIndex()
+                ->rules('required'),
+
+            Text::make('Status', 'status')
+                ->hideWhenUpdating()
                 ->sortable(),
         ];
     }
@@ -79,19 +116,29 @@ class InvoiceDailyDisputesApproval extends Resource
     /**
      * Get the filters available for the resource.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
      * @return array
      */
     public function filters(Request $request)
     {
-        return [];
+        return [
+            new DailyDisputesStatus(),
+        ];
+    }
+
+    /**
+     * @return string
+     */
+    public static function label()
+    {
+        return 'Invoice Daily Disputes';
     }
 
     /**
      * Get the lenses available for the resource.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
      * @return array
      */

@@ -11,7 +11,6 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 class NurseInvoiceDailyDispute extends BaseModel
 {
     protected $casts = [
-        'status'       => 'boolean',
         'disputed_day' => 'date',
     ];
 

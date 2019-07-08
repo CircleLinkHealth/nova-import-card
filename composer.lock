@@ -416,16 +416,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.104.1",
+            "version": "3.105.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "295706ab2134bf842837fa0b0162ff3aef8b0aa4"
+                "reference": "3a1159eeb14f707780817bebf73dd3eeeeb710cc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/295706ab2134bf842837fa0b0162ff3aef8b0aa4",
-                "reference": "295706ab2134bf842837fa0b0162ff3aef8b0aa4",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/3a1159eeb14f707780817bebf73dd3eeeeb710cc",
+                "reference": "3a1159eeb14f707780817bebf73dd3eeeeb710cc",
                 "shasum": ""
             },
             "require": {
@@ -495,7 +495,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2019-07-03T18:08:50+00:00"
+            "time": "2019-07-08T18:16:57+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -621,7 +621,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "1eef1cd114420832170a707d5dcb5bff14ff637a"
+                "reference": "eadbacc5fc55b55225020dddc0961fd179e9f604"
             },
             "require": {
                 "venturecraft/revisionable": "dev-master"
@@ -630,7 +630,8 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "CircleLinkHealth\\Core\\Providers\\CoreServiceProvider"
+                        "CircleLinkHealth\\Core\\Providers\\CoreServiceProvider",
+                        "CircleLinkHealth\\Core\\Providers\\CoreDeferredBindingsServiceProvider"
                     ],
                     "aliases": []
                 }
@@ -649,7 +650,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-06-28T01:13:48+00:00"
+            "time": "2019-07-08T14:44:56+00:00"
         },
         {
             "name": "circlelinkhealth/customer",
@@ -818,7 +819,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "67ff7168823449a48b8873e1c3f4eed3bebbbb4a"
+                "reference": "28175c08ce17d0bdaaf0da4e3a2cdc6dd205b5c9"
             },
             "require": {
                 "authy/php": "^3.0",
@@ -844,7 +845,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-06-21T12:17:37+00:00"
+            "time": "2019-07-08T15:00:57+00:00"
         },
         {
             "name": "composer/ca-bundle",
@@ -8647,8 +8648,14 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "git@github.com:CircleLinkHealth/revisionable.git",
-                "reference": "7c3fde76b35df8afcdc4adbac0b9895801bbe9f5"
+                "url": "https://github.com/VentureCraft/revisionable.git",
+                "reference": "79b1e62f643d287f32dbd3e83527ca807e7eb51b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/VentureCraft/revisionable/zipball/79b1e62f643d287f32dbd3e83527ca807e7eb51b",
+                "reference": "79b1e62f643d287f32dbd3e83527ca807e7eb51b",
+                "shasum": ""
             },
             "require": {
                 "illuminate/support": "~4.0|~5.0|~5.1",
@@ -8667,11 +8674,7 @@
                     "Venturecraft\\Revisionable": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Venturecraft\\Revisionable\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -8684,19 +8687,14 @@
             "description": "Keep a revision history for your models without thinking, created as a package for use with Laravel",
             "homepage": "http://github.com/venturecraft/revisionable",
             "keywords": [
+                "Audit",
                 "ardent",
-                "audit",
                 "history",
                 "laravel",
                 "model",
                 "revision"
             ],
-            "support": {
-                "issues": "https://github.com/VentureCraft/revisionable/issues",
-                "source": "https://github.com/VentureCraft/revisionable"
-            },
-            "abandoned": true,
-            "time": "2019-06-11T11:57:51+00:00"
+            "time": "2019-06-14T02:49:17+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -10195,20 +10193,20 @@
         },
         {
             "name": "hamcrest/hamcrest-php",
-            "version": "v2.0.0",
+            "version": "v1.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hamcrest/hamcrest-php.git",
-                "reference": "776503d3a8e85d4f9a1148614f95b7a608b046ad"
+                "reference": "b37020aa976fa52d3de9aa904aa2522dc518f79c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hamcrest/hamcrest-php/zipball/776503d3a8e85d4f9a1148614f95b7a608b046ad",
-                "reference": "776503d3a8e85d4f9a1148614f95b7a608b046ad",
+                "url": "https://api.github.com/repos/hamcrest/hamcrest-php/zipball/b37020aa976fa52d3de9aa904aa2522dc518f79c",
+                "reference": "b37020aa976fa52d3de9aa904aa2522dc518f79c",
                 "shasum": ""
             },
             "require": {
-                "php": "^5.3|^7.0"
+                "php": ">=5.3.2"
             },
             "replace": {
                 "cordoval/hamcrest-php": "*",
@@ -10217,18 +10215,15 @@
             },
             "require-dev": {
                 "phpunit/php-file-iterator": "1.3.3",
-                "phpunit/phpunit": "~4.0",
-                "satooshi/php-coveralls": "^1.0"
+                "satooshi/php-coveralls": "dev-master"
             },
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.0-dev"
-                }
-            },
             "autoload": {
                 "classmap": [
                     "hamcrest"
+                ],
+                "files": [
+                    "hamcrest/Hamcrest.php"
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -10239,7 +10234,7 @@
             "keywords": [
                 "test"
             ],
-            "time": "2016-01-20T08:20:44+00:00"
+            "time": "2015-05-11T14:41:42+00:00"
         },
         {
             "name": "jkocik/laravel-profiler",
@@ -10548,30 +10543,30 @@
         },
         {
             "name": "mockery/mockery",
-            "version": "1.2.2",
+            "version": "0.9.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mockery/mockery.git",
-                "reference": "0eb0b48c3f07b3b89f5169ce005b7d05b18cf1d2"
+                "reference": "be9bf28d8e57d67883cba9fcadfcff8caab667f8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mockery/mockery/zipball/0eb0b48c3f07b3b89f5169ce005b7d05b18cf1d2",
-                "reference": "0eb0b48c3f07b3b89f5169ce005b7d05b18cf1d2",
+                "url": "https://api.github.com/repos/mockery/mockery/zipball/be9bf28d8e57d67883cba9fcadfcff8caab667f8",
+                "reference": "be9bf28d8e57d67883cba9fcadfcff8caab667f8",
                 "shasum": ""
             },
             "require": {
-                "hamcrest/hamcrest-php": "~2.0",
+                "hamcrest/hamcrest-php": "~1.1",
                 "lib-pcre": ">=7.0",
-                "php": ">=5.6.0"
+                "php": ">=5.3.2"
             },
             "require-dev": {
-                "phpunit/phpunit": "~5.7.10|~6.5|~7.0|~8.0"
+                "phpunit/phpunit": "~4.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0.x-dev"
+                    "dev-master": "0.9.x-dev"
                 }
             },
             "autoload": {
@@ -10595,8 +10590,8 @@
                     "homepage": "http://davedevelopment.co.uk"
                 }
             ],
-            "description": "Mockery is a simple yet flexible PHP mock object framework",
-            "homepage": "https://github.com/mockery/mockery",
+            "description": "Mockery is a simple yet flexible PHP mock object framework for use in unit testing with PHPUnit, PHPSpec or any other testing framework. Its core goal is to offer a test double framework with a succinct API capable of clearly defining all possible object operations and interactions using a human readable Domain Specific Language (DSL). Designed as a drop in alternative to PHPUnit's phpunit-mock-objects library, Mockery is easy to integrate with PHPUnit and can operate alongside phpunit-mock-objects without the World ending.",
+            "homepage": "http://github.com/padraic/mockery",
             "keywords": [
                 "BDD",
                 "TDD",
@@ -10609,7 +10604,7 @@
                 "test double",
                 "testing"
             ],
-            "time": "2019-02-13T09:37:52+00:00"
+            "time": "2019-02-12T16:07:13+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -10787,121 +10782,6 @@
                 "seed"
             ],
             "time": "2019-02-08T07:45:41+00:00"
-        },
-        {
-            "name": "orchestra/testbench",
-            "version": "v3.7.7",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/orchestral/testbench.git",
-                "reference": "0715465a6f921e1da61f28cb5b310cbbaa3c92bf"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/orchestral/testbench/zipball/0715465a6f921e1da61f28cb5b310cbbaa3c92bf",
-                "reference": "0715465a6f921e1da61f28cb5b310cbbaa3c92bf",
-                "shasum": ""
-            },
-            "require": {
-                "laravel/framework": "~5.7.28",
-                "mockery/mockery": "^1.0",
-                "orchestra/testbench-core": "~3.7.8",
-                "php": ">=7.1",
-                "phpunit/phpunit": "^7.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.7-dev"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Mior Muhammad Zaki",
-                    "email": "crynobone@gmail.com",
-                    "homepage": "https://github.com/crynobone"
-                }
-            ],
-            "description": "Laravel Testing Helper for Packages Development",
-            "homepage": "http://orchestraplatform.com/docs/latest/components/testbench/",
-            "keywords": [
-                "BDD",
-                "TDD",
-                "laravel",
-                "orchestra-platform",
-                "orchestral",
-                "testing"
-            ],
-            "time": "2019-03-16T07:03:42+00:00"
-        },
-        {
-            "name": "orchestra/testbench-core",
-            "version": "v3.7.9",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/orchestral/testbench-core.git",
-                "reference": "55cdd1943eb2a244dc4e83f4d252050189686bbe"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/orchestral/testbench-core/zipball/55cdd1943eb2a244dc4e83f4d252050189686bbe",
-                "reference": "55cdd1943eb2a244dc4e83f4d252050189686bbe",
-                "shasum": ""
-            },
-            "require": {
-                "fzaninotto/faker": "^1.4",
-                "php": ">=7.1"
-            },
-            "require-dev": {
-                "laravel/framework": "~5.7.28",
-                "laravel/laravel": "5.7.x-dev",
-                "mockery/mockery": "^1.0",
-                "phpunit/phpunit": "^7.0"
-            },
-            "suggest": {
-                "laravel/framework": "Required for testing (~5.7.28).",
-                "mockery/mockery": "Allow to use Mockery for testing (^1.0).",
-                "orchestra/testbench-browser-kit": "Allow to use legacy Laravel BrowserKit for testing (~3.7).",
-                "orchestra/testbench-dusk": "Allow to use Laravel Dusk for testing (~3.7).",
-                "phpunit/phpunit": "Allow to use PHPUnit for testing (^7.0)."
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.7-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Orchestra\\Testbench\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Mior Muhammad Zaki",
-                    "email": "crynobone@gmail.com",
-                    "homepage": "https://github.com/crynobone"
-                }
-            ],
-            "description": "Testing Helper for Laravel Development",
-            "homepage": "http://orchestraplatform.com/docs/latest/components/testbench/",
-            "keywords": [
-                "BDD",
-                "TDD",
-                "laravel",
-                "orchestra-platform",
-                "orchestral",
-                "testing"
-            ],
-            "time": "2019-06-10T04:24:59+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -13062,13 +12942,12 @@
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
         "xethron/migrations-generator": 20,
-        "venturecraft/revisionable": 20,
         "michalisantoniou6/laravel-cerberus": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.4.0",
+        "php": ">=7.2.0",
         "ext-bcmath": "*",
         "ext-dom": "*",
         "ext-json": "*",
