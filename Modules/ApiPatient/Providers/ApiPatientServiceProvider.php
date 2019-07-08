@@ -16,18 +16,22 @@ class ApiPatientServiceProvider extends ServiceProvider
      *
      * @var bool
      */
-    protected $defer = false;
+    protected $defer = true;
 
     /**
      * Boot the application events.
      */
     public function boot()
     {
-        $this->registerTranslations();
-        $this->registerConfig();
-        $this->registerViews();
-        $this->registerFactories();
-        $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
+//        commented out so we can use deferred loading for this provider
+//        currently the package does not have any migrations, views, translations, factories, blah
+//        uncomment if we add any of the above
+
+//        $this->registerTranslations();
+//        $this->registerConfig();
+//        $this->registerViews();
+//        $this->registerFactories();
+//        $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
     }
 
     /**

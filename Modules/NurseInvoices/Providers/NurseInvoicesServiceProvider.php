@@ -22,17 +22,17 @@ class NurseInvoicesServiceProvider extends ServiceProvider
      *
      * @var bool
      */
-    protected $defer = true;
+    protected $defer = false;
 
     /**
      * Boot the application events.
      */
     public function boot()
     {
-        $this->registerTranslations();
-        $this->registerConfig();
+//        $this->registerTranslations();
+//        $this->registerConfig();
         $this->registerViews();
-        $this->registerFactories();
+//        $this->registerFactories();
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
     }
 
