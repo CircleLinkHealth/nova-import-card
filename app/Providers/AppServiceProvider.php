@@ -6,10 +6,6 @@
 
 namespace App\Providers;
 
-use App\Contracts\HtmlToPdfService;
-use App\Contracts\ReportFormatter;
-use App\Formatters\WebixFormatter;
-use App\Services\SnappyPdfWrapper;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
@@ -21,8 +17,6 @@ use Queue;
 
 class AppServiceProvider extends ServiceProvider
 {
-    protected $defer = true;
-
     /**
      * Bootstrap any application services.
      */
@@ -94,15 +88,6 @@ class AppServiceProvider extends ServiceProvider
         );
     }
 
-    public function provides()
-    {
-        return [
-            DevelopmentServiceProvider::class,
-            HtmlToPdfService::class,
-            ReportFormatter::class,
-        ];
-    }
-
     /**
      * Register any application services.
      *
@@ -114,23 +99,6 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->register(\Maatwebsite\Excel\ExcelServiceProvider::class);
         $this->app->register(\Yajra\DataTables\DataTablesServiceProvider::class);
-
-        if ($this->app->environment('local')) {
-            DevelopmentServiceProvider::class;
-        }
-
-        $this->app->bind(
-            HtmlToPdfService::class,
-            function () {
-                return $this->app->make(SnappyPdfWrapper::class)
-                    ->setTemporaryFolder(storage_path('tmp'));
-            }
-        );
-
-        $this->app->bind(
-            ReportFormatter::class,
-            WebixFormatter::class
-        );
 
         $this->app->register(\Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class);
         $this->app->register(\Barryvdh\Snappy\ServiceProvider::class);
