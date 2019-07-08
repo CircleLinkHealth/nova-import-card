@@ -106,10 +106,6 @@ class Kernel extends ConsoleKernel
             ->weekdays()
             ->at('08:00')->onOneServer();
 
-        //commenting out due to isues with google calendar
-//        $schedule->command('nurseSchedule:export')
-//                 ->hourly()->onOneServer();
-
         $schedule->command(GetAppointments::class)
             ->dailyAt('22:30')->onOneServer();
 
@@ -187,8 +183,6 @@ class Kernel extends ConsoleKernel
 //        $schedule->command(DownloadTwilioRecordings::class)
 //                 ->everyThirtyMinutes()
 //                 ->withoutOverlapping()->onOneServer();
-
-        $schedule->command(SecurityMailCommand::class)->weekly()->onOneServer();
 
         $schedule->command(NursesPerformanceDailyReport::class)->dailyAt('00:05')->onOneServer();
 
