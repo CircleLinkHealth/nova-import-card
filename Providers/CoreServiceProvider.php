@@ -6,15 +6,7 @@
 
 namespace CircleLinkHealth\Core\Providers;
 
-use CircleLinkHealth\Core\Entities\DatabaseNotification as CircleLinkDatabaseNotification;
-use CircleLinkHealth\Core\Notifications\Channels\DatabaseChannel as CircleLinkDatabaseChannel;
-use CircleLinkHealth\Core\Traits\HasDatabaseNotifications as CircleLinkHasDatabaseNotifications;
-use CircleLinkHealth\Core\Traits\Notifiable as CircleLinkNotifiable;
 use Illuminate\Database\Eloquent\Factory;
-use Illuminate\Notifications\Channels\DatabaseChannel as LaravelDatabaseChannel;
-use Illuminate\Notifications\DatabaseNotification as LaravelDatabaseNotification;
-use Illuminate\Notifications\HasDatabaseNotifications as LaravelHasDatabaseNotifications;
-use Illuminate\Notifications\Notifiable as LaravelNotifiable;
 use Illuminate\Support\ServiceProvider;
 
 class CoreServiceProvider extends ServiceProvider
@@ -31,21 +23,15 @@ class CoreServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->registerTranslations();
-        $this->registerConfig();
-        $this->registerViews();
-        $this->registerFactories();
-        $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
-    }
+//        $this->registerTranslations();
 
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides()
-    {
-        return [];
+        $this->registerViews();
+        
+        if ($this->app->runningInConsole()) {
+            $this->registerConfig();
+            $this->registerFactories();
+            $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
+        }
     }
 
     /**
@@ -54,11 +40,6 @@ class CoreServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register(RouteServiceProvider::class);
-
-        $this->app->bind(LaravelDatabaseChannel::class, CircleLinkDatabaseChannel::class);
-        $this->app->bind(LaravelHasDatabaseNotifications::class, CircleLinkHasDatabaseNotifications::class);
-        $this->app->bind(LaravelNotifiable::class, CircleLinkNotifiable::class);
-        $this->app->bind(LaravelDatabaseNotification::class, CircleLinkDatabaseNotification::class);
     }
 
     /**

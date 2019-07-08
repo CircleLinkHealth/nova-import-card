@@ -10,7 +10,8 @@
     "extra": {
         "laravel": {
             "providers": [
-                "CircleLinkHealth\\Core\\Providers\\CoreServiceProvider"
+                "CircleLinkHealth\\Core\\Providers\\CoreServiceProvider",
+                "CircleLinkHealth\\Core\\Providers\\CoreDeferredBindingsServiceProvider"
             ],
             "aliases": {
                 
