@@ -22,7 +22,7 @@ class NurseInvoicesServiceProvider extends ServiceProvider
      *
      * @var bool
      */
-    protected $defer = false;
+    protected $defer = true;
 
     /**
      * Boot the application events.
@@ -31,9 +31,7 @@ class NurseInvoicesServiceProvider extends ServiceProvider
     {
 //        $this->registerTranslations();
 //        $this->registerConfig();
-        $this->registerViews();
 //        $this->registerFactories();
-        $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
     }
 
     /**
@@ -53,6 +51,10 @@ class NurseInvoicesServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->registerViews();
+    
+        $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
+    
         $this->app->register(RouteServiceProvider::class);
         $this->app->bind(AggregatedTotalTimePerNurse::class, function ($app, array $args) {
             $userIds = $args[0];
