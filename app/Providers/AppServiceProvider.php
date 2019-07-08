@@ -11,7 +11,6 @@ use App\Contracts\ReportFormatter;
 use App\Formatters\WebixFormatter;
 use App\Services\SnappyPdfWrapper;
 use Carbon\Carbon;
-use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesServiceProvider;
 use DB;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
@@ -23,7 +22,7 @@ use Queue;
 class AppServiceProvider extends ServiceProvider
 {
     protected $defer = true;
-    
+
     /**
      * Bootstrap any application services.
      */
@@ -103,7 +102,7 @@ class AppServiceProvider extends ServiceProvider
             ReportFormatter::class,
         ];
     }
-    
+
     /**
      * Register any application services.
      *
@@ -145,6 +144,5 @@ class AppServiceProvider extends ServiceProvider
         $this->app->register(AuthyServiceProvider::class);
         $this->app->register(\PragmaRX\Health\ServiceProvider::class);
         $this->app->register(NovaServiceProvider::class);
-        $this->app->register(NurseInvoicesServiceProvider::class);
     }
 }

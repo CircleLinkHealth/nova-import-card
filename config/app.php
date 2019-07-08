@@ -192,6 +192,9 @@ return [
         App\Providers\TwilioClientServiceProvider::class,
         \Collective\Html\HtmlServiceProvider::class,
 
+        CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesServiceProvider::class,
+        CircleLinkHealth\ApiPatient\Providers\ApiPatientServiceProvider::class,
+
         App\View\Composers\ProviderUITimerComposer::class,
         App\View\Composers\FabComposer::class,
         App\View\Composers\SAAS\Admin\ManageInternalUser::class,

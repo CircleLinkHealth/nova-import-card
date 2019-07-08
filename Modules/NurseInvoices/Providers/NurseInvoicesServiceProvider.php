@@ -22,7 +22,7 @@ class NurseInvoicesServiceProvider extends ServiceProvider
      *
      * @var bool
      */
-    protected $defer = false;
+    protected $defer = true;
 
     /**
      * Boot the application events.
@@ -43,7 +43,9 @@ class NurseInvoicesServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return [];
+        return [
+            AggregatedTotalTimePerNurse::class,
+        ];
     }
 
     /**
