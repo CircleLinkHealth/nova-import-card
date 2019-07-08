@@ -621,7 +621,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "1eef1cd114420832170a707d5dcb5bff14ff637a"
+                "reference": "eadbacc5fc55b55225020dddc0961fd179e9f604"
             },
             "require": {
                 "venturecraft/revisionable": "dev-master"
@@ -630,7 +630,8 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "CircleLinkHealth\\Core\\Providers\\CoreServiceProvider"
+                        "CircleLinkHealth\\Core\\Providers\\CoreServiceProvider",
+                        "CircleLinkHealth\\Core\\Providers\\CoreDeferredBindingsServiceProvider"
                     ],
                     "aliases": []
                 }
@@ -649,7 +650,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-06-28T01:13:48+00:00"
+            "time": "2019-07-08T14:44:56+00:00"
         },
         {
             "name": "circlelinkhealth/customer",
