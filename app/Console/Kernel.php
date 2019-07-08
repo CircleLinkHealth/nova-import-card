@@ -38,7 +38,6 @@ use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use CircleLinkHealth\ResponseCache\Commands\Clear;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use Jorijn\LaravelSecurityChecker\Console\SecurityMailCommand;
 
 class Kernel extends ConsoleKernel
 {
@@ -148,9 +147,6 @@ class Kernel extends ConsoleKernel
 //                '--variable-time' => true,
 //            ]
 //        )->monthlyOn(1, '5:0')->onOneServer();
-
-//        $schedule->command('lgh:importInsurance')
-//            ->dailyAt('05:00')->onOneServer();
 
         $schedule->command(QueueGenerateNurseDailyReport::class)
             ->dailyAt('23:45')
