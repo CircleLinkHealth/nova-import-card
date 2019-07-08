@@ -11,12 +11,15 @@ use App\Jobs\UpdateEnrolleesFromEnglishEnrollmentSheetCsv;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\Importable;
+use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\ToArray;
+use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 
-class EnroleeStatus implements WithChunkReading, WithValidation, WithHeadingRow, ToArray
+class EnroleeStatus implements WithChunkReading, WithValidation, WithHeadingRow, OnEachRow
 {
     use Importable;
 
@@ -34,53 +37,63 @@ class EnroleeStatus implements WithChunkReading, WithValidation, WithHeadingRow,
         $this->attributes = $attributes;
         $this->rules      = $rules;
         $this->modelClass = $modelClass;
+
+//        ini_set('max_execution_time', 100000000000);
     }
 
     public function array(array $array)
     {
         //We are passing the whole csv to the job, without chunking
-        UpdateEnrolleesFromEnglishEnrollmentSheetCsv::dispatch($array)->onQueue('high');
+//        UpdateEnrolleesFromEnglishEnrollmentSheetCsv::dispatch($array)->onQueue('high');
 
         //this causes timeout, plus for some reason changes were not being saved to the Enrollees model
-//        $csv = collect($array)->filter(function ($row) {
-//            return array_key_exists('call_status', $row);
-//        });
-//
-//        Enrollee::whereIn('id', $csv->pluck('eligible_patient_id')->toArray())
-//                ->orWhereIn('eligibility_job_id', $csv->pluck('eligibility_job_id')->toArray())
-//                ->chunk(200, function ($enrollees) use (&$csv) {
-//                    $enrollees->each(function (Enrollee $e) use ($csv) {
-//                        $row = $csv->filter(function ($row) use ($e) {
-//                            //We need either the enrollee id, or the eligibility job id
-//                            if (array_key_exists('eligible_patient_id', $row)) {
-//                                return $row['eligible_patient_id'] == $e->id;
-//                            }
-//                            if (array_key_exists('eligibility_job_id', $row)) {
-//                                return $row['eligibility_job_id'] == $e->eligibility_job_id;
-//                            }
-//
-//                            return false;
-//                        })
-//                            //use last to get the last row for that patient from the csv (latest updates for that patient)
-//                                   ->last();
-//
-//                        if ($row) {
-//                            $e = $this->setEnrolleeStatus($e, $row);
-//                            if (array_key_exists('call_date', $row) && ! empty($row['call_date'])) {
-//                                //this is a hack helping us parse dates from the csv that combine dots and dashes. It makes alot of assumptions that in other cases may be wrong. Fix if needed.
-//                                $date = preg_split("/[.|\/]/", $row['call_date']);
-//                                if (3 == count($date)) {
-//                                    try {
-//                                        $e->last_attempt_at = Carbon::parse("{$date[0]}/{$date[1]}/{$date[2]}");
-//                                    } catch (\Exception $exception) {
-//                                        //do nothing, date provided in csv is invalid
-//                                    }
-//                                }
-//                            }
-//                            $e->save();
-//                        }
-//                    });
-//                });
+        $csv = collect($array)->filter(function ($row) {
+            return array_key_exists('call_status', $row);
+        });
+
+        Enrollee::whereIn('id', $csv->pluck('eligible_patient_id')->toArray())
+            ->orWhereIn('eligibility_job_id', $csv->pluck('eligibility_job_id')->toArray())
+            ->chunk(200, function ($enrollees) use (&$csv) {
+                    $enrollees->each(function (Enrollee $e) use ($csv) {
+                        $row = $csv->filter(function ($row) use ($e) {
+                            //We need either the enrollee id, or the eligibility job id
+                            if (array_key_exists('eligible_patient_id', $row)) {
+                                return $row['eligible_patient_id'] == $e->id;
+                            }
+                            if (array_key_exists('eligibility_job_id', $row)) {
+                                return $row['eligibility_job_id'] == $e->eligibility_job_id;
+                            }
+
+                            return false;
+                        })
+                            //use last to get the last row for that patient from the csv (latest updates for that patient)
+                            ->last();
+
+                        if ($row) {
+                            $e = $this->setEnrolleeStatus($e, $row);
+                            if (array_key_exists('call_date', $row) && ! empty($row['call_date'])) {
+                                //this is a hack helping us parse dates from the csv that combine dots and dashes. It makes alot of assumptions that in other cases may be wrong. Fix if needed.
+                                $date = preg_split("/[.|\/]/", $row['call_date']);
+                                if (3 == count($date)) {
+                                    try {
+                                        $e->last_attempt_at = Carbon::parse("{$date[0]}/{$date[1]}/{$date[2]}");
+                                    } catch (\Exception $exception) {
+                                        //do nothing, date provided in csv is invalid
+                                    }
+                                }
+                            }
+                            $e->save();
+                        }
+                    });
+                });
+    }
+
+    /**
+     * @return int
+     */
+    public function batchSize(): int
+    {
+        return 200;
     }
 
     /**
@@ -88,39 +101,69 @@ class EnroleeStatus implements WithChunkReading, WithValidation, WithHeadingRow,
      */
     public function chunkSize(): int
     {
-        return 10000;
+        return 200;
     }
 
     public function model(array $row)
     {
         //this was trying to implement shouldQueue by chunking results then queueing job to update each model individually, still getting timeout.
 //
-//        if (array_key_exists('call_status', $row)) {
-//            $e = Enrollee::where('id', $row['eligible_patient_id'])
-//                         ->orWhere('eligibility_job_id', $row['eligibility_job_id'])
-//                         ->first();
-//
-//            if ($e){
-//                $e = $this->setEnrolleeStatus($e, $row);
-//                if (array_key_exists('call_date', $row) && ! empty($row['call_date'])) {
-//                    //this is a hack helping us parse dates from the csv that combine dots and dashes. It makes alot of assumptions that in other cases may be wrong. Fix if needed.
-//                    $date = preg_split("/[.|\/]/", $row['call_date']);
-//                    if (3 == count($date)) {
-//                        try {
-//                            $e->last_attempt_at = Carbon::parse("{$date[0]}/{$date[1]}/{$date[2]}");
-//                        } catch (\Exception $exception) {
-//                            //do nothing, date provided in csv is invalid
-//                        }
-//                    }
-//                }
-//                return $e->save();
-//            }
-//        }
+        if (array_key_exists('call_status', $row)) {
+            $e = Enrollee::where('id', $row['eligible_patient_id'])
+                ->orWhere('eligibility_job_id', $row['eligibility_job_id'])
+                ->first();
+
+            if ($e) {
+                $e = $this->setEnrolleeStatus($e, $row);
+                if (array_key_exists('call_date', $row) && ! empty($row['call_date'])) {
+                    //this is a hack helping us parse dates from the csv that combine dots and dashes. It makes alot of assumptions that in other cases may be wrong. Fix if needed.
+                    $date = preg_split("/[.|\/]/", $row['call_date']);
+                    if (3 == count($date)) {
+                        try {
+                            $e->last_attempt_at = Carbon::parse("{$date[0]}/{$date[1]}/{$date[2]}");
+                        } catch (\Exception $exception) {
+                            //do nothing, date provided in csv is invalid
+                        }
+                    }
+                }
+
+                return $e;
+            }
+
+            return null;
+        }
+    }
+
+    public function onRow($row)
+    {
+        if (array_key_exists('call_status', $row)) {
+            $e = Enrollee::where('id', $row['eligible_patient_id'])
+                ->orWhere('eligibility_job_id', $row['eligibility_job_id'])
+                ->first();
+
+            if ($e) {
+                $e = $this->setEnrolleeStatus($e, $row);
+                if (array_key_exists('call_date', $row) && ! empty($row['call_date'])) {
+                    //this is a hack helping us parse dates from the csv that combine dots and dashes. It makes alot of assumptions that in other cases may be wrong. Fix if needed.
+                    $date = preg_split("/[.|\/]/", $row['call_date']);
+                    if (3 == count($date)) {
+                        try {
+                            $e->last_attempt_at = Carbon::parse("{$date[0]}/{$date[1]}/{$date[2]}");
+                        } catch (\Exception $exception) {
+                            //do nothing, date provided in csv is invalid
+                        }
+                    }
+                }
+                $e->save();
+            }
+
+            return null;
+        }
     }
 
     public function rules(): array
     {
-        return $this->rules;
+        return [];
     }
 
     private function setEnrolleeStatus($e, $row)

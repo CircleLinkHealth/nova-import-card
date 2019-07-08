@@ -38,6 +38,18 @@
                     </div>
                 </div>
                 <div class="row">
+                    <div class="col-sm-12 panel-body">
+                        <form action="{{route('ca-director.upload-csv')}}" method="POST" enctype="multipart/form-data">
+                            {{csrf_field()}}
+                            <div class="col-sm-12">
+                                <input type="file" name="source_file" required>
+                            </div>
+                            <div class="col-sm-12">
+                                <input type="submit" class="btn btn-md btn-default" value="Upload file">
+                            </div>
+
+                        </form>
+                    </div>
                     <div class="col-sm-12">
                         <div>
                             <div class="panel-body">
