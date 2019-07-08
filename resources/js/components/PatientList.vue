@@ -44,6 +44,7 @@
                     perPageValues: [10, 25, 50, 100, 200],
                     skin: "table-striped table-bordered table-hover",
                     filterByColumn: true,
+                    //todo: hra_status, vitals_status and eligibility should have a dropdown for filters
                     filterable: ['patient_name', 'provider_name', 'hra_status', 'vitals_status', 'eligibility', 'dob'],
                     sortable: ['patient_name', 'provider_name', 'hra_status', 'vitals_status', 'eligibility', 'dob'],
                 },
