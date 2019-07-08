@@ -113,7 +113,7 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'report-writer.notify',
         ]);
     });
-    
+
     // API
     Route::group(['prefix' => 'api', 'middleware' => ['cacheResponse']], function () {
         Route::group(['prefix' => 'admin'], function () {
@@ -285,7 +285,6 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'patients.without-inbound-calls',
             ])->middleware('permission:patient.read,call.read');
 
-            
             Route::post(
                 '{patientId}/problems/cpm/{cpmId}/instructions',
                 'ProblemInstructionController@addInstructionProblem'
@@ -374,7 +373,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('records/delete', 'MedicalRecordImportController@deleteRecords');
         });
     });
-    
+
     Route::get('user/{patientId}/care-plan', 'API\PatientCarePlanController@index')->middleware(['permission:careplan.read', 'cacheResponse']);
 
     Route::get('user/{user}/care-team', [
@@ -899,6 +898,8 @@ Route::group(['middleware' => 'auth'], function () {
         ],
         'prefix' => 'admin',
     ], function () {
+        Route::get('opcache', 'Admin\OPCacheGUIController@index');
+
         Route::get('calls-v2', [
             'uses' => 'Admin\PatientCallManagementController@remixV2',
             'as'   => 'admin.patientCallManagement.v2.index',
@@ -1547,7 +1548,7 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => '\Lab404\Impersonate\Controllers\ImpersonateController@take',
             'as'   => 'impersonate',
         ]);
-        
+
         // users
         Route::group([
         ], function () {
