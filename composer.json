@@ -10,7 +10,8 @@
     "extra": {
         "laravel": {
             "providers": [
-                "CircleLinkHealth\\TwoFA\\Providers\\TwoFAServiceProvider"
+                "CircleLinkHealth\\TwoFA\\Providers\\TwoFAServiceProvider",
+                "CircleLinkHealth\\TwoFA\\Providers\\AuthyServiceProvider"
             ],
             "aliases": {
                 
