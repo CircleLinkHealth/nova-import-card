@@ -24,10 +24,10 @@ class NurseInvoiceDailyDispute extends BaseModel
         'invalidated',
     ];
 
-    protected $table = 'nurse_invoice_daily_disputes';
+//    protected $table = 'nurse_invoice_daily_disputes';
 
-//    public function nurseInvoice()
-//    {
-//        return $this->belongsTo(NurseInvoice::class, 'invoice_id', 'id');
-//    }
+    public function nurseInvoice()
+    {
+        return $this->belongsTo(NurseInvoice::class, 'invoice_id', 'id');
+    }
 }
