@@ -1,7 +1,12 @@
 <template>
     <div>
         <v-server-table class="table" :url="getUrl()" :columns="columns" :options="options" ref="table">
+            <template slot="eligibility" slot-scope="props">
+                <!-- todo -->
+                <span>Eligible</span>
+            </template>
             <template slot="actions" slot-scope="props">
+                <!-- todo -->
                 <button>...</button>
             </template>
         </v-server-table>
@@ -10,15 +15,10 @@
 
 <script>
 
-    import {ServerTable} from 'vue-tables-2';
-
     let self;
 
     export default {
         name: "PatientList",
-        components: {
-            'v-server-table': ServerTable
-        },
         data() {
             return {
                 columns: ['name', 'provider', 'hra_status', 'vitals_status', 'eligibility', 'dob', 'actions'],

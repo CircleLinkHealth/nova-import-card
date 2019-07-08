@@ -6,6 +6,7 @@
 
 namespace App\Filters;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class PatientListFilters extends QueryFilters
@@ -69,12 +70,36 @@ class PatientListFilters extends QueryFilters
         return $this->builder->where('dob', '=', $value);
     }
 
+    public function year($value)
+    {
+        if (empty($value)) {
+            return $this->builder;
+        }
+
+        return $this->builder->where('year', '=', $value);
+    }
+
+    public function years(array $value)
+    {
+        if (empty($value)) {
+            return $this->builder;
+        }
+
+        return $this->builder->whereIn('year', $value);
+    }
+
     public function globalFilters(): array
     {
         $query = $this->request->get('query');
 
         $decoded  = json_decode($query, true);
         $filtered = collect($decoded)->filter();
+
+        //do not set years if year was set in query
+        if ( ! isset($filtered['year'])) {
+            $now               = Carbon::now();
+            $filtered['years'] = [$now->year - 1, $now->year, $now->year + 1];
+        }
 
         return $filtered->all();
     }
