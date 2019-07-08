@@ -22,4 +22,6 @@ use CircleLinkHealth\Core\Filters\Filterable;
 class PatientAwvSurveyInstanceStatusView extends BaseModel
 {
     use Filterable;
+
+    protected $table = 'patient_awv_survey_instance_status_view';
 }

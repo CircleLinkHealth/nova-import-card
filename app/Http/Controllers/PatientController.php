@@ -10,7 +10,7 @@ namespace App\Http\Controllers;
 
 use App\Filters\PatientListFilters;
 use App\PatientAwvSurveyInstanceStatusView;
-use Request;
+use Illuminate\Http\Request;
 
 class PatientController extends Controller
 {

@@ -1,6 +1,12 @@
 <template>
     <div>
         <v-server-table class="table" :url="getUrl()" :columns="columns" :options="options" ref="table">
+            <template slot="hra_status" slot-scope="props">
+                <span>{{getStatus(props.row.hra_status)}}</span>
+            </template>
+            <template slot="vitals_status" slot-scope="props">
+                <span>{{getStatus(props.row.vitals_status)}}</span>
+            </template>
             <template slot="eligibility" slot-scope="props">
                 <!-- todo -->
                 <span>Eligible</span>
@@ -21,7 +27,7 @@
         name: "PatientList",
         data() {
             return {
-                columns: ['name', 'provider', 'hra_status', 'vitals_status', 'eligibility', 'dob', 'actions'],
+                columns: ['patient_name', 'provider_name', 'hra_status', 'vitals_status', 'eligibility', 'dob', 'actions'],
                 options: {
                     requestAdapter(data) {
                         if (typeof (self) !== 'undefined') {
@@ -38,14 +44,23 @@
                     perPageValues: [10, 25, 50, 100, 200],
                     skin: "table-striped table-bordered table-hover",
                     filterByColumn: true,
-                    filterable: ['name', 'provider', 'hra_status', 'vitals_status', 'eligibility', 'dob'],
-                    sortable: ['name', 'provider', 'hra_status', 'vitals_status', 'eligibility', 'dob'],
+                    filterable: ['patient_name', 'provider_name', 'hra_status', 'vitals_status', 'eligibility', 'dob'],
+                    sortable: ['patient_name', 'provider_name', 'hra_status', 'vitals_status', 'eligibility', 'dob'],
                 },
             };
         },
         methods: {
             getUrl() {
                 return `/manage-patients/list`
+            },
+
+            getStatus(status) {
+                switch (status) {
+                    case 'pending': return 'Pending';
+                    case 'in_progress': return 'In Progress';
+                    case 'completed': return 'Completed';
+                }
+                return 'N/A';
             }
         },
         created() {

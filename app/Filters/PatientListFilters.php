@@ -16,16 +16,16 @@ class PatientListFilters extends QueryFilters
         parent::__construct($request);
     }
 
-    public function name($name)
+    public function patient_name($name)
     {
         if (empty($name)) {
             return $this->builder;
         }
 
-        return $this->builder->where('name', 'like', '%' . $name . '%');
+        return $this->builder->where('patient_name', 'like', '%' . $name . '%');
     }
 
-    public function provider($name)
+    public function provider_name($name)
     {
         if (empty($name)) {
             return $this->builder;
