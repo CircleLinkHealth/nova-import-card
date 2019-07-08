@@ -16,19 +16,22 @@ class TwoFAServiceProvider extends ServiceProvider
      *
      * @var bool
      */
-    protected $defer = false;
+    protected $defer = true;
 
     /**
      * Boot the application events.
      */
     public function boot()
     {
+        if ($this->app->runningInConsole()) {
+            $this->registerConfig();
+            $this->registerFactories();
+            $this->registerVueComponents();
+            $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
+        }
+        
         $this->registerTranslations();
-        $this->registerConfig();
         $this->registerViews();
-        $this->registerFactories();
-        $this->registerVueComponents();
-        $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
     }
 
     /**
