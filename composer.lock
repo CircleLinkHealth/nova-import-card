@@ -233,7 +233,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "52b74b4112fd9692d4816a4491d3c94cf583fe60"
+                "reference": "b4d1d584b6c259b71e721cd6df063f7d635a7350"
             },
             "require": {
                 "circlelinkhealth/core": "dev-master",
@@ -266,7 +266,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-06-30T00:52:02+00:00"
+            "time": "2019-07-08T08:21:01+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
@@ -4838,7 +4838,7 @@
                 },
                 {
                     "name": "Gert de Pagter",
-                    "email": "BackEndTea@gmail.com"
+                    "email": "backendtea@gmail.com"
                 }
             ],
             "description": "Symfony polyfill for ctype functions",
