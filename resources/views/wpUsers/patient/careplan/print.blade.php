@@ -501,9 +501,7 @@ if (isset($patient) && ! empty($patient)) {
         @if(!isset($isPdf))
             @push('styles')
                 <script>
-                    var careplan = (<?php
-                        echo json_encode($careplan);
-                        ?>) || {};
+                    var careplan = @json($careplan);
                 </script>
             @endpush
         @endif
