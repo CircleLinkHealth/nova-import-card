@@ -55,7 +55,6 @@ use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
 use DateTime;
-use Faker\Factory;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -2907,41 +2906,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ]
         );
     }
-
-    public function scramble()
-    {
-        $faker = Factory::create();
-        if ( ! $faker) {
-            return false;
-        }
-
-        //dd($randomUserInfo);
-        // set random data
-        $user = $this;
-        $user->setFirstName($faker->firstName);
-        $user->setLastName('Z-'.$faker->lastName);
-        $user->username = $faker->userName;
-        $user->password = $faker->password;
-        $user->email    = $faker->freeEmail;
-        $user->setMRN(rand());
-        $user->setGender('M');
-        $user->address  = $faker->address;
-        $user->address2 = $faker->secondaryAddress;
-        $user->city     = $faker->city;
-        $user->state    = $faker->stateAbbr;
-        $user->zip      = $faker->postcode;
-        $user->setPhone('111-234-5678');
-        $user->setWorkPhoneNumber('222-234-5678');
-        $user->setMobilePhoneNumber('333-234-5678');
-        $user->setBirthDate($faker->dateTimeThisCentury->format('Y-m-d'));
-        $user->setAgentName('Secret Agent');
-        $user->setAgentPhone('111-234-5678');
-        $user->setAgentEmail('secret@agent.net');
-        $user->setAgentRelationship('SA');
-        $user->save();
-    }
-
-    // MISC, these should be removed eventually
 
     /**
      * Get Scout index name for the model.

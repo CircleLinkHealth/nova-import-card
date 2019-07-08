@@ -164,7 +164,7 @@ class UserController extends Controller
             return redirect()->back()->withErrors(['form_error' => "There was an error: Missing 'action' parameter."]);
         }
 
-        if ('scramble' == $action || 'withdraw' == $action) {
+        if ('withdraw' == $action) {
             $selectAllFromFilters = ! empty($params->get('filterRole')) || ! empty($params->get('filterProgram'));
             if ($selectAllFromFilters) {
                 $users = $this->getUsersBasedOnFilters($params);
@@ -175,12 +175,7 @@ class UserController extends Controller
             if (empty($users)) {
                 return redirect()->back()->withErrors(['form_error' => 'There was an error: Users array is empty.']);
             }
-
-            if ('scramble' == $action) {
-                $this->scrambleUsers($users);
-
-                return redirect()->back()->with('messages', ['Action [Scramble] was successful']);
-            }
+            
             if ('withdraw' == $action) {
                 $withdrawnReason = $params->get('withdrawn-reason');
                 if ('Other' == $withdrawnReason) {
@@ -456,27 +451,6 @@ class UserController extends Controller
             'invalidUsers',
             'queryString',
         ]));
-    }
-
-    /**
-     * Scramble user(s).
-     *
-     * @param mixed $userIds
-     *
-     * @return bool
-     */
-    public function scrambleUsers($userIds)
-    {
-        foreach ($userIds as $id) {
-            $user = User::find($id);
-            if ( ! $user) {
-                return false;
-            }
-
-            $user->scramble();
-        }
-
-        return true;
     }
 
     /**
