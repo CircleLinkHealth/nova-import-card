@@ -7,8 +7,8 @@
 namespace Tests\Helpers;
 
 use App\Call;
+use App\CLH\Helpers\StringManipulation;
 use App\CLH\Repositories\UserRepository;
-use App\Facades\StringManipulation;
 use App\Repositories\PatientWriteRepository;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Nurse;
@@ -171,7 +171,7 @@ trait UserHelpers
         $firstName = $faker->firstName;
         $lastName  = $faker->lastName;
         $email     = $faker->email;
-        $workPhone = StringManipulation::formatPhoneNumber($faker->phoneNumber);
+        $workPhone = (new StringManipulation())->formatPhoneNumber($faker->phoneNumber);
 
         $bag = new ParameterBag(
             [

@@ -15,7 +15,7 @@ fi
 npm run prod
 
 if [ ! -d "vendor" ]; then
-  composer install --no-dev --classmap-authoritative --prefer-dist
+  composer install --no-dev --classmap-authoritative --prefer-dist --no-scripts
 
   # Exit if composer failed
   if [ $? -ne 0 ]; then
@@ -23,6 +23,8 @@ if [ ! -d "vendor" ]; then
     exit 1;
   fi
 fi
+
+composer dump-autoload --no-dev --classmap-authoritative --no-scripts
 
 php artisan tickets:store $COMMIT $ENV_NAME $ROLLBACK $USER_NAME $COMMENT $PREVIOUS_COMMIT
 

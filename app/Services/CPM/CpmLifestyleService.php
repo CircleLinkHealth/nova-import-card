@@ -27,7 +27,7 @@ class CpmLifestyleService implements CpmModel
         if ($this->repo()->exists($lifestyleId)) {
             return $this->lifestyleUserRepo->addLifestyleToPatient($lifestyleId, $userId);
         }
-        throw new Exception('lifestyle with id "'.$lifestyleId.'" does not exist');
+        throw new \Exception('lifestyle with id "'.$lifestyleId.'" does not exist');
     }
 
     public function lifestylePatients($lifestyleId)

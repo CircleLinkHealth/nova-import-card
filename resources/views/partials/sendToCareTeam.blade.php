@@ -103,5 +103,19 @@
         else if (hasSummary) {
             $('.load-hidden').show();
         }
+
+        $('#notify-careteam').change(function (e) {
+            setSubmitText();
+        });
+
+        $('#notify-circlelink-support').change(function (e) {
+            setSubmitText();
+        });
+
+        function setSubmitText() {
+            const text = ($('#notify-circlelink-support').is(':checked') || $('#notify-careteam').is(':checked')) ? 'Save / Send Note' : 'Save Note';
+            $('#Submit').text(text);
+        }
+
     </script>
 @endpush

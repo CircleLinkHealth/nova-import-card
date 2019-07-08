@@ -7,8 +7,6 @@
 namespace App;
 
 use CircleLinkHealth\Customer\Entities\User;
-use Prettus\Repository\Contracts\Transformable;
-use Prettus\Repository\Traits\TransformableTrait;
 
 /**
  * These are IDs from third party systems.
@@ -43,10 +41,8 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ForeignId newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ForeignId query()
  */
-class ForeignId extends \CircleLinkHealth\Core\Entities\BaseModel implements Transformable
+class ForeignId extends \CircleLinkHealth\Core\Entities\BaseModel
 {
-    use TransformableTrait;
-
     //Define systems here
     const APRIMA = 'aprima';
     const ATHENA = 'athena';

@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers\API;
 
-use App\CLH\Facades\StringManipulation;
+use App\CLH\Helpers\StringManipulation;
 use App\Http\Controllers\Controller;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
@@ -331,13 +331,13 @@ class CareTeamController extends Controller
             if (isset($phone['id'])) {
                 $phone = PhoneNumber::where('id', '=', $phone['id'])
                     ->update([
-                        'number' => StringManipulation::formatPhoneNumber($phone['number']),
+                        'number' => (new StringManipulation())->formatPhoneNumber($phone['number']),
                     ]);
             } else {
                 $phone = PhoneNumber::updateOrCreate([
                     'user_id' => $providerUser->id,
                     'type'    => 'work',
-                    'number'  => StringManipulation::formatPhoneNumber($phone['number']),
+                    'number'  => (new StringManipulation())->formatPhoneNumber($phone['number']),
                 ]);
             }
         }

@@ -71,13 +71,13 @@ class CareplanService
             ? $userId
             : User::findOrFail($userId);
 
-        $user->loadMissing(['ccdProblems.cpmInstruction', 'ccdProblems.codes']);
+        $user->loadMissing(['ccdProblems.cpmInstruction', 'ccdProblems.codes', 'ccdMedications']);
 
         return [
             'allCpmProblems'   => $this->cpmService->all(),
             'cpmProblems'      => $this->cpmUserService->getPatientProblems($userId),
             'ccdProblems'      => $this->ccdUserService->getPatientProblemsValues($user),
-            'medications'      => $this->medicationService->repo()->patientMedication($userId)->getCollection(),
+            'medications'      => $user->ccdMedications,
             'medicationGroups' => $this->medicationGroupService->repo()->groups(),
             'healthGoals'      => $this->biometricService->patientBiometrics($userId),
             'baseHealthGoals'  => $this->biometricService->biometrics(),
