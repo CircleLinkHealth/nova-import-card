@@ -95,6 +95,7 @@
                 //newly created data from DB.
                 showTillRefresh: true,
                 //
+
                 loader: false,
                 errors: [],
                 temporaryValue: '',
