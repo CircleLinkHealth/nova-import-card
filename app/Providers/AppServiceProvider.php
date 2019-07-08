@@ -109,6 +109,5 @@ class AppServiceProvider extends ServiceProvider
         $this->app->register(\Waavi\UrlShortener\UrlShortenerServiceProvider::class);
         $this->app->register(GoogleDriveServiceProvider::class);
         $this->app->register(\LynX39\LaraPdfMerger\PdfMergerServiceProvider::class);
-        $this->app->register(AuthyServiceProvider::class);
     }
 }
