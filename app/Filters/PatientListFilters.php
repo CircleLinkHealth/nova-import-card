@@ -40,6 +40,10 @@ class PatientListFilters extends QueryFilters
             return $this->builder;
         }
 
+        if ("null" === $status) {
+            return $this->builder->whereNull('hra_status');
+        }
+
         return $this->builder->where('hra_status', '=', $status);
     }
 
@@ -47,6 +51,10 @@ class PatientListFilters extends QueryFilters
     {
         if (empty($status)) {
             return $this->builder;
+        }
+
+        if ("null" === $status) {
+            return $this->builder->whereNull('vitals_status');
         }
 
         return $this->builder->where('vitals_status', '=', $status);
