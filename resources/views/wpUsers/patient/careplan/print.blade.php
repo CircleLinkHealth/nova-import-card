@@ -13,7 +13,7 @@ if (isset($patient) && ! empty($patient)) {
 
 @if(!isset($isPdf))
     @section('title', 'Care Plan View/Print')
-@section('activity', 'Care Plan View/Print')
+    @section('activity', 'Care Plan View/Print')
 @endif
 
 @section('content')
@@ -169,7 +169,7 @@ if (isset($patient) && ! empty($patient)) {
                                                 ? $patientCarePlan->pdfs
                                                 : null;
                                             $patientCarePlanPdfsHasItems = isset($patientCarePlanPdfs)
-                                                ? $patientCarePlanPdfs->count() > 0
+                                                ? $patientCarePlanPdfs->isNotEmpty()
                                                 : false;
                                             ?>
 

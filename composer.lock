@@ -819,7 +819,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "67ff7168823449a48b8873e1c3f4eed3bebbbb4a"
+                "reference": "28175c08ce17d0bdaaf0da4e3a2cdc6dd205b5c9"
             },
             "require": {
                 "authy/php": "^3.0",
@@ -845,7 +845,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-06-21T12:17:37+00:00"
+            "time": "2019-07-08T15:00:57+00:00"
         },
         {
             "name": "composer/ca-bundle",

@@ -157,15 +157,6 @@ Route::group(['middleware' => 'auth'], function () {
         ])->middleware('permission:activity.read');
 
         Route::group([
-            'prefix'     => 'biometrics',
-            'middleware' => ['permission:biometric.read'],
-        ], function () {
-            Route::get('', 'BiometricController@index');
-            Route::get('{biometricId}', 'BiometricController@show');
-            Route::get('{biometricId}/patients', 'BiometricController@patients');
-        });
-
-        Route::group([
             'prefix'     => 'allergies',
             'middleware' => ['permission:allergy.read'],
         ], function () {
