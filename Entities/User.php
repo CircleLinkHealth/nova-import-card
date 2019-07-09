@@ -2594,14 +2594,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function safe()
     {
-        $careplan    = $this->carePlan()->first();
-        $observation = $this->observations()->orderBy('id', 'desc')->first();
-        $phone       = $this->phoneNumbers()->first();
-
         return [
             'id'                    => $this->id,
             'username'              => $this->username,
-            'name'                  => $this->name() ?? $this->display_name,
+            'name'                  => $this->name(),
             'address'               => $this->address,
             'city'                  => $this->city,
             'state'                 => $this->state,
@@ -2610,13 +2606,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             'status'                => $this->status,
             'user_status'           => $this->user_status,
             'is_online'             => $this->is_online,
-            'patient_info'          => optional($this->patientInfo()->first())->safe(),
-            'provider_info'         => $this->providerInfo()->first(),
-            'billing_provider_name' => $this->getBillingProviderName(),
-            'billing_provider_id'   => $this->getBillingProviderId(),
-            'careplan'              => optional($careplan)->safe(),
-            'last_read'             => optional($observation)->obs_date,
-            'phone'                 => $this->getPhone() ?? optional($phone)->number,
+            'provider_info'         => $this->providerInfo,
+            'phone'                 => $this->getPhone(),
             'created_at'            => optional($this->created_at)->format('c') ?? null,
             'updated_at'            => optional($this->updated_at)->format('c') ?? null,
         ];
