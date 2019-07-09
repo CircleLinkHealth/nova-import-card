@@ -119,7 +119,7 @@
 @endif
 
 @auth
-    @if(!isset($isPdf) && auth()->user()->isAdmin() || auth()->user()->isCareCoach())
+    @if(!isset($isPdf) && (auth()->user()->isAdmin() || auth()->user()->isCareCoach()))
         @include('partials.jira-issue-collector')
     @endif
 @endauth
