@@ -911,7 +911,12 @@
             */
 
             function getNoteBodyExcludingMedications(noteBody) {
-                return noteBody.substring(0, noteBody.indexOf(MEDICATIONS_SEPARATOR)).trim();
+                const medicationsIndex = noteBody.indexOf(MEDICATIONS_SEPARATOR);
+
+                if (medicationsIndex > -1) {
+                    return noteBody.substring(0, medicationsIndex).trim();
+                }
+                return noteBody;
             }
 
 
