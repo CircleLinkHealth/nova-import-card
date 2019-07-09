@@ -163,7 +163,6 @@
             @foreach($timePerDay as $date => $row)
                 <tr>
                     <td><b>{{$date}}</b></td>
-
                     <td>
                         <nurse-invoice-daily-dispute
                                 :invoice-data="{{json_encode($row)}}"

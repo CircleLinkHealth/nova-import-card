@@ -7,13 +7,23 @@
            {{this.formattedTime}}
             <loader v-show="loader"></loader>
        </span>
+
             <!--Requested Time From nurse-->
             <span v-show="showTillRefresh"
                   class="dispute-requested-time">
             {{setRequestedValue}}
         </span>
+
+            <!--Status glyphicons-->
+            <span v-if="showDisputeStatus !== false"
+                  class="dispute-requested-time">
+                <i v-if="showDisputeStatus === 'approved'" class="glyphicon glyphicon-ok-circle" style="color: #008000;"></i>
+                <i v-else-if="showDisputeStatus === 'rejected'" class="glyphicon glyphicon-remove-sign" style="color: #ff0000;"></i>
+                <i v-else-if="showDisputeStatus === 'pending'" class="glyphicon glyphicon-option-horizontal" style="color: #00bfff;" ></i>
+        </span>
+
             <!--Edit Btn-->
-            <span v-show="editButtonActive"
+            <span v-show="editButtonActive && (!showDisputeStatus || showDisputeStatus === 'pending')"
                   @click="handleEdit()"
                   aria-hidden="true"
                   class="edit-button">
@@ -21,7 +31,8 @@
         </span>
 
             <!--Delete Btn-->
-            <span v-show="showDeleteBtn && showTillRefresh"
+            <span v-show="(showDeleteBtn && showTillRefresh)
+            && (!showDisputeStatus || showDisputeStatus === 'pending')"
                   @click="handleDelete()"
                   aria-hidden="true"
                   class="delete-button">
@@ -37,7 +48,7 @@
                                :class="{validation: !validateTime}"
                                placeholder="hh:mm"
                                v-model="liveRequestedTime">
-
+                <!--Save Button-->
             <span class="save">
                 <button class="button"
                         @click="saveDispute"
@@ -45,8 +56,8 @@
                         :disabled="disableButton">
                 <i class="glyphicon glyphicon-saved"></i>
                 </button>
-
             </span>
+                <!--Text box-->
                 <span class="dismiss">
                     <button v-show="showDisputeBox"
                             class="button"
@@ -90,15 +101,12 @@
                 requestedTimeFromDb: this.invoiceData.suggestedTime,
                 userDisputedTime: false,
                 strikethroughTime: false,
-                //these are used to force a behavior on an element
-                // eg. show/hide till user refreshes page so component can load the
-                //newly created data from DB.
                 showTillRefresh: true,
-                //
                 loader: false,
                 errors: [],
                 temporaryValue: '',
-
+                disputeStatus: this.invoiceData.status,
+                disputeInvalidated: this.invoiceData.invalidated,
             }
         },
 
@@ -138,6 +146,18 @@
 
             disableButton() {
                 return this.validateTime !== true || this.liveRequestedTime.length === 0;
+            },
+
+            showDisputeStatus() {
+                if (this.disputeStatus === undefined) {
+                    return false;
+                } else if (this.disputeStatus === 'approved') {
+                    return 'approved';
+                } else if (this.disputeStatus === 'rejected') {
+                    return 'rejected';
+                } else if (this.disputeStatus === 'pending') {
+                    return 'pending';
+                }
             }
         },
 
@@ -171,6 +191,7 @@
                         this.requestedTimeFromDb = undefined;
                         this.liveRequestedTime = '';
                         this.temporaryValue = '';
+                        this.disputeStatus = undefined;
                         this.loader = false;
 
                         this.addNotification({
@@ -210,6 +231,7 @@
                         this.showTillRefresh = true;
                         this.editButtonActive = false;
                         this.showDisputeBox = false;
+                        this.disputeStatus = 'pending';
                         this.temporaryValue = this.liveRequestedTime;
                         this.loader = false;
 
@@ -304,7 +326,7 @@
         padding-left: 3%;
     }
 
-    .disable{
+    .disable {
         background-color: #f4f6f6;
         color: #d5dbdb;
         cursor: default;
