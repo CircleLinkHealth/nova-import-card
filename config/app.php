@@ -190,6 +190,7 @@ return [
 
         CircleLinkHealth\ResponseCache\ResponseCacheServiceProvider::class,
 
+        App\Providers\HtmlToPdfServiceProvider::class,
         App\Providers\DirectMailServiceProvider::class,
         App\Providers\FaxServiceProvider::class,
         App\Providers\TwilioClientServiceProvider::class,
