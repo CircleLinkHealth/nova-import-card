@@ -37,7 +37,9 @@ class ProblemObserver
         if ($problem->isDirty('cpm_problem_id')) {
             $patient = $problem->patient;
 
-            if ($patient) {
+            $patient->loadMissing('carePlan');
+
+            if ($patient && $patient->carePlan) {
                 $storage = new ProblemsToMonitor($patient->program_id, $patient);
 
                 $originalCpmProblemId = $problem->getOriginal('cpm_problem_id');

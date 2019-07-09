@@ -36,7 +36,7 @@ Route::get('home', 'WelcomeController@index', [
     'as' => 'home',
 ]);
 
-Route::get('login', 'Auth\LoginController@showLoginForm');
+Route::get('login', 'Auth\LoginController@showLoginForm')->middleware('doNotCacheResponse');
 Route::post('browser-check', [
     'uses' => 'Auth\LoginController@storeBrowserCompatibilityCheckPreference',
     'as'   => 'store.browser.compatibility.check.preference',
@@ -44,7 +44,7 @@ Route::post('browser-check', [
 
 Route::group([
     'prefix'     => 'auth',
-    'middleware' => 'web',
+    'middleware' => ['doNotCacheResponse', 'web'],
 ], function () {
     Auth::routes();
 
@@ -67,19 +67,19 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('impersonate/leave', [
         'uses' => '\Lab404\Impersonate\Controllers\ImpersonateController@leave',
         'as'   => 'impersonate.leave',
-    ]);
+    ])->middleware('doNotCacheResponse');
 
     Route::get('cache/view/{key}', [
         'as'   => 'get.cached.view.by.key',
         'uses' => 'Cache\UserCacheController@getCachedViewByKey',
-    ]);
+    ])->middleware('doNotCacheResponse');
 
     Route::view('jobs/completed', 'admin.jobsCompleted.manage');
 
     Route::get('download/{filePath}', [
         'uses' => 'DownloadController@file',
         'as'   => 'download',
-    ]);
+    ])->middleware('doNotCacheResponse');
 
     Route::group(['prefix' => 'ehr-report-writer'], function () {
         Route::get('index', [
@@ -515,11 +515,6 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('user.care-plan', 'API\PatientCarePlanController')->middleware('permission:careplan.read');
 
-//    Route::resource('user.care-team', 'API\CareTeamController')->middleware('permission:carePerson.create,carePerson.read,carePerson.update,carePerson.delete');
-    Route::get('user/{user}/care-team', [
-        'uses' => 'API\CareTeamController@index',
-        'as'   => 'user.care-team.index',
-    ])->middleware('permission:carePerson.read');
     Route::get('user/{user}/care-team', [
         'uses' => 'API\CareTeamController@index',
         'as'   => 'user.care-team.index',
@@ -566,7 +561,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('download-pdf-careplan/{filePath}', [
         'uses' => 'API\PatientCarePlanController@downloadPdf',
         'as'   => 'download.pdf.careplan',
-    ])->middleware('permission:careplan-pdf.read');
+    ])->middleware('permission:careplan-pdf.read')->middleware('doNotCacheResponse');
 
     Route::post(
         'care-docs/{patient_id}',
@@ -887,7 +882,7 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'patient.careplan.assessment.create',
         ])->middleware('permission:note.create,careplanAssessment.update');
 
-        Route::get('approve-careplan/{viewNext?}', [
+        Route::post('approve-careplan/{viewNext?}', [
             'uses' => 'ProviderController@approveCarePlan',
             'as'   => 'patient.careplan.approve',
         ])->middleware('permission:care-plan-approve,care-plan-qa-approve');
@@ -2021,7 +2016,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     // CARE-CENTER GROUP
     Route::group([
-        'middleware' => ['permission:has-schedule'],
+        'middleware' => ['permission:has-schedule', 'doNotCacheResponse'],
         'prefix'     => 'care-center',
     ], function () {
         Route::resource('work-schedule', 'CareCenter\WorkScheduleController', [

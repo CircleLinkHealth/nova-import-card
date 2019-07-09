@@ -54,27 +54,24 @@ class PatientProgramSecurity
             return redirect()->route('report-writer.dashboard', []);
         }
 
-        if ($request->route()->patientId) {
-            $patient = User::whereId($request->route()->patientId)
-                ->with('practices')
+        $patientId = $request->route()->parameter('patientId');
+
+        if ($patientId) {
+            $patient = User::whereId($patientId)
+                ->intersectPracticesWith(auth()->user())
                 ->has('patientInfo')
-                ->first();
+                ->exists();
 
             if ( ! $patient) {
                 return response('Could not locate patient.', 401);
             }
-            if ($patient->id == $loggedInUser->id && ! $loggedInUser->hasPermission('users-view-self')) {
+
+            session()->put(\App\Constants::VIEWING_PATIENT, $patientId);
+
+            if ($patientId == $loggedInUser->id && ! $loggedInUser->hasPermission('users-view-self')) {
                 abort(403);
             }
-            if ($patient->id != $loggedInUser->id && ! $loggedInUser->hasPermission('users-view-all')) {
-                abort(403);
-            }
-            if (
-                    0 == count(array_intersect(
-                        $patient->practices->pluck('id')->all(),
-                        auth()->user()->practices->pluck('id')->all()
-                    ))
-                ) {
+            if ($patientId != $loggedInUser->id && ! $loggedInUser->hasPermission('users-view-all')) {
                 abort(403);
             }
         }
