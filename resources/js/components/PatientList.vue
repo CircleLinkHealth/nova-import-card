@@ -6,11 +6,11 @@
                 <span>Eligible</span>
             </template>
             <template slot="actions" slot-scope="props">
-                <mdb-dropdown>
-                    <mdb-dropdown-toggle slot="toggle">...</mdb-dropdown-toggle>
-                    <mdb-dropdown-menu right>
-                        <mdb-dropdown-item>Send HRA link</mdb-dropdown-item>
-                        <mdb-dropdown-item>Send Vitals link</mdb-dropdown-item>
+                <mdb-dropdown class="actions">
+                    <mdb-dropdown-toggle slot="toggle" class="actions-toggle">...</mdb-dropdown-toggle>
+                    <mdb-dropdown-menu right :dropup="isLastRow(props)">
+                        <mdb-dropdown-item @click="sendHraLink">Send HRA link</mdb-dropdown-item>
+                        <mdb-dropdown-item @click="sendVitalsLink">Send Vitals link</mdb-dropdown-item>
                     </mdb-dropdown-menu>
                 </mdb-dropdown>
             </template>
@@ -40,7 +40,7 @@
                     },
                     columnsClasses: {
                         // 'selected': 'blank',
-                        // 'Type': 'padding-2'
+                        'actions': 'text-center'
                     },
                     perPage: 100,
                     perPageValues: [10, 25, 50, 100, 200],
@@ -63,6 +63,12 @@
                     //todo: eligibility should have a dropdown for filters
                     filterable: ['patient_name', 'provider_name', 'hra_status', 'vitals_status', 'eligibility', 'dob'],
                     sortable: ['patient_name', 'provider_name', 'hra_status', 'vitals_status', 'eligibility', 'dob'],
+                    sortIcon: {
+                        base: 'fa',
+                        is: 'fa-sort',
+                        up: 'fa-sort-asc',
+                        down: 'fa-sort-desc'
+                    }
                 },
             };
         },
@@ -81,6 +87,18 @@
                         return 'Completed';
                 }
                 return 'N/A';
+            },
+
+            isLastRow(props) {
+                return this.$refs.table.count === props.index;
+            },
+
+            sendHraLink() {
+
+            },
+
+            sendVitalsLink() {
+
             }
         },
         created() {
@@ -92,5 +110,24 @@
 </script>
 
 <style scoped>
+
+    .dropdown.actions {
+        border: none;
+    }
+
+    .actions-toggle {
+        padding: 0;
+        font-weight: 600;
+        font-size: 20px;
+        line-height: 1;
+        letter-spacing: 3px;
+        box-shadow: none;
+        border: none;
+        margin-top: -10px;
+    }
+
+    .actions-toggle:after {
+        display: none;
+    }
 
 </style>
