@@ -97,10 +97,11 @@
                         </div>
                     </div>
 
-                    <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12 col-xs-12"
-                         style=" border-bottom:3px solid #50b2e2;padding: 8px 0px;">
+                    @if (!empty($note) && $note->status === 'draft')
+                        <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12 col-xs-12"
+                             style=" border-bottom:3px solid #50b2e2;padding: 8px 0px;">
 
-                        @if (!empty($note) && $note->status === 'draft')
+
                             <div class="col-md-12 text-center" style="line-height: 2.6;">
                                 This is a draft note. Please click Save/Send in order to finalize and create a new
                                 one or
@@ -110,10 +111,8 @@
                             </div>
                             <br/>
                             <br/>
-                        @endif
-
-                    </div>
-
+                        </div>
+                    @endif
 
                     <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12 col-xs-12"
                          style=" border:0 solid #50b2e2;padding: 10px 35px;">
