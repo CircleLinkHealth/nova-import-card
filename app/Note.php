@@ -104,6 +104,18 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
         return $this->hasOne('App\Call');
     }
 
+    public function editLink()
+    {
+        if (self::STATUS_DRAFT !== $this->status) {
+            return null;
+        }
+
+        return route('patient.note.edit', [
+            'patientId' => $this->patient_id,
+            'noteId'    => $this->id,
+        ]);
+    }
+
     /**
      * Forwards note to CareTeam and/or Support.
      *
