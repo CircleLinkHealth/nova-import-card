@@ -108,6 +108,7 @@ class InvoiceReviewController extends Controller
                 [
                     'dispute.resolver',
                     'dailyDisputes',
+                    'nurse',
                 ]
             )
             ->ofNurses(auth()->id())

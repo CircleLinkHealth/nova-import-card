@@ -10,33 +10,37 @@
 
             <!--Requested Time From nurse-->
             <span v-show="showTillRefresh"
-                  class="dispute-requested-time">
+                  class="dispute-requested-time"
+                  :class="{invalidated: strikethroughTime || isInvalidated}">
             {{setRequestedValue}}
         </span>
 
             <!--Status glyphicons-->
             <span v-if="showDisputeStatus !== false"
                   class="dispute-requested-time">
-                <i v-if="showDisputeStatus === 'approved'" class="glyphicon glyphicon-ok-circle" style="color: #008000;"></i>
-                <i v-else-if="showDisputeStatus === 'rejected'" class="glyphicon glyphicon-remove-sign" style="color: #ff0000;"></i>
-                <i v-else-if="showDisputeStatus === 'pending'" class="glyphicon glyphicon-option-horizontal" style="color: #00bfff;" ></i>
+                <i v-if="showDisputeStatus === 'approved' && !isInvalidated" class="glyphicon glyphicon-ok-circle"
+                   style="color: #008000;"></i>
+                <i v-else-if="showDisputeStatus === 'rejected' && !isInvalidated" class="glyphicon glyphicon-remove-sign"
+                   style="color: #ff0000;"></i>
+                <i v-else-if="showDisputeStatus === 'pending' && !isInvalidated" class="glyphicon glyphicon-option-horizontal"
+                   style="color: #00bfff;"></i>
         </span>
 
             <!--Edit Btn-->
-            <span v-show="editButtonActive && (!showDisputeStatus || showDisputeStatus === 'pending')"
+            <span v-show="!isInvalidated && editButtonActive && (!showDisputeStatus || showDisputeStatus === 'pending')"
                   @click="handleEdit()"
                   aria-hidden="true"
                   class="edit-button">
-           <i class="glyphicon glyphicon-pencil"></i> Edit
+           <i class="glyphicon glyphicon-pencil"></i>
         </span>
 
             <!--Delete Btn-->
-            <span v-show="(showDeleteBtn && showTillRefresh)
+            <span v-show="(showDeleteBtn && !isInvalidated && showTillRefresh)
             && (!showDisputeStatus || showDisputeStatus === 'pending')"
                   @click="handleDelete()"
                   aria-hidden="true"
                   class="delete-button">
-           <i class="glyphicon glyphicon-erase"></i> Delete
+           <i class="glyphicon glyphicon-erase"></i>
         </span>
 
             <!--Input for new time hh:mm with save & dismiss btn-->
@@ -111,6 +115,11 @@
         },
 
         computed: {
+
+            isInvalidated() {
+                return !!this.disputeInvalidated;
+            },
+
             requestedTimeIsVisible() {
                 const requestedTimeFromDbExists = this.requestedTimeFromDb !== undefined;
                 const liveRequestedTime = !!this.liveRequestedTime;
@@ -276,12 +285,12 @@
 <style scoped>
     .edit-button {
         color: #87cefa;
-        padding-left: 10%;
+        padding-left: 22%;
     }
 
     .delete-button {
         color: #ff0000;
-        padding-left: 3%;
+        padding-left: 8%;
     }
 
     .dispute-box {
@@ -331,6 +340,11 @@
         color: #d5dbdb;
         cursor: default;
         opacity: 0.7;
+    }
+
+    .invalidated {
+        text-decoration: line-through;
+        color: skyblue;
     }
 
 </style>
