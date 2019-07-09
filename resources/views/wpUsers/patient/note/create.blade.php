@@ -104,8 +104,7 @@
                             <div class="col-md-12 text-center" style="line-height: 2.6;">
                                 This is a draft note. Please click Save/Send in order to finalize and create a new
                                 one or
-                                <a href="#" style="font-weight: bold; color: red"
-                                   onclick="event.preventDefault();document.getElementById('delete-form').submit();">
+                                <a href="#" id="delete-note" style="font-weight: bold; color: red">
                                     DELETE
                                 </a> it.
                             </div>
@@ -867,10 +866,7 @@
 
                     submitted = true;
 
-                    var key = 'notes:{{$patient->id}}:add';
-                    window.sessionStorage.removeItem(key);
-                    key = 'notes-summaries:{{$patient->id}}:add';
-                    window.sessionStorage.removeItem(key);
+                    clearDraftFromClientSide();
                     //when we associate a note with task, we disable the note topic
                     //we have to enable it back before posting to server,
                     //otherwise its value will not reach the server
@@ -969,13 +965,7 @@
                             noteId = response.data.note_id;
                         }
 
-                        if (App.$refs.bodyComponent) {
-                            App.$refs.bodyComponent.clearFromStorage();
-                        }
-
-                        if (App.$refs.summaryInput) {
-                            App.$refs.summaryInput.clearFromStorage();
-                        }
+                        clearDraftFromClientSide();
 
                         setTimeout(() => saveDraft(), AUTO_SAVE_INTERVAL);
                     })
@@ -988,6 +978,32 @@
 
             if (!disableAutoSave) {
                 setTimeout(() => saveDraft(), AUTO_SAVE_INTERVAL);
+            }
+
+            const deleteElem = $('#delete-note');
+            if (deleteElem && deleteElem.length) {
+                deleteElem.click(function (e) {
+                    e.preventDefault();
+                    if (confirm('Are you sure?')) {
+                        clearDraftFromClientSide();
+                        $('#delete-form').submit();
+                    }
+                });
+            }
+
+            function clearDraftFromClientSide() {
+
+                if (typeof App === "undefined") {
+                    return;
+                }
+
+                if (App.$refs.bodyComponent) {
+                    App.$refs.bodyComponent.clearFromStorage();
+                }
+
+                if (App.$refs.summaryInput) {
+                    App.$refs.summaryInput.clearFromStorage();
+                }
             }
         </script>
     @endpush

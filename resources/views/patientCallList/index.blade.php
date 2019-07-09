@@ -87,7 +87,7 @@ function formatTime($time)
 
                     <div class="">
 
-                        @if(!empty($draftNotes))
+                        @if(isset($draftNotes) && $draftNotes->isNotEmpty())
                             <div class="row text-center">
                                 <div class="col-md-12">
                                     <h4>
