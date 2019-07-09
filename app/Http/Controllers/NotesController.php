@@ -103,6 +103,7 @@ class NotesController extends Controller
         asort($provider_info);
         asort($careteam_info);
 
+        $existingNote = null;
         if ($noteId) {
             $existingNote = Note::findOrFail($noteId);
         } else {
@@ -129,15 +130,15 @@ class NotesController extends Controller
                 ->where('inbound_cpm_id', '=', $patientId)
                 ->where('outbound_cpm_id', '=', $author_id)
                 ->select(
-                    [
-                        'id',
-                        'type',
-                        'sub_type',
-                        'attempt_note',
-                        'scheduled_date',
-                        'window_start',
-                        'window_end',
-                    ]
+                                           [
+                                               'id',
+                                               'type',
+                                               'sub_type',
+                                               'attempt_note',
+                                               'scheduled_date',
+                                               'window_start',
+                                               'window_end',
+                                           ]
                                        )
                 ->get();
         }
@@ -194,6 +195,18 @@ class NotesController extends Controller
         ];
 
         return view('wpUsers.patient.note.create', $view_data);
+    }
+
+    public function deleteDraft(Request $request, $patientId, $noteId)
+    {
+        $note = Note::findOrFail($noteId);
+        if (Note::STATUS_DRAFT !== $note->status) {
+            throw new \Exception('You cannot delete a non-draft note');
+        }
+
+        $note->delete();
+
+        return redirect()->route('patient.note.index', ['patientId' => $patientId]);
     }
 
     public function index(
@@ -438,7 +451,10 @@ class NotesController extends Controller
         }
 
         //performed_at entered in patient's timezone and stored in app's timezone
-        $input['performed_at'] = Carbon::parse($input['performed_at'], $patient->timezone)->setTimezone(config('app.timezone'))->toDateTimeString();
+        $input['performed_at'] = Carbon::parse(
+            $input['performed_at'],
+            $patient->timezone
+        )->setTimezone(config('app.timezone'))->toDateTimeString();
 
         $noteIsAlreadyComplete = false;
         if ($editingNoteId) {
@@ -750,10 +766,10 @@ class NotesController extends Controller
     {
         return Practice::whereId($patient->program_id)
             ->where(
-                function ($q) {
-                    $q->where('name', '=', 'phoenix-heart')
-                        ->orWhere('name', '=', 'demo');
-                }
+                           function ($q) {
+                               $q->where('name', '=', 'phoenix-heart')
+                                   ->orWhere('name', '=', 'demo');
+                           }
                        )
             ->exists();
     }
@@ -779,7 +795,7 @@ class NotesController extends Controller
         if (isset($input['ccm_status']) && in_array(
             $input['ccm_status'],
             [Patient::ENROLLED, Patient::WITHDRAWN, Patient::PAUSED]
-        )) {
+            )) {
             $info->ccm_status = $input['ccm_status'];
 
             if ('withdrawn' == $input['ccm_status']) {

@@ -264,12 +264,12 @@ class NoteService
             ->with('notifiable')
             ->get()
             ->mapWithKeys(function ($notification) {
-                if ( ! $notification->notifiable) {
-                    return ['N/A' => $notification->created_at->format('m/d/y h:iA T')];
-                }
+                        if ( ! $notification->notifiable) {
+                            return ['N/A' => $notification->created_at->format('m/d/y h:iA T')];
+                        }
 
-                return [$notification->notifiable->getFullName() => $notification->created_at->format('m/d/y h:iA T')];
-            });
+                        return [$notification->notifiable->getFullName() => $notification->created_at->format('m/d/y h:iA T')];
+                    });
     }
 
     //Save call information for note
@@ -346,8 +346,15 @@ class NoteService
             ->whereNotNull('read_at')
             ->get()
             ->mapWithKeys(function ($notification) {
-                return [$notification->notifiable->getFullName() => $notification->read_at->format('m/d/y h:iA T')];
-            });
+                        return [$notification->notifiable->getFullName() => $notification->read_at->format('m/d/y h:iA T')];
+                    });
+    }
+
+    public function getUserDraftNotes($userId)
+    {
+        return Note::where('status', '=', 'draft')
+            ->where('author_id', '=', $userId)
+            ->get();
     }
 
     public function markNoteAsRead(

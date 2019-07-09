@@ -50,6 +50,13 @@
 
     @include('partials.confirm-modal')
 
+    <form id="delete-form" action="{{ route('patient.note.delete.draft', [
+                                    'patientId' => Route::getCurrentRoute()->parameter('patientId'),
+                                    'noteId' => Route::getCurrentRoute()->parameter('noteId')
+                                ]) }}" method="POST" style="display: none;">
+        {{ csrf_field() }}
+    </form>
+
     <form id="newNote" method="post"
           action="{{route('patient.note.store', ['patientId' => $patient->id, 'noteId' => !empty($note) ? $note->id : null])}}"
           class="form-horizontal">
@@ -91,16 +98,26 @@
                     </div>
 
                     <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12 col-xs-12"
-                         style=" border:0 solid #50b2e2;padding: 10px 35px;">
+                         style=" border-bottom:3px solid #50b2e2;padding: 8px 0px;">
 
                         @if (!empty($note) && $note->status === 'draft')
-                            <div class="col-md-12 text-center">
+                            <div class="col-md-12 text-center" style="line-height: 2.6;">
                                 This is a draft note. Please click Save/Send in order to finalize and create a new
-                                one.
+                                one or
+                                <a href="#" style="font-weight: bold; color: red"
+                                   onclick="event.preventDefault();document.getElementById('delete-form').submit();">
+                                    DELETE
+                                </a> it.
                             </div>
                             <br/>
                             <br/>
                         @endif
+
+                    </div>
+
+
+                    <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12 col-xs-12"
+                         style=" border:0 solid #50b2e2;padding: 10px 35px;">
 
                         <div class="col-md-6">
 
@@ -428,7 +445,8 @@
                                             Full Note
                                         </label>
                                         <div class="col-sm-12">
-                                            <persistent-textarea storage-key="notes:{{$patient->id}}:add" id="note"
+                                            <persistent-textarea ref="bodyComponent"
+                                                                 storage-key="notes:{{$patient->id}}:add" id="note"
                                                                  class-name="form-control" :rows="10" :cols="100"
                                                                  placeholder="Enter Note..."
                                                                  value="{{ !empty($note) ? $note->body : '' }}"
@@ -463,7 +481,7 @@
                                                 <button name="Submit" id="Submit" type="submit" value="Submit"
                                                         form="newNote"
                                                         class="btn btn-primary btn-lg form-item--button form-item-spacing">
-                                                    Save/Send Note
+                                                    Save Note
                                                 </button>
                                             </div>
                                         </div>
@@ -604,7 +622,7 @@
                         }
 
                         if (window['App']) {
-                            App.$emit('create-note:with-call', e.currentTarget.checked);
+                            window['App'].$emit('create-note:with-call', e.currentTarget.checked);
                         }
                     }
                     else {
@@ -914,7 +932,16 @@
 
             const saveDraftUrl = '{{route('patient.note.store.draft', ['patientId' => $patient->id])}}';
             const saveDraft = () => {
+
+                const fullBody = $('#note').val();
+                const body = getNoteBodyExcludingMedications(fullBody);
+                if (!body.length) {
+                    setTimeout(() => saveDraft(), AUTO_SAVE_INTERVAL);
+                    return;
+                }
+
                 isSavingDraft = true;
+
                 window.axios
                     .post(saveDraftUrl, {
                         patient_id: $('#patient_id').val(),
@@ -931,7 +958,7 @@
                         medication_recon: $('#medication_recon').is(":checked"),
                         tcm: $('#tcm').is(":checked"),
                         summary: $('#summary').val(),
-                        body: $('#note').val(),
+                        body: fullBody,
                         logger_id: $('#logger_id').val(),
                         programId: $('#programId').val(),
                         task_status: $('#task_status').val()
@@ -941,6 +968,15 @@
                         if (response.data && response.data.note_id) {
                             noteId = response.data.note_id;
                         }
+
+                        if (App.$refs.bodyComponent) {
+                            App.$refs.bodyComponent.clearFromStorage();
+                        }
+
+                        if (App.$refs.summaryInput) {
+                            App.$refs.summaryInput.clearFromStorage();
+                        }
+
                         setTimeout(() => saveDraft(), AUTO_SAVE_INTERVAL);
                     })
                     .catch(err => {

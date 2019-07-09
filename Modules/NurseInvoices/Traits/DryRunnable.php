@@ -27,7 +27,7 @@ trait DryRunnable
      */
     public function isDryRun()
     {
-        return (bool) $this->option('dry-run');
+        return $this->hasOption('dry-run') ? (bool) $this->option('dry-run') : null;
     }
 
     /**

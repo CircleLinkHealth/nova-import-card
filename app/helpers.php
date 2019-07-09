@@ -47,7 +47,7 @@ if ( ! function_exists('parseIds')) {
         if (empty($value)) {
             return [];
         }
-        
+
         if ($value instanceof Model) {
             return [$value->getKey()];
         }

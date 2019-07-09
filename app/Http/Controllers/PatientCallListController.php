@@ -7,6 +7,7 @@
 namespace App\Http\Controllers;
 
 use App\CallView;
+use App\Services\NoteService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -26,9 +27,13 @@ class PatientCallListController extends Controller
      *
      * @return Response
      */
-    public function index(Request $request)
+    public function index(Request $request, NoteService $noteService)
     {
-        $calls = CallView::where('nurse_id', '=', \Auth::user()->id);
+        $nurseId = \Auth::user()->id;
+
+        $draftNotes = $noteService->getUserDraftNotes($nurseId);
+
+        $calls = CallView::where('nurse_id', '=', $nurseId);
 
         $dateFilter = 'All';
         $date       = Carbon::now();
@@ -57,6 +62,7 @@ class PatientCallListController extends Controller
         $calls = $calls->get();
 
         return view('patientCallList.index', compact([
+            'draftNotes',
             'calls',
             'dateFilter',
             'filterStatus',
