@@ -470,12 +470,12 @@ class NursesPerformanceReportService
 (
 DATE(calls.scheduled_date) >= DATE('{$date->copy()->startOfMonth()->toDateString()}')
 AND
-DATE(calls.scheduled_date)<=DATE('{$date->toDateString()}')
+DATE(calls.scheduled_date)<=DATE('{$date->copy()->endOfMonth()->toDateString()}')
 ) 
 OR (
 DATE(calls.called_date) >= DATE('{$date->copy()->startOfMonth()->toDateString()}') 
 AND
-DATE(calls.called_date)<=DATE('{$date->toDateString()}')
+DATE(calls.called_date)<=DATE('{$date->copy()->endOfMonth()->toDateString()}')
 )
 )
 AND (calls.type IS NULL OR calls.type='call') 
