@@ -82,7 +82,7 @@ class NursesPerformanceReportService
                     ]);
 
                     foreach ($nurses as $nurse) {
-                        $data[] = $this->getDataForNurse($nurse, $date, $aggregatedTime->totalCcmTime($nurse->id));
+                        $data[] = $this->getDataForNurse($nurse, $date, $aggregatedTime->totalSystemTime($nurse->id));
                     }
                 }
             );
@@ -143,15 +143,15 @@ class NursesPerformanceReportService
      *
      * @return Collection
      */
-    public function getDataForNurse(User $nurse, Carbon $date, int $totalCcmTime): Collection
+    public function getDataForNurse(User $nurse, Carbon $date, int $totalSystemTime): Collection
     {
         $patientsForMonth = $this->getUniquePatientsAssignedForNurseForMonth($nurse, $date);
 
         $data = [
             'nurse_id'        => $nurse->id,
             'nurse_full_name' => $nurse->getFullName(),
-            'systemTime'      => $totalCcmTime,
-            'actualHours'     => round((float) ($totalCcmTime / 3600), 1),
+            'systemTime'      => $totalSystemTime,
+            'actualHours'     => round((float) ($totalSystemTime / 3600), 1),
             'committedHours'  => $nurse->nurseInfo->isOnHoliday($date, $this->companyHolidays)
                 ? 0
                 : $nurse->nurseInfo->getHoursCommittedForCarbonDate($date),
