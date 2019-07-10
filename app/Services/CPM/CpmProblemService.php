@@ -9,19 +9,10 @@ namespace App\Services\CPM;
 use App\Contracts\Services\CpmModel;
 use App\Models\CCD\Problem;
 use App\Models\CPM\CpmProblem;
-use App\Repositories\CpmProblemRepository;
 use CircleLinkHealth\Customer\Entities\User;
 
 class CpmProblemService implements CpmModel
 {
-    private $problemRepo;
-    private $userRepo;
-
-    public function __construct(CpmProblemRepository $problemRepo)
-    {
-        $this->problemRepo = $problemRepo;
-    }
-
     public function all()
     {
         $problems = $this->noDiabetesFilter()->withLatestCpmInstruction()->withIcd10Codes()->get([

@@ -8,6 +8,7 @@ namespace App\Repositories;
 
 use App\Models\CPM\CpmMisc;
 use App\Models\CPM\CpmMiscUser;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Collection;
 
 class CpmMiscUserRepository
@@ -64,25 +65,34 @@ class CpmMiscUserRepository
         if ($miscTypeId) {
             $query['cpm_misc_id'] = $miscTypeId;
         }
-        $miscData = $this->model()->where($query)->groupBy('cpm_misc_id')->with(['cpmMisc'])->get()->map(function ($u) use ($userId) {
-            $misc = $u->cpmMisc;
-            $misc['instructions'] = array_values($this->model()
-                ->where(['patient_id' => $userId, 'cpm_misc_id' => $misc->id])
-                ->orderBy('id', 'desc')
-                ->with('cpmInstruction')->get()->map(function ($cu) {
-                    if ($cu->cpmInstruction) {
-                        $cu->cpmInstruction['misc_user_id'] = $cu->id;
-                    }
 
-                    return $cu->cpmInstruction;
-                })->filter(function ($i) {
-                    return (bool) $i;
-                })->toArray());
+        $relQuery = [
+            'cpmMiscUserPivot.cpmInstruction',
+            'cpmMiscUserPivot.cpmMisc',
+        ];
+
+        if (is_a($userId, User::class)) {
+            $user = $userId;
+
+            $user->loadMissing($relQuery);
+        } else {
+            $user = User::with($relQuery)->findOrFail($userId);
+        }
+
+        $miscData = $user->cpmMiscUserPivot->map(function ($userMisc) use ($user) {
+            $misc = $userMisc->cpmMisc;
+
+            if ($userMisc->cpmInstruction) {
+                $instruction                 = $userMisc->cpmInstruction->toArray();
+                $instruction['misc_user_id'] = $userMisc->id;
+            }
+    
+            $misc['instructions'] = $instruction ?? [];
 
             return $misc;
         });
 
-        if ( ! $miscData->count() && $miscTypeId) {
+        if ($miscData->isEmpty() && $miscTypeId) {
             $misc                 = CpmMisc::findOrFail($miscTypeId);
             $misc['instructions'] = [];
             $miscCollection       = new Collection();

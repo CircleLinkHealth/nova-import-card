@@ -7,41 +7,49 @@
 namespace App\Services\CPM;
 
 use App\Models\CPM\CpmInstruction;
-use App\Repositories\CpmProblemUserRepository;
+use App\Models\CPM\CpmProblem;
+use App\Models\CPM\CpmProblemUser;
 use CircleLinkHealth\Customer\Entities\User;
 
 class CpmProblemUserService
 {
     private $cpmProblemService;
-    private $cpmProblemUserRepo;
 
-    public function __construct(CpmProblemUserRepository $cpmProblemUserRepo, CpmProblemService $cpmProblemService)
+    public function __construct(CpmProblemService $cpmProblemService)
     {
-        $this->cpmProblemUserRepo = $cpmProblemUserRepo;
-        $this->cpmProblemService  = $cpmProblemService;
+        $this->cpmProblemService = $cpmProblemService;
     }
 
     public function addInstructionToProblem($patientId, $cpmProblemId, $instructionId)
     {
-        $cpmProblemUser = $this->cpmProblemUserRepo->where([
-            'patient_id'         => $patientId,
-            'cpm_problem_id'     => $cpmProblemId,
-            'cpm_instruction_id' => $instructionId,
-        ])->first();
-        if ( ! $cpmProblemUser) {
-            return $this->cpmProblemUserRepo->create($patientId, $cpmProblemId, $instructionId);
-        }
-        throw new \Exception('a similar instruction->problem relationship already exists');
+        return $this->create($patientId, $cpmProblemId, $instructionId);
     }
 
     public function addProblemToPatient($patientId, $cpmProblemId)
     {
-        $problemUser = $this->cpmProblemUserRepo->create($patientId, $cpmProblemId, null);
+        $problemUser = $this->create($patientId, $cpmProblemId, null);
         if ($problemUser) {
-            return $this->cpmProblemService->setupProblem($problemUser->problems()->first());
+            return $this->cpmProblemService->setupProblem(CpmProblem::with(['cpmInstructions' => function($q) { $q->latest(); },'snomedMaps',])->find($cpmProblemId));
         }
 
         return $problemUser;
+    }
+
+    /**
+     * @param $patientId
+     * @param $cpmProblemId
+     * @param null $instructionId
+     *
+     * @return CpmProblemUser|null
+     */
+    public function create(int $patientId, int $cpmProblemId, int $instructionId = null)
+    {
+        return CpmProblemUser::firstOrCreate([
+            'patient_id'     => $patientId,
+            'cpm_problem_id' => $cpmProblemId,
+        ], [
+            'cpm_instruction_id' => $instructionId,
+        ]);
     }
 
     public function getPatientProblems($userId)
@@ -67,7 +75,7 @@ class CpmProblemUserService
 
     public function removeInstructionFromProblem($patientId, $cpmProblemId, $instructionId)
     {
-        $this->cpmProblemUserRepo->where([
+        CpmProblemUser::where([
             'patient_id'         => $patientId,
             'cpm_problem_id'     => $cpmProblemId,
             'cpm_instruction_id' => $instructionId,
@@ -76,6 +84,6 @@ class CpmProblemUserService
 
     public function removeProblemFromPatient($patientId, $cpmProblemId)
     {
-        return $this->cpmProblemUserRepo->remove($patientId, $cpmProblemId);
+        return CpmProblemUser::where(['cpm_problem_id' => $cpmProblemId, 'patient_id' => $patientId])->delete();
     }
 }

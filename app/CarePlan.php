@@ -318,7 +318,7 @@ class CarePlan extends BaseModel implements PdfReport
         $reportFormatter = app(ReportFormatter::class);
         $careplanService = app(CareplanService::class);
 
-        $careplan = $reportFormatter->formatDataForViewPrintCareplanReport([$this->patient]);
+        $careplan = $reportFormatter->formatDataForViewPrintCareplanReport($this->patient);
         $careplan = $careplan[$this->patient->id];
 
         if (empty($careplan)) {

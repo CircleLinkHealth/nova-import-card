@@ -6,12 +6,6 @@
 
 namespace CircleLinkHealth\NurseInvoices\Providers;
 
-use CircleLinkHealth\NurseInvoices\AggregatedTotalTimePerNurse;
-use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
-use CircleLinkHealth\NurseInvoices\Console\Commands\SendMonthlyNurseInvoiceLAN;
-use CircleLinkHealth\NurseInvoices\Console\Commands\SendResolveInvoiceDisputeReminder;
-use CircleLinkHealth\NurseInvoices\Console\SendMonthlyNurseInvoiceFAN;
-use CircleLinkHealth\NurseInvoices\TotalTimeAggregator;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\ServiceProvider;
 
@@ -22,7 +16,7 @@ class NurseInvoicesServiceProvider extends ServiceProvider
      *
      * @var bool
      */
-    protected $defer = true;
+    protected $defer = false;
 
     /**
      * Boot the application events.
@@ -30,8 +24,13 @@ class NurseInvoicesServiceProvider extends ServiceProvider
     public function boot()
     {
 //        $this->registerTranslations();
+        $this->registerViews();
+
+        if ($this->app->runningInConsole()) {
 //        $this->registerConfig();
 //        $this->registerFactories();
+            $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
+        }
     }
 
     /**
@@ -42,7 +41,6 @@ class NurseInvoicesServiceProvider extends ServiceProvider
     public function provides()
     {
         return [
-            AggregatedTotalTimePerNurse::class,
         ];
     }
 
@@ -51,25 +49,7 @@ class NurseInvoicesServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->registerViews();
-    
-        $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
-    
         $this->app->register(RouteServiceProvider::class);
-        $this->app->bind(AggregatedTotalTimePerNurse::class, function ($app, array $args) {
-            $userIds = $args[0];
-            $startDate = $args[1];
-            $endDate = $args[2];
-
-            return new AggregatedTotalTimePerNurse(new TotalTimeAggregator(parseIds($userIds), $startDate, $endDate));
-        });
-
-        $this->commands([
-            GenerateMonthlyInvoicesForNonDemoNurses::class,
-            SendMonthlyNurseInvoiceFAN::class,
-            SendMonthlyNurseInvoiceLAN::class,
-            SendResolveInvoiceDisputeReminder::class,
-        ]);
     }
 
     /**
@@ -105,13 +85,25 @@ class NurseInvoicesServiceProvider extends ServiceProvider
 
         $sourcePath = __DIR__.'/../Resources/views';
 
-        $this->publishes([
-            $sourcePath => $viewPath,
-        ], 'views');
+        $this->publishes(
+            [
+                $sourcePath => $viewPath,
+            ],
+            'views'
+        );
 
-        $this->loadViewsFrom(array_merge(array_map(function ($path) {
-            return $path.'/modules/nurseinvoices';
-        }, \Config::get('view.paths')), [$sourcePath]), 'nurseinvoices');
+        $this->loadViewsFrom(
+            array_merge(
+                array_map(
+                    function ($path) {
+                        return $path.'/modules/nurseinvoices';
+                    },
+                    \Config::get('view.paths')
+                ),
+                [$sourcePath]
+            ),
+            'nurseinvoices'
+        );
     }
 
     /**
@@ -119,9 +111,12 @@ class NurseInvoicesServiceProvider extends ServiceProvider
      */
     protected function registerConfig()
     {
-        $this->publishes([
-            __DIR__.'/../Config/config.php' => config_path('nurseinvoices.php'),
-        ], 'config');
+        $this->publishes(
+            [
+                __DIR__.'/../Config/config.php' => config_path('nurseinvoices.php'),
+            ],
+            'config'
+        );
         $this->mergeConfigFrom(
             __DIR__.'/../Config/config.php',
             'nurseinvoices'

@@ -2,33 +2,18 @@
 
 namespace CircleLinkHealth\ApiPatient\Http\Controllers;
 
-use App\Services\CPM\CpmSymptomService;
+use App\Models\CPM\CpmSymptomUser;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 
 class SymptomsController extends Controller
 {
-    /**
-     * @var CpmSymptomService
-     */
-    protected $symptomService;
-    
-    /**
-     * SymptomsController constructor.
-     *
-     * @param CpmSymptomService $symptomService
-     */
-    public function __construct(CpmSymptomService $symptomService)
-   {
-       $this->symptomService = $symptomService;
-   }
-    
     public function store($userId, Request $request)
     {
         $symptomId = $request->input('symptomId');
         if ($userId && $symptomId) {
-            return $this->symptomService->repo()->addSymptomToPatient($symptomId, $userId);
+            return CpmSymptomUser::firstOrCreate(['cpm_symptom_id' => $symptomId, 'patient_id' => $userId]);
         }
         
         return \response('"symptomId" and "userId" are important');
@@ -37,7 +22,7 @@ class SymptomsController extends Controller
     public function show($userId)
     {
         if ($userId) {
-            return $this->symptomService->repo()->patientSymptoms($userId);
+            return User::with('cpmSymptoms')->findOrFail()->cpmSymptoms;
         }
         
         return \response('"userId" is important');
@@ -46,7 +31,10 @@ class SymptomsController extends Controller
     public function destroy($userId, $symptomId)
     {
         if ($userId && $symptomId) {
-            $result = $this->symptomService->repo()->removeSymptomFromPatient($symptomId, $userId);
+            $result = CpmSymptomUser::where([
+                                                'patient_id'     => $userId,
+                                                'cpm_symptom_id' => $symptomId,
+                                            ])->delete();
             
             return $result ? response()->json($result) : \response('provided patient does not have the symptom in question');
         }

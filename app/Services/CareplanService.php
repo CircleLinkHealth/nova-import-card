@@ -6,6 +6,11 @@
 
 namespace App\Services;
 
+use App\Models\CPM\CpmBiometric;
+use App\Models\CPM\CpmLifestyle;
+use App\Models\CPM\CpmMedicationGroup;
+use App\Models\CPM\CpmMisc;
+use App\Models\CPM\CpmSymptom;
 use App\Repositories\CareplanRepository;
 use App\Services\CCD\CcdAllergyService;
 use App\Services\CCD\CcdProblemService;
@@ -16,7 +21,6 @@ use App\Services\CPM\CpmMedicationService;
 use App\Services\CPM\CpmMiscService;
 use App\Services\CPM\CpmProblemService;
 use App\Services\CPM\CpmProblemUserService;
-use App\Services\CPM\CpmSymptomService;
 use CircleLinkHealth\Customer\Entities\User;
 
 class CareplanService
@@ -33,7 +37,6 @@ class CareplanService
     private $medicationService;
     private $miscService;
     private $noteService;
-    private $symptomService;
 
     public function __construct(
         CareplanRepository $careplanRepo,
@@ -43,7 +46,6 @@ class CareplanService
         CpmMedicationService $medicationService,
         CpmMedicationGroupService $medicationGroupService,
         CpmBiometricService $biometricService,
-        CpmSymptomService $symptomService,
         CpmLifestyleService $lifestyleService,
         CcdAllergyService $allergyService,
         CpmMiscService $miscService,
@@ -57,7 +59,6 @@ class CareplanService
         $this->medicationService      = $medicationService;
         $this->medicationGroupService = $medicationGroupService;
         $this->biometricService       = $biometricService;
-        $this->symptomService         = $symptomService;
         $this->lifestyleService       = $lifestyleService;
         $this->allergyService         = $allergyService;
         $this->miscService            = $miscService;
@@ -71,25 +72,55 @@ class CareplanService
             ? $userId
             : User::findOrFail($userId);
 
-        $user->loadMissing(['ccdProblems.cpmInstruction', 'ccdProblems.codes', 'ccdMedications']);
+        $user->loadMissing([
+            'appointments' => function ($q) {
+                $q->orderBy('id', 'desc')->paginate(5);
+            },
+            'carePlan',
+            'carePlanAssessment' => function ($q) {
+                $q->whereNotNull('key_treatment');
+            },
+            'ccdInsurancePolicies',
+            'ccdAllergies',
+            'ccdMedications',
+            'ccdProblems.cpmInstruction',
+            'ccdProblems.codes',
+            'cpmMiscUserPivot.cpmInstruction',
+            'cpmMiscUserPivot.cpmMisc',
+            'cpmSymptoms',
+            'cpmProblems',
+            'cpmLifestyles',
+            'cpmBiometrics',
+            'cpmMedicationGroups',
+        ]);
 
         return [
             'allCpmProblems'   => $this->cpmService->all(),
             'cpmProblems'      => $this->cpmUserService->getPatientProblems($userId),
             'ccdProblems'      => $this->ccdUserService->getPatientProblemsValues($user),
             'medications'      => $user->ccdMedications,
-            'medicationGroups' => $this->medicationGroupService->repo()->groups(),
-            'healthGoals'      => $this->biometricService->patientBiometrics($userId),
-            'baseHealthGoals'  => $this->biometricService->biometrics(),
-            'symptoms'         => $this->symptomService->repo()->patientSymptoms($userId),
-            'allSymptoms'      => $this->symptomService->repo()->symptoms()->getCollection(),
-            'lifestyles'       => $this->lifestyleService->patientLifestyles($userId),
-            'allLifestyles'    => $this->lifestyleService->repo()->lifestyles()->getCollection(),
+            'medicationGroups' => CpmMedicationGroup::get()->toArray(),
+            'healthGoals'      => $this->biometricService->patientBiometrics($user),
+            'baseHealthGoals'  => CpmBiometric::get(),
+            'symptoms'         => $user->cpmSymptoms,
+            'allSymptoms'      => CpmSymptom::get(),
+            'lifestyles'       => $user->cpmLifestyles,
+            'allLifestyles'    => CpmLifestyle::get(),
             'allergies'        => $this->allergyService->patientAllergies($userId),
             'misc'             => $this->miscService->patientMisc($userId),
-            'allMisc'          => $this->miscService->repo()->misc(),
-            'appointments'     => $this->appointmentService->repo()->patientAppointments($userId)->getCollection(),
-            'healthGoalNote'   => $this->noteService->patientBiometricNotes($userId)->first(),
+            'allMisc'          => CpmMisc::get(),
+            'appointments'     => $user->appointments,
+            'healthGoalNote'   => $user->carePlanAssessment ? [
+                'body                ' => $user->carePlanAssessment->key_treatment,
+                'author_id           ' => $user->carePlanAssessment->provider_approver_id,
+                'patient_id          ' => $user->carePlanAssessment->careplan_id,
+                'created_at          ' => $user->carePlanAssessment->created_at,
+                'updated_at          ' => $user->carePlanAssessment->updated_at,
+                'isTCM               ' => 0,
+                'did_medication_recon' => 0,
+                'type                ' => 'Biometrics',
+                'id                  ' => 0,
+            ] : [],
         ];
     }
 

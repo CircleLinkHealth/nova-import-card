@@ -293,6 +293,11 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
      */
     public function toPdf($scale = null): string
     {
+        $fileName = Carbon::today()->toDateString().'-'.$this->patient->id.'.pdf';
+        $filePath       = storage_path('pdfs/notes/'.$fileName);
+        
+        if (file_exists($filePath)) return $filePath;
+        
         $problems = $this->patient
             ->cpmProblems
             ->pluck('name')
@@ -322,9 +327,7 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
         } elseif ( ! empty($fontSize)) {
             $pdf->setOption('zoom', $fontSize);
         }
-
-        $this->fileName = Carbon::now()->toDateString().'-'.$this->patient->getFullName().'.pdf';
-        $filePath       = base_path('storage/pdfs/notes/'.$this->fileName);
+        
         $pdf->save($filePath, true);
 
         return $filePath;
