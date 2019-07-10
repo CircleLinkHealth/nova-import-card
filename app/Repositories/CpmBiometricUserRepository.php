@@ -13,7 +13,6 @@ use App\Models\CPM\Biometrics\CpmWeight;
 use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmBiometricUser;
 use CircleLinkHealth\Customer\Entities\User;
-use Illuminate\Support\Collection;
 
 class CpmBiometricUserRepository
 {
@@ -25,7 +24,7 @@ class CpmBiometricUserRepository
         if ( ! User::find($userId)) {
             throw new \Exception('invalid user id "'.$userId.'"');
         }
-        if ($this->model()->where(['patient_id' => $userId, 'cpm_biometric_id' => $biometricId])->first()) {
+        if (CpmBiometricUser::where(['patient_id' => $userId, 'cpm_biometric_id' => $biometricId])->first()) {
             throw new \Exception('mapping between user "'.$userId.'" and biometric "'.$biometricId.'" already exists');
         }
         $biometricUser                   = new CpmBiometricUser();
@@ -42,7 +41,7 @@ class CpmBiometricUserRepository
             $this->addPatientBiometric($userId, $biometricId);
         }
         $biometric['patient_id'] = $userId;
-        $pressure                = $this->pressure()->firstOrCreate(['patient_id' => $userId]);
+        $pressure                = CpmBloodPressure::firstOrCreate(['patient_id' => $userId]);
         $pressure->save();
         $pressure->update($biometric);
 
@@ -55,7 +54,7 @@ class CpmBiometricUserRepository
             $this->addPatientBiometric($userId, $biometricId);
         }
         $biometric['patient_id'] = $userId;
-        $pressure                = $this->sugar()->firstOrCreate(['patient_id' => $userId]);
+        $pressure                = CpmBloodSugar::firstOrCreate(['patient_id' => $userId]);
         $pressure->save();
         $pressure->update($biometric);
 
@@ -68,7 +67,7 @@ class CpmBiometricUserRepository
             $this->addPatientBiometric($userId, $biometricId);
         }
         $biometric['patient_id'] = $userId;
-        $pressure                = $this->smoking()->firstOrCreate(['patient_id' => $userId]);
+        $pressure                = CpmSmoking::firstOrCreate(['patient_id' => $userId]);
         $pressure->save();
         $pressure->update($biometric);
 
@@ -81,61 +80,24 @@ class CpmBiometricUserRepository
             $this->addPatientBiometric($userId, $biometricId);
         }
         $biometric['patient_id'] = $userId;
-        $pressure                = $this->weight()->firstOrCreate(['patient_id' => $userId]);
+        $pressure                = CpmWeight::firstOrCreate(['patient_id' => $userId]);
         $pressure->save();
         $pressure->update($biometric);
 
         return $pressure;
     }
 
-    public function biometrics()
-    {
-        return new Collection([
-            $this->pressure(),
-            $this->sugar(),
-            $this->smoking(),
-            $this->weight(),
-        ]);
-    }
-
     public function exists($userId, $biometricId)
     {
-        return (bool) $this->model()->where([
+        return (bool) CpmBiometricUser::where([
             'patient_id'       => $userId,
             'cpm_biometric_id' => $biometricId,
-        ])->first();
-    }
-
-    public function model()
-    {
-        return app(CpmBiometricUser::class);
-    }
-
-    public function patientBiometrics($userId)
-    {
-        return $this->biometrics()->map(function ($model) use ($userId) {
-            $goal = $model->where(['patient_id' => $userId])->first();
-            if ($goal) {
-                $biometric = $goal->biometric()->first();
-                $biometricUser = $this->model()->where(['patient_id' => $userId, 'cpm_biometric_id' => $biometric->id])->first() ?? new CpmBiometricUser();
-                $biometric['info'] = $goal;
-                $biometric['enabled'] = (bool) $biometricUser['id'];
-
-                return $biometric;
-            }
-
-            return null;
-        })->filter()->values();
+        ])->exists();
     }
 
     public function patients($biometricId)
     {
-        return $this->model()->where(['cpm_biometric_id' => $biometricId]);
-    }
-
-    public function pressure()
-    {
-        return app(CpmBloodPressure::class);
+        return CpmBiometricUser::where(['cpm_biometric_id' => $biometricId]);
     }
 
     public function removePatientBiometric($userId, $biometricId)
@@ -154,7 +116,7 @@ class CpmBiometricUserRepository
         //         $this->smoking()->where([ 'patient_id' => $userId ])->delete();
         //         break;
         // }
-        $this->model()->where([
+        CpmBiometricUser::where([
             'patient_id'       => $userId,
             'cpm_biometric_id' => $biometricId,
         ])->delete();
@@ -164,7 +126,7 @@ class CpmBiometricUserRepository
         ];
     }
 
-    public function setupBiometricUser($bu)
+    private function setupBiometricUser($bu)
     {
         $biometric = $bu->biometric()->first();
         switch ($biometric->type) {
@@ -184,20 +146,5 @@ class CpmBiometricUserRepository
         $biometric['enabled'] = (bool) $biometric->info;
 
         return $biometric;
-    }
-
-    public function smoking()
-    {
-        return app(CpmSmoking::class);
-    }
-
-    public function sugar()
-    {
-        return app(CpmBloodSugar::class);
-    }
-
-    public function weight()
-    {
-        return app(CpmWeight::class);
     }
 }

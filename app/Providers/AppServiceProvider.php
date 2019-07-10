@@ -20,8 +20,6 @@ use Queue;
 
 class AppServiceProvider extends ServiceProvider
 {
-    protected $defer = true;
-
     /**
      * Bootstrap any application services.
      */
@@ -93,14 +91,6 @@ class AppServiceProvider extends ServiceProvider
         );
     }
 
-    public function provides()
-    {
-        return [
-            DevelopmentServiceProvider::class,
-            ReportFormatter::class,
-        ];
-    }
-
     /**
      * Register any application services.
      *
@@ -131,6 +121,5 @@ class AppServiceProvider extends ServiceProvider
         $this->app->register(\Waavi\UrlShortener\UrlShortenerServiceProvider::class);
         $this->app->register(GoogleDriveServiceProvider::class);
         $this->app->register(\LynX39\LaraPdfMerger\PdfMergerServiceProvider::class);
-        $this->app->register(AuthyServiceProvider::class);
     }
 }

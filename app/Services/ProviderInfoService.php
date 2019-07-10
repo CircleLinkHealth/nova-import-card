@@ -16,6 +16,7 @@ class ProviderInfoService
         $user = User::findOrFail($userId);
 
         return User::ofType('provider')
+            ->with('providerInfo', 'phoneNumbers')
             ->intersectPracticesWith($user)
             ->get()
             ->transform(
@@ -32,16 +33,16 @@ class ProviderInfoService
         })
             ->select(['id', 'user_id', 'specialty'])
             ->orderBy('id', 'desc')->with(['user' => function ($q) {
-                              $q->select(['id', 'display_name', 'address']);
-                          }])->get()->transform(function ($p) {
-                              return [
-                                  'id'        => $p->id,
-                                  'user_id'   => $p->user_id,
-                                  'specialty' => $p->specialty,
-                                  'name'      => trim(optional($p->user)->display_name ?? ''),
-                                  'address'   => optional($p->user)->address,
-                              ];
-                          });
+                $q->select(['id', 'display_name', 'address']);
+            }])->get()->transform(function ($p) {
+                return [
+                    'id'        => $p->id,
+                    'user_id'   => $p->user_id,
+                    'specialty' => $p->specialty,
+                    'name'      => trim(optional($p->user)->display_name ?? ''),
+                    'address'   => optional($p->user)->address,
+                ];
+            });
 
         return $providers;
     }

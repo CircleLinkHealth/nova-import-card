@@ -367,14 +367,7 @@ class NoteService
             ->get()
             ->markAsRead();
     }
-
-    public function patientBiometricNotes($userId)
-    {
-        $assessments = $this->assessmentRepo->assessments($userId)->where('key_treatment', '!=', 'null');
-
-        return $assessments->map([$this, 'createNoteFromAssessment']);
-    }
-
+    
     public function patientNotes($userId, NoteFilters $filters)
     {
         return $this->noteRepo->patientNotes($userId, $filters);

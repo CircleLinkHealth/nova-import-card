@@ -186,16 +186,16 @@ return [
         CircleLinkHealth\Raygun\Providers\RaygunServiceProvider::class,
 
         App\Providers\AppServiceProvider::class,
+        App\Providers\AppDeferredServiceProvider::class,
 
         CircleLinkHealth\ResponseCache\ResponseCacheServiceProvider::class,
-        App\Providers\HtmlToPdfServiceProvider::class,
 
+        App\Providers\HtmlToPdfServiceProvider::class,
         App\Providers\DirectMailServiceProvider::class,
         App\Providers\FaxServiceProvider::class,
         App\Providers\TwilioClientServiceProvider::class,
         \Collective\Html\HtmlServiceProvider::class,
 
-        CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesServiceProvider::class,
         CircleLinkHealth\ApiPatient\Providers\ApiPatientServiceProvider::class,
 
         App\View\Composers\ProviderUITimerComposer::class,

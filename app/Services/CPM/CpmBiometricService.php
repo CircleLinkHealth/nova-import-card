@@ -7,18 +7,16 @@
 namespace App\Services\CPM;
 
 use App\Contracts\Services\CpmModel;
-use App\Repositories\CpmBiometricRepository;
+use App\Models\CPM\CpmBiometricUser;
 use App\Repositories\CpmBiometricUserRepository;
 use CircleLinkHealth\Customer\Entities\User;
 
 class CpmBiometricService implements CpmModel
 {
-    private $biometricRepo;
     private $biometricUserRepo;
 
-    public function __construct(CpmBiometricRepository $biometricRepo, CpmBiometricUserRepository $biometricUserRepo)
+    public function __construct(CpmBiometricUserRepository $biometricUserRepo)
     {
-        $this->biometricRepo     = $biometricRepo;
         $this->biometricUserRepo = $biometricUserRepo;
     }
 
@@ -44,7 +42,7 @@ class CpmBiometricService implements CpmModel
 
     public function biometric($biometricId)
     {
-        $biometric             = $this->biometricUserRepo->model()->find($biometricId);
+        $biometric             = CpmBiometricUser::find($biometricId);
         $biometric['patients'] = $this->biometricUserRepo->patients($biometricId)->count();
 
         return $biometric;
@@ -57,28 +55,29 @@ class CpmBiometricService implements CpmModel
         });
     }
 
-    public function biometrics()
-    {
-        return $this->repo()->biometrics()->map(function ($b) {
-            $b['patients'] = $this->biometricUserRepo->patients($b->id)->count();
-
-            return $b;
-        });
-    }
-
     public function patientBiometrics($userId)
     {
-        return $this->biometricUserRepo->patientBiometrics($userId);
+        if (is_a($userId, User::class)) {
+            $user = $userId;
+
+            $user->loadMissing([
+                'cpmBiometrics',
+            ]);
+        } else {
+            $user = User::with('cpmBiometrics')->findOrFail($userId);
+        }
+
+        return $user->cpmBiometrics->map(function ($biometric) use ($user) {
+            return [
+                'info'    => $biometric,
+                'enabled' => (bool) $biometric->pivot->patient_id,
+            ];
+        });
     }
 
     public function removePatientBiometric($userId, $biometricId)
     {
         return $this->biometricUserRepo->removePatientBiometric($userId, $biometricId);
-    }
-
-    public function repo()
-    {
-        return $this->biometricRepo;
     }
 
     public function syncWithUser(User $user, array $ids = [], $page = null, array $instructions)

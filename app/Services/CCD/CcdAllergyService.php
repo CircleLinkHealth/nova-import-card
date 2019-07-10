@@ -7,6 +7,7 @@
 namespace App\Services\CCD;
 
 use App\Repositories\CcdAllergyRepository;
+use CircleLinkHealth\Customer\Entities\User;
 
 class CcdAllergyService
 {
@@ -53,9 +54,21 @@ class CcdAllergyService
 
     public function patientAllergies($userId)
     {
-        return $this->allergyRepo->patientAllergies($userId)
-            ->unique('allergen_name')
-            ->values()
+        $relQuery = [
+            'ccdAllergies' => function($q){
+                return $q->distinct('allergen_name');
+            },
+        ];
+        
+        if (is_a($userId, User::class)) {
+            $user = $userId;
+        
+            $user->loadMissing($relQuery);
+        } else {
+            $user = User::with($relQuery)->findOrFail($userId);
+        }
+        
+        return $user->ccdAllergies
             ->map(function ($a) {
                 return [
                     'id'         => $a->id,

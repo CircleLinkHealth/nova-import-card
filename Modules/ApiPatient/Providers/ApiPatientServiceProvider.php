@@ -16,7 +16,7 @@ class ApiPatientServiceProvider extends ServiceProvider
      *
      * @var bool
      */
-    protected $defer = true;
+    protected $defer = false;
 
     /**
      * Boot the application events.
@@ -28,10 +28,13 @@ class ApiPatientServiceProvider extends ServiceProvider
 //        uncomment if we add any of the above
 
 //        $this->registerTranslations();
-//        $this->registerConfig();
 //        $this->registerViews();
+
+//        if ($this->app->runningInConsole()) {
+//        $this->registerConfig();
 //        $this->registerFactories();
 //        $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
+//        }
     }
 
     /**
