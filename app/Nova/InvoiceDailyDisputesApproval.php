@@ -59,6 +59,16 @@ class InvoiceDailyDisputesApproval extends Resource
         return [];
     }
 
+    public static function authorizedToCreate(Request $request)
+    {
+        return false;
+    }
+
+    public function authorizedToDelete(Request $request)
+    {
+        return false;
+    }
+
     /**
      * Get the cards available for the request.
      *
