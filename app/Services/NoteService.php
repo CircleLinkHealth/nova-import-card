@@ -349,6 +349,13 @@ class NoteService
             });
     }
 
+    public function getUserDraftNotes($userId)
+    {
+        return Note::where('status', '=', 'draft')
+            ->where('author_id', '=', $userId)
+            ->get();
+    }
+
     public function markNoteAsRead(
         User $viewer,
         Note $note

@@ -6,23 +6,41 @@
 
 namespace App\Providers;
 
-use App\Contracts\HtmlToPdfService;
 use App\Contracts\ReportFormatter;
+use App\Contracts\Repositories\ActivityRepository;
+use App\Contracts\Repositories\AprimaCcdApiRepository;
+use App\Contracts\Repositories\CcdaRepository;
+use App\Contracts\Repositories\CcdaRequestRepository;
+use App\Contracts\Repositories\CcmTimeApiLogRepository;
+use App\Contracts\Repositories\InviteRepository;
+use App\Contracts\Repositories\LocationRepository;
+use App\Contracts\Repositories\PracticeRepository;
+use App\Contracts\Repositories\UserRepository;
 use App\Formatters\WebixFormatter;
-use App\Services\SnappyPdfWrapper;
+use App\Repositories\ActivityRepositoryEloquent;
+use App\Repositories\AprimaCcdApiRepositoryEloquent;
+use App\Repositories\CcdaRepositoryEloquent;
+use App\Repositories\CcdaRequestRepositoryEloquent;
+use App\Repositories\CcmTimeApiLogRepositoryEloquent;
+use App\Repositories\InviteRepositoryEloquent;
+use App\Repositories\LocationRepositoryEloquent;
+use App\Repositories\PracticeRepositoryEloquent;
+use App\Repositories\PrettusUserRepositoryEloquent;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Dusk\DuskServiceProvider;
 use Laravel\Horizon\Horizon;
+use Orangehill\Iseed\IseedServiceProvider;
 use Queue;
+use Way\Generators\GeneratorsServiceProvider;
+use Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    protected $defer = true;
-
     /**
      * Bootstrap any application services.
      */
@@ -94,15 +112,6 @@ class AppServiceProvider extends ServiceProvider
         );
     }
 
-    public function provides()
-    {
-        return [
-            DevelopmentServiceProvider::class,
-            HtmlToPdfService::class,
-            ReportFormatter::class,
-        ];
-    }
-
     /**
      * Register any application services.
      *
@@ -112,19 +121,54 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->register(\Maatwebsite\Excel\ExcelServiceProvider::class);
-        $this->app->register(\Yajra\DataTables\DataTablesServiceProvider::class);
-
-        if ($this->app->environment('local')) {
-            DevelopmentServiceProvider::class;
-        }
+        $this->app->bind(
+            ActivityRepository::class,
+            ActivityRepositoryEloquent::class
+        );
 
         $this->app->bind(
-            HtmlToPdfService::class,
-            function () {
-                return $this->app->make(SnappyPdfWrapper::class)
-                    ->setTemporaryFolder(storage_path('tmp'));
-            }
+            CcdaRepository::class,
+            CcdaRepositoryEloquent::class
+        );
+
+        $this->app->bind(
+            CcdaRequestRepository::class,
+            CcdaRequestRepositoryEloquent::class
+        );
+
+        $this->app->bind(
+            CcmTimeApiLogRepository::class,
+            CcmTimeApiLogRepositoryEloquent::class
+        );
+
+        $this->app->bind(
+            AprimaCcdApiRepository::class,
+            AprimaCcdApiRepositoryEloquent::class
+        );
+
+        $this->app->bind(
+            InviteRepository::class,
+            InviteRepositoryEloquent::class
+        );
+
+        $this->app->bind(
+            LocationRepository::class,
+            LocationRepositoryEloquent::class
+        );
+
+        $this->app->bind(
+            PracticeRepository::class,
+            PracticeRepositoryEloquent::class
+        );
+
+        $this->app->bind(
+            \App\CLH\Contracts\Repositories\UserRepository::class,
+            \App\CLH\Repositories\UserRepository::class
+        );
+
+        $this->app->bind(
+            UserRepository::class,
+            PrettusUserRepositoryEloquent::class
         );
 
         $this->app->bind(
@@ -132,15 +176,12 @@ class AppServiceProvider extends ServiceProvider
             WebixFormatter::class
         );
 
-        $this->app->register(\Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class);
-        $this->app->register(\Barryvdh\Snappy\ServiceProvider::class);
-
-        $this->app->register(\jeremykenedy\Slack\Laravel\ServiceProvider::class);
-        $this->app->register(EmailArrayValidatorServiceProvider::class);
-        $this->app->register(\Propaganistas\LaravelPhone\PhoneServiceProvider::class);
-        $this->app->register(\Waavi\UrlShortener\UrlShortenerServiceProvider::class);
-        $this->app->register(GoogleDriveServiceProvider::class);
-        $this->app->register(\LynX39\LaraPdfMerger\PdfMergerServiceProvider::class);
-        $this->app->register(AuthyServiceProvider::class);
+        if ($this->app->environment('local')) {
+            $this->app->register(IseedServiceProvider::class);
+            $this->app->register(GeneratorsServiceProvider::class);
+            $this->app->register(MigrationsGeneratorServiceProvider::class);
+            $this->app->register(DuskServiceProvider::class);
+            $this->app->register(\JKocik\Laravel\Profiler\ServiceProvider::class);
+        }
     }
 }
