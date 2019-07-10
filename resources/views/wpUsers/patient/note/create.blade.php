@@ -998,13 +998,14 @@
                     return;
                 }
 
-                if (App.$refs.bodyComponent) {
+                if (App.$refs.bodyComponent && App.$refs.bodyComponent.clearFromStorage) {
                     App.$refs.bodyComponent.clearFromStorage();
                 }
 
-                if (App.$refs.summaryInput) {
+                if (App.$refs.summaryInput && App.$refs.summaryInput.clearFromStorage) {
                     App.$refs.summaryInput.clearFromStorage();
                 }
+
             }
         </script>
     @endpush
