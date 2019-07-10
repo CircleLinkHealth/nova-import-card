@@ -13,6 +13,7 @@ use App\Filters\EnrolleeFilters;
 use App\Http\Requests\AddEnrolleeCustomFilter;
 use App\Http\Requests\EditEnrolleeData;
 use App\Http\Requests\UpdateMultipleEnrollees;
+use App\Jobs\UpdateEnrolleesFromEnglishEnrollmentSheetCsv;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
@@ -142,10 +143,5 @@ class EnrollmentDirectorController extends Controller
         Enrollee::whereIn('id', $request->input('enrolleeIds'))->update(['care_ambassador_user_id' => null]);
 
         return response()->json([], 200);
-    }
-
-    public function uploadCsv(Request $request)
-    {
-        $csv = 1;
     }
 }

@@ -1245,11 +1245,6 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'EnrollmentDirectorController@addEnrolleeCustomFilter',
                 'as'   => 'ca-director.add-enrollee-custom-filter',
             ]);
-
-            Route::post('/upload-csv', [
-                'uses' => 'EnrollmentDirectorController@uploadCsv',
-                'as'   => 'ca-director.upload-csv',
-            ]);
         });
 
         Route::group(['prefix' => 'enrollees'], function () {

@@ -48,8 +48,7 @@ class EnroleeStatus implements WithChunkReading, ToModel, WithHeadings, ShouldQu
     {
         if (array_key_exists('Call_Status', $row)) {
             $e = Enrollee::where('id', $row['Eligible_Patient_ID'])
-                ->orWhere('Eligibility_Job_ID', $row['Eligibility_Job_ID'])
-                ->orWhere('Eligibility_Job_ID', $row['Eligibility_Job_ID'])
+                ->orWhere('eligibility_job_id', $row['Eligibility_Job_ID'])
                 ->first();
 
             if ($e) {
