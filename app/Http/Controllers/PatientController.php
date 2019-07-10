@@ -9,8 +9,8 @@
 namespace App\Http\Controllers;
 
 use App\Filters\PatientListFilters;
-use App\User;
-use Request;
+use App\PatientAwvSurveyInstanceStatusView;
+use Illuminate\Http\Request;
 
 class PatientController extends Controller
 {
@@ -33,8 +33,7 @@ class PatientController extends Controller
         $ascending = $request->get('ascending');
         $page      = $request->get('page');
 
-        //todo
-        $data = PatientListView::filter($filters)->select($fields);
+        $data = PatientAwvSurveyInstanceStatusView::filter($filters)->select($fields);
 
         $count = $data->count();
 

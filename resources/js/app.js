@@ -32,6 +32,10 @@ Vue.component('vitals-survey-not-authorized', VitalsSurveyNotAuthorized);
 Vue.component('vitals-survey-welcome', VitalsSurveyWelcome);
 Vue.component('patient-list', PatientList);
 
+import { ClientTable, ServerTable } from 'vue-tables-2';
+Vue.use(ClientTable, {}, false);
+Vue.use(ServerTable, {}, false, 'bootstrap4');
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

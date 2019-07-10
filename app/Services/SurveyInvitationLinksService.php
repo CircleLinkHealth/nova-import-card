@@ -40,26 +40,8 @@ class SurveyInvitationLinksService
                 throw new \Exception("user does not belong to a survey instance");
             }
 
-            $hraSurvey = Survey
-                ::with([
-                    'instances' => function ($instance) use ($forYear) {
-                        $instance->forYear($forYear);
-                    },
-                ])
-                ->where('name', Survey::HRA)
-                ->firstOrFail();
-
-            if ($hraSurvey->instances->isEmpty()) {
-                throw new \Exception("There is no HRA survey instance for year $forYear");
-            }
-
-            $user->surveys()
-                 ->attach($hraSurvey->id, [
-                     'survey_instance_id' => $hraSurvey->instances->first()->id,
-                     'status'             => SurveyInstance::PENDING,
-                 ]);
-
-            $surveyId = $hraSurvey->id;
+            $ids      = $this->enrolUser($user, $forYear);
+            $surveyId = $ids[Survey::HRA];
 
         } else {
 
@@ -136,5 +118,56 @@ class SurveyInvitationLinksService
         $text = $text . "\n" . $url;
 
         return $text;
+    }
+
+    /**
+     * @param User $user
+     * @param string|null $forYear
+     *
+     * @return array
+     * @throws \Exception
+     */
+    public function enrolUser(User $user, string $forYear = null)
+    {
+
+        if ( ! $forYear) {
+            $forYear = Carbon::now()->year;
+        }
+
+        $surveys = Survey
+            ::with([
+                'instances' => function ($instance) use ($forYear) {
+                    $instance->forYear($forYear);
+                },
+            ])
+            ->get();
+
+        $hraSurvey = $surveys->firstWhere('name', Survey::HRA);
+        if ( ! $hraSurvey || $hraSurvey->instances->isEmpty()) {
+            throw new \Exception("There is no HRA survey instance for year $forYear");
+        }
+
+        $vitalsSurvey = $surveys->firstWhere('name', Survey::VITALS);
+        if ( ! $vitalsSurvey || $vitalsSurvey->instances->isEmpty()) {
+            throw new \Exception("There is no VITALS survey instance for year $forYear");
+        }
+
+        $user->surveys()
+             ->attach($vitalsSurvey->id, [
+                     'survey_instance_id' => $vitalsSurvey->instances->first()->id,
+                     'status'             => SurveyInstance::PENDING,
+                 ]
+             );
+
+        $user->surveys()
+             ->attach($hraSurvey->id, [
+                 'survey_instance_id' => $hraSurvey->instances->first()->id,
+                 'status'             => SurveyInstance::PENDING,
+             ]);
+
+        return [
+            Survey::HRA    => $hraSurvey->id,
+            Survey::VITALS => $vitalsSurvey->id,
+        ];
     }
 }

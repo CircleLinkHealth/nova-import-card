@@ -4,7 +4,9 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="main-form-title col-lg-12">
-            Patient List
+            <h1>
+                Patient List
+            </h1>
         </div>
         <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12 overflow-scroll">
             <patient-list ref="patientList"></patient-list>
