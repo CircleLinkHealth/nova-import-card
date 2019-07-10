@@ -68,7 +68,6 @@ class Kernel extends HttpKernel
             LogoutIfAccessDisabled::class,
             CreateFreshApiToken::class,
             AuthyMiddleware::class,
-            CacheResponse::class,
         ],
         'sessions' => [
             StartSession::class,

@@ -6,7 +6,6 @@
 
 namespace App\Providers;
 
-use App\Contracts\HtmlToPdfService;
 use App\Contracts\ReportFormatter;
 use App\Contracts\Repositories\ActivityRepository;
 use App\Contracts\Repositories\AprimaCcdApiRepository;
@@ -27,7 +26,6 @@ use App\Repositories\InviteRepositoryEloquent;
 use App\Repositories\LocationRepositoryEloquent;
 use App\Repositories\PracticeRepositoryEloquent;
 use App\Repositories\PrettusUserRepositoryEloquent;
-use App\Services\SnappyPdfWrapper;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
@@ -123,14 +121,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(
-            HtmlToPdfService::class,
-            function () {
-                return $this->app->make(SnappyPdfWrapper::class)
-                    ->setTemporaryFolder(storage_path('tmp'));
-            }
-        );
-
         $this->app->bind(
             ActivityRepository::class,
             ActivityRepositoryEloquent::class
