@@ -40,14 +40,14 @@ class ProblemCodeService
                     return $problemCode;
                 }
 
-                return $this->repo()->model()->where([
+                return ProblemCode::where([
                     'problem_code_system_id' => $problemCode->problem_code_system_id,
                     'problem_id'             => $problemCode->problem_id,
                 ])->first();
             }
-            throw new Exception('Invalid problem_code_system_id value');
+            throw new \Exception('Invalid problem_code_system_id value');
         }
-        throw new Exception('$problemCode must exist');
+        throw new \Exception('$problemCode must exist');
     }
 
     public function repo()

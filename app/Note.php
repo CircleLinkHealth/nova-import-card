@@ -16,6 +16,7 @@ use App\Traits\PdfReportTrait;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Customer\Entities\User;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * App\Note.
@@ -70,6 +71,7 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
     use IsAddendumable;
     use NotificationAttachable;
     use PdfReportTrait;
+    use SoftDeletes;
     const STATUS_COMPLETE = 'complete';
     const STATUS_DRAFT    = 'draft';
 
@@ -100,6 +102,18 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
     public function call()
     {
         return $this->hasOne('App\Call');
+    }
+
+    public function editLink()
+    {
+        if (self::STATUS_DRAFT !== $this->status) {
+            return null;
+        }
+
+        return route('patient.note.edit', [
+            'patientId' => $this->patient_id,
+            'noteId'    => $this->id,
+        ]);
     }
 
     /**

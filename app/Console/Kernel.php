@@ -30,6 +30,7 @@ use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
 use App\Console\Commands\SendCarePlanApprovalReminders;
 use App\Console\Commands\TuneScheduledCalls;
+use App\Spatie\ResponseCache\Commands\Clear;
 use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendMonthlyNurseInvoiceLAN;
@@ -45,6 +46,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
+        Clear::class,
     ];
 
     /**
@@ -181,12 +183,6 @@ class Kernel extends ConsoleKernel
 //        $schedule->command(DownloadTwilioRecordings::class)
 //                 ->everyThirtyMinutes()
 //                 ->withoutOverlapping()->onOneServer();
-
-//        Disable backup till we fix the issue of it not running
-//        if (isProductionEnv()) {
-//            $schedule->command(CleanupCommand::class)->daily()->at('01:00')->onOneServer();
-//            $schedule->command(BackupCommand::class)->daily()->at('02:00')->onOneServer();
-//        }
 
         $schedule->command(SecurityMailCommand::class)->weekly()->onOneServer();
 

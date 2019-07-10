@@ -181,19 +181,25 @@ if (isset($patient) && ! empty($patient)) {
                                             </template>
 
                                             @if ( ($patient->getCarePlanStatus() == 'qa_approved' && auth()->user()->canApproveCarePlans()) || ($patient->getCarePlanStatus() == 'draft' && auth()->user()->canQAApproveCarePlans()) )
-                                                <a style="margin-right:10px;"
-                                                   class="btn btn-info btn-sm inline-block"
+                                                <form action="{{ route('patient.careplan.approve', ['patientId' => $patient->id]) }}"
+                                                      method="POST" style="display: inline">
+                                                    {{ csrf_field() }}
+                                                    <input class="btn btn-info btn-sm inline-block"
                                                    aria-label="..."
                                                    role="button"
-                                                   href="{{ route('patient.careplan.approve', ['patientId' => $patient->id]) }}">Approve</a>
+                                                       type="submit" value="Approve">
+                                                </form>
 
                                                 @if(auth()->user()->hasRole('provider'))
-                                                    <a style="margin-right:10px;"
-                                                       class="btn btn-success btn-sm inline-block"
+                                                    <form action="{{ route('patient.careplan.approve', ['patientId' => $patient->id, 'viewNext' => true]) }}"
+                                                          method="POST" style="display: inline">
+                                                        {{ csrf_field() }}
+                                                        <input class="btn btn-success btn-sm inline-block"
                                                        aria-label="..."
-                                                       role="button"
-                                                       href="{{ route('patient.careplan.approve', ['patientId' => $patient->id, 'viewNext' => true]) }}">Approve
-                                                        and View Next</a>
+                                                       type="submit"
+                                                       role="button" value="Approve
+                                                        and View Next">
+                                                    </form>
 
                                                     <form action="{{route('patient.careplan.not.eligible', ['patientId' => $patient->id, 'viewNext' => true])}}"
                                                           method="POST" id="not-eligible-form" style="display: inline">
