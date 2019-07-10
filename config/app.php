@@ -188,6 +188,7 @@ return [
         App\Providers\AppServiceProvider::class,
 
         CircleLinkHealth\ResponseCache\ResponseCacheServiceProvider::class,
+        App\Providers\HtmlToPdfServiceProvider::class,
 
         App\Providers\DirectMailServiceProvider::class,
         App\Providers\FaxServiceProvider::class,

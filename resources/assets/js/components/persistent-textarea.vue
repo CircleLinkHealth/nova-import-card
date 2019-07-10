@@ -66,6 +66,10 @@
             changeTextArea() {
                 sstor.add(this.storageKey, this.text);
                 this.$emit('input', this.text)
+            },
+
+            clearFromStorage() {
+                sstor.remove(this.storageKey);
             }
         },
         mounted() {

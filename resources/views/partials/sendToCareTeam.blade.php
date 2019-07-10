@@ -79,6 +79,10 @@
                 //hacky way to display summary input required when notify-careteam is checked, and also make summary required
                 $('#notify-careteam').change(function (e) {
 
+                    if (typeof App === 'undefined' || typeof Vue === 'undefined') {
+                        return;
+                    }
+
                     //might be called before summaryInput component is created
                     if (!App.$refs.summaryInput) {
                         return;

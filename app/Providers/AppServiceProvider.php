@@ -6,7 +6,6 @@
 
 namespace App\Providers;
 
-use App\Contracts\HtmlToPdfService;
 use App\Contracts\ReportFormatter;
 use App\Formatters\WebixFormatter;
 use App\Services\SnappyPdfWrapper;
@@ -98,7 +97,6 @@ class AppServiceProvider extends ServiceProvider
     {
         return [
             DevelopmentServiceProvider::class,
-            HtmlToPdfService::class,
             ReportFormatter::class,
         ];
     }
@@ -118,14 +116,6 @@ class AppServiceProvider extends ServiceProvider
         if ($this->app->environment('local')) {
             DevelopmentServiceProvider::class;
         }
-
-        $this->app->bind(
-            HtmlToPdfService::class,
-            function () {
-                return $this->app->make(SnappyPdfWrapper::class)
-                    ->setTemporaryFolder(storage_path('tmp'));
-            }
-        );
 
         $this->app->bind(
             ReportFormatter::class,
