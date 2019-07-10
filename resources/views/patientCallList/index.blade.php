@@ -29,9 +29,9 @@ function formatTime($time)
 
             .bold-row {
                 font-weight: 900;
-                color:#888888;
+                color: #888888;
                 text-shadow: 1px 0 #888888;
-                letter-spacing:1px;
+                letter-spacing: 1px;
             }
 
         </style>
@@ -86,6 +86,52 @@ function formatTime($time)
                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
 
                     <div class="">
+
+                        @if(isset($draftNotes) && $draftNotes->isNotEmpty())
+                            <div class="row text-center">
+                                <div class="col-md-12">
+                                    <h4>
+                                        The following notes are pending your <strong>approval</strong> or <strong>deletion</strong>:
+                                    </h4>
+                                </div>
+                                <div class="col-md-8 col-md-offset-2">
+                                    <table class="display dataTable no-footer">
+                                        <thead>
+                                        <tr>
+                                            <th>
+                                                Patient Id
+                                            </th>
+                                            <th>
+                                                Date Created
+                                            </th>
+                                            <th>
+
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        @foreach($draftNotes as $key => $note)
+                                            <tr>
+                                                <td>
+                                                    {{$note->patient_id}}
+                                                </td>
+                                                <td>
+                                                    {{$note->performed_at->toDateString()}}
+                                                </td>
+                                                <td>
+                                                    <a href="{{$note->editLink()}}">Approve/Delete</a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        @endif
+
+                        <br/>
+                        <br/>
+
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="row">

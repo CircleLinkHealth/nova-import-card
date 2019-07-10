@@ -209,6 +209,7 @@ return [
 
         App\Providers\UserMetaParserHelpersServiceProvider::class,
         App\Providers\StringManipulationServiceProvider::class,
+        App\Providers\HtmlToPdfServiceProvider::class,
 
         // CPM Providers
         \Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
