@@ -84,27 +84,33 @@ class InvoiceDailyDisputesApproval extends Resource
             ID::make()->sortable(),
 
             BelongsTo::make('Care Coach', 'nurseInvoice', NurseInvoice::class)
-                ->hideFromIndex(),
+                ->hideFromIndex()
+                ->hideWhenCreating()
+                ->hideWhenUpdating(),
 
             Text::make('Care Coach', 'nurseInvoice.invoice_data.nurseFullName')
+                ->readonly(true)
                 ->sortable(),
 
             Date::make('Date', 'disputed_day')
+                ->readonly(true)
                 ->sortable(),
 
             Text::make('Time disputed', 'disputed_formatted_time')
+                ->readonly(true)
                 ->sortable(),
 
             Text::make('Time Suggested', 'suggested_formatted_time')
+                ->readonly(true)
                 ->sortable(),
 
-            Select::make('Approve/Disapprove', 'status')
+            Select::make('Approve / Reject', 'status')
                 ->options(
                     [
-                        'Approve'    => 'approve',
-                        'Disapprove' => 'disapprove',
+                        'approved' => 'Approve',
+                        'rejected' => 'Reject',
                     ]
-            )->hideFromIndex()
+                )->hideFromIndex()
                 ->rules('required'),
 
             Text::make('Status', 'status')
