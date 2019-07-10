@@ -7222,7 +7222,7 @@
                 "shasum": ""
             },
             "require": {
-                "google/apiclient": "^2.2",
+                "google/capiclient": "^2.2",
                 "illuminate/support": "^5.4.0",
                 "nesbot/carbon": "^1.21 || ^2.0",
                 "php": "^7.0"
