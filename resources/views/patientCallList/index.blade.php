@@ -91,7 +91,8 @@ function formatTime($time)
                             <div class="row text-center">
                                 <div class="col-md-12">
                                     <h4>
-                                        The following notes are pending your <strong>approval</strong> or <strong>deletion</strong>:
+                                        Please <strong>save</strong> or <strong>delete</strong> the following note
+                                        drafts:
                                     </h4>
                                 </div>
                                 <div class="col-md-8 col-md-offset-2">
@@ -99,7 +100,7 @@ function formatTime($time)
                                         <thead>
                                         <tr>
                                             <th>
-                                                Patient Id
+                                                Patient
                                             </th>
                                             <th>
                                                 Date Created
@@ -119,7 +120,10 @@ function formatTime($time)
                                                     {{$note->performed_at->toDateString()}}
                                                 </td>
                                                 <td>
-                                                    <a href="{{$note->editLink()}}">Approve/Delete</a>
+                                                    <a href="{{$note->editLink()}}"
+                                                       style="color: blue; text-transform: uppercase; font-weight: 600">
+                                                        Approve/Delete
+                                                    </a>
                                                 </td>
                                             </tr>
                                         @endforeach
