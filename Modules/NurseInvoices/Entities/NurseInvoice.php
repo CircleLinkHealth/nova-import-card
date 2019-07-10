@@ -14,6 +14,7 @@ use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\NurseInvoices\Traits\Disputable;
 use CircleLinkHealth\NurseInvoices\Traits\Nursable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
@@ -44,6 +45,14 @@ class NurseInvoice extends Model implements HasMedia, Pdfable
         'is_nurse_approved',
         'nurse_approved_at',
     ];
+
+    /**
+     * @return HasMany
+     */
+    public function dailyDisputes()
+    {
+        return $this->hasMany(NurseInvoiceDailyDispute::class, 'invoice_id', 'id');
+    }
 
     public function dispute()
     {
