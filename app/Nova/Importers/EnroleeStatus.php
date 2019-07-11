@@ -12,9 +12,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
-use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class EnroleeStatus implements WithChunkReading, ToModel, WithHeadings, ShouldQueue
+class EnroleeStatus implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueue
 {
     use Importable;
 
@@ -34,21 +34,11 @@ class EnroleeStatus implements WithChunkReading, ToModel, WithHeadings, ShouldQu
         return 200;
     }
 
-    /**
-     * @return array
-     */
-    public function headings(): array
-    {
-        return [
-            'Eligible_Patient_ID',	'Eligibility_Job_ID',	'Call_Status',	'Call_Date',
-        ];
-    }
-
     public function model(array $row)
     {
-        if (array_key_exists('Call_Status', $row)) {
-            $e = Enrollee::where('id', $row['Eligible_Patient_ID'])
-                ->orWhere('eligibility_job_id', $row['Eligibility_Job_ID'])
+        if (array_key_exists('call_status', $row)) {
+            $e = Enrollee::where('id', $row['eligible_patient_id'])
+                ->orWhere('eligibility_job_id', $row['eligibility_job_id'])
                 ->first();
 
             if ($e) {
@@ -74,28 +64,28 @@ class EnroleeStatus implements WithChunkReading, ToModel, WithHeadings, ShouldQu
 
     private function setEnrolleeStatus($e, $row)
     {
-        if (str_contains(strtolower($row['Call_Status']), ['maybe', 'attempt', '3', '2', '1', 'soft'])) {
-            if (str_contains($row['Call_Status'], '3')) {
+        if (str_contains(strtolower($row['call_status']), ['maybe', 'attempt', '3', '2', '1', 'soft'])) {
+            if (str_contains($row['call_status'], '3')) {
                 $e->attempt_count = 3;
             }
-            if (str_contains($row['Call_Status'], '2')) {
+            if (str_contains($row['call_status'], '2')) {
                 $e->attempt_count = 2;
             }
-            if (str_contains($row['Call_Status'], '1')) {
+            if (str_contains($row['call_status'], '1')) {
                 $e->attempt_count = 1;
             }
             $e->status = Enrollee::SOFT_REJECTED;
         }
-        if (str_contains(strtolower($row['Call_Status']), ['hard', 'declined'])) {
+        if (str_contains(strtolower($row['call_status']), ['hard', 'declined'])) {
             $e->status = Enrollee::REJECTED;
         }
-        if (str_contains(strtolower($row['Call_Status']), 'reach')) {
+        if (str_contains(strtolower($row['call_status']), 'reach')) {
             $e->status = Enrollee::UNREACHABLE;
         }
-        if (str_contains(strtolower($row['Call_Status']), 'call')) {
+        if (str_contains(strtolower($row['call_status']), 'call')) {
             $e->status = Enrollee::TO_CALL;
         }
-        if (str_contains(strtolower($row['Call_Status']), 'enrolled')) {
+        if (str_contains(strtolower($row['call_status']), 'enrolled')) {
             $e->status = Enrollee::ENROLLED;
         }
 
