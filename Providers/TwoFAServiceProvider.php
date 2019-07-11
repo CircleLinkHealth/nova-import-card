@@ -16,7 +16,7 @@ class TwoFAServiceProvider extends ServiceProvider
      *
      * @var bool
      */
-    protected $defer = true;
+    protected $defer = false;
 
     /**
      * Boot the application events.
