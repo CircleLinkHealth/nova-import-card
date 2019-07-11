@@ -62,6 +62,7 @@ class OnSuccessfulDeployment extends Command
         $this->info('userName: '.$user);
         $this->info('comment: '.$comment);
 
+        \Artisan::call(NotifyRaygunOfDeployment::class, ['scmIdentifier' => $newlyDeployedRevision]);
         $this->notifySlackOfTicketsDeployed();
     }
 

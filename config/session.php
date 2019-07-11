@@ -196,14 +196,4 @@ return [
     */
 
     'same_site' => null,
-
-    /*
-     * Set to true to enable raygun monitoring.
-     *
-     * Link to CLH dashboard:
-     * https://app.raygun.com/pulse/1jsvnxu?dateFrom=2019-02-19T21%3A53%3A04.000Z&dateTo=2019-02-26T21%3A53%3A04.000Z
-     */
-    'enable_raygun_real_user_monitoring' => env('ENABLE_RAYGUN_REAL_USER_MONITORING', ! in_array(env('APP_ENV'), ['local', 'testing'])),
-
-    'enable_raygun_crash_reporting' => env('ENABLE_RAYGUN_CRASH_REPORTING', ! in_array(env('APP_ENV'), ['local', 'testing'])),
 ];
