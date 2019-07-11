@@ -11,7 +11,6 @@ use App\Http\Requests\CreateLegacyBhiConsentDecision;
 use App\Note;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
-use Illuminate\Support\Facades\Cache;
 
 class LegacyBhiConsentController extends Controller
 {
@@ -48,15 +47,17 @@ class LegacyBhiConsentController extends Controller
     }
 
     /**
-     * When the User clicks `Not Now` we want to hide the banner for 24 hours.
+     * When the User clicks `Not Now` we want to hide the banner till next scheduled call.
      *
      * @param $patientId
      */
     private function storeNotNowResponse($patientId)
     {
-        $key     = auth()->user()->getLegacyBhiNursePatientCacheKey($patientId);
-        $minutes = intval(Carbon::now()->secondsUntilEndOfDay() / 60);
+        $now                   = Carbon::now();
+        $nextScheduledCallDate = auth()->user()->patientNextScheduledCallDate($patientId);
+        $key                   = auth()->user()->getLegacyBhiNursePatientCacheKey($patientId);
+        $seconds               = $nextScheduledCallDate->diffInSeconds($now);
 
-        Cache::put($key, true, $minutes);
+        \Cache::put($key, '', $seconds);
     }
 }
