@@ -204,6 +204,10 @@ class NotesController extends Controller
             throw new \Exception('You cannot delete a non-draft note');
         }
 
+        if ($note->author_id != auth()->id()) {
+            throw new \Exception('Only the author of the note can delete it');
+        }
+
         $note->delete();
 
         return redirect()->route('patient.note.index', ['patientId' => $patientId]);
