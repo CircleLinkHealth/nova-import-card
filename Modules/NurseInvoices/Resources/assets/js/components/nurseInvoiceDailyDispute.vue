@@ -208,7 +208,7 @@
 
                         this.addNotification({
                             title: "Deleted",
-                            text: "Your dispute has been submitted deleted",
+                            text: "Your dispute has been deleted",
                             type: "info",
                             timeout: true
                         });
