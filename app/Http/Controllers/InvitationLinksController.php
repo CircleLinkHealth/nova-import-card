@@ -75,7 +75,27 @@ class InvitationLinksController extends Controller
         return back()->with(['message' => 'success']);
     }
 
-    public function sendSms(
+    /**
+     * Send HRA survey link to patient
+     *
+     * @param Request $request
+     */
+    public function sendHraLink(Request $request) {
+
+    }
+
+    /**
+     * Send Vitals link to practice staff
+     *
+     * @param Request $request
+     */
+    public function sendVitalsLink(Request $request) {
+
+        //if possible, validate that receiver is not a patient
+
+    }
+
+    private function sendSms(
         TwilioClientService $twilioService,
         User $user,
         string $url

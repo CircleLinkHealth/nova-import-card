@@ -9,26 +9,34 @@
                 <mdb-dropdown class="actions">
                     <mdb-dropdown-toggle slot="toggle" class="actions-toggle">...</mdb-dropdown-toggle>
                     <mdb-dropdown-menu right :dropup="isLastRow(props)">
-                        <mdb-dropdown-item @click="sendHraLink">Send HRA link</mdb-dropdown-item>
-                        <mdb-dropdown-item @click="sendVitalsLink">Send Vitals link</mdb-dropdown-item>
+                        <mdb-dropdown-item @click="sendHraLink(props.row)">Send HRA link</mdb-dropdown-item>
+                        <mdb-dropdown-item @click="sendVitalsLink(props.row)">Send Vitals link</mdb-dropdown-item>
                     </mdb-dropdown-menu>
                 </mdb-dropdown>
             </template>
         </v-server-table>
+        <send-link-modal v-if="sendLinkModalOptions.show" :options="sendLinkModalOptions"></send-link-modal>
     </div>
 </template>
 
 <script>
 
     import {mdbDropdown, mdbDropdownItem, mdbDropdownMenu, mdbDropdownToggle} from 'mdbvue';
+    import SendLinkModal from './SendLinkModal';
 
     let self;
 
     export default {
         name: "PatientList",
-        components: {mdbDropdown, mdbDropdownItem, mdbDropdownMenu, mdbDropdownToggle},
+        components: {SendLinkModal, mdbDropdown, mdbDropdownItem, mdbDropdownMenu, mdbDropdownToggle},
         data() {
             return {
+                sendLinkModalOptions: {
+                    show: false,
+                    survey: null,
+                    patientId: null,
+                    onDone: null,
+                },
                 columns: ['patient_name', 'provider_name', 'hra_status', 'vitals_status', 'eligibility', 'dob', 'actions'],
                 options: {
                     requestAdapter(data) {
@@ -77,28 +85,26 @@
                 return `/manage-patients/list`
             },
 
-            getStatus(status) {
-                switch (status) {
-                    case 'pending':
-                        return 'Pending';
-                    case 'in_progress':
-                        return 'In Progress';
-                    case 'completed':
-                        return 'Completed';
-                }
-                return 'N/A';
-            },
-
             isLastRow(props) {
                 return this.$refs.table.count === props.index;
             },
 
-            sendHraLink() {
-
+            sendHraLink(patient) {
+                this.sendLinkModalOptions.patientId = patient.patient_id;
+                this.sendLinkModalOptions.survey = "hra";
+                this.sendLinkModalOptions.show = true;
+                this.sendLinkModalOptions.onDone = () => {
+                    this.sendLinkModalOptions.show = false;
+                }
             },
 
             sendVitalsLink() {
-
+                this.sendLinkModalOptions.patientId = null;
+                this.sendLinkModalOptions.survey = "vitals";
+                this.sendLinkModalOptions.show = true;
+                this.sendLinkModalOptions.onDone = () => {
+                    this.sendLinkModalOptions.show = false;
+                }
             }
         },
         created() {
