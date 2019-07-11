@@ -63,7 +63,7 @@ class NursesPerformanceDailyReport extends Command
 
         if ( ! $saved && isProductionEnv()) {
             sendSlackMessage(
-                '#callcenter_ops',
+                '#carecoach_ops',
                 "Nurses And States dashboard report {$date->toDateString()} could not be created. \n"
             );
 
@@ -77,7 +77,7 @@ class NursesPerformanceDailyReport extends Command
 
         if (isProductionEnv()) {
             sendSlackMessage(
-                '#callcenter_ops',
+                '#carecoach_ops',
                 "Nurses weekly calls and work hours report {$date->toDateString()} created. \n"
             );
         }
