@@ -100,7 +100,7 @@ function formatTime($time)
                                         <thead>
                                         <tr>
                                             <th>
-                                                Patient
+                                                Patient ID
                                             </th>
                                             <th>
                                                 Date Created
