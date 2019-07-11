@@ -40,7 +40,7 @@ class LegacyBhiConsentController extends Controller
 
         return Note::create([
             'patient_id'   => $patientId,
-            'author_id'    => 948, //clh patient support
+            'author_id'    => auth()->user()->id,
             'body'         => $body,
             'type'         => $type,
             'performed_at' => Carbon::now()->toDateTimeString(),
