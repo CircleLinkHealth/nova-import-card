@@ -48,15 +48,20 @@ class LegacyBhiConsentController extends Controller
 
     /**
      * When the User clicks `Not Now` we want to hide the banner till next scheduled call.
+     * If Scheduled call is null will show banner & flag again tomorrow.
      *
      * @param $patientId
      */
     private function storeNotNowResponse($patientId)
     {
         $now                   = Carbon::now();
+        $tomorrow              = $now->copy()->addHours(24);
         $nextScheduledCallDate = auth()->user()->patientNextScheduledCallDate($patientId);
         $key                   = auth()->user()->getLegacyBhiNursePatientCacheKey($patientId);
-        $seconds               = $nextScheduledCallDate->diffInSeconds($now);
+
+        $seconds = null !== $nextScheduledCallDate
+            ? Carbon::parse($nextScheduledCallDate)->diffInSeconds($now)
+            : $tomorrow->diffInSeconds($now);
 
         \Cache::put($key, '', $seconds);
     }
