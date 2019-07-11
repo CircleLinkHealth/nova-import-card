@@ -416,16 +416,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.106.0",
+            "version": "3.106.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "9baaba0eef80774ba18a13666e735c84b9e32b9a"
+                "reference": "ed3bd17b8a6caa5c99ed5fe559d061a1f9fc2c8c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/9baaba0eef80774ba18a13666e735c84b9e32b9a",
-                "reference": "9baaba0eef80774ba18a13666e735c84b9e32b9a",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/ed3bd17b8a6caa5c99ed5fe559d061a1f9fc2c8c",
+                "reference": "ed3bd17b8a6caa5c99ed5fe559d061a1f9fc2c8c",
                 "shasum": ""
             },
             "require": {
@@ -495,7 +495,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2019-07-09T18:24:12+00:00"
+            "time": "2019-07-10T18:29:49+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -658,7 +658,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "db170c63b4971eda1a139dd7b23fed265639b0fd"
+                "reference": "b51491d22a38cf11e6b12f4033bc72e54e4a1d03"
             },
             "require": {
                 "circlelinkhealth/core": "dev-master",
@@ -691,7 +691,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-07-08T09:09:39+00:00"
+            "time": "2019-07-09T11:59:57+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
@@ -819,7 +819,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "aa118e70dc948a94405553507b49e39a8ea52fe2"
+                "reference": "dc0dbd63629c21214a7b2a970f42bc7213c3f0ba"
             },
             "require": {
                 "authy/php": "^3.0",
@@ -846,7 +846,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-07-08T15:05:17+00:00"
+            "time": "2019-07-11T05:42:07+00:00"
         },
         {
             "name": "composer/ca-bundle",
