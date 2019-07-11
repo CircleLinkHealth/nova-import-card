@@ -11,7 +11,7 @@
             <!--Requested Time From nurse-->
             <span v-show="showTillRefresh"
                   class="dispute-requested-time"
-                  :class="{invalidated: strikethroughTime || isInvalidated}">
+                  :class="{invalidated: strikethroughSuggestedTime || isInvalidated}">
             {{setRequestedValue}}
         </span>
 
@@ -20,9 +20,11 @@
                   class="dispute-requested-time">
                 <i v-if="showDisputeStatus === 'approved' && !isInvalidated" class="glyphicon glyphicon-ok-circle"
                    style="color: #008000;"></i>
-                <i v-else-if="showDisputeStatus === 'rejected' && !isInvalidated" class="glyphicon glyphicon-remove-sign"
+                <i v-else-if="showDisputeStatus === 'rejected' && !isInvalidated"
+                   class="glyphicon glyphicon-remove-sign"
                    style="color: #ff0000;"></i>
-                <i v-else-if="showDisputeStatus === 'pending' && !isInvalidated" class="glyphicon glyphicon-option-horizontal"
+                <i v-else-if="showDisputeStatus === 'pending' && !isInvalidated"
+                   class="glyphicon glyphicon-option-horizontal"
                    style="color: #00bfff;"></i>
         </span>
 
@@ -105,6 +107,7 @@
                 requestedTimeFromDb: this.invoiceData.suggestedTime,
                 userDisputedTime: false,
                 strikethroughTime: false,
+                strikethroughSuggestedTime: false,
                 showTillRefresh: true,
                 loader: false,
                 errors: [],
