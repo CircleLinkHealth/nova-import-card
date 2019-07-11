@@ -34,6 +34,7 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Dusk\DuskServiceProvider;
 use Laravel\Horizon\Horizon;
+use Maatwebsite\Excel\Imports\HeadingRowFormatter;
 use Orangehill\Iseed\IseedServiceProvider;
 use Queue;
 use Way\Generators\GeneratorsServiceProvider;
@@ -121,6 +122,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        // Excel Package Importing Config
+        // Format input array keys to be all lower-case and sluggified
+        HeadingRowFormatter::extend('custom', function ($value) {
+            return strtolower(str_slug($value));
+        });
+
         $this->app->bind(
             ActivityRepository::class,
             ActivityRepositoryEloquent::class
