@@ -465,12 +465,13 @@ class NursesPerformanceReportService
             )
             ->leftJoin('users', 'users.id', '=', 'calls.inbound_cpm_id')
             ->leftJoin('patient_monthly_summaries', 'users.id', '=', 'patient_monthly_summaries.patient_id')
+            ->leftJoin('patient_info', 'users.id', '=', 'patient_info.user_id')
             ->whereRaw(
                 "
 calls.status = 'scheduled'
 AND (calls.type IS NULL OR calls.type='call') 
 AND calls.outbound_cpm_id = {$nurse->id}
-AND calls.scheduled_date <= DATE('{$date->copy()->endOfMonth()->toDateString()}') 
+AND patient_info.ccm_status = 'enrolled'
 AND DATE(patient_monthly_summaries.month_year) = DATE('{$date->copy()->startOfMonth()->toDateString()}')"
             )
             ->get();
