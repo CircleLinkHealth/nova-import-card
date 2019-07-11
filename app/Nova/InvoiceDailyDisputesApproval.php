@@ -107,11 +107,11 @@ class InvoiceDailyDisputesApproval extends Resource
                 ->sortable(),
 
             Text::make('Time disputed', 'disputed_formatted_time')
-                ->readonly(true)
+                //->readonly(true)
                 ->sortable(),
 
             Text::make('Time Suggested', 'suggested_formatted_time')
-                ->readonly(true)
+                //->readonly(true)
                 ->sortable(),
 
             Select::make('Approve / Reject', 'status')
