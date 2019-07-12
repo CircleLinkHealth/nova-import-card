@@ -11,6 +11,10 @@
                     <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
                 </div>
 
+                <mdb-alert v-if="isVitals" color="warning">
+                    Reminder: Do not send links to the Vitals Questionnaire to patients!
+                </mdb-alert>
+
                 <div class="row text-center">
                     <div class="col-md-6">
                         <mdb-btn outline="success" :disabled="waiting" @click.native="selectEmail">Email</mdb-btn>
@@ -189,6 +193,7 @@
                 this.selectedChannel = "sms";
             },
             sendLink() {
+                this.error = null;
                 this.waiting = true;
 
                 const url = `/manage-patients/${this.patientId}/send-link/${this.isVitals ? 'vitals' : 'hra'}`;
@@ -201,8 +206,9 @@
                 }
 
                 const req = {
+                    target_patient_id: this.patientId,
                     channel: this.selectedChannel,
-                    target: target,
+                    channel_value: target,
                 };
 
                 axios.post(url, req)
