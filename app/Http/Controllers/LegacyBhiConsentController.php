@@ -64,6 +64,6 @@ class LegacyBhiConsentController extends Controller
             ? Carbon::parse($nextScheduledCallDate)->diffInSeconds($now)
             : $tomorrow->diffInSeconds($now);
 
-        Cache::put($key, '', $seconds);
+        Cache::put($key, true, $seconds);
     }
 }
