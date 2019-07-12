@@ -11,6 +11,7 @@ use App\Http\Requests\CreateLegacyBhiConsentDecision;
 use App\Note;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
+use Illuminate\Support\Facades\Cache;
 
 class LegacyBhiConsentController extends Controller
 {
@@ -63,6 +64,6 @@ class LegacyBhiConsentController extends Controller
             ? Carbon::parse($nextScheduledCallDate)->diffInSeconds($now)
             : $tomorrow->diffInSeconds($now);
 
-        \Cache::put($key, '', $seconds);
+        Cache::put($key, '', $seconds);
     }
 }
