@@ -42,6 +42,7 @@ class NurseDailyReport
                 continue;
             }
 
+            $nurses[$i]['id']                       = $nurse->id;
             $nurses[$i]['name']                     = $nurse->getFullName();
             $nurses[$i]['Time Since Last Activity'] = Carbon::parse($mostRecentPageTimer->end_time)->diffForHumans();
 
