@@ -45,6 +45,11 @@ class NurseInvoice extends Model implements HasMedia, Pdfable
         'nurse_approved_at',
     ];
 
+    public function dailyDisputes()
+    {
+        return $this->hasMany(NurseInvoiceDailyDispute::class, 'invoice_id', 'id');
+    }
+
     public function dispute()
     {
         return $this->morphOne(Dispute::class, 'disputable');
