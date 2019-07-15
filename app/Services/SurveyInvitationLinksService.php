@@ -13,26 +13,24 @@ use Illuminate\Support\Str;
 
 class SurveyInvitationLinksService
 {
-    const SMS_TEXT_FOR_KNOWN_APPOINTMENT_DATE_TIME = "Hello! Dr. {primaryPhysicianLastName} requests you complete this wellness survey before your scheduled appointment on {date}[“mm/dd/yy”] at {time}[hh:mm am/pm].";
-    const SMS_TEXT_FOR_KNOWN_APPOINTMENT_DATE_ONLY = "Hello! Dr. {primaryPhysicianLastName} requests you complete this wellness survey before your scheduled appointment on {date}[“mm/dd/yy”].";
-    const SMS_TEXT_FOR_UNKNOWN_APPOINTMENT_DATE = "Hello! Dr. {primaryPhysicianLastName} at {practiceName} requests you complete this health survey as soon as you can. Please call {clhNumber} if you have any questions.";
-
     /**
      * @param User $user
+     * @param string $surveyName
      * @param string $forYear
      * @param bool $addUserToSurveyInstance
      *
      * @return string
      * @throws \Exception
      */
-    public function createAndSaveUrl(User $user, string $forYear, bool $addUserToSurveyInstance = false)
-    {
+    public function createAndSaveUrl(
+        User $user,
+        string $surveyName,
+        string $forYear,
+        bool $addUserToSurveyInstance = false
+    ) {
         if ( ! $user->patientInfo) {
             throw new \Exception("missing patient info from user");
         }
-
-        $patientInfoId = $user->patientInfo->id;
-        $this->expireAllPastUrls($patientInfoId);
 
         if ($user->surveyInstances->isEmpty()) {
 
@@ -41,7 +39,7 @@ class SurveyInvitationLinksService
             }
 
             $ids      = $this->enrolUser($user, $forYear);
-            $surveyId = $ids[Survey::HRA];
+            $surveyId = $ids[$surveyName];
 
         } else {
 
@@ -54,6 +52,9 @@ class SurveyInvitationLinksService
 
             $surveyId = $hraSurveyInstance->survey_id;
         }
+
+        $patientInfoId = $user->patientInfo->id;
+        $this->expireAllPastUrls($patientInfoId, $surveyId);
 
         //APP_URL must be set correctly in .env for this to work
         $url = URL::signedRoute('auth.login.signed',
@@ -77,10 +78,13 @@ class SurveyInvitationLinksService
         return $url;
     }
 
-    public function expireAllPastUrls($patientInfoId)
+    public function expireAllPastUrls($patientInfoId, $surveyId = null)
     {
         InvitationLink::where('patient_info_id', $patientInfoId)
                       ->where('is_manually_expired', '=', 0)
+                      ->when($surveyId != null, function ($q) use ($surveyId) {
+                          $q->where('survey_id', '=', $surveyId);
+                      })
                       ->update(['is_manually_expired' => true]);
     }
 
@@ -97,27 +101,6 @@ class SurveyInvitationLinksService
         $urlToken = $output['signature'];
 
         return $urlToken;
-    }
-
-    /**
-     * @param User $user
-     * @param string $url
-     *
-     * @return string
-     */
-    public function getSMSText(User $user, string $url)
-    {
-        $providerLastName = $user->billingProviderUser()->last_name;
-        $practiceName     = $user->primaryPractice->display_name;
-
-        //todo: check if we have known appointment and select appropriate SMS message
-        $text = Str::replaceFirst("{primaryPhysicianLastName}", $providerLastName,
-            self::SMS_TEXT_FOR_UNKNOWN_APPOINTMENT_DATE);
-        $text = Str::replaceFirst("{practiceName}", $practiceName, $text);
-        $text = Str::replaceFirst("{clhNumber}", config('services.twilio.from'), $text);
-        $text = $text . "\n" . $url;
-
-        return $text;
     }
 
     /**

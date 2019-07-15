@@ -130,6 +130,9 @@
 
     library.add(faSpinner);
 
+    const CHANNEL_MAIL = "mail";
+    const CHANNEL_SMS = "sms";
+
     export default {
         name: "SendLinkModal",
         components: {
@@ -162,7 +165,6 @@
 
         },
         mounted() {
-            this.title = this.options.title;
             this.patientId = this.options.patientId;
             this.getPatientContactInfo();
         },
@@ -187,10 +189,10 @@
                     });
             },
             selectEmail() {
-                this.selectedChannel = "email";
+                this.selectedChannel = CHANNEL_MAIL;
             },
             selectSMS() {
-                this.selectedChannel = "sms";
+                this.selectedChannel = CHANNEL_SMS;
             },
             sendLink() {
                 this.error = null;
@@ -198,7 +200,7 @@
 
                 const url = `/manage-patients/${this.patientId}/send-link/${this.isVitals ? 'vitals' : 'hra'}`;
                 let target;
-                if (this.selectedChannel === 'email') {
+                if (this.selectedChannel === CHANNEL_MAIL) {
                     target = this.selectedEmail === 'other' ? this.customEmail : this.selectedEmail;
                 }
                 else {
@@ -227,7 +229,14 @@
 
             handleError(error) {
                 console.log(error);
-                if (error.response && error.response.status === 404) {
+                if (error.response && error.response.status === 504) {
+                    this.error = "Server took too long to respond. Please try again.";
+                }
+                else if (error.response && error.response.status === 500) {
+                    this.error = "There was an error with our servers. Please contact CLH support.";
+                    console.error(error.response.data);
+                }
+                else if (error.response && error.response.status === 404) {
                     this.error = "Not Found [404]";
                 }
                 else if (error.response && error.response.status === 419) {
@@ -236,7 +245,7 @@
                     window.location.reload();
                 }
                 else if (error.response && error.response.data) {
-                    const errors = [error.response.data.message];
+                    const errors = [error.response.data.error];
                     Object.keys(error.response.data.errors || []).forEach(e => {
                         errors.push(error.response.data.errors[e]);
                     });

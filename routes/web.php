@@ -27,9 +27,6 @@ Route::group([
     'prefix' => 'auth',
 ], function () {
 
-    Route::post('send-invitation-link', 'InvitationLinksController@createSendInvitationUrl')
-         ->name('auth.send.signed.url');
-
     //this is a signed route
     Route::get('login-survey/{user}/{survey}', 'Auth\PatientLoginController@showLoginForm')
          ->name('auth.login.signed')
