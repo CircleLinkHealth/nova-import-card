@@ -79,6 +79,10 @@
                 //hacky way to display summary input required when notify-careteam is checked, and also make summary required
                 $('#notify-careteam').change(function (e) {
 
+                    if (typeof App === 'undefined' || typeof Vue === 'undefined') {
+                        return;
+                    }
+
                     //might be called before summaryInput component is created
                     if (!App.$refs.summaryInput) {
                         return;
@@ -103,5 +107,19 @@
         else if (hasSummary) {
             $('.load-hidden').show();
         }
+
+        $('#notify-careteam').change(function (e) {
+            setSubmitText();
+        });
+
+        $('#notify-circlelink-support').change(function (e) {
+            setSubmitText();
+        });
+
+        function setSubmitText() {
+            const text = ($('#notify-circlelink-support').is(':checked') || $('#notify-careteam').is(':checked')) ? 'Save / Send Note' : 'Save Note';
+            $('#Submit').text(text);
+        }
+
     </script>
 @endpush

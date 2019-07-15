@@ -962,6 +962,10 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'NotesController@storeDraft',
                 'as'   => 'patient.note.store.draft',
             ])->middleware('permission:note.create,patient.update,patientSummary.update');
+            Route::post('delete/{noteId}', [
+                'uses' => 'NotesController@deleteDraft',
+                'as'   => 'patient.note.delete.draft',
+            ])->middleware('permission:note.create,patient.update,patientSummary.update');
             Route::get('{showAll?}', [
                 'uses' => 'NotesController@index',
                 'as'   => 'patient.note.index',
@@ -1234,7 +1238,7 @@ Route::group(['middleware' => 'auth'], function () {
 
             Route::post('/unassign-ca', [
                 'uses' => 'EnrollmentDirectorController@unassignCareAmbassadorFromEnrollees',
-                'as'   => 'ca-director.mark-ineligible',
+                'as'   => 'ca-director.unassign-ambassador',
             ]);
 
             Route::post('/edit-enrollee', [

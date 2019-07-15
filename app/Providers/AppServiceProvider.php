@@ -6,7 +6,6 @@
 
 namespace App\Providers;
 
-use App\Contracts\HtmlToPdfService;
 use App\Contracts\ReportFormatter;
 use App\Contracts\Repositories\ActivityRepository;
 use App\Contracts\Repositories\AprimaCcdApiRepository;
@@ -27,7 +26,6 @@ use App\Repositories\InviteRepositoryEloquent;
 use App\Repositories\LocationRepositoryEloquent;
 use App\Repositories\PracticeRepositoryEloquent;
 use App\Repositories\PrettusUserRepositoryEloquent;
-use App\Services\SnappyPdfWrapper;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
@@ -36,6 +34,7 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Dusk\DuskServiceProvider;
 use Laravel\Horizon\Horizon;
+use Maatwebsite\Excel\Imports\HeadingRowFormatter;
 use Orangehill\Iseed\IseedServiceProvider;
 use Queue;
 use Way\Generators\GeneratorsServiceProvider;
@@ -123,13 +122,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(
-            HtmlToPdfService::class,
-            function () {
-                return $this->app->make(SnappyPdfWrapper::class)
-                    ->setTemporaryFolder(storage_path('tmp'));
-            }
-        );
+        // Excel Package Importing Config
+        // Format input array keys to be all lower-case and sluggified
+        HeadingRowFormatter::extend('custom', function ($value) {
+            return strtolower(str_slug($value));
+        });
 
         $this->app->bind(
             ActivityRepository::class,
