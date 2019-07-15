@@ -98,8 +98,8 @@
                 }
             },
 
-            sendVitalsLink() {
-                this.sendLinkModalOptions.patientId = null;
+            sendVitalsLink(patient) {
+                this.sendLinkModalOptions.patientId = patient.patient_id;
                 this.sendLinkModalOptions.survey = "vitals";
                 this.sendLinkModalOptions.show = true;
                 this.sendLinkModalOptions.onDone = () => {

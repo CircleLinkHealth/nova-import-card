@@ -7,8 +7,10 @@
 
             <div class="container">
 
-                <div class="row text-center">
-                    <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
+                <div class="spinner-overlay" v-show="waiting">
+                    <div class="text-center">
+                        <font-awesome-icon icon="spinner" :spin="true"/>
+                    </div>
                 </div>
 
                 <mdb-alert v-if="isVitals" color="warning">
@@ -26,7 +28,7 @@
 
                 <br/>
 
-                <template v-if="selectedChannel === 'email'">
+                <template v-if="isMailChannel">
 
                     <template v-if="email">
                         <div class="row">
@@ -62,7 +64,7 @@
 
                 </template>
 
-                <template v-if="selectedChannel === 'sms'">
+                <template v-if="isSmsChannel">
 
                     <template v-if="phoneNumbers.length">
                         <div class="row">
@@ -106,7 +108,7 @@
         </mdb-modal-body>
         <mdb-modal-footer>
             <mdb-btn color="warning" @click.native="cancel">Cancel</mdb-btn>
-            <mdb-btn color="primary" @click.native="sendLink">Send</mdb-btn>
+            <mdb-btn color="primary" @click.native="sendLink" :disabled="waiting || error">Send</mdb-btn>
         </mdb-modal-footer>
     </mdb-modal>
 </template>
@@ -166,7 +168,9 @@
         },
         mounted() {
             this.patientId = this.options.patientId;
-            this.getPatientContactInfo();
+            if (!this.isVitals) {
+                this.getPatientContactInfo();
+            }
         },
         methods: {
             getPatientContactInfo() {
@@ -190,9 +194,15 @@
             },
             selectEmail() {
                 this.selectedChannel = CHANNEL_MAIL;
+                if (!this.email) {
+                    this.selectedEmail = 'other';
+                }
             },
             selectSMS() {
                 this.selectedChannel = CHANNEL_SMS;
+                if (!this.phoneNumbers || this.phoneNumbers.length === 0) {
+                    this.selectedPhoneNumber = 'other';
+                }
             },
             sendLink() {
                 this.error = null;
@@ -260,6 +270,12 @@
             isVitals() {
                 return this.options.survey === "vitals";
             },
+            isMailChannel() {
+                return this.selectedChannel === CHANNEL_MAIL;
+            },
+            isSmsChannel() {
+                return this.selectedChannel === CHANNEL_SMS;
+            },
             title() {
                 return this.isVitals ? "Send Vitals Link" : "Send HRA Link";
             }
@@ -268,5 +284,20 @@
 </script>
 
 <style scoped>
+
+    .container {
+        position: relative;
+    }
+
+    .spinner-overlay {
+        position: absolute;
+        width: 100%;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        background-color: rgba(255, 255, 255, 0.7);
+        z-index: 9999;
+    }
 
 </style>

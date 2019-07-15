@@ -3,7 +3,6 @@
 namespace App\Notifications;
 
 use App\NotifiableUser;
-use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -22,6 +21,7 @@ class SurveyInvitationLink extends Notification
     const SMS_TEXT_FOR_VITALS = "Hello! Dr. {primaryPhysicianLastName} at {practiceName} requests you complete this health survey as soon as you can. Please call {clhNumber} if you have any questions.";
 
 
+    const EMAIL_SUBJECT = "Annual Wellness Survey - {primaryPhysicianLastName} at {practiceName}";
     const EMAIL_GREETING = "Hello!";
     const EMAIL_ACTION = "Open Survey";
     const EMAIL_LINE_1 = "Dr. {primaryPhysicianLastName} at {practiceName} requests you complete this health survey as soon as you can.";
@@ -80,12 +80,19 @@ class SurveyInvitationLink extends Notification
         //todo: check if we have known appointment and select appropriate SMS message
         //todo: use $surveyName to decide the body of the message
 
+        $subject = Str::replaceFirst("{primaryPhysicianLastName}", $providerLastName,
+            self::EMAIL_SUBJECT);
+        $subject = Str::replaceFirst("{practiceName}", $practiceName, $subject);
+
         $line1 = Str::replaceFirst("{primaryPhysicianLastName}", $providerLastName,
             self::EMAIL_LINE_1);
         $line1 = Str::replaceFirst("{practiceName}", $practiceName, $line1);
+
         $line2 = Str::replaceFirst("{clhNumber}", config('services.twilio.from'), self::EMAIL_LINE_2);
 
         return (new MailMessage)
+            ->from("support@circlelinkhealth.com", "CirleLink Health")
+            ->subject($subject)
             ->greeting(self::EMAIL_GREETING)
             ->line($line1)
             ->action(self::EMAIL_ACTION, $this->url)
