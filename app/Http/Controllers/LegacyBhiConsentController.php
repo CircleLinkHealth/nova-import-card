@@ -56,8 +56,9 @@ class LegacyBhiConsentController extends Controller
      */
     private function storeNotNowResponse($patientId)
     {
-        $now                   = Carbon::now();
-        $tomorrow              = $now->copy()->addHours(24);
+        $now      = Carbon::now();
+        $tomorrow = $now->addDay()->startOfDay();
+
         $nextScheduledCallDate = auth()->user()->patientNextScheduledCallDate($patientId);
         $key                   = auth()->user()->getLegacyBhiNursePatientCacheKey($patientId);
 
