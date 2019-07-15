@@ -29,9 +29,11 @@
     export default {
         name: "PatientList",
         components: {SendLinkModal, mdbDropdown, mdbDropdownItem, mdbDropdownMenu, mdbDropdownToggle},
+        props: ['debug'],
         data() {
             return {
                 sendLinkModalOptions: {
+                    debug: this.debug,
                     show: false,
                     survey: null,
                     patientId: null,

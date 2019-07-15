@@ -9,7 +9,7 @@
             </h1>
         </div>
         <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12 overflow-scroll">
-            <patient-list ref="patientList"></patient-list>
+            <patient-list ref="patientList" :debug="@json(!isProductionEnv())"></patient-list>
         </div>
     </div>
 </div>

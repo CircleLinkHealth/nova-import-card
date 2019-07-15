@@ -62,11 +62,11 @@ class InvitationLinksController extends Controller
         try {
             $sent = $this->generateUrlAndSend($request, Survey::VITALS);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], 400);
         }
 
         if ( ! $sent) {
-            return response()->json(['error' => 'Could not send survey link']);
+            return response()->json(['error' => 'Could not send survey link'], 400);
         }
 
         return response()->json(['message' => 'success']);

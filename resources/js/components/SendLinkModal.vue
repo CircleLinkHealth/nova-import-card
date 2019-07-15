@@ -108,7 +108,7 @@
         </mdb-modal-body>
         <mdb-modal-footer>
             <mdb-btn color="warning" @click.native="cancel">Cancel</mdb-btn>
-            <mdb-btn color="primary" @click.native="sendLink" :disabled="waiting || error">Send</mdb-btn>
+            <mdb-btn color="primary" @click.native="sendLink" :disabled="waiting || error != null">Send</mdb-btn>
         </mdb-modal-footer>
     </mdb-modal>
 </template>
@@ -192,19 +192,69 @@
                         this.handleError(error);
                     });
             },
+
             selectEmail() {
+                this.error = null;
                 this.selectedChannel = CHANNEL_MAIL;
                 if (!this.email) {
                     this.selectedEmail = 'other';
                 }
             },
+
             selectSMS() {
+                this.error = null;
                 this.selectedChannel = CHANNEL_SMS;
                 if (!this.phoneNumbers || this.phoneNumbers.length === 0) {
                     this.selectedPhoneNumber = 'other';
                 }
             },
+
+            validate() {
+
+                if (this.options.debug) {
+                    return true;
+                }
+
+                let result = false;
+                if (this.selectedChannel === CHANNEL_MAIL && this.selectedEmail === 'other') {
+                    result = this.validateEmail(this.customEmail);
+                    if (!result) {
+                        this.error = "Invalid Email";
+                    }
+                }
+                else if (this.selectedChannel === CHANNEL_SMS && this.selectedPhoneNumber === 'other') {
+                    result = this.validatePhone(this.customPhoneNumber);
+                    if (!result) {
+                        this.error = "Invalid Phone number.";
+                    }
+                }
+                return result;
+            },
+
+            validateEmail(email) {
+                const re = /\S+@\S+\.\S+/;
+                return re.test(email);
+            },
+
+            validatePhone(phone) {
+                const res = this.sanitizePhoneNumber(phone);
+                return res.startsWith('+') ? res.length === 11 : res.length === 10;
+            },
+
+            sanitizePhoneNumber(value) {
+                let res = value.toString().trim();
+                res = res.replace(/\(/g, '');
+                res = res.replace(/\)/g, '');
+                res = res.replace(/\s/g, '');
+                return res;
+            },
+
             sendLink() {
+
+                if (!this.validate()) {
+                    return;
+                }
+
                 this.error = null;
                 this.waiting = true;
 
@@ -215,6 +265,7 @@
                 }
                 else {
                     target = this.selectedPhoneNumber === 'other' ? this.customPhoneNumber : this.selectedPhoneNumber;
+                    target = this.sanitizePhoneNumber(target);
                 }
 
                 const req = {
