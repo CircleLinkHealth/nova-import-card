@@ -21,13 +21,20 @@ require('./bootstrap-axios');
  * allows your team to easily build robust real-time web applications.
  */
 
-// import Echo from 'laravel-echo'
+import Echo from 'laravel-echo'
 
-// window.Pusher = require('pusher-js');
+import pusher_js from "pusher-js";
 
-// window.Echo = new Echo({
-//     broadcaster: 'pusher',
-//     key: 'your-pusher-key',
-//     cluster: 'mt1',
-//     encrypted: true
-// });
+window.Pusher = pusher_js;
+
+window.Echo = new Echo({
+    broadcaster: 'pusher',
+    key: 'dca1637b1d26e1c5867f',
+    cluster: 'mt1',
+    encrypted: true
+});
+
+window.Echo.channel('pusher-test').listen('PusherTest', e => {
+    console.log('Hey man new notification you have '+ e.message.id +'');
+    console.log(e);
+});

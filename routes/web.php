@@ -4,6 +4,8 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use App\Events\PusherTest;
+
 Route::post('send-sample-fax', 'DemoController@sendSampleEfaxNote');
 
 Route::post('/send-sample-direct-mail', 'DemoController@sendSampleEMRNote');
@@ -2413,3 +2415,18 @@ Route::get(
         'as'   => 'process.eligibility.local.zip',
     ]
 )->middleware(['auth', 'role:administrator']);
+
+//tester for Pusher
+class Message
+{
+    public $message;
+
+    public function __construct($message)
+    {
+        $this->message = $message;
+    }
+}
+
+Route::get('pusher-test', function () {
+    PusherTest::dispatch(new Message(1));
+});

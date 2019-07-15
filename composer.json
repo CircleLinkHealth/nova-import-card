@@ -117,6 +117,7 @@
     "prettus/l5-repository": "dev-master",
     "prettus/laravel-validation": "*",
     "propaganistas/laravel-phone": "^3.0",
+    "pusher/pusher-php-server": "^4.0",
     "rap2hpoutre/laravel-log-viewer": "^0.4.0",
     "seld/jsonlint": "^1.7",
     "sparclex/nova-import-card": "^2.0",
