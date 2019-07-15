@@ -78,7 +78,10 @@
                     @include('partials.userheader')
 
                     {{--If today is scheduled call day then just show banner--}}
-                    @if(isset($patient) && auth()->check() && !isset($isPdf) && auth()->user()->shouldShowBhiBannerIfPatientHasScheduledCallToday($patient))
+                    @if(isset($patient)
+                    && auth()->check()
+                    && !isset($isPdf)
+                    && auth()->user()->shouldShowBhiBannerIfPatientHasScheduledCallToday($patient))
                         @include('partials.providerUI.bhi-notification-banner', ['user' => $patient])
                     @endif
 

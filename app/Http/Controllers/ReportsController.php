@@ -19,6 +19,7 @@ use App\Services\PrintPausedPatientLettersService;
 use App\Services\ReportsService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Location;
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -134,8 +135,8 @@ class ReportsController extends Controller
                 ->select(
                     DB::raw(
                         '*,DATE(performed_at),provider_id, type, SUM(duration) as duration'
-                                                            )
-                                                        )
+                    )
+                )
                 ->where('patient_id', $patient->id)
                 ->whereBetween(
                     'performed_at',
@@ -143,7 +144,7 @@ class ReportsController extends Controller
                         $start,
                         $end,
                     ]
-                                                        )
+                )
                 ->where('duration', '>', 1200)
                 ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
                 ->orderBy('performed_at', 'desc')
@@ -609,19 +610,19 @@ class ReportsController extends Controller
                                     $start,
                                     $end,
                                 ]
-                          )
+                            )
                             ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
                             ->orderBy('performed_at', 'desc');
                     },
                 ]
-                        )
+            )
             ->whereHas(
                 'patientSummaries',
                 function ($q) use ($time) {
                     $q->where('month_year', $time->copy()->startOfMonth()->toDateString())
                         ->where('total_time', '<', 1200);
                 }
-                        )
+            )
             ->get();
 
         $u20_patients = [];
