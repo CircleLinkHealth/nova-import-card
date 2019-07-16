@@ -186,7 +186,8 @@
       "@php artisan package:discover --ansi"
     ],
     "post-update-cmd": [
-      "Illuminate\\Foundation\\ComposerScripts::postUpdate"
+      "Illuminate\\Foundation\\ComposerScripts::postUpdate",
+      "@php artisan nova:publish"
     ],
     "test-db-mysql": [
       "php artisan config:clear && php artisan db:test && php artisan migrate:fresh && php artisan migrate && php artisan db:seed && php artisan db:seed --class=TestSuiteSeeder"
