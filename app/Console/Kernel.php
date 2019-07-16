@@ -112,13 +112,11 @@ class Kernel extends ConsoleKernel
         $schedule->command(GetCcds::class)
             ->dailyAt('03:00')->onOneServer();
 
-        //old report - to deprecate - send to all
         $schedule->command(EmailRNDailyReportToDeprecate::class)
             ->dailyAt('07:00')->onOneServer();
 
-        //new report - testing with 3 nurses
-        $schedule->command(EmailRNDailyReport::class, ['nurseUserIds' => '11321,8151,1920'])
-            ->dailyAt('07:20')->onOneServer();
+        $schedule->command(EmailRNDailyReport::class)
+            ->dailyAt('07:05')->onOneServer();
 
         $schedule->command(QueueSendApprovedCareplanSlackNotification::class)
             ->dailyAt('23:40')->onOneServer();

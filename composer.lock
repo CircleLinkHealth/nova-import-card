@@ -700,7 +700,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "b51491d22a38cf11e6b12f4033bc72e54e4a1d03"
+                "reference": "2c4c48a5b56a2f03418f86710dc63ebe57882bbf"
             },
             "require": {
                 "circlelinkhealth/core": "dev-master",
@@ -733,7 +733,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-07-09T11:59:57+00:00"
+            "time": "2019-07-16T19:56:14+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
