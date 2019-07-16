@@ -71,7 +71,7 @@
                 <div class="questions-box question"
                      :id="question.id"
                      :class="!readOnlyMode && currentQuestionIndex !== index ? (question.conditions && question.conditions.length > 0 ? 'non-visible' : 'watermark') : 'active'"
-                     v-show="index >= currentQuestionIndex"
+                     v-show="readOnlyMode || index >= currentQuestionIndex"
                      v-for="(question, index) in questions">
                     <div class="questions-body">
 
