@@ -267,11 +267,11 @@ class NursesPerformanceReportService
     {
         $diff = $date->diffInDays($date->copy()->endOfMonth());
 
-        $mutableDate = $date->copy()->addDay();
+        $mutableDate = $date->copy()->addDay()->startOfDay();
         $hours       = [];
         for ($i = $diff; $i > 0; --$i) {
             $isHolidayForDate = $upcomingHolidays
-                ->where('date', $mutableDate->format('Y-m-d'))
+                ->where('date', $mutableDate)
                 ->isNotEmpty();
 
             //we count the hours only if the nurse has not scheduled a holiday for that day.
@@ -279,7 +279,7 @@ class NursesPerformanceReportService
                 $hours[] = $nurse->nurseInfo->getHoursCommittedForCarbonDate($date);
             }
 
-            $mutableDate->addDay();
+            $mutableDate->addDay()->startOfDay();
         }
 
         return round(array_sum($hours), 1);
@@ -359,7 +359,7 @@ class NursesPerformanceReportService
         $noOfDays    = 0;
         for ($i = $diff; $i > 0; --$i) {
             $isHolidayForDate = $upcomingHolidays
-                ->where('date', $mutableDate->format('Y-m-d'))
+                ->where('date', $mutableDate->copy()->startOfDay())
                 ->isNotEmpty();
 
             if ( ! $isHolidayForDate) {
